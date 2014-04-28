@@ -4,10 +4,10 @@ import net.minecraft.block.Block;
 
 public final class ModBlocks
 {
-    public static Block myBlock;
+    public static Block blockHutTownhall;
 
     public static void init()
     {
-        myBlock = new MyBlock();
+        blockHutTownhall = new BlockHutTownHall();
     }
 }

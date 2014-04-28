@@ -16,8 +16,8 @@ public class MyBlock extends net.minecraft.block.Block implements IColoniesBlock
     {
         super(Material.rock);
         setBlockName(name);
-        GameRegistry.registerBlock(this, name);
         setCreativeTab(CreativeTabs.tabBlock);
+        GameRegistry.registerBlock(this, name);
     }
 
     @Override

@@ -2,6 +2,13 @@ package com.minecolonies.configuration;
 
 public class Configurations
 {
-    public static final boolean DEFAULT_TESTSUCEEDED = false;
-    public static boolean testSucceeded;
+    /*
+    Defaults
+     */
+    public static final int DEFAULT_WORKINGRANGETOWNHALL = 10; //TODO make legit
+    /*
+    Holders
+     */
+    public static int workingRangeTownhall;
+    public static String[] cityNames = {"1", "2"}; //TODO add names
 }

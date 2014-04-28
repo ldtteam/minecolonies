@@ -18,7 +18,7 @@ public class ConfigurationHandler
         try
         {
             config.load();
-            Configurations.testSucceeded = config.get("Blocks", "Change to true ->", Configurations.DEFAULT_TESTSUCEEDED).getBoolean(Configurations.DEFAULT_TESTSUCEEDED);
+            Configurations.workingRangeTownhall = config.get("Item", "Working Range Townhall", Configurations.DEFAULT_WORKINGRANGETOWNHALL).getInt(Configurations.DEFAULT_WORKINGRANGETOWNHALL);
         }
         finally
         {
