@@ -14,34 +14,57 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
-apply plugin: 'scala'
+
 apply plugin: 'forge'
 
-version = "0.0.1"
-group = "com.minecolonies" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "MineColonies"
+ext.configFile = file "build.properties"
 
-minecraft {
-    version = "1.7.2-10.12.1.1061"
-    assetDir = "eclipse/assets"
+configFile.withReader {
+
+        def prop = new Properties()
+        prop.load(it)
+        ext.config = new ConfigSlurper().parse prop
 }
 
-processResources
-        {
-            // this will ensure that this task is redone when the versions change.
-            inputs.property "version", project.version
-            inputs.property "mcversion", project.minecraft.version
+group = "MineColoniesMod"
+version = config.mod_version
 
-            // replace stuff in mcmod.info, nothing else
-            from(sourceSets.main.resources.srcDirs) {
-                include 'mcmod.info'
-
-                // replace version and mcversion
-                expand 'version': project.version, 'mcversion': project.minecraft.version
-            }
-
-            // copy everything else, thats not the mcmod.info
-            from(sourceSets.main.resources.srcDirs) {
-                exclude 'mcmod.info'
-            }
+minecraft {
+        version = config.minecraft_version + "-" + config.forge_version
+        assetDir = "run/assets"
+}
+if (System.getenv("BUILD_NUMBER") != null) {
+        version = "${config.minecraft_version}-${config.mod_version}-" + System.getenv("BUILD_NUMBER");
+}
+else {
+        version = "${config.minecraft_version}-${config.mod_version}"
+}
+processResources{
+        from(sourceSets.main.resources.srcDirs) {
+            //Exclude stuff if required
         }
+}
+
+repositories {
+        mavenCentral()
+}
+
+jar {
+        appendix = 'universal'
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    appendix = 'src'
+}
+
+task deobfJar(type: Jar) {
+        from sourceSets.main.output
+        appendix = 'deobf'
+}
+
+//The *-universal-* is the right one!
+artifacts {
+        archives sourceJar
+        archives deobfJar
+}

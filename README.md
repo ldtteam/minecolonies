@@ -61,7 +61,7 @@ Git is used to clone MineColonies and update your local copy.
 This section assumes that you're using the command-line version of Git.
 
 1. Open up your command line.
-2. Navigate to a place where you want to download PPP source (eg `C:\Github\PPP\`) by executing `cd [folder location]`.  This location is known as `basefolder` from now on.
+2. Navigate to a place where you want to download MineColonies source (eg `C:\Github\MineColonies\`) by executing `cd [folder location]`.  This location is known as `basefolder` from now on.
 3. Execute `git clone https://github.com/Minecolonies/MineColoniesMod.git`.  This will download MineColonies' source into `basefolder`.
 4. Right now, you should have a directory that looks something like:
 
@@ -115,3 +115,14 @@ MineColonies crashes every time?  Have a suggestion?  Found a bug?  Create an is
 		* Server log (if applicable)
 		* Detailed description of the bug
 5. Click `Submit new issue`, and wait for feedback!
+<br>
+<br>
+
+For Devs
+--
+
+Do not push to the main branch anymore!
+Only PR's (pull requests) are acceptable for this branch.
+
+To do this, the easiest way is to download [sourcetree](http://www.sourcetreeapp.com/). Install it, and add a repo (either clone, or select working directory)
+Then, click on branch, and create a new one. You can push to your own branch! Make sure your branch is selected, before you push! [Example](http://gyazo.com/4b453a55a8baf59f573bb1c4636a5ca2) So it should be big black. Once you are statisfied, go to github, and create a pull request.
