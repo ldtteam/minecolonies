@@ -1,6 +1,7 @@
 package com.minecolonies;
 
 import com.minecolonies.blocks.ModBlocks;
+import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.proxy.IProxy;
 import cpw.mods.fml.common.Mod;
@@ -16,11 +17,13 @@ public class MineColonies
     public static MineColonies instance;
 
     @SidedProxy(clientSide = Constants.CLIENTPROXYLOCATION, serverSide = Constants.COMMONPROXYLOCATION)
-    public static IProxy proxy;
+    public static  IProxy proxy;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        ConfigurationHandler.init(event.getSuggestedConfigurationFile());
+
         ModBlocks.init();
     }
 
