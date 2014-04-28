@@ -1,9 +1,11 @@
 .idea/*
+.gradle/*
 classes/*
 build/*
 eclipse/*
 logs/*
 mods/*
+out/*
 *.iml
 *.ipr
 *.iws
