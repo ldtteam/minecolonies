@@ -1,0 +1,16 @@
+[
+{
+  "modid": "minecolonies",
+  "name": "MineColonies",
+  "description": "Adds Towns and Workers to Minecraft.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "http://minecolonies.com/"",
+  "updateUrl": "",
+  "authorList": [""],
+  "credits": "MineColonies Mod Team",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

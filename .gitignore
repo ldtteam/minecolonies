@@ -1,4 +1,9 @@
-/eclipse*
+.idea/*
+classes/*
+build/*
+eclipse/*
+logs/*
+mods/*
 *.iml
 *.ipr
 *.iws
@@ -6,8 +11,5 @@ MinecraftForge*.txt
 CREDITS*
 LICENSE-fml*
 *changelog.txt
-build*
-.idea*
-.gradle*
 run*
 README.txt
