@@ -1,5 +1,6 @@
 package com.minecolonies;
 
+import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.proxy.IProxy;
 import cpw.mods.fml.common.Mod;
@@ -18,7 +19,10 @@ public class MineColonies
     public static IProxy proxy;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event){}
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        ModBlocks.init();
+    }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event){}
