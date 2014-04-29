@@ -2,6 +2,7 @@ package com.minecolonies.util;
 
 import com.minecolonies.tilentities.TileEntityTownHall;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -63,5 +64,10 @@ public class Utils
             }
         }
         return closestVec;
+    }
+
+    public static boolean isWater(Block block)
+    {
+        return (block == Blocks.water || block == Blocks.flowing_water);
     }
 }

@@ -4,6 +4,8 @@ import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
 
+import static com.minecolonies.configuration.Configurations.*;
+
 /**
  * Configuration Handler.
  * Reads the config file, and stores them in Configurations.java
@@ -18,7 +20,8 @@ public class ConfigurationHandler
         try
         {
             config.load();
-            Configurations.workingRangeTownhall = config.get("General", "Working Range Townhall", Configurations.DEFAULT_WORKINGRANGETOWNHALL).getInt(Configurations.DEFAULT_WORKINGRANGETOWNHALL);
+            Configurations.workingRangeTownhall = config.get("Game Play", "Working Range Townhall: ", DEFAULT_WORKINGRANGETOWNHALL).getInt(DEFAULT_WORKINGRANGETOWNHALL);
+            Configurations.allowInfinitePlacing = config.get("Game Play", "Allow infinite placing of Supply Chests: ", DEFAULT_ALLOWINFINTEPLACING).getBoolean(DEFAULT_ALLOWINFINTEPLACING);
         }
         finally
         {

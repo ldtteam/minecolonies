@@ -3,6 +3,7 @@ package com.minecolonies;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.client.gui.GuiHandler;
 import com.minecolonies.configuration.ConfigurationHandler;
+import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.proxy.IProxy;
 import cpw.mods.fml.common.Mod;
@@ -28,6 +29,8 @@ public class MineColonies
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
 
         ModBlocks.init();
+
+        ModItems.init();
     }
 
     @Mod.EventHandler

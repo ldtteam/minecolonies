@@ -3,6 +3,7 @@ package com.minecolonies.blocks;
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.CreativeTab;
+import com.minecolonies.util.IColony;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -13,7 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-public abstract class BlockInformator extends Block implements IColoniesBlock, ITileEntityProvider
+public abstract class BlockInformator extends Block implements IColony, ITileEntityProvider
 {
     protected int workingRange;
 
