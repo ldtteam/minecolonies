@@ -18,7 +18,7 @@ public class ConfigurationHandler
         try
         {
             config.load();
-            Configurations.workingRangeTownhall = config.get("Item", "Working Range Townhall", Configurations.DEFAULT_WORKINGRANGETOWNHALL).getInt(Configurations.DEFAULT_WORKINGRANGETOWNHALL);
+            Configurations.workingRangeTownhall = config.get("General", "Working Range Townhall", Configurations.DEFAULT_WORKINGRANGETOWNHALL).getInt(Configurations.DEFAULT_WORKINGRANGETOWNHALL);
         }
         finally
         {

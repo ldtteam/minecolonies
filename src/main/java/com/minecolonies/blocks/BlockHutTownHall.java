@@ -8,7 +8,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
@@ -40,6 +39,7 @@ public class BlockHutTownHall extends BlockInformator
         return name;
     }
 
+    //TODO Check that huts are within the range of the townhall and aren't already bound to an existing townhall.
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
@@ -50,9 +50,7 @@ public class BlockHutTownHall extends BlockInformator
 
         if(entityLivingBase instanceof EntityPlayer)
         {
-            if(entityLivingBase instanceof EntityPlayerMP)
-                tileEntityTownHall.setInfo(world, ((EntityPlayerMP) entityLivingBase).getDisplayName(), x, z); //TODO check if username is still usable
-            else tileEntityTownHall.setInfo(world, ((EntityPlayer) entityLivingBase).getDisplayName(), x, z);
+            tileEntityTownHall.setInfo(world, entityLivingBase.getUniqueID(), x, z);
         }
     }
 
@@ -73,7 +71,7 @@ public class BlockHutTownHall extends BlockInformator
     public boolean canPlaceBlockAt(World world, int x, int y, int z)
     {
         TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
-        if(tileEntityTownHall != null && Math.sqrt((x - tileEntityTownHall.xCoord) * (x - tileEntityTownHall.xCoord) + (y - tileEntityTownHall.yCoord) * (y - tileEntityTownHall.yCoord) + (z - tileEntityTownHall.zCoord) * (z - tileEntityTownHall.zCoord)) < 200)
+        if(tileEntityTownHall != null && tileEntityTownHall.getDistanceFrom(x,y,z) < 200)
         {
             FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Too close to existing townhall"));
 

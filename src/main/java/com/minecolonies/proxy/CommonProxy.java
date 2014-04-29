@@ -8,6 +8,6 @@ public abstract class CommonProxy implements IProxy
     @Override
     public void registerTileEntities()
     {
-        GameRegistry.registerTileEntity(TileEntityTownHall.class, "tilEntityTownHall");
+        GameRegistry.registerTileEntity(TileEntityTownHall.class, "tileEntityTownHall");
     }
 }
