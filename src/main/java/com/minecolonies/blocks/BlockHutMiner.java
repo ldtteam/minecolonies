@@ -1,0 +1,35 @@
+package com.minecolonies.blocks;
+
+import net.minecraft.block.material.Material;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
+public class BlockHutMiner extends BlockInformator
+{
+    public final String name = "blockHutMiner";
+
+    protected BlockHutMiner()
+    {
+        super(Material.wood);
+        setBlockName(getName());
+    }
+
+    @Override
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
+     * Returns a new instance of a block's tile entity class. Called on placing the block.
+     *
+     * @param var1
+     * @param var2
+     */
+    @Override
+    public TileEntity createNewTileEntity(World var1, int var2)
+    {
+        //TODO
+        return null;
+    }
+}

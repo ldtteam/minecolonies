@@ -5,6 +5,7 @@ import com.minecolonies.client.gui.GuiHandler;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.items.ModItems;
+import com.minecolonies.items.crafting.RecipeHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.proxy.IProxy;
 import cpw.mods.fml.common.Mod;
@@ -41,6 +42,7 @@ public class MineColonies
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
         proxy.registerTileEntities();
+        RecipeHandler.init();
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
