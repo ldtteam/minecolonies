@@ -5,11 +5,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockHutMiner extends BlockInformator
+public class BlockHutDeliveryman extends BlockInformator
 {
-    public final String name = "blockHutMiner";
+    public final String name = "blockHutDeliveryman";
 
-    protected BlockHutMiner()
+    protected BlockHutDeliveryman()
     {
         super(Material.wood);
         setBlockName(getName());
