@@ -40,7 +40,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         int x = blockPos.blockX;
         int y = blockPos.blockY;
         int z = blockPos.blockZ;
-        if(!canPlaceBlockAt(world, x, y, z))
+        if(!canShipBePlaced(world, x, y, z, entityPlayer))
         {
             return itemStack;
         }
@@ -48,9 +48,18 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         return itemStack;
     }
 
-    public boolean canPlaceBlockAt(World world, int x, int y, int z)
+    /**
+     * Checks if the ship can be placed, by checking an area for water
+     * @param world world
+     * @param x xCoord clicked
+     * @param y yCoord clicked
+     * @param z zCoord clicked
+     * @param entityPlayer Player
+     * @return true if ship can be placed, false otherwise
+     */
+    public boolean canShipBePlaced(World world, int x, int y, int z, EntityPlayer entityPlayer)
     {
-        if (!isFirstPlacing(world)) {
+        if (!isFirstPlacing(world, entityPlayer)) {
             FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Supply Chest Already Placed"));
 
             return false;
@@ -69,7 +78,13 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         return false;
     }
 
-    boolean isFirstPlacing(World world)
+    /**
+     * Checks if the player already placed a supply chest
+     * @param world World obj
+     * @param entityPlayer The player
+     * @return boolean, returns true when player hasnt placed before, or when infinite placing is on.
+     */
+    boolean isFirstPlacing(World world, EntityPlayer entityPlayer)
     {
         if(Configurations.allowInfinitePlacing)
             return true;
@@ -77,6 +92,14 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
             return false;
     }
 
+    /**
+     * Spawns the ship and supply chest
+     * @param world world obj
+     * @param x xCoord clicked
+     * @param y yCoord clicked
+     * @param z zCoord clicked
+     * @param entityPlayer the player
+     */
     private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer)
     {
       //TODO Spawn ship, spawn chest, fill chest, save new ship.

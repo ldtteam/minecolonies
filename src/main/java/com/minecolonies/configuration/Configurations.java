@@ -7,6 +7,7 @@ public class Configurations
      */
     public static final int DEFAULT_WORKINGRANGETOWNHALL = 10; //TODO make legit
     public static final boolean DEFAULT_ALLOWINFINTEPLACING = true;
+
     /*
     Holders
      */

@@ -8,6 +8,14 @@ import net.minecraft.world.World;
 
 public class Utils
 {
+    /**
+     * Method to find the closest townhall
+     * @param world world obj
+     * @param x xCoord to check from
+     * @param y yCoord to check from
+     * @param z zCoord to check from
+     * @return closest TileEntityTownHall
+     */
     public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z)
     {
         double closestDist = 9999;
@@ -29,13 +37,34 @@ public class Utils
         return closestTownHall;
     }
 
-    @SuppressWarnings("UnusedDeclaration") //TODO Check for uses (Inherited from old mod)
+    /**
+     * Finds the highest block in one yCoord, but ignores leaves etc.
+     * @param world world obj
+     * @param x xCoord
+     * @param z zCoord
+     * @return yCoordinate
+     */
     protected int findTopGround(World world, int x, int z)
     {
-        //TODO
-        return 1;
+        int yHolder = 1;
+        while(true)
+        {
+            if (world.canBlockSeeTheSky(x, yHolder, z))
+                break;
+            yHolder++;
+        }
+        while(true)
+        {
+            if(world.getBlock(x,yHolder,z) == Blocks.air || !world.getBlock(x,yHolder,z).isOpaqueCube() || world.getBlock(x, yHolder, z) == Blocks.leaves || world.getBlock(x,yHolder,z) == Blocks.leaves2)
+                yHolder--;
+            else break;
+        }
+        return yHolder;
     }
 
+    /**
+     * Still unused
+     */
     @SuppressWarnings("UnusedDeclaration") //TODO Check for uses (Inherited from old mod)
     protected Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
     {
@@ -66,8 +95,26 @@ public class Utils
         return closestVec;
     }
 
+    /**
+     * Checks if the block is water
+     * @param block block to be checked
+     * @return true if is water.
+     */
     public static boolean isWater(Block block)
     {
         return (block == Blocks.water || block == Blocks.flowing_water);
+    }
+
+    /**
+     * Checks if the block is water
+     * @param world world obj
+     * @param x xCoord
+     * @param y yCoord
+     * @param z zCoord
+     * @return true if is water.
+     */
+    public static boolean isWater(World world, int x, int y, int z)
+    {
+        return world.getBlock(x, y, z) == Blocks.water || world.getBlock(x, y, z) == Blocks.flowing_water;
     }
 }
