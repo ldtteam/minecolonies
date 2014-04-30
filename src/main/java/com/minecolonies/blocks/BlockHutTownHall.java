@@ -46,6 +46,15 @@ public class BlockHutTownHall extends BlockInformator
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
         if(world.isRemote) return;
+        PlayerProperties playerProperties = (PlayerProperties)entityLivingBase.getExtendedProperties(Constants.PlayerPropertyName);
+        if(playerProperties.hasPlacedTownHall())
+        {
+            world.setBlockToAir(x,y,z);
+            FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("You have placed a Town Hall already"));
+            removedByPlayer(world, (EntityPlayer)entityLivingBase, x, y, z);
+            return;
+        }
+
         super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
 
         TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
@@ -53,8 +62,6 @@ public class BlockHutTownHall extends BlockInformator
         {
             tileEntityTownHall.setInfo(world, entityLivingBase.getUniqueID(), x, z);
             tileEntityTownHall.markDirty();
-            EntityPlayer player = (EntityPlayer)entityLivingBase;
-            PlayerProperties playerProperties =  (PlayerProperties) player.getExtendedProperties(Constants.PlayerPropertyName);
             playerProperties.setHasPlacedTownHall(true);
         }
     }
@@ -71,7 +78,6 @@ public class BlockHutTownHall extends BlockInformator
         tileEntityTownHall.onBlockAdded();
     }
 
-    //TODO Somehow check if player has placed Townhall already;
     @Override
     public boolean canPlaceBlockAt(World world, int x, int y, int z)
     {
