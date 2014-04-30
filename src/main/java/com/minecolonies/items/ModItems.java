@@ -8,6 +8,6 @@ public final class ModItems
 
     public static void init()
     {
-        supplyChest = new SupplyChest();
+        supplyChest = new ItemSupplyChestDeployer();
     }
 }
