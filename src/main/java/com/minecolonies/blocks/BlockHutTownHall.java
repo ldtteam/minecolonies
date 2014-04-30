@@ -1,6 +1,8 @@
 package com.minecolonies.blocks;
 
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.PlayerProperties;
+import com.minecolonies.lib.Constants;
 import com.minecolonies.tilentities.TileEntityTownHall;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -47,10 +49,13 @@ public class BlockHutTownHall extends BlockInformator
         super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
 
         TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-
         if(entityLivingBase instanceof EntityPlayer)
         {
             tileEntityTownHall.setInfo(world, entityLivingBase.getUniqueID(), x, z);
+            tileEntityTownHall.markDirty();
+            EntityPlayer player = (EntityPlayer)entityLivingBase;
+            PlayerProperties playerProperties =  (PlayerProperties) player.getExtendedProperties(Constants.PlayerPropertyName);
+            playerProperties.setHasPlacedTownHall(true);
         }
     }
 
@@ -66,7 +71,7 @@ public class BlockHutTownHall extends BlockInformator
         tileEntityTownHall.onBlockAdded();
     }
 
-    //TODO CHECK
+    //TODO Somehow check if player has placed Townhall already;
     @Override
     public boolean canPlaceBlockAt(World world, int x, int y, int z)
     {
@@ -80,16 +85,23 @@ public class BlockHutTownHall extends BlockInformator
         return super.canPlaceBlockAt(world, x, y, z);
     }
 
-    //TODO CHECK
-    @Override
-    public void updateTick(World world, int x, int y, int z, Random random)
-    {
-        super.updateTick(world, x, y, z, random);
-    }
-
     @Override
     public TileEntity createNewTileEntity(World var1, int var2)
     {
         return new TileEntityTownHall();
+    }
+
+    @Override
+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
+    {
+        if(world.isRemote) return super.removedByPlayer(world, player, x, y, z);
+
+        if(super.removedByPlayer(world, player, x, y, z))
+        {
+            PlayerProperties playerProperties =  (PlayerProperties)player.getExtendedProperties(Constants.PlayerPropertyName);
+            playerProperties.setHasPlacedTownHall(false);
+            return true;
+        }
+        return false;
     }
 }
