@@ -42,6 +42,7 @@ public class MineColonies
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
         proxy.registerTileEntities();
+
         RecipeHandler.init();
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());

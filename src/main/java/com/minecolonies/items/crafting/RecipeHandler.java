@@ -8,7 +8,8 @@ import net.minecraft.item.ItemStack;
 
 public final class RecipeHandler
 {
-    public static void init() {
+    public static void init()
+    {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), "XXX", "X#X", "XXX", Character.valueOf('X'), Blocks.planks, Character.valueOf('#'), Items.wooden_pickaxe);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutLumberjack, 1), "XXX", "X#X", "XXX", Character.valueOf('X'), Blocks.planks, Character.valueOf('#'), Items.wooden_axe);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), "XXX", "X#X", "XXX", Character.valueOf('X'), Blocks.planks, Character.valueOf('#'), Items.wheat);
