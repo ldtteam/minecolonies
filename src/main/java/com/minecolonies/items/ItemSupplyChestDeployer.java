@@ -1,6 +1,8 @@
 package com.minecolonies.items;
 
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.PlayerProperties;
+import com.minecolonies.lib.Constants;
 import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
 import com.minecolonies.util.Utils;
@@ -88,8 +90,8 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     {
         if(Configurations.allowInfinitePlacing)
             return true;
-            //TODO Check for already placed (player properties);
-            return false;
+        PlayerProperties playerProperties = (PlayerProperties)entityPlayer.getExtendedProperties(Constants.PlayerPropertyName);
+        return !playerProperties.hasPlacedSupplyChest();
     }
 
     /**
@@ -103,5 +105,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer)
     {
       //TODO Spawn ship, spawn chest, fill chest, save new ship.
+        PlayerProperties playerProperties = (PlayerProperties) entityPlayer.getExtendedProperties(Constants.PlayerPropertyName);
+        playerProperties.setHasPlacedSupplyChest(true);
     }
 }

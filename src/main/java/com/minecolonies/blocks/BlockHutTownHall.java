@@ -71,6 +71,7 @@ public class BlockHutTownHall extends BlockInformator
         tileEntityTownHall.onBlockAdded();
     }
 
+    //TODO Somehow check if player has placed Townhall already;
     @Override
     public boolean canPlaceBlockAt(World world, int x, int y, int z)
     {

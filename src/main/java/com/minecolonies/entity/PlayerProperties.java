@@ -16,6 +16,7 @@ public class PlayerProperties implements IExtendedEntityProperties
 {
     private EntityPlayer player;
     boolean hasPlacedTownHall = false;
+    boolean hasPlacedSupplyChest = false;
 
     public PlayerProperties(EntityPlayer player)
     {
@@ -36,12 +37,14 @@ public class PlayerProperties implements IExtendedEntityProperties
     public void saveNBTData(NBTTagCompound compound)
     {
         compound.setBoolean("hasPlacedTownHall", hasPlacedTownHall);
+        compound.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
     }
 
     @Override
     public void loadNBTData(NBTTagCompound compound)
     {
         this.hasPlacedTownHall = compound.getBoolean("hasPlacedTownHall");
+        this.hasPlacedSupplyChest = compound.getBoolean("hasPlacedSupplyChest");
     }
 
     @Override
@@ -58,5 +61,15 @@ public class PlayerProperties implements IExtendedEntityProperties
     public void setHasPlacedTownHall(boolean hasPlacedTownHall)
     {
         this.hasPlacedTownHall = hasPlacedTownHall;
+    }
+
+    public boolean hasPlacedSupplyChest()
+    {
+        return hasPlacedSupplyChest;
+    }
+
+    public void setHasPlacedSupplyChest(boolean hasPlacedSupplyChest)
+    {
+        this.hasPlacedSupplyChest = hasPlacedSupplyChest;
     }
 }
