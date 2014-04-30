@@ -47,17 +47,16 @@ public class Utils
     protected int findTopGround(World world, int x, int z)
     {
         int yHolder = 1;
-        while(true)
+        while(!world.canBlockSeeTheSky(x, yHolder, z))
         {
-            if (world.canBlockSeeTheSky(x, yHolder, z))
-                break;
             yHolder++;
         }
-        while(true)
+        while(  world.getBlock(x, yHolder, z) == Blocks.air ||
+               !world.getBlock(x, yHolder, z).isOpaqueCube() ||
+                world.getBlock(x, yHolder, z) == Blocks.leaves ||
+                world.getBlock(x, yHolder, z) == Blocks.leaves2)
         {
-            if(world.getBlock(x,yHolder,z) == Blocks.air || !world.getBlock(x,yHolder,z).isOpaqueCube() || world.getBlock(x, yHolder, z) == Blocks.leaves || world.getBlock(x,yHolder,z) == Blocks.leaves2)
-                yHolder--;
-            else break;
+            yHolder--;
         }
         return yHolder;
     }
