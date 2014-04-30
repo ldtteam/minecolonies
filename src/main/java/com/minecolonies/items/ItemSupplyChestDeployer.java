@@ -42,12 +42,11 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         int x = blockPos.blockX;
         int y = blockPos.blockY;
         int z = blockPos.blockZ;
-        int chestFacing = getWaterSide(world, x, y, z, entityPlayer);
-        if(chestFacing == -1)
+        if(!canShipBePlaced(world, x, y, z, entityPlayer))
         {
             return itemStack;
         }
-        spawnShip(world, x, y, z, entityPlayer, chestFacing);
+        spawnShip(world, x, y, z, entityPlayer, getChestFacing(world, x, y, z, entityPlayer));
         return itemStack;
     }
 
@@ -59,28 +58,49 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      * @param y            yCoord clicked
      * @param z            zCoord clicked
      * @param entityPlayer Player
-     * @return -1 if ship can't be placed, 0-3 if ship can be placed
+     * @return true if ship can be places, false else
      */
-    public int getWaterSide(World world, int x, int y, int z, EntityPlayer entityPlayer)
+    public boolean canShipBePlaced(World world, int x, int y, int z, EntityPlayer entityPlayer)
     {
         if(!isFirstPlacing(world, entityPlayer))
         {
             FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Supply Chest Already Placed"));
 
-            return -1;
+            return false;
         }
         if(Utils.isWater(world.getBlock(x - 1, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z + 23)))
-            return 5; //Chest: East
+            return true; //Chest: East
         if(Utils.isWater(world.getBlock(x + 1, y, z)) && Utils.isWater(world.getBlock(x + 15, y, z)) && Utils.isWater(world.getBlock(x + 15, y, z - 23)))
-            return 4; //Chest: West
+            return true; //Chest: West
         if(Utils.isWater(world.getBlock(x, y, z - 1)) && Utils.isWater(world.getBlock(x, y, z - 15)) && Utils.isWater(world.getBlock(x - 23, y, z - 15)))
-            return 3; //Chest: South
+            return true; //Chest: South
         if(Utils.isWater(world.getBlock(x, y, z + 1)) && Utils.isWater(world.getBlock(x, y, z + 15)) && Utils.isWater(world.getBlock(x + 23, y, z + 15)))
-            return 2; //Chest: North
+            return true; //Chest: North
 
         FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Supply Chest Must Be next to a large body of water"));
 
-        return -1;
+        return false;
+    }
+
+    /**
+     * Checks if the ship can be placed, by checking an area for water and returns metadata/facing of chest
+     *
+     * @param world        world
+     * @param x            xCoord clicked
+     * @param y            yCoord clicked
+     * @param z            zCoord clicked
+     * @param entityPlayer Player
+     * @return 2: north, 3: south 4: west 5: east
+     */
+    public int getChestFacing(World world, int x, int y, int z, EntityPlayer entityPlayer)
+    {
+        if(Utils.isWater(world.getBlock(x - 1, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z + 23)))
+            return 5; //East
+        if(Utils.isWater(world.getBlock(x + 1, y, z)) && Utils.isWater(world.getBlock(x + 15, y, z)) && Utils.isWater(world.getBlock(x + 15, y, z - 23)))
+            return 4; //West
+        if(Utils.isWater(world.getBlock(x, y, z - 1)) && Utils.isWater(world.getBlock(x, y, z - 15)) && Utils.isWater(world.getBlock(x - 23, y, z - 15)))
+            return 3; //South
+        else return 2; //North
     }
 
     /**
