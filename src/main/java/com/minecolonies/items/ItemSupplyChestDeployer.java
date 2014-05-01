@@ -46,7 +46,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         {
             return itemStack;
         }
-        spawnShip(world, x, y, z, entityPlayer, getChestFacing(world, x, y, z, entityPlayer));
+        spawnShip(world, x, y, z, entityPlayer, getChestFacing(world, x, y, z));
         return itemStack;
     }
 
@@ -62,7 +62,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      */
     public boolean canShipBePlaced(World world, int x, int y, int z, EntityPlayer entityPlayer)
     {
-        if(!isFirstPlacing(world, entityPlayer))
+        if(!isFirstPlacing(entityPlayer))
         {
             FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Supply Chest Already Placed"));
 
@@ -89,10 +89,9 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      * @param x            xCoord clicked
      * @param y            yCoord clicked
      * @param z            zCoord clicked
-     * @param entityPlayer Player
      * @return 2: north, 3: south 4: west 5: east
      */
-    public int getChestFacing(World world, int x, int y, int z, EntityPlayer entityPlayer)
+    public int getChestFacing(World world, int x, int y, int z)
     {
         if(Utils.isWater(world.getBlock(x - 1, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z + 23)))
             return 5; //East
@@ -106,11 +105,10 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     /**
      * Checks if the player already placed a supply chest
      *
-     * @param world World obj
      * @param player The player
      * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
      */
-    boolean isFirstPlacing(World world, EntityPlayer player)
+    boolean isFirstPlacing(EntityPlayer player)
     {
         if(Configurations.allowInfinitePlacing)
             return true;
@@ -128,7 +126,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      */
     private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer, int chestFacing)
     {
-        //TODO Spawn ship, spawn chest, fill chest, save new ship.
+        //TODO Spawn ship
         PlayerProperties playerProperties = (PlayerProperties) entityPlayer.getExtendedProperties(Constants.PlayerPropertyName);
         playerProperties.setHasPlacedSupplyChest(true);
 
