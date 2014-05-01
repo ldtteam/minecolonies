@@ -1,6 +1,5 @@
 package com.minecolonies.items;
 
-import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
@@ -12,7 +11,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
@@ -48,7 +46,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         {
             return itemStack;
         }
-        spawnShip(world, x, y, z, entityPlayer, getChestFacing(world, x, y, z));
+        spawnShip(world, x, y, z, entityPlayer, getChestFacing(world, x, y, z, entityPlayer));
         return itemStack;
     }
 
@@ -64,7 +62,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      */
     public boolean canShipBePlaced(World world, int x, int y, int z, EntityPlayer entityPlayer)
     {
-        if(!isFirstPlacing(entityPlayer))
+        if(!isFirstPlacing(world, entityPlayer))
         {
             FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Supply Chest Already Placed"));
 
@@ -91,9 +89,10 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      * @param x            xCoord clicked
      * @param y            yCoord clicked
      * @param z            zCoord clicked
+     * @param entityPlayer Player
      * @return 2: north, 3: south 4: west 5: east
      */
-    public int getChestFacing(World world, int x, int y, int z)
+    public int getChestFacing(World world, int x, int y, int z, EntityPlayer entityPlayer)
     {
         if(Utils.isWater(world.getBlock(x - 1, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z + 23)))
             return 5; //East
@@ -107,10 +106,11 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     /**
      * Checks if the player already placed a supply chest
      *
+     * @param world World obj
      * @param player The player
      * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
      */
-    boolean isFirstPlacing(EntityPlayer player)
+    boolean isFirstPlacing(World world, EntityPlayer player)
     {
         if(Configurations.allowInfinitePlacing)
             return true;
@@ -128,12 +128,11 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      */
     private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer, int chestFacing)
     {
-        //TODO Spawn ship
+        //TODO Spawn ship, spawn chest, fill chest, save new ship.
         PlayerProperties playerProperties = (PlayerProperties) entityPlayer.getExtendedProperties(Constants.PlayerPropertyName);
         playerProperties.setHasPlacedSupplyChest(true);
 
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
-        ((TileEntityChest)world.getTileEntity(x, y + 1, z)).setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownhall, 1));
     }
 }
