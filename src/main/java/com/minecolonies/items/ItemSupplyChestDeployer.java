@@ -83,15 +83,14 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     /**
      * Checks if the player already placed a supply chest
      * @param world World obj
-     * @param entityPlayer The player
-     * @return boolean, returns true when player hasnt placed before, or when infinite placing is on.
+     * @param player The player
+     * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
      */
-    boolean isFirstPlacing(World world, EntityPlayer entityPlayer)
+    boolean isFirstPlacing(World world, EntityPlayer player)
     {
         if(Configurations.allowInfinitePlacing)
             return true;
-        PlayerProperties playerProperties = (PlayerProperties)entityPlayer.getExtendedProperties(Constants.PlayerPropertyName);
-        return !playerProperties.hasPlacedSupplyChest();
+        return !PlayerProperties.get(player).hasPlacedSupplyChest();
     }
 
     /**
@@ -100,12 +99,11 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      * @param x xCoord clicked
      * @param y yCoord clicked
      * @param z zCoord clicked
-     * @param entityPlayer the player
+     * @param player the player
      */
-    private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer)
+    private void spawnShip(World world, int x, int y, int z, EntityPlayer player)
     {
       //TODO Spawn ship, spawn chest, fill chest, save new ship.
-        PlayerProperties playerProperties = (PlayerProperties) entityPlayer.getExtendedProperties(Constants.PlayerPropertyName);
-        playerProperties.setHasPlacedSupplyChest(true);
+        PlayerProperties.get(player).setHasPlacedSupplyChest(true);
     }
 }
