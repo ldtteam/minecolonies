@@ -21,6 +21,8 @@ public abstract class CommonProxy implements IProxy
 
     /**
      * Adds an entity's custom data to the map for temporary storage
+     *
+     * @param name player UUID + Properties name, HashMap key
      * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties data only
      */
     public static void storeEntityData(String name, NBTTagCompound compound)
@@ -30,6 +32,9 @@ public abstract class CommonProxy implements IProxy
 
     /**
      * Removes the compound from the map and returns the NBT tag stored for name or null if none exists
+     *
+     * @param name player UUID + Properties name, HashMap key
+     * @return NBTTagCompound PlayerProperties NBT compound
      */
     public static NBTTagCompound getEntityData(String name)
     {
