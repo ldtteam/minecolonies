@@ -53,9 +53,8 @@ public class BlockHutTownHall extends BlockInformator
         {
             tileEntityTownHall.setInfo(world, entityLivingBase.getUniqueID(), x, z);
             tileEntityTownHall.markDirty();
-            EntityPlayer player = (EntityPlayer)entityLivingBase;
-            PlayerProperties playerProperties =  (PlayerProperties) player.getExtendedProperties(Constants.PlayerPropertyName);
-            playerProperties.setHasPlacedTownHall(true);
+            EntityPlayer player = (EntityPlayer) entityLivingBase;
+            PlayerProperties.get(player).setHasPlacedTownHall(true);
         }
     }
 
@@ -98,8 +97,7 @@ public class BlockHutTownHall extends BlockInformator
 
         if(super.removedByPlayer(world, player, x, y, z))
         {
-            PlayerProperties playerProperties =  (PlayerProperties)player.getExtendedProperties(Constants.PlayerPropertyName);
-            playerProperties.setHasPlacedTownHall(false);
+            PlayerProperties.get(player).setHasPlacedTownHall(false);
             return true;
         }
         return false;
