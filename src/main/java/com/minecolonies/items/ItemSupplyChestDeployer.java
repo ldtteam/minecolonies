@@ -106,15 +106,15 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     /**
      * Checks if the player already placed a supply chest
      *
-     * @param world        World obj
-     * @param entityPlayer The player
-     * @return boolean, returns true when player hasnt placed before, or when infinite placing is on.
+     * @param world World obj
+     * @param player The player
+     * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
      */
-    boolean isFirstPlacing(World world, EntityPlayer entityPlayer)
+    boolean isFirstPlacing(World world, EntityPlayer player)
     {
-        if(Configurations.allowInfinitePlacing) return true;
-        PlayerProperties playerProperties = (PlayerProperties) entityPlayer.getExtendedProperties(Constants.PlayerPropertyName);
-        return !playerProperties.hasPlacedSupplyChest();
+        if(Configurations.allowInfinitePlacing)
+            return true;
+        return !PlayerProperties.get(player).hasPlacedSupplyChest();
     }
 
     /**

@@ -104,8 +104,7 @@ public class BlockHutTownHall extends BlockInformator
 
         if(super.removedByPlayer(world, player, x, y, z))
         {
-            PlayerProperties playerProperties =  (PlayerProperties)player.getExtendedProperties(Constants.PlayerPropertyName);
-            playerProperties.setHasPlacedTownHall(false);
+            PlayerProperties.get(player).setHasPlacedTownHall(false);
             return true;
         }
         return false;
