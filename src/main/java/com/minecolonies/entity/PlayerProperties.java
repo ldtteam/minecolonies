@@ -26,6 +26,8 @@ public class PlayerProperties implements IExtendedEntityProperties
 
     /**
      * Registers player property. Should be checked if already exists, and called in onEntityConstruct event
+     *
+     * @param player player to create property for
      */
     public static final void register(EntityPlayer player)
     {
@@ -35,6 +37,7 @@ public class PlayerProperties implements IExtendedEntityProperties
     /**
      * Gets the player properties for a player
      *
+     * @param player player to get property for
      * @return PlayerProperties for the player.
      */
     public static final PlayerProperties get(EntityPlayer player)
@@ -82,7 +85,7 @@ public class PlayerProperties implements IExtendedEntityProperties
     /**
      * Saves NBT data to proxy HashMap.
      *
-     * @param player
+     * @param player to save data for
      */
     public static void saveProxyData(EntityPlayer player)
     {
@@ -97,7 +100,7 @@ public class PlayerProperties implements IExtendedEntityProperties
     /**
      * Loads NBT data from proxy HashMap
      *
-     * @param player
+     * @param player to load data for
      */
     public static void loadProxyData(EntityPlayer player)
     {
