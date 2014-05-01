@@ -1,5 +1,6 @@
 package com.minecolonies.client.gui;
 
+import com.minecolonies.tilentities.TileEntityTownHall;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -24,8 +25,7 @@ public class GuiHandler implements IGuiHandler
         switch(ID)
         {
             case 0:
-                //TODO
-                break;
+                return new GuiInformator(player.inventory, (TileEntityTownHall) world.getTileEntity(x, y, z));
         }
         return null;
     }
