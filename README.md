@@ -26,8 +26,7 @@ The Java JDK is used to compile MineColonies
     * Scroll down to a variable named `Path`, and double-click on it.
     * Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `Ok`.  Make sure the location is correct; double-check just to make sure.
 3. Open up your command line and run `javac`.  If it spews out a bunch of possible options and the usage, then you're good to go.  If not, either try the steps again.
-</br>
-</br>
+
 ####Setup Gradle
 Gradle is used to execute the various build tasks when compiling MineColonies
 

@@ -30,6 +30,6 @@ public class GuiInformator extends GuiContainer
         mc.renderEngine.bindTexture(background);
         int xCoord = (width - xSize) / 2;
         int yCoord = (height - ySize - 10) / 2;
-        drawTexturedModalRect(xCoord, yCoord, 0, 0, xSize, ySize + 20);
+        drawTexturedModalRect(xCoord, yCoord, 0, 0, xSize, ySize);
     }
 }
