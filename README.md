@@ -44,8 +44,7 @@ Gradle is used to execute the various build tasks when compiling MineColonies
 	* For `Variable Value`, input something similar to `C:\Gradle-1.10` exactly as shown (or wherever your Gradle installation is), and click `Ok`.
 	* Scroll down to `Path` again, and append `;%GRADLE_HOME%\bin` EXACTLY AS SHOWN and click `Ok`.  Once again, double-check the location.
 3. Open up your command line and run `gradle`.  If it says "Welcome to Gradle [version].", then you're good to go.  If not, either try the steps again.
-</br>
-</br>
+
 ####Setup Git
 Git is used to clone MineColonies and update your local copy.
 
