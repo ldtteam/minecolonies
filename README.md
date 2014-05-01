@@ -1,16 +1,12 @@
 For Users
 --
 
-<br>
-<br>
 
 Compiling MineColonies
 ----
-</br>
-</br>
+
 IMPORTANT: Please report any issues you have, there might be some problems with the documentation! Also make sure you know EXACTLY what you're doing! It's not any of our faults if your OS crashes, becomes corrupted, etc.
-</br>
-</br>
+
 ####Setup Java
 The Java JDK is used to compile MineColonies
 
@@ -115,8 +111,6 @@ MineColonies crashes every time?  Have a suggestion?  Found a bug?  Create an is
 		* Server log (if applicable)
 		* Detailed description of the bug
 5. Click `Submit new issue`, and wait for feedback!
-<br>
-<br>
 
 For Devs
 --
