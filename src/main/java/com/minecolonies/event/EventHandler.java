@@ -14,13 +14,9 @@ public class EventHandler
         if(event.entity instanceof EntityPlayer)
         {
             PlayerProperties playerProperties = new PlayerProperties((EntityPlayer) event.entity);
-            if(playerProperties.getPlayerProperties((EntityPlayer) event.entity) == null)
+            if(playerProperties.getPlayerProperties() == null)
             {
-                playerProperties.register((EntityPlayer) event.entity);
-            }
-            if(event.entity.getExtendedProperties(Constants.PlayerPropertyName) == null)
-            {
-                event.entity.registerExtendedProperties(Constants.PlayerPropertyName, new PlayerProperties((EntityPlayer) event.entity));
+                playerProperties.register();
             }
         }
     }
