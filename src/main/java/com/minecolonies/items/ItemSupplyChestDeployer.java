@@ -87,27 +87,28 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         {
             hashMap.put(4, true);
             hashMap.put(1, true);
-            a = false;
+            return hashMap;
         }
         else if(Utils.isWater(world.getBlock(x - 1, y, z))) a = check(world, x, y, z, true, false);
         if(a)
         {
             hashMap.put(5, true);
             if(!hashMap.containsKey(1)) hashMap.put(1, true);
-            a = false;
+            return hashMap;
         }
         else if(Utils.isWater(world.getBlock(x, y, z - 1))) a = check(world, x, y, z, false, false);
         if(a)
         {
             hashMap.put(3, true);
             if(!hashMap.containsKey(1)) hashMap.put(1, true);
-            a = false;
+            return hashMap;
         }
         else if((Utils.isWater(world.getBlock(x, y, z + 1)))) a = check(world, x, y, z, false, true);
         if(a)
         {
             hashMap.put(2, true);
             if(!hashMap.containsKey(1)) hashMap.put(1, true);
+            return hashMap;
         }
         if(hashMap.get(1) == null) hashMap.put(1, false);
         return hashMap;
@@ -130,30 +131,21 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         {
             for(int i = 0; i < spaceNeededForShip; i++)
             {
-                int j = i;
                 int k = isCoordPositivelyAdded ? 1 : -1;
-                if(!isCoordPositivelyAdded) j = -i;
+                int j = !isCoordPositivelyAdded ? -i : i;
                 if(!Utils.isWater(world.getBlock(x + j + k, y, z))) return false;
             }
             for(int i = 0; i < spaceNeededForShip; i++)
             {
-                int j = i;
-                if(!isCoordPositivelyAdded)
-                {
-                    j = -i;
-                    spaceNeededForShip = -spaceNeededForShip;
-                }
+                int j = !isCoordPositivelyAdded ? -i : i;
+                spaceNeededForShip =  !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
                 if(!Utils.isWater(world.getBlock(x + spaceNeededForShip, y, z + j - 10))) return false;
             }
             for(int i = 0; i < spaceNeededForShip; i++)
             {
                 int k = isCoordPositivelyAdded ? 1 : -1;
-                int j = i;
-                if(!isCoordPositivelyAdded)
-                {
-                    j = -i;
-                    spaceNeededForShip = -spaceNeededForShip;
-                }
+                int j = !isCoordPositivelyAdded ? -i : i;
+                spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
                 if(!Utils.isWater(world.getBlock(x + k, y, z + j - 10))) return false;
             }
             return true;
@@ -162,31 +154,22 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         {
             for(int i = 0; i < spaceNeededForShip; i++)
             {
-                int j = i;
+                int j = !isCoordPositivelyAdded ? -i : i;
                 int k = isCoordPositivelyAdded ? 1 : -1;
-                if(!isCoordPositivelyAdded) j = -i;
                 if(!Utils.isWater(world.getBlock(x, y, z + j + k))) return false;
             }
             for(int i = 0; i < spaceNeededForShip; i++)
             {
-                int j = i;
-                if(!isCoordPositivelyAdded)
-                {
-                    j = -i;
-                    spaceNeededForShip = -spaceNeededForShip;
-                }
+                int j = !isCoordPositivelyAdded ? -i : i;
+                spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
                 if(!Utils.isWater(world.getBlock(x + j - 10, y, z + spaceNeededForShip))) return false;
             }
             for(int i = 0; i < spaceNeededForShip; i++)
             {
                 int k = isCoordPositivelyAdded ? 1 : -1;
-                int j = i;
-                if(!isCoordPositivelyAdded)
-                {
-                    j = -i;
-                    spaceNeededForShip = -spaceNeededForShip;
-                }
-               if(!Utils.isWater(world.getBlock(x + j - 10, y, z + k))) return false;
+                int j = !isCoordPositivelyAdded ? -i : i;
+                spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
+                if(!Utils.isWater(world.getBlock(x + j - 10, y, z + k))) return false;
             }
             return true;
         }
