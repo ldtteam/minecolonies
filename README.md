@@ -1,16 +1,12 @@
 For Users
 --
 
-<br>
-<br>
 
 Compiling MineColonies
 ----
-</br>
-</br>
+
 IMPORTANT: Please report any issues you have, there might be some problems with the documentation! Also make sure you know EXACTLY what you're doing! It's not any of our faults if your OS crashes, becomes corrupted, etc.
-</br>
-</br>
+
 ####Setup Java
 The Java JDK is used to compile MineColonies
 
@@ -30,8 +26,7 @@ The Java JDK is used to compile MineColonies
     * Scroll down to a variable named `Path`, and double-click on it.
     * Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `Ok`.  Make sure the location is correct; double-check just to make sure.
 3. Open up your command line and run `javac`.  If it spews out a bunch of possible options and the usage, then you're good to go.  If not, either try the steps again.
-</br>
-</br>
+
 ####Setup Gradle
 Gradle is used to execute the various build tasks when compiling MineColonies
 
@@ -49,8 +44,7 @@ Gradle is used to execute the various build tasks when compiling MineColonies
 	* For `Variable Value`, input something similar to `C:\Gradle-1.10` exactly as shown (or wherever your Gradle installation is), and click `Ok`.
 	* Scroll down to `Path` again, and append `;%GRADLE_HOME%\bin` EXACTLY AS SHOWN and click `Ok`.  Once again, double-check the location.
 3. Open up your command line and run `gradle`.  If it says "Welcome to Gradle [version].", then you're good to go.  If not, either try the steps again.
-</br>
-</br>
+
 ####Setup Git
 Git is used to clone MineColonies and update your local copy.
 
@@ -115,8 +109,6 @@ MineColonies crashes every time?  Have a suggestion?  Found a bug?  Create an is
 		* Server log (if applicable)
 		* Detailed description of the bug
 5. Click `Submit new issue`, and wait for feedback!
-<br>
-<br>
 
 For Devs
 --
