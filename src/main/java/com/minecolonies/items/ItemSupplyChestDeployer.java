@@ -139,14 +139,14 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
             {
                 int j = !isCoordPositivelyAdded ? -i : i;
                 spaceNeededForShip =  !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
-                if(!Utils.isWater(world.getBlock(x + spaceNeededForShip, y, z + j - 10))) return false;
+                if(!Utils.isWater(world.getBlock(x + spaceNeededForShip, y, z + j - (spaceNeededForShip / 2)))) return false;
             }
             for(int i = 0; i < spaceNeededForShip; i++)
             {
                 int k = isCoordPositivelyAdded ? 1 : -1;
                 int j = !isCoordPositivelyAdded ? -i : i;
                 spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
-                if(!Utils.isWater(world.getBlock(x + k, y, z + j - 10))) return false;
+                if(!Utils.isWater(world.getBlock(x + k, y, z + j - (spaceNeededForShip / 2)))) return false;
             }
             return true;
         }
@@ -162,14 +162,14 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
             {
                 int j = !isCoordPositivelyAdded ? -i : i;
                 spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
-                if(!Utils.isWater(world.getBlock(x + j - 10, y, z + spaceNeededForShip))) return false;
+                if(!Utils.isWater(world.getBlock(x + j - (spaceNeededForShip / 2), y, z + spaceNeededForShip))) return false;
             }
             for(int i = 0; i < spaceNeededForShip; i++)
             {
                 int k = isCoordPositivelyAdded ? 1 : -1;
                 int j = !isCoordPositivelyAdded ? -i : i;
                 spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
-                if(!Utils.isWater(world.getBlock(x + j - 10, y, z + k))) return false;
+                if(!Utils.isWater(world.getBlock(x + j - (spaceNeededForShip / 2), y, z + k))) return false;
             }
             return true;
         }
