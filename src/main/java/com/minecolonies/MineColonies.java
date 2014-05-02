@@ -46,6 +46,10 @@ public class MineColonies
         RecipeHandler.init();
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());
+
+        proxy.registerEntities();
+
+        proxy.registerEntityRendering();
     }
 
     @Mod.EventHandler
