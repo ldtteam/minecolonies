@@ -81,12 +81,15 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public boolean canPlaceBlockAt(World world, int x, int y, int z)
     {
-        TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
-        if(tileEntityTownHall != null && tileEntityTownHall.getDistanceFrom(x,y,z) < 200)
+        if(world.provider.dimensionId == 0)
         {
-            FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Too close to existing townhall"));
+            TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
+            if(tileEntityTownHall != null && tileEntityTownHall.getDistanceFrom(x, y, z) < 200)
+            {
+                FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Too close to existing townhall"));
 
-            return false;
+                return false;
+            }
         }
         return super.canPlaceBlockAt(world, x, y, z);
     }
