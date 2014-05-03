@@ -81,7 +81,7 @@ public class GuiTownHall extends GuiScreen
     }
 
     private void drawGuiForeground() {
-        String currentSpec    = I18n.format("com.minecolonies.gui.townhall.currspec")+":  ";
+        String currentSpec    = I18n.format("com.minecolonies.gui.townhall.currspec");
         String spec           = "<Industrial>"; //TODO replace with actual specialisation
 
         fontRendererObj.drawString(currentSpec, middleX-fontRendererObj.getStringWidth(currentSpec)/2+3, middleY + span+4*(buttonHeight+buttonSpan), 0x000000);
