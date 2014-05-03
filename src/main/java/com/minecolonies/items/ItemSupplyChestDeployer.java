@@ -11,6 +11,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
@@ -81,30 +82,25 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     public HashMap<Integer, Boolean> canShipBePlaced(World world, int x, int y, int z)
     {
         HashMap<Integer, Boolean> hashMap = new HashMap<Integer, Boolean>();
-        boolean a = false;
-        if(Utils.isWater(world.getBlock(x + 1, y, z))) a = check(world, x, y, z, true, true);
-        if(a)
+        if(Utils.isWater(world.getBlock(x + 1, y, z)) && check(world, x, y, z, true, true))
         {
             hashMap.put(4, true);
             hashMap.put(1, true);
             return hashMap;
         }
-        else if(Utils.isWater(world.getBlock(x - 1, y, z))) a = check(world, x, y, z, true, false);
-        if(a)
+        else if(Utils.isWater(world.getBlock(x - 1, y, z)) && check(world, x, y, z, true, false))
         {
             hashMap.put(5, true);
             if(!hashMap.containsKey(1)) hashMap.put(1, true);
             return hashMap;
         }
-        else if(Utils.isWater(world.getBlock(x, y, z - 1))) a = check(world, x, y, z, false, false);
-        if(a)
+        else if(Utils.isWater(world.getBlock(x, y, z - 1)) && check(world, x, y, z, false, false))
         {
             hashMap.put(3, true);
             if(!hashMap.containsKey(1)) hashMap.put(1, true);
             return hashMap;
         }
-        else if((Utils.isWater(world.getBlock(x, y, z + 1)))) a = check(world, x, y, z, false, true);
-        if(a)
+        else if((Utils.isWater(world.getBlock(x, y, z + 1))) && check(world, x, y, z, false, true))
         {
             hashMap.put(2, true);
             if(!hashMap.containsKey(1)) hashMap.put(1, true);
@@ -126,50 +122,41 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      */
     private boolean check(World world, int x, int y, int z, boolean shouldCheckX, boolean isCoordPositivelyAdded)
     {
-        int spaceNeededForShip = Constants.SIZENEEDEDFORSHIP;
+        int spaceNeededForShip = isCoordPositivelyAdded ? Constants.SIZENEEDEDFORSHIP : -Constants.SIZENEEDEDFORSHIP;
+        int spaceNeededForShipHalf = Constants.SIZENEEDEDFORSHIP >> 1;//Constants.SIZENEEDEDFORSHIP / 2;
+        int k = isCoordPositivelyAdded ? 1 : -1;
+
         if(shouldCheckX)
         {
-            for(int i = 0; i < spaceNeededForShip; i++)
+            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
-                int k = isCoordPositivelyAdded ? 1 : -1;
-                int j = !isCoordPositivelyAdded ? -i : i;
+                int j = isCoordPositivelyAdded ? i : -i;
                 if(!Utils.isWater(world.getBlock(x + j + k, y, z))) return false;
             }
-            for(int i = 0; i < spaceNeededForShip; i++)
+            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
-                int j = !isCoordPositivelyAdded ? -i : i;
-                spaceNeededForShip =  !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
-                if(!Utils.isWater(world.getBlock(x + spaceNeededForShip, y, z + j - (spaceNeededForShip / 2)))) return false;
+                if(!Utils.isWater(world.getBlock(x + spaceNeededForShip, y, z + i - spaceNeededForShipHalf))) return false;
             }
-            for(int i = 0; i < spaceNeededForShip; i++)
+            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
-                int k = isCoordPositivelyAdded ? 1 : -1;
-                int j = !isCoordPositivelyAdded ? -i : i;
-                spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
-                if(!Utils.isWater(world.getBlock(x + k, y, z + j - (spaceNeededForShip / 2)))) return false;
+                if(!Utils.isWater(world.getBlock(x + k, y, z + i - spaceNeededForShipHalf))) return false;
             }
             return true;
         }
         else
         {
-            for(int i = 0; i < spaceNeededForShip; i++)
+            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
                 int j = !isCoordPositivelyAdded ? -i : i;
-                int k = isCoordPositivelyAdded ? 1 : -1;
                 if(!Utils.isWater(world.getBlock(x, y, z + j + k))) return false;
             }
-            for(int i = 0; i < spaceNeededForShip; i++)
+            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
-                int j = !isCoordPositivelyAdded ? -i : i;
-                spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
-                if(!Utils.isWater(world.getBlock(x + j - (spaceNeededForShip / 2), y, z + spaceNeededForShip))) return false;
+                if(!Utils.isWater(world.getBlock(x + i - spaceNeededForShipHalf, y, z + spaceNeededForShip))) return false;
             }
-            for(int i = 0; i < spaceNeededForShip; i++)
+            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
-                int k = isCoordPositivelyAdded ? 1 : -1;
-                int j = !isCoordPositivelyAdded ? -i : i;
-                spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
-                if(!Utils.isWater(world.getBlock(x + j - (spaceNeededForShip / 2), y, z + k))) return false;
+                if(!Utils.isWater(world.getBlock(x + i - spaceNeededForShipHalf, y, z + k))) return false;
             }
             return true;
         }
@@ -204,5 +191,11 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
 
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
+
+        fillChest((TileEntityChest) world.getTileEntity(x, y + 1, z));
+    }
+
+    private void fillChest(TileEntityChest chest) {
+        //TODO chest.setInventorySlotContents(slotID, ItemStack);
     }
 }
