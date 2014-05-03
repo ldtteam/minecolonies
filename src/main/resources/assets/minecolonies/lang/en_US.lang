@@ -2,8 +2,10 @@ com.minecolonies.gui.townhall.build=Build Townhall
 com.minecolonies.gui.townhall.repair=Repair Townhall
 com.minecolonies.gui.townhall.recall=Recall Citizens
 com.minecolonies.gui.townhall.togglespec=Toogle Specialization
-com.minecolonies.gui.townhall.rename=Rename Colony
-
 com.minecolonies.gui.townhall.currspec=Current Specialization:
+com.minecolonies.gui.townhall.rename=Rename Colony
+com.minecolonies.gui.townhall.information=Information
+com.minecolonies.gui.townhall.actions=Actions
+com.minecolonies.gui.townhall.settings=Settings
 
 tile.myBlock.name=My Block

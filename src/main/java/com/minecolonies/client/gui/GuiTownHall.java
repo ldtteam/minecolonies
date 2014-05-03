@@ -64,6 +64,11 @@ public class GuiTownHall extends GuiScreen
         //Current Spec
         y += buttonHeight+buttonSpan;
         buttonList.add(new GuiButton(idRenameColony, middleX - buttonWidth/2, middleY + y, buttonWidth, buttonHeight, I18n.format("com.minecolonies.gui.townhall.rename")));
+
+        //Bottom navigation
+        buttonList.add(new GuiButton(idInformation, middleX - 76, middleY + ySize - 34, 64, buttonHeight, I18n.format("com.minecolonies.gui.townhall.information")));
+        buttonList.add(new GuiButton(idActions, middleX - 10, middleY + ySize - 34, 44, buttonHeight, I18n.format("com.minecolonies.gui.townhall.actions")));
+        buttonList.add(new GuiButton(idSettings, middleX + xSize/2 - 50, middleY + ySize - 34, 46, buttonHeight, I18n.format("com.minecolonies.gui.townhall.settings")));
     }
 
     @Override
