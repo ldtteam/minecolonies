@@ -130,7 +130,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         {
             for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
-                int j = isCoordPositivelyAdded ? i : -i;
+                int j = k * i;
                 if(!Utils.isWater(world.getBlock(x + j + k, y, z))) return false;
             }
             for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
@@ -147,7 +147,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         {
             for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
-                int j = !isCoordPositivelyAdded ? -i : i;
+                int j = k * i;
                 if(!Utils.isWater(world.getBlock(x, y, z + j + k))) return false;
             }
             for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
