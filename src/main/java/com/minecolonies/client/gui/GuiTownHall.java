@@ -1,25 +1,34 @@
 package com.minecolonies.client.gui;
 
+import com.minecolonies.lib.Constants;
 import com.minecolonies.tilentities.TileEntityTownHall;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class GuiTownHall extends GuiScreen
 {
     private TileEntityTownHall tileEntityTownHall;
-    private int numberOfButtons = 8;
-    private int buildTownhall = 0;
-    private int repairTownhall = 1;
-    private int recallCitizens = 2;
-    private int toggleSpecialization = 3;
-    private int renameColony = 4;
-    private int information = 5;
-    private int actions = 6;
-    private int settings = 7;
+    private int numberOfButtons      = 8;
+    private int idBuildTownhall        = 0;
+    private int idRepairTownhall       = 1;
+    private int idRecallCitizens       = 2;
+    private int idToggleSpecialization = 3;
+    private int idRenameColony         = 4;
+    private int idInformation          = 5;
+    private int idActions              = 6;
+    private int idSettings             = 7;
     private int xSize;
     private int ySize;
-    private int middleX = width / 2;
-    private int middleY = (height - ySize) / 2;
+    private int middleX = 0;
+    private int middleY = 0;
+    private int buttonWidth = 116;
+    private int buttonHeight = 20;
+    private int buttonSpan = 4;
+    private int span = 10;
+
+    private final ResourceLocation background = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiInformatorBackground.png");
 
     public GuiTownHall(TileEntityTownHall tileEntityTownHall)
     {
@@ -37,7 +46,29 @@ public class GuiTownHall extends GuiScreen
 
     private void addButtons()
     {
+        String buildTownhall  = "Build Townhall";
+        String repairTownhall = "Repair Townhall";
+        String recallCitizens = "Recall Citizens";
+        String toggleSpec     = "Toogle Specialisation";
+        String renameColony   = "Rename Colony";
 
+        middleX = (width / 2);
+        middleY = (height - ySize) / 2;
+
+        buttonList.clear();
+
+        int y = span;
+        buttonList.add(new GuiButton(idBuildTownhall, middleX - buttonWidth/2, middleY + y, buttonWidth, buttonHeight, buildTownhall));
+        y += buttonHeight+buttonSpan;
+        buttonList.add(new GuiButton(idRepairTownhall, middleX - buttonWidth/2, middleY + y, buttonWidth, buttonHeight, repairTownhall));
+        y += buttonHeight+buttonSpan;
+        buttonList.add(new GuiButton(idRecallCitizens, middleX - buttonWidth/2, middleY + y, buttonWidth, buttonHeight, recallCitizens));
+        y += buttonHeight+buttonSpan;
+        buttonList.add(new GuiButton(idToggleSpecialization, middleX - buttonWidth/2, middleY + y, buttonWidth, buttonHeight, toggleSpec));
+        y += buttonHeight+buttonSpan;
+        //Current Spec
+        y += buttonHeight+buttonSpan;
+        buttonList.add(new GuiButton(idRenameColony, middleX - buttonWidth/2, middleY + y, buttonWidth, buttonHeight, renameColony));
     }
 
     @Override
@@ -46,12 +77,32 @@ public class GuiTownHall extends GuiScreen
         return false;
     }
 
+    private void drawGuiBackground() {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        mc.renderEngine.bindTexture(background);
+        int xCoord = (width - xSize) / 2;
+        int yCoord = (height - ySize - 10) / 2;
+        drawTexturedModalRect(xCoord, yCoord, 0, 0, xSize, ySize);
+    }
+
+    private void drawGuiForeground() {
+        String currentSpec    = "Current Specialisation:  ";
+        String spec           = "<Industrial>"; //TODO replace with actual specialisation
+
+        fontRendererObj.drawString(currentSpec, middleX-fontRendererObj.getStringWidth(currentSpec)/2+3, middleY + span+4*(buttonHeight+buttonSpan), 0x000000);
+        fontRendererObj.drawString(spec, middleX-fontRendererObj.getStringWidth(spec)/2+3, middleY + span+4*(buttonHeight+buttonSpan)+11, 0x000000);
+
+    }
+
     @Override
     public void drawScreen(int par1, int par2, float par3)
     {
         drawGuiBackground();
         drawGuiForeground();
 
-        //TODO buttons
+        for (int k = 0; k < this.buttonList.size(); ++k) {
+            GuiButton guibutton = (GuiButton) this.buttonList.get(k);
+            guibutton.drawButton(this.mc, par1, par2);
+        }
     }
 }
