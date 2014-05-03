@@ -61,6 +61,18 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
                         spawnShip(world, x, y, z, entityPlayer, i);
                         return itemStack;
                     }
+
+        //Different way start
+
+        int shipDirection = canShipBePlacedInt(world, x, y, z);
+
+        if (shipDirection != -1) {
+            spawnShip(world, x, y, z, entityPlayer, shipDirection);
+            return itemStack;
+        }
+
+        //Different way end
+
         FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("You must be near a big pool of water"));
         return itemStack;
     }
@@ -108,6 +120,40 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         }
         if(hashMap.get(1) == null) hashMap.put(1, false);
         return hashMap;
+    }
+
+    /**
+     * Checks if the ship can be placed, and returns the facing it can be placed in
+     *       2: can be placed at north
+     *       3: can be placed at south
+     *       4: can be placed at west
+     *       5: can be placed at east
+     *
+     * @param world world obj
+     * @param x xCoord clicked
+     * @param y yCoord clicked
+     * @param z zCoord clicked
+     * @return int -1 if can't be placed and facings it can be placed at (2-5)
+     */
+    public int canShipBePlacedInt(World world, int x, int y, int z)
+    {
+        if(Utils.isWater(world.getBlock(x + 1, y, z)) && check(world, x, y, z, true, true))
+        {
+            return 4;
+        }
+        else if(Utils.isWater(world.getBlock(x - 1, y, z)) && check(world, x, y, z, true, false))
+        {
+            return 5;
+        }
+        else if(Utils.isWater(world.getBlock(x, y, z - 1)) && check(world, x, y, z, false, false))
+        {
+            return 3;
+        }
+        else if((Utils.isWater(world.getBlock(x, y, z + 1))) && check(world, x, y, z, false, true))
+        {
+            return 2;
+        }
+        return -1;
     }
 
     /**
