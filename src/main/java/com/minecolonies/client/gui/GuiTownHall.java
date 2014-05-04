@@ -2,6 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tilentities.TileEntityTownHall;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -98,8 +99,8 @@ public class GuiTownHall extends GuiScreen
     @Override
     public void drawScreen(int par1, int par2, float par3)
     {
-        //drawGuiBackground();
-        //drawGuiForeground();
+        drawGuiBackground();
+        drawGuiForeground();
 
         for(int k = 0; k < this.buttonList.size(); ++k)
         {

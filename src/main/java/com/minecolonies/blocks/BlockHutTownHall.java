@@ -1,7 +1,6 @@
 package com.minecolonies.blocks;
 
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tilentities.TileEntityTownHall;
@@ -112,14 +111,5 @@ public class BlockHutTownHall extends BlockInformator
             return true;
         }
         return false;
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
-    {
-        EntityCitizen entityCitizen = new EntityCitizen(world);
-        entityCitizen.setPosition(x, y, z+1);
-        world.spawnEntityInWorld(entityCitizen);
-        return true;
     }
 }
