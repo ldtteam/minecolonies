@@ -131,7 +131,12 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
             for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
                 int j = k * i;
-                if(!Utils.isWater(world.getBlock(x + j + k, y, z))) return false;
+                if(!Utils.isWater(world.getBlock(x + j + k, y, z - spaceNeededForShipHalf))) return false;
+            }
+            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
+            {
+                int j = k * i;
+                if(!Utils.isWater(world.getBlock(x + j + k, y, z + spaceNeededForShipHalf))) return false;
             }
             for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
@@ -148,7 +153,12 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
             for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
                 int j = k * i;
-                if(!Utils.isWater(world.getBlock(x, y, z + j + k))) return false;
+                if(!Utils.isWater(world.getBlock(x - spaceNeededForShipHalf, y, z + j + k))) return false;
+            }
+            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
+            {
+                int j = k * i;
+                if(!Utils.isWater(world.getBlock(x + spaceNeededForShipHalf, y, z + j + k))) return false;
             }
             for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
             {
