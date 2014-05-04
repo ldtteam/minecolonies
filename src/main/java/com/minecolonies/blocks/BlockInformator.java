@@ -4,8 +4,6 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -18,7 +16,6 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
 {
     protected int workingRange;
 
-    @SideOnly(Side.CLIENT)
     private IIcon[] icons = new IIcon[6];// 0 = top, 1 = bot, 2-5 = sides;
 
     public BlockInformator(Material material)
@@ -38,7 +35,7 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
     public void registerBlockIcons(IIconRegister iconRegister)
     {
         icons[0] = iconRegister.registerIcon(Constants.MODID.toLowerCase() + ":" + getName() + "top");
-        icons[1] = iconRegister.registerIcon(Constants.MODID.toLowerCase() + ":" + getName() + "bot");
+        icons[1] = icons [0];
         for(int i = 2; i <= 5; i++)
         {
             icons[i] = iconRegister.registerIcon(Constants.MODID.toLowerCase() + ":" + "sideChest");
