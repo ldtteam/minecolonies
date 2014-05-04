@@ -1,4 +1,4 @@
 {
    "soundsName": {"category": "master","sounds": [{"name": "SoundName","stream": false}]},
-   "soundsName2": {"category": "master","sounds": [{"name": "SoundName2","stream": false}]},
+   "soundsName2": {"category": "master","sounds": [{"name": "SoundName2","stream": false}]}
 }

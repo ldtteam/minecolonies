@@ -3,6 +3,7 @@ package com.minecolonies.items;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.Schematic;
 import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
 import com.minecolonies.util.Utils;
@@ -132,5 +133,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
 
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
+
+        Schematic.loadAndPlaceSchematic(world, "test", x, y + 5, z);
     }
 }

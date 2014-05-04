@@ -1,5 +1,7 @@
 package com.minecolonies;
 
+import com.github.lunatrius.schematica.config.Config;
+import com.github.lunatrius.schematica.lib.Reference;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.client.gui.GuiHandler;
 import com.minecolonies.configuration.ConfigurationHandler;
@@ -29,11 +31,18 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        Reference.logger = event.getModLog();//Schematica
+
+        Reference.config = new Config(event.getSuggestedConfigurationFile());//Schematica
+        Reference.config.save();//Schematica
+
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
 
         ModBlocks.init();
 
         ModItems.init();
+
+        proxy.registerKeybindings();//Schematica
     }
 
     @Mod.EventHandler
@@ -46,6 +55,8 @@ public class MineColonies
         RecipeHandler.init();
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());
+
+        proxy.registerEvents();//Schematica
     }
 
     @Mod.EventHandler
