@@ -37,6 +37,6 @@ public class EntityCitizen extends EntityAgeable
 
     public void setTexture()
     {
-        texture = new ResourceLocation(level.getTexture(level) + (random.nextInt(3) + 1) + ".png");
+        texture = new ResourceLocation(level.getTexture() + (random.nextInt(3) + 1) + ".png");
     }
 }

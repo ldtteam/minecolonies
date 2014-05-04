@@ -33,14 +33,14 @@ public enum EnumCitizenLevel
         this.partialTextureString = setTexture(textureLocationPart);
     }
 
-    public ModelBiped getModel(EnumCitizenLevel level)
+    public ModelBiped getModel()
     {
-        return level.model;
+        return this.model;
     }
 
-    public int getLevel(EnumCitizenLevel level)
+    public int getLevel()
     {
-        return level.level;
+        return this.level;
     }
 
     public int getSexInt()
@@ -53,9 +53,9 @@ public enum EnumCitizenLevel
         return sexString;
     }
 
-    public String getTexture(EnumCitizenLevel level)
+    public String getTexture()
     {
-        return level.partialTextureString;
+        return this.partialTextureString;
     }
 
     public String setTexture(String texture)

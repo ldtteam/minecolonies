@@ -26,11 +26,9 @@ public class RenderBipedCitizenMulti extends RenderBipedCitizen
 
             if(entityCitizen.level.getSexInt() == 1)
             {
-                switch(entityCitizen.level.getLevel(entityCitizen.level))
+                switch(entityCitizen.level.getLevel())
                 {
                     case 0:
-                        modelBipedMain = femaleModelCitizenAndSettler;
-                        break;
                     case 1:
                         modelBipedMain = femaleModelCitizenAndSettler;
                         break;
