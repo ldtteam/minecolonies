@@ -15,6 +15,8 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
+import java.util.HashMap;
+
 public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements IColony
 {
     private String name = "supplyChestDeployer";
@@ -36,70 +38,141 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer)
     {
-        if(world == null || entityPlayer == null || world.isRemote || itemStack.stackSize == 0) return itemStack;
+        if(world == null || entityPlayer == null || world.isRemote || itemStack.stackSize == 0 || !isFirstPlacing(entityPlayer)) return itemStack;
         MovingObjectPosition blockPos = getMovingObjectPositionFromPlayer(world, entityPlayer, false);
         if(blockPos == null) return itemStack;
         int x = blockPos.blockX;
         int y = blockPos.blockY;
+
         int z = blockPos.blockZ;
-        if(!canShipBePlaced(world, x, y, z, entityPlayer))
-        {
-            return itemStack;
-        }
-        spawnShip(world, x, y, z, entityPlayer, getChestFacing(world, x, y, z));
+        HashMap<Integer, Boolean> hashmap = canShipBePlaced(world, x, y, z);
+     // System.out.println("hashmap 1 : " + hashmap.get(1));
+     // System.out.println("hashmap 2 : " + hashmap.get(2));
+     // System.out.println("hashmap 3 : " + hashmap.get(3));
+     // System.out.println("hashmap 4 : " + hashmap.get(4));
+     // System.out.println("hashmap 5 : " + hashmap.get(5));
+
+        if(hashmap.get(1))
+            for(int i = 2; i <= 5; i++)
+                if(hashmap.get(i) != null)
+                    if(hashmap.get(i))
+                    {
+                        spawnShip(world, x, y, z, entityPlayer, i);
+                        return itemStack;
+                    }
+        FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("You must be near a big pool of water"));
         return itemStack;
     }
 
     /**
-     * Checks if the ship can be placed, by checking an area for water and returns metadata/facing of chest
+     * Checks if the ship can be placed, and stores the facings it can be placed in, in a hashmap
+     * Keys: 1: value: can be placed at all
+     *       2: value: can be placed at north
+     *       3: value: can be placed at south
+     *       4: value: can be placed at west
+     *       5: value: can be placed at east
      *
-     * @param world        world
-     * @param x            xCoord clicked
-     * @param y            yCoord clicked
-     * @param z            zCoord clicked
-     * @param entityPlayer Player
-     * @return true if ship can be places, false else
+     * @param world world obj
+     * @param x xCoord clicked
+     * @param y yCoord clicked
+     * @param z zCoord clicked
+     * @return hashMap whether it can be placed (1) and facings it can be placed at (2-5)
      */
-    public boolean canShipBePlaced(World world, int x, int y, int z, EntityPlayer entityPlayer)
+    public HashMap<Integer, Boolean> canShipBePlaced(World world, int x, int y, int z)
     {
-        if(!isFirstPlacing(entityPlayer))
+        HashMap<Integer, Boolean> hashMap = new HashMap<Integer, Boolean>();
+        boolean a = false;
+        if(Utils.isWater(world.getBlock(x + 1, y, z))) a = check(world, x, y, z, true, true);
+        if(a)
         {
-            FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Supply Chest Already Placed"));
-
-            return false;
+            hashMap.put(4, true);
+            hashMap.put(1, true);
+            return hashMap;
         }
-        if(Utils.isWater(world.getBlock(x - 1, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z + 23)))
-            return true; //Chest: East
-        if(Utils.isWater(world.getBlock(x + 1, y, z)) && Utils.isWater(world.getBlock(x + 15, y, z)) && Utils.isWater(world.getBlock(x + 15, y, z - 23)))
-            return true; //Chest: West
-        if(Utils.isWater(world.getBlock(x, y, z - 1)) && Utils.isWater(world.getBlock(x, y, z - 15)) && Utils.isWater(world.getBlock(x - 23, y, z - 15)))
-            return true; //Chest: South
-        if(Utils.isWater(world.getBlock(x, y, z + 1)) && Utils.isWater(world.getBlock(x, y, z + 15)) && Utils.isWater(world.getBlock(x + 23, y, z + 15)))
-            return true; //Chest: North
-
-        FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Supply Chest Must Be next to a large body of water"));
-
-        return false;
+        else if(Utils.isWater(world.getBlock(x - 1, y, z))) a = check(world, x, y, z, true, false);
+        if(a)
+        {
+            hashMap.put(5, true);
+            if(!hashMap.containsKey(1)) hashMap.put(1, true);
+            return hashMap;
+        }
+        else if(Utils.isWater(world.getBlock(x, y, z - 1))) a = check(world, x, y, z, false, false);
+        if(a)
+        {
+            hashMap.put(3, true);
+            if(!hashMap.containsKey(1)) hashMap.put(1, true);
+            return hashMap;
+        }
+        else if((Utils.isWater(world.getBlock(x, y, z + 1)))) a = check(world, x, y, z, false, true);
+        if(a)
+        {
+            hashMap.put(2, true);
+            if(!hashMap.containsKey(1)) hashMap.put(1, true);
+            return hashMap;
+        }
+        if(hashMap.get(1) == null) hashMap.put(1, false);
+        return hashMap;
     }
 
     /**
-     * Checks if the ship can be placed, by checking an area for water and returns metadata/facing of chest
-     *
-     * @param world        world
-     * @param x            xCoord clicked
-     * @param y            yCoord clicked
-     * @param z            zCoord clicked
-     * @return 2: north, 3: south 4: west 5: east
+     * Checks if the area is free, checks in a 'I' shape, so 20 forward, 10 left at origin + 1, 10 right at origin + 1, 10 left at origin + 20, 10 right at origin + 20
+     * @param world world obj
+     * @param x xCoord clicked
+     * @param y yCoord clicked
+     * @param z zCoord clicked
+     * @param shouldCheckX boolean whether the x-sides should be checks
+     * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false)
+     * @return whether the space in the I shape is free or not
      */
-    public int getChestFacing(World world, int x, int y, int z)
+    private boolean check(World world, int x, int y, int z, boolean shouldCheckX, boolean isCoordPositivelyAdded)
     {
-        if(Utils.isWater(world.getBlock(x - 1, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z)) && Utils.isWater(world.getBlock(x - 15, y, z + 23)))
-            return 5; //East
-        if(Utils.isWater(world.getBlock(x + 1, y, z)) && Utils.isWater(world.getBlock(x + 15, y, z)) && Utils.isWater(world.getBlock(x + 15, y, z - 23)))
-            return 4; //West
-        if(Utils.isWater(world.getBlock(x, y, z - 1)) && Utils.isWater(world.getBlock(x, y, z - 15)) && Utils.isWater(world.getBlock(x - 23, y, z - 15)))
-            return 3; //South
-        else return 2; //North
+        int spaceNeededForShip = Constants.SIZENEEDEDFORSHIP;
+        if(shouldCheckX)
+        {
+            for(int i = 0; i < spaceNeededForShip; i++)
+            {
+                int k = isCoordPositivelyAdded ? 1 : -1;
+                int j = !isCoordPositivelyAdded ? -i : i;
+                if(!Utils.isWater(world.getBlock(x + j + k, y, z))) return false;
+            }
+            for(int i = 0; i < spaceNeededForShip; i++)
+            {
+                int j = !isCoordPositivelyAdded ? -i : i;
+                spaceNeededForShip =  !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
+                if(!Utils.isWater(world.getBlock(x + spaceNeededForShip, y, z + j - (spaceNeededForShip / 2)))) return false;
+            }
+            for(int i = 0; i < spaceNeededForShip; i++)
+            {
+                int k = isCoordPositivelyAdded ? 1 : -1;
+                int j = !isCoordPositivelyAdded ? -i : i;
+                spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
+                if(!Utils.isWater(world.getBlock(x + k, y, z + j - (spaceNeededForShip / 2)))) return false;
+            }
+            return true;
+        }
+        else
+        {
+            for(int i = 0; i < spaceNeededForShip; i++)
+            {
+                int j = !isCoordPositivelyAdded ? -i : i;
+                int k = isCoordPositivelyAdded ? 1 : -1;
+                if(!Utils.isWater(world.getBlock(x, y, z + j + k))) return false;
+            }
+            for(int i = 0; i < spaceNeededForShip; i++)
+            {
+                int j = !isCoordPositivelyAdded ? -i : i;
+                spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
+                if(!Utils.isWater(world.getBlock(x + j - (spaceNeededForShip / 2), y, z + spaceNeededForShip))) return false;
+            }
+            for(int i = 0; i < spaceNeededForShip; i++)
+            {
+                int k = isCoordPositivelyAdded ? 1 : -1;
+                int j = !isCoordPositivelyAdded ? -i : i;
+                spaceNeededForShip = !isCoordPositivelyAdded ? -spaceNeededForShip : spaceNeededForShip;
+                if(!Utils.isWater(world.getBlock(x + j - (spaceNeededForShip / 2), y, z + k))) return false;
+            }
+            return true;
+        }
     }
 
     /**
@@ -110,8 +183,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        if(Configurations.allowInfinitePlacing)
-            return true;
+        if(Configurations.allowInfinitePlacing) return true;
         return !PlayerProperties.get(player).hasPlacedSupplyChest();
     }
 
