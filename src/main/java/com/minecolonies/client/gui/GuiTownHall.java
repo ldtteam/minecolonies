@@ -27,7 +27,7 @@ public class GuiTownHall extends GuiScreen
     private int buttonWidth  = 116;
     private int buttonHeight = 20;
     private int buttonSpan   = 4;
-    private int span         = 10;
+    private int span         = 30;
 
     private final ResourceLocation background = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiInformatorBackground.png");
 
@@ -88,12 +88,15 @@ public class GuiTownHall extends GuiScreen
 
     private void drawGuiForeground()
     {
-        String currentSpec = I18n.format("com.minecolonies.gui.townhall.currspec");
+        String currentSpec = I18n.format("com.minecolonies.gui.townhall.currentSpecialization");
         String spec = "<Industrial>"; //TODO replace with actual specialisation
+        String currentTownhallName = I18n.format("com.minecolonies.gui.townhall.currTownhallName");
+        String townhallName = "FreeZ City"; //TODO replace with actual name
 
         fontRendererObj.drawString(currentSpec, middleX - fontRendererObj.getStringWidth(currentSpec) / 2 + 3, middleY + span + 4 * (buttonHeight + buttonSpan), 0x000000);
         fontRendererObj.drawString(spec, middleX - fontRendererObj.getStringWidth(spec) / 2 + 3, middleY + span + 4 * (buttonHeight + buttonSpan) + 11, 0x000000);
-
+        fontRendererObj.drawString(currentTownhallName, middleX - fontRendererObj.getStringWidth(currentTownhallName)/ 2 + 3, middleY + 4, 0x000000);
+        fontRendererObj.drawString(townhallName, middleX - fontRendererObj.getStringWidth(townhallName) / 2 + 3, middleY + 13, 0x000000);
     }
 
     @Override

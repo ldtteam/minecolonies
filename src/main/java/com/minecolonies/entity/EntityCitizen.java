@@ -1,19 +1,23 @@
 package com.minecolonies.entity;
 
-import com.minecolonies.lib.Constants;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import java.util.Random;
+
 public class EntityCitizen extends EntityAgeable
 {
     public ResourceLocation texture;
+    public EnumCitizenLevel level;
+    Random random = new Random();
 
     public EntityCitizen(World world)
     {
         super(world);
         setSize(.6f, 1.8f);
+        this.level = random.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
         setTexture();
     }
 
@@ -33,6 +37,6 @@ public class EntityCitizen extends EntityAgeable
 
     public void setTexture()
     {
-        this.texture = new ResourceLocation(Constants.MODID + ":" + "/textures/entity/EntityCitizen.png");
+        texture = new ResourceLocation(level.getTexture(level) + (random.nextInt(3) + 1) + ".png");
     }
 }

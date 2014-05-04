@@ -11,8 +11,8 @@ import java.util.UUID;
 
 public class TileEntityTownHall extends TileEntityHut
 {
-    private String            cityName;
-    private ArrayList<UUID>   owners;
+    private String            cityName; //TODO Send by packet
+    private ArrayList<UUID>   owners; //TODO Send by packet
     private BiomeGenBase      biome;
 
     public TileEntityTownHall()
@@ -77,5 +77,10 @@ public class TileEntityTownHall extends TileEntityHut
     public ArrayList<UUID> getOwners()
     {
         return owners;
+    }
+
+    public String getCityName()
+    {
+        return cityName;
     }
 }

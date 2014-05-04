@@ -16,7 +16,7 @@ public class RenderBipedCitizen extends RenderBiped
     @Override
     protected ResourceLocation getEntityTexture(Entity entity)
     {
-        EntityCitizen entityCitizen = (EntityCitizen)entity;
+        EntityCitizen entityCitizen = (EntityCitizen) entity;
         return entityCitizen.texture;
     }
 }
