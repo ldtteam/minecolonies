@@ -25,7 +25,8 @@ public class GuiHandler implements IGuiHandler
         switch(ID)
         {
             case 0:
-                return new GuiInformator(player.inventory, (TileEntityTownHall) world.getTileEntity(x, y, z));
+                return new GuiTownHall((TileEntityTownHall) world.getTileEntity(x, y, z));
+                //return new GuiInformator(player.inventory, (TileEntityTownHall) world.getTileEntity());
         }
         return null;
     }
