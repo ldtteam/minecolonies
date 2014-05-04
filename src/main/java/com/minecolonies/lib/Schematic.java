@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -173,7 +174,8 @@ public class Schematic
         }
     }
 
-    public void setOrientation(int orientation) {
+    public void setOrientation(int orientation)
+    {
         //TODO schematic.rotate();
     }
 
@@ -210,6 +212,11 @@ public class Schematic
     {
         if(!this.hasSchematic() || x == -1) return 0;
         return this.schematic.getBlockMetadata(x, y, z);
+    }
+
+    public Vec3 getBlockPosition(int baseX, int baseY, int baseZ)
+    {
+        return world.getWorldVec3Pool().getVecFromPool(baseX + x, baseY + y, baseZ + z);
     }
 
     public List<ItemStack> getMaterials()
