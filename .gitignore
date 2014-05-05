@@ -6,6 +6,7 @@ eclipse/*
 logs/*
 mods/*
 out/*
+run/*
 *.iml
 *.ipr
 *.iws
@@ -13,5 +14,4 @@ MinecraftForge*.txt
 CREDITS*
 LICENSE-fml*
 *changelog.txt
-run*
 README.txt
