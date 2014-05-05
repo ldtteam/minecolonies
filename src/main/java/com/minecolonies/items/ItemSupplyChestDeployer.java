@@ -122,50 +122,34 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      */
     private boolean check(World world, int x, int y, int z, boolean shouldCheckX, boolean isCoordPositivelyAdded)
     {
-        int spaceNeededForShip = isCoordPositivelyAdded ? Constants.SIZENEEDEDFORSHIP : -Constants.SIZENEEDEDFORSHIP;
-        int spaceNeededForShipHalf = Constants.SIZENEEDEDFORSHIP >> 1;//Constants.SIZENEEDEDFORSHIP / 2;
+        int spaceNeededForShip = Constants.SIZENEEDEDFORSHIP;
+        int spaceNeededForShipHalf = spaceNeededForShip >> 1;//Constants.SIZENEEDEDFORSHIP / 2;
         int k = isCoordPositivelyAdded ? 1 : -1;
 
         if(shouldCheckX)
         {
-            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
+            for(int i = 0; i < spaceNeededForShip; i++)
             {
                 int j = k * i;
+                if(!Utils.isWater(world.getBlock(x + j + k, y, z))) return false;
+                if(!Utils.isWater(world.getBlock(x + k * spaceNeededForShipHalf, y, z - spaceNeededForShipHalf + i))) return false;
                 if(!Utils.isWater(world.getBlock(x + j + k, y, z - spaceNeededForShipHalf))) return false;
-            }
-            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
-            {
-                int j = k * i;
                 if(!Utils.isWater(world.getBlock(x + j + k, y, z + spaceNeededForShipHalf))) return false;
-            }
-            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
-            {
-                if(!Utils.isWater(world.getBlock(x + spaceNeededForShip, y, z + i - spaceNeededForShipHalf))) return false;
-            }
-            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
-            {
+                if(!Utils.isWater(world.getBlock(x + k * spaceNeededForShip, y, z + i - spaceNeededForShipHalf))) return false;
                 if(!Utils.isWater(world.getBlock(x + k, y, z + i - spaceNeededForShipHalf))) return false;
             }
             return true;
         }
         else
         {
-            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
+            for(int i = 0; i < spaceNeededForShip; i++)
             {
                 int j = k * i;
+                if(!Utils.isWater(world.getBlock(x, y, z + j + k))) return false;
+                if(!Utils.isWater(world.getBlock(x - spaceNeededForShipHalf + i, y, z + k * spaceNeededForShipHalf))) return false;
                 if(!Utils.isWater(world.getBlock(x - spaceNeededForShipHalf, y, z + j + k))) return false;
-            }
-            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
-            {
-                int j = k * i;
                 if(!Utils.isWater(world.getBlock(x + spaceNeededForShipHalf, y, z + j + k))) return false;
-            }
-            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
-            {
-                if(!Utils.isWater(world.getBlock(x + i - spaceNeededForShipHalf, y, z + spaceNeededForShip))) return false;
-            }
-            for(int i = 0; i < Constants.SIZENEEDEDFORSHIP; i++)
-            {
+                if(!Utils.isWater(world.getBlock(x + i - spaceNeededForShipHalf, y, z + k * spaceNeededForShip))) return false;
                 if(!Utils.isWater(world.getBlock(x + i - spaceNeededForShipHalf, y, z + k))) return false;
             }
             return true;
