@@ -9,6 +9,7 @@ import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -56,13 +57,10 @@ public class BlockHutTownHall extends BlockInformator
             return;
         }
 
-        super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
-
         TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
         if(entityLivingBase instanceof EntityPlayer)
         {
             tileEntityTownHall.setInfo(world, entityLivingBase.getUniqueID(), x, z);
-            tileEntityTownHall.markDirty();
             playerProperties.setHasPlacedTownHall(true);
         }
     }
@@ -88,7 +86,6 @@ public class BlockHutTownHall extends BlockInformator
             if(tileEntityTownHall != null && tileEntityTownHall.getDistanceFrom(x, y, z) < 200)
             {
                 FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Too close to existing townhall"));
-
                 return false;
             }
         }
@@ -106,9 +103,14 @@ public class BlockHutTownHall extends BlockInformator
     {
         if(world.isRemote) return super.removedByPlayer(world, player, x, y, z);
 
-        if(super.removedByPlayer(world, player, x, y, z))
+        if(this.canPlayerDestroy(world, x, y, z, player))
         {
-            PlayerProperties.get(player).setHasPlacedTownHall(false);
+            if(world.getTileEntity(x, y, z) instanceof TileEntityTownHall)
+            {
+                TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
+                //TODO KILL ENTITIES
+                PlayerProperties.get(player).setHasPlacedTownHall(false);
+            }
             return true;
         }
         return false;
@@ -118,9 +120,35 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
     {
-        EntityCitizen entityCitizen = new EntityCitizen(world);
-        entityCitizen.setLocationAndAngles(x,y,z, 1f, 1f);
-        world.spawnEntityInWorld(entityCitizen);
-        return true;
+        if(world.isRemote)
+        {
+            TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
+            if(tileEntityTownHall.getMaxCitizens() > tileEntityTownHall.getCitizens().size()) //TODO Change to be checked when spawned.
+            {
+                EntityCitizen entityCitizen = new EntityCitizen(world);
+                entityCitizen.setLocationAndAngles(x, y, z, 1f, 1f);
+                world.spawnEntityInWorld(entityCitizen);
+                entityCitizen.addCitizenToTownhall(world);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean canPlayerDestroy(World world, int x, int y, int z, Entity entity)
+    {
+        EntityPlayer entityPlayer = (EntityPlayer)entity;
+        TileEntityTownHall tileEntityTownHall = (TileEntityTownHall)world.getTileEntity(x, y, z);
+        if(tileEntityTownHall == null) return true;
+        if(tileEntityTownHall.getOwners().size() == 0) return true;
+        for(int i = 0; i < tileEntityTownHall.getOwners().size(); i++)
+        {
+            if(tileEntityTownHall.getOwners().get(i) == entityPlayer.getUniqueID())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

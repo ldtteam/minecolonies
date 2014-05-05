@@ -1,7 +1,12 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.tilentities.TileEntityHutWorker;
+import com.minecolonies.tilentities.TileEntityTownHall;
+import com.minecolonies.util.Utils;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -12,6 +17,8 @@ public class EntityCitizen extends EntityAgeable
     public ResourceLocation texture;
     public EnumCitizenLevel level;
     Random random = new Random();
+    private String job;
+    private TileEntityHutWorker tileEntityHutWorker;
 
     public EntityCitizen(World world)
     {
@@ -19,6 +26,14 @@ public class EntityCitizen extends EntityAgeable
         setSize(.6f, 1.8f);
         this.level = random.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
         setTexture();
+        job = "Citizen";
+    }
+
+    public void addCitizenToTownhall(World world)
+    {
+        TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, (int)this.posX, (int)this.posY, (int)this.posZ);
+        if(tileEntityTownHall.getCitizens() != null)
+            tileEntityTownHall.addCitizen(this);
     }
 
     @Override
@@ -38,5 +53,31 @@ public class EntityCitizen extends EntityAgeable
     public void setTexture()
     {
         texture = new ResourceLocation(level.getTexture() + (random.nextInt(3) + 1) + ".png");
+    }
+
+    public String getJob()
+    {
+        return job;
+    }
+
+    public void setJob(String job, TileEntity tileEntity)
+    {
+        this.job = job;
+        this.tileEntityHutWorker = (TileEntityHutWorker)tileEntity;
+    }
+
+    @Override
+    public void writeEntityToNBT(NBTTagCompound nbtTagCompound)
+    {
+        super.writeEntityToNBT(nbtTagCompound);
+        nbtTagCompound.setString("job", job);
+        //TODO save level
+    }
+
+    @Override
+    public void readEntityFromNBT(NBTTagCompound nbtTagCompound)
+    {
+        super.readEntityFromNBT(nbtTagCompound);
+        this.job = nbtTagCompound.getString("job");
     }
 }

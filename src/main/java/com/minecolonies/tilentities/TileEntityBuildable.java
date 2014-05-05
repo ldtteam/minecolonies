@@ -12,7 +12,7 @@ public abstract class TileEntityBuildable extends TileEntityChest
 
     public TileEntityBuildable()
     {
-
+        this.buildingLevel = 0;
     }
 
     @Override
@@ -75,6 +75,4 @@ public abstract class TileEntityBuildable extends TileEntityChest
     {
         this.townHall = townHall;
     }
-
-
 }
