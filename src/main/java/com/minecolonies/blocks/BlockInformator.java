@@ -2,14 +2,17 @@ package com.minecolonies.blocks;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.tilentities.TileEntityTownHall;
 import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public abstract class BlockInformator extends Block implements IColony, ITileEntityProvider
@@ -46,5 +49,20 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
     public IIcon getIcon(int side, int meta)
     {
         return icons[side];
+    }
+
+    @Override
+    public boolean canEntityDestroy(IBlockAccess world, int x, int y, int z, Entity entity)
+    {
+        EntityPlayer entityPlayer = (EntityPlayer)entity;
+        TileEntityTownHall tileEntityTownHall = (TileEntityTownHall)world.getTileEntity(x, y, z);
+        for(int i = 0; i < tileEntityTownHall.getOwners().size(); i++)
+        {
+            if(tileEntityTownHall.getOwners().get(i) == entityPlayer.getUniqueID())
+            {
+                return super.canEntityDestroy(world, x, y, z, entity);
+            }
+        }
+        return false;
     }
 }
