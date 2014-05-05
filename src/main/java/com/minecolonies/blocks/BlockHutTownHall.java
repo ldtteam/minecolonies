@@ -1,6 +1,7 @@
 package com.minecolonies.blocks;
 
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tilentities.TileEntityTownHall;
@@ -111,5 +112,15 @@ public class BlockHutTownHall extends BlockInformator
             return true;
         }
         return false;
+    }
+
+    //TODO Delete this to open GUI again, atm used for testing entities
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
+    {
+        EntityCitizen entityCitizen = new EntityCitizen(world);
+        entityCitizen.setLocationAndAngles(x,y,z, 1f, 1f);
+        world.spawnEntityInWorld(entityCitizen);
+        return true;
     }
 }
