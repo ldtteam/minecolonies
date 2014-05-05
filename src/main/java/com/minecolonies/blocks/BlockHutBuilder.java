@@ -1,5 +1,6 @@
 package com.minecolonies.blocks;
 
+import com.minecolonies.tilentities.TileEntityHutBuilder;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
@@ -25,7 +26,6 @@ public class BlockHutBuilder extends BlockInformator
     @Override
     public TileEntity createNewTileEntity(World var1, int var2)
     {
-        //TODO
-        return null;
+        return new TileEntityHutBuilder();
     }
 }

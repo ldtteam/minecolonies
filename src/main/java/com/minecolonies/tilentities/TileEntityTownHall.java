@@ -1,5 +1,6 @@
 package com.minecolonies.tilentities;
 
+import com.minecolonies.util.Utils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
@@ -28,10 +29,11 @@ public class TileEntityTownHall extends TileEntityHut
     public void onBlockAdded()
     {
         for(Object o : worldObj.loadedTileEntityList)
-            if(o instanceof TileEntityHut)
+            if(o instanceof TileEntityHut && Utils.getDistanceToClosestTownHall(worldObj, xCoord, yCoord, zCoord) < com.minecolonies.lib.Constants.MAXDISTANCETOTOWNHALL)
             {
                 TileEntityHut tileEntityHut = (TileEntityHut) o;
-                tileEntityHut.findTownHall();
+                if (tileEntityHut.getTownHall() == null)
+                    tileEntityHut.findAndAddClosestTownhall();
             }
     }
 

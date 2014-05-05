@@ -1,10 +1,10 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.client.model.ModelEntityCitizenFemaleAristocrat;
 import com.minecolonies.client.model.ModelEntityCitizenFemaleCitizen;
+import com.minecolonies.client.model.ModelEntityCitizenFemaleNoble;
 import com.minecolonies.lib.Constants;
 import net.minecraft.client.model.ModelBiped;
-
-import java.util.Random;
 
 public enum EnumCitizenLevel
 {
@@ -14,15 +14,14 @@ public enum EnumCitizenLevel
     ARISTOCRATMALE(new ModelBiped(), 3, "Male", "/textures/entity/EntityAristocrat"),
     SETTLERFEMALE(new ModelEntityCitizenFemaleCitizen(), 0, "Female", "/textures/entity/EntitySettler"),
     CITIZENFEMALE(new ModelEntityCitizenFemaleCitizen(), 1, "Female", "/textures/entity/EntityCitizen"),
-    NOBLEFEMALE(new ModelBiped(), 2, "Female", "/textures/entity/EntityNoble"), //TODO ADD MODEL
-    ARISTOCRATFEMALE(new ModelBiped(), 3, "Female", "/textures/entity/EntityAristocrat"); //TODO ADD MODEL
+    NOBLEFEMALE(new ModelEntityCitizenFemaleNoble(), 2, "Female", "/textures/entity/EntityNoble"), //TODO ADD MODEL
+    ARISTOCRATFEMALE(new ModelEntityCitizenFemaleAristocrat(), 3, "Female", "/textures/entity/EntityAristocrat"); //TODO ADD MODEL
 
     private final ModelBiped model;
     private final int        level;
     private final String     partialTextureString;
     private final int        sexInt;
     private final String     sexString;
-    Random random = new Random();
 
     EnumCitizenLevel(ModelBiped modelBiped, int level, String sex, String textureLocationPart)
     {

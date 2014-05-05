@@ -1,13 +1,80 @@
 package com.minecolonies.tilentities;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
 
-public class TileEntityBuildable extends TileEntityChest
+public abstract class TileEntityBuildable extends TileEntityChest
 {
-    public TileEntityTownHall townHall;
+    private int buildingLevel;
+    private boolean hasWorker;
+    private TileEntityTownHall townHall;
+    private String hutName;
 
     public TileEntityBuildable()
     {
 
     }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        NBTTagCompound nbtTagCompound = new NBTTagCompound();
+        nbtTagCompound.setInteger("buildingLvl", buildingLevel);
+        nbtTagCompound.setBoolean("hasWorker", hasWorker);
+        nbtTagCompound.setString("hutName", hutName);
+        compound.setTag("nbtTagCompound", nbtTagCompound);
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        NBTTagCompound nbtTagCompound = (NBTTagCompound)compound.getTag("nbtTagCompound");
+        this.buildingLevel = nbtTagCompound.getInteger("buildingLvl");
+        this.hasWorker = nbtTagCompound.getBoolean("hasWorker");
+        this.hutName = nbtTagCompound.getString("hutName");
+    }
+
+    public int getBuildingLevel()
+    {
+        return buildingLevel;
+    }
+
+    public void setBuildingLevel(int buildingLevel)
+    {
+        this.buildingLevel = buildingLevel;
+    }
+
+    public boolean isHasWorker()
+    {
+        return hasWorker;
+    }
+
+    public void setHasWorker(boolean hasWorker)
+    {
+        this.hasWorker = hasWorker;
+    }
+
+    public String getHutName()
+    {
+        return hutName;
+    }
+
+    public void setHutName(String hutName)
+    {
+        this.hutName = hutName;
+    }
+
+    public TileEntityTownHall getTownHall()
+    {
+        return townHall;
+    }
+
+    public void setTownHall(TileEntityTownHall townHall)
+    {
+        this.townHall = townHall;
+    }
+
+
 }
