@@ -14,10 +14,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class BlockHutTownHall extends BlockInformator
 {
@@ -47,7 +51,7 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
-        if(world.isRemote) return;
+        if(!world.isRemote) return;
         PlayerProperties playerProperties = (PlayerProperties)entityLivingBase.getExtendedProperties(Constants.PlayerPropertyName);
         if(playerProperties.hasPlacedTownHall())
         {
@@ -68,7 +72,7 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public void onBlockAdded(World world, int x, int y, int z)
     {
-        if(world.isRemote) return;
+        if(!world.isRemote) return;
         super.onBlockAdded(world, x, y, z);
 
         TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
@@ -101,14 +105,30 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
     {
-        if(world.isRemote) return super.removedByPlayer(world, player, x, y, z);
+        if(!world.isRemote) return super.removedByPlayer(world, player, x, y, z);
 
         if(this.canPlayerDestroy(world, x, y, z, player))
         {
             if(world.getTileEntity(x, y, z) instanceof TileEntityTownHall)
             {
+                /*
+                Note, not enhanced yet
+                 */
                 TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-                //TODO KILL ENTITIES
+                List<UUID> list2 = tileEntityTownHall.getCitizens();
+                List<UUID> list3 = new ArrayList<UUID>();
+                List<EntityCitizen> list = world.getEntitiesWithinAABB(EntityCitizen.class, AxisAlignedBB.getBoundingBox(x - 20, y - 20, z - 20, x + 20, y + 20, z + 20));
+                for(EntityCitizen entityCitizen : list)
+                {
+                    list3.add(entityCitizen.getUniqueID());
+                }
+                for(int i = 1; i <= list.size(); i++)
+                {
+                    for(int j = 1; i <= list2.size(); i++)
+                       if(list3.get(i) == tileEntityTownHall.getCitizens().get(j))
+                           list.get(i).setDead();
+                }
+
                 PlayerProperties.get(player).setHasPlacedTownHall(false);
             }
             return true;
@@ -120,7 +140,7 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
     {
-        if(world.isRemote)
+        if(!world.isRemote)
         {
             TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
             if(tileEntityTownHall.getMaxCitizens() > tileEntityTownHall.getCitizens().size()) //TODO Change to be checked when spawned.
