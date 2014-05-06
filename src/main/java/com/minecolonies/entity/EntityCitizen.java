@@ -1,8 +1,6 @@
 package com.minecolonies.entity;
 
 import com.minecolonies.tilentities.TileEntityHutWorker;
-import com.minecolonies.tilentities.TileEntityTownHall;
-import com.minecolonies.util.Utils;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,13 +25,6 @@ public class EntityCitizen extends EntityAgeable
         this.level = random.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
         setTexture();
         job = "Citizen";
-    }
-
-    public void addCitizenToTownhall(World world)
-    {
-        TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, (int)this.posX, (int)this.posY, (int)this.posZ);
-        if(tileEntityTownHall.getCitizens() != null)
-            tileEntityTownHall.addCitizen(this);
     }
 
     @Override

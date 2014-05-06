@@ -76,7 +76,7 @@ public class BlockHutTownHall extends BlockInformator
         TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
         Random rand = new Random();
         tileEntityTownHall.setCityName(Configurations.cityNames[rand.nextInt(Configurations.cityNames.length)]);
-        tileEntityTownHall.onBlockAdded();
+        tileEntityTownHall.onBlockAdded(tileEntityTownHall);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
     {
-        if(!world.isRemote)
+        if(world.isRemote)
         {
             TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
             if(tileEntityTownHall.getMaxCitizens() > tileEntityTownHall.getCitizens().size()) //TODO Change to be checked when spawned.
@@ -138,7 +138,7 @@ public class BlockHutTownHall extends BlockInformator
                 EntityCitizen entityCitizen = new EntityCitizen(world);
                 entityCitizen.setLocationAndAngles(x, y, z, 1f, 1f);
                 world.spawnEntityInWorld(entityCitizen);
-                entityCitizen.addCitizenToTownhall(world);
+                tileEntityTownHall.addCitizenToTownhall(entityCitizen);
                 return true;
             }
         }

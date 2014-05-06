@@ -32,13 +32,13 @@ public class TileEntityTownHall extends TileEntityHut
         this.cityName = cityName;
     }
 
-    public void onBlockAdded()
+    public void onBlockAdded(TileEntityTownHall tileEntityTownHall)
     {
         for(Object o : worldObj.loadedTileEntityList)
             if(o instanceof TileEntityHut && Utils.getDistanceToClosestTownHall(worldObj, xCoord, yCoord, zCoord) < com.minecolonies.lib.Constants.MAXDISTANCETOTOWNHALL)
             {
                 TileEntityHut tileEntityHut = (TileEntityHut) o;
-                if(tileEntityHut.getTownHall() == null) tileEntityHut.findAndAddClosestTownhall();
+                if(tileEntityHut.getTownHall() == null) tileEntityHut.setTownHall(tileEntityTownHall);
             }
     }
 
@@ -124,5 +124,11 @@ public class TileEntityTownHall extends TileEntityHut
     public void setMaxCitizens(int maxCitizens)
     {
         this.maxCitizens = maxCitizens;
+    }
+
+    public void addCitizenToTownhall(EntityCitizen entityCitizen)
+    {
+        if(getCitizens() != null)
+            this.addCitizen(entityCitizen);
     }
 }

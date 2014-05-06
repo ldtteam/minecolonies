@@ -57,6 +57,14 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
         return icons[side];
     }
 
+    /**
+     * Attempts to add citizen to a working hut
+     * @param tileEntityTownHall TileEntityTownHall bound to
+     * @param world world
+     * @param x xcoord
+     * @param y ycoord
+     * @param z zcoord
+     */
     public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall, World world, int x, int y, int z)
     {
         TileEntity tileEntity = world.getTileEntity(x,y,z);
@@ -65,6 +73,14 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
         //TODO ATTEMP TO ADD
     }
 
+    /**
+     * Sets the TE's townhall to the closest townhall
+     *
+     * @param world world
+     * @param x xcoord
+     * @param y ycoord
+     * @param z zcoord
+     */
     public void addClosestTownhall(World world, int x, int y, int z)
     {
         TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
@@ -73,7 +89,8 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
             if(world.getTileEntity(x,y,z) instanceof TileEntityBuildable)
             {
                 TileEntityBuildable tileEntityBuildable = (TileEntityBuildable)world.getTileEntity(x,y,z);
-                tileEntityBuildable.setTownHall(tileEntityTownHall);
+                tileEntityBuildable.setTownHall(tileEntityTownHall); //TODO, check for owner first
+                attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
             }
         }
     }
@@ -86,7 +103,6 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
         if(Utils.getDistanceToClosestTownHall(world, x, y, z) < Constants.MAXDISTANCETOTOWNHALL)
         {
             addClosestTownhall(world, x, y, z);
-            attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
         }
     }
 }
