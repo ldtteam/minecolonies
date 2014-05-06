@@ -14,11 +14,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -115,20 +113,12 @@ public class BlockHutTownHall extends BlockInformator
                 Note, not enhanced yet
                  */
                 TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-                List<UUID> list2 = tileEntityTownHall.getCitizens();
-                List<UUID> list3 = new ArrayList<UUID>();
-                List<EntityCitizen> list = world.getEntitiesWithinAABB(EntityCitizen.class, AxisAlignedBB.getBoundingBox(x - 20, y - 20, z - 20, x + 20, y + 20, z + 20));
-                for(EntityCitizen entityCitizen : list)
-                {
-                    list3.add(entityCitizen.getUniqueID());
-                }
-                for(int i = 1; i <= list.size(); i++)
-                {
-                    for(int j = 1; i <= list2.size(); i++)
-                       if(list3.get(i) == tileEntityTownHall.getCitizens().get(j))
-                           list.get(i).setDead();
-                }
-
+                List<Entity> loadedEntities = world.getLoadedEntityList();
+                List<UUID> townhallList = tileEntityTownHall.getCitizens();
+                for(Entity entity : loadedEntities)
+                    for(UUID uuid : townhallList)
+                        if(entity.getPersistentID().equals(uuid))
+                            entity.setDead();
                 PlayerProperties.get(player).setHasPlacedTownHall(false);
             }
             return true;

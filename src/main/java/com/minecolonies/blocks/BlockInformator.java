@@ -2,15 +2,24 @@ package com.minecolonies.blocks;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.tilentities.TileEntityBuildable;
+import com.minecolonies.tilentities.TileEntityTownHall;
 import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
+import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 public abstract class BlockInformator extends Block implements IColony, ITileEntityProvider
 {
@@ -46,5 +55,38 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
     public IIcon getIcon(int side, int meta)
     {
         return icons[side];
+    }
+
+    public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall, World world, int x, int y, int z)
+    {
+        TileEntity tileEntity = world.getTileEntity(x,y,z);
+        if(!(tileEntity instanceof TileEntityBuildable)) return;
+        ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
+        //TODO ATTEMP TO ADD
+    }
+
+    public void addClosestTownhall(World world, int x, int y, int z)
+    {
+        TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
+        if(tileEntityTownHall != null)
+        {
+            if(world.getTileEntity(x,y,z) instanceof TileEntityBuildable)
+            {
+                TileEntityBuildable tileEntityBuildable = (TileEntityBuildable)world.getTileEntity(x,y,z);
+                tileEntityBuildable.setTownHall(tileEntityTownHall);
+            }
+        }
+    }
+
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
+    {
+        TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
+        if(Utils.getDistanceToClosestTownHall(world, x, y, z) < Constants.MAXDISTANCETOTOWNHALL)
+        {
+            addClosestTownhall(world, x, y, z);
+            attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
+        }
     }
 }
