@@ -1,6 +1,7 @@
-package com.minecolonies.client.gui;
+package com.minecolonies.network;
 
-import com.minecolonies.tilentities.TileEntityTownHall;
+import com.minecolonies.client.gui.GuiTownHall;
+import com.minecolonies.tileentities.TileEntityTownHall;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;

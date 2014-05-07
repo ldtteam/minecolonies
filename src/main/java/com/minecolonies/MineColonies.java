@@ -1,7 +1,7 @@
 package com.minecolonies;
 
 import com.minecolonies.blocks.ModBlocks;
-import com.minecolonies.client.gui.GuiHandler;
+import com.minecolonies.network.GuiHandler;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.items.ModItems;

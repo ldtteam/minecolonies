@@ -1,4 +1,4 @@
-package com.minecolonies.tilentities;
+package com.minecolonies.tileentities;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Utils;
@@ -32,13 +32,13 @@ public class TileEntityTownHall extends TileEntityHut
         this.cityName = cityName;
     }
 
-    public void onBlockAdded(TileEntityTownHall tileEntityTownHall)
+    public void onBlockAdded()
     {
         for(Object o : worldObj.loadedTileEntityList)
             if(o instanceof TileEntityHut && Utils.getDistanceToClosestTownHall(worldObj, xCoord, yCoord, zCoord) < com.minecolonies.lib.Constants.MAXDISTANCETOTOWNHALL)
             {
                 TileEntityHut tileEntityHut = (TileEntityHut) o;
-                if(tileEntityHut.getTownHall() == null) tileEntityHut.setTownHall(tileEntityTownHall);
+                if(tileEntityHut.getTownHall() == null) tileEntityHut.setTownHall(this);
             }
     }
 

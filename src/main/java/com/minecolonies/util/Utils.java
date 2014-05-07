@@ -1,6 +1,6 @@
 package com.minecolonies.util;
 
-import com.minecolonies.tilentities.TileEntityTownHall;
+import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.Vec3;
