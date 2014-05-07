@@ -51,7 +51,7 @@ public class BlockHutTownHall extends BlockInformator
     {
         if(world.isRemote) return;
 
-        PlayerProperties playerProperties = (PlayerProperties) entityLivingBase.getExtendedProperties(Constants.PlayerPropertyName);
+        PlayerProperties playerProperties = PlayerProperties.get((EntityPlayer) entityLivingBase);
         if(playerProperties.hasPlacedTownHall())
         {
             world.setBlockToAir(x, y, z);

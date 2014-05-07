@@ -216,8 +216,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer, int chestFacing)
     {
         //TODO Spawn ship
-        PlayerProperties playerProperties = (PlayerProperties) entityPlayer.getExtendedProperties(Constants.PlayerPropertyName);
-        playerProperties.setHasPlacedSupplyChest(true);
+        PlayerProperties.get(entityPlayer).setHasPlacedSupplyChest(true);
 
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
