@@ -78,7 +78,7 @@ public class BlockHutTownHall extends BlockInformator
         TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
         Random rand = new Random();
         tileEntityTownHall.setCityName(Configurations.cityNames[rand.nextInt(Configurations.cityNames.length)]);
-        tileEntityTownHall.onBlockAdded(tileEntityTownHall);
+        tileEntityTownHall.onBlockAdded();
     }
 
     @Override
