@@ -49,13 +49,14 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
-        if(!world.isRemote) return;
-        PlayerProperties playerProperties = (PlayerProperties)entityLivingBase.getExtendedProperties(Constants.PlayerPropertyName);
+        if(world.isRemote) return;
+
+        PlayerProperties playerProperties = (PlayerProperties) entityLivingBase.getExtendedProperties(Constants.PlayerPropertyName);
         if(playerProperties.hasPlacedTownHall())
         {
-            world.setBlockToAir(x,y,z);
+            world.setBlockToAir(x, y, z);
             FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("You have placed a Town Hall already"));
-            removedByPlayer(world, (EntityPlayer)entityLivingBase, x, y, z);
+            removedByPlayer(world, (EntityPlayer) entityLivingBase, x, y, z);
             return;
         }
 
@@ -70,7 +71,8 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public void onBlockAdded(World world, int x, int y, int z)
     {
-        if(!world.isRemote) return;
+        if(world.isRemote) return;
+
         super.onBlockAdded(world, x, y, z);
 
         TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
@@ -103,7 +105,7 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
     {
-        if(!world.isRemote) return super.removedByPlayer(world, player, x, y, z);
+        if(world.isRemote) return super.removedByPlayer(world, player, x, y, z);
 
         if(this.canPlayerDestroy(world, x, y, z, player))
         {
@@ -117,8 +119,7 @@ public class BlockHutTownHall extends BlockInformator
                 List<UUID> townhallList = tileEntityTownHall.getCitizens();
                 for(Entity entity : loadedEntities)
                     for(UUID uuid : townhallList)
-                        if(entity.getPersistentID().equals(uuid))
-                            entity.setDead();
+                        if(entity.getPersistentID().equals(uuid)) entity.setDead();
                 PlayerProperties.get(player).setHasPlacedTownHall(false);
             }
             return true;
@@ -130,17 +131,16 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
     {
-        if(world.isRemote)
+        if(world.isRemote) return false;
+
+        TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
+        if(tileEntityTownHall.getMaxCitizens() > tileEntityTownHall.getCitizens().size()) //TODO Change to be checked when spawned.
         {
-            TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-            if(tileEntityTownHall.getMaxCitizens() > tileEntityTownHall.getCitizens().size()) //TODO Change to be checked when spawned.
-            {
-                EntityCitizen entityCitizen = new EntityCitizen(world);
-                entityCitizen.setLocationAndAngles(x, y, z, 1f, 1f);
-                world.spawnEntityInWorld(entityCitizen);
-                tileEntityTownHall.addCitizenToTownhall(entityCitizen);
-                return true;
-            }
+            EntityCitizen entityCitizen = new EntityCitizen(world);
+            entityCitizen.setLocationAndAngles(x, y, z, 1f, 1f);
+            world.spawnEntityInWorld(entityCitizen);
+            tileEntityTownHall.addCitizenToTownhall(entityCitizen);
+            return true;
         }
         return false;
     }
@@ -148,8 +148,8 @@ public class BlockHutTownHall extends BlockInformator
 
     public boolean canPlayerDestroy(World world, int x, int y, int z, Entity entity)
     {
-        EntityPlayer entityPlayer = (EntityPlayer)entity;
-        TileEntityTownHall tileEntityTownHall = (TileEntityTownHall)world.getTileEntity(x, y, z);
+        EntityPlayer entityPlayer = (EntityPlayer) entity;
+        TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
         if(tileEntityTownHall == null) return true;
         if(tileEntityTownHall.getOwners().size() == 0) return true;
         for(int i = 0; i < tileEntityTownHall.getOwners().size(); i++)
