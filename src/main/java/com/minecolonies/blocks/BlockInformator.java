@@ -2,8 +2,8 @@ package com.minecolonies.blocks;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.tilentities.TileEntityBuildable;
-import com.minecolonies.tilentities.TileEntityTownHall;
+import com.minecolonies.tileentities.TileEntityBuildable;
+import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
 import com.minecolonies.util.Utils;

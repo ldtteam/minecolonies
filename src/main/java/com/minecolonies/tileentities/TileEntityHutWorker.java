@@ -1,4 +1,4 @@
-package com.minecolonies.tilentities;
+package com.minecolonies.tileentities;
 
 import com.minecolonies.entity.EntityCitizen;
 

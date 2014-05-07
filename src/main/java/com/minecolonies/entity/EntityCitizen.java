@@ -1,6 +1,6 @@
 package com.minecolonies.entity;
 
-import com.minecolonies.tilentities.TileEntityHutWorker;
+import com.minecolonies.tileentities.TileEntityHutWorker;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;

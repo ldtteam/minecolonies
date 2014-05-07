@@ -2,7 +2,7 @@ package com.minecolonies.proxy;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.tilentities.TileEntityTownHall;
+import com.minecolonies.tileentities.TileEntityTownHall;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,4 +1,4 @@
-package com.minecolonies.tilentities;
+package com.minecolonies.tileentities;
 
 public class TileEntityHutBuilder extends TileEntityHutWorker
 {

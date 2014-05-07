@@ -1,4 +1,4 @@
-package com.minecolonies.tilentities;
+package com.minecolonies.tileentities;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
