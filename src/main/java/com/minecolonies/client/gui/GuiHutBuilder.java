@@ -2,7 +2,6 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
-import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
