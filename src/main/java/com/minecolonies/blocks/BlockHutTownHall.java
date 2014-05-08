@@ -105,7 +105,7 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
     {
-        if(world.isRemote) return super.removedByPlayer(world, player, x, y, z);
+        if(world.isRemote) return false;
 
         if(this.canPlayerDestroy(world, x, y, z, player))
         {
@@ -122,7 +122,7 @@ public class BlockHutTownHall extends BlockInformator
                         if(entity.getPersistentID().equals(uuid)) entity.setDead();
                 PlayerProperties.get(player).setHasPlacedTownHall(false);
             }
-            return true;
+            return super.removedByPlayer(world, player, x, y, z);
         }
         return false;
     }

@@ -22,6 +22,7 @@ public class TileEntityTownHall extends TileEntityHut
 
     public TileEntityTownHall()
     {
+        setHutName("Townhall");
         owners = new ArrayList<UUID>();
         citizens = new ArrayList<UUID>();
         maxCitizens = com.minecolonies.lib.Constants.DEFAULTMAXCITIZENS;
