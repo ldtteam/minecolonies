@@ -13,7 +13,8 @@ public class GuiTypable extends GuiScreen
 {
     private TileEntityTownHall tileEntityTownHall;
     private GuiTextField guiTextField = null;
-    private String       newCityName  = "";
+    private final String message = "Rename Your City";
+    private String       newCityName  = message;
     private EntityPlayer player;
     private World        world;
     private int          x;
@@ -41,7 +42,7 @@ public class GuiTypable extends GuiScreen
         this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 110, "Done"));
 
         this.guiTextField.setMaxStringLength(1024);
-        this.guiTextField.setText("");
+        this.guiTextField.setText(newCityName);
     }
 
     @Override
@@ -64,6 +65,7 @@ public class GuiTypable extends GuiScreen
     {
         this.guiTextField.updateCursorCounter();
         super.updateScreen();
+        newCityName = guiTextField.getText();
     }
 
     @Override
@@ -73,7 +75,7 @@ public class GuiTypable extends GuiScreen
         {
             if(guiButton.id == 0)
             {
-                if(!newCityName.equals(""))
+                if(!newCityName.equals(message))
                 {
                     tileEntityTownHall.setCityName(newCityName);
                     tileEntityTownHall.markDirty();
@@ -94,7 +96,7 @@ public class GuiTypable extends GuiScreen
     public void drawScreen(int par1, int par2, float par3)
     {
         super.drawScreen(par1, par2, par3);
-        fontRendererObj.drawString("Rename Your City", this.width / 2 - fontRendererObj.getStringWidth("Rename Your City") / 2, this.height / 2 - 20, 0xffffff);
+        fontRendererObj.drawString(message, this.width / 2 - fontRendererObj.getStringWidth(message) / 2, this.height / 2 - 20, 0xffffff);
         this.guiTextField.drawTextBox();
     }
 }
