@@ -1,25 +1,28 @@
 package com.minecolonies.client.gui;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class GuiTownHall extends GuiScreen
 {
     private TileEntityTownHall tileEntityTownHall;
-    private int numberOfButtons        = 8;
-    private int idBuildTownhall        = 0;
-    private int idRepairTownhall       = 1;
-    private int idRecallCitizens       = 2;
-    private int idToggleSpecialization = 3;
-    private int idRenameColony         = 4;
-    private int idInformation          = 5;
-    private int idActions              = 6;
-    private int idSettings             = 7;
+    private final int numberOfButtons        = 8;
+    private final int idBuildTownhall        = 0;
+    private final int idRepairTownhall       = 1;
+    private final int idRecallCitizens       = 2;
+    private final int idToggleSpecialization = 3;
+    private final int idRenameColony         = 4;
+    private final int idInformation          = 5;
+    private final int idActions              = 6;
+    private final int idSettings             = 7;
     private int xSize;
     private int ySize;
     private int middleX      = 0;
@@ -29,13 +32,24 @@ public class GuiTownHall extends GuiScreen
     private int buttonSpan   = 4;
     private int span         = 30;
 
+    private EntityPlayer player;
+    private World world;
+    private int x;
+    private int y;
+    private int z;
+
     private final ResourceLocation background = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiInformatorBackground.png");
 
-    public GuiTownHall(TileEntityTownHall tileEntityTownHall)
+    public GuiTownHall(TileEntityTownHall tileEntityTownHall, EntityPlayer player, World world, int x, int y, int z)
     {
         xSize = 171;
         ySize = 247;
         this.tileEntityTownHall = tileEntityTownHall;
+        this.player = player;
+        this.world = world;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     @Override
@@ -109,6 +123,31 @@ public class GuiTownHall extends GuiScreen
         {
             GuiButton guibutton = (GuiButton) this.buttonList.get(k);
             guibutton.drawButton(this.mc, par1, par2);
+        }
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton guiButton)
+    {
+        switch(guiButton.id)
+        {
+            case idBuildTownhall:
+                break;
+            case idRepairTownhall:
+                break;
+            case idRecallCitizens:
+                break;
+            case idToggleSpecialization:
+                break;
+            case idRenameColony:
+                player.openGui(MineColonies.instance, 1, world, x, y, z);
+                break;
+            case idInformation:
+                break;
+            case idActions:
+                break;
+            case idSettings:
+                break;
         }
     }
 }
