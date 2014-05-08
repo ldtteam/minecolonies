@@ -3,7 +3,6 @@ package com.minecolonies.blocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
