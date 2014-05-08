@@ -29,7 +29,9 @@ public class GuiHandler implements IGuiHandler
         {
             case 0:
                 return new GuiTownHall((TileEntityTownHall) world.getTileEntity(x, y, z));
-            case 1:
+            /*case 1:
+                return new GuiTypable((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);*/
+            case 2:
                 return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z));
         }
         return null;
