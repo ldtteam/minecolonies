@@ -66,6 +66,7 @@ public class GuiTypable extends GuiScreen
         super.updateScreen();
     }
 
+    @Override
     protected void actionPerformed(GuiButton guiButton)
     {
         if(guiButton.enabled)
