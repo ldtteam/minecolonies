@@ -1,6 +1,8 @@
 package com.minecolonies.network;
 
+import com.minecolonies.client.gui.GuiHutBuilder;
 import com.minecolonies.client.gui.GuiTownHall;
+import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +29,8 @@ public class GuiHandler implements IGuiHandler
         {
             case 0:
                 return new GuiTownHall((TileEntityTownHall) world.getTileEntity(x, y, z));
-                //return new GuiInformator(player.inventory, (TileEntityTownHall) world.getTileEntity());
+            case 1:
+                return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z));
         }
         return null;
     }

@@ -9,4 +9,14 @@ com.minecolonies.gui.townhall.information=Information
 com.minecolonies.gui.townhall.actions=Actions
 com.minecolonies.gui.townhall.settings=Settings
 
+com.minecolonies.gui.builderHut.buildersHut=Builders Hut
+com.minecolonies.gui.builderHut.workerAssigned=Worker Assigned:
+com.minecolonies.gui.builderHut.workerLevel=Worker Level:
+com.minecolonies.gui.builderHut.hire=Hire Worker
+com.minecolonies.gui.builderHut.fire=Fire Worker
+com.minecolonies.gui.builderHut.recall=Recall Worker
+com.minecolonies.gui.builderHut.build=Build Building
+com.minecolonies.gui.builderHut.repair=Repair Building
+com.minecolonies.gui.builderHut.buildType=Build Type:
+
 tile.myBlock.name=My Block
