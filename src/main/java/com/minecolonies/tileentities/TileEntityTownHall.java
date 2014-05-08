@@ -4,6 +4,8 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Utils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.Constants;
@@ -18,7 +20,7 @@ public class TileEntityTownHall extends TileEntityHut
     private BiomeGenBase    biome;
 
     private ArrayList<UUID> citizens;
-    private int                      maxCitizens;
+    private int             maxCitizens;
 
     public TileEntityTownHall()
     {
@@ -95,6 +97,44 @@ public class TileEntityTownHall extends TileEntityHut
             UUID uuid = UUID.fromString(nbtTagCitizenCompound.getString("citizen"));
             citizens.add(i, uuid);
         }
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+    {
+        NBTTagCompound nbt = packet.func_148857_g();
+
+        this.maxCitizens = nbt.getInteger("maxCitizens");
+        this.cityName = nbt.getString("cityName");
+
+        NBTTagList citizenList = nbt.getTagList("citizens", Constants.NBT.TAG_COMPOUND);
+        this.citizens = new ArrayList<UUID>();
+        for(int i = 0; i < citizenList.tagCount(); i++)
+        {
+            NBTTagCompound citizenTag = citizenList.getCompoundTagAt(i);
+            UUID uuid = UUID.fromString(citizenTag.getString("citizen"));
+            citizens.add(i, uuid);
+        }
+    }
+
+    @Override
+    public S35PacketUpdateTileEntity getDescriptionPacket()
+    {
+        NBTTagCompound nbt = new NBTTagCompound();
+
+        nbt.setInteger("maxCitizens", maxCitizens);
+        nbt.setString("cityName", cityName);
+
+        NBTTagList citizenList = new NBTTagList();
+        for(UUID citizen : getCitizens())
+        {
+            NBTTagCompound citizenTag = new NBTTagCompound();
+            citizenTag.setString("citizen", citizen.toString());
+            citizenList.appendTag(citizenTag);
+        }
+        nbt.setTag("citizens", citizenList);
+
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, nbt);
     }
 
     public ArrayList<UUID> getOwners()
