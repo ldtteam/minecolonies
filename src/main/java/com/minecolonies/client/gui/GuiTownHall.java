@@ -91,7 +91,7 @@ public class GuiTownHall extends GuiScreen
         String currentSpec = I18n.format("com.minecolonies.gui.townhall.currentSpecialization");
         String spec = "<Industrial>"; //TODO replace with actual specialisation
         String currentTownhallName = I18n.format("com.minecolonies.gui.townhall.currTownhallName");
-        String townhallName = "FreeZ City"; //TODO replace with actual name
+        String townhallName = tileEntityTownHall.getCityName();
 
         fontRendererObj.drawString(currentSpec, middleX - fontRendererObj.getStringWidth(currentSpec) / 2 + 3, middleY + span + 4 * (buttonHeight + buttonSpan), 0x000000);
         fontRendererObj.drawString(spec, middleX - fontRendererObj.getStringWidth(spec) / 2 + 3, middleY + span + 4 * (buttonHeight + buttonSpan) + 11, 0x000000);
