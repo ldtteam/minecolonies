@@ -1,8 +1,9 @@
 package com.minecolonies.network;
 
 import com.minecolonies.client.gui.GuiHutBuilder;
-import com.minecolonies.client.gui.GuiHutDeliveryMan;
+import com.minecolonies.client.gui.GuiHutDeliveryman;
 import com.minecolonies.client.gui.GuiTownHall;
+import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.client.gui.GuiTypable;
 import com.minecolonies.tileentities.TileEntityTownHall;
@@ -27,16 +28,19 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
-        switch(ID)
+        Constants.Gui guiID = Constants.Gui.values()[ID];
+        switch(guiID)
         {
-            case 0:
+            case TownHall:
                 return new GuiTownHall((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
-            case 1:
+            case RenameTown:
                 return new GuiTypable((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
-            case 2:
+            case HutBuilder:
                 return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z));
-            case 3:
-                return new GuiHutDeliveryMan();
+            case HutDeliveryman:
+                return new GuiHutDeliveryman(/*(TileEntityHutDeliveryman) world.getTileEntity(x, y, z), */0, player, world, x, y, z);
+            case HutDeliverymanSettings:
+                return new GuiHutDeliveryman(/*(TileEntityHutDeliveryman) world.getTileEntity(x, y, z), */1, player, world, x, y, z);
         }
         return null;
     }

@@ -7,7 +7,6 @@ com.minecolonies.gui.townhall.currentSpecialization=Current Specialization:
 com.minecolonies.gui.townhall.rename=Rename Colony
 com.minecolonies.gui.townhall.information=Information
 com.minecolonies.gui.townhall.actions=Actions
-com.minecolonies.gui.townhall.settings=Settings
 com.minecolonies.gui.townhall.rename.done=Done
 com.minecolonies.gui.townhall.rename.title=Rename Your City
 
@@ -21,5 +20,6 @@ com.minecolonies.gui.workerHuts.recall=Recall Worker
 com.minecolonies.gui.workerHuts.build=Build Building
 com.minecolonies.gui.workerHuts.repair=Repair Building
 com.minecolonies.gui.workerHuts.buildType=Build Type:
+com.minecolonies.gui.workerHuts.settings=Settings
 
 tile.myBlock.name=My Block

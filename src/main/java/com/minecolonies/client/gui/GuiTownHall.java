@@ -1,6 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
@@ -64,7 +65,7 @@ public class GuiTownHall extends GuiBase {
         //Bottom navigation
         addButton(idInformation, I18n.format("com.minecolonies.gui.townhall.information"), middleX - 76, middleY + ySize - 34, 64, buttonHeight);
         addButton(idActions, I18n.format("com.minecolonies.gui.townhall.actions"), middleX - 10, middleY + ySize - 34, 44, buttonHeight);
-        addButton(idSettings, I18n.format("com.minecolonies.gui.townhall.settings"), middleX + xSize / 2 - 50, middleY + ySize - 34, 46, buttonHeight);
+        addButton(idSettings, I18n.format("com.minecolonies.gui.workerHuts.settings"), middleX + xSize / 2 - 50, middleY + ySize - 34, 46, buttonHeight);
     }
 
     @Override
@@ -79,7 +80,7 @@ public class GuiTownHall extends GuiBase {
             case idToggleSpecialization:
                 break;
             case idRenameColony:
-                player.openGui(MineColonies.instance, 1, world, x, y, z);
+                player.openGui(MineColonies.instance, Constants.Gui.RenameTown.ordinal(), world, x, y, z);
                 break;
             case idInformation:
                 break;
