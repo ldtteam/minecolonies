@@ -2,6 +2,7 @@ package com.github.lunatrius.schematica.world;
 
 import com.github.lunatrius.schematica.config.BlockInfo;
 import com.github.lunatrius.schematica.lib.Reference;
+import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -94,7 +95,7 @@ public class SchematicWorld extends World {
 				try {
 					tileEntity.validate();
 				} catch (Exception e) {
-					Reference.logger.error(String.format("TileEntity validation for %s failed!", tileEntity.getClass()), e);
+					MineColonies.logger.error(String.format("TileEntity validation for %s failed!", tileEntity.getClass()), e);
 				}
 			}
 		}
@@ -160,7 +161,7 @@ public class SchematicWorld extends World {
 
 			return getIconFromNBT(tagCompound);
 		} catch (Exception e) {
-			Reference.logger.error("Failed to read schematic icon!", e);
+			MineColonies.logger.error("Failed to read schematic icon!", e);
 		}
 
 		return SchematicWorld.DEFAULT_ICON.copy();
@@ -394,7 +395,7 @@ public class SchematicWorld extends World {
 			try {
 				tileEntity.validate();
 			} catch (Exception e) {
-				Reference.logger.error(String.format("TileEntity validation for %s failed!", tileEntity.getClass()), e);
+				MineColonies.logger.error(String.format("TileEntity validation for %s failed!", tileEntity.getClass()), e);
 			}
 		}
 	}

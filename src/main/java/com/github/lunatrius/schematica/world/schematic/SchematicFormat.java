@@ -2,6 +2,7 @@ package com.github.lunatrius.schematica.world.schematic;
 
 import com.github.lunatrius.schematica.lib.Reference;
 import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.minecolonies.MineColonies;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
@@ -41,7 +42,7 @@ public abstract class SchematicFormat {
 
 			return schematicFormat.readFromNBT(tagCompound);
 		} catch (Exception ex) {
-			Reference.logger.error("Failed to read schematic!", ex);
+			MineColonies.logger.error("Failed to read schematic!", ex);
 		}
 
 		return null;
@@ -61,7 +62,7 @@ public abstract class SchematicFormat {
 
             return schematicFormat.readFromNBT(tagCompound);
         } catch (Exception ex) {
-            Reference.logger.error("Failed to read schematic!", ex);
+            MineColonies.logger.error("Failed to read schematic!", ex);
         }
 
         return null;
@@ -92,7 +93,7 @@ public abstract class SchematicFormat {
 
 			return true;
 		} catch (Exception ex) {
-			Reference.logger.error("Failed to write schematic!", ex);
+			MineColonies.logger.error("Failed to write schematic!", ex);
 		}
 
 		return false;

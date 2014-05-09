@@ -2,6 +2,7 @@ package com.github.lunatrius.schematica.world.schematic;
 
 import com.github.lunatrius.schematica.lib.Reference;
 import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -117,7 +118,7 @@ public class SchematicAlpha extends SchematicFormat {
 				int pos = tileEntity.xCoord + (tileEntity.yCoord * world.getLength() + tileEntity.zCoord) * world.getWidth();
 				if (--count > 0) {
 					Block block = world.getBlockRaw(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
-					Reference.logger.error(String.format("Block %s[%s] with TileEntity %s failed to save! Replacing with bedrock...", block, block != null ? GameData.getBlockRegistry().getNameForObject(block) : "?", tileEntity.getClass().getName()), e);
+					MineColonies.logger.error(String.format("Block %s[%s] with TileEntity %s failed to save! Replacing with bedrock...", block, block != null ? GameData.getBlockRegistry().getNameForObject(block) : "?", tileEntity.getClass().getName()), e);
 				}
 				localBlocks[pos] = (byte) GameData.getBlockRegistry().getId(Blocks.bedrock);
 				localMetadata[pos] = 0;

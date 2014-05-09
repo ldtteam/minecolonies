@@ -18,10 +18,12 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION)
 public class MineColonies
 {
+    public static Logger logger;
 
     public static final PacketPipeline packetPipeline = new PacketPipeline();
 
@@ -35,6 +37,7 @@ public class MineColonies
     public void preInit(FMLPreInitializationEvent event)
     {
         Reference.logger = event.getModLog();//Schematica
+        logger = event.getModLog();
 
         Reference.config = new Config(event.getSuggestedConfigurationFile());//Schematica
         Reference.config.save();//Schematica

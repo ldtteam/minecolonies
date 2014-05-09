@@ -188,7 +188,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
 
-        Schematic.loadAndPlaceSchematic(world, "test", x, y + 5, z);
+        Schematic.loadAndPlaceSchematic(world, "test", x, y + 5, z);//TODO use correct schematic
         fillChest((TileEntityChest) world.getTileEntity(x, y + 1, z));
     }
 

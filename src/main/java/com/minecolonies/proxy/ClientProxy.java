@@ -1,6 +1,5 @@
 package com.minecolonies.proxy;
 
-import com.github.lunatrius.schematica.client.events.ChatEventHandler;
 import com.github.lunatrius.schematica.client.events.KeyInputHandler;
 import com.github.lunatrius.schematica.client.events.TickHandler;
 import com.github.lunatrius.schematica.client.renderer.RendererSchematicGlobal;
@@ -37,14 +36,11 @@ public class ClientProxy extends CommonProxy
 
         this.rendererSchematicGlobal = new RendererSchematicGlobal();
         MinecraftForge.EVENT_BUS.register(this.rendererSchematicGlobal);
-        MinecraftForge.EVENT_BUS.register(new ChatEventHandler());
     }
 
     @Override
     public void registerEntityRendering()
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, new RenderBipedCitizenMulti(new ModelBiped(), new ModelEntityCitizenFemaleCitizen(), new ModelEntityCitizenFemaleNoble(), new ModelEntityCitizenFemaleAristocrat(), 1f));
-
-        MinecraftForge.EVENT_BUS.register(new ChatEventHandler());
     }
 }
