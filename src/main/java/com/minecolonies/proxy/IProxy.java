@@ -7,8 +7,4 @@ public interface IProxy
     void registerEntities();
 
     void registerEntityRendering();
-
-    void registerKeybindings();
- 
-    void registerEvents();
 }
