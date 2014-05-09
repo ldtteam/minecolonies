@@ -4,6 +4,8 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Utils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.Constants;
@@ -18,7 +20,7 @@ public class TileEntityTownHall extends TileEntityHut
     private BiomeGenBase    biome;
 
     private ArrayList<UUID> citizens;
-    private int                      maxCitizens;
+    private int             maxCitizens;
 
     public TileEntityTownHall()
     {
@@ -95,6 +97,20 @@ public class TileEntityTownHall extends TileEntityHut
             UUID uuid = UUID.fromString(nbtTagCitizenCompound.getString("citizen"));
             citizens.add(i, uuid);
         }
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+    {
+        this.readFromNBT(packet.func_148857_g());
+    }
+
+    @Override
+    public S35PacketUpdateTileEntity getDescriptionPacket()
+    {
+        NBTTagCompound nbtTagCompound = new NBTTagCompound();
+        this.writeToNBT(nbtTagCompound);
+        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, nbtTagCompound);
     }
 
     public ArrayList<UUID> getOwners()

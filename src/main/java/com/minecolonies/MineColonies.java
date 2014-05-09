@@ -7,6 +7,7 @@ import com.minecolonies.event.EventHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.items.crafting.RecipeHandler;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.network.PacketPipeline;
 import com.minecolonies.proxy.IProxy;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -19,6 +20,8 @@ import net.minecraftforge.common.MinecraftForge;
 @Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION)
 public class MineColonies
 {
+
+    public static final PacketPipeline packetPipeline = new PacketPipeline();
 
     @Mod.Instance
     public static MineColonies instance;
@@ -39,6 +42,8 @@ public class MineColonies
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
+        packetPipeline.initialize();
+
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
         proxy.registerTileEntities();
@@ -53,5 +58,8 @@ public class MineColonies
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event){}
+    public void postInit(FMLPostInitializationEvent event)
+    {
+        packetPipeline.postInitialize();
+    }
 }
