@@ -7,6 +7,7 @@ import com.minecolonies.client.model.ModelEntityCitizenFemaleNoble;
 import com.minecolonies.entity.EntityCitizen;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy
 {
@@ -14,5 +15,8 @@ public class ClientProxy extends CommonProxy
     public void registerEntityRendering()
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, new RenderBipedCitizenMulti(new ModelBiped(), new ModelEntityCitizenFemaleCitizen(), new ModelEntityCitizenFemaleNoble(), new ModelEntityCitizenFemaleAristocrat(), 1f));
+    
+        //MinecraftForge.EVENT_BUS.register(new ChatEventHandler()); //I don't have a class "ChatEventHandler" - Nico
     }
 }
+ 

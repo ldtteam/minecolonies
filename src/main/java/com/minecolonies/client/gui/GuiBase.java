@@ -6,24 +6,32 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-public class GuiBase extends GuiScreen
-{
-    protected int xSize;
-    protected int ySize;
+public class GuiBase extends GuiScreen {
+    protected int middleX, middleY, xSize, ySize;
     protected final ResourceLocation background = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiInformatorBackground.png");
 
-    protected void drawGuiForeground(){}
+    protected void addElements() {
+        middleX = (width / 2);
+        middleY = (height - ySize) / 2;
 
-    protected void addButtons(){}
+        buttonList.clear();
+        labelList.clear();
+    }
 
-    public GuiBase()
-    {
+    protected void addButton(int id, String text, int x, int y, int w, int h) {
+        buttonList.add(new GuiButton(id, x, y, w, h, text));
+    }
+
+    protected void addLabel(String text, int x, int y) {
+        labelList.add(new GuiModLabel(text, x, y));
+    }
+
+    public GuiBase() {
         xSize = 171;
         ySize = 247;
     }
 
-    protected void drawGuiBackground()
-    {
+    protected void drawGuiBackground() {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(background);
         int xCoord = (width - xSize) / 2;
@@ -32,28 +40,26 @@ public class GuiBase extends GuiScreen
     }
 
     @Override
-    public void drawScreen(int par1, int par2, float par3)
-    {
+    public void drawScreen(int par1, int par2, float par3) {
         drawGuiBackground();
-        drawGuiForeground();
 
-        for(int k = 0; k < this.buttonList.size(); ++k)
-        {
-            GuiButton guibutton = (GuiButton) this.buttonList.get(k);
-            guibutton.drawButton(this.mc, par1, par2);
+        int k;
+        for (k = 0; k < this.buttonList.size(); ++k) {
+            ((GuiButton) this.buttonList.get(k)).drawButton(this.mc, par1, par2);
+        }
+        for (k = 0; k < this.labelList.size(); ++k) {
+            ((GuiModLabel) this.labelList.get(k)).drawLabel(this.mc);
         }
     }
 
     @Override
-    public boolean doesGuiPauseGame()
-    {
+    public boolean doesGuiPauseGame() {
         return false;
     }
 
     @Override
-    public void initGui()
-    {
-        addButtons();
+    public void initGui() {
+        addElements();
         super.initGui();
     }
 }

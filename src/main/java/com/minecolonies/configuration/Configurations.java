@@ -12,6 +12,6 @@ public class Configurations
     Holders
      */
     public static int workingRangeTownhall;
-    public static String[] cityNames = {"1", "2"}; //TODO add names
+    public static String[] cityNames = {"myCity", "yourCity"}; //TODO add names
     public static boolean allowInfiniteSupplyChests;
 }
