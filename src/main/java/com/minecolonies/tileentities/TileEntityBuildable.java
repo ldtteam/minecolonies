@@ -1,5 +1,7 @@
 package com.minecolonies.tileentities;
 
+import com.minecolonies.MineColonies;
+import com.minecolonies.network.packets.TileEntityPacket;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
 
@@ -34,6 +36,14 @@ public abstract class TileEntityBuildable extends TileEntityChest
         nbtTagCompound.setBoolean("hasWorker", hasWorker);
         nbtTagCompound.setString("hutName", hutName);
         compound.setTag("nbtTagCompound", nbtTagCompound);
+    }
+
+    public void sendPacket() {
+        NBTTagCompound data = new NBTTagCompound();
+        this.writeToNBT(data);
+        TileEntityPacket packet = new TileEntityPacket(xCoord, yCoord, zCoord, data);
+
+        MineColonies.packetPipeline.sendToServer(packet);
     }
 
     public int getBuildingLevel()
