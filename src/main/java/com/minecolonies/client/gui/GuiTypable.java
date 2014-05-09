@@ -5,6 +5,7 @@ import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
@@ -12,9 +13,9 @@ import org.lwjgl.input.Keyboard;
 public class GuiTypable extends GuiScreen
 {
     private TileEntityTownHall tileEntityTownHall;
-    private GuiTextField guiTextField = null;
-    private final String message = "Rename Your City";
-    private String       newCityName  = message;
+    private       GuiTextField guiTextField = null;
+    private final String       title        = I18n.format("com.minecolonies.gui.townhall.rename.title");
+    private       String       newCityName  = tileEntityTownHall.getCityName();
     private EntityPlayer player;
     private World        world;
     private int          x;
@@ -23,7 +24,6 @@ public class GuiTypable extends GuiScreen
 
     public GuiTypable(TileEntityTownHall tileEntityTownHall, EntityPlayer player, World world, int x, int y, int z)
     {
-        this.tileEntityTownHall = tileEntityTownHall;
         this.tileEntityTownHall = tileEntityTownHall;
         this.player = player;
         this.world = world;
@@ -39,7 +39,7 @@ public class GuiTypable extends GuiScreen
         Keyboard.enableRepeatEvents(true);
         //Do Not Move down, hides crosshair
         guiTextField = new GuiTextField(this.fontRendererObj, this.width / 2 - 75, this.height / 2 - 10, 150, 18);
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 110, "Done"));
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 110, I18n.format("com.minecolonies.gui.townhall.rename.done")));
 
         this.guiTextField.setMaxStringLength(1024);
         this.guiTextField.setText(newCityName);
@@ -75,7 +75,7 @@ public class GuiTypable extends GuiScreen
         {
             if(guiButton.id == 0)
             {
-                if(!newCityName.equals(message))
+                if(!newCityName.equals(""))
                 {
                     tileEntityTownHall.setCityName(newCityName);
                     tileEntityTownHall.markDirty();
@@ -96,7 +96,7 @@ public class GuiTypable extends GuiScreen
     public void drawScreen(int par1, int par2, float par3)
     {
         super.drawScreen(par1, par2, par3);
-        fontRendererObj.drawString(message, this.width / 2 - fontRendererObj.getStringWidth(message) / 2, this.height / 2 - 20, 0xffffff);
+        fontRendererObj.drawString(title, this.width / 2 - fontRendererObj.getStringWidth(title) / 2, this.height / 2 - 20, 0xffffff);
         this.guiTextField.drawTextBox();
     }
 }

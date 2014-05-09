@@ -8,5 +8,7 @@ com.minecolonies.gui.townhall.rename=Rename Colony
 com.minecolonies.gui.townhall.information=Information
 com.minecolonies.gui.townhall.actions=Actions
 com.minecolonies.gui.townhall.settings=Settings
+com.minecolonies.gui.townhall.rename.done=Done
+com.minecolonies.gui.townhall.rename.title=Rename Your City
 
 tile.myBlock.name=My Block
