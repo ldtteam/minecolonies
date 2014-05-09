@@ -1,12 +1,14 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.network.packets.TileEntityPacket;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
@@ -15,7 +17,7 @@ public class GuiTypable extends GuiScreen
     private TileEntityTownHall tileEntityTownHall;
     private       GuiTextField guiTextField = null;
     private final String       title        = I18n.format("com.minecolonies.gui.townhall.rename.title");
-    private       String       newCityName  = tileEntityTownHall.getCityName();
+    private       String       newCityName;
     private EntityPlayer player;
     private World        world;
     private int          x;
@@ -30,6 +32,8 @@ public class GuiTypable extends GuiScreen
         this.x = x;
         this.y = y;
         this.z = z;
+
+        newCityName = tileEntityTownHall.getCityName();
     }
 
     @Override
@@ -78,7 +82,7 @@ public class GuiTypable extends GuiScreen
                 if(!newCityName.equals(""))
                 {
                     tileEntityTownHall.setCityName(newCityName);
-                    tileEntityTownHall.markDirty();
+                    tileEntityTownHall.sendPacket();
                 }
                 this.mc.displayGuiScreen((GuiScreen) null);
                 player.openGui(MineColonies.instance, 0, world, x, y, z);
