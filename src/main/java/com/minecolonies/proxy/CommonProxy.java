@@ -1,6 +1,9 @@
 package com.minecolonies.proxy;
 
-import com.minecolonies.tilentities.TileEntityTownHall;
+import com.minecolonies.MineColonies;
+import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.tileentities.TileEntityTownHall;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -40,5 +43,17 @@ public abstract class CommonProxy implements IProxy
     public static NBTTagCompound getEntityData(String name)
     {
         return playerPropertiesData.remove(name);
+    }
+    /*
+    * @param entityName A unique name for the entity
+    * @param id A mod specific ID for the entity
+    * @param mod The mod
+    * @param trackingRange The range at which MC will send tracking updates
+    * @param updateFrequency The frequency of tracking updates
+    * @param sendsVelocityUpdates Whether to send velocity information packets as well
+    * */
+    public void registerEntities()
+    {
+        EntityRegistry.registerModEntity(EntityCitizen.class, "entityCitizen",0, MineColonies.instance, 250, 3, true);
     }
 }

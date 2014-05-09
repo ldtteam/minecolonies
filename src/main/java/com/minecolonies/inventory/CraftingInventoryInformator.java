@@ -1,6 +1,6 @@
 package com.minecolonies.inventory;
 
-import com.minecolonies.tilentities.TileEntityTownHall;
+import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;

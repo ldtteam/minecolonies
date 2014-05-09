@@ -21,7 +21,7 @@ public class ConfigurationHandler
         {
             config.load();
             Configurations.workingRangeTownhall = config.get("Game Play", "Working Range Townhall: ", DEFAULT_WORKINGRANGETOWNHALL).getInt(DEFAULT_WORKINGRANGETOWNHALL);
-            Configurations.allowInfinitePlacing = config.get("Game Play", "Allow infinite placing of Supply Chests: ", DEFAULT_ALLOWINFINTEPLACING).getBoolean(DEFAULT_ALLOWINFINTEPLACING);
+            Configurations.allowInfiniteSupplyChests = config.get("Game Play", "Allow infinite placing of Supply Chests: ", DEFAULT_ALLOWINFINTESUPPLYCHESTS).getBoolean(DEFAULT_ALLOWINFINTESUPPLYCHESTS);
         }
         finally
         {
