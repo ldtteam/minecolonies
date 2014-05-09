@@ -11,14 +11,15 @@ com.minecolonies.gui.townhall.settings=Settings
 com.minecolonies.gui.townhall.rename.done=Done
 com.minecolonies.gui.townhall.rename.title=Rename Your City
 
-com.minecolonies.gui.builderHut.buildersHut=Builders Hut
-com.minecolonies.gui.builderHut.workerAssigned=Worker Assigned:
-com.minecolonies.gui.builderHut.workerLevel=Worker Level:
-com.minecolonies.gui.builderHut.hire=Hire Worker
-com.minecolonies.gui.builderHut.fire=Fire Worker
-com.minecolonies.gui.builderHut.recall=Recall Worker
-com.minecolonies.gui.builderHut.build=Build Building
-com.minecolonies.gui.builderHut.repair=Repair Building
-com.minecolonies.gui.builderHut.buildType=Build Type:
+com.minecolonies.gui.workerHuts.buildersHut=Builders Hut
+com.minecolonies.gui.workerHuts.deliverymansHut=Deliverymans Hut
+com.minecolonies.gui.workerHuts.workerAssigned=Worker Assigned:
+com.minecolonies.gui.workerHuts.workerLevel=Worker Level:
+com.minecolonies.gui.workerHuts.hire=Hire Worker
+com.minecolonies.gui.workerHuts.fire=Fire Worker
+com.minecolonies.gui.workerHuts.recall=Recall Worker
+com.minecolonies.gui.workerHuts.build=Build Building
+com.minecolonies.gui.workerHuts.repair=Repair Building
+com.minecolonies.gui.workerHuts.buildType=Build Type:
 
 tile.myBlock.name=My Block

@@ -1,6 +1,7 @@
 package com.minecolonies.network;
 
 import com.minecolonies.client.gui.GuiHutBuilder;
+import com.minecolonies.client.gui.GuiHutDeliveryMan;
 import com.minecolonies.client.gui.GuiTownHall;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.client.gui.GuiTypable;
@@ -34,6 +35,8 @@ public class GuiHandler implements IGuiHandler
                 return new GuiTypable((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
             case 2:
                 return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z));
+            case 3:
+                return new GuiHutDeliveryMan();
         }
         return null;
     }

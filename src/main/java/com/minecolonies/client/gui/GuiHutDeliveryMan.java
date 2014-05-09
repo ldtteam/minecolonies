@@ -1,24 +1,23 @@
 package com.minecolonies.client.gui;
 
-import com.minecolonies.tileentities.TileEntityHutBuilder;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 
-public class GuiHutBuilder extends GuiBase {
-    private TileEntityHutBuilder tileEntity;
-    private int numberOfButtons = 4;
+public class GuiHutDeliveryMan extends GuiBase {
+    //private TileEntityHutDeliveryMan tileEntity; //There is no TileEntity for now - Nico
+    protected final int idSettings = 5;
     private int span = 10;
 
-    public GuiHutBuilder(TileEntityHutBuilder tileEntityHutBuilder) {
+    public GuiHutDeliveryMan(/*TileEntityHutBuilder tileEntity*/) {
         super();
-        this.tileEntity = tileEntityHutBuilder;
+        //this.tileEntity = tileEntity;
     }
 
     @Override
     protected void addElements() {
         super.addElements();
 
-        addDefaultWorkerLayout(I18n.format("com.minecolonies.gui.workerHuts.buildersHut"), "John R. Jones", "xx (yy)", "xxxxxxxx", span);
+        addDefaultWorkerLayout(I18n.format("com.minecolonies.gui.workerHuts.deliverymansHut"), "John R. Jones", "xx (yy)", "xxxxxxxx", span);
     }
 
     @Override
@@ -41,6 +40,8 @@ public class GuiHutBuilder extends GuiBase {
             case idBuildBuilding:
                 break;
             case idRepairBuilding:
+                break;
+            case idSettings:
                 break;
         }
     }

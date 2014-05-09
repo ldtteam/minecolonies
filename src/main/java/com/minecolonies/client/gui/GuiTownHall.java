@@ -18,9 +18,7 @@ public class GuiTownHall extends GuiBase {
             idInformation = 5,
             idActions = 6,
             idSettings = 7;
-    private int buttonWidth = 116,
-            buttonHeight = 20,
-            buttonSpan = 4,
+    private int buttonSpan = 4,
             span = 30;
 
     private EntityPlayer player;
