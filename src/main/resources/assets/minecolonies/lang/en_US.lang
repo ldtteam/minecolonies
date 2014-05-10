@@ -20,4 +20,7 @@ tile.blockHutLumberjack.name=Lumberjack's Hut
 tile.blockHutMiner.name=Miner's Hut
 tile.blockHutStonemason.name=Stonemason's Hut
 tile.blockHutTownhall.name=Town Hall
+
+item.supplyChestDeployer.name=Supply Chest
+
 itemGroup.minecolonies=MineColonies

@@ -9,6 +9,7 @@ import com.minecolonies.util.IColony;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -35,6 +36,12 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     public String getName()
     {
         return name;
+    }
+
+    @Override
+    public void registerIcons(IIconRegister par1IconRegister)
+    {
+        this.itemIcon = par1IconRegister.registerIcon(Constants.MODID + ":" + getName());
     }
 
     @Override
