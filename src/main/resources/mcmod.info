@@ -7,8 +7,8 @@
   "mcversion": "${mcversion}",
   "url": "http://minecolonies.com/",
   "updateUrl": "",
-  "authorList": [""],
-  "credits": "MineColonies Mod Team",
+  "authorList": ["MineColonies Mod Team"],
+  "credits": "Lunatrius",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
