@@ -1,5 +1,6 @@
 package com.minecolonies.lib;
 
+import com.github.lunatrius.schematica.client.renderer.RendererSchematicChunk;
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.github.lunatrius.schematica.world.schematic.SchematicFormat;
 import com.minecolonies.util.IColony;
@@ -13,8 +14,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +34,8 @@ public class Schematic
      * North-West corner
      */
     private int x = -1, y = -1, z = -1;
+    private ChunkCache mcWorldCache;
+    public final  List<RendererSchematicChunk> sortedRendererSchematicChunk = new ArrayList<RendererSchematicChunk>();
 
     private Schematic(World worldObj, SchematicWorld schematicWorld)
     {
@@ -117,20 +120,20 @@ public class Schematic
 
     }
 
-    public static void saveSchematic(World world, Vector3f from, Vector3f to, String file, String icon)
+    public static void saveSchematic(World world, Vec3 from, Vec3 to, String file, String icon)
     {
         if(world == null || from == null || to == null || file == null) return;
         SchematicFormat.writeToFile(MinecraftServer.getServer().getFile("/schematics"), file, scanSchematic(world, from, to, icon));
     }
 
-    public static SchematicWorld scanSchematic(World world, Vector3f from, Vector3f to, String icon)
+    public static SchematicWorld scanSchematic(World world, Vec3 from, Vec3 to, String icon)
     {
-        int minX = (int) Math.min(from.x, to.x);
-        int maxX = (int) Math.max(from.x, to.x);
-        int minY = (int) Math.min(from.y, to.y);
-        int maxY = (int) Math.max(from.y, to.y);
-        int minZ = (int) Math.min(from.z, to.z);
-        int maxZ = (int) Math.max(from.z, to.z);
+        int minX = (int) Math.min(from.xCoord, to.xCoord);
+        int maxX = (int) Math.max(from.xCoord, to.xCoord);
+        int minY = (int) Math.min(from.yCoord, to.yCoord);
+        int maxY = (int) Math.max(from.yCoord, to.yCoord);
+        int minZ = (int) Math.min(from.zCoord, to.zCoord);
+        int maxZ = (int) Math.max(from.zCoord, to.zCoord);
         short width = (short) (Math.abs(maxX - minX) + 1);
         short height = (short) (Math.abs(maxY - minY) + 1);
         short length = (short) (Math.abs(maxZ - minZ) + 1);
@@ -170,7 +173,7 @@ public class Schematic
         }
         else
         {
-            return new SchematicWorld(new ItemStack(Blocks.grass), blocks, metadata, tileEntities, width, height, length);
+            return new SchematicWorld(new ItemStack(Blocks.red_mushroom), blocks, metadata, tileEntities, width, height, length);
         }
     }
 
@@ -227,5 +230,20 @@ public class Schematic
     public boolean hasSchematic()
     {
         return schematic != null;
+    }
+
+    //TODO rendering
+
+    public void reloadChunkCache() {
+        if (schematic != null) {
+            this.mcWorldCache = new ChunkCache(world, x - 1, y - 1, z - 1, x + schematic.getWidth() + 1, y + schematic.getHeight() + 1, z + schematic.getLength() + 1, 0);
+            refreshSchematic();
+        }
+    }
+
+    public void refreshSchematic() {
+        for (RendererSchematicChunk renderer : this.sortedRendererSchematicChunk) {
+            renderer.setDirty();
+        }
     }
 }
