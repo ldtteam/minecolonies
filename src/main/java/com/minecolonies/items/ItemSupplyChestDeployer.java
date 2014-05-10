@@ -189,13 +189,13 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
 
         Schematic.loadAndPlaceSchematic(world, "test", x, y + 5, z);//TODO use correct schematic
-        fillChest(world, (TileEntityChest) world.getTileEntity(x, y + 1, z));
+        fillChest((TileEntityChest) world.getTileEntity(x, y + 1, z));
     }
 
-    private void fillChest(World world, TileEntityChest chest) {
+    private void fillChest(TileEntityChest chest) {
         //TODO chest.setInventorySlotContents(slotID, ItemStack);
 
-        switch(world.difficultySetting)
+        switch(chest.getWorldObj().difficultySetting)
         {
             //The easier the difficulty, the more loot recieved
             case PEACEFUL:
