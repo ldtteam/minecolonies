@@ -5,7 +5,7 @@ import com.minecolonies.network.GuiHandler;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.items.ModItems;
-import com.minecolonies.items.crafting.RecipeHandler;
+import com.minecolonies.util.RecipeHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.PacketPipeline;
 import com.minecolonies.proxy.IProxy;

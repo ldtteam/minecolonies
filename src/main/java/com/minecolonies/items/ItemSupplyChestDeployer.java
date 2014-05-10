@@ -3,7 +3,7 @@ package com.minecolonies.items;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.lib.Schematic;
+import com.minecolonies.util.Schematic;
 import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
 import com.minecolonies.util.Utils;

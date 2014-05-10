@@ -1,8 +1,7 @@
-package com.minecolonies.lib;
+package com.minecolonies.util;
 
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.github.lunatrius.schematica.world.schematic.SchematicFormat;
-import com.minecolonies.util.IColony;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;

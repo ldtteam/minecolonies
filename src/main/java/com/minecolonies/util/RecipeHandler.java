@@ -1,4 +1,4 @@
-package com.minecolonies.items.crafting;
+package com.minecolonies.util;
 
 import com.minecolonies.blocks.ModBlocks;
 import cpw.mods.fml.common.registry.GameRegistry;
