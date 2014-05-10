@@ -4,6 +4,10 @@ public interface IProxy
 {
     void registerTileEntities();
 
+    void registerKeybindings();
+
+    void registerEvents();
+
     void registerEntities();
 
     void registerEntityRendering();
