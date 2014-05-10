@@ -1,7 +1,5 @@
 package com.minecolonies;
 
-import com.github.lunatrius.schematica.config.Config;
-import com.github.lunatrius.schematica.lib.Reference;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.network.GuiHandler;
 import com.minecolonies.configuration.ConfigurationHandler;
@@ -36,11 +34,7 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        Reference.logger = event.getModLog();//Schematica
         logger = event.getModLog();
-
-        Reference.config = new Config(event.getSuggestedConfigurationFile());//Schematica
-        Reference.config.save();//Schematica
 
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
 

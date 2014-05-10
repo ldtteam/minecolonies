@@ -1,6 +1,5 @@
 package com.github.lunatrius.schematica.world.schematic;
 
-import com.github.lunatrius.schematica.lib.Reference;
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.registry.GameData;

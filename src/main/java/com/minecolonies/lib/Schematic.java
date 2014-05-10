@@ -1,6 +1,5 @@
 package com.minecolonies.lib;
 
-import com.github.lunatrius.schematica.client.renderer.RendererSchematicChunk;
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.github.lunatrius.schematica.world.schematic.SchematicFormat;
 import com.minecolonies.util.IColony;
@@ -35,7 +34,7 @@ public class Schematic
      */
     private int x = -1, y = -1, z = -1;
     private ChunkCache mcWorldCache;
-    public final  List<RendererSchematicChunk> sortedRendererSchematicChunk = new ArrayList<RendererSchematicChunk>();
+    //public final  List<RendererSchematicChunk> sortedRendererSchematicChunk = new ArrayList<RendererSchematicChunk>();
 
     private Schematic(World worldObj, SchematicWorld schematicWorld)
     {
@@ -234,16 +233,16 @@ public class Schematic
 
     //TODO rendering
 
-    public void reloadChunkCache() {
-        if (schematic != null) {
-            this.mcWorldCache = new ChunkCache(world, x - 1, y - 1, z - 1, x + schematic.getWidth() + 1, y + schematic.getHeight() + 1, z + schematic.getLength() + 1, 0);
-            refreshSchematic();
-        }
-    }
-
-    public void refreshSchematic() {
-        for (RendererSchematicChunk renderer : this.sortedRendererSchematicChunk) {
-            renderer.setDirty();
-        }
-    }
+//    public void reloadChunkCache() {
+//        if (schematic != null) {
+//            this.mcWorldCache = new ChunkCache(world, x - 1, y - 1, z - 1, x + schematic.getWidth() + 1, y + schematic.getHeight() + 1, z + schematic.getLength() + 1, 0);
+//            refreshSchematic();
+//        }
+//    }
+//
+//    public void refreshSchematic() {
+//        for (RendererSchematicChunk renderer : this.sortedRendererSchematicChunk) {
+//            renderer.setDirty();
+//        }
+//    }
 }

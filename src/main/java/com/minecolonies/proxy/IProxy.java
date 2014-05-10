@@ -4,7 +4,7 @@ public interface IProxy
 {
     void registerTileEntities();
 
-   void registerKeybindings();
+    void registerKeybindings();
 
     void registerEvents();
 

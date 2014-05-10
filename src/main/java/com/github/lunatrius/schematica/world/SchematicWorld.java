@@ -1,7 +1,6 @@
 package com.github.lunatrius.schematica.world;
 
 import com.github.lunatrius.schematica.config.BlockInfo;
-import com.github.lunatrius.schematica.lib.Reference;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
