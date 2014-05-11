@@ -1,5 +1,6 @@
 package com.minecolonies.items;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
@@ -62,13 +63,19 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      // System.out.println("hashmap 5 : " + hashmap.get(5));
 
         if(hashmap.get(1))
+        {
             for(int i = 2; i <= 5; i++)
+            {
                 if(hashmap.get(i) != null)
+                {
                     if(hashmap.get(i))
                     {
                         spawnShip(world, x, y, z, entityPlayer, i);
                         return itemStack;
                     }
+                }
+            }
+        }
         FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("You must be near a big pool of water"));
         return itemStack;
     }
@@ -195,18 +202,43 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
 
-        Schematic.loadAndPlaceSchematic(world, "test", x, y + 5, z);//TODO use correct schematic
+        placeSupplyShip(world, x, y, z, chestFacing);
+
         fillChest((TileEntityChest) world.getTileEntity(x, y + 1, z));
     }
 
+    private void placeSupplyShip(World world, int x, int y, int z, int direction)
+    {
+        switch(direction)
+        {
+            case 2://North
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x - 11, y - 2, z + 5, 3);
+                break;
+            case 3://South
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x - 20, y - 2, z - 21, 1);
+                break;
+            case 4://West
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x + 5, y - 2, z - 20, 2);
+                break;
+            case 5://East
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x - 21, y - 2, z - 11, 0);
+                break;
+        }
+    }
+
     private void fillChest(TileEntityChest chest) {
+        if (chest == null)
+        {
+            MineColonies.logger.error("Supply chest tile entity was null.");
+            return;
+        }
         //TODO chest.setInventorySlotContents(slotID, ItemStack);
 
         switch(chest.getWorldObj().difficultySetting)
         {
             //The easier the difficulty, the more loot recieved
             case PEACEFUL:
-                //TODO peacefull loot
+                //TODO peaceful loot
             case EASY:
                 //TODO easy loot
             case NORMAL:
