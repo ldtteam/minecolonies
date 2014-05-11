@@ -1,8 +1,11 @@
 package com.minecolonies.util;
 
 import com.minecolonies.tileentities.TileEntityTownHall;
+import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -135,5 +138,10 @@ public class Utils
     public static boolean isWater(World world, int x, int y, int z)
     {
         return world.getBlock(x, y, z) == Blocks.water || world.getBlock(x, y, z) == Blocks.flowing_water;
+    }
+
+    public static void sendPlayerMessage(EntityPlayer player, String message)
+    {
+        player.addChatComponentMessage(new ChatComponentText(message));
     }
 }

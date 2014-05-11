@@ -77,7 +77,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
                 }
             }
         }
-        FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("You must be near a big pool of water"));
+        Utils.sendPlayerMessage(entityPlayer, "You must be near a big pool of water");
         return itemStack;
     }
 
