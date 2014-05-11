@@ -43,11 +43,11 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
     @Override
     public void registerBlockIcons(IIconRegister iconRegister)
     {
-        icons[0] = iconRegister.registerIcon(Constants.MODID.toLowerCase() + ":" + getName() + "top");
+        icons[0] = iconRegister.registerIcon(Constants.MODID + ":" + getName() + "Top");
         icons[1] = icons [0];
         for(int i = 2; i <= 5; i++)
         {
-            icons[i] = iconRegister.registerIcon(Constants.MODID.toLowerCase() + ":" + "sideChest");
+            icons[i] = iconRegister.registerIcon(Constants.MODID + ":" + "sideChest");
         }
     }
 

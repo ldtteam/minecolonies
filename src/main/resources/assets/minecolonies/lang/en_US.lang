@@ -9,6 +9,18 @@ com.minecolonies.gui.townhall.information=Information
 com.minecolonies.gui.townhall.actions=Actions
 com.minecolonies.gui.townhall.settings=Settings
 com.minecolonies.gui.townhall.rename.done=Done
-com.minecolonies.gui.townhall.rename.title=Rename Your City
+com.minecolonies.gui.townhall.rename.title=Rename Your Colony
 
-tile.myBlock.name=My Block
+tile.blockHutBaker.name=Baker's Hut
+tile.blockHutBlacksmith.name=Blacksmith's Hut
+tile.blockHutBuilder.name=Builder's Hut
+tile.blockHutDeliveryman.name=Deliveryman's Hut
+tile.blockHutFarmer.name=Farmer's Hut
+tile.blockHutLumberjack.name=Lumberjack's Hut
+tile.blockHutMiner.name=Miner's Hut
+tile.blockHutStonemason.name=Stonemason's Hut
+tile.blockHutTownhall.name=Town Hall
+
+item.supplyChestDeployer.name=Supply Chest
+
+itemGroup.minecolonies=MineColonies
