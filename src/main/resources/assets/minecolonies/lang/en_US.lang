@@ -1,3 +1,6 @@
+com.minecolonies.gui.yes=Yes
+com.minecolonies.gui.no=No
+
 com.minecolonies.gui.townhall.build=Build Townhall
 com.minecolonies.gui.townhall.repair=Repair Townhall
 com.minecolonies.gui.townhall.recall=Recall Citizens
@@ -5,7 +8,6 @@ com.minecolonies.gui.townhall.togglespec=Toggle Specialization
 com.minecolonies.gui.townhall.currTownhallName=Colony Name:
 com.minecolonies.gui.townhall.currentSpecialization=Current Specialization:
 com.minecolonies.gui.townhall.rename=Rename Colony
-com.minecolonies.gui.townhall.information=Information
 com.minecolonies.gui.townhall.actions=Actions
 com.minecolonies.gui.townhall.rename.done=Done
 com.minecolonies.gui.townhall.rename.title=Rename Your City
@@ -20,6 +22,16 @@ com.minecolonies.gui.workerHuts.recall=Recall Worker
 com.minecolonies.gui.workerHuts.build=Build Building
 com.minecolonies.gui.workerHuts.repair=Repair Building
 com.minecolonies.gui.workerHuts.buildType=Build Type:
+com.minecolonies.gui.workerHuts.information=Information
 com.minecolonies.gui.workerHuts.settings=Settings
+
+com.minecolonies.gui.deliverymanHut.goldToBlacksmith=Gold to Blacksmith
+com.minecolonies.gui.deliverymanHut.diamondToBlacksmith=Diamond to Blacksmith
+com.minecolonies.gui.deliverymanHut.stoneToStonemason=Stone to Stonemason
+com.minecolonies.gui.deliverymanHut.sandToStonemason=Sand to Stonemason
+com.minecolonies.gui.deliverymanHut.netherrackToStonemason=Netherrack to Stonemason
+com.minecolonies.gui.deliverymanHut.quartzToStonemason=Quartz to Stonemason
+com.minecolonies.gui.deliverymanHut.armorToStonemason=Armor to Guards
+com.minecolonies.gui.deliverymanHut.weaponsToGuards=Weapons to Guards
 
 tile.myBlock.name=My Block

@@ -7,18 +7,29 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
+
 public class GuiBase extends GuiScreen {
     protected int middleX, middleY, xSize, ySize,
             buttonWidth = 116,
-            buttonHeight = 20;
+            buttonHeight = 20,
+            buttonSpan = 4;
     protected final int idHireWorker = 0, //IDs for default layout
             idFireWorker = 1,
             idRecallWorker = 2,
-            idBuildBuilding = 3,
-            idRepairBuilding = 4;
+            idBuildBuilding = 3, idRepairBuilding = 4;
+    protected ArrayList iconList;
     protected final ResourceLocation background = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiInformatorBackground.png");
 
-    protected void addElements() {
+    public GuiBase() {
+        super();
+        xSize = 171;
+        ySize = 247;
+        iconList = new ArrayList();
+    }
+
+    protected void addElements()
+    {
         middleX = (width / 2);
         middleY = (height - ySize) / 2;
 
@@ -26,17 +37,20 @@ public class GuiBase extends GuiScreen {
         labelList.clear();
     }
 
-    protected void addButton(int id, String text, int x, int y, int w, int h) {
+    protected void addButton(int id, String text, int x, int y, int w, int h)
+    {
         addButton(id, text, x, y, w, h, true);
     }
 
-    protected void addButton(int id, String text, int x, int y, int w, int h, boolean visible) {
+    protected void addButton(int id, String text, int x, int y, int w, int h, boolean visible)
+    {
         GuiButton button = new GuiButton(id, x, y, w, h, text);
         button.visible = visible;
         buttonList.add(id, button);
     }
 
-    protected void addLabel(String text, int x, int y) {
+    protected void addLabel(String text, int x, int y)
+    {
         labelList.add(new GuiModLabel(text, x, y));
     }
 
@@ -63,11 +77,6 @@ public class GuiBase extends GuiScreen {
         addLabel(type, middleX + 10, middleY + span + 160);
     }
 
-    public GuiBase() {
-        xSize = 171;
-        ySize = 247;
-    }
-
     protected void drawGuiBackground() {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(background);
@@ -77,15 +86,18 @@ public class GuiBase extends GuiScreen {
     }
 
     @Override
-    public void drawScreen(int par1, int par2, float par3) {
+    public void drawScreen(int mouseX, int mouseY, float par3) {
         drawGuiBackground();
 
         int k;
-        for (k = 0; k < this.buttonList.size(); ++k) {
-            ((GuiButton) this.buttonList.get(k)).drawButton(this.mc, par1, par2);
+        for (k = 0; k < this.buttonList.size(); k++) {
+            ((GuiButton) this.buttonList.get(k)).drawButton(this.mc, mouseX, mouseY);
         }
-        for (k = 0; k < this.labelList.size(); ++k) {
+        for (k = 0; k < this.labelList.size(); k++) {
             ((GuiModLabel) this.labelList.get(k)).drawLabel(this.mc);
+        }
+        for (k = 0; k < this.iconList.size(); k++) {
+            ((GuiModIcon) this.iconList.get(k)).drawIcon(this.mc, itemRender);
         }
     }
 

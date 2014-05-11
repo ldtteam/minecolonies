@@ -63,7 +63,7 @@ public class GuiTownHall extends GuiBase {
         addButton(idRenameColony, I18n.format("com.minecolonies.gui.townhall.rename"), middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight);
 
         //Bottom navigation
-        addButton(idInformation, I18n.format("com.minecolonies.gui.townhall.information"), middleX - 76, middleY + ySize - 34, 64, buttonHeight);
+        addButton(idInformation, I18n.format("com.minecolonies.gui.workerHuts.information"), middleX - 76, middleY + ySize - 34, 64, buttonHeight);
         addButton(idActions, I18n.format("com.minecolonies.gui.townhall.actions"), middleX - 10, middleY + ySize - 34, 44, buttonHeight);
         addButton(idSettings, I18n.format("com.minecolonies.gui.workerHuts.settings"), middleX + xSize / 2 - 50, middleY + ySize - 34, 46, buttonHeight);
     }
