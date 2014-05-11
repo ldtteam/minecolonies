@@ -12,6 +12,7 @@ import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -77,7 +78,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
                 }
             }
         }
-        Utils.sendPlayerMessage(entityPlayer, "You must be near a big pool of water");
+        Utils.sendPlayerMessage(entityPlayer, I18n.format("item.supplyChestDeployer.invalid"));
         return itemStack;
     }
 
