@@ -2,6 +2,7 @@ package com.minecolonies.network;
 
 import java.util.*;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.network.packets.TileEntityPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -44,17 +45,17 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
      */
     public boolean registerPacket(Class<? extends AbstractPacket> clazz) {
         if (this.packets.size() > 256) {
-            // You should log here!!
+            MineColonies.logger.error("Packet Registration Failure: You can't register more than 256 packets.");
             return false;
         }
 
         if (this.packets.contains(clazz)) {
-            // You should log here!!
+            MineColonies.logger.error("Packet Registration Failure: Packet already registered: " + clazz.getName());
             return false;
         }
 
         if (this.isPostInitialised) {
-            // You should log here!!
+            MineColonies.logger.error("Packet Registration Failure: Packet registration closed.");
             return false;
         }
 
