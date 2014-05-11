@@ -22,5 +22,6 @@ tile.blockHutStonemason.name=Stonemason's Hut
 tile.blockHutTownhall.name=Town Hall
 
 item.supplyChestDeployer.name=Supply Chest
+item.scepterGold.name=Building Tool
 
 itemGroup.minecolonies=MineColonies

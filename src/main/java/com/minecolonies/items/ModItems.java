@@ -5,9 +5,11 @@ import net.minecraft.item.Item;
 public final class ModItems
 {
     public static Item supplyChest;
+    public static Item buildTool;
 
     public static void init()
     {
         supplyChest = new ItemSupplyChestDeployer();
+        buildTool = new ItemBuildTool();
     }
 }
