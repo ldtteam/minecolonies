@@ -1,6 +1,7 @@
 package com.minecolonies.items;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
@@ -232,20 +233,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
             MineColonies.logger.error("Supply chest tile entity was null.");
             return;
         }
-        //TODO chest.setInventorySlotContents(slotID, ItemStack);
-
-        switch(chest.getWorldObj().difficultySetting)
-        {
-            //The easier the difficulty, the more loot recieved
-            case PEACEFUL:
-                //TODO peaceful loot
-            case EASY:
-                //TODO easy loot
-            case NORMAL:
-                //TODO normal loot
-            case HARD:
-                //TODO hard loot
-                break;
-        }
+        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownhall));
+        chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
     }
 }
