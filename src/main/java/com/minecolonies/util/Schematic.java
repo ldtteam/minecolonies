@@ -70,10 +70,12 @@ public class Schematic
 
                     if(block == Blocks.air)
                     {
-                        continue;
+                        world.setBlockToAir(x + i, y + j, z + k);
                     }
-
-                    world.setBlock(x + i, y + j, z + k, block, metadata, 0x02);
+                    else
+                    {
+                        world.setBlock(x + i, y + j, z + k, block, metadata, 0x02);
+                    }
                 }
             }
         }
