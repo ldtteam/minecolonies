@@ -8,25 +8,19 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-public class GuiTownHall extends GuiBase {
-    private TileEntityTownHall tileEntityTownHall;
+public class GuiTownHall extends GuiBase
+{
     //private final int numberOfButtons = 8; //This variable is unused - Nico
-    private final int idBuildTownhall = 0,
-            idRepairTownhall = 1,
-            idRecallCitizens = 2,
-            idToggleSpecialization = 3,
-            idRenameColony = 4,
-            idInformation = 5,
-            idActions = 6,
-            idSettings = 7;
-    private int buttonSpan = 4,
-            span = 30;
+    private final int idBuildTownhall = 0, idRepairTownhall = 1, idRecallCitizens = 2, idToggleSpecialization = 3, idRenameColony = 4, idInformation = 5, idActions = 6, idSettings = 7;
+    private TileEntityTownHall tileEntityTownHall;
+    private int buttonSpan = 4, span = 30;
 
     private EntityPlayer player;
-    private World world;
-    private int x, y, z;
+    private World        world;
+    private int          x, y, z;
 
-    public GuiTownHall(TileEntityTownHall tileEntityTownHall, EntityPlayer player, World world, int x, int y, int z) {
+    public GuiTownHall(TileEntityTownHall tileEntityTownHall, EntityPlayer player, World world, int x, int y, int z)
+    {
         super();
         this.tileEntityTownHall = tileEntityTownHall;
         this.player = player;
@@ -37,7 +31,8 @@ public class GuiTownHall extends GuiBase {
     }
 
     @Override
-    protected void addElements() {
+    protected void addElements()
+    {
         super.addElements();
 
         String currentSpec = I18n.format("com.minecolonies.gui.townhall.currentSpecialization");
@@ -69,8 +64,10 @@ public class GuiTownHall extends GuiBase {
     }
 
     @Override
-    protected void actionPerformed(GuiButton guiButton) {
-        switch (guiButton.id) {
+    protected void actionPerformed(GuiButton guiButton)
+    {
+        switch(guiButton.id)
+        {
             case idBuildTownhall:
                 break;
             case idRepairTownhall:

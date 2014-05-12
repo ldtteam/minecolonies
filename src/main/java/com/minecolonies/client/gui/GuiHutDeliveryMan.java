@@ -18,24 +18,12 @@ public class GuiHutDeliveryMan extends GuiBase
     protected final int idSettings = 5;
 
     //IDs for Settings
-    protected final int idGoldToBlacksmith = 0,
-                        idDiamondToBlacksmith = 1,
-                        idStoneToStonemason = 2,
-                        idSandToStonemason = 3,
-                        idNetherrackToStonemason = 4,
-                        idQuartzToStonemason = 5,
-                        idArmorToGuards = 6,
-                        idWeaponToGuards = 7,
-                        idInformation = 8;
-    String ntos = I18n.format("com.minecolonies.gui.deliverymanHut.netherrackToStonemason");
-    String qtos = I18n.format("com.minecolonies.gui.deliverymanHut.quartzToStonemason");
-    String atog = I18n.format("com.minecolonies.gui.deliverymanHut.armorToStonemason");
-    String wtog = I18n.format("com.minecolonies.gui.deliverymanHut.weaponsToGuards");
+    protected final int idGoldToBlacksmith = 0, idDiamondToBlacksmith = 1, idStoneToStonemason = 2, idSandToStonemason = 3, idNetherrackToStonemason = 4, idQuartzToStonemason = 5, idArmorToGuards = 6, idWeaponToGuards = 7, idVisitCitizenChests = 8, idInformation = 9;
 
     protected EntityPlayer player;
     protected World        world;
     protected int          x, y, z;
-    private int span = 10, page = 0;
+    private int span = 4, page = 0;
 
     public GuiHutDeliveryMan(/*TileEntityHutBuilder tileEntity, */int page, EntityPlayer player, World world, int x, int y, int z)
     {
@@ -52,51 +40,58 @@ public class GuiHutDeliveryMan extends GuiBase
     private void addDeliverySettingElements()
     {
         int smallButton = 30;
-        int xl = (width - xSize)/2 + xSize/3 - 5;
-        int xr = xl + xSize/3;
+        int xl = (width - xSize) / 2 + xSize / 3 - 5;
+        int xr = xl + xSize / 3;
         int y = middleY + span;
         int textPaddTop = 6, textPaddRight = 3;
 
         String yes = I18n.format("com.minecolonies.gui.yes");
         String no = I18n.format("com.minecolonies.gui.no");
         String information = I18n.format("com.minecolonies.gui.workerHuts.information");
-        String toBlacksmith = I18n.format("com.minecolonies.gui.deliverymanHut.toblacksmith");
-        String toStonemason = I18n.format("com.minecolonies.gui.deliverymanHut.tostonemason");
-        String toGuards = I18n.format("com.minecolonies.gui.deliverymanHut.toguards");
+        String toBlacksmith = I18n.format("com.minecolonies.gui.deliverymanHut.toBlacksmith");
+        String toStonemason = I18n.format("com.minecolonies.gui.deliverymanHut.toStonemason");
+        String toGuards = I18n.format("com.minecolonies.gui.deliverymanHut.toGuards");
+        String visitCitizenChests = I18n.format("com.minecolonies.gui.deliverymanHut.visitCitizenChests");
 
-        addLabel(toBlacksmith, middleX - fontRendererObj.getStringWidth(toBlacksmith)/2, y + textPaddTop);
-        y += buttonHeight + buttonSpan;
+        addLabel(toBlacksmith, middleX - fontRendererObj.getStringWidth(toBlacksmith) / 2, y + textPaddTop);
+        y += buttonHeight;
 
-        addIcon(new ItemStack(Items.gold_ingot, 1), xl - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addIcon(new ItemStack(Items.gold_ingot, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idGoldToBlacksmith, no, xl, y, smallButton, buttonHeight);
         addIcon(new ItemStack(Items.diamond, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idDiamondToBlacksmith, no, xr, y, smallButton, buttonHeight);
-        y += buttonHeight + buttonSpan + 3;
+        y += buttonHeight + buttonSpan + 1;
 
-        addLabel(toStonemason, middleX - fontRendererObj.getStringWidth(toStonemason)/2, y + textPaddTop);
-        y += buttonHeight + buttonSpan;
+        addLabel(toStonemason, middleX - fontRendererObj.getStringWidth(toStonemason) / 2, y + textPaddTop);
+        y += buttonHeight;
 
-        addIcon(new ItemStack(Blocks.stone, 1), xl - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addIcon(new ItemStack(Blocks.stone, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idStoneToStonemason, yes, xl, y, smallButton, buttonHeight);
-        addIcon(new ItemStack(Blocks.sand, 1), xr - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addIcon(new ItemStack(Blocks.sand, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idSandToStonemason, no, xr, y, smallButton, buttonHeight);
         y += buttonHeight + buttonSpan;
 
-        addIcon(new ItemStack(Blocks.netherrack, 1), xl - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addIcon(new ItemStack(Blocks.netherrack, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idNetherrackToStonemason, yes, xl, y, smallButton, buttonHeight);
-        addIcon(new ItemStack(Items.quartz, 1), xr - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addIcon(new ItemStack(Items.quartz, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idQuartzToStonemason, no, xr, y, smallButton, buttonHeight);
-        y += buttonHeight + buttonSpan + 3;
+        y += buttonHeight + buttonSpan + 1;
 
-        addLabel(toGuards, middleX - fontRendererObj.getStringWidth(toGuards)/2, y + textPaddTop);
-        y += buttonHeight + buttonSpan;
+        addLabel(toGuards, middleX - fontRendererObj.getStringWidth(toGuards) / 2, y + textPaddTop);
+        y += buttonHeight;
 
-        addIcon(new ItemStack(Items.iron_chestplate, 1), xl - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addIcon(new ItemStack(Items.iron_chestplate, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idArmorToGuards, no, xl, y, smallButton, buttonHeight);
-        addIcon(new ItemStack(Items.iron_sword, 1), xr - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addIcon(new ItemStack(Items.iron_sword, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idWeaponToGuards, no, xr, y, smallButton, buttonHeight);
+        y += buttonHeight + buttonSpan + 1;
+
+        addLabel(visitCitizenChests, middleX - fontRendererObj.getStringWidth(visitCitizenChests) / 2, y + textPaddTop);
+        y += textPaddTop + 10;
+        addButton(idVisitCitizenChests, no, middleX - smallButton / 2, y, smallButton, buttonHeight);
 
         addButton(idInformation, information, middleX - buttonWidth / 2, middleY + ySize - 34, buttonWidth, buttonHeight);
+
     }
 
     @Override

@@ -10,19 +10,16 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
-public class GuiBase extends GuiScreen {
-    protected int middleX, middleY, xSize, ySize,
-            buttonWidth = 116,
-            buttonHeight = 20,
-            buttonSpan = 4;
+public class GuiBase extends GuiScreen
+{
     protected final int idHireWorker = 0, //IDs for default layout
-            idFireWorker = 1,
-            idRecallWorker = 2,
-            idBuildBuilding = 3, idRepairBuilding = 4;
-    protected ArrayList iconList;
+            idFireWorker             = 1, idRecallWorker = 2, idBuildBuilding = 3, idRepairBuilding = 4;
     protected final ResourceLocation background = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiInformatorBackground.png");
+    protected int middleX, middleY, xSize, ySize, buttonWidth = 116, buttonHeight = 20, buttonSpan = 4;
+    protected ArrayList iconList;
 
-    public GuiBase() {
+    public GuiBase()
+    {
         super();
         xSize = 171;
         ySize = 247;
@@ -36,6 +33,7 @@ public class GuiBase extends GuiScreen {
 
         buttonList.clear();
         labelList.clear();
+        iconList.clear();
     }
 
     protected void addButton(int id, String text, int x, int y, int w, int h)
@@ -55,34 +53,37 @@ public class GuiBase extends GuiScreen {
         labelList.add(new GuiModLabel(text, x, y));
     }
 
-    protected void addIcon(ItemStack is, int x, int y) {
+    protected void addIcon(ItemStack is, int x, int y)
+    {
         iconList.add(new GuiModIcon(is, x, y));
     }
 
-    protected void addDefaultWorkerLayout(String hutName, String workerName, String level, String type) {
+    protected void addDefaultWorkerLayout(String hutName, String workerName, String level, String type)
+    {
         addDefaultWorkerLayout(hutName, workerName, level, type, 0);
     }
 
-    protected void addDefaultWorkerLayout(String hutName, String workerName, String level, String type, int span) {
+    protected void addDefaultWorkerLayout(String hutName, String workerName, String level, String type, int span)
+    {
         String workerAssigned = I18n.format("com.minecolonies.gui.workerHuts.workerAssigned");
         String workerLevel = I18n.format("com.minecolonies.gui.workerHuts.workerLevel");
         String buildType = I18n.format("com.minecolonies.gui.workerHuts.buildType");
 
-        addLabel(hutName, middleX - fontRendererObj.getStringWidth(hutName) / 2 + 3, middleY + span);
-        addLabel(workerAssigned, middleX - fontRendererObj.getStringWidth(workerAssigned) + 5, middleY + span + 18);
-        addLabel(workerName, middleX + 10, middleY + span + 18);
-        addLabel(workerLevel, middleX - fontRendererObj.getStringWidth(workerLevel) + 5, middleY + span + 28);
-        addLabel(level, middleX + 10, middleY + span + 28);
-        addButton(idHireWorker, I18n.format("com.minecolonies.gui.workerHuts.hire"), middleX - buttonWidth / 2, middleY + span + 46, buttonWidth, buttonHeight, false);
-        addButton(idFireWorker, I18n.format("com.minecolonies.gui.workerHuts.fire"), middleX - buttonWidth / 2, middleY + span + 46, buttonWidth, buttonHeight);
-        addButton(idRecallWorker, I18n.format("com.minecolonies.gui.workerHuts.recall"), middleX - buttonWidth / 2, middleY + span + 70, buttonWidth, buttonHeight);
-        addButton(idBuildBuilding, I18n.format("com.minecolonies.gui.workerHuts.build"), middleX - buttonWidth / 2, middleY + span + 102, buttonWidth, buttonHeight);
-        addButton(idRepairBuilding, I18n.format("com.minecolonies.gui.workerHuts.repair"), middleX - buttonWidth / 2, middleY + span + 126, buttonWidth, buttonHeight);
-        addLabel(buildType, middleX - fontRendererObj.getStringWidth(buildType) + 5, middleY + span + 160);
-        addLabel(type, middleX + 10, middleY + span + 160);
+        addLabel(hutName, middleX - fontRendererObj.getStringWidth(hutName) / 2, middleY + span);
+        addLabel(workerAssigned, middleX - fontRendererObj.getStringWidth(workerAssigned) / 2, middleY + span + 18);
+        addLabel(workerName, middleX - fontRendererObj.getStringWidth(workerName) / 2, middleY + span + 28);
+        addLabel(workerLevel + " " + level, middleX - fontRendererObj.getStringWidth(workerLevel + " " + level) / 2, middleY + span + 44);
+        addButton(idHireWorker, I18n.format("com.minecolonies.gui.workerHuts.hire"), middleX - buttonWidth / 2, middleY + span + 64, buttonWidth, buttonHeight, false);
+        addButton(idFireWorker, I18n.format("com.minecolonies.gui.workerHuts.fire"), middleX - buttonWidth / 2, middleY + span + 64, buttonWidth, buttonHeight);
+        addButton(idRecallWorker, I18n.format("com.minecolonies.gui.workerHuts.recall"), middleX - buttonWidth / 2, middleY + span + 88, buttonWidth, buttonHeight);
+        addButton(idBuildBuilding, I18n.format("com.minecolonies.gui.workerHuts.build"), middleX - buttonWidth / 2, middleY + span + 120, buttonWidth, buttonHeight);
+        addButton(idRepairBuilding, I18n.format("com.minecolonies.gui.workerHuts.repair"), middleX - buttonWidth / 2, middleY + span + 144, buttonWidth, buttonHeight);
+        addLabel(buildType, middleX - fontRendererObj.getStringWidth(buildType) / 2, middleY + span + 172);
+        addLabel(type, middleX - fontRendererObj.getStringWidth(type) / 2, middleY + span + 182);
     }
 
-    protected void drawGuiBackground() {
+    protected void drawGuiBackground()
+    {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(background);
         int xCoord = (width - xSize) / 2;
@@ -91,28 +92,34 @@ public class GuiBase extends GuiScreen {
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float par3) {
+    public void drawScreen(int mouseX, int mouseY, float par3)
+    {
         drawGuiBackground();
 
         int k;
-        for (k = 0; k < this.buttonList.size(); k++) {
+        for(k = 0; k < this.buttonList.size(); k++)
+        {
             ((GuiButton) this.buttonList.get(k)).drawButton(this.mc, mouseX, mouseY);
         }
-        for (k = 0; k < this.labelList.size(); k++) {
+        for(k = 0; k < this.labelList.size(); k++)
+        {
             ((GuiModLabel) this.labelList.get(k)).drawLabel(this.mc);
         }
-        for (k = 0; k < this.iconList.size(); k++) {
+        for(k = 0; k < this.iconList.size(); k++)
+        {
             ((GuiModIcon) this.iconList.get(k)).drawIcon(this.mc, itemRender);
         }
     }
 
     @Override
-    public boolean doesGuiPauseGame() {
+    public boolean doesGuiPauseGame()
+    {
         return false;
     }
 
     @Override
-    public void initGui() {
+    public void initGui()
+    {
         addElements();
         super.initGui();
     }

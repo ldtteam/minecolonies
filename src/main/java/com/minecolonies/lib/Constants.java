@@ -13,7 +13,8 @@ public class Constants
     public static final double MAXDISTANCETOTOWNHALL = 200;
     public static final int    DEFAULTMAXCITIZENS    = 4;
 
-    public enum Gui{
+    public enum Gui
+    {
         TownHall, RenameTown, HutBuilder, HutDeliveryman, HutDeliverymanSettings;
     }
 }

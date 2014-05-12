@@ -25,8 +25,9 @@ com.minecolonies.gui.workerHuts.buildType=Build Type:
 com.minecolonies.gui.workerHuts.information=Information
 com.minecolonies.gui.workerHuts.settings=Settings
 
-com.minecolonies.gui.deliverymanHut.toblacksmith=Deliver to Blacksmith:
-com.minecolonies.gui.deliverymanHut.tostonemason=Deliver to Stonemason:
-com.minecolonies.gui.deliverymanHut.toguards=Deliver to Guards:
+com.minecolonies.gui.deliverymanHut.toBlacksmith=Deliver to Blacksmith:
+com.minecolonies.gui.deliverymanHut.toStonemason=Deliver to Stonemason:
+com.minecolonies.gui.deliverymanHut.toGuards=Deliver to Guards:
+com.minecolonies.gui.deliverymanHut.visitCitizenChests=Visit Citizenchests:
 
 tile.myBlock.name=My Block

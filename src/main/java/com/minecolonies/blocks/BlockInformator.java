@@ -44,7 +44,7 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
     public void registerBlockIcons(IIconRegister iconRegister)
     {
         icons[0] = iconRegister.registerIcon(Constants.MODID.toLowerCase() + ":" + getName() + "top");
-        icons[1] = icons [0];
+        icons[1] = icons[0];
         for(int i = 2; i <= 5; i++)
         {
             icons[i] = iconRegister.registerIcon(Constants.MODID.toLowerCase() + ":" + "sideChest");
@@ -59,15 +59,16 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
 
     /**
      * Attempts to add citizen to a working hut
+     *
      * @param tileEntityTownHall TileEntityTownHall bound to
-     * @param world world
-     * @param x xcoord
-     * @param y ycoord
-     * @param z zcoord
+     * @param world              world
+     * @param x                  xcoord
+     * @param y                  ycoord
+     * @param z                  zcoord
      */
     public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall, World world, int x, int y, int z)
     {
-        TileEntity tileEntity = world.getTileEntity(x,y,z);
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
         if(!(tileEntity instanceof TileEntityBuildable)) return;
         ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
         //TODO ATTEMPT TO ADD
@@ -77,18 +78,18 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
      * Sets the TE's townhall to the closest townhall
      *
      * @param world world
-     * @param x xcoord
-     * @param y ycoord
-     * @param z zcoord
+     * @param x     xcoord
+     * @param y     ycoord
+     * @param z     zcoord
      */
     public void addClosestTownhall(World world, int x, int y, int z)
     {
         TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
         if(tileEntityTownHall != null)
         {
-            if(world.getTileEntity(x,y,z) instanceof TileEntityBuildable)
+            if(world.getTileEntity(x, y, z) instanceof TileEntityBuildable)
             {
-                TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x,y,z);
+                TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
                 tileEntityBuildable.setTownHall(tileEntityTownHall); //TODO, check for owner first
                 attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
             }
@@ -99,7 +100,7 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
-        if (world.isRemote) return;
+        if(world.isRemote) return;
 
         if(Utils.getDistanceToClosestTownHall(world, x, y, z) < Constants.MAXDISTANCETOTOWNHALL)
         {

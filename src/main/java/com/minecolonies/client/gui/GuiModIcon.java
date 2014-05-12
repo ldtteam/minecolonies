@@ -10,13 +10,15 @@ public class GuiModIcon
     protected int x, y;
     protected ItemStack itemStack;
 
-    public GuiModIcon(ItemStack itemStack, int x, int y) {
+    public GuiModIcon(ItemStack itemStack, int x, int y)
+    {
         this.itemStack = itemStack;
         this.x = x;
         this.y = y;
     }
 
-    public void drawIcon(Minecraft mc, RenderItem itemRender) {
+    public void drawIcon(Minecraft mc, RenderItem itemRender)
+    {
         FontRenderer fontRenderer = mc.fontRenderer;
         itemRender.renderItemAndEffectIntoGUI(fontRenderer, mc.getTextureManager(), itemStack, x, y);
         itemRender.renderItemOverlayIntoGUI(fontRenderer, mc.getTextureManager(), itemStack, x, y);
