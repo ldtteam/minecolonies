@@ -16,7 +16,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class BlockHutTownHall extends BlockInformator
