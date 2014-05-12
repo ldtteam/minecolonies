@@ -1,7 +1,7 @@
 package com.minecolonies.network;
 
 import com.minecolonies.client.gui.GuiHutBuilder;
-import com.minecolonies.client.gui.GuiHutDeliveryman;
+import com.minecolonies.client.gui.GuiHutDeliveryMan;
 import com.minecolonies.client.gui.GuiTownHall;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
@@ -38,9 +38,9 @@ public class GuiHandler implements IGuiHandler
             case HutBuilder:
                 return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z));
             case HutDeliveryman:
-                return new GuiHutDeliveryman(/*(TileEntityHutDeliveryman) world.getTileEntity(x, y, z), */0, player, world, x, y, z);
+                return new GuiHutDeliveryMan(/*(TileEntityHutDeliveryman) world.getTileEntity(x, y, z), */0, player, world, x, y, z);
             case HutDeliverymanSettings:
-                return new GuiHutDeliveryman(/*(TileEntityHutDeliveryman) world.getTileEntity(x, y, z), */1, player, world, x, y, z);
+                return new GuiHutDeliveryMan(/*(TileEntityHutDeliveryman) world.getTileEntity(x, y, z), */1, player, world, x, y, z);
         }
         return null;
     }

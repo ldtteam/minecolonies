@@ -4,6 +4,7 @@ import com.minecolonies.lib.Constants;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -52,6 +53,10 @@ public class GuiBase extends GuiScreen {
     protected void addLabel(String text, int x, int y)
     {
         labelList.add(new GuiModLabel(text, x, y));
+    }
+
+    protected void addIcon(ItemStack is, int x, int y) {
+        iconList.add(new GuiModIcon(is, x, y));
     }
 
     protected void addDefaultWorkerLayout(String hutName, String workerName, String level, String type) {

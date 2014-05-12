@@ -25,13 +25,8 @@ com.minecolonies.gui.workerHuts.buildType=Build Type:
 com.minecolonies.gui.workerHuts.information=Information
 com.minecolonies.gui.workerHuts.settings=Settings
 
-com.minecolonies.gui.deliverymanHut.goldToBlacksmith=Gold to Blacksmith
-com.minecolonies.gui.deliverymanHut.diamondToBlacksmith=Diamond to Blacksmith
-com.minecolonies.gui.deliverymanHut.stoneToStonemason=Stone to Stonemason
-com.minecolonies.gui.deliverymanHut.sandToStonemason=Sand to Stonemason
-com.minecolonies.gui.deliverymanHut.netherrackToStonemason=Netherrack to Stonemason
-com.minecolonies.gui.deliverymanHut.quartzToStonemason=Quartz to Stonemason
-com.minecolonies.gui.deliverymanHut.armorToStonemason=Armor to Guards
-com.minecolonies.gui.deliverymanHut.weaponsToGuards=Weapons to Guards
+com.minecolonies.gui.deliverymanHut.toblacksmith=Deliver to Blacksmith:
+com.minecolonies.gui.deliverymanHut.tostonemason=Deliver to Stonemason:
+com.minecolonies.gui.deliverymanHut.toguards=Deliver to Guards:
 
 tile.myBlock.name=My Block

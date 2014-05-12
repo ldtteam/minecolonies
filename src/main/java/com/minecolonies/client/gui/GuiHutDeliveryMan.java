@@ -5,9 +5,12 @@ import com.minecolonies.lib.Constants;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class GuiHutDeliveryman extends GuiBase
+public class GuiHutDeliveryMan extends GuiBase
 {
     //private TileEntityHutDeliveryMan tileEntity; //There is no TileEntity for now - Nico
 
@@ -34,7 +37,7 @@ public class GuiHutDeliveryman extends GuiBase
     protected int          x, y, z;
     private int span = 10, page = 0;
 
-    public GuiHutDeliveryman(/*TileEntityHutBuilder tileEntity, */int page, EntityPlayer player, World world, int x, int y, int z)
+    public GuiHutDeliveryMan(/*TileEntityHutBuilder tileEntity, */int page, EntityPlayer player, World world, int x, int y, int z)
     {
         super();
         //this.tileEntity = tileEntity;
@@ -49,52 +52,49 @@ public class GuiHutDeliveryman extends GuiBase
     private void addDeliverySettingElements()
     {
         int smallButton = 30;
-        int x = width - (width - xSize) / 2 - smallButton - 10;
+        int xl = (width - xSize)/2 + xSize/3 - 5;
+        int xr = xl + xSize/3;
         int y = middleY + span;
         int textPaddTop = 6, textPaddRight = 3;
 
         String yes = I18n.format("com.minecolonies.gui.yes");
         String no = I18n.format("com.minecolonies.gui.no");
         String information = I18n.format("com.minecolonies.gui.workerHuts.information");
-        String gtob = I18n.format("com.minecolonies.gui.deliverymanHut.goldToBlacksmith");
-        String dtob = I18n.format("com.minecolonies.gui.deliverymanHut.diamondToBlacksmith");
-        String stos = I18n.format("com.minecolonies.gui.deliverymanHut.stoneToStonemason");
-        String satos = I18n.format("com.minecolonies.gui.deliverymanHut.sandToStonemason");
-        String ntos = I18n.format("com.minecolonies.gui.deliverymanHut.netherrackToStonemason");
-        String qtos = I18n.format("com.minecolonies.gui.deliverymanHut.quartzToStonemason");
-        String atog = I18n.format("com.minecolonies.gui.deliverymanHut.armorToStonemason");
-        String wtog = I18n.format("com.minecolonies.gui.deliverymanHut.weaponsToGuards");
+        String toBlacksmith = I18n.format("com.minecolonies.gui.deliverymanHut.toblacksmith");
+        String toStonemason = I18n.format("com.minecolonies.gui.deliverymanHut.tostonemason");
+        String toGuards = I18n.format("com.minecolonies.gui.deliverymanHut.toguards");
 
-        addLabel(gtob, x - fontRendererObj.getStringWidth(gtob) - textPaddRight, y+textPaddTop);
-        addButton(idGoldToBlacksmith, no, x, y, smallButton, buttonHeight);
+        addLabel(toBlacksmith, middleX - fontRendererObj.getStringWidth(toBlacksmith)/2, y + textPaddTop);
         y += buttonHeight + buttonSpan;
 
-        addLabel(dtob, x - fontRendererObj.getStringWidth(dtob) - textPaddRight, y+textPaddTop);
-        addButton(idDiamondToBlacksmith, no, x, y, smallButton, buttonHeight);
+        addIcon(new ItemStack(Items.gold_ingot, 1), xl - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addButton(idGoldToBlacksmith, no, xl, y, smallButton, buttonHeight);
+        addIcon(new ItemStack(Items.diamond, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
+        addButton(idDiamondToBlacksmith, no, xr, y, smallButton, buttonHeight);
+        y += buttonHeight + buttonSpan + 3;
+
+        addLabel(toStonemason, middleX - fontRendererObj.getStringWidth(toStonemason)/2, y + textPaddTop);
         y += buttonHeight + buttonSpan;
 
-        addLabel(stos, x - fontRendererObj.getStringWidth(stos) - textPaddRight, y+textPaddTop);
-        addButton(idStoneToStonemason, yes, x, y, smallButton, buttonHeight);
+        addIcon(new ItemStack(Blocks.stone, 1), xl - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addButton(idStoneToStonemason, yes, xl, y, smallButton, buttonHeight);
+        addIcon(new ItemStack(Blocks.sand, 1), xr - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addButton(idSandToStonemason, no, xr, y, smallButton, buttonHeight);
         y += buttonHeight + buttonSpan;
 
-        addLabel(satos, x - fontRendererObj.getStringWidth(satos) - textPaddRight, y+textPaddTop);
-        addButton(idSandToStonemason, no, x, y, smallButton, buttonHeight);
+        addIcon(new ItemStack(Blocks.netherrack, 1), xl - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addButton(idNetherrackToStonemason, yes, xl, y, smallButton, buttonHeight);
+        addIcon(new ItemStack(Items.quartz, 1), xr - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addButton(idQuartzToStonemason, no, xr, y, smallButton, buttonHeight);
+        y += buttonHeight + buttonSpan + 3;
+
+        addLabel(toGuards, middleX - fontRendererObj.getStringWidth(toGuards)/2, y + textPaddTop);
         y += buttonHeight + buttonSpan;
 
-        addLabel(ntos, x - fontRendererObj.getStringWidth(ntos) - textPaddRight, y+textPaddTop);
-        addButton(idNetherrackToStonemason, yes, x, y, smallButton, buttonHeight);
-        y += buttonHeight + buttonSpan;
-
-        addLabel(qtos, x - fontRendererObj.getStringWidth(qtos) - textPaddRight, y+textPaddTop);
-        addButton(idQuartzToStonemason, no, x, y, smallButton, buttonHeight);
-        y += buttonHeight + buttonSpan;
-
-        addLabel(atog, x - fontRendererObj.getStringWidth(atog) - textPaddRight, y+textPaddTop);
-        addButton(idArmorToGuards, no, x, y, smallButton, buttonHeight);
-        y += buttonHeight + buttonSpan;
-
-        addLabel(wtog, x - fontRendererObj.getStringWidth(wtog) - textPaddRight, y+textPaddTop);
-        addButton(idWeaponToGuards, no, x, y, smallButton, buttonHeight);
+        addIcon(new ItemStack(Items.iron_chestplate, 1), xl - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addButton(idArmorToGuards, no, xl, y, smallButton, buttonHeight);
+        addIcon(new ItemStack(Items.iron_sword, 1), xr - 16 - textPaddRight, y + (buttonHeight-16)/2);
+        addButton(idWeaponToGuards, no, xr, y, smallButton, buttonHeight);
 
         addButton(idInformation, information, middleX - buttonWidth / 2, middleY + ySize - 34, buttonWidth, buttonHeight);
     }
