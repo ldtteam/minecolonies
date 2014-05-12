@@ -5,19 +5,13 @@ import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.util.Schematic;
-import com.minecolonies.util.CreativeTab;
-import com.minecolonies.util.IColony;
-import com.minecolonies.util.Utils;
-import cpw.mods.fml.client.FMLClientHandler;
+import com.minecolonies.util.*;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
@@ -78,7 +72,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
                 }
             }
         }
-        Utils.sendPlayerMessage(entityPlayer, I18n.format("item.supplyChestDeployer.invalid"));//TODO create message packet
+        Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.supplyChestDeployer.invalid"));
         return itemStack;
     }
 

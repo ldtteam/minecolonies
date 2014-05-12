@@ -3,9 +3,9 @@ package com.minecolonies.client.gui;
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -67,22 +67,22 @@ public class GuiTownHall extends GuiScreen
         buttonList.clear();
 
         int y = span;
-        buttonList.add(new GuiButton(idBuildTownhall, middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight, I18n.format("com.minecolonies.gui.townhall.build")));
+        buttonList.add(new GuiButton(idBuildTownhall, middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight, LanguageHandler.format("com.minecolonies.gui.townhall.build")));
         y += buttonHeight + buttonSpan;
-        buttonList.add(new GuiButton(idRepairTownhall, middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight, I18n.format("com.minecolonies.gui.townhall.repair")));
+        buttonList.add(new GuiButton(idRepairTownhall, middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight, LanguageHandler.format("com.minecolonies.gui.townhall.repair")));
         y += buttonHeight + buttonSpan;
-        buttonList.add(new GuiButton(idRecallCitizens, middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight, I18n.format("com.minecolonies.gui.townhall.recall")));
+        buttonList.add(new GuiButton(idRecallCitizens, middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight, LanguageHandler.format("com.minecolonies.gui.townhall.recall")));
         y += buttonHeight + buttonSpan;
-        buttonList.add(new GuiButton(idToggleSpecialization, middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight, I18n.format("com.minecolonies.gui.townhall.togglespec")));
+        buttonList.add(new GuiButton(idToggleSpecialization, middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight, LanguageHandler.format("com.minecolonies.gui.townhall.togglespec")));
         y += buttonHeight + buttonSpan;
         //Current Spec
         y += buttonHeight + buttonSpan;
-        buttonList.add(new GuiButton(idRenameColony, middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight, I18n.format("com.minecolonies.gui.townhall.rename")));
+        buttonList.add(new GuiButton(idRenameColony, middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight, LanguageHandler.format("com.minecolonies.gui.townhall.rename")));
 
         //Bottom navigation
-        buttonList.add(new GuiButton(idInformation, middleX - 76, middleY + ySize - 34, 64, buttonHeight, I18n.format("com.minecolonies.gui.townhall.information")));
-        buttonList.add(new GuiButton(idActions, middleX - 10, middleY + ySize - 34, 44, buttonHeight, I18n.format("com.minecolonies.gui.townhall.actions")));
-        buttonList.add(new GuiButton(idSettings, middleX + xSize / 2 - 50, middleY + ySize - 34, 46, buttonHeight, I18n.format("com.minecolonies.gui.townhall.settings")));
+        buttonList.add(new GuiButton(idInformation, middleX - 76, middleY + ySize - 34, 64, buttonHeight, LanguageHandler.format("com.minecolonies.gui.townhall.information")));
+        buttonList.add(new GuiButton(idActions, middleX - 10, middleY + ySize - 34, 44, buttonHeight, LanguageHandler.format("com.minecolonies.gui.townhall.actions")));
+        buttonList.add(new GuiButton(idSettings, middleX + xSize / 2 - 50, middleY + ySize - 34, 46, buttonHeight, LanguageHandler.format("com.minecolonies.gui.townhall.settings")));
     }
 
     @Override
@@ -102,9 +102,9 @@ public class GuiTownHall extends GuiScreen
 
     private void drawGuiForeground()
     {
-        String currentSpec = I18n.format("com.minecolonies.gui.townhall.currentSpecialization");
+        String currentSpec = LanguageHandler.format("com.minecolonies.gui.townhall.currentSpecialization");
         String spec = "<Industrial>"; //TODO replace with actual specialisation
-        String currentTownhallName = I18n.format("com.minecolonies.gui.townhall.currTownhallName");
+        String currentTownhallName = LanguageHandler.format("com.minecolonies.gui.townhall.currTownhallName");
         String townhallName = tileEntityTownHall.getCityName();
 
         fontRendererObj.drawString(currentSpec, middleX - fontRendererObj.getStringWidth(currentSpec) / 2 + 3, middleY + span + 4 * (buttonHeight + buttonSpan), 0x000000);

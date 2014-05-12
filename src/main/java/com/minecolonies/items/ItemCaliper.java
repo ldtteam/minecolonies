@@ -3,14 +3,11 @@ package com.minecolonies.items;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -68,58 +65,58 @@ public class ItemCaliper extends Item implements IColony
         }
         attribute.setBaseValue(0.0);
         if (startPositionX == i && startPositionY == j && startPositionZ == k) {
-            Utils.sendPlayerMessage(entityPlayer, I18n.format("item.caliper.message.same"));
+            Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.caliper.message.same"));
             return false;
         }
         if (startPositionX == i) {
             if (startPositionY == j) {
                 int distance = java.lang.Math.abs(k - startPositionZ) + 1;
-                Utils.sendPlayerMessage(entityPlayer, I18n.format("item.caliper.message.line", distance));
+                Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.caliper.message.line", distance));
                 return false;
             }
             if (startPositionZ == k) {
                 int distance = java.lang.Math.abs(j - startPositionY) + 1;
-                Utils.sendPlayerMessage(entityPlayer, I18n.format("item.caliper.message.line", distance));
+                Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.caliper.message.line", distance));
                 return false;
             }
             int distance1 = java.lang.Math.abs(j - startPositionY) + 1;
             int distance2 = java.lang.Math.abs(k - startPositionZ) + 1;
 
-            Utils.sendPlayerMessage(entityPlayer, I18n.format("item.caliper.message.square", distance1, distance2));
+            Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.caliper.message.square", distance1, distance2));
             return false;
         }
         if (startPositionY == j) {
             if (startPositionX == j) {
                 int distance = java.lang.Math.abs(k - startPositionZ) + 1;
-                Utils.sendPlayerMessage(entityPlayer, I18n.format("item.caliper.message.line", distance));
+                Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.caliper.message.line", distance));
                 return false;
             }
             if (startPositionZ == k) {
                 int distance = java.lang.Math.abs(i - startPositionX) + 1;
-                Utils.sendPlayerMessage(entityPlayer, I18n.format("item.caliper.message.line", distance));
+                Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.caliper.message.line", distance));
                 return false;
             }
             int distance1 = java.lang.Math.abs(i - startPositionX) + 1;
             int distance2 = java.lang.Math.abs(k - startPositionZ) + 1;
 
-            Utils.sendPlayerMessage(entityPlayer, I18n.format("item.caliper.message.square", distance1, distance2));
+            Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.caliper.message.square", distance1, distance2));
             return false;
         }
         if (startPositionZ == k) {
             if (startPositionX == i) {
                 int distance = java.lang.Math.abs(j - startPositionY) + 1;
-                Utils.sendPlayerMessage(entityPlayer, I18n.format("item.caliper.message.line", distance));
+                Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.caliper.message.line", distance));
                 return false;
             }
             if (startPositionY == j) {
                 int distance = java.lang.Math.abs(i - startPositionX) + 1;
-                Utils.sendPlayerMessage(entityPlayer, I18n.format("item.caliper.message.line", distance));
+                Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.caliper.message.line", distance));
                 return false;
             }
             int distance1 = java.lang.Math.abs(i - startPositionX) + 1;
             int distance2 = java.lang.Math.abs(j - startPositionY) + 1;
 
-            Utils.sendPlayerMessage(entityPlayer, I18n.format("item.caliper.message.square", distance1, distance2));
+            Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.caliper.message.square", distance1, distance2));
             return false;
         }
 
@@ -127,7 +124,7 @@ public class ItemCaliper extends Item implements IColony
         int distance2 = java.lang.Math.abs(j - startPositionY) + 1;
         int distance3 = java.lang.Math.abs(k - startPositionZ) + 1;
 
-        Utils.sendPlayerMessage(entityPlayer, I18n.format("item.caliper.message.cube", distance1, distance2, distance3));
+        Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.caliper.message.cube", distance1, distance2, distance3));
         return false;
     }
 }
