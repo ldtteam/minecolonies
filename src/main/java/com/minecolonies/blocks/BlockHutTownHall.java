@@ -62,6 +62,7 @@ public class BlockHutTownHall extends BlockInformator
         if(entityLivingBase instanceof EntityPlayer)
         {
             tileEntityTownHall.setInfo(world, entityLivingBase.getUniqueID(), x, z);
+            tileEntityTownHall.setCityName(((EntityPlayer) entityLivingBase).getDisplayName() + "'s City");
             playerProperties.setHasPlacedTownHall(true);
         }
     }
@@ -74,8 +75,6 @@ public class BlockHutTownHall extends BlockInformator
         super.onBlockAdded(world, x, y, z);
 
         TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-        Random rand = new Random();
-        tileEntityTownHall.setCityName(Configurations.cityNames[rand.nextInt(Configurations.cityNames.length)]);
         tileEntityTownHall.onBlockAdded();
     }
 
