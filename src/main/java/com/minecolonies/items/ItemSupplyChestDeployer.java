@@ -78,7 +78,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
                 }
             }
         }
-        Utils.sendPlayerMessage(entityPlayer, I18n.format("item.supplyChestDeployer.invalid"));
+        Utils.sendPlayerMessage(entityPlayer, I18n.format("item.supplyChestDeployer.invalid"));//TODO create message packet
         return itemStack;
     }
 

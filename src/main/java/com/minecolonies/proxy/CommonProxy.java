@@ -10,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class CommonProxy implements IProxy
+public class CommonProxy implements IProxy
 {
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn
@@ -56,4 +56,12 @@ public abstract class CommonProxy implements IProxy
     {
         EntityRegistry.registerModEntity(EntityCitizen.class, "entityCitizen",0, MineColonies.instance, 250, 3, true);
     }
+
+    @Override
+    public void registerEntityRendering() {}
+    @Override
+    public void registerKeybindings() {}
+
+    @Override
+    public void registerEvents() {}
 }
