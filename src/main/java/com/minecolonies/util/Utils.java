@@ -1,7 +1,6 @@
 package com.minecolonies.util;
 
 import com.minecolonies.tileentities.TileEntityTownHall;
-import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
