@@ -14,8 +14,8 @@ public class GuiBase extends GuiScreen
 {
     protected final int idHireWorker = 0, //IDs for default layout
             idFireWorker             = 1, idRecallWorker = 2, idBuildBuilding = 3, idRepairBuilding = 4;
-    protected final ResourceLocation background = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiInformatorBackground.png");
-    protected int middleX, middleY, xSize, ySize, buttonWidth = 116, buttonHeight = 20, buttonSpan = 4;
+    protected final ResourceLocation background                                  = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiInformatorBackground.png");
+    protected       int              middleX, middleY, xSize, ySize, buttonWidth = 116, buttonHeight = 20, buttonSpan = 4;
     protected ArrayList iconList;
 
     public GuiBase()
@@ -53,6 +53,11 @@ public class GuiBase extends GuiScreen
         labelList.add(new GuiModLabel(text, x, y));
     }
 
+    protected void addLabel(String text, int x, int y, int color)
+    {
+        labelList.add(new GuiModLabel(text, x, y, color));
+    }
+
     protected void addIcon(ItemStack is, int x, int y)
     {
         iconList.add(new GuiModIcon(is, x, y));
@@ -69,7 +74,7 @@ public class GuiBase extends GuiScreen
         String workerLevel = LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel");
         String buildType = LanguageHandler.format("com.minecolonies.gui.workerHuts.buildType");
 
-        addLabel(hutName, middleX - fontRendererObj.getStringWidth(hutName) / 2, middleY + span);
+        addLabel(hutName, middleX - fontRendererObj.getStringWidth(hutName) / 2, middleY + span, 0xff0000);
         addLabel(workerAssigned, middleX - fontRendererObj.getStringWidth(workerAssigned) / 2, middleY + span + 18);
         addLabel(workerName, middleX - fontRendererObj.getStringWidth(workerName) / 2, middleY + span + 28);
         addLabel(workerLevel + " " + level, middleX - fontRendererObj.getStringWidth(workerLevel + " " + level) / 2, middleY + span + 44);

@@ -1,6 +1,5 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityTownHall;
@@ -12,7 +11,6 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -34,16 +32,9 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
-    {
-        entityPlayer.openGui(MineColonies.instance, Constants.Gui.TownHall.ordinal(), world, x, y, z);
-        return true;
-    }
-
-    @Override
     public void registerBlockIcons(IIconRegister iconRegister)
     {
-        icons[0] = iconRegister.registerIcon(Constants.MODID.toLowerCase() + ":" + getName() + "top");
+        icons[0] = iconRegister.registerIcon(Constants.MODID + ":" + getName() + "top");
         icons[1] = icons[0];
         for(int i = 2; i <= 5; i++)
         {
