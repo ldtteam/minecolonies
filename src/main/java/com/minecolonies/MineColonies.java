@@ -58,7 +58,7 @@ public class MineColonies
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());
 
-        //proxy.registerEvents();//Schematica //proxy doesn't have a method "registerEvents" - Nico
+        proxy.registerEvents();//Schematica
 
         proxy.registerEntities();
 
