@@ -47,7 +47,7 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
         icons[1] = icons[0];
         for(int i = 2; i <= 5; i++)
         {
-            icons[i] = iconRegister.registerIcon(Constants.MODID.toLowerCase() + ":" + "sideChest");
+            icons[i] = iconRegister.registerIcon(Constants.MODID + ":" + "sideChest");
         }
     }
 

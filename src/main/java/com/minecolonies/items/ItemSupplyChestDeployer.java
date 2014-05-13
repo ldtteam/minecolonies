@@ -3,11 +3,13 @@ package com.minecolonies.items;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.Schematic;
 import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -34,6 +36,12 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     public String getName()
     {
         return name;
+    }
+
+    @Override
+    public void registerIcons(IIconRegister par1IconRegister)
+    {
+        this.itemIcon = par1IconRegister.registerIcon(Constants.MODID + ":" + getName());
     }
 
     @Override
@@ -187,10 +195,25 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
 
+        Schematic.loadAndPlaceSchematic(world, "test", x, y + 5, z);//TODO use correct schematic
         fillChest((TileEntityChest) world.getTileEntity(x, y + 1, z));
     }
 
     private void fillChest(TileEntityChest chest) {
         //TODO chest.setInventorySlotContents(slotID, ItemStack);
+
+        switch(chest.getWorldObj().difficultySetting)
+        {
+            //The easier the difficulty, the more loot recieved
+            case PEACEFUL:
+                //TODO peacefull loot
+            case EASY:
+                //TODO easy loot
+            case NORMAL:
+                //TODO normal loot
+            case HARD:
+                //TODO hard loot
+                break;
+        }
     }
 }

@@ -10,7 +10,7 @@ com.minecolonies.gui.townhall.currentSpecialization=Current Specialization:
 com.minecolonies.gui.townhall.rename=Rename Colony
 com.minecolonies.gui.townhall.actions=Actions
 com.minecolonies.gui.townhall.rename.done=Done
-com.minecolonies.gui.townhall.rename.title=Rename Your City
+com.minecolonies.gui.townhall.rename.title=Rename Your Colony
 
 com.minecolonies.gui.workerHuts.buildersHut=Builders Hut
 com.minecolonies.gui.workerHuts.deliverymansHut=Deliverymans Hut
@@ -30,4 +30,16 @@ com.minecolonies.gui.deliverymanHut.toStonemason=Deliver to Stonemason:
 com.minecolonies.gui.deliverymanHut.toGuards=Deliver to Guards:
 com.minecolonies.gui.deliverymanHut.visitCitizenChests=Visit Citizenchests:
 
-tile.myBlock.name=My Block
+tile.blockHutBaker.name=Baker's Hut
+tile.blockHutBlacksmith.name=Blacksmith's Hut
+tile.blockHutBuilder.name=Builder's Hut
+tile.blockHutDeliveryman.name=Deliveryman's Hut
+tile.blockHutFarmer.name=Farmer's Hut
+tile.blockHutLumberjack.name=Lumberjack's Hut
+tile.blockHutMiner.name=Miner's Hut
+tile.blockHutStonemason.name=Stonemason's Hut
+tile.blockHutTownhall.name=Town Hall
+
+item.supplyChestDeployer.name=Supply Chest
+
+itemGroup.minecolonies=MineColonies

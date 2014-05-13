@@ -11,12 +11,28 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy
 {
+    //private RendererSchematicGlobal rendererSchematicGlobal;
+
+    public void registerKeybindings()
+    {
+//        for(KeyBinding keyBinding : KeyInputHandler.KEY_BINDINGS)
+//        {
+//            ClientRegistry.registerKeyBinding(keyBinding);
+//        }
+    }
+
+    public void registerEvents()
+    {
+//        FMLCommonHandler.instance().bus().register(new KeyInputHandler());
+//        FMLCommonHandler.instance().bus().register(new TickHandler());
+//
+//        this.rendererSchematicGlobal = new RendererSchematicGlobal();
+//        MinecraftForge.EVENT_BUS.register(this.rendererSchematicGlobal);
+    }
+
     @Override
     public void registerEntityRendering()
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, new RenderBipedCitizenMulti(new ModelBiped(), new ModelEntityCitizenFemaleCitizen(), new ModelEntityCitizenFemaleNoble(), new ModelEntityCitizenFemaleAristocrat(), 1f));
-    
-        //MinecraftForge.EVENT_BUS.register(new ChatEventHandler()); //I don't have a class "ChatEventHandler" - Nico
     }
 }
- 

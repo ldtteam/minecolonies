@@ -5,7 +5,7 @@ import com.minecolonies.network.GuiHandler;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.items.ModItems;
-import com.minecolonies.items.crafting.RecipeHandler;
+import com.minecolonies.util.RecipeHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.PacketPipeline;
 import com.minecolonies.proxy.IProxy;
@@ -16,10 +16,12 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION)
 public class MineColonies
 {
+    public static Logger logger;
 
     public static final PacketPipeline packetPipeline = new PacketPipeline();
 
@@ -32,11 +34,15 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        logger = event.getModLog();
+
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
 
         ModBlocks.init();
 
         ModItems.init();
+
+        proxy.registerKeybindings();//Schematica
     }
 
     @Mod.EventHandler

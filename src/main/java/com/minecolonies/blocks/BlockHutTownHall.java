@@ -152,7 +152,7 @@ public class BlockHutTownHall extends BlockInformator
         if(tileEntityTownHall.getOwners().size() == 0) return true;
         for(int i = 0; i < tileEntityTownHall.getOwners().size(); i++)
         {
-            if(tileEntityTownHall.getOwners().get(i) == entityPlayer.getUniqueID())
+            if(tileEntityTownHall.getOwners().get(i).equals(entityPlayer.getUniqueID()))
             {
                 return true;
             }
