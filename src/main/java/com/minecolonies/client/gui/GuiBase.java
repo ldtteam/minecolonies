@@ -1,6 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -65,19 +66,19 @@ public class GuiBase extends GuiScreen
 
     protected void addDefaultWorkerLayout(String hutName, String workerName, String level, String type, int span)
     {
-        String workerAssigned = I18n.format("com.minecolonies.gui.workerHuts.workerAssigned");
-        String workerLevel = I18n.format("com.minecolonies.gui.workerHuts.workerLevel");
-        String buildType = I18n.format("com.minecolonies.gui.workerHuts.buildType");
+        String workerAssigned = LanguageHandler.format("com.minecolonies.gui.workerHuts.workerAssigned");
+        String workerLevel = LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel");
+        String buildType = LanguageHandler.format("com.minecolonies.gui.workerHuts.buildType");
 
         addLabel(hutName, middleX - fontRendererObj.getStringWidth(hutName) / 2, middleY + span);
         addLabel(workerAssigned, middleX - fontRendererObj.getStringWidth(workerAssigned) / 2, middleY + span + 18);
         addLabel(workerName, middleX - fontRendererObj.getStringWidth(workerName) / 2, middleY + span + 28);
         addLabel(workerLevel + " " + level, middleX - fontRendererObj.getStringWidth(workerLevel + " " + level) / 2, middleY + span + 44);
-        addButton(idHireWorker, I18n.format("com.minecolonies.gui.workerHuts.hire"), middleX - buttonWidth / 2, middleY + span + 64, buttonWidth, buttonHeight, false);
-        addButton(idFireWorker, I18n.format("com.minecolonies.gui.workerHuts.fire"), middleX - buttonWidth / 2, middleY + span + 64, buttonWidth, buttonHeight);
-        addButton(idRecallWorker, I18n.format("com.minecolonies.gui.workerHuts.recall"), middleX - buttonWidth / 2, middleY + span + 88, buttonWidth, buttonHeight);
-        addButton(idBuildBuilding, I18n.format("com.minecolonies.gui.workerHuts.build"), middleX - buttonWidth / 2, middleY + span + 120, buttonWidth, buttonHeight);
-        addButton(idRepairBuilding, I18n.format("com.minecolonies.gui.workerHuts.repair"), middleX - buttonWidth / 2, middleY + span + 144, buttonWidth, buttonHeight);
+        addButton(idHireWorker, LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"), middleX - buttonWidth / 2, middleY + span + 64, buttonWidth, buttonHeight, false);
+        addButton(idFireWorker, LanguageHandler.format("com.minecolonies.gui.workerHuts.fire"), middleX - buttonWidth / 2, middleY + span + 64, buttonWidth, buttonHeight);
+        addButton(idRecallWorker, LanguageHandler.format("com.minecolonies.gui.workerHuts.recall"), middleX - buttonWidth / 2, middleY + span + 88, buttonWidth, buttonHeight);
+        addButton(idBuildBuilding, LanguageHandler.format("com.minecolonies.gui.workerHuts.build"), middleX - buttonWidth / 2, middleY + span + 120, buttonWidth, buttonHeight);
+        addButton(idRepairBuilding, LanguageHandler.format("com.minecolonies.gui.workerHuts.repair"), middleX - buttonWidth / 2, middleY + span + 144, buttonWidth, buttonHeight);
         addLabel(buildType, middleX - fontRendererObj.getStringWidth(buildType) / 2, middleY + span + 172);
         addLabel(type, middleX - fontRendererObj.getStringWidth(type) / 2, middleY + span + 182);
     }

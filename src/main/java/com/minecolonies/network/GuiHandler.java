@@ -38,9 +38,9 @@ public class GuiHandler implements IGuiHandler
             case HutBuilder:
                 return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z));
             case HutDeliveryman:
-                return new GuiHutDeliveryMan(/*(TileEntityHutDeliveryman) world.getTileEntity(x, y, z), */0, player, world, x, y, z);
+                return new GuiHutDeliveryMan(0, player, world, x, y, z);
             case HutDeliverymanSettings:
-                return new GuiHutDeliveryMan(/*(TileEntityHutDeliveryman) world.getTileEntity(x, y, z), */1, player, world, x, y, z);
+                return new GuiHutDeliveryMan(1, player, world, x, y, z);
         }
         return null;
     }

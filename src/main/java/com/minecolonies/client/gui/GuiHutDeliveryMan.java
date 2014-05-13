@@ -2,6 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,8 +13,6 @@ import net.minecraft.world.World;
 
 public class GuiHutDeliveryMan extends GuiBase
 {
-    //private TileEntityHutDeliveryMan tileEntity; //There is no TileEntity for now - Nico
-
     //IDs for Information
     protected final int idSettings = 5;
 
@@ -25,10 +24,9 @@ public class GuiHutDeliveryMan extends GuiBase
     protected int          x, y, z;
     private int span = 4, page = 0;
 
-    public GuiHutDeliveryMan(/*TileEntityHutBuilder tileEntity, */int page, EntityPlayer player, World world, int x, int y, int z)
+    public GuiHutDeliveryMan(int page, EntityPlayer player, World world, int x, int y, int z)
     {
         super();
-        //this.tileEntity = tileEntity;
         this.page = page;
         this.player = player;
         this.world = world;
@@ -45,13 +43,13 @@ public class GuiHutDeliveryMan extends GuiBase
         int y = middleY + span;
         int textPaddTop = 6, textPaddRight = 3;
 
-        String yes = I18n.format("com.minecolonies.gui.yes");
-        String no = I18n.format("com.minecolonies.gui.no");
-        String information = I18n.format("com.minecolonies.gui.workerHuts.information");
-        String toBlacksmith = I18n.format("com.minecolonies.gui.deliverymanHut.toBlacksmith");
-        String toStonemason = I18n.format("com.minecolonies.gui.deliverymanHut.toStonemason");
-        String toGuards = I18n.format("com.minecolonies.gui.deliverymanHut.toGuards");
-        String visitCitizenChests = I18n.format("com.minecolonies.gui.deliverymanHut.visitCitizenChests");
+        String yes = LanguageHandler.format("com.minecolonies.gui.yes");
+        String no = LanguageHandler.format("com.minecolonies.gui.no");
+        String information = LanguageHandler.format("com.minecolonies.gui.workerHuts.information");
+        String toBlacksmith = LanguageHandler.format("com.minecolonies.gui.deliverymanHut.toBlacksmith");
+        String toStonemason = LanguageHandler.format("com.minecolonies.gui.deliverymanHut.toStonemason");
+        String toGuards = LanguageHandler.format("com.minecolonies.gui.deliverymanHut.toGuards");
+        String visitCitizenChests = LanguageHandler.format("com.minecolonies.gui.deliverymanHut.visitCitizenChests");
 
         addLabel(toBlacksmith, middleX - fontRendererObj.getStringWidth(toBlacksmith) / 2, y + textPaddTop);
         y += buttonHeight;
@@ -102,9 +100,9 @@ public class GuiHutDeliveryMan extends GuiBase
         switch(page)
         {
             case 0:
-                addDefaultWorkerLayout(I18n.format("com.minecolonies.gui.workerHuts.deliverymansHut"), "John R. Jones", "xx (yy)", "xxxxxxxx", span);
+                addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.deliverymansHut"), "John R. Jones", "xx (yy)", "xxxxxxxx", span);
 
-                String settings = I18n.format("com.minecolonies.gui.workerHuts.settings");
+                String settings = LanguageHandler.format("com.minecolonies.gui.workerHuts.settings");
                 addButton(idSettings, settings, middleX - buttonWidth / 2, middleY + ySize - 34, buttonWidth, buttonHeight);
                 break;
             case 1:
