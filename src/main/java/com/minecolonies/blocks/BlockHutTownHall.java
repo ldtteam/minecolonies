@@ -1,7 +1,9 @@
 package com.minecolonies.blocks;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
+import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -141,6 +143,12 @@ public class BlockHutTownHall extends BlockInformator
 //     return false;
 // }
 
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
+    {
+        entityPlayer.openGui(MineColonies.instance, Constants.Gui.TownHall.ordinal(), world, x, y, z);
+        return true;
+    }
 
     public boolean canPlayerDestroy(World world, int x, int y, int z, Entity entity)
     {
