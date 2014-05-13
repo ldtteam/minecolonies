@@ -1,8 +1,7 @@
 package com.minecolonies.util;
 
-import net.minecraft.entity.Entity;
-
 import com.minecolonies.lib.Constants;
+import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 /**

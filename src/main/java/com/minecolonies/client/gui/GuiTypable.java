@@ -2,6 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -12,9 +13,9 @@ import org.lwjgl.input.Keyboard;
 
 public class GuiTypable extends GuiScreen
 {
-    private final String       title        = I18n.format("com.minecolonies.gui.townhall.rename.title");
     private TileEntityTownHall tileEntityTownHall;
     private       GuiTextField guiTextField = null;
+    private final String       title        = LanguageHandler.format("com.minecolonies.gui.townhall.rename.title");
     private String       newCityName;
     private EntityPlayer player;
     private World        world;

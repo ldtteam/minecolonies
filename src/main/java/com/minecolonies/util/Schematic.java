@@ -70,10 +70,12 @@ public class Schematic
 
                     if(block == Blocks.air)
                     {
-                        continue;
+                        world.setBlockToAir(x + i, y + j, z + k);
                     }
-
-                    world.setBlock(x + i, y + j, z + k, block, metadata, 0x02);
+                    else
+                    {
+                        world.setBlock(x + i, y + j, z + k, block, metadata, 0x02);
+                    }
                 }
             }
         }
@@ -81,9 +83,18 @@ public class Schematic
 
     public static void loadAndPlaceSchematic(World worldObj, String name, int x, int y, int z)
     {
+        loadAndPlaceSchematicWithRotation(worldObj, name, x, y, z, 0);
+    }
+
+    public static void loadAndPlaceSchematicWithRotation(World worldObj, String name, int x, int y, int z, int rotations)
+    {
         Schematic schematic = loadSchematic(worldObj, name);
         if(schematic.hasSchematic())
         {
+            for(int i = 0; i < rotations; i++)
+            {
+                schematic.rotate();
+            }
             schematic.placeSchematic(x, y, z);
         }
     }
@@ -180,6 +191,11 @@ public class Schematic
         //TODO schematic.rotate();
     }
 
+    public void rotate()
+    {
+        schematic.rotate();
+    }
+
     private static ResourceLocation getResourceLocation(String name)
     {
         return new ResourceLocation("minecolonies:schematics/" + name + ".schematic");
@@ -228,6 +244,21 @@ public class Schematic
     public boolean hasSchematic()
     {
         return schematic != null;
+    }
+
+    public int getHeight()
+    {
+        return schematic.getHeight();
+    }
+
+    public int getWidth()
+    {
+        return schematic.getWidth();
+    }
+
+    public int getLength()
+    {
+        return schematic.getLength();
     }
 
     //TODO rendering

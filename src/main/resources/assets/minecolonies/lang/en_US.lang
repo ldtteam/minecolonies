@@ -41,5 +41,14 @@ tile.blockHutStonemason.name=Stonemason's Hut
 tile.blockHutTownhall.name=Town Hall
 
 item.supplyChestDeployer.name=Supply Chest
+item.scepterGold.name=Building Tool
+item.caliper.name=Caliper
+
+item.supplyChestDeployer.invalid=You must be near a big pool of water
+
+item.caliper.message.same=That's the same block.
+item.caliper.message.line=That's a %d block line.
+item.caliper.message.square=That's a %d by %d square.
+item.caliper.message.cube=That's a %d by %d by %d cube.
 
 itemGroup.minecolonies=MineColonies
