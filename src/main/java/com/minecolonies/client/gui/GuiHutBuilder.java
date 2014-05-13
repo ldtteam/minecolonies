@@ -3,7 +3,6 @@ package com.minecolonies.client.gui;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.resources.I18n;
 
 public class GuiHutBuilder extends GuiBase
 {

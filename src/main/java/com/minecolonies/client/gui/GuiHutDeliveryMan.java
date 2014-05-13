@@ -4,7 +4,6 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
