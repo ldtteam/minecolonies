@@ -1,14 +1,12 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.network.packets.TileEntityPacket;
 import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
@@ -16,8 +14,8 @@ public class GuiTypable extends GuiScreen
 {
     private TileEntityTownHall tileEntityTownHall;
     private       GuiTextField guiTextField = null;
-    private final String       title        = I18n.format("com.minecolonies.gui.townhall.rename.title");
-    private       String       newCityName;
+    private final String       title        = LanguageHandler.format("com.minecolonies.gui.townhall.rename.title");
+    private String       newCityName;
     private EntityPlayer player;
     private World        world;
     private int          x;
@@ -43,7 +41,7 @@ public class GuiTypable extends GuiScreen
         Keyboard.enableRepeatEvents(true);
         //Do Not Move down, hides crosshair
         guiTextField = new GuiTextField(this.fontRendererObj, this.width / 2 - 75, this.height / 2 - 10, 150, 18);
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 110, I18n.format("com.minecolonies.gui.townhall.rename.done")));
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 110, LanguageHandler.format("com.minecolonies.gui.townhall.rename.done")));
 
         this.guiTextField.setMaxStringLength(1024);
         this.guiTextField.setText(newCityName);

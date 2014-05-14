@@ -4,15 +4,7 @@ import net.minecraft.block.Block;
 
 public final class ModBlocks
 {
-    public static Block blockHutTownhall,
-                        blockHutMiner,
-                        blockHutLumberjack,
-                        blockHutBaker,
-                        blockHutBuilder,
-                        blockHutDeliveryman,
-                        blockHutBlacksmith,
-                        blockHutStonemason,
-                        blockHutFarmer;
+    public static Block blockHutTownhall, blockHutMiner, blockHutLumberjack, blockHutBaker, blockHutBuilder, blockHutDeliveryman, blockHutBlacksmith, blockHutStonemason, blockHutFarmer;
 
     public static void init()
     {

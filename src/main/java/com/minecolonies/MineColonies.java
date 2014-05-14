@@ -1,14 +1,14 @@
 package com.minecolonies;
 
 import com.minecolonies.blocks.ModBlocks;
-import com.minecolonies.network.GuiHandler;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.items.ModItems;
-import com.minecolonies.util.RecipeHandler;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.network.GuiHandler;
 import com.minecolonies.network.PacketPipeline;
 import com.minecolonies.proxy.IProxy;
+import com.minecolonies.util.RecipeHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
