@@ -1,20 +1,17 @@
 package com.minecolonies.items;
 
+import com.minecolonies.MineColonies;
+import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.util.Schematic;
-import com.minecolonies.util.CreativeTab;
-import com.minecolonies.util.IColony;
-import com.minecolonies.util.Utils;
-import cpw.mods.fml.client.FMLClientHandler;
+import com.minecolonies.util.*;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
@@ -62,14 +59,20 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      // System.out.println("hashmap 5 : " + hashmap.get(5));
 
         if(hashmap.get(1))
+        {
             for(int i = 2; i <= 5; i++)
+            {
                 if(hashmap.get(i) != null)
+                {
                     if(hashmap.get(i))
                     {
                         spawnShip(world, x, y, z, entityPlayer, i);
                         return itemStack;
                     }
-        FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("You must be near a big pool of water"));
+                }
+            }
+        }
+        Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.supplyChestDeployer.invalid"));
         return itemStack;
     }
 
@@ -189,31 +192,42 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      */
     private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer, int chestFacing)
     {
-        //TODO Spawn ship
         PlayerProperties.get(entityPlayer).setHasPlacedSupplyChest(true);
 
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
 
-        Schematic.loadAndPlaceSchematic(world, "test", x, y + 5, z);//TODO use correct schematic
+        placeSupplyShip(world, x, y, z, chestFacing);
+
         fillChest((TileEntityChest) world.getTileEntity(x, y + 1, z));
     }
 
-    private void fillChest(TileEntityChest chest) {
-        //TODO chest.setInventorySlotContents(slotID, ItemStack);
-
-        switch(chest.getWorldObj().difficultySetting)
+    private void placeSupplyShip(World world, int x, int y, int z, int direction)
+    {
+        switch(direction)
         {
-            //The easier the difficulty, the more loot recieved
-            case PEACEFUL:
-                //TODO peacefull loot
-            case EASY:
-                //TODO easy loot
-            case NORMAL:
-                //TODO normal loot
-            case HARD:
-                //TODO hard loot
+            case 2://North
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x - 11, y - 2, z + 5, 3);
+                break;
+            case 3://South
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x - 20, y - 2, z - 21, 1);
+                break;
+            case 4://West
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x + 5, y - 2, z - 20, 2);
+                break;
+            case 5://East
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x - 21, y - 2, z - 11, 0);
                 break;
         }
+    }
+
+    private void fillChest(TileEntityChest chest) {
+        if (chest == null)
+        {
+            MineColonies.logger.error("Supply chest tile entity was null.");
+            return;
+        }
+        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownhall));
+        chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
     }
 }

@@ -4,7 +4,8 @@ import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
 
-import static com.minecolonies.configuration.Configurations.*;
+import static com.minecolonies.configuration.Configurations.DEFAULT_ALLOWINFINTESUPPLYCHESTS;
+import static com.minecolonies.configuration.Configurations.DEFAULT_WORKINGRANGETOWNHALL;
 
 /**
  * Configuration Handler.

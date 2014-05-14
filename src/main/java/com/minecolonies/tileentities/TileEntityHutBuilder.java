@@ -5,5 +5,6 @@ public class TileEntityHutBuilder extends TileEntityHutWorker
     public TileEntityHutBuilder()
     {
         setMaxInhabitants(1);
+        setHutName("hutBuilder");
     }
 }

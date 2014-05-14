@@ -2,6 +2,7 @@ package com.minecolonies.proxy;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -10,7 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class CommonProxy implements IProxy
+public class CommonProxy implements IProxy
 {
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn
@@ -21,6 +22,7 @@ public abstract class CommonProxy implements IProxy
     public void registerTileEntities()
     {
         GameRegistry.registerTileEntity(TileEntityTownHall.class, "tileEntityTownHall");
+        GameRegistry.registerTileEntity(TileEntityHutBuilder.class, "tileEntityHutBuilder");
     }
 
     /**
@@ -56,4 +58,12 @@ public abstract class CommonProxy implements IProxy
     {
         EntityRegistry.registerModEntity(EntityCitizen.class, "entityCitizen",0, MineColonies.instance, 250, 3, true);
     }
+
+    @Override
+    public void registerEntityRendering() {}
+    @Override
+    public void registerKeybindings() {}
+
+    @Override
+    public void registerEvents() {}
 }
