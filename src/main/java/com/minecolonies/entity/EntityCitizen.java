@@ -72,8 +72,8 @@ public class EntityCitizen extends EntityAgeable
         super.readEntityFromNBT(nbtTagCompound);
         this.job = nbtTagCompound.getString("job");
 
-        int level = nbtTagCompound.hasKey("level") ? nbtTagCompound.getInteger("level") : -1;
-        int sex = nbtTagCompound.hasKey("sex") ? nbtTagCompound.getInteger("sex") : -1;
+        int level = nbtTagCompound.hasKey("level") ? nbtTagCompound.getInteger("level") : this.level.getLevel();
+        int sex = nbtTagCompound.hasKey("sex") ? nbtTagCompound.getInteger("sex") : this.level.getSexInt();
 
         EnumCitizenLevel[] levels = EnumCitizenLevel.values();
         for (int i = 0; i < levels.length; i++) {
