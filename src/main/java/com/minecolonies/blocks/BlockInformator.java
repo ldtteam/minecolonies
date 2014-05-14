@@ -5,12 +5,14 @@ import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -87,15 +89,27 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
         }
     }
 
-
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
         if(world.isRemote) return;
 
-        if(Utils.getDistanceToClosestTownHall(world, x, y, z) < Constants.MAXDISTANCETOTOWNHALL)
+        if(entityLivingBase instanceof EntityPlayer && !(world.getTileEntity(x, y, z) instanceof TileEntityTownHall))
         {
-            addClosestTownhall(world, x, y, z);
+            TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
+            Object o = Utils.getTownhallByOwner(world, (EntityPlayer) entityLivingBase);
+            if(o == null || Utils.getDistanceToTileEntity(world, x, y, z, (TileEntityTownHall) o) > Constants.MAXDISTANCETOTOWNHALL)
+            {
+                if(o == null)
+                    Utils.sendPlayerMessage((EntityPlayer) entityLivingBase, LanguageHandler.format("tile.blockInformator.messageNoTownhall"));
+                else
+                    Utils.sendPlayerMessage((EntityPlayer) entityLivingBase, LanguageHandler.format("tile.blockInformator.messageTooFarFromTownhall"));
+                world.setBlockToAir(x, y, z);
+                return;
+            }
+            TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) o;
+            tileEntityBuildable.setTownHall(tileEntityTownHall);
+            attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
         }
     }
 }

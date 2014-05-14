@@ -4,18 +4,22 @@ import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
+import java.util.UUID;
 
 public class Utils
 {
     /**
      * Method to find the closest townhall
+     *
      * @param world world obj
-     * @param x xCoord to check from
-     * @param y yCoord to check from
-     * @param z zCoord to check from
+     * @param x     xCoord to check from
+     * @param y     yCoord to check from
+     * @param z     zCoord to check from
      * @return closest TileEntityTownHall
      */
     public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z)
@@ -60,10 +64,47 @@ public class Utils
     }
 
     /**
-     * Finds the highest block in one yCoord, but ignores leaves etc.
+     * Gives the distance to a given townhall
      * @param world world obj
-     * @param x xCoord
-     * @param z zCoord
+     * @param x xCoord to check from
+     * @param y yCoord to check from
+     * @param z zCoord to check from
+     * @param tileEntity TileEntityTownhall to check to.
+     * @return distance
+     */
+    public static double getDistanceToTileEntity(World world, int x, int y, int z, TileEntity tileEntity)
+    {
+        int xTown = tileEntity.xCoord;
+        int yTown = tileEntity.yCoord;
+        int zTown = tileEntity.zCoord;
+        return Math.sqrt(Math.pow(Math.abs(x - tileEntity.xCoord), 2)
+                       + Math.pow(Math.abs(y - tileEntity.yCoord), 2)
+                       + Math.pow(Math.abs(z - tileEntity.zCoord), 2));
+    }
+
+    /**
+     * Gets a Townhall that a given player is owner of
+     *
+     * @param world world obj
+     * @param player player to be checked
+     * @return TileEntityTownHall the player is user of, or null when he is no owner.
+     */
+    public static TileEntityTownHall getTownhallByOwner(World world, EntityPlayer player)
+    {
+        for(Object o : world.loadedTileEntityList)
+            if(o instanceof TileEntityTownHall)
+                for(UUID owners : ((TileEntityTownHall) o).getOwners())
+                    if(owners.equals(player.getUniqueID()))
+                        return (TileEntityTownHall)o;
+        return null;
+    }
+
+    /**
+     * Finds the highest block in one yCoord, but ignores leaves etc.
+     *
+     * @param world world obj
+     * @param x     xCoord
+     * @param z     zCoord
      * @return yCoordinate
      */
     protected int findTopGround(World world, int x, int z)
@@ -73,8 +114,8 @@ public class Utils
         {
             yHolder++;
         }
-        while(  world.getBlock(x, yHolder, z) == Blocks.air ||
-               !world.getBlock(x, yHolder, z).isOpaqueCube() ||
+        while(world.getBlock(x, yHolder, z) == Blocks.air ||
+                !world.getBlock(x, yHolder, z).isOpaqueCube() ||
                 world.getBlock(x, yHolder, z) == Blocks.leaves ||
                 world.getBlock(x, yHolder, z) == Blocks.leaves2)
         {
@@ -118,6 +159,7 @@ public class Utils
 
     /**
      * Checks if the block is water
+     *
      * @param block block to be checked
      * @return true if is water.
      */
@@ -128,10 +170,11 @@ public class Utils
 
     /**
      * Checks if the block is water
+     *
      * @param world world obj
-     * @param x xCoord
-     * @param y yCoord
-     * @param z zCoord
+     * @param x     xCoord
+     * @param y     yCoord
+     * @param z     zCoord
      * @return true if is water.
      */
     public static boolean isWater(World world, int x, int y, int z)
