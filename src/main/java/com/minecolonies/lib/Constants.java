@@ -4,7 +4,7 @@ public class Constants
 {
     public static final String MODID               = "minecolonies";
     public static final String MODNAME             = "MineColonies";
-    public static final String VERSION             = "0.0.4"; //TODO can gradle set this?
+    public static final String VERSION             = "@VERSION@";
     public static final String CLIENTPROXYLOCATION = "com.minecolonies.proxy.ClientProxy";
     public static final String COMMONPROXYLOCATION = "com.minecolonies.proxy.CommonProxy";
     public static final String PlayerPropertyName  = "MineColoniesPlayerProperties";
