@@ -27,18 +27,26 @@ configFile.withReader {
 }
 
 group = "MineColoniesMod"
-version = config.mod_version
+version = "${config.minecolonies_major}.${config.minecolonies_minor}.${config.minecolonies_build}"
 
 minecraft {
         version = config.minecraft_version + "-" + config.forge_version
         assetDir = "run/assets"
+		replace "@VERSION@", project.version
 }
-if (System.getenv("BUILD_NUMBER") != null) {
-        version = "${config.minecraft_version}-${config.mod_version}-" + System.getenv("BUILD_NUMBER");
+
+task incrementBuildNumber() {
+	dependsOn "reobf"
+	doLast {
+		config.minecolonies_build = (config.minecolonies_build.toString().toInteger()) + 1
+
+		configFile.withWriter {
+				config.toProperties().store(it, "")
+		}
+    }
 }
-else {
-        version = "${config.minecraft_version}-${config.mod_version}"
-}
+tasks.build.dependsOn "incrementBuildNumber"
+
 processResources
 {
         // this will ensure that this task is redone when the versions change.
