@@ -62,7 +62,7 @@ public class GuiHutDeliveryMan extends GuiBase
         addLabel(toStonemason, middleX - fontRendererObj.getStringWidth(toStonemason) / 2, y + textPaddTop);
         y += buttonHeight;
 
-        addIcon(new ItemStack(Blocks.stone, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
+        addIcon(new ItemStack(Blocks.cobblestone, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idStoneToStonemason, yes, xl, y, smallButton, buttonHeight);
         addIcon(new ItemStack(Blocks.sand, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idSandToStonemason, no, xr, y, smallButton, buttonHeight);
