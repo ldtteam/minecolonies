@@ -2,6 +2,7 @@ package com.minecolonies.proxy;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -21,6 +22,7 @@ public class CommonProxy implements IProxy
     public void registerTileEntities()
     {
         GameRegistry.registerTileEntity(TileEntityTownHall.class, "tileEntityTownHall");
+        GameRegistry.registerTileEntity(TileEntityHutBuilder.class, "tileEntityHutBuilder");
     }
 
     /**
