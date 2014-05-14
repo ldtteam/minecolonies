@@ -4,6 +4,7 @@ import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -68,17 +69,17 @@ public class Utils
      * @param x xCoord to check from
      * @param y yCoord to check from
      * @param z zCoord to check from
-     * @param tileEntityTownHall TileEntityTownhall to check to.
+     * @param tileEntity TileEntityTownhall to check to.
      * @return distance
      */
-    public static double getDistanceToTownHall(World world, int x, int y, int z, TileEntityTownHall tileEntityTownHall)
+    public static double getDistanceToTileEntity(World world, int x, int y, int z, TileEntity tileEntity)
     {
-        int xTown = tileEntityTownHall.xCoord;
-        int yTown = tileEntityTownHall.yCoord;
-        int zTown = tileEntityTownHall.zCoord;
-        return Math.sqrt(Math.pow(Math.abs(x - tileEntityTownHall.xCoord), 2)
-                       + Math.pow(Math.abs(y - tileEntityTownHall.yCoord), 2)
-                       + Math.pow(Math.abs(z - tileEntityTownHall.zCoord), 2));
+        int xTown = tileEntity.xCoord;
+        int yTown = tileEntity.yCoord;
+        int zTown = tileEntity.zCoord;
+        return Math.sqrt(Math.pow(Math.abs(x - tileEntity.xCoord), 2)
+                       + Math.pow(Math.abs(y - tileEntity.yCoord), 2)
+                       + Math.pow(Math.abs(z - tileEntity.zCoord), 2));
     }
 
     /**
