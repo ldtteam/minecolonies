@@ -8,9 +8,11 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.GuiHandler;
 import com.minecolonies.network.PacketPipeline;
 import com.minecolonies.proxy.IProxy;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.RecipeHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -18,7 +20,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION)
+@Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, certificateFingerprint = Constants.FINGERPRINT)
 public class MineColonies
 {
     public static Logger logger;
@@ -30,6 +32,16 @@ public class MineColonies
 
     @SidedProxy(clientSide = Constants.CLIENTPROXYLOCATION, serverSide = Constants.COMMONPROXYLOCATION)
     public static IProxy proxy;
+
+    @Mod.EventHandler
+    @SuppressWarnings("unused")
+    public void invalidFingerprint(FMLFingerprintViolationEvent event)
+    {
+        if (Constants.FINGERPRINT.equals("@FINGERPRINT@"))
+        {
+            System.out.println(LanguageHandler.format("com.minecolonies.error.noFingerprint"));
+        }
+    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)

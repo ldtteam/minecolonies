@@ -14,79 +14,103 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
-
+ 
 apply plugin: 'forge'
-
+ 
 ext.configFile = file "build.properties"
-
+ 
 configFile.withReader {
-
+ 
         def prop = new Properties()
         prop.load(it)
         ext.config = new ConfigSlurper().parse prop
 }
-
-group = "MineColoniesMod"
+ 
+group = "com.mineclonies"
 version = "${config.minecolonies_major}.${config.minecolonies_minor}.${config.minecolonies_build}"
-
+ 
 minecraft {
+
         version = config.minecraft_version + "-" + config.forge_version
         assetDir = "run/assets"
-		replace "@VERSION@", project.version
+                replace "@VERSION@", project.version
+		replaceIn "lib/Constants.java"
+    			if (project.hasProperty("signature"))
+        			replace "@FINGERPRINT@", signature
 }
+ 
+processResources {
 
-task incrementBuildNumber() {
-	dependsOn "reobf"
-	doLast {
-		config.minecolonies_build = (config.minecolonies_build.toString().toInteger()) + 1
-
-		configFile.withWriter {
-				config.toProperties().store(it, "")
-		}
-    }
-}
-tasks.build.dependsOn "incrementBuildNumber"
-
-processResources
-{
-        // this will ensure that this task is redone when the versions change.
         inputs.property "version", project.version
         inputs.property "mcversion", project.minecraft.version
-
-        // replace stuff in mcmod.info, nothing else
+ 
         from(sourceSets.main.resources.srcDirs) {
             include 'mcmod.info'
-
-            // replace version and mcversion
             expand 'version': project.version, 'mcversion': project.minecraft.version
         }
 
-        // copy everything else, thats not the mcmod.info
         from(sourceSets.main.resources.srcDirs) {
             exclude 'mcmod.info'
         }
 }
+ 
+task("signJar") {
 
-repositories {
-        mavenCentral()
+    dependsOn 'reobf'
+    dependsOn 'incrementBuildNumber'
+
+    inputs.file jar.getArchivePath()
+    inputs.file keystore_location
+    inputs.property "keystore_alias", keystore_alias
+    inputs.property "keystore_password", keystore_password
+    outputs.file jar.getArchivePath()
+ 
+    onlyIf {
+        return keystore_location != "."
+    }
+ 
+    doLast {
+        ant.signjar(
+                destDir: jar.destinationDir,
+                jar: jar.getArchivePath(),
+                keystore: keystore_location,
+                alias: keystore_alias,
+                storepass: keystore_password
+        )
+    }
 }
-
-jar {
-        appendix = 'universal'
-}
-
+ 
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
     appendix = 'src'
 }
-
+ 
 task deobfJar(type: Jar) {
         from sourceSets.main.output
         appendix = 'deobf'
 }
+ 
+task incrementBuildNumber() {
+        dependsOn "reobf"
+        doLast {
+                config.minecolonies_build = (config.minecolonies_build.toString().toInteger()) + 1
+ 
+                configFile.withWriter {
+                                config.toProperties().store(it, "")
+                }
+    }
+}
+ 
+jar {
+        appendix = 'universal'
+}
 
-//The *-universal-* is the right one!
-artifacts {
-        archives sourceJar
-        archives deobfJar
+task release(type: Copy) {
+    dependsOn "signJar"
+
+    from project.tasks.jar.destinationDir
+    into project.file(project.release_loc)
+    onlyIf {
+        return project.release_loc != "."
+    }
 }
