@@ -40,6 +40,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         super.applyEntityAttributes();
         getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0d);
+        getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.5d);
     }
 
     public void setTexture()
