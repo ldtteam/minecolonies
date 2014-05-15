@@ -62,7 +62,8 @@ public class EntityCitizen extends EntityAgeable
     {
         super.writeEntityToNBT(nbtTagCompound);
         nbtTagCompound.setString("job", job);
-        //TODO save level
+        nbtTagCompound.setInteger("level", level.getLevel());
+        nbtTagCompound.setInteger("sex", level.getSexInt());
     }
 
     @Override
@@ -70,5 +71,15 @@ public class EntityCitizen extends EntityAgeable
     {
         super.readEntityFromNBT(nbtTagCompound);
         this.job = nbtTagCompound.getString("job");
+
+        int level = nbtTagCompound.hasKey("level") ? nbtTagCompound.getInteger("level") : this.level.getLevel();
+        int sex = nbtTagCompound.hasKey("sex") ? nbtTagCompound.getInteger("sex") : this.level.getSexInt();
+
+        EnumCitizenLevel[] levels = EnumCitizenLevel.values();
+        for (int i = 0; i < levels.length; i++) {
+            if (levels[i].getLevel() == level && levels[i].getSexInt() == sex) {
+                this.level = levels[i];
+            }
+        }
     }
 }
