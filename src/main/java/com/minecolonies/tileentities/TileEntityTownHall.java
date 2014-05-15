@@ -1,16 +1,22 @@
 package com.minecolonies.tileentities;
 
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 public class TileEntityTownHall extends TileEntityHut
@@ -49,6 +55,46 @@ public class TileEntityTownHall extends TileEntityHut
     {
         owners.add(ownerName);
         biome = w.getBiomeGenForCoords(x, z);
+    }
+
+    @Override
+    public void updateEntity()
+    {
+        int respawnInterval = Configurations.citizenRespawnInterval;
+        respawnInterval -= (60 * getBuildingLevel());
+
+        if (worldObj.getWorldInfo().getWorldTime() % respawnInterval == 0)
+        {
+            Random rand = new Random();
+            if (getCitizens().size() < getMaxCitizens())
+            {
+                if (rand.nextInt(10) < 10)
+                {
+                    Vec3 spawnPoint = scanForBlockNearPoint(worldObj, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
+                    if (spawnPoint == null)
+                        spawnPoint = scanForBlockNearPoint(worldObj, Blocks.snow, xCoord, yCoord, zCoord, 1, 0, 1);
+
+                    if (getMaxCitizens() == getCitizens().size() + 1)
+                        FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Colony has reached max size"));
+                    if (spawnPoint != null) {
+                        EntityCitizen ec = spawnCitizen(spawnPoint.xCoord, spawnPoint.yCoord, spawnPoint.zCoord);
+                        if (ec != null)
+                            addCitizen(ec);
+                    }
+                }
+            }
+        }
+    }
+
+    public EntityCitizen spawnCitizen(double x, double y, double z)
+    {
+        if (worldObj.isRemote || !worldObj.provider.isSurfaceWorld())
+            return null;
+
+        EntityCitizen ec = new EntityCitizen(worldObj);
+        ec.setPosition(x, y, z);
+        worldObj.spawnEntityInWorld(ec);
+        return ec;
     }
 
     @Override
