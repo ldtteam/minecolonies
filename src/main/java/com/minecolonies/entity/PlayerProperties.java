@@ -8,16 +8,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
-/**
- * NOTE
- * THIS CLASS NEEDS TWEAKING
- * I DO NOT KNOW ALL ABOUT PLAYER PROPERTIES, BUT THIS WAY, IT WORKED FOR ME LAST TIME!
- */
 public class PlayerProperties implements IExtendedEntityProperties
 {
     private final EntityPlayer player;
-    boolean hasPlacedTownHall    = false;
-    boolean hasPlacedSupplyChest = false;
+    private boolean hasPlacedTownHall    = false;
+    private int townhallX = 0, townhallY = 0, townhallZ = 0;
+    private boolean hasPlacedSupplyChest = false;
 
     private PlayerProperties(EntityPlayer player)
     {
@@ -51,6 +47,9 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = new NBTTagCompound();
 
         properties.setBoolean("hasPlacedTownHall", hasPlacedTownHall);
+        properties.setInteger("townhallX", townhallX);
+        properties.setInteger("townhallY", townhallY);
+        properties.setInteger("townhallZ", townhallZ);
         properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
         compound.setTag(Constants.PlayerPropertyName, properties);
@@ -62,6 +61,9 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PlayerPropertyName);
 
         this.hasPlacedTownHall = properties.getBoolean("hasPlacedTownHall");
+        this.townhallX = properties.getInteger("townhallX");
+        this.townhallY = properties.getInteger("townhallY");
+        this.townhallZ = properties.getInteger("townhallZ");
         this.hasPlacedSupplyChest = properties.getBoolean("hasPlacedSupplyChest");
     }
 
@@ -128,9 +130,20 @@ public class PlayerProperties implements IExtendedEntityProperties
      *
      * @param hasPlacedTownHall boolean
      */
-    public void setHasPlacedTownHall(boolean hasPlacedTownHall)
+    private void setHasPlacedTownHall(boolean hasPlacedTownHall)
     {
         this.hasPlacedTownHall = hasPlacedTownHall;
+    }
+
+    public void placeTownhall(int x, int y, int z)
+    {
+        setHasPlacedTownHall(true);
+        setTownhallPos(x, y, z);
+    }
+
+    public void removeTownhall()
+    {
+        setHasPlacedTownHall(false);
     }
 
     /**
@@ -151,5 +164,27 @@ public class PlayerProperties implements IExtendedEntityProperties
     public void setHasPlacedSupplyChest(boolean hasPlacedSupplyChest)
     {
         this.hasPlacedSupplyChest = hasPlacedSupplyChest;
+    }
+
+    public int getTownhallX()
+    {
+        return townhallX;
+    }
+
+    public int getTownhallY()
+    {
+        return townhallY;
+    }
+
+    public int getTownhallZ()
+    {
+        return townhallZ;
+    }
+
+    public void setTownhallPos(int x, int y, int z)
+    {
+        this.townhallX = x;
+        this.townhallY = y;
+        this.townhallZ = z;
     }
 }
