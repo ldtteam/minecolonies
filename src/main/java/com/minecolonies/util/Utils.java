@@ -1,5 +1,6 @@
 package com.minecolonies.util;
 
+import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -91,11 +92,11 @@ public class Utils
      */
     public static TileEntityTownHall getTownhallByOwner(World world, EntityPlayer player)
     {
-        for(Object o : world.loadedTileEntityList)
-            if(o instanceof TileEntityTownHall)
-                for(UUID owners : ((TileEntityTownHall) o).getOwners())
-                    if(owners.equals(player.getUniqueID()))
-                        return (TileEntityTownHall)o;
+        PlayerProperties props = PlayerProperties.get(player);
+        if (props.hasPlacedTownHall())
+        {
+            return (TileEntityTownHall) world.getTileEntity(props.getTownhallX(), props.getTownhallY(), props.getTownhallZ());
+        }
         return null;
     }
 

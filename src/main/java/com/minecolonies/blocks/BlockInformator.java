@@ -97,17 +97,16 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
         if(entityLivingBase instanceof EntityPlayer && !(world.getTileEntity(x, y, z) instanceof TileEntityTownHall))
         {
             TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
-            Object o = Utils.getTownhallByOwner(world, (EntityPlayer) entityLivingBase);
-            if(o == null || Utils.getDistanceToTileEntity(world, x, y, z, (TileEntityTownHall) o) > Constants.MAXDISTANCETOTOWNHALL)
+            TileEntityTownHall tileEntityTownHall = Utils.getTownhallByOwner(world, (EntityPlayer) entityLivingBase);
+            if(tileEntityTownHall == null || Utils.getDistanceToTileEntity(world, x, y, z, tileEntityTownHall) > Constants.MAXDISTANCETOTOWNHALL)
             {
-                if(o == null)
+                if(tileEntityTownHall == null)
                     Utils.sendPlayerMessage((EntityPlayer) entityLivingBase, LanguageHandler.format("tile.blockInformator.messageNoTownhall"));
                 else
                     Utils.sendPlayerMessage((EntityPlayer) entityLivingBase, LanguageHandler.format("tile.blockInformator.messageTooFarFromTownhall"));
                 world.setBlockToAir(x, y, z);
                 return;
             }
-            TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) o;
             tileEntityBuildable.setTownHall(tileEntityTownHall);
             attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
         }
