@@ -2,6 +2,7 @@ package com.minecolonies.entity;
 
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -10,7 +11,7 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class EntityCitizen extends EntityAgeable
+public class EntityCitizen extends EntityAgeable implements INpc
 {
     public ResourceLocation texture;
     public EnumCitizenLevel level;
