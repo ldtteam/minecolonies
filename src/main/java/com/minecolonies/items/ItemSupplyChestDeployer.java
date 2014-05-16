@@ -72,7 +72,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
                 }
             }
         }
-        Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.supplyChestDeployer.invalid"));
+        LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.supplyChestDeployer.invalid");
         return itemStack;
     }
 
