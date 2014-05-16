@@ -185,6 +185,13 @@ public class Utils
         return world.getBlock(x, y, z) == Blocks.water || world.getBlock(x, y, z) == Blocks.flowing_water;
     }
 
+    /**
+     * Returns the online EntityPlayer with the given UUID
+     *
+     * @param world world the player is in
+     * @param id the player's UUID
+     * @return the EntityPlayer
+     */
     public static EntityPlayer getPlayerFromUUID(World world, UUID id)
     {
         for (int i = 0; i < world.playerEntities.size(); ++i)
@@ -197,6 +204,13 @@ public class Utils
         return null;
     }
 
+    /**
+     * Returns a list of online players whose UUID's match the ones provided.
+     *
+     * @param world the world the players are in.
+     * @param ids List of UUIDs
+     * @return list of EntityPlayers
+     */
     public static List<EntityPlayer> getPlayersFromUUID(World world, List<UUID> ids)
     {
         List<EntityPlayer> players = new ArrayList<EntityPlayer>();
