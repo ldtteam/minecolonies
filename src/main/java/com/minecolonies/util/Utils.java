@@ -1,5 +1,6 @@
 package com.minecolonies.util;
 
+import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,6 +10,8 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Utils
@@ -91,11 +94,11 @@ public class Utils
      */
     public static TileEntityTownHall getTownhallByOwner(World world, EntityPlayer player)
     {
-        for(Object o : world.loadedTileEntityList)
-            if(o instanceof TileEntityTownHall)
-                for(UUID owners : ((TileEntityTownHall) o).getOwners())
-                    if(owners.equals(player.getUniqueID()))
-                        return (TileEntityTownHall)o;
+        PlayerProperties props = PlayerProperties.get(player);
+        if (props.hasPlacedTownHall())
+        {
+            return (TileEntityTownHall) world.getTileEntity(props.getTownhallX(), props.getTownhallY(), props.getTownhallZ());
+        }
         return null;
     }
 
@@ -182,8 +185,55 @@ public class Utils
         return world.getBlock(x, y, z) == Blocks.water || world.getBlock(x, y, z) == Blocks.flowing_water;
     }
 
-    public static void sendPlayerMessage(EntityPlayer player, String message)
+    /**
+     * Returns the online EntityPlayer with the given UUID
+     *
+     * @param world world the player is in
+     * @param id the player's UUID
+     * @return the EntityPlayer
+     */
+    public static EntityPlayer getPlayerFromUUID(World world, UUID id)
     {
-        player.addChatComponentMessage(new ChatComponentText(message));
+        for (int i = 0; i < world.playerEntities.size(); ++i)
+        {
+            if (id.equals(((EntityPlayer) world.playerEntities.get(i)).getUniqueID()))
+            {
+                return (EntityPlayer ) world.playerEntities.get(i);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a list of online players whose UUID's match the ones provided.
+     *
+     * @param world the world the players are in.
+     * @param ids List of UUIDs
+     * @return list of EntityPlayers
+     */
+    public static List<EntityPlayer> getPlayersFromUUID(World world, List<UUID> ids)
+    {
+        List<EntityPlayer> players = new ArrayList<EntityPlayer>();
+
+        for (EntityPlayer player : (List<EntityPlayer>) world.playerEntities)
+        {
+            for (UUID id : ids)
+            {
+                if (player.getUniqueID().equals(id))
+                {
+                    players.add(player);
+                    if (players.size() == ids.size())
+                    {
+                        return players;
+                    }
+                    break;
+                }
+            }
+        }
+        if (!players.isEmpty())
+        {
+            return players;
+        }
+        return null;
     }
 }

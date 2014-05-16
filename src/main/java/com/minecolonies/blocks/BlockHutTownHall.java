@@ -33,12 +33,6 @@ public class BlockHutTownHall extends BlockInformator
     }
 
     @Override
-    public int getRenderType()
-    {
-        return 31;
-    }
-
-    @Override
     public String getName()
     {
         return name;
@@ -64,7 +58,7 @@ public class BlockHutTownHall extends BlockInformator
         {
             tileEntityTownHall.setInfo(world, entityLivingBase.getUniqueID(), x, z);
             tileEntityTownHall.setCityName(((EntityPlayer) entityLivingBase).getDisplayName() + "'s City");
-            playerProperties.setHasPlacedTownHall(true);
+            playerProperties.placeTownhall(x, y, z);
         }
     }
 
@@ -118,7 +112,7 @@ public class BlockHutTownHall extends BlockInformator
                 for(Entity entity : loadedEntities)
                     for(UUID uuid : townhallList)
                         if(entity.getPersistentID().equals(uuid)) entity.setDead();
-                PlayerProperties.get(player).setHasPlacedTownHall(false);
+                PlayerProperties.get(player).removeTownhall();
             }
             return super.removedByPlayer(world, player, x, y, z);
         }
