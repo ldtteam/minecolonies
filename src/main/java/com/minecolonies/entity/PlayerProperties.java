@@ -135,12 +135,23 @@ public class PlayerProperties implements IExtendedEntityProperties
         this.hasPlacedTownHall = hasPlacedTownHall;
     }
 
+    /**
+     * Set hasPlacedTownHall to true and sets coordinates
+     *
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param z z coordinate
+     */
     public void placeTownhall(int x, int y, int z)
     {
         setHasPlacedTownHall(true);
         setTownhallPos(x, y, z);
     }
 
+    /**
+     * Set hasPlacedTownHall to false. Should be called when removing the townhall.
+     *
+     */
     public void removeTownhall()
     {
         setHasPlacedTownHall(false);
@@ -166,22 +177,37 @@ public class PlayerProperties implements IExtendedEntityProperties
         this.hasPlacedSupplyChest = hasPlacedSupplyChest;
     }
 
+    /**
+     * Returns the townhall x coordinate
+     *
+     * @return townhall x coordinate
+     */
     public int getTownhallX()
     {
         return townhallX;
     }
 
+    /**
+     * Returns the townhall y coordinate
+     *
+     * @return townhall y coordinate
+     */
     public int getTownhallY()
     {
         return townhallY;
     }
 
+    /**
+     * Returns the townhall z coordinate
+     *
+     * @return townhall z coordinate
+     */
     public int getTownhallZ()
     {
         return townhallZ;
     }
 
-    public void setTownhallPos(int x, int y, int z)
+    private void setTownhallPos(int x, int y, int z)
     {
         this.townhallX = x;
         this.townhallY = y;
