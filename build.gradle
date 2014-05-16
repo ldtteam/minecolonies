@@ -14,36 +14,36 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
- 
+
 apply plugin: 'forge'
- 
+
 ext.configFile = file "build.properties"
- 
+
 configFile.withReader {
- 
-        def prop = new Properties()
-        prop.load(it)
-        ext.config = new ConfigSlurper().parse prop
+
+      def prop = new Properties()
+      prop.load(it)
+      ext.config = new ConfigSlurper().parse prop
 }
  
 group = "com.mineclonies"
 version = "${config.minecolonies_major}.${config.minecolonies_minor}.${config.minecolonies_build}"
- 
+
 minecraft {
 
         version = config.minecraft_version + "-" + config.forge_version
         assetDir = "run/assets"
                 replace "@VERSION@", project.version
-		replaceIn "lib/Constants.java"
-    			if (project.hasProperty("signature"))
-        			replace "@FINGERPRINT@", signature
+                replaceIn "lib/Constants.java"
+                    if (project.hasProperty("signature"))
+                       replace "@FINGERPRINT@", signature
 }
- 
+
 processResources {
 
         inputs.property "version", project.version
         inputs.property "mcversion", project.minecraft.version
- 
+
         from(sourceSets.main.resources.srcDirs) {
             include 'mcmod.info'
             expand 'version': project.version, 'mcversion': project.minecraft.version
@@ -53,7 +53,7 @@ processResources {
             exclude 'mcmod.info'
         }
 }
- 
+
 task("signJar") {
 
     dependsOn 'reobf'
@@ -64,11 +64,11 @@ task("signJar") {
     inputs.property "keystore_alias", keystore_alias
     inputs.property "keystore_password", keystore_password
     outputs.file jar.getArchivePath()
- 
+
     onlyIf {
         return keystore_location != "."
     }
- 
+
     doLast {
         ant.signjar(
                 destDir: jar.destinationDir,
@@ -79,28 +79,28 @@ task("signJar") {
         )
     }
 }
- 
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
     appendix = 'src'
 }
- 
+
 task deobfJar(type: Jar) {
         from sourceSets.main.output
         appendix = 'deobf'
 }
- 
+
 task incrementBuildNumber() {
         dependsOn "reobf"
         doLast {
                 config.minecolonies_build = (config.minecolonies_build.toString().toInteger()) + 1
- 
+
                 configFile.withWriter {
                                 config.toProperties().store(it, "")
                 }
     }
 }
- 
+
 jar {
         appendix = 'universal'
 }
