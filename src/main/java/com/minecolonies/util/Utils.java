@@ -10,6 +10,8 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Utils
@@ -183,8 +185,41 @@ public class Utils
         return world.getBlock(x, y, z) == Blocks.water || world.getBlock(x, y, z) == Blocks.flowing_water;
     }
 
-    public static void sendPlayerMessage(EntityPlayer player, String message)
+    public static EntityPlayer getPlayerFromUUID(World world, UUID id)
     {
-        player.addChatComponentMessage(new ChatComponentText(message));
+        for (int i = 0; i < world.playerEntities.size(); ++i)
+        {
+            if (id.equals(((EntityPlayer) world.playerEntities.get(i)).getUniqueID()))
+            {
+                return (EntityPlayer ) world.playerEntities.get(i);
+            }
+        }
+        return null;
+    }
+
+    public static List<EntityPlayer> getPlayersFromUUID(World world, List<UUID> ids)
+    {
+        List<EntityPlayer> players = new ArrayList<EntityPlayer>();
+
+        for (EntityPlayer player : (List<EntityPlayer>) world.playerEntities)
+        {
+            for (UUID id : ids)
+            {
+                if (player.getUniqueID().equals(id))
+                {
+                    players.add(player);
+                    if (players.size() == ids.size())
+                    {
+                        return players;
+                    }
+                    break;
+                }
+            }
+        }
+        if (!players.isEmpty())
+        {
+            return players;
+        }
+        return null;
     }
 }

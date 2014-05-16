@@ -101,9 +101,9 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
             if(tileEntityTownHall == null || Utils.getDistanceToTileEntity(world, x, y, z, tileEntityTownHall) > Constants.MAXDISTANCETOTOWNHALL)
             {
                 if(tileEntityTownHall == null)
-                    Utils.sendPlayerMessage((EntityPlayer) entityLivingBase, LanguageHandler.format("tile.blockInformator.messageNoTownhall"));
+                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockInformator.messageNoTownhall");
                 else
-                    Utils.sendPlayerMessage((EntityPlayer) entityLivingBase, LanguageHandler.format("tile.blockInformator.messageTooFarFromTownhall"));
+                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockInformator.messageTooFarFromTownhall");
                 world.setBlockToAir(x, y, z);
                 return;
             }
