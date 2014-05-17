@@ -127,13 +127,12 @@ public class Utils
         return yHolder;
     }
 
-    //TODO Check for uses (Inherited from old mod)
     public static Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
     {
         Vec3 entityVec = Vec3.createVectorHelper(x, y, z);
 
         Vec3 closestVec = null;
-        double minDistance = 999999999;
+        double minDistance = Double.MAX_VALUE;
 
         for(int i = x - radiusX; i <= x + radiusX; i++)
         {
