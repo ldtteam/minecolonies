@@ -13,7 +13,7 @@ com.minecolonies.gui.townhall.rename=Rename Colony
 com.minecolonies.gui.townhall.actions=Actions
 com.minecolonies.gui.townhall.rename.done=Done
 com.minecolonies.gui.townhall.rename.title=Rename Your Colony
-com.minecolonies.gui.townhall.defaultName=Your Colony
+com.minecolonies.gui.townhall.defaultName=%s's Colony
 
 com.minecolonies.gui.workerHuts.buildersHut=Builders Hut
 com.minecolonies.gui.workerHuts.deliverymansHut=Deliverymans Hut

@@ -59,11 +59,7 @@ public class BlockHutTownHall extends BlockInformator
 
             TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
             tileEntityTownHall.setInfo(world, entityLivingBase.getUniqueID(), x, z);
-//<<<<<<< HEAD
-            tileEntityTownHall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName"));
-//=======
-//            tileEntityTownHall.setCityName(((EntityPlayer) entityLivingBase).getDisplayName() + "'s City");
-//>>>>>>> 1a2022eb809b7e71a11c3d59cc15af36b5da66b2
+            tileEntityTownHall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", entityPlayer.getDisplayName()));
             playerProperties.placeTownhall(x, y, z);
         }
     }
