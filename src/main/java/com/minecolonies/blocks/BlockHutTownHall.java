@@ -83,7 +83,7 @@ public class BlockHutTownHall extends BlockInformator
             TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
             if(tileEntityTownHall != null && tileEntityTownHall.getDistanceFrom(x, y, z) < 200)
             {
-                //TODO: send message to player
+                //TODO: send message to player, move to onBlockPlacedBy?
                 FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText(LanguageHandler.format("tile.blockHutTownhall.messageTooClose")));
                 return false;
             }

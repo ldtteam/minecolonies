@@ -214,16 +214,12 @@ public class Utils
 
         for (EntityPlayer player : (List<EntityPlayer>) world.playerEntities)
         {
-            for (UUID id : ids)
+            if (ids.contains(player.getUniqueID()))
             {
-                if (player.getUniqueID().equals(id))
+                players.add(player);
+                if (players.size() == ids.size())
                 {
-                    players.add(player);
-                    if (players.size() == ids.size())
-                    {
-                        return players;
-                    }
-                    break;
+                    return players;
                 }
             }
         }
