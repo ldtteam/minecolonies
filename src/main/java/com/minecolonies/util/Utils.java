@@ -23,11 +23,13 @@ public class Utils
      * @param x     xCoord to check from
      * @param y     yCoord to check from
      * @param z     zCoord to check from
+     * @param flag  true if you don't want to return the block provided
+     *
      * @return closest TileEntityTownHall
      */
-    public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z)
+    public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z, boolean flag)
     {
-        double closestDist = 9999;
+        double closestDist = Double.MAX_VALUE;
         TileEntityTownHall closestTownHall = null;
 
         if(world == null || world.loadedTileEntityList == null) return null;
@@ -36,6 +38,11 @@ public class Utils
             if(o instanceof TileEntityTownHall)
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
+
+                if (flag)
+                {
+                    if (x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
+                }
 
                 if(closestDist > Math.sqrt(Math.sqrt((x - townHall.xCoord) * (x - townHall.xCoord) + (y - townHall.yCoord) * (y - townHall.yCoord) + (z - townHall.zCoord) * (z - townHall.zCoord))))
                 {
@@ -48,7 +55,7 @@ public class Utils
 
     public static double getDistanceToClosestTownHall(World world, int x, int y, int z)
     {
-        double closestDist = 9999;
+        double closestDist = Double.MAX_VALUE;
         TileEntityTownHall closestTownHall = null;
 
         if(world == null || world.loadedTileEntityList == null) return -1;

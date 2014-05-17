@@ -77,7 +77,7 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
      */
     public void addClosestTownhall(World world, int x, int y, int z)
     {
-        TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
+        TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z, false);
         if(tileEntityTownHall != null)
         {
             if(world.getTileEntity(x, y, z) instanceof TileEntityBuildable)
