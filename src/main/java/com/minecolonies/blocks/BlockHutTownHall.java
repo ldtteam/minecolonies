@@ -43,11 +43,21 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
-        if(world.isRemote) return;
+        if(world.isRemote && !world.provider.isSurfaceWorld()) return;
 
         if(entityLivingBase instanceof EntityPlayer)
         {
             EntityPlayer entityPlayer = (EntityPlayer) entityLivingBase;
+
+            TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z);
+            if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < 200)
+            {
+                world.setBlockToAir(x, y, z);
+                LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "tile.blockHutTownhall.messageTooClose");
+                removedByPlayer(world, entityPlayer, x, y, z);
+                return;
+            }
+
             PlayerProperties playerProperties = PlayerProperties.get(entityPlayer);
             if(playerProperties.hasPlacedTownHall())
             {
@@ -58,12 +68,8 @@ public class BlockHutTownHall extends BlockInformator
             }
 
             TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-            tileEntityTownHall.setInfo(world, entityLivingBase.getUniqueID(), x, z);
-//<<<<<<< HEAD
-            tileEntityTownHall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName"));
-//=======
-//            tileEntityTownHall.setCityName(((EntityPlayer) entityLivingBase).getDisplayName() + "'s City");
-//>>>>>>> 1a2022eb809b7e71a11c3d59cc15af36b5da66b2
+            tileEntityTownHall.setInfo(world, entityPlayer.getUniqueID(), x, z);
+            tileEntityTownHall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", entityPlayer.getDisplayName()));
             playerProperties.placeTownhall(x, y, z);
         }
     }
@@ -77,22 +83,6 @@ public class BlockHutTownHall extends BlockInformator
 
         TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
         tileEntityTownHall.onBlockAdded();
-    }
-
-    @Override
-    public boolean canPlaceBlockAt(World world, int x, int y, int z)
-    {
-        if(world.provider.isSurfaceWorld())
-        {
-            TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
-            if(tileEntityTownHall != null && tileEntityTownHall.getDistanceFrom(x, y, z) < 200)
-            {
-                //TODO: send message to player
-                FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText(LanguageHandler.format("tile.blockHutTownhall.messageTooClose")));
-                return false;
-            }
-        }
-        return super.canPlaceBlockAt(world, x, y, z);
     }
 
     @Override

@@ -127,13 +127,12 @@ public class Utils
         return yHolder;
     }
 
-    //TODO Check for uses (Inherited from old mod)
     public static Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
     {
         Vec3 entityVec = Vec3.createVectorHelper(x, y, z);
 
         Vec3 closestVec = null;
-        double minDistance = 999999999;
+        double minDistance = Double.MAX_VALUE;
 
         for(int i = x - radiusX; i <= x + radiusX; i++)
         {
@@ -214,16 +213,12 @@ public class Utils
 
         for (EntityPlayer player : (List<EntityPlayer>) world.playerEntities)
         {
-            for (UUID id : ids)
+            if (ids.contains(player.getUniqueID()))
             {
-                if (player.getUniqueID().equals(id))
+                players.add(player);
+                if (players.size() == ids.size())
                 {
-                    players.add(player);
-                    if (players.size() == ids.size())
-                    {
-                        return players;
-                    }
-                    break;
+                    return players;
                 }
             }
         }
