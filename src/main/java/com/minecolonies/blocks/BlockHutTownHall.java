@@ -43,13 +43,13 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
-        if(world.isRemote && !world.provider.isSurfaceWorld()) return;
+        if(world.isRemote || !world.provider.isSurfaceWorld()) return;
 
         if(entityLivingBase instanceof EntityPlayer)
         {
             EntityPlayer entityPlayer = (EntityPlayer) entityLivingBase;
 
-            TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z);
+            TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z, true);
             if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < 200)
             {
                 world.setBlockToAir(x, y, z);
@@ -68,21 +68,11 @@ public class BlockHutTownHall extends BlockInformator
             }
 
             TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
+            tileEntityTownHall.onBlockAdded();
             tileEntityTownHall.setInfo(world, entityPlayer.getUniqueID(), x, z);
             tileEntityTownHall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", entityPlayer.getDisplayName()));
             playerProperties.placeTownhall(x, y, z);
         }
-    }
-
-    @Override
-    public void onBlockAdded(World world, int x, int y, int z)
-    {
-        if(world.isRemote) return;
-
-        super.onBlockAdded(world, x, y, z);
-
-        TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-        tileEntityTownHall.onBlockAdded();
     }
 
     @Override
