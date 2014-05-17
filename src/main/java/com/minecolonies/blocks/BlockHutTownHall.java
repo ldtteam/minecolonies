@@ -94,7 +94,7 @@ public class BlockHutTownHall extends BlockInformator
                 Note, not enhanced yet
                  */
                 TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-                List<Entity> loadedEntities = world.getLoadedEntityList();
+                List<Entity> loadedEntities = world.loadedEntityList;
                 List<UUID> townhallList = tileEntityTownHall.getCitizens();
                 for(Entity entity : loadedEntities)
                     for(UUID uuid : townhallList)
