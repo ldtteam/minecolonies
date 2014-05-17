@@ -24,7 +24,7 @@ public class ConfigurationHandler
             config.load();
             Configurations.workingRangeTownhall = config.get("Game Play", "Working Range Townhall: ", DEFAULT_WORKINGRANGETOWNHALL).getInt(DEFAULT_WORKINGRANGETOWNHALL);
             Configurations.allowInfiniteSupplyChests = config.get("Game Play", "Allow infinite placing of Supply Chests: ", DEFAULT_ALLOWINFINTESUPPLYCHESTS).getBoolean(DEFAULT_ALLOWINFINTESUPPLYCHESTS);
-            Configurations.citizenRespawnInterval = config.get("Game Play", "Citizen Respawn Interval: ", DEFAULT_CITIZENRESPAWNINTERVAL).getInt(DEFAULT_CITIZENRESPAWNINTERVAL);
+            Configurations.citizenRespawnInterval = config.get("Game Play", "Citizen Respawn Interval in seconds: ", DEFAULT_CITIZENRESPAWNINTERVAL).getInt(DEFAULT_CITIZENRESPAWNINTERVAL);
         }
         finally
         {

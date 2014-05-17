@@ -110,7 +110,7 @@ public class Utils
      * @param z     zCoord
      * @return yCoordinate
      */
-    protected int findTopGround(World world, int x, int z)
+    public static int findTopGround(World world, int x, int z)
     {
         int yHolder = 1;
         while(!world.canBlockSeeTheSky(x, yHolder, z))
@@ -127,11 +127,8 @@ public class Utils
         return yHolder;
     }
 
-    /**
-     * Still unused
-     */
-    @SuppressWarnings("UnusedDeclaration") //TODO Check for uses (Inherited from old mod)
-    protected Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
+    //TODO Check for uses (Inherited from old mod)
+    public static Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
     {
         Vec3 entityVec = Vec3.createVectorHelper(x, y, z);
 

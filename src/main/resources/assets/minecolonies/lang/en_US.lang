@@ -13,6 +13,7 @@ com.minecolonies.gui.townhall.rename=Rename Colony
 com.minecolonies.gui.townhall.actions=Actions
 com.minecolonies.gui.townhall.rename.done=Done
 com.minecolonies.gui.townhall.rename.title=Rename Your Colony
+com.minecolonies.gui.townhall.defaultName=Your Colony
 
 com.minecolonies.gui.workerHuts.buildersHut=Builders Hut
 com.minecolonies.gui.workerHuts.deliverymansHut=Deliverymans Hut
@@ -41,6 +42,10 @@ tile.blockHutLumberjack.name=Lumberjack's Hut
 tile.blockHutMiner.name=Miner's Hut
 tile.blockHutStonemason.name=Stonemason's Hut
 tile.blockHutTownhall.name=Town Hall
+tile.blockHutTownhall.messageMaxSize=Colony has reached max size
+tile.blockHutTownhall.messageColonistDead=A colonist has died!
+tile.blockHutTownhall.messagePlacedAlready=You have placed a Town Hall already
+tile.blockHutTownhall.messageTooClose=Too close to existing townhall
 tile.blockInformator.messageTooFarFromTownhall=You need to be closer to your townhall!
 tile.blockInformator.messageNoTownhall=You need to place a townhall first!
 

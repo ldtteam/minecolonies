@@ -1,14 +1,19 @@
 package com.minecolonies.entity;
 
 import com.minecolonies.tileentities.TileEntityHutWorker;
+import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import java.util.List;
 import java.util.Random;
 
 public class EntityCitizen extends EntityAgeable implements INpc
@@ -18,6 +23,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     Random random = new Random();
     private String job;
     private TileEntityHutWorker tileEntityHutWorker;
+    private TileEntityTownHall tileEntityTownHall;
+    private int townPosX, townPosY, townPosZ;
 
     public EntityCitizen(World world)
     {
@@ -26,6 +33,15 @@ public class EntityCitizen extends EntityAgeable implements INpc
         this.level = random.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
         setTexture();
         job = "Citizen";
+    }
+
+    public void onEntityUpdate()
+    {
+        super.onEntityUpdate();
+        if (tileEntityTownHall == null)
+        {
+            tileEntityTownHall = (TileEntityTownHall) worldObj.getTileEntity(townPosX, townPosY, townPosZ);
+        }
     }
 
     @Override
@@ -41,6 +57,24 @@ public class EntityCitizen extends EntityAgeable implements INpc
         super.applyEntityAttributes();
         getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0d);
         getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.5d);
+    }
+
+    @Override
+    public void onDeath(DamageSource par1DamageSource)
+    {
+        if (tileEntityTownHall != null)
+        {
+            List players = worldObj.playerEntities;
+            for (int i = 0; !players.isEmpty() && i < players.size(); i++)
+            {
+                EntityPlayer player = (EntityPlayer) players.get(i);
+                if (tileEntityTownHall.getOwners().contains(player.getUniqueID()))
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageColonistDead");
+            }
+            tileEntityTownHall.removeCitizen(this);
+        }
+        super.onDeath(par1DamageSource);
+
     }
 
     public void setTexture()
@@ -59,6 +93,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
         this.tileEntityHutWorker = (TileEntityHutWorker)tileEntity;
     }
 
+    public TileEntityTownHall getTownHall()
+    {
+        return tileEntityTownHall;
+    }
+
+    public void setTownHall(TileEntityTownHall tileEntityTownHall)
+    {
+        this.tileEntityTownHall = tileEntityTownHall;
+    }
+
     @Override
     public void writeEntityToNBT(NBTTagCompound nbtTagCompound)
     {
@@ -66,6 +110,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
         nbtTagCompound.setString("job", job);
         nbtTagCompound.setInteger("level", level.getLevel());
         nbtTagCompound.setInteger("sex", level.getSexInt());
+
+        if (tileEntityTownHall != null) {
+            NBTTagCompound nbtTagTownhallCompound = new NBTTagCompound();
+            nbtTagTownhallCompound.setInteger("x", tileEntityTownHall.xCoord);
+            nbtTagTownhallCompound.setInteger("y", tileEntityTownHall.yCoord);
+            nbtTagTownhallCompound.setInteger("z", tileEntityTownHall.zCoord);
+            nbtTagCompound.setTag("townhall", nbtTagTownhallCompound);
+        }
     }
 
     @Override
@@ -82,6 +134,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if (levels[i].getLevel() == level && levels[i].getSexInt() == sex) {
                 this.level = levels[i];
             }
+        }
+
+        if (nbtTagCompound.hasKey("townhall")) {
+            NBTTagCompound nbtTagTownhallCompound = nbtTagCompound.getCompoundTag("townhall");
+            townPosX = nbtTagTownhallCompound.getInteger("x");
+            townPosY = nbtTagTownhallCompound.getInteger("y");
+            townPosZ = nbtTagTownhallCompound.getInteger("z");
         }
     }
 }

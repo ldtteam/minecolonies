@@ -2,14 +2,13 @@ package com.minecolonies.tileentities;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
-import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -60,22 +59,25 @@ public class TileEntityTownHall extends TileEntityHut
     @Override
     public void updateEntity()
     {
-        int respawnInterval = Configurations.citizenRespawnInterval;
+        //for (worldObj)
+
+        int respawnInterval = Configurations.citizenRespawnInterval * 20;
         respawnInterval -= (60 * getBuildingLevel());
 
         if (worldObj.getWorldInfo().getWorldTime() % respawnInterval == 0)
         {
-            Random rand = new Random();
+            Random rand = worldObj.rand;
             if (getCitizens().size() < getMaxCitizens())
             {
-                if (rand.nextInt(10) < 10)
+                if (rand.nextInt(100) < 10)
                 {
-                    Vec3 spawnPoint = scanForBlockNearPoint(worldObj, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
+                    Vec3 spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
                     if (spawnPoint == null)
-                        spawnPoint = scanForBlockNearPoint(worldObj, Blocks.snow, xCoord, yCoord, zCoord, 1, 0, 1);
+                        spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.snow_layer, xCoord, yCoord, zCoord, 1, 0, 1);
 
-                    if (getMaxCitizens() == getCitizens().size() + 1)
-                        FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Colony has reached max size"));
+                    if (getMaxCitizens() == getCitizens().size() + 1) {
+                        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, owners), "tile.blockHutTownhall.messageMaxSize");
+                    }
                     if (spawnPoint != null) {
                         EntityCitizen ec = spawnCitizen(spawnPoint.xCoord, spawnPoint.yCoord, spawnPoint.zCoord);
                         if (ec != null)
@@ -84,17 +86,6 @@ public class TileEntityTownHall extends TileEntityHut
                 }
             }
         }
-    }
-
-    public EntityCitizen spawnCitizen(double x, double y, double z)
-    {
-        if (worldObj.isRemote || !worldObj.provider.isSurfaceWorld())
-            return null;
-
-        EntityCitizen ec = new EntityCitizen(worldObj);
-        ec.setPosition(x, y, z);
-        worldObj.spawnEntityInWorld(ec);
-        return ec;
     }
 
     @Override
@@ -171,7 +162,13 @@ public class TileEntityTownHall extends TileEntityHut
 
     public void addCitizen(EntityCitizen citizen)
     {
+        citizen.setTownHall(this);
         citizens.add(citizen.getUniqueID());
+    }
+
+    public void removeCitizen(EntityCitizen citizen)
+    {
+        if (citizens.contains(citizen.getUniqueID())) citizens.remove(citizen.getUniqueID());
     }
 
     public ArrayList<UUID> getCitizens()
@@ -193,5 +190,16 @@ public class TileEntityTownHall extends TileEntityHut
     {
         if(getCitizens() != null)
             this.addCitizen(entityCitizen);
+    }
+
+    public EntityCitizen spawnCitizen(double x, double y, double z)
+    {
+        if (worldObj.isRemote || !worldObj.provider.isSurfaceWorld())
+            return null;
+
+        EntityCitizen ec = new EntityCitizen(worldObj);
+        ec.setPosition(x, y, z);
+        worldObj.spawnEntityInWorld(ec);
+        return ec;
     }
 }

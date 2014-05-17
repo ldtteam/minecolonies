@@ -14,5 +14,8 @@ public class Configurations
      */
     public static int workingRangeTownhall;
     public static boolean allowInfiniteSupplyChests;
+    /**
+     * The citizen respawn interval in seconds
+     */
     public static int citizenRespawnInterval;
 }
