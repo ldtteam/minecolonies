@@ -1,6 +1,7 @@
 package com.minecolonies.proxy;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.tileentities.TileEntityTownHall;
@@ -13,6 +14,8 @@ import java.util.Map;
 
 public class CommonProxy implements IProxy
 {
+    private int nextEntityId = 0;
+
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn
      */
@@ -56,7 +59,8 @@ public class CommonProxy implements IProxy
     * */
     public void registerEntities()
     {
-        EntityRegistry.registerModEntity(EntityCitizen.class, "entityCitizen",0, MineColonies.instance, 250, 3, true);
+        EntityRegistry.registerModEntity(EntityCitizen.class, "entityCitizen", getNextEntityId(), MineColonies.instance, 250, 3, true);
+        EntityRegistry.registerModEntity(EntityBuilder.class, "entityBuilder", getNextEntityId(), MineColonies.instance, 250, 3, true);
     }
 
     @Override
@@ -66,4 +70,11 @@ public class CommonProxy implements IProxy
 
     @Override
     public void registerEvents() {}
+
+    /**
+     * Used for entity IDs, increments nextEntityId for each call
+     */
+    private int getNextEntityId() {
+        return nextEntityId++;
+    }
 }
