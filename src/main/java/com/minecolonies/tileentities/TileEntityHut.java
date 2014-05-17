@@ -1,9 +1,5 @@
 package com.minecolonies.tileentities;
 
-import net.minecraft.block.Block;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-
 public class TileEntityHut extends TileEntityBuildable
 {
     private int maxInhabitants;
