@@ -23,11 +23,13 @@ public class Utils
      * @param x     xCoord to check from
      * @param y     yCoord to check from
      * @param z     zCoord to check from
+     * @param flag  true if you don't want to return the block provided
+     *
      * @return closest TileEntityTownHall
      */
-    public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z)
+    public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z, boolean flag)
     {
-        double closestDist = 9999;
+        double closestDist = Double.MAX_VALUE;
         TileEntityTownHall closestTownHall = null;
 
         if(world == null || world.loadedTileEntityList == null) return null;
@@ -36,6 +38,11 @@ public class Utils
             if(o instanceof TileEntityTownHall)
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
+
+                if (flag)
+                {
+                    if (x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
+                }
 
                 if(closestDist > Math.sqrt(Math.sqrt((x - townHall.xCoord) * (x - townHall.xCoord) + (y - townHall.yCoord) * (y - townHall.yCoord) + (z - townHall.zCoord) * (z - townHall.zCoord))))
                 {
@@ -48,7 +55,7 @@ public class Utils
 
     public static double getDistanceToClosestTownHall(World world, int x, int y, int z)
     {
-        double closestDist = 9999;
+        double closestDist = Double.MAX_VALUE;
         TileEntityTownHall closestTownHall = null;
 
         if(world == null || world.loadedTileEntityList == null) return -1;
@@ -110,7 +117,7 @@ public class Utils
      * @param z     zCoord
      * @return yCoordinate
      */
-    protected int findTopGround(World world, int x, int z)
+    public static int findTopGround(World world, int x, int z)
     {
         int yHolder = 1;
         while(!world.canBlockSeeTheSky(x, yHolder, z))
@@ -127,16 +134,12 @@ public class Utils
         return yHolder;
     }
 
-    /**
-     * Still unused
-     */
-    @SuppressWarnings("UnusedDeclaration") //TODO Check for uses (Inherited from old mod)
-    protected Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
+    public static Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
     {
         Vec3 entityVec = Vec3.createVectorHelper(x, y, z);
 
         Vec3 closestVec = null;
-        double minDistance = 999999999;
+        double minDistance = Double.MAX_VALUE;
 
         for(int i = x - radiusX; i <= x + radiusX; i++)
         {
@@ -217,16 +220,12 @@ public class Utils
 
         for (EntityPlayer player : (List<EntityPlayer>) world.playerEntities)
         {
-            for (UUID id : ids)
+            if (ids.contains(player.getUniqueID()))
             {
-                if (player.getUniqueID().equals(id))
+                players.add(player);
+                if (players.size() == ids.size())
                 {
-                    players.add(player);
-                    if (players.size() == ids.size())
-                    {
-                        return players;
-                    }
-                    break;
+                    return players;
                 }
             }
         }

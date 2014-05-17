@@ -5,6 +5,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -42,50 +43,36 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
-        if(world.isRemote) return;
+        if(world.isRemote || !world.provider.isSurfaceWorld()) return;
 
-        PlayerProperties playerProperties = PlayerProperties.get((EntityPlayer) entityLivingBase);
-        if(playerProperties.hasPlacedTownHall())
-        {
-            world.setBlockToAir(x, y, z);
-            FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("You have placed a Town Hall already"));
-            removedByPlayer(world, (EntityPlayer) entityLivingBase, x, y, z);
-            return;
-        }
-
-        TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
         if(entityLivingBase instanceof EntityPlayer)
         {
-            tileEntityTownHall.setInfo(world, entityLivingBase.getUniqueID(), x, z);
-            tileEntityTownHall.setCityName(((EntityPlayer) entityLivingBase).getDisplayName() + "'s City");
+            EntityPlayer entityPlayer = (EntityPlayer) entityLivingBase;
+
+            TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z, true);
+            if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < 200)
+            {
+                world.setBlockToAir(x, y, z);
+                LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "tile.blockHutTownhall.messageTooClose");
+                removedByPlayer(world, entityPlayer, x, y, z);
+                return;
+            }
+
+            PlayerProperties playerProperties = PlayerProperties.get(entityPlayer);
+            if(playerProperties.hasPlacedTownHall())
+            {
+                world.setBlockToAir(x, y, z);
+                LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "tile.blockHutTownhall.messagePlacedAlready");
+                removedByPlayer(world, entityPlayer, x, y, z);
+                return;
+            }
+
+            TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
+            tileEntityTownHall.onBlockAdded();
+            tileEntityTownHall.setInfo(world, entityPlayer.getUniqueID(), x, z);
+            tileEntityTownHall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", entityPlayer.getDisplayName()));
             playerProperties.placeTownhall(x, y, z);
         }
-    }
-
-    @Override
-    public void onBlockAdded(World world, int x, int y, int z)
-    {
-        if(world.isRemote) return;
-
-        super.onBlockAdded(world, x, y, z);
-
-        TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-        tileEntityTownHall.onBlockAdded();
-    }
-
-    @Override
-    public boolean canPlaceBlockAt(World world, int x, int y, int z)
-    {
-        if(world.provider.dimensionId == 0)
-        {
-            TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
-            if(tileEntityTownHall != null && tileEntityTownHall.getDistanceFrom(x, y, z) < 200)
-            {
-                FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Too close to existing townhall"));
-                return false;
-            }
-        }
-        return super.canPlaceBlockAt(world, x, y, z);
     }
 
     @Override
