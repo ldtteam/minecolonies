@@ -3,6 +3,7 @@ package com.minecolonies.entity;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Utils;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -64,13 +65,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (tileEntityTownHall != null)
         {
-            List players = worldObj.playerEntities;
-            for (int i = 0; !players.isEmpty() && i < players.size(); i++)
-            {
-                EntityPlayer player = (EntityPlayer) players.get(i);
-                if (tileEntityTownHall.getOwners().contains(player.getUniqueID()))
-                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageColonistDead");
-            }
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, tileEntityTownHall.getOwners()), "tile.blockHutTownhall.messageColonistDead");
+
             tileEntityTownHall.removeCitizen(this);
         }
         super.onDeath(par1DamageSource);
