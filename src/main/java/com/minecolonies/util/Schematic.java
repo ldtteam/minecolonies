@@ -2,7 +2,9 @@ package com.minecolonies.util;
 
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.github.lunatrius.schematica.world.schematic.SchematicFormat;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
@@ -205,7 +207,14 @@ public class Schematic
     {
         try
         {
-            return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+            {
+                return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
+            }
+            else
+            {
+                return Schematic.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
+            }
         }
         catch(IOException e)
         {
