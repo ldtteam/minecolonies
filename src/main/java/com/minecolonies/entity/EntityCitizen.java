@@ -21,19 +21,17 @@ import java.util.Random;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
-
-
     public ResourceLocation texture;
     public EnumCitizenLevel level;
     Random random = worldObj.rand;
-    private EnumCitizenAction currentAction;
-    private String job;
-    protected InventoryCitizen inventory;
+    private   EnumCitizenAction currentAction;
+    private   String            job;
+    protected InventoryCitizen  inventory;
 
     private TileEntityTownHall tileEntityTownHall;
-    private int townPosX, townPosY, townPosZ;
+    private int                townPosX, townPosY, townPosZ;
     private TileEntityHutWorker tileEntityWorkHut;
-    private int workPosX, workPosY, workPosZ;
+    private int                 workPosX, workPosY, workPosZ;
     public TileEntityHut tileEntityHomeHut;
     int homePosX, homePosY, homePosZ;
 
@@ -51,15 +49,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void onLivingUpdate()
     {
         super.onLivingUpdate();
-        if (tileEntityTownHall == null)
+        if(tileEntityTownHall == null)
         {
             tileEntityTownHall = (TileEntityTownHall) worldObj.getTileEntity(townPosX, townPosY, townPosZ);
         }
-        if (tileEntityWorkHut == null)
+        if(tileEntityWorkHut == null)
         {
             tileEntityWorkHut = (TileEntityHutWorker) worldObj.getTileEntity(workPosX, workPosY, workPosZ);
         }
-        if (tileEntityHomeHut == null)
+        if(tileEntityHomeHut == null)
         {
             tileEntityHomeHut = (TileEntityHut) worldObj.getTileEntity(homePosX, homePosY, homePosZ);
         }
@@ -83,14 +81,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onDeath(DamageSource par1DamageSource)
     {
-        if (tileEntityTownHall != null)
+        if(tileEntityTownHall != null)
         {
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, tileEntityTownHall.getOwners()), "tile.blockHutTownhall.messageColonistDead");
 
             tileEntityTownHall.removeCitizen(this);
         }
         super.onDeath(par1DamageSource);
-
     }
 
     public void setTexture()
@@ -105,7 +102,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public void setJob(String job, TileEntity tileEntity)
     {
-
         this.job = job;
         this.tileEntityWorkHut = (TileEntityHutWorker) tileEntity;
     }
@@ -128,14 +124,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         nbtTagCompound.setInteger("level", level.getLevel());
         nbtTagCompound.setInteger("sex", level.getSexInt());
 
-        if (tileEntityTownHall != null) {
+        if(tileEntityTownHall != null)
+        {
             NBTTagCompound nbtTagTownhallCompound = new NBTTagCompound();
             nbtTagTownhallCompound.setInteger("x", tileEntityTownHall.xCoord);
             nbtTagTownhallCompound.setInteger("y", tileEntityTownHall.yCoord);
             nbtTagTownhallCompound.setInteger("z", tileEntityTownHall.zCoord);
             nbtTagCompound.setTag("townhall", nbtTagTownhallCompound);
         }
-        if (tileEntityWorkHut != null)
+        if(tileEntityWorkHut != null)
         {
             NBTTagCompound nbtTagWorkHutCompound = new NBTTagCompound();
             nbtTagWorkHutCompound.setInteger("x", tileEntityWorkHut.xCoord);
@@ -143,7 +140,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             nbtTagWorkHutCompound.setInteger("z", tileEntityWorkHut.zCoord);
             nbtTagCompound.setTag("workhut", nbtTagWorkHutCompound);
         }
-        if (tileEntityHomeHut != null)
+        if(tileEntityHomeHut != null)
         {
             NBTTagCompound nbtTagHomeHutCompound = new NBTTagCompound();
             nbtTagHomeHutCompound.setInteger("x", tileEntityHomeHut.xCoord);
@@ -165,25 +162,30 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         int sex = nbtTagCompound.hasKey("sex") ? nbtTagCompound.getInteger("sex") : this.level.getSexInt();
 
         EnumCitizenLevel[] levels = EnumCitizenLevel.values();
-        for (int i = 0; i < levels.length; i++) {
-            if (levels[i].getLevel() == level && levels[i].getSexInt() == sex) {
+        for(int i = 0; i < levels.length; i++)
+        {
+            if(levels[i].getLevel() == level && levels[i].getSexInt() == sex)
+            {
                 this.level = levels[i];
             }
         }
 
-        if (nbtTagCompound.hasKey("townhall")) {
+        if(nbtTagCompound.hasKey("townhall"))
+        {
             NBTTagCompound nbtTagTownhallCompound = nbtTagCompound.getCompoundTag("townhall");
             townPosX = nbtTagTownhallCompound.getInteger("x");
             townPosY = nbtTagTownhallCompound.getInteger("y");
             townPosZ = nbtTagTownhallCompound.getInteger("z");
         }
-        if (nbtTagCompound.hasKey("workhut")) {
+        if(nbtTagCompound.hasKey("workhut"))
+        {
             NBTTagCompound nbtTagWorkHutCompound = nbtTagCompound.getCompoundTag("workhut");
             workPosX = nbtTagWorkHutCompound.getInteger("x");
             workPosY = nbtTagWorkHutCompound.getInteger("y");
             workPosZ = nbtTagWorkHutCompound.getInteger("z");
         }
-        if (nbtTagCompound.hasKey("homehut")) {
+        if(nbtTagCompound.hasKey("homehut"))
+        {
             NBTTagCompound nbtTagHomeHutCompound = nbtTagCompound.getCompoundTag("homehut");
             homePosX = nbtTagHomeHutCompound.getInteger("x");
             homePosY = nbtTagHomeHutCompound.getInteger("y");
@@ -194,29 +196,25 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     @Override
-    public void onInventoryChanged(InventoryBasic var1) {}
+    public void onInventoryChanged(InventoryBasic var1){}
 
     public InventoryCitizen getInventory()
     {
-
         return inventory;
     }
 
-    public EnumCitizenAction getCurrentAction()
+    /*public EnumCitizenAction getCurrentAction()
     {
-
         return EnumCitizenAction.getActionById(dataWatcher.getWatchableObjectInt(24));
     }
 
     public void setCurrentAction(EnumCitizenAction action)
     {
-
         this.dataWatcher.updateObject(24, action.getActionID());
     }
 
     public void setCurrentAction(int actionID)
     {
-
         this.dataWatcher.updateObject(24, actionID);
-    }
+    }*/
 }

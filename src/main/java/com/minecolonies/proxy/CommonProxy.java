@@ -72,9 +72,10 @@ public class CommonProxy implements IProxy
     public void registerEvents() {}
 
     /**
-     * Used for entity IDs, increments nextEntityId for each call
+     * Used for entity IDs, starts at 0 & increments for each call
      */
-    private int getNextEntityId() {
+    private int getNextEntityId()
+    {
         return nextEntityId++;
     }
 }

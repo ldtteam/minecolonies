@@ -62,12 +62,12 @@ public class TileEntityTownHall extends TileEntityHut
         int respawnInterval = Configurations.citizenRespawnInterval * 20;
         respawnInterval -= (60 * getBuildingLevel());
 
-        if (worldObj.getWorldInfo().getWorldTime() % respawnInterval == 0)
+        if (worldObj.getWorldInfo().getWorldTime() % 40 == 0)
         {
             Random rand = worldObj.rand;
             if (getCitizens().size() < getMaxCitizens())
             {
-                if (rand.nextInt(100) < 10)
+                if (rand.nextInt(10) < 10)
                 {
                     Vec3 spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
                     if (spawnPoint == null)
