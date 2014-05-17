@@ -59,8 +59,6 @@ public class TileEntityTownHall extends TileEntityHut
     @Override
     public void updateEntity()
     {
-        //for (worldObj)
-
         int respawnInterval = Configurations.citizenRespawnInterval * 20;
         respawnInterval -= (60 * getBuildingLevel());
 
@@ -75,13 +73,15 @@ public class TileEntityTownHall extends TileEntityHut
                     if (spawnPoint == null)
                         spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.snow_layer, xCoord, yCoord, zCoord, 1, 0, 1);
 
-                    if (getMaxCitizens() == getCitizens().size() + 1) {
-                        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, owners), "tile.blockHutTownhall.messageMaxSize");
-                    }
                     if (spawnPoint != null) {
                         EntityCitizen ec = spawnCitizen(spawnPoint.xCoord, spawnPoint.yCoord, spawnPoint.zCoord);
                         if (ec != null)
+                        {
                             addCitizen(ec);
+                            if (getMaxCitizens() == getCitizens().size()) {
+                                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, owners), "tile.blockHutTownhall.messageMaxSize");
+                            }
+                        }
                     }
                 }
             }
