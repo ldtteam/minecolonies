@@ -77,7 +77,7 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
      */
     public void addClosestTownhall(World world, int x, int y, int z)
     {
-        TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z, false);
+        TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
         if(tileEntityTownHall != null)
         {
             if(world.getTileEntity(x, y, z) instanceof TileEntityBuildable)
@@ -98,7 +98,7 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
         {
             TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
             TileEntityTownHall tileEntityTownHall = Utils.getTownhallByOwner(world, (EntityPlayer) entityLivingBase);
-            if(tileEntityTownHall == null || Utils.getDistanceToTileEntity(world, x, y, z, tileEntityTownHall) > Constants.MAXDISTANCETOTOWNHALL)
+            if(tileEntityTownHall == null || Utils.getDistanceToTileEntity(x, y, z, tileEntityTownHall) > Constants.MAXDISTANCETOTOWNHALL)
             {
                 if(tileEntityTownHall == null)
                     LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockInformator.messageNoTownhall");

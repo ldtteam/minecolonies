@@ -49,7 +49,7 @@ public class BlockHutTownHall extends BlockInformator
         {
             EntityPlayer entityPlayer = (EntityPlayer) entityLivingBase;
 
-            TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z, true);
+            TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z);
             if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < Math.pow(2 * workingRange, 2))
             {
                 world.setBlockToAir(x, y, z);
@@ -90,15 +90,15 @@ public class BlockHutTownHall extends BlockInformator
         {
             if(world.getTileEntity(x, y, z) instanceof TileEntityTownHall)
             {
-                /*
-                Note, not enhanced yet
-                 */
                 TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-                List<Entity> loadedEntities = world.loadedEntityList;
-                List<UUID> townhallList = tileEntityTownHall.getCitizens();
-                for(Entity entity : loadedEntities)
-                    for(UUID uuid : townhallList)
-                        if(entity.getPersistentID().equals(uuid)) entity.setDead();
+                for (Object o : world.loadedEntityList)
+                {
+                    if (o instanceof Entity)
+                    {
+                        Entity entity = (Entity) o;
+                        if (tileEntityTownHall.getCitizens().contains(entity.getUniqueID())) entity.setDead();
+                    }
+                }
                 PlayerProperties.get(player).removeTownhall();
             }
             return super.removedByPlayer(world, player, x, y, z);

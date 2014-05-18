@@ -20,14 +20,13 @@ public class Utils
      * Method to find the closest townhall
      *
      * @param world world obj
-     * @param x     xCoord to check from
-     * @param y     yCoord to check from
-     * @param z     zCoord to check from
-     * @param flag  true if you don't want to return the block provided
+     * @param x     x coordinate to check from
+     * @param y     y coordinate to check from
+     * @param z     z coordinate to check from
      *
      * @return closest TileEntityTownHall
      */
-    public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z, boolean flag)
+    public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z)
     {
         double closestDist = Double.MAX_VALUE;
         TileEntityTownHall closestTownHall = null;
@@ -39,24 +38,31 @@ public class Utils
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if (flag)
-                {
-                    if (x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
-                }
+                if (x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
 
-                if(closestDist > Math.sqrt(Math.sqrt((x - townHall.xCoord) * (x - townHall.xCoord) + (y - townHall.yCoord) * (y - townHall.yCoord) + (z - townHall.zCoord) * (z - townHall.zCoord))))
+                double distanceSquared = townHall.getDistanceFrom(x, y, z);
+                if(closestDist > distanceSquared)
                 {
                     closestTownHall = townHall;
-                    closestDist = Math.sqrt((x - townHall.xCoord) * (x - townHall.xCoord) + (y - townHall.yCoord) * (y - townHall.yCoord) + (z - townHall.zCoord) * (z - townHall.zCoord));
+                    closestDist = distanceSquared;
                 }
             }
         return closestTownHall;
     }
 
+    /**
+     * find the distance to the closest townhall.
+     *
+     * @param world
+     * @param x x coordinate to check from
+     * @param y y coordinate to check from
+     * @param z z coordinate to check from
+     *
+     * @return distance to nearest townhall
+     */
     public static double getDistanceToClosestTownHall(World world, int x, int y, int z)
     {
         double closestDist = Double.MAX_VALUE;
-        TileEntityTownHall closestTownHall = null;
 
         if(world == null || world.loadedTileEntityList == null) return -1;
 
@@ -65,37 +71,34 @@ public class Utils
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if(closestDist > Math.sqrt(Math.sqrt((x - townHall.xCoord) * (x - townHall.xCoord) + (y - townHall.yCoord) * (y - townHall.yCoord) + (z - townHall.zCoord) * (z - townHall.zCoord))))
+                if (x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
+
+                double distanceSquared = townHall.getDistanceFrom(x, y, z);
+                if(closestDist > distanceSquared)
                 {
-                    closestDist = Math.sqrt((x - townHall.xCoord) * (x - townHall.xCoord) + (y - townHall.yCoord) * (y - townHall.yCoord) + (z - townHall.zCoord) * (z - townHall.zCoord));
+                    closestDist = distanceSquared;
                 }
             }
-        return closestDist;
+        return Math.sqrt(closestDist);
     }
 
     /**
      * Gives the distance to a given townhall
-     * @param world world obj
-     * @param x xCoord to check from
-     * @param y yCoord to check from
-     * @param z zCoord to check from
+     * @param x x coordinate to check from
+     * @param y y coordinate to check from
+     * @param z z coordinate to check from
      * @param tileEntity TileEntityTownhall to check to.
      * @return distance
      */
-    public static double getDistanceToTileEntity(World world, int x, int y, int z, TileEntity tileEntity)
+    public static double getDistanceToTileEntity(int x, int y, int z, TileEntity tileEntity)
     {
-        int xTown = tileEntity.xCoord;
-        int yTown = tileEntity.yCoord;
-        int zTown = tileEntity.zCoord;
-        return Math.sqrt(Math.pow(Math.abs(x - tileEntity.xCoord), 2)
-                       + Math.pow(Math.abs(y - tileEntity.yCoord), 2)
-                       + Math.pow(Math.abs(z - tileEntity.zCoord), 2));
+        return Math.sqrt(tileEntity.getDistanceFrom(x, y, z));
     }
 
     /**
      * Gets a Townhall that a given player is owner of
      *
-     * @param world world obj
+     * @param world world object
      * @param player player to be checked
      * @return TileEntityTownHall the player is user of, or null when he is no owner.
      */
@@ -109,12 +112,13 @@ public class Utils
         return null;
     }
 
+    //TODO world.getTopSolidOrLiquidBlock(x, z)?
     /**
-     * Finds the highest block in one yCoord, but ignores leaves etc.
+     * Finds the highest block in one y coordinate, but ignores leaves etc.
      *
      * @param world world obj
-     * @param x     xCoord
-     * @param z     zCoord
+     * @param x     x coordinate
+     * @param z     z coordinate
      * @return yCoordinate
      */
     public static int findTopGround(World world, int x, int z)
@@ -178,14 +182,14 @@ public class Utils
      * Checks if the block is water
      *
      * @param world world obj
-     * @param x     xCoord
-     * @param y     yCoord
-     * @param z     zCoord
+     * @param x     x coordinate
+     * @param y     y coordinate
+     * @param z     z coordinate
      * @return true if is water.
      */
-    public static boolean isWater(World world, int x, int y, int z)
+    public static boolean isWater(World world, int x, int y, int z)//TODO remove? we never use it
     {
-        return world.getBlock(x, y, z) == Blocks.water || world.getBlock(x, y, z) == Blocks.flowing_water;
+        return isWater(world.getBlock(x, y, z));
     }
 
     /**
@@ -218,14 +222,18 @@ public class Utils
     {
         List<EntityPlayer> players = new ArrayList<EntityPlayer>();
 
-        for (EntityPlayer player : (List<EntityPlayer>) world.playerEntities)
+        for (Object o : world.playerEntities)
         {
-            if (ids.contains(player.getUniqueID()))
+            if (o instanceof EntityPlayer)
             {
-                players.add(player);
-                if (players.size() == ids.size())
+                EntityPlayer player = (EntityPlayer) o;
+                if(ids.contains(player.getUniqueID()))
                 {
-                    return players;
+                    players.add(player);
+                    if(players.size() == ids.size())
+                    {
+                        return players;
+                    }
                 }
             }
         }
