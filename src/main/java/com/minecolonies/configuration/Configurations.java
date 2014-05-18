@@ -5,7 +5,7 @@ public class Configurations
     /*
     Defaults
      */
-    public static final int     DEFAULT_WORKINGRANGETOWNHALL = 10; //TODO make legit
+    public static final int     DEFAULT_WORKINGRANGETOWNHALL = 100;
     public static final boolean DEFAULT_ALLOWINFINTESUPPLYCHESTS = true;
     public static final int     DEFAULT_CITIZENRESPAWNINTERVAL = 30;
 
