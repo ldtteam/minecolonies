@@ -355,7 +355,7 @@ public class SchematicWorld extends World {
 	}
 
 	@Override
-         protected IChunkProvider createChunkProvider() {
+    protected IChunkProvider createChunkProvider() {
         return null;
     }
 
