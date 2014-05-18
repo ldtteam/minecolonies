@@ -86,11 +86,6 @@ public class ItemCaliper extends Item implements IColony
             return false;
         }
         if (startPositionY == j) {
-            if (startPositionX == j) {
-                int distance = java.lang.Math.abs(k - startPositionZ) + 1;
-                LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.line", distance);
-                return false;
-            }
             if (startPositionZ == k) {
                 int distance = java.lang.Math.abs(i - startPositionX) + 1;
                 LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.line", distance);
