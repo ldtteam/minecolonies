@@ -11,9 +11,7 @@ public class BlockHutLumberjack extends BlockInformator
 
     protected BlockHutLumberjack()
     {
-        super(Material.wood);
-        setBlockName(getName());
-        GameRegistry.registerBlock(this, getName());
+        super();
     }
 
     @Override

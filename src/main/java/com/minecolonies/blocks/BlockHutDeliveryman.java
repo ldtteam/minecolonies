@@ -15,9 +15,7 @@ public class BlockHutDeliveryman extends BlockInformator
 
     protected BlockHutDeliveryman()
     {
-        super(Material.wood);
-        setBlockName(getName());
-        GameRegistry.registerBlock(this, getName());
+        super();
     }
 
     @Override

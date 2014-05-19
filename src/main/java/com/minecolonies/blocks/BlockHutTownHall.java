@@ -28,10 +28,8 @@ public class BlockHutTownHall extends BlockInformator
 
     protected BlockHutTownHall()
     {
-        super(Material.wood);
+        super();
         this.workingRange = Configurations.workingRangeTownhall;
-        setBlockName(getName());
-        GameRegistry.registerBlock(this, getName());
     }
 
     @Override

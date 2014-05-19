@@ -12,9 +12,7 @@ public class BlockHutBlacksmith extends BlockInformator
 
     protected BlockHutBlacksmith()
     {
-        super(Material.wood);
-        setBlockName(getName());
-        GameRegistry.registerBlock(this, getName());
+        super();
     }
 
     @Override

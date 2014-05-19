@@ -11,9 +11,7 @@ public class BlockHutStonemason extends BlockInformator
 
     protected BlockHutStonemason()
     {
-        super(Material.wood);
-        setBlockName(getName());
-        GameRegistry.registerBlock(this, getName());
+        super();
     }
 
     @Override

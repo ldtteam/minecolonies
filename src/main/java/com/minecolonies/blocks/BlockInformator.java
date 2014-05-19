@@ -7,6 +7,7 @@ import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.IColony;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -27,10 +28,12 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
 
     private IIcon[] icons = new IIcon[6];// 0 = top, 1 = bot, 2-5 = sides;
 
-    public BlockInformator(Material material)
+    public BlockInformator()
     {
-        super(material);
+        super(Material.wood);
+        setBlockName(getName());
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
+        GameRegistry.registerBlock(this, getName());
     }
 
     @Override

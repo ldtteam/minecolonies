@@ -11,9 +11,7 @@ public class BlockHutFarmer extends BlockInformator
 
     protected BlockHutFarmer()
     {
-        super(Material.wood);
-        setBlockName(getName());
-        GameRegistry.registerBlock(this, getName());
+        super();
     }
 
     @Override

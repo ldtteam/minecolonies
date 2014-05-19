@@ -11,9 +11,7 @@ public class BlockHutMiner extends BlockInformator
 
     protected BlockHutMiner()
     {
-        super(Material.wood);
-        setBlockName(getName());
-        GameRegistry.registerBlock(this, getName());
+        super();
     }
 
     @Override
