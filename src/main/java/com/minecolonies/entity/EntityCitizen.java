@@ -158,12 +158,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         int level = nbtTagCompound.hasKey("level") ? nbtTagCompound.getInteger("level") : this.level.getLevel();
         int sex = nbtTagCompound.hasKey("sex") ? nbtTagCompound.getInteger("sex") : this.level.getSexInt();
 
-        EnumCitizenLevel[] levels = EnumCitizenLevel.values();
-        for(int i = 0; i < levels.length; i++)
+        for(EnumCitizenLevel citizenLevel : EnumCitizenLevel.values())
         {
-            if(levels[i].getLevel() == level && levels[i].getSexInt() == sex)
+            if(citizenLevel.getLevel() == level && citizenLevel.getSexInt() == sex)
             {
-                this.level = levels[i];
+                this.level = citizenLevel;
             }
         }
 
@@ -193,25 +192,27 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     @Override
-    public void onInventoryChanged(InventoryBasic var1){}
+    public void onInventoryChanged(InventoryBasic inventoryBasic){}
 
     public InventoryCitizen getInventory()
     {
         return inventory;
     }
 
-    /*public EnumCitizenAction getCurrentAction()
+    /*private static final int DATAWATCHER_CURRENTACTION = 24;
+
+    public EnumCitizenAction getCurrentAction()
     {
-        return EnumCitizenAction.getActionById(dataWatcher.getWatchableObjectInt(24));
+        return EnumCitizenAction.getActionById(dataWatcher.getWatchableObjectInt(DATAWATCHER_CURRENTACTION));
     }
 
     public void setCurrentAction(EnumCitizenAction action)
     {
-        this.dataWatcher.updateObject(24, action.getActionID());
+        this.dataWatcher.updateObject(DATAWATCHER_CURRENTACTION, action.getActionID());
     }
 
     public void setCurrentAction(int actionID)
     {
-        this.dataWatcher.updateObject(24, actionID);
+        this.dataWatcher.updateObject(DATAWATCHER_CURRENTACTION, actionID);
     }*/
 }
