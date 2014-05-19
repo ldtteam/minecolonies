@@ -8,9 +8,9 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderBipedCitizen extends RenderBiped
 {
-    public RenderBipedCitizen(ModelBiped model, float label)
+    public RenderBipedCitizen(ModelBiped model)
     {
-        super(model, label);
+        super(model, 1F);
     }
 
     @Override

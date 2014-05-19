@@ -16,11 +16,6 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
 
     public ModelEntityCitizenFemaleCitizen()
     {
-        this(0.0F);
-    }
-
-    public ModelEntityCitizenFemaleCitizen(float f)
-    {
 
         textureWidth = 64;
         textureHeight = 64;
@@ -32,7 +27,7 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         setRotation(bipedHead, 0F, 0F, 0F);
 
         bipedHeadwear = new ModelRenderer(this, 32, 0);
-        bipedHeadwear.addBox(-4F, -8F, -4F, 8, 8, 8, f + 0.5F);
+        bipedHeadwear.addBox(-4F, -8F, -4F, 8, 8, 8, 0.5F);
         bipedHeadwear.setRotationPoint(0F, 0F, 1F);
         bipedHeadwear.setTextureSize(64, 64);
         setRotation(bipedHeadwear, 0F, 0F, 0F);
@@ -76,7 +71,7 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         setRotation(Breast, -0.5235988F, 0F, 0F);
 
         Hairs = new ModelRenderer(this, 46, 17);
-        Hairs.addBox(-4F, 0F, 3F, 8, 7, 1, f + 0.5F);
+        Hairs.addBox(-4F, 0F, 3F, 8, 7, 1, 0.5F);
         Hairs.setRotationPoint(0F, 0F, 1F);
         Hairs.setTextureSize(64, 64);
         setRotation(Hairs, 0F, 0F, 0F);

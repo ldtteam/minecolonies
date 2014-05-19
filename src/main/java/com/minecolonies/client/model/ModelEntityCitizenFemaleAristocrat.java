@@ -32,11 +32,6 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
 
     public ModelEntityCitizenFemaleAristocrat()
     {
-        this(0.0F);
-    }
-
-    public ModelEntityCitizenFemaleAristocrat(float f)
-    {
         textureWidth = 64;
         textureHeight = 64;
 
@@ -127,7 +122,7 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         setRotation(Umbrella, -0.4712389F, 0F, 0F);
 
         Dresspart1 = new ModelRenderer(this, 18, 33);
-        Dresspart1.addBox(-6F, 0F, -6F, 12, 6, 11, f + 0.01F);
+        Dresspart1.addBox(-6F, 0F, -6F, 12, 6, 11, 0.01F);
         Dresspart1.setRotationPoint(0F, 16F, 1F);
         Dresspart1.setTextureSize(64, 64);
         setRotation(Dresspart1, 0F, 0.418879F, 0F);
@@ -139,7 +134,7 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         setRotation(Dresspart2, 0F, -0.3839724F, 0F);
 
         Dresspart3 = new ModelRenderer(this, 30, 50);
-        Dresspart3.addBox(-5F, 0F, -3F, 10, 4, 7, f + 0.01F);
+        Dresspart3.addBox(-5F, 0F, -3F, 10, 4, 7, 0.01F);
         Dresspart3.setRotationPoint(0F, 9F, 0F);
         Dresspart3.setTextureSize(64, 64);
         setRotation(Dresspart3, 0F, -0.3316126F, 0F);
