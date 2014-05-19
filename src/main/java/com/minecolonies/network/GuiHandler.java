@@ -4,6 +4,7 @@ import com.minecolonies.client.gui.GuiHutBuilder;
 import com.minecolonies.client.gui.GuiHutDeliveryMan;
 import com.minecolonies.client.gui.GuiTownHall;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.client.gui.GuiTypable;
 import com.minecolonies.tileentities.TileEntityTownHall;
@@ -28,18 +29,18 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
-        Constants.Gui guiID = Constants.Gui.values()[ID];
+        EnumGUI guiID = EnumGUI.values()[ID];
         switch(guiID)
         {
-            case TownHall:
+            case TOWNHALL:
                 return new GuiTownHall((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
-            case RenameTown:
+            case TOWNHALL_RENAME:
                 return new GuiTypable((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
-            case HutBuilder:
+            case BUILDER:
                 return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z));
-            case HutDeliveryman:
+            case WAREHOUSE:
                 return new GuiHutDeliveryMan(0, player, world, x, y, z);
-            case HutDeliverymanSettings:
+            case WAREHOUSE_SETTINGS:
                 return new GuiHutDeliveryMan(1, player, world, x, y, z);
         }
         return null;

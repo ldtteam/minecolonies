@@ -2,6 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
@@ -79,7 +80,7 @@ public class GuiTownHall extends GuiBase
             case idToggleSpecialization:
                 break;
             case idRenameColony:
-                player.openGui(MineColonies.instance, Constants.Gui.RenameTown.ordinal(), world, x, y, z);
+                player.openGui(MineColonies.instance, EnumGUI.TOWNHALL_RENAME.getID(), world, x, y, z);
                 break;
             case idInformation:
                 break;

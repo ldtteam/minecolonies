@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -127,7 +128,7 @@ public class BlockHutTownHall extends BlockInformator
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
     {
-        entityPlayer.openGui(MineColonies.instance, Constants.Gui.TownHall.ordinal(), world, x, y, z);
+        entityPlayer.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
         return true;
     }
 
