@@ -1,4 +1,4 @@
-package com.minecolonies.client;
+package com.minecolonies.client.render;
 
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.client.model.ModelBiped;

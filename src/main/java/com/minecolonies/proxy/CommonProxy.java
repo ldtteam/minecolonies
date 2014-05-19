@@ -61,6 +61,10 @@ public class CommonProxy implements IProxy
 
     @Override
     public void registerEntityRendering() {}
+
+    @Override
+    public void registerTileEntityRendering() {}
+
     @Override
     public void registerKeybindings() {}
 
