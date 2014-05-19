@@ -1,4 +1,4 @@
-package com.minecolonies.util;
+package com.minecolonies.lib;
 
 public interface IColony
 {

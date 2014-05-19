@@ -2,7 +2,7 @@ package com.minecolonies.items;
 
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.util.IColony;
+import com.minecolonies.lib.IColony;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.Item;

@@ -1,6 +1,5 @@
 package com.minecolonies.network.packets;
 
-import com.minecolonies.network.AbstractPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;

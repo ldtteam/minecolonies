@@ -1,4 +1,4 @@
-package com.minecolonies.network;
+package com.minecolonies.network.packets;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
