@@ -1,10 +1,9 @@
 package com.minecolonies.items;
 
+import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -29,7 +28,7 @@ public class ItemCaliper extends Item implements IColony
     public ItemCaliper()
     {
         setUnlocalizedName(getName());
-        setCreativeTab(CreativeTab.mineColoniesTab);
+        setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setMaxStackSize(1);
         GameRegistry.registerItem(this, getName());
     }

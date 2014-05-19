@@ -1,7 +1,7 @@
 package com.minecolonies.items;
 
+import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -20,7 +20,7 @@ public class ItemBuildTool extends Item implements IColony
     public ItemBuildTool()
     {
         setUnlocalizedName(getName());
-        setCreativeTab(CreativeTab.mineColoniesTab);
+        setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setMaxStackSize(1);
         GameRegistry.registerItem(this, getName());
     }

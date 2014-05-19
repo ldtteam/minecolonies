@@ -1,9 +1,9 @@
 package com.minecolonies.blocks;
 
+import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityTownHall;
-import com.minecolonies.util.CreativeTab;
 import com.minecolonies.util.IColony;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -30,7 +30,7 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
     public BlockInformator(Material material)
     {
         super(material);
-        setCreativeTab(CreativeTab.mineColoniesTab);
+        setCreativeTab(ModCreativeTabs.MINECOLONIES);
     }
 
     @Override

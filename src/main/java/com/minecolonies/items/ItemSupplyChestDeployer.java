@@ -3,6 +3,7 @@ package com.minecolonies.items;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.*;
@@ -24,7 +25,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     public ItemSupplyChestDeployer()
     {
         setUnlocalizedName(getName());
-        setCreativeTab(CreativeTab.mineColoniesTab);
+        setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setMaxStackSize(1);
         GameRegistry.registerItem(this, getName());
     }
