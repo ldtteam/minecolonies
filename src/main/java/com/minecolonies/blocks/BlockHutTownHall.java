@@ -3,24 +3,16 @@ package com.minecolonies.blocks;
 import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.lib.Constants;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
-
-import java.util.List;
-import java.util.UUID;
 
 public class BlockHutTownHall extends BlockInformator
 {

@@ -3,7 +3,6 @@ package com.minecolonies.network;
 import com.minecolonies.client.gui.GuiHutBuilder;
 import com.minecolonies.client.gui.GuiHutDeliveryMan;
 import com.minecolonies.client.gui.GuiTownHall;
-import com.minecolonies.lib.Constants;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.client.gui.GuiTypable;
