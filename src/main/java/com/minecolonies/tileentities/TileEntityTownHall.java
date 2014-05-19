@@ -192,7 +192,7 @@ public class TileEntityTownHall extends TileEntityHut
 
     public EntityCitizen spawnCitizen(double x, double y, double z)
     {
-        if(worldObj.isRemote || !worldObj.provider.isSurfaceWorld()) return null;
+        if(worldObj.isRemote) return null;
 
         EntityCitizen ec = new EntityCitizen(worldObj);
         ec.setPosition(x, y, z);
