@@ -1,7 +1,9 @@
 package com.minecolonies.lib;
 
 /**
- * Created by Colton on 5/18/2014.
+ * Simple Enum for GUI ids
+ *
+ * @author Colton
  */
 public enum EnumGUI
 {

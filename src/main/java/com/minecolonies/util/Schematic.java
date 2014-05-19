@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Colton on 5/4/2014.
+ * Interface for using the Schematica codebase
+ *
+ * @author Colton
  */
 public class Schematic
 {

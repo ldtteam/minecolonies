@@ -4,9 +4,6 @@ import com.minecolonies.lib.Constants;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
-/**
- * Created by Colton on 5/10/2014.
- */
 public class SoundHandler
 {
     public static void playSound(World world, String name, int x, int y, int z)

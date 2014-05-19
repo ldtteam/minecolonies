@@ -52,7 +52,7 @@ public class Utils
     /**
      * find the distance to the closest townhall.
      *
-     * @param world
+     * @param world world townhall is in
      * @param x x coordinate to check from
      * @param y y coordinate to check from
      * @param z z coordinate to check from

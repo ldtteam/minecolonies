@@ -10,9 +10,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-/**
- * Created by Colton on 5/11/2014.
- */
 public class ItemBuildTool extends Item implements IColony
 {
     private String name = "scepterGold";

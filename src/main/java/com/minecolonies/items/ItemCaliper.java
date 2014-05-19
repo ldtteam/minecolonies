@@ -13,9 +13,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-/**
- * Created by Colton on 5/11/2014.
- */
 public class ItemCaliper extends Item implements IColony
 {
     public        String          name = "caliper";
