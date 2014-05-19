@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockHutTownHall extends BlockInformator
+public class BlockHutTownHall extends BlockHut
 {
     public final String name = "blockHutTownhall";
 

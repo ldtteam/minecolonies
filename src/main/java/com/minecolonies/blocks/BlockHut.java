@@ -22,13 +22,13 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public abstract class BlockInformator extends Block implements IColony, ITileEntityProvider
+public abstract class BlockHut extends Block implements IColony, ITileEntityProvider
 {
     protected int workingRange;
 
     private IIcon[] icons = new IIcon[6];// 0 = top, 1 = bot, 2-5 = sides;
 
-    public BlockInformator()
+    public BlockHut()
     {
         super(Material.wood);
         setBlockName(getName());
@@ -58,9 +58,9 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
      *
      * @param tileEntityTownHall TileEntityTownHall bound to
      * @param world              world
-     * @param x                  xcoord
-     * @param y                  ycoord
-     * @param z                  zcoord
+     * @param x                  x coordinate
+     * @param y                  y coordinate
+     * @param z                  z coordinate
      */
     public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall, World world, int x, int y, int z)
     {
@@ -71,12 +71,12 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
     }
 
     /**
-     * Sets the TE's townhall to the closest townhall
+     * Sets the TileEntities townhall to the closest townhall
      *
      * @param world world
-     * @param x     xcoord
-     * @param y     ycoord
-     * @param z     zcoord
+     * @param x     x coordinate
+     * @param y     y coordinate
+     * @param z     z coordinate
      */
     public void addClosestTownhall(World world, int x, int y, int z)
     {
@@ -104,9 +104,9 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
             if(tileEntityTownHall == null || Utils.getDistanceToTileEntity(x, y, z, tileEntityTownHall) > Constants.MAXDISTANCETOTOWNHALL)
             {
                 if(tileEntityTownHall == null)
-                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockInformator.messageNoTownhall");
+                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockHut.messageNoTownhall");
                 else
-                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockInformator.messageTooFarFromTownhall");
+                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockHut.messageTooFarFromTownhall");
                 world.setBlockToAir(x, y, z);
                 return;
             }

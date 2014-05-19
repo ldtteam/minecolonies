@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockHutBuilder extends BlockInformator
+public class BlockHutBuilder extends BlockHut
 {
     public final String name = "blockHutBuilder";
 

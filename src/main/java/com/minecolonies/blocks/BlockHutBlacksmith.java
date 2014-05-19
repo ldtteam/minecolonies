@@ -4,7 +4,7 @@ import com.minecolonies.tileentities.TileEntityBlacksmith;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockHutBlacksmith extends BlockInformator
+public class BlockHutBlacksmith extends BlockHut
 {
     public final String name = "blockHutBlacksmith";
 

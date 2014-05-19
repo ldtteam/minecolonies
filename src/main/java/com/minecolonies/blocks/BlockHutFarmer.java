@@ -3,7 +3,7 @@ package com.minecolonies.blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockHutFarmer extends BlockInformator
+public class BlockHutFarmer extends BlockHut
 {
     public final String name = "blockHutFarmer";
 
