@@ -7,24 +7,24 @@ import net.minecraft.item.ItemStack;
 public class InventoryCitizen extends InventoryBasic
 {
 
-    public InventoryCitizen(String InventoryTitle, boolean LocaleEnabled, int InventorySize)
+    public InventoryCitizen(String title, boolean localeEnabled, int size)
     {
-        super(InventoryTitle, LocaleEnabled, InventorySize);
+        super(title, localeEnabled, size);
     }
 
-    public void addIInvBasic(IInvBasic par1iInvBasic)
+    public void addIInvBasic(IInvBasic inventory)
     {
-        super.func_110134_a(par1iInvBasic);
+        super.func_110134_a(inventory);
     }
 
-    public void removeIInvBasic(IInvBasic par1iInvBasic)
+    public void removeIInvBasic(IInvBasic inventory)
     {
-        super.func_110132_b(par1iInvBasic);
+        super.func_110132_b(inventory);
     }
 
-    public void setInventoryTitle(String par1Str)
+    public void setInventoryTitle(String title)
     {
-        super.func_110133_a(par1Str);
+        super.func_110133_a(title);
     }
 
     public ItemStack[] getAllItemsInInventory()
