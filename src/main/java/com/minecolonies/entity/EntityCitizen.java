@@ -17,13 +17,10 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import java.util.Random;
-
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
     public ResourceLocation texture;
     public EnumCitizenLevel level;
-    Random random = worldObj.rand;
     private   EnumCitizenAction currentAction;
     private   String            job;
     protected InventoryCitizen  inventory;
@@ -39,7 +36,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         super(world);
         setSize(.6f, 1.8f);
-        this.level = random.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
+        this.level = worldObj.rand.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
         setTexture();
         currentAction = EnumCitizenAction.IDLE;
         job = "Citizen";
@@ -92,7 +89,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public void setTexture()
     {
-        texture = new ResourceLocation(level.getTexture() + (random.nextInt(3) + 1) + ".png");
+        texture = new ResourceLocation(level.getTexture() + (worldObj.rand.nextInt(3) + 1) + ".png");
     }
 
     public String getJob()
