@@ -9,6 +9,7 @@ public class EntityBuilder extends EntityCitizen
     public EntityBuilder(World world)
     {
         super(world);
+        // TODO: check if builder is male, OR create model for female builder
         level = EnumCitizenLevel.CITIZENMALE;
     }
 

@@ -23,10 +23,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
     public ResourceLocation texture;
     public EnumCitizenLevel level;
-    Random random = worldObj.rand;
+    public final Random random = worldObj.rand;
     private   EnumCitizenAction currentAction;
     private   String            job;
-    protected InventoryCitizen  inventory;
+    private InventoryCitizen  inventory;
 
     private TileEntityTownHall tileEntityTownHall;
     private int                townPosX, townPosY, townPosZ;
@@ -196,7 +196,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     @Override
-    public void onInventoryChanged(InventoryBasic var1){}
+    public void onInventoryChanged(InventoryBasic inventory){}
 
     public InventoryCitizen getInventory()
     {
