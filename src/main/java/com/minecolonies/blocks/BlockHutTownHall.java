@@ -50,7 +50,7 @@ public class BlockHutTownHall extends BlockInformator
             EntityPlayer entityPlayer = (EntityPlayer) entityLivingBase;
 
             TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z);
-            if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < Math.pow(2 * workingRange, 2))
+            if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < Math.pow(2 * workingRange + Configurations.townhallPadding, 2))
             {
                 world.setBlockToAir(x, y, z);
                 LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "tile.blockHutTownhall.messageTooClose");
