@@ -11,4 +11,6 @@ public interface IProxy
     void registerEntities();
 
     void registerEntityRendering();
+
+    void registerTileEntityRendering();
 }

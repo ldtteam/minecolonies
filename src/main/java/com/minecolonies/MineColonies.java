@@ -75,6 +75,8 @@ public class MineColonies
         proxy.registerEntities();
 
         proxy.registerEntityRendering();
+
+        proxy.registerTileEntityRendering();
     }
 
     @Mod.EventHandler
