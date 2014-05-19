@@ -16,14 +16,14 @@ public class GuiBase extends GuiScreen
             idFireWorker             = 1, idRecallWorker = 2, idBuildBuilding = 3, idRepairBuilding = 4;
     protected final ResourceLocation background                                  = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiInformatorBackground.png");
     protected       int              middleX, middleY, xSize, ySize, buttonWidth = 116, buttonHeight = 20, buttonSpan = 4;
-    protected ArrayList iconList;
+    protected ArrayList<GuiModIcon> iconList;
 
     public GuiBase()
     {
         super();
         xSize = 171;
         ySize = 247;
-        iconList = new ArrayList();
+        iconList = new ArrayList<GuiModIcon>();
     }
 
     protected void addElements()
@@ -112,7 +112,7 @@ public class GuiBase extends GuiScreen
         }
         for(k = 0; k < this.iconList.size(); k++)
         {
-            ((GuiModIcon) this.iconList.get(k)).drawIcon(this.mc, itemRender);
+            (this.iconList.get(k)).drawIcon(this.mc, itemRender);
         }
     }
 

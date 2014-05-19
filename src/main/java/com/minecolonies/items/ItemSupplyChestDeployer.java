@@ -178,8 +178,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        if(Configurations.allowInfiniteSupplyChests) return true;
-        return !PlayerProperties.get(player).hasPlacedSupplyChest();
+        return Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest();
     }
 
     /**

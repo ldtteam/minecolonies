@@ -16,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -152,8 +153,8 @@ public class Schematic
         short[][][] blocks = new short[width][height][length];
         byte[][][] metadata = new byte[width][height][length];
         List<TileEntity> tileEntities = new ArrayList<TileEntity>();
-        TileEntity tileEntity = null;
-        NBTTagCompound tileEntityNBT = null;
+        TileEntity tileEntity;
+        NBTTagCompound tileEntityNBT;
 
         for(int x = minX; x <= maxX; x++)
         {
@@ -188,7 +189,7 @@ public class Schematic
         }
     }
 
-    public void setOrientation(int orientation)
+    public void setOrientation(ForgeDirection orientation)
     {
         //TODO schematic.rotate();
     }

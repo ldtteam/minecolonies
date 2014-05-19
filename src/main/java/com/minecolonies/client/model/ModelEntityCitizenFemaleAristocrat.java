@@ -10,8 +10,8 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
     // fields
     ModelRenderer Breast;
 
-    ModelRenderer Leftarm2;
-    ModelRenderer LeftArm1;
+    ModelRenderer leftArm2;
+    ModelRenderer leftArm1;
     ModelRenderer Hairs1;
     ModelRenderer Hairs2;
     ModelRenderer Hairs3;
@@ -58,18 +58,18 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         bipedRightArm.setTextureSize(64, 64);
         setRotation(bipedRightArm, 0F, 0F, 0F);
 
-        Leftarm2 = new ModelRenderer(this, 46, 22);
-        Leftarm2.addBox(-1F, -1F, -1F, 3, 7, 3);
-        Leftarm2.setRotationPoint(5F, 6F, 1F);
-        Leftarm2.setTextureSize(64, 64);
-        setRotation(Leftarm2, -1.570796F, 0F, 0F);
+        leftArm2 = new ModelRenderer(this, 46, 22);
+        leftArm2.addBox(-1F, -1F, -1F, 3, 7, 3);
+        leftArm2.setRotationPoint(5F, 6F, 1F);
+        leftArm2.setTextureSize(64, 64);
+        setRotation(leftArm2, -1.570796F, 0F, 0F);
 
-        LeftArm1 = new ModelRenderer(this, 34, 17);
-        LeftArm1.addBox(0F, 0F, -1F, 3, 6, 3);
-        LeftArm1.mirror = true;
-        LeftArm1.setRotationPoint(4F, 0F, 0F);
-        LeftArm1.setTextureSize(64, 64);
-        setRotation(LeftArm1, 0F, 0F, 0F);
+        leftArm1 = new ModelRenderer(this, 34, 17);
+        leftArm1.addBox(0F, 0F, -1F, 3, 6, 3);
+        leftArm1.mirror = true;
+        leftArm1.setRotationPoint(4F, 0F, 0F);
+        leftArm1.setTextureSize(64, 64);
+        setRotation(leftArm1, 0F, 0F, 0F);
 
         bipedRightLeg = new ModelRenderer(this, 0, 17);
         bipedRightLeg.addBox(-2F, 0F, -2F, 3, 12, 3);
@@ -206,8 +206,8 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         bipedHead.render(f5);
         bipedBody.render(f5);
         bipedRightArm.render(f5);
-        Leftarm2.render(f5);
-        LeftArm1.render(f5);
+        leftArm2.render(f5);
+        leftArm1.render(f5);
         bipedRightLeg.render(f5);
         bipedLeftLeg.render(f5);
         Breast.render(f5);
@@ -249,10 +249,10 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         Hairs3.rotateAngleY = bipedHead.rotateAngleY;
         Hairs3.rotateAngleX = bipedHead.rotateAngleX;
 
-        bipedRightArm.rotateAngleX = MathHelper.cos(f * 0.6662F + 3.141593F) * 2.0F * f1 * 0.5F;
+        bipedRightArm.rotateAngleX = MathHelper.cos((float) (f * 0.6662F + Math.PI)) * 2.0F * f1 * 0.5F;
 
         bipedRightLeg.rotateAngleX = MathHelper.cos(f * 0.6662F) * 1.1F * f1;
-        bipedLeftLeg.rotateAngleX = MathHelper.cos(f * 0.6662F + 3.141593F) * 1.1F * f1;
+        bipedLeftLeg.rotateAngleX = MathHelper.cos((float) (f * 0.6662F + Math.PI)) * 1.1F * f1;
         bipedRightLeg.rotateAngleY = 0.0F;
         bipedLeftLeg.rotateAngleY = 0.0F;
 
@@ -276,11 +276,11 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
             f6 *= f6;
             f6 *= f6;
             f6 = 1.0F - f6;
-            float f7 = MathHelper.sin(f6 * 3.141593F);
-            float f8 = MathHelper.sin(onGround * 3.141593F) * -(bipedHead.rotateAngleX - 0.7F) * 0.75F;
+            float f7 = MathHelper.sin((float) (f6 * Math.PI));
+            float f8 = MathHelper.sin((float) (onGround * Math.PI)) * -(bipedHead.rotateAngleX - 0.7F) * 0.75F;
             bipedRightArm.rotateAngleX -= f7 * 1.2D + f8;
             bipedRightArm.rotateAngleY += bipedBody.rotateAngleY * 2.0F;
-            bipedRightArm.rotateAngleZ = MathHelper.sin(onGround * 3.141593F) * -0.4F;
+            bipedRightArm.rotateAngleZ = MathHelper.sin((float) (onGround * Math.PI)) * -0.4F;
         }
     }
 
