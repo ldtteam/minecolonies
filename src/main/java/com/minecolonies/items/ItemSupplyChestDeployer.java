@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 public class ItemSupplyChestDeployer extends ItemMinecolonies
 {
-    private String name = "supplyChestDeployer";
+    private final String name = "supplyChestDeployer";
 
     public ItemSupplyChestDeployer()
     {
