@@ -1,10 +1,10 @@
 package com.minecolonies.proxy;
 
-import com.minecolonies.client.render.EmptyTileEntitySpecialRenderer;
-import com.minecolonies.client.render.RenderBipedCitizenMulti;
 import com.minecolonies.client.model.ModelEntityCitizenFemaleAristocrat;
 import com.minecolonies.client.model.ModelEntityCitizenFemaleCitizen;
 import com.minecolonies.client.model.ModelEntityCitizenFemaleNoble;
+import com.minecolonies.client.render.EmptyTileEntitySpecialRenderer;
+import com.minecolonies.client.render.RenderBipedCitizenMulti;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.tileentities.TileEntityHut;
 import cpw.mods.fml.client.registry.ClientRegistry;

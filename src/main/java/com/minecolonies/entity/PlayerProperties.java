@@ -10,11 +10,11 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 
 public class PlayerProperties implements IExtendedEntityProperties
 {
-    private boolean hasPlacedTownHall    = false;
-    private int townhallX = 0, townhallY = 0, townhallZ = 0;
+    private boolean hasPlacedTownHall = false;
+    private int     townhallX         = 0, townhallY = 0, townhallZ = 0;
     private boolean hasPlacedSupplyChest = false;
 
-    private PlayerProperties() {}
+    private PlayerProperties(){}
 
     /**
      * Registers player property. Should be checked if already exists, and called in onEntityConstruct event
@@ -146,7 +146,6 @@ public class PlayerProperties implements IExtendedEntityProperties
 
     /**
      * Set hasPlacedTownHall to false. Should be called when removing the townhall.
-     *
      */
     public void removeTownhall()
     {

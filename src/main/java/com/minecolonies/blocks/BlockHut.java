@@ -2,9 +2,9 @@ package com.minecolonies.blocks;
 
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.IColony;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityTownHall;
-import com.minecolonies.lib.IColony;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;

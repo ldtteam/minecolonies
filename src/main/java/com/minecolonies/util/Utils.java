@@ -22,7 +22,6 @@ public class Utils
      * @param x     x coordinate to check from
      * @param y     y coordinate to check from
      * @param z     z coordinate to check from
-     *
      * @return closest TileEntityTownHall
      */
     public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z)
@@ -37,7 +36,7 @@ public class Utils
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if (x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
+                if(x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
 
                 double distanceSquared = townHall.getDistanceFrom(x, y, z);
                 if(closestDist > distanceSquared)
@@ -53,10 +52,9 @@ public class Utils
      * find the distance to the closest townhall.
      *
      * @param world world townhall is in
-     * @param x x coordinate to check from
-     * @param y y coordinate to check from
-     * @param z z coordinate to check from
-     *
+     * @param x     x coordinate to check from
+     * @param y     y coordinate to check from
+     * @param z     z coordinate to check from
      * @return distance to nearest townhall
      */
     public static double getDistanceToClosestTownHall(World world, int x, int y, int z)
@@ -70,7 +68,7 @@ public class Utils
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if (x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
+                if(x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
 
                 double distanceSquared = townHall.getDistanceFrom(x, y, z);
                 if(closestDist > distanceSquared)
@@ -83,9 +81,10 @@ public class Utils
 
     /**
      * Gives the distance to a given townhall
-     * @param x x coordinate to check from
-     * @param y y coordinate to check from
-     * @param z z coordinate to check from
+     *
+     * @param x          x coordinate to check from
+     * @param y          y coordinate to check from
+     * @param z          z coordinate to check from
      * @param tileEntity TileEntityTownhall to check to.
      * @return distance
      */
@@ -97,14 +96,14 @@ public class Utils
     /**
      * Gets a Townhall that a given player is owner of
      *
-     * @param world world object
+     * @param world  world object
      * @param player player to be checked
      * @return TileEntityTownHall the player is user of, or null when he is no owner.
      */
     public static TileEntityTownHall getTownhallByOwner(World world, EntityPlayer player)
     {
         PlayerProperties props = PlayerProperties.get(player);
-        if (props.hasPlacedTownHall())
+        if(props.hasPlacedTownHall())
         {
             return (TileEntityTownHall) world.getTileEntity(props.getTownhallX(), props.getTownhallY(), props.getTownhallZ());
         }
@@ -112,6 +111,7 @@ public class Utils
     }
 
     //TODO world.getTopSolidOrLiquidBlock(x, z)?
+
     /**
      * Finds the highest block in one y coordinate, but ignores leaves etc.
      *
@@ -195,16 +195,16 @@ public class Utils
      * Returns the online EntityPlayer with the given UUID
      *
      * @param world world the player is in
-     * @param id the player's UUID
+     * @param id    the player's UUID
      * @return the EntityPlayer
      */
     public static EntityPlayer getPlayerFromUUID(World world, UUID id)
     {
-        for (int i = 0; i < world.playerEntities.size(); ++i)
+        for(int i = 0; i < world.playerEntities.size(); ++i)
         {
-            if (id.equals(((EntityPlayer) world.playerEntities.get(i)).getUniqueID()))
+            if(id.equals(((EntityPlayer) world.playerEntities.get(i)).getUniqueID()))
             {
-                return (EntityPlayer ) world.playerEntities.get(i);
+                return (EntityPlayer) world.playerEntities.get(i);
             }
         }
         return null;
@@ -214,16 +214,16 @@ public class Utils
      * Returns a list of online players whose UUID's match the ones provided.
      *
      * @param world the world the players are in.
-     * @param ids List of UUIDs
+     * @param ids   List of UUIDs
      * @return list of EntityPlayers
      */
     public static List<EntityPlayer> getPlayersFromUUID(World world, List<UUID> ids)
     {
         List<EntityPlayer> players = new ArrayList<EntityPlayer>();
 
-        for (Object o : world.playerEntities)
+        for(Object o : world.playerEntities)
         {
-            if (o instanceof EntityPlayer)
+            if(o instanceof EntityPlayer)
             {
                 EntityPlayer player = (EntityPlayer) o;
                 if(ids.contains(player.getUniqueID()))
@@ -236,7 +236,7 @@ public class Utils
                 }
             }
         }
-        if (!players.isEmpty())
+        if(!players.isEmpty())
         {
             return players;
         }

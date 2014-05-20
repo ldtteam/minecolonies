@@ -227,7 +227,7 @@ public class Schematic
     {
         try
         {
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+            if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
             {
                 return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
             }

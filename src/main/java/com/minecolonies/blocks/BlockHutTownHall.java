@@ -40,7 +40,7 @@ public class BlockHutTownHall extends BlockHut
         {
             EntityPlayer entityPlayer = (EntityPlayer) entityLivingBase;
 
-            if (!world.provider.isSurfaceWorld())
+            if(!world.provider.isSurfaceWorld())
             {
                 world.setBlockToAir(x, y, z);
                 LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "tile.blockHutTownhall.messageInvalidWorld");
@@ -90,12 +90,12 @@ public class BlockHutTownHall extends BlockHut
             if(world.getTileEntity(x, y, z) instanceof TileEntityTownHall)
             {
                 TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-                for (Object o : world.loadedEntityList)
+                for(Object o : world.loadedEntityList)
                 {
-                    if (o instanceof Entity)
+                    if(o instanceof Entity)
                     {
                         Entity entity = (Entity) o;
-                        if (tileEntityTownHall.getCitizens().contains(entity.getUniqueID())) entity.setDead();
+                        if(tileEntityTownHall.getCitizens().contains(entity.getUniqueID())) entity.setDead();
                     }
                 }
                 PlayerProperties.get(player).removeTownhall();
