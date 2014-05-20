@@ -21,7 +21,7 @@ public class LanguageHandler
     /**
      * Localize a string and use String.format().
      *
-     * @param key unlocalized key
+     * @param key  unlocalized key
      * @param args Objects for String.format()
      * @return Localized string
      */
@@ -39,8 +39,8 @@ public class LanguageHandler
      * Send a localized and formatted message to a player
      *
      * @param player player to send the message to
-     * @param key unlocalized key
-     * @param args Objects for String.format()
+     * @param key    unlocalized key
+     * @param args   Objects for String.format()
      */
     public static void sendPlayerLocalizedMessage(EntityPlayer player, String key, Object... args)
     {
@@ -49,7 +49,7 @@ public class LanguageHandler
 
     private static void sendPlayersMessage(List<EntityPlayer> players, String message)
     {
-        for (EntityPlayer player : players)
+        for(EntityPlayer player : players)
         {
             sendPlayerMessage(player, message);
         }
@@ -59,8 +59,8 @@ public class LanguageHandler
      * Send a localized and formatted message to multiple players
      *
      * @param players EntityPlayers to send the message to
-     * @param key unlocalized key
-     * @param args Objects for String.format()
+     * @param key     unlocalized key
+     * @param args    Objects for String.format()
      */
     public static void sendPlayersLocalizedMessage(List<EntityPlayer> players, String key, Object... args)
     {

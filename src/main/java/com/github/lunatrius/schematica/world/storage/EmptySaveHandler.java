@@ -1,6 +1,5 @@
 package com.github.lunatrius.schematica.world.storage;
 
-import java.io.File;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.WorldProvider;
@@ -8,6 +7,8 @@ import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+
+import java.io.File;
 
 public class EmptySaveHandler implements ISaveHandler
 {
@@ -22,7 +23,8 @@ public class EmptySaveHandler implements ISaveHandler
     /**
      * Checks the session lock to prevent save collisions
      */
-    public void checkSessionLock() throws MinecraftException {}
+    public void checkSessionLock() throws MinecraftException
+    {}
 
     /**
      * Returns the chunk loader with the provided world provider
@@ -35,12 +37,14 @@ public class EmptySaveHandler implements ISaveHandler
     /**
      * Saves the given World Info with the given NBTTagCompound as the Player.
      */
-    public void saveWorldInfoWithPlayer(WorldInfo par1WorldInfo, NBTTagCompound par2NBTTagCompound) {}
+    public void saveWorldInfoWithPlayer(WorldInfo par1WorldInfo, NBTTagCompound par2NBTTagCompound)
+    {}
 
     /**
      * Saves the passed in world info.
      */
-    public void saveWorldInfo(WorldInfo par1WorldInfo) {}
+    public void saveWorldInfo(WorldInfo par1WorldInfo)
+    {}
 
     /**
      * returns null if no saveHandler is relevent (eg. SMP)
@@ -53,7 +57,8 @@ public class EmptySaveHandler implements ISaveHandler
     /**
      * Called to flush all changes to disk, waiting for them to complete.
      */
-    public void flush() {}
+    public void flush()
+    {}
 
     /**
      * Gets the file location of the given map

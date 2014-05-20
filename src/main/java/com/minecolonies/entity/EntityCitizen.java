@@ -19,10 +19,10 @@ import net.minecraft.world.World;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
-    public ResourceLocation texture;
-    public EnumCitizenLevel level;
-    private   EnumCitizenAction currentAction;
-    private   String            job;
+    public  ResourceLocation  texture;
+    public  EnumCitizenLevel  level;
+    private EnumCitizenAction currentAction;
+    private String            job;
     private InventoryCitizen  inventory;
 
     private TileEntityTownHall tileEntityTownHall;

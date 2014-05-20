@@ -49,6 +49,7 @@ public class CommonProxy implements IProxy
     {
         return playerPropertiesData.remove(name);
     }
+
     /*
     * @param entityName A unique name for the entity
     * @param id A mod specific ID for the entity
@@ -64,16 +65,16 @@ public class CommonProxy implements IProxy
     }
 
     @Override
-    public void registerEntityRendering() {}
+    public void registerEntityRendering(){}
 
     @Override
-    public void registerTileEntityRendering() {}
+    public void registerTileEntityRendering(){}
 
     @Override
-    public void registerKeybindings() {}
+    public void registerKeybindings(){}
 
     @Override
-    public void registerEvents() {}
+    public void registerEvents(){}
 
     /**
      * Used for entity IDs, starts at 0 & increments for each call

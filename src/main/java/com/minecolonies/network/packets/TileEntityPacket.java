@@ -14,9 +14,10 @@ public class TileEntityPacket extends AbstractPacket
     private int x, y, z;
     private NBTTagCompound data;
 
-    public TileEntityPacket() {}
+    public TileEntityPacket(){}
 
-    public TileEntityPacket(int x, int y, int z, NBTTagCompound data) {
+    public TileEntityPacket(int x, int y, int z, NBTTagCompound data)
+    {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -64,7 +65,7 @@ public class TileEntityPacket extends AbstractPacket
     {
         TileEntity tileEntity = player.getEntityWorld().getTileEntity(x, y, z);
 
-        if (tileEntity != null)
+        if(tileEntity != null)
         {
             tileEntity.readFromNBT(data);
         }
@@ -75,7 +76,7 @@ public class TileEntityPacket extends AbstractPacket
     {
         TileEntity tileEntity = player.getEntityWorld().getTileEntity(x, y, z);
 
-        if (tileEntity != null)
+        if(tileEntity != null)
         {
             tileEntity.readFromNBT(data);
         }

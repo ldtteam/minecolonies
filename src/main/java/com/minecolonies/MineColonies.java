@@ -39,7 +39,7 @@ public class MineColonies
     @SuppressWarnings("unused")
     public void invalidFingerprint(FMLFingerprintViolationEvent event)
     {
-        if (Constants.FINGERPRINT.equals("@FINGERPRINT@"))
+        if(Constants.FINGERPRINT.equals("@FINGERPRINT@"))
         {
             logger.log(Level.ERROR, LanguageHandler.format("com.minecolonies.error.noFingerprint"));
         }
