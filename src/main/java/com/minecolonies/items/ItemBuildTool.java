@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 
 public class ItemBuildTool extends ItemMinecolonies
 {
-    private String name = "scepterGold";
+    private final String name = "scepterGold";
 
     public ItemBuildTool()
     {

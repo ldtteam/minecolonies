@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 public class ItemCaliper extends ItemMinecolonies
 {
-    public        String          name = "caliper";
+    public final  String          name = "caliper";
     public static RangedAttribute use  = new RangedAttribute("player.caliberUse", 0.0, 0.0, 1.0);
 
     private int startPositionX;
