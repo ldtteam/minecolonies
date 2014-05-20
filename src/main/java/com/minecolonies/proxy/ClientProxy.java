@@ -1,10 +1,13 @@
 package com.minecolonies.proxy;
 
-import com.minecolonies.client.RenderBipedCitizenMulti;
+import com.minecolonies.client.render.EmptyTileEntitySpecialRenderer;
+import com.minecolonies.client.render.RenderBipedCitizenMulti;
 import com.minecolonies.client.model.ModelEntityCitizenFemaleAristocrat;
 import com.minecolonies.client.model.ModelEntityCitizenFemaleCitizen;
 import com.minecolonies.client.model.ModelEntityCitizenFemaleNoble;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.tileentities.TileEntityHut;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.client.model.ModelBiped;
 
@@ -33,5 +36,11 @@ public class ClientProxy extends CommonProxy
     public void registerEntityRendering()
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, new RenderBipedCitizenMulti(new ModelBiped(), new ModelEntityCitizenFemaleCitizen(), new ModelEntityCitizenFemaleNoble(), new ModelEntityCitizenFemaleAristocrat()));
+    }
+
+    @Override
+    public void registerTileEntityRendering()
+    {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHut.class, new EmptyTileEntitySpecialRenderer());
     }
 }

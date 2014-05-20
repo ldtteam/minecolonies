@@ -1,4 +1,4 @@
-com.minecolonies.error.noFingerprint=[ERROR] Minecolonies: No Fingerprint. Might not be a valid version!
+com.minecolonies.error.noFingerprint=No Fingerprint. Might not be a valid version!
 
 com.minecolonies.gui.yes=Yes
 com.minecolonies.gui.no=No
@@ -45,6 +45,7 @@ tile.blockHutTownhall.name=Town Hall
 tile.blockHutTownhall.messageMaxSize=Colony has reached max size
 tile.blockHutTownhall.messageColonistDead=A colonist has died!
 tile.blockHutTownhall.messagePlacedAlready=You have placed a Town Hall already
+tile.blockHutTownhall.messageInvalidWorld=You can't place a townhall in this world type
 tile.blockHutTownhall.messageTooClose=Too close to existing townhall
 tile.blockHut.messageTooFarFromTownhall=You need to be closer to your townhall!
 tile.blockHut.messageNoTownhall=You need to place a townhall first!

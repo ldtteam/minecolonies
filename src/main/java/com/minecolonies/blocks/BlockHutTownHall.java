@@ -34,11 +34,19 @@ public class BlockHutTownHall extends BlockHut
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
-        if(world.isRemote || !world.provider.isSurfaceWorld()) return;
+        if(world.isRemote) return;
 
         if(entityLivingBase instanceof EntityPlayer)
         {
             EntityPlayer entityPlayer = (EntityPlayer) entityLivingBase;
+
+            if (!world.provider.isSurfaceWorld())
+            {
+                world.setBlockToAir(x, y, z);
+                LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "tile.blockHutTownhall.messageInvalidWorld");
+                removedByPlayer(world, entityPlayer, x, y, z);
+                return;
+            }
 
             TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z);
             if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < Math.pow(2 * workingRange + Configurations.townhallPadding, 2))

@@ -64,6 +64,8 @@ public class Schematic
 
     public void placeSchematic(int x, int y, int z)
     {
+        List<Vec3> delayedBlocks = new ArrayList<Vec3>();
+
         for(int j = 0; j < schematic.getHeight(); j++)
         {
             for(int k = 0; k < schematic.getLength(); k++)
@@ -78,12 +80,26 @@ public class Schematic
                     {
                         world.setBlockToAir(x + i, y + j, z + k);
                     }
-                    else
+                    else if(block.getMaterial().isSolid())
                     {
                         world.setBlock(x + i, y + j, z + k, block, metadata, 0x02);
                     }
+                    else
+                    {
+                        delayedBlocks.add(Vec3.createVectorHelper(i, j, k));
+                    }
                 }
             }
+        }
+
+        for(Vec3 vec : delayedBlocks)
+        {
+            int i = (int) vec.xCoord;
+            int j = (int) vec.yCoord;
+            int k = (int) vec.zCoord;
+            Block block = this.schematic.getBlock(i, j, k);
+            int metadata = this.schematic.getBlockMetadata(i, j, k);
+            world.setBlock(x + i, y + j, z + k, block, metadata, 0x02);
         }
     }
 

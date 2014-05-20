@@ -18,12 +18,14 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, certificateFingerprint = Constants.FINGERPRINT)
 public class MineColonies
 {
-    public static Logger logger;
+    public static Logger logger = LogManager.getLogger(Constants.MODID);
 
     public static final PacketPipeline packetPipeline = new PacketPipeline();
 
@@ -39,7 +41,7 @@ public class MineColonies
     {
         if (Constants.FINGERPRINT.equals("@FINGERPRINT@"))
         {
-            System.out.println(LanguageHandler.format("com.minecolonies.error.noFingerprint"));
+            logger.log(Level.ERROR, LanguageHandler.format("com.minecolonies.error.noFingerprint"));
         }
     }
 
@@ -75,6 +77,8 @@ public class MineColonies
         proxy.registerEntities();
 
         proxy.registerEntityRendering();
+
+        proxy.registerTileEntityRendering();
     }
 
     @Mod.EventHandler
