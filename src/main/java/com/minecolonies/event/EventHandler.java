@@ -25,7 +25,7 @@ public class EventHandler
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event)
     {
-        if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer)
+        if(!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer)
         {
             PlayerProperties.saveProxyData((EntityPlayer) event.entity);
         }
@@ -34,7 +34,7 @@ public class EventHandler
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
-        if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer)
+        if(!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer)
         {
             PlayerProperties.loadProxyData((EntityPlayer) event.entity);
         }

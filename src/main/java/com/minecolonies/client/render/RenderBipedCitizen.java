@@ -1,4 +1,4 @@
-package com.minecolonies.client;
+package com.minecolonies.client.render;
 
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.client.model.ModelBiped;
@@ -8,9 +8,9 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderBipedCitizen extends RenderBiped
 {
-    public RenderBipedCitizen(ModelBiped model, float label)
+    public RenderBipedCitizen(ModelBiped model)
     {
-        super(model, label);
+        super(model, 1F);
     }
 
     @Override

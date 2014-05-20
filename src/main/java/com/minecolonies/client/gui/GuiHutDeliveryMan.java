@@ -1,7 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,7 +62,7 @@ public class GuiHutDeliveryMan extends GuiBase
         addLabel(toStonemason, middleX - fontRendererObj.getStringWidth(toStonemason) / 2, y + textPaddTop);
         y += buttonHeight;
 
-        addIcon(new ItemStack(Blocks.stone, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
+        addIcon(new ItemStack(Blocks.cobblestone, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idStoneToStonemason, yes, xl, y, smallButton, buttonHeight);
         addIcon(new ItemStack(Blocks.sand, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
         addButton(idSandToStonemason, no, xr, y, smallButton, buttonHeight);
@@ -140,7 +140,7 @@ public class GuiHutDeliveryMan extends GuiBase
                 case idRepairBuilding:
                     break;
                 case idSettings:
-                    player.openGui(MineColonies.instance, Constants.Gui.HutDeliverymanSettings.ordinal(), world, x, y, z);
+                    player.openGui(MineColonies.instance, EnumGUI.WAREHOUSE_SETTINGS.getID(), world, x, y, z);
                     break;
             }
         }
@@ -151,7 +151,7 @@ public class GuiHutDeliveryMan extends GuiBase
                 case idGoldToBlacksmith:
                     break;
                 case idInformation:
-                    player.openGui(MineColonies.instance, Constants.Gui.HutDeliveryman.ordinal(), world, x, y, z);
+                    player.openGui(MineColonies.instance, EnumGUI.WAREHOUSE.getID(), world, x, y, z);
                     break;
             }
         }

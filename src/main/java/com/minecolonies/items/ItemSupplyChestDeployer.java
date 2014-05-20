@@ -5,9 +5,9 @@ import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.util.*;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Schematic;
+import com.minecolonies.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -17,16 +17,14 @@ import net.minecraft.world.World;
 
 import java.util.HashMap;
 
-public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements IColony
+public class ItemSupplyChestDeployer extends ItemMinecolonies
 {
     private String name = "supplyChestDeployer";
 
     public ItemSupplyChestDeployer()
     {
-        setUnlocalizedName(getName());
-        setCreativeTab(CreativeTab.mineColoniesTab);
+        super();
         setMaxStackSize(1);
-        GameRegistry.registerItem(this, getName());
     }
 
     @Override
@@ -36,15 +34,10 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     }
 
     @Override
-    public void registerIcons(IIconRegister par1IconRegister)
-    {
-        this.itemIcon = par1IconRegister.registerIcon(Constants.MODID + ":" + getName());
-    }
-
-    @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer)
     {
-        if(world == null || entityPlayer == null || world.isRemote || itemStack.stackSize == 0 || !isFirstPlacing(entityPlayer)) return itemStack;
+        if(world == null || entityPlayer == null || world.isRemote || itemStack.stackSize == 0 || !isFirstPlacing(entityPlayer))
+            return itemStack;
         MovingObjectPosition blockPos = getMovingObjectPositionFromPlayer(world, entityPlayer, false);
         if(blockPos == null) return itemStack;
         int x = blockPos.blockX;
@@ -52,11 +45,11 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
 
         int z = blockPos.blockZ;
         HashMap<Integer, Boolean> hashmap = canShipBePlaced(world, x, y, z);
-     // System.out.println("hashmap 1 : " + hashmap.get(1));
-     // System.out.println("hashmap 2 : " + hashmap.get(2));
-     // System.out.println("hashmap 3 : " + hashmap.get(3));
-     // System.out.println("hashmap 4 : " + hashmap.get(4));
-     // System.out.println("hashmap 5 : " + hashmap.get(5));
+        // System.out.println("hashmap 1 : " + hashmap.get(1));
+        // System.out.println("hashmap 2 : " + hashmap.get(2));
+        // System.out.println("hashmap 3 : " + hashmap.get(3));
+        // System.out.println("hashmap 4 : " + hashmap.get(4));
+        // System.out.println("hashmap 5 : " + hashmap.get(5));
 
         if(hashmap.get(1))
         {
@@ -72,22 +65,22 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
                 }
             }
         }
-        Utils.sendPlayerMessage(entityPlayer, LanguageHandler.format("item.supplyChestDeployer.invalid"));
+        LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.supplyChestDeployer.invalid");
         return itemStack;
     }
 
     /**
      * Checks if the ship can be placed, and stores the facings it can be placed in, in a hashmap
      * Keys: 1: value: can be placed at all
-     *       2: value: can be placed at north
-     *       3: value: can be placed at south
-     *       4: value: can be placed at west
-     *       5: value: can be placed at east
+     * 2: value: can be placed at north
+     * 3: value: can be placed at south
+     * 4: value: can be placed at west
+     * 5: value: can be placed at east
      *
      * @param world world obj
-     * @param x xCoord clicked
-     * @param y yCoord clicked
-     * @param z zCoord clicked
+     * @param x     x coordinate clicked
+     * @param y     y coordinate clicked
+     * @param z     z coordinate clicked
      * @return hashMap whether it can be placed (1) and facings it can be placed at (2-5)
      */
     public HashMap<Integer, Boolean> canShipBePlaced(World world, int x, int y, int z)
@@ -123,11 +116,12 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
 
     /**
      * Checks if the area is free, checks in a 'I' shape, so 20 forward, 10 left at origin + 1, 10 right at origin + 1, 10 left at origin + 20, 10 right at origin + 20
-     * @param world world obj
-     * @param x xCoord clicked
-     * @param y yCoord clicked
-     * @param z zCoord clicked
-     * @param shouldCheckX boolean whether the x-sides should be checks
+     *
+     * @param world                  world obj
+     * @param x                      x coordinate clicked
+     * @param y                      y coordinate clicked
+     * @param z                      z coordinate clicked
+     * @param shouldCheckX           boolean whether the x-sides should be checks
      * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false)
      * @return whether the space in the I shape is free or not
      */
@@ -147,8 +141,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
                         !Utils.isWater(world.getBlock(x + j + k, y, z - spaceNeededForShipHalf)) ||
                         !Utils.isWater(world.getBlock(x + j + k, y, z + spaceNeededForShipHalf)) ||
                         !Utils.isWater(world.getBlock(x + k * spaceNeededForShip, y, z + i - spaceNeededForShipHalf)) ||
-                        !Utils.isWater(world.getBlock(x + k, y, z + i - spaceNeededForShipHalf)))
-                    return false;
+                        !Utils.isWater(world.getBlock(x + k, y, z + i - spaceNeededForShipHalf))) return false;
             }
             return true;
         }
@@ -162,8 +155,7 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
                         !Utils.isWater(world.getBlock(x - spaceNeededForShipHalf, y, z + j + k)) ||
                         !Utils.isWater(world.getBlock(x + spaceNeededForShipHalf, y, z + j + k)) ||
                         !Utils.isWater(world.getBlock(x + i - spaceNeededForShipHalf, y, z + k * spaceNeededForShip)) ||
-                        !Utils.isWater(world.getBlock(x + i - spaceNeededForShipHalf, y, z + k)))
-                    return false;
+                        !Utils.isWater(world.getBlock(x + i - spaceNeededForShipHalf, y, z + k))) return false;
             }
             return true;
         }
@@ -177,22 +169,21 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        if(Configurations.allowInfiniteSupplyChests) return true;
-        return !PlayerProperties.get(player).hasPlacedSupplyChest();
+        return Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest();
     }
 
     /**
      * Spawns the ship and supply chest
      *
      * @param world        world obj
-     * @param x            xCoord clicked
-     * @param y            yCoord clicked
-     * @param z            zCoord clicked
+     * @param x            x coordinate clicked
+     * @param y            y coordinate clicked
+     * @param z            z coordinate clicked
      * @param entityPlayer the player
      */
     private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer, int chestFacing)
     {
-        PlayerProperties.get(entityPlayer).setHasPlacedSupplyChest(true);
+        PlayerProperties.get(entityPlayer).placeSupplyChest();
 
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
@@ -221,8 +212,9 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
         }
     }
 
-    private void fillChest(TileEntityChest chest) {
-        if (chest == null)
+    private void fillChest(TileEntityChest chest)
+    {
+        if(chest == null)
         {
             MineColonies.logger.error("Supply chest tile entity was null.");
             return;

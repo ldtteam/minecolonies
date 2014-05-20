@@ -1,22 +1,18 @@
 package com.minecolonies.blocks;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.lib.Constants;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.block.material.Material;
+import com.minecolonies.lib.EnumGUI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockHutDeliveryman extends BlockInformator
+public class BlockHutDeliveryman extends BlockHut
 {
     public final String name = "blockHutDeliveryman";
 
     protected BlockHutDeliveryman()
     {
-        super(Material.wood);
-        setBlockName(getName());
-        GameRegistry.registerBlock(this, getName());
+        super();
     }
 
     @Override
@@ -35,7 +31,7 @@ public class BlockHutDeliveryman extends BlockInformator
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
     {
-        entityPlayer.openGui(MineColonies.instance, Constants.Gui.HutDeliveryman.ordinal(), world, x, y, z);
+        entityPlayer.openGui(MineColonies.instance, EnumGUI.WAREHOUSE.getID(), world, x, y, z);
         return true;
     }
 }

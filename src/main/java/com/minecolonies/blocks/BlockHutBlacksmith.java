@@ -1,19 +1,16 @@
 package com.minecolonies.blocks;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.block.material.Material;
+import com.minecolonies.tileentities.TileEntityBlacksmith;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockHutBlacksmith extends BlockInformator
+public class BlockHutBlacksmith extends BlockHut
 {
     public final String name = "blockHutBlacksmith";
 
     protected BlockHutBlacksmith()
     {
-        super(Material.wood);
-        setBlockName(getName());
-        GameRegistry.registerBlock(this, getName());
+        super();
     }
 
     @Override
@@ -26,6 +23,6 @@ public class BlockHutBlacksmith extends BlockInformator
     public TileEntity createNewTileEntity(World var1, int var2)
     {
         //TODO
-        return null;
+        return new TileEntityBlacksmith();
     }
 }

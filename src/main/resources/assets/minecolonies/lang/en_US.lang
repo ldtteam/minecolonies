@@ -1,3 +1,5 @@
+com.minecolonies.error.noFingerprint=No Fingerprint. Might not be a valid version!
+
 com.minecolonies.gui.yes=Yes
 com.minecolonies.gui.no=No
 
@@ -11,6 +13,7 @@ com.minecolonies.gui.townhall.rename=Rename Colony
 com.minecolonies.gui.townhall.actions=Actions
 com.minecolonies.gui.townhall.rename.done=Done
 com.minecolonies.gui.townhall.rename.title=Rename Your Colony
+com.minecolonies.gui.townhall.defaultName=%s's Colony
 
 com.minecolonies.gui.workerHuts.buildersHut=Builders Hut
 com.minecolonies.gui.workerHuts.deliverymansHut=Deliverymans Hut
@@ -39,6 +42,13 @@ tile.blockHutLumberjack.name=Lumberjack's Hut
 tile.blockHutMiner.name=Miner's Hut
 tile.blockHutStonemason.name=Stonemason's Hut
 tile.blockHutTownhall.name=Town Hall
+tile.blockHutTownhall.messageMaxSize=Colony has reached max size
+tile.blockHutTownhall.messageColonistDead=A colonist has died!
+tile.blockHutTownhall.messagePlacedAlready=You have placed a Town Hall already
+tile.blockHutTownhall.messageInvalidWorld=You can't place a townhall in this world type
+tile.blockHutTownhall.messageTooClose=Too close to existing townhall
+tile.blockHut.messageTooFarFromTownhall=You need to be closer to your townhall!
+tile.blockHut.messageNoTownhall=You need to place a townhall first!
 
 item.supplyChestDeployer.name=Supply Chest
 item.scepterGold.name=Building Tool

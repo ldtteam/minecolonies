@@ -7,10 +7,10 @@ import net.minecraft.tileentity.TileEntityChest;
 
 public abstract class TileEntityBuildable extends TileEntityChest
 {
-    private int buildingLevel;
-    private boolean hasWorker;
+    private int                buildingLevel;
+    private boolean            hasWorker;
     private TileEntityTownHall townHall;
-    private String hutName;
+    private String             hutName;
 
     public TileEntityBuildable()
     {
@@ -21,7 +21,7 @@ public abstract class TileEntityBuildable extends TileEntityChest
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        NBTTagCompound nbtTagCompound = (NBTTagCompound)compound.getTag("nbtTagCompound");
+        NBTTagCompound nbtTagCompound = (NBTTagCompound) compound.getTag("nbtTagCompound");
         this.buildingLevel = nbtTagCompound.getInteger("buildingLvl");
         this.hasWorker = nbtTagCompound.getBoolean("hasWorker");
         this.hutName = nbtTagCompound.getString("hutName");
@@ -38,7 +38,8 @@ public abstract class TileEntityBuildable extends TileEntityChest
         compound.setTag("nbtTagCompound", nbtTagCompound);
     }
 
-    public void sendPacket() {
+    public void sendPacket()
+    {
         NBTTagCompound data = new NBTTagCompound();
         this.writeToNBT(data);
         TileEntityPacket packet = new TileEntityPacket(xCoord, yCoord, zCoord, data);

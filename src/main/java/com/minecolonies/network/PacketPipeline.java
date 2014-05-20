@@ -1,6 +1,7 @@
 package com.minecolonies.network;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.network.packets.AbstractPacket;
 import com.minecolonies.network.packets.TileEntityPacket;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
@@ -24,13 +25,15 @@ import java.util.*;
 
 /**
  * Packet pipeline class. Directs all registered packet data to be handled by the packets themselves.
+ *
  * @author sirgingalot
- * some code from: cpw
+ *         some code from: cpw
  */
 @ChannelHandler.Sharable
-public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, AbstractPacket> {
+public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, AbstractPacket>
+{
 
-    private EnumMap<Side, FMLEmbeddedChannel>           channels;
+    private EnumMap<Side, FMLEmbeddedChannel> channels;
     private LinkedList<Class<? extends AbstractPacket>> packets           = new LinkedList<Class<? extends AbstractPacket>>();
     private boolean                                     isPostInitialised = false;
 
@@ -38,21 +41,24 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
      * Register your packet with the pipeline. Discriminators are automatically set.
      *
      * @param clazz the class to register
-     *
      * @return whether registration was successful. Failure may occur if 256 packets have been registered or if the registry already contains this packet
      */
-    public boolean registerPacket(Class<? extends AbstractPacket> clazz) {
-        if (this.packets.size() > 256) {
+    public boolean registerPacket(Class<? extends AbstractPacket> clazz)
+    {
+        if(this.packets.size() > 256)
+        {
             MineColonies.logger.error("Packet Registration Failure: You can't register more than 256 packets.");
             return false;
         }
 
-        if (this.packets.contains(clazz)) {
+        if(this.packets.contains(clazz))
+        {
             MineColonies.logger.error("Packet Registration Failure: Packet already registered: " + clazz.getName());
             return false;
         }
 
-        if (this.isPostInitialised) {
+        if(this.isPostInitialised)
+        {
             MineColonies.logger.error("Packet Registration Failure: Packet registration closed.");
             return false;
         }
@@ -63,10 +69,12 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
 
     // In line encoding of the packet, including discriminator setting
     @Override
-    protected void encode(ChannelHandlerContext ctx, AbstractPacket msg, List<Object> out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, AbstractPacket msg, List<Object> out) throws Exception
+    {
         ByteBuf buffer = Unpooled.buffer();
         Class<? extends AbstractPacket> clazz = msg.getClass();
-        if (!this.packets.contains(msg.getClass())) {
+        if(!this.packets.contains(msg.getClass()))
+        {
             throw new NullPointerException("No Packet Registered for: " + msg.getClass().getCanonicalName());
         }
 
@@ -79,11 +87,13 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
 
     // In line decoding and handling of the packet
     @Override
-    protected void decode(ChannelHandlerContext ctx, FMLProxyPacket msg, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, FMLProxyPacket msg, List<Object> out) throws Exception
+    {
         ByteBuf payload = msg.payload();
         byte discriminator = payload.readByte();
         Class<? extends AbstractPacket> clazz = this.packets.get(discriminator);
-        if (clazz == null) {
+        if(clazz == null)
+        {
             throw new NullPointerException("No packet registered for discriminator: " + discriminator);
         }
 
@@ -91,7 +101,8 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
         pkt.decodeInto(ctx, payload.slice());
 
         EntityPlayer player;
-        switch (FMLCommonHandler.instance().getEffectiveSide()) {
+        switch(FMLCommonHandler.instance().getEffectiveSide())
+        {
             case CLIENT:
                 player = this.getClientPlayer();
                 pkt.handleClientSide(player);
@@ -110,29 +121,36 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
     }
 
     // Method to call from FMLInitializationEvent
-    public void initialize() {
+    public void initialize()
+    {
         this.channels = NetworkRegistry.INSTANCE.newChannel("minecolonies", this);
         registerPackets();
     }
 
-    private void registerPackets() {
+    private void registerPackets()
+    {
         registerPacket(TileEntityPacket.class);
     }
 
     // Method to call from FMLPostInitializationEvent
     // Ensures that packet discriminators are common between server and client by using logical sorting
-    public void postInitialize() {
-        if (this.isPostInitialised) {
+    public void postInitialize()
+    {
+        if(this.isPostInitialised)
+        {
             return;
         }
 
         this.isPostInitialised = true;
-        Collections.sort(this.packets, new Comparator<Class<? extends AbstractPacket>>() {
+        Collections.sort(this.packets, new Comparator<Class<? extends AbstractPacket>>()
+        {
 
             @Override
-            public int compare(Class<? extends AbstractPacket> clazz1, Class<? extends AbstractPacket> clazz2) {
+            public int compare(Class<? extends AbstractPacket> clazz1, Class<? extends AbstractPacket> clazz2)
+            {
                 int com = String.CASE_INSENSITIVE_ORDER.compare(clazz1.getCanonicalName(), clazz2.getCanonicalName());
-                if (com == 0) {
+                if(com == 0)
+                {
                     com = clazz1.getCanonicalName().compareTo(clazz2.getCanonicalName());
                 }
 
@@ -142,7 +160,8 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
     }
 
     @SideOnly(Side.CLIENT)
-    private EntityPlayer getClientPlayer() {
+    private EntityPlayer getClientPlayer()
+    {
         return Minecraft.getMinecraft().thePlayer;
     }
 
@@ -153,7 +172,8 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
      *
      * @param message The message to send
      */
-    public void sendToAll(AbstractPacket message) {
+    public void sendToAll(AbstractPacket message)
+    {
         this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
         this.channels.get(Side.SERVER).writeAndFlush(message);
     }
@@ -166,7 +186,8 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
      * @param message The message to send
      * @param player  The player to send it to
      */
-    public void sendTo(AbstractPacket message, EntityPlayerMP player) {
+    public void sendTo(AbstractPacket message, EntityPlayerMP player)
+    {
         this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
         this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
         this.channels.get(Side.SERVER).writeAndFlush(message);
@@ -180,7 +201,8 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
      * @param message The message to send
      * @param point   The {@link cpw.mods.fml.common.network.NetworkRegistry.TargetPoint} around which to send
      */
-    public void sendToAllAround(AbstractPacket message, NetworkRegistry.TargetPoint point) {
+    public void sendToAllAround(AbstractPacket message, NetworkRegistry.TargetPoint point)
+    {
         this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
         this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
         this.channels.get(Side.SERVER).writeAndFlush(message);
@@ -194,7 +216,8 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
      * @param message     The message to send
      * @param dimensionId The dimension id to target
      */
-    public void sendToDimension(AbstractPacket message, int dimensionId) {
+    public void sendToDimension(AbstractPacket message, int dimensionId)
+    {
         this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION);
         this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
         this.channels.get(Side.SERVER).writeAndFlush(message);
@@ -207,7 +230,8 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
      *
      * @param message The message to send
      */
-    public void sendToServer(AbstractPacket message) {
+    public void sendToServer(AbstractPacket message)
+    {
         this.channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
         this.channels.get(Side.CLIENT).writeAndFlush(message);
     }

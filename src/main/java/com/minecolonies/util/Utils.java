@@ -1,26 +1,32 @@
 package com.minecolonies.util;
 
+import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class Utils
 {
     /**
      * Method to find the closest townhall
+     *
      * @param world world obj
-     * @param x xCoord to check from
-     * @param y yCoord to check from
-     * @param z zCoord to check from
+     * @param x     x coordinate to check from
+     * @param y     y coordinate to check from
+     * @param z     z coordinate to check from
      * @return closest TileEntityTownHall
      */
     public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z)
     {
-        double closestDist = 9999;
+        double closestDist = Double.MAX_VALUE;
         TileEntityTownHall closestTownHall = null;
 
         if(world == null || world.loadedTileEntityList == null) return null;
@@ -30,19 +36,30 @@ public class Utils
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if(closestDist > Math.sqrt(Math.sqrt((x - townHall.xCoord) * (x - townHall.xCoord) + (y - townHall.yCoord) * (y - townHall.yCoord) + (z - townHall.zCoord) * (z - townHall.zCoord))))
+                if(x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
+
+                double distanceSquared = townHall.getDistanceFrom(x, y, z);
+                if(closestDist > distanceSquared)
                 {
                     closestTownHall = townHall;
-                    closestDist = Math.sqrt((x - townHall.xCoord) * (x - townHall.xCoord) + (y - townHall.yCoord) * (y - townHall.yCoord) + (z - townHall.zCoord) * (z - townHall.zCoord));
+                    closestDist = distanceSquared;
                 }
             }
         return closestTownHall;
     }
 
+    /**
+     * find the distance to the closest townhall.
+     *
+     * @param world world townhall is in
+     * @param x     x coordinate to check from
+     * @param y     y coordinate to check from
+     * @param z     z coordinate to check from
+     * @return distance to nearest townhall
+     */
     public static double getDistanceToClosestTownHall(World world, int x, int y, int z)
     {
-        double closestDist = 9999;
-        TileEntityTownHall closestTownHall = null;
+        double closestDist = Double.MAX_VALUE;
 
         if(world == null || world.loadedTileEntityList == null) return -1;
 
@@ -51,30 +68,67 @@ public class Utils
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if(closestDist > Math.sqrt(Math.sqrt((x - townHall.xCoord) * (x - townHall.xCoord) + (y - townHall.yCoord) * (y - townHall.yCoord) + (z - townHall.zCoord) * (z - townHall.zCoord))))
+                if(x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
+
+                double distanceSquared = townHall.getDistanceFrom(x, y, z);
+                if(closestDist > distanceSquared)
                 {
-                    closestDist = Math.sqrt((x - townHall.xCoord) * (x - townHall.xCoord) + (y - townHall.yCoord) * (y - townHall.yCoord) + (z - townHall.zCoord) * (z - townHall.zCoord));
+                    closestDist = distanceSquared;
                 }
             }
-        return closestDist;
+        return Math.sqrt(closestDist);
     }
 
     /**
-     * Finds the highest block in one yCoord, but ignores leaves etc.
+     * Gives the distance to a given townhall
+     *
+     * @param x          x coordinate to check from
+     * @param y          y coordinate to check from
+     * @param z          z coordinate to check from
+     * @param tileEntity TileEntityTownhall to check to.
+     * @return distance
+     */
+    public static double getDistanceToTileEntity(int x, int y, int z, TileEntity tileEntity)
+    {
+        return Math.sqrt(tileEntity.getDistanceFrom(x, y, z));
+    }
+
+    /**
+     * Gets a Townhall that a given player is owner of
+     *
+     * @param world  world object
+     * @param player player to be checked
+     * @return TileEntityTownHall the player is user of, or null when he is no owner.
+     */
+    public static TileEntityTownHall getTownhallByOwner(World world, EntityPlayer player)
+    {
+        PlayerProperties props = PlayerProperties.get(player);
+        if(props.hasPlacedTownHall())
+        {
+            return (TileEntityTownHall) world.getTileEntity(props.getTownhallX(), props.getTownhallY(), props.getTownhallZ());
+        }
+        return null;
+    }
+
+    //TODO world.getTopSolidOrLiquidBlock(x, z)?
+
+    /**
+     * Finds the highest block in one y coordinate, but ignores leaves etc.
+     *
      * @param world world obj
-     * @param x xCoord
-     * @param z zCoord
+     * @param x     x coordinate
+     * @param z     z coordinate
      * @return yCoordinate
      */
-    protected int findTopGround(World world, int x, int z)
+    public static int findTopGround(World world, int x, int z)
     {
         int yHolder = 1;
         while(!world.canBlockSeeTheSky(x, yHolder, z))
         {
             yHolder++;
         }
-        while(  world.getBlock(x, yHolder, z) == Blocks.air ||
-               !world.getBlock(x, yHolder, z).isOpaqueCube() ||
+        while(world.getBlock(x, yHolder, z) == Blocks.air ||
+                !world.getBlock(x, yHolder, z).isOpaqueCube() ||
                 world.getBlock(x, yHolder, z) == Blocks.leaves ||
                 world.getBlock(x, yHolder, z) == Blocks.leaves2)
         {
@@ -83,16 +137,12 @@ public class Utils
         return yHolder;
     }
 
-    /**
-     * Still unused
-     */
-    @SuppressWarnings("UnusedDeclaration") //TODO Check for uses (Inherited from old mod)
-    protected Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
+    public static Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
     {
         Vec3 entityVec = Vec3.createVectorHelper(x, y, z);
 
         Vec3 closestVec = null;
-        double minDistance = 999999999;
+        double minDistance = Double.MAX_VALUE;
 
         for(int i = x - radiusX; i <= x + radiusX; i++)
         {
@@ -118,6 +168,7 @@ public class Utils
 
     /**
      * Checks if the block is water
+     *
      * @param block block to be checked
      * @return true if is water.
      */
@@ -128,19 +179,67 @@ public class Utils
 
     /**
      * Checks if the block is water
+     *
      * @param world world obj
-     * @param x xCoord
-     * @param y yCoord
-     * @param z zCoord
+     * @param x     x coordinate
+     * @param y     y coordinate
+     * @param z     z coordinate
      * @return true if is water.
      */
-    public static boolean isWater(World world, int x, int y, int z)
+    public static boolean isWater(World world, int x, int y, int z)//TODO remove? we never use it
     {
-        return world.getBlock(x, y, z) == Blocks.water || world.getBlock(x, y, z) == Blocks.flowing_water;
+        return isWater(world.getBlock(x, y, z));
     }
 
-    public static void sendPlayerMessage(EntityPlayer player, String message)
+    /**
+     * Returns the online EntityPlayer with the given UUID
+     *
+     * @param world world the player is in
+     * @param id    the player's UUID
+     * @return the EntityPlayer
+     */
+    public static EntityPlayer getPlayerFromUUID(World world, UUID id)
     {
-        player.addChatComponentMessage(new ChatComponentText(message));
+        for(int i = 0; i < world.playerEntities.size(); ++i)
+        {
+            if(id.equals(((EntityPlayer) world.playerEntities.get(i)).getUniqueID()))
+            {
+                return (EntityPlayer) world.playerEntities.get(i);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a list of online players whose UUID's match the ones provided.
+     *
+     * @param world the world the players are in.
+     * @param ids   List of UUIDs
+     * @return list of EntityPlayers
+     */
+    public static List<EntityPlayer> getPlayersFromUUID(World world, List<UUID> ids)
+    {
+        List<EntityPlayer> players = new ArrayList<EntityPlayer>();
+
+        for(Object o : world.playerEntities)
+        {
+            if(o instanceof EntityPlayer)
+            {
+                EntityPlayer player = (EntityPlayer) o;
+                if(ids.contains(player.getUniqueID()))
+                {
+                    players.add(player);
+                    if(players.size() == ids.size())
+                    {
+                        return players;
+                    }
+                }
+            }
+        }
+        if(!players.isEmpty())
+        {
+            return players;
+        }
+        return null;
     }
 }

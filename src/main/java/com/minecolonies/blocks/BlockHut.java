@@ -1,16 +1,19 @@
 package com.minecolonies.blocks;
 
+import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.IColony;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityTownHall;
-import com.minecolonies.util.CreativeTab;
-import com.minecolonies.util.IColony;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -19,16 +22,18 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public abstract class BlockInformator extends Block implements IColony, ITileEntityProvider
+public abstract class BlockHut extends Block implements IColony, ITileEntityProvider
 {
     protected int workingRange;
 
     private IIcon[] icons = new IIcon[6];// 0 = top, 1 = bot, 2-5 = sides;
 
-    public BlockInformator(Material material)
+    public BlockHut()
     {
-        super(material);
-        setCreativeTab(CreativeTab.mineColoniesTab);
+        super(Material.wood);
+        setBlockName(getName());
+        setCreativeTab(ModCreativeTabs.MINECOLONIES);
+        GameRegistry.registerBlock(this, getName());
     }
 
     @Override
@@ -53,9 +58,9 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
      *
      * @param tileEntityTownHall TileEntityTownHall bound to
      * @param world              world
-     * @param x                  xcoord
-     * @param y                  ycoord
-     * @param z                  zcoord
+     * @param x                  x coordinate
+     * @param y                  y coordinate
+     * @param z                  z coordinate
      */
     public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall, World world, int x, int y, int z)
     {
@@ -66,12 +71,12 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
     }
 
     /**
-     * Sets the TE's townhall to the closest townhall
+     * Sets the TileEntities townhall to the closest townhall
      *
      * @param world world
-     * @param x     xcoord
-     * @param y     ycoord
-     * @param z     zcoord
+     * @param x     x coordinate
+     * @param y     y coordinate
+     * @param z     z coordinate
      */
     public void addClosestTownhall(World world, int x, int y, int z)
     {
@@ -87,15 +92,26 @@ public abstract class BlockInformator extends Block implements IColony, ITileEnt
         }
     }
 
-
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
         if(world.isRemote) return;
 
-        if(Utils.getDistanceToClosestTownHall(world, x, y, z) < Constants.MAXDISTANCETOTOWNHALL)
+        if(entityLivingBase instanceof EntityPlayer && !(world.getTileEntity(x, y, z) instanceof TileEntityTownHall))
         {
-            addClosestTownhall(world, x, y, z);
+            TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
+            TileEntityTownHall tileEntityTownHall = Utils.getTownhallByOwner(world, (EntityPlayer) entityLivingBase);
+            if(tileEntityTownHall == null || Utils.getDistanceToTileEntity(x, y, z, tileEntityTownHall) > Constants.MAXDISTANCETOTOWNHALL)
+            {
+                if(tileEntityTownHall == null)
+                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockHut.messageNoTownhall");
+                else
+                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockHut.messageTooFarFromTownhall");
+                world.setBlockToAir(x, y, z);
+                return;
+            }
+            tileEntityBuildable.setTownHall(tileEntityTownHall);
+            attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
         }
     }
 }

@@ -1,13 +1,13 @@
-package com.minecolonies.util;
+package com.minecolonies.creativetab;
 
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.lib.Constants;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
-public class CreativeTab
+public class ModCreativeTabs
 {
-    public static final CreativeTabs mineColoniesTab = new CreativeTabs(Constants.MODID)
+    public static final CreativeTabs MINECOLONIES = new CreativeTabs(Constants.MODID)
     {
         @Override
         public Item getTabIconItem()

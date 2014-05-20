@@ -1,22 +1,22 @@
 {
-   "mob.baker.grind": {
-       "category": "neutral",
-       "sounds": [
-           {
-               "name": "mob/baker/grind",
-               "stream": false
-           }
-       ]
-   },
-   "mob.barbarian.death": {
-       "category": "hostile",
-       "sounds": [
-           {
-               "name": "mob/barbarian/death",
-               "stream": false
-           }
-       ]
-   },
+    "mob.baker.grind": {
+        "category": "neutral",
+        "sounds": [
+            {
+                "name": "mob/baker/grind",
+                "stream": false
+            }
+        ]
+    },
+    "mob.barbarian.death": {
+        "category": "hostile",
+        "sounds": [
+            {
+                "name": "mob/barbarian/death",
+                "stream": false
+            }
+        ]
+    },
     "mob.barbarian.hurt": {
         "category": "hostile",
         "sounds": [

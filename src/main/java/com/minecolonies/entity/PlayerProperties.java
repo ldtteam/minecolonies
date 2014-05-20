@@ -8,21 +8,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
-/**
- * NOTE
- * THIS CLASS NEEDS TWEAKING
- * I DO NOT KNOW ALL ABOUT PLAYER PROPERTIES, BUT THIS WAY, IT WORKED FOR ME LAST TIME!
- */
 public class PlayerProperties implements IExtendedEntityProperties
 {
-    private final EntityPlayer player;
-    boolean hasPlacedTownHall    = false;
-    boolean hasPlacedSupplyChest = false;
+    private boolean hasPlacedTownHall = false;
+    private int     townhallX         = 0, townhallY = 0, townhallZ = 0;
+    private boolean hasPlacedSupplyChest = false;
 
-    private PlayerProperties(EntityPlayer player)
-    {
-        this.player = player;
-    }
+    private PlayerProperties(){}
 
     /**
      * Registers player property. Should be checked if already exists, and called in onEntityConstruct event
@@ -31,7 +23,7 @@ public class PlayerProperties implements IExtendedEntityProperties
      */
     public static final void register(EntityPlayer player)
     {
-        player.registerExtendedProperties(Constants.PlayerPropertyName, new PlayerProperties(player));
+        player.registerExtendedProperties(Constants.PlayerPropertyName, new PlayerProperties());
     }
 
     /**
@@ -51,6 +43,9 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = new NBTTagCompound();
 
         properties.setBoolean("hasPlacedTownHall", hasPlacedTownHall);
+        properties.setInteger("townhallX", townhallX);
+        properties.setInteger("townhallY", townhallY);
+        properties.setInteger("townhallZ", townhallZ);
         properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
         compound.setTag(Constants.PlayerPropertyName, properties);
@@ -62,6 +57,9 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PlayerPropertyName);
 
         this.hasPlacedTownHall = properties.getBoolean("hasPlacedTownHall");
+        this.townhallX = properties.getInteger("townhallX");
+        this.townhallY = properties.getInteger("townhallY");
+        this.townhallZ = properties.getInteger("townhallZ");
         this.hasPlacedSupplyChest = properties.getBoolean("hasPlacedSupplyChest");
     }
 
@@ -74,7 +72,7 @@ public class PlayerProperties implements IExtendedEntityProperties
     /**
      * Adds support for other mods and multiple properties tags
      *
-     * @param player
+     * @param player the player
      * @return String HashMap key
      */
     private static String getSaveKey(EntityPlayer player)
@@ -128,9 +126,30 @@ public class PlayerProperties implements IExtendedEntityProperties
      *
      * @param hasPlacedTownHall boolean
      */
-    public void setHasPlacedTownHall(boolean hasPlacedTownHall)
+    private void setHasPlacedTownHall(boolean hasPlacedTownHall)
     {
         this.hasPlacedTownHall = hasPlacedTownHall;
+    }
+
+    /**
+     * Set hasPlacedTownHall to true and sets coordinates
+     *
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param z z coordinate
+     */
+    public void placeTownhall(int x, int y, int z)
+    {
+        setHasPlacedTownHall(true);
+        setTownhallPos(x, y, z);
+    }
+
+    /**
+     * Set hasPlacedTownHall to false. Should be called when removing the townhall.
+     */
+    public void removeTownhall()
+    {
+        setHasPlacedTownHall(false);
     }
 
     /**
@@ -144,12 +163,47 @@ public class PlayerProperties implements IExtendedEntityProperties
     }
 
     /**
-     * Sets whether the player has placed a townhall
-     *
-     * @param hasPlacedSupplyChest boolean
+     * Sets hasPlacedSupplyChest to true
      */
-    public void setHasPlacedSupplyChest(boolean hasPlacedSupplyChest)
+    public void placeSupplyChest()
     {
-        this.hasPlacedSupplyChest = hasPlacedSupplyChest;
+        this.hasPlacedSupplyChest = true;
+    }
+
+    /**
+     * Returns the townhall x coordinate
+     *
+     * @return townhall x coordinate
+     */
+    public int getTownhallX()
+    {
+        return townhallX;
+    }
+
+    /**
+     * Returns the townhall y coordinate
+     *
+     * @return townhall y coordinate
+     */
+    public int getTownhallY()
+    {
+        return townhallY;
+    }
+
+    /**
+     * Returns the townhall z coordinate
+     *
+     * @return townhall z coordinate
+     */
+    public int getTownhallZ()
+    {
+        return townhallZ;
+    }
+
+    private void setTownhallPos(int x, int y, int z)
+    {
+        this.townhallX = x;
+        this.townhallY = y;
+        this.townhallZ = z;
     }
 }

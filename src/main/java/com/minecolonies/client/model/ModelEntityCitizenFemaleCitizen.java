@@ -16,11 +16,6 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
 
     public ModelEntityCitizenFemaleCitizen()
     {
-        this(0.0F);
-    }
-
-    public ModelEntityCitizenFemaleCitizen(float f)
-    {
 
         textureWidth = 64;
         textureHeight = 64;
@@ -32,7 +27,7 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         setRotation(bipedHead, 0F, 0F, 0F);
 
         bipedHeadwear = new ModelRenderer(this, 32, 0);
-        bipedHeadwear.addBox(-4F, -8F, -4F, 8, 8, 8, f + 0.5F);
+        bipedHeadwear.addBox(-4F, -8F, -4F, 8, 8, 8, 0.5F);
         bipedHeadwear.setRotationPoint(0F, 0F, 1F);
         bipedHeadwear.setTextureSize(64, 64);
         setRotation(bipedHeadwear, 0F, 0F, 0F);
@@ -76,7 +71,7 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         setRotation(Breast, -0.5235988F, 0F, 0F);
 
         Hairs = new ModelRenderer(this, 46, 17);
-        Hairs.addBox(-4F, 0F, 3F, 8, 7, 1, f + 0.5F);
+        Hairs.addBox(-4F, 0F, 3F, 8, 7, 1, 0.5F);
         Hairs.setRotationPoint(0F, 0F, 1F);
         Hairs.setTextureSize(64, 64);
         setRotation(Hairs, 0F, 0F, 0F);
@@ -135,13 +130,13 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         Hairs.rotateAngleY = bipedHead.rotateAngleY;
         Hairs.rotateAngleX = bipedHead.rotateAngleX;
 
-        bipedRightArm.rotateAngleX = MathHelper.cos(f * 0.6662F + 3.141593F) * 2.0F * f1 * 0.5F;
+        bipedRightArm.rotateAngleX = MathHelper.cos((float) (f * 0.6662F + Math.PI)) * 2.0F * f1 * 0.5F;
         bipedLeftArm.rotateAngleX = MathHelper.cos(f * 0.6662F) * 2.0F * f1 * 0.5F;
         bipedRightArm.rotateAngleZ = 0.0F;
         bipedLeftArm.rotateAngleZ = 0.0F;
 
         bipedRightLeg.rotateAngleX = MathHelper.cos(f * 0.6662F) * 0.53F * f1;
-        bipedLeftLeg.rotateAngleX = MathHelper.cos(f * 0.6662F + 3.141593F) * 0.53F * f1;
+        bipedLeftLeg.rotateAngleX = MathHelper.cos((float) (f * 0.6662F + Math.PI)) * 0.53F * f1;
         bipedRightLeg.rotateAngleY = 0.0F;
         bipedLeftLeg.rotateAngleY = 0.0F;
 
@@ -157,24 +152,24 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         if(onGround > -9990F)
         {
             float f6 = onGround;
-            bipedBody.rotateAngleY = MathHelper.sin(MathHelper.sqrt_float(f6) * 3.141593F * 2.0F) * 0.2F;
-            Breast.rotateAngleY = MathHelper.sin(MathHelper.sqrt_float(f6) * 3.141593F * 2.0F) * 0.2F;
+            bipedBody.rotateAngleY = MathHelper.sin((float) (MathHelper.sqrt_float(f6) * Math.PI * 2.0F)) * 0.2F;
+            Breast.rotateAngleY = MathHelper.sin((float) (MathHelper.sqrt_float(f6) * Math.PI * 2.0F)) * 0.2F;
             bipedRightArm.rotationPointZ = MathHelper.sin(bipedBody.rotateAngleY) * 5F;
             bipedRightArm.rotationPointX = -MathHelper.cos(bipedBody.rotateAngleY) * 5F;
             bipedLeftArm.rotationPointZ = -MathHelper.sin(bipedBody.rotateAngleY) * 5F;
             // LeftArm.rotationPointX = MathHelper.cos(Body.rotateAngleY) * 5F;
             bipedRightArm.rotateAngleY += bipedBody.rotateAngleY;
             bipedLeftArm.rotateAngleY += bipedBody.rotateAngleY;
-            bipedLeftArm.rotateAngleX += bipedBody.rotateAngleY;
+            bipedLeftArm.rotateAngleX += bipedBody.rotateAngleY;//TODO rotateAngleX?
             f6 = 1.0F - onGround;
             f6 *= f6;
             f6 *= f6;
             f6 = 1.0F - f6;
-            float f7 = MathHelper.sin(f6 * 3.141593F);
-            float f8 = MathHelper.sin(onGround * 3.141593F) * -(bipedHead.rotateAngleX - 0.7F) * 0.75F;
+            float f7 = MathHelper.sin((float) (f6 * Math.PI));
+            float f8 = MathHelper.sin((float) (onGround * Math.PI)) * -(bipedHead.rotateAngleX - 0.7F) * 0.75F;
             bipedRightArm.rotateAngleX -= f7 * 1.2D + f8;
             bipedRightArm.rotateAngleY += bipedBody.rotateAngleY * 2.0F;
-            bipedRightArm.rotateAngleZ = MathHelper.sin(onGround * 3.141593F) * -0.4F;
+            bipedRightArm.rotateAngleZ = MathHelper.sin((float) (onGround * Math.PI)) * -0.4F;
         }
     }
 

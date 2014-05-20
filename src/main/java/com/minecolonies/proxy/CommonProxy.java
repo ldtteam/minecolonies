@@ -1,6 +1,7 @@
 package com.minecolonies.proxy;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.tileentities.TileEntityTownHall;
@@ -13,6 +14,8 @@ import java.util.Map;
 
 public class CommonProxy implements IProxy
 {
+    private int nextEntityId = 0;
+
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn
      */
@@ -46,6 +49,7 @@ public class CommonProxy implements IProxy
     {
         return playerPropertiesData.remove(name);
     }
+
     /*
     * @param entityName A unique name for the entity
     * @param id A mod specific ID for the entity
@@ -56,14 +60,27 @@ public class CommonProxy implements IProxy
     * */
     public void registerEntities()
     {
-        EntityRegistry.registerModEntity(EntityCitizen.class, "entityCitizen",0, MineColonies.instance, 250, 3, true);
+        EntityRegistry.registerModEntity(EntityCitizen.class, "entityCitizen", getNextEntityId(), MineColonies.instance, 250, 3, true);
+        EntityRegistry.registerModEntity(EntityBuilder.class, "entityBuilder", getNextEntityId(), MineColonies.instance, 250, 3, true);
     }
 
     @Override
-    public void registerEntityRendering() {}
-    @Override
-    public void registerKeybindings() {}
+    public void registerEntityRendering(){}
 
     @Override
-    public void registerEvents() {}
+    public void registerTileEntityRendering(){}
+
+    @Override
+    public void registerKeybindings(){}
+
+    @Override
+    public void registerEvents(){}
+
+    /**
+     * Used for entity IDs, starts at 0 & increments for each call
+     */
+    private int getNextEntityId()
+    {
+        return nextEntityId++;
+    }
 }

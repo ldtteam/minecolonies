@@ -1,19 +1,15 @@
 package com.minecolonies.blocks;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockHutLumberjack extends BlockInformator
+public class BlockHutLumberjack extends BlockHut
 {
     public final String name = "blockHutLumberjack";
 
     protected BlockHutLumberjack()
     {
-        super(Material.wood);
-        setBlockName(getName());
-        GameRegistry.registerBlock(this, getName());
+        super();
     }
 
     @Override

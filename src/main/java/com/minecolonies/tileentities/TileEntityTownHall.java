@@ -1,23 +1,28 @@
 package com.minecolonies.tileentities;
 
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 public class TileEntityTownHall extends TileEntityHut
 {
     private String          cityName;
     private ArrayList<UUID> owners;
-    private BiomeGenBase    biome;
+    private BiomeGenBase    biome;//TODO do we plan on useing this?
 
     private ArrayList<UUID> citizens;
     private int             maxCitizens;
@@ -49,6 +54,37 @@ public class TileEntityTownHall extends TileEntityHut
     {
         owners.add(ownerName);
         biome = w.getBiomeGenForCoords(x, z);
+    }
+
+    @Override
+    public void updateEntity()
+    {
+        int respawnInterval = Configurations.citizenRespawnInterval * 20;
+        respawnInterval -= (60 * getBuildingLevel());
+
+        if(worldObj.getWorldInfo().getWorldTime() % respawnInterval == 0)
+        {
+            Random rand = worldObj.rand;
+            if(getCitizens().size() < getMaxCitizens())
+            {
+                Vec3 spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
+                if(spawnPoint == null)
+                    spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.snow_layer, xCoord, yCoord, zCoord, 1, 0, 1);
+
+                if(spawnPoint != null)
+                {
+                    EntityCitizen ec = spawnCitizen(spawnPoint.xCoord, spawnPoint.yCoord, spawnPoint.zCoord);
+                    if(ec != null)
+                    {
+                        addCitizen(ec);
+                        if(getMaxCitizens() == getCitizens().size())
+                        {
+                            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, owners), "tile.blockHutTownhall.messageMaxSize");
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -125,7 +161,13 @@ public class TileEntityTownHall extends TileEntityHut
 
     public void addCitizen(EntityCitizen citizen)
     {
+        citizen.setTownHall(this);
         citizens.add(citizen.getUniqueID());
+    }
+
+    public void removeCitizen(EntityCitizen citizen)
+    {
+        if(citizens.contains(citizen.getUniqueID())) citizens.remove(citizen.getUniqueID());
     }
 
     public ArrayList<UUID> getCitizens()
@@ -145,7 +187,16 @@ public class TileEntityTownHall extends TileEntityHut
 
     public void addCitizenToTownhall(EntityCitizen entityCitizen)
     {
-        if(getCitizens() != null)
-            this.addCitizen(entityCitizen);
+        if(getCitizens() != null) this.addCitizen(entityCitizen);
+    }
+
+    public EntityCitizen spawnCitizen(double x, double y, double z)
+    {
+        if(worldObj.isRemote) return null;
+
+        EntityCitizen ec = new EntityCitizen(worldObj);
+        ec.setPosition(x, y, z);
+        worldObj.spawnEntityInWorld(ec);
+        return ec;
     }
 }
