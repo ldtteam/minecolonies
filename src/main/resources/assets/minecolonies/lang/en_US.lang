@@ -47,8 +47,8 @@ tile.blockHutTownhall.messageColonistDead=A colonist has died!
 tile.blockHutTownhall.messagePlacedAlready=You have placed a Town Hall already
 tile.blockHutTownhall.messageInvalidWorld=You can't place a townhall in this world type
 tile.blockHutTownhall.messageTooClose=Too close to existing townhall
-tile.blockInformator.messageTooFarFromTownhall=You need to be closer to your townhall!
-tile.blockInformator.messageNoTownhall=You need to place a townhall first!
+tile.blockHut.messageTooFarFromTownhall=You need to be closer to your townhall!
+tile.blockHut.messageNoTownhall=You need to place a townhall first!
 
 item.supplyChestDeployer.name=Supply Chest
 item.scepterGold.name=Building Tool

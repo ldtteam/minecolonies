@@ -10,15 +10,11 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 
 public class PlayerProperties implements IExtendedEntityProperties
 {
-    private final EntityPlayer player;
     private boolean hasPlacedTownHall    = false;
     private int townhallX = 0, townhallY = 0, townhallZ = 0;
     private boolean hasPlacedSupplyChest = false;
 
-    private PlayerProperties(EntityPlayer player)
-    {
-        this.player = player;
-    }
+    private PlayerProperties() {}
 
     /**
      * Registers player property. Should be checked if already exists, and called in onEntityConstruct event
@@ -27,7 +23,7 @@ public class PlayerProperties implements IExtendedEntityProperties
      */
     public static final void register(EntityPlayer player)
     {
-        player.registerExtendedProperties(Constants.PlayerPropertyName, new PlayerProperties(player));
+        player.registerExtendedProperties(Constants.PlayerPropertyName, new PlayerProperties());
     }
 
     /**
@@ -76,7 +72,7 @@ public class PlayerProperties implements IExtendedEntityProperties
     /**
      * Adds support for other mods and multiple properties tags
      *
-     * @param player
+     * @param player the player
      * @return String HashMap key
      */
     private static String getSaveKey(EntityPlayer player)
@@ -168,13 +164,11 @@ public class PlayerProperties implements IExtendedEntityProperties
     }
 
     /**
-     * Sets whether the player has placed a townhall
-     *
-     * @param hasPlacedSupplyChest boolean
+     * Sets hasPlacedSupplyChest to true
      */
-    public void setHasPlacedSupplyChest(boolean hasPlacedSupplyChest)
+    public void placeSupplyChest()
     {
-        this.hasPlacedSupplyChest = hasPlacedSupplyChest;
+        this.hasPlacedSupplyChest = true;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.minecolonies.network;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.network.packets.AbstractPacket;
 import com.minecolonies.network.packets.TileEntityPacket;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;

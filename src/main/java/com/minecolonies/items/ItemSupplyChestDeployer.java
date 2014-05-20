@@ -6,8 +6,6 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.*;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -17,28 +15,20 @@ import net.minecraft.world.World;
 
 import java.util.HashMap;
 
-public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements IColony
+public class ItemSupplyChestDeployer extends ItemMinecolonies
 {
     private String name = "supplyChestDeployer";
 
     public ItemSupplyChestDeployer()
     {
-        setUnlocalizedName(getName());
-        setCreativeTab(CreativeTab.mineColoniesTab);
+        super();
         setMaxStackSize(1);
-        GameRegistry.registerItem(this, getName());
     }
 
     @Override
     public String getName()
     {
         return name;
-    }
-
-    @Override
-    public void registerIcons(IIconRegister par1IconRegister)
-    {
-        this.itemIcon = par1IconRegister.registerIcon(Constants.MODID + ":" + getName());
     }
 
     @Override
@@ -85,9 +75,9 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      *       5: value: can be placed at east
      *
      * @param world world obj
-     * @param x xCoord clicked
-     * @param y yCoord clicked
-     * @param z zCoord clicked
+     * @param x x coordinate clicked
+     * @param y y coordinate clicked
+     * @param z z coordinate clicked
      * @return hashMap whether it can be placed (1) and facings it can be placed at (2-5)
      */
     public HashMap<Integer, Boolean> canShipBePlaced(World world, int x, int y, int z)
@@ -124,9 +114,9 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
     /**
      * Checks if the area is free, checks in a 'I' shape, so 20 forward, 10 left at origin + 1, 10 right at origin + 1, 10 left at origin + 20, 10 right at origin + 20
      * @param world world obj
-     * @param x xCoord clicked
-     * @param y yCoord clicked
-     * @param z zCoord clicked
+     * @param x x coordinate clicked
+     * @param y y coordinate clicked
+     * @param z z coordinate clicked
      * @param shouldCheckX boolean whether the x-sides should be checks
      * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false)
      * @return whether the space in the I shape is free or not
@@ -177,22 +167,21 @@ public class ItemSupplyChestDeployer extends net.minecraft.item.Item implements 
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        if(Configurations.allowInfiniteSupplyChests) return true;
-        return !PlayerProperties.get(player).hasPlacedSupplyChest();
+        return Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest();
     }
 
     /**
      * Spawns the ship and supply chest
      *
      * @param world        world obj
-     * @param x            xCoord clicked
-     * @param y            yCoord clicked
-     * @param z            zCoord clicked
+     * @param x            x coordinate clicked
+     * @param y            y coordinate clicked
+     * @param z            z coordinate clicked
      * @param entityPlayer the player
      */
     private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer, int chestFacing)
     {
-        PlayerProperties.get(entityPlayer).setHasPlacedSupplyChest(true);
+        PlayerProperties.get(entityPlayer).placeSupplyChest();
 
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);

@@ -2,7 +2,10 @@ package com.minecolonies.util;
 
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.github.lunatrius.schematica.world.schematic.SchematicFormat;
+import com.minecolonies.lib.IColony;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
@@ -14,6 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Colton on 5/4/2014.
+ * Interface for using the Schematica codebase
+ *
+ * @author Colton
  */
 public class Schematic
 {
@@ -166,8 +172,8 @@ public class Schematic
         short[][][] blocks = new short[width][height][length];
         byte[][][] metadata = new byte[width][height][length];
         List<TileEntity> tileEntities = new ArrayList<TileEntity>();
-        TileEntity tileEntity = null;
-        NBTTagCompound tileEntityNBT = null;
+        TileEntity tileEntity;
+        NBTTagCompound tileEntityNBT;
 
         for(int x = minX; x <= maxX; x++)
         {
@@ -202,7 +208,7 @@ public class Schematic
         }
     }
 
-    public void setOrientation(int orientation)
+    public void setOrientation(ForgeDirection orientation)
     {
         //TODO schematic.rotate();
     }
@@ -221,7 +227,14 @@ public class Schematic
     {
         try
         {
-            return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+            {
+                return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
+            }
+            else
+            {
+                return Schematic.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
+            }
         }
         catch(IOException e)
         {

@@ -1,6 +1,7 @@
 package com.github.lunatrius.schematica.world;
 
 import com.github.lunatrius.schematica.config.BlockInfo;
+import com.github.lunatrius.schematica.world.storage.EmptySaveHandler;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
@@ -37,76 +38,86 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SchematicWorld extends World {
-	// private static final AnvilSaveHandler SAVE_HANDLER = new AnvilSaveHandler(Minecraft.getMinecraft().mcDataDir, "tmp/com.github.lunatrius.schematica", false);
-	private static final WorldSettings WORLD_SETTINGS = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
-	private static final Comparator<ItemStack> BLOCK_COMPARATOR = new Comparator<ItemStack>() {
-		@Override
-		public int compare(ItemStack itemStackA, ItemStack itemStackB) {
-			return itemStackA.getUnlocalizedName().compareTo(itemStackB.getUnlocalizedName());
-		}
-	};
+    // private static final AnvilSaveHandler SAVE_HANDLER = new AnvilSaveHandler(Minecraft.getMinecraft().mcDataDir, "tmp/com.github.lunatrius.schematica", false);
+    private static final WorldSettings         WORLD_SETTINGS   = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
+    private static final   Comparator<ItemStack> BLOCK_COMPARATOR = new Comparator<ItemStack>()
+    {
+        @Override
+        public int compare(ItemStack itemStackA, ItemStack itemStackB)
+        {
+            return itemStackA.getUnlocalizedName().compareTo(itemStackB.getUnlocalizedName());
+        }
+    };
 
-	public static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.grass);
+    public static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.grass);
 
-	private ItemStack icon;
-	private short[][][] blocks;
-	private byte[][][] metadata;
-	private final List<TileEntity> tileEntities = new ArrayList<TileEntity>();
-	private final List<ItemStack> blockList = new ArrayList<ItemStack>();
-	private short width;
-	private short length;
-	private short height;
+    private ItemStack   icon;
+    private   short[][][] blocks;
+    private   byte[][][]  metadata;
+    private final List<TileEntity> tileEntities = new ArrayList<TileEntity>();
+    private final List<ItemStack>  blockList    = new ArrayList<ItemStack>();
+    private short width;
+    private short length;
+    private short height;
 
-	private boolean isRendering;
-	private int renderingLayer;
+    private boolean isRendering;
+    private int     renderingLayer;
 
-	public SchematicWorld() {
-		// TODO: revert if any issues arise
-		super(new SaveHandlerMP(), "Schematica", null, WORLD_SETTINGS, null);
-		this.icon = SchematicWorld.DEFAULT_ICON.copy();
-		this.blocks = null;
-		this.metadata = null;
-		this.tileEntities.clear();
-		this.width = 0;
-		this.length = 0;
-		this.height = 0;
+    public SchematicWorld()
+    {
+        // TODO: revert if any issues arise
+        super(new EmptySaveHandler(), "Schematica", WORLD_SETTINGS, null, null);
+        this.icon = SchematicWorld.DEFAULT_ICON.copy();
+        this.blocks = null;
+        this.metadata = null;
+        this.tileEntities.clear();
+        this.width = 0;
+        this.length = 0;
+        this.height = 0;
 
-		this.isRendering = false;
-		this.renderingLayer = -1;
-	}
+        this.isRendering = false;
+        this.renderingLayer = -1;
+    }
 
-	public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, short width, short height, short length) {
-		this();
+    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, short width, short height, short length)
+    {
+        this();
 
-		this.icon = icon != null ? icon : SchematicWorld.DEFAULT_ICON.copy();
+        this.icon = icon != null ? icon : SchematicWorld.DEFAULT_ICON.copy();
 
-		this.blocks = blocks.clone();
-		this.metadata = metadata.clone();
+        this.blocks = blocks.clone();
+        this.metadata = metadata.clone();
 
-		if (tileEntities != null) {
-			this.tileEntities.addAll(tileEntities);
-			for (TileEntity tileEntity : this.tileEntities) {
-				tileEntity.setWorldObj(this);
-				try {
-					tileEntity.validate();
-				} catch (Exception e) {
-					MineColonies.logger.error(String.format("TileEntity validation for %s failed!", tileEntity.getClass()), e);
-				}
-			}
-		}
+        if(tileEntities != null)
+        {
+            this.tileEntities.addAll(tileEntities);
+            for(TileEntity tileEntity : this.tileEntities)
+            {
+                tileEntity.setWorldObj(this);
+                try
+                {
+                    tileEntity.validate();
+                }
+                catch(Exception e)
+                {
+                    MineColonies.logger.error(String.format("TileEntity validation for %s failed!", tileEntity.getClass()), e);
+                }
+            }
+        }
 
-		this.width = width;
-		this.length = length;
-		this.height = height;
+        this.width = width;
+        this.length = length;
+        this.height = height;
 
-		generateBlockList();
-	}
+        generateBlockList();
+    }
 
-	public SchematicWorld(String iconName, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, short width, short height, short length) {
-		this(getIconFromName(iconName), blocks, metadata, tileEntities, width, height, length);
-	}
+    public SchematicWorld(String iconName, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, short width, short height, short length)
+    {
+        this(getIconFromName(iconName), blocks, metadata, tileEntities, width, height, length);
+    }
 
-	public static ItemStack getIconFromName(String iconName) {
+    public static ItemStack getIconFromName(String iconName) {
 		ItemStack icon;
 		String name = "";
 		int damage = 0;
@@ -344,9 +355,9 @@ public class SchematicWorld extends World {
 	}
 
 	@Override
-	protected IChunkProvider createChunkProvider() {
-		return new ChunkProviderClient(this);
-	}
+    protected IChunkProvider createChunkProvider() {
+        return null;
+    }
 
 	@Override
 	public Entity getEntityByID(int id) {

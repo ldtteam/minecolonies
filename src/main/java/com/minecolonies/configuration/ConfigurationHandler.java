@@ -4,9 +4,7 @@ import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
 
-import static com.minecolonies.configuration.Configurations.DEFAULT_ALLOWINFINTESUPPLYCHESTS;
-import static com.minecolonies.configuration.Configurations.DEFAULT_CITIZENRESPAWNINTERVAL;
-import static com.minecolonies.configuration.Configurations.DEFAULT_WORKINGRANGETOWNHALL;
+import static com.minecolonies.configuration.Configurations.*;
 
 /**
  * Configuration Handler.
@@ -15,6 +13,8 @@ import static com.minecolonies.configuration.Configurations.DEFAULT_WORKINGRANGE
  */
 public class ConfigurationHandler
 {
+    private static final String CATEGORY_GAMEPLAY = "Game Play";
+
     public static void init(File file)
     {
         Configuration config = new Configuration(file);
@@ -22,9 +22,10 @@ public class ConfigurationHandler
         try
         {
             config.load();
-            Configurations.workingRangeTownhall = config.get("Game Play", "Working Range Townhall: ", DEFAULT_WORKINGRANGETOWNHALL).getInt(DEFAULT_WORKINGRANGETOWNHALL);
-            Configurations.allowInfiniteSupplyChests = config.get("Game Play", "Allow infinite placing of Supply Chests: ", DEFAULT_ALLOWINFINTESUPPLYCHESTS).getBoolean(DEFAULT_ALLOWINFINTESUPPLYCHESTS);
-            Configurations.citizenRespawnInterval = config.get("Game Play", "Citizen Respawn Interval in seconds: ", DEFAULT_CITIZENRESPAWNINTERVAL).getInt(DEFAULT_CITIZENRESPAWNINTERVAL);
+            Configurations.workingRangeTownhall = config.get(CATEGORY_GAMEPLAY, "Working Range Townhall: ", DEFAULT_WORKINGRANGETOWNHALL).getInt(DEFAULT_WORKINGRANGETOWNHALL);
+            Configurations.townhallPadding = config.get(CATEGORY_GAMEPLAY, "Empty space between townhall boundaries: ", DEFAULT_TOWNHALLPADDING).getInt(DEFAULT_TOWNHALLPADDING);
+            Configurations.allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY, "Allow infinite placing of Supply Chests: ", DEFAULT_ALLOWINFINTESUPPLYCHESTS).getBoolean(DEFAULT_ALLOWINFINTESUPPLYCHESTS);
+            Configurations.citizenRespawnInterval = config.get(CATEGORY_GAMEPLAY, "Citizen Respawn Interval in seconds: ", DEFAULT_CITIZENRESPAWNINTERVAL).getInt(DEFAULT_CITIZENRESPAWNINTERVAL);
         }
         finally
         {

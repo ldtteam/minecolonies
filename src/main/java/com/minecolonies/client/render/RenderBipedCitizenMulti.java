@@ -8,9 +8,9 @@ public class RenderBipedCitizenMulti extends RenderBipedCitizen
 {
     ModelBiped modelBase, femaleModelCitizenAndSettler, femaleModelNoble, femaleModelAristocrat;
 
-    public RenderBipedCitizenMulti(ModelBiped modelBase, ModelBiped femaleModelCitizenAndSettler, ModelBiped femaleModelNoble, ModelBiped femaleModelAristocrat, float flag)
+    public RenderBipedCitizenMulti(ModelBiped modelBase, ModelBiped femaleModelCitizenAndSettler, ModelBiped femaleModelNoble, ModelBiped femaleModelAristocrat)
     {
-        super(modelBase, flag);
+        super(modelBase);
         this.femaleModelCitizenAndSettler = femaleModelCitizenAndSettler;
         this.femaleModelNoble = femaleModelNoble;
         this.femaleModelAristocrat = femaleModelAristocrat;

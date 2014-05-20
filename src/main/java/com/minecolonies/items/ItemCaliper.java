@@ -1,23 +1,13 @@
 package com.minecolonies.items;
 
-import com.minecolonies.lib.Constants;
-import com.minecolonies.util.CreativeTab;
-import com.minecolonies.util.IColony;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Utils;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-/**
- * Created by Colton on 5/11/2014.
- */
-public class ItemCaliper extends Item implements IColony
+public class ItemCaliper extends ItemMinecolonies
 {
     public        String          name = "caliper";
     public static RangedAttribute use  = new RangedAttribute("player.caliberUse", 0.0, 0.0, 1.0);
@@ -28,22 +18,14 @@ public class ItemCaliper extends Item implements IColony
 
     public ItemCaliper()
     {
-        setUnlocalizedName(getName());
-        setCreativeTab(CreativeTab.mineColoniesTab);
+        super();
         setMaxStackSize(1);
-        GameRegistry.registerItem(this, getName());
     }
 
     @Override
     public String getName()
     {
         return name;
-    }
-
-    @Override
-    public void registerIcons(IIconRegister par1IconRegister)
-    {
-        this.itemIcon = par1IconRegister.registerIcon(Constants.MODID + ":" + getName());
     }
 
     @Override
@@ -86,11 +68,6 @@ public class ItemCaliper extends Item implements IColony
             return false;
         }
         if (startPositionY == j) {
-            if (startPositionX == j) {
-                int distance = java.lang.Math.abs(k - startPositionZ) + 1;
-                LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.line", distance);
-                return false;
-            }
             if (startPositionZ == k) {
                 int distance = java.lang.Math.abs(i - startPositionX) + 1;
                 LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.line", distance);

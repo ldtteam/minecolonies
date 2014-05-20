@@ -7,7 +7,9 @@ import net.minecraft.util.ChatComponentText;
 import java.util.List;
 
 /**
- * Created by Colton on 5/12/2014.
+ * Helper class for localization and sending player messages
+ *
+ * @author Colton
  */
 public class LanguageHandler
 {

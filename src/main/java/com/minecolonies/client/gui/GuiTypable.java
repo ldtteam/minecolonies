@@ -1,6 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
@@ -82,8 +83,7 @@ public class GuiTypable extends GuiScreen
                     tileEntityTownHall.setCityName(newCityName);
                     tileEntityTownHall.sendPacket();
                 }
-                this.mc.displayGuiScreen((GuiScreen) null);
-                player.openGui(MineColonies.instance, 0, world, x, y, z);
+                player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
             }
         }
     }

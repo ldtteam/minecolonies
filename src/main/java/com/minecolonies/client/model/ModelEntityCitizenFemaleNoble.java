@@ -23,11 +23,6 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
 
     public ModelEntityCitizenFemaleNoble()
     {
-        this(0.0F);
-    }
-
-    public ModelEntityCitizenFemaleNoble(float f)
-    {
         textureWidth = 128;
         textureHeight = 64;
 
@@ -38,7 +33,7 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
         setRotation(bipedHead, 0F, 0F, 0F);
 
         bipedHeadwear = new ModelRenderer(this, 32, 0);
-        bipedHeadwear.addBox(-4F, -8F, -4F, 8, 8, 8, f + 0.5F);
+        bipedHeadwear.addBox(-4F, -8F, -4F, 8, 8, 8, 0.5F);
         bipedHeadwear.setRotationPoint(0F, 0F, 1F);
         bipedHeadwear.setTextureSize(128, 64);
         setRotation(bipedHeadwear, 0F, 0F, 0F);
@@ -82,7 +77,7 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
         setRotation(Breast, -0.5235988F, 0F, 0F);
 
         Hairs = new ModelRenderer(this, 46, 17);
-        Hairs.addBox(-4F, 0F, 3F, 8, 7, 1, f + 0.5F);
+        Hairs.addBox(-4F, 0F, 3F, 8, 7, 1, 0.5F);
         Hairs.setRotationPoint(0F, 0F, 1F);
         Hairs.setTextureSize(128, 64);
         setRotation(Hairs, 0F, 0F, 0F);
@@ -118,13 +113,13 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
         setRotation(DressPart1, 0F, 0F, 0F);
 
         Hat1 = new ModelRenderer(this, 0, 48);
-        Hat1.addBox(-5F, -8F, -5F, 10, 2, 10, f + 0.1F);
+        Hat1.addBox(-5F, -8F, -5F, 10, 2, 10, 0.1F);
         Hat1.setRotationPoint(0F, 0F, 1F);
         Hat1.setTextureSize(128, 64);
         setRotation(Hat1, 0F, 0F, 0F);
 
         Hat2 = new ModelRenderer(this, 0, 40);
-        Hat2.addBox(-3F, -10F, -3F, 6, 2, 6, f + 0.3F);
+        Hat2.addBox(-3F, -10F, -3F, 6, 2, 6, 0.3F);
         Hat2.setRotationPoint(0F, 0F, 1F);
         Hat2.setTextureSize(128, 64);
         setRotation(Hat2, 0F, 0F, 0F);

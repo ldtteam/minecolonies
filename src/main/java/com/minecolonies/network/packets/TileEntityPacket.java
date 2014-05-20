@@ -1,6 +1,5 @@
 package com.minecolonies.network.packets;
 
-import com.minecolonies.network.AbstractPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,9 +9,6 @@ import net.minecraft.tileentity.TileEntity;
 
 import java.io.IOException;
 
-/**
- * Created by Colton on 5/8/2014.
- */
 public class TileEntityPacket extends AbstractPacket
 {
     private int x, y, z;

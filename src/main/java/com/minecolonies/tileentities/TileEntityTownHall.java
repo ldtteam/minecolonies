@@ -22,7 +22,7 @@ public class TileEntityTownHall extends TileEntityHut
 {
     private String          cityName;
     private ArrayList<UUID> owners;
-    private BiomeGenBase    biome;
+    private BiomeGenBase    biome;//TODO do we plan on useing this?
 
     private ArrayList<UUID> citizens;
     private int             maxCitizens;
