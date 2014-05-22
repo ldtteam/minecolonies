@@ -8,14 +8,14 @@ import net.minecraft.client.model.ModelBiped;
 
 public enum EnumCitizenLevel
 {
-    SETTLERMALE(0, "Male", "/textures/entity/EntitySettler"),
-    CITIZENMALE(1, "Male", "/textures/entity/EntityCitizen"),
-    NOBLEMALE(2, "Male", "/textures/entity/EntityNoble"),
-    ARISTOCRATMALE(3, "Male", "/textures/entity/EntityAristocrat"),
-    SETTLERFEMALE(0, "Female", "/textures/entity/EntitySettler"),
-    CITIZENFEMALE(1, "Female", "/textures/entity/EntityCitizen"),
-    NOBLEFEMALE(2, "Female", "/textures/entity/EntityNoble"),
-    ARISTOCRATFEMALE(3, "Female", "/textures/entity/EntityAristocrat");
+    SETTLERMALE(0, "Male", "textures/entity/EntitySettler"),
+    CITIZENMALE(1, "Male", "textures/entity/EntityCitizen"),
+    NOBLEMALE(2, "Male", "textures/entity/EntityNoble"),
+    ARISTOCRATMALE(3, "Male", "textures/entity/EntityAristocrat"),
+    SETTLERFEMALE(0, "Female", "textures/entity/EntitySettler"),
+    CITIZENFEMALE(1, "Female", "textures/entity/EntityCitizen"),
+    NOBLEFEMALE(2, "Female", "textures/entity/EntityNoble"),
+    ARISTOCRATFEMALE(3, "Female", "textures/entity/EntityAristocrat");
 
     private final int        level;
     private final String     partialTextureString;

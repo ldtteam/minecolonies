@@ -1,5 +1,6 @@
 package com.minecolonies.blocks;
 
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.lib.IColony;
@@ -101,7 +102,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
         {
             TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
             TileEntityTownHall tileEntityTownHall = Utils.getTownhallByOwner(world, (EntityPlayer) entityLivingBase);
-            if(tileEntityTownHall == null || Utils.getDistanceToTileEntity(x, y, z, tileEntityTownHall) > Constants.MAXDISTANCETOTOWNHALL)
+            if(tileEntityTownHall == null || Utils.getDistanceToTileEntity(x, y, z, tileEntityTownHall) > Configurations.workingRangeTownhall)
             {
                 if(tileEntityTownHall == null)
                     LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockHut.messageNoTownhall");

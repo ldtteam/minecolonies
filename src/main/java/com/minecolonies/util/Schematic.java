@@ -233,6 +233,7 @@ public class Schematic
             }
             else
             {
+                //TODO add more checks here
                 return Schematic.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
             }
         }
