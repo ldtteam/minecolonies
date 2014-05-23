@@ -1,4 +1,5 @@
 com.minecolonies.error.noFingerprint=No Fingerprint. Might not be a valid version!
+com.minecolonies.error.supplyChestAlreadyPlaced=You have already placed a supply ship!
 
 com.minecolonies.gui.yes=Yes
 com.minecolonies.gui.no=No

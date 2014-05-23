@@ -23,6 +23,7 @@ public class BlockHutTownHall extends BlockHut
     {
         super();
         this.workingRange = Configurations.workingRangeTownhall;
+        setResistance(1000f);
     }
 
     @Override

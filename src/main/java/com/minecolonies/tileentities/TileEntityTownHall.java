@@ -36,6 +36,7 @@ public class TileEntityTownHall extends TileEntityHut
         citizens = new ArrayList<UUID>();
         maxCitizens = com.minecolonies.lib.Constants.DEFAULTMAXCITIZENS;
         buildings = new ArrayList<int[]>();
+        builderRequired = new ArrayList<int[]>();
     }
 
     public void setCityName(String cityName)
@@ -86,7 +87,7 @@ public class TileEntityTownHall extends TileEntityHut
                         if(getMaxCitizens() == getCitizens().size())
                         {
                             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, owners), "tile.blockHutTownhall.messageMaxSize");
-                    }
+                        }
                     }
                 }
             }
