@@ -3,6 +3,7 @@ package com.minecolonies.util;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -196,15 +197,15 @@ public class Utils
      *
      * @param world world the player is in
      * @param id    the player's UUID
-     * @return the EntityPlayer
+     * @return the Entity
      */
-    public static EntityPlayer getPlayerFromUUID(World world, UUID id)
+    public static Entity getEntityFromUUID(World world, UUID id)
     {
         for(int i = 0; i < world.playerEntities.size(); ++i)
         {
-            if(id.equals(((EntityPlayer) world.playerEntities.get(i)).getUniqueID()))
+            if(id.equals(((Entity) world.playerEntities.get(i)).getUniqueID()))
             {
-                return (EntityPlayer) world.playerEntities.get(i);
+                return (Entity)world.playerEntities.get(i);
             }
         }
         return null;

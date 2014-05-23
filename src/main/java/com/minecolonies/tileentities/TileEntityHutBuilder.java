@@ -12,6 +12,8 @@ public class TileEntityHutBuilder extends TileEntityHutWorker
         checkInterfall = Constants.BUILDERCHECKINTERFALL * 20;
     }
 
+
+
     @Override
     public void updateEntity()
     {
@@ -20,7 +22,7 @@ public class TileEntityHutBuilder extends TileEntityHutWorker
         if(checkInterfall == 0 && !getTownHall().getBuilderRequired().isEmpty())
         {
             int[] coord = {0,0,0};
-            for(int[] coords : getTownHall().getBuilderRequired())
+            for(int[] coords : getTownHall().getBuilderRequired()) //TODO Not sure if the first index can be empty. This is for safety.
             {
                 coord = coords;
                 break;

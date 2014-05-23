@@ -97,4 +97,14 @@ public abstract class TileEntityBuildable extends TileEntityChest
                 if(owners == player.getUniqueID())
                     getTownHall().addBuildingForUpgrade(xCoord, yCoord, zCoord);
     }
+
+    /**
+     * Returns the required sex of a citizen before it can be added to a hut.
+     * 0 = man, 1 = female
+     * @return sex
+     */
+    public int getRequiredSex()
+    {
+        return 0;
+    }
 }

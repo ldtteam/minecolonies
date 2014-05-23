@@ -2,10 +2,12 @@ package com.minecolonies.blocks;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.creativetab.ModCreativeTabs;
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.lib.IColony;
 import com.minecolonies.tileentities.TileEntityBuildable;
+import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -67,10 +69,18 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
      */
     public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall, World world, int x, int y, int z)
     {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if(!(tileEntity instanceof TileEntityBuildable)) return;
+        if(!(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)) return;
+        TileEntityHutWorker TileEntityHutWorker = (TileEntityHutWorker)world.getTileEntity(x, y, z);
         ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
-        //TODO ATTEMPT TO ADD
+        for(UUID citizen : citizens)
+        {
+            EntityCitizen entityCitizen = (EntityCitizen) Utils.getEntityFromUUID(world, citizen);
+            if(entityCitizen.level.getSexInt() == TileEntityHutWorker.getRequiredSex())
+            {
+                entityCitizen.addToHut(TileEntityHutWorker);
+                return;
+            }
+        }
     }
 
     /**
