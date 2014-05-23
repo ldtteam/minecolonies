@@ -1,18 +1,31 @@
 package com.minecolonies.client.gui;
 
+import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 
 public class GuiHutBuilder extends GuiBase
 {
-    private TileEntityHutBuilder tileEntity;
+    private final EntityPlayer         player;
+    private final World                worldObj;
+    private final int                  x;
+    private final int                  y;
+    private final int                  z;
+    private       TileEntityHutBuilder tileEntity;
     private int numberOfButtons = 4;
     private int span            = 10;
 
-    public GuiHutBuilder(TileEntityHutBuilder tileEntityHutBuilder)
+    public GuiHutBuilder(TileEntityHutBuilder tileEntityHutBuilder, EntityPlayer player, World world, int x, int y, int z)
     {
         super();
+        this.player = player;
+        this.worldObj = world;
+        this.x = x;
+        this.y = y;
+        this.z = z;
         this.tileEntity = tileEntityHutBuilder;
     }
 
@@ -47,6 +60,8 @@ public class GuiHutBuilder extends GuiBase
             case idRecallWorker:
                 break;
             case idBuildBuilding:
+                TileEntityBuildable tileEntityBuildable = (TileEntityBuildable)tileEntity;
+                tileEntityBuildable.requestBuilding(player);
                 break;
             case idRepairBuilding:
                 break;

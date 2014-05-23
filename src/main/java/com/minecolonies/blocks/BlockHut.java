@@ -2,6 +2,7 @@ package com.minecolonies.blocks;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.creativetab.ModCreativeTabs;
+import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.lib.IColony;
 import com.minecolonies.tileentities.TileEntityBuildable;
@@ -13,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -112,7 +114,64 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 return;
             }
             tileEntityBuildable.setTownHall(tileEntityTownHall);
+            tileEntityTownHall.addBuildingForUpgrade(tileEntityBuildable.xCoord, tileEntityBuildable.yCoord, tileEntityBuildable.zCoord);
             attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
         }
+    }
+
+    @Override
+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
+    {
+        if(world.isRemote) return false;
+
+        if(this.canPlayerDestroy(world, x, y, z, player))
+        {
+            if(world.getTileEntity(x, y, z) instanceof TileEntityTownHall)
+            {
+                TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
+                for(Object o : world.loadedEntityList)
+                {
+                    if(o instanceof Entity)
+                    {
+                        Entity entity = (Entity) o;
+                        if(tileEntityTownHall.getCitizens().contains(entity.getUniqueID())) entity.setDead();
+                    }
+                }
+                PlayerProperties.get(player).removeTownhall();
+            }
+            return super.removedByPlayer(world, player, x, y, z);
+        }
+        return false;
+    }
+
+    public boolean canPlayerDestroy(World world, int x, int y, int z, Entity entity)
+    {
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        EntityPlayer entityPlayer = (EntityPlayer) entity;
+        if(tileEntity instanceof TileEntityTownHall)
+        {
+            TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) tileEntity;
+            if(tileEntityTownHall.getOwners().size() == 0) return true;
+            for(int i = 0; i < tileEntityTownHall.getOwners().size(); i++)
+            {
+                if(tileEntityTownHall.getOwners().get(i).equals(entityPlayer.getUniqueID()))
+                {
+                    return true;
+                }
+            }
+        }
+        if(tileEntity instanceof TileEntityBuildable)
+        {
+            TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) tileEntity;
+            if(tileEntityBuildable.getTownHall().getOwners().size() == 0) return true;
+            for(int i = 0; i < tileEntityBuildable.getTownHall().getOwners().size(); i++)
+            {
+                if(tileEntityBuildable.getTownHall().getOwners().get(i).equals(entityPlayer.getUniqueID()))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

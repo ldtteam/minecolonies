@@ -2,6 +2,7 @@ package com.minecolonies.blocks;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityTownHall;
@@ -95,7 +96,11 @@ public class BlockHutTownHall extends BlockHut
                     if(o instanceof Entity)
                     {
                         Entity entity = (Entity) o;
-                        if(tileEntityTownHall.getCitizens().contains(entity.getUniqueID())) entity.setDead();
+                        if(tileEntityTownHall.getCitizens().contains(entity.getUniqueID()))
+                        {
+                            entity.setDead();
+                            tileEntityTownHall.removeCitizen((EntityCitizen)o);
+                        }
                     }
                 }
                 PlayerProperties.get(player).removeTownhall();
@@ -128,21 +133,5 @@ public class BlockHutTownHall extends BlockHut
     {
         entityPlayer.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
         return true;
-    }
-
-    public boolean canPlayerDestroy(World world, int x, int y, int z, Entity entity)
-    {
-        EntityPlayer entityPlayer = (EntityPlayer) entity;
-        TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-        if(tileEntityTownHall == null) return true;
-        if(tileEntityTownHall.getOwners().size() == 0) return true;
-        for(int i = 0; i < tileEntityTownHall.getOwners().size(); i++)
-        {
-            if(tileEntityTownHall.getOwners().get(i).equals(entityPlayer.getUniqueID()))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 }

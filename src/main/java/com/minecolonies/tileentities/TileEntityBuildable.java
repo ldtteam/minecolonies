@@ -2,8 +2,11 @@ package com.minecolonies.tileentities;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.network.packets.TileEntityPacket;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
+
+import java.util.UUID;
 
 public abstract class TileEntityBuildable extends TileEntityChest
 {
@@ -85,5 +88,13 @@ public abstract class TileEntityBuildable extends TileEntityChest
     public void setTownHall(TileEntityTownHall townHall)
     {
         this.townHall = townHall;
+    }
+
+    public void requestBuilding(EntityPlayer player)
+    {
+        if(!(buildingLevel >= 3)) //TODO
+            for(UUID owners : getTownHall().getOwners())
+                if(owners == player.getUniqueID())
+                    getTownHall().addBuildingForUpgrade(xCoord, yCoord, zCoord);
     }
 }
