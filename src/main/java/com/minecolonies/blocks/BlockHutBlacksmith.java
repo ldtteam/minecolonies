@@ -1,6 +1,7 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.tileentities.TileEntityBlacksmith;
+import com.minecolonies.tileentities.TileEntityHutBaker;
+import com.minecolonies.tileentities.TileEntityHutBlacksmith;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -22,7 +23,6 @@ public class BlockHutBlacksmith extends BlockHut
     @Override
     public TileEntity createNewTileEntity(World var1, int var2)
     {
-        //TODO
-        return new TileEntityBlacksmith();
+        return new TileEntityHutBlacksmith();
     }
 }

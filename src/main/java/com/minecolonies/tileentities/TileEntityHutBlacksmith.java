@@ -1,8 +1,8 @@
 package com.minecolonies.tileentities;
 
-public class TileEntityBlacksmith extends TileEntityHutWorker
+public class TileEntityHutBlacksmith extends TileEntityHutWorker
 {
-    public TileEntityBlacksmith()
+    public TileEntityHutBlacksmith()
     {
         setMaxInhabitants(1);
         setHutName("hutBlacksmith");
