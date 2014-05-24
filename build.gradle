@@ -26,7 +26,7 @@ configFile.withReader {
       ext.config = new ConfigSlurper().parse prop
 }
  
-group = "com.mineclonies"
+group = "com.minecolonies"
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.minecolonies_build}"
 
 minecraft {
