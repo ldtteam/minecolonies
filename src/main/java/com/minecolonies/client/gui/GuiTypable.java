@@ -78,7 +78,7 @@ public class GuiTypable extends GuiScreen
         {
             if(guiButton.id == 0)
             {
-                if(!newCityName.equals(""))
+                if(!newCityName.isEmpty())
                 {
                     tileEntityTownHall.setCityName(newCityName);
                     tileEntityTownHall.sendPacket();

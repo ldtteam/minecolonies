@@ -2,6 +2,7 @@ package com.minecolonies.tileentities;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.network.packets.TileEntityPacket;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
 
@@ -57,7 +58,7 @@ public abstract class TileEntityBuildable extends TileEntityChest
         this.buildingLevel = buildingLevel;
     }
 
-    public boolean isHasWorker()
+    public boolean hasWorker()
     {
         return hasWorker;
     }
@@ -85,5 +86,17 @@ public abstract class TileEntityBuildable extends TileEntityChest
     public void setTownHall(TileEntityTownHall townHall)
     {
         this.townHall = townHall;
+    }
+
+    public void requestBuilding(EntityPlayer player)
+    {
+        if(!(buildingLevel >= 3)) //TODO
+            getTownHall().addHutForUpgrade(xCoord, yCoord, zCoord);
+    }
+
+    public boolean isPlayerOwner(EntityPlayer player)
+    {
+        if(this.getTownHall().getOwners().isEmpty() || this.getTownHall().getOwners().contains(player.getUniqueID())) return true;
+        return false;
     }
 }

@@ -199,6 +199,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return inventory;
     }
 
+    public void addToHut(TileEntityHutWorker tileEntityHutWorker)
+    {
+        setJob(tileEntityHutWorker.getJobName(), tileEntityHutWorker);
+        //TODO more to come
+    }
+
     /*private static final int DATAWATCHER_CURRENTACTION = 24;
 
     public EnumCitizenAction getCurrentAction()

@@ -169,7 +169,9 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        return Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest();
+        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest()) return true;
+        LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.error.supplyChestAlreadyPlaced");
+        return false;
     }
 
     /**
@@ -183,14 +185,13 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      */
     private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer, int chestFacing)
     {
-        PlayerProperties.get(entityPlayer).placeSupplyChest();
-
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
 
         placeSupplyShip(world, x, y, z, chestFacing);
 
         fillChest((TileEntityChest) world.getTileEntity(x, y + 1, z));
+        PlayerProperties.get(entityPlayer).placeSupplyChest();
     }
 
     private void placeSupplyShip(World world, int x, int y, int z, int direction)

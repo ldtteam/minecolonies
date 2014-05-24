@@ -36,7 +36,7 @@ public class GuiHandler implements IGuiHandler
             case TOWNHALL_RENAME:
                 return new GuiTypable((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
             case BUILDER:
-                return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z));
+                return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z), player, world, x, y, z);
             case WAREHOUSE:
                 return new GuiHutDeliveryMan(0, player, world, x, y, z);
             case WAREHOUSE_SETTINGS:

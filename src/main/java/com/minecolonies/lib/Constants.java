@@ -10,6 +10,7 @@ public class Constants
     public static final String COMMONPROXYLOCATION = "com.minecolonies.proxy.CommonProxy";
     public static final String PlayerPropertyName  = "MineColoniesPlayerProperties";
 
-    public static final int    SIZENEEDEDFORSHIP     = 32;
-    public static final int    DEFAULTMAXCITIZENS    = 4;
+    public static final int SIZENEEDEDFORSHIP     = 32;
+    public static final int DEFAULTMAXCITIZENS    = 4;
+    public static final int BUILDERCHECKINTERFALL = 5;
 }

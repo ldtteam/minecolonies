@@ -2,9 +2,12 @@ package com.minecolonies.blocks;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.creativetab.ModCreativeTabs;
+import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.lib.IColony;
 import com.minecolonies.tileentities.TileEntityBuildable;
+import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -13,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,6 +25,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public abstract class BlockHut extends Block implements IColony, ITileEntityProvider
@@ -34,13 +39,14 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
         super(Material.wood);
         setBlockName(getName());
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
+        setResistance(1000f);
         GameRegistry.registerBlock(this, getName());
     }
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister)
     {
-        icons[0] = iconRegister.registerIcon(Constants.MODID + ":" + getName() + "top");
+        icons[0] = iconRegister.registerIcon(Constants.MODID + ":" + getName() + "Top");
         icons[1] = icons[0];
         for(int i = 2; i <= 5; i++)
         {
@@ -63,12 +69,25 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
      * @param y                  y coordinate
      * @param z                  z coordinate
      */
-    public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall, World world, int x, int y, int z)
+    public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall, World world, int x, int y, int z)//TODO move to TileEntityHutWorker
     {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if(!(tileEntity instanceof TileEntityBuildable)) return;
+        if(!(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)) return;
+        TileEntityHutWorker tileEntityHutWorker = (TileEntityHutWorker)world.getTileEntity(x, y, z);
         ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
-        //TODO ATTEMPT TO ADD
+
+        List<Entity> entityCitizens = Utils.getEntitiesFromUUID(world, citizens);
+        for(Entity entity : entityCitizens)
+        {
+            if (entity instanceof EntityCitizen)
+            {
+                EntityCitizen entityCitizen = (EntityCitizen) entity;
+                if(entityCitizen.getJob().equals("Citizen") && !tileEntityHutWorker.hasWorker())
+                {
+                    entityCitizen.addToHut(tileEntityHutWorker);
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -112,7 +131,48 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 return;
             }
             tileEntityBuildable.setTownHall(tileEntityTownHall);
+            tileEntityTownHall.addHut(tileEntityBuildable.xCoord, tileEntityBuildable.yCoord, tileEntityBuildable.zCoord);
             attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
         }
+    }
+
+    @Override
+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
+    {
+        if(world.isRemote) return false;
+
+        if(this.canPlayerDestroy(world, x, y, z, player))
+        {
+            if(world.getTileEntity(x, y, z) instanceof TileEntityTownHall)
+            {
+                TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
+                for(Object o : world.loadedEntityList)
+                {
+                    if(o instanceof EntityCitizen)
+                    {
+                        EntityCitizen citizen = (EntityCitizen) o;
+                        if(tileEntityTownHall.getCitizens().contains(citizen.getUniqueID()))
+                        {
+                            citizen.setDead();
+                            tileEntityTownHall.removeCitizen(citizen);//TODO move to citizen onDeath
+                        }
+                    }
+                }
+                PlayerProperties.get(player).removeTownhall();
+            }
+            return super.removedByPlayer(world, player, x, y, z);
+        }
+        return false;
+    }
+
+    public boolean canPlayerDestroy(World world, int x, int y, int z, Entity entity)
+    {
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        EntityPlayer entityPlayer = (EntityPlayer) entity;
+        if(tileEntity instanceof TileEntityBuildable)
+        {
+            return ((TileEntityBuildable) tileEntity).isPlayerOwner(entityPlayer);
+        }
+        return false;
     }
 }
