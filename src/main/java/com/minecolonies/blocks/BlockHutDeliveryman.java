@@ -1,11 +1,11 @@
 package com.minecolonies.blocks;
 
-        import com.minecolonies.MineColonies;
-        import com.minecolonies.lib.EnumGUI;
-        import com.minecolonies.tileentities.TileEntityHutWarehouse;
-        import net.minecraft.entity.player.EntityPlayer;
-        import net.minecraft.tileentity.TileEntity;
-        import net.minecraft.world.World;
+import com.minecolonies.MineColonies;
+import com.minecolonies.lib.EnumGUI;
+import com.minecolonies.tileentities.TileEntityHutWarehouse;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class BlockHutDeliveryman extends BlockHut
 {
