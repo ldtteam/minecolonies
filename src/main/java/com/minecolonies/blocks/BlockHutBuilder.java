@@ -31,7 +31,13 @@ public class BlockHutBuilder extends BlockHut
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
     {
-        entityPlayer.openGui(MineColonies.instance, EnumGUI.BUILDER.getID(), world, x, y, z);
-        return true;
+
+        TileEntityHutBuilder tileEntityHutBuilder = (TileEntityHutBuilder) world.getTileEntity(x, y, z);
+        if(tileEntityHutBuilder != null && tileEntityHutBuilder.isPlayerOwner(entityPlayer))
+        {
+            entityPlayer.openGui(MineColonies.instance, EnumGUI.BUILDER.getID(), world, x, y, z);
+            return true;
+        }
+        return false;
     }
 }

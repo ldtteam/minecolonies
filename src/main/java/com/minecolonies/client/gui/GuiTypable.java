@@ -11,8 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
-import java.util.UUID;
-
 public class GuiTypable extends GuiScreen
 {
     private TileEntityTownHall tileEntityTownHall;
@@ -80,16 +78,12 @@ public class GuiTypable extends GuiScreen
         {
             if(guiButton.id == 0)
             {
-                for(UUID owners : tileEntityTownHall.getOwners())
-                    if(owners.equals(player.getUniqueID()))
-                    {
-                        if(!newCityName.equals(""))
-                        {
-                            tileEntityTownHall.setCityName(newCityName);
-                            tileEntityTownHall.sendPacket();
-                        }
-                        player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
-                    }
+                if(!newCityName.isEmpty())
+                {
+                    tileEntityTownHall.setCityName(newCityName);
+                    tileEntityTownHall.sendPacket();
+                }
+                player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
             }
         }
     }
