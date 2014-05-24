@@ -6,8 +6,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
 
-import java.util.UUID;
-
 public abstract class TileEntityBuildable extends TileEntityChest
 {
     private int                buildingLevel;
@@ -60,7 +58,7 @@ public abstract class TileEntityBuildable extends TileEntityChest
         this.buildingLevel = buildingLevel;
     }
 
-    public boolean isHasWorker()
+    public boolean hasWorker()
     {
         return hasWorker;
     }
@@ -93,18 +91,12 @@ public abstract class TileEntityBuildable extends TileEntityChest
     public void requestBuilding(EntityPlayer player)
     {
         if(!(buildingLevel >= 3)) //TODO
-            for(UUID owners : getTownHall().getOwners())
-                if(owners == player.getUniqueID())
-                    getTownHall().addBuildingForUpgrade(xCoord, yCoord, zCoord);
+            getTownHall().addHutForUpgrade(xCoord, yCoord, zCoord);
     }
 
-    /**
-     * Returns the required sex of a citizen before it can be added to a hut.
-     * 0 = man, 1 = female
-     * @return sex
-     */
-    public int getRequiredSex()
+    public boolean isPlayerOwner(EntityPlayer player)
     {
-        return 0;
+        if(this.getTownHall().getOwners().isEmpty() || this.getTownHall().getOwners().contains(player.getUniqueID())) return true;
+        return false;
     }
 }

@@ -7,7 +7,7 @@ public class Configurations
      */
     public static final int     DEFAULT_WORKINGRANGETOWNHALL     = 100;
     public static final int     DEFAULT_TOWNHALLPADDING          = 20;
-    public static final boolean DEFAULT_ALLOWINFINTESUPPLYCHESTS = true;
+    public static final boolean DEFAULT_ALLOWINFINTESUPPLYCHESTS = false;
     public static final int     DEFAULT_CITIZENRESPAWNINTERVAL   = 30;
 
     /*

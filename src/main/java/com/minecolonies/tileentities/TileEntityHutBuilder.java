@@ -24,12 +24,19 @@ public class TileEntityHutBuilder extends TileEntityHutWorker
             int[] coord = {0,0,0};
             for(int[] coords : getTownHall().getBuilderRequired()) //TODO Not sure if the first index can be empty. This is for safety.
             {
+                if(coords == null)
+                {
+                    continue;
+                }
                 coord = coords;
                 break;
             }
             TileEntityBuildable tileEntityBuildable = (TileEntityHutBuilder) worldObj.getTileEntity(coord[0], coord[1], coord[2]);
-            startBuilding(tileEntityBuildable);
-            checkInterfall = Constants.BUILDERCHECKINTERFALL * 20;
+            if(tileEntityBuildable != null)
+            {
+                startBuilding(tileEntityBuildable);
+                checkInterfall = Constants.BUILDERCHECKINTERFALL * 20;
+            }//TODO when do we remove the coord from the getBuilderRequired?
         }
     }
 
