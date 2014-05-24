@@ -169,14 +169,14 @@ public class TileEntityTownHall extends TileEntityHut
         for(int i = 0; i < nbtTagBuildingsList.tagCount(); i++)
         {
             NBTTagCompound nbtTagBuildingCompound = nbtTagBuildingsList.getCompoundTagAt(i);
-            int[] building = nbtTagBuildingCompound.getIntArray("hut");
-            huts.add(i, building);
+            int[] hut = nbtTagBuildingCompound.getIntArray("hut");
+            huts.add(i, hut);
         }
         for(int i = 0; i < nbtTagBuildersNeededList.tagCount(); i++)
         {
             NBTTagCompound nbtTagBuildingsListCompoundTag = nbtTagBuildingsList.getCompoundTagAt(i);
-            int[] building = nbtTagBuildingsListCompoundTag.getIntArray("builderRequired");
-            huts.add(i, building);
+            int[] hut = nbtTagBuildingsListCompoundTag.getIntArray("builderRequired");
+            builderRequired.add(i, hut);
         }
     }
 
