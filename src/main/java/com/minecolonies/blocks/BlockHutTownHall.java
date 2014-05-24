@@ -43,27 +43,24 @@ public class BlockHutTownHall extends BlockHut
 
             if(!world.provider.isSurfaceWorld())
             {
-                world.setBlockToAir(x, y, z);
+                cancelBlockPlacing(world, entityPlayer, x, y, z);
                 LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "tile.blockHutTownhall.messageInvalidWorld");
-                removedByPlayer(world, entityPlayer, x, y, z);
                 return;
             }
 
             TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z);
             if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < Math.pow(2 * workingRange + Configurations.townhallPadding, 2))
             {
-                world.setBlockToAir(x, y, z);
+                cancelBlockPlacing(world, entityPlayer, x, y, z);
                 LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "tile.blockHutTownhall.messageTooClose");
-                removedByPlayer(world, entityPlayer, x, y, z);
                 return;
             }
 
             PlayerProperties playerProperties = PlayerProperties.get(entityPlayer);
             if(playerProperties.hasPlacedTownHall())
             {
-                world.setBlockToAir(x, y, z);
+                cancelBlockPlacing(world, entityPlayer, x, y, z);
                 LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "tile.blockHutTownhall.messagePlacedAlready");
-                removedByPlayer(world, entityPlayer, x, y, z);
                 return;
             }
 
@@ -73,6 +70,13 @@ public class BlockHutTownHall extends BlockHut
             tileEntityTownHall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", entityPlayer.getDisplayName()));
             playerProperties.placeTownhall(x, y, z);
         }
+    }
+
+    private void cancelBlockPlacing(World world, EntityPlayer player, int x, int y, int z)
+    {
+        world.setBlockToAir(x, y, z);
+        removedByPlayer(world, player, x, y, z);
+        player.inventory.addItemStackToInventory(new ItemStack(ModBlocks.blockHutTownhall));
     }
 
     @Override
