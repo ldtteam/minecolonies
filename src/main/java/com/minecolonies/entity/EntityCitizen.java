@@ -1,5 +1,6 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityHutWorker;
@@ -7,8 +8,13 @@ import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.*;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,11 +48,33 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.level = worldObj.rand.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
         currentAction = EnumCitizenAction.IDLE;
 
+        this.getNavigator().setAvoidsWater(true);
+        this.getNavigator().setEnterDoors(true);
+        initTasks();
+    }
+
+    protected void initTasks()
+    {
+        this.tasks.addTask(0, new EntityAISwimming(this));
+        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 0.6D));
+        this.tasks.addTask(2, new EntityAIGoHome(this));
+        //this.tasks.addTask(2, new EntityAISleep(this));
+        this.tasks.addTask(3, new EntityAIOpenDoor(this, true));
+        this.tasks.addTask(4, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+        this.tasks.addTask(5, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
+        this.tasks.addTask(6, new EntityAIWander(this, 0.6D));
+        this.tasks.addTask(7, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
+    }
 
     protected String initJob()
     {
         return "Citizen";
     }
+
+    @Override
+    public boolean isAIEnabled()
+    {
+        return true;
     }
 
     @Override
