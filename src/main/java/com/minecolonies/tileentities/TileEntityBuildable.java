@@ -5,6 +5,7 @@ import com.minecolonies.network.packets.TileEntityPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.Vec3;
 
 public abstract class TileEntityBuildable extends TileEntityChest
 {
@@ -98,5 +99,10 @@ public abstract class TileEntityBuildable extends TileEntityChest
     {
         if(this.getTownHall().getOwners().isEmpty() || this.getTownHall().getOwners().contains(player.getUniqueID())) return true;
         return false;
+    }
+
+    public Vec3 getPosition()
+    {
+        return Vec3.createVectorHelper(xCoord, yCoord, zCoord);
     }
 }

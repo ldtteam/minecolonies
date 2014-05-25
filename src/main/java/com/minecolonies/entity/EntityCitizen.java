@@ -29,23 +29,35 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private int                townPosX, townPosY, townPosZ;
     private TileEntityHutWorker tileEntityWorkHut;
     private int                 workPosX, workPosY, workPosZ;
-    public TileEntityHut tileEntityHomeHut;
+    private TileEntityHut tileEntityHomeHut;//TODO TileEntityHutCitizen
     int homePosX, homePosY, homePosZ;
 
     public EntityCitizen(World world)
     {
         super(world);
-        setSize(.6f, 1.8f);
-        this.level = worldObj.rand.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
+        setSize(0.6F, 1.8F);
         setTexture();
+        this.job = initJob();
+
+        this.level = worldObj.rand.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
         currentAction = EnumCitizenAction.IDLE;
-        job = "Citizen";
+
+
+    protected String initJob()
+    {
+        return "Citizen";
+    }
     }
 
     @Override
     public void onLivingUpdate()
     {
         super.onLivingUpdate();
+        updateTileEntities();
+    }
+
+    private void updateTileEntities()
+    {
         if(tileEntityTownHall == null)
         {
             tileEntityTownHall = (TileEntityTownHall) worldObj.getTileEntity(townPosX, townPosY, townPosZ);
@@ -56,7 +68,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         if(tileEntityHomeHut == null)
         {
-            tileEntityHomeHut = (TileEntityHut) worldObj.getTileEntity(homePosX, homePosY, homePosZ);
+            tileEntityHomeHut = (TileEntityHut) worldObj.getTileEntity(homePosX, homePosY, homePosZ);//TODO TileEntityHutCitizen
         }
     }
 
@@ -106,6 +118,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public TileEntityTownHall getTownHall()
     {
         return tileEntityTownHall;
+    }
+
+    public TileEntityHut getHomeHut()//TODO TileEntityHutCitizen
+    {
+        return tileEntityHomeHut;
+    }
+
+    public TileEntityHutWorker getWorkHut()
+    {
+        return tileEntityWorkHut;
     }
 
     public void setTownHall(TileEntityTownHall tileEntityTownHall)

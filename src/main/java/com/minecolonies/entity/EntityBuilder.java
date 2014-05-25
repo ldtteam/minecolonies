@@ -15,6 +15,12 @@ public class EntityBuilder extends EntityCitizen
 
     @Override
     @Override
+    protected String initJob()
+    {
+        return "Builder";
+    }
+
+    @Override
     public void setTexture()
     {
         texture = new ResourceLocation(Constants.MODID + ":textures/entity/EntityBuilder.png");
