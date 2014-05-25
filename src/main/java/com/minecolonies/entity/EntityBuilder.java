@@ -14,8 +14,9 @@ public class EntityBuilder extends EntityCitizen
     }
 
     @Override
+    @Override
     public void setTexture()
     {
-        texture = new ResourceLocation(Constants.MODID + ":/textures/entity/EntityBuilder.png");
+        texture = new ResourceLocation(Constants.MODID + ":textures/entity/EntityBuilder.png");
     }
 }
