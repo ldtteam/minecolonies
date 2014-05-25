@@ -312,7 +312,7 @@ public class SchematicWorld extends World
 
     public Block getBlockRaw(int x, int y, int z)
     {
-        return GameData.getBlockRegistry().getRaw(getBlockIdRaw(x, y, z));
+        return GameData.getBlockRegistry().getObjectById(getBlockIdRaw(x, y, z));
     }
 
     @Override
@@ -324,9 +324,8 @@ public class SchematicWorld extends World
     @Override
     public TileEntity getTileEntity(int x, int y, int z)
     {
-        for(int i = 0; i < this.tileEntities.size(); i++)
+        for(TileEntity tileEntity : this.tileEntities)
         {
-            TileEntity tileEntity = this.tileEntities.get(i);
             if(tileEntity.xCoord == x && tileEntity.yCoord == y && tileEntity.zCoord == z)
             {
                 return tileEntity;
@@ -526,14 +525,13 @@ public class SchematicWorld extends World
 
     public void refreshChests()
     {
-        TileEntity tileEntity;
-        for(int i = 0; i < this.tileEntities.size(); i++)
+        for(TileEntity tileEntity : this.tileEntities)
         {
-            tileEntity = this.tileEntities.get(i);
-
             if(tileEntity instanceof TileEntityChest)
             {
-                ((TileEntityChest) tileEntity).checkForAdjacentChests();
+                TileEntityChest tileEntityChest = (TileEntityChest) tileEntity;
+                tileEntityChest.adjacentChestChecked = false;
+                tileEntityChest.checkForAdjacentChests();
             }
         }
     }
@@ -605,11 +603,9 @@ public class SchematicWorld extends World
         this.blocks = localBlocks;
         this.metadata = localMetadata;
 
-        TileEntity tileEntity;
         int coord;
-        for(int i = 0; i < this.tileEntities.size(); i++)
+        for(TileEntity tileEntity : this.tileEntities)
         {
-            tileEntity = this.tileEntities.get(i);
             coord = tileEntity.zCoord;
             tileEntity.zCoord = tileEntity.xCoord;
             tileEntity.xCoord = this.length - 1 - coord;
