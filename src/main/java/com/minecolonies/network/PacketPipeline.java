@@ -2,6 +2,7 @@ package com.minecolonies.network;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.network.packets.AbstractPacket;
+import com.minecolonies.network.packets.BuildRequestPacket;
 import com.minecolonies.network.packets.TileEntityPacket;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
@@ -32,6 +33,12 @@ import java.util.*;
 @ChannelHandler.Sharable
 public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, AbstractPacket>
 {
+
+    private void registerPackets()
+    {
+        registerPacket(TileEntityPacket.class);
+        registerPacket(BuildRequestPacket.class);
+    }
 
     private EnumMap<Side, FMLEmbeddedChannel> channels;
     private LinkedList<Class<? extends AbstractPacket>> packets           = new LinkedList<Class<? extends AbstractPacket>>();
@@ -125,11 +132,6 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
     {
         this.channels = NetworkRegistry.INSTANCE.newChannel("minecolonies", this);
         registerPackets();
-    }
-
-    private void registerPackets()
-    {
-        registerPacket(TileEntityPacket.class);
     }
 
     // Method to call from FMLPostInitializationEvent

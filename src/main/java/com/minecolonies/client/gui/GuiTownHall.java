@@ -2,6 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.EnumGUI;
+import com.minecolonies.network.packets.BuildRequestPacket;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
@@ -71,6 +72,8 @@ public class GuiTownHall extends GuiBase
         switch(guiButton.id)
         {
             case idBuildTownhall:
+                BuildRequestPacket packet = new BuildRequestPacket(tileEntityTownHall.xCoord, tileEntityTownHall.yCoord, tileEntityTownHall.zCoord);
+                MineColonies.packetPipeline.sendToServer(packet);
                 break;
             case idRepairTownhall:
                 break;
