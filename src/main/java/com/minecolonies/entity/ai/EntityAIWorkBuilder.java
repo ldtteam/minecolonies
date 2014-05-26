@@ -50,14 +50,21 @@ public class EntityAIWorkBuilder extends EntityAIBase
             int[] coords = entry.getKey();
             builder.getSchematic().setPosition(Vec3.createVectorHelper(coords[0], coords[1], coords[2]));
         }
+        Vec3 pos = builder.getSchematic().getPosition();
+        builder.getNavigator().tryMoveToXYZ(pos.xCoord, pos.yCoord, pos.zCoord, 1.0F);
     }
 
     @Override
     public void updateTask()
     {
+        if(!builder.getNavigator().noPath()) return;//traveling
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
-            if(!builder.getSchematic().findNextBlockIncludingAir()) completeBuild();
+            if(!builder.getSchematic().findNextBlockIncludingAir())
+            {
+                completeBuild();
+                return;
+            }
 
             Block block = builder.getSchematic().getBlock();
             if(block == null)
@@ -67,6 +74,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
             }
             int metadata = builder.getSchematic().getMetadata();
             int[] coords = Utils.vecToInt(builder.getSchematic().getBlockPosition());
+            System.out.println("x: " + coords[0] + " y: " + coords[1] + " z: " + coords[2]);
 
             Block worldBlock = world.getBlock(coords[0], coords[1], coords[2]);
 
@@ -76,13 +84,14 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 int slotID = InventoryHelper.doesInventoryContainItemStack(builder.getInventory(), new ItemStack(block, 1, metadata));
                 if(slotID == -1) return;//TODO getMaterials
                 builder.getInventory().decrStackSize(slotID, 1);
-            }
 
-            ItemStack stack = worldBlock.getPickBlock(null, world, coords[0], coords[1], coords[2]);
-            InventoryHelper.setStackInInventory(builder.getInventory(), stack);
+                ItemStack stack = worldBlock.getPickBlock(null, world, coords[0], coords[1], coords[2]);
+                InventoryHelper.setStackInInventory(builder.getInventory(), stack);
+            }
 
             if(block == Blocks.air)
             {
+                builder.swingItem();
                 world.setBlockToAir(coords[0], coords[1], coords[2]);
             }
             else
@@ -91,6 +100,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 {
                     //TODO support block or add delay system
                 }
+                builder.swingItem();
                 world.setBlock(coords[0], coords[1], coords[2], block, metadata, 0x02);
             }
         }
@@ -99,11 +109,19 @@ public class EntityAIWorkBuilder extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        return this.shouldExecute() && builder.hasMaterials();
+        return this.shouldExecute() && (builder.hasMaterials() || Configurations.builderInfiniteResources);//TODO finish hasMaterials, look above for ideas
     }
 
     public void completeBuild()
     {
-        builder.getTownHall().getBuilderRequired().remove(Utils.vecToInt(builder.getSchematic().getPosition()));
+        int[] toMatch = Utils.vecToInt(builder.getSchematic().getPosition());
+        for(int[] key : builder.getTownHall().getBuilderRequired().keySet())
+        {
+            if(key[0] == toMatch[0] && key[1] == toMatch[1] && key[2] == toMatch[2])
+            {
+                builder.getTownHall().removeHutForUpgrade(key);
+                builder.setSchematic(null);
+            }
+        }
     }
 }
