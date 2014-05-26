@@ -15,6 +15,8 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class TileEntityTownHall extends TileEntityHut
@@ -27,16 +29,15 @@ public class TileEntityTownHall extends TileEntityHut
     private int              maxCitizens;
     private ArrayList<int[]> huts; //Stores XYZ's
 
-    private ArrayList<int[]> builderRequired; //Stores XYZ's
+    private HashMap<int[], String> builderRequired; //Stores XYZ's
 
     public TileEntityTownHall()
     {
-        setHutName("Townhall");
         owners = new ArrayList<UUID>();
         citizens = new ArrayList<UUID>();
         maxCitizens = com.minecolonies.lib.Constants.DEFAULTMAXCITIZENS;
         huts = new ArrayList<int[]>();
-        builderRequired = new ArrayList<int[]>();
+        builderRequired = new HashMap<int[], String>();
     }
 
     @Override
@@ -134,13 +135,14 @@ public class TileEntityTownHall extends TileEntityHut
         if(!builderRequired.isEmpty())
         {
             NBTTagList nbtTagBuildingsList = new NBTTagList();
-            for(int[] coords : builderRequired)
+            for(Map.Entry<int[], String> entry : builderRequired.entrySet())
             {
                 NBTTagCompound compound = new NBTTagCompound();
-                compound.setIntArray("builderRequired", coords);
+                compound.setIntArray("coords", entry.getKey());
+                compound.setString("name", entry.getValue());
                 nbtTagBuildingsList.appendTag(compound);
             }
-            nbtTagCompound.setTag("builderRequireds", nbtTagBuildingsList);
+            nbtTagCompound.setTag("builderRequired", nbtTagBuildingsList);
         }
         nbtTagCompound.setTag("citizens", nbtTagCitizenList);
         nbtTagCompound.setTag("owners", nbtTagOwnersList);
@@ -155,11 +157,11 @@ public class TileEntityTownHall extends TileEntityHut
         NBTTagList nbtTagOwnersList = nbtTagCompound.getTagList("owners", Constants.NBT.TAG_COMPOUND);
         NBTTagList nbtTagCitizenList = nbtTagCompound.getTagList("citizens", Constants.NBT.TAG_COMPOUND);
         NBTTagList nbtTagBuildingsList = nbtTagCompound.getTagList("huts", Constants.NBT.TAG_INT_ARRAY);
-        NBTTagList nbtTagBuildersNeededList = nbtTagCompound.getTagList("builderRequireds", Constants.NBT.TAG_COMPOUND);
+        NBTTagList nbtTagBuilderRequiredList = nbtTagCompound.getTagList("builderRequired", Constants.NBT.TAG_COMPOUND);
         this.owners = new ArrayList<UUID>();
         this.citizens = new ArrayList<UUID>();
         this.huts = new ArrayList<int[]>();
-        this.builderRequired = new ArrayList<int[]>();
+        this.builderRequired = new HashMap<int[], String>();
         for(int i = 0; i < nbtTagOwnersList.tagCount(); i++)
         {
             NBTTagCompound nbtTagOwnersCompound = nbtTagOwnersList.getCompoundTagAt(i);
@@ -178,11 +180,12 @@ public class TileEntityTownHall extends TileEntityHut
             int[] hut = nbtTagBuildingCompound.getIntArray("hut");
             huts.add(i, hut);
         }
-        for(int i = 0; i < nbtTagBuildersNeededList.tagCount(); i++)
+        for(int i = 0; i < nbtTagBuilderRequiredList.tagCount(); i++)
         {
-            NBTTagCompound nbtTagBuildingsListCompoundTag = nbtTagBuildingsList.getCompoundTagAt(i);
-            int[] hut = nbtTagBuildingsListCompoundTag.getIntArray("builderRequired");
-            builderRequired.add(i, hut);
+            NBTTagCompound nbtTagBuilderRequiredCompound = nbtTagBuilderRequiredList.getCompoundTagAt(i);
+            int[] coords = nbtTagBuilderRequiredCompound.getIntArray("coords");
+            String name = nbtTagBuilderRequiredCompound.getString("name");
+            builderRequired.put(coords, name);
         }
     }
 
@@ -272,12 +275,12 @@ public class TileEntityTownHall extends TileEntityHut
         huts.add(new int[]{x, y, z});
     }
 
-    public void addHutForUpgrade(int x, int y, int z)
+    public void addHutForUpgrade(String name, int x, int y, int z)
     {
-        builderRequired.add(new int[] {x, y, z});
+        builderRequired.put(new int[] {x, y, z}, name);
     }
 
-    public ArrayList<int[]> getBuilderRequired()
+    public HashMap<int[], String> getBuilderRequired()
     {
         return builderRequired;
     }

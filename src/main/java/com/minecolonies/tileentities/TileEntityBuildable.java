@@ -3,6 +3,7 @@ package com.minecolonies.tileentities;
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.IColony;
 import com.minecolonies.network.packets.TileEntityPacket;
+import com.minecolonies.util.Schematic;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
@@ -80,7 +81,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     public void requestBuilding(EntityPlayer player)
     {
         if(!(buildingLevel >= 3)) //TODO
-            getTownHall().addHutForUpgrade(xCoord, yCoord, zCoord);
+            getTownHall().addHutForUpgrade(Schematic.getName(this, buildingLevel), xCoord, yCoord, zCoord);
     }
 
     public boolean isPlayerOwner(EntityPlayer player)
