@@ -5,6 +5,11 @@ public class TileEntityHutMiner extends TileEntityHutWorker
     public TileEntityHutMiner()
     {
         setMaxInhabitants(1);
-        setHutName("hutMiner");
+    }
+
+    @Override
+    public String getName()
+    {
+        return "hutMiner";
     }
 }

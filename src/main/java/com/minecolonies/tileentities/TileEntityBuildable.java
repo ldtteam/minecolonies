@@ -1,18 +1,18 @@
 package com.minecolonies.tileentities;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.lib.IColony;
 import com.minecolonies.network.packets.TileEntityPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Vec3;
 
-public abstract class TileEntityBuildable extends TileEntityChest
+public abstract class TileEntityBuildable extends TileEntityChest implements IColony
 {
     private int                buildingLevel;
     private boolean            hasWorker;
     private TileEntityTownHall townHall;
-    private String             hutName;
 
     public TileEntityBuildable()
     {
@@ -26,7 +26,6 @@ public abstract class TileEntityBuildable extends TileEntityChest
         NBTTagCompound nbtTagCompound = (NBTTagCompound) compound.getTag("nbtTagCompound");
         this.buildingLevel = nbtTagCompound.getInteger("buildingLvl");
         this.hasWorker = nbtTagCompound.getBoolean("hasWorker");
-        this.hutName = nbtTagCompound.getString("hutName");
     }
 
     @Override
@@ -36,7 +35,6 @@ public abstract class TileEntityBuildable extends TileEntityChest
         NBTTagCompound nbtTagCompound = new NBTTagCompound();
         nbtTagCompound.setInteger("buildingLvl", buildingLevel);
         nbtTagCompound.setBoolean("hasWorker", hasWorker);
-        nbtTagCompound.setString("hutName", hutName);
         compound.setTag("nbtTagCompound", nbtTagCompound);
     }
 
@@ -67,16 +65,6 @@ public abstract class TileEntityBuildable extends TileEntityChest
     public void setHasWorker(boolean hasWorker)
     {
         this.hasWorker = hasWorker;
-    }
-
-    public String getHutName()
-    {
-        return hutName;
-    }
-
-    public void setHutName(String hutName)
-    {
-        this.hutName = hutName;
     }
 
     public TileEntityTownHall getTownHall()

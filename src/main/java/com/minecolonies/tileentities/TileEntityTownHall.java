@@ -39,6 +39,12 @@ public class TileEntityTownHall extends TileEntityHut
         builderRequired = new ArrayList<int[]>();
     }
 
+    @Override
+    public String getName()
+    {
+        return "Townhall";
+    }
+
     public void setCityName(String cityName)
     {
         this.cityName = cityName;
