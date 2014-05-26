@@ -33,6 +33,7 @@ public class Schematic
     private World          world;
     private SchematicWorld schematic;
     private Vec3           position;
+    private String         name;
 
     /**
      * North-West corner
@@ -40,15 +41,16 @@ public class Schematic
     private int x = -1, y = -1, z = -1;
     //public final  List<RendererSchematicChunk> sortedRendererSchematicChunk = new ArrayList<RendererSchematicChunk>();
 
-    private Schematic(World worldObj, SchematicWorld schematicWorld)
+    private Schematic(World worldObj, SchematicWorld schematicWorld, String name)
     {
         world = worldObj;
         schematic = schematicWorld;
+        this.name = name;
     }
 
     public static Schematic loadSchematic(World worldObj, IColony hut, int level)
     {
-        return loadSchematic(worldObj, getResourceLocation(getName(hut, level)));
+        return loadSchematic(worldObj, getNameFromHut(hut, level));
     }
 
     public static Schematic loadSchematic(World worldObj, String name)
@@ -58,7 +60,7 @@ public class Schematic
 
     private static Schematic loadSchematic(World worldObj, ResourceLocation res)
     {
-        return new Schematic(worldObj, SchematicFormat.readFromStream(getStream(res)));
+        return new Schematic(worldObj, SchematicFormat.readFromStream(getStream(res)), getNameFromResourceLocation(res));
     }
 
     public void placeSchematic(int x, int y, int z)
@@ -256,6 +258,12 @@ public class Schematic
         return new ResourceLocation("minecolonies:schematics/" + name + ".schematic");
     }
 
+    private static String getNameFromResourceLocation(ResourceLocation res)
+    {
+        String path = res.getResourcePath();
+        return path.substring(path.indexOf('/') + 1, path.lastIndexOf('.'));
+    }
+
     private static InputStream getStream(ResourceLocation res)
     {
         try
@@ -277,7 +285,7 @@ public class Schematic
         return null;
     }
 
-    public static String getName(IColony hut, int level)
+    public static String getNameFromHut(IColony hut, int level)
     {
         return hut.getName() + level;
     }
@@ -304,14 +312,31 @@ public class Schematic
         return world.getWorldVec3Pool().getVecFromPool(baseX + x, baseY + y, baseZ + z);
     }
 
+    public Vec3 getLocalPosition()
+    {
+        return Vec3.createVectorHelper(x, y, z);
+    }
+
     public Vec3 getPosition()
     {
         return position;
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
     public void setPosition(Vec3 position)
     {
         this.position = position;
+    }
+
+    public void setLocalPosition(Vec3 localPosition)
+    {
+        x = (int) localPosition.xCoord;
+        y = (int) localPosition.yCoord;
+        z = (int) localPosition.zCoord;
     }
 
     public List<ItemStack> getMaterials()

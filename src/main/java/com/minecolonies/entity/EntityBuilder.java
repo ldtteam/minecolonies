@@ -8,7 +8,9 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class EntityBuilder extends EntityCitizen
@@ -47,6 +49,35 @@ public class EntityBuilder extends EntityCitizen
     public void setTexture()
     {
         texture = new ResourceLocation(Constants.MODID + ":textures/entity/EntityBuilder.png");
+    }
+
+    @Override
+    public void writeEntityToNBT(NBTTagCompound compound)
+    {
+        super.writeEntityToNBT(compound);
+        if(hasSchematic()){
+            NBTTagCompound schematicTag = new NBTTagCompound();
+            schematicTag.setString("name", schematic.getName());
+            writeVecToNBT(schematicTag, "position", schematic.getPosition());
+            writeVecToNBT(schematicTag, "progress", schematic.getLocalPosition());
+            compound.setTag("schematic", schematicTag);
+        }
+    }
+
+    @Override
+    public void readEntityFromNBT(NBTTagCompound compound)
+    {
+        super.readEntityFromNBT(compound);
+        if(compound.hasKey("schematic"))
+        {
+            NBTTagCompound schematicTag = compound.getCompoundTag("schematic");
+            String name = schematicTag.getString("name");
+            Vec3 pos = readVecFromNBT(schematicTag, "position");
+            Vec3 progress = readVecFromNBT(schematicTag, "progress");
+            schematic = Schematic.loadSchematic(worldObj, name);
+            schematic.setPosition(pos);
+            schematic.setLocalPosition(progress);
+        }
     }
 
     public boolean hasSchematic()

@@ -23,6 +23,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -294,5 +295,23 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         tileEntityHutWorker.bindWorker(worker);
         worldObj.spawnEntityInWorld(worker);
         //TODO more to come
+    }
+
+    public void writeVecToNBT(NBTTagCompound compound, String name, Vec3 vec)
+    {
+        NBTTagCompound vecCompound = new NBTTagCompound();
+        vecCompound.setInteger("x", (int) vec.xCoord);
+        vecCompound.setInteger("y", (int) vec.yCoord);
+        vecCompound.setInteger("z", (int) vec.zCoord);
+        compound.setTag("name", vecCompound);
+    }
+
+    public Vec3 readVecFromNBT(NBTTagCompound compound, String name)
+    {
+        NBTTagCompound vecCompound = compound.getCompoundTag(name);
+        int x = vecCompound.getInteger("x");
+        int y = vecCompound.getInteger("y");
+        int z = vecCompound.getInteger("z");
+        return Vec3.createVectorHelper(x, y, z);
     }
 }
