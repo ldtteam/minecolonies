@@ -17,10 +17,7 @@ public abstract class TileEntityHutWorker extends TileEntityHut
         return jobName;
     }
 
-    public EntityCitizen createWorker()
-    {
-        return null;
-    }
+    public abstract EntityCitizen createWorker();
 
     public void bindWorker(EntityCitizen worker)
     {
