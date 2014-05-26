@@ -302,6 +302,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         //TODO more to come
     }
 
+    public void removeFromHut(TileEntityHutWorker tileEntityHutWorker)
+    {
+        setJob(initJob(), null);
+        NBTTagCompound nbt = new NBTTagCompound();
+        this.writeToNBT(nbt);
+        getTownHall().removeCitizen(this);
+        tileEntityHutWorker.unbindWorker(this);
+        this.setDead();
+
+        EntityCitizen citizen = new EntityCitizen(worldObj);
+        citizen.readFromNBT(nbt);
+        getTownHall().addCitizenToTownhall(citizen);
+        worldObj.spawnEntityInWorld(citizen);
+    }
+
     public void writeVecToNBT(NBTTagCompound compound, String name, Vec3 vec)
     {
         NBTTagCompound vecCompound = new NBTTagCompound();

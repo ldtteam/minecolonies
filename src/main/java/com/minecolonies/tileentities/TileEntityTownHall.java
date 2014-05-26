@@ -14,10 +14,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class TileEntityTownHall extends TileEntityHut
 {
@@ -273,6 +270,18 @@ public class TileEntityTownHall extends TileEntityHut
     public void addHut(int x, int y, int z)
     {
         huts.add(new int[]{x, y, z});
+    }
+
+    public void removeHut(int x, int y, int z)
+    {
+        for (int[] coords : huts)
+        {
+            if (Arrays.equals(new int[]{x, y, z}, coords))
+            {
+                huts.remove(coords);
+                return;
+            }
+        }
     }
 
     public void addHutForUpgrade(String name, int x, int y, int z)
