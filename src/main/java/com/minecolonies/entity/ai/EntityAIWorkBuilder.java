@@ -37,7 +37,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return !world.isRaining() && world.isDaytime() && (builder.hasSchematic() || (builder.getTownHall() != null && !builder.getTownHall().getBuilderRequired().isEmpty()));
+        return builder.isWorkTime() && (builder.hasSchematic() || builder.isBuilderNeeded());
     }
 
     @Override
@@ -45,10 +45,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
     {
         if(!builder.hasSchematic())
         {
-            Map.Entry<int[], String> entry = builder.getTownHall().getBuilderRequired().entrySet().iterator().next();
-            builder.setSchematic(Schematic.loadSchematic(world, entry.getValue()));
-            int[] coords = entry.getKey();
-            builder.getSchematic().setPosition(Vec3.createVectorHelper(coords[0], coords[1], coords[2]));
+            loadSchematic();
         }
         Vec3 pos = builder.getSchematic().getPosition();
         builder.getNavigator().tryMoveToXYZ(pos.xCoord, pos.yCoord, pos.zCoord, 1.0F);
@@ -58,41 +55,41 @@ public class EntityAIWorkBuilder extends EntityAIBase
     public void updateTask()
     {
         if(!builder.getNavigator().noPath()) return;//traveling
+
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
-            if(!builder.getSchematic().findNextBlockIncludingAir())
+            if(!builder.getSchematic().findNextBlockIncludingAir())//method returns false if there is no next block (schematic finished)
             {
                 completeBuild();
                 return;
             }
 
             Block block = builder.getSchematic().getBlock();
-            if(block == null)
+            if(block == null)//should never happen
             {
                 MineColonies.logger.error("Schematic has null block");
                 return;
             }
             int metadata = builder.getSchematic().getMetadata();
-            int[] coords = Utils.vecToInt(builder.getSchematic().getBlockPosition());
-            System.out.println("x: " + coords[0] + " y: " + coords[1] + " z: " + coords[2]);
+            int[] pos = Utils.vecToInt(builder.getSchematic().getBlockPosition());
 
-            Block worldBlock = world.getBlock(coords[0], coords[1], coords[2]);
+            Block worldBlock = world.getBlock(pos[0], pos[1], pos[2]);
+            if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock) return;
 
-            if(worldBlock instanceof BlockHut) return;
             if(!Configurations.builderInfiniteResources)
             {
                 int slotID = InventoryHelper.doesInventoryContainItemStack(builder.getInventory(), new ItemStack(block, 1, metadata));
                 if(slotID == -1) return;//TODO getMaterials
                 builder.getInventory().decrStackSize(slotID, 1);
 
-                ItemStack stack = worldBlock.getPickBlock(null, world, coords[0], coords[1], coords[2]);
+                ItemStack stack = worldBlock.getPickBlock(null, world, pos[0], pos[1], pos[2]);
                 InventoryHelper.setStackInInventory(builder.getInventory(), stack);
             }
 
             if(block == Blocks.air)
             {
-                builder.swingItem();
-                world.setBlockToAir(coords[0], coords[1], coords[2]);
+                builder.swingItem();//TODO doesn't work, may need item in hand
+                world.setBlockToAir(pos[0], pos[1], pos[2]);
             }
             else
             {
@@ -101,7 +98,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                     //TODO support block or add delay system
                 }
                 builder.swingItem();
-                world.setBlock(coords[0], coords[1], coords[2], block, metadata, 0x02);
+                world.setBlock(pos[0], pos[1], pos[2], block, metadata, 0x02);
             }
         }
     }
@@ -112,7 +109,15 @@ public class EntityAIWorkBuilder extends EntityAIBase
         return this.shouldExecute() && (builder.hasMaterials() || Configurations.builderInfiniteResources);//TODO finish hasMaterials, look above for ideas
     }
 
-    public void completeBuild()
+    private void loadSchematic()
+    {
+        Map.Entry<int[], String> entry = builder.getTownHall().getBuilderRequired().entrySet().iterator().next();
+        builder.setSchematic(Schematic.loadSchematic(world, entry.getValue()));
+        int[] pos = entry.getKey();
+        builder.getSchematic().setPosition(Vec3.createVectorHelper(pos[0], pos[1], pos[2]));
+    }
+
+    private void completeBuild()
     {
         int[] toMatch = Utils.vecToInt(builder.getSchematic().getPosition());
         for(int[] key : builder.getTownHall().getBuilderRequired().keySet())

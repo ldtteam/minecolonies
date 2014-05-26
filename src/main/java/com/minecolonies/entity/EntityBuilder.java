@@ -110,4 +110,9 @@ public class EntityBuilder extends EntityCitizen
     {
         return Constants.BUILDERWORKINTERFALL - this.level.getLevel();//TODO
     }
+
+    public boolean isBuilderNeeded()
+    {
+        return this.getTownHall() != null && !this.getTownHall().getBuilderRequired().isEmpty();
+    }
 }

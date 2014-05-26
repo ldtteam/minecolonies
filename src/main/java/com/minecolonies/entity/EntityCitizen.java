@@ -272,6 +272,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return this.ticksExisted + 7 * this.getEntityId();
     }
 
+    public boolean isWorkTime()
+    {
+        return worldObj.isDaytime() && !worldObj.isRaining();
+    }
+
     @Override
     public void onInventoryChanged(InventoryBasic inventoryBasic){}
 

@@ -29,7 +29,7 @@ public class TileEntityTownHall extends TileEntityHut
     private int              maxCitizens;
     private ArrayList<int[]> huts; //Stores XYZ's
 
-    private HashMap<int[], String> builderRequired; //Stores XYZ's
+    private HashMap<int[], String> builderRequired; //Stores XYZ's //TODO make this a Vec3
 
     public TileEntityTownHall()
     {
