@@ -12,5 +12,5 @@ public class Constants
 
     public static final int SIZENEEDEDFORSHIP     = 32;
     public static final int DEFAULTMAXCITIZENS    = 4;
-    public static final int BUILDERCHECKINTERFALL = 5;
+    public static final int BUILDERWORKINTERFALL = 5;
 }

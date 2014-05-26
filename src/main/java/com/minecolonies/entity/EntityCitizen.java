@@ -241,6 +241,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         currentAction = EnumCitizenAction.getActionById(nbtTagCompound.getInteger("currentAction"));
     }
 
+    public int getOffsetTicks()
+    {
+        return this.ticksExisted + 7 * this.getEntityId();
+    }
+
     @Override
     public void onInventoryChanged(InventoryBasic inventoryBasic){}
 

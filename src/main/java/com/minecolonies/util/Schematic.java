@@ -33,12 +33,12 @@ public class Schematic
 {
     private World          world;
     private SchematicWorld schematic;
+    private Vec3 position;
 
     /**
      * North-West corner
      */
     private int x = -1, y = -1, z = -1;
-    private ChunkCache mcWorldCache;
     //public final  List<RendererSchematicChunk> sortedRendererSchematicChunk = new ArrayList<RendererSchematicChunk>();
 
     private Schematic(World worldObj, SchematicWorld schematicWorld)
@@ -121,9 +121,14 @@ public class Schematic
         }
     }
 
-    public void findNextBlock()
+    /**
+     * Find the next non-air block to be built
+     *
+     * @return true if a new block is found and false if there is no next block.
+     */
+    public boolean findNextBlock()
     {
-        if(!this.hasSchematic()) return;
+        if(!this.hasSchematic()) return false;
 
         if(x == -1)
         {
@@ -143,12 +148,41 @@ public class Schematic
                     if(y == schematic.getHeight())
                     {
                         x = y = z = -1;
+                        return false;
                     }
                 }
             }
         }
         while(schematic.isAirBlock(x, y, z));
 
+        return true;
+    }
+
+    public boolean findNextBlockIncludingAir()
+    {
+        if(!this.hasSchematic()) return false;
+
+        if(x == -1)
+        {
+            y = z = 0;
+        }
+            x++;
+            if(x == schematic.getWidth())
+            {
+                x = 0;
+                z++;
+                if(z == schematic.getLength())
+                {
+                    z = 0;
+                    y++;
+                    if(y == schematic.getHeight())
+                    {
+                        x = y = z = -1;
+                        return false;
+                    }
+                }
+            }
+        return true;
     }
 
     public static void saveSchematic(World world, Vec3 from, Vec3 to, String file, String icon)
@@ -244,7 +278,7 @@ public class Schematic
         return null;
     }
 
-    private static String getName(IColony hut, int level)
+    public static String getName(IColony hut, int level)
     {
         return hut.getName() + level;
     }
@@ -261,9 +295,24 @@ public class Schematic
         return this.schematic.getBlockMetadata(x, y, z);
     }
 
+    public Vec3 getBlockPosition()
+    {
+        return position.addVector(x, y, z);
+    }
+
     public Vec3 getBlockPosition(int baseX, int baseY, int baseZ)
     {
         return world.getWorldVec3Pool().getVecFromPool(baseX + x, baseY + y, baseZ + z);
+    }
+
+    public Vec3 getPosition()
+    {
+        return position;
+    }
+
+    public void setPosition(Vec3 position)
+    {
+        this.position = position;
     }
 
     public List<ItemStack> getMaterials()
@@ -292,14 +341,6 @@ public class Schematic
     }
 
     //TODO rendering
-
-//    public void reloadChunkCache() {
-//        if (schematic != null) {
-//            this.mcWorldCache = new ChunkCache(world, x - 1, y - 1, z - 1, x + schematic.getWidth() + 1, y + schematic.getHeight() + 1, z + schematic.getLength() + 1, 0);
-//            refreshSchematic();
-//        }
-//    }
-//
 //    public void refreshSchematic() {
 //        for (RendererSchematicChunk renderer : this.sortedRendererSchematicChunk) {
 //            renderer.setDirty();

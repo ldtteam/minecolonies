@@ -295,4 +295,9 @@ public class Utils
         }
         return null;
     }
+
+    public static int[] vecToInt(Vec3 vec)
+    {
+        return new int[] {(int) vec.xCoord, (int) vec.yCoord, (int) vec.zCoord};
+    }
 }
