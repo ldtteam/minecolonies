@@ -1,6 +1,5 @@
 package com.minecolonies.entity;
 
-import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import com.minecolonies.lib.Constants;
@@ -67,7 +66,7 @@ public class EntityBuilder extends EntityCitizen
 
     public boolean hasMaterials()
     {
-        if (!hasSchematic()) return false;
+        if(!hasSchematic()) return false;
 
         schematic.getMaterials();
         this.getInventory();//TODO create contains method

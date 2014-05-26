@@ -169,7 +169,8 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest()) return true;
+        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest())
+            return true;
         LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.error.supplyChestAlreadyPlaced");
         return false;
     }

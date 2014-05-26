@@ -5,9 +5,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-
-import java.io.IOException;
 
 /**
  * CLASS DESCRIPTION
@@ -19,7 +16,7 @@ public class BuildRequestPacket extends AbstractPacket
 {
     private int x, y, z;
 
-    public BuildRequestPacket() {}
+    public BuildRequestPacket(){}
 
     public BuildRequestPacket(int x, int y, int z)
     {
@@ -27,6 +24,7 @@ public class BuildRequestPacket extends AbstractPacket
         this.y = y;
         this.z = z;
     }
+
     @Override
     public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer)
     {

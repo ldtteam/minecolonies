@@ -31,7 +31,7 @@ public class EntityAIGoHome extends EntityAIBase
     public void startExecuting()
     {
         Vec3 vec;
-        if (citizen.getHomeHut() != null)
+        if(citizen.getHomeHut() != null)
         {
             vec = citizen.getHomeHut().getPosition();
         }

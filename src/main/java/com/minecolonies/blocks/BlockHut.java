@@ -72,13 +72,13 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
     public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall, World world, int x, int y, int z)//TODO move to TileEntityHutWorker
     {
         if(!(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)) return;
-        TileEntityHutWorker tileEntityHutWorker = (TileEntityHutWorker)world.getTileEntity(x, y, z);
+        TileEntityHutWorker tileEntityHutWorker = (TileEntityHutWorker) world.getTileEntity(x, y, z);
         ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
 
         List<Entity> entityCitizens = Utils.getEntitiesFromUUID(world, citizens);
         for(Entity entity : entityCitizens)
         {
-            if (entity instanceof EntityCitizen)
+            if(entity instanceof EntityCitizen)
             {
                 EntityCitizen entityCitizen = (EntityCitizen) entity;
                 if(entityCitizen.getJob().equals("Citizen") && !tileEntityHutWorker.hasWorker())

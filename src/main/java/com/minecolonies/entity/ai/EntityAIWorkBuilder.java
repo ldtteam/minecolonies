@@ -55,12 +55,12 @@ public class EntityAIWorkBuilder extends EntityAIBase
     @Override
     public void updateTask()
     {
-        if (builder.getOffsetTicks() % builder.getWorkInterval() == 0)
+        if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
             if(!builder.getSchematic().findNextBlockIncludingAir()) completeBuild();
 
             Block block = builder.getSchematic().getBlock();
-            if (block == null)
+            if(block == null)
             {
                 MineColonies.logger.error("Schematic has null block");
                 return;
@@ -87,7 +87,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
             }
             else
             {
-                if (!block.getMaterial().isSolid())
+                if(!block.getMaterial().isSolid())
                 {
                     //TODO support block or add delay system
                 }

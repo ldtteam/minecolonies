@@ -86,7 +86,8 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
     public boolean isPlayerOwner(EntityPlayer player)
     {
-        if(this.getTownHall() == null || this.getTownHall().getOwners().isEmpty() || this.getTownHall().getOwners().contains(player.getUniqueID())) return true;
+        if(this.getTownHall() == null || this.getTownHall().getOwners().isEmpty() || this.getTownHall().getOwners().contains(player.getUniqueID()))
+            return true;
         return false;
     }
 

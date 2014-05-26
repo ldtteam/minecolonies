@@ -2,8 +2,6 @@ package com.minecolonies.tileentities;
 
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.lib.Constants;
-import net.minecraft.world.World;
 
 public class TileEntityHutBuilder extends TileEntityHutWorker
 {

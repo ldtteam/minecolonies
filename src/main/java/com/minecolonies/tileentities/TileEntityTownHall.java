@@ -265,7 +265,7 @@ public class TileEntityTownHall extends TileEntityHut
         ArrayList<TileEntityBuildable> list = new ArrayList<TileEntityBuildable>();
         for(int[] i : huts)
         {
-            list.add((TileEntityBuildable)worldObj.getTileEntity(i[0], i[1], i[2]));
+            list.add((TileEntityBuildable) worldObj.getTileEntity(i[0], i[1], i[2]));
         }
         return list;
     }
@@ -277,7 +277,7 @@ public class TileEntityTownHall extends TileEntityHut
 
     public void addHutForUpgrade(String name, int x, int y, int z)
     {
-        builderRequired.put(new int[] {x, y, z}, name);
+        builderRequired.put(new int[]{x, y, z}, name);
     }
 
     public HashMap<int[], String> getBuilderRequired()

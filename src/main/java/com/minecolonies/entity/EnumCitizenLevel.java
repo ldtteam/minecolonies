@@ -1,10 +1,6 @@
 package com.minecolonies.entity;
 
-import com.minecolonies.client.model.ModelEntityCitizenFemaleAristocrat;
-import com.minecolonies.client.model.ModelEntityCitizenFemaleCitizen;
-import com.minecolonies.client.model.ModelEntityCitizenFemaleNoble;
 import com.minecolonies.lib.Constants;
-import net.minecraft.client.model.ModelBiped;
 
 public enum EnumCitizenLevel
 {
@@ -17,10 +13,10 @@ public enum EnumCitizenLevel
     NOBLEFEMALE(2, "Female", "textures/entity/EntityNoble"),
     ARISTOCRATFEMALE(3, "Female", "textures/entity/EntityAristocrat");
 
-    private final int        level;
-    private final String     partialTextureString;
-    private final int        sexInt;
-    private final String     sexString;
+    private final int    level;
+    private final String partialTextureString;
+    private final int    sexInt;
+    private final String sexString;
 
     EnumCitizenLevel(int level, String sex, String textureLocationPart)
     {

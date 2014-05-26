@@ -60,7 +60,7 @@ public class GuiHutBuilder extends GuiBase
             case idRecallWorker:
                 break;
             case idBuildBuilding:
-                TileEntityBuildable tileEntityBuildable = (TileEntityBuildable)tileEntity;
+                TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) tileEntity;
                 tileEntityBuildable.requestBuilding(player);
                 break;
             case idRepairBuilding:

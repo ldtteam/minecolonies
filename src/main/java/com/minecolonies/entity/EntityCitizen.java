@@ -14,7 +14,6 @@ import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.InventoryBasic;
@@ -29,10 +28,10 @@ import net.minecraftforge.common.util.Constants;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
-    public  ResourceLocation  texture;
-    public  EnumCitizenLevel  level;
-    private String            job;
-    private InventoryCitizen  inventory;
+    public  ResourceLocation texture;
+    public  EnumCitizenLevel level;
+    private String           job;
+    private InventoryCitizen inventory;
 
     private TileEntityTownHall tileEntityTownHall;
     private int                townPosX, townPosY, townPosZ;
@@ -205,8 +204,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             nbtTagCompound.setTag("homehut", nbtTagHomeHutCompound);
         }
         NBTTagList inventoryList = new NBTTagList();
-        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            if (inventory.getStackInSlot(i) != null) {
+        for(int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            if(inventory.getStackInSlot(i) != null)
+            {
                 NBTTagCompound tag = new NBTTagCompound();
                 inventory.getStackInSlot(i).writeToNBT(tag);
                 inventoryList.appendTag(tag);
@@ -254,10 +255,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             homePosZ = nbtTagHomeHutCompound.getInteger("z");
         }
         NBTTagList nbttaglist = nbtTagCompound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < nbttaglist.tagCount(); i++) {
+        for(int i = 0; i < nbttaglist.tagCount(); i++)
+        {
             NBTTagCompound tag = nbttaglist.getCompoundTagAt(i);
             ItemStack itemstack = ItemStack.loadItemStackFromNBT(tag);
-            if (itemstack != null) {
+            if(itemstack != null)
+            {
                 InventoryHelper.setStackInInventory(inventory, itemstack);
             }
         }

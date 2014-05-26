@@ -2,13 +2,11 @@ package com.minecolonies.blocks;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

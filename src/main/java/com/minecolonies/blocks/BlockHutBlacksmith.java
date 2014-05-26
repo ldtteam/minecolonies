@@ -1,6 +1,5 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.tileentities.TileEntityHutBaker;
 import com.minecolonies.tileentities.TileEntityHutBlacksmith;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

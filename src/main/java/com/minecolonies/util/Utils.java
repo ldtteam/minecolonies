@@ -224,7 +224,7 @@ public class Utils
         {
             if(id.equals(((Entity) world.loadedEntityList.get(i)).getUniqueID()))
             {
-                return (Entity)world.loadedEntityList.get(i);
+                return (Entity) world.loadedEntityList.get(i);
             }
         }
         return null;
@@ -298,6 +298,6 @@ public class Utils
 
     public static int[] vecToInt(Vec3 vec)
     {
-        return new int[] {(int) vec.xCoord, (int) vec.yCoord, (int) vec.zCoord};
+        return new int[]{(int) vec.xCoord, (int) vec.yCoord, (int) vec.zCoord};
     }
 }

@@ -15,7 +15,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -33,7 +32,7 @@ public class Schematic
 {
     private World          world;
     private SchematicWorld schematic;
-    private Vec3 position;
+    private Vec3           position;
 
     /**
      * North-West corner
@@ -166,22 +165,22 @@ public class Schematic
         {
             y = z = 0;
         }
-            x++;
-            if(x == schematic.getWidth())
+        x++;
+        if(x == schematic.getWidth())
+        {
+            x = 0;
+            z++;
+            if(z == schematic.getLength())
             {
-                x = 0;
-                z++;
-                if(z == schematic.getLength())
+                z = 0;
+                y++;
+                if(y == schematic.getHeight())
                 {
-                    z = 0;
-                    y++;
-                    if(y == schematic.getHeight())
-                    {
-                        x = y = z = -1;
-                        return false;
-                    }
+                    x = y = z = -1;
+                    return false;
                 }
             }
+        }
         return true;
     }
 
