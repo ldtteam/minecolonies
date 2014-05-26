@@ -9,6 +9,7 @@ public class Configurations
     public static final int     DEFAULT_TOWNHALLPADDING          = 20;
     public static final boolean DEFAULT_ALLOWINFINTESUPPLYCHESTS = false;
     public static final int     DEFAULT_CITIZENRESPAWNINTERVAL   = 30;
+    public static final boolean DEFAULT_BUILDERINFINITERESOURCES = false;
 
     /*
     Holders
@@ -20,4 +21,5 @@ public class Configurations
      * The citizen respawn interval in seconds
      */
     public static int     citizenRespawnInterval;
+    public static boolean builderInfiniteResources;
 }

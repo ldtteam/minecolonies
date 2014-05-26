@@ -26,6 +26,7 @@ public class ConfigurationHandler
             Configurations.townhallPadding = config.get(CATEGORY_GAMEPLAY, "Empty space between townhall boundaries: ", DEFAULT_TOWNHALLPADDING).getInt(DEFAULT_TOWNHALLPADDING);
             Configurations.allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY, "Allow infinite placing of Supply Chests: ", DEFAULT_ALLOWINFINTESUPPLYCHESTS).getBoolean(DEFAULT_ALLOWINFINTESUPPLYCHESTS);
             Configurations.citizenRespawnInterval = config.get(CATEGORY_GAMEPLAY, "Citizen Respawn Interval in seconds: ", DEFAULT_CITIZENRESPAWNINTERVAL).getInt(DEFAULT_CITIZENRESPAWNINTERVAL);
+            Configurations.builderInfiniteResources = config.get(CATEGORY_GAMEPLAY, "Does Builder have infinite resources: ", DEFAULT_BUILDERINFINITERESOURCES).getBoolean(DEFAULT_BUILDERINFINITERESOURCES);
         }
         finally
         {
