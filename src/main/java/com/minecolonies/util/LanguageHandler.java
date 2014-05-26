@@ -49,6 +49,7 @@ public class LanguageHandler
 
     private static void sendPlayersMessage(List<EntityPlayer> players, String message)
     {
+        if (players == null || players.isEmpty()) return;
         for(EntityPlayer player : players)
         {
             sendPlayerMessage(player, message);

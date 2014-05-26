@@ -1,6 +1,9 @@
 package com.minecolonies.tileentities;
 
-public class TileEntityHutWorker extends TileEntityHut
+import com.minecolonies.entity.EntityCitizen;
+import net.minecraft.world.World;
+
+public abstract class TileEntityHutWorker extends TileEntityHut
 {
     private String jobName = "";
 

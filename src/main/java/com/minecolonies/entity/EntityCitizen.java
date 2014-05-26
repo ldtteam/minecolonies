@@ -5,6 +5,7 @@ import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.util.InventoryHelper;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.EntityAgeable;
@@ -17,17 +18,19 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
     public  ResourceLocation  texture;
     public  EnumCitizenLevel  level;
-    private EnumCitizenAction currentAction;
     private String            job;
     private InventoryCitizen  inventory;
 
@@ -42,11 +45,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         super(world);
         setSize(0.6F, 1.8F);
+        this.level = worldObj.rand.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
         setTexture();
         this.job = initJob();
-
-        this.level = worldObj.rand.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
-        currentAction = EnumCitizenAction.IDLE;
+        this.inventory = new InventoryCitizen("Minecolony Inventory", false, 27);
 
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setEnterDoors(true);
@@ -163,6 +165,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tileEntityTownHall = tileEntityTownHall;
     }
 
+    //public void setHomeHut(TileEntityHutCitizen home) { this.tileEntityHomeHut = home};
+
+    public void setWorkHut(TileEntityHutWorker work)
+    {
+        this.tileEntityWorkHut = work;
+    }
+
     @Override
     public void writeEntityToNBT(NBTTagCompound nbtTagCompound)
     {
@@ -195,8 +204,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             nbtTagHomeHutCompound.setInteger("z", tileEntityHomeHut.zCoord);
             nbtTagCompound.setTag("homehut", nbtTagHomeHutCompound);
         }
-
-        nbtTagCompound.setInteger("currentAction", currentAction.getActionID());
+        NBTTagList inventoryList = new NBTTagList();
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            if (inventory.getStackInSlot(i) != null) {
+                NBTTagCompound tag = new NBTTagCompound();
+                inventory.getStackInSlot(i).writeToNBT(tag);
+                inventoryList.appendTag(tag);
+            }
+        }
+        nbtTagCompound.setTag("Inventory", inventoryList);
     }
 
     @Override
@@ -237,8 +253,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             homePosY = nbtTagHomeHutCompound.getInteger("y");
             homePosZ = nbtTagHomeHutCompound.getInteger("z");
         }
-
-        currentAction = EnumCitizenAction.getActionById(nbtTagCompound.getInteger("currentAction"));
+        NBTTagList nbttaglist = nbtTagCompound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < nbttaglist.tagCount(); i++) {
+            NBTTagCompound tag = nbttaglist.getCompoundTagAt(i);
+            ItemStack itemstack = ItemStack.loadItemStackFromNBT(tag);
+            if (itemstack != null) {
+                InventoryHelper.setStackInInventory(inventory, itemstack);
+            }
+        }
     }
 
     public int getOffsetTicks()
@@ -257,23 +279,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void addToHut(TileEntityHutWorker tileEntityHutWorker)
     {
         setJob(tileEntityHutWorker.getJobName(), tileEntityHutWorker);
+        //TEST
+        NBTTagCompound nbt = new NBTTagCompound();
+        this.writeToNBT(nbt);
+        getTownHall().removeCitizen(this);
+        this.setDead();
+
+        EntityCitizen worker = tileEntityHutWorker.createWorker();
+        worker.readFromNBT(nbt);
+        getTownHall().addCitizenToTownhall(worker);
+        tileEntityHutWorker.bindWorker(worker);
+        worldObj.spawnEntityInWorld(worker);
         //TODO more to come
     }
-
-    /*private static final int DATAWATCHER_CURRENTACTION = 24;
-
-    public EnumCitizenAction getCurrentAction()
-    {
-        return EnumCitizenAction.getActionById(dataWatcher.getWatchableObjectInt(DATAWATCHER_CURRENTACTION));
-    }
-
-    public void setCurrentAction(EnumCitizenAction action)
-    {
-        this.dataWatcher.updateObject(DATAWATCHER_CURRENTACTION, action.getActionID());
-    }
-
-    public void setCurrentAction(int actionID)
-    {
-        this.dataWatcher.updateObject(DATAWATCHER_CURRENTACTION, actionID);
-    }*/
 }

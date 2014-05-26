@@ -13,10 +13,10 @@ public class InventoryHelper
      * @return returns null if successful, or stack of remaining items
      */
     public static ItemStack setStackInInventory(IInventory inventory, ItemStack stack) {
-        if (inventory != null || stack != null){
+        if (inventory != null && stack != null){
             ItemStack returnStack = stack;//returning this in the end.
             int slot;//does the destination already have a stack of item?
-            while((slot = doesInventoryContainNotFullItem(inventory,stack)) != -1 && returnStack != null){//try and fill the slot
+            while((slot = doesInventoryContainNotFullItem(inventory, stack)) != -1 && returnStack != null){//try and fill the slot
                 ItemStack current = inventory.getStackInSlot(slot);
                 int spaceLeft = current.getMaxStackSize() - current.stackSize;
                 if(spaceLeft > 0){

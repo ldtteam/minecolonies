@@ -1,15 +1,10 @@
 package com.minecolonies.tileentities;
 
-public class TileEntityHut extends TileEntityBuildable
+public abstract class TileEntityHut extends TileEntityBuildable
 {
     private int maxInhabitants;
     private int maleInhabitants;
     private int femaleInhabitants;
-
-    public TileEntityHut()
-    {
-
-    }
 
     public int getMaxInhabitants()
     {
