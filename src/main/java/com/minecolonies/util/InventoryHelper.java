@@ -54,6 +54,19 @@ public class InventoryHelper
         return -1;
     }
 
+    /** returns a slot number if a chest contains given ItemStack item
+     * @return returns slot number if found, -1 when not found.
+     */
+    public static int doesInventoryContainItemStack(IInventory inventory, ItemStack stack) {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack testStack = inventory.getStackInSlot(i);
+            if (testStack != null && inventory.getStackInSlot(i).isItemEqual(stack)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     /** returns a slot number if a chest contains given ItemStack item that is not fully stacked
      * @return returns slot number if found, -1 when not found.
      */

@@ -1,5 +1,8 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.MineColonies;
+import com.minecolonies.blocks.BlockHut;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.util.InventoryHelper;
 import com.minecolonies.util.Schematic;
@@ -57,10 +60,24 @@ public class EntityAIWorkBuilder extends EntityAIBase
             if(!builder.getSchematic().findNextBlockIncludingAir()) completeBuild();
 
             Block block = builder.getSchematic().getBlock();
+            if (block == null)
+            {
+                MineColonies.logger.error("Schematic has null block");
+                return;
+            }
             int metadata = builder.getSchematic().getMetadata();
             int[] coords = Utils.vecToInt(builder.getSchematic().getBlockPosition());
 
             Block worldBlock = world.getBlock(coords[0], coords[1], coords[2]);
+
+            if(worldBlock instanceof BlockHut) return;
+            if(!Configurations.builderInfiniteResources)
+            {
+                int slotID = InventoryHelper.doesInventoryContainItemStack(builder.getInventory(), new ItemStack(block, 1, metadata));
+                if(slotID == -1) return;//TODO getMaterials
+                builder.getInventory().decrStackSize(slotID, 1);
+            }
+
             ItemStack stack = worldBlock.getPickBlock(null, world, coords[0], coords[1], coords[2]);
             InventoryHelper.setStackInInventory(builder.getInventory(), stack);
 
