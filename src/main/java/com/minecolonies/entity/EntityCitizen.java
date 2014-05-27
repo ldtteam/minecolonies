@@ -285,7 +285,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return inventory;
     }
 
-    public void addToHut(TileEntityHutWorker tileEntityHutWorker)
+    public void addToWorkHut(TileEntityHutWorker tileEntityHutWorker)
     {
         setJob(tileEntityHutWorker.getJobName(), tileEntityHutWorker);
         //TEST
@@ -302,7 +302,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         //TODO more to come
     }
 
-    public void removeFromHut(TileEntityHutWorker tileEntityHutWorker)
+    public void removeFromWorkHut(TileEntityHutWorker tileEntityHutWorker)
     {
         setJob(initJob(), null);
         NBTTagCompound nbt = new NBTTagCompound();

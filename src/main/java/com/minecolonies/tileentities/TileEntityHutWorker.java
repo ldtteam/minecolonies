@@ -31,7 +31,7 @@ public abstract class TileEntityHutWorker extends TileEntityHut
         worker.setWorkHut(null);
     }
 
-    public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall)
+    public void attemptToAddIdleCitizen(TileEntityTownHall tileEntityTownHall)
     {
         ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
 
@@ -43,14 +43,14 @@ public abstract class TileEntityHutWorker extends TileEntityHut
                 EntityCitizen entityCitizen = (EntityCitizen) entity;
                 if(entityCitizen.getJob().equals("Citizen") && !hasWorker())
                 {
-                    entityCitizen.addToHut(this);
+                    entityCitizen.addToWorkHut(this);
                     return;
                 }
             }
         }
     }
 
-    public void removeCitizens(TileEntityTownHall tileEntityTownHall)
+    public void removeWorker(TileEntityTownHall tileEntityTownHall)
     {
         ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
 
@@ -60,9 +60,9 @@ public abstract class TileEntityHutWorker extends TileEntityHut
             if(entity instanceof EntityCitizen)
             {
                 EntityCitizen entityCitizen = (EntityCitizen) entity;
-                if(entityCitizen.getWorkHut() == this && hasWorker())
+                if(entityCitizen.getWorkHut() != null && entityCitizen.getWorkHut() == this && hasWorker())
                 {
-                    entityCitizen.removeFromHut(this);
+                    entityCitizen.removeFromWorkHut(this);
                     return;
                 }
             }

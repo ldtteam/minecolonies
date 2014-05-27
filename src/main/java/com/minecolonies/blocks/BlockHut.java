@@ -75,7 +75,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 tileEntityBuildable.setTownHall(tileEntityTownHall); //TODO, check for owner first
                 if(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)
                 {
-                    ((TileEntityHutWorker) world.getTileEntity(x, y, z)).attemptToAddIdleCitizens(tileEntityTownHall);
+                    ((TileEntityHutWorker) world.getTileEntity(x, y, z)).attemptToAddIdleCitizen(tileEntityTownHall);
                 }
             }
         }
@@ -103,7 +103,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
             tileEntityTownHall.addHut(tileEntityBuildable.xCoord, tileEntityBuildable.yCoord, tileEntityBuildable.zCoord);
             if(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)
             {
-                ((TileEntityHutWorker) world.getTileEntity(x, y, z)).attemptToAddIdleCitizens(tileEntityTownHall);
+                ((TileEntityHutWorker) world.getTileEntity(x, y, z)).attemptToAddIdleCitizen(tileEntityTownHall);
             }
         }
     }
@@ -159,7 +159,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
             tileEntityTownHall.removeHut(tileEntityBuildable.xCoord, tileEntityBuildable.yCoord, tileEntityBuildable.zCoord);
             if(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)
             {
-                ((TileEntityHutWorker) world.getTileEntity(x, y, z)).removeCitizens(tileEntityTownHall);
+                ((TileEntityHutWorker) world.getTileEntity(x, y, z)).removeWorker(tileEntityTownHall);
             }
         }
         super.breakBlock(world, x, y, z, block, meta);
