@@ -151,10 +151,6 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
     {
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         EntityPlayer entityPlayer = (EntityPlayer) entity;
-        if(tileEntity instanceof TileEntityBuildable)
-        {
-            return ((TileEntityBuildable) tileEntity).isPlayerOwner(entityPlayer);
-        }
-        return false;
+        return tileEntity instanceof TileEntityBuildable && ((TileEntityBuildable) tileEntity).isPlayerOwner(entityPlayer);
     }
 }

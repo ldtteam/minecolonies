@@ -49,7 +49,7 @@ public class InventoryHelper
     /**
      * returns first open slot in the inventory
      *
-     * @param inventory
+     * @param inventory inventory to search
      * @return slot number or -1 if none found.
      */
     public static int getOpenSlot(IInventory inventory)

@@ -3,9 +3,6 @@ package com.minecolonies.client.render;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
-/**
- * Created by Colton on 5/18/2014.
- */
 public class EmptyTileEntitySpecialRenderer extends TileEntitySpecialRenderer
 {
     @Override
