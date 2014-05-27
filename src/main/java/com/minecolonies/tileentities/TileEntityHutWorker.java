@@ -31,18 +31,19 @@ public abstract class TileEntityHutWorker extends TileEntityHut
         ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
 
         List<Entity> entityCitizens = Utils.getEntitiesFromUUID(worldObj, citizens);
-        for(Entity entity : entityCitizens)
-        {
-            if(entity instanceof EntityCitizen)
+        if(entityCitizens != null)
+            for(Entity entity : entityCitizens)
             {
-                EntityCitizen entityCitizen = (EntityCitizen) entity;
-                if(entityCitizen.getJob().equals("Citizen") && !hasWorker())
+                if(entity instanceof EntityCitizen)
                 {
-                    entityCitizen.addToWorkHut(this);
-                    return;
+                    EntityCitizen entityCitizen = (EntityCitizen) entity;
+                    if(entityCitizen.getJob().equals("Citizen") && !hasWorker())
+                    {
+                        entityCitizen.addToWorkHut(this);
+                        return;
+                    }
                 }
             }
-        }
     }
 
     public void removeWorker(TileEntityTownHall tileEntityTownHall)//TODO store Worker UUID in NBT for easy access and performance
