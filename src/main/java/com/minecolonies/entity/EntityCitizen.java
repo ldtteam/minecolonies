@@ -285,7 +285,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return inventory;
     }
 
-    public void addToHut(TileEntityHutWorker tileEntityHutWorker)
+    public void addToWorkHut(TileEntityHutWorker tileEntityHutWorker)
     {
         setJob(tileEntityHutWorker.getJobName(), tileEntityHutWorker);
         //TEST
@@ -300,6 +300,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         tileEntityHutWorker.bindWorker(worker);
         worldObj.spawnEntityInWorld(worker);
         //TODO more to come
+    }
+
+    public void removeFromWorkHut(TileEntityHutWorker tileEntityHutWorker)
+    {
+        setJob(initJob(), null);
+        NBTTagCompound nbt = new NBTTagCompound();
+        this.writeToNBT(nbt);
+        getTownHall().removeCitizen(this);
+        tileEntityHutWorker.unbindWorker(this);
+        this.setDead();
+
+        EntityCitizen citizen = new EntityCitizen(worldObj);
+        citizen.readFromNBT(nbt);
+        getTownHall().addCitizenToTownhall(citizen);
+        worldObj.spawnEntityInWorld(citizen);
     }
 
     public void writeVecToNBT(NBTTagCompound compound, String name, Vec3 vec)

@@ -24,10 +24,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 public abstract class BlockHut extends Block implements IColony, ITileEntityProvider
 {
     protected int workingRange;
@@ -61,36 +57,6 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
     }
 
     /**
-     * Attempts to add citizen to a working hut
-     *
-     * @param tileEntityTownHall TileEntityTownHall bound to
-     * @param world              world
-     * @param x                  x coordinate
-     * @param y                  y coordinate
-     * @param z                  z coordinate
-     */
-    public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall, World world, int x, int y, int z)//TODO move to TileEntityHutWorker
-    {
-        if(!(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)) return;
-        TileEntityHutWorker tileEntityHutWorker = (TileEntityHutWorker) world.getTileEntity(x, y, z);
-        ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
-
-        List<Entity> entityCitizens = Utils.getEntitiesFromUUID(world, citizens);
-        for(Entity entity : entityCitizens)
-        {
-            if(entity instanceof EntityCitizen)
-            {
-                EntityCitizen entityCitizen = (EntityCitizen) entity;
-                if(entityCitizen.getJob().equals("Citizen") && !tileEntityHutWorker.hasWorker())
-                {
-                    entityCitizen.addToHut(tileEntityHutWorker);
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
      * Sets the TileEntities townhall to the closest townhall
      *
      * @param world world
@@ -107,7 +73,10 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
             {
                 TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
                 tileEntityBuildable.setTownHall(tileEntityTownHall); //TODO, check for owner first
-                attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
+                if(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)
+                {
+                    ((TileEntityHutWorker) world.getTileEntity(x, y, z)).attemptToAddIdleCitizen(tileEntityTownHall);
+                }
             }
         }
     }
@@ -132,7 +101,10 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
             }
             tileEntityBuildable.setTownHall(tileEntityTownHall);
             tileEntityTownHall.addHut(tileEntityBuildable.xCoord, tileEntityBuildable.yCoord, tileEntityBuildable.zCoord);
-            attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
+            if(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)
+            {
+                ((TileEntityHutWorker) world.getTileEntity(x, y, z)).attemptToAddIdleCitizen(tileEntityTownHall);
+            }
         }
     }
 
@@ -174,5 +146,22 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
             return ((TileEntityBuildable) tileEntity).isPlayerOwner(entityPlayer);
         }
         return false;
+    }
+
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta)
+    {
+        if(world.isRemote) return;
+
+        if(!(world.getTileEntity(x, y, z) instanceof TileEntityTownHall))
+        {
+            TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
+            TileEntityTownHall tileEntityTownHall = tileEntityBuildable.getTownHall();
+            tileEntityTownHall.removeHut(tileEntityBuildable.xCoord, tileEntityBuildable.yCoord, tileEntityBuildable.zCoord);
+            if(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)
+            {
+                ((TileEntityHutWorker) world.getTileEntity(x, y, z)).removeWorker(tileEntityTownHall);
+            }
+        }
+        super.breakBlock(world, x, y, z, block, meta);
     }
 }

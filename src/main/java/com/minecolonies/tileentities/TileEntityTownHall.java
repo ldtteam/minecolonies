@@ -14,10 +14,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class TileEntityTownHall extends TileEntityHut
 {
@@ -275,14 +272,33 @@ public class TileEntityTownHall extends TileEntityHut
         huts.add(new int[]{x, y, z});
     }
 
+    public void removeHut(int x, int y, int z)
+    {
+        for (int[] coords : huts)
+        {
+            if (Arrays.equals(new int[]{x, y, z}, coords))
+            {
+                huts.remove(coords);
+                return;
+            }
+        }
+    }
+
     public void addHutForUpgrade(String name, int x, int y, int z)
     {
         builderRequired.put(new int[]{x, y, z}, name);
     }
 
-    public void removeHutForUpgrade(int[] pos)
+    public void removeHutForUpgrade(int x, int y, int z)
     {
-        builderRequired.remove(pos);
+        for (int[] coords : builderRequired.keySet())
+        {
+            if (Arrays.equals(new int[]{x, y, z}, coords))
+            {
+                builderRequired.remove(coords);
+                return;
+            }
+        }
     }
 
     public HashMap<int[], String> getBuilderRequired()
