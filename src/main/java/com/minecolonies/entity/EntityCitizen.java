@@ -5,7 +5,6 @@ import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
-import com.minecolonies.util.InventoryHelper;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.EntityAgeable;
@@ -262,7 +261,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             ItemStack itemstack = ItemStack.loadItemStackFromNBT(tag);
             if(itemstack != null)
             {
-                InventoryHelper.setStackInInventory(inventory, itemstack);
+                inventory.setStackInInventory(itemstack);
             }
         }
     }

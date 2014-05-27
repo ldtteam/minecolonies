@@ -4,7 +4,6 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
-import com.minecolonies.util.InventoryHelper;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
@@ -79,12 +78,12 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
             if(!Configurations.builderInfiniteResources)
             {
-                int slotID = InventoryHelper.doesInventoryContainItemStack(builder.getInventory(), new ItemStack(block, 1, metadata));
+                int slotID = builder.getInventory().containsItemStack(new ItemStack(block, 1, metadata));
                 if(slotID == -1) return;//TODO getMaterials
                 builder.getInventory().decrStackSize(slotID, 1);
 
                 ItemStack stack = worldBlock.getPickBlock(null, world, pos[0], pos[1], pos[2]);
-                InventoryHelper.setStackInInventory(builder.getInventory(), stack);
+                builder.getInventory().setStackInInventory(stack);
             }
 
             if(block == Blocks.air)
