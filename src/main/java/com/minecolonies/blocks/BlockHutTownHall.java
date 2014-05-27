@@ -15,8 +15,6 @@ import net.minecraft.world.World;
 
 public class BlockHutTownHall extends BlockHut
 {
-    public final String name = "blockHutTownhall";
-
     protected BlockHutTownHall()
     {
         super();
@@ -26,7 +24,7 @@ public class BlockHutTownHall extends BlockHut
     @Override
     public String getName()
     {
-        return name;
+        return "blockHutTownhall";
     }
 
     //TODO Check that huts are within the range of the townhall and aren't already bound to an existing townhall.
