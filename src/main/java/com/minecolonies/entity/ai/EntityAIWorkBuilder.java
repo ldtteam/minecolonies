@@ -123,9 +123,9 @@ public class EntityAIWorkBuilder extends EntityAIBase
     private void completeBuild()
     {
         int[] toMatch = Utils.vecToInt(builder.getSchematic().getPosition());
-        for (int[] key : builder.getTownHall().getBuilderRequired().keySet())
+        for(int[] key : builder.getTownHall().getBuilderRequired().keySet())
         {
-            if (Arrays.equals(toMatch, key))
+            if(Arrays.equals(toMatch, key))
             {
                 LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", builder.getSchematic().getName());
                 builder.getTownHall().removeHutForUpgrade(key);

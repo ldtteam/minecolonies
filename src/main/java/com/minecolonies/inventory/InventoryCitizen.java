@@ -1,7 +1,6 @@
 package com.minecolonies.inventory;
 
 import net.minecraft.inventory.IInvBasic;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 
@@ -62,7 +61,7 @@ public class InventoryCitizen extends InventoryBasic
     /**
      * Tries to put an item into Inventory
      *
-     * @param stack     Item stack with items to be transferred
+     * @param stack Item stack with items to be transferred
      * @return returns null if successful, or stack of remaining items
      */
     public ItemStack setStackInInventory(ItemStack stack)

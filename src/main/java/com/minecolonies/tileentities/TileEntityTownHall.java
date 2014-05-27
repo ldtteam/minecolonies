@@ -274,9 +274,9 @@ public class TileEntityTownHall extends TileEntityHut
 
     public void removeHut(int x, int y, int z)
     {
-        for (int[] coords : huts)
+        for(int[] coords : huts)
         {
-            if (Arrays.equals(new int[]{x, y, z}, coords))
+            if(Arrays.equals(new int[]{x, y, z}, coords))
             {
                 huts.remove(coords);
                 return;

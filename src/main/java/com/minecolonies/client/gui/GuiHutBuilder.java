@@ -16,7 +16,7 @@ public class GuiHutBuilder extends GuiBase
     private final int                  y;
     private final int                  z;
     private       TileEntityHutBuilder tileEntity;
-    private int span            = 10;
+    private int span = 10;
 
     public GuiHutBuilder(TileEntityHutBuilder tileEntityHutBuilder, EntityPlayer player, World world, int x, int y, int z)
     {

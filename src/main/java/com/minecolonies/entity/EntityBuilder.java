@@ -55,7 +55,8 @@ public class EntityBuilder extends EntityCitizen
     public void writeEntityToNBT(NBTTagCompound compound)
     {
         super.writeEntityToNBT(compound);
-        if(hasSchematic()){
+        if(hasSchematic())
+        {
             NBTTagCompound schematicTag = new NBTTagCompound();
             schematicTag.setString("name", schematic.getName());
             writeVecToNBT(schematicTag, "position", schematic.getPosition());
