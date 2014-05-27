@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
@@ -49,6 +50,8 @@ public class EntityAIWorkBuilder extends EntityAIBase
         }
         Vec3 pos = builder.getSchematic().getPosition();
         builder.getNavigator().tryMoveToXYZ(pos.xCoord, pos.yCoord, pos.zCoord, 1.0F);
+
+        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
     }
 
     @Override
@@ -124,6 +127,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
         {
             if (Arrays.equals(toMatch, key))
             {
+                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", builder.getSchematic().getName());
                 builder.getTownHall().removeHutForUpgrade(key);
                 builder.setSchematic(null);
                 return;

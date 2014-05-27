@@ -63,3 +63,6 @@ item.caliper.message.square=That's a %d by %d square.
 item.caliper.message.cube=That's a %d by %d by %d cube.
 
 itemGroup.minecolonies=MineColonies
+
+entity.builder.messageBuildStart=Started building %s
+entity.builder.messageBuildComplete=Finished building %s
