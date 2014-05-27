@@ -81,7 +81,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     public void requestBuilding(EntityPlayer player)
     {
         if(!(buildingLevel >= 3)) //TODO
-            getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel), xCoord, yCoord, zCoord);
+            getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel + 1), xCoord, yCoord, zCoord);
     }
 
     public boolean isPlayerOwner(EntityPlayer player)

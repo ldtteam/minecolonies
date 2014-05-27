@@ -2,6 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.EnumGUI;
+import com.minecolonies.network.packets.BuildRequestPacket;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -136,6 +137,8 @@ public class GuiHutDeliveryMan extends GuiBase
                 case idRecallWorker:
                     break;
                 case idBuildBuilding:
+                    BuildRequestPacket packet = new BuildRequestPacket(x, y, z);
+                    MineColonies.packetPipeline.sendToServer(packet);
                     break;
                 case idRepairBuilding:
                     break;

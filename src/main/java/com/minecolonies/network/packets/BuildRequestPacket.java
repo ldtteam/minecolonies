@@ -58,7 +58,7 @@ public class BuildRequestPacket extends AbstractPacket
 
         if(tileEntity != null)
         {
-            tileEntity.getTownHall().addHutForUpgrade(tileEntity.getName(), x, y, z);
+            tileEntity.requestBuilding(player);
         }
     }
 }
