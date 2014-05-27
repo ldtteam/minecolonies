@@ -6,8 +6,6 @@ import net.minecraft.world.World;
 
 public class ItemBuildTool extends ItemMinecolonies
 {
-    private final String name = "scepterGold";
-
     public ItemBuildTool()
     {
         super();
@@ -17,7 +15,7 @@ public class ItemBuildTool extends ItemMinecolonies
     @Override
     public String getName()
     {
-        return name;
+        return "scepterGold";
     }
 
     //TODO onItemUse?

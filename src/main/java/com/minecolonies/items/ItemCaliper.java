@@ -9,7 +9,6 @@ import net.minecraft.world.World;
 
 public class ItemCaliper extends ItemMinecolonies
 {
-    public final  String          name = "caliper";
     public static RangedAttribute use  = new RangedAttribute("player.caliberUse", 0.0, 0.0, 1.0);
 
     private int startPositionX;
@@ -25,7 +24,7 @@ public class ItemCaliper extends ItemMinecolonies
     @Override
     public String getName()
     {
-        return name;
+        return "caliper";
     }
 
     @Override

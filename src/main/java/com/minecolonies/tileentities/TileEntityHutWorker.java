@@ -10,12 +10,7 @@ import java.util.UUID;
 
 public abstract class TileEntityHutWorker extends TileEntityHut
 {
-    private String jobName = "";
-
-    public String getJobName()
-    {
-        return jobName;
-    }
+    public abstract String getJobName();
 
     public abstract EntityCitizen createWorker();
 

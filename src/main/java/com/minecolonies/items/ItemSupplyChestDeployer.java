@@ -19,8 +19,6 @@ import java.util.HashMap;
 
 public class ItemSupplyChestDeployer extends ItemMinecolonies
 {
-    private final String name = "supplyChestDeployer";
-
     public ItemSupplyChestDeployer()
     {
         super();
@@ -30,7 +28,7 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
     @Override
     public String getName()
     {
-        return name;
+        return "supplyChestDeployer";
     }
 
     @Override
