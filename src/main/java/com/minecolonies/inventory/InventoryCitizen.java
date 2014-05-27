@@ -94,7 +94,7 @@ public class InventoryCitizen extends InventoryBasic
             }
             return returnStack;
         }
-        return stack;
+        return null;
     }
 
     /**
