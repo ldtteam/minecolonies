@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 
 /**
- * CLASS DESCRIPTION
+ * Adds a entry to the builderRequired map
  * Created: May 26, 2014
  *
  * @author Colton

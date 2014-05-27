@@ -50,7 +50,7 @@ public abstract class TileEntityHutWorker extends TileEntityHut
         }
     }
 
-    public void removeWorker(TileEntityTownHall tileEntityTownHall)
+    public void removeWorker(TileEntityTownHall tileEntityTownHall)//TODO store Worker UUID in NBT for easy access and performance
     {
         ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
 
