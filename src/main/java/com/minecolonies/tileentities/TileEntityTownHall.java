@@ -289,16 +289,9 @@ public class TileEntityTownHall extends TileEntityHut
         builderRequired.put(new int[]{x, y, z}, name);
     }
 
-    public void removeHutForUpgrade(int x, int y, int z)
+    public void removeHutForUpgrade(int[] coords)
     {
-        for (int[] coords : builderRequired.keySet())
-        {
-            if (Arrays.equals(new int[]{x, y, z}, coords))
-            {
-                builderRequired.remove(coords);
-                return;
-            }
-        }
+        builderRequired.remove(coords);
     }
 
     public HashMap<int[], String> getBuilderRequired()

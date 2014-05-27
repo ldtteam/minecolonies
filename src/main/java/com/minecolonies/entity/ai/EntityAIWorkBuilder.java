@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -120,12 +121,13 @@ public class EntityAIWorkBuilder extends EntityAIBase
     private void completeBuild()
     {
         int[] toMatch = Utils.vecToInt(builder.getSchematic().getPosition());
-        for(int[] key : builder.getTownHall().getBuilderRequired().keySet())
+        for (int[] key : builder.getTownHall().getBuilderRequired().keySet())
         {
-            if(key[0] == toMatch[0] && key[1] == toMatch[1] && key[2] == toMatch[2])
+            if (Arrays.equals(toMatch, key))
             {
                 builder.getTownHall().removeHutForUpgrade(key);
                 builder.setSchematic(null);
+                return;
             }
         }
     }

@@ -132,6 +132,16 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 }
                 PlayerProperties.get(player).removeTownhall();
             }
+            else
+            {
+                TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
+                TileEntityTownHall tileEntityTownHall = tileEntityBuildable.getTownHall();
+                tileEntityTownHall.removeHut(tileEntityBuildable.xCoord, tileEntityBuildable.yCoord, tileEntityBuildable.zCoord);
+                if(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)
+                {
+                    ((TileEntityHutWorker) world.getTileEntity(x, y, z)).removeWorker(tileEntityTownHall);
+                }
+            }
             return super.removedByPlayer(world, player, x, y, z);
         }
         return false;
@@ -146,22 +156,5 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
             return ((TileEntityBuildable) tileEntity).isPlayerOwner(entityPlayer);
         }
         return false;
-    }
-
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta)
-    {
-        if(world.isRemote) return;
-
-        if(!(world.getTileEntity(x, y, z) instanceof TileEntityTownHall))
-        {
-            TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
-            TileEntityTownHall tileEntityTownHall = tileEntityBuildable.getTownHall();
-            tileEntityTownHall.removeHut(tileEntityBuildable.xCoord, tileEntityBuildable.yCoord, tileEntityBuildable.zCoord);
-            if(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)
-            {
-                ((TileEntityHutWorker) world.getTileEntity(x, y, z)).removeWorker(tileEntityTownHall);
-            }
-        }
-        super.breakBlock(world, x, y, z, block, meta);
     }
 }
