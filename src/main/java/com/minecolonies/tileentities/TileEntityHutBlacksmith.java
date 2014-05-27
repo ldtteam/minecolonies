@@ -1,5 +1,7 @@
 package com.minecolonies.tileentities;
 
+import com.minecolonies.entity.EntityCitizen;
+
 public class TileEntityHutBlacksmith extends TileEntityHutWorker
 {
     public TileEntityHutBlacksmith()
@@ -11,5 +13,17 @@ public class TileEntityHutBlacksmith extends TileEntityHutWorker
     public String getName()
     {
         return "hutBlacksmith";
+    }
+
+    @Override
+    public String getJobName()
+    {
+        return "Blacksmith";
+    }
+
+    @Override
+    public EntityCitizen createWorker()
+    {
+        return null;//TODO
     }
 }

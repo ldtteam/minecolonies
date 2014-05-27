@@ -17,6 +17,12 @@ public class TileEntityHutBuilder extends TileEntityHutWorker
     }
 
     @Override
+    public String getJobName()
+    {
+        return "Builder";
+    }
+
+    @Override
     public EntityCitizen createWorker()
     {
         return new EntityBuilder(worldObj);
