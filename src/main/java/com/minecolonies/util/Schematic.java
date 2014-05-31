@@ -77,7 +77,7 @@ public class Schematic
                     Block block = this.schematic.getBlock(i, j, k);
                     int metadata = this.schematic.getBlockMetadata(i, j, k);
 
-                    if(block == Blocks.air)
+                    if(block == Blocks.air && !world.getBlock(x + i, y + j, z + k).getMaterial().isSolid())
                     {
                         world.setBlockToAir(x + i, y + j, z + k);
                     }
