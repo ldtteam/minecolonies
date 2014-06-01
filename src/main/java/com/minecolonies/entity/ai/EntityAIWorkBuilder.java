@@ -4,6 +4,8 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
+import com.minecolonies.tileentities.TileEntityBuildable;
+import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
@@ -82,7 +84,8 @@ public class EntityAIWorkBuilder extends EntityAIBase
             if(!Configurations.builderInfiniteResources)
             {
                 int slotID = builder.getInventory().containsItemStack(new ItemStack(block, 1, metadata));
-                if(slotID == -1) return;//TODO getMaterials
+                if(slotID == -1) return;//TODO getMaterials - check chest, then request
+                builder.getSchematic().useMaterial(builder.getInventory().getStackInSlot(slotID));
                 builder.getInventory().decrStackSize(slotID, 1);
 
                 ItemStack stack = worldBlock.getPickBlock(null, world, pos[0], pos[1], pos[2]);
@@ -99,9 +102,24 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 if(!block.getMaterial().isSolid())
                 {
                     //TODO support block or add delay system
+                    if (block == Blocks.torch) {
+                        if (metadata == 1 && world.getBlock(pos[0] - 1, pos[1], pos[2]) == Blocks.air) {
+                            world.setBlock(pos[0] - 1, pos[1], pos[2], Blocks.dirt);
+                        } else if (metadata == 2 && world.getBlock(pos[0] + 1, pos[1], pos[2]) == Blocks.air) {
+                            world.setBlock(pos[0] + 1, pos[1], pos[2], Blocks.dirt);
+                        } else if (metadata == 3 && world.getBlock(pos[0], pos[1], pos[2] - 1) == Blocks.air) {
+                            world.setBlock(pos[0], pos[1], pos[2] - 1, Blocks.dirt);
+                        } else if (metadata == 4 && world.getBlock(pos[0], pos[1], pos[2] + 1) == Blocks.air) {
+                            world.setBlock(pos[0], pos[1], pos[2] + 1, Blocks.dirt);
+                        }
+                    }
                 }
                 builder.swingItem();
                 world.setBlock(pos[0], pos[1], pos[2], block, metadata, 0x02);
+                if(builder.getSchematic().getTileEntity() != null)
+                {
+                    world.setTileEntity(pos[0], pos[1], pos[2], builder.getSchematic().getTileEntity());
+                }
             }
         }
     }
@@ -109,7 +127,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        return this.shouldExecute() && (builder.hasMaterials() || Configurations.builderInfiniteResources);//TODO finish hasMaterials, look above for ideas
+        return builder.isWorkTime() && builder.hasSchematic() && (builder.hasMaterials() || Configurations.builderInfiniteResources);
     }
 
     private void loadSchematic()
@@ -122,16 +140,15 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
     private void completeBuild()
     {
-        int[] toMatch = Utils.vecToInt(builder.getSchematic().getPosition());
-        for(int[] key : builder.getTownHall().getBuilderRequired().keySet())
+        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", builder.getSchematic().getName());
+        int[] pos = Utils.vecToInt(builder.getSchematic().getPosition());
+        builder.getTownHall().removeHutForUpgrade(pos);
+        builder.setSchematic(null);
+
+        if(world.getTileEntity(pos[0], pos[1], pos[2]) instanceof TileEntityBuildable)
         {
-            if(Arrays.equals(toMatch, key))
-            {
-                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", builder.getSchematic().getName());
-                builder.getTownHall().removeHutForUpgrade(key);
-                builder.setSchematic(null);
-                return;
-            }
+            TileEntityBuildable hut = (TileEntityBuildable) world.getTileEntity(pos[0], pos[1], pos[2]);
+            hut.setBuildingLevel(hut.getBuildingLevel() + 1);
         }
     }
 }

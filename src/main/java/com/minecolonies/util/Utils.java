@@ -179,20 +179,6 @@ public class Utils
     }
 
     /**
-     * Checks if the block is water
-     *
-     * @param world world obj
-     * @param x     x coordinate
-     * @param y     y coordinate
-     * @param z     z coordinate
-     * @return true if is water.
-     */
-    public static boolean isWater(World world, int x, int y, int z)//TODO remove? we never use it
-    {
-        return isWater(world.getBlock(x, y, z));
-    }
-
-    /**
      * Returns the online EntityPlayer with the given UUID
      *
      * @param world world the player is in

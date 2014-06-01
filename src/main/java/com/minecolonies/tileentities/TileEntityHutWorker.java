@@ -26,6 +26,16 @@ public abstract class TileEntityHutWorker extends TileEntityHut
         worker.setWorkHut(null);
     }
 
+    @Override
+    public void updateEntity()
+    {
+        super.updateEntity();
+        if(!hasWorker() && this.getTownHall() != null)
+        {
+            attemptToAddIdleCitizen(this.getTownHall());
+        }
+    }
+
     public void attemptToAddIdleCitizen(TileEntityTownHall tileEntityTownHall)
     {
         ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();

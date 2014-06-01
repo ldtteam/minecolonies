@@ -629,4 +629,21 @@ public class SchematicWorld extends World
     {
         return new Vector3f(this.width, this.height, this.length);
     }
+
+    public void removeFromBlockList(ItemStack stack)
+    {
+        for(ItemStack blockStack : blockList)
+        {
+            if(blockStack.isItemEqual(stack))
+            {
+                int index = blockList.indexOf(blockStack);
+                blockStack.stackSize--;
+                if(blockStack.stackSize == 0)
+                {
+                    blockList.remove(index);
+                }
+                return;
+            }
+        }
+    }
 }

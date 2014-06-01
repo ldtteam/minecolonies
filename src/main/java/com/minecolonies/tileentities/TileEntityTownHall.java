@@ -18,7 +18,7 @@ import java.util.*;
 
 public class TileEntityTownHall extends TileEntityHut
 {
-    private String          cityName;
+    private String          cityName = "ERROR(Wasn't placed by player)";
     private ArrayList<UUID> owners;
     private BiomeGenBase    biome;
 
@@ -291,7 +291,14 @@ public class TileEntityTownHall extends TileEntityHut
 
     public void removeHutForUpgrade(int[] coords)
     {
-        builderRequired.remove(coords);
+        for(int[] key : builderRequired.keySet())
+        {
+            if(Arrays.equals(coords, key))
+            {
+                builderRequired.remove(key);
+                return;
+            }
+        }
     }
 
     public HashMap<int[], String> getBuilderRequired()

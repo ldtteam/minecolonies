@@ -13,7 +13,8 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 {
     private int                buildingLevel;
     private boolean            hasWorker;
-    private TileEntityTownHall townHall;
+    private TileEntityTownHall townhall;
+    private int townhallX, townhallY, townhallZ;
 
     public TileEntityBuildable()
     {
@@ -21,22 +22,37 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     }
 
     @Override
+    public void updateEntity()
+    {
+        if(townhall == null)
+        {
+            townhall = (TileEntityTownHall) worldObj.getTileEntity(townhallX, townhallY, townhallZ);
+        }
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        NBTTagCompound nbtTagCompound = (NBTTagCompound) compound.getTag("nbtTagCompound");
-        this.buildingLevel = nbtTagCompound.getInteger("buildingLvl");
-        this.hasWorker = nbtTagCompound.getBoolean("hasWorker");
+        this.buildingLevel = compound.getInteger("buildingLevel");
+        this.hasWorker = compound.getBoolean("hasWorker");
+        this.townhallX = compound.getInteger("townhall-x");
+        this.townhallY = compound.getInteger("townhall-y");
+        this.townhallZ = compound.getInteger("townhall-z");
     }
 
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        NBTTagCompound nbtTagCompound = new NBTTagCompound();
-        nbtTagCompound.setInteger("buildingLvl", buildingLevel);
-        nbtTagCompound.setBoolean("hasWorker", hasWorker);
-        compound.setTag("nbtTagCompound", nbtTagCompound);
+        compound.setInteger("buildingLevel", buildingLevel);
+        compound.setBoolean("hasWorker", hasWorker);
+        if(this.townhall != null)
+        {
+            compound.setInteger("townhall-x", townhall.xCoord);
+            compound.setInteger("townhall-y", townhall.yCoord);
+            compound.setInteger("townhall-z", townhall.zCoord);
+        }
     }
 
     public void sendPacket()
@@ -70,12 +86,12 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
     public TileEntityTownHall getTownHall()
     {
-        return townHall;
+        return townhall;
     }
 
-    public void setTownHall(TileEntityTownHall townHall)
+    public void setTownHall(TileEntityTownHall townhall)
     {
-        this.townHall = townHall;
+        this.townhall = townhall;
     }
 
     public void requestBuilding(EntityPlayer player)

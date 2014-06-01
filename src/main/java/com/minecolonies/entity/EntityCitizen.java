@@ -172,6 +172,19 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     @Override
+    public void onDeathUpdate()
+    {
+        super.onDeathUpdate();
+        if(this.getTownHall() != null)
+        {
+            this.getTownHall().removeCitizen(this);
+        }
+        if(this.getWorkHut() != null)
+        {
+            this.removeFromWorkHut(this.getWorkHut());
+        }
+    }
+    @Override
     public void writeEntityToNBT(NBTTagCompound nbtTagCompound)
     {
         super.writeEntityToNBT(nbtTagCompound);

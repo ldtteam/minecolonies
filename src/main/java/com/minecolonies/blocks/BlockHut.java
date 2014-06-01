@@ -125,8 +125,8 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                         EntityCitizen citizen = (EntityCitizen) o;
                         if(tileEntityTownHall.getCitizens().contains(citizen.getUniqueID()))
                         {
+                            tileEntityTownHall.removeCitizen(citizen);
                             citizen.setDead();
-                            tileEntityTownHall.removeCitizen(citizen);//TODO move to citizen onDeath
                         }
                     }
                 }
