@@ -71,13 +71,13 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent event)
     {
-        int x = event.x, y = event.y, z = event.z;
-
         if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.entityPlayer.getHeldItem() != null)
         {
             Block block = Block.getBlockFromItem(event.entityPlayer.getHeldItem().getItem());
             if(block instanceof BlockHut)
             {
+
+                int x = event.x, y = event.y, z = event.z;
                 switch(event.face)
                 {
                     case 0:

@@ -32,23 +32,12 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer)
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int face, float f, float f1, float f2)
     {
-        if(world == null || entityPlayer == null || world.isRemote || itemStack.stackSize == 0 || !isFirstPlacing(entityPlayer))
-            return itemStack;
-        MovingObjectPosition blockPos = getMovingObjectPositionFromPlayer(world, entityPlayer, false);
-        if(blockPos == null) return itemStack;
-        int x = blockPos.blockX;
-        int y = blockPos.blockY;
+        if(world == null || player == null || world.isRemote || stack.stackSize == 0 || !isFirstPlacing(player))
+            return false;
 
-        int z = blockPos.blockZ;
         HashMap<Integer, Boolean> hashmap = canShipBePlaced(world, x, y, z);
-        // System.out.println("hashmap 1 : " + hashmap.get(1));
-        // System.out.println("hashmap 2 : " + hashmap.get(2));
-        // System.out.println("hashmap 3 : " + hashmap.get(3));
-        // System.out.println("hashmap 4 : " + hashmap.get(4));
-        // System.out.println("hashmap 5 : " + hashmap.get(5));
-
         if(hashmap.get(1))
         {
             for(int i = 2; i <= 5; i++)
@@ -57,14 +46,15 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
                 {
                     if(hashmap.get(i))
                     {
-                        spawnShip(world, x, y, z, entityPlayer, i);
-                        return itemStack;
+                        spawnShip(world, x, y, z, player, i);
+                        stack.stackSize--;
+                        return true;
                     }
                 }
             }
         }
-        LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.supplyChestDeployer.invalid");
-        return itemStack;
+        LanguageHandler.sendPlayerLocalizedMessage(player, "item.supplyChestDeployer.invalid");
+        return false;
     }
 
     /**
