@@ -32,7 +32,7 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int face, float f, float f1, float f2)
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int face, float px, float py, float pz)
     {
         if(world == null || player == null || world.isRemote || stack.stackSize == 0 || !isFirstPlacing(player))
             return false;

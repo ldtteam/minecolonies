@@ -18,12 +18,5 @@ public class ItemBuildTool extends ItemMinecolonies
         return "scepterGold";
     }
 
-    //TODO onItemUse?
-
-    @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
-    {
-        //TODO
-        return stack;
-    }
+    //TODO onItemUse
 }
