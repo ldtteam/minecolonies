@@ -28,21 +28,17 @@ public class BuildRequestPacket extends AbstractPacket
     @Override
     public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer)
     {
-        PacketBuffer packetBuffer = new PacketBuffer(buffer);
-
-        packetBuffer.writeInt(x);
-        packetBuffer.writeInt(y);
-        packetBuffer.writeInt(z);
+        buffer.writeInt(x);
+        buffer.writeInt(y);
+        buffer.writeInt(z);
     }
 
     @Override
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer)
     {
-        PacketBuffer packetBuffer = new PacketBuffer(buffer);
-
-        x = packetBuffer.readInt();
-        y = packetBuffer.readInt();
-        z = packetBuffer.readInt();
+        x = buffer.readInt();
+        y = buffer.readInt();
+        z = buffer.readInt();
     }
 
     @Override

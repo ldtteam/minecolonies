@@ -2,6 +2,7 @@ package com.minecolonies.entity;
 
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.inventory.InventoryCitizen;
+import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
@@ -24,12 +25,11 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
     public  ResourceLocation texture;
-    public  EnumCitizenLevel level;
+    //public  EnumCitizenLevel level;
     private String           job;
     private InventoryCitizen inventory;
 
@@ -44,7 +44,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         super(world);
         setSize(0.6F, 1.8F);
-        this.level = worldObj.rand.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
+        this.func_110163_bv();//Set persistenceRequired = true;
+        //this.level = worldObj.rand.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
         setTexture();
         this.job = initJob();
         this.inventory = new InventoryCitizen("Minecolony Inventory", false, 27);
@@ -52,6 +53,22 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setEnterDoors(true);
         initTasks();
+    }
+
+    @Override
+    public void entityInit()
+    {
+        super.entityInit();
+        dataWatcher.addObject(13, worldObj.rand.nextInt(3) + 1);//textureID
+        dataWatcher.addObject(14, 0);//level
+        dataWatcher.addObject(15, worldObj.rand.nextInt(2));//sex
+    }
+
+    @Override
+    public boolean interact(EntityPlayer player)
+    {
+        System.out.println(player.worldObj.isRemote + " " + getSex());
+        return true;
     }
 
     protected void initTasks()
@@ -81,6 +98,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onLivingUpdate()
     {
+        this.setTexture();
         super.onLivingUpdate();
         updateTileEntities();
     }
@@ -135,7 +153,57 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public void setTexture()
     {
-        texture = new ResourceLocation(level.getTexture() + (worldObj.rand.nextInt(3) + 1) + ".png");
+        String textureBase = "textures/entity/Entity";
+        /*switch(getLevel())
+        {
+            case 0:
+                textureBase += "Settler";
+                break;
+            case 1:
+                textureBase += "Citizen";
+                break;
+            case 2:
+                textureBase += "Noble";
+                break;
+            case 3:
+                textureBase += "Aristocrat";
+                break;
+        }*/
+        textureBase += "Citizen";
+
+        textureBase += getSex() == 0 ? "Male" : "Female";
+
+        texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
+    }
+
+    public int getTextureID()
+    {
+        return dataWatcher.getWatchableObjectInt(13);
+    }
+
+    public void setTextureID(int textureID)
+    {
+        dataWatcher.updateObject(13, textureID);
+    }
+
+    public int getLevel()
+    {
+        return dataWatcher.getWatchableObjectInt(14);
+    }
+
+    public void setLevel(int level)
+    {
+        dataWatcher.updateObject(14, level);
+    }
+
+    public int getSex()
+    {
+        return dataWatcher.getWatchableObjectInt(15);
+    }
+
+    public void setSex(int sex)
+    {
+        dataWatcher.updateObject(15, sex);
     }
 
     public String getJob()
@@ -177,12 +245,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     @Override
-    public void writeEntityToNBT(NBTTagCompound nbtTagCompound)
+    public void writeEntityToNBT(NBTTagCompound compound)
     {
-        super.writeEntityToNBT(nbtTagCompound);
-        nbtTagCompound.setString("job", job);
-        nbtTagCompound.setInteger("level", level.getLevel());
-        nbtTagCompound.setInteger("sex", level.getSexInt());
+        super.writeEntityToNBT(compound);
+        compound.setString("job", job);
+        compound.setInteger("level", getLevel());
+        compound.setInteger("textureID", getTextureID());
+        compound.setInteger("sex", getSex());
 
         if(tileEntityTownHall != null)
         {
@@ -190,7 +259,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             nbtTagTownhallCompound.setInteger("x", tileEntityTownHall.xCoord);
             nbtTagTownhallCompound.setInteger("y", tileEntityTownHall.yCoord);
             nbtTagTownhallCompound.setInteger("z", tileEntityTownHall.zCoord);
-            nbtTagCompound.setTag("townhall", nbtTagTownhallCompound);
+            compound.setTag("townhall", nbtTagTownhallCompound);
         }
         if(tileEntityWorkHut != null)
         {
@@ -198,7 +267,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             nbtTagWorkHutCompound.setInteger("x", tileEntityWorkHut.xCoord);
             nbtTagWorkHutCompound.setInteger("y", tileEntityWorkHut.yCoord);
             nbtTagWorkHutCompound.setInteger("z", tileEntityWorkHut.zCoord);
-            nbtTagCompound.setTag("workhut", nbtTagWorkHutCompound);
+            compound.setTag("workhut", nbtTagWorkHutCompound);
         }
         if(tileEntityHomeHut != null)
         {
@@ -206,7 +275,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             nbtTagHomeHutCompound.setInteger("x", tileEntityHomeHut.xCoord);
             nbtTagHomeHutCompound.setInteger("y", tileEntityHomeHut.yCoord);
             nbtTagHomeHutCompound.setInteger("z", tileEntityHomeHut.zCoord);
-            nbtTagCompound.setTag("homehut", nbtTagHomeHutCompound);
+            compound.setTag("homehut", nbtTagHomeHutCompound);
         }
         NBTTagList inventoryList = new NBTTagList();
         for(int i = 0; i < inventory.getSizeInventory(); i++)
@@ -218,48 +287,43 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 inventoryList.appendTag(tag);
             }
         }
-        nbtTagCompound.setTag("Inventory", inventoryList);
+        compound.setTag("Inventory", inventoryList);
     }
 
     @Override
-    public void readEntityFromNBT(NBTTagCompound nbtTagCompound)
+    public void readEntityFromNBT(NBTTagCompound compound)
     {
-        super.readEntityFromNBT(nbtTagCompound);
-        this.job = nbtTagCompound.getString("job");
+        super.readEntityFromNBT(compound);
 
-        int level = nbtTagCompound.hasKey("level") ? nbtTagCompound.getInteger("level") : this.level.getLevel();
-        int sex = nbtTagCompound.hasKey("sex") ? nbtTagCompound.getInteger("sex") : this.level.getSexInt();
+        this.job = compound.getString("job");
 
-        for(EnumCitizenLevel citizenLevel : EnumCitizenLevel.values())
+        setTextureID(compound.getInteger("textureID"));
+        setLevel(compound.hasKey("level") ? compound.getInteger("level") : this.getLevel());
+        setSex(compound.hasKey("sex") ? compound.getInteger("sex") : this.getSex());
+        setTexture();
+
+        if(compound.hasKey("townhall"))
         {
-            if(citizenLevel.getLevel() == level && citizenLevel.getSexInt() == sex)
-            {
-                this.level = citizenLevel;
-            }
-        }
-
-        if(nbtTagCompound.hasKey("townhall"))
-        {
-            NBTTagCompound nbtTagTownhallCompound = nbtTagCompound.getCompoundTag("townhall");
+            NBTTagCompound nbtTagTownhallCompound = compound.getCompoundTag("townhall");
             townPosX = nbtTagTownhallCompound.getInteger("x");
             townPosY = nbtTagTownhallCompound.getInteger("y");
             townPosZ = nbtTagTownhallCompound.getInteger("z");
         }
-        if(nbtTagCompound.hasKey("workhut"))
+        if(compound.hasKey("workhut"))
         {
-            NBTTagCompound nbtTagWorkHutCompound = nbtTagCompound.getCompoundTag("workhut");
+            NBTTagCompound nbtTagWorkHutCompound = compound.getCompoundTag("workhut");
             workPosX = nbtTagWorkHutCompound.getInteger("x");
             workPosY = nbtTagWorkHutCompound.getInteger("y");
             workPosZ = nbtTagWorkHutCompound.getInteger("z");
         }
-        if(nbtTagCompound.hasKey("homehut"))
+        if(compound.hasKey("homehut"))
         {
-            NBTTagCompound nbtTagHomeHutCompound = nbtTagCompound.getCompoundTag("homehut");
+            NBTTagCompound nbtTagHomeHutCompound = compound.getCompoundTag("homehut");
             homePosX = nbtTagHomeHutCompound.getInteger("x");
             homePosY = nbtTagHomeHutCompound.getInteger("y");
             homePosZ = nbtTagHomeHutCompound.getInteger("z");
         }
-        NBTTagList nbttaglist = nbtTagCompound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
+        NBTTagList nbttaglist = compound.getTagList("Inventory", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for(int i = 0; i < nbttaglist.tagCount(); i++)
         {
             NBTTagCompound tag = nbttaglist.getCompoundTagAt(i);
@@ -303,7 +367,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         getTownHall().addCitizenToTownhall(worker);
         tileEntityHutWorker.bindWorker(worker);
         worldObj.spawnEntityInWorld(worker);
-        //TODO more to come
     }
 
     public void removeFromWorkHut(TileEntityHutWorker tileEntityHutWorker)

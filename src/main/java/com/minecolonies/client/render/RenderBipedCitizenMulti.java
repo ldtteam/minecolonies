@@ -24,9 +24,9 @@ public class RenderBipedCitizenMulti extends RenderBipedCitizen
         {
             EntityCitizen entityCitizen = (EntityCitizen) entityliving;
 
-            if(entityCitizen.level.getSexInt() == 1)
+            if(entityCitizen.getSex() == 1)
             {
-                switch(entityCitizen.level.getLevel())
+                switch(entityCitizen.getLevel())
                 {
                     case 0:
                     case 1:

@@ -127,7 +127,7 @@ public class EntityBuilder extends EntityCitizen
 
     public int getWorkInterval()
     {
-        return Constants.BUILDERWORKINTERFALL - this.level.getLevel();//TODO
+        return Constants.BUILDERWORKINTERFALL - this.getLevel();//TODO
     }
 
     public boolean isBuilderNeeded()
