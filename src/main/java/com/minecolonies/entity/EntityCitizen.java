@@ -119,11 +119,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onDeath(DamageSource par1DamageSource)
     {
-        if(tileEntityTownHall != null)
+        if(this.getTownHall() != null)
         {
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, tileEntityTownHall.getOwners()), "tile.blockHutTownhall.messageColonistDead");
 
             tileEntityTownHall.removeCitizen(this);
+        }
+        //TODO addHome when CitizenHut is in game
+        if(this.getWorkHut() != null)
+        {
+            this.removeFromWorkHut(this.getWorkHut());
         }
         super.onDeath(par1DamageSource);
     }
@@ -171,19 +176,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tileEntityWorkHut = work;
     }
 
-    @Override
-    public void onDeathUpdate()
-    {
-        super.onDeathUpdate();
-        if(this.getTownHall() != null)
-        {
-            this.getTownHall().removeCitizen(this);
-        }
-        if(this.getWorkHut() != null)
-        {
-            this.removeFromWorkHut(this.getWorkHut());
-        }
-    }
     @Override
     public void writeEntityToNBT(NBTTagCompound nbtTagCompound)
     {

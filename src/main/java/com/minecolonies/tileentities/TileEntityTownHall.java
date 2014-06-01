@@ -54,7 +54,7 @@ public class TileEntityTownHall extends TileEntityHut
             if(o instanceof TileEntityHut && Utils.getDistanceToClosestTownHall(worldObj, xCoord, yCoord, zCoord) < Configurations.workingRangeTownhall)
             {
                 TileEntityHut tileEntityHut = (TileEntityHut) o;
-                if(tileEntityHut.getTownHall() == null)
+                if(tileEntityHut.getTownHall() == null)//TODO test this, we may not need this check because there shouldn't be a hut claimed in a region you're allowed to place
                 {
                     tileEntityHut.setTownHall(this);
                     huts.add(new int[]{((TileEntityHut) o).xCoord, ((TileEntityHut) o).yCoord, ((TileEntityHut) o).zCoord});

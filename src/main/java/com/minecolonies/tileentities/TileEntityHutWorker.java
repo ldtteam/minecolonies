@@ -61,6 +61,8 @@ public abstract class TileEntityHutWorker extends TileEntityHut
         ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
 
         List<Entity> entityCitizens = Utils.getEntitiesFromUUID(worldObj, citizens);
+        if(entityCitizens == null) return;
+
         for(Entity entity : entityCitizens)
         {
             if(entity instanceof EntityCitizen)
