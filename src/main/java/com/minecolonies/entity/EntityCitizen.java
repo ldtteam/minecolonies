@@ -226,7 +226,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return tileEntityTownHall;
     }
 
-    public TileEntityHutCitizen getHomeHut()//TODO TileEntityHutCitizen
+    public TileEntityHutCitizen getHomeHut()
     {
         return tileEntityHomeHut;
     }

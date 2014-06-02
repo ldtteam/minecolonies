@@ -2,7 +2,6 @@ package com.minecolonies.tileentities;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -12,11 +11,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
-import static net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.*;
+
+import static net.minecraftforge.common.util.Constants.NBT;
 
 public class TileEntityTownHall extends TileEntityHut
 {
@@ -24,8 +22,8 @@ public class TileEntityTownHall extends TileEntityHut
     private List<UUID> owners   = new ArrayList<UUID>();
 
     private int maxCitizens;
-    private List<UUID> citizens = new ArrayList<UUID>();
-    private List<int[]> huts = new ArrayList<int[]>(); //Stores XYZ's
+    private List<UUID>  citizens = new ArrayList<UUID>();
+    private List<int[]> huts     = new ArrayList<int[]>(); //Stores XYZ's
 
     private Map<int[], String> builderRequired = new HashMap<int[], String>(); //Stores XYZ's //TODO make this a Vec3
 
@@ -50,12 +48,9 @@ public class TileEntityTownHall extends TileEntityHut
         for(Object o : worldObj.loadedTileEntityList)
             if(o instanceof TileEntityHut && Utils.getDistanceToClosestTownHall(worldObj, xCoord, yCoord, zCoord) < Configurations.workingRangeTownhall)
             {
-                TileEntityHut tileEntityHut = (TileEntityHut) o;
-                if(tileEntityHut.getTownHall() == null)//TODO test this, we may not need this check because there shouldn't be a hut claimed in a region you're allowed to place
-                {
-                    tileEntityHut.setTownHall(this);
-                    huts.add(new int[]{((TileEntityHut) o).xCoord, ((TileEntityHut) o).yCoord, ((TileEntityHut) o).zCoord});
-                }
+                TileEntityHut hut = (TileEntityHut) o;
+                hut.setTownHall(this);
+                huts.add(new int[]{hut.xCoord, hut.yCoord, hut.zCoord});
             }
     }
 
