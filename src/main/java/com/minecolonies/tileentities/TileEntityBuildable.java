@@ -13,7 +13,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 {
     private int                buildingLevel;
     private TileEntityTownHall townhall;
-    private int townhallX, townhallY, townhallZ;
+    private int                townhallX, townhallY, townhallZ;
 
     public TileEntityBuildable()
     {

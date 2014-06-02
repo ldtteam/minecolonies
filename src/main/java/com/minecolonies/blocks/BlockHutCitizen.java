@@ -10,6 +10,7 @@ public class BlockHutCitizen extends BlockHut
     {
         super();
     }
+
     @Override
     public String getName()
     {

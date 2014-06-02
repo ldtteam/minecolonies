@@ -5,7 +5,6 @@ import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.tileentities.TileEntityBuildable;
-import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
@@ -16,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -102,14 +100,22 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 if(!block.getMaterial().isSolid())
                 {
                     //TODO support block or add delay system
-                    if (block == Blocks.torch) {
-                        if (metadata == 1 && world.getBlock(pos[0] - 1, pos[1], pos[2]) == Blocks.air) {
+                    if(block == Blocks.torch)
+                    {
+                        if(metadata == 1 && world.getBlock(pos[0] - 1, pos[1], pos[2]) == Blocks.air)
+                        {
                             world.setBlock(pos[0] - 1, pos[1], pos[2], Blocks.dirt);
-                        } else if (metadata == 2 && world.getBlock(pos[0] + 1, pos[1], pos[2]) == Blocks.air) {
+                        }
+                        else if(metadata == 2 && world.getBlock(pos[0] + 1, pos[1], pos[2]) == Blocks.air)
+                        {
                             world.setBlock(pos[0] + 1, pos[1], pos[2], Blocks.dirt);
-                        } else if (metadata == 3 && world.getBlock(pos[0], pos[1], pos[2] - 1) == Blocks.air) {
+                        }
+                        else if(metadata == 3 && world.getBlock(pos[0], pos[1], pos[2] - 1) == Blocks.air)
+                        {
                             world.setBlock(pos[0], pos[1], pos[2] - 1, Blocks.dirt);
-                        } else if (metadata == 4 && world.getBlock(pos[0], pos[1], pos[2] + 1) == Blocks.air) {
+                        }
+                        else if(metadata == 4 && world.getBlock(pos[0], pos[1], pos[2] + 1) == Blocks.air)
+                        {
                             world.setBlock(pos[0], pos[1], pos[2] + 1, Blocks.dirt);
                         }
                     }

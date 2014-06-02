@@ -3,7 +3,6 @@ package com.minecolonies.entity;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityHutCitizen;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
@@ -26,6 +25,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
 import static net.minecraftforge.common.util.Constants.NBT;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
@@ -34,12 +34,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private String           job;
     private InventoryCitizen inventory;
 
-    private TileEntityTownHall      tileEntityTownHall;
-    private int                     townPosX, townPosY, townPosZ;
-    private TileEntityHutWorker     tileEntityWorkHut;
-    private int                     workPosX, workPosY, workPosZ;
+    private TileEntityTownHall tileEntityTownHall;
+    private int                townPosX, townPosY, townPosZ;
+    private TileEntityHutWorker tileEntityWorkHut;
+    private int                 workPosX, workPosY, workPosZ;
     private TileEntityHutCitizen tileEntityHomeHut;
-    int                             homePosX, homePosY, homePosZ;
+    int homePosX, homePosY, homePosZ;
 
     public EntityCitizen(World world)
     {
@@ -241,7 +241,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tileEntityTownHall = tileEntityTownHall;
     }
 
-    public void setHomeHut(TileEntityHutCitizen home) { this.tileEntityHomeHut = home;}
+    public void setHomeHut(TileEntityHutCitizen home){ this.tileEntityHomeHut = home;}
 
     public void setWorkHut(TileEntityHutWorker work)
     {

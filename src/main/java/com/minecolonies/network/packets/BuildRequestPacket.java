@@ -4,7 +4,6 @@ import com.minecolonies.tileentities.TileEntityHut;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
 
 /**
  * Adds a entry to the builderRequired map

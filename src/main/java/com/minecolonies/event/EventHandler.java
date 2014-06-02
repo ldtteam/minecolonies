@@ -3,11 +3,8 @@ package com.minecolonies.event;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityHut;
-import com.minecolonies.tileentities.TileEntityHutCitizen;
-import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -116,8 +113,9 @@ public class EventHandler
         }
         else
         {
-            if(world.isRemote) return true;//Player properties aren't stored client side, so we must do this or huts will never be placed
-                                           //Only downfall is it causes huts to flicker, when they get cancelled.
+            if(world.isRemote)
+                return true;//Player properties aren't stored client side, so we must do this or huts will never be placed
+            //Only downfall is it causes huts to flicker, when they get cancelled.
             TileEntityTownHall townhall = Utils.getTownhallByOwner(world, player);
             if(townhall == null || Utils.getDistanceToTileEntity(x, y, z, townhall) > Configurations.workingRangeTownhall)
             {
