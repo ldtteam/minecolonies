@@ -4,6 +4,7 @@ import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityHut;
+import com.minecolonies.tileentities.TileEntityHutCitizen;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
@@ -25,20 +26,20 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import static net.minecraftforge.common.util.Constants.NBT;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
     public  ResourceLocation texture;
-    //public  EnumCitizenLevel level;
     private String           job;
     private InventoryCitizen inventory;
 
-    private TileEntityTownHall tileEntityTownHall;
-    private int                townPosX, townPosY, townPosZ;
-    private TileEntityHutWorker tileEntityWorkHut;
-    private int                 workPosX, workPosY, workPosZ;
-    private TileEntityHut tileEntityHomeHut;//TODO TileEntityHutCitizen
-    int homePosX, homePosY, homePosZ;
+    private TileEntityTownHall      tileEntityTownHall;
+    private int                     townPosX, townPosY, townPosZ;
+    private TileEntityHutWorker     tileEntityWorkHut;
+    private int                     workPosX, workPosY, workPosZ;
+    private TileEntityHutCitizen tileEntityHomeHut;
+    int                             homePosX, homePosY, homePosZ;
 
     public EntityCitizen(World world)
     {
@@ -115,7 +116,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         if(tileEntityHomeHut == null)
         {
-            tileEntityHomeHut = (TileEntityHut) worldObj.getTileEntity(homePosX, homePosY, homePosZ);//TODO TileEntityHutCitizen
+            tileEntityHomeHut = (TileEntityHutCitizen) worldObj.getTileEntity(homePosX, homePosY, homePosZ);
         }
     }
 
@@ -143,7 +144,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
             tileEntityTownHall.removeCitizen(this);
         }
-        //TODO addHome when CitizenHut is in game
+        if(this.getHomeHut() != null)
+        {
+            this.getHomeHut().removeCitizen(this);
+        }
         if(this.getWorkHut() != null)
         {
             this.removeFromWorkHut(this.getWorkHut());
@@ -222,7 +226,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return tileEntityTownHall;
     }
 
-    public TileEntityHut getHomeHut()//TODO TileEntityHutCitizen
+    public TileEntityHutCitizen getHomeHut()//TODO TileEntityHutCitizen
     {
         return tileEntityHomeHut;
     }
@@ -237,7 +241,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tileEntityTownHall = tileEntityTownHall;
     }
 
-    //public void setHomeHut(TileEntityHutCitizen home) { this.tileEntityHomeHut = home};
+    public void setHomeHut(TileEntityHutCitizen home) { this.tileEntityHomeHut = home;}
 
     public void setWorkHut(TileEntityHutWorker work)
     {
@@ -323,7 +327,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             homePosY = nbtTagHomeHutCompound.getInteger("y");
             homePosZ = nbtTagHomeHutCompound.getInteger("z");
         }
-        NBTTagList nbttaglist = compound.getTagList("Inventory", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        NBTTagList nbttaglist = compound.getTagList("Inventory", NBT.TAG_COMPOUND);
         for(int i = 0; i < nbttaglist.tagCount(); i++)
         {
             NBTTagCompound tag = nbttaglist.getCompoundTagAt(i);
@@ -371,15 +375,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public void removeFromWorkHut(TileEntityHutWorker tileEntityHutWorker)
     {
-        setJob(initJob(), null);
         NBTTagCompound nbt = new NBTTagCompound();
         this.writeToNBT(nbt);
+        nbt.removeTag("workhut");
         getTownHall().removeCitizen(this);
         tileEntityHutWorker.unbindWorker(this);
         this.setDead();
 
         EntityCitizen citizen = new EntityCitizen(worldObj);
         citizen.readFromNBT(nbt);
+        citizen.setJob("Citizen", null);
         getTownHall().addCitizenToTownhall(citizen);
         worldObj.spawnEntityInWorld(citizen);
     }

@@ -34,6 +34,7 @@ com.minecolonies.gui.deliverymanHut.toStonemason=Deliver to Stonemason:
 com.minecolonies.gui.deliverymanHut.toGuards=Deliver to Guards:
 com.minecolonies.gui.deliverymanHut.visitCitizenChests=Visit Citizenchests:
 
+tile.blockHutCitizen.name=Citizen's Hut
 tile.blockHutBaker.name=Baker's Hut
 tile.blockHutBlacksmith.name=Blacksmith's Hut
 tile.blockHutBuilder.name=Builder's Hut

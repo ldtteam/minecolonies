@@ -12,7 +12,6 @@ import net.minecraft.util.Vec3;
 public abstract class TileEntityBuildable extends TileEntityChest implements IColony
 {
     private int                buildingLevel;
-    private boolean            hasWorker;
     private TileEntityTownHall townhall;
     private int townhallX, townhallY, townhallZ;
 
@@ -35,7 +34,6 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     {
         super.readFromNBT(compound);
         this.buildingLevel = compound.getInteger("buildingLevel");
-        this.hasWorker = compound.getBoolean("hasWorker");
         this.townhallX = compound.getInteger("townhall-x");
         this.townhallY = compound.getInteger("townhall-y");
         this.townhallZ = compound.getInteger("townhall-z");
@@ -46,7 +44,6 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     {
         super.writeToNBT(compound);
         compound.setInteger("buildingLevel", buildingLevel);
-        compound.setBoolean("hasWorker", hasWorker);
         if(this.townhall != null)
         {
             compound.setInteger("townhall-x", townhall.xCoord);
@@ -72,16 +69,6 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     public void setBuildingLevel(int buildingLevel)
     {
         this.buildingLevel = buildingLevel;
-    }
-
-    public boolean hasWorker()
-    {
-        return hasWorker;
-    }
-
-    public void setHasWorker(boolean hasWorker)
-    {
-        this.hasWorker = hasWorker;
     }
 
     public TileEntityTownHall getTownHall()

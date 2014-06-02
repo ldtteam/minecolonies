@@ -6,6 +6,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityHut;
+import com.minecolonies.tileentities.TileEntityHutCitizen;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
@@ -33,38 +34,24 @@ public class EventHandler
             TileEntityHut hut = (TileEntityHut) getTileEntity(event);
             EntityPlayer player = event.getPlayer();
 
-            if(isPlayerOwner(hut, player))
+            if(hut != null && isPlayerOwner(hut, player))
             {
                 TileEntityTownHall townhall = hut.getTownHall();
 
                 if(hut instanceof TileEntityTownHall)
                 {
-                    for(Object o : world.loadedEntityList)
-                    {
-                        if(o instanceof EntityCitizen)
-                        {
-                            EntityCitizen citizen = (EntityCitizen) o;
-                            if(townhall.getCitizens().contains(citizen.getUniqueID()))
-                            {
-                                townhall.removeCitizen(citizen);
-                                citizen.setDead();
-                            }
-                        }
-                    }
                     PlayerProperties.get(player).removeTownhall();
                 }
                 else if(townhall != null)
                 {
                     townhall.removeHut(hut.xCoord, hut.yCoord, hut.zCoord);
-
-                    if(hut instanceof TileEntityHutWorker)
-                    {
-                        ((TileEntityHutWorker) hut).removeWorker(townhall);
-                    }
                 }
-                return;
+                hut.breakBlock();
             }
-            event.setCanceled(true);
+            else
+            {
+                event.setCanceled(hut != null);
+            }
         }
     }
 

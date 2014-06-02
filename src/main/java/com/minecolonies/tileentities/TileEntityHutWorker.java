@@ -3,26 +3,28 @@ package com.minecolonies.tileentities;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public abstract class TileEntityHutWorker extends TileEntityHut
 {
+    private UUID workerID;
+
     public abstract String getJobName();
 
     public abstract EntityCitizen createWorker();
 
     public void bindWorker(EntityCitizen worker)
     {
-        this.setHasWorker(true);
+        workerID = worker.getUniqueID();
         worker.setWorkHut(this);
     }
 
     public void unbindWorker(EntityCitizen worker)
     {
-        this.setHasWorker(false);
+        workerID = null;
         worker.setWorkHut(null);
     }
 
@@ -32,16 +34,17 @@ public abstract class TileEntityHutWorker extends TileEntityHut
         super.updateEntity();
         if(!hasWorker() && this.getTownHall() != null)
         {
-            attemptToAddIdleCitizen(this.getTownHall());
+            addJoblessCitizens(this.getTownHall());
         }
     }
 
-    public void attemptToAddIdleCitizen(TileEntityTownHall tileEntityTownHall)
+    public void addJoblessCitizens(TileEntityTownHall tileEntityTownHall)
     {
-        ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
+        List<UUID> citizens = tileEntityTownHall.getCitizens();
 
         List<Entity> entityCitizens = Utils.getEntitiesFromUUID(worldObj, citizens);
         if(entityCitizens != null)
+        {
             for(Entity entity : entityCitizens)
             {
                 if(entity instanceof EntityCitizen)
@@ -54,26 +57,41 @@ public abstract class TileEntityHutWorker extends TileEntityHut
                     }
                 }
             }
+        }
     }
 
-    public void removeWorker(TileEntityTownHall tileEntityTownHall)//TODO store Worker UUID in NBT for easy access and performance
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
     {
-        ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
+        super.readFromNBT(compound);
+        this.workerID = UUID.fromString(compound.getString("workerID"));
+    }
 
-        List<Entity> entityCitizens = Utils.getEntitiesFromUUID(worldObj, citizens);
-        if(entityCitizens == null) return;
-
-        for(Entity entity : entityCitizens)
+    @Override
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        if(hasWorker())
         {
-            if(entity instanceof EntityCitizen)
+            compound.setString("workerID", workerID.toString());
+        }
+    }
+
+    @Override
+    public void breakBlock()
+    {
+        if(workerID != null)
+        {
+            EntityCitizen worker = (EntityCitizen) Utils.getEntityFromUUID(worldObj, workerID);
+            if(worker != null)
             {
-                EntityCitizen entityCitizen = (EntityCitizen) entity;
-                if(entityCitizen.getWorkHut() != null && entityCitizen.getWorkHut() == this && hasWorker())
-                {
-                    entityCitizen.removeFromWorkHut(this);
-                    return;
-                }
+                worker.removeFromWorkHut(this);
             }
         }
+    }
+
+    public boolean hasWorker()
+    {
+        return workerID != null;
     }
 }

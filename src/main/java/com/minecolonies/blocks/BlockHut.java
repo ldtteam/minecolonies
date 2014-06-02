@@ -1,28 +1,22 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.configuration.Configurations;
 import com.minecolonies.creativetab.ModCreativeTabs;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.lib.IColony;
-import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
-import ibxm.Player;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
@@ -71,7 +65,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
             {
                 TileEntityTownHall townhall = (TileEntityTownHall) hut;
                 townhall.onBlockAdded();
-                townhall.setInfo(world, player.getUniqueID(), x, z);
+                townhall.addOwner(player.getUniqueID());
                 townhall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName()));
                 PlayerProperties.get(player).placeTownhall(x, y, z);
             }
@@ -84,7 +78,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
 
                 if(hut instanceof TileEntityHutWorker)
                 {
-                    ((TileEntityHutWorker) hut).attemptToAddIdleCitizen(townhall);
+                    ((TileEntityHutWorker) hut).addJoblessCitizens(townhall);
                 }
             }
         }

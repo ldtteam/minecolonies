@@ -6,6 +6,8 @@ public abstract class TileEntityHut extends TileEntityBuildable
     private int maleInhabitants;
     private int femaleInhabitants;
 
+    public abstract void breakBlock();
+
     public int getMaxInhabitants()
     {
         return maxInhabitants;

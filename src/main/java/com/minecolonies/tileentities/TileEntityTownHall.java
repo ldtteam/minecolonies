@@ -2,6 +2,8 @@ package com.minecolonies.tileentities;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.PlayerProperties;
+import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import net.minecraft.init.Blocks;
@@ -12,29 +14,24 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.util.Constants;
+import static net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.*;
 
 public class TileEntityTownHall extends TileEntityHut
 {
-    private String          cityName = "ERROR(Wasn't placed by player)";
-    private ArrayList<UUID> owners;
-    private BiomeGenBase    biome;
+    private String     cityName = "ERROR(Wasn't placed by player)";
+    private List<UUID> owners   = new ArrayList<UUID>();
 
-    private ArrayList<UUID>  citizens;
-    private int              maxCitizens;
-    private ArrayList<int[]> huts; //Stores XYZ's
+    private int maxCitizens;
+    private List<UUID> citizens = new ArrayList<UUID>();
+    private List<int[]> huts = new ArrayList<int[]>(); //Stores XYZ's
 
-    private HashMap<int[], String> builderRequired; //Stores XYZ's //TODO make this a Vec3
+    private Map<int[], String> builderRequired = new HashMap<int[], String>(); //Stores XYZ's //TODO make this a Vec3
 
     public TileEntityTownHall()
     {
-        owners = new ArrayList<UUID>();
-        citizens = new ArrayList<UUID>();
-        maxCitizens = com.minecolonies.lib.Constants.DEFAULTMAXCITIZENS;
-        huts = new ArrayList<int[]>();
-        builderRequired = new HashMap<int[], String>();
+        maxCitizens = Constants.DEFAULTMAXCITIZENS;
     }
 
     @Override
@@ -60,12 +57,6 @@ public class TileEntityTownHall extends TileEntityHut
                     huts.add(new int[]{((TileEntityHut) o).xCoord, ((TileEntityHut) o).yCoord, ((TileEntityHut) o).zCoord});
                 }
             }
-    }
-
-    public void setInfo(World w, UUID ownerName, int x, int z)
-    {
-        owners.add(ownerName);
-        biome = w.getBiomeGenForCoords(x, z);
     }
 
     @Override
@@ -99,6 +90,23 @@ public class TileEntityTownHall extends TileEntityHut
     }
 
     @Override
+    public void breakBlock()
+    {
+        for(Object o : worldObj.loadedEntityList)
+        {
+            if(o instanceof EntityCitizen)
+            {
+                EntityCitizen citizen = (EntityCitizen) o;
+                if(this.getCitizens().contains(citizen.getUniqueID()))
+                {
+                    this.removeCitizen(citizen);
+                    citizen.setDead();
+                }
+            }
+        }
+    }
+
+    @Override
     public void writeToNBT(NBTTagCompound nbtTagCompound)
     {
         super.writeToNBT(nbtTagCompound);
@@ -112,10 +120,10 @@ public class TileEntityTownHall extends TileEntityHut
             nbtTagOwnersList.appendTag(nbtTagOwnersCompound);
         }
         NBTTagList nbtTagCitizenList = new NBTTagList();
-        for(UUID citizens : getCitizens())
+        for(UUID citizen : getCitizens())
         {
             NBTTagCompound nbtTagCitizenCompound = new NBTTagCompound();
-            nbtTagCitizenCompound.setString("citizen", citizens.toString());
+            nbtTagCitizenCompound.setString("citizen", citizen.toString());
             nbtTagCitizenList.appendTag(nbtTagCitizenCompound);
         }
         if(!huts.isEmpty())
@@ -151,31 +159,32 @@ public class TileEntityTownHall extends TileEntityHut
         super.readFromNBT(nbtTagCompound);
         this.maxCitizens = nbtTagCompound.getInteger("maxCitizens");
         this.cityName = nbtTagCompound.getString("cityName");
-        NBTTagList nbtTagOwnersList = nbtTagCompound.getTagList("owners", Constants.NBT.TAG_COMPOUND);
-        NBTTagList nbtTagCitizenList = nbtTagCompound.getTagList("citizens", Constants.NBT.TAG_COMPOUND);
-        NBTTagList nbtTagBuildingsList = nbtTagCompound.getTagList("huts", Constants.NBT.TAG_INT_ARRAY);
-        NBTTagList nbtTagBuilderRequiredList = nbtTagCompound.getTagList("builderRequired", Constants.NBT.TAG_COMPOUND);
-        this.owners = new ArrayList<UUID>();
-        this.citizens = new ArrayList<UUID>();
-        this.huts = new ArrayList<int[]>();
-        this.builderRequired = new HashMap<int[], String>();
+
+        NBTTagList nbtTagOwnersList = nbtTagCompound.getTagList("owners", NBT.TAG_COMPOUND);
+        NBTTagList nbtTagCitizenList = nbtTagCompound.getTagList("citizens", NBT.TAG_COMPOUND);
+        NBTTagList nbtTagBuildingsList = nbtTagCompound.getTagList("huts", NBT.TAG_INT_ARRAY);
+        NBTTagList nbtTagBuilderRequiredList = nbtTagCompound.getTagList("builderRequired", NBT.TAG_COMPOUND);
+        this.owners.clear();
+        this.citizens.clear();
+        this.huts.clear();
+        this.builderRequired.clear();
         for(int i = 0; i < nbtTagOwnersList.tagCount(); i++)
         {
             NBTTagCompound nbtTagOwnersCompound = nbtTagOwnersList.getCompoundTagAt(i);
             UUID uuid = UUID.fromString(nbtTagOwnersCompound.getString("owner"));
-            owners.add(i, uuid);
+            owners.add(uuid);
         }
         for(int i = 0; i < nbtTagCitizenList.tagCount(); i++)
         {
             NBTTagCompound nbtTagCitizenCompound = nbtTagCitizenList.getCompoundTagAt(i);
             UUID uuid = UUID.fromString(nbtTagCitizenCompound.getString("citizen"));
-            citizens.add(i, uuid);
+            citizens.add(uuid);
         }
         for(int i = 0; i < nbtTagBuildingsList.tagCount(); i++)
         {
             NBTTagCompound nbtTagBuildingCompound = nbtTagBuildingsList.getCompoundTagAt(i);
             int[] hut = nbtTagBuildingCompound.getIntArray("hut");
-            huts.add(i, hut);
+            huts.add(hut);
         }
         for(int i = 0; i < nbtTagBuilderRequiredList.tagCount(); i++)
         {
@@ -200,13 +209,18 @@ public class TileEntityTownHall extends TileEntityHut
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, nbtTagCompound);
     }
 
+    public void addOwner(UUID ownerName)
+    {
+        owners.add(ownerName);
+    }
+
     @Override
     public TileEntityTownHall getTownHall()
     {
         return this;
     }
 
-    public ArrayList<UUID> getOwners()
+    public List<UUID> getOwners()
     {
         return owners;
     }
@@ -224,10 +238,17 @@ public class TileEntityTownHall extends TileEntityHut
 
     public void removeCitizen(EntityCitizen citizen)
     {
-        if(citizens.contains(citizen.getUniqueID())) citizens.remove(citizen.getUniqueID());
+        for(UUID id : citizens)
+        {
+            if(citizen.getUniqueID().equals(id))
+            {
+                citizens.remove(id);
+                return;
+            }
+        }
     }
 
-    public ArrayList<UUID> getCitizens()
+    public List<UUID> getCitizens()
     {
         return citizens;
     }
@@ -257,9 +278,9 @@ public class TileEntityTownHall extends TileEntityHut
         return ec;
     }
 
-    public ArrayList<TileEntityBuildable> getHuts()
+    public List<TileEntityBuildable> getHuts()
     {
-        ArrayList<TileEntityBuildable> list = new ArrayList<TileEntityBuildable>();
+        List<TileEntityBuildable> list = new ArrayList<TileEntityBuildable>();
         for(int[] i : huts)
         {
             list.add((TileEntityBuildable) worldObj.getTileEntity(i[0], i[1], i[2]));
@@ -301,7 +322,7 @@ public class TileEntityTownHall extends TileEntityHut
         }
     }
 
-    public HashMap<int[], String> getBuilderRequired()
+    public Map<int[], String> getBuilderRequired()
     {
         return builderRequired;
     }
