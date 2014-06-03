@@ -70,14 +70,16 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
         this.townhall = townhall;
     }
 
-    public void requestBuilding()//TODO check that the list doesn't already contain this request
+    public void requestBuilding()
     {
+        if(getTownHall().getBuilderRequired().containsKey(new int[]{xCoord, yCoord, zCoord})) return; //Untested //TODO send message, i dont have @link{EntityPlayer}
         if(!(buildingLevel >= 3)) //TODO
             getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel + 1), xCoord, yCoord, zCoord);
     }
 
-    public void requestRepair()//TODO check that the list doesn't already contain this request
+    public void requestRepair()
     {
+        if(getTownHall().getBuilderRequired().containsKey(new int[]{xCoord, yCoord, zCoord})) return; //Untested //TODO send message, i dont have @link{EntityPlayer}
         if(buildingLevel == 0) return;
         getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel), xCoord, yCoord, zCoord);
     }
