@@ -8,8 +8,6 @@ import com.minecolonies.util.Utils;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.Vec3;
 
 import java.util.*;
@@ -188,20 +186,6 @@ public class TileEntityTownHall extends TileEntityHut
             String name = nbtTagBuilderRequiredCompound.getString("name");
             builderRequired.put(coords, name);
         }
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
-    {
-        this.readFromNBT(packet.func_148857_g());
-    }
-
-    @Override
-    public S35PacketUpdateTileEntity getDescriptionPacket()
-    {
-        NBTTagCompound nbtTagCompound = new NBTTagCompound();
-        this.writeToNBT(nbtTagCompound);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, nbtTagCompound);
     }
 
     public void addOwner(UUID ownerName)

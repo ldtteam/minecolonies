@@ -1,5 +1,9 @@
 package com.minecolonies.tileentities;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+
 public abstract class TileEntityHut extends TileEntityBuildable
 {
     private int maxInhabitants;
@@ -36,5 +40,19 @@ public abstract class TileEntityHut extends TileEntityBuildable
     public void setFemaleInhabitants(int femaleInhabitants)
     {
         this.femaleInhabitants = femaleInhabitants;
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+    {
+        this.readFromNBT(packet.func_148857_g());
+    }
+
+    @Override
+    public S35PacketUpdateTileEntity getDescriptionPacket()
+    {
+        NBTTagCompound nbtTagCompound = new NBTTagCompound();
+        this.writeToNBT(nbtTagCompound);
+        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, nbtTagCompound);
     }
 }

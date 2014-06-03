@@ -1,8 +1,6 @@
 package com.minecolonies.tileentities;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.lib.IColony;
-import com.minecolonies.network.packets.TileEntityPacket;
 import com.minecolonies.util.Schematic;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -50,15 +48,6 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
             compound.setInteger("townhall-y", townhall.yCoord);
             compound.setInteger("townhall-z", townhall.zCoord);
         }
-    }
-
-    public void sendPacket()
-    {
-        NBTTagCompound data = new NBTTagCompound();
-        this.writeToNBT(data);
-        TileEntityPacket packet = new TileEntityPacket(xCoord, yCoord, zCoord, data);
-
-        MineColonies.packetPipeline.sendToServer(packet);
     }
 
     public int getBuildingLevel()

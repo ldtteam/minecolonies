@@ -1,27 +1,27 @@
 package com.minecolonies.network.packets;
 
+import com.minecolonies.MineColonies;
+import com.minecolonies.tileentities.TileEntityTownHall;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 
 import java.io.IOException;
 
-public class TileEntityPacket extends AbstractPacket
+public class TownhallRenamePacket extends AbstractPacket
 {
     private int x, y, z;
-    private NBTTagCompound data;
+    private String name;
 
-    public TileEntityPacket(){}
+    public TownhallRenamePacket(){}
 
-    public TileEntityPacket(int x, int y, int z, NBTTagCompound data)
+    public TownhallRenamePacket(int x, int y, int z, String name)
     {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.data = data;
+        this.name = name;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class TileEntityPacket extends AbstractPacket
         packetBuffer.writeInt(z);
         try
         {
-            packetBuffer.writeNBTTagCompoundToBuffer(data);
+            packetBuffer.writeStringToBuffer(name);
         }
         catch(IOException e)
         {
@@ -52,7 +52,7 @@ public class TileEntityPacket extends AbstractPacket
         z = packetBuffer.readInt();
         try
         {
-            data = packetBuffer.readNBTTagCompoundFromBuffer();
+            name = packetBuffer.readStringFromBuffer(128);
         }
         catch(IOException e)
         {
@@ -63,22 +63,23 @@ public class TileEntityPacket extends AbstractPacket
     @Override
     public void handleClientSide(EntityPlayer player)
     {
-        TileEntity tileEntity = player.getEntityWorld().getTileEntity(x, y, z);
+        TileEntityTownHall townhall = (TileEntityTownHall) player.getEntityWorld().getTileEntity(x, y, z);
 
-        if(tileEntity != null)
+        if(townhall != null)
         {
-            tileEntity.readFromNBT(data);
+            townhall.setCityName(name);
         }
     }
 
     @Override
     public void handleServerSide(EntityPlayer player)
     {
-        TileEntity tileEntity = player.getEntityWorld().getTileEntity(x, y, z);
+        TileEntityTownHall townhall = (TileEntityTownHall) player.getEntityWorld().getTileEntity(x, y, z);
 
-        if(tileEntity != null)
+        if(townhall != null)
         {
-            tileEntity.readFromNBT(data);
+            townhall.setCityName(name);
+            MineColonies.packetPipeline.sendToAll(this);
         }
     }
 }
