@@ -24,6 +24,6 @@ public class TileEntityHutMiner extends TileEntityHutWorker
     @Override
     public EntityCitizen createWorker()
     {
-        return null;//TODO
+        return new EntityCitizen(worldObj); //TODO Implement Later
     }
 }
