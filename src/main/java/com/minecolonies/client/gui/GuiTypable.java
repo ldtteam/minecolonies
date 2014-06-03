@@ -81,6 +81,7 @@ public class GuiTypable extends GuiScreen
             {
                 if(!newCityName.isEmpty())
                 {
+                    tileEntityTownHall.setCityName(newCityName);
                     MineColonies.packetPipeline.sendToServer(new TownhallRenamePacket(x, y, z, newCityName));
                 }
                 player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
