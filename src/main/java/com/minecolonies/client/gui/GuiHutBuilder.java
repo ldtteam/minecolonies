@@ -60,10 +60,10 @@ public class GuiHutBuilder extends GuiBase
             case idRecallWorker:
                 break;
             case idBuildBuilding:
-                BuildRequestPacket packet = new BuildRequestPacket(x, y, z);
-                MineColonies.packetPipeline.sendToServer(packet);
+                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.BUILD));
                 break;
             case idRepairBuilding:
+                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.REPAIR));
                 break;
         }
     }

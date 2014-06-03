@@ -3,8 +3,7 @@ package com.minecolonies.proxy;
 import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.tileentities.TileEntityHutBuilder;
-import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.tileentities.*;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,6 +25,14 @@ public class CommonProxy implements IProxy
     {
         GameRegistry.registerTileEntity(TileEntityTownHall.class, "tileEntityTownHall");
         GameRegistry.registerTileEntity(TileEntityHutBuilder.class, "tileEntityHutBuilder");
+        GameRegistry.registerTileEntity(TileEntityHutCitizen.class, "tileEntityHutCitizen");
+        GameRegistry.registerTileEntity(TileEntityHutBaker.class, "tileEntityHutBaker");
+        GameRegistry.registerTileEntity(TileEntityHutBlacksmith.class, "tileEntityHutBlacksmith");
+        GameRegistry.registerTileEntity(TileEntityHutFarmer.class, "tileEntityHutFarmer");
+        GameRegistry.registerTileEntity(TileEntityHutLumberjack.class, "tileEntityHutLumberjack");
+        GameRegistry.registerTileEntity(TileEntityHutMiner.class, "tileEntityHutMiner");
+        GameRegistry.registerTileEntity(TileEntityHutStonemason.class, "tileEntityHutStonemason");
+        GameRegistry.registerTileEntity(TileEntityHutWarehouse.class, "tileEntityHutWarehouse");
     }
 
     /**

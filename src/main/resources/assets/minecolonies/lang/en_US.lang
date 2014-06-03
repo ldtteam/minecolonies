@@ -34,6 +34,7 @@ com.minecolonies.gui.deliverymanHut.toStonemason=Deliver to Stonemason:
 com.minecolonies.gui.deliverymanHut.toGuards=Deliver to Guards:
 com.minecolonies.gui.deliverymanHut.visitCitizenChests=Visit Citizenchests:
 
+tile.blockHutCitizen.name=Citizen's Hut
 tile.blockHutBaker.name=Baker's Hut
 tile.blockHutBlacksmith.name=Blacksmith's Hut
 tile.blockHutBuilder.name=Builder's Hut
@@ -43,11 +44,14 @@ tile.blockHutLumberjack.name=Lumberjack's Hut
 tile.blockHutMiner.name=Miner's Hut
 tile.blockHutStonemason.name=Stonemason's Hut
 tile.blockHutTownhall.name=Town Hall
+
 tile.blockHutTownhall.messageMaxSize=Colony has reached max size
 tile.blockHutTownhall.messageColonistDead=A colonist has died!
 tile.blockHutTownhall.messagePlacedAlready=You have placed a Town Hall already
 tile.blockHutTownhall.messageInvalidWorld=You can't place a townhall in this world type
 tile.blockHutTownhall.messageTooClose=Too close to existing townhall
+tile.blockHutTownhall.messageNoPermission=You don't have permission for %s.
+
 tile.blockHut.messageTooFarFromTownhall=You need to be closer to your townhall!
 tile.blockHut.messageNoTownhall=You need to place a townhall first!
 

@@ -3,7 +3,7 @@ package com.minecolonies.network;
 import com.minecolonies.MineColonies;
 import com.minecolonies.network.packets.AbstractPacket;
 import com.minecolonies.network.packets.BuildRequestPacket;
-import com.minecolonies.network.packets.TileEntityPacket;
+import com.minecolonies.network.packets.TownhallRenamePacket;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
@@ -36,7 +36,7 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
 
     private void registerPackets()
     {
-        registerPacket(TileEntityPacket.class);
+        registerPacket(TownhallRenamePacket.class);
         registerPacket(BuildRequestPacket.class);
     }
 

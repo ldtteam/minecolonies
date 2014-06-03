@@ -28,7 +28,7 @@ public class ItemCaliper extends ItemMinecolonies
     }
 
     @Override
-    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityPlayer, World world, int i, int j, int k, int l, float par8, float par9, float par10)
+    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityPlayer, World world, int x, int y, int z, int face, float px, float py, float pz)
     {
         if(world.isRemote) return false;
         IAttributeInstance attribute = entityPlayer.getEntityAttribute(use);
@@ -39,66 +39,66 @@ public class ItemCaliper extends ItemMinecolonies
         }
         if(attribute.getAttributeValue() == 0)
         {
-            startPositionX = i;
-            startPositionY = j;
-            startPositionZ = k;
+            startPositionX = x;
+            startPositionY = y;
+            startPositionZ = z;
             attribute.setBaseValue(1.0);
-            return false;
+            return true;
         }
         attribute.setBaseValue(0.0);
-        if(startPositionX == i && startPositionY == j && startPositionZ == k)
+        if(startPositionX == x && startPositionY == y && startPositionZ == z)
         {
             LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.same");
-            return false;
+            return true;
         }
-        if(startPositionX == i)
+        if(startPositionX == x)
         {
-            if(startPositionY == j)
+            if(startPositionY == y)
             {
-                int distance = java.lang.Math.abs(k - startPositionZ) + 1;
+                int distance = java.lang.Math.abs(z - startPositionZ) + 1;
                 LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.line", distance);
-                return false;
+                return true;
             }
-            if(startPositionZ == k)
+            if(startPositionZ == z)
             {
-                int distance = java.lang.Math.abs(j - startPositionY) + 1;
+                int distance = java.lang.Math.abs(y - startPositionY) + 1;
                 LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.line", distance);
-                return false;
+                return true;
             }
-            int distance1 = java.lang.Math.abs(j - startPositionY) + 1;
-            int distance2 = java.lang.Math.abs(k - startPositionZ) + 1;
+            int distance1 = java.lang.Math.abs(y - startPositionY) + 1;
+            int distance2 = java.lang.Math.abs(z - startPositionZ) + 1;
 
             LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.square", distance1, distance2);
-            return false;
+            return true;
         }
-        if(startPositionY == j)
+        if(startPositionY == y)
         {
-            if(startPositionZ == k)
+            if(startPositionZ == z)
             {
-                int distance = java.lang.Math.abs(i - startPositionX) + 1;
+                int distance = java.lang.Math.abs(x - startPositionX) + 1;
                 LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.line", distance);
-                return false;
+                return true;
             }
-            int distance1 = java.lang.Math.abs(i - startPositionX) + 1;
-            int distance2 = java.lang.Math.abs(k - startPositionZ) + 1;
+            int distance1 = java.lang.Math.abs(x - startPositionX) + 1;
+            int distance2 = java.lang.Math.abs(z - startPositionZ) + 1;
 
             LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.square", distance1, distance2);
-            return false;
+            return true;
         }
-        if(startPositionZ == k)
+        if(startPositionZ == z)
         {
-            int distance1 = java.lang.Math.abs(i - startPositionX) + 1;
-            int distance2 = java.lang.Math.abs(j - startPositionY) + 1;
+            int distance1 = java.lang.Math.abs(x - startPositionX) + 1;
+            int distance2 = java.lang.Math.abs(y - startPositionY) + 1;
 
             LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.square", distance1, distance2);
-            return false;
+            return true;
         }
 
-        int distance1 = java.lang.Math.abs(i - startPositionX) + 1;
-        int distance2 = java.lang.Math.abs(j - startPositionY) + 1;
-        int distance3 = java.lang.Math.abs(k - startPositionZ) + 1;
+        int distance1 = java.lang.Math.abs(x - startPositionX) + 1;
+        int distance2 = java.lang.Math.abs(y - startPositionY) + 1;
+        int distance3 = java.lang.Math.abs(z - startPositionZ) + 1;
 
         LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.cube", distance1, distance2, distance3);
-        return false;
+        return true;
     }
 }

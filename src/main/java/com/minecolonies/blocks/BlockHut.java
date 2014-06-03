@@ -1,12 +1,10 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.configuration.Configurations;
 import com.minecolonies.creativetab.ModCreativeTabs;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.lib.IColony;
-import com.minecolonies.tileentities.TileEntityBuildable;
+import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
@@ -16,11 +14,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
@@ -56,101 +52,35 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
         return icons[side];
     }
 
-    /**
-     * Sets the TileEntities townhall to the closest townhall
-     *
-     * @param world world
-     * @param x     x coordinate
-     * @param y     y coordinate
-     * @param z     z coordinate
-     */
-    public void addClosestTownhall(World world, int x, int y, int z)
-    {
-        TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
-        if(tileEntityTownHall != null)
-        {
-            if(world.getTileEntity(x, y, z) instanceof TileEntityBuildable)
-            {
-                TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
-                tileEntityBuildable.setTownHall(tileEntityTownHall); //TODO, check for owner first
-                if(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)
-                {
-                    ((TileEntityHutWorker) world.getTileEntity(x, y, z)).attemptToAddIdleCitizen(tileEntityTownHall);
-                }
-            }
-        }
-    }
-
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
         if(world.isRemote) return;
 
-        if(entityLivingBase instanceof EntityPlayer && !(world.getTileEntity(x, y, z) instanceof TileEntityTownHall))
+        if(entityLivingBase instanceof EntityPlayer)
         {
-            TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
-            TileEntityTownHall tileEntityTownHall = Utils.getTownhallByOwner(world, (EntityPlayer) entityLivingBase);
-            if(tileEntityTownHall == null || Utils.getDistanceToTileEntity(x, y, z, tileEntityTownHall) > Configurations.workingRangeTownhall)
+            EntityPlayer player = (EntityPlayer) entityLivingBase;
+            TileEntityHut hut = (TileEntityHut) world.getTileEntity(x, y, z);
+            if(hut instanceof TileEntityTownHall)
             {
-                if(tileEntityTownHall == null)
-                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockHut.messageNoTownhall");
-                else
-                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockHut.messageTooFarFromTownhall");
-                world.setBlockToAir(x, y, z);
-                return;
-            }
-            tileEntityBuildable.setTownHall(tileEntityTownHall);
-            tileEntityTownHall.addHut(tileEntityBuildable.xCoord, tileEntityBuildable.yCoord, tileEntityBuildable.zCoord);
-            if(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)
-            {
-                ((TileEntityHutWorker) world.getTileEntity(x, y, z)).attemptToAddIdleCitizen(tileEntityTownHall);
-            }
-        }
-    }
-
-    @Override
-    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
-    {
-        if(world.isRemote) return false;
-
-        if(this.canPlayerDestroy(world, x, y, z, player))
-        {
-            if(world.getTileEntity(x, y, z) instanceof TileEntityTownHall)
-            {
-                TileEntityTownHall tileEntityTownHall = (TileEntityTownHall) world.getTileEntity(x, y, z);
-                for(Object o : world.loadedEntityList)
-                {
-                    if(o instanceof EntityCitizen)
-                    {
-                        EntityCitizen citizen = (EntityCitizen) o;
-                        if(tileEntityTownHall.getCitizens().contains(citizen.getUniqueID()))
-                        {
-                            citizen.setDead();
-                            tileEntityTownHall.removeCitizen(citizen);//TODO move to citizen onDeath
-                        }
-                    }
-                }
-                PlayerProperties.get(player).removeTownhall();
+                TileEntityTownHall townhall = (TileEntityTownHall) hut;
+                townhall.onBlockAdded();
+                townhall.addOwner(player.getUniqueID());
+                townhall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName()));
+                PlayerProperties.get(player).placeTownhall(x, y, z);
             }
             else
             {
-                TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
-                TileEntityTownHall tileEntityTownHall = tileEntityBuildable.getTownHall();
-                tileEntityTownHall.removeHut(tileEntityBuildable.xCoord, tileEntityBuildable.yCoord, tileEntityBuildable.zCoord);
-                if(world.getTileEntity(x, y, z) instanceof TileEntityHutWorker)
+                TileEntityTownHall townhall = Utils.getTownhallByOwner(world, player);
+
+                hut.setTownHall(townhall);
+                townhall.addHut(hut.xCoord, hut.yCoord, hut.zCoord);
+
+                if(hut instanceof TileEntityHutWorker)
                 {
-                    ((TileEntityHutWorker) world.getTileEntity(x, y, z)).removeWorker(tileEntityTownHall);
+                    ((TileEntityHutWorker) hut).addJoblessCitizens(townhall);
                 }
             }
-            return super.removedByPlayer(world, player, x, y, z);
         }
-        return false;
-    }
-
-    public boolean canPlayerDestroy(World world, int x, int y, int z, Entity entity)
-    {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-        EntityPlayer entityPlayer = (EntityPlayer) entity;
-        return tileEntity instanceof TileEntityBuildable && ((TileEntityBuildable) tileEntity).isPlayerOwner(entityPlayer);
     }
 }

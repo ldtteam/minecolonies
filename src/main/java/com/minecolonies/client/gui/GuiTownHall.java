@@ -72,10 +72,10 @@ public class GuiTownHall extends GuiBase
         switch(guiButton.id)
         {
             case idBuildTownhall:
-                BuildRequestPacket packet = new BuildRequestPacket(x, y, z);
-                MineColonies.packetPipeline.sendToServer(packet);
+                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.BUILD));
                 break;
             case idRepairTownhall:
+                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.REPAIR));
                 break;
             case idRecallCitizens:
                 break;

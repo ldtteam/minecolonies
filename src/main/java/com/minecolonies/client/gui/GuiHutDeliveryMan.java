@@ -137,10 +137,10 @@ public class GuiHutDeliveryMan extends GuiBase
                 case idRecallWorker:
                     break;
                 case idBuildBuilding:
-                    BuildRequestPacket packet = new BuildRequestPacket(x, y, z);
-                    MineColonies.packetPipeline.sendToServer(packet);
+                    MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.BUILD));
                     break;
                 case idRepairBuilding:
+                    MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.REPAIR));
                     break;
                 case idSettings:
                     player.openGui(MineColonies.instance, EnumGUI.WAREHOUSE_SETTINGS.getID(), world, x, y, z);

@@ -41,7 +41,7 @@ public class EntityAIGoHome extends EntityAIBase
         }
         else
         {
-            MineColonies.logger.error("EntityCitizen has null townhall");
+            MineColonies.logger.error("EntityCitizen has null townhall (And no home)");
             return;
         }
         citizen.getNavigator().tryMoveToXYZ(vec.xCoord, vec.yCoord, vec.zCoord, 1.0F);

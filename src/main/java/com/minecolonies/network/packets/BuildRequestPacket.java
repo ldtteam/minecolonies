@@ -4,7 +4,6 @@ import com.minecolonies.tileentities.TileEntityHut;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
 
 /**
  * Adds a entry to the builderRequired map
@@ -14,35 +13,38 @@ import net.minecraft.network.PacketBuffer;
  */
 public class BuildRequestPacket extends AbstractPacket
 {
-    private int x, y, z;
+    private int x, y, z, mode;
+
+    public static final int BUILD  = 0;
+    public static final int REPAIR = 1;
+
 
     public BuildRequestPacket(){}
 
-    public BuildRequestPacket(int x, int y, int z)
+    public BuildRequestPacket(int x, int y, int z, int mode)
     {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.mode = mode;
     }
 
     @Override
     public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer)
     {
-        PacketBuffer packetBuffer = new PacketBuffer(buffer);
-
-        packetBuffer.writeInt(x);
-        packetBuffer.writeInt(y);
-        packetBuffer.writeInt(z);
+        buffer.writeInt(x);
+        buffer.writeInt(y);
+        buffer.writeInt(z);
+        buffer.writeInt(mode);
     }
 
     @Override
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer)
     {
-        PacketBuffer packetBuffer = new PacketBuffer(buffer);
-
-        x = packetBuffer.readInt();
-        y = packetBuffer.readInt();
-        z = packetBuffer.readInt();
+        x = buffer.readInt();
+        y = buffer.readInt();
+        z = buffer.readInt();
+        mode = buffer.readInt();
     }
 
     @Override
@@ -58,7 +60,15 @@ public class BuildRequestPacket extends AbstractPacket
 
         if(tileEntity != null)
         {
-            tileEntity.requestBuilding(player);
+            switch(mode)
+            {
+                case BUILD:
+                    tileEntity.requestBuilding();
+                    break;
+                case REPAIR:
+                    tileEntity.requestRepair();
+                    break;
+            }
         }
     }
 }

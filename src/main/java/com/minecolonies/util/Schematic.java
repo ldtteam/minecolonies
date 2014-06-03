@@ -77,7 +77,7 @@ public class Schematic
                     Block block = this.schematic.getBlock(i, j, k);
                     int metadata = this.schematic.getBlockMetadata(i, j, k);
 
-                    if(block == Blocks.air)
+                    if(block == Blocks.air && !world.getBlock(x + i, y + j, z + k).getMaterial().isSolid())
                     {
                         world.setBlockToAir(x + i, y + j, z + k);
                     }
@@ -88,6 +88,10 @@ public class Schematic
                     else
                     {
                         delayedBlocks.add(Vec3.createVectorHelper(i, j, k));
+                    }
+                    if(schematic.getTileEntity(x, y, z) != null)
+                    {
+                        world.setTileEntity(x + i, y + j, z + k, schematic.getTileEntity(x, y, z));
                     }
                 }
             }
@@ -302,6 +306,12 @@ public class Schematic
         return this.schematic.getBlockMetadata(x, y, z);
     }
 
+    public TileEntity getTileEntity()
+    {
+        if(!this.hasSchematic() || x == -1) return null;
+        return this.schematic.getTileEntity(x, y, z);
+    }
+
     public Vec3 getBlockPosition()
     {
         return position.addVector(x, y, z);
@@ -342,6 +352,11 @@ public class Schematic
     public List<ItemStack> getMaterials()
     {
         return schematic.getBlockList();
+    }
+
+    public void useMaterial(ItemStack stack)
+    {
+        schematic.removeFromBlockList(stack);
     }
 
     public boolean hasSchematic()

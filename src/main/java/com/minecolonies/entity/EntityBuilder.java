@@ -8,20 +8,24 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EntityBuilder extends EntityCitizen
 {
     private Schematic schematic;
 
+    private List<ItemStack> itemsNeeded = new ArrayList<ItemStack>();
+
     public EntityBuilder(World world)
     {
         super(world);
-        // TODO: check if builder is male, OR create model for female builder
-        level = EnumCitizenLevel.CITIZENMALE;
     }
 
     @Override
@@ -98,18 +102,32 @@ public class EntityBuilder extends EntityCitizen
 
     public boolean hasMaterials()
     {
-        if(!hasSchematic()) return false;
+        if(!hasSchematic()) return true;
 
-        schematic.getMaterials();
-        this.getInventory();//TODO create contains method
-        this.getWorkHut();//TODO create contains method
-        return true;//TODO if builder has materials in inventory (or chest?)
+        //TODO possibly find a better method
+        for(ItemStack materialStack : this.getSchematic().getMaterials())
+        {
+            ItemStack materialStackCopy = materialStack.copy();
+            for(int i = 0; i < this.getInventory().getSizeInventory(); i++)
+            {
+                ItemStack builderStack = this.getInventory().getStackInSlot(i);
+                if(builderStack != null && builderStack.isItemEqual(materialStackCopy))
+                {
+                    materialStackCopy.stackSize -= builderStack.stackSize;
+                }
+            }
+            if(materialStackCopy.stackSize > 0)
+            {
+                itemsNeeded.add(materialStackCopy);
+            }
+        }
 
+        return itemsNeeded.isEmpty();
     }
 
     public int getWorkInterval()
     {
-        return Constants.BUILDERWORKINTERFALL - this.level.getLevel();//TODO
+        return Constants.BUILDERWORKINTERFALL - this.getLevel();//TODO
     }
 
     public boolean isBuilderNeeded()
