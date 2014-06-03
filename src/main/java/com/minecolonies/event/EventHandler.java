@@ -5,7 +5,7 @@ import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.lib.EnumHut;
+import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
@@ -90,7 +90,7 @@ public class EventHandler
                     TileEntityHut tileEntityHut = (TileEntityHut) event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z);
 
                     if (tileEntityHut.isPlayerOwner(event.entityPlayer)) {
-                        int guiID = EnumHut.getGuiIdByInstance(event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z));
+                        int guiID = EnumGUI.getGuiIdByInstance(event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z));
                         event.entityPlayer.openGui(MineColonies.instance, guiID, event.entityPlayer.worldObj, event.x, event.y, event.z);
                     } else {
                         LanguageHandler.sendPlayerLocalizedMessage(event.entityPlayer, "tile.blockHut.messageNoPermission", tileEntityHut.getName()); //todo languagen
