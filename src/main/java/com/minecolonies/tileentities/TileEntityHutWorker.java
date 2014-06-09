@@ -64,7 +64,8 @@ public abstract class TileEntityHutWorker extends TileEntityHut
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        this.workerID = UUID.fromString(compound.getString("workerID"));
+        if(!(compound.getString("workerID").equals("")))
+            this.workerID = UUID.fromString(compound.getString("workerID"));
     }
 
     @Override

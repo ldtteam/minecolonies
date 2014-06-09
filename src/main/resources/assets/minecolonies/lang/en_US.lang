@@ -44,13 +44,13 @@ tile.blockHutLumberjack.name=Lumberjack's Hut
 tile.blockHutMiner.name=Miner's Hut
 tile.blockHutStonemason.name=Stonemason's Hut
 tile.blockHutTownhall.name=Town Hall
+tile.blockHut.messageNoPermission=You don't have permission to open this %s.
 
 tile.blockHutTownhall.messageMaxSize=Colony has reached max size
 tile.blockHutTownhall.messageColonistDead=A colonist has died!
 tile.blockHutTownhall.messagePlacedAlready=You have placed a Town Hall already
 tile.blockHutTownhall.messageInvalidWorld=You can't place a townhall in this world type
 tile.blockHutTownhall.messageTooClose=Too close to existing townhall
-tile.blockHutTownhall.messageNoPermission=You don't have permission for %s.
 
 tile.blockHut.messageTooFarFromTownhall=You need to be closer to your townhall!
 tile.blockHut.messageNoTownhall=You need to place a townhall first!

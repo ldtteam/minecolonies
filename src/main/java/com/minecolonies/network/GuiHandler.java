@@ -19,7 +19,6 @@ public class GuiHandler implements IGuiHandler
         switch(ID)
         {
             case 0:
-                //TODO
                 break;
         }
         return null;
