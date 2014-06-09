@@ -28,7 +28,7 @@ public class EventHandler
 
         if(!world.isRemote && event.block instanceof BlockHut)
         {
-            TileEntityHut hut = (TileEntityHut) getTileEntity(event);
+            TileEntityHut hut = (TileEntityHut) world.getTileEntity(event.x, event.y, event.z);
             EntityPlayer player = event.getPlayer();
 
             if(hut != null && isPlayerOwner(hut, player))
@@ -135,11 +135,6 @@ public class EventHandler
     private boolean isPlayerOwner(TileEntityHut hut, EntityPlayer player)
     {
         return hut == null || hut.isPlayerOwner(player);
-    }
-
-    private TileEntity getTileEntity(BlockEvent.BreakEvent event)
-    {
-        return event.world.getTileEntity(event.x, event.y, event.z);
     }
 
     @SubscribeEvent
