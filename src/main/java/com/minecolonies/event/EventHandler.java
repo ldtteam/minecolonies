@@ -82,12 +82,23 @@ public class EventHandler
                         x++;
                         break;
                 }
-                event.setCanceled(!onBlockPlaced(event.entityPlayer.worldObj, event.entityPlayer, block, x, y, z));
+                event.setCanceled(!onBlockHutPlaced(event.entityPlayer.worldObj, event.entityPlayer, block, x, y, z));
             }
         }
     }
 
-    private boolean onBlockPlaced(World world, EntityPlayer player, Block block, int x, int y, int z)
+    /**
+     * Called when a player tries to place a BlockHut. Returns true if successful and false to cancel the block placement.
+     *
+     * @param world The world the player is in
+     * @param player The player
+     * @param block The block type the player is placing
+     * @param x The x coordinate of the block
+     * @param y The y coordinate of the block
+     * @param z The z coordinate of the block
+     * @return false to cancel the event
+     */
+    private boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, int x, int y, int z)
     {
         if(block == ModBlocks.blockHutTownhall)
         {
