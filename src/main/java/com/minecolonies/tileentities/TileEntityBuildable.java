@@ -7,6 +7,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Vec3;
 
+import java.util.Arrays;
+
 public abstract class TileEntityBuildable extends TileEntityChest implements IColony
 {
     private int                buildingLevel;
@@ -72,14 +74,26 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
     public void requestBuilding()
     {
-        if(getTownHall().getBuilderRequired().containsKey(new int[]{xCoord, yCoord, zCoord})) return; //Untested //TODO send message, i dont have @link{EntityPlayer}
+        for(int[] key : getTownHall().getBuilderRequired().keySet())
+        {
+            if(Arrays.equals(new int[]{xCoord, yCoord, zCoord}, key))
+            {
+                return;
+            }
+        }
         if(!(buildingLevel >= 3)) //TODO
             getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel + 1), xCoord, yCoord, zCoord);
     }
 
     public void requestRepair()
     {
-        if(getTownHall().getBuilderRequired().containsKey(new int[]{xCoord, yCoord, zCoord})) return; //Untested //TODO send message, i dont have @link{EntityPlayer}
+        for(int[] key : getTownHall().getBuilderRequired().keySet())
+        {
+            if(Arrays.equals(new int[]{xCoord, yCoord, zCoord}, key))
+            {
+                return;
+            }
+        }
         if(buildingLevel == 0) return;
         getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel), xCoord, yCoord, zCoord);
     }
