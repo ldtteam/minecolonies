@@ -70,9 +70,7 @@ public class MineColonies
 
         RecipeHandler.init();
 
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
-
-        proxy.registerEvents();//Schematica
+        proxy.registerEvents();
 
         proxy.registerEntities();
 
