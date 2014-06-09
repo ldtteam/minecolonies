@@ -70,3 +70,4 @@ itemGroup.minecolonies=MineColonies
 
 entity.builder.messageBuildStart=Started building %s
 entity.builder.messageBuildComplete=Finished building %s
+entity.builder.messageNeedMaterial=I need %s(%d)

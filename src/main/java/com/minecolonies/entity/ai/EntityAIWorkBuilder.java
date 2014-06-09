@@ -82,12 +82,49 @@ public class EntityAIWorkBuilder extends EntityAIBase
             if(!Configurations.builderInfiniteResources)
             {
                 int slotID = builder.getInventory().containsItemStack(new ItemStack(block, 1, metadata));
-                if(slotID == -1) return;//TODO getMaterials - check chest, then request
+                if(slotID == -1)
+                {
+                    ItemStack material = new ItemStack(block, 1, metadata);
+
+                    int amount = -1;
+                    for(ItemStack item : builder.getSchematic().getMaterials())
+                    {
+                        if(item.isItemEqual(material))
+                        {
+                            amount = item.stackSize;
+                            break;
+                        }
+                    }
+
+                    int chestSlotID = builder.getWorkHut().containsItemStack(material);
+                    if(chestSlotID != -1)
+                    {
+                        if(builder.getWorkHut().getDistanceFrom(builder.posX, builder.posY, builder.posZ) < 64) //Square Distance
+                        {
+                            builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, amount);
+                        }
+                        else
+                        {
+                            builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D);
+                        }
+                    }
+                    else if(false)//TODO canCraft()
+                    {
+                        //TODO craft item
+                    }
+                    else
+                    {
+                        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
+                        //TODO request material
+                    }
+                    return;
+                }
                 builder.getSchematic().useMaterial(builder.getInventory().getStackInSlot(slotID));
                 builder.getInventory().decrStackSize(slotID, 1);
 
                 ItemStack stack = worldBlock.getPickBlock(null, world, pos[0], pos[1], pos[2]);
                 builder.getInventory().setStackInInventory(stack);
+                //TODO unload full inventory
             }
 
             if(block == Blocks.air)
@@ -99,7 +136,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
             {
                 if(!block.getMaterial().isSolid())
                 {
-                    //TODO support block or add delay system
+                    //TODO create proper system, this works for torches
                     if(block == Blocks.torch)
                     {
                         if(metadata == 1 && world.getBlock(pos[0] - 1, pos[1], pos[2]) == Blocks.air)
