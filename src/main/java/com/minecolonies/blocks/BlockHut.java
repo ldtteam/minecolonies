@@ -1,8 +1,10 @@
 package com.minecolonies.blocks;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.lib.IColony;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityHutWorker;
@@ -82,5 +84,22 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float px, float py, float pz)
+    {
+        if (world.getTileEntity(x, y, z) instanceof TileEntityHut && !player.isSneaking()) {
+            TileEntityHut tileEntityHut = (TileEntityHut) world.getTileEntity(x, y, z);
+
+            if (tileEntityHut.isPlayerOwner(player)) {
+                int guiID = EnumGUI.getGuiIdByInstance(tileEntityHut);
+                player.openGui(MineColonies.instance, guiID, world, x, y, z);
+            } else {
+                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission", tileEntityHut.getName());
+            }
+            return true;
+        }
+        return false;
     }
 }

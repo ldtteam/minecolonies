@@ -1,11 +1,9 @@
 package com.minecolonies.event;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
@@ -57,46 +55,34 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent event)
     {
-        if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-            if(event.entityPlayer.getHeldItem() != null) {
-                Block block = Block.getBlockFromItem(event.entityPlayer.getHeldItem().getItem());
-                if(block instanceof BlockHut) {
-                    int x = event.x, y = event.y, z = event.z;
-                    switch(event.face) {
-                        case 0:
-                            y--;
-                            break;
-                        case 1:
-                            y++;
-                            break;
-                        case 2:
-                            z--;
-                            break;
-                        case 3:
-                            z++;
-                            break;
-                        case 4:
-                            x--;
-                            break;
-                        case 5:
-                            x++;
-                            break;
-                    }
-                    event.setCanceled(!onBlockPlaced(event.entityPlayer.worldObj, event.entityPlayer, block, x, y, z));
+        if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.entityPlayer.getHeldItem() != null)
+        {
+            Block block = Block.getBlockFromItem(event.entityPlayer.getHeldItem().getItem());
+            if(block instanceof BlockHut)
+            {
+                int x = event.x, y = event.y, z = event.z;
+                switch(event.face)
+                {
+                    case 0:
+                        y--;
+                        break;
+                    case 1:
+                        y++;
+                        break;
+                    case 2:
+                        z--;
+                        break;
+                    case 3:
+                        z++;
+                        break;
+                    case 4:
+                        x--;
+                        break;
+                    case 5:
+                        x++;
+                        break;
                 }
-            }
-            else {
-                if (event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z) instanceof TileEntityHut) {
-                    TileEntityHut tileEntityHut = (TileEntityHut) event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z);
-
-                    if (tileEntityHut.isPlayerOwner(event.entityPlayer)) {
-                        int guiID = EnumGUI.getGuiIdByInstance(event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z));
-                        event.entityPlayer.openGui(MineColonies.instance, guiID, event.entityPlayer.worldObj, event.x, event.y, event.z);
-                    } else {
-                        LanguageHandler.sendPlayerLocalizedMessage(event.entityPlayer, "tile.blockHut.messageNoPermission", tileEntityHut.getName()); //todo languagen
-                        event.setCanceled(true);
-                    }
-                }
+                event.setCanceled(!onBlockPlaced(event.entityPlayer.worldObj, event.entityPlayer, block, x, y, z));
             }
         }
     }
