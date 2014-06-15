@@ -3,6 +3,7 @@ package com.github.lunatrius.schematica.world;
 import com.github.lunatrius.schematica.config.BlockInfo;
 import com.github.lunatrius.schematica.world.storage.EmptySaveHandler;
 import com.minecolonies.MineColonies;
+import com.minecolonies.tileentities.TileEntityHut;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -62,6 +63,8 @@ public class SchematicWorld extends World
     private boolean isRendering;
     private int     renderingLayer;
 
+    private int xOffset = 0, yOffset = 0, zOffset = 0;
+
     public SchematicWorld()
     {
         // TODO: revert if any issues arise
@@ -76,6 +79,14 @@ public class SchematicWorld extends World
 
         this.isRendering = false;
         this.renderingLayer = -1;
+    }
+
+    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, short width, short height, short length, int xOffset, int yOffset, int zOffset)
+    {
+        this(icon, blocks, metadata, tileEntities, width, height, length);
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+        this.zOffset = zOffset;
     }
 
     public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, short width, short height, short length)
@@ -645,5 +656,20 @@ public class SchematicWorld extends World
                 return;
             }
         }
+    }
+
+    public int getOffsetX()
+    {
+        return xOffset;
+    }
+
+    public int getOffsetY()
+    {
+        return yOffset;
+    }
+
+    public int getOffsetZ()
+    {
+        return zOffset;
     }
 }

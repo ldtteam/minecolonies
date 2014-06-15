@@ -39,6 +39,7 @@ public class Schematic
      * North-West corner
      */
     private int x = -1, y = -1, z = -1;
+
     //public final  List<RendererSchematicChunk> sortedRendererSchematicChunk = new ArrayList<RendererSchematicChunk>();
 
     private Schematic(World worldObj, SchematicWorld schematicWorld, String name)
@@ -314,7 +315,7 @@ public class Schematic
 
     public Vec3 getBlockPosition()
     {
-        return position.addVector(x, y, z);
+        return position.addVector(x - schematic.getOffsetX(), y  - schematic.getOffsetY(), z  - schematic.getOffsetZ());
     }
 
     public Vec3 getBlockPosition(int baseX, int baseY, int baseZ)

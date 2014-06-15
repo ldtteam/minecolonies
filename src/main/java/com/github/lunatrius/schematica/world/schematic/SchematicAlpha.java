@@ -2,6 +2,7 @@ package com.github.lunatrius.schematica.world.schematic;
 
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
+import com.minecolonies.blocks.BlockHut;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -76,7 +77,14 @@ public class SchematicAlpha extends SchematicFormat
                 tileEntities.add(tileEntity);
             }
         }
+        if(tagCompound.hasKey("OffsetX"))
+        {
+            int xOffset = tagCompound.getShort("OffsetX");
+            int yOffset = tagCompound.getShort("OffsetY");
+            int zOffset = tagCompound.getShort("OffsetZ");
 
+            return new SchematicWorld(icon, blocks, metadata, tileEntities, width, height, length, xOffset, yOffset, zOffset);
+        }
         return new SchematicWorld(icon, blocks, metadata, tileEntities, width, height, length);
     }
 
@@ -99,6 +107,8 @@ public class SchematicAlpha extends SchematicFormat
         byte extraBlocksNibble[] = new byte[(int) Math.ceil(size / 2.0)];
         boolean extra = false;
 
+        int xOffset = 0, yOffset = 0, zOffset = 0;
+
         for(int x = 0; x < world.getWidth(); x++)
         {
             for(int y = 0; y < world.getHeight(); y++)
@@ -110,6 +120,12 @@ public class SchematicAlpha extends SchematicFormat
                     if((extraBlocks[x + (y * world.getLength() + z) * world.getWidth()] = (byte) (world.getBlockIdRaw(x, y, z) >> 8)) > 0)
                     {
                         extra = true;
+                    }
+                    if(world.getBlock(x, y, z) instanceof BlockHut)
+                    {
+                        xOffset = x;
+                        yOffset = y;
+                        zOffset = z;
                     }
                 }
             }
@@ -151,6 +167,8 @@ public class SchematicAlpha extends SchematicFormat
             }
         }
 
+
+
         tagCompound.setString("Materials", "Alpha");
         tagCompound.setByteArray("Blocks", localBlocks);
         tagCompound.setByteArray("Data", localMetadata);
@@ -160,6 +178,10 @@ public class SchematicAlpha extends SchematicFormat
         }
         tagCompound.setTag("Entities", new NBTTagList());
         tagCompound.setTag("TileEntities", tileEntitiesList);
+
+        tagCompound.setShort("OffsetX", (short) xOffset);
+        tagCompound.setShort("OffsetY", (short) yOffset);
+        tagCompound.setShort("OffsetZ", (short) zOffset);
 
         return true;
     }

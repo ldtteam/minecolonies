@@ -19,9 +19,9 @@ public class ItemBuildTool extends ItemMinecolonies
     }
 
     @Override
-    public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int face, float par8, float par9, float par10)
     {
         //TODO open build GUI
-        return super.onItemUse(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10);
+        return super.onItemUse(itemStack, player, world, x, y, z, face, par8, par9, par10);
     }
 }
