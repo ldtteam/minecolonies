@@ -95,8 +95,8 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
             if (tileEntityHut.isPlayerOwner(player)) {
                 int guiID = EnumGUI.getGuiIdByInstance(tileEntityHut);
                 player.openGui(MineColonies.instance, guiID, world, x, y, z);
-            } else {
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission", tileEntityHut.getName());
+            } else if(tileEntityHut.getTownHall() != null) {
+                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission", tileEntityHut.getTownHall().getCityName());
             }
             return true;
         }

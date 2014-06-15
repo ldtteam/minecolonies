@@ -44,7 +44,7 @@ tile.blockHutLumberjack.name=Lumberjack's Hut
 tile.blockHutMiner.name=Miner's Hut
 tile.blockHutStonemason.name=Stonemason's Hut
 tile.blockHutTownhall.name=Town Hall
-tile.blockHut.messageNoPermission=You don't have permission to open %s's huts.
+tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
 
 tile.blockHutTownhall.messageMaxSize=Colony has reached max size
 tile.blockHutTownhall.messageColonistDead=A colonist has died!
