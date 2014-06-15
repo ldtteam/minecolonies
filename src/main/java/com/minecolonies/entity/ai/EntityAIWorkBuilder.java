@@ -5,6 +5,7 @@ import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.tileentities.TileEntityBuildable;
+import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
@@ -12,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -159,9 +161,11 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 }
                 builder.swingItem();
                 world.setBlock(pos[0], pos[1], pos[2], block, metadata, 0x02);
-                if(builder.getSchematic().getTileEntity() != null)
+
+                TileEntity tileEntity = builder.getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
+                if(tileEntity != null && !(world.getTileEntity(pos[0], pos[1], pos[2]) instanceof TileEntityHut))
                 {
-                    world.setTileEntity(pos[0], pos[1], pos[2], builder.getSchematic().getTileEntity());
+                    world.setTileEntity(pos[0], pos[1], pos[2], tileEntity);
                 }
             }
         }
