@@ -18,6 +18,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -194,7 +195,7 @@ public class Schematic
     public static void saveSchematic(World world, Vec3 from, Vec3 to, String file, String icon)
     {
         if(world == null || from == null || to == null || file == null) return;
-        SchematicFormat.writeToFile(MinecraftServer.getServer().getFile("/schematics"), file, scanSchematic(world, from, to, icon));
+        SchematicFormat.writeToFile(MinecraftServer.getServer().getFile(file + ".schematic"), scanSchematic(world, from, to, icon));
     }
 
     public static SchematicWorld scanSchematic(World world, Vec3 from, Vec3 to, String icon)

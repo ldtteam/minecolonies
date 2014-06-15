@@ -57,9 +57,14 @@ tile.blockHut.messageNoTownhall=You need to place a townhall first!
 
 item.supplyChestDeployer.name=Supply Chest
 item.scepterGold.name=Building Tool
+item.scepterSteel.name=Scan Tool
 item.caliper.name=Caliper
 
 item.supplyChestDeployer.invalid=You must be near a big pool of water
+
+item.scepterSteel.point=Point one saved
+item.scepterSteel.samePoint=That was the same point
+item.scepterSteel.scan=Scan saved as %s
 
 item.caliper.message.same=That's the same block.
 item.caliper.message.line=That's a %d block line.
