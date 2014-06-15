@@ -41,7 +41,8 @@ public class MineColonies
     {
         if(Constants.FINGERPRINT.equals("@FINGERPRINT@"))
         {
-            logger.log(Level.ERROR, LanguageHandler.format("com.minecolonies.error.noFingerprint"));
+            //logger.log(Level.ERROR, LanguageHandler.format("com.minecolonies.error.noFingerprint"));
+            logger.error("No Fingerprint. Might not be a valid version!");
         }
     }
 
