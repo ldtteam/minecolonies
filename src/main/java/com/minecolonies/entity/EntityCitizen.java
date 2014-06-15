@@ -150,7 +150,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         if(this.getWorkHut() != null)
         {
-            this.removeFromWorkHut(this.getWorkHut());
+            this.removeFromWorkHut();
         }
         super.onDeath(par1DamageSource);
     }
@@ -373,13 +373,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         worldObj.spawnEntityInWorld(worker);
     }
 
-    public void removeFromWorkHut(TileEntityHutWorker tileEntityHutWorker)
+    public void removeFromWorkHut()
     {
         NBTTagCompound nbt = new NBTTagCompound();
         this.writeToNBT(nbt);
         nbt.removeTag("workhut");
         getTownHall().removeCitizen(this);
-        tileEntityHutWorker.unbindWorker(this);
+        getWorkHut().unbindWorker(this);
         this.setDead();
 
         EntityCitizen citizen = new EntityCitizen(worldObj);

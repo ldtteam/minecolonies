@@ -93,6 +93,14 @@ public class TileEntityTownHall extends TileEntityHut
                 if(this.getCitizens().contains(citizen.getUniqueID()))
                 {
                     this.removeCitizen(citizen);
+                    if(citizen.getHomeHut() != null)
+                    {
+                        citizen.getHomeHut().removeCitizen(citizen);
+                    }
+                    if(citizen.getWorkHut() != null)
+                    {
+                        citizen.removeFromWorkHut();
+                    }
                     citizen.setDead();
                 }
             }

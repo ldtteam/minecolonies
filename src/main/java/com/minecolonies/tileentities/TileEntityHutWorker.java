@@ -88,7 +88,7 @@ public abstract class TileEntityHutWorker extends TileEntityHut
             EntityCitizen worker = (EntityCitizen) Utils.getEntityFromUUID(worldObj, workerID);
             if(worker != null)
             {
-                worker.removeFromWorkHut(this);
+                worker.removeFromWorkHut();
             }
         }
     }
