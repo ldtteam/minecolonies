@@ -65,13 +65,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.addObject(15, worldObj.rand.nextInt(2));//sex
     }
 
-    @Override
-    public boolean interact(EntityPlayer player)
-    {
-        System.out.println(player.worldObj.isRemote + " " + getSex());
-        return true;
-    }
-
     protected void initTasks()
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
