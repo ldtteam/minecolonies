@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 public class ItemScanTool extends ItemMinecolonies
 {
     Vec3 pos;
+    Vec3 pos2;
 
     public ItemScanTool()
     {
@@ -33,17 +34,26 @@ public class ItemScanTool extends ItemMinecolonies
             LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point");
             return true;
         }
-
-        Vec3 pos2 = Vec3.createVectorHelper(x, y, z);
-        if(pos.squareDistanceTo(pos2) > 0)
+        else if(pos2 == null)
+        {
+            pos2 = Vec3.createVectorHelper(x, y, z);
+            if(pos.squareDistanceTo(pos2) > 0)
+            {
+                LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point2");
+                return true;
+            }
+            pos2 = null;
+            LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.samePoint");
+            return false;
+        }
+        else
         {
             String name = "SCAN_" + System.currentTimeMillis();
             Schematic.saveSchematic(world, pos, pos2, name, null);
             pos = null;
+            pos2 = null;
             LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.scan", name);
             return true;
         }
-        LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.samePoint");
-        return false;
     }
 }

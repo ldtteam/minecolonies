@@ -63,6 +63,7 @@ item.caliper.name=Caliper
 item.supplyChestDeployer.invalid=You must be near a big pool of water
 
 item.scepterSteel.point=Point one saved
+item.scepterSteel.point2=Point two saved, right click again to save the schematic
 item.scepterSteel.samePoint=That was the same point
 item.scepterSteel.scan=Scan saved as %s
 
