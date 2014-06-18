@@ -62,6 +62,11 @@ public class Schematic
 
     private static Schematic loadSchematic(World worldObj, ResourceLocation res)
     {
+        InputStream stream = getStream(res);
+        if(stream == null)
+        {
+            return null;
+        }
         return new Schematic(worldObj, SchematicFormat.readFromStream(getStream(res)), getNameFromResourceLocation(res));
     }
 

@@ -80,8 +80,15 @@ public class EntityBuilder extends EntityCitizen
             Vec3 pos = readVecFromNBT(schematicTag, "position");
             Vec3 progress = readVecFromNBT(schematicTag, "progress");
             schematic = Schematic.loadSchematic(worldObj, name);
-            schematic.setPosition(pos);
-            schematic.setLocalPosition(progress);
+            if(schematic == null)
+            {
+                compound.removeTag("schematic");
+            }
+            else
+            {
+                schematic.setPosition(pos);
+                schematic.setLocalPosition(progress);
+            }
         }
     }
 

@@ -180,8 +180,17 @@ public class EntityAIWorkBuilder extends EntityAIBase
     private void loadSchematic()
     {
         Map.Entry<int[], String> entry = builder.getTownHall().getBuilderRequired().entrySet().iterator().next();
-        builder.setSchematic(Schematic.loadSchematic(world, entry.getValue()));
         int[] pos = entry.getKey();
+        String name = entry.getValue();
+
+        builder.setSchematic(Schematic.loadSchematic(world, name));
+
+        if(builder.getSchematic() == null)
+        {
+            MineColonies.logger.warn("Schematic: (" + name + ") does not exist - removing build request.");
+            builder.getTownHall().removeHutForUpgrade(entry.getKey());
+            return;
+        }
         builder.getSchematic().setPosition(Vec3.createVectorHelper(pos[0], pos[1], pos[2]));
     }
 
