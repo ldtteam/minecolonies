@@ -32,6 +32,9 @@ public abstract class TileEntityHutWorker extends TileEntityHut
     public void updateEntity()
     {
         super.updateEntity();
+
+        if(worldObj.isRemote) return;
+
         if(!hasWorker() && this.getTownHall() != null)
         {
             addJoblessCitizens(this.getTownHall());
@@ -77,6 +80,10 @@ public abstract class TileEntityHutWorker extends TileEntityHut
         if(hasWorker())
         {
             compound.setString("workerID", workerID.toString());
+        }
+        else
+        {
+            compound.removeTag("workerID");
         }
     }
 

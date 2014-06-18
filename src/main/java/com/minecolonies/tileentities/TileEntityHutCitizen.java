@@ -68,9 +68,10 @@ public class TileEntityHutCitizen extends TileEntityHut
             if(id.equals(citizen.getUniqueID()))
             {
                 citizens.remove(id);
+                citizen.setHomeHut(null);
+                return;
             }
         }
-        citizen.setHomeHut(null);
     }
 
     @Override

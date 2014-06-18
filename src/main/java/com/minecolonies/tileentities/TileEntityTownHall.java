@@ -5,6 +5,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -44,11 +45,14 @@ public class TileEntityTownHall extends TileEntityHut
     public void onBlockAdded()
     {
         for(Object o : worldObj.loadedTileEntityList)
-            if(o instanceof TileEntityHut && Utils.getDistanceToClosestTownHall(worldObj, xCoord, yCoord, zCoord) < Configurations.workingRangeTownhall)
+            if(o instanceof TileEntityHut)
             {
                 TileEntityHut hut = (TileEntityHut) o;
-                hut.setTownHall(this);
-                huts.add(new int[]{hut.xCoord, hut.yCoord, hut.zCoord});
+                if(hut.getDistanceFrom(xCoord, yCoord, zCoord) < Math.pow(Configurations.workingRangeTownhall, 2))
+                {
+                    hut.setTownHall(this);
+                    huts.add(new int[]{hut.xCoord, hut.yCoord, hut.zCoord});
+                }
             }
     }
 
@@ -103,6 +107,14 @@ public class TileEntityTownHall extends TileEntityHut
                     }
                     citizen.setDead();
                 }
+            }
+        }
+        for(int[] pos : huts)
+        {
+            TileEntityHut hut = (TileEntityHut) worldObj.getTileEntity(pos[0], pos[1], pos[2]);
+            if(hut != null)
+            {
+                hut.setTownHall(null);
             }
         }
     }

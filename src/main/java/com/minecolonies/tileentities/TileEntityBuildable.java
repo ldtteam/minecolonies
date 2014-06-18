@@ -23,6 +23,8 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     @Override
     public void updateEntity()
     {
+        if(worldObj.isRemote) return;
+
         if(townhall == null)
         {
             townhall = (TileEntityTownHall) worldObj.getTileEntity(townhallX, townhallY, townhallZ);
@@ -81,7 +83,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
                 return;
             }
         }
-        if(!(buildingLevel >= 3)) //TODO
+        if(!(buildingLevel >= 3)) //TODO maxLevel
             getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel + 1), xCoord, yCoord, zCoord);
     }
 
