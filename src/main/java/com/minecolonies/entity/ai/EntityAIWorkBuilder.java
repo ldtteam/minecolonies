@@ -63,7 +63,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
-            if(!builder.getSchematic().smartFindNextBlock())//method returns false if there is no next block (schematic finished)
+            if(!builder.getSchematic().findNextBlock())//method returns false if there is no next block (schematic finished)
             {
                 completeBuild();
                 return;

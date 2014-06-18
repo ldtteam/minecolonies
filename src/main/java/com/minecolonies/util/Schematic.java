@@ -134,7 +134,7 @@ public class Schematic
     }
 
     /**
-     * Find the next non-air block to be built
+     * Find the next block that doesn't already exist in the world
      *
      * @return true if a new block is found and false if there is no next block.
      */
@@ -146,8 +146,13 @@ public class Schematic
         {
             y = z = 0;
         }
+
+        int count = 0;
+
         do
         {
+            count++;
+
             x++;
             if(x == schematic.getWidth())
             {
@@ -165,36 +170,16 @@ public class Schematic
                 }
             }
         }
-        while(schematic.isAirBlock(x, y, z));
+        while(doesSchematicBlockEqualWorldBlock() && count < 50);//count limits the number of checked blocks per builder update
+        //TODO change count to agreed upon value, possibly add config option - possibly remove if we think this shouldn't be a problem
 
         return true;
     }
 
-    public boolean findNextBlockIncludingAir()
+    private boolean doesSchematicBlockEqualWorldBlock()
     {
-        if(!this.hasSchematic()) return false;
-
-        if(x == -1)
-        {
-            y = z = 0;
-        }
-        x++;
-        if(x == schematic.getWidth())
-        {
-            x = 0;
-            z++;
-            if(z == schematic.getLength())
-            {
-                z = 0;
-                y++;
-                if(y == schematic.getHeight())
-                {
-                    x = y = z = -1;
-                    return false;
-                }
-            }
-        }
-        return true;
+        int[] pos = Utils.vecToInt(this.getBlockPosition());
+        return schematic.getBlock(x, y, z) == world.getBlock(pos[0], pos[1], pos[2]) && schematic.getBlockMetadata(x, y, z) == world.getBlockMetadata(pos[0], pos[1], pos[2]);
     }
 
     public static void saveSchematic(World world, Vec3 from, Vec3 to, String file, String icon)
