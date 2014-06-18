@@ -67,7 +67,7 @@ public class Schematic
         {
             return null;
         }
-        return new Schematic(worldObj, SchematicFormat.readFromStream(getStream(res)), getNameFromResourceLocation(res));
+        return new Schematic(worldObj, SchematicFormat.readFromStream(stream), getNameFromResourceLocation(res));
     }
 
     public void placeSchematic(int x, int y, int z)
