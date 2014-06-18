@@ -124,8 +124,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
-        getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0d);
-        getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.5d);
+        getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0D);
+        getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3D);
+        getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(100);//path finding search range
     }
 
     @Override
@@ -364,6 +365,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         getTownHall().addCitizenToTownhall(worker);
         tileEntityHutWorker.bindWorker(worker);
         worldObj.spawnEntityInWorld(worker);
+        worker.getNavigator().tryMoveToXYZ(tileEntityHutWorker.xCoord, tileEntityHutWorker.yCoord, tileEntityHutWorker.zCoord, 1.0D);
     }
 
     public void removeFromWorkHut()
