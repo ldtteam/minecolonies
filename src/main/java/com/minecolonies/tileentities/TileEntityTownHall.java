@@ -99,7 +99,7 @@ public class TileEntityTownHall extends TileEntityHut
                     }
                     if(citizen.getWorkHut() != null)
                     {
-                        citizen.removeFromWorkHut();
+                        citizen.getWorkHut().unbindWorker(citizen);
                     }
                     citizen.setDead();
                 }

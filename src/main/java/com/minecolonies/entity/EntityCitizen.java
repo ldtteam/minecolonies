@@ -70,7 +70,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 0.6D));
         this.tasks.addTask(2, new EntityAIGoHome(this));
-        //this.tasks.addTask(2, new EntityAISleep(this));
+        //this.tasks.addTask(2, new EntityAISleep(this));  //TODO sleep AI
         this.tasks.addTask(3, new EntityAIOpenDoor(this, true));
         this.tasks.addTask(4, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
         this.tasks.addTask(5, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
@@ -143,7 +143,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         if(this.getWorkHut() != null)
         {
-            this.removeFromWorkHut();
+            this.getWorkHut().unbindWorker(this);
         }
         super.onDeath(par1DamageSource);
     }
@@ -353,7 +353,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void addToWorkHut(TileEntityHutWorker tileEntityHutWorker)
     {
         setJob(tileEntityHutWorker.getJobName(), tileEntityHutWorker);
-        //TEST
+
         NBTTagCompound nbt = new NBTTagCompound();
         this.writeToNBT(nbt);
         getTownHall().removeCitizen(this);

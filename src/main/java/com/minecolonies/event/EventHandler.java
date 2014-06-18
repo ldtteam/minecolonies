@@ -31,23 +31,26 @@ public class EventHandler
             TileEntityHut hut = (TileEntityHut) world.getTileEntity(event.x, event.y, event.z);
             EntityPlayer player = event.getPlayer();
 
-            if(hut != null && isPlayerOwner(hut, player))
+            if(isPlayerOwner(hut, player))
             {
-                TileEntityTownHall townhall = hut.getTownHall();
+                if(hut != null)
+                {
+                    TileEntityTownHall townhall = hut.getTownHall();
 
-                if(hut instanceof TileEntityTownHall)
-                {
-                    PlayerProperties.get(player).removeTownhall();
+                    if(hut instanceof TileEntityTownHall)
+                    {
+                        PlayerProperties.get(player).removeTownhall();
+                    }
+                    else if(townhall != null)
+                    {
+                        townhall.removeHut(hut.xCoord, hut.yCoord, hut.zCoord);
+                    }
+                    hut.breakBlock();
                 }
-                else if(townhall != null)
-                {
-                    townhall.removeHut(hut.xCoord, hut.yCoord, hut.zCoord);
-                }
-                hut.breakBlock();
             }
             else
             {
-                event.setCanceled(hut != null);
+                event.setCanceled(true);
             }
         }
     }
