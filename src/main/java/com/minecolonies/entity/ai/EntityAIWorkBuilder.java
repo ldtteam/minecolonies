@@ -50,8 +50,8 @@ public class EntityAIWorkBuilder extends EntityAIBase
         {
             loadSchematic();
         }
-        Vec3 pos = builder.getSchematic().getPosition();
-        builder.getNavigator().tryMoveToXYZ(pos.xCoord, pos.yCoord, pos.zCoord, 1.0F);
+        Vec3 buildPos = builder.getSchematic().getPosition();
+        builder.getNavigator().tryMoveToXYZ(buildPos.xCoord, buildPos.yCoord, buildPos.zCoord, 1.0F);
 
         LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
     }
@@ -63,7 +63,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
-            if(!builder.getSchematic().findNextBlockIncludingAir())//method returns false if there is no next block (schematic finished)
+            if(!builder.getSchematic().smartFindNextBlock())//method returns false if there is no next block (schematic finished)
             {
                 completeBuild();
                 return;
@@ -79,9 +79,9 @@ public class EntityAIWorkBuilder extends EntityAIBase
             int[] pos = Utils.vecToInt(builder.getSchematic().getBlockPosition());
 
             Block worldBlock = world.getBlock(pos[0], pos[1], pos[2]);
-            if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock) return;
+            if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock) return;//don't overwrite huts or bedrock
 
-            if(!Configurations.builderInfiniteResources)
+            if(!Configurations.builderInfiniteResources)//We need to deal with materials
             {
                 int slotID = builder.getInventory().containsItemStack(new ItemStack(block, 1, metadata));
                 if(slotID == -1)
@@ -117,7 +117,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                     else
                     {
                         LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
-                        //TODO request material
+                        //TODO request material - deliveryman
                     }
                     return;
                 }
@@ -196,15 +196,19 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
     private void completeBuild()
     {
-        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", builder.getSchematic().getName());
+        String schematicName = builder.getSchematic().getName();
+        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", schematicName);
         int[] pos = Utils.vecToInt(builder.getSchematic().getPosition());
-        builder.getTownHall().removeHutForUpgrade(pos);
-        builder.setSchematic(null);
 
         if(world.getTileEntity(pos[0], pos[1], pos[2]) instanceof TileEntityBuildable)
         {
+            int schematicLevel = Integer.parseInt(schematicName.substring(schematicName.length() - 1));
+
             TileEntityBuildable hut = (TileEntityBuildable) world.getTileEntity(pos[0], pos[1], pos[2]);
-            hut.setBuildingLevel(hut.getBuildingLevel() + 1);
+            hut.setBuildingLevel(schematicLevel);
         }
+
+        builder.getTownHall().removeHutForUpgrade(pos);
+        builder.setSchematic(null);
     }
 }
