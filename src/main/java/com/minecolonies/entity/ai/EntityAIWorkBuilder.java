@@ -187,8 +187,8 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
         if(builder.getSchematic() == null)
         {
-            MineColonies.logger.warn("Schematic: (" + name + ") does not exist - removing build request.");
-            builder.getTownHall().removeHutForUpgrade(entry.getKey());
+            MineColonies.logger.warn(LanguageHandler.format("entity.builder.ai.schematicLoadFailure", name));
+            builder.getTownHall().removeHutForUpgrade(pos);
             return;
         }
         builder.getSchematic().setPosition(Vec3.createVectorHelper(pos[0], pos[1], pos[2]));
