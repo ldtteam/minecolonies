@@ -88,9 +88,12 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 return;
             }
             int metadata = builder.getSchematic().getMetadata();
-            int[] pos = Utils.vecToInt(builder.getSchematic().getBlockPosition());
+            Vec3 vec = builder.getSchematic().getBlockPosition();
+            int x = (int) vec.xCoord;
+            int y = (int) vec.yCoord;
+            int z = (int) vec.zCoord;
 
-            Block worldBlock = world.getBlock(pos[0], pos[1], pos[2]);
+            Block worldBlock = world.getBlock(x, y, z);
             if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock) return;//don't overwrite huts or bedrock
 
             if(!Configurations.builderInfiniteResources)//We need to deal with materials
@@ -136,51 +139,244 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 builder.getSchematic().useMaterial(builder.getInventory().getStackInSlot(slotID));
                 builder.getInventory().decrStackSize(slotID, 1);
 
-                ItemStack stack = worldBlock.getPickBlock(null, world, pos[0], pos[1], pos[2]);
+                ItemStack stack = worldBlock.getPickBlock(null, world, x, y, z);
                 builder.getInventory().setStackInInventory(stack);
                 //TODO unload full inventory
             }
 
             if(block == Blocks.air)
             {
-                builder.swingItem();//TODO doesn't work, may need item in hand
-                world.setBlockToAir(pos[0], pos[1], pos[2]);
+                world.setBlockToAir(x, y, z);
             }
             else
             {
-                if(!block.getMaterial().isSolid())
+                //TODO create proper system
+                placeRequiredSupportingBlocks(world, x, y, z, block, metadata);
+
+                if(block instanceof BlockDoor)
                 {
-                    //TODO create proper system, this works for torches
-                    if(block == Blocks.torch)
+                    ItemDoor.placeDoorBlock(world, x, y, z, metadata, block);
+                }
+                else if(block instanceof BlockBed && !testFlag(metadata, 8))
+                {
+                    world.setBlock(x, y, z, block, metadata, 0x03);
+
+                    int xOffset = 0, zOffset = 0;
+                    if(metadata == 0)
                     {
-                        if(metadata == 1 && world.getBlock(pos[0] - 1, pos[1], pos[2]) == Blocks.air)
-                        {
-                            world.setBlock(pos[0] - 1, pos[1], pos[2], Blocks.dirt);
-                        }
-                        else if(metadata == 2 && world.getBlock(pos[0] + 1, pos[1], pos[2]) == Blocks.air)
-                        {
-                            world.setBlock(pos[0] + 1, pos[1], pos[2], Blocks.dirt);
-                        }
-                        else if(metadata == 3 && world.getBlock(pos[0], pos[1], pos[2] - 1) == Blocks.air)
-                        {
-                            world.setBlock(pos[0], pos[1], pos[2] - 1, Blocks.dirt);
-                        }
-                        else if(metadata == 4 && world.getBlock(pos[0], pos[1], pos[2] + 1) == Blocks.air)
-                        {
-                            world.setBlock(pos[0], pos[1], pos[2] + 1, Blocks.dirt);
-                        }
+                        zOffset = 1;
+                    }
+                    else if(metadata == 1)
+                    {
+                        xOffset = -1;
+                    }
+                    else if(metadata == 2)
+                    {
+                        zOffset = -1;
+                    }
+                    else if(metadata == 3)
+                    {
+                        xOffset = 1;
+                    }
+                    world.setBlock(x + xOffset, y, z + zOffset, block, metadata + 8, 0x03);
+                }
+                else if(block instanceof BlockDoublePlant)
+                {
+                    world.setBlock(x, y, z, block, metadata, 0x03);
+                    world.setBlock(x, y + 1, z, block, 0x8, 0x03);
+                }
+                else
+                {
+                    if(!world.setBlock(x, y, z, block, metadata, 0x03))
+                    {
+                        return;
+                    }
+                    if(world.getBlock(x, y, z) == block)
+                    {
+                        block.onPostBlockPlaced(world, x, y, z, metadata);
                     }
                 }
-                builder.swingItem();
-                world.setBlock(pos[0], pos[1], pos[2], block, metadata, 0x02);
 
                 TileEntity tileEntity = builder.getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
-                if(tileEntity != null && !(world.getTileEntity(pos[0], pos[1], pos[2]) instanceof TileEntityHut))
+                if(tileEntity != null && !(world.getTileEntity(x, y, z) instanceof TileEntityHut))
                 {
-                    world.setTileEntity(pos[0], pos[1], pos[2], tileEntity);
+                    world.setTileEntity(x, y, z, tileEntity);
                 }
             }
+            builder.swingItem();//TODO doesn't work, may need item in hand
         }
+    }
+
+    private void placeRequiredSupportingBlocks(World world, int x, int y, int z, Block block, int metadata)
+    {
+
+        if(block instanceof BlockTorch || block instanceof BlockLever || block instanceof BlockButton)
+        {
+            if(testMask(metadata, 7, 0) && !(block instanceof BlockTorch) && !world.isSideSolid(x, y + 1, z, ForgeDirection.DOWN, true))
+            {
+                world.setBlock(x, y + 1, z, Blocks.dirt);
+            }
+            else if(testMask(metadata, 7, 1) && !world.isSideSolid(x - 1, y, z, ForgeDirection.EAST, true))
+            {
+                world.setBlock(x - 1, y, z, Blocks.dirt);
+            }
+            else if(testMask(metadata, 7, 2) && !world.isSideSolid(x + 1, y, z, ForgeDirection.WEST, true))
+            {
+                world.setBlock(x + 1, y, z, Blocks.dirt);
+            }
+            else if(testMask(metadata, 7, 3) && !world.isSideSolid(x, y, z - 1, ForgeDirection.SOUTH, true))
+            {
+                world.setBlock(x, y, z - 1, Blocks.dirt);
+            }
+            else if(testMask(metadata, 7, 4) && !world.isSideSolid(x, y, z + 1, ForgeDirection.NORTH, true))
+            {
+                world.setBlock(x, y, z + 1, Blocks.dirt);
+            }
+        }
+        else if(block instanceof BlockLadder)
+        {
+            if(metadata == 5 && !world.isSideSolid(x - 1, y, z, ForgeDirection.EAST, true))
+            {
+                world.setBlock(x - 1, y, z, Blocks.dirt);
+            }
+            else if(metadata == 4 && !world.isSideSolid(x + 1, y, z, ForgeDirection.WEST, true))
+            {
+                world.setBlock(x + 1, y, z, Blocks.dirt);
+            }
+            else if(metadata == 3 && !world.isSideSolid(x, y, z - 1, ForgeDirection.SOUTH, true))
+            {
+                world.setBlock(x, y, z - 1, Blocks.dirt);
+            }
+            else if(metadata == 2 && !world.isSideSolid(x, y, z + 1, ForgeDirection.NORTH, true))
+            {
+                world.setBlock(x, y, z + 1, Blocks.dirt);
+            }
+        }
+        else if(block instanceof BlockSign)
+        {
+            if(metadata == 5 && !world.getBlock(x - 1, y, z).getMaterial().isSolid())
+            {
+                world.setBlock(x - 1, y, z, Blocks.dirt);
+            }
+            else if(metadata == 4 && !world.getBlock(x + 1, y, z).getMaterial().isSolid())
+            {
+                world.setBlock(x + 1, y, z, Blocks.dirt);
+            }
+            else if(metadata == 3 && !world.getBlock(x, y, z - 1).getMaterial().isSolid())
+            {
+                world.setBlock(x, y, z - 1, Blocks.dirt);
+            }
+            else if(metadata == 2 && !world.getBlock(x, y, z + 1).getMaterial().isSolid())
+            {
+                world.setBlock(x, y, z + 1, Blocks.dirt);
+            }
+        }
+        else if(block instanceof BlockTrapDoor)
+        {
+            if(testMask(metadata, 3, 3) && !(trapDoorCheck(world.getBlock(x - 1, y, z)) || world.isSideSolid(x - 1, y, z, ForgeDirection.UP)))
+            {
+                world.setBlock(x - 1, y, z, Blocks.dirt);
+            }
+            else if(testMask(metadata, 3, 2) && !(trapDoorCheck(world.getBlock(x + 1, y, z)) || world.isSideSolid(x + 1, y, z, ForgeDirection.UP)))
+            {
+                world.setBlock(x + 1, y, z, Blocks.dirt);
+            }
+            else if(testMask(metadata, 3, 1) && !(trapDoorCheck(world.getBlock(x, y, z - 1)) || world.isSideSolid(x, y, z - 1, ForgeDirection.UP)))
+            {
+                world.setBlock(x, y, z - 1, Blocks.dirt);
+            }
+            else if(testMask(metadata, 3, 0) && !(trapDoorCheck(world.getBlock(x, y, z + 1)) || world.isSideSolid(x, y, z + 1, ForgeDirection.UP)))
+            {
+                world.setBlock(x, y, z + 1, Blocks.dirt);
+            }
+        }
+        else if(block instanceof BlockVine)
+        {
+            if(testFlag(metadata, 8) && !vineCheck(world.getBlock(x - 1, y, z)))
+            {
+                world.setBlock(x - 1, y, z, Blocks.dirt);
+            }
+            else if(testFlag(metadata, 2) && !vineCheck(world.getBlock(x + 1, y, z)))
+            {
+                world.setBlock(x + 1, y, z, Blocks.dirt);
+            }
+            else if(testFlag(metadata, 1) && !vineCheck(world.getBlock(x, y, z - 1)))
+            {
+                world.setBlock(x, y, z - 1, Blocks.dirt);
+            }
+            else if(testFlag(metadata, 4) && !vineCheck(world.getBlock(x, y, z + 1)))
+            {
+                world.setBlock(x, y, z + 1, Blocks.dirt);
+            }
+        }
+        else if(block instanceof BlockCocoa)
+        {
+            int l = BlockDirectional.getDirection(metadata);
+            Block testBlock = world.getBlock(x + Direction.offsetX[l], y, z + Direction.offsetZ[l]);
+            int testMetadata = world.getBlockMetadata(x + Direction.offsetX[l], y, z + Direction.offsetZ[l]);
+            if(testBlock == Blocks.log && testFlag(testMetadata, 3))
+            {
+                world.setBlock(x + Direction.offsetX[l], y, z + Direction.offsetZ[l], Blocks.log, 3, 0x03);
+            }
+        }
+        else if(block instanceof BlockTripWireHook)
+        {
+            if(testMask(metadata, 3, 3) && !world.isSideSolid(x - 1, y, z, ForgeDirection.EAST, true))
+            {
+                world.setBlock(x - 1, y, z, Blocks.dirt);
+            }
+            else if(testMask(metadata, 3, 1) && !world.isSideSolid(x + 1, y, z, ForgeDirection.WEST, true))
+            {
+                world.setBlock(x + 1, y, z, Blocks.dirt);
+            }
+            else if(testMask(metadata, 3, 0) && !world.isSideSolid(x, y, z - 1, ForgeDirection.SOUTH, true))
+            {
+                world.setBlock(x, y, z - 1, Blocks.dirt);
+            }
+            else if(testMask(metadata, 3, 2) && !world.isSideSolid(x, y, z + 1, ForgeDirection.NORTH, true))
+            {
+                world.setBlock(x, y, z + 1, Blocks.dirt);
+            }
+        }
+        else if(block instanceof BlockSkull)
+        {
+            if(metadata == 4 && !world.getBlock(x - 1, y, z).getMaterial().isSolid())
+            {
+                world.setBlock(x - 1, y, z, Blocks.dirt);
+            }
+            else if(metadata == 5 && !world.getBlock(x + 1, y, z).getMaterial().isSolid())
+            {
+                world.setBlock(x + 1, y, z, Blocks.dirt);
+            }
+            else if(metadata == 3 && !world.getBlock(x, y, z - 1).getMaterial().isSolid())
+            {
+                world.setBlock(x, y, z - 1, Blocks.dirt);
+            }
+            else if(metadata == 2 && !world.getBlock(x, y, z + 1).getMaterial().isSolid())
+            {
+                world.setBlock(x, y, z + 1, Blocks.dirt);
+            }
+        }
+    }
+
+    private boolean vineCheck(Block block)
+    {
+        return block.renderAsNormalBlock() && block.getMaterial().blocksMovement();
+    }
+
+    private boolean trapDoorCheck(Block block)
+    {
+        return (block.getMaterial().isOpaque() && block.renderAsNormalBlock() || block == Blocks.glowstone || block instanceof BlockSlab || block instanceof BlockStairs);
+    }
+
+    private boolean testFlag(int data, int flag)
+    {
+        return (data & flag) == flag;
+    }
+
+    private boolean testMask(int data, int mask, int id)
+    {
+        return (data & mask) == id;
     }
 
     @Override
