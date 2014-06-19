@@ -169,7 +169,7 @@ public class Schematic
                 }
             }
         }
-        while(doesSchematicBlockEqualWorldBlock() && count < 50);//count limits the number of checked blocks per builder update
+        while(doesSchematicBlockEqualWorldBlock() && count < 1000);//count limits the number of checked blocks per builder update
         //TODO change count to agreed upon value, possibly add config option - possibly remove if we think this shouldn't be a problem
 
         return true;
