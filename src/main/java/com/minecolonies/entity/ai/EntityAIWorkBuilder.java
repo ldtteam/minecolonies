@@ -9,13 +9,17 @@ import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
-import net.minecraft.block.Block;
+import net.minecraft.block.*;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
@@ -59,7 +63,15 @@ public class EntityAIWorkBuilder extends EntityAIBase
     @Override
     public void updateTask()
     {
-        if(!builder.getNavigator().noPath()) return;//traveling
+        //TODO: Need to do more in range and pathfind fail checks
+        if(!builder.getNavigator().noPath())//traveling
+        {
+            if(builder.getNavigator().getPath().getFinalPathPoint().distanceToSquared(new PathPoint((int) builder.posX, (int) builder.posY, (int) builder.posZ)) < 4)//within 2 blocks
+            {
+                builder.getNavigator().clearPathEntity();
+            }
+            return;
+        }
 
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
