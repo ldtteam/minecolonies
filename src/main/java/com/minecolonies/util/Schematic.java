@@ -18,7 +18,6 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -306,7 +305,7 @@ public class Schematic
 
     public Vec3 getBlockPosition()
     {
-        return position.addVector(x - schematic.getOffsetX(), y  - schematic.getOffsetY(), z  - schematic.getOffsetZ());
+        return position.addVector(x - schematic.getOffsetX(), y - schematic.getOffsetY(), z - schematic.getOffsetZ());
     }
 
     public Vec3 getBlockPosition(int baseX, int baseY, int baseZ)

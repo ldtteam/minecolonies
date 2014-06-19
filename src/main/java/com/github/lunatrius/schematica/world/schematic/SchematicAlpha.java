@@ -168,7 +168,6 @@ public class SchematicAlpha extends SchematicFormat
         }
 
 
-
         tagCompound.setString("Materials", "Alpha");
         tagCompound.setByteArray("Blocks", localBlocks);
         tagCompound.setByteArray("Data", localMetadata);

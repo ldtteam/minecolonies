@@ -11,7 +11,6 @@ import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -93,12 +92,12 @@ public class EventHandler
     /**
      * Called when a player tries to place a BlockHut. Returns true if successful and false to cancel the block placement.
      *
-     * @param world The world the player is in
+     * @param world  The world the player is in
      * @param player The player
-     * @param block The block type the player is placing
-     * @param x The x coordinate of the block
-     * @param y The y coordinate of the block
-     * @param z The z coordinate of the block
+     * @param block  The block type the player is placing
+     * @param x      The x coordinate of the block
+     * @param y      The y coordinate of the block
+     * @param z      The z coordinate of the block
      * @return false to cancel the event
      */
     private boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, int x, int y, int z)

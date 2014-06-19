@@ -3,7 +3,6 @@ package com.github.lunatrius.schematica.world;
 import com.github.lunatrius.schematica.config.BlockInfo;
 import com.github.lunatrius.schematica.world.storage.EmptySaveHandler;
 import com.minecolonies.MineColonies;
-import com.minecolonies.tileentities.TileEntityHut;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -550,7 +549,7 @@ public class SchematicWorld extends World
     public void flip()
     {
         /*
-		int tmp;
+        int tmp;
 		for (int x = 0; x < this.width; x++) {
 			for (int y = 0; y < this.height; y++) {
 				for (int z = 0; z < (this.length + 1) / 2; z++) {

@@ -5,7 +5,6 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
-import cpw.mods.fml.common.registry.EntityRegistry;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

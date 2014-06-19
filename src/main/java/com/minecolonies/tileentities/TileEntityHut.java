@@ -1,7 +1,6 @@
 package com.minecolonies.tileentities;
 
 import com.minecolonies.inventory.InventoryCitizen;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -151,13 +150,17 @@ public abstract class TileEntityHut extends TileEntityBuildable
         return -1;
     }
 
-    public boolean takeItem(InventoryCitizen inventory, int slotID, int amount) {
-        if (inventory != null && slotID >= 0 && amount >= 0) {
+    public boolean takeItem(InventoryCitizen inventory, int slotID, int amount)
+    {
+        if(inventory != null && slotID >= 0 && amount >= 0)
+        {
             ItemStack stack = getStackInSlot(slotID);
-            if (stack != null) {
+            if(stack != null)
+            {
                 stack = decrStackSize(slotID, Math.min(amount, stack.stackSize));
                 stack = inventory.setStackInInventory(stack);
-                if (stack != null) {
+                if(stack != null)
+                {
                     this.setStackInInventory(stack);
                     return false;
                 }
