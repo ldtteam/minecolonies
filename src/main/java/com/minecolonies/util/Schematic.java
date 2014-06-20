@@ -253,11 +253,6 @@ public class Schematic
                 entityData.setString("id", EntityList.getEntityString(entity));
                 entity.writeToNBT(entityData);
 
-                NBTTagList pos = new NBTTagList();
-                pos.appendTag(new NBTTagDouble(entity.posX - minX));
-                pos.appendTag(new NBTTagDouble(entity.posY - minY));
-                pos.appendTag(new NBTTagDouble(entity.posZ - minZ));
-                entityData.setTag("Pos", pos);
                 entityData.setTag("TileX", new NBTTagInt(entity.field_146063_b - minX));
                 entityData.setTag("TileY", new NBTTagInt(entity.field_146064_c - minY));
                 entityData.setTag("TileZ", new NBTTagInt(entity.field_146062_d - minZ));

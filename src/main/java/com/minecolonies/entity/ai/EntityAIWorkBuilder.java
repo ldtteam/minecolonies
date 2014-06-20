@@ -559,21 +559,17 @@ public class EntityAIWorkBuilder extends EntityAIBase
             if(entity != null && entity instanceof EntityHanging)
             {
                 EntityHanging entityHanging = (EntityHanging) entity;
-                System.out.println("EntityHanging exists");
+
                 Vec3 pos = builder.getSchematic().getOffsetPosition();//min position
+                entityHanging.field_146063_b += pos.xCoord;//tileX
+                entityHanging.field_146064_c += pos.yCoord;//tileY
+                entityHanging.field_146062_d += pos.zCoord;//tileZ
+                entityHanging.setDirection(entityHanging.hangingDirection);//also sets position based on tile
 
-                entityHanging.setPosition(entityHanging.posX + pos.xCoord, entityHanging.posY + pos.yCoord, entityHanging.posZ + pos.zCoord);
-                entityHanging.field_146063_b += pos.xCoord;
-                entityHanging.field_146064_c += pos.yCoord;
-                entityHanging.field_146062_d += pos.zCoord;
-
-                entityHanging.setDirection(entityHanging.hangingDirection);
                 entityHanging.setWorld(world);
                 entityHanging.dimension = world.provider.dimensionId;
 
                 world.spawnEntityInWorld(entityHanging);
-                System.out.println(String.format("Spawned at: %s, %s, %s", entityHanging.posX, entityHanging.posY, entityHanging.posZ));
-                System.out.println(String.format("tile coords: %s, %s, %s", entityHanging.field_146063_b, entityHanging.field_146064_c, entityHanging.field_146062_d));
             }
         }
     }
