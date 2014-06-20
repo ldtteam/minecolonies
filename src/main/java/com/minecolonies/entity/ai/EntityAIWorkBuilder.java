@@ -193,7 +193,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                     }
                     if(world.getBlock(x, y, z) == block)
                     {
-                        if(block instanceof BlockChest)
+                        if(world.getBlockMetadata(x, y, z) != metadata)
                         {
                             world.setBlockMetadataWithNotify(x, y, z, metadata, 0x03);
                         }
