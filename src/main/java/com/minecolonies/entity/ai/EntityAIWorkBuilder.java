@@ -13,9 +13,9 @@ import com.minecolonies.util.Utils;
 import net.minecraft.block.*;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Vec3;
@@ -53,9 +53,11 @@ public class EntityAIWorkBuilder extends EntityAIBase
     @Override
     public void startExecuting()
     {
-        if(!builder.hasSchematic())
+        if(!builder.hasSchematic())//is build in progress
         {
             loadSchematic();
+
+            findNextBlock();
         }
         Vec3 buildPos = builder.getSchematic().getPosition();
         builder.getNavigator().tryMoveToXYZ(buildPos.xCoord, buildPos.yCoord, buildPos.zCoord, 1.0F);
@@ -66,151 +68,142 @@ public class EntityAIWorkBuilder extends EntityAIBase
     @Override
     public void updateTask()
     {
-        //TODO: Need to do more in range and pathfind fail checks
-        if(!builder.getNavigator().noPath())//traveling
-        {
-            if(builder.getNavigator().getPath().getFinalPathPoint().distanceToSquared(new PathPoint((int) builder.posX, (int) builder.posY, (int) builder.posZ)) < 4)//within 2 blocks
-            {
-                builder.getNavigator().clearPathEntity();
-            }
-            return;
-        }
-
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
-            if(!builder.getSchematic().findNextBlock())//method returns false if there is no next block (schematic finished)
-            {
-                completeBuild();
-                return;
-            }
+            builder.setStatus(EnumStatus.WORKING);
+
+            if(!isBuilderAtSite()) return;
 
             Block block = builder.getSchematic().getBlock();
+            int metadata = builder.getSchematic().getMetadata();
             if(block == null)//should never happen
             {
                 MineColonies.logger.error("Schematic has null block");
+                findNextBlock();
                 return;
             }
-            int metadata = builder.getSchematic().getMetadata();
+
             Vec3 vec = builder.getSchematic().getBlockPosition();
-            int x = (int) vec.xCoord;
-            int y = (int) vec.yCoord;
-            int z = (int) vec.zCoord;
+            int x = (int) vec.xCoord, y = (int) vec.yCoord, z = (int) vec.zCoord;
 
             Block worldBlock = world.getBlock(x, y, z);
-            if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock) return;//don't overwrite huts or bedrock
+            if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock)//don't overwrite huts or bedrock
+            {
+                findNextBlock();
+                return;
+            }
 
             if(!Configurations.builderInfiniteResources)//We need to deal with materials
             {
-                int slotID = builder.getInventory().containsItemStack(new ItemStack(block, 1, metadata));
-                if(slotID == -1)
-                {
-                    ItemStack material = new ItemStack(block, 1, metadata);
-
-                    int amount = -1;
-                    for(ItemStack item : builder.getSchematic().getMaterials())
-                    {
-                        if(item.isItemEqual(material))
-                        {
-                            amount = item.stackSize;
-                            break;
-                        }
-                    }
-
-                    int chestSlotID = builder.getWorkHut().containsItemStack(material);
-                    if(chestSlotID != -1)
-                    {
-                        if(builder.getWorkHut().getDistanceFrom(builder.posX, builder.posY, builder.posZ) < 64) //Square Distance
-                        {
-                            builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, amount);
-                        }
-                        else
-                        {
-                            builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D);
-                        }
-                    }
-                    else if(false)//TODO canCraft()
-                    {
-                        //TODO craft item
-                    }
-                    else
-                    {
-                        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
-                        //TODO request material - deliveryman
-                    }
-                    return;
-                }
-                builder.getSchematic().useMaterial(builder.getInventory().getStackInSlot(slotID));
-                builder.getInventory().decrStackSize(slotID, 1);
-
-                ItemStack stack = worldBlock.getPickBlock(null, world, x, y, z);
-                builder.getInventory().setStackInInventory(stack);
-                //TODO unload full inventory
+                if(!handleMaterials(block, metadata, worldBlock, world.getBlockMetadata(x, y, z))) return;
             }
 
             if(block == Blocks.air)
             {
-                world.setBlockToAir(x, y, z);
+                if(world.setBlockToAir(x, y, z))
+                {
+                    findNextBlock();
+                }
             }
             else
             {
                 placeRequiredSupportingBlocks(x, y, z, block, metadata);
 
-                if(block instanceof BlockDoor)
+                if(placeBlock(x, y, z, block, metadata))
                 {
-                    ItemDoor.placeDoorBlock(world, x, y, z, metadata, block);
-                }
-                else if(block instanceof BlockBed && !testFlag(metadata, 8))
-                {
-                    world.setBlock(x, y, z, block, metadata, 0x03);
-
-                    int xOffset = 0, zOffset = 0;
-                    if(metadata == 0)
-                    {
-                        zOffset = 1;
-                    }
-                    else if(metadata == 1)
-                    {
-                        xOffset = -1;
-                    }
-                    else if(metadata == 2)
-                    {
-                        zOffset = -1;
-                    }
-                    else if(metadata == 3)
-                    {
-                        xOffset = 1;
-                    }
-                    world.setBlock(x + xOffset, y, z + zOffset, block, metadata + 8, 0x03);
-                }
-                else if(block instanceof BlockDoublePlant)
-                {
-                    world.setBlock(x, y, z, block, metadata, 0x03);
-                    world.setBlock(x, y + 1, z, block, 0x8, 0x03);
-                }
-                else
-                {
-                    if(!world.setBlock(x, y, z, block, metadata, 0x03))
-                    {
-                        return;
-                    }
-                    if(world.getBlock(x, y, z) == block)
-                    {
-                        if(world.getBlockMetadata(x, y, z) != metadata)
-                        {
-                            world.setBlockMetadataWithNotify(x, y, z, metadata, 0x03);
-                        }
-                        block.onPostBlockPlaced(world, x, y, z, metadata);
-                    }
-                }
-
-                TileEntity tileEntity = builder.getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
-                if(tileEntity != null && !(world.getTileEntity(x, y, z) instanceof TileEntityHut))
-                {
-                    world.setTileEntity(x, y, z, tileEntity);
+                    setTileEntity(x, y, z);
+                    findNextBlock();
                 }
             }
             builder.swingItem();//TODO doesn't work, may need item in hand
         }
+    }
+
+    private boolean isBuilderAtSite()
+    {
+        Vec3 buildPos = builder.getSchematic().getPosition();
+        if(builder.getPosition().squareDistanceTo(buildPos) > 4)//Too far away
+        {
+            if(builder.getNavigator().noPath())//Not moving
+            {
+                if(!builder.getNavigator().tryMoveToXYZ(buildPos.xCoord, buildPos.yCoord, buildPos.zCoord, 1.0F))
+                {
+                    builder.setStatus(EnumStatus.PATHFINDING_ERROR);
+                }
+            }
+            return false;
+        }
+        else
+        {
+            if(!builder.getNavigator().noPath())//within 2 blocks - can stop pathing //TODO may not need this check
+            {
+                builder.getNavigator().clearPathEntity();
+            }
+            return true;
+        }
+    }
+
+    private void findNextBlock()
+    {
+        if(!builder.getSchematic().findNextBlock())//method returns false if there is no next block (schematic finished)
+        {
+            completeBuild();
+        }
+    }
+
+    private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
+    {
+        int slotID = builder.getInventory().containsItemStack(new ItemStack(block, 1, metadata));
+        if(slotID == -1)//inventory doesn't contain item
+        {
+            ItemStack material = new ItemStack(block, 1, metadata);
+
+            int amount = -1;
+            for(ItemStack item : builder.getSchematic().getMaterials())//find amount needed
+            {
+                if(item.isItemEqual(material))
+                {
+                    amount = item.stackSize;
+                    break;
+                }
+            }
+
+            int chestSlotID = builder.getWorkHut().containsItemStack(material);
+            if(chestSlotID != -1)//chest contains item
+            {
+                if(builder.getWorkHut().getDistanceFrom(builder.posX, builder.posY, builder.posZ) < 64) //Square Distance - within 8 blocks
+                {
+                    builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, amount);//if chest doesn't contain full amount, take all.
+                }
+                else
+                {
+                    if(!builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D))
+                    {
+                        builder.setStatus(EnumStatus.PATHFINDING_ERROR);
+                    }
+                }
+            }
+            else if(false)//TODO canCraft(material)
+            {
+                //TODO craft item
+            }
+            else
+            {
+                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
+                builder.setStatus(EnumStatus.NEED_MATERIALS);
+                //TODO request material - deliveryman
+            }
+            return false;
+        }
+        builder.getSchematic().useMaterial(builder.getInventory().getStackInSlot(slotID));//remove item from materials list (--stackSize)
+        builder.getInventory().decrStackSize(slotID, 1);
+
+        ItemStack stack = new ItemStack(Item.getItemFromBlock(worldBlock), 1, worldBlockMetadata);//get item for inventory
+        builder.getInventory().setStackInInventory(stack);
+        //TODO unload unneeded items if inventory is full
+        return true;
+    }
+
     private boolean canBlockFace(World world, int x, int y, int z, ForgeDirection direction)
     {
         return world.isSideSolid(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, direction, true);
@@ -432,6 +425,66 @@ public class EntityAIWorkBuilder extends EntityAIBase
     {
         return data & mask;
     }
+
+    private boolean placeBlock(int x, int y, int z, Block block, int metadata)
+    {
+        if(block instanceof BlockDoor)
+        {
+            ItemDoor.placeDoorBlock(world, x, y, z, metadata, block);
+        }
+        else if(block instanceof BlockBed && !testFlag(metadata, 0x8))
+        {
+            world.setBlock(x, y, z, block, metadata, 0x03);
+
+            int xOffset = 0, zOffset = 0;
+            if(metadata == 0)
+            {
+                zOffset = 1;
+            }
+            else if(metadata == 1)
+            {
+                xOffset = -1;
+            }
+            else if(metadata == 2)
+            {
+                zOffset = -1;
+            }
+            else if(metadata == 3)
+            {
+                xOffset = 1;
+            }
+            world.setBlock(x + xOffset, y, z + zOffset, block, metadata | 0x8, 0x03);
+        }
+        else if(block instanceof BlockDoublePlant)
+        {
+            world.setBlock(x, y, z, block, metadata, 0x03);
+            world.setBlock(x, y + 1, z, block, 0x8, 0x03);
+        }
+        else
+        {
+            if(!world.setBlock(x, y, z, block, metadata, 0x03))
+            {
+                return false;
+            }
+            if(world.getBlock(x, y, z) == block)
+            {
+                if(world.getBlockMetadata(x, y, z) != metadata)
+                {
+                    world.setBlockMetadataWithNotify(x, y, z, metadata, 0x03);
+                }
+                block.onPostBlockPlaced(world, x, y, z, metadata);
+            }
+        }
+        return true;
+    }
+
+    private void setTileEntity(int x, int y, int z)
+    {
+        TileEntity tileEntity = builder.getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
+        if(tileEntity != null && !(world.getTileEntity(x, y, z) instanceof TileEntityHut))
+        {
+            world.setTileEntity(x, y, z, tileEntity);
+        }
     }
 
     @Override
