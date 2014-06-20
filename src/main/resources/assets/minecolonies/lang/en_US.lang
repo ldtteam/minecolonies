@@ -75,6 +75,9 @@ item.caliper.message.cube=That's a %d by %d by %d cube.
 itemGroup.minecolonies=MineColonies
 
 entity.builder.ai.schematicLoadFailure=Schematic: (%s) does not exist - removing build request
+entity.builder.ai.schematicNullBlock=Schematic has null block at %d, %d, %d - local(%d, %d, %d)
+entity.builder.ai.blockPlaceFailure=Block place failure %s at %d, %d, %d
+entity.builder.ai.blockBreakFailure=Block break failure at %d, %d, %d
 entity.builder.messageBuildStart=Started building %s
 entity.builder.messageBuildComplete=Finished building %s
 entity.builder.messageNeedMaterial=I need %s(%d)

@@ -11,6 +11,8 @@ import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -57,7 +59,10 @@ public class EntityAIWorkBuilder extends EntityAIBase
         {
             loadSchematic();
 
-            findNextBlock();
+            if(!findNextBlock())
+            {
+                return;
+            }
         }
         Vec3 buildPos = builder.getSchematic().getPosition();
         builder.getNavigator().tryMoveToXYZ(buildPos.xCoord, buildPos.yCoord, buildPos.zCoord, 1.0F);
@@ -68,6 +73,9 @@ public class EntityAIWorkBuilder extends EntityAIBase
     @Override
     public void updateTask()
     {
+        if(!continueExecuting())
+            return;//not called from startExecuting to first check causes repairs to crash if unneeded
+
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
             builder.setStatus(EnumStatus.WORKING);
@@ -76,17 +84,19 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
             Block block = builder.getSchematic().getBlock();
             int metadata = builder.getSchematic().getMetadata();
-            if(block == null)//should never happen
-            {
-                MineColonies.logger.error("Schematic has null block");
-                findNextBlock();
-                return;
-            }
 
             Vec3 vec = builder.getSchematic().getBlockPosition();
             int x = (int) vec.xCoord, y = (int) vec.yCoord, z = (int) vec.zCoord;
 
             Block worldBlock = world.getBlock(x, y, z);
+
+            if(block == null)//should never happen
+            {
+                Vec3 local = builder.getSchematic().getLocalPosition();
+                MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.schematicNullBlock", x, y, z, local.xCoord, local.yCoord, local.zCoord));
+                findNextBlock();
+                return;
+            }
             if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock)//don't overwrite huts or bedrock
             {
                 findNextBlock();
@@ -104,6 +114,11 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 {
                     findNextBlock();
                 }
+                else
+                {
+                    MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.blockBreakFailure", x, y, z));
+                    findNextBlock();//TODO handle - for now, just skipping
+                }
             }
             else
             {
@@ -113,6 +128,11 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 {
                     setTileEntity(x, y, z);
                     findNextBlock();
+                }
+                else
+                {
+                    MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.blockPlaceFailure", block.getUnlocalizedName(), x, y, z));
+                    findNextBlock();//TODO handle - for now, just skipping
                 }
             }
             builder.swingItem();//TODO doesn't work, may need item in hand
@@ -143,12 +163,14 @@ public class EntityAIWorkBuilder extends EntityAIBase
         }
     }
 
-    private void findNextBlock()
+    private boolean findNextBlock()
     {
         if(!builder.getSchematic().findNextBlock())//method returns false if there is no next block (schematic finished)
         {
             completeBuild();
+            return false;
         }
+        return true;
     }
 
     private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
@@ -512,6 +534,8 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
     private void completeBuild()
     {
+        spawnEntities();
+
         String schematicName = builder.getSchematic().getName();
         LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", schematicName);
         int[] pos = Utils.vecToInt(builder.getSchematic().getPosition());
@@ -526,5 +550,29 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
         builder.getTownHall().removeHutForUpgrade(pos);
         builder.setSchematic(null);
+    }
+
+    private void spawnEntities()
+    {
+        for(Entity entity : builder.getSchematic().getEntities())
+        {
+            if(entity != null && entity instanceof EntityHanging)
+            {
+                EntityHanging entityHanging = (EntityHanging) entity;
+                System.out.println("EntityHanging exists");
+                Vec3 pos = builder.getSchematic().getOffsetPosition();//min position
+
+                entityHanging.setPosition(entityHanging.posX + pos.xCoord, entityHanging.posY + pos.yCoord, entityHanging.posZ + pos.zCoord);
+                entityHanging.field_146063_b += pos.xCoord;
+                entityHanging.field_146064_c += pos.yCoord;
+                entityHanging.field_146062_d += pos.zCoord;
+
+                entityHanging.setWorld(world);
+                entityHanging.dimension = world.provider.dimensionId;
+                world.spawnEntityInWorld(entityHanging);
+                System.out.println(String.format("Spawned at: %s, %s, %s", entityHanging.posX, entityHanging.posY, entityHanging.posZ));
+                System.out.println(String.format("tile coords: %s, %s, %s", entityHanging.field_146063_b, entityHanging.field_146064_c, entityHanging.field_146062_d));
+            }
+        }
     }
 }

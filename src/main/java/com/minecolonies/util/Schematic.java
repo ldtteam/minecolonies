@@ -8,11 +8,18 @@ import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityHanging;
+import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -178,6 +185,10 @@ public class Schematic
     private boolean doesSchematicBlockEqualWorldBlock()
     {
         int[] pos = Utils.vecToInt(this.getBlockPosition());
+        if(y <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
+        {
+            return true;
+        }
         return schematic.getBlock(x, y, z) == world.getBlock(pos[0], pos[1], pos[2]) && schematic.getBlockMetadata(x, y, z) == world.getBlockMetadata(pos[0], pos[1], pos[2]);
     }
 
@@ -214,8 +225,8 @@ public class Schematic
                     blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(world.getBlock(x, y, z));
                     metadata[x - minX][y - minY][z - minZ] = (byte) world.getBlockMetadata(x, y, z);
                     tileEntity = world.getTileEntity(x, y, z);
-                    if(tileEntity != null)
-                    {
+                    if(tileEntity != null)//creates a new tileEntity and formats its data for saving
+                    {                     //a new tileEntity is needed to prevent changes to the real one
                         tileEntityNBT = new NBTTagCompound();
                         tileEntity.writeToNBT(tileEntityNBT);
 
@@ -228,13 +239,40 @@ public class Schematic
                 }
             }
         }
+
+        AxisAlignedBB region = AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+        List<EntityHanging> entities = world.getEntitiesWithinAABB(EntityHanging.class, region);
+        NBTTagList entityList = new NBTTagList();
+
+        for(EntityHanging entity : entities)
+        {
+            if(entity != null)
+            {
+                NBTTagCompound entityData = new NBTTagCompound();
+
+                entityData.setString("id", EntityList.getEntityString(entity));
+                entity.writeToNBT(entityData);
+
+                NBTTagList pos = new NBTTagList();
+                pos.appendTag(new NBTTagDouble(entity.posX - minX));
+                pos.appendTag(new NBTTagDouble(entity.posY - minY));
+                pos.appendTag(new NBTTagDouble(entity.posZ - minZ));
+                entityData.setTag("Pos", pos);
+                entityData.setTag("TileX", new NBTTagInt(entity.field_146063_b - minX));
+                entityData.setTag("TileY", new NBTTagInt(entity.field_146064_c - minY));
+                entityData.setTag("TileZ", new NBTTagInt(entity.field_146062_d - minZ));
+
+                entityList.appendTag(entityData);
+            }
+        }
+
         if(icon != null)
         {
-            return new SchematicWorld(icon, blocks, metadata, tileEntities, width, height, length);
+            return new SchematicWorld(icon, blocks, metadata, tileEntities, entityList, width, height, length);
         }
         else
         {
-            return new SchematicWorld(new ItemStack(Blocks.red_mushroom), blocks, metadata, tileEntities, width, height, length);
+            return new SchematicWorld(new ItemStack(Blocks.red_mushroom), blocks, metadata, tileEntities, entityList, width, height, length);
         }
     }
 
@@ -303,14 +341,24 @@ public class Schematic
         return this.schematic.getTileEntity(x, y, z);
     }
 
+    public Vec3 getOffset()
+    {
+        return Vec3.createVectorHelper(schematic.getOffsetX(), schematic.getOffsetY(), schematic.getOffsetZ());
+    }
+
+    public Vec3 getOffsetPosition()
+    {
+        return getOffset().subtract(position);//I know this seems backwards, minecraft's fault
+    }
+
     public Vec3 getBlockPosition()
     {
-        return position.addVector(x - schematic.getOffsetX(), y - schematic.getOffsetY(), z - schematic.getOffsetZ());
+        return getOffsetPosition().addVector(x, y, z);
     }
 
     public Vec3 getBlockPosition(int baseX, int baseY, int baseZ)
     {
-        return world.getWorldVec3Pool().getVecFromPool(baseX + x, baseY + y, baseZ + z);
+        return Vec3.createVectorHelper(baseX + x, baseY + y, baseZ + z);
     }
 
     public Vec3 getLocalPosition()
@@ -368,6 +416,11 @@ public class Schematic
     public int getLength()
     {
         return schematic.getLength();
+    }
+
+    public List<Entity> getEntities()
+    {
+        return schematic.loadedEntityList;
     }
 
     //TODO rendering
