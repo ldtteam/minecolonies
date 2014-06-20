@@ -8,12 +8,14 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntitySkull;
@@ -80,15 +82,15 @@ public class SchematicWorld extends World
         this.renderingLayer = -1;
     }
 
-    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, short width, short height, short length, int xOffset, int yOffset, int zOffset)
+    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length, int xOffset, int yOffset, int zOffset)
     {
-        this(icon, blocks, metadata, tileEntities, width, height, length);
+        this(icon, blocks, metadata, tileEntities, entities, width, height, length);
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.zOffset = zOffset;
     }
 
-    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, short width, short height, short length)
+    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
     {
         this();
 
@@ -114,6 +116,15 @@ public class SchematicWorld extends World
             }
         }
 
+        if(entities != null)
+        {
+            for(int i = 0; i < entities.tagCount(); i++)
+            {
+                Entity entity = EntityList.createEntityFromNBT(entities.getCompoundTagAt(i), this);
+                this.loadedEntityList.add(entity);
+            }
+        }
+
         this.width = width;
         this.length = length;
         this.height = height;
@@ -121,9 +132,9 @@ public class SchematicWorld extends World
         generateBlockList();
     }
 
-    public SchematicWorld(String iconName, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, short width, short height, short length)
+    public SchematicWorld(String iconName, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
     {
-        this(getIconFromName(iconName), blocks, metadata, tileEntities, width, height, length);
+        this(getIconFromName(iconName), blocks, metadata, tileEntities, entities, width, height, length);
     }
 
     public static ItemStack getIconFromName(String iconName)

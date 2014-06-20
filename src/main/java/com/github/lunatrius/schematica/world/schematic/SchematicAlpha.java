@@ -5,6 +5,8 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -77,15 +79,18 @@ public class SchematicAlpha extends SchematicFormat
                 tileEntities.add(tileEntity);
             }
         }
+
+        NBTTagList entityList = tagCompound.getTagList("Entities", Constants.NBT.TAG_COMPOUND);
+
         if(tagCompound.hasKey("OffsetX"))
         {
             int xOffset = tagCompound.getShort("OffsetX");
             int yOffset = tagCompound.getShort("OffsetY");
             int zOffset = tagCompound.getShort("OffsetZ");
 
-            return new SchematicWorld(icon, blocks, metadata, tileEntities, width, height, length, xOffset, yOffset, zOffset);
+            return new SchematicWorld(icon, blocks, metadata, tileEntities, entityList, width, height, length, xOffset, yOffset, zOffset);
         }
-        return new SchematicWorld(icon, blocks, metadata, tileEntities, width, height, length);
+        return new SchematicWorld(icon, blocks, metadata, tileEntities, entityList, width, height, length);
     }
 
     @Override
@@ -166,7 +171,19 @@ public class SchematicAlpha extends SchematicFormat
                 extraBlocks[pos] = 0;
             }
         }
+        NBTTagList entities = new NBTTagList();
+        for(Object o : world.loadedEntityList)
+        {
+            if(o instanceof Entity)
+            {
+                Entity entity = (Entity) o;
+                NBTTagCompound entityData = new NBTTagCompound();
+                entityData.setString("id", EntityList.getEntityString(entity));
+                entity.writeToNBT(entityData);
+                entities.appendTag(entityData);
+            }
 
+        }
 
         tagCompound.setString("Materials", "Alpha");
         tagCompound.setByteArray("Blocks", localBlocks);
@@ -175,7 +192,7 @@ public class SchematicAlpha extends SchematicFormat
         {
             tagCompound.setByteArray("AddBlocks", extraBlocksNibble);
         }
-        tagCompound.setTag("Entities", new NBTTagList());
+        tagCompound.setTag("Entities", entities);
         tagCompound.setTag("TileEntities", tileEntitiesList);
 
         tagCompound.setShort("OffsetX", (short) xOffset);
