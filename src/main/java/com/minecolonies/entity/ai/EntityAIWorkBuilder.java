@@ -24,6 +24,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
+import static com.minecolonies.lib.Constants.BlockData.*;
+
 /**
  * Performs builder work
  * Created: May 25, 2014
@@ -151,8 +153,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
             }
             else
             {
-                //TODO create proper system
-                placeRequiredSupportingBlocks(world, x, y, z, block, metadata);
+                placeRequiredSupportingBlocks(x, y, z, block, metadata);
 
                 if(block instanceof BlockDoor)
                 {
@@ -210,107 +211,150 @@ public class EntityAIWorkBuilder extends EntityAIBase
             }
             builder.swingItem();//TODO doesn't work, may need item in hand
         }
+    private boolean canBlockFace(World world, int x, int y, int z, ForgeDirection direction)
+    {
+        return world.isSideSolid(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, direction, true);
     }
 
-    private void placeRequiredSupportingBlocks(World world, int x, int y, int z, Block block, int metadata)
+    private void placeRequiredSupportingBlocks(int x, int y, int z, Block block, int metadata)
     {
-        if(block instanceof BlockTorch || block instanceof BlockLever || block instanceof BlockButton)
+        if(block instanceof BlockTorch)
         {
-            if(testMask(metadata, 7, 0) && !(block instanceof BlockTorch) && !world.isSideSolid(x, y + 1, z, ForgeDirection.DOWN, true))
+            ForgeDirection direction = ForgeDirection.UNKNOWN;
+            switch(metadata)
             {
-                world.setBlock(x, y + 1, z, Blocks.dirt);
+                case TORCH_EAST:
+                    direction = ForgeDirection.EAST;
+                    break;
+                case TORCH_WEST:
+                    direction = ForgeDirection.WEST;
+                    break;
+                case TORCH_SOUTH:
+                    direction = ForgeDirection.SOUTH;
+                    break;
+                case TORCH_NORTH:
+                    direction = ForgeDirection.NORTH;
             }
-            else if(testMask(metadata, 7, 1) && !world.isSideSolid(x - 1, y, z, ForgeDirection.EAST, true))
+            if(direction != ForgeDirection.UNKNOWN && !canBlockFace(world, x, y, z, direction))
             {
-                world.setBlock(x - 1, y, z, Blocks.dirt);
+                world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
-            else if(testMask(metadata, 7, 2) && !world.isSideSolid(x + 1, y, z, ForgeDirection.WEST, true))
+        }
+        else if(block instanceof BlockLever || block instanceof BlockButton)
+        {
+            ForgeDirection direction = ForgeDirection.UNKNOWN;
+            switch(mask(metadata, BUTTON_LEVER_MASK))
             {
-                world.setBlock(x + 1, y, z, Blocks.dirt);
+                case BUTTON_LEVER_CEILING:
+                    direction = ForgeDirection.DOWN;
+                    break;
+                case BUTTON_LEVER_EAST:
+                    direction = ForgeDirection.EAST;
+                    break;
+                case BUTTON_LEVER_WEST:
+                    direction = ForgeDirection.WEST;
+                    break;
+                case BUTTON_LEVER_SOUTH:
+                    direction = ForgeDirection.SOUTH;
+                    break;
+                case BUTTON_LEVER_NORTH:
+                    direction = ForgeDirection.NORTH;
             }
-            else if(testMask(metadata, 7, 3) && !world.isSideSolid(x, y, z - 1, ForgeDirection.SOUTH, true))
+            if(direction != ForgeDirection.UNKNOWN && !canBlockFace(world, x, y, z, direction))
             {
-                world.setBlock(x, y, z - 1, Blocks.dirt);
-            }
-            else if(testMask(metadata, 7, 4) && !world.isSideSolid(x, y, z + 1, ForgeDirection.NORTH, true))
-            {
-                world.setBlock(x, y, z + 1, Blocks.dirt);
+                world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
         }
         else if(block instanceof BlockLadder)
         {
-            if(metadata == 5 && !world.isSideSolid(x - 1, y, z, ForgeDirection.EAST, true))
+            ForgeDirection direction = ForgeDirection.UNKNOWN;
+            switch(metadata)
             {
-                world.setBlock(x - 1, y, z, Blocks.dirt);
+                case LADDER_EAST:
+                    direction = ForgeDirection.EAST;
+                    break;
+                case LADDER_WEST:
+                    direction = ForgeDirection.WEST;
+                    break;
+                case LADDER_SOUTH:
+                    direction = ForgeDirection.SOUTH;
+                    break;
+                case LADDER_NORTH:
+                    direction = ForgeDirection.NORTH;
             }
-            else if(metadata == 4 && !world.isSideSolid(x + 1, y, z, ForgeDirection.WEST, true))
+            if(direction != ForgeDirection.UNKNOWN && !canBlockFace(world, x, y, z, direction))
             {
-                world.setBlock(x + 1, y, z, Blocks.dirt);
-            }
-            else if(metadata == 3 && !world.isSideSolid(x, y, z - 1, ForgeDirection.SOUTH, true))
-            {
-                world.setBlock(x, y, z - 1, Blocks.dirt);
-            }
-            else if(metadata == 2 && !world.isSideSolid(x, y, z + 1, ForgeDirection.NORTH, true))
-            {
-                world.setBlock(x, y, z + 1, Blocks.dirt);
+                world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
         }
         else if(block instanceof BlockSign)
         {
-            if(metadata == 5 && !world.getBlock(x - 1, y, z).getMaterial().isSolid())
+            ForgeDirection direction = ForgeDirection.UNKNOWN;
+            switch(metadata)
             {
-                world.setBlock(x - 1, y, z, Blocks.dirt);
+                case SIGN_EAST:
+                    direction = ForgeDirection.EAST;
+                    break;
+                case SIGN_WEST:
+                    direction = ForgeDirection.WEST;
+                    break;
+                case SIGN_SOUTH:
+                    direction = ForgeDirection.SOUTH;
+                    break;
+                case SIGN_NORTH:
+                    direction = ForgeDirection.NORTH;
             }
-            else if(metadata == 4 && !world.getBlock(x + 1, y, z).getMaterial().isSolid())
+            if(direction != ForgeDirection.UNKNOWN && ! world.getBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ).getMaterial().isSolid())
             {
-                world.setBlock(x + 1, y, z, Blocks.dirt);
-            }
-            else if(metadata == 3 && !world.getBlock(x, y, z - 1).getMaterial().isSolid())
-            {
-                world.setBlock(x, y, z - 1, Blocks.dirt);
-            }
-            else if(metadata == 2 && !world.getBlock(x, y, z + 1).getMaterial().isSolid())
-            {
-                world.setBlock(x, y, z + 1, Blocks.dirt);
+                world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
         }
         else if(block instanceof BlockTrapDoor)
         {
-            if(testMask(metadata, 3, 3) && !(trapDoorCheck(world.getBlock(x - 1, y, z)) || world.isSideSolid(x - 1, y, z, ForgeDirection.UP)))
+            ForgeDirection direction = ForgeDirection.UNKNOWN;
+            switch(mask(metadata, TRAPDOOR_MASK))
             {
-                world.setBlock(x - 1, y, z, Blocks.dirt);
+                case TRAPDOOR_EAST:
+                    direction = ForgeDirection.EAST;
+                    break;
+                case TRAPDOOR_WEST:
+                    direction = ForgeDirection.WEST;
+                    break;
+                case TRAPDOOR_SOUTH:
+                    direction = ForgeDirection.SOUTH;
+                    break;
+                case TRAPDOOR_NORTH:
+                    direction = ForgeDirection.NORTH;
             }
-            else if(testMask(metadata, 3, 2) && !(trapDoorCheck(world.getBlock(x + 1, y, z)) || world.isSideSolid(x + 1, y, z, ForgeDirection.UP)))
+            if(direction != ForgeDirection.UNKNOWN && !(trapDoorCheck(world.getBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ)) || world.isSideSolid(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, ForgeDirection.UP)))
             {
-                world.setBlock(x + 1, y, z, Blocks.dirt);
-            }
-            else if(testMask(metadata, 3, 1) && !(trapDoorCheck(world.getBlock(x, y, z - 1)) || world.isSideSolid(x, y, z - 1, ForgeDirection.UP)))
-            {
-                world.setBlock(x, y, z - 1, Blocks.dirt);
-            }
-            else if(testMask(metadata, 3, 0) && !(trapDoorCheck(world.getBlock(x, y, z + 1)) || world.isSideSolid(x, y, z + 1, ForgeDirection.UP)))
-            {
-                world.setBlock(x, y, z + 1, Blocks.dirt);
+                world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
         }
         else if(block instanceof BlockVine)
         {
-            if(testFlag(metadata, 8) && !vineCheck(world.getBlock(x - 1, y, z)))
+            if(metadata == 0 && !vineCheck(world.getBlock(x, y + 1, z)))
             {
-                world.setBlock(x - 1, y, z, Blocks.dirt);
+                world.setBlock(x, y + 1, z, Blocks.dirt);
             }
-            else if(testFlag(metadata, 2) && !vineCheck(world.getBlock(x + 1, y, z)))
+            else
             {
-                world.setBlock(x + 1, y, z, Blocks.dirt);
-            }
-            else if(testFlag(metadata, 1) && !vineCheck(world.getBlock(x, y, z - 1)))
-            {
-                world.setBlock(x, y, z - 1, Blocks.dirt);
-            }
-            else if(testFlag(metadata, 4) && !vineCheck(world.getBlock(x, y, z + 1)))
-            {
-                world.setBlock(x, y, z + 1, Blocks.dirt);
+                if(testFlag(metadata, VINE_EAST) && !vineCheck(world.getBlock(x - 1, y, z)))
+                {
+                    world.setBlock(x - 1, y, z, Blocks.dirt);
+                }
+                if(testFlag(metadata, VINE_WEST) && !vineCheck(world.getBlock(x + 1, y, z)))
+                {
+                    world.setBlock(x + 1, y, z, Blocks.dirt);
+                }
+                if(testFlag(metadata, VINE_SOUTH) && !vineCheck(world.getBlock(x, y, z - 1)))
+                {
+                    world.setBlock(x, y, z - 1, Blocks.dirt);
+                }
+                if(testFlag(metadata, VINE_NORTH) && !vineCheck(world.getBlock(x, y, z + 1)))
+                {
+                    world.setBlock(x, y, z + 1, Blocks.dirt);
+                }
             }
         }
         else if(block instanceof BlockCocoa)
@@ -318,47 +362,53 @@ public class EntityAIWorkBuilder extends EntityAIBase
             int l = BlockDirectional.getDirection(metadata);
             Block testBlock = world.getBlock(x + Direction.offsetX[l], y, z + Direction.offsetZ[l]);
             int testMetadata = world.getBlockMetadata(x + Direction.offsetX[l], y, z + Direction.offsetZ[l]);
-            if(testBlock == Blocks.log && testFlag(testMetadata, 3))
+            if(testBlock == Blocks.log && testFlag(testMetadata, 0x3))
             {
                 world.setBlock(x + Direction.offsetX[l], y, z + Direction.offsetZ[l], Blocks.log, 3, 0x03);
             }
         }
         else if(block instanceof BlockTripWireHook)
         {
-            if(testMask(metadata, 3, 3) && !world.isSideSolid(x - 1, y, z, ForgeDirection.EAST, true))
+            ForgeDirection direction = ForgeDirection.UNKNOWN;
+            switch(mask(metadata, TRIPWIRE_HOOK_MASK))
             {
-                world.setBlock(x - 1, y, z, Blocks.dirt);
+                case LADDER_EAST:
+                    direction = ForgeDirection.EAST;
+                    break;
+                case LADDER_WEST:
+                    direction = ForgeDirection.WEST;
+                    break;
+                case LADDER_SOUTH:
+                    direction = ForgeDirection.SOUTH;
+                    break;
+                case LADDER_NORTH:
+                    direction = ForgeDirection.NORTH;
             }
-            else if(testMask(metadata, 3, 1) && !world.isSideSolid(x + 1, y, z, ForgeDirection.WEST, true))
+            if(direction != ForgeDirection.UNKNOWN && !canBlockFace(world, x, y, z, direction))
             {
-                world.setBlock(x + 1, y, z, Blocks.dirt);
-            }
-            else if(testMask(metadata, 3, 0) && !world.isSideSolid(x, y, z - 1, ForgeDirection.SOUTH, true))
-            {
-                world.setBlock(x, y, z - 1, Blocks.dirt);
-            }
-            else if(testMask(metadata, 3, 2) && !world.isSideSolid(x, y, z + 1, ForgeDirection.NORTH, true))
-            {
-                world.setBlock(x, y, z + 1, Blocks.dirt);
+                world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
         }
         else if(block instanceof BlockSkull)
         {
-            if(metadata == 4 && !world.getBlock(x - 1, y, z).getMaterial().isSolid())
+            ForgeDirection direction = ForgeDirection.UNKNOWN;
+            switch(metadata)
             {
-                world.setBlock(x - 1, y, z, Blocks.dirt);
+                case SKULL_EAST:
+                    direction = ForgeDirection.EAST;
+                    break;
+                case SKULL_WEST:
+                    direction = ForgeDirection.WEST;
+                    break;
+                case SKULL_SOUTH:
+                    direction = ForgeDirection.SOUTH;
+                    break;
+                case SKULL_NORTH:
+                    direction = ForgeDirection.NORTH;
             }
-            else if(metadata == 5 && !world.getBlock(x + 1, y, z).getMaterial().isSolid())
+            if(direction != ForgeDirection.UNKNOWN && ! world.getBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ).getMaterial().isSolid())
             {
-                world.setBlock(x + 1, y, z, Blocks.dirt);
-            }
-            else if(metadata == 3 && !world.getBlock(x, y, z - 1).getMaterial().isSolid())
-            {
-                world.setBlock(x, y, z - 1, Blocks.dirt);
-            }
-            else if(metadata == 2 && !world.getBlock(x, y, z + 1).getMaterial().isSolid())
-            {
-                world.setBlock(x, y, z + 1, Blocks.dirt);
+                world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
         }
     }
@@ -378,9 +428,10 @@ public class EntityAIWorkBuilder extends EntityAIBase
         return (data & flag) == flag;
     }
 
-    private boolean testMask(int data, int mask, int id)
+    private int mask(int data, int mask)
     {
-        return (data & mask) == id;
+        return data & mask;
+    }
     }
 
     @Override
