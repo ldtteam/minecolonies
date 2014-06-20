@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 
 public abstract class BlockHut extends Block implements IColony, ITileEntityProvider
 {
-    protected int workingRange;
+    protected int workingRange;//TODO unused
 
     private IIcon[] icons = new IIcon[6];// 0 = top, 1 = bot, 2-5 = sides;
 

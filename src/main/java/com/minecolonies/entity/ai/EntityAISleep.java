@@ -6,7 +6,7 @@ import net.minecraft.entity.ai.EntityAIBase;
 
 public class EntityAISleep extends EntityAIBase
 {
-    public EntityCitizen citizen;
+    private EntityCitizen citizen;
 
     public EntityAISleep(EntityCitizen citizen)
     {

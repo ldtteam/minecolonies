@@ -204,9 +204,9 @@ public class EntityAIWorkBuilder extends EntityAIBase
         return true;
     }
 
-    private boolean canBlockFace(World world, int x, int y, int z, ForgeDirection direction)
+    private boolean isSupportNeeded(World world, int x, int y, int z, ForgeDirection direction)
     {
-        return world.isSideSolid(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, direction, true);
+        return !world.isSideSolid(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, direction, true);
     }
 
     private void placeRequiredSupportingBlocks(int x, int y, int z, Block block, int metadata)
@@ -228,7 +228,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 case TORCH_NORTH:
                     direction = ForgeDirection.NORTH;
             }
-            if(direction != ForgeDirection.UNKNOWN && !canBlockFace(world, x, y, z, direction))
+            if(direction != ForgeDirection.UNKNOWN && isSupportNeeded(world, x, y, z, direction))
             {
                 world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
@@ -253,7 +253,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 case BUTTON_LEVER_NORTH:
                     direction = ForgeDirection.NORTH;
             }
-            if(direction != ForgeDirection.UNKNOWN && !canBlockFace(world, x, y, z, direction))
+            if(direction != ForgeDirection.UNKNOWN && isSupportNeeded(world, x, y, z, direction))
             {
                 world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
@@ -275,7 +275,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 case LADDER_NORTH:
                     direction = ForgeDirection.NORTH;
             }
-            if(direction != ForgeDirection.UNKNOWN && !canBlockFace(world, x, y, z, direction))
+            if(direction != ForgeDirection.UNKNOWN && isSupportNeeded(world, x, y, z, direction))
             {
                 world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
@@ -326,25 +326,25 @@ public class EntityAIWorkBuilder extends EntityAIBase
         }
         else if(block instanceof BlockVine)
         {
-            if(metadata == 0 && !vineCheck(world.getBlock(x, y + 1, z)))
+            if(metadata == 0 && vineCheck(world.getBlock(x, y + 1, z)))
             {
                 world.setBlock(x, y + 1, z, Blocks.dirt);
             }
             else
             {
-                if(testFlag(metadata, VINE_EAST) && !vineCheck(world.getBlock(x - 1, y, z)))
+                if(testFlag(metadata, VINE_EAST) && vineCheck(world.getBlock(x - 1, y, z)))
                 {
                     world.setBlock(x - 1, y, z, Blocks.dirt);
                 }
-                if(testFlag(metadata, VINE_WEST) && !vineCheck(world.getBlock(x + 1, y, z)))
+                if(testFlag(metadata, VINE_WEST) && vineCheck(world.getBlock(x + 1, y, z)))
                 {
                     world.setBlock(x + 1, y, z, Blocks.dirt);
                 }
-                if(testFlag(metadata, VINE_SOUTH) && !vineCheck(world.getBlock(x, y, z - 1)))
+                if(testFlag(metadata, VINE_SOUTH) && vineCheck(world.getBlock(x, y, z - 1)))
                 {
                     world.setBlock(x, y, z - 1, Blocks.dirt);
                 }
-                if(testFlag(metadata, VINE_NORTH) && !vineCheck(world.getBlock(x, y, z + 1)))
+                if(testFlag(metadata, VINE_NORTH) && vineCheck(world.getBlock(x, y, z + 1)))
                 {
                     world.setBlock(x, y, z + 1, Blocks.dirt);
                 }
@@ -377,7 +377,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 case LADDER_NORTH:
                     direction = ForgeDirection.NORTH;
             }
-            if(direction != ForgeDirection.UNKNOWN && !canBlockFace(world, x, y, z, direction))
+            if(direction != ForgeDirection.UNKNOWN && isSupportNeeded(world, x, y, z, direction))
             {
                 world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
@@ -408,7 +408,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
     private boolean vineCheck(Block block)
     {
-        return block.renderAsNormalBlock() && block.getMaterial().blocksMovement();
+        return !(block.renderAsNormalBlock() && block.getMaterial().blocksMovement());
     }
 
     private boolean trapDoorCheck(Block block)
