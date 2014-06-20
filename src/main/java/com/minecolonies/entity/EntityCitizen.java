@@ -244,7 +244,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tileEntityWorkHut = work;
     }
 
-    public EnumStatus getStatus() {return status;}
+    public EnumStatus getStatus(){return status;}
 
     public void setStatus(EnumStatus status)
     {

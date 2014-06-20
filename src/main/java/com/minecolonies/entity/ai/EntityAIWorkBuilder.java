@@ -297,7 +297,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 case SIGN_NORTH:
                     direction = ForgeDirection.NORTH;
             }
-            if(direction != ForgeDirection.UNKNOWN && ! world.getBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ).getMaterial().isSolid())
+            if(direction != ForgeDirection.UNKNOWN && !world.getBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ).getMaterial().isSolid())
             {
                 world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
@@ -399,7 +399,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 case SKULL_NORTH:
                     direction = ForgeDirection.NORTH;
             }
-            if(direction != ForgeDirection.UNKNOWN && ! world.getBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ).getMaterial().isSolid())
+            if(direction != ForgeDirection.UNKNOWN && !world.getBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ).getMaterial().isSolid())
             {
                 world.setBlock(x - direction.offsetX, y - direction.offsetY, z - direction.offsetZ, Blocks.dirt);
             }
