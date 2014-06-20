@@ -193,6 +193,10 @@ public class EntityAIWorkBuilder extends EntityAIBase
                     }
                     if(world.getBlock(x, y, z) == block)
                     {
+                        if(block instanceof BlockChest)
+                        {
+                            world.setBlockMetadataWithNotify(x, y, z, metadata, 0x03);
+                        }
                         block.onPostBlockPlaced(world, x, y, z, metadata);
                     }
                 }
@@ -209,7 +213,6 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
     private void placeRequiredSupportingBlocks(World world, int x, int y, int z, Block block, int metadata)
     {
-
         if(block instanceof BlockTorch || block instanceof BlockLever || block instanceof BlockButton)
         {
             if(testMask(metadata, 7, 0) && !(block instanceof BlockTorch) && !world.isSideSolid(x, y + 1, z, ForgeDirection.DOWN, true))
