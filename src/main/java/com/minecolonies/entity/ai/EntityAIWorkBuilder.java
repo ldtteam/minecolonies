@@ -567,8 +567,10 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 entityHanging.field_146064_c += pos.yCoord;
                 entityHanging.field_146062_d += pos.zCoord;
 
+                entityHanging.setDirection(entityHanging.hangingDirection);
                 entityHanging.setWorld(world);
                 entityHanging.dimension = world.provider.dimensionId;
+
                 world.spawnEntityInWorld(entityHanging);
                 System.out.println(String.format("Spawned at: %s, %s, %s", entityHanging.posX, entityHanging.posY, entityHanging.posZ));
                 System.out.println(String.format("tile coords: %s, %s, %s", entityHanging.field_146063_b, entityHanging.field_146064_c, entityHanging.field_146062_d));
