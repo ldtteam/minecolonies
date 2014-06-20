@@ -42,15 +42,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private TileEntityHutCitizen tileEntityHomeHut;
     int homePosX, homePosY, homePosZ;
 
+    protected EnumStatus status = EnumStatus.IDLE;
+
     public EntityCitizen(World world)
     {
         super(world);
         setSize(0.6F, 1.8F);
         this.func_110163_bv();//Set persistenceRequired = true;
-        //this.level = worldObj.rand.nextBoolean() ? EnumCitizenLevel.CITIZENMALE : EnumCitizenLevel.CITIZENFEMALE;
         setTexture();
         this.job = initJob();
-        this.inventory = new InventoryCitizen("Minecolony Inventory", false, 27);
+        this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
 
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setEnterDoors(true);
@@ -241,6 +242,18 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void setWorkHut(TileEntityHutWorker work)
     {
         this.tileEntityWorkHut = work;
+    }
+
+    public EnumStatus getStatus() {return status;}
+
+    public void setStatus(EnumStatus status)
+    {
+        this.status = status;
+    }
+
+    public Vec3 getPosition()
+    {
+        return Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
     }
 
     @Override

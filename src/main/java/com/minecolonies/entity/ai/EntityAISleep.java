@@ -1,6 +1,7 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EnumStatus;
 import net.minecraft.entity.ai.EntityAIBase;
 
 public class EntityAISleep extends EntityAIBase
@@ -28,6 +29,7 @@ public class EntityAISleep extends EntityAIBase
     public void startExecuting()
     {
         //TODO sleep
+        citizen.setStatus(EnumStatus.SLEEPING);
     }
 
     @Override

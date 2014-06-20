@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
+import com.minecolonies.entity.EnumStatus;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.util.LanguageHandler;
