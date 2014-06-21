@@ -8,6 +8,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Vec3;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 public abstract class TileEntityBuildable extends TileEntityChest implements IColony
 {
@@ -103,9 +104,9 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     public boolean isPlayerOwner(EntityPlayer player)
     {
         if(this.getTownHall() == null || this.getTownHall().getOwners().isEmpty()) return true;
-        for(int i = 0; i < getTownHall().getOwners().size(); i++)
+        for(UUID id : this.getTownHall().getOwners())
         {
-            if(getTownHall().getOwners().get(i).equals(player.getUniqueID()))
+            if(player.getUniqueID().equals(id))
             {
                 return true;
             }

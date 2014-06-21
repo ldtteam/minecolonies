@@ -1,6 +1,7 @@
 package com.minecolonies.tileentities;
 
 import com.minecolonies.inventory.InventoryCitizen;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -42,6 +43,12 @@ public abstract class TileEntityHut extends TileEntityBuildable
     public void setFemaleInhabitants(int femaleInhabitants)
     {
         this.femaleInhabitants = femaleInhabitants;
+    }
+
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer player)
+    {
+        return super.isUseableByPlayer(player) && this.isPlayerOwner(player);
     }
 
     @Override
