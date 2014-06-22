@@ -14,7 +14,7 @@ import net.minecraft.inventory.Container;
  */
 public class ContainerHut extends Container //ContainerChest in future
 {
-    private TileEntityHut hut;
+    private TileEntityHut   hut;
     private InventoryPlayer inventoryPlayer;
 
     public ContainerHut(TileEntityHut hut, InventoryPlayer inventoryPlayer)

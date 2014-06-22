@@ -2,6 +2,8 @@ package com.minecolonies.util;
 
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.github.lunatrius.schematica.world.schematic.SchematicFormat;
+import com.minecolonies.MineColonies;
+import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.lib.IColony;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameData;
@@ -14,7 +16,6 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
@@ -25,6 +26,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -192,13 +194,42 @@ public class Schematic
         return schematic.getBlock(x, y, z) == world.getBlock(pos[0], pos[1], pos[2]) && schematic.getBlockMetadata(x, y, z) == world.getBlockMetadata(pos[0], pos[1], pos[2]);
     }
 
-    public static void saveSchematic(World world, Vec3 from, Vec3 to, String file, String icon)
+    public static String saveSchematic(World world, Vec3 from, Vec3 to)
     {
-        if(world == null || from == null || to == null || file == null) return;
-        SchematicFormat.writeToFile(MinecraftServer.getServer().getFile(file + ".schematic"), scanSchematic(world, from, to, icon));
+        if(world == null || from == null || to == null)
+            return LanguageHandler.format("item.scepterSteel.invalidMethod");
+
+        SchematicWorld schematic = scanSchematic(world, from, to, new ItemStack(Blocks.red_flower));
+
+        String fileName = LanguageHandler.format("item.scepterSteel.scanFormat", schematic.getType(), System.currentTimeMillis());
+        File file = new File(getDirectory(), fileName);
+
+        if(SchematicFormat.writeToFile(file, schematic))
+        {
+            return LanguageHandler.format("item.scepterSteel.scanSuccess", fileName);
+        }
+        return LanguageHandler.format("item.scepterSteel.scanFailure");
     }
 
-    public static SchematicWorld scanSchematic(World world, Vec3 from, Vec3 to, String icon)
+    private static File getDirectory()
+    {
+        File minecolonies = MinecraftServer.getServer().getFile("minecolonies/");
+        checkDirectory(minecolonies);
+
+        File scans = new File(minecolonies, "scans/");
+        checkDirectory(scans);
+        return scans;
+    }
+
+    private static void checkDirectory(File directory)
+    {
+        if(!directory.exists())
+        {
+            directory.mkdir();
+        }
+    }
+
+    public static SchematicWorld scanSchematic(World world, Vec3 from, Vec3 to, ItemStack icon)
     {
         int minX = (int) Math.min(from.xCoord, to.xCoord);
         int maxX = (int) Math.max(from.xCoord, to.xCoord);
@@ -216,6 +247,8 @@ public class Schematic
         TileEntity tileEntity;
         NBTTagCompound tileEntityNBT;
 
+        int xOffset = 0, yOffset = 0, zOffset = 0;
+
         for(int x = minX; x <= maxX; x++)
         {
             for(int y = minY; y <= maxY; y++)
@@ -224,6 +257,23 @@ public class Schematic
                 {
                     blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(world.getBlock(x, y, z));
                     metadata[x - minX][y - minY][z - minZ] = (byte) world.getBlockMetadata(x, y, z);
+
+                    if(world.getBlock(x, y, z) instanceof BlockHut)
+                    {
+                        if(xOffset == 0 && yOffset == 0 && zOffset == 0)
+                        {
+                            xOffset = x;
+                            yOffset = y;
+                            zOffset = z;
+                        }
+                        else
+                        {
+                            MineColonies.logger.warn("Scan contained multiple BlockHut's ignoring this one");
+                            blocks[x - minX][y - minY][z - minZ] = 0;
+                            metadata[x - minX][y - minY][z - minZ] = 0;
+                        }
+                    }
+
                     tileEntity = world.getTileEntity(x, y, z);
                     if(tileEntity != null)//creates a new tileEntity and formats its data for saving
                     {                     //a new tileEntity is needed to prevent changes to the real one
@@ -263,11 +313,11 @@ public class Schematic
 
         if(icon != null)
         {
-            return new SchematicWorld(icon, blocks, metadata, tileEntities, entityList, width, height, length);
+            return new SchematicWorld(icon, blocks, metadata, tileEntities, entityList, width, height, length, xOffset, yOffset, zOffset);
         }
         else
         {
-            return new SchematicWorld(new ItemStack(Blocks.red_mushroom), blocks, metadata, tileEntities, entityList, width, height, length);
+            return new SchematicWorld(new ItemStack(Blocks.red_mushroom), blocks, metadata, tileEntities, entityList, width, height, length, xOffset, yOffset, zOffset);
         }
     }
 

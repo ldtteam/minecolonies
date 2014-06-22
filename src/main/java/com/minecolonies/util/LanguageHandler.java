@@ -30,7 +30,7 @@ public class LanguageHandler
         return String.format(getString(key), args);
     }
 
-    private static void sendPlayerMessage(EntityPlayer player, String message)
+    public static void sendPlayerMessage(EntityPlayer player, String message)
     {
         player.addChatComponentMessage(new ChatComponentText(message));
     }

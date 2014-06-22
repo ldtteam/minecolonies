@@ -12,7 +12,7 @@ public class TileEntityHutMiner extends TileEntityHutWorker
     @Override
     public String getName()
     {
-        return "hutMiner";
+        return "Miner";
     }
 
     @Override

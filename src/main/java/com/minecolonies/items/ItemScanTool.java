@@ -48,11 +48,10 @@ public class ItemScanTool extends ItemMinecolonies
         }
         else
         {
-            String name = "SCAN_" + System.currentTimeMillis();
-            Schematic.saveSchematic(world, pos, pos2, name, null);
+            String result = Schematic.saveSchematic(world, pos, pos2);
+            LanguageHandler.sendPlayerMessage(player, result);
             pos = null;
             pos2 = null;
-            LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.scan", name);
             return true;
         }
     }

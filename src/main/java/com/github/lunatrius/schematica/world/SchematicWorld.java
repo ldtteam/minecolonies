@@ -668,6 +668,11 @@ public class SchematicWorld extends World
         }
     }
 
+    public boolean hasOffset()
+    {
+        return xOffset != 0 || yOffset != 0 || zOffset != 0;
+    }
+
     public int getOffsetX()
     {
         return xOffset;
@@ -681,5 +686,14 @@ public class SchematicWorld extends World
     public int getOffsetZ()
     {
         return zOffset;
+    }
+
+    public String getType()
+    {
+        if(hasOffset())
+        {
+            return "Hut";
+        }
+        return "Decoration";
     }
 }

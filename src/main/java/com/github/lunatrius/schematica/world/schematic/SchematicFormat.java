@@ -90,7 +90,7 @@ public abstract class SchematicFormat
 
             DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
 
-            try
+            try//TODO: update to java7 try-with-resources?
             {
                 Method method = ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[]{
                         "func_150298_a", "a"}, String.class, NBTBase.class, DataOutput.class);
