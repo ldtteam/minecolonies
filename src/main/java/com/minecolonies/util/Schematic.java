@@ -202,7 +202,7 @@ public class Schematic
         SchematicWorld schematic = scanSchematic(world, from, to, new ItemStack(Blocks.red_flower));
 
         String fileName = LanguageHandler.format("item.scepterSteel.scanFormat", schematic.getType(), System.currentTimeMillis());
-        File file = new File(getDirectory(), fileName);
+        File file = new File(getScanDirectory(world), fileName);
 
         if(SchematicFormat.writeToFile(file, schematic))
         {
@@ -211,9 +211,17 @@ public class Schematic
         return LanguageHandler.format("item.scepterSteel.scanFailure");
     }
 
-    private static File getDirectory()
+    private static File getScanDirectory(World world)
     {
-        File minecolonies = MinecraftServer.getServer().getFile("minecolonies/");
+        File minecolonies;
+        if(world.isRemote)
+        {
+            minecolonies = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
+        }
+        else
+        {
+            minecolonies = MinecraftServer.getServer().getFile("minecolonies/");
+        }
         checkDirectory(minecolonies);
 
         File scans = new File(minecolonies, "scans/");

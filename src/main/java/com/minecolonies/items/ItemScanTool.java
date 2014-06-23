@@ -27,7 +27,7 @@ public class ItemScanTool extends ItemMinecolonies
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int face, float par8, float par9, float par10)
     {
-        if(world.isRemote) return false;
+        if(!world.isRemote) return false;
         if(pos == null)
         {
             pos = Vec3.createVectorHelper(x, y, z);
