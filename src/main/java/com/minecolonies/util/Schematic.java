@@ -98,7 +98,15 @@ public class Schematic
                     }
                     else if(block.getMaterial().isSolid())
                     {
-                        world.setBlock(x + i, y + j, z + k, block, metadata, 0x02);
+                        world.setBlock(x + i, y + j, z + k, block, metadata, 0x03);
+                        if(world.getBlock(x + i, y + j, z + k) == block)
+                        {
+                            if(world.getBlockMetadata(x + i, y + j, z + k) != metadata)
+                            {
+                                world.setBlockMetadataWithNotify(x + i, y + j, z + k, metadata, 0x03);
+                            }
+                            block.onPostBlockPlaced(world, x + i, y + j, z + k, metadata);
+                        }
                     }
                     else
                     {
@@ -119,7 +127,15 @@ public class Schematic
             int k = (int) vec.zCoord;
             Block block = this.schematic.getBlock(i, j, k);
             int metadata = this.schematic.getBlockMetadata(i, j, k);
-            world.setBlock(x + i, y + j, z + k, block, metadata, 0x02);
+            world.setBlock(x + i, y + j, z + k, block, metadata, 0x03);
+            if(world.getBlock(x + i, y + j, z + k) == block)
+            {
+                if(world.getBlockMetadata(x + i, y + j, z + k) != metadata)
+                {
+                    world.setBlockMetadataWithNotify(x + i, y + j, z + k, metadata, 0x03);
+                }
+                block.onPostBlockPlaced(world, x + i, y + j, z + k, metadata);
+            }
         }
     }
 
