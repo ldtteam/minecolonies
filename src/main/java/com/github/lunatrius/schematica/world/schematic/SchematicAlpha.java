@@ -18,21 +18,21 @@ import java.util.*;
 
 public class SchematicAlpha extends SchematicFormat
 {
-    public static final String ICON                  = "Icon";
-    public static final String BLOCKS                = "Blocks";
-    public static final String DATA                  = "Data";
-    public static final String ADD_BLOCKS            = "AddBlocks";
-    public static final String ADD_BLOCKS_SCHEMATICA = "Add";
-    public static final String WIDTH                 = "Width";
-    public static final String LENGTH                = "Length";
-    public static final String HEIGHT                = "Height";
-    public static final String MAPPING               = "..."; // TODO: use this once MCEdit adds support for it
-    public static final String MAPPING_SCHEMATICA    = "SchematicaMapping";
-    public static final String TILE_ENTITIES         = "TileEntities";
-    public static final String ENTITIES              = "Entities";
-    public static final String OFFSET_X              = "OffsetX";
-    public static final String OFFSET_Y              = "OffsetY";
-    public static final String OFFSET_Z              = "OffsetZ";
+    public static final String ICON               = "Icon";
+    public static final String BLOCKS             = "Blocks";
+    public static final String DATA               = "Data";
+    public static final String ADD_BLOCKS         = "AddBlocks";
+    public static final String WIDTH              = "Width";
+    public static final String LENGTH             = "Length";
+    public static final String HEIGHT             = "Height";
+    public static final String MAPPING            = "..."; // TODO: use this once MCEdit adds support for it
+    public static final String MAPPING_SCHEMATICA = "SchematicaMapping";
+    public static final String TILE_ENTITIES      = "TileEntities";
+    public static final String ENTITIES           = "Entities";
+    public static final String OFFSET_X           = "OffsetX";
+    public static final String OFFSET_Y           = "OffsetY";
+    public static final String OFFSET_Z           = "OffsetZ";
+    public static final String ENTITY_ID          = "id";
 
     @Override
     public SchematicWorld readFromNBT(NBTTagCompound tagCompound)
@@ -42,12 +42,11 @@ public class SchematicAlpha extends SchematicFormat
         byte localBlocks[] = tagCompound.getByteArray(BLOCKS);
         byte localMetadata[] = tagCompound.getByteArray(DATA);
 
-        boolean extra = false;
+        boolean extra = tagCompound.hasKey(ADD_BLOCKS);
         byte extraBlocks[] = null;
         byte extraBlocksNibble[] = null;
-        if(tagCompound.hasKey(ADD_BLOCKS))
+        if(extra)
         {
-            extra = true;
             extraBlocksNibble = tagCompound.getByteArray(ADD_BLOCKS);
             extraBlocks = new byte[extraBlocksNibble.length * 2];
             for(int i = 0; i < extraBlocksNibble.length; i++)
@@ -55,11 +54,6 @@ public class SchematicAlpha extends SchematicFormat
                 extraBlocks[i * 2 + 0] = (byte) ((extraBlocksNibble[i] >> 4) & 0xF);
                 extraBlocks[i * 2 + 1] = (byte) (extraBlocksNibble[i] & 0xF);
             }
-        }
-        else if(tagCompound.hasKey(ADD_BLOCKS_SCHEMATICA))
-        {
-            extra = true;
-            extraBlocks = tagCompound.getByteArray(ADD_BLOCKS_SCHEMATICA);
         }
 
         short width = tagCompound.getShort(WIDTH);
@@ -219,7 +213,7 @@ public class SchematicAlpha extends SchematicFormat
             {
                 Entity entity = (Entity) o;
                 NBTTagCompound entityData = new NBTTagCompound();
-                entityData.setString("id", EntityList.getEntityString(entity));
+                entityData.setString(ENTITY_ID, EntityList.getEntityString(entity));
                 entity.writeToNBT(entityData);
                 entities.appendTag(entityData);
             }
