@@ -160,7 +160,12 @@ public class SchematicAlpha extends SchematicFormat
                     {
                         extra = true;
                     }
-                    mapping.setShort(GameData.getBlockRegistry().getNameForObject(world.getBlockRaw(x, y, z)), (short) blockId);
+
+                    String name = GameData.getBlockRegistry().getNameForObject(blockId);
+                    if(!mapping.hasKey(name))
+                    {
+                        mapping.setShort(name, (short) blockId);
+                    }
 
                     if(world.getBlock(x, y, z) instanceof BlockHut)
                     {
