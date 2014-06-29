@@ -13,9 +13,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
@@ -315,10 +317,11 @@ public class Schematic
         }
 
         AxisAlignedBB region = AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
-        List<EntityHanging> entities = world.getEntitiesWithinAABB(EntityHanging.class, region);
+        List<EntityHanging> entityHangings = world.getEntitiesWithinAABB(EntityHanging.class, region);
+        List<EntityMinecart> entityMinecarts = world.getEntitiesWithinAABB(EntityMinecart.class, region);
         NBTTagList entityList = new NBTTagList();
 
-        for(EntityHanging entity : entities)
+        for(EntityHanging entity : entityHangings)
         {
             if(entity != null)
             {
@@ -330,6 +333,25 @@ public class Schematic
                 entityData.setTag("TileX", new NBTTagInt(entity.field_146063_b - minX));
                 entityData.setTag("TileY", new NBTTagInt(entity.field_146064_c - minY));
                 entityData.setTag("TileZ", new NBTTagInt(entity.field_146062_d - minZ));
+
+                entityList.appendTag(entityData);
+            }
+        }
+        for(EntityMinecart minecart : entityMinecarts)
+        {
+            if(minecart != null)
+            {
+
+                NBTTagCompound entityData = new NBTTagCompound();
+
+                entityData.setString("id", EntityList.getEntityString(minecart));
+                minecart.writeToNBT(entityData);
+
+                NBTTagList pos = new NBTTagList();
+                pos.appendTag(new NBTTagDouble(minecart.posX - minX));
+                pos.appendTag(new NBTTagDouble(minecart.posY - minY));
+                pos.appendTag(new NBTTagDouble(minecart.posZ - minZ));
+                entityData.setTag("Pos", pos);
 
                 entityList.appendTag(entityData);
             }

@@ -14,6 +14,7 @@ import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
@@ -556,20 +557,37 @@ public class EntityAIWorkBuilder extends EntityAIBase
     {
         for(Entity entity : builder.getSchematic().getEntities())
         {
-            if(entity != null && entity instanceof EntityHanging)
+            if(entity != null)
             {
-                EntityHanging entityHanging = (EntityHanging) entity;
-
                 Vec3 pos = builder.getSchematic().getOffsetPosition();//min position
-                entityHanging.field_146063_b += pos.xCoord;//tileX
-                entityHanging.field_146064_c += pos.yCoord;//tileY
-                entityHanging.field_146062_d += pos.zCoord;//tileZ
-                entityHanging.setDirection(entityHanging.hangingDirection);//also sets position based on tile
 
-                entityHanging.setWorld(world);
-                entityHanging.dimension = world.provider.dimensionId;
+                if(entity instanceof EntityHanging)
+                {
+                    EntityHanging entityHanging = (EntityHanging) entity;
 
-                world.spawnEntityInWorld(entityHanging);
+                    entityHanging.field_146063_b += pos.xCoord;//tileX
+                    entityHanging.field_146064_c += pos.yCoord;//tileY
+                    entityHanging.field_146062_d += pos.zCoord;//tileZ
+                    entityHanging.setDirection(entityHanging.hangingDirection);//also sets position based on tile
+
+                    entityHanging.setWorld(world);
+                    entityHanging.dimension = world.provider.dimensionId;
+
+                    world.spawnEntityInWorld(entityHanging);
+                }
+                else if(entity instanceof EntityMinecart)
+                {
+                    EntityMinecart minecart = (EntityMinecart) entity;
+                    minecart.riddenByEntity = null;
+                    minecart.posX += pos.xCoord;
+                    minecart.posY += pos.yCoord;
+                    minecart.posZ += pos.zCoord;
+
+                    minecart.setWorld(world);
+                    minecart.dimension = world.provider.dimensionId;
+
+                    world.spawnEntityInWorld(minecart);
+                }
             }
         }
     }
