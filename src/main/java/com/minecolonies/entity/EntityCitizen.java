@@ -237,14 +237,20 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tileEntityTownHall = tileEntityTownHall;
     }
 
-    public void setHomeHut(TileEntityHutCitizen home){ this.tileEntityHomeHut = home;}
+    public void setHomeHut(TileEntityHutCitizen home)
+    {
+        this.tileEntityHomeHut = home;
+    }
 
     public void setWorkHut(TileEntityHutWorker work)
     {
         this.tileEntityWorkHut = work;
     }
 
-    public EnumStatus getStatus(){return status;}
+    public EnumStatus getStatus()
+    {
+        return status;
+    }
 
     public void setStatus(EnumStatus status)
     {

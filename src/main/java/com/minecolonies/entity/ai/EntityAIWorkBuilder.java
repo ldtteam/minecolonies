@@ -535,7 +535,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
     private void completeBuild()
     {
-        spawnEntities();
+        spawnEntities();//TODO handle materials - would work well in staged building
 
         String schematicName = builder.getSchematic().getName();
         LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", schematicName);

@@ -9,7 +9,7 @@ public class Configurations
     public static final int     DEFAULT_TOWNHALLPADDING          = 20;
     public static final boolean DEFAULT_ALLOWINFINTESUPPLYCHESTS = false;
     public static final int     DEFAULT_CITIZENRESPAWNINTERVAL   = 30;
-    public static final boolean DEFAULT_BUILDERINFINITERESOURCES = false;
+    public static final boolean DEFAULT_BUILDERINFINITERESOURCES = true;//TODO change to false when material handling is implemented
 
     /*
     Holders

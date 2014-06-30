@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
@@ -59,10 +60,12 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
     {
         if(world.isRemote) return;
 
-        if(entityLivingBase instanceof EntityPlayer)
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        if(entityLivingBase instanceof EntityPlayer && tileEntity instanceof TileEntityHut)
         {
             EntityPlayer player = (EntityPlayer) entityLivingBase;
-            TileEntityHut hut = (TileEntityHut) world.getTileEntity(x, y, z);
+            TileEntityHut hut = (TileEntityHut) tileEntity;
+
             if(hut instanceof TileEntityTownHall)
             {
                 TileEntityTownHall townhall = (TileEntityTownHall) hut;
