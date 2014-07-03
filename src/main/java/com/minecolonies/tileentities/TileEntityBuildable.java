@@ -1,17 +1,20 @@
 package com.minecolonies.tileentities;
 
-import com.minecolonies.MineColonies;
-import com.minecolonies.network.packets.TileEntityPacket;
+import com.minecolonies.lib.IColony;
+import com.minecolonies.util.Schematic;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.Vec3;
 
-public abstract class TileEntityBuildable extends TileEntityChest
+import java.util.Arrays;
+import java.util.UUID;
+
+public abstract class TileEntityBuildable extends TileEntityChest implements IColony
 {
     private int                buildingLevel;
-    private boolean            hasWorker;
-    private TileEntityTownHall townHall;
-    private String             hutName;
+    private TileEntityTownHall townhall;
+    private int                townhallX, townhallY, townhallZ;
 
     public TileEntityBuildable()
     {
@@ -19,33 +22,37 @@ public abstract class TileEntityBuildable extends TileEntityChest
     }
 
     @Override
+    public void updateEntity()
+    {
+        if(worldObj.isRemote) return;
+
+        if(townhall == null)
+        {
+            townhall = (TileEntityTownHall) worldObj.getTileEntity(townhallX, townhallY, townhallZ);
+        }
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        NBTTagCompound nbtTagCompound = (NBTTagCompound) compound.getTag("nbtTagCompound");
-        this.buildingLevel = nbtTagCompound.getInteger("buildingLvl");
-        this.hasWorker = nbtTagCompound.getBoolean("hasWorker");
-        this.hutName = nbtTagCompound.getString("hutName");
+        this.buildingLevel = compound.getInteger("buildingLevel");
+        this.townhallX = compound.getInteger("townhall-x");
+        this.townhallY = compound.getInteger("townhall-y");
+        this.townhallZ = compound.getInteger("townhall-z");
     }
 
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        NBTTagCompound nbtTagCompound = new NBTTagCompound();
-        nbtTagCompound.setInteger("buildingLvl", buildingLevel);
-        nbtTagCompound.setBoolean("hasWorker", hasWorker);
-        nbtTagCompound.setString("hutName", hutName);
-        compound.setTag("nbtTagCompound", nbtTagCompound);
-    }
-
-    public void sendPacket()
-    {
-        NBTTagCompound data = new NBTTagCompound();
-        this.writeToNBT(data);
-        TileEntityPacket packet = new TileEntityPacket(xCoord, yCoord, zCoord, data);
-
-        MineColonies.packetPipeline.sendToServer(packet);
+        compound.setInteger("buildingLevel", buildingLevel);
+        if(this.townhall != null)
+        {
+            compound.setInteger("townhall-x", townhall.xCoord);
+            compound.setInteger("townhall-y", townhall.yCoord);
+            compound.setInteger("townhall-z", townhall.zCoord);
+        }
     }
 
     public int getBuildingLevel()
@@ -58,45 +65,57 @@ public abstract class TileEntityBuildable extends TileEntityChest
         this.buildingLevel = buildingLevel;
     }
 
-    public boolean hasWorker()
-    {
-        return hasWorker;
-    }
-
-    public void setHasWorker(boolean hasWorker)
-    {
-        this.hasWorker = hasWorker;
-    }
-
-    public String getHutName()
-    {
-        return hutName;
-    }
-
-    public void setHutName(String hutName)
-    {
-        this.hutName = hutName;
-    }
-
     public TileEntityTownHall getTownHall()
     {
-        return townHall;
+        return townhall;
     }
 
-    public void setTownHall(TileEntityTownHall townHall)
+    public void setTownHall(TileEntityTownHall townhall)
     {
-        this.townHall = townHall;
+        this.townhall = townhall;
     }
 
-    public void requestBuilding(EntityPlayer player)
+    public void requestBuilding()
     {
-        if(!(buildingLevel >= 3)) //TODO
-            getTownHall().addHutForUpgrade(xCoord, yCoord, zCoord);
+        for(int[] key : getTownHall().getBuilderRequired().keySet())
+        {
+            if(Arrays.equals(new int[]{xCoord, yCoord, zCoord}, key))
+            {
+                return;
+            }
+        }
+        if(!(buildingLevel >= 3)) //TODO maxLevel
+            getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel + 1), xCoord, yCoord, zCoord);
+    }
+
+    public void requestRepair()
+    {
+        for(int[] key : getTownHall().getBuilderRequired().keySet())
+        {
+            if(Arrays.equals(new int[]{xCoord, yCoord, zCoord}, key))
+            {
+                return;
+            }
+        }
+        if(buildingLevel == 0) return;
+        getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel), xCoord, yCoord, zCoord);
     }
 
     public boolean isPlayerOwner(EntityPlayer player)
     {
-        if(this.getTownHall().getOwners().isEmpty() || this.getTownHall().getOwners().contains(player.getUniqueID())) return true;
+        if(this.getTownHall() == null || this.getTownHall().getOwners().isEmpty()) return true;
+        for(UUID id : this.getTownHall().getOwners())
+        {
+            if(player.getUniqueID().equals(id))
+            {
+                return true;
+            }
+        }
         return false;
+    }
+
+    public Vec3 getPosition()
+    {
+        return Vec3.createVectorHelper(xCoord, yCoord, zCoord);
     }
 }

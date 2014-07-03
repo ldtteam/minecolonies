@@ -2,13 +2,11 @@ package com.minecolonies;
 
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.ConfigurationHandler;
-import com.minecolonies.event.EventHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.GuiHandler;
 import com.minecolonies.network.PacketPipeline;
 import com.minecolonies.proxy.IProxy;
-import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.RecipeHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -17,8 +15,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import net.minecraftforge.common.MinecraftForge;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,7 +37,8 @@ public class MineColonies
     {
         if(Constants.FINGERPRINT.equals("@FINGERPRINT@"))
         {
-            logger.log(Level.ERROR, LanguageHandler.format("com.minecolonies.error.noFingerprint"));
+            //logger.log(Level.ERROR, LanguageHandler.format("com.minecolonies.error.noFingerprint"));
+            logger.error("No Fingerprint. Might not be a valid version!");
         }
     }
 
@@ -70,9 +67,7 @@ public class MineColonies
 
         RecipeHandler.init();
 
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
-
-        proxy.registerEvents();//Schematica
+        proxy.registerEvents();
 
         proxy.registerEntities();
 

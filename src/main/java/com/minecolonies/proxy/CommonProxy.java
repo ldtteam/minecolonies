@@ -3,11 +3,12 @@ package com.minecolonies.proxy;
 import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.tileentities.TileEntityHutBuilder;
-import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.event.EventHandler;
+import com.minecolonies.tileentities.*;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,14 @@ public class CommonProxy implements IProxy
     {
         GameRegistry.registerTileEntity(TileEntityTownHall.class, "tileEntityTownHall");
         GameRegistry.registerTileEntity(TileEntityHutBuilder.class, "tileEntityHutBuilder");
+        GameRegistry.registerTileEntity(TileEntityHutCitizen.class, "tileEntityHutCitizen");
+        GameRegistry.registerTileEntity(TileEntityHutBaker.class, "tileEntityHutBaker");
+        GameRegistry.registerTileEntity(TileEntityHutBlacksmith.class, "tileEntityHutBlacksmith");
+        GameRegistry.registerTileEntity(TileEntityHutFarmer.class, "tileEntityHutFarmer");
+        GameRegistry.registerTileEntity(TileEntityHutLumberjack.class, "tileEntityHutLumberjack");
+        GameRegistry.registerTileEntity(TileEntityHutMiner.class, "tileEntityHutMiner");
+        GameRegistry.registerTileEntity(TileEntityHutStonemason.class, "tileEntityHutStonemason");
+        GameRegistry.registerTileEntity(TileEntityHutWarehouse.class, "tileEntityHutWarehouse");
     }
 
     /**
@@ -58,10 +67,17 @@ public class CommonProxy implements IProxy
     * @param updateFrequency The frequency of tracking updates
     * @param sendsVelocityUpdates Whether to send velocity information packets as well
     * */
+    @Override
     public void registerEntities()
     {
         EntityRegistry.registerModEntity(EntityCitizen.class, "entityCitizen", getNextEntityId(), MineColonies.instance, 250, 3, true);
         EntityRegistry.registerModEntity(EntityBuilder.class, "entityBuilder", getNextEntityId(), MineColonies.instance, 250, 3, true);
+    }
+
+    @Override
+    public void registerEvents()
+    {
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
 
     @Override
@@ -72,9 +88,6 @@ public class CommonProxy implements IProxy
 
     @Override
     public void registerKeybindings(){}
-
-    @Override
-    public void registerEvents(){}
 
     /**
      * Used for entity IDs, starts at 0 & increments for each call

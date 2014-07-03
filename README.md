@@ -55,8 +55,8 @@ Git is used to clone MineColonies and update your local copy.
 This section assumes that you're using the command-line version of Git.
 
 1. Open up your command line.
-2. Navigate to a place where you want to download MineColonies source (eg `C:\Github\MineColonies\`) by executing `cd [folder location]`.  This location is known as `basefolder` from now on.
-3. Execute `git clone https://github.com/Minecolonies/MineColoniesMod.git`.  This will download MineColonies' source into `basefolder`.
+2. Navigate to a place where you want to download MineColonies source (eg `C:\BitBucket\MineColonies\`) by executing `cd [folder location]`.  This location is known as `basefolder` from now on.
+3. Execute `git clone https://martijnwoudstra@bitbucket.org/martijnwoudstra/minecolonies.git`.  This will download MineColonies' source into `basefolder`.
 4. Right now, you should have a directory that looks something like:
 
 ***
@@ -88,27 +88,31 @@ In order to get the most up-to-date builds, you'll have to periodically update y
 ####Submitting a PR
 So you found a bug in our code?  Think you can make it more efficient?  Want to help in general?  Great!
 
-1. If you haven't already, create a Github account.
-2. Click the `Fork` icon located at the top-right of this page (below your username).
+1. If you haven't already, create a BitBucket account.
+2. Click the `Fork` icon located at the top-right, when you click on the triple dots of this page (below your username).
 3. Make the changes that you want to and commit them.
 	* If you're making changes locally, you'll have to do `git commit -a` and `git push` in your command line.
-4. Click `Pull Request` at the right-hand side of the gray bar directly below your fork's name.
+4. Click `Pull Request` at the left of the triple dot.
 5. Click `Click to create a pull request for this comparison`, enter your PR's title, and create a detailed description telling us what you changed.
-6. Click `Send pull request`, and wait for feedback!
+6. Click `Create pull request`, and wait for feedback!
 
 ####Creating an Issue
 MineColonies crashes every time?  Have a suggestion?  Found a bug?  Create an issue now!
 
 1. Make sure your issue hasn't already been answered or fixed.  Also think about whether your issue is a valid one before submitting it.
-2. Go to [the issues page](https://github.com/Minecolonies/MineColoniesMod/issues).
-3. Click `New Issue` right below `Star` and `Fork`.
-4. Enter your Issue's title (something that summarizes your issue), and then create a detailed description ("Hey, could you add/change xxx?" or "Hey, found an exploit:  stuff").
-	* If you are reporting a bug report from an unofficial version, make sure you include the following:
-		* Commit SHA (usually located in a changelog or the jar name itself)
-		* ForgeModLoader log
-		* Server log (if applicable)
-		* Detailed description of the bug
-5. Click `Submit new issue`, and wait for feedback!
+2. Go to [the issues page](https://bitbucket.org/martijnwoudstra/minecolonies/issues?status=new&status=open).
+3. Click `Create Issue`
+4. Fill in the form:
+    * `Title`: Short summary of your issue
+    * `Discription`: A discription of what your problem is, with additional info. What have you tried to fix it etc.
+    * `Assignee`: Assign either Colton or Martijn
+    * `Kind`: Select the kind of issue
+    * `Priority`: Select the priority. Think very well if it is a major issue before you select that!
+    * `Attachments`: Add the latest.log from %appdata%/.minecraft/logs
+    
+5. Click `Create Issue`, and wait for feedback!
+
+NOTE: A video explaining how to is [here](http://youtu.be/2SscjHmLvss)
 
 For Devs
 --

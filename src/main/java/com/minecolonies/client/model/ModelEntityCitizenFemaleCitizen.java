@@ -160,7 +160,7 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
             // LeftArm.rotationPointX = MathHelper.cos(Body.rotateAngleY) * 5F;
             bipedRightArm.rotateAngleY += bipedBody.rotateAngleY;
             bipedLeftArm.rotateAngleY += bipedBody.rotateAngleY;
-            bipedLeftArm.rotateAngleX += bipedBody.rotateAngleY;//TODO rotateAngleX?
+            bipedLeftArm.rotateAngleX += bipedBody.rotateAngleY;//TODO If model looks funny try changing to rotateAngleX
             f6 = 1.0F - onGround;
             f6 *= f6;
             f6 *= f6;

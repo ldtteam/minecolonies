@@ -14,7 +14,7 @@ public class GuiBase extends GuiScreen
 {
     protected final int idHireWorker = 0, //IDs for default layout
             idFireWorker             = 1, idRecallWorker = 2, idBuildBuilding = 3, idRepairBuilding = 4;
-    protected final ResourceLocation background                                  = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiInformatorBackground.png");
+    protected final ResourceLocation background                                  = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiHutBackground.png");
     protected       int              middleX, middleY, xSize, ySize, buttonWidth = 116, buttonHeight = 20, buttonSpan = 4;
     protected ArrayList<GuiModIcon> iconList;
 

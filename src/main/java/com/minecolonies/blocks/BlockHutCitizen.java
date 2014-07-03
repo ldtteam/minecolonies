@@ -1,12 +1,12 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.tileentities.TileEntityHutBuilder;
+import com.minecolonies.tileentities.TileEntityHutCitizen;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockHutBuilder extends BlockHut
+public class BlockHutCitizen extends BlockHut
 {
-    protected BlockHutBuilder()
+    public BlockHutCitizen()
     {
         super();
     }
@@ -14,12 +14,12 @@ public class BlockHutBuilder extends BlockHut
     @Override
     public String getName()
     {
-        return "blockHutBuilder";
+        return "blockHutCitizen";
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta)
     {
-        return new TileEntityHutBuilder();
+        return new TileEntityHutCitizen();
     }
 }

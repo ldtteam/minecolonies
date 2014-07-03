@@ -2,6 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.EnumGUI;
+import com.minecolonies.network.packets.TownhallRenamePacket;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
@@ -44,7 +45,7 @@ public class GuiTypable extends GuiScreen
         guiTextField = new GuiTextField(this.fontRendererObj, this.width / 2 - 75, this.height / 2 - 10, 150, 18);
         this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 110, LanguageHandler.format("com.minecolonies.gui.townhall.rename.done")));
 
-        this.guiTextField.setMaxStringLength(1024);
+        this.guiTextField.setMaxStringLength(128);
         this.guiTextField.setText(newCityName);
     }
 
@@ -81,7 +82,7 @@ public class GuiTypable extends GuiScreen
                 if(!newCityName.isEmpty())
                 {
                     tileEntityTownHall.setCityName(newCityName);
-                    tileEntityTownHall.sendPacket();
+                    MineColonies.packetPipeline.sendToServer(new TownhallRenamePacket(x, y, z, newCityName));
                 }
                 player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
             }

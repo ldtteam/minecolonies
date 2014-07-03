@@ -25,6 +25,7 @@ public class ClientProxy extends CommonProxy
 
     public void registerEvents()
     {
+        super.registerEvents();
 //        FMLCommonHandler.instance().bus().register(new KeyInputHandler());
 //        FMLCommonHandler.instance().bus().register(new TickHandler());
 //

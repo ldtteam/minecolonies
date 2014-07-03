@@ -6,8 +6,6 @@ import net.minecraft.world.World;
 
 public class ItemBuildTool extends ItemMinecolonies
 {
-    private final String name = "scepterGold";
-
     public ItemBuildTool()
     {
         super();
@@ -17,15 +15,13 @@ public class ItemBuildTool extends ItemMinecolonies
     @Override
     public String getName()
     {
-        return name;
+        return "scepterGold";
     }
 
-    //TODO onItemUse?
-
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int face, float par8, float par9, float par10)
     {
-        //TODO
-        return stack;
+        //TODO open build GUI
+        return super.onItemUse(itemStack, player, world, x, y, z, face, par8, par9, par10);
     }
 }

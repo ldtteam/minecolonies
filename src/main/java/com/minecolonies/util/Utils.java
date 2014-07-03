@@ -179,20 +179,6 @@ public class Utils
     }
 
     /**
-     * Checks if the block is water
-     *
-     * @param world world obj
-     * @param x     x coordinate
-     * @param y     y coordinate
-     * @param z     z coordinate
-     * @return true if is water.
-     */
-    public static boolean isWater(World world, int x, int y, int z)//TODO remove? we never use it
-    {
-        return isWater(world.getBlock(x, y, z));
-    }
-
-    /**
      * Returns the online EntityPlayer with the given UUID
      *
      * @param world world the player is in
@@ -224,7 +210,7 @@ public class Utils
         {
             if(id.equals(((Entity) world.loadedEntityList.get(i)).getUniqueID()))
             {
-                return (Entity)world.loadedEntityList.get(i);
+                return (Entity) world.loadedEntityList.get(i);
             }
         }
         return null;
@@ -294,5 +280,10 @@ public class Utils
             return entities;
         }
         return null;
+    }
+
+    public static int[] vecToInt(Vec3 vec)
+    {
+        return new int[]{(int) vec.xCoord, (int) vec.yCoord, (int) vec.zCoord};
     }
 }

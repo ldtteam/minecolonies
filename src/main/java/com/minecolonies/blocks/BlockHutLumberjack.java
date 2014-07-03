@@ -6,8 +6,6 @@ import net.minecraft.world.World;
 
 public class BlockHutLumberjack extends BlockHut
 {
-    public final String name = "blockHutLumberjack";
-
     protected BlockHutLumberjack()
     {
         super();
@@ -16,7 +14,7 @@ public class BlockHutLumberjack extends BlockHut
     @Override
     public String getName()
     {
-        return name;
+        return "blockHutLumberjack";
     }
 
     @Override

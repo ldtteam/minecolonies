@@ -195,6 +195,8 @@ public class BlockInfo
         addBlockItemMapping(Blocks.carrots, Items.carrot);
         addBlockItemMapping(Blocks.potatoes, Items.potato);
         addBlockItemMapping(Blocks.skull, Items.skull);
+        addBlockItemMapping(Blocks.unpowered_comparator, Items.comparator);
+        addBlockItemMapping(Blocks.powered_comparator, Items.comparator);
     }
 
     private static Item addBlockItemMapping(Block block, Item item)

@@ -1,10 +1,29 @@
 package com.minecolonies.tileentities;
 
+import com.minecolonies.entity.EntityCitizen;
+
 public class TileEntityHutBaker extends TileEntityHutWorker
 {
     public TileEntityHutBaker()
     {
         setMaxInhabitants(1);
-        setHutName("hutBaker");
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Baker";
+    }
+
+    @Override
+    public String getJobName()
+    {
+        return "Baker";
+    }
+
+    @Override
+    public EntityCitizen createWorker()
+    {
+        return new EntityCitizen(worldObj); //TODO Implement Later
     }
 }
