@@ -21,7 +21,7 @@ public class PlayerProperties implements IExtendedEntityProperties
      *
      * @param player player to create property for
      */
-    public static final void register(EntityPlayer player)
+    public static void register(EntityPlayer player)
     {
         player.registerExtendedProperties(Constants.PlayerPropertyName, new PlayerProperties());
     }
@@ -32,7 +32,7 @@ public class PlayerProperties implements IExtendedEntityProperties
      * @param player player to get property for
      * @return PlayerProperties for the player.
      */
-    public static final PlayerProperties get(EntityPlayer player)
+    public static PlayerProperties get(EntityPlayer player)
     {
         return (PlayerProperties) player.getExtendedProperties(Constants.PlayerPropertyName);
     }

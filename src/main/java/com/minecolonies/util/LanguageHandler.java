@@ -30,7 +30,7 @@ public class LanguageHandler
         return String.format(getString(key), args);
     }
 
-    private static void sendPlayerMessage(EntityPlayer player, String message)
+    public static void sendPlayerMessage(EntityPlayer player, String message)
     {
         player.addChatComponentMessage(new ChatComponentText(message));
     }
@@ -49,6 +49,7 @@ public class LanguageHandler
 
     private static void sendPlayersMessage(List<EntityPlayer> players, String message)
     {
+        if(players == null || players.isEmpty()) return;
         for(EntityPlayer player : players)
         {
             sendPlayerMessage(player, message);

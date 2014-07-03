@@ -1,4 +1,5 @@
 com.minecolonies.error.noFingerprint=No Fingerprint. Might not be a valid version!
+com.minecolonies.error.supplyChestAlreadyPlaced=You have already placed a supply ship!
 
 com.minecolonies.gui.yes=Yes
 com.minecolonies.gui.no=No
@@ -33,28 +34,41 @@ com.minecolonies.gui.deliverymanHut.toStonemason=Deliver to Stonemason:
 com.minecolonies.gui.deliverymanHut.toGuards=Deliver to Guards:
 com.minecolonies.gui.deliverymanHut.visitCitizenChests=Visit Citizenchests:
 
+tile.blockHutCitizen.name=Citizen's Hut
 tile.blockHutBaker.name=Baker's Hut
 tile.blockHutBlacksmith.name=Blacksmith's Hut
 tile.blockHutBuilder.name=Builder's Hut
-tile.blockHutDeliveryman.name=Deliveryman's Hut
+tile.blockHutWarehouse.name=Deliveryman's Hut
 tile.blockHutFarmer.name=Farmer's Hut
 tile.blockHutLumberjack.name=Lumberjack's Hut
 tile.blockHutMiner.name=Miner's Hut
 tile.blockHutStonemason.name=Stonemason's Hut
 tile.blockHutTownhall.name=Town Hall
+tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
+
 tile.blockHutTownhall.messageMaxSize=Colony has reached max size
 tile.blockHutTownhall.messageColonistDead=A colonist has died!
 tile.blockHutTownhall.messagePlacedAlready=You have placed a Town Hall already
 tile.blockHutTownhall.messageInvalidWorld=You can't place a townhall in this world type
 tile.blockHutTownhall.messageTooClose=Too close to existing townhall
+
 tile.blockHut.messageTooFarFromTownhall=You need to be closer to your townhall!
 tile.blockHut.messageNoTownhall=You need to place a townhall first!
 
 item.supplyChestDeployer.name=Supply Chest
 item.scepterGold.name=Building Tool
+item.scepterSteel.name=Scan Tool
 item.caliper.name=Caliper
 
 item.supplyChestDeployer.invalid=You must be near a big pool of water
+
+item.scepterSteel.point=Point one saved
+item.scepterSteel.point2=Point two saved, right click again to save the schematic
+item.scepterSteel.samePoint=That was the same point
+item.scepterSteel.scanFormat=SCAN_%s-%s.schematic
+item.scepterSteel.scanSuccess=Scan successfully saved as %s
+item.scepterSteel.scanFailure=Scan failed to save
+item.scepterSteel.invalidMethod=Invalid method call, contact a developer
 
 item.caliper.message.same=That's the same block.
 item.caliper.message.line=That's a %d block line.
@@ -62,3 +76,11 @@ item.caliper.message.square=That's a %d by %d square.
 item.caliper.message.cube=That's a %d by %d by %d cube.
 
 itemGroup.minecolonies=MineColonies
+
+entity.builder.ai.schematicLoadFailure=Schematic: (%s) does not exist - removing build request
+entity.builder.ai.schematicNullBlock=Schematic has null block at %d, %d, %d - local(%d, %d, %d)
+entity.builder.ai.blockPlaceFailure=Block place failure %s at %d, %d, %d
+entity.builder.ai.blockBreakFailure=Block break failure at %d, %d, %d
+entity.builder.messageBuildStart=Started building %s
+entity.builder.messageBuildComplete=Finished building %s
+entity.builder.messageNeedMaterial=I need %s(%d)

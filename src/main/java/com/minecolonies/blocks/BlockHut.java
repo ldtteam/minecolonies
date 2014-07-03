@@ -1,10 +1,13 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.configuration.Configurations;
+import com.minecolonies.MineColonies;
 import com.minecolonies.creativetab.ModCreativeTabs;
+import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.lib.IColony;
-import com.minecolonies.tileentities.TileEntityBuildable;
+import com.minecolonies.tileentities.TileEntityHut;
+import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -20,12 +23,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 public abstract class BlockHut extends Block implements IColony, ITileEntityProvider
 {
-    protected int workingRange;
+    protected int workingRange;//TODO unused
 
     private IIcon[] icons = new IIcon[6];// 0 = top, 1 = bot, 2-5 = sides;
 
@@ -34,6 +34,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
         super(Material.wood);
         setBlockName(getName());
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
+        setResistance(1000f);
         GameRegistry.registerBlock(this, getName());
     }
 
@@ -54,65 +55,51 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
         return icons[side];
     }
 
-    /**
-     * Attempts to add citizen to a working hut
-     *
-     * @param tileEntityTownHall TileEntityTownHall bound to
-     * @param world              world
-     * @param x                  x coordinate
-     * @param y                  y coordinate
-     * @param z                  z coordinate
-     */
-    public void attemptToAddIdleCitizens(TileEntityTownHall tileEntityTownHall, World world, int x, int y, int z)
-    {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if(!(tileEntity instanceof TileEntityBuildable)) return;
-        ArrayList<UUID> citizens = tileEntityTownHall.getCitizens();
-        //TODO ATTEMPT TO ADD
-    }
-
-    /**
-     * Sets the TileEntities townhall to the closest townhall
-     *
-     * @param world world
-     * @param x     x coordinate
-     * @param y     y coordinate
-     * @param z     z coordinate
-     */
-    public void addClosestTownhall(World world, int x, int y, int z)
-    {
-        TileEntityTownHall tileEntityTownHall = Utils.getClosestTownHall(world, x, y, z);
-        if(tileEntityTownHall != null)
-        {
-            if(world.getTileEntity(x, y, z) instanceof TileEntityBuildable)
-            {
-                TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
-                tileEntityBuildable.setTownHall(tileEntityTownHall); //TODO, check for owner first
-                attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
-            }
-        }
-    }
-
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
         if(world.isRemote) return;
 
-        if(entityLivingBase instanceof EntityPlayer && !(world.getTileEntity(x, y, z) instanceof TileEntityTownHall))
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        if(entityLivingBase instanceof EntityPlayer && tileEntity instanceof TileEntityHut)
         {
-            TileEntityBuildable tileEntityBuildable = (TileEntityBuildable) world.getTileEntity(x, y, z);
-            TileEntityTownHall tileEntityTownHall = Utils.getTownhallByOwner(world, (EntityPlayer) entityLivingBase);
-            if(tileEntityTownHall == null || Utils.getDistanceToTileEntity(x, y, z, tileEntityTownHall) > Configurations.workingRangeTownhall)
+            EntityPlayer player = (EntityPlayer) entityLivingBase;
+            TileEntityHut hut = (TileEntityHut) tileEntity;
+
+            if(hut instanceof TileEntityTownHall)
             {
-                if(tileEntityTownHall == null)
-                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockHut.messageNoTownhall");
-                else
-                    LanguageHandler.sendPlayerLocalizedMessage((EntityPlayer) entityLivingBase, "tile.blockHut.messageTooFarFromTownhall");
-                world.setBlockToAir(x, y, z);
-                return;
+                TileEntityTownHall townhall = (TileEntityTownHall) hut;
+                townhall.onBlockAdded();
+                townhall.addOwner(player.getUniqueID());
+                townhall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName()));
+                PlayerProperties.get(player).placeTownhall(x, y, z);
             }
-            tileEntityBuildable.setTownHall(tileEntityTownHall);
-            attemptToAddIdleCitizens(tileEntityTownHall, world, x, y, z);
+            else
+            {
+                TileEntityTownHall townhall = Utils.getTownhallByOwner(world, player);
+
+                hut.setTownHall(townhall);
+                townhall.addHut(hut.xCoord, hut.yCoord, hut.zCoord);
+
+                if(hut instanceof TileEntityHutWorker)
+                {
+                    ((TileEntityHutWorker) hut).addJoblessCitizens(townhall);
+                }
+            }
         }
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float px, float py, float pz)
+    {
+        if(world.isRemote) return false;
+
+        if(world.getTileEntity(x, y, z) instanceof TileEntityHut && !player.isSneaking())
+        {
+            int guiID = EnumGUI.getGuiIdByInstance(world.getTileEntity(x, y, z));
+            player.openGui(MineColonies.instance, guiID, world, x, y, z);
+            return true;
+        }
+        return false;
     }
 }

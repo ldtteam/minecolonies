@@ -2,23 +2,33 @@ package com.minecolonies.util;
 
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.github.lunatrius.schematica.world.schematic.SchematicFormat;
+import com.minecolonies.MineColonies;
+import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.lib.IColony;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityHanging;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,23 +43,26 @@ public class Schematic
 {
     private World          world;
     private SchematicWorld schematic;
+    private Vec3           position;
+    private String         name;
 
     /**
      * North-West corner
      */
     private int x = -1, y = -1, z = -1;
-    private ChunkCache mcWorldCache;
+
     //public final  List<RendererSchematicChunk> sortedRendererSchematicChunk = new ArrayList<RendererSchematicChunk>();
 
-    private Schematic(World worldObj, SchematicWorld schematicWorld)
+    private Schematic(World worldObj, SchematicWorld schematicWorld, String name)
     {
         world = worldObj;
         schematic = schematicWorld;
+        this.name = name;
     }
 
     public static Schematic loadSchematic(World worldObj, IColony hut, int level)
     {
-        return loadSchematic(worldObj, getResourceLocation(getName(hut, level)));
+        return loadSchematic(worldObj, getNameFromHut(hut, level));
     }
 
     public static Schematic loadSchematic(World worldObj, String name)
@@ -59,7 +72,12 @@ public class Schematic
 
     private static Schematic loadSchematic(World worldObj, ResourceLocation res)
     {
-        return new Schematic(worldObj, SchematicFormat.readFromStream(getStream(res)));
+        InputStream stream = getStream(res);
+        if(stream == null)
+        {
+            return null;
+        }
+        return new Schematic(worldObj, SchematicFormat.readFromStream(stream), getNameFromResourceLocation(res));
     }
 
     public void placeSchematic(int x, int y, int z)
@@ -76,17 +94,29 @@ public class Schematic
                     Block block = this.schematic.getBlock(i, j, k);
                     int metadata = this.schematic.getBlockMetadata(i, j, k);
 
-                    if(block == Blocks.air)
+                    if(block == Blocks.air && !world.getBlock(x + i, y + j, z + k).getMaterial().isSolid())
                     {
                         world.setBlockToAir(x + i, y + j, z + k);
                     }
                     else if(block.getMaterial().isSolid())
                     {
-                        world.setBlock(x + i, y + j, z + k, block, metadata, 0x02);
+                        world.setBlock(x + i, y + j, z + k, block, metadata, 0x03);
+                        if(world.getBlock(x + i, y + j, z + k) == block)
+                        {
+                            if(world.getBlockMetadata(x + i, y + j, z + k) != metadata)
+                            {
+                                world.setBlockMetadataWithNotify(x + i, y + j, z + k, metadata, 0x03);
+                            }
+                            block.onPostBlockPlaced(world, x + i, y + j, z + k, metadata);
+                        }
                     }
                     else
                     {
                         delayedBlocks.add(Vec3.createVectorHelper(i, j, k));
+                    }
+                    if(schematic.getTileEntity(x, y, z) != null)
+                    {
+                        world.setTileEntity(x + i, y + j, z + k, schematic.getTileEntity(x, y, z));
                     }
                 }
             }
@@ -99,7 +129,15 @@ public class Schematic
             int k = (int) vec.zCoord;
             Block block = this.schematic.getBlock(i, j, k);
             int metadata = this.schematic.getBlockMetadata(i, j, k);
-            world.setBlock(x + i, y + j, z + k, block, metadata, 0x02);
+            world.setBlock(x + i, y + j, z + k, block, metadata, 0x03);
+            if(world.getBlock(x + i, y + j, z + k) == block)
+            {
+                if(world.getBlockMetadata(x + i, y + j, z + k) != metadata)
+                {
+                    world.setBlockMetadataWithNotify(x + i, y + j, z + k, metadata, 0x03);
+                }
+                block.onPostBlockPlaced(world, x + i, y + j, z + k, metadata);
+            }
         }
     }
 
@@ -121,16 +159,26 @@ public class Schematic
         }
     }
 
-    public void findNextBlock()
+    /**
+     * Find the next block that doesn't already exist in the world
+     *
+     * @return true if a new block is found and false if there is no next block.
+     */
+    public boolean findNextBlock()
     {
-        if(!this.hasSchematic()) return;
+        if(!this.hasSchematic()) return false;
 
         if(x == -1)
         {
             y = z = 0;
         }
+
+        int count = 0;
+
         do
         {
+            count++;
+
             x++;
             if(x == schematic.getWidth())
             {
@@ -143,21 +191,71 @@ public class Schematic
                     if(y == schematic.getHeight())
                     {
                         x = y = z = -1;
+                        return false;
                     }
                 }
             }
         }
-        while(schematic.isAirBlock(x, y, z));
+        while(doesSchematicBlockEqualWorldBlock() && count < 1000);//count limits the number of checked blocks per builder update
+        //TODO change count to agreed upon value, possibly add config option - possibly remove if we think this shouldn't be a problem
 
+        return true;
     }
 
-    public static void saveSchematic(World world, Vec3 from, Vec3 to, String file, String icon)
+    private boolean doesSchematicBlockEqualWorldBlock()
     {
-        if(world == null || from == null || to == null || file == null) return;
-        SchematicFormat.writeToFile(MinecraftServer.getServer().getFile("/schematics"), file, scanSchematic(world, from, to, icon));
+        int[] pos = Utils.vecToInt(this.getBlockPosition());
+        if(y <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
+        {
+            return true;
+        }
+        return schematic.getBlock(x, y, z) == world.getBlock(pos[0], pos[1], pos[2]) && schematic.getBlockMetadata(x, y, z) == world.getBlockMetadata(pos[0], pos[1], pos[2]);
     }
 
-    public static SchematicWorld scanSchematic(World world, Vec3 from, Vec3 to, String icon)
+    public static String saveSchematic(World world, Vec3 from, Vec3 to)
+    {
+        if(world == null || from == null || to == null)
+            return LanguageHandler.format("item.scepterSteel.invalidMethod");
+
+        SchematicWorld schematic = scanSchematic(world, from, to, new ItemStack(Blocks.red_flower));
+
+        String fileName = LanguageHandler.format("item.scepterSteel.scanFormat", schematic.getType(), System.currentTimeMillis());
+        File file = new File(getScanDirectory(world), fileName);
+
+        if(SchematicFormat.writeToFile(file, schematic))
+        {
+            return LanguageHandler.format("item.scepterSteel.scanSuccess", fileName);
+        }
+        return LanguageHandler.format("item.scepterSteel.scanFailure");
+    }
+
+    private static File getScanDirectory(World world)
+    {
+        File minecolonies;
+        if(world.isRemote)
+        {
+            minecolonies = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
+        }
+        else
+        {
+            minecolonies = MinecraftServer.getServer().getFile("minecolonies/");
+        }
+        checkDirectory(minecolonies);
+
+        File scans = new File(minecolonies, "scans/");
+        checkDirectory(scans);
+        return scans;
+    }
+
+    private static void checkDirectory(File directory)
+    {
+        if(!directory.exists())
+        {
+            directory.mkdir();
+        }
+    }
+
+    public static SchematicWorld scanSchematic(World world, Vec3 from, Vec3 to, ItemStack icon)
     {
         int minX = (int) Math.min(from.xCoord, to.xCoord);
         int maxX = (int) Math.max(from.xCoord, to.xCoord);
@@ -175,6 +273,8 @@ public class Schematic
         TileEntity tileEntity;
         NBTTagCompound tileEntityNBT;
 
+        int xOffset = 0, yOffset = 0, zOffset = 0;
+
         for(int x = minX; x <= maxX; x++)
         {
             for(int y = minY; y <= maxY; y++)
@@ -183,9 +283,26 @@ public class Schematic
                 {
                     blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(world.getBlock(x, y, z));
                     metadata[x - minX][y - minY][z - minZ] = (byte) world.getBlockMetadata(x, y, z);
-                    tileEntity = world.getTileEntity(x, y, z);
-                    if(tileEntity != null)
+
+                    if(world.getBlock(x, y, z) instanceof BlockHut)
                     {
+                        if(xOffset == 0 && yOffset == 0 && zOffset == 0)
+                        {
+                            xOffset = x;
+                            yOffset = y;
+                            zOffset = z;
+                        }
+                        else
+                        {
+                            MineColonies.logger.warn("Scan contained multiple BlockHut's ignoring this one");
+                            blocks[x - minX][y - minY][z - minZ] = 0;
+                            metadata[x - minX][y - minY][z - minZ] = 0;
+                        }
+                    }
+
+                    tileEntity = world.getTileEntity(x, y, z);
+                    if(tileEntity != null)//creates a new tileEntity and formats its data for saving
+                    {                     //a new tileEntity is needed to prevent changes to the real one
                         tileEntityNBT = new NBTTagCompound();
                         tileEntity.writeToNBT(tileEntityNBT);
 
@@ -198,13 +315,55 @@ public class Schematic
                 }
             }
         }
+
+        AxisAlignedBB region = AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+        List<EntityHanging> entityHangings = world.getEntitiesWithinAABB(EntityHanging.class, region);
+        List<EntityMinecart> entityMinecarts = world.getEntitiesWithinAABB(EntityMinecart.class, region);
+        NBTTagList entityList = new NBTTagList();
+
+        for(EntityHanging entity : entityHangings)
+        {
+            if(entity != null)
+            {
+                NBTTagCompound entityData = new NBTTagCompound();
+
+                entityData.setString("id", EntityList.getEntityString(entity));
+                entity.writeToNBT(entityData);
+
+                entityData.setTag("TileX", new NBTTagInt(entity.field_146063_b - minX));
+                entityData.setTag("TileY", new NBTTagInt(entity.field_146064_c - minY));
+                entityData.setTag("TileZ", new NBTTagInt(entity.field_146062_d - minZ));
+
+                entityList.appendTag(entityData);
+            }
+        }
+        for(EntityMinecart minecart : entityMinecarts)
+        {
+            if(minecart != null)
+            {
+
+                NBTTagCompound entityData = new NBTTagCompound();
+
+                entityData.setString("id", EntityList.getEntityString(minecart));
+                minecart.writeToNBT(entityData);
+
+                NBTTagList pos = new NBTTagList();
+                pos.appendTag(new NBTTagDouble(minecart.posX - minX));
+                pos.appendTag(new NBTTagDouble(minecart.posY - minY));
+                pos.appendTag(new NBTTagDouble(minecart.posZ - minZ));
+                entityData.setTag("Pos", pos);
+
+                entityList.appendTag(entityData);
+            }
+        }
+
         if(icon != null)
         {
-            return new SchematicWorld(icon, blocks, metadata, tileEntities, width, height, length);
+            return new SchematicWorld(icon, blocks, metadata, tileEntities, entityList, width, height, length, xOffset, yOffset, zOffset);
         }
         else
         {
-            return new SchematicWorld(new ItemStack(Blocks.red_mushroom), blocks, metadata, tileEntities, width, height, length);
+            return new SchematicWorld(new ItemStack(Blocks.red_mushroom), blocks, metadata, tileEntities, entityList, width, height, length, xOffset, yOffset, zOffset);
         }
     }
 
@@ -221,6 +380,12 @@ public class Schematic
     private static ResourceLocation getResourceLocation(String name)
     {
         return new ResourceLocation("minecolonies:schematics/" + name + ".schematic");
+    }
+
+    private static String getNameFromResourceLocation(ResourceLocation res)
+    {
+        String path = res.getResourcePath();
+        return path.substring(path.indexOf('/') + 1, path.lastIndexOf('.'));
     }
 
     private static InputStream getStream(ResourceLocation res)
@@ -244,7 +409,7 @@ public class Schematic
         return null;
     }
 
-    private static String getName(IColony hut, int level)
+    public static String getNameFromHut(IColony hut, int level)
     {
         return hut.getName() + level;
     }
@@ -261,14 +426,67 @@ public class Schematic
         return this.schematic.getBlockMetadata(x, y, z);
     }
 
+    public TileEntity getTileEntity()
+    {
+        if(!this.hasSchematic() || x == -1) return null;
+        return this.schematic.getTileEntity(x, y, z);
+    }
+
+    public Vec3 getOffset()
+    {
+        return Vec3.createVectorHelper(schematic.getOffsetX(), schematic.getOffsetY(), schematic.getOffsetZ());
+    }
+
+    public Vec3 getOffsetPosition()
+    {
+        return getOffset().subtract(position);//I know this seems backwards, minecraft's fault
+    }
+
+    public Vec3 getBlockPosition()
+    {
+        return getOffsetPosition().addVector(x, y, z);
+    }
+
     public Vec3 getBlockPosition(int baseX, int baseY, int baseZ)
     {
-        return world.getWorldVec3Pool().getVecFromPool(baseX + x, baseY + y, baseZ + z);
+        return Vec3.createVectorHelper(baseX + x, baseY + y, baseZ + z);
+    }
+
+    public Vec3 getLocalPosition()
+    {
+        return Vec3.createVectorHelper(x, y, z);
+    }
+
+    public Vec3 getPosition()
+    {
+        return position;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setPosition(Vec3 position)
+    {
+        this.position = position;
+    }
+
+    public void setLocalPosition(Vec3 localPosition)
+    {
+        x = (int) localPosition.xCoord;
+        y = (int) localPosition.yCoord;
+        z = (int) localPosition.zCoord;
     }
 
     public List<ItemStack> getMaterials()
     {
         return schematic.getBlockList();
+    }
+
+    public void useMaterial(ItemStack stack)
+    {
+        schematic.removeFromBlockList(stack);
     }
 
     public boolean hasSchematic()
@@ -291,15 +509,12 @@ public class Schematic
         return schematic.getLength();
     }
 
-    //TODO rendering
+    public List<Entity> getEntities()
+    {
+        return schematic.loadedEntityList;
+    }
 
-//    public void reloadChunkCache() {
-//        if (schematic != null) {
-//            this.mcWorldCache = new ChunkCache(world, x - 1, y - 1, z - 1, x + schematic.getWidth() + 1, y + schematic.getHeight() + 1, z + schematic.getLength() + 1, 0);
-//            refreshSchematic();
-//        }
-//    }
-//
+    //TODO rendering
 //    public void refreshSchematic() {
 //        for (RendererSchematicChunk renderer : this.sortedRendererSchematicChunk) {
 //            renderer.setDirty();

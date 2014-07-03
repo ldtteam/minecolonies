@@ -1,12 +1,11 @@
 package com.minecolonies.blocks;
 
+import com.minecolonies.tileentities.TileEntityHutStonemason;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class BlockHutStonemason extends BlockHut
 {
-    public final String name = "blockHutStonemason";
-
     protected BlockHutStonemason()
     {
         super();
@@ -15,13 +14,12 @@ public class BlockHutStonemason extends BlockHut
     @Override
     public String getName()
     {
-        return name;
+        return "blockHutStonemason";
     }
 
     @Override
     public TileEntity createNewTileEntity(World var1, int var2)
     {
-        //TODO
-        return null;
+        return new TileEntityHutStonemason();
     }
 }

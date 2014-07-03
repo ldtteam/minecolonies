@@ -8,12 +8,14 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntitySkull;
@@ -62,6 +64,8 @@ public class SchematicWorld extends World
     private boolean isRendering;
     private int     renderingLayer;
 
+    private int xOffset = 0, yOffset = 0, zOffset = 0;
+
     public SchematicWorld()
     {
         // TODO: revert if any issues arise
@@ -78,7 +82,15 @@ public class SchematicWorld extends World
         this.renderingLayer = -1;
     }
 
-    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, short width, short height, short length)
+    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length, int xOffset, int yOffset, int zOffset)
+    {
+        this(icon, blocks, metadata, tileEntities, entities, width, height, length);
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+        this.zOffset = zOffset;
+    }
+
+    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
     {
         this();
 
@@ -104,6 +116,15 @@ public class SchematicWorld extends World
             }
         }
 
+        if(entities != null)
+        {
+            for(int i = 0; i < entities.tagCount(); i++)
+            {
+                Entity entity = EntityList.createEntityFromNBT(entities.getCompoundTagAt(i), this);
+                this.loadedEntityList.add(entity);
+            }
+        }
+
         this.width = width;
         this.length = length;
         this.height = height;
@@ -111,9 +132,9 @@ public class SchematicWorld extends World
         generateBlockList();
     }
 
-    public SchematicWorld(String iconName, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, short width, short height, short length)
+    public SchematicWorld(String iconName, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
     {
-        this(getIconFromName(iconName), blocks, metadata, tileEntities, width, height, length);
+        this(getIconFromName(iconName), blocks, metadata, tileEntities, entities, width, height, length);
     }
 
     public static ItemStack getIconFromName(String iconName)
@@ -312,7 +333,7 @@ public class SchematicWorld extends World
 
     public Block getBlockRaw(int x, int y, int z)
     {
-        return GameData.getBlockRegistry().getRaw(getBlockIdRaw(x, y, z));
+        return GameData.getBlockRegistry().getObjectById(getBlockIdRaw(x, y, z));
     }
 
     @Override
@@ -324,9 +345,8 @@ public class SchematicWorld extends World
     @Override
     public TileEntity getTileEntity(int x, int y, int z)
     {
-        for(int i = 0; i < this.tileEntities.size(); i++)
+        for(TileEntity tileEntity : this.tileEntities)
         {
-            TileEntity tileEntity = this.tileEntities.get(i);
             if(tileEntity.xCoord == x && tileEntity.yCoord == y && tileEntity.zCoord == z)
             {
                 return tileEntity;
@@ -526,14 +546,13 @@ public class SchematicWorld extends World
 
     public void refreshChests()
     {
-        TileEntity tileEntity;
-        for(int i = 0; i < this.tileEntities.size(); i++)
+        for(TileEntity tileEntity : this.tileEntities)
         {
-            tileEntity = this.tileEntities.get(i);
-
             if(tileEntity instanceof TileEntityChest)
             {
-                ((TileEntityChest) tileEntity).checkForAdjacentChests();
+                TileEntityChest tileEntityChest = (TileEntityChest) tileEntity;
+                tileEntityChest.adjacentChestChecked = false;
+                tileEntityChest.checkForAdjacentChests();
             }
         }
     }
@@ -541,7 +560,7 @@ public class SchematicWorld extends World
     public void flip()
     {
         /*
-		int tmp;
+        int tmp;
 		for (int x = 0; x < this.width; x++) {
 			for (int y = 0; y < this.height; y++) {
 				for (int z = 0; z < (this.length + 1) / 2; z++) {
@@ -605,11 +624,9 @@ public class SchematicWorld extends World
         this.blocks = localBlocks;
         this.metadata = localMetadata;
 
-        TileEntity tileEntity;
         int coord;
-        for(int i = 0; i < this.tileEntities.size(); i++)
+        for(TileEntity tileEntity : this.tileEntities)
         {
-            tileEntity = this.tileEntities.get(i);
             coord = tileEntity.zCoord;
             tileEntity.zCoord = tileEntity.xCoord;
             tileEntity.xCoord = this.length - 1 - coord;
@@ -632,5 +649,51 @@ public class SchematicWorld extends World
     public Vector3f dimensions()
     {
         return new Vector3f(this.width, this.height, this.length);
+    }
+
+    public void removeFromBlockList(ItemStack stack)
+    {
+        for(ItemStack blockStack : blockList)
+        {
+            if(blockStack.isItemEqual(stack))
+            {
+                int index = blockList.indexOf(blockStack);
+                blockStack.stackSize--;
+                if(blockStack.stackSize == 0)
+                {
+                    blockList.remove(index);
+                }
+                return;
+            }
+        }
+    }
+
+    public boolean hasOffset()
+    {
+        return xOffset != 0 || yOffset != 0 || zOffset != 0;
+    }
+
+    public int getOffsetX()
+    {
+        return xOffset;
+    }
+
+    public int getOffsetY()
+    {
+        return yOffset;
+    }
+
+    public int getOffsetZ()
+    {
+        return zOffset;
+    }
+
+    public String getType()
+    {
+        if(hasOffset())
+        {
+            return "Hut";
+        }
+        return "Decoration";
     }
 }

@@ -3,6 +3,7 @@ package com.minecolonies.util;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -178,25 +179,11 @@ public class Utils
     }
 
     /**
-     * Checks if the block is water
-     *
-     * @param world world obj
-     * @param x     x coordinate
-     * @param y     y coordinate
-     * @param z     z coordinate
-     * @return true if is water.
-     */
-    public static boolean isWater(World world, int x, int y, int z)//TODO remove? we never use it
-    {
-        return isWater(world.getBlock(x, y, z));
-    }
-
-    /**
      * Returns the online EntityPlayer with the given UUID
      *
      * @param world world the player is in
      * @param id    the player's UUID
-     * @return the EntityPlayer
+     * @return the Player
      */
     public static EntityPlayer getPlayerFromUUID(World world, UUID id)
     {
@@ -205,6 +192,25 @@ public class Utils
             if(id.equals(((EntityPlayer) world.playerEntities.get(i)).getUniqueID()))
             {
                 return (EntityPlayer) world.playerEntities.get(i);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the loaded Entity with the given UUID
+     *
+     * @param world world the entity is in
+     * @param id    the entity's UUID
+     * @return the Entity
+     */
+    public static Entity getEntityFromUUID(World world, UUID id)
+    {
+        for(int i = 0; i < world.loadedEntityList.size(); ++i)
+        {
+            if(id.equals(((Entity) world.loadedEntityList.get(i)).getUniqueID()))
+            {
+                return (Entity) world.loadedEntityList.get(i);
             }
         }
         return null;
@@ -241,5 +247,43 @@ public class Utils
             return players;
         }
         return null;
+    }
+
+    /**
+     * Returns a list of loaded entities whose UUID's match the ones provided.
+     *
+     * @param world the world the entities are in.
+     * @param ids   List of UUIDs
+     * @return list of Entity's
+     */
+    public static List<Entity> getEntitiesFromUUID(World world, List<UUID> ids)
+    {
+        List<Entity> entities = new ArrayList<Entity>();
+
+        for(Object o : world.loadedEntityList)
+        {
+            if(o instanceof Entity)
+            {
+                Entity entity = (Entity) o;
+                if(ids.contains(entity.getUniqueID()))
+                {
+                    entities.add(entity);
+                    if(entities.size() == ids.size())
+                    {
+                        return entities;
+                    }
+                }
+            }
+        }
+        if(!entities.isEmpty())
+        {
+            return entities;
+        }
+        return null;
+    }
+
+    public static int[] vecToInt(Vec3 vec)
+    {
+        return new int[]{(int) vec.xCoord, (int) vec.yCoord, (int) vec.zCoord};
     }
 }

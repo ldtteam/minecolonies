@@ -12,15 +12,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
 
 public class ItemSupplyChestDeployer extends ItemMinecolonies
 {
-    private final String name = "supplyChestDeployer";
-
     public ItemSupplyChestDeployer()
     {
         super();
@@ -30,27 +27,16 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
     @Override
     public String getName()
     {
-        return name;
+        return "supplyChestDeployer";
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer)
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int face, float px, float py, float pz)
     {
-        if(world == null || entityPlayer == null || world.isRemote || itemStack.stackSize == 0 || !isFirstPlacing(entityPlayer))
-            return itemStack;
-        MovingObjectPosition blockPos = getMovingObjectPositionFromPlayer(world, entityPlayer, false);
-        if(blockPos == null) return itemStack;
-        int x = blockPos.blockX;
-        int y = blockPos.blockY;
+        if(world == null || player == null || world.isRemote || stack.stackSize == 0 || !isFirstPlacing(player))
+            return false;
 
-        int z = blockPos.blockZ;
         HashMap<Integer, Boolean> hashmap = canShipBePlaced(world, x, y, z);
-        // System.out.println("hashmap 1 : " + hashmap.get(1));
-        // System.out.println("hashmap 2 : " + hashmap.get(2));
-        // System.out.println("hashmap 3 : " + hashmap.get(3));
-        // System.out.println("hashmap 4 : " + hashmap.get(4));
-        // System.out.println("hashmap 5 : " + hashmap.get(5));
-
         if(hashmap.get(1))
         {
             for(int i = 2; i <= 5; i++)
@@ -59,14 +45,15 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
                 {
                     if(hashmap.get(i))
                     {
-                        spawnShip(world, x, y, z, entityPlayer, i);
-                        return itemStack;
+                        spawnShip(world, x, y, z, player, i);
+                        stack.stackSize--;
+                        return true;
                     }
                 }
             }
         }
-        LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.supplyChestDeployer.invalid");
-        return itemStack;
+        LanguageHandler.sendPlayerLocalizedMessage(player, "item.supplyChestDeployer.invalid");
+        return false;
     }
 
     /**
@@ -169,7 +156,10 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        return Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest();
+        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest())
+            return true;
+        LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.error.supplyChestAlreadyPlaced");
+        return false;
     }
 
     /**
@@ -183,14 +173,13 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      */
     private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer, int chestFacing)
     {
-        PlayerProperties.get(entityPlayer).placeSupplyChest();
-
         world.setBlock(x, y + 1, z, Blocks.chest);
         world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
 
         placeSupplyShip(world, x, y, z, chestFacing);
 
         fillChest((TileEntityChest) world.getTileEntity(x, y + 1, z));
+        PlayerProperties.get(entityPlayer).placeSupplyChest();
     }
 
     private void placeSupplyShip(World world, int x, int y, int z, int direction)
