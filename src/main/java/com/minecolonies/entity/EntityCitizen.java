@@ -183,6 +183,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     @Override
+    public boolean interact(EntityPlayer player)
+    {
+        if(!worldObj.isRemote)
+        {
+            this.inventory.func_110133_a(this.getCustomNameTag());
+            player.displayGUIChest(this.inventory);
+        }
+        return true;
+    }
+
+    @Override
     public void onDeath(DamageSource par1DamageSource)
     {
         if(this.getTownHall() != null)
