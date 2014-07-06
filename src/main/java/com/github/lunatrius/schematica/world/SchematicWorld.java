@@ -68,7 +68,6 @@ public class SchematicWorld extends World
 
     public SchematicWorld()
     {
-        // TODO: revert if any issues arise
         super(new EmptySaveHandler(), "Schematica", WORLD_SETTINGS, null, null);
         this.icon = SchematicWorld.DEFAULT_ICON.copy();
         this.blocks = null;

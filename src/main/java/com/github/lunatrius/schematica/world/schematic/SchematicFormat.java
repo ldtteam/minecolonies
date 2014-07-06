@@ -17,7 +17,6 @@ public abstract class SchematicFormat
 {
     public static final Map<String, SchematicFormat> FORMATS        = new HashMap<String, SchematicFormat>();
     public static final String                       MATERIALS      = "Materials";
-    public static final String                       FORMAT_CLASSIC = "Classic";
     public static final String                       FORMAT_ALPHA   = "Alpha";
     public static String FORMAT_DEFAULT;
 
@@ -119,7 +118,6 @@ public abstract class SchematicFormat
 
     static
     {
-        FORMATS.put(FORMAT_CLASSIC, new SchematicClassic());
         FORMATS.put(FORMAT_ALPHA, new SchematicAlpha());
 
         FORMAT_DEFAULT = FORMAT_ALPHA;
