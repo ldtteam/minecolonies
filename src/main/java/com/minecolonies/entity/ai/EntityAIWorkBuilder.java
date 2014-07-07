@@ -14,6 +14,7 @@ import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -39,6 +40,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
 {
     private EntityBuilder builder;
     private World         world;
+    int messageDelay = 0;
 
     public EntityAIWorkBuilder(EntityBuilder builder)
     {
@@ -79,6 +81,8 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
+            messageDelay++;
+
             builder.setStatus(EnumStatus.WORKING);
 
             if(!isBuilderAtSite()) return;
@@ -176,54 +180,89 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
     private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
     {
-        int slotID = builder.getInventory().containsItemStack(new ItemStack(block, 1, metadata));
-        if(slotID == -1)//inventory doesn't contain item
+        if(block != Blocks.air)//We are breaking and don't need materials.
         {
-            ItemStack material = new ItemStack(block, 1, metadata);
-
-            int amount = -1;
-            for(ItemStack item : builder.getSchematic().getMaterials())//find amount needed
+            int slotID = builder.getInventory().containsItemStack(new ItemStack(block, 1, metadata));
+            if(slotID == -1)//inventory doesn't contain item
             {
-                if(item.isItemEqual(material))
+                ItemStack material = new ItemStack(block, 1, metadata);
+
+                int amount = -1;
+                for(ItemStack item : builder.getSchematic().getMaterials())//find amount needed
                 {
-                    amount = item.stackSize;
-                    break;
+                    if(item.isItemEqual(material))
+                    {
+                        amount = item.stackSize;
+                        break;
+                    }
                 }
-            }
-
-            int chestSlotID = builder.getWorkHut().containsItemStack(material);
-            if(chestSlotID != -1)//chest contains item
-            {
-                if(builder.getWorkHut().getDistanceFrom(builder.posX, builder.posY, builder.posZ) < 64) //Square Distance - within 8 blocks
+                if(amount == -1)
                 {
-                    builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, amount);//if chest doesn't contain full amount, take all.
+                    System.out.println(block.getLocalizedName());
+                }
+
+                int chestSlotID = builder.getWorkHut().containsItemStack(material);
+                if(chestSlotID != -1)//chest contains item
+                {
+                    if(builder.getWorkHut().getDistanceFrom(builder.posX, builder.posY, builder.posZ) < 64) //Square Distance - within 8 blocks
+                    {
+                        builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, amount);//if chest doesn't contain full amount, take all.
+                    }
+                    else
+                    {
+                        if(!builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D))
+                        {
+                            builder.setStatus(EnumStatus.PATHFINDING_ERROR);
+                        }
+                    }
+                }
+                else if(false)//TODO canCraft(material)
+                {
+                    //TODO craft item
                 }
                 else
                 {
-                    if(!builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D))
+                    if(messageDelay % 10 == 0)
                     {
-                        builder.setStatus(EnumStatus.PATHFINDING_ERROR);
+                        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
+                    }
+                    builder.setStatus(EnumStatus.NEED_MATERIALS);
+                    //TODO request material - deliveryman
+                }
+                return false;
+            }
+            builder.getSchematic().useMaterial(builder.getInventory().getStackInSlot(slotID));//remove item from materials list (--stackSize)
+            builder.getInventory().decrStackSize(slotID, 1);
+        }
+
+        if(worldBlock != Blocks.air)//Don't collect air blocks.
+        {
+            ItemStack stack = new ItemStack(Item.getItemFromBlock(worldBlock), 1, worldBlockMetadata);//get item for inventory
+            if(stack != null && stack.getItem() != null)
+            {
+                ItemStack leftOvers = builder.getInventory().setStackInInventory(stack);
+                if(leftOvers != null)
+                {
+                    if(builder.getWorkHut().getDistanceFrom(builder.posX, builder.posY, builder.posZ) < 64) //Square Distance - within 8 blocks
+                    {
+                        ItemStack chestLeftOvers = builder.getWorkHut().setStackInInventory(leftOvers);
+                        if(chestLeftOvers != null)
+                        {
+                            builder.setStatus(EnumStatus.INVENTORY_FULL);
+                            EntityItem itemDrop = new EntityItem(world, builder.posX, builder.posY + 1, builder.posZ, chestLeftOvers);
+                            world.spawnEntityInWorld(itemDrop);
+                        }
+                    }
+                    else
+                    {
+                        if(!builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D))
+                        {
+                            builder.setStatus(EnumStatus.PATHFINDING_ERROR);
+                        }
                     }
                 }
             }
-            else if(false)//TODO canCraft(material)
-            {
-                //TODO craft item
-            }
-            else
-            {
-                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
-                builder.setStatus(EnumStatus.NEED_MATERIALS);
-                //TODO request material - deliveryman
-            }
-            return false;
         }
-        builder.getSchematic().useMaterial(builder.getInventory().getStackInSlot(slotID));//remove item from materials list (--stackSize)
-        builder.getInventory().decrStackSize(slotID, 1);
-
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(worldBlock), 1, worldBlockMetadata);//get item for inventory
-        builder.getInventory().setStackInInventory(stack);
-        //TODO unload unneeded items if inventory is full
         return true;
     }
 
@@ -513,7 +552,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        return builder.isWorkTime() && builder.hasSchematic() && (builder.hasMaterials() || Configurations.builderInfiniteResources);
+        return builder.isWorkTime() && builder.hasSchematic();// && (builder.hasMaterials() || Configurations.builderInfiniteResources);
     }
 
     private void loadSchematic()

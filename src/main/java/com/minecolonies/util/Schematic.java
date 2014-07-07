@@ -205,7 +205,7 @@ public class Schematic
     private boolean doesSchematicBlockEqualWorldBlock()
     {
         int[] pos = Utils.vecToInt(this.getBlockPosition());
-        if(y <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
+        if(pos[1] <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
         {
             return true;
         }

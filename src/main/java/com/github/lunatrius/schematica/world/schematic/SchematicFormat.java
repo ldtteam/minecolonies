@@ -17,7 +17,6 @@ public abstract class SchematicFormat
 {
     public static final Map<String, SchematicFormat> FORMATS        = new HashMap<String, SchematicFormat>();
     public static final String                       MATERIALS      = "Materials";
-    public static final String                       FORMAT_CLASSIC = "Classic";
     public static final String                       FORMAT_ALPHA   = "Alpha";
     public static String FORMAT_DEFAULT;
 
@@ -90,8 +89,7 @@ public abstract class SchematicFormat
             FORMATS.get(FORMAT_DEFAULT).writeToNBT(tagCompound, world);
 
             DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
-
-            try//TODO: update to java7 try-with-resources?
+            try
             {
                 Method method = ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[]{
                         "func_150298_a", "a"}, String.class, NBTBase.class, DataOutput.class);
@@ -119,7 +117,6 @@ public abstract class SchematicFormat
 
     static
     {
-        FORMATS.put(FORMAT_CLASSIC, new SchematicClassic());
         FORMATS.put(FORMAT_ALPHA, new SchematicAlpha());
 
         FORMAT_DEFAULT = FORMAT_ALPHA;

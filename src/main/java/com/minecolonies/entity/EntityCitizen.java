@@ -1,5 +1,6 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.inventory.InventoryCitizen;
@@ -50,6 +51,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         setSize(0.6F, 1.8F);
         this.func_110163_bv();//Set persistenceRequired = true;
         setTexture();
+        this.setCustomNameTag(generateName());
         this.job = initJob();
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
 
@@ -83,6 +85,55 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     protected String initJob()
     {
         return "Citizen";
+    }
+
+    public void setTexture()
+    {
+        String textureBase = "textures/entity/Entity";
+        /*switch(getLevel())
+        {
+            case 0:
+                textureBase += "Settler";
+                break;
+            case 1:
+                textureBase += "Citizen";
+                break;
+            case 2:
+                textureBase += "Noble";
+                break;
+            case 3:
+                textureBase += "Aristocrat";
+                break;
+        }*/
+        textureBase += "Citizen";
+
+        textureBase += getSex() == 0 ? "Male" : "Female";
+
+        texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
+    }
+
+    private String generateName()
+    {
+        String firstName;
+        if(getSex() == 0)
+        {
+            firstName = getRandomElement(Configurations.maleFirstNames);
+        }
+        else
+        {
+            firstName = getRandomElement(Configurations.femaleFirstNames);
+        }
+        return String.format("%s %s. %s", firstName, getRandomLetter(), getRandomElement(Configurations.lastNames));
+    }
+
+    private String getRandomElement(String[] array)
+    {
+        return array[rand.nextInt(array.length)];
+    }
+
+    private char getRandomLetter()
+    {
+        return (char) (rand.nextInt(26) + 'A');
     }
 
     @Override
@@ -132,6 +183,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     @Override
+    public boolean interact(EntityPlayer player)
+    {
+        if(!worldObj.isRemote)
+        {
+            this.inventory.func_110133_a(this.getCustomNameTag());
+            player.displayGUIChest(this.inventory);
+        }
+        return true;
+    }
+
+    @Override
     public void onDeath(DamageSource par1DamageSource)
     {
         if(this.getTownHall() != null)
@@ -149,31 +211,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             this.getWorkHut().unbindWorker(this);
         }
         super.onDeath(par1DamageSource);
-    }
-
-    public void setTexture()
-    {
-        String textureBase = "textures/entity/Entity";
-        /*switch(getLevel())
-        {
-            case 0:
-                textureBase += "Settler";
-                break;
-            case 1:
-                textureBase += "Citizen";
-                break;
-            case 2:
-                textureBase += "Noble";
-                break;
-            case 3:
-                textureBase += "Aristocrat";
-                break;
-        }*/
-        textureBase += "Citizen";
-
-        textureBase += getSex() == 0 ? "Male" : "Female";
-
-        texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
     }
 
     public int getTextureID()
