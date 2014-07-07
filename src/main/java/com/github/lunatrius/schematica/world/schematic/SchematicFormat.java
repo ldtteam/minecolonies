@@ -88,11 +88,16 @@ public abstract class SchematicFormat
 
             FORMATS.get(FORMAT_DEFAULT).writeToNBT(tagCompound, world);
 
-            try(DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file))))
+            DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
+            try
             {
                 Method method = ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[]{
                         "func_150298_a", "a"}, String.class, NBTBase.class, DataOutput.class);
                 method.invoke(null, "Schematic", tagCompound, dataOutputStream);
+            }
+            finally
+            {
+                dataOutputStream.close();
             }
 
             return true;
