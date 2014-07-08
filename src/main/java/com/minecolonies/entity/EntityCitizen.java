@@ -134,22 +134,19 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onDeath(DamageSource par1DamageSource)
     {
-        if (tileEntityTownHall.getCitizens().contains(this.getUniqueID()))
+        if(this.getTownHall() != null && this.getTownHall().getCitizens().contains(this.getUniqueID()))
         {
-            if(this.getTownHall() != null)
-            {
-                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, tileEntityTownHall.getOwners()), "tile.blockHutTownhall.messageColonistDead");
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, tileEntityTownHall.getOwners()), "tile.blockHutTownhall.messageColonistDead");
 
-                tileEntityTownHall.removeCitizen(this);
-            }
-            if(this.getHomeHut() != null)
-            {
-                this.getHomeHut().removeCitizen(this);
-            }
-            if(this.getWorkHut() != null)
-            {
-                this.getWorkHut().unbindWorker(this);
-            }
+            tileEntityTownHall.removeCitizen(this);
+        }
+        if(this.getHomeHut() != null)
+        {
+            this.getHomeHut().removeCitizen(this);
+        }
+        if(this.getWorkHut() != null)
+        {
+            this.getWorkHut().unbindWorker(this);
         }
         super.onDeath(par1DamageSource);
     }
