@@ -5,6 +5,7 @@ import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.network.packets.BuildRequestPacket;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -13,12 +14,12 @@ public class GuiTownHall extends GuiBase
 {
     //private final int numberOfButtons = 8; //This variable is unused - Nico
     private final int idBuildTownhall = 0, idRepairTownhall = 1, idRecallCitizens = 2, idToggleSpecialization = 3, idRenameColony = 4, idInformation = 5, idActions = 6, idSettings = 7;
-    private TileEntityTownHall tileEntityTownHall;
-    private int buttonSpan = 4, span = 30;
+    protected TileEntityTownHall tileEntityTownHall;
+    protected int span = 30;
 
-    private EntityPlayer player;
-    private World        world;
-    private int          x, y, z;
+    protected EntityPlayer player;
+    protected World        world;
+    protected int          x, y, z;
 
     public GuiTownHall(TileEntityTownHall tileEntityTownHall, EntityPlayer player, World world, int x, int y, int z)
     {
@@ -36,6 +37,11 @@ public class GuiTownHall extends GuiBase
     {
         super.addElements();
 
+        addTownHallElements();
+    }
+
+    protected void addTownHallElements()
+    {
         String currentSpec = LanguageHandler.format("com.minecolonies.gui.townhall.currentSpecialization");
         String spec = "<Industrial>"; //TODO replace with actual specialisation
         String currentTownhallName = LanguageHandler.format("com.minecolonies.gui.townhall.currTownhallName");
@@ -62,7 +68,8 @@ public class GuiTownHall extends GuiBase
 
         //Bottom navigation
         addButton(idInformation, LanguageHandler.format("com.minecolonies.gui.workerHuts.information"), middleX - 76, middleY + ySize - 34, 64, buttonHeight);
-        addButton(idActions, LanguageHandler.format("com.minecolonies.gui.townhall.actions"), middleX - 10, middleY + ySize - 34, 44, buttonHeight);
+        GuiButton actionsButton = addButton(idActions, LanguageHandler.format("com.minecolonies.gui.townhall.actions"), middleX - 10, middleY + ySize - 34, 44, buttonHeight);
+        actionsButton.enabled = false;
         addButton(idSettings, LanguageHandler.format("com.minecolonies.gui.workerHuts.settings"), middleX + xSize / 2 - 50, middleY + ySize - 34, 46, buttonHeight);
     }
 
@@ -85,6 +92,7 @@ public class GuiTownHall extends GuiBase
                 player.openGui(MineColonies.instance, EnumGUI.TOWNHALL_RENAME.getID(), world, x, y, z);
                 break;
             case idInformation:
+                FMLCommonHandler.instance().showGuiScreen(new GuiTownHallInfo(tileEntityTownHall, player, world, x, y, z));
                 break;
             case idActions:
                 break;

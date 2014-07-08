@@ -36,16 +36,17 @@ public class GuiBase extends GuiScreen
         iconList.clear();
     }
 
-    protected void addButton(int id, String text, int x, int y, int w, int h)
+    protected GuiButton addButton(int id, String text, int x, int y, int w, int h)
     {
-        addButton(id, text, x, y, w, h, true);
+        return addButton(id, text, x, y, w, h, true);
     }
 
-    protected void addButton(int id, String text, int x, int y, int w, int h, boolean visible)
+    protected GuiButton addButton(int id, String text, int x, int y, int w, int h, boolean visible)
     {
         GuiButton button = new GuiButton(id, x, y, w, h, text);
         button.visible = visible;
         buttonList.add(id, button);
+        return button;
     }
 
     protected void addLabel(String text, int x, int y)
