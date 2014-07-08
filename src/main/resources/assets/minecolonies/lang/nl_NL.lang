@@ -15,8 +15,8 @@ com.minecolonies.gui.townhall.rename.done=Klaar
 com.minecolonies.gui.townhall.rename.title=Hernoem Je Kolonie
 com.minecolonies.gui.townhall.defaultName=%s zijn Kolonie
 
-com.minecolonies.gui.workerHuts.buildersHut=Bouwvakker Huis
-com.minecolonies.gui.workerHuts.deliverymansHut=Bezorger Huis
+com.minecolonies.gui.workerHuts.buildersHut=Bouwvakkershuis
+com.minecolonies.gui.workerHuts.deliverymansHut=Bezorgershuis
 com.minecolonies.gui.workerHuts.workerAssigned=Werker Toegewezen:
 com.minecolonies.gui.workerHuts.workerLevel=Werker Level:
 com.minecolonies.gui.workerHuts.hire=Huur Werker
@@ -33,23 +33,23 @@ com.minecolonies.gui.deliverymanHut.toStonemason=Bezorg aan Steenhouwer:
 com.minecolonies.gui.deliverymanHut.toGuards=Bezorg aan Bewaker:
 com.minecolonies.gui.deliverymanHut.visitCitizenChests=Bezoek Burgerkisten:
 
-tile.blockHutCitizen.name=Burger's Huis
+tile.blockHutCitizen.name=Woning
 tile.blockHutBaker.name=Bakker
 tile.blockHutBlacksmith.name=Smederij
-tile.blockHutBuilder.name=Bouwvakker's Huis
+tile.blockHutBuilder.name=Bouwvakkershuis
 tile.blockHutWarehouse.name=Warenhuis
 tile.blockHutFarmer.name=Boerderij
-tile.blockHutLumberjack.name=Houthakker's Huis
-tile.blockHutMiner.name=Mijner's Huis
-tile.blockHutStonemason.name=Steenhouwer's Huis
+tile.blockHutLumberjack.name=Houthakkershuis
+tile.blockHutMiner.name=Mijn
+tile.blockHutStonemason.name=Steenhouwerhuis
 tile.blockHutTownhall.name=Stadhuis
 tile.blockHut.messageNoPermission=Je hebt geen toestemming om huizen te openen in %s.
 
-tile.blockHutTownhall.messageMaxSize=De Kolonie heeft zijn maximale grootte bereikt
+tile.blockHutTownhall.messageMaxSize=De Kolonie heeft zijn maximale grootte bereikt.
 tile.blockHutTownhall.messageColonistDead=Een burger is gestorven!
-tile.blockHutTownhall.messagePlacedAlready=Je hebt al een Stadhuis geplaatst
-tile.blockHutTownhall.messageInvalidWorld=Je kan geen Stadhuis bouwen in dit wereldtype
-tile.blockHutTownhall.messageTooClose=Te dichtbij een ander Stadhuis
+tile.blockHutTownhall.messagePlacedAlready=Je hebt al een Stadhuis geplaatst.
+tile.blockHutTownhall.messageInvalidWorld=Je kan geen Stadhuis bouwen in dit wereldtype.
+tile.blockHutTownhall.messageTooClose=Te dichtbij een ander Stadhuis.
 
 tile.blockHut.messageTooFarFromTownhall=Je moet dichter bij je Stadhuis zijn!
 tile.blockHut.messageNoTownhall=Je moet eerst een Stadhuis plaatsen!
@@ -61,13 +61,13 @@ item.caliper.name=Caliper
 
 item.supplyChestDeployer.invalid=Je moet dicht bij een groot stuk water zijn!
 
-item.scepterSteel.point=Punt één opgeslagen
-item.scepterSteel.point2=Punt twee opgeslagen, klik rechts om de schematic op te slaan
-item.scepterSteel.samePoint=Dat was hetzelfde punt
+item.scepterSteel.point=Punt Ã©Ã©n opgeslagen.
+item.scepterSteel.point2=Punt twee opgeslagen, klik rechts om de schematic op te slaan.
+item.scepterSteel.samePoint=Dat was hetzelfde punt!
 item.scepterSteel.scanFormat=SCAN_%s-%s.schematic
 item.scepterSteel.scanSuccess=Scan succesvol opgeslagen als %s
-item.scepterSteel.scanFailure=Scan niet opgeslagen
-item.scepterSteel.invalidMethod=Ongeldige method call, contacteer een ontwikkelaar
+item.scepterSteel.scanFailure=Scan niet opgeslagen.
+item.scepterSteel.invalidMethod=Ongeldige method call, contacteer een ontwikkelaar.
 
 item.caliper.message.same=Dat is hetzelfde blok.
 item.caliper.message.line=Dat is een %d blok(ken) lange lijn.
