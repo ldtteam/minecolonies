@@ -175,7 +175,6 @@ public class TileEntityTownHall extends TileEntityHut
 
         NBTTagList nbtTagOwnersList = nbtTagCompound.getTagList("owners", NBT.TAG_COMPOUND);
         NBTTagList nbtTagCitizenList = nbtTagCompound.getTagList("citizens", NBT.TAG_COMPOUND);
-        NBTTagList nbtTagBuildersList = nbtTagCompound.getTagList("builders", NBT.TAG_COMPOUND);
         NBTTagList nbtTagBuildingsList = nbtTagCompound.getTagList("huts", NBT.TAG_INT_ARRAY);
         NBTTagList nbtTagBuilderRequiredList = nbtTagCompound.getTagList("builderRequired", NBT.TAG_COMPOUND);
         this.owners.clear();
