@@ -22,7 +22,6 @@ public class TileEntityTownHall extends TileEntityHut
 
     private int maxCitizens;
     private List<UUID>  citizens = new ArrayList<UUID>();
-    private List<UUID>  builders = new ArrayList<UUID>();
     private List<int[]> huts     = new ArrayList<int[]>(); //Stores XYZ's
 
     private Map<int[], String> builderRequired = new HashMap<int[], String>(); //Stores XYZ's //TODO make this a Vec3
@@ -140,13 +139,6 @@ public class TileEntityTownHall extends TileEntityHut
             nbtTagCitizenCompound.setString("citizen", citizen.toString());
             nbtTagCitizenList.appendTag(nbtTagCitizenCompound);
         }
-        NBTTagList nbtTagBuilderList = new NBTTagList();
-        for(UUID builder : getBuilders())
-        {
-            NBTTagCompound nbtTagBuilderCompound = new NBTTagCompound();
-            nbtTagBuilderCompound.setString("builder", builder.toString());
-            nbtTagBuilderList.appendTag(nbtTagBuilderCompound);
-        }
         if(!huts.isEmpty())
         {
             NBTTagList nbtTagBuildingsList = new NBTTagList();
@@ -170,7 +162,6 @@ public class TileEntityTownHall extends TileEntityHut
             }
             nbtTagCompound.setTag("builderRequired", nbtTagBuildingsList);
         }
-        nbtTagCompound.setTag("builders", nbtTagBuilderList);
         nbtTagCompound.setTag("citizens", nbtTagCitizenList);
         nbtTagCompound.setTag("owners", nbtTagOwnersList);
     }
@@ -189,7 +180,6 @@ public class TileEntityTownHall extends TileEntityHut
         NBTTagList nbtTagBuilderRequiredList = nbtTagCompound.getTagList("builderRequired", NBT.TAG_COMPOUND);
         this.owners.clear();
         this.citizens.clear();
-        this.builders.clear();
         this.huts.clear();
         this.builderRequired.clear();
         for(int i = 0; i < nbtTagOwnersList.tagCount(); i++)
@@ -203,12 +193,6 @@ public class TileEntityTownHall extends TileEntityHut
             NBTTagCompound nbtTagCitizenCompound = nbtTagCitizenList.getCompoundTagAt(i);
             UUID uuid = UUID.fromString(nbtTagCitizenCompound.getString("citizen"));
             citizens.add(uuid);
-        }
-        for(int i = 0; i < nbtTagBuildersList.tagCount(); i++)
-        {
-            NBTTagCompound nbtTagBuilderCompound = nbtTagBuildersList.getCompoundTagAt(i);
-            UUID uuid = UUID.fromString(nbtTagBuilderCompound.getString("builder"));
-            builders.add(uuid);
         }
         for(int i = 0; i < nbtTagBuildingsList.tagCount(); i++)
         {
@@ -250,10 +234,6 @@ public class TileEntityTownHall extends TileEntityHut
     {
         citizen.setTownHall(this);
         citizens.add(citizen.getUniqueID());
-        if (citizen instanceof EntityBuilder)
-        {
-            builders.add(citizen.getUniqueID());
-        }
     }
 
     public void removeCitizen(EntityCitizen citizen)
@@ -266,34 +246,11 @@ public class TileEntityTownHall extends TileEntityHut
                 return;
             }
         }
-        if (citizen instanceof EntityBuilder)
-        {
-            for(UUID id : builders)
-            {
-                if(citizen.getUniqueID().equals(id))
-                {
-                    builders.remove(id);
-                    return;
-                }
-            }
-        }
     }
 
     public List<UUID> getCitizens()
     {
         return citizens;
-    }
-
-    public List<UUID> getWorkers()
-    {
-        List<UUID> workers = new ArrayList<UUID>();
-        workers.addAll(builders);
-        return workers;
-    }
-
-    public List<UUID> getBuilders()
-    {
-        return builders;
     }
 
     public int getMaxCitizens()
