@@ -1,5 +1,6 @@
 package com.minecolonies.lib;
 
+import com.minecolonies.network.GuiHandler;
 import com.minecolonies.tileentities.*;
 import net.minecraft.tileentity.TileEntity;
 
@@ -10,20 +11,26 @@ import net.minecraft.tileentity.TileEntity;
  */
 public enum EnumGUI
 {
-    TOWNHALL(0),
-    TOWNHALL_RENAME(1),
-    BUILDER(2),
-    WAREHOUSE(3),
-    WAREHOUSE_SETTINGS(4),
-    BAKER(5),
-    BLACKSMITH(6),
-    CITIZEN(7),
-    FARMER(8),
-    LUMBERJACK(9),
-    MINER(10),
-    STONEMASON(11);
+    TOWNHALL,
+    TOWNHALL_RENAME,
+    TOWNHALL_INFORMATION,
+    BUILDER,
+    WAREHOUSE,
+    WAREHOUSE_SETTINGS,
+    BAKER,
+    BLACKSMITH,
+    CITIZEN,
+    FARMER,
+    LUMBERJACK,
+    MINER,
+    STONEMASON;
 
     private final int id;
+
+    EnumGUI()
+    {
+        this(GuiHandler.getNextGuiId());
+    }
 
     EnumGUI(int id)
     {

@@ -8,7 +8,6 @@ import com.minecolonies.network.packets.BuildRequestPacket;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -127,7 +126,7 @@ public class GuiTownHall extends GuiBase
         switch(guiButton.id)
         {
             case idInformation:
-                FMLCommonHandler.instance().showGuiScreen(new GuiTownHall(tileEntityTownHall, player, world, x, y, z, idInformation));
+                player.openGui(MineColonies.instance, EnumGUI.TOWNHALL_INFORMATION.getID(), world, x, y, z);
                 break;
             case idActions:
                 player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
