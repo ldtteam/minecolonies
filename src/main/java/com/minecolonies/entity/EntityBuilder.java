@@ -53,7 +53,11 @@ public class EntityBuilder extends EntityCitizen
     @Override
     public void setTexture()
     {
-        texture = new ResourceLocation(Constants.MODID + ":textures/entity/EntityBuilder.png");
+        String textureBase = "textures/entity/EntityBuilder";
+
+        textureBase += getSex() == 0 ? "Male" : "Female";
+
+        texture = new ResourceLocation(Constants.MODID, textureBase + ".png");
     }
 
     @Override
