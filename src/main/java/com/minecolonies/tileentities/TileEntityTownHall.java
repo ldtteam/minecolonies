@@ -1,6 +1,7 @@
 package com.minecolonies.tileentities;
 
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;

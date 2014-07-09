@@ -16,6 +16,10 @@ com.minecolonies.gui.townhall.rename.done=Done
 com.minecolonies.gui.townhall.rename.title=Rename Your Colony
 com.minecolonies.gui.townhall.defaultName=%s's Colony
 
+com.minecolonies.gui.townhall.population.totalCitizens=Number of Citizens:
+com.minecolonies.gui.townhall.population.unemployed=Unemployed:
+com.minecolonies.gui.townhall.population.builders=Builders:
+
 com.minecolonies.gui.workerHuts.buildersHut=Builders Hut
 com.minecolonies.gui.workerHuts.deliverymansHut=Deliverymans Hut
 com.minecolonies.gui.workerHuts.workerAssigned=Worker Assigned:

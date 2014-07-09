@@ -16,6 +16,13 @@ import net.minecraft.world.World;
 
 public class GuiHandler implements IGuiHandler
 {
+    private static int nextGuiId = 0;
+
+    public static int getNextGuiId()
+    {
+        return nextGuiId++;
+    }
+
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
@@ -42,6 +49,8 @@ public class GuiHandler implements IGuiHandler
                 return new GuiTownHall((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
             case TOWNHALL_RENAME:
                 return new GuiTypable((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
+            case TOWNHALL_INFORMATION:
+                return new GuiTownHall((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z, GuiTownHall.idInformation);
             case BUILDER:
                 return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z), player, world, x, y, z);
             case WAREHOUSE:

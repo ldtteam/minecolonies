@@ -205,7 +205,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onDeath(DamageSource par1DamageSource)
     {
-        if(this.getTownHall() != null)
+        if(this.getTownHall() != null && this.getTownHall().getCitizens().contains(this.getUniqueID()))
         {
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, tileEntityTownHall.getOwners()), "tile.blockHutTownhall.messageColonistDead");
 
