@@ -88,6 +88,37 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return "Citizen";
     }
 
+    public void setTexture()
+    {
+        String textureBase = "textures/entity/";
+        if(this.getJob().equals("Citizen"))
+        {
+            switch(getLevel())
+            {
+                case 0:
+                    textureBase += "Settler";
+                    break;
+                case 1:
+                    textureBase += "Citizen";
+                    break;
+                case 2:
+                    textureBase += "Noble";
+                    break;
+                case 3:
+                    textureBase += "Aristocrat";
+                    break;
+            }
+        }
+        else
+        {
+            textureBase += this.getJob();
+        }
+
+        textureBase += getSex() == SEX_MALE ? "Male" : "Female";
+
+        texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
+    }
+
     @Override
     public boolean isAIEnabled()
     {
@@ -152,37 +183,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             this.getWorkHut().unbindWorker(this);
         }
         super.onDeath(par1DamageSource);
-    }
-
-    public void setTexture()
-    {
-        String textureBase = "textures/entity/";
-        if(this.getJob().equals("Citizen"))
-        {
-            switch(getLevel())
-            {
-                case 0:
-                    textureBase += "Settler";
-                    break;
-                case 1:
-                    textureBase += "Citizen";
-                    break;
-                case 2:
-                    textureBase += "Noble";
-                    break;
-                case 3:
-                    textureBase += "Aristocrat";
-                    break;
-            }
-        }
-        else
-        {
-            textureBase += this.getJob();
-        }
-
-        textureBase += getSex() == SEX_MALE ? "Male" : "Female";
-
-        texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
     }
 
     public int getTextureID()
