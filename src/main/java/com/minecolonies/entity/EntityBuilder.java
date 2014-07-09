@@ -51,13 +51,9 @@ public class EntityBuilder extends EntityCitizen
     }
 
     @Override
-    public void setTexture()
+    public int getTextureID()//TODO remove method once more textures are added
     {
-        String textureBase = "textures/entity/EntityBuilder";
-
-        textureBase += getSex() == 0 ? "Male" : "Female";
-
-        texture = new ResourceLocation(Constants.MODID, textureBase + ".png");
+        return 1;
     }
 
     @Override
