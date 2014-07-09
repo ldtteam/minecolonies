@@ -32,6 +32,9 @@ import static net.minecraftforge.common.util.Constants.NBT;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
+    public static final int SEX_MALE = 0;
+    public static final int SEX_FEMALE = 1;
+
     public  ResourceLocation texture;
     private String           job;
     private InventoryCitizen inventory;
@@ -89,25 +92,31 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public void setTexture()
     {
-        String textureBase = "textures/entity/Entity";
-        /*switch(getLevel())
+        String textureBase = "textures/entity/";
+        if(this.getJob().equals("Citizen"))
         {
-            case 0:
-                textureBase += "Settler";
-                break;
-            case 1:
-                textureBase += "Citizen";
-                break;
-            case 2:
-                textureBase += "Noble";
-                break;
-            case 3:
-                textureBase += "Aristocrat";
-                break;
-        }*/
-        textureBase += "Citizen";
+            switch(getLevel())
+            {
+                case 0:
+                    textureBase += "Settler";
+                    break;
+                case 1:
+                    textureBase += "Citizen";
+                    break;
+                case 2:
+                    textureBase += "Noble";
+                    break;
+                case 3:
+                    textureBase += "Aristocrat";
+                    break;
+            }
+        }
+        else
+        {
+            textureBase += this.getJob();
+        }
 
-        textureBase += getSex() == 0 ? "Male" : "Female";
+        textureBase += getSex() == SEX_MALE ? "Male" : "Female";
 
         texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
     }
@@ -447,7 +456,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         vecCompound.setInteger("x", (int) vec.xCoord);
         vecCompound.setInteger("y", (int) vec.yCoord);
         vecCompound.setInteger("z", (int) vec.zCoord);
-        compound.setTag("name", vecCompound);
+        compound.setTag(name, vecCompound);
     }
 
     public Vec3 readVecFromNBT(NBTTagCompound compound, String name)

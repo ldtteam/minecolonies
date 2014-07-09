@@ -51,9 +51,9 @@ public class EntityBuilder extends EntityCitizen
     }
 
     @Override
-    public void setTexture()
+    public int getTextureID()//TODO remove method once more textures are added
     {
-        texture = new ResourceLocation(Constants.MODID + ":textures/entity/EntityBuilder.png");
+        return 1;
     }
 
     @Override

@@ -7,12 +7,11 @@ import net.minecraft.util.MathHelper;
 
 public class ModelEntityCitizenFemaleCitizen extends ModelBiped
 {
-    // fields
-    ModelRenderer Breast;
-    ModelRenderer Hairs;
-    ModelRenderer DressPart3;
-    ModelRenderer DressPart2;
-    ModelRenderer DressPart1;
+    ModelRenderer breast;
+    ModelRenderer hair;
+    ModelRenderer dressPart1;
+    ModelRenderer dressPart2;
+    ModelRenderer dressPart3;
 
     public ModelEntityCitizenFemaleCitizen()
     {
@@ -64,35 +63,35 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         bipedLeftLeg.setTextureSize(64, 64);
         setRotation(bipedLeftLeg, 0F, 0F, 0F);
 
-        Breast = new ModelRenderer(this, 0, 33);
-        Breast.addBox(-3F, 0F, -2F, 8, 4, 3);
-        Breast.setRotationPoint(-1F, 3F, 1F);
-        Breast.setTextureSize(64, 64);
-        setRotation(Breast, -0.5235988F, 0F, 0F);
+        breast = new ModelRenderer(this, 0, 33);
+        breast.addBox(-3F, 0F, -2F, 8, 4, 3);
+        breast.setRotationPoint(-1F, 3F, 1F);
+        breast.setTextureSize(64, 64);
+        setRotation(breast, -0.5235988F, 0F, 0F);
 
-        Hairs = new ModelRenderer(this, 46, 17);
-        Hairs.addBox(-4F, 0F, 3F, 8, 7, 1, 0.5F);
-        Hairs.setRotationPoint(0F, 0F, 1F);
-        Hairs.setTextureSize(64, 64);
-        setRotation(Hairs, 0F, 0F, 0F);
+        hair = new ModelRenderer(this, 46, 17);
+        hair.addBox(-4F, 0F, 3F, 8, 7, 1, 0.5F);
+        hair.setRotationPoint(0F, 0F, 1F);
+        hair.setTextureSize(64, 64);
+        setRotation(hair, 0F, 0F, 0F);
 
-        DressPart3 = new ModelRenderer(this, 26, 46);
-        DressPart3.addBox(-5F, 2F, -4F, 10, 9, 9);
-        DressPart3.setRotationPoint(0F, 11F, 0F);
-        DressPart3.setTextureSize(64, 64);
-        setRotation(DressPart3, 0F, 0F, 0F);
+        dressPart1 = new ModelRenderer(this, 26, 46);
+        dressPart1.addBox(-5F, 2F, -4F, 10, 9, 9);
+        dressPart1.setRotationPoint(0F, 11F, 0F);
+        dressPart1.setTextureSize(64, 64);
+        setRotation(dressPart1, 0F, 0F, 0F);
 
-        DressPart2 = new ModelRenderer(this, 28, 38);
-        DressPart2.addBox(-5F, 1F, -3F, 10, 1, 7);
-        DressPart2.setRotationPoint(0F, 11F, 0F);
-        DressPart2.setTextureSize(64, 64);
-        setRotation(DressPart2, 0F, 0F, 0F);
+        dressPart2 = new ModelRenderer(this, 28, 38);
+        dressPart2.addBox(-5F, 1F, -3F, 10, 1, 7);
+        dressPart2.setRotationPoint(0F, 11F, 0F);
+        dressPart2.setTextureSize(64, 64);
+        setRotation(dressPart2, 0F, 0F, 0F);
 
-        DressPart1 = new ModelRenderer(this, 32, 32);
-        DressPart1.addBox(-4F, 0F, -2F, 8, 1, 5);
-        DressPart1.setRotationPoint(0F, 11F, 0F);
-        DressPart1.setTextureSize(64, 64);
-        setRotation(DressPart1, 0F, 0F, 0F);
+        dressPart3 = new ModelRenderer(this, 32, 32);
+        dressPart3.addBox(-4F, 0F, -2F, 8, 1, 5);
+        dressPart3.setRotationPoint(0F, 11F, 0F);
+        dressPart3.setTextureSize(64, 64);
+        setRotation(dressPart3, 0F, 0F, 0F);
     }
 
     @Override
@@ -106,11 +105,11 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         bipedRightArm.render(f5);
         bipedRightLeg.render(f5);
         bipedLeftLeg.render(f5);
-        Breast.render(f5);
-        Hairs.render(f5);
-        DressPart3.render(f5);
-        DressPart2.render(f5);
-        DressPart1.render(f5);
+        breast.render(f5);
+        hair.render(f5);
+        dressPart1.render(f5);
+        dressPart2.render(f5);
+        dressPart3.render(f5);
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z)
@@ -127,8 +126,8 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         bipedHead.rotateAngleX = f4 / 57.29578F;
         bipedHeadwear.rotateAngleY = bipedHead.rotateAngleY;
         bipedHeadwear.rotateAngleX = bipedHead.rotateAngleX;
-        Hairs.rotateAngleY = bipedHead.rotateAngleY;
-        Hairs.rotateAngleX = bipedHead.rotateAngleX;
+        hair.rotateAngleY = bipedHead.rotateAngleY;
+        hair.rotateAngleX = bipedHead.rotateAngleX;
 
         bipedRightArm.rotateAngleX = MathHelper.cos((float) (f * 0.6662F + Math.PI)) * 2.0F * f1 * 0.5F;
         bipedLeftArm.rotateAngleX = MathHelper.cos(f * 0.6662F) * 2.0F * f1 * 0.5F;
@@ -153,11 +152,10 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         {
             float f6 = onGround;
             bipedBody.rotateAngleY = MathHelper.sin((float) (MathHelper.sqrt_float(f6) * Math.PI * 2.0F)) * 0.2F;
-            Breast.rotateAngleY = MathHelper.sin((float) (MathHelper.sqrt_float(f6) * Math.PI * 2.0F)) * 0.2F;
+            breast.rotateAngleY = MathHelper.sin((float) (MathHelper.sqrt_float(f6) * Math.PI * 2.0F)) * 0.2F;
             bipedRightArm.rotationPointZ = MathHelper.sin(bipedBody.rotateAngleY) * 5F;
             bipedRightArm.rotationPointX = -MathHelper.cos(bipedBody.rotateAngleY) * 5F;
             bipedLeftArm.rotationPointZ = -MathHelper.sin(bipedBody.rotateAngleY) * 5F;
-            // LeftArm.rotationPointX = MathHelper.cos(Body.rotateAngleY) * 5F;
             bipedRightArm.rotateAngleY += bipedBody.rotateAngleY;
             bipedLeftArm.rotateAngleY += bipedBody.rotateAngleY;
             bipedLeftArm.rotateAngleX += bipedBody.rotateAngleY;//TODO If model looks funny try changing to rotateAngleX

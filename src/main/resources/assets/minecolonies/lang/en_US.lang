@@ -35,14 +35,14 @@ com.minecolonies.gui.deliverymanHut.toGuards=Deliver to Guards:
 com.minecolonies.gui.deliverymanHut.visitCitizenChests=Visit Citizenchests:
 
 tile.blockHutCitizen.name=Citizen's Hut
-tile.blockHutBaker.name=Baker's Hut
-tile.blockHutBlacksmith.name=Blacksmith's Hut
+tile.blockHutBaker.name=Bakery
+tile.blockHutBlacksmith.name=Forge
 tile.blockHutBuilder.name=Builder's Hut
-tile.blockHutWarehouse.name=Deliveryman's Hut
-tile.blockHutFarmer.name=Farmer's Hut
-tile.blockHutLumberjack.name=Lumberjack's Hut
-tile.blockHutMiner.name=Miner's Hut
-tile.blockHutStonemason.name=Stonemason's Hut
+tile.blockHutWarehouse.name=Warehouse
+tile.blockHutFarmer.name=Farm
+tile.blockHutLumberjack.name=Sawmill
+tile.blockHutMiner.name=Mine
+tile.blockHutStonemason.name=Quarry
 tile.blockHutTownhall.name=Town Hall
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
 
