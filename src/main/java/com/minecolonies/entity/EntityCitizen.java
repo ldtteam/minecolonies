@@ -1,5 +1,6 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.inventory.InventoryCitizen;
@@ -31,9 +32,6 @@ import static net.minecraftforge.common.util.Constants.NBT;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
-    public static final int SEX_MALE = 0;
-    public static final int SEX_FEMALE = 1;
-
     public  ResourceLocation texture;
     private String           job;
     private InventoryCitizen inventory;
@@ -53,6 +51,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         setSize(0.6F, 1.8F);
         this.func_110163_bv();//Set persistenceRequired = true;
         setTexture();
+        this.setCustomNameTag(generateName());
         this.job = initJob();
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
 
@@ -90,33 +89,51 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public void setTexture()
     {
-        String textureBase = "textures/entity/";
-        if(this.getJob().equals("Citizen"))
+        String textureBase = "textures/entity/Entity";
+        /*switch(getLevel())
         {
-            switch(getLevel())
-            {
-                case 0:
-                    textureBase += "Settler";
-                    break;
-                case 1:
-                    textureBase += "Citizen";
-                    break;
-                case 2:
-                    textureBase += "Noble";
-                    break;
-                case 3:
-                    textureBase += "Aristocrat";
-                    break;
-            }
+            case 0:
+                textureBase += "Settler";
+                break;
+            case 1:
+                textureBase += "Citizen";
+                break;
+            case 2:
+                textureBase += "Noble";
+                break;
+            case 3:
+                textureBase += "Aristocrat";
+                break;
+        }*/
+        textureBase += "Citizen";
+
+        textureBase += getSex() == 0 ? "Male" : "Female";
+
+        texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
+    }
+
+    private String generateName()
+    {
+        String firstName;
+        if(getSex() == 0)
+        {
+            firstName = getRandomElement(Configurations.maleFirstNames);
         }
         else
         {
-            textureBase += this.getJob();
+            firstName = getRandomElement(Configurations.femaleFirstNames);
         }
+        return String.format("%s %s. %s", firstName, getRandomLetter(), getRandomElement(Configurations.lastNames));
+    }
 
-        textureBase += getSex() == SEX_MALE ? "Male" : "Female";
+    private String getRandomElement(String[] array)
+    {
+        return array[rand.nextInt(array.length)];
+    }
 
-        texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
+    private char getRandomLetter()
+    {
+        return (char) (rand.nextInt(26) + 'A');
     }
 
     @Override
@@ -163,6 +180,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0D);
         getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3D);
         getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(100);//path finding search range
+    }
+
+    @Override
+    public boolean interact(EntityPlayer player)
+    {
+        if(!worldObj.isRemote)
+        {
+            this.inventory.func_110133_a(this.getCustomNameTag());
+            player.displayGUIChest(this.inventory);
+        }
+        return true;
     }
 
     @Override
