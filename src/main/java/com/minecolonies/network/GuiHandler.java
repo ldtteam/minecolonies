@@ -29,7 +29,7 @@ public class GuiHandler implements IGuiHandler
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if(tileEntity instanceof TileEntityHut)
         {
-            return new ContainerHut((TileEntityHut) tileEntity, player.inventory);
+            return new ContainerHut((TileEntityHut) tileEntity, player);
         }
         switch(ID)
         {
@@ -49,15 +49,12 @@ public class GuiHandler implements IGuiHandler
                 return new GuiTownHall((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
             case TOWNHALL_RENAME:
                 return new GuiTypable((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
-            case TOWNHALL_INFORMATION:
-                return new GuiTownHall((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z, GuiTownHall.idInformation);
             case BUILDER:
                 return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z), player, world, x, y, z);
             case WAREHOUSE:
-                return new GuiHutDeliveryMan(0, player, world, x, y, z);
-            case WAREHOUSE_SETTINGS:
-                return new GuiHutDeliveryMan(1, player, world, x, y, z);
+                return new GuiHutDeliveryMan(player, world, x, y, z);
+            default:
+                return null;
         }
-        return null;
     }
 }

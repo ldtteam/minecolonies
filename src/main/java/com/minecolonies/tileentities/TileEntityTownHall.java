@@ -1,11 +1,11 @@
 package com.minecolonies.tileentities;
 
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -25,6 +25,8 @@ public class TileEntityTownHall extends TileEntityHut
     private List<int[]> huts     = new ArrayList<int[]>(); //Stores XYZ's
 
     private Map<int[], String> builderRequired = new HashMap<int[], String>(); //Stores XYZ's //TODO make this a Vec3
+
+    private List<Integer> entityIDs = new ArrayList<Integer>();
 
     public TileEntityTownHall()
     {
@@ -164,6 +166,20 @@ public class TileEntityTownHall extends TileEntityHut
         }
         nbtTagCompound.setTag("citizens", nbtTagCitizenList);
         nbtTagCompound.setTag("owners", nbtTagOwnersList);
+
+        if(!worldObj.isRemote && !this.getCitizens().isEmpty())
+        {
+            List<Entity> entities = Utils.getEntitiesFromUUID(worldObj, this.getCitizens());
+
+            NBTTagList nbtTagList = new NBTTagList();
+            for(Entity entity : entities)
+            {
+                NBTTagCompound nbtTagCompoundEntityID = new NBTTagCompound();
+                nbtTagCompoundEntityID.setInteger("id", entity.getEntityId());
+                nbtTagList.appendTag(nbtTagCompoundEntityID);
+            }
+            nbtTagCompound.setTag("EntityIDs", nbtTagList);
+        }
     }
 
     @Override
@@ -205,6 +221,18 @@ public class TileEntityTownHall extends TileEntityHut
             int[] coords = nbtTagBuilderRequiredCompound.getIntArray("coords");
             String name = nbtTagBuilderRequiredCompound.getString("name");
             builderRequired.put(coords, name);
+        }
+
+        if(nbtTagCompound.hasKey("EntityIDs"))
+        {
+            entityIDs.clear();
+            NBTTagList nbtList = nbtTagCompound.getTagList("EntityIDs", NBT.TAG_COMPOUND);
+
+            for(int i = 0; i < nbtList.tagCount(); i++)
+            {
+                NBTTagCompound tag = nbtList.getCompoundTagAt(i);
+                entityIDs.add(tag.getInteger("id"));
+            }
         }
     }
 
@@ -324,5 +352,10 @@ public class TileEntityTownHall extends TileEntityHut
     public Map<int[], String> getBuilderRequired()
     {
         return builderRequired;
+    }
+
+    public List<Integer> getEntityIDs()
+    {
+        return entityIDs;
     }
 }
