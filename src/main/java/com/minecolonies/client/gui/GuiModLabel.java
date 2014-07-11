@@ -5,13 +5,9 @@ import net.minecraft.client.gui.FontRenderer;
 
 public class GuiModLabel
 {
-    protected String text;
-    protected int    x, y, color;
-
-    public GuiModLabel(String text, int x, int y)
-    {
-        this(text, x, y, 0x000000);
-    }
+    private final String text;
+    private final int    x, y;
+    private int color;
 
     public GuiModLabel(String text, int x, int y, int color)
     {

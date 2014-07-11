@@ -4,7 +4,6 @@ import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -59,7 +58,7 @@ public class ContainerHut extends Container //ContainerChest in future
                 Utils.getEntitiesFromUUID(player.worldObj, ((TileEntityTownHall) hut).getCitizens());
                 Packet packet = hut.getDescriptionPacket();
 
-                if (packet != null)
+                if(packet != null)
                 {
                     player.playerNetServerHandler.sendPacket(packet);
                 }

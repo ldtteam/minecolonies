@@ -8,8 +8,8 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiModIcon
 {
-    protected int x, y;
-    protected ItemStack itemStack;
+    private final int x, y;
+    private final ItemStack itemStack;
 
     public GuiModIcon(ItemStack itemStack, int x, int y)
     {

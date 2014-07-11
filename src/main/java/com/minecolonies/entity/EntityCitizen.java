@@ -32,7 +32,7 @@ import static net.minecraftforge.common.util.Constants.NBT;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
-    public static final int SEX_MALE = 0;
+    public static final int SEX_MALE   = 0;
     public static final int SEX_FEMALE = 1;
 
     public  ResourceLocation texture;

@@ -14,15 +14,13 @@ import org.lwjgl.input.Keyboard;
 
 public class GuiTypable extends GuiScreen
 {
-    private TileEntityTownHall tileEntityTownHall;
+    private final TileEntityTownHall tileEntityTownHall;
     private       GuiTextField guiTextField = null;
     private final String       title        = LanguageHandler.format("com.minecolonies.gui.townhall.rename.title");
-    private String       newCityName;
-    private EntityPlayer player;
-    private World        world;
-    private int          x;
-    private int          y;
-    private int          z;
+    private       String       newCityName;
+    private final EntityPlayer player;
+    private final World        world;
+    private final int          x, y, z;
 
     public GuiTypable(TileEntityTownHall tileEntityTownHall, EntityPlayer player, World world, int x, int y, int z)
     {
