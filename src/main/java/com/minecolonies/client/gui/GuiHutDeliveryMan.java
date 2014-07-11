@@ -1,7 +1,5 @@
 package com.minecolonies.client.gui;
 
-import com.minecolonies.MineColonies;
-import com.minecolonies.network.packets.BuildRequestPacket;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,27 +11,19 @@ import net.minecraft.world.World;
 public class GuiHutDeliveryMan extends GuiBase
 {
     //IDs for Information
-    private final int idSettings = 5;
+    private final int BUTTON_SETTINGS = 4;
 
     //IDs for Settings
-    private final int idGoldToBlacksmith = 0, idDiamondToBlacksmith = 1, idStoneToStonemason = 2, idSandToStonemason = 3, idNetherrackToStonemason = 4, idQuartzToStonemason = 5, idArmorToGuards = 6, idWeaponToGuards = 7, idVisitCitizenChests = 8, idInformation = 9;
+    private final int BUTTON_BLACKSMITH_GOLD = 0, BUTTON_BLACKSMITH_DIAMOND = 1, BUTTON_STONEMASON_STONE = 2, BUTTON_STONEMASON_SAND = 3, BUTTON_STONEMASON_NETHERRACK = 4, BUTTON_STONEMASON_QUARTZ = 5, BUTTON_GUARD_ARMOR = 6, BUTTON_GUARD_WEAPON = 7, BUTTON_CITIZEN = 8, BUTTON_INFORMATION = 9;
 
-    protected EntityPlayer player;
-    protected World        world;
-    protected int          x, y, z;
-    private int span = 4;
-    private int page = 0;
+    private final int span = 4;
 
     private final int PAGE_INFORMATION = 0, PAGE_SETTINGS = 1;
+    private int page = PAGE_INFORMATION;
 
     public GuiHutDeliveryMan(EntityPlayer player, World world, int x, int y, int z)
     {
-        super();
-        this.player = player;
-        this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        super(player, world, x, y, z);
     }
 
     private void addDeliverySettingElements()
@@ -52,44 +42,44 @@ public class GuiHutDeliveryMan extends GuiBase
         String toGuards = LanguageHandler.format("com.minecolonies.gui.deliverymanHut.toGuards");
         String visitCitizenChests = LanguageHandler.format("com.minecolonies.gui.deliverymanHut.visitCitizenChests");
 
-        addLabel(toBlacksmith, middleX - fontRendererObj.getStringWidth(toBlacksmith) / 2, y + textPaddTop);
+        addCenteredLabel(toBlacksmith, y + textPaddTop);
         y += buttonHeight;
 
         addIcon(new ItemStack(Items.gold_ingot, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(idGoldToBlacksmith, no, xl, y, smallButton, buttonHeight);
+        addButton(BUTTON_BLACKSMITH_GOLD, no, xl, y, smallButton, buttonHeight);
         addIcon(new ItemStack(Items.diamond, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(idDiamondToBlacksmith, no, xr, y, smallButton, buttonHeight);
+        addButton(BUTTON_BLACKSMITH_DIAMOND, no, xr, y, smallButton, buttonHeight);
         y += buttonHeight + buttonSpan + 1;
 
-        addLabel(toStonemason, middleX - fontRendererObj.getStringWidth(toStonemason) / 2, y + textPaddTop);
+        addCenteredLabel(toStonemason, y + textPaddTop);
         y += buttonHeight;
 
         addIcon(new ItemStack(Blocks.cobblestone, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(idStoneToStonemason, yes, xl, y, smallButton, buttonHeight);
+        addButton(BUTTON_STONEMASON_STONE, yes, xl, y, smallButton, buttonHeight);
         addIcon(new ItemStack(Blocks.sand, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(idSandToStonemason, no, xr, y, smallButton, buttonHeight);
+        addButton(BUTTON_STONEMASON_SAND, no, xr, y, smallButton, buttonHeight);
         y += buttonHeight + buttonSpan;
 
         addIcon(new ItemStack(Blocks.netherrack, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(idNetherrackToStonemason, yes, xl, y, smallButton, buttonHeight);
+        addButton(BUTTON_STONEMASON_NETHERRACK, yes, xl, y, smallButton, buttonHeight);
         addIcon(new ItemStack(Items.quartz, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(idQuartzToStonemason, no, xr, y, smallButton, buttonHeight);
+        addButton(BUTTON_STONEMASON_QUARTZ, no, xr, y, smallButton, buttonHeight);
         y += buttonHeight + buttonSpan + 1;
 
-        addLabel(toGuards, middleX - fontRendererObj.getStringWidth(toGuards) / 2, y + textPaddTop);
+        addCenteredLabel(toGuards, y + textPaddTop);
         y += buttonHeight;
 
         addIcon(new ItemStack(Items.iron_chestplate, 1), xl - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(idArmorToGuards, no, xl, y, smallButton, buttonHeight);
+        addButton(BUTTON_GUARD_ARMOR, no, xl, y, smallButton, buttonHeight);
         addIcon(new ItemStack(Items.iron_sword, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(idWeaponToGuards, no, xr, y, smallButton, buttonHeight);
+        addButton(BUTTON_GUARD_WEAPON, no, xr, y, smallButton, buttonHeight);
         y += buttonHeight + buttonSpan + 1;
 
-        addLabel(visitCitizenChests, middleX - fontRendererObj.getStringWidth(visitCitizenChests) / 2, y + textPaddTop);
+        addCenteredLabel(visitCitizenChests, y + textPaddTop);
         y += textPaddTop + 10;
-        addButton(idVisitCitizenChests, no, middleX - smallButton / 2, y, smallButton, buttonHeight);
+        addButton(BUTTON_CITIZEN, no, middleX - smallButton / 2, y, smallButton, buttonHeight);
 
-        addButton(idInformation, information, middleX + 2, middleY + ySize - 34, (int) (buttonWidth / 1.5), buttonHeight);
+        addButton(BUTTON_INFORMATION, information, middleX + 2, middleY + ySize - 34, (int) (buttonWidth / 1.5), buttonHeight);
 
     }
 
@@ -104,7 +94,7 @@ public class GuiHutDeliveryMan extends GuiBase
                 addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.deliverymansHut"), "John R. Jones", "xx (yy)", "xxxxxxxx", span);
 
                 String settings = LanguageHandler.format("com.minecolonies.gui.workerHuts.settings");
-                addButton(idSettings, settings, middleX - ((int) (buttonWidth / 1.5)), middleY + ySize - 34, (int) (buttonWidth / 1.5), buttonHeight);
+                addButton(BUTTON_SETTINGS, settings, middleX - ((int) (buttonWidth / 1.5)), middleY + ySize - 34, (int) (buttonWidth / 1.5), buttonHeight);
                 break;
             case PAGE_SETTINGS:
                 addDeliverySettingElements();
@@ -118,32 +108,11 @@ public class GuiHutDeliveryMan extends GuiBase
         //Actions for Information Tab
         if(page == PAGE_INFORMATION)
         {
+            super.actionPerformed(guiButton);
+
             switch(guiButton.id)
             {
-                case idHireWorker:
-                    ((GuiButton) buttonList.get(idFireWorker)).visible = true;
-                    break;
-                case idFireWorker:
-                    GuiButton hireButton = (GuiButton) buttonList.get(idHireWorker);
-                    if(hireButton.visible)
-                    {
-                        hireButton.visible = false;
-                    }
-                    else
-                    {
-                        guiButton.visible = false;
-                        hireButton.visible = true;
-                    }
-                    break;
-                case idRecallWorker:
-                    break;
-                case idBuildBuilding:
-                    MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.BUILD));
-                    break;
-                case idRepairBuilding:
-                    MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.REPAIR));
-                    break;
-                case idSettings:
+                case BUTTON_SETTINGS:
                     page = PAGE_SETTINGS;
                     addElements();
                     break;
@@ -153,9 +122,9 @@ public class GuiHutDeliveryMan extends GuiBase
         {
             switch(guiButton.id)
             {
-                case idGoldToBlacksmith:
+                case BUTTON_BLACKSMITH_GOLD:
                     break;
-                case idInformation:
+                case BUTTON_INFORMATION:
                     page = PAGE_INFORMATION;
                     addElements();
                     break;

@@ -2,7 +2,6 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityBuilder;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.network.packets.BuildRequestPacket;
 import com.minecolonies.tileentities.TileEntityTownHall;
@@ -13,31 +12,21 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GuiTownHall extends GuiBase
 {
     private final int BUTTON_INFORMATION = 0, BUTTON_ACTIONS = 1, BUTTON_SETTINGS = 2, BUTTON_BUILD = 3, BUTTON_REPAIR = 4, BUTTON_RECALL = 5, BUTTON_SPECIALIZATION_TOGGLE = 6, BUTTON_RENAME = 7;
-    protected TileEntityTownHall tileEntityTownHall;
-    protected int labelSpan = 9, span = 30;
+    private final TileEntityTownHall tileEntityTownHall;
+    private final int labelSpan = 9, span = 30;
 
-    protected EntityPlayer player;
-    protected World        world;
-    protected int          x, y, z;
-
-    private       int page         = 0;
     private final int PAGE_ACTIONS = 0, PAGE_INFORMATION = 1, PAGE_SETTINGS = 2;
+    private int page = PAGE_ACTIONS;
 
     public GuiTownHall(TileEntityTownHall tileEntityTownHall, EntityPlayer player, World world, int x, int y, int z)
     {
-        super();
+        super(player, world, x, y, z);
         this.tileEntityTownHall = tileEntityTownHall;
-        this.player = player;
-        this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
     }
 
     @Override
@@ -64,20 +53,20 @@ public class GuiTownHall extends GuiBase
 
             addLabel(currentTownhallName, middleX - fontRendererObj.getStringWidth(currentTownhallName) / 2 + 3, middleY + 4);
             addLabel(townhallName, middleX - fontRendererObj.getStringWidth(townhallName) / 2 + 3, middleY + 13);
-            addButton(BUTTON_BUILD, LanguageHandler.format("com.minecolonies.gui.townhall.build"), middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight);
+            addButton(BUTTON_BUILD, LanguageHandler.format("com.minecolonies.gui.townhall.build"), buttonMiddleX, middleY + y, buttonWidth, buttonHeight);
             y += buttonHeight + buttonSpan;
-            addButton(BUTTON_REPAIR, LanguageHandler.format("com.minecolonies.gui.townhall.repair"), middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight);
+            addButton(BUTTON_REPAIR, LanguageHandler.format("com.minecolonies.gui.townhall.repair"), buttonMiddleX, middleY + y, buttonWidth, buttonHeight);
             y += buttonHeight + buttonSpan;
-            addButton(BUTTON_RECALL, LanguageHandler.format("com.minecolonies.gui.townhall.recall"), middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight);
+            addButton(BUTTON_RECALL, LanguageHandler.format("com.minecolonies.gui.townhall.recall"), buttonMiddleX, middleY + y, buttonWidth, buttonHeight);
             y += buttonHeight + buttonSpan;
-            addButton(BUTTON_SPECIALIZATION_TOGGLE, LanguageHandler.format("com.minecolonies.gui.townhall.togglespec"), middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight);
+            addButton(BUTTON_SPECIALIZATION_TOGGLE, LanguageHandler.format("com.minecolonies.gui.townhall.togglespec"), buttonMiddleX, middleY + y, buttonWidth, buttonHeight);
 
             y += buttonHeight + buttonSpan;
             addLabel(currentSpec, middleX - fontRendererObj.getStringWidth(currentSpec) / 2 + 3, middleY + y);
             addLabel(spec, middleX - fontRendererObj.getStringWidth(spec) / 2 + 3, middleY + y + 11);
             y += buttonHeight + buttonSpan;
 
-            addButton(BUTTON_RENAME, LanguageHandler.format("com.minecolonies.gui.townhall.rename"), middleX - buttonWidth / 2, middleY + y, buttonWidth, buttonHeight);
+            addButton(BUTTON_RENAME, LanguageHandler.format("com.minecolonies.gui.townhall.rename"), buttonMiddleX, middleY + y, buttonWidth, buttonHeight);
         }
         else if(page == PAGE_INFORMATION)
         {

@@ -15,7 +15,7 @@ import static com.minecolonies.configuration.Configurations.*;
 public class ConfigurationHandler
 {
     private static final String CATEGORY_GAMEPLAY = "Game Play";
-    private static final String CATEGORY_NAMES = "Names";
+    private static final String CATEGORY_NAMES    = "Names";
 
     public static void init(File file)
     {
