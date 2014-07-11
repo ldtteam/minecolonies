@@ -1,7 +1,6 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.network.packets.BuildRequestPacket;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
@@ -14,20 +13,22 @@ import net.minecraft.world.World;
 public class GuiHutDeliveryMan extends GuiBase
 {
     //IDs for Information
-    protected final int idSettings = 5;
+    private final int idSettings = 5;
 
     //IDs for Settings
-    protected final int idGoldToBlacksmith = 0, idDiamondToBlacksmith = 1, idStoneToStonemason = 2, idSandToStonemason = 3, idNetherrackToStonemason = 4, idQuartzToStonemason = 5, idArmorToGuards = 6, idWeaponToGuards = 7, idVisitCitizenChests = 8, idInformation = 9;
+    private final int idGoldToBlacksmith = 0, idDiamondToBlacksmith = 1, idStoneToStonemason = 2, idSandToStonemason = 3, idNetherrackToStonemason = 4, idQuartzToStonemason = 5, idArmorToGuards = 6, idWeaponToGuards = 7, idVisitCitizenChests = 8, idInformation = 9;
 
     protected EntityPlayer player;
     protected World        world;
     protected int          x, y, z;
-    private int span = 4, page = 0;
+    private int span = 4;
+    private int page = 0;
 
-    public GuiHutDeliveryMan(int page, EntityPlayer player, World world, int x, int y, int z)
+    private final int PAGE_INFORMATION = 0, PAGE_SETTINGS = 1;
+
+    public GuiHutDeliveryMan(EntityPlayer player, World world, int x, int y, int z)
     {
         super();
-        this.page = page;
         this.player = player;
         this.world = world;
         this.x = x;
@@ -88,7 +89,7 @@ public class GuiHutDeliveryMan extends GuiBase
         y += textPaddTop + 10;
         addButton(idVisitCitizenChests, no, middleX - smallButton / 2, y, smallButton, buttonHeight);
 
-        addButton(idInformation, information, middleX - buttonWidth / 2, middleY + ySize - 34, buttonWidth, buttonHeight);
+        addButton(idInformation, information, middleX + 2, middleY + ySize - 34, (int) (buttonWidth / 1.5), buttonHeight);
 
     }
 
@@ -99,13 +100,13 @@ public class GuiHutDeliveryMan extends GuiBase
 
         switch(page)
         {
-            case 0:
+            case PAGE_INFORMATION:
                 addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.deliverymansHut"), "John R. Jones", "xx (yy)", "xxxxxxxx", span);
 
                 String settings = LanguageHandler.format("com.minecolonies.gui.workerHuts.settings");
-                addButton(idSettings, settings, middleX - buttonWidth / 2, middleY + ySize - 34, buttonWidth, buttonHeight);
+                addButton(idSettings, settings, middleX - ((int) (buttonWidth / 1.5)), middleY + ySize - 34, (int) (buttonWidth / 1.5), buttonHeight);
                 break;
-            case 1:
+            case PAGE_SETTINGS:
                 addDeliverySettingElements();
                 break;
         }
@@ -115,7 +116,7 @@ public class GuiHutDeliveryMan extends GuiBase
     protected void actionPerformed(GuiButton guiButton)
     {
         //Actions for Information Tab
-        if(page == 0)
+        if(page == PAGE_INFORMATION)
         {
             switch(guiButton.id)
             {
@@ -143,18 +144,20 @@ public class GuiHutDeliveryMan extends GuiBase
                     MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.REPAIR));
                     break;
                 case idSettings:
-                    player.openGui(MineColonies.instance, EnumGUI.WAREHOUSE_SETTINGS.getID(), world, x, y, z);
+                    page = PAGE_SETTINGS;
+                    addElements();
                     break;
             }
         }
-        else if(page == 1)
+        else if(page == PAGE_SETTINGS)
         {
             switch(guiButton.id)
             {
                 case idGoldToBlacksmith:
                     break;
                 case idInformation:
-                    player.openGui(MineColonies.instance, EnumGUI.WAREHOUSE.getID(), world, x, y, z);
+                    page = PAGE_INFORMATION;
+                    addElements();
                     break;
             }
         }

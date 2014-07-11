@@ -1,5 +1,6 @@
 package com.minecolonies.util;
 
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
@@ -274,6 +275,28 @@ public class Utils
                     }
                 }
             }
+        }
+        if(!entities.isEmpty())
+        {
+            return entities;
+        }
+        return null;
+    }
+
+    /**
+     * Returns a list of loaded entities whose id's match the ones provided.
+     *
+     * @param world the world the entities are in.
+     * @param ids   List of Entity id's
+     * @return list of Entity's
+     */
+    public static List<Entity> getEntitiesFromID(World world, List<Integer> ids)
+    {
+        List<Entity> entities = new ArrayList<Entity>();
+
+        for(int id : ids)
+        {
+            entities.add(world.getEntityByID(id));
         }
         if(!entities.isEmpty())
         {
