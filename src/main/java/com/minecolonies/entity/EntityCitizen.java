@@ -53,9 +53,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super(world);
         setSize(0.6F, 1.8F);
         this.func_110163_bv();//Set persistenceRequired = true;
+        this.job = initJob();
         setTexture();
         this.setCustomNameTag(generateName());
-        this.job = initJob();
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
 
         this.getNavigator().setAvoidsWater(true);
