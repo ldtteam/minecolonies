@@ -115,6 +115,8 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
             if(block == Blocks.air)
             {
+                builder.setCurrentItemOrArmor(0, null);
+
                 if(world.setBlockToAir(x, y, z))
                 {
                     findNextBlock();
@@ -127,6 +129,8 @@ public class EntityAIWorkBuilder extends EntityAIBase
             }
             else
             {
+                builder.setCurrentItemOrArmor(0, new ItemStack(block.getItem(world, x, y, z), 1, metadata));
+
                 placeRequiredSupportingBlocks(x, y, z, block, metadata);
 
                 if(placeBlock(x, y, z, block, metadata))
@@ -588,6 +592,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
             hut.setBuildingLevel(schematicLevel);
         }
 
+        builder.setCurrentItemOrArmor(0, null);
         builder.getTownHall().removeHutForUpgrade(pos);
         builder.setSchematic(null);
     }

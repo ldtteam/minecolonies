@@ -57,6 +57,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         setTexture();
         this.setCustomNameTag(generateName());
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
+        this.inventory.addIInvBasic(this);
 
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setEnterDoors(true);
