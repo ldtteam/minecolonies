@@ -1,9 +1,6 @@
 com.minecolonies.error.noFingerprint=No Fingerprint. Might not be a valid version!
 com.minecolonies.error.supplyChestAlreadyPlaced=You have already placed a supply ship!
 
-com.minecolonies.gui.yes=Yes
-com.minecolonies.gui.no=No
-
 com.minecolonies.gui.townhall.build=Build Townhall
 com.minecolonies.gui.townhall.repair=Repair Townhall
 com.minecolonies.gui.townhall.recall=Recall Citizens

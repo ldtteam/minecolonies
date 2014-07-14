@@ -34,8 +34,8 @@ public class GuiHutDeliveryMan extends GuiBase
         int y = middleY + span;
         int textPaddTop = 6, textPaddRight = 3;
 
-        String yes = LanguageHandler.format("com.minecolonies.gui.yes");
-        String no = LanguageHandler.format("com.minecolonies.gui.no");
+        String yes = LanguageHandler.format("gui.yes");
+        String no = LanguageHandler.format("gui.no");
         String information = LanguageHandler.format("com.minecolonies.gui.workerHuts.information");
         String toBlacksmith = LanguageHandler.format("com.minecolonies.gui.deliverymanHut.toBlacksmith");
         String toStonemason = LanguageHandler.format("com.minecolonies.gui.deliverymanHut.toStonemason");
