@@ -8,17 +8,16 @@ com.minecolonies.gui.townhall.togglespec=Toggle Specialization
 com.minecolonies.gui.townhall.currTownhallName=Colony Name:
 com.minecolonies.gui.townhall.currentSpecialization=Current Specialization:
 com.minecolonies.gui.townhall.rename=Rename Colony
-com.minecolonies.gui.townhall.actions=Actions
-com.minecolonies.gui.townhall.rename.done=Done
 com.minecolonies.gui.townhall.rename.title=Rename Your Colony
+com.minecolonies.gui.townhall.actions=Actions
 com.minecolonies.gui.townhall.defaultName=%s's Colony
 
-com.minecolonies.gui.townhall.population.totalCitizens=Number of Citizens:
-com.minecolonies.gui.townhall.population.unemployed=Unemployed:
-com.minecolonies.gui.townhall.population.builders=Builders:
+com.minecolonies.gui.townhall.population.totalCitizens=Number of Citizens: %d/%d
+com.minecolonies.gui.townhall.population.unemployed=Unemployed: %d
+com.minecolonies.gui.townhall.population.builders=Builders: %d
 
-com.minecolonies.gui.workerHuts.buildersHut=Builders Hut
-com.minecolonies.gui.workerHuts.deliverymansHut=Deliverymans Hut
+com.minecolonies.gui.workerHuts.buildersHut=Builder's Hut
+com.minecolonies.gui.workerHuts.deliverymansHut=Warehouse
 com.minecolonies.gui.workerHuts.workerAssigned=Worker Assigned:
 com.minecolonies.gui.workerHuts.workerLevel=Worker Level: %s
 com.minecolonies.gui.workerHuts.hire=Hire Worker

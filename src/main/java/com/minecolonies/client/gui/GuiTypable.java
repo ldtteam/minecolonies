@@ -41,7 +41,8 @@ public class GuiTypable extends GuiScreen
         Keyboard.enableRepeatEvents(true);
         //Do Not Move down, hides crosshair
         guiTextField = new GuiTextField(this.fontRendererObj, this.width / 2 - 75, this.height / 2 - 10, 150, 18);
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 110, LanguageHandler.format("com.minecolonies.gui.townhall.rename.done")));
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 110, LanguageHandler.format("gui.done")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 134, LanguageHandler.format("gui.cancel")));
 
         this.guiTextField.setMaxStringLength(128);
         this.guiTextField.setText(newCityName);
@@ -75,14 +76,19 @@ public class GuiTypable extends GuiScreen
     {
         if(guiButton.enabled)
         {
-            if(guiButton.id == 0)
+            switch(guiButton.id)
             {
-                if(!newCityName.isEmpty())
-                {
-                    tileEntityTownHall.setCityName(newCityName);
-                    MineColonies.packetPipeline.sendToServer(new TownhallRenamePacket(x, y, z, newCityName));
-                }
-                player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
+                case 0:
+                    if(!newCityName.isEmpty())
+                    {
+                        tileEntityTownHall.setCityName(newCityName);
+                        MineColonies.packetPipeline.sendToServer(new TownhallRenamePacket(x, y, z, newCityName));
+                    }
+                    player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
+                    break;
+                case 1:
+                    player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
+                    break;
             }
         }
     }

@@ -51,22 +51,17 @@ public class GuiTownHall extends GuiBase
 
             int y = span;
 
-            addLabel(currentTownhallName, middleX - fontRendererObj.getStringWidth(currentTownhallName) / 2 + 3, middleY + 4);
-            addLabel(townhallName, middleX - fontRendererObj.getStringWidth(townhallName) / 2 + 3, middleY + 13);
+            addCenteredLabel(currentTownhallName, middleY + 4);
+            addCenteredLabel(townhallName, middleY + 13);
             addButton(BUTTON_BUILD, LanguageHandler.format("com.minecolonies.gui.townhall.build"), buttonMiddleX, middleY + y, buttonWidth, buttonHeight);
-            y += buttonHeight + buttonSpan;
-            addButton(BUTTON_REPAIR, LanguageHandler.format("com.minecolonies.gui.townhall.repair"), buttonMiddleX, middleY + y, buttonWidth, buttonHeight);
-            y += buttonHeight + buttonSpan;
-            addButton(BUTTON_RECALL, LanguageHandler.format("com.minecolonies.gui.townhall.recall"), buttonMiddleX, middleY + y, buttonWidth, buttonHeight);
-            y += buttonHeight + buttonSpan;
-            addButton(BUTTON_SPECIALIZATION_TOGGLE, LanguageHandler.format("com.minecolonies.gui.townhall.togglespec"), buttonMiddleX, middleY + y, buttonWidth, buttonHeight);
+            addButton(BUTTON_REPAIR, LanguageHandler.format("com.minecolonies.gui.townhall.repair"), buttonMiddleX, middleY + (y += buttonHeight + buttonSpan), buttonWidth, buttonHeight);
+            addButton(BUTTON_RECALL, LanguageHandler.format("com.minecolonies.gui.townhall.recall"), buttonMiddleX, middleY + (y += buttonHeight + buttonSpan), buttonWidth, buttonHeight);
+            addButton(BUTTON_SPECIALIZATION_TOGGLE, LanguageHandler.format("com.minecolonies.gui.townhall.togglespec"), buttonMiddleX, middleY + (y += buttonHeight + buttonSpan), buttonWidth, buttonHeight);
 
-            y += buttonHeight + buttonSpan;
-            addLabel(currentSpec, middleX - fontRendererObj.getStringWidth(currentSpec) / 2 + 3, middleY + y);
-            addLabel(spec, middleX - fontRendererObj.getStringWidth(spec) / 2 + 3, middleY + y + 11);
-            y += buttonHeight + buttonSpan;
+            addCenteredLabel(currentSpec, middleY + (y += buttonHeight + buttonSpan));
+            addCenteredLabel(spec, middleY + y + 11);
 
-            addButton(BUTTON_RENAME, LanguageHandler.format("com.minecolonies.gui.townhall.rename"), buttonMiddleX, middleY + y, buttonWidth, buttonHeight);
+            addButton(BUTTON_RENAME, LanguageHandler.format("com.minecolonies.gui.townhall.rename"), buttonMiddleX, middleY + (y += buttonHeight + buttonSpan), buttonWidth, buttonHeight);
         }
         else if(page == PAGE_INFORMATION)
         {
@@ -88,18 +83,16 @@ public class GuiTownHall extends GuiBase
                 workers = builders;//+ etc..
             }
 
-            String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens") + " " + citizensSize + "/" + tileEntityTownHall.getMaxCitizens();
-            String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed") + " " + (citizensSize - workers);
-            String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townhall.population.builders") + " " + builders;
+            String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens", citizensSize, tileEntityTownHall.getMaxCitizens());
+            String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed", (citizensSize - workers));
+            String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townhall.population.builders", builders);
 
             int y = middleY + 13;
-            int x = middleX - fontRendererObj.getStringWidth(numberOfCitizens) / 2 + 3;
+            int x = getSameCenterX(numberOfCitizens, numberOfUnemployed, numberOfBuilders);
 
             addLabel(numberOfCitizens, x, y);
-            y += labelSpan * 2;
-            addLabel(numberOfUnemployed, x, y);
-            y += labelSpan;
-            addLabel(numberOfBuilders, x, y);
+            addLabel(numberOfUnemployed, x, y += labelSpan * 2);
+            addLabel(numberOfBuilders, x, y += labelSpan);
         }
         else if(page == PAGE_SETTINGS)
         {

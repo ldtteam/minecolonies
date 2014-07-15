@@ -116,6 +116,22 @@ public abstract class GuiBase extends GuiScreen
         addCenteredLabel(type, middleY + yPadding + 182);
     }
 
+    protected int getSameCenterX(String... strings)
+    {
+        int x = middleX;
+        int maxStringWidth = 0;
+        for (String string : strings)
+        {
+            int stringWidth = fontRendererObj.getStringWidth(string);
+            if (stringWidth > maxStringWidth)
+            {
+                maxStringWidth = stringWidth;
+                x = middleX - stringWidth / 2;
+            }
+        }
+        return x;
+    }
+
     protected void drawGuiBackground()
     {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
