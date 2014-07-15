@@ -1,15 +1,19 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.client.gui.GuiEntityCitizen;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.network.GuiHandler;
 import com.minecolonies.tileentities.TileEntityHutCitizen;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -38,6 +42,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public  ResourceLocation texture;
     private String           job;
     private InventoryCitizen inventory;
+    public int strength, stamina, wisdom, intelligence, charisma;
 
     private TileEntityTownHall tileEntityTownHall;
     private int                townPosX, townPosY, townPosZ;
@@ -58,6 +63,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.setCustomNameTag(generateName());
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
+
+        this.strength = worldObj.rand.nextInt(10) + 1;
+        this.stamina = worldObj.rand.nextInt(10) + 1;
+        this.wisdom = worldObj.rand.nextInt(10) + 1;
+        this.intelligence = worldObj.rand.nextInt(10) + 1;
+        this.charisma = worldObj.rand.nextInt(10) + 1;
 
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setEnterDoors(true);
@@ -195,11 +206,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public boolean interact(EntityPlayer player)
     {
-        if(!worldObj.isRemote)
-        {
-            this.inventory.func_110133_a(this.getCustomNameTag());
-            player.displayGUIChest(this.inventory);
-        }
+        GuiHandler.showGuiScreen(new GuiEntityCitizen(this, player, worldObj));
         return true;
     }
 
@@ -318,6 +325,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         compound.setInteger("textureID", getTextureID());
         compound.setInteger("sex", getSex());
 
+        NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
+        nbtTagSkillsCompound.setInteger("strength", strength);
+        nbtTagSkillsCompound.setInteger("stamina", stamina);
+        nbtTagSkillsCompound.setInteger("wisdom", wisdom);
+        nbtTagSkillsCompound.setInteger("intelligence", intelligence);
+        nbtTagSkillsCompound.setInteger("charisma", charisma);
+        compound.setTag("skills", nbtTagSkillsCompound);
+
         if(tileEntityTownHall != null)
         {
             NBTTagCompound nbtTagTownhallCompound = new NBTTagCompound();
@@ -366,6 +381,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         setLevel(compound.hasKey("level") ? compound.getInteger("level") : this.getLevel());
         setSex(compound.hasKey("sex") ? compound.getInteger("sex") : this.getSex());
         setTexture();
+
+        NBTTagCompound nbtTagSkillsCompound = compound.getCompoundTag("skills");
+        strength = nbtTagSkillsCompound.getInteger("strength");
+        stamina = nbtTagSkillsCompound.getInteger("stamina");
+        wisdom = nbtTagSkillsCompound.getInteger("wisdom");
+        intelligence = nbtTagSkillsCompound.getInteger("intelligence");
+        charisma = nbtTagSkillsCompound.getInteger("charisma");
 
         if(compound.hasKey("townhall"))
         {

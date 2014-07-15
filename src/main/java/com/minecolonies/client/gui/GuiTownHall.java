@@ -18,7 +18,6 @@ public class GuiTownHall extends GuiBase
 {
     private final int BUTTON_INFORMATION = 0, BUTTON_ACTIONS = 1, BUTTON_SETTINGS = 2, BUTTON_BUILD = 3, BUTTON_REPAIR = 4, BUTTON_RECALL = 5, BUTTON_SPECIALIZATION_TOGGLE = 6, BUTTON_RENAME = 7;
     private final TileEntityTownHall tileEntityTownHall;
-    private final int labelSpan = 9, span = 30;
 
     private final int PAGE_ACTIONS = 0, PAGE_INFORMATION = 1, PAGE_SETTINGS = 2;
     private int page = PAGE_ACTIONS;
@@ -35,9 +34,9 @@ public class GuiTownHall extends GuiBase
         super.addElements();
 
         //Bottom navigation
-        GuiButton infoButton = addButton(BUTTON_INFORMATION, LanguageHandler.format("com.minecolonies.gui.workerHuts.information"), middleX - 76, middleY + ySize - 34, 64, buttonHeight);
-        GuiButton actionsButton = addButton(BUTTON_ACTIONS, LanguageHandler.format("com.minecolonies.gui.townhall.actions"), middleX - 10, middleY + ySize - 34, 44, buttonHeight);
-        GuiButton settingsButton = addButton(BUTTON_SETTINGS, LanguageHandler.format("com.minecolonies.gui.workerHuts.settings"), middleX + xSize / 2 - 50, middleY + ySize - 34, 46, buttonHeight);
+        GuiButton infoButton = addBottomButton(BUTTON_INFORMATION, LanguageHandler.format("com.minecolonies.gui.workerHuts.information"), middleX - 76, 64, buttonHeight);
+        GuiButton actionsButton = addBottomButton(BUTTON_ACTIONS, LanguageHandler.format("com.minecolonies.gui.townhall.actions"), middleX - 10, 44, buttonHeight);
+        GuiButton settingsButton = addBottomButton(BUTTON_SETTINGS, LanguageHandler.format("com.minecolonies.gui.workerHuts.settings"), middleX + xSize / 2 - 50, 46, buttonHeight);
 
 
         if(page == PAGE_ACTIONS)
@@ -49,17 +48,17 @@ public class GuiTownHall extends GuiBase
             String currentTownhallName = LanguageHandler.format("com.minecolonies.gui.townhall.currTownhallName");
             String townhallName = tileEntityTownHall.getCityName();
 
-            int y = span;
+            int y = labelSpan * 3;
 
-            addCenteredLabel(currentTownhallName, middleY + 4);
-            addCenteredLabel(townhallName, middleY + 13);
+            addCenteredLabel(currentTownhallName, middleY + labelSpan / 2);
+            addCenteredLabel(townhallName, middleY + labelSpan + labelSpan / 2);
             addButton(BUTTON_BUILD, LanguageHandler.format("com.minecolonies.gui.townhall.build"), buttonMiddleX, middleY + y, buttonWidth, buttonHeight);
             addButton(BUTTON_REPAIR, LanguageHandler.format("com.minecolonies.gui.townhall.repair"), buttonMiddleX, middleY + (y += buttonHeight + buttonSpan), buttonWidth, buttonHeight);
             addButton(BUTTON_RECALL, LanguageHandler.format("com.minecolonies.gui.townhall.recall"), buttonMiddleX, middleY + (y += buttonHeight + buttonSpan), buttonWidth, buttonHeight);
             addButton(BUTTON_SPECIALIZATION_TOGGLE, LanguageHandler.format("com.minecolonies.gui.townhall.togglespec"), buttonMiddleX, middleY + (y += buttonHeight + buttonSpan), buttonWidth, buttonHeight);
 
             addCenteredLabel(currentSpec, middleY + (y += buttonHeight + buttonSpan));
-            addCenteredLabel(spec, middleY + y + 11);
+            addCenteredLabel(spec, middleY + y + labelSpan);
 
             addButton(BUTTON_RENAME, LanguageHandler.format("com.minecolonies.gui.townhall.rename"), buttonMiddleX, middleY + (y += buttonHeight + buttonSpan), buttonWidth, buttonHeight);
         }
@@ -87,7 +86,7 @@ public class GuiTownHall extends GuiBase
             String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed", (citizensSize - workers));
             String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townhall.population.builders", builders);
 
-            int y = middleY + 13;
+            int y = middleY + labelSpan;
             int x = getSameCenterX(numberOfCitizens, numberOfUnemployed, numberOfBuilders);
 
             addLabel(numberOfCitizens, x, y);

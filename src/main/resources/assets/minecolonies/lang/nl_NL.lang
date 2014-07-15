@@ -10,13 +10,12 @@ com.minecolonies.gui.townhall.togglespec=Schakel Specialisatie
 com.minecolonies.gui.townhall.currTownhallName=Kolonie naam:
 com.minecolonies.gui.townhall.currentSpecialization=Huidige Specialisatie:
 com.minecolonies.gui.townhall.rename=Hernoem Kolonie
-com.minecolonies.gui.townhall.actions=Acties
-com.minecolonies.gui.townhall.rename.done=Klaar
 com.minecolonies.gui.townhall.rename.title=Hernoem Je Kolonie
+com.minecolonies.gui.townhall.actions=Acties
 com.minecolonies.gui.townhall.defaultName=%s zijn Kolonie
 
 com.minecolonies.gui.workerHuts.buildersHut=Bouwvakkershuis
-com.minecolonies.gui.workerHuts.deliverymansHut=Bezorgershuis
+com.minecolonies.gui.workerHuts.deliverymansHut=Warenhuis
 com.minecolonies.gui.workerHuts.workerAssigned=Werker Toegewezen:
 com.minecolonies.gui.workerHuts.workerLevel=Werker Level: %s
 com.minecolonies.gui.workerHuts.hire=Huur Werker

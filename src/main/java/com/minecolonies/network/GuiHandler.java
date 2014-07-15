@@ -8,8 +8,12 @@ import com.minecolonies.inventory.ContainerHut;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
+import com.minecolonies.tileentities.TileEntityHutWarehouse;
 import com.minecolonies.tileentities.TileEntityTownHall;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
+import cpw.mods.fml.relauncher.Side;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -52,9 +56,17 @@ public class GuiHandler implements IGuiHandler
             case BUILDER:
                 return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z), player, world, x, y, z);
             case WAREHOUSE:
-                return new GuiHutDeliveryMan(player, world, x, y, z);
+                return new GuiHutDeliveryMan((TileEntityHutWarehouse) world.getTileEntity(x, y, z), player, world, x, y, z);
             default:
                 return null;
+        }
+    }
+
+    public static void showGuiScreen(GuiScreen gui)
+    {
+        if(FMLCommonHandler.instance().getSide().equals(Side.CLIENT))
+        {
+            FMLCommonHandler.instance().showGuiScreen(gui);
         }
     }
 }

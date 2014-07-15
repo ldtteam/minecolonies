@@ -34,6 +34,14 @@ com.minecolonies.gui.deliverymanHut.toStonemason=Deliver to Stonemason:
 com.minecolonies.gui.deliverymanHut.toGuards=Deliver to Guards:
 com.minecolonies.gui.deliverymanHut.visitCitizenChests=Visit Citizenchests:
 
+com.minecolonies.gui.citizen.skills=Skills
+com.minecolonies.gui.citizen.skills.strength=Strength: %d
+com.minecolonies.gui.citizen.skills.stamina=Stamina: %d
+com.minecolonies.gui.citizen.skills.wisdom=Wisdom: %d
+com.minecolonies.gui.citizen.skills.intelligence=Intelligence: %d
+com.minecolonies.gui.citizen.skills.charisma=Charisma: %d
+com.minecolonies.gui.citizen.inventory=Citizen's Inventory
+
 tile.blockHutCitizen.name=Citizen's Hut
 tile.blockHutBaker.name=Bakery
 tile.blockHutBlacksmith.name=Forge

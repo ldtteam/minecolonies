@@ -20,7 +20,7 @@ public abstract class GuiBase extends GuiScreen
     //IDs for default layout
     protected final int BUTTON_HIRE_FIRE = 0, BUTTON_RECALL = 1, BUTTON_BUILD = 2, BUTTON_REPAIR = 3;
     protected final ResourceLocation background  = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiHutBackground.png");
-    protected final int              buttonWidth = 116, buttonHeight = 20, buttonSpan = 4;
+    protected final int              buttonWidth = 116, buttonHeight = 20, buttonSpan = 4, labelSpan = 11;
     protected int middleX, middleY, xSize, ySize, buttonMiddleX;
 
     protected final EntityPlayer player;
@@ -53,6 +53,16 @@ public abstract class GuiBase extends GuiScreen
         buttonList.clear();
         labelList.clear();
         iconList.clear();
+    }
+
+    protected GuiButton addBottomButton(int id, String text, int x, int w, int h)
+    {
+        return addButton(id, text, x, middleY + ySize - 34, w, h);
+    }
+
+    protected GuiButton addBottomButton(int id, String text, int x, int w, int h, boolean visible)
+    {
+        return addButton(id, text, x, middleY + ySize - 34, w, h, visible);
     }
 
     protected GuiButton addButton(int id, String text, int x, int y, int w, int h)
@@ -100,6 +110,11 @@ public abstract class GuiBase extends GuiScreen
 
     protected void addDefaultWorkerLayout(String hutName, String workerName, String level, String type, int yPadding)
     {
+        addDefaultWorkerLayout(hutName, workerName, level, type, yPadding, 0);
+    }
+
+    protected void addDefaultWorkerLayout(String hutName, String workerName, String level, String type, int yPadding, int startId)
+    {
         String workerAssigned = LanguageHandler.format("com.minecolonies.gui.workerHuts.workerAssigned");
         String workerLevel = LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", level);
         String buildType = LanguageHandler.format("com.minecolonies.gui.workerHuts.buildType");
@@ -108,10 +123,10 @@ public abstract class GuiBase extends GuiScreen
         addCenteredLabel(workerAssigned, middleY + yPadding + 18);
         addCenteredLabel(workerName, middleY + yPadding + 28);
         addCenteredLabel(workerLevel, middleY + yPadding + 44);
-        addButton(BUTTON_HIRE_FIRE, LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"), buttonMiddleX, middleY + yPadding + 64, buttonWidth, buttonHeight);
-        addButton(BUTTON_RECALL, LanguageHandler.format("com.minecolonies.gui.workerHuts.recall"), buttonMiddleX, middleY + yPadding + 88, buttonWidth, buttonHeight);
-        addButton(BUTTON_BUILD, LanguageHandler.format("com.minecolonies.gui.workerHuts.build"), buttonMiddleX, middleY + yPadding + 120, buttonWidth, buttonHeight);
-        addButton(BUTTON_REPAIR, LanguageHandler.format("com.minecolonies.gui.workerHuts.repair"), buttonMiddleX, middleY + yPadding + 144, buttonWidth, buttonHeight);
+        addButton(BUTTON_HIRE_FIRE + startId, LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"), buttonMiddleX, middleY + yPadding + 64, buttonWidth, buttonHeight);
+        addButton(BUTTON_RECALL + startId, LanguageHandler.format("com.minecolonies.gui.workerHuts.recall"), buttonMiddleX, middleY + yPadding + 88, buttonWidth, buttonHeight);
+        addButton(BUTTON_BUILD + startId, LanguageHandler.format("com.minecolonies.gui.workerHuts.build"), buttonMiddleX, middleY + yPadding + 120, buttonWidth, buttonHeight);
+        addButton(BUTTON_REPAIR + startId, LanguageHandler.format("com.minecolonies.gui.workerHuts.repair"), buttonMiddleX, middleY + yPadding + 144, buttonWidth, buttonHeight);
         addCenteredLabel(buildType, middleY + yPadding + 172);
         addCenteredLabel(type, middleY + yPadding + 182);
     }

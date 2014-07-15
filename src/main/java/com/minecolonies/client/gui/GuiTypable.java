@@ -14,6 +14,7 @@ import org.lwjgl.input.Keyboard;
 
 public class GuiTypable extends GuiScreen
 {
+    private final int BUTTON_DONE = 0, BUTTON_CANCEL = 1;
     private final TileEntityTownHall tileEntityTownHall;
     private       GuiTextField guiTextField = null;
     private final String       title        = LanguageHandler.format("com.minecolonies.gui.townhall.rename.title");
@@ -41,8 +42,8 @@ public class GuiTypable extends GuiScreen
         Keyboard.enableRepeatEvents(true);
         //Do Not Move down, hides crosshair
         guiTextField = new GuiTextField(this.fontRendererObj, this.width / 2 - 75, this.height / 2 - 10, 150, 18);
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 110, LanguageHandler.format("gui.done")));
-        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 134, LanguageHandler.format("gui.cancel")));
+        this.buttonList.add(new GuiButton(BUTTON_DONE, this.width / 2 - 100, this.height / 4 + 110, LanguageHandler.format("gui.done")));
+        this.buttonList.add(new GuiButton(BUTTON_CANCEL, this.width / 2 - 100, this.height / 4 + 134, LanguageHandler.format("gui.cancel")));
 
         this.guiTextField.setMaxStringLength(128);
         this.guiTextField.setText(newCityName);
@@ -78,7 +79,7 @@ public class GuiTypable extends GuiScreen
         {
             switch(guiButton.id)
             {
-                case 0:
+                case BUTTON_DONE:
                     if(!newCityName.isEmpty())
                     {
                         tileEntityTownHall.setCityName(newCityName);
@@ -86,7 +87,7 @@ public class GuiTypable extends GuiScreen
                     }
                     player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
                     break;
-                case 1:
+                case BUTTON_CANCEL:
                     player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
                     break;
             }

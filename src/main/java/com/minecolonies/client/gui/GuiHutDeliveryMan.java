@@ -1,5 +1,6 @@
 package com.minecolonies.client.gui;
 
+import com.minecolonies.tileentities.TileEntityHutWarehouse;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,20 +11,18 @@ import net.minecraft.world.World;
 
 public class GuiHutDeliveryMan extends GuiBase
 {
-    //IDs for Information
-    private final int BUTTON_INFO_INFORMATION = 4, BUTTON_INFO_SETTINGS = 5;
-
-    //IDs for Settings
-    private final int BUTTON_BLACKSMITH_GOLD = 0, BUTTON_BLACKSMITH_DIAMOND = 1, BUTTON_STONEMASON_STONE = 2, BUTTON_STONEMASON_SAND = 3, BUTTON_STONEMASON_NETHERRACK = 4, BUTTON_STONEMASON_QUARTZ = 5, BUTTON_GUARD_ARMOR = 6, BUTTON_GUARD_WEAPON = 7, BUTTON_CITIZEN = 8, BUTTON_SET_INFORMATION = 9, BUTTON_SET_SETTINGS = 10;
+    private final int BUTTON_INFORMATION = 0, BUTTON_SETTINGS = 1, BUTTON_BLACKSMITH_GOLD = 2, BUTTON_BLACKSMITH_DIAMOND = 3, BUTTON_STONEMASON_STONE = 4, BUTTON_STONEMASON_SAND = 5, BUTTON_STONEMASON_NETHERRACK = 6, BUTTON_STONEMASON_QUARTZ = 7, BUTTON_GUARD_ARMOR = 8, BUTTON_GUARD_WEAPON = 9, BUTTON_CITIZEN = 10;
+    private final TileEntityHutWarehouse warehouse;
 
     private final int span = 4;
 
     private final int PAGE_INFORMATION = 0, PAGE_SETTINGS = 1;
     private int page = PAGE_INFORMATION;
 
-    public GuiHutDeliveryMan(EntityPlayer player, World world, int x, int y, int z)
+    public GuiHutDeliveryMan(TileEntityHutWarehouse tileEntityHutWarehouse, EntityPlayer player, World world, int x, int y, int z)
     {
         super(player, world, x, y, z);
+        warehouse = tileEntityHutWarehouse;
     }
 
     private void addDeliverySettingElements()
@@ -44,31 +43,31 @@ public class GuiHutDeliveryMan extends GuiBase
         addCenteredLabel(toBlacksmith, y + textPaddTop);
 
         addIcon(new ItemStack(Items.gold_ingot, 1), xl - 16 - textPaddRight, (y += buttonHeight) + (buttonHeight - 16) / 2);
-        addButton(BUTTON_BLACKSMITH_GOLD, no, xl, y, smallButton, buttonHeight);
+        addButton(BUTTON_BLACKSMITH_GOLD, warehouse.blacksmithGold ? yes : no, xl, y, smallButton, buttonHeight);
         addIcon(new ItemStack(Items.diamond, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(BUTTON_BLACKSMITH_DIAMOND, no, xr, y, smallButton, buttonHeight);
+        addButton(BUTTON_BLACKSMITH_DIAMOND, warehouse.blacksmithDiamond ? yes : no, xr, y, smallButton, buttonHeight);
 
         addCenteredLabel(toStonemason, (y += buttonHeight + buttonSpan + 1) + textPaddTop);
 
         addIcon(new ItemStack(Blocks.cobblestone, 1), xl - 16 - textPaddRight, (y += buttonHeight) + (buttonHeight - 16) / 2);
-        addButton(BUTTON_STONEMASON_STONE, yes, xl, y, smallButton, buttonHeight);
+        addButton(BUTTON_STONEMASON_STONE, warehouse.stonemasonStone ? yes : no, xl, y, smallButton, buttonHeight);
         addIcon(new ItemStack(Blocks.sand, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(BUTTON_STONEMASON_SAND, no, xr, y, smallButton, buttonHeight);
+        addButton(BUTTON_STONEMASON_SAND, warehouse.stonemasonSand ? yes : no, xr, y, smallButton, buttonHeight);
 
         addIcon(new ItemStack(Blocks.netherrack, 1), xl - 16 - textPaddRight, (y += buttonHeight + buttonSpan) + (buttonHeight - 16) / 2);
-        addButton(BUTTON_STONEMASON_NETHERRACK, yes, xl, y, smallButton, buttonHeight);
+        addButton(BUTTON_STONEMASON_NETHERRACK, warehouse.stonemasonNetherrack ? yes : no, xl, y, smallButton, buttonHeight);
         addIcon(new ItemStack(Items.quartz, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(BUTTON_STONEMASON_QUARTZ, no, xr, y, smallButton, buttonHeight);
+        addButton(BUTTON_STONEMASON_QUARTZ, warehouse.stonemasonQuartz ? yes : no, xr, y, smallButton, buttonHeight);
 
         addCenteredLabel(toGuards, (y += buttonHeight + buttonSpan + 1) + textPaddTop);
 
         addIcon(new ItemStack(Items.iron_chestplate, 1), xl - 16 - textPaddRight, (y += buttonHeight) + (buttonHeight - 16) / 2);
-        addButton(BUTTON_GUARD_ARMOR, no, xl, y, smallButton, buttonHeight);
+        addButton(BUTTON_GUARD_ARMOR, warehouse.guardArmor ? yes : no, xl, y, smallButton, buttonHeight);
         addIcon(new ItemStack(Items.iron_sword, 1), xr - 16 - textPaddRight, y + (buttonHeight - 16) / 2);
-        addButton(BUTTON_GUARD_WEAPON, no, xr, y, smallButton, buttonHeight);
+        addButton(BUTTON_GUARD_WEAPON, warehouse.guardWeapon ? yes : no, xr, y, smallButton, buttonHeight);
 
         addCenteredLabel(visitCitizenChests, (y += buttonHeight + buttonSpan + 1) + textPaddTop);
-        addButton(BUTTON_CITIZEN, no, middleX - smallButton / 2, (y += textPaddTop + 10), smallButton, buttonHeight);
+        addButton(BUTTON_CITIZEN, warehouse.citizenVisit ? yes : no, middleX - smallButton / 2, (y += textPaddTop + 10), smallButton, buttonHeight);
     }
 
     @Override
@@ -76,29 +75,22 @@ public class GuiHutDeliveryMan extends GuiBase
     {
         super.addElements();
 
-        boolean infoButtonEnabled = true, settingsButtonEnabled = true;
-        int infoButtonId = BUTTON_INFO_INFORMATION, settingsButtonId = BUTTON_INFO_SETTINGS;
+        String information = LanguageHandler.format("com.minecolonies.gui.workerHuts.information");
+        String settings = LanguageHandler.format("com.minecolonies.gui.workerHuts.settings");
+        GuiButton infoButton = addBottomButton(BUTTON_INFORMATION, information, middleX - ((int) (buttonWidth / 1.5)), (int) (buttonWidth / 1.5), buttonHeight);
+        GuiButton settingsButton = addBottomButton(BUTTON_SETTINGS, settings, middleX + 2, (int) (buttonWidth / 1.5), buttonHeight);
 
         switch(page)
         {
             case PAGE_INFORMATION:
-                infoButtonEnabled = false;
-                addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.deliverymansHut"), "John R. Jones", "xx (yy)", "xxxxxxxx", span);
+                infoButton.enabled = false;
+                addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.deliverymansHut"), "John R. Jones", "xx (yy)", "xxxxxxxx", span, 2);
                 break;
             case PAGE_SETTINGS:
-                infoButtonId = BUTTON_SET_INFORMATION;
-                settingsButtonId = BUTTON_SET_SETTINGS;
-                settingsButtonEnabled = false;
+                settingsButton.enabled = false;
                 addDeliverySettingElements();
                 break;
         }
-
-        String information = LanguageHandler.format("com.minecolonies.gui.workerHuts.information");
-        String settings = LanguageHandler.format("com.minecolonies.gui.workerHuts.settings");
-        GuiButton infoButton = addButton(infoButtonId, information, middleX - ((int) (buttonWidth / 1.5)), middleY + ySize - 34, (int) (buttonWidth / 1.5), buttonHeight);
-        GuiButton settingsButton = addButton(settingsButtonId, settings, middleX + 2, middleY + ySize - 34, (int) (buttonWidth / 1.5), buttonHeight);
-        infoButton.enabled = infoButtonEnabled;
-        settingsButton.enabled = settingsButtonEnabled;
     }
 
     @Override
@@ -109,10 +101,12 @@ public class GuiHutDeliveryMan extends GuiBase
         {
             super.actionPerformed(guiButton);
 
-            if (guiButton.id == BUTTON_INFO_SETTINGS)
+            switch(guiButton.id)
             {
-                page = PAGE_SETTINGS;
-                addElements();
+                case BUTTON_SETTINGS:
+                    page = PAGE_SETTINGS;
+                    addElements();
+                    break;
             }
         }
         //Actions for Settings Tab
@@ -120,15 +114,38 @@ public class GuiHutDeliveryMan extends GuiBase
         {
             switch(guiButton.id)
             {
+                case BUTTON_INFORMATION:
+                    page = PAGE_INFORMATION;
+                    break;
                 case BUTTON_BLACKSMITH_GOLD:
+                    warehouse.blacksmithGold = !warehouse.blacksmithGold;
+                    break;
+                case BUTTON_BLACKSMITH_DIAMOND:
+                    warehouse.blacksmithDiamond = !warehouse.blacksmithDiamond;
+                    break;
+                case BUTTON_STONEMASON_STONE:
+                    warehouse.stonemasonStone = !warehouse.stonemasonStone;
+                    break;
+                case BUTTON_STONEMASON_SAND:
+                    warehouse.stonemasonSand = !warehouse.stonemasonSand;
+                    break;
+                case BUTTON_STONEMASON_NETHERRACK:
+                    warehouse.stonemasonNetherrack = !warehouse.stonemasonNetherrack;
+                    break;
+                case BUTTON_STONEMASON_QUARTZ:
+                    warehouse.stonemasonQuartz = !warehouse.stonemasonQuartz;
+                    break;
+                case BUTTON_GUARD_ARMOR:
+                    warehouse.guardArmor = !warehouse.guardArmor;
+                    break;
+                case BUTTON_GUARD_WEAPON:
+                    warehouse.guardWeapon = !warehouse.guardWeapon;
+                    break;
+                case BUTTON_CITIZEN:
+                    warehouse.citizenVisit = !warehouse.citizenVisit;
                     break;
             }
-
-            if(guiButton.id == BUTTON_SET_INFORMATION)
-            {
-                page = PAGE_INFORMATION;
-                addElements();
-            }
+            addElements();
         }
     }
 }
