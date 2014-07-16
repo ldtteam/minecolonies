@@ -37,9 +37,14 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     {
         super.readFromNBT(compound);
         this.buildingLevel = compound.getInteger("buildingLevel");
-        this.townhallX = compound.getInteger("townhall-x");
-        this.townhallY = compound.getInteger("townhall-y");
-        this.townhallZ = compound.getInteger("townhall-z");
+
+        if (compound.hasKey("townhall"))
+        {
+            NBTTagCompound townhallCompound = compound.getCompoundTag("townhall");
+            this.townhallX = townhallCompound.getInteger("x");
+            this.townhallY = townhallCompound.getInteger("y");
+            this.townhallZ = townhallCompound.getInteger("z");
+        }
     }
 
     @Override
@@ -49,9 +54,11 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
         compound.setInteger("buildingLevel", buildingLevel);
         if(this.townhall != null)
         {
-            compound.setInteger("townhall-x", townhall.xCoord);
-            compound.setInteger("townhall-y", townhall.yCoord);
-            compound.setInteger("townhall-z", townhall.zCoord);
+            NBTTagCompound townhallCompound = new NBTTagCompound();
+            townhallCompound.setInteger("x", townhall.xCoord);
+            townhallCompound.setInteger("y", townhall.yCoord);
+            townhallCompound.setInteger("z", townhall.zCoord);
+            compound.setTag("townhall", townhallCompound);
         }
     }
 
