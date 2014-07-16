@@ -4,7 +4,6 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
-import com.minecolonies.entity.EnumStatus;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.util.LanguageHandler;
@@ -83,7 +82,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
         {
             messageDelay++;
 
-            builder.setStatus(EnumStatus.WORKING);
+            builder.setStatus(EntityBuilder.Status.WORKING);
 
             if(!isBuilderAtSite()) return;
 
@@ -157,7 +156,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
             {
                 if(!builder.getNavigator().tryMoveToXYZ(buildPos.xCoord, buildPos.yCoord, buildPos.zCoord, 1.0F))
                 {
-                    builder.setStatus(EnumStatus.PATHFINDING_ERROR);
+                    builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
                 }
             }
             return false;
@@ -216,7 +215,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                     {
                         if(!builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D))
                         {
-                            builder.setStatus(EnumStatus.PATHFINDING_ERROR);
+                            builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
                         }
                     }
                 }
@@ -230,7 +229,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                     {
                         LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
                     }
-                    builder.setStatus(EnumStatus.NEED_MATERIALS);
+                    builder.setStatus(EntityBuilder.Status.NEED_MATERIALS);
                     //TODO request material - deliveryman
                 }
                 return false;
@@ -252,7 +251,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                         ItemStack chestLeftOvers = builder.getWorkHut().setStackInInventory(leftOvers);
                         if(chestLeftOvers != null)
                         {
-                            builder.setStatus(EnumStatus.INVENTORY_FULL);
+                            builder.setStatus(EntityBuilder.Status.INVENTORY_FULL);
                             EntityItem itemDrop = new EntityItem(world, builder.posX, builder.posY + 1, builder.posZ, chestLeftOvers);
                             world.spawnEntityInWorld(itemDrop);
                         }
@@ -261,7 +260,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                     {
                         if(!builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D))
                         {
-                            builder.setStatus(EnumStatus.PATHFINDING_ERROR);
+                            builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
                         }
                     }
                 }

@@ -12,8 +12,6 @@ import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -49,9 +47,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private TileEntityHutWorker tileEntityWorkHut;
     private int                 workPosX, workPosY, workPosZ;
     private TileEntityHutCitizen tileEntityHomeHut;
-    int homePosX, homePosY, homePosZ;
+    private int                  homePosX, homePosY, homePosZ;
 
-    protected EnumStatus status = EnumStatus.IDLE;
+    protected Status status = Status.IDLE;
 
     public EntityCitizen(World world)
     {
@@ -61,6 +59,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.job = initJob();
         setTexture();
         this.setCustomNameTag(generateName());
+        this.setAlwaysRenderNameTag(true);//TODO: configurable
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
 
@@ -71,6 +70,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.charisma = worldObj.rand.nextInt(10) + 1;
 
         this.getNavigator().setAvoidsWater(true);
+        this.getNavigator().setCanSwim(true);
         this.getNavigator().setEnterDoors(true);
         initTasks();
     }
@@ -301,12 +301,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tileEntityWorkHut = work;
     }
 
-    public EnumStatus getStatus()
+    public Status getStatus()
     {
         return status;
     }
 
-    public void setStatus(EnumStatus status)
+    public void setStatus(Status status)
     {
         this.status = status;
     }
@@ -489,5 +489,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         int y = vecCompound.getInteger("y");
         int z = vecCompound.getInteger("z");
         return Vec3.createVectorHelper(x, y, z);
+    }
+
+    /**
+     * Used for chat messages, sounds, and other need based interactions
+     * Created: June 20, 2014
+     *
+     * @author Colton
+     */
+    public static enum Status
+    {
+        IDLE, SLEEPING, WORKING, NEED_ASSISTANCE, NEED_MATERIALS, INVENTORY_FULL, PATHFINDING_ERROR
     }
 }
