@@ -29,7 +29,7 @@ public class GuiEntityCitizen extends GuiBase
         String charisma = LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma);
 
         int x = getSameCenterX(strength, stamina, wisdom, intelligence, charisma);
-        int y = middleY + labelSpan;
+        int y = topY + labelSpan;
 
         addCenteredLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills"), y);
         addLabel(strength, x, y += labelSpan * 2);
@@ -37,7 +37,7 @@ public class GuiEntityCitizen extends GuiBase
         addLabel(wisdom, x, y += labelSpan);
         addLabel(intelligence, x, y += labelSpan);
         addLabel(charisma, x, y += labelSpan);
-        addBottomButton(BUTTON_INVENTORY, LanguageHandler.format("com.minecolonies.gui.citizen.inventory"), buttonMiddleX, buttonWidth, buttonHeight);
+        addBottomButton(BUTTON_INVENTORY, LanguageHandler.format("container.inventory"), buttonMiddleX, buttonWidth, buttonHeight);
     }
 
     @Override

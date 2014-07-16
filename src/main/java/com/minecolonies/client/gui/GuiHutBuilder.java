@@ -8,13 +8,14 @@ import net.minecraft.world.World;
 
 public class GuiHutBuilder extends GuiBase
 {
-    private TileEntityHutBuilder tileEntity;
+    private final int BUTTON_INVENTORY = 4;
+    private TileEntityHutBuilder builderHut;
     private final int span = 10;
 
     public GuiHutBuilder(TileEntityHutBuilder tileEntityHutBuilder, EntityPlayer player, World world, int x, int y, int z)
     {
         super(player, world, x, y, z);
-        this.tileEntity = tileEntityHutBuilder;
+        this.builderHut = tileEntityHutBuilder;
     }
 
     @Override
@@ -23,11 +24,20 @@ public class GuiHutBuilder extends GuiBase
         super.addElements();
 
         addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.buildersHut"), "John R. Jones", "xx (yy)", "xxxxxxxx", span);
+        addBottomButton(BUTTON_INVENTORY, LanguageHandler.format("container.inventory"), buttonMiddleX, buttonWidth, buttonHeight);
     }
 
     @Override
     protected void actionPerformed(GuiButton guiButton)
     {
         super.actionPerformed(guiButton);
+
+        switch(guiButton.id)
+        {
+            case BUTTON_INVENTORY:
+                builderHut.func_145976_a(builderHut.getName());
+                player.displayGUIChest(builderHut);
+                break;
+        }
     }
 }

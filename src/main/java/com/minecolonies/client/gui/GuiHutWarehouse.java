@@ -11,13 +11,14 @@ import net.minecraft.world.World;
 
 public class GuiHutWarehouse extends GuiBase
 {
-    private final int BUTTON_INFORMATION = 0, BUTTON_SETTINGS = 1, BUTTON_BLACKSMITH_GOLD = 2, BUTTON_BLACKSMITH_DIAMOND = 3, BUTTON_STONEMASON_STONE = 4, BUTTON_STONEMASON_SAND = 5, BUTTON_STONEMASON_NETHERRACK = 6, BUTTON_STONEMASON_QUARTZ = 7, BUTTON_GUARD_ARMOR = 8, BUTTON_GUARD_WEAPON = 9, BUTTON_CITIZEN = 10;
+    private final int BUTTON_INFORMATION = 0, BUTTON_SETTINGS = 1, BUTTON_INVENTORY = 2;
+    private final int BUTTON_BLACKSMITH_GOLD = 0, BUTTON_BLACKSMITH_DIAMOND = 1, BUTTON_STONEMASON_STONE = 2, BUTTON_STONEMASON_SAND = 3, BUTTON_STONEMASON_NETHERRACK = 4, BUTTON_STONEMASON_QUARTZ = 5, BUTTON_GUARD_ARMOR = 6, BUTTON_GUARD_WEAPON = 7, BUTTON_CITIZEN = 8, BUTTON_BACK = 9;
     private final TileEntityHutWarehouse warehouse;
 
     private final int span = 4;
 
-    private final int PAGE_INFORMATION = 0, PAGE_SETTINGS = 1;
-    private int page = PAGE_INFORMATION;
+    private final int PAGE_MENU = 0, PAGE_INFORMATION = 1, PAGE_SETTINGS = 2;
+    private int page = PAGE_MENU;
 
     public GuiHutWarehouse(TileEntityHutWarehouse tileEntityHutWarehouse, EntityPlayer player, World world, int x, int y, int z)
     {
@@ -30,7 +31,7 @@ public class GuiHutWarehouse extends GuiBase
         int smallButton = 30;
         int xl = (width - xSize) / 2 + xSize / 3 - 5;
         int xr = xl + xSize / 3;
-        int y = middleY + span;
+        int y = topY + span;
         int textPaddTop = 6, textPaddRight = 3;
 
         String toBlacksmith = LanguageHandler.format("com.minecolonies.gui.warehouse.toBlacksmith");
@@ -73,19 +74,24 @@ public class GuiHutWarehouse extends GuiBase
     {
         super.addElements();
 
-        String information = LanguageHandler.format("com.minecolonies.gui.workerHuts.information");
-        String settings = LanguageHandler.format("com.minecolonies.gui.workerHuts.settings");
-        GuiButton infoButton = addBottomButton(BUTTON_INFORMATION, information, middleX - ((int) (buttonWidth / 1.5)), (int) (buttonWidth / 1.5), buttonHeight);
-        GuiButton settingsButton = addBottomButton(BUTTON_SETTINGS, settings, middleX + 2, (int) (buttonWidth / 1.5), buttonHeight);
 
         switch(page)
         {
+            case PAGE_MENU:
+                int span = buttonHeight * 3;
+                String information = LanguageHandler.format("com.minecolonies.gui.workerHuts.information");
+                String settings = LanguageHandler.format("com.minecolonies.gui.workerHuts.settings");
+                String inventory = LanguageHandler.format("container.inventory");
+                addButton(BUTTON_INFORMATION, information, buttonMiddleX, buttonMiddleY - span, buttonWidth, buttonHeight);
+                addButton(BUTTON_SETTINGS, settings, buttonMiddleX, buttonMiddleY, buttonWidth, buttonHeight);
+                addButton(BUTTON_INVENTORY, inventory, buttonMiddleX, buttonMiddleY + span, buttonWidth, buttonHeight);
+                break;
             case PAGE_INFORMATION:
-                infoButton.enabled = false;
-                addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.warehouse"), "John R. Jones", "xx (yy)", "xxxxxxxx", span, false);
+                addBottomButton(BUTTON_BACK, LanguageHandler.format("gui.back"), buttonMiddleX, buttonWidth, buttonHeight);
+                addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.warehouse"), "John R. Jones", "xx (yy)", "xxxxxxxx", this.span);
                 break;
             case PAGE_SETTINGS:
-                settingsButton.enabled = false;
+                addBottomButton(BUTTON_BACK, LanguageHandler.format("gui.back"), buttonMiddleX, buttonWidth, buttonHeight);
                 addDeliverySettingElements();
                 break;
         }
@@ -94,15 +100,34 @@ public class GuiHutWarehouse extends GuiBase
     @Override
     protected void actionPerformed(GuiButton guiButton)
     {
+        //Actions for Menu Tab
+        if(page == PAGE_MENU)
+        {
+            switch(guiButton.id)
+            {
+                case BUTTON_INFORMATION:
+                    page = PAGE_INFORMATION;
+                    addElements();
+                    break;
+                case BUTTON_SETTINGS:
+                    page = PAGE_SETTINGS;
+                    addElements();
+                    break;
+                case BUTTON_INVENTORY:
+                    warehouse.func_145976_a(warehouse.getName());
+                    player.displayGUIChest(warehouse);
+                    break;
+            }
+        }
         //Actions for Information Tab
-        if(page == PAGE_INFORMATION)
+        else if(page == PAGE_INFORMATION)
         {
             super.actionPerformed(guiButton);
 
             switch(guiButton.id)
             {
-                case BUTTON_SETTINGS:
-                    page = PAGE_SETTINGS;
+                case BUTTON_BACK:
+                    page = PAGE_MENU;
                     addElements();
                     break;
             }
@@ -112,9 +137,6 @@ public class GuiHutWarehouse extends GuiBase
         {
             switch(guiButton.id)
             {
-                case BUTTON_INFORMATION:
-                    page = PAGE_INFORMATION;
-                    break;
                 case BUTTON_BLACKSMITH_GOLD:
                     warehouse.blacksmithGold = !warehouse.blacksmithGold;
                     break;
@@ -142,7 +164,11 @@ public class GuiHutWarehouse extends GuiBase
                 case BUTTON_CITIZEN:
                     warehouse.citizenVisit = !warehouse.citizenVisit;
                     break;
+                case BUTTON_BACK:
+                    page = PAGE_MENU;
+                    break;
             }
+
             addElements();
         }
     }

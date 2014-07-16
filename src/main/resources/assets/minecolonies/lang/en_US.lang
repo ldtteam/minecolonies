@@ -15,6 +15,7 @@ com.minecolonies.gui.townhall.defaultName=%s's Colony
 com.minecolonies.gui.townhall.population.totalCitizens=Number of Citizens: %d/%d
 com.minecolonies.gui.townhall.population.unemployed=Unemployed: %d
 com.minecolonies.gui.townhall.population.builders=Builders: %d
+com.minecolonies.gui.townhall.population.deliverymen=Deliverymen: %d
 
 com.minecolonies.gui.workerHuts.buildersHut=Builder's Hut
 com.minecolonies.gui.workerHuts.warehouse=Warehouse
@@ -40,7 +41,6 @@ com.minecolonies.gui.citizen.skills.stamina=Stamina: %d
 com.minecolonies.gui.citizen.skills.wisdom=Wisdom: %d
 com.minecolonies.gui.citizen.skills.intelligence=Intelligence: %d
 com.minecolonies.gui.citizen.skills.charisma=Charisma: %d
-com.minecolonies.gui.citizen.inventory=Citizen's Inventory
 
 tile.blockHutCitizen.name=Citizen's Hut
 tile.blockHutBaker.name=Bakery

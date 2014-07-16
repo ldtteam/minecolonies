@@ -1,6 +1,7 @@
 package com.minecolonies.tileentities;
 
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityDeliveryman;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class TileEntityHutWarehouse extends TileEntityHutWorker
@@ -40,7 +41,7 @@ public class TileEntityHutWarehouse extends TileEntityHutWorker
     @Override
     public EntityCitizen createWorker()
     {
-        return new EntityCitizen(worldObj); //TODO Implement Later
+        return new EntityDeliveryman(worldObj);
     }
 
     @Override
