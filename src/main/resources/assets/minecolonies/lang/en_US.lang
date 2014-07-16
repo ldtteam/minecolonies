@@ -17,7 +17,7 @@ com.minecolonies.gui.townhall.population.unemployed=Unemployed: %d
 com.minecolonies.gui.townhall.population.builders=Builders: %d
 
 com.minecolonies.gui.workerHuts.buildersHut=Builder's Hut
-com.minecolonies.gui.workerHuts.deliverymansHut=Warehouse
+com.minecolonies.gui.workerHuts.warehouse=Warehouse
 com.minecolonies.gui.workerHuts.workerAssigned=Worker Assigned:
 com.minecolonies.gui.workerHuts.workerLevel=Worker Level: %s
 com.minecolonies.gui.workerHuts.hire=Hire Worker
@@ -29,10 +29,10 @@ com.minecolonies.gui.workerHuts.buildType=Build Type:
 com.minecolonies.gui.workerHuts.information=Information
 com.minecolonies.gui.workerHuts.settings=Settings
 
-com.minecolonies.gui.deliverymanHut.toBlacksmith=Deliver to Blacksmith:
-com.minecolonies.gui.deliverymanHut.toStonemason=Deliver to Stonemason:
-com.minecolonies.gui.deliverymanHut.toGuards=Deliver to Guards:
-com.minecolonies.gui.deliverymanHut.visitCitizenChests=Visit Citizenchests:
+com.minecolonies.gui.warehouse.toBlacksmith=Deliver to Blacksmith:
+com.minecolonies.gui.warehouse.toStonemason=Deliver to Stonemason:
+com.minecolonies.gui.warehouse.toGuards=Deliver to Guards:
+com.minecolonies.gui.warehouse.visitCitizenChests=Visit Citizenchests:
 
 com.minecolonies.gui.citizen.skills=Skills
 com.minecolonies.gui.citizen.skills.strength=Strength: %d

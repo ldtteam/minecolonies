@@ -1,8 +1,5 @@
 com.minecolonies.error.supplyChestAlreadyPlaced=Je hebt het bevoorradingsschip al geplaatst!
 
-com.minecolonies.gui.yes=Ja
-com.minecolonies.gui.no=Nee
-
 com.minecolonies.gui.townhall.build=Bouw Stadhuis
 com.minecolonies.gui.townhall.repair=Repareer Stadhuis
 com.minecolonies.gui.townhall.recall=Roep Burgers Terug
@@ -15,7 +12,7 @@ com.minecolonies.gui.townhall.actions=Acties
 com.minecolonies.gui.townhall.defaultName=%s zijn Kolonie
 
 com.minecolonies.gui.workerHuts.buildersHut=Bouwvakkershuis
-com.minecolonies.gui.workerHuts.deliverymansHut=Warenhuis
+com.minecolonies.gui.workerHuts.warehouse=Warenhuis
 com.minecolonies.gui.workerHuts.workerAssigned=Werker Toegewezen:
 com.minecolonies.gui.workerHuts.workerLevel=Werker Level: %s
 com.minecolonies.gui.workerHuts.hire=Huur Werker
@@ -27,10 +24,10 @@ com.minecolonies.gui.workerHuts.buildType=Bouw Type:
 com.minecolonies.gui.workerHuts.information=Informatie
 com.minecolonies.gui.workerHuts.settings=Instellingen
 
-com.minecolonies.gui.deliverymanHut.toBlacksmith=Bezorg aan Smid:
-com.minecolonies.gui.deliverymanHut.toStonemason=Bezorg aan Steenhouwer:
-com.minecolonies.gui.deliverymanHut.toGuards=Bezorg aan Bewaker:
-com.minecolonies.gui.deliverymanHut.visitCitizenChests=Bezoek Burgerkisten:
+com.minecolonies.gui.warehouse.toBlacksmith=Bezorg aan Smid:
+com.minecolonies.gui.warehouse.toStonemason=Bezorg aan Steenhouwer:
+com.minecolonies.gui.warehouse.toGuards=Bezorg aan Bewaker:
+com.minecolonies.gui.warehouse.visitCitizenChests=Bezoek Burgerkisten:
 
 tile.blockHutCitizen.name=Woning
 tile.blockHutBaker.name=Bakker
