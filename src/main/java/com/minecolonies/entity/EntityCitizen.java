@@ -18,6 +18,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInvBasic;
@@ -27,9 +28,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
 
 import static net.minecraftforge.common.util.Constants.NBT;
 
@@ -418,6 +422,52 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public InventoryCitizen getInventory()
     {
         return inventory;
+    }
+
+    public void setInventorySize(int newSize, boolean dropLeftovers)
+    {
+        InventoryCitizen newInventory = new InventoryCitizen(inventory.getInventoryName(), inventory.hasCustomInventoryName(), newSize, this);
+        ArrayList<ItemStack> leftovers = new ArrayList<ItemStack>();
+        for(int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            ItemStack itemstack = inventory.getStackInSlot(i);
+            if(i < newInventory.getSizeInventory())
+            {
+                newInventory.setInventorySlotContents(i, itemstack);
+            }
+            else
+            {
+                if(itemstack != null) leftovers.add(itemstack);
+            }
+        }
+        inventory = newInventory;
+        inventory.addIInvBasic(this);
+        if(!worldObj.isRemote && dropLeftovers)
+        {
+            for(ItemStack leftover : leftovers)
+            {
+                if(leftover.stackSize > 0)
+                {
+                    EntityItem entityitem = new EntityItem(worldObj, posX, posY - 0.30000001192092896D + (double)getEyeHeight(), posZ, leftover);
+                    entityitem.delayBeforeCanPickup = 40;
+
+                    entityitem.func_145799_b(getCommandSenderName());
+
+                    float f = 0.3F;
+                    entityitem.motionX = (double)(-MathHelper.sin(rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(rotationPitch / 180.0F * (float)Math.PI) * f);
+                    entityitem.motionZ = (double)(MathHelper.cos(rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(rotationPitch / 180.0F * (float)Math.PI) * f);
+                    entityitem.motionY = (double)(-MathHelper.sin(rotationPitch / 180.0F * (float)Math.PI) * f + 0.1F);
+                    f = 0.02F;
+                    float f1 = rand.nextFloat() * (float)Math.PI * 2.0F;
+                    f *= rand.nextFloat();
+                    entityitem.motionX += Math.cos((double)f1) * (double)f;
+                    entityitem.motionY += (double)((rand.nextFloat() - rand.nextFloat()) * 0.1F);
+                    entityitem.motionZ += Math.sin((double)f1) * (double)f;
+
+                    worldObj.spawnEntityInWorld(entityitem);
+                }
+            }
+        }
     }
 
     public void addToWorkHut(TileEntityHutWorker tileEntityHutWorker)
