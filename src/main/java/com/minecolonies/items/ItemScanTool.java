@@ -9,8 +9,8 @@ import net.minecraft.world.World;
 
 public class ItemScanTool extends ItemMinecolonies
 {
-    Vec3 pos;
-    Vec3 pos2;
+    private Vec3 pos;
+    private Vec3 pos2;
 
     public ItemScanTool()
     {

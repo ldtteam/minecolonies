@@ -12,6 +12,7 @@ import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import com.minecolonies.util.Vec3Utils;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -37,17 +38,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public static final int SEX_MALE   = 0;
     public static final int SEX_FEMALE = 1;
 
+    public int strength, stamina, wisdom, intelligence, charisma;
     public  ResourceLocation texture;
     private String           job;
     private InventoryCitizen inventory;
-    public int strength, stamina, wisdom, intelligence, charisma;
 
-    private TileEntityTownHall tileEntityTownHall;
-    private int                townPosX, townPosY, townPosZ;
-    private TileEntityHutWorker tileEntityWorkHut;
-    private int                 workPosX, workPosY, workPosZ;
+    private TileEntityTownHall   tileEntityTownHall;
+    private Vec3                 townPos;
+    private TileEntityHutWorker  tileEntityWorkHut;
+    private Vec3                 workPos;
     private TileEntityHutCitizen tileEntityHomeHut;
-    private int                  homePosX, homePosY, homePosZ;
+    private Vec3                 homePos;
 
     protected Status status = Status.IDLE;
 
@@ -175,15 +176,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if(tileEntityTownHall == null)
         {
-            tileEntityTownHall = (TileEntityTownHall) worldObj.getTileEntity(townPosX, townPosY, townPosZ);
+            tileEntityTownHall = (TileEntityTownHall) Vec3Utils.getTileEntityFromVec(worldObj, townPos);
         }
         if(tileEntityWorkHut == null)
         {
-            tileEntityWorkHut = (TileEntityHutWorker) worldObj.getTileEntity(workPosX, workPosY, workPosZ);
+            tileEntityWorkHut = (TileEntityHutWorker) Vec3Utils.getTileEntityFromVec(worldObj, workPos);
         }
         if(tileEntityHomeHut == null)
         {
-            tileEntityHomeHut = (TileEntityHutCitizen) worldObj.getTileEntity(homePosX, homePosY, homePosZ);
+            tileEntityHomeHut = (TileEntityHutCitizen) Vec3Utils.getTileEntityFromVec(worldObj, homePos);
         }
     }
 
@@ -392,23 +393,26 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if(compound.hasKey("townhall"))
         {
             NBTTagCompound nbtTagTownhallCompound = compound.getCompoundTag("townhall");
-            townPosX = nbtTagTownhallCompound.getInteger("x");
-            townPosY = nbtTagTownhallCompound.getInteger("y");
-            townPosZ = nbtTagTownhallCompound.getInteger("z");
+            int x = nbtTagTownhallCompound.getInteger("x");
+            int y = nbtTagTownhallCompound.getInteger("y");
+            int z = nbtTagTownhallCompound.getInteger("z");
+            townPos = Vec3.createVectorHelper(x, y, z);
         }
         if(compound.hasKey("workhut"))
         {
             NBTTagCompound nbtTagWorkHutCompound = compound.getCompoundTag("workhut");
-            workPosX = nbtTagWorkHutCompound.getInteger("x");
-            workPosY = nbtTagWorkHutCompound.getInteger("y");
-            workPosZ = nbtTagWorkHutCompound.getInteger("z");
+            int x = nbtTagWorkHutCompound.getInteger("x");
+            int y = nbtTagWorkHutCompound.getInteger("y");
+            int z = nbtTagWorkHutCompound.getInteger("z");
+            workPos = Vec3.createVectorHelper(x, y, z);
         }
         if(compound.hasKey("homehut"))
         {
             NBTTagCompound nbtTagHomeHutCompound = compound.getCompoundTag("homehut");
-            homePosX = nbtTagHomeHutCompound.getInteger("x");
-            homePosY = nbtTagHomeHutCompound.getInteger("y");
-            homePosZ = nbtTagHomeHutCompound.getInteger("z");
+            int x = nbtTagHomeHutCompound.getInteger("x");
+            int y = nbtTagHomeHutCompound.getInteger("y");
+            int z = nbtTagHomeHutCompound.getInteger("z");
+            homePos = Vec3.createVectorHelper(x, y, z);
         }
         NBTTagList nbttaglist = compound.getTagList("Inventory", NBT.TAG_COMPOUND);
         for(int i = 0; i < nbttaglist.tagCount(); i++)
@@ -471,24 +475,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         citizen.setJob("Citizen", null);
         getTownHall().addCitizenToTownhall(citizen);
         worldObj.spawnEntityInWorld(citizen);
-    }
-
-    public void writeVecToNBT(NBTTagCompound compound, String name, Vec3 vec)
-    {
-        NBTTagCompound vecCompound = new NBTTagCompound();
-        vecCompound.setInteger("x", (int) vec.xCoord);
-        vecCompound.setInteger("y", (int) vec.yCoord);
-        vecCompound.setInteger("z", (int) vec.zCoord);
-        compound.setTag(name, vecCompound);
-    }
-
-    public Vec3 readVecFromNBT(NBTTagCompound compound, String name)
-    {
-        NBTTagCompound vecCompound = compound.getCompoundTag(name);
-        int x = vecCompound.getInteger("x");
-        int y = vecCompound.getInteger("y");
-        int z = vecCompound.getInteger("z");
-        return Vec3.createVectorHelper(x, y, z);
     }
 
     /**

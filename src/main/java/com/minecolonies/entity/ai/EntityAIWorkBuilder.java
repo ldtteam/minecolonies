@@ -9,6 +9,7 @@ import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
+import com.minecolonies.util.Vec3Utils;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
@@ -560,8 +561,8 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
     private void loadSchematic()
     {
-        Map.Entry<int[], String> entry = builder.getTownHall().getBuilderRequired().entrySet().iterator().next();
-        int[] pos = entry.getKey();
+        Map.Entry<Vec3, String> entry = builder.getTownHall().getBuilderRequired().entrySet().iterator().next();
+        Vec3 pos = entry.getKey();
         String name = entry.getValue();
 
         builder.setSchematic(Schematic.loadSchematic(world, name));
@@ -572,7 +573,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
             builder.getTownHall().removeHutForUpgrade(pos);
             return;
         }
-        builder.getSchematic().setPosition(Vec3.createVectorHelper(pos[0], pos[1], pos[2]));
+        builder.getSchematic().setPosition(pos);
     }
 
     private void completeBuild()
@@ -581,13 +582,13 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
         String schematicName = builder.getSchematic().getName();
         LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", schematicName);
-        int[] pos = Utils.vecToInt(builder.getSchematic().getPosition());
+        Vec3 pos = builder.getSchematic().getPosition();
 
-        if(world.getTileEntity(pos[0], pos[1], pos[2]) instanceof TileEntityBuildable)
+        if(Vec3Utils.getTileEntityFromVec(world, pos) instanceof TileEntityBuildable)
         {
             int schematicLevel = Integer.parseInt(schematicName.substring(schematicName.length() - 1));
 
-            TileEntityBuildable hut = (TileEntityBuildable) world.getTileEntity(pos[0], pos[1], pos[2]);
+            TileEntityBuildable hut = (TileEntityBuildable) Vec3Utils.getTileEntityFromVec(world, pos);
             hut.setBuildingLevel(schematicLevel);
         }
 

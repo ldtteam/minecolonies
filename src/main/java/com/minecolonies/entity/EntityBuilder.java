@@ -4,6 +4,7 @@ import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import com.minecolonies.util.Schematic;
+import com.minecolonies.util.Vec3Utils;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
@@ -62,8 +63,8 @@ public class EntityBuilder extends EntityCitizen
         {
             NBTTagCompound schematicTag = new NBTTagCompound();
             schematicTag.setString("name", schematic.getName());
-            writeVecToNBT(schematicTag, "position", schematic.getPosition());
-            writeVecToNBT(schematicTag, "progress", schematic.getLocalPosition());
+            Vec3Utils.writeVecToNBT(schematicTag, "position", schematic.getPosition());
+            Vec3Utils.writeVecToNBT(schematicTag, "progress", schematic.getLocalPosition());
             compound.setTag("schematic", schematicTag);
         }
     }
@@ -76,8 +77,8 @@ public class EntityBuilder extends EntityCitizen
         {
             NBTTagCompound schematicTag = compound.getCompoundTag("schematic");
             String name = schematicTag.getString("name");
-            Vec3 pos = readVecFromNBT(schematicTag, "position");
-            Vec3 progress = readVecFromNBT(schematicTag, "progress");
+            Vec3 pos = Vec3Utils.readVecFromNBT(schematicTag, "position");
+            Vec3 progress = Vec3Utils.readVecFromNBT(schematicTag, "progress");
             schematic = Schematic.loadSchematic(worldObj, name);
             if(schematic == null)
             {

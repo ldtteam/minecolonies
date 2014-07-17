@@ -2,19 +2,19 @@ package com.minecolonies.tileentities;
 
 import com.minecolonies.lib.IColony;
 import com.minecolonies.util.Schematic;
+import com.minecolonies.util.Vec3Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Vec3;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 public abstract class TileEntityBuildable extends TileEntityChest implements IColony
 {
     private int                buildingLevel;
     private TileEntityTownHall townhall;
-    private int                townhallX, townhallY, townhallZ;
+    private Vec3               townhallPos;
 
     public TileEntityBuildable()
     {
@@ -28,7 +28,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
         if(townhall == null)
         {
-            townhall = (TileEntityTownHall) worldObj.getTileEntity(townhallX, townhallY, townhallZ);
+            townhall = (TileEntityTownHall) Vec3Utils.getTileEntityFromVec(worldObj, townhallPos);
         }
     }
 
@@ -40,10 +40,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
         if (compound.hasKey("townhall"))
         {
-            NBTTagCompound townhallCompound = compound.getCompoundTag("townhall");
-            this.townhallX = townhallCompound.getInteger("x");
-            this.townhallY = townhallCompound.getInteger("y");
-            this.townhallZ = townhallCompound.getInteger("z");
+            townhallPos = Vec3Utils.readVecFromNBT(compound, "townhall");
         }
     }
 
@@ -54,11 +51,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
         compound.setInteger("buildingLevel", buildingLevel);
         if(this.townhall != null)
         {
-            NBTTagCompound townhallCompound = new NBTTagCompound();
-            townhallCompound.setInteger("x", townhall.xCoord);
-            townhallCompound.setInteger("y", townhall.yCoord);
-            townhallCompound.setInteger("z", townhall.zCoord);
-            compound.setTag("townhall", townhallCompound);
+            Vec3Utils.writeVecToNBT(compound, "townhall", townhall.getPosition());
         }
     }
 
@@ -84,9 +77,9 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
     public void requestBuilding()
     {
-        for(int[] key : getTownHall().getBuilderRequired().keySet())
+        for(Vec3 key : getTownHall().getBuilderRequired().keySet())
         {
-            if(Arrays.equals(new int[]{xCoord, yCoord, zCoord}, key))
+            if(getPosition().equals(key))
             {
                 return;
             }
@@ -97,9 +90,9 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
     public void requestRepair()
     {
-        for(int[] key : getTownHall().getBuilderRequired().keySet())
+        for(Vec3 key : getTownHall().getBuilderRequired().keySet())
         {
-            if(Arrays.equals(new int[]{xCoord, yCoord, zCoord}, key))
+            if(getPosition().equals(key))
             {
                 return;
             }
@@ -124,5 +117,10 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     public Vec3 getPosition()
     {
         return Vec3.createVectorHelper(xCoord, yCoord, zCoord);
+    }
+
+    public double getDistanceFrom(Vec3 pos)
+    {
+        return getDistanceFrom(pos.xCoord, pos.yCoord, pos.zCoord);
     }
 }

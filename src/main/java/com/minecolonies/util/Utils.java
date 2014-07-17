@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -302,10 +303,5 @@ public class Utils
             return entities;
         }
         return null;
-    }
-
-    public static int[] vecToInt(Vec3 vec)
-    {
-        return new int[]{(int) vec.xCoord, (int) vec.yCoord, (int) vec.zCoord};
     }
 }

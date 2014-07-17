@@ -204,12 +204,12 @@ public class Schematic
 
     private boolean doesSchematicBlockEqualWorldBlock()
     {
-        int[] pos = Utils.vecToInt(this.getBlockPosition());
-        if(pos[1] <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
+        Vec3 pos = this.getBlockPosition();
+        if(pos.yCoord <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
         {
             return true;
         }
-        return schematic.getBlock(x, y, z) == world.getBlock(pos[0], pos[1], pos[2]) && schematic.getBlockMetadata(x, y, z) == world.getBlockMetadata(pos[0], pos[1], pos[2]);
+        return schematic.getBlock(x, y, z) == Vec3Utils.getBlockFromVec(world, pos) && schematic.getBlockMetadata(x, y, z) == Vec3Utils.getBlockMetadataFromVec(world, pos);
     }
 
     public static String saveSchematic(World world, Vec3 from, Vec3 to)

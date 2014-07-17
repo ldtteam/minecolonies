@@ -2,6 +2,7 @@ package com.minecolonies.network.packets;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
+import com.minecolonies.util.Vec3Utils;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -9,16 +10,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.StringUtils;
+import net.minecraft.util.Vec3;
 
 public class OpenInventoryPacket extends AbstractPacket
 {
     private final int INVENTORY_NULL = -1, INVENTORY_CITIZEN = 0, INVENTORY_CHEST = 1;
     private IInventory inventory;
-    private String name;
+    private String     name;
 
     private int inventoryType;
     private int entityId;
-    private int[] pos = new int[3];
+    private Vec3 pos;
 
     public OpenInventoryPacket(){}
 
@@ -38,21 +40,17 @@ public class OpenInventoryPacket extends AbstractPacket
     {
         if(inventory instanceof InventoryCitizen)
         {
-            buffer.writeInt(inventoryType = INVENTORY_CITIZEN);
-            buffer.writeInt(entityId = ((InventoryCitizen) inventory).citizen.getEntityId());
-
-            if(StringUtils.isNullOrEmpty(name)) name = "";
+            buffer.writeInt(INVENTORY_CITIZEN);
+            buffer.writeInt(((InventoryCitizen) inventory).citizen.getEntityId());
             ByteBufUtils.writeUTF8String(buffer, name);
         }
         else if(inventory instanceof TileEntityChest)
         {
             TileEntityChest chest = (TileEntityChest) inventory;
-            buffer.writeInt(inventoryType = INVENTORY_CHEST);
-            buffer.writeInt(pos[0] = chest.xCoord);
-            buffer.writeInt(pos[1] = chest.yCoord);
-            buffer.writeInt(pos[2] = chest.zCoord);
-
-            if(StringUtils.isNullOrEmpty(name)) name = "";
+            buffer.writeInt(INVENTORY_CHEST);
+            buffer.writeInt(chest.xCoord);
+            buffer.writeInt(chest.yCoord);
+            buffer.writeInt(chest.zCoord);
             ByteBufUtils.writeUTF8String(buffer, name);
         }
         else
@@ -72,7 +70,7 @@ public class OpenInventoryPacket extends AbstractPacket
                 name = ByteBufUtils.readUTF8String(buffer);
                 break;
             case INVENTORY_CHEST:
-                pos = new int[]{buffer.readInt(), buffer.readInt(), buffer.readInt()};
+                pos = Vec3.createVectorHelper(buffer.readInt(), buffer.readInt(), buffer.readInt());
                 name = ByteBufUtils.readUTF8String(buffer);
                 break;
         }
@@ -92,7 +90,7 @@ public class OpenInventoryPacket extends AbstractPacket
                 player.displayGUIChest(citizenInventory);
                 break;
             case INVENTORY_CHEST:
-                TileEntityChest chest = (TileEntityChest) player.worldObj.getTileEntity(pos[0], pos[1], pos[2]);
+                TileEntityChest chest = (TileEntityChest) Vec3Utils.getTileEntityFromVec(player.worldObj, pos);
                 if(!StringUtils.isNullOrEmpty(name)) chest.func_145976_a(name);
                 player.displayGUIChest(chest);
                 break;

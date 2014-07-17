@@ -2,16 +2,19 @@ package com.minecolonies.entity;
 
 import com.minecolonies.lib.Constants;
 import com.minecolonies.proxy.CommonProxy;
+import com.minecolonies.util.Vec3Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
 public class PlayerProperties implements IExtendedEntityProperties
 {
     private boolean hasPlacedTownHall = false;
-    private int     townhallX         = 0, townhallY = 0, townhallZ = 0;
+    private Vec3 townhallPos = Vec3.createVectorHelper(0, 0, 0);
+    //private int     townhallX         = 0, townhallY = 0, townhallZ = 0;
     private boolean hasPlacedSupplyChest = false;
 
     private PlayerProperties(){}
@@ -43,9 +46,7 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = new NBTTagCompound();
 
         properties.setBoolean("hasPlacedTownHall", hasPlacedTownHall);
-        properties.setInteger("townhallX", townhallX);
-        properties.setInteger("townhallY", townhallY);
-        properties.setInteger("townhallZ", townhallZ);
+        Vec3Utils.writeVecToNBT(compound, "townhall", townhallPos);
         properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
         compound.setTag(Constants.PlayerPropertyName, properties);
@@ -57,9 +58,7 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PlayerPropertyName);
 
         this.hasPlacedTownHall = properties.getBoolean("hasPlacedTownHall");
-        this.townhallX = properties.getInteger("townhallX");
-        this.townhallY = properties.getInteger("townhallY");
-        this.townhallZ = properties.getInteger("townhallZ");
+        this.townhallPos = Vec3Utils.readVecFromNBT(compound, "townhall");
         this.hasPlacedSupplyChest = properties.getBoolean("hasPlacedSupplyChest");
     }
 
@@ -141,7 +140,7 @@ public class PlayerProperties implements IExtendedEntityProperties
     public void placeTownhall(int x, int y, int z)
     {
         setHasPlacedTownHall(true);
-        setTownhallPos(x, y, z);
+        setTownhallPos(Vec3.createVectorHelper(x, y, z));
     }
 
     /**
@@ -177,7 +176,7 @@ public class PlayerProperties implements IExtendedEntityProperties
      */
     public int getTownhallX()
     {
-        return townhallX;
+        return (int) townhallPos.xCoord;
     }
 
     /**
@@ -187,7 +186,17 @@ public class PlayerProperties implements IExtendedEntityProperties
      */
     public int getTownhallY()
     {
-        return townhallY;
+        return (int) townhallPos.yCoord;
+    }
+
+    /**
+     * Returns the townhall position
+     *
+     * @return townhall position
+     */
+    public Vec3 getTownhallPos()
+    {
+        return townhallPos;
     }
 
     /**
@@ -197,13 +206,11 @@ public class PlayerProperties implements IExtendedEntityProperties
      */
     public int getTownhallZ()
     {
-        return townhallZ;
+        return (int) townhallPos.zCoord;
     }
 
-    private void setTownhallPos(int x, int y, int z)
+    private void setTownhallPos(Vec3 pos)
     {
-        this.townhallX = x;
-        this.townhallY = y;
-        this.townhallZ = z;
+        townhallPos = pos;
     }
 }

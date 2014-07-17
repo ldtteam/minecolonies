@@ -5,6 +5,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import com.minecolonies.util.Vec3Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,9 +23,9 @@ public class TileEntityTownHall extends TileEntityHut
 
     private int maxCitizens;
     private List<UUID>  citizens = new ArrayList<UUID>();
-    private List<int[]> huts     = new ArrayList<int[]>(); //Stores XYZ's
+    private List<Vec3> huts     = new ArrayList<Vec3>(); //Stores XYZ's
 
-    private Map<int[], String> builderRequired = new HashMap<int[], String>(); //Stores XYZ's //TODO make this a Vec3
+    private Map<Vec3, String> builderRequired = new HashMap<Vec3, String>(); //Stores XYZ's //TODO make this a Vec3
 
     private List<Integer> entityIDs = new ArrayList<Integer>();
 
@@ -53,7 +54,7 @@ public class TileEntityTownHall extends TileEntityHut
                 if(hut.getDistanceFrom(xCoord, yCoord, zCoord) < Math.pow(Configurations.workingRangeTownhall, 2))
                 {
                     hut.setTownHall(this);
-                    huts.add(new int[]{hut.xCoord, hut.yCoord, hut.zCoord});
+                    huts.add(hut.getPosition());
                 }
             }
     }
@@ -111,9 +112,9 @@ public class TileEntityTownHall extends TileEntityHut
                 }
             }
         }
-        for(int[] pos : huts)
+        for(Vec3 pos : huts)
         {
-            TileEntityHut hut = (TileEntityHut) worldObj.getTileEntity(pos[0], pos[1], pos[2]);
+            TileEntityHut hut = (TileEntityHut) Vec3Utils.getTileEntityFromVec(worldObj, pos);
             if(hut != null)
             {
                 hut.setTownHall(null);
@@ -144,10 +145,10 @@ public class TileEntityTownHall extends TileEntityHut
         if(!huts.isEmpty())
         {
             NBTTagList nbtTagBuildingsList = new NBTTagList();
-            for(int[] coords : huts)
+            for(Vec3 coords : huts)
             {
                 NBTTagCompound compound = new NBTTagCompound();
-                compound.setIntArray("hut", coords);
+                Vec3Utils.writeVecToNBT(compound, "hut", coords);
                 nbtTagBuildingsList.appendTag(compound);
             }
             nbtTagCompound.setTag("huts", nbtTagBuildingsList);
@@ -155,10 +156,10 @@ public class TileEntityTownHall extends TileEntityHut
         if(!builderRequired.isEmpty())
         {
             NBTTagList nbtTagBuildingsList = new NBTTagList();
-            for(Map.Entry<int[], String> entry : builderRequired.entrySet())
+            for(Map.Entry<Vec3, String> entry : builderRequired.entrySet())
             {
                 NBTTagCompound compound = new NBTTagCompound();
-                compound.setIntArray("coords", entry.getKey());
+                Vec3Utils.writeVecToNBT(compound, "coords", entry.getKey());
                 compound.setString("name", entry.getValue());
                 nbtTagBuildingsList.appendTag(compound);
             }
@@ -212,13 +213,13 @@ public class TileEntityTownHall extends TileEntityHut
         for(int i = 0; i < nbtTagBuildingsList.tagCount(); i++)
         {
             NBTTagCompound nbtTagBuildingCompound = nbtTagBuildingsList.getCompoundTagAt(i);
-            int[] hut = nbtTagBuildingCompound.getIntArray("hut");
+            Vec3 hut = Vec3Utils.readVecFromNBT(nbtTagBuildingCompound, "hut");
             huts.add(hut);
         }
         for(int i = 0; i < nbtTagBuilderRequiredList.tagCount(); i++)
         {
             NBTTagCompound nbtTagBuilderRequiredCompound = nbtTagBuilderRequiredList.getCompoundTagAt(i);
-            int[] coords = nbtTagBuilderRequiredCompound.getIntArray("coords");
+            Vec3 coords = Vec3Utils.readVecFromNBT(nbtTagBuilderRequiredCompound, "hut");
             String name = nbtTagBuilderRequiredCompound.getString("name");
             builderRequired.put(coords, name);
         }
@@ -308,23 +309,40 @@ public class TileEntityTownHall extends TileEntityHut
     public List<TileEntityBuildable> getHuts()
     {
         List<TileEntityBuildable> list = new ArrayList<TileEntityBuildable>();
-        for(int[] i : huts)
+        for(Vec3 vec : huts)
         {
-            list.add((TileEntityBuildable) worldObj.getTileEntity(i[0], i[1], i[2]));
+            list.add((TileEntityBuildable) Vec3Utils.getTileEntityFromVec(worldObj, vec));
         }
         return list;
     }
 
     public void addHut(int x, int y, int z)
     {
-        huts.add(new int[]{x, y, z});
+        huts.add(Vec3.createVectorHelper(x, y, z));
+    }
+
+    public void addHut(Vec3 pos)
+    {
+        huts.add(pos);
     }
 
     public void removeHut(int x, int y, int z)
     {
-        for(int[] coords : huts)
+        for(Vec3 coords : huts)
         {
-            if(Arrays.equals(new int[]{x, y, z}, coords))
+            if(Vec3.createVectorHelper(x, y, z).equals(coords))
+            {
+                huts.remove(coords);
+                return;
+            }
+        }
+    }
+
+    public void removeHut(Vec3 pos)
+    {
+        for(Vec3 coords : huts)
+        {
+            if(pos.equals(coords))
             {
                 huts.remove(coords);
                 return;
@@ -334,14 +352,19 @@ public class TileEntityTownHall extends TileEntityHut
 
     public void addHutForUpgrade(String name, int x, int y, int z)
     {
-        builderRequired.put(new int[]{x, y, z}, name);
+        builderRequired.put(Vec3.createVectorHelper(x, y, z), name);
+    }
+
+    public void addHutForUpgrade(String name, Vec3 pos)
+    {
+        builderRequired.put(pos, name);
     }
 
     public void removeHutForUpgrade(int[] coords)
     {
-        for(int[] key : builderRequired.keySet())
+        for(Vec3 key : builderRequired.keySet())
         {
-            if(Arrays.equals(coords, key))
+            if(Arrays.equals(coords, Vec3Utils.vecToInt(key)))
             {
                 builderRequired.remove(key);
                 return;
@@ -349,7 +372,19 @@ public class TileEntityTownHall extends TileEntityHut
         }
     }
 
-    public Map<int[], String> getBuilderRequired()
+    public void removeHutForUpgrade(Vec3 coords)
+    {
+        for(Vec3 key : builderRequired.keySet())
+        {
+            if(coords.equals(key))
+            {
+                builderRequired.remove(key);
+                return;
+            }
+        }
+    }
+
+    public Map<Vec3, String> getBuilderRequired()
     {
         return builderRequired;
     }
