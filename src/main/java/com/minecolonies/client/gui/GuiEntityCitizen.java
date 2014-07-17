@@ -1,6 +1,8 @@
 package com.minecolonies.client.gui;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.network.packets.OpenInventoryPacket;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,11 +48,7 @@ public class GuiEntityCitizen extends GuiBase
         switch(guiButton.id)
         {
             case BUTTON_INVENTORY:
-                if(!citizen.worldObj.isRemote)
-                {
-                    citizen.getInventory().func_110133_a(citizen.getCustomNameTag());
-                    player.displayGUIChest(citizen.getInventory());
-                }
+                MineColonies.packetPipeline.sendToServer(new OpenInventoryPacket(citizen.getInventory(), citizen.getCustomNameTag()));
                 break;
         }
     }

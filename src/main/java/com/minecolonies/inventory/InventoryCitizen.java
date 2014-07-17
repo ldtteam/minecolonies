@@ -1,15 +1,18 @@
 package com.minecolonies.inventory;
 
+import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 
 public class InventoryCitizen extends InventoryBasic
 {
+    public final EntityCitizen citizen;
 
-    public InventoryCitizen(String title, boolean localeEnabled, int size)
+    public InventoryCitizen(String title, boolean localeEnabled, int size, EntityCitizen entityCitizen)
     {
         super(title, localeEnabled, size);
+        citizen = entityCitizen;
     }
 
     public void addIInvBasic(IInvBasic inventory)

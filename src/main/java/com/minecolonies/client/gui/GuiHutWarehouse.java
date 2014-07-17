@@ -1,5 +1,7 @@
 package com.minecolonies.client.gui;
 
+import com.minecolonies.MineColonies;
+import com.minecolonies.network.packets.OpenInventoryPacket;
 import com.minecolonies.tileentities.TileEntityHutWarehouse;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
@@ -114,8 +116,7 @@ public class GuiHutWarehouse extends GuiBase
                     addElements();
                     break;
                 case BUTTON_INVENTORY:
-                    warehouse.func_145976_a(warehouse.getName());
-                    player.displayGUIChest(warehouse);
+                    MineColonies.packetPipeline.sendToServer(new OpenInventoryPacket(warehouse, warehouse.getName()));
                     break;
             }
         }

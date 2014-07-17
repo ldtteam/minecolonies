@@ -60,7 +60,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         setTexture();
         this.setCustomNameTag(generateName());
         this.setAlwaysRenderNameTag(true);//TODO: configurable
-        this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
+        this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27, this);
         this.inventory.addIInvBasic(this);
 
         this.strength = worldObj.rand.nextInt(10) + 1;
