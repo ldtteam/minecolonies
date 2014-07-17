@@ -174,15 +174,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     private void updateTileEntities()
     {
-        if(tileEntityTownHall == null)
+        if(tileEntityTownHall == null && townPos != null)
         {
             tileEntityTownHall = (TileEntityTownHall) Vec3Utils.getTileEntityFromVec(worldObj, townPos);
         }
-        if(tileEntityWorkHut == null)
+        if(tileEntityWorkHut == null && workPos != null)
         {
             tileEntityWorkHut = (TileEntityHutWorker) Vec3Utils.getTileEntityFromVec(worldObj, workPos);
         }
-        if(tileEntityHomeHut == null)
+        if(tileEntityHomeHut == null && homePos != null)
         {
             tileEntityHomeHut = (TileEntityHutCitizen) Vec3Utils.getTileEntityFromVec(worldObj, homePos);
         }

@@ -26,7 +26,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     {
         if(worldObj.isRemote) return;
 
-        if(townhall == null)
+        if(townhall == null && townhallPos != null)
         {
             townhall = (TileEntityTownHall) Vec3Utils.getTileEntityFromVec(worldObj, townhallPos);
         }
