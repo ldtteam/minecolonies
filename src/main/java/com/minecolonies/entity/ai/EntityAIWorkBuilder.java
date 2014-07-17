@@ -208,7 +208,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 int chestSlotID = builder.getWorkHut().containsItemStack(material);
                 if(chestSlotID != -1)//chest contains item
                 {
-                    if(builder.getWorkHut().getDistanceFrom(builder.posX, builder.posY, builder.posZ) < 64) //Square Distance - within 8 blocks
+                    if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 64) //Square Distance - within 8 blocks
                     {
                         builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, amount);//if chest doesn't contain full amount, take all.
                     }
@@ -247,7 +247,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 ItemStack leftOvers = builder.getInventory().setStackInInventory(stack);
                 if(leftOvers != null)
                 {
-                    if(builder.getWorkHut().getDistanceFrom(builder.posX, builder.posY, builder.posZ) < 64) //Square Distance - within 8 blocks
+                    if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 64) //Square Distance - within 8 blocks
                     {
                         ItemStack chestLeftOvers = builder.getWorkHut().setStackInInventory(leftOvers);
                         if(chestLeftOvers != null)

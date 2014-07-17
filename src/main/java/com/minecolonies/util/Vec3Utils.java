@@ -66,7 +66,7 @@ public class Vec3Utils
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if(pos == townHall.getPosition()) continue;
+                if(equals(pos, townHall.getPosition())) continue;
 
                 double distanceSquared = townHall.getDistanceFrom(pos);
                 if(closestDist > distanceSquared)
@@ -96,7 +96,7 @@ public class Vec3Utils
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if(pos == townHall.getPosition()) continue;
+                if(equals(pos, townHall.getPosition())) continue;
 
                 double distanceSquared = townHall.getDistanceFrom(pos);
                 if(closestDist > distanceSquared)
@@ -117,5 +117,37 @@ public class Vec3Utils
     public static double getDistanceToTileEntity(Vec3 pos, TileEntity tileEntity)
     {
         return Math.sqrt(tileEntity.getDistanceFrom((int) pos.xCoord, (int) pos.yCoord, (int) pos.zCoord));
+    }
+
+    public static Vec3 scanForBlockNearPoint(World world, Block block, Vec3 pos, Vec3 radiusPos)
+    {
+        Vec3 closestVec = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for(int i = (int) (pos.xCoord - radiusPos.xCoord); i <= (int) (pos.xCoord + radiusPos.xCoord); i++)
+        {
+            for(int j = (int) (pos.yCoord - radiusPos.yCoord); j <= (int) (pos.yCoord + radiusPos.yCoord); j++)
+            {
+                for(int k = (int) (pos.zCoord - radiusPos.zCoord); k <= (int) (pos.zCoord + radiusPos.zCoord); k++)
+                {
+                    if(world.getBlock(i, j, k) == block)
+                    {
+                        Vec3 tempVec = Vec3.createVectorHelper(i, j, k);
+
+                        if(closestVec == null || tempVec.distanceTo(pos) < minDistance)
+                        {
+                            closestVec = tempVec;
+                            minDistance = closestVec.distanceTo(pos);
+                        }
+                    }
+                }
+            }
+        }
+        return closestVec;
+    }
+
+    public static boolean equals(Vec3 vec1, Vec3 vec2)
+    {
+        return vec1.xCoord == vec2.xCoord && vec1.yCoord == vec2.yCoord && vec1.zCoord == vec2.zCoord;
     }
 }

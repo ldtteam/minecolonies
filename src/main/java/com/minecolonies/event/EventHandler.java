@@ -42,7 +42,7 @@ public class EventHandler
                     }
                     else if(townhall != null)
                     {
-                        townhall.removeHut(hut.xCoord, hut.yCoord, hut.zCoord);
+                        townhall.removeHut(hut.getPosition());
                     }
                     hut.breakBlock();
                 }

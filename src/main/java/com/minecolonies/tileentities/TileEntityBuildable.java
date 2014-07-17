@@ -79,26 +79,26 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     {
         for(Vec3 key : getTownHall().getBuilderRequired().keySet())
         {
-            if(getPosition().equals(key))
+            if(Vec3Utils.equals(getPosition(), key))
             {
                 return;
             }
         }
         if(!(buildingLevel >= 3)) //TODO maxLevel
-            getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel + 1), xCoord, yCoord, zCoord);
+            getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel + 1), getPosition());
     }
 
     public void requestRepair()
     {
         for(Vec3 key : getTownHall().getBuilderRequired().keySet())
         {
-            if(getPosition().equals(key))
+            if(Vec3Utils.equals(getPosition(), key))
             {
                 return;
             }
         }
         if(buildingLevel == 0) return;
-        getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel), xCoord, yCoord, zCoord);
+        getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel), getPosition());
     }
 
     public boolean isPlayerOwner(EntityPlayer player)

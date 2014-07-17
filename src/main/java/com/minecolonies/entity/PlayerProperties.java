@@ -13,8 +13,7 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 public class PlayerProperties implements IExtendedEntityProperties
 {
     private boolean hasPlacedTownHall = false;
-    private Vec3 townhallPos = Vec3.createVectorHelper(0, 0, 0);
-    //private int     townhallX         = 0, townhallY = 0, townhallZ = 0;
+    private Vec3 townhallPos;
     private boolean hasPlacedSupplyChest = false;
 
     private PlayerProperties(){}
@@ -46,7 +45,7 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = new NBTTagCompound();
 
         properties.setBoolean("hasPlacedTownHall", hasPlacedTownHall);
-        Vec3Utils.writeVecToNBT(compound, "townhall", townhallPos);
+        if(townhallPos != null) Vec3Utils.writeVecToNBT(properties, "townhall", townhallPos);
         properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
         compound.setTag(Constants.PlayerPropertyName, properties);
@@ -58,7 +57,14 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PlayerPropertyName);
 
         this.hasPlacedTownHall = properties.getBoolean("hasPlacedTownHall");
-        this.townhallPos = Vec3Utils.readVecFromNBT(compound, "townhall");
+        if(properties.hasKey("townhall")) this.townhallPos = Vec3Utils.readVecFromNBT(properties, "townhall");
+        else if(properties.hasKey("townhallX") && properties.hasKey("townhallY") && properties.hasKey("townhallZ"))
+        {
+            int x = properties.getInteger("townhallX");
+            int y = properties.getInteger("townhallY");
+            int z = properties.getInteger("townhallZ");
+            this.townhallPos = Vec3.createVectorHelper(x, y, z);
+        }
         this.hasPlacedSupplyChest = properties.getBoolean("hasPlacedSupplyChest");
     }
 
@@ -170,26 +176,6 @@ public class PlayerProperties implements IExtendedEntityProperties
     }
 
     /**
-     * Returns the townhall x coordinate
-     *
-     * @return townhall x coordinate
-     */
-    public int getTownhallX()
-    {
-        return (int) townhallPos.xCoord;
-    }
-
-    /**
-     * Returns the townhall y coordinate
-     *
-     * @return townhall y coordinate
-     */
-    public int getTownhallY()
-    {
-        return (int) townhallPos.yCoord;
-    }
-
-    /**
      * Returns the townhall position
      *
      * @return townhall position
@@ -197,16 +183,6 @@ public class PlayerProperties implements IExtendedEntityProperties
     public Vec3 getTownhallPos()
     {
         return townhallPos;
-    }
-
-    /**
-     * Returns the townhall z coordinate
-     *
-     * @return townhall z coordinate
-     */
-    public int getTownhallZ()
-    {
-        return (int) townhallPos.zCoord;
     }
 
     private void setTownhallPos(Vec3 pos)

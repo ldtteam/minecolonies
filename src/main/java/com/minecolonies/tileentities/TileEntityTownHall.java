@@ -9,6 +9,7 @@ import com.minecolonies.util.Vec3Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.Vec3;
 
@@ -51,7 +52,7 @@ public class TileEntityTownHall extends TileEntityHut
             if(o instanceof TileEntityHut)
             {
                 TileEntityHut hut = (TileEntityHut) o;
-                if(hut.getDistanceFrom(xCoord, yCoord, zCoord) < Math.pow(Configurations.workingRangeTownhall, 2))
+                if(hut.getDistanceFrom(getPosition()) < Math.pow(Configurations.workingRangeTownhall, 2))
                 {
                     hut.setTownHall(this);
                     huts.add(hut.getPosition());
@@ -213,13 +214,31 @@ public class TileEntityTownHall extends TileEntityHut
         for(int i = 0; i < nbtTagBuildingsList.tagCount(); i++)
         {
             NBTTagCompound nbtTagBuildingCompound = nbtTagBuildingsList.getCompoundTagAt(i);
-            Vec3 hut = Vec3Utils.readVecFromNBT(nbtTagBuildingCompound, "hut");
+            Vec3 hut;
+            if(nbtTagBuildingCompound.getTag("hut") instanceof NBTTagIntArray)
+            {
+                int[] coords = nbtTagBuildingCompound.getIntArray("hut");
+                hut = Vec3.createVectorHelper(coords[0], coords[1], coords[2]);
+            }
+            else
+            {
+                hut = Vec3Utils.readVecFromNBT(nbtTagBuildingCompound, "hut");
+            }
             huts.add(hut);
         }
         for(int i = 0; i < nbtTagBuilderRequiredList.tagCount(); i++)
         {
             NBTTagCompound nbtTagBuilderRequiredCompound = nbtTagBuilderRequiredList.getCompoundTagAt(i);
-            Vec3 coords = Vec3Utils.readVecFromNBT(nbtTagBuilderRequiredCompound, "hut");
+            Vec3 coords;
+            if(nbtTagBuilderRequiredCompound.getTag("coords") instanceof NBTTagIntArray)
+            {
+                int[] hut = nbtTagBuilderRequiredCompound.getIntArray("coords");
+                coords = Vec3.createVectorHelper(hut[0], hut[1], hut[2]);
+            }
+            else
+            {
+                coords = Vec3Utils.readVecFromNBT(nbtTagBuilderRequiredCompound, "coords");
+            }
             String name = nbtTagBuilderRequiredCompound.getString("name");
             builderRequired.put(coords, name);
         }
@@ -316,9 +335,10 @@ public class TileEntityTownHall extends TileEntityHut
         return list;
     }
 
+    @Deprecated
     public void addHut(int x, int y, int z)
     {
-        huts.add(Vec3.createVectorHelper(x, y, z));
+        addHut(Vec3.createVectorHelper(x, y, z));
     }
 
     public void addHut(Vec3 pos)
@@ -326,23 +346,17 @@ public class TileEntityTownHall extends TileEntityHut
         huts.add(pos);
     }
 
+    @Deprecated
     public void removeHut(int x, int y, int z)
     {
-        for(Vec3 coords : huts)
-        {
-            if(Vec3.createVectorHelper(x, y, z).equals(coords))
-            {
-                huts.remove(coords);
-                return;
-            }
-        }
+        removeHut(Vec3.createVectorHelper(x, y, z));
     }
 
     public void removeHut(Vec3 pos)
     {
         for(Vec3 coords : huts)
         {
-            if(pos.equals(coords))
+            if(Vec3Utils.equals(pos, coords))
             {
                 huts.remove(coords);
                 return;
@@ -350,9 +364,10 @@ public class TileEntityTownHall extends TileEntityHut
         }
     }
 
+    @Deprecated
     public void addHutForUpgrade(String name, int x, int y, int z)
     {
-        builderRequired.put(Vec3.createVectorHelper(x, y, z), name);
+        addHutForUpgrade(name, Vec3.createVectorHelper(x, y, z));
     }
 
     public void addHutForUpgrade(String name, Vec3 pos)
@@ -360,23 +375,17 @@ public class TileEntityTownHall extends TileEntityHut
         builderRequired.put(pos, name);
     }
 
-    public void removeHutForUpgrade(int[] coords)
+    @Deprecated
+    public void removeHutForUpgrade(int x, int y, int z)
     {
-        for(Vec3 key : builderRequired.keySet())
-        {
-            if(Arrays.equals(coords, Vec3Utils.vecToInt(key)))
-            {
-                builderRequired.remove(key);
-                return;
-            }
-        }
+        removeHutForUpgrade(Vec3.createVectorHelper(x, y, z));
     }
 
     public void removeHutForUpgrade(Vec3 coords)
     {
         for(Vec3 key : builderRequired.keySet())
         {
-            if(coords.equals(key))
+            if(Vec3Utils.equals(coords, key))
             {
                 builderRequired.remove(key);
                 return;

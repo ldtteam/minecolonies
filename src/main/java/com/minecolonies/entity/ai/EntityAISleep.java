@@ -21,7 +21,7 @@ public class EntityAISleep extends EntityAIBase
 
     private boolean isHome()
     {
-        return this.citizen.getHomeHut() != null && this.citizen.getHomeHut().getDistanceFrom(citizen.posX, citizen.posY, citizen.posZ) < 4;
+        return this.citizen.getHomeHut() != null && this.citizen.getHomeHut().getDistanceFrom(citizen.getPosition()) < 4;
     }
 
     @Override

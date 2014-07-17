@@ -336,27 +336,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if(tileEntityTownHall != null)
         {
-            NBTTagCompound nbtTagTownhallCompound = new NBTTagCompound();
-            nbtTagTownhallCompound.setInteger("x", tileEntityTownHall.xCoord);
-            nbtTagTownhallCompound.setInteger("y", tileEntityTownHall.yCoord);
-            nbtTagTownhallCompound.setInteger("z", tileEntityTownHall.zCoord);
-            compound.setTag("townhall", nbtTagTownhallCompound);
+            Vec3Utils.writeVecToNBT(compound, "townhall", tileEntityTownHall.getPosition());
         }
         if(tileEntityWorkHut != null)
         {
-            NBTTagCompound nbtTagWorkHutCompound = new NBTTagCompound();
-            nbtTagWorkHutCompound.setInteger("x", tileEntityWorkHut.xCoord);
-            nbtTagWorkHutCompound.setInteger("y", tileEntityWorkHut.yCoord);
-            nbtTagWorkHutCompound.setInteger("z", tileEntityWorkHut.zCoord);
-            compound.setTag("workhut", nbtTagWorkHutCompound);
+            Vec3Utils.writeVecToNBT(compound, "workhut", tileEntityWorkHut.getPosition());
         }
         if(tileEntityHomeHut != null)
         {
-            NBTTagCompound nbtTagHomeHutCompound = new NBTTagCompound();
-            nbtTagHomeHutCompound.setInteger("x", tileEntityHomeHut.xCoord);
-            nbtTagHomeHutCompound.setInteger("y", tileEntityHomeHut.yCoord);
-            nbtTagHomeHutCompound.setInteger("z", tileEntityHomeHut.zCoord);
-            compound.setTag("homehut", nbtTagHomeHutCompound);
+            Vec3Utils.writeVecToNBT(compound, "homehut", tileEntityHomeHut.getPosition());
         }
         NBTTagList inventoryList = new NBTTagList();
         for(int i = 0; i < inventory.getSizeInventory(); i++)
@@ -392,27 +380,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if(compound.hasKey("townhall"))
         {
-            NBTTagCompound nbtTagTownhallCompound = compound.getCompoundTag("townhall");
-            int x = nbtTagTownhallCompound.getInteger("x");
-            int y = nbtTagTownhallCompound.getInteger("y");
-            int z = nbtTagTownhallCompound.getInteger("z");
-            townPos = Vec3.createVectorHelper(x, y, z);
+            townPos = Vec3Utils.readVecFromNBT(compound, "townhall");
         }
         if(compound.hasKey("workhut"))
         {
-            NBTTagCompound nbtTagWorkHutCompound = compound.getCompoundTag("workhut");
-            int x = nbtTagWorkHutCompound.getInteger("x");
-            int y = nbtTagWorkHutCompound.getInteger("y");
-            int z = nbtTagWorkHutCompound.getInteger("z");
-            workPos = Vec3.createVectorHelper(x, y, z);
+            workPos = Vec3Utils.readVecFromNBT(compound, "workhut");
         }
         if(compound.hasKey("homehut"))
         {
-            NBTTagCompound nbtTagHomeHutCompound = compound.getCompoundTag("homehut");
-            int x = nbtTagHomeHutCompound.getInteger("x");
-            int y = nbtTagHomeHutCompound.getInteger("y");
-            int z = nbtTagHomeHutCompound.getInteger("z");
-            homePos = Vec3.createVectorHelper(x, y, z);
+            homePos = Vec3Utils.readVecFromNBT(compound, "homehut");
         }
         NBTTagList nbttaglist = compound.getTagList("Inventory", NBT.TAG_COMPOUND);
         for(int i = 0; i < nbttaglist.tagCount(); i++)

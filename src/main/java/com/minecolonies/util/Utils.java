@@ -28,26 +28,7 @@ public class Utils
      */
     public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z)
     {
-        double closestDist = Double.MAX_VALUE;
-        TileEntityTownHall closestTownHall = null;
-
-        if(world == null || world.loadedTileEntityList == null) return null;
-
-        for(Object o : world.loadedTileEntityList)
-            if(o instanceof TileEntityTownHall)
-            {
-                TileEntityTownHall townHall = (TileEntityTownHall) o;
-
-                if(x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
-
-                double distanceSquared = townHall.getDistanceFrom(x, y, z);
-                if(closestDist > distanceSquared)
-                {
-                    closestTownHall = townHall;
-                    closestDist = distanceSquared;
-                }
-            }
-        return closestTownHall;
+        return Vec3Utils.getClosestTownHall(world, Vec3.createVectorHelper(x, y, z));
     }
 
     /**
@@ -61,24 +42,7 @@ public class Utils
      */
     public static double getDistanceToClosestTownHall(World world, int x, int y, int z)
     {
-        double closestDist = Double.MAX_VALUE;
-
-        if(world == null || world.loadedTileEntityList == null) return -1;
-
-        for(Object o : world.loadedTileEntityList)
-            if(o instanceof TileEntityTownHall)
-            {
-                TileEntityTownHall townHall = (TileEntityTownHall) o;
-
-                if(x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
-
-                double distanceSquared = townHall.getDistanceFrom(x, y, z);
-                if(closestDist > distanceSquared)
-                {
-                    closestDist = distanceSquared;
-                }
-            }
-        return Math.sqrt(closestDist);
+        return Vec3Utils.getDistanceToClosestTownHall(world, Vec3.createVectorHelper(x, y, z));
     }
 
     /**
@@ -92,7 +56,12 @@ public class Utils
      */
     public static double getDistanceToTileEntity(int x, int y, int z, TileEntity tileEntity)
     {
-        return Math.sqrt(tileEntity.getDistanceFrom(x, y, z));
+        return Vec3Utils.getDistanceToTileEntity(Vec3.createVectorHelper(x, y, z), tileEntity);
+    }
+
+    public static Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
+    {
+        return Vec3Utils.scanForBlockNearPoint(world, block, Vec3.createVectorHelper(x, y, z), Vec3.createVectorHelper(radiusX, radiusY, radiusZ));
     }
 
     /**
@@ -107,7 +76,7 @@ public class Utils
         PlayerProperties props = PlayerProperties.get(player);
         if(props.hasPlacedTownHall())
         {
-            return (TileEntityTownHall) world.getTileEntity(props.getTownhallX(), props.getTownhallY(), props.getTownhallZ());
+            return (TileEntityTownHall) Vec3Utils.getTileEntityFromVec(world, props.getTownhallPos());
         }
         return null;
     }
@@ -137,35 +106,6 @@ public class Utils
             yHolder--;
         }
         return yHolder;
-    }
-
-    public static Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
-    {
-        Vec3 entityVec = Vec3.createVectorHelper(x, y, z);
-
-        Vec3 closestVec = null;
-        double minDistance = Double.MAX_VALUE;
-
-        for(int i = x - radiusX; i <= x + radiusX; i++)
-        {
-            for(int j = y - radiusY; j <= y + radiusY; j++)
-            {
-                for(int k = z - radiusZ; k <= z + radiusZ; k++)
-                {
-                    if(world.getBlock(i, j, k) == block)
-                    {
-                        Vec3 tempVec = Vec3.createVectorHelper(i, j, k);
-
-                        if(closestVec == null || tempVec.distanceTo(entityVec) < minDistance)
-                        {
-                            closestVec = tempVec;
-                            minDistance = closestVec.distanceTo(entityVec);
-                        }
-                    }
-                }
-            }
-        }
-        return closestVec;
     }
 
     /**

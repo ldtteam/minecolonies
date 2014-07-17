@@ -79,7 +79,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 TileEntityTownHall townhall = Utils.getTownhallByOwner(world, player);
 
                 hut.setTownHall(townhall);
-                townhall.addHut(hut.xCoord, hut.yCoord, hut.zCoord);
+                townhall.addHut(hut.getPosition());
 
                 if(hut instanceof TileEntityHutWorker)
                 {
