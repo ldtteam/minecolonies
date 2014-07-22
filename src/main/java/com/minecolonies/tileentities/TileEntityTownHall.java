@@ -26,7 +26,7 @@ public class TileEntityTownHall extends TileEntityHut
     private List<UUID>  citizens = new ArrayList<UUID>();
     private List<Vec3> huts     = new ArrayList<Vec3>(); //Stores XYZ's
 
-    private Map<Vec3, String> builderRequired = new HashMap<Vec3, String>(); //Stores XYZ's //TODO make this a Vec3
+    private Map<Vec3, String> builderRequired = new HashMap<Vec3, String>(); //Stores XYZ's
 
     private List<Integer> entityIDs = new ArrayList<Integer>();
 
@@ -193,7 +193,7 @@ public class TileEntityTownHall extends TileEntityHut
 
         NBTTagList nbtTagOwnersList = nbtTagCompound.getTagList("owners", NBT.TAG_COMPOUND);
         NBTTagList nbtTagCitizenList = nbtTagCompound.getTagList("citizens", NBT.TAG_COMPOUND);
-        NBTTagList nbtTagBuildingsList = nbtTagCompound.getTagList("huts", NBT.TAG_INT_ARRAY);
+        NBTTagList nbtTagBuildingsList = nbtTagCompound.getTagList("huts", NBT.TAG_COMPOUND);
         NBTTagList nbtTagBuilderRequiredList = nbtTagCompound.getTagList("builderRequired", NBT.TAG_COMPOUND);
         this.owners.clear();
         this.citizens.clear();

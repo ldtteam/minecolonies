@@ -17,11 +17,9 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntityBuilder extends EntityCitizen
+public class EntityBuilder extends EntityWorker
 {
     private Schematic schematic;
-
-    private List<ItemStack> itemsNeeded = new ArrayList<ItemStack>();
 
     public EntityBuilder(World world)
     {
@@ -107,38 +105,14 @@ public class EntityBuilder extends EntityCitizen
         this.schematic = schematic;
     }
 
-    public boolean hasMaterials()
-    {
-        if(!hasSchematic()) return true;
-
-        //TODO possibly find a better method
-        for(ItemStack materialStack : this.getSchematic().getMaterials())
-        {
-            ItemStack materialStackCopy = materialStack.copy();
-            for(int i = 0; i < this.getInventory().getSizeInventory(); i++)
-            {
-                ItemStack builderStack = this.getInventory().getStackInSlot(i);
-                if(builderStack != null && builderStack.isItemEqual(materialStackCopy))
-                {
-                    materialStackCopy.stackSize -= builderStack.stackSize;
-                }
-            }
-            if(materialStackCopy.stackSize > 0)
-            {
-                itemsNeeded.add(materialStackCopy);
-            }
-        }
-
-        return itemsNeeded.isEmpty();
-    }
-
     public int getWorkInterval()
     {
         return 1;//Constants.BUILDERWORKINTERFALL - this.getLevel();//TODO
     }
 
-    public boolean isBuilderNeeded()
+    @Override
+    public boolean isNeeded()
     {
-        return this.getTownHall() != null && !this.getTownHall().getBuilderRequired().isEmpty();
+        return this.getTownHall() != null && !this.getTownHall().getBuilderRequired().isEmpty() && this.getWorkHut() != null;
     }
 }

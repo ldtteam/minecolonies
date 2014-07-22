@@ -35,7 +35,7 @@ public abstract class TileEntityHutWorker extends TileEntityHut
 
         if(worldObj.isRemote) return;
 
-        if(!hasWorker() && this.getTownHall() != null)
+        if(workerID == null && this.getTownHall() != null)
         {
             addJoblessCitizens(this.getTownHall());
         }
@@ -53,7 +53,7 @@ public abstract class TileEntityHutWorker extends TileEntityHut
                 if(entity instanceof EntityCitizen)
                 {
                     EntityCitizen entityCitizen = (EntityCitizen) entity;
-                    if(entityCitizen.getJob().equals("Citizen") && !hasWorker())
+                    if(entityCitizen.getJob().equals("Citizen") && workerID == null)
                     {
                         entityCitizen.addToWorkHut(this);
                         return;
@@ -77,13 +77,9 @@ public abstract class TileEntityHutWorker extends TileEntityHut
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if(hasWorker())
+        if(workerID != null)
         {
             compound.setString("workerID", workerID.toString());
-        }
-        else
-        {
-            compound.removeTag("workerID");
         }
     }
 
@@ -100,8 +96,8 @@ public abstract class TileEntityHutWorker extends TileEntityHut
         }
     }
 
-    public boolean hasWorker()
+    public UUID getWorkerID()
     {
-        return workerID != null;
+        return workerID;
     }
 }

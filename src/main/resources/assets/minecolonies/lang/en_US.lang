@@ -91,4 +91,4 @@ entity.builder.ai.blockPlaceFailure=Block place failure %s at %d, %d, %d
 entity.builder.ai.blockBreakFailure=Block break failure at %d, %d, %d
 entity.builder.messageBuildStart=Started building %s
 entity.builder.messageBuildComplete=Finished building %s
-entity.builder.messageNeedMaterial=I need %s(%d)
+entity.builder.messageNeedMaterial=I need %s (Amount: %d)

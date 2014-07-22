@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.util.LanguageHandler;
@@ -52,7 +53,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return builder.isWorkTime() && (builder.hasSchematic() || builder.isBuilderNeeded());
+        return builder.isWorkTime() && (builder.hasSchematic() || builder.isNeeded());
     }
 
     @Override
@@ -66,11 +67,11 @@ public class EntityAIWorkBuilder extends EntityAIBase
             {
                 return;
             }
+
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
         }
         Vec3 buildPos = builder.getSchematic().getPosition();
         builder.getNavigator().tryMoveToXYZ(buildPos.xCoord, buildPos.yCoord, buildPos.zCoord, 1.0F);
-
-        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
     }
 
     @Override
@@ -85,7 +86,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
             builder.setStatus(EntityBuilder.Status.WORKING);
 
-            if(!isBuilderAtSite()) return;
+            if(!Vec3Utils.isWorkerAtSite(builder, builder.getSchematic().getPosition())) return;
 
             Block block = builder.getSchematic().getBlock();
             int metadata = builder.getSchematic().getMetadata();
@@ -148,30 +149,6 @@ public class EntityAIWorkBuilder extends EntityAIBase
         }
     }
 
-    private boolean isBuilderAtSite()
-    {
-        Vec3 buildPos = builder.getSchematic().getPosition();
-        if(builder.getPosition().squareDistanceTo(buildPos) > 4)//Too far away
-        {
-            if(builder.getNavigator().noPath())//Not moving
-            {
-                if(!builder.getNavigator().tryMoveToXYZ(buildPos.xCoord, buildPos.yCoord, buildPos.zCoord, 1.0F))
-                {
-                    builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
-                }
-            }
-            return false;
-        }
-        else
-        {
-            if(!builder.getNavigator().noPath())//within 2 blocks - can stop pathing //TODO may not need this check
-            {
-                builder.getNavigator().clearPathEntity();
-            }
-            return true;
-        }
-    }
-
     private boolean findNextBlock()
     {
         if(!builder.getSchematic().findNextBlock())//method returns false if there is no next block (schematic finished)
@@ -226,12 +203,23 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 }
                 else
                 {
-                    if(messageDelay % 10 == 0)
+                    boolean isAlreadyNeeded = false;
+                    for(ItemStack itemstack : builder.getItemsNeeded())
                     {
-                        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
+                        if(itemstack.isItemEqual(material))
+                        {
+                            isAlreadyNeeded = true;
+                        }
                     }
-                    builder.setStatus(EntityBuilder.Status.NEED_MATERIALS);
-                    //TODO request material - deliveryman
+
+                    if(!isAlreadyNeeded)
+                    {
+                        if(messageDelay % 10 == 0)
+                        {
+                            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
+                        }
+                        builder.getItemsNeeded().add(material);
+                    }
                 }
                 return false;
             }
@@ -252,7 +240,6 @@ public class EntityAIWorkBuilder extends EntityAIBase
                         ItemStack chestLeftOvers = builder.getWorkHut().setStackInInventory(leftOvers);
                         if(chestLeftOvers != null)
                         {
-                            builder.setStatus(EntityBuilder.Status.INVENTORY_FULL);
                             EntityItem itemDrop = new EntityItem(world, builder.posX, builder.posY + 1, builder.posZ, chestLeftOvers);
                             world.spawnEntityInWorld(itemDrop);
                         }
@@ -556,7 +543,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        return builder.isWorkTime() && builder.hasSchematic();// && (builder.hasMaterials() || Configurations.builderInfiniteResources);
+        return builder.isWorkTime() && builder.hasSchematic();
     }
 
     private void loadSchematic()
@@ -595,6 +582,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
         builder.setCurrentItemOrArmor(0, null);
         builder.getTownHall().removeHutForUpgrade(pos);
         builder.setSchematic(null);
+        builder.setStatus(EntityBuilder.Status.IDLE);
     }
 
     private void spawnEntities()

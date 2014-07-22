@@ -29,6 +29,7 @@ public class ConfigurationHandler
             Configurations.allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY, "Allow infinite placing of Supply Chests: ", DEFAULT_ALLOWINFINTESUPPLYCHESTS).getBoolean(DEFAULT_ALLOWINFINTESUPPLYCHESTS);
             Configurations.citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY, "Citizen Respawn Interval: ", DEFAULT_CITIZENRESPAWNINTERVAL, 10, 600, "Value in seconds");
             Configurations.builderInfiniteResources = config.get(CATEGORY_GAMEPLAY, "Does Builder have infinite resources: ", DEFAULT_BUILDERINFINITERESOURCES).getBoolean(DEFAULT_BUILDERINFINITERESOURCES);
+            Configurations.deliverymanInfiniteResources = config.get(CATEGORY_GAMEPLAY, "Does Deliveryman have infinite resources: ", DEFAULT_DELIVERYMANINFINITERESOURCES).getBoolean(DEFAULT_DELIVERYMANINFINITERESOURCES);
 
             Configurations.maleFirstNames = config.get(CATEGORY_NAMES, "Male first names: ", DEFAULT_MALE_FIRST_NAMES).getStringList();
             Configurations.femaleFirstNames = config.get(CATEGORY_NAMES, "Female first names: ", DEFAULT_FEMALE_FIRST_NAMES).getStringList();

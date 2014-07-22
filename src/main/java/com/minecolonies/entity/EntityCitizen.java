@@ -504,6 +504,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public static enum Status
     {
-        IDLE, SLEEPING, WORKING, NEED_ASSISTANCE, NEED_MATERIALS, INVENTORY_FULL, PATHFINDING_ERROR
+        IDLE, SLEEPING, WORKING, NEED_ASSISTANCE, PATHFINDING_ERROR
     }
 }

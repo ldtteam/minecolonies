@@ -1,5 +1,6 @@
 package com.minecolonies.util;
 
+import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
@@ -243,5 +244,11 @@ public class Utils
             return entities;
         }
         return null;
+    }
+
+    @Deprecated
+    public static boolean isWorkerAtSite(EntityWorker worker, int x, int y, int z)
+    {
+        return Vec3Utils.isWorkerAtSite(worker, Vec3.createVectorHelper(x, y, z));
     }
 }

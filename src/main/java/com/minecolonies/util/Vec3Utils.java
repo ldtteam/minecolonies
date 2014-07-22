@@ -1,5 +1,6 @@
 package com.minecolonies.util;
 
+import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
@@ -144,6 +145,29 @@ public class Vec3Utils
             }
         }
         return closestVec;
+    }
+
+    public static boolean isWorkerAtSite(EntityWorker worker, Vec3 site)
+    {
+        if(worker.getPosition().squareDistanceTo(site) > 4)//Too far away
+        {
+            if(worker.getNavigator().noPath())//Not moving
+            {
+                if(!worker.getNavigator().tryMoveToXYZ(site.xCoord, site.yCoord, site.zCoord, 1.0F))
+                {
+                    worker.setStatus(EntityWorker.Status.PATHFINDING_ERROR);
+                }
+            }
+            return false;
+        }
+        else
+        {
+            if(!worker.getNavigator().noPath())//within 2 blocks - can stop pathing //TODO may not need this check
+            {
+                worker.getNavigator().clearPathEntity();
+            }
+            return true;
+        }
     }
 
     public static boolean equals(Vec3 vec1, Vec3 vec2)
