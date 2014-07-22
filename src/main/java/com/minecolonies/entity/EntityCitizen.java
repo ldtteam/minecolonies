@@ -363,12 +363,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             if(inventory.getStackInSlot(i) != null)
             {
                 NBTTagCompound tag = new NBTTagCompound();
+                tag.setInteger("slot", i);
                 inventory.getStackInSlot(i).writeToNBT(tag);
-                inventoryList.func_150304_a(i, tag);
-            }
-            else
-            {
-                inventoryList.func_150304_a(i, null);
+                inventoryList.appendTag(tag);
             }
         }
         compound.setTag("Inventory", inventoryList);
@@ -409,8 +406,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         for(int i = 0; i < nbttaglist.tagCount(); i++)
         {
             NBTTagCompound tag = nbttaglist.getCompoundTagAt(i);
+            int slot = tag.getInteger("slot");
             ItemStack itemstack = ItemStack.loadItemStackFromNBT(tag);
-            inventory.setInventorySlotContents(i, itemstack);
+            inventory.setInventorySlotContents(slot, itemstack);
         }
     }
 
