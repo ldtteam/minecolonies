@@ -1,14 +1,12 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.util.Utils;
 import com.minecolonies.util.Vec3Utils;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -19,22 +17,20 @@ import net.minecraft.world.World;
  *
  * @author MrIbby
  */
-public class EntityAIWorkDeliveryman extends EntityAIBase
+public class EntityAIWorkDeliveryman extends EntityAIWork
 {
-    private EntityDeliveryman deliveryman;
-    private World             world;
+    private final EntityDeliveryman deliveryman;
 
     public EntityAIWorkDeliveryman(EntityDeliveryman deliveryman)
     {
-        setMutexBits(3);
+        super(deliveryman);
         this.deliveryman = deliveryman;
-        this.world = deliveryman.worldObj;
     }
 
     @Override
     public boolean shouldExecute()
     {
-        return deliveryman.isWorkTime() && (deliveryman.hasDestination() || (deliveryman.isNeeded() && getDeliverymanRequired() != null));
+        return super.shouldExecute() && (deliveryman.hasDestination() || (deliveryman.isNeeded() && getDeliverymanRequired() != null));
     }
 
     @Override
@@ -44,16 +40,12 @@ public class EntityAIWorkDeliveryman extends EntityAIBase
         {
             deliveryman.setDestination(getDeliverymanRequired());
         }
-        Vec3 destination = deliveryman.getDestination();
-        deliveryman.getNavigator().tryMoveToXYZ(destination.xCoord, destination.yCoord, destination.zCoord, 1.0F);
+        Vec3Utils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination());
     }
 
     @Override
     public void updateTask()
     {
-        if(!continueExecuting())
-            return;
-
         deliveryman.setStatus(EntityDeliveryman.Status.WORKING);
 
         if(!Vec3Utils.isWorkerAtSite(deliveryman, deliveryman.getDestination())) return;
@@ -79,7 +71,7 @@ public class EntityAIWorkDeliveryman extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        return deliveryman.isWorkTime() && deliveryman.hasDestination();
+        return super.continueExecuting() && deliveryman.hasDestination();
     }
 
     private Vec3 getDeliverymanRequired()

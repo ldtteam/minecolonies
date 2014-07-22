@@ -477,7 +477,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         getTownHall().addCitizenToTownhall(worker);
         tileEntityHutWorker.bindWorker(worker);
         worldObj.spawnEntityInWorld(worker);
-        worker.getNavigator().tryMoveToXYZ(tileEntityHutWorker.xCoord, tileEntityHutWorker.yCoord, tileEntityHutWorker.zCoord, 1.0D);
+        Vec3Utils.tryMoveLivingToXYZ(worker, tileEntityHutWorker.getPosition());
     }
 
     public void removeFromWorkHut()

@@ -5,6 +5,7 @@ import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -63,6 +64,21 @@ public class Utils
     public static Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
     {
         return Vec3Utils.scanForBlockNearPoint(world, block, Vec3.createVectorHelper(x, y, z), Vec3.createVectorHelper(radiusX, radiusY, radiusZ));
+    }
+
+    public static boolean isWorkerAtSite(EntityWorker worker, int x, int y, int z)
+    {
+        return Vec3Utils.isWorkerAtSite(worker, Vec3.createVectorHelper(x, y, z));
+    }
+
+    public static boolean tryMoveLivingToXYZ(EntityLiving living, int x, int y, int z)
+    {
+        return Vec3Utils.tryMoveLivingToXYZ(living, Vec3.createVectorHelper(x, y, z));
+    }
+
+    public static boolean tryMoveLivingToXYZ(EntityLiving living, int x, int y, int z, double speed)
+    {
+        return Vec3Utils.tryMoveLivingToXYZ(living, Vec3.createVectorHelper(x, y, z), speed);
     }
 
     /**
@@ -244,11 +260,5 @@ public class Utils
             return entities;
         }
         return null;
-    }
-
-    @Deprecated
-    public static boolean isWorkerAtSite(EntityWorker worker, int x, int y, int z)
-    {
-        return Vec3Utils.isWorkerAtSite(worker, Vec3.createVectorHelper(x, y, z));
     }
 }

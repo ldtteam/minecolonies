@@ -4,7 +4,6 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.util.LanguageHandler;
@@ -14,7 +13,6 @@ import com.minecolonies.util.Vec3Utils;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
@@ -37,23 +35,21 @@ import static com.minecolonies.lib.Constants.BlockData.*;
  *
  * @author Colton
  */
-public class EntityAIWorkBuilder extends EntityAIBase
+public class EntityAIWorkBuilder extends EntityAIWork
 {
-    private EntityBuilder builder;
-    private World         world;
-    int messageDelay = 0;
+    private final EntityBuilder builder;
+    private int messageDelay;
 
     public EntityAIWorkBuilder(EntityBuilder builder)
     {
-        setMutexBits(3);
+        super(builder);
         this.builder = builder;
-        this.world = builder.worldObj;
     }
 
     @Override
     public boolean shouldExecute()
     {
-        return builder.isWorkTime() && (builder.hasSchematic() || builder.isNeeded());
+        return super.shouldExecute() && (builder.hasSchematic() || builder.isNeeded());
     }
 
     @Override
@@ -70,23 +66,19 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
         }
-        Vec3 buildPos = builder.getSchematic().getPosition();
-        builder.getNavigator().tryMoveToXYZ(buildPos.xCoord, buildPos.yCoord, buildPos.zCoord, 1.0F);
+        Vec3Utils.tryMoveLivingToXYZ(builder, builder.getSchematic().getPosition());
     }
 
     @Override
     public void updateTask()
     {
-        if(!continueExecuting())
-            return;//not called from startExecuting to first check causes repairs to crash if unneeded
+        builder.setStatus(EntityBuilder.Status.WORKING);
+
+        if(!Vec3Utils.isWorkerAtSite(builder, builder.getSchematic().getPosition())) return;
 
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
             messageDelay++;
-
-            builder.setStatus(EntityBuilder.Status.WORKING);
-
-            if(!Vec3Utils.isWorkerAtSite(builder, builder.getSchematic().getPosition())) return;
 
             Block block = builder.getSchematic().getBlock();
             int metadata = builder.getSchematic().getMetadata();
@@ -149,6 +141,12 @@ public class EntityAIWorkBuilder extends EntityAIBase
         }
     }
 
+    @Override
+    public boolean continueExecuting()
+    {
+        return super.continueExecuting() && builder.hasSchematic();
+    }
+
     private boolean findNextBlock()
     {
         if(!builder.getSchematic().findNextBlock())//method returns false if there is no next block (schematic finished)
@@ -191,7 +189,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                     }
                     else
                     {
-                        if(!builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D))
+                        if(!Vec3Utils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))
                         {
                             builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
                         }
@@ -206,9 +204,10 @@ public class EntityAIWorkBuilder extends EntityAIBase
                     boolean isAlreadyNeeded = false;
                     for(ItemStack itemstack : builder.getItemsNeeded())
                     {
-                        if(itemstack.isItemEqual(material))
+                        if(itemstack.isItemEqual(material) && (amount -= itemstack.stackSize) <= 0)
                         {
                             isAlreadyNeeded = true;
+                            break;
                         }
                     }
 
@@ -218,7 +217,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                         {
                             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
                         }
-                        builder.getItemsNeeded().add(material);
+                        for(int i = 0; i < amount; i++) builder.getItemsNeeded().add(material);
                     }
                 }
                 return false;
@@ -246,7 +245,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
                     }
                     else
                     {
-                        if(!builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D))
+                        if(!Vec3Utils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))
                         {
                             builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
                         }
@@ -534,16 +533,10 @@ public class EntityAIWorkBuilder extends EntityAIBase
     private void setTileEntity(int x, int y, int z)
     {
         TileEntity tileEntity = builder.getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
-        if(tileEntity != null && !(world.getTileEntity(x, y, z) instanceof TileEntityHut))
+        if(tileEntity != null && !(world.getTileEntity(x, y, z) instanceof TileEntityHut))//TODO check if TileEntity already exists
         {
             world.setTileEntity(x, y, z, tileEntity);
         }
-    }
-
-    @Override
-    public boolean continueExecuting()
-    {
-        return builder.isWorkTime() && builder.hasSchematic();
     }
 
     private void loadSchematic()

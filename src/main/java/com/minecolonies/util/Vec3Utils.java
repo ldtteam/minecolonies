@@ -3,6 +3,7 @@ package com.minecolonies.util;
 import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
@@ -153,7 +154,7 @@ public class Vec3Utils
         {
             if(worker.getNavigator().noPath())//Not moving
             {
-                if(!worker.getNavigator().tryMoveToXYZ(site.xCoord, site.yCoord, site.zCoord, 1.0F))
+                if(!tryMoveLivingToXYZ(worker, site))
                 {
                     worker.setStatus(EntityWorker.Status.PATHFINDING_ERROR);
                 }
@@ -168,6 +169,16 @@ public class Vec3Utils
             }
             return true;
         }
+    }
+
+    public static boolean tryMoveLivingToXYZ(EntityLiving living, Vec3 destination)
+    {
+        return tryMoveLivingToXYZ(living, destination, 1.0D);
+    }
+
+    public static boolean tryMoveLivingToXYZ(EntityLiving living, Vec3 destination, double speed)
+    {
+        return living.getNavigator().tryMoveToXYZ(destination.xCoord, destination.yCoord, destination.zCoord, speed);
     }
 
     public static boolean equals(Vec3 vec1, Vec3 vec2)

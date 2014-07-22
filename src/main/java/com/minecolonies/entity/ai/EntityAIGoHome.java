@@ -2,6 +2,7 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.Vec3Utils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.Vec3;
 
@@ -44,7 +45,7 @@ public class EntityAIGoHome extends EntityAIBase
             MineColonies.logger.error("EntityCitizen has null townhall (And no home)");
             return;
         }
-        citizen.getNavigator().tryMoveToXYZ(vec.xCoord, vec.yCoord, vec.zCoord, 1.0F);
+        Vec3Utils.tryMoveLivingToXYZ(citizen, vec);
     }
 
     @Override
