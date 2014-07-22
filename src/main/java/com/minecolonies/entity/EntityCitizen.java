@@ -170,8 +170,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void onLivingUpdate()
     {
         this.setTexture();
-        super.onLivingUpdate();
         updateTileEntities();
+        super.onLivingUpdate();
     }
 
     private void updateTileEntities()
