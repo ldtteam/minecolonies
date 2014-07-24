@@ -11,13 +11,13 @@ com.minecolonies.gui.townhall.rename.title=Hernoem Je Kolonie
 com.minecolonies.gui.townhall.actions=Acties
 com.minecolonies.gui.townhall.defaultName=%s zijn Kolonie
 
-com.minecolonies.gui.workerHuts.buildersHut=Bouwvakkershuis
-com.minecolonies.gui.workerHuts.warehouse=Warenhuis
-com.minecolonies.gui.workerHuts.workerAssigned=Werker Toegewezen:
-com.minecolonies.gui.workerHuts.workerLevel=Werker Level: %s
-com.minecolonies.gui.workerHuts.hire=Huur Werker
-com.minecolonies.gui.workerHuts.fire=Ontsla Werker
-com.minecolonies.gui.workerHuts.recall=Roep Werker terug
+com.minecolonies.gui.workerHuts.buildersHut=Bouwvakkershut
+com.minecolonies.gui.workerHuts.warehouse=Warenhut
+com.minecolonies.gui.workerHuts.workerAssigned=Werknemer Toegewezen:
+com.minecolonies.gui.workerHuts.workerLevel=Werknemer Level: %s
+com.minecolonies.gui.workerHuts.hire=Huur Werknemer In
+com.minecolonies.gui.workerHuts.fire=Ontsla Werknemer
+com.minecolonies.gui.workerHuts.recall=Roep Werknemer terug
 com.minecolonies.gui.workerHuts.build=Bouw Gebouw
 com.minecolonies.gui.workerHuts.repair=Repareer Gebouw
 com.minecolonies.gui.workerHuts.buildType=Bouw Type:
@@ -30,14 +30,14 @@ com.minecolonies.gui.warehouse.toGuards=Bezorg aan Bewaker:
 com.minecolonies.gui.warehouse.visitCitizenChests=Bezoek Burgerkisten:
 
 tile.blockHutCitizen.name=Woning
-tile.blockHutBaker.name=Bakker
+tile.blockHutBaker.name=Bakkerij
 tile.blockHutBlacksmith.name=Smederij
-tile.blockHutBuilder.name=Bouwvakkershuis
+tile.blockHutBuilder.name=Bouwvakkershut
 tile.blockHutWarehouse.name=Warenhuis
 tile.blockHutFarmer.name=Boerderij
-tile.blockHutLumberjack.name=Houthakkershuis
+tile.blockHutLumberjack.name=Houthakkershut
 tile.blockHutMiner.name=Mijn
-tile.blockHutStonemason.name=Steenhouwerhuis
+tile.blockHutStonemason.name=Steenhouwerhut
 tile.blockHutTownhall.name=Stadhuis
 tile.blockHut.messageNoPermission=Je hebt geen toestemming om huizen te openen in %s.
 
@@ -57,13 +57,13 @@ item.caliper.name=Caliper
 
 item.supplyChestDeployer.invalid=Je moet dicht bij een groot stuk water zijn!
 
-item.scepterSteel.point=Punt Ã©Ã©n opgeslagen.
+item.scepterSteel.point=Punt een opgeslagen.
 item.scepterSteel.point2=Punt twee opgeslagen, klik rechts om de schematic op te slaan.
 item.scepterSteel.samePoint=Dat was hetzelfde punt!
 item.scepterSteel.scanFormat=SCAN_%s-%s.schematic
 item.scepterSteel.scanSuccess=Scan succesvol opgeslagen als %s
 item.scepterSteel.scanFailure=Scan niet opgeslagen.
-item.scepterSteel.invalidMethod=Ongeldige method call, contacteer een ontwikkelaar.
+item.scepterSteel.invalidMethod=Invalid method call, contact a developer. TODO remove error messages from lang
 
 item.caliper.message.same=Dat is hetzelfde blok.
 item.caliper.message.line=Dat is een %d blok(ken) lange lijn.
@@ -73,7 +73,7 @@ item.caliper.message.cube=Dat is een %d bij %d bij %d kubus.
 itemGroup.minecolonies=MineColonies
 
 entity.builder.ai.schematicLoadFailure=Schematic: (%s) bestaat niet - bouw aanvraag verwijderen
-entity.builder.ai.schematicNullBlock=Schematic heeft null blok op de plek %d, %d, %d - local(%d, %d, %d)
+entity.builder.ai.schematicNullBlock=Schematic has null block at %d, %d, %d - local(%d, %d, %d)
 entity.builder.ai.blockPlaceFailure=Blok plaatsing fout %s op de plek %d, %d, %d
 entity.builder.ai.blockBreakFailure=Blok breek fout op de plek %d, %d, %d
 entity.builder.messageBuildStart=Gestart met %s bouwen
