@@ -8,7 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -30,7 +30,26 @@ public class Utils
      */
     public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z)
     {
-        return Vec3Utils.getClosestTownHall(world, Vec3.createVectorHelper(x, y, z));
+        double closestDist = Double.MAX_VALUE;
+        TileEntityTownHall closestTownHall = null;
+
+        if(world == null || world.loadedTileEntityList == null) return null;
+
+        for(Object o : world.loadedTileEntityList)
+            if(o instanceof TileEntityTownHall)
+            {
+                TileEntityTownHall townHall = (TileEntityTownHall) o;
+
+                if(Vec3Utils.equals(townHall.getPosition(), x, y, z)) continue;
+
+                double distanceSquared = townHall.getDistanceFrom(x, y, z);
+                if(closestDist > distanceSquared)
+                {
+                    closestTownHall = townHall;
+                    closestDist = distanceSquared;
+                }
+            }
+        return closestTownHall;
     }
 
     /**
@@ -44,7 +63,24 @@ public class Utils
      */
     public static double getDistanceToClosestTownHall(World world, int x, int y, int z)
     {
-        return Vec3Utils.getDistanceToClosestTownHall(world, Vec3.createVectorHelper(x, y, z));
+        double closestDist = Double.MAX_VALUE;
+
+        if(world == null || world.loadedTileEntityList == null) return -1;
+
+        for(Object o : world.loadedTileEntityList)
+            if(o instanceof TileEntityTownHall)
+            {
+                TileEntityTownHall townHall = (TileEntityTownHall) o;
+
+                if(Vec3Utils.equals(townHall.getPosition(), x, y, z)) continue;
+
+                double distanceSquared = townHall.getDistanceFrom(x, y, z);
+                if(closestDist > distanceSquared)
+                {
+                    closestDist = distanceSquared;
+                }
+            }
+        return Math.sqrt(closestDist);
     }
 
     /**
@@ -58,27 +94,67 @@ public class Utils
      */
     public static double getDistanceToTileEntity(int x, int y, int z, TileEntity tileEntity)
     {
-        return Vec3Utils.getDistanceToTileEntity(Vec3.createVectorHelper(x, y, z), tileEntity);
+        return Math.sqrt(tileEntity.getDistanceFrom(x, y, z));
     }
 
     public static Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
     {
-        return Vec3Utils.scanForBlockNearPoint(world, block, Vec3.createVectorHelper(x, y, z), Vec3.createVectorHelper(radiusX, radiusY, radiusZ));
+        Vec3 closestVec = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for(int i = x - radiusX; i <= x + radiusX; i++)
+        {
+            for(int j = y - radiusY; j <= y + radiusY; j++)
+            {
+                for(int k = z - radiusZ; k <= z + radiusZ; k++)
+                {
+                    if(world.getBlock(i, j, k) == block)
+                    {
+                        Vec3 tempVec = Vec3.createVectorHelper(i, j, k);
+
+                        if(closestVec == null || Vec3Utils.distanceTo(tempVec, x, y, z) < minDistance)
+                        {
+                            closestVec = tempVec;
+                            minDistance = Vec3Utils.distanceTo(closestVec, x, y, z);
+                        }
+                    }
+                }
+            }
+        }
+        return closestVec;
     }
 
     public static boolean isWorkerAtSite(EntityWorker worker, int x, int y, int z)
     {
-        return Vec3Utils.isWorkerAtSite(worker, Vec3.createVectorHelper(x, y, z));
+        if(worker.getPosition().squareDistanceTo(x, y, z) > 4)//Too far away
+        {
+            if(worker.getNavigator().noPath())//Not moving
+            {
+                if(!tryMoveLivingToXYZ(worker, x, y, z))
+                {
+                    worker.setStatus(EntityWorker.Status.PATHFINDING_ERROR);
+                }
+            }
+            return false;
+        }
+        else
+        {
+            if(!worker.getNavigator().noPath())//within 2 blocks - can stop pathing //TODO may not need this check
+            {
+                worker.getNavigator().clearPathEntity();
+            }
+            return true;
+        }
     }
 
     public static boolean tryMoveLivingToXYZ(EntityLiving living, int x, int y, int z)
     {
-        return Vec3Utils.tryMoveLivingToXYZ(living, Vec3.createVectorHelper(x, y, z));
+        return tryMoveLivingToXYZ(living, x, y, z, 1.0D);
     }
 
     public static boolean tryMoveLivingToXYZ(EntityLiving living, int x, int y, int z, double speed)
     {
-        return Vec3Utils.tryMoveLivingToXYZ(living, Vec3.createVectorHelper(x, y, z), speed);
+        return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
     }
 
     /**
@@ -260,5 +336,17 @@ public class Utils
             return entities;
         }
         return null;
+    }
+
+    public static boolean containsItemStack(List<ItemStack> list, ItemStack itemstack)
+    {
+        for(ItemStack listItem : list)
+        {
+            if(listItem.equals(itemstack))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

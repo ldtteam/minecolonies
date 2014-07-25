@@ -221,15 +221,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, tileEntityTownHall.getOwners()), "tile.blockHutTownhall.messageColonistDead");
 
             tileEntityTownHall.removeCitizen(this);
-
-            for(int i = 0; i < inventory.getSizeInventory(); i++)
-            {
-                ItemStack itemstack = inventory.getStackInSlot(i);
-                if(itemstack != null && itemstack.stackSize > 0)
-                {
-                    entityDropItem(itemstack, getEyeHeight() - 0.3F);
-                }
-            }
         }
         if(this.getHomeHut() != null)
         {
@@ -239,6 +230,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             this.getWorkHut().unbindWorker(this);
         }
+
+        setCurrentItemOrArmor(0, null);
+        for(int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            ItemStack itemstack = inventory.getStackInSlot(i);
+            if(itemstack != null && itemstack.stackSize > 0)
+            {
+                entityDropItem(itemstack, getEyeHeight() - 0.3F);
+            }
+        }
+
         super.onDeath(par1DamageSource);
     }
 
@@ -333,6 +335,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         super.writeEntityToNBT(compound);
         compound.setString("job", job);
+        compound.setInteger("status", status.ordinal());
         compound.setInteger("level", getLevel());
         compound.setInteger("textureID", getTextureID());
         compound.setInteger("sex", getSex());
@@ -377,6 +380,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.readEntityFromNBT(compound);
 
         this.job = compound.getString("job");
+        status = Status.values()[compound.getInteger("status")];
 
         setTextureID(compound.getInteger("textureID"));
         setLevel(compound.hasKey("level") ? compound.getInteger("level") : this.getLevel());
@@ -504,6 +508,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public static enum Status
     {
-        IDLE, SLEEPING, WORKING, NEED_ASSISTANCE, PATHFINDING_ERROR
+        IDLE, SLEEPING, WORKING, GETTING_ITEMS, NEED_ASSISTANCE, PATHFINDING_ERROR
     }
 }

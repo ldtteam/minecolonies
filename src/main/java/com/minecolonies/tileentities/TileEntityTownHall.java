@@ -2,6 +2,7 @@ package com.minecolonies.tileentities;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -335,21 +336,9 @@ public class TileEntityTownHall extends TileEntityHut
         return list;
     }
 
-    @Deprecated
-    public void addHut(int x, int y, int z)
-    {
-        addHut(Vec3.createVectorHelper(x, y, z));
-    }
-
     public void addHut(Vec3 pos)
     {
         huts.add(pos);
-    }
-
-    @Deprecated
-    public void removeHut(int x, int y, int z)
-    {
-        removeHut(Vec3.createVectorHelper(x, y, z));
     }
 
     public void removeHut(Vec3 pos)
@@ -364,21 +353,9 @@ public class TileEntityTownHall extends TileEntityHut
         }
     }
 
-    @Deprecated
-    public void addHutForUpgrade(String name, int x, int y, int z)
-    {
-        addHutForUpgrade(name, Vec3.createVectorHelper(x, y, z));
-    }
-
     public void addHutForUpgrade(String name, Vec3 pos)
     {
         builderRequired.put(pos, name);
-    }
-
-    @Deprecated
-    public void removeHutForUpgrade(int x, int y, int z)
-    {
-        removeHutForUpgrade(Vec3.createVectorHelper(x, y, z));
     }
 
     public void removeHutForUpgrade(Vec3 coords)
@@ -396,6 +373,23 @@ public class TileEntityTownHall extends TileEntityHut
     public Map<Vec3, String> getBuilderRequired()
     {
         return builderRequired;
+    }
+
+    public List<Vec3> getDeliverymanRequired()
+    {
+        List<Vec3> deliverymanRequired = new ArrayList<Vec3>();
+        for(Entity entity : Utils.getEntitiesFromUUID(worldObj, citizens))
+        {
+            if(entity instanceof EntityWorker)
+            {
+                EntityWorker worker = (EntityWorker) entity;
+                if(worker.getWorkHut() != null && !worker.hasItemsNeeded())
+                {
+                    deliverymanRequired.add(worker.getWorkHut().getPosition());
+                }
+            }
+        }
+        return deliverymanRequired;
     }
 
     public List<Integer> getEntityIDs()

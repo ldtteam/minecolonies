@@ -57,34 +57,44 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent event)
     {
-        if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.entityPlayer.getHeldItem() != null)
+        int x = event.x, y = event.y, z = event.z;
+        World world = event.world;
+        EntityPlayer player = event.entityPlayer;
+
+        if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
         {
-            Block block = Block.getBlockFromItem(event.entityPlayer.getHeldItem().getItem());
-            if(block instanceof BlockHut)
+            boolean blockDoesSomething = world.getBlock(x, y, z).onBlockActivated(world, x, y, z, player, event.face, 0.0F, 0.0F, 0.0F);
+            if(!blockDoesSomething)
             {
-                int x = event.x, y = event.y, z = event.z;
-                switch(event.face)
+                if(player.getHeldItem() != null)
                 {
-                    case 0:
-                        y--;
-                        break;
-                    case 1:
-                        y++;
-                        break;
-                    case 2:
-                        z--;
-                        break;
-                    case 3:
-                        z++;
-                        break;
-                    case 4:
-                        x--;
-                        break;
-                    case 5:
-                        x++;
-                        break;
+                    Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
+                    if(heldBlock instanceof BlockHut)
+                    {
+                        switch(event.face)
+                        {
+                            case 0:
+                                y--;
+                                break;
+                            case 1:
+                                y++;
+                                break;
+                            case 2:
+                                z--;
+                                break;
+                            case 3:
+                                z++;
+                                break;
+                            case 4:
+                                x--;
+                                break;
+                            case 5:
+                                x++;
+                                break;
+                        }
+                        event.setCanceled(!onBlockHutPlaced(world, player, heldBlock, x, y, z));
+                    }
                 }
-                event.setCanceled(!onBlockHutPlaced(event.entityPlayer.worldObj, event.entityPlayer, block, x, y, z));
             }
         }
     }

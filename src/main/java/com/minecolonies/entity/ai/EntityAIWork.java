@@ -25,9 +25,6 @@ public abstract class EntityAIWork extends EntityAIBase
     @Override
     public void resetTask()
     {
-        if(!continueExecuting())
-        {
-            worker.setStatus(EntityWorker.Status.IDLE);
-        }
+        worker.setStatus(EntityWorker.Status.IDLE);
     }
 }

@@ -30,7 +30,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
     @Override
     public boolean shouldExecute()
     {
-        return super.shouldExecute() && (deliveryman.hasDestination() || (deliveryman.isNeeded() && getDeliverymanRequired() != null));
+        return super.shouldExecute() && (deliveryman.hasDestination() || deliveryman.isNeeded());
     }
 
     @Override
@@ -38,7 +38,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
     {
         if(!deliveryman.hasDestination())
         {
-            deliveryman.setDestination(getDeliverymanRequired());
+            deliveryman.setDestination(deliveryman.getTownHall().getDeliverymanRequired().iterator().next());
         }
         Vec3Utils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination());
     }
@@ -55,38 +55,35 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
         for(int i = 0; i < worker.getItemsNeeded().size(); i++)
         {
             ItemStack itemstack = worker.getItemsNeeded().get(i);
-            if(!Configurations.deliverymanInfiniteResources)
+            int amount = itemstack.stackSize;
+            for(int j = 0; j < workHut.getSizeInventory(); j++)
             {
-                //TODO: resource handling
+                ItemStack hutItem = workHut.getStackInSlot(j);
+                if(hutItem != null && hutItem.isItemEqual(itemstack))
+                {
+                    amount -= hutItem.stackSize;
+                    if(amount <= 0) break;
+                }
             }
-            workHut.setStackInInventory(itemstack);
+            if(amount > 0)
+            {
+                if(!Configurations.deliverymanInfiniteResources)
+                {
+                    //TODO: resource handling
+                }
+                workHut.setStackInInventory(new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
+            }
             worker.getItemsNeeded().remove(i);
             i--;
         }
 
         deliveryman.setDestination(null);
-        deliveryman.setStatus(EntityDeliveryman.Status.IDLE);
+        resetTask();
     }
 
     @Override
     public boolean continueExecuting()
     {
         return super.continueExecuting() && deliveryman.hasDestination();
-    }
-
-    private Vec3 getDeliverymanRequired()
-    {
-        for(Entity entity : Utils.getEntitiesFromUUID(world, deliveryman.getTownHall().getCitizens()))
-        {
-            if(entity instanceof EntityWorker)
-            {
-                EntityWorker worker = (EntityWorker) entity;
-                if(worker.getWorkHut() != null && !worker.getItemsNeeded().isEmpty())
-                {
-                    return worker.getWorkHut().getPosition();
-                }
-            }
-        }
-        return null;
     }
 }

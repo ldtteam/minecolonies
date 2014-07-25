@@ -44,11 +44,6 @@ public class Vec3Utils
         return world.getBlockMetadata((int) vec.xCoord, (int) vec.yCoord, (int) vec.zCoord);
     }
 
-    public static int[] vecToInt(Vec3 vec)
-    {
-        return new int[]{(int) vec.xCoord, (int) vec.yCoord, (int) vec.zCoord};
-    }
-
     /**
      * Method to find the closest townhall
      *
@@ -58,26 +53,7 @@ public class Vec3Utils
      */
     public static TileEntityTownHall getClosestTownHall(World world, Vec3 pos)
     {
-        double closestDist = Double.MAX_VALUE;
-        TileEntityTownHall closestTownHall = null;
-
-        if(world == null || world.loadedTileEntityList == null) return null;
-
-        for(Object o : world.loadedTileEntityList)
-            if(o instanceof TileEntityTownHall)
-            {
-                TileEntityTownHall townHall = (TileEntityTownHall) o;
-
-                if(equals(pos, townHall.getPosition())) continue;
-
-                double distanceSquared = townHall.getDistanceFrom(pos);
-                if(closestDist > distanceSquared)
-                {
-                    closestTownHall = townHall;
-                    closestDist = distanceSquared;
-                }
-            }
-        return closestTownHall;
+        return Utils.getClosestTownHall(world, (int) pos.xCoord, (int) pos.yCoord, (int) pos.zCoord);
     }
 
     /**
@@ -89,24 +65,7 @@ public class Vec3Utils
      */
     public static double getDistanceToClosestTownHall(World world, Vec3 pos)
     {
-        double closestDist = Double.MAX_VALUE;
-
-        if(world == null || world.loadedTileEntityList == null) return -1;
-
-        for(Object o : world.loadedTileEntityList)
-            if(o instanceof TileEntityTownHall)
-            {
-                TileEntityTownHall townHall = (TileEntityTownHall) o;
-
-                if(equals(pos, townHall.getPosition())) continue;
-
-                double distanceSquared = townHall.getDistanceFrom(pos);
-                if(closestDist > distanceSquared)
-                {
-                    closestDist = distanceSquared;
-                }
-            }
-        return Math.sqrt(closestDist);
+        return Utils.getDistanceToClosestTownHall(world, (int) pos.xCoord, (int) pos.yCoord, (int) pos.zCoord);
     }
 
     /**
@@ -118,67 +77,37 @@ public class Vec3Utils
      */
     public static double getDistanceToTileEntity(Vec3 pos, TileEntity tileEntity)
     {
-        return Math.sqrt(tileEntity.getDistanceFrom((int) pos.xCoord, (int) pos.yCoord, (int) pos.zCoord));
+        return Utils.getDistanceToTileEntity((int) pos.xCoord, (int) pos.yCoord, (int) pos.zCoord, tileEntity);
     }
 
     public static Vec3 scanForBlockNearPoint(World world, Block block, Vec3 pos, Vec3 radiusPos)
     {
-        Vec3 closestVec = null;
-        double minDistance = Double.MAX_VALUE;
-
-        for(int i = (int) (pos.xCoord - radiusPos.xCoord); i <= (int) (pos.xCoord + radiusPos.xCoord); i++)
-        {
-            for(int j = (int) (pos.yCoord - radiusPos.yCoord); j <= (int) (pos.yCoord + radiusPos.yCoord); j++)
-            {
-                for(int k = (int) (pos.zCoord - radiusPos.zCoord); k <= (int) (pos.zCoord + radiusPos.zCoord); k++)
-                {
-                    if(world.getBlock(i, j, k) == block)
-                    {
-                        Vec3 tempVec = Vec3.createVectorHelper(i, j, k);
-
-                        if(closestVec == null || tempVec.distanceTo(pos) < minDistance)
-                        {
-                            closestVec = tempVec;
-                            minDistance = closestVec.distanceTo(pos);
-                        }
-                    }
-                }
-            }
-        }
-        return closestVec;
+        return Utils.scanForBlockNearPoint(world, block, (int) pos.xCoord, (int) pos.yCoord, (int) pos.zCoord, (int) radiusPos.xCoord, (int) radiusPos.yCoord, (int) radiusPos.zCoord);
     }
 
     public static boolean isWorkerAtSite(EntityWorker worker, Vec3 site)
     {
-        if(worker.getPosition().squareDistanceTo(site) > 4)//Too far away
-        {
-            if(worker.getNavigator().noPath())//Not moving
-            {
-                if(!tryMoveLivingToXYZ(worker, site))
-                {
-                    worker.setStatus(EntityWorker.Status.PATHFINDING_ERROR);
-                }
-            }
-            return false;
-        }
-        else
-        {
-            if(!worker.getNavigator().noPath())//within 2 blocks - can stop pathing //TODO may not need this check
-            {
-                worker.getNavigator().clearPathEntity();
-            }
-            return true;
-        }
+        return Utils.isWorkerAtSite(worker, (int) site.xCoord, (int) site.yCoord, (int) site.zCoord);
     }
 
     public static boolean tryMoveLivingToXYZ(EntityLiving living, Vec3 destination)
     {
-        return tryMoveLivingToXYZ(living, destination, 1.0D);
+        return Utils.tryMoveLivingToXYZ(living, (int) destination.xCoord, (int) destination.yCoord, (int) destination.zCoord);
     }
 
     public static boolean tryMoveLivingToXYZ(EntityLiving living, Vec3 destination, double speed)
     {
-        return living.getNavigator().tryMoveToXYZ(destination.xCoord, destination.yCoord, destination.zCoord, speed);
+        return Utils.tryMoveLivingToXYZ(living, (int) destination.xCoord, (int) destination.yCoord, (int) destination.zCoord, speed);
+    }
+
+    public static double distanceTo(Vec3 vec, int x, int y, int z)
+    {
+        return vec.distanceTo(Vec3.createVectorHelper(x, y, z));
+    }
+
+    public static boolean equals(Vec3 vec, int x, int y, int z)
+    {
+        return equals(vec, Vec3.createVectorHelper(x, y, z));
     }
 
     public static boolean equals(Vec3 vec1, Vec3 vec2)

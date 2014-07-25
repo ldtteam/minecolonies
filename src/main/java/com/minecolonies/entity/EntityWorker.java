@@ -1,5 +1,11 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.entity.ai.EntityAIGoHome;
+import com.minecolonies.entity.ai.EntityAISleep;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.ai.*;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -16,6 +22,20 @@ public abstract class EntityWorker extends EntityCitizen
     public EntityWorker(World world)
     {
         super(world);
+    }
+
+    @Override
+    protected void initTasks()
+    {
+        this.tasks.addTask(0, new EntityAISwimming(this));
+        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 0.6D));
+        this.tasks.addTask(2, new EntityAIGoHome(this));
+        this.tasks.addTask(3, new EntityAISleep(this));
+        this.tasks.addTask(4, new EntityAIOpenDoor(this, true));
+        this.tasks.addTask(5, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+        this.tasks.addTask(6, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
+        this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
+        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
     }
 
     @Override
@@ -49,13 +69,55 @@ public abstract class EntityWorker extends EntityCitizen
 
     public abstract boolean isNeeded();
 
+    public boolean hasItemsNeeded()
+    {
+        return itemsNeeded.isEmpty();
+    }
+
     public List<ItemStack> getItemsNeeded()
     {
         return itemsNeeded;
     }
 
-    public boolean hasItemsNeeded()
+    public void addItemNeeded(ItemStack itemstack)
     {
-        return itemsNeeded.isEmpty();
+        boolean isAlreadyNeeded = false;
+        for(ItemStack neededItem : itemsNeeded)
+        {
+            if(itemstack.isItemEqual(neededItem))
+            {
+                for(int i = 0; i < itemstack.stackSize; i++)
+                {
+                    neededItem.stackSize++;
+                }
+                isAlreadyNeeded = true;
+            }
+        }
+        if(!isAlreadyNeeded)
+        {
+            itemsNeeded.add(itemstack);
+        }
+    }
+
+    public ItemStack removeItemNeeded(ItemStack itemstack)
+    {
+        ItemStack itemCopy = itemstack.copy();
+        for(ItemStack neededItem : itemsNeeded)
+        {
+            if(itemCopy.isItemEqual(neededItem))
+            {
+                for(int i = 0; i < itemCopy.stackSize; i++)
+                {
+                    itemCopy.stackSize--;
+                    neededItem.stackSize--;
+                    if(neededItem.stackSize == 0)
+                    {
+                        itemsNeeded.remove(itemsNeeded.indexOf(neededItem));
+                        break;
+                    }
+                }
+            }
+        }
+        return itemCopy.stackSize == 0 ? null : itemstack;
     }
 }

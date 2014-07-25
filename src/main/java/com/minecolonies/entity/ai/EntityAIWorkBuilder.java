@@ -11,20 +11,24 @@ import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
 import com.minecolonies.util.Vec3Utils;
 import net.minecraft.block.*;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import static com.minecolonies.lib.Constants.BlockData.*;
@@ -38,7 +42,6 @@ import static com.minecolonies.lib.Constants.BlockData.*;
 public class EntityAIWorkBuilder extends EntityAIWork
 {
     private final EntityBuilder builder;
-    private int messageDelay;
 
     public EntityAIWorkBuilder(EntityBuilder builder)
     {
@@ -67,19 +70,18 @@ public class EntityAIWorkBuilder extends EntityAIWork
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
         }
         Vec3Utils.tryMoveLivingToXYZ(builder, builder.getSchematic().getPosition());
+        requestMaterials();
     }
 
     @Override
     public void updateTask()
     {
-        builder.setStatus(EntityBuilder.Status.WORKING);
+        if(builder.getStatus() != EntityBuilder.Status.GETTING_ITEMS && !Vec3Utils.isWorkerAtSite(builder, builder.getSchematic().getPosition())) return;
 
-        if(!Vec3Utils.isWorkerAtSite(builder, builder.getSchematic().getPosition())) return;
+        builder.setStatus(EntityBuilder.Status.WORKING);
 
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
-            messageDelay++;
-
             Block block = builder.getSchematic().getBlock();
             int metadata = builder.getSchematic().getMetadata();
 
@@ -147,6 +149,13 @@ public class EntityAIWorkBuilder extends EntityAIWork
         return super.continueExecuting() && builder.hasSchematic();
     }
 
+    @Override
+    public void resetTask()
+    {
+        super.resetTask();
+        builder.setCurrentItemOrArmor(0, null);
+    }
+
     private boolean findNextBlock()
     {
         if(!builder.getSchematic().findNextBlock())//method returns false if there is no next block (schematic finished)
@@ -157,35 +166,97 @@ public class EntityAIWorkBuilder extends EntityAIWork
         return true;
     }
 
+    private void requestMaterials()
+    {
+        Schematic schematic = Schematic.loadSchematic(world, builder.getSchematic().getName());
+        schematic.setPosition(builder.getSchematic().getPosition());
+        boolean placesBlock = false;
+
+        while(schematic.findNextBlock())
+        {
+            Block block = schematic.getBlock();
+            int metadata = schematic.getMetadata();
+            ItemStack itemstack = new ItemStack(block, 1, metadata);
+
+            Vec3 pos = schematic.getBlockPosition();
+            int x = (int) pos.xCoord, y = (int) pos.yCoord, z = (int) pos.zCoord;
+
+            Block worldBlock = world.getBlock(x, y, z);
+
+            if(block == null || block == Blocks.air || worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock)
+            {
+                continue;
+            }
+
+            placesBlock = true;
+
+            for(ItemStack material : builder.getSchematic().getMaterials())
+            {
+                if(material.isItemEqual(itemstack))
+                {
+                    if(material.stackSize > 0)
+                    {
+                        if(builder.getInventory().containsItemStack(itemstack) == -1)
+                        {
+                            builder.addItemNeeded(itemstack);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        if(placesBlock)
+        {
+            for(int slotID = 0; slotID < builder.getInventory().getSizeInventory(); slotID++)
+            {
+                ItemStack invItem = builder.getInventory().getStackInSlot(slotID);
+                if(invItem != null)
+                {
+                    for(int i = 0; i < invItem.stackSize; i++)
+                    {
+                        builder.getSchematic().useMaterial(invItem);
+                        if(builder.getSchematic().getMaterials().isEmpty()) break;
+                    }
+                }
+            }
+            for(ItemStack neededItem : builder.getItemsNeeded())
+            {
+                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
+            }
+        }
+
+        /*Vec3 pos = schematic.getBlockPosition();
+        int x = (int) pos.xCoord, y = (int) pos.yCoord, z = (int) pos.zCoord;
+
+        Block worldBlock = world.getBlock(x, y, z);
+        int worldBlockMetadata = world.getBlockMetadata(x, y, z);
+
+        if(worldBlock != Blocks.air)
+        {
+            //TODO canCraft(material)
+        }*/
+    }
+
     private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
     {
         if(block != Blocks.air)//We are breaking and don't need materials.
         {
-            int slotID = builder.getInventory().containsItemStack(new ItemStack(block, 1, metadata));
+            ItemStack material = new ItemStack(block, 1, metadata);
+            int slotID = builder.getInventory().containsItemStack(material);
             if(slotID == -1)//inventory doesn't contain item
             {
-                ItemStack material = new ItemStack(block, 1, metadata);
-
-                int amount = -1;
-                for(ItemStack item : builder.getSchematic().getMaterials())//find amount needed
-                {
-                    if(item.isItemEqual(material))
-                    {
-                        amount = item.stackSize;
-                        break;
-                    }
-                }
-                if(amount == -1)
-                {
-                    System.out.println(block.getLocalizedName());
-                }
-
                 int chestSlotID = builder.getWorkHut().containsItemStack(material);
                 if(chestSlotID != -1)//chest contains item
                 {
                     if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 64) //Square Distance - within 8 blocks
                     {
-                        builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, amount);//if chest doesn't contain full amount, take all.
+                        if(!builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, 1))
+                        {
+                            ItemStack chestItem = builder.getWorkHut().getStackInSlot(chestSlotID);
+                            builder.getWorkHut().setInventorySlotContents(chestSlotID, null);
+                            setStackInBuilder(chestItem, true);
+                        }
                     }
                     else
                     {
@@ -193,67 +264,120 @@ public class EntityAIWorkBuilder extends EntityAIWork
                         {
                             builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
                         }
+                        else
+                        {
+                            builder.setStatus(EntityBuilder.Status.GETTING_ITEMS);
+                            return Vec3Utils.isWorkerAtSite(builder, builder.getWorkHut().getPosition());
+                        }
                     }
-                }
-                else if(false)//TODO canCraft(material)
-                {
-                    //TODO craft item
                 }
                 else
                 {
-                    boolean isAlreadyNeeded = false;
-                    for(ItemStack itemstack : builder.getItemsNeeded())
+                    for(Object obj : CraftingManager.getInstance().getRecipeList())
                     {
-                        if(itemstack.isItemEqual(material) && (amount -= itemstack.stackSize) <= 0)
+                        if(obj instanceof ShapelessRecipes)
                         {
-                            isAlreadyNeeded = true;
-                            break;
-                        }
-                    }
+                            ShapelessRecipes recipe = (ShapelessRecipes) obj;
+                            ItemStack output = recipe.getRecipeOutput();
+                            if(!output.isItemEqual(material)) continue;
 
-                    if(!isAlreadyNeeded)
-                    {
-                        if(messageDelay % 10 == 0)
-                        {
-                            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
+                            ArrayList<ItemStack> containedItems = new ArrayList<ItemStack>();
+                            for(Object obj2 : recipe.recipeItems)
+                            {
+                                ItemStack recipeItem = (ItemStack) obj2;
+                                boolean itemNeeded = !Utils.containsItemStack(containedItems, recipeItem);
+                                boolean hasItem = Utils.containsItemStack(Arrays.asList(builder.getInventory().getAllItemsInInventory()), recipeItem);
+                                if(itemNeeded && hasItem)
+                                {
+                                    int amount = recipeItem.stackSize;
+                                    for(ItemStack invItem : builder.getInventory().getAllItemsInInventory())
+                                    {
+                                        if(invItem.isItemEqual(recipeItem))
+                                        {
+                                            amount -= invItem.stackSize;
+                                            if(amount <= 0) break;
+                                        }
+                                    }
+                                    if(amount <= 0)
+                                    {
+                                        amount = recipeItem.stackSize;
+                                        while(amount > 0)
+                                        {
+                                            builder.getInventory().decrStackSize(builder.getInventory().containsItemStack(recipeItem), 1);
+                                            amount--;
+                                        }
+                                        containedItems.add(recipeItem);
+                                    }
+                                }
+                            }
+
+                            if(recipe.getRecipeSize() == containedItems.size())
+                            {
+                                setStackInBuilder(output, true);
+                                break;
+                            }
                         }
-                        for(int i = 0; i < amount; i++) builder.getItemsNeeded().add(material);
                     }
                 }
                 return false;
             }
-            builder.getSchematic().useMaterial(builder.getInventory().getStackInSlot(slotID));//remove item from materials list (--stackSize)
-            builder.getInventory().decrStackSize(slotID, 1);
+            else
+            {
+                builder.getSchematic().useMaterial(builder.getInventory().getStackInSlot(slotID));//remove item from materials list (--stackSize)
+                builder.getInventory().decrStackSize(slotID, 1);
+            }
         }
 
         if(worldBlock != Blocks.air)//Don't collect air blocks.
         {
-            ItemStack stack = new ItemStack(Item.getItemFromBlock(worldBlock), 1, worldBlockMetadata);//get item for inventory
-            if(stack != null && stack.getItem() != null)
+            Item itemDropped = worldBlock.getItemDropped(worldBlockMetadata, world.rand, EnchantmentHelper.getFortuneModifier(builder));
+            int quantityDropped = worldBlock.quantityDropped(worldBlockMetadata, EnchantmentHelper.getFortuneModifier(builder), world.rand);
+            int damageDropped = worldBlock.damageDropped(worldBlockMetadata);
+            ItemStack stack = new ItemStack(itemDropped, quantityDropped, damageDropped);//get item for inventory
+
+            if(stack.getItem() != null && stack.stackSize > 0)
             {
-                ItemStack leftOvers = builder.getInventory().setStackInInventory(stack);
-                if(leftOvers != null)
-                {
-                    if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 64) //Square Distance - within 8 blocks
-                    {
-                        ItemStack chestLeftOvers = builder.getWorkHut().setStackInInventory(leftOvers);
-                        if(chestLeftOvers != null)
-                        {
-                            EntityItem itemDrop = new EntityItem(world, builder.posX, builder.posY + 1, builder.posZ, chestLeftOvers);
-                            world.spawnEntityInWorld(itemDrop);
-                        }
-                    }
-                    else
-                    {
-                        if(!Vec3Utils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))
-                        {
-                            builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
-                        }
-                    }
-                }
+                setStackInBuilder(stack, false);
             }
         }
+        builder.setStatus(EntityBuilder.Status.WORKING);
         return true;
+    }
+
+    private void setStackInBuilder(ItemStack stack, boolean shouldUseForce)
+    {
+        if(stack != null && stack.getItem() != null && stack.stackSize > 0)
+        {
+            ItemStack leftOvers = builder.getInventory().setStackInInventory(stack);
+            if(shouldUseForce && leftOvers != null)
+            {
+                int slotID = world.rand.nextInt(builder.getInventory().getSizeInventory());
+                while(builder.getInventory().getStackInSlot(slotID).isItemEqual(stack))
+                {
+                    slotID = world.rand.nextInt(builder.getInventory().getSizeInventory());
+                }
+                leftOvers = builder.getInventory().getStackInSlot(slotID);
+
+                builder.getInventory().setInventorySlotContents(slotID, stack);
+            }
+
+            if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 64)
+            {
+                leftOvers = builder.getWorkHut().setStackInInventory(leftOvers);
+            }
+            /*else
+            {
+                if(!Vec3Utils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))//TODO
+                {
+                    builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
+                }
+            }*/
+
+            if(leftOvers != null)
+            {
+                builder.entityDropItem(leftOvers, builder.getEyeHeight() - 0.3F);
+            }
+        }
     }
 
     private boolean isSupportNeeded(World world, int x, int y, int z, ForgeDirection direction)
@@ -572,10 +696,9 @@ public class EntityAIWorkBuilder extends EntityAIWork
             hut.setBuildingLevel(schematicLevel);
         }
 
-        builder.setCurrentItemOrArmor(0, null);
         builder.getTownHall().removeHutForUpgrade(pos);
         builder.setSchematic(null);
-        builder.setStatus(EntityBuilder.Status.IDLE);
+        resetTask();
     }
 
     private void spawnEntities()
