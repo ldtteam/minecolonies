@@ -18,6 +18,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInvBasic;
@@ -63,7 +64,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         setTexture();
         this.setCustomNameTag(generateName());
         this.setAlwaysRenderNameTag(true);//TODO: configurable
-        this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27, this);
+        this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
 
         this.strength = worldObj.rand.nextInt(10) + 1;
@@ -92,12 +93,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 0.6D));
         this.tasks.addTask(2, new EntityAIGoHome(this));
-        this.tasks.addTask(2, new EntityAISleep(this));
-        this.tasks.addTask(3, new EntityAIOpenDoor(this, true));
-        this.tasks.addTask(4, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
-        this.tasks.addTask(5, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
-        this.tasks.addTask(6, new EntityAIWander(this, 0.6D));
-        this.tasks.addTask(7, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
+        this.tasks.addTask(3, new EntityAISleep(this));
+        this.tasks.addTask(4, new EntityAIOpenDoor(this, true));
+        this.tasks.addTask(5, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+        this.tasks.addTask(6, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
+        this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
+        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
     }
 
     protected String initJob()
@@ -229,16 +230,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if(this.getWorkHut() != null)
         {
             this.getWorkHut().unbindWorker(this);
-        }
-
-        setCurrentItemOrArmor(0, null);
-        for(int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            ItemStack itemstack = inventory.getStackInSlot(i);
-            if(itemstack != null && itemstack.stackSize > 0)
-            {
-                entityDropItem(itemstack, getEyeHeight() - 0.3F);
-            }
         }
 
         super.onDeath(par1DamageSource);
@@ -426,6 +417,31 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return worldObj.isDaytime() && !worldObj.isRaining();
     }
 
+    public EntityItem entityDropItem(ItemStack itemstack)
+    {
+        return entityDropItem(itemstack, getEyeHeight() - 0.3F);
+    }
+
+    @Override
+    protected void dropEquipment(boolean par1, int par2)
+    {
+        for(int i = 0; i < getLastActiveItems().length; i++) setCurrentItemOrArmor(i, null);
+        for(int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            ItemStack itemstack = inventory.getStackInSlot(i);
+            if(itemstack != null && itemstack.stackSize > 0)
+            {
+                entityDropItem(itemstack);
+            }
+        }
+    }
+
+    @Override
+    protected int getExperiencePoints(EntityPlayer par1EntityPlayer)
+    {
+        return 0;
+    }
+
     @Override
     public void onInventoryChanged(InventoryBasic inventoryBasic){}
 
@@ -438,7 +454,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if(!worldObj.isRemote)
         {
-            InventoryCitizen newInventory = new InventoryCitizen(inventory.getInventoryName(), inventory.hasCustomInventoryName(), newSize, this);
+            InventoryCitizen newInventory = new InventoryCitizen(inventory.getInventoryName(), inventory.hasCustomInventoryName(), newSize);
             ArrayList<ItemStack> leftovers = new ArrayList<ItemStack>();
             for(int i = 0; i < inventory.getSizeInventory(); i++)
             {
@@ -460,7 +476,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 {
                     if(leftover.stackSize > 0)
                     {
-                        entityDropItem(leftover, getEyeHeight() - 0.3F);
+                        entityDropItem(leftover);
                     }
                 }
             }

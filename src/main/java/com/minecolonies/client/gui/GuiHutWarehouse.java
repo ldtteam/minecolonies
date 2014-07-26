@@ -116,7 +116,7 @@ public class GuiHutWarehouse extends GuiBase
                     addElements();
                     break;
                 case BUTTON_INVENTORY:
-                    MineColonies.packetPipeline.sendToServer(new OpenInventoryPacket(warehouse, warehouse.getName()));
+                    MineColonies.packetPipeline.sendToServer(new OpenInventoryPacket(warehouse, warehouse.getName(), warehouse.getPosition()));
                     break;
             }
         }

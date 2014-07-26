@@ -7,12 +7,9 @@ import net.minecraft.item.ItemStack;
 
 public class InventoryCitizen extends InventoryBasic
 {
-    public final EntityCitizen citizen;
-
-    public InventoryCitizen(String title, boolean localeEnabled, int size, EntityCitizen entityCitizen)
+    public InventoryCitizen(String title, boolean localeEnabled, int size)
     {
         super(title, localeEnabled, size);
-        citizen = entityCitizen;
     }
 
     public void addIInvBasic(IInvBasic inventory)

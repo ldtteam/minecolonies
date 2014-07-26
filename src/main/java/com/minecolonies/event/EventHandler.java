@@ -63,8 +63,9 @@ public class EventHandler
 
         if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
         {
-            boolean blockDoesSomething = world.getBlock(x, y, z).onBlockActivated(world, x, y, z, player, event.face, 0.0F, 0.0F, 0.0F);
-            if(!blockDoesSomething)
+            boolean useBlock = !player.isSneaking() || player.getHeldItem() == null;
+            if (!useBlock) useBlock = player.getHeldItem().getItem().doesSneakBypassUse(world, x, y, z, player);
+            if(!useBlock)
             {
                 if(player.getHeldItem() != null)
                 {

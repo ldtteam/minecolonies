@@ -38,7 +38,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
     {
         if(!deliveryman.hasDestination())
         {
-            deliveryman.setDestination(deliveryman.getTownHall().getDeliverymanRequired().iterator().next());
+            deliveryman.setDestination(deliveryman.getTownHall().getDeliverymanRequired().get(0));
         }
         Vec3Utils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination());
     }

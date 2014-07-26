@@ -37,7 +37,7 @@ public class GuiHutBuilder extends GuiBase
         switch(guiButton.id)
         {
             case BUTTON_INVENTORY:
-                MineColonies.packetPipeline.sendToServer(new OpenInventoryPacket(builderHut, builderHut.getName()));
+                MineColonies.packetPipeline.sendToServer(new OpenInventoryPacket(builderHut, builderHut.getName(), builderHut.getPosition()));
                 break;
         }
     }

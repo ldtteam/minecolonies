@@ -70,7 +70,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
         }
         Vec3Utils.tryMoveLivingToXYZ(builder, builder.getSchematic().getPosition());
-        requestMaterials();
+        if(!Configurations.builderInfiniteResources) requestMaterials();
     }
 
     @Override
@@ -211,7 +211,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
             for(int slotID = 0; slotID < builder.getInventory().getSizeInventory(); slotID++)
             {
                 ItemStack invItem = builder.getInventory().getStackInSlot(slotID);
-                if(invItem != null)
+                if(invItem != null && Utils.containsItemStack(builder.getItemsNeeded(), invItem))
                 {
                     for(int i = 0; i < invItem.stackSize; i++)
                     {
@@ -240,7 +240,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
 
     private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
     {
-        if(block != Blocks.air)//We are breaking and don't need materials.
+        if(block != Blocks.air)
         {
             ItemStack material = new ItemStack(block, 1, metadata);
             int slotID = builder.getInventory().containsItemStack(material);
@@ -295,24 +295,28 @@ public class EntityAIWorkBuilder extends EntityAIWork
                                         if(invItem.isItemEqual(recipeItem))
                                         {
                                             amount -= invItem.stackSize;
-                                            if(amount <= 0) break;
+                                            if(amount <= 0)
+                                            {
+                                                containedItems.add(recipeItem);
+                                                break;
+                                            }
                                         }
-                                    }
-                                    if(amount <= 0)
-                                    {
-                                        amount = recipeItem.stackSize;
-                                        while(amount > 0)
-                                        {
-                                            builder.getInventory().decrStackSize(builder.getInventory().containsItemStack(recipeItem), 1);
-                                            amount--;
-                                        }
-                                        containedItems.add(recipeItem);
                                     }
                                 }
                             }
 
                             if(recipe.getRecipeSize() == containedItems.size())
                             {
+                                for(ItemStack recipeItem : containedItems)
+                                {
+                                    int amount = recipeItem.stackSize;
+                                    while(amount > 0)
+                                    {
+                                        int itemSlotID = builder.getInventory().containsItemStack(recipeItem);
+                                        amount -= builder.getInventory().getStackInSlot(itemSlotID).stackSize;
+                                        builder.getInventory().decrStackSize(itemSlotID, recipeItem.stackSize);
+                                    }
+                                }
                                 setStackInBuilder(output, true);
                                 break;
                             }
@@ -352,12 +356,16 @@ public class EntityAIWorkBuilder extends EntityAIWork
             if(shouldUseForce && leftOvers != null)
             {
                 int slotID = world.rand.nextInt(builder.getInventory().getSizeInventory());
-                while(builder.getInventory().getStackInSlot(slotID).isItemEqual(stack))
+                for(int i = 0; i < builder.getInventory().getSizeInventory(); i++)
                 {
-                    slotID = world.rand.nextInt(builder.getInventory().getSizeInventory());
+                    ItemStack invItem =  builder.getInventory().getStackInSlot(i);
+                    if(!Utils.containsItemStack(builder.getSchematic().getMaterials(), invItem))
+                    {
+                        leftOvers = invItem;
+                        slotID = i;
+                        break;
+                    }
                 }
-                leftOvers = builder.getInventory().getStackInSlot(slotID);
-
                 builder.getInventory().setInventorySlotContents(slotID, stack);
             }
 
@@ -375,7 +383,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
 
             if(leftOvers != null)
             {
-                builder.entityDropItem(leftOvers, builder.getEyeHeight() - 0.3F);
+                builder.entityDropItem(leftOvers);
             }
         }
     }

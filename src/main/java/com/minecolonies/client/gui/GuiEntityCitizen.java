@@ -48,7 +48,7 @@ public class GuiEntityCitizen extends GuiBase
         switch(guiButton.id)
         {
             case BUTTON_INVENTORY:
-                MineColonies.packetPipeline.sendToServer(new OpenInventoryPacket(citizen.getInventory(), citizen.getCustomNameTag()));
+                MineColonies.packetPipeline.sendToServer(new OpenInventoryPacket(citizen.getInventory(), citizen.getCustomNameTag(), citizen.getEntityId()));
                 break;
         }
     }
