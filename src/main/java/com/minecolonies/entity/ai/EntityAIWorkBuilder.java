@@ -225,17 +225,6 @@ public class EntityAIWorkBuilder extends EntityAIWork
                 LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
             }
         }
-
-        /*Vec3 pos = schematic.getBlockPosition();
-        int x = (int) pos.xCoord, y = (int) pos.yCoord, z = (int) pos.zCoord;
-
-        Block worldBlock = world.getBlock(x, y, z);
-        int worldBlockMetadata = world.getBlockMetadata(x, y, z);
-
-        if(worldBlock != Blocks.air)
-        {
-            //TODO canCraft(material)
-        }*/
     }
 
     private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
