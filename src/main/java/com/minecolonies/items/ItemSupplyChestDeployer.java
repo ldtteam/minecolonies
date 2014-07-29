@@ -13,8 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 
-import java.util.HashMap;
-
 public class ItemSupplyChestDeployer extends ItemMinecolonies
 {
     public ItemSupplyChestDeployer()
@@ -35,73 +33,55 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
         if(world == null || player == null || world.isRemote || stack.stackSize == 0 || !isFirstPlacing(player))
             return false;
 
-        HashMap<Integer, Boolean> hashmap = canShipBePlaced(world, x, y, z);
-        if(hashmap.get(1))
+        int facing = canShipBePlaced(world, x, y, z);
+        if(facing != 0)
         {
-            for(int i = 2; i <= 5; i++)
-            {
-                if(hashmap.get(i) != null)
-                {
-                    if(hashmap.get(i))
-                    {
-                        spawnShip(world, x, y, z, player, i);
-                        stack.stackSize--;
-                        return true;
-                    }
-                }
-            }
+            spawnShip(world, x, y, z, player, facing);
+            stack.stackSize--;
+            return true;
         }
         LanguageHandler.sendPlayerLocalizedMessage(player, "item.supplyChestDeployer.invalid");
         return false;
     }
 
     /**
-     * Checks if the ship can be placed, and stores the facings it can be placed in, in a hashmap
-     * Keys: 1: value: can be placed at all
-     * 2: value: can be placed at north
-     * 3: value: can be placed at south
-     * 4: value: can be placed at west
-     * 5: value: can be placed at east
+     * Checks if the ship can be placed and returns the direction it can face.
+     * <p/>
+     * 0: cannot be placed
+     * 2: can be placed at north
+     * 3: can be placed at south
+     * 4: can be placed at west
+     * 5: can be placed at east
      *
      * @param world world obj
      * @param x     x coordinate clicked
      * @param y     y coordinate clicked
      * @param z     z coordinate clicked
-     * @return hashMap whether it can be placed (1) and facings it can be placed at (2-5)
+     * @return facings it can be placed at (2-5)
      */
-    public HashMap<Integer, Boolean> canShipBePlaced(World world, int x, int y, int z)
+    public int canShipBePlaced(World world, int x, int y, int z)
     {
-        HashMap<Integer, Boolean> hashMap = new HashMap<Integer, Boolean>();
-        if(Utils.isWater(world.getBlock(x + 1, y, z)) && check(world, x + 1, y, z, true, true))
+        if(check(world, x + 1, y, z, true, true))
         {
-            hashMap.put(4, true);
-            hashMap.put(1, true);
-            return hashMap;
+            return 4;
         }
-        else if(Utils.isWater(world.getBlock(x - 1, y, z)) && check(world, x - 1, y, z, true, false))
+        else if(check(world, x - 1, y, z, true, false))
         {
-            hashMap.put(5, true);
-            if(!hashMap.containsKey(1)) hashMap.put(1, true);
-            return hashMap;
+            return 5;
         }
-        else if(Utils.isWater(world.getBlock(x, y, z - 1)) && check(world, x, y, z - 1, false, false))
+        else if(check(world, x, y, z - 1, false, false))
         {
-            hashMap.put(3, true);
-            if(!hashMap.containsKey(1)) hashMap.put(1, true);
-            return hashMap;
+            return 3;
         }
-        else if((Utils.isWater(world.getBlock(x, y, z + 1))) && check(world, x, y, z + 1, false, true))
+        else if(check(world, x, y, z + 1, false, true))
         {
-            hashMap.put(2, true);
-            if(!hashMap.containsKey(1)) hashMap.put(1, true);
-            return hashMap;
+            return 2;
         }
-        if(hashMap.get(1) == null) hashMap.put(1, false);
-        return hashMap;
+        return 0;
     }
 
     /**
-     * Checks if the area is free, checks in a 'I' shape, so 20 forward, 10 left at origin + 1, 10 right at origin + 1, 10 left at origin + 20, 10 right at origin + 20
+     * Checks the area for the ship to be placed.
      *
      * @param world                  world obj
      * @param x                      x coordinate clicked
