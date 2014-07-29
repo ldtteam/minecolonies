@@ -4,7 +4,6 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
@@ -73,25 +72,25 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
     public HashMap<Integer, Boolean> canShipBePlaced(World world, int x, int y, int z)
     {
         HashMap<Integer, Boolean> hashMap = new HashMap<Integer, Boolean>();
-        if(Utils.isWater(world.getBlock(x + 1, y, z)) && check(world, x, y, z, true, true))
+        if(Utils.isWater(world.getBlock(x + 1, y, z)) && check(world, x + 1, y, z, true, true))
         {
             hashMap.put(4, true);
             hashMap.put(1, true);
             return hashMap;
         }
-        else if(Utils.isWater(world.getBlock(x - 1, y, z)) && check(world, x, y, z, true, false))
+        else if(Utils.isWater(world.getBlock(x - 1, y, z)) && check(world, x - 1, y, z, true, false))
         {
             hashMap.put(5, true);
             if(!hashMap.containsKey(1)) hashMap.put(1, true);
             return hashMap;
         }
-        else if(Utils.isWater(world.getBlock(x, y, z - 1)) && check(world, x, y, z, false, false))
+        else if(Utils.isWater(world.getBlock(x, y, z - 1)) && check(world, x, y, z - 1, false, false))
         {
             hashMap.put(3, true);
             if(!hashMap.containsKey(1)) hashMap.put(1, true);
             return hashMap;
         }
-        else if((Utils.isWater(world.getBlock(x, y, z + 1))) && check(world, x, y, z, false, true))
+        else if((Utils.isWater(world.getBlock(x, y, z + 1))) && check(world, x, y, z + 1, false, true))
         {
             hashMap.put(2, true);
             if(!hashMap.containsKey(1)) hashMap.put(1, true);
@@ -114,38 +113,56 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      */
     private boolean check(World world, int x, int y, int z, boolean shouldCheckX, boolean isCoordPositivelyAdded)
     {
-        int spaceNeededForShip = Constants.SIZENEEDEDFORSHIP;
-        int spaceNeededForShipHalf = spaceNeededForShip >> 1;//Constants.SIZENEEDEDFORSHIP / 2;
         int k = isCoordPositivelyAdded ? 1 : -1;
+
+        final int SPACE_RIGHT = 11;
+        final int SPACE_LEFT = 20;
+        final int LENGTH = 32;
+        final int WIDTH = 20;
+
+        int horizontalX = isCoordPositivelyAdded ? SPACE_LEFT : SPACE_RIGHT;
+        int horizontalZ = isCoordPositivelyAdded ? SPACE_RIGHT : SPACE_LEFT;
+
+        int spaceRightK = SPACE_RIGHT * k;
+        int spaceLeftK = SPACE_LEFT * k;
+
+        int widthK = WIDTH * k;
+        int widthKHalf = widthK / 2;
 
         if(shouldCheckX)
         {
-            for(int i = 0; i < spaceNeededForShip; i++)
+            for(int i = 0; i < WIDTH; i++)
             {
                 int j = k * i;
-                if(!Utils.isWater(world.getBlock(x + j + k, y, z)) ||
-                        !Utils.isWater(world.getBlock(x + k * spaceNeededForShipHalf, y, z - spaceNeededForShipHalf + i)) ||
-                        !Utils.isWater(world.getBlock(x + j + k, y, z - spaceNeededForShipHalf)) ||
-                        !Utils.isWater(world.getBlock(x + j + k, y, z + spaceNeededForShipHalf)) ||
-                        !Utils.isWater(world.getBlock(x + k * spaceNeededForShip, y, z + i - spaceNeededForShipHalf)) ||
-                        !Utils.isWater(world.getBlock(x + k, y, z + i - spaceNeededForShipHalf))) return false;
+                if(!Utils.isWater(world.getBlock(x + j, y, z)) ||
+                        !Utils.isWater(world.getBlock(x + j, y, z + spaceRightK)) ||
+                        !Utils.isWater(world.getBlock(x + j, y, z - spaceLeftK))) return false;
             }
-            return true;
+            for(int i = 0; i < LENGTH; i++)
+            {
+                if(!Utils.isWater(world.getBlock(x, y, z - horizontalX + i)) ||
+                        !Utils.isWater(world.getBlock(x + widthKHalf, y, z - horizontalX + i)) ||
+                        !Utils.isWater(world.getBlock(x + widthK, y, z - horizontalX + i))) return false;
+            }
         }
         else
         {
-            for(int i = 0; i < spaceNeededForShip; i++)
+            for(int i = 0; i < WIDTH; i++)
             {
                 int j = k * i;
-                if(!Utils.isWater(world.getBlock(x, y, z + j + k)) ||
-                        !Utils.isWater(world.getBlock(x - spaceNeededForShipHalf + i, y, z + k * spaceNeededForShipHalf)) ||
-                        !Utils.isWater(world.getBlock(x - spaceNeededForShipHalf, y, z + j + k)) ||
-                        !Utils.isWater(world.getBlock(x + spaceNeededForShipHalf, y, z + j + k)) ||
-                        !Utils.isWater(world.getBlock(x + i - spaceNeededForShipHalf, y, z + k * spaceNeededForShip)) ||
-                        !Utils.isWater(world.getBlock(x + i - spaceNeededForShipHalf, y, z + k))) return false;
+                if(!Utils.isWater(world.getBlock(x, y, z + j)) ||
+                        !Utils.isWater(world.getBlock(x - spaceRightK, y, z + j)) ||
+                        !Utils.isWater(world.getBlock(x + spaceLeftK, y, z + j))) return false;
             }
-            return true;
+
+            for(int i = 0; i < LENGTH; i++)
+            {
+                if(!Utils.isWater(world.getBlock(x - horizontalZ + i, y, z)) ||
+                        !Utils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthKHalf)) ||
+                        !Utils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthK))) return false;
+            }
         }
+        return true;
     }
 
     /**
