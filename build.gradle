@@ -21,62 +21,36 @@ ext.configFile = file "build.properties"
 
 configFile.withReader {
 
-      def prop = new Properties()
-      prop.load(it)
-      ext.config = new ConfigSlurper().parse prop
+    def prop = new Properties()
+    prop.load(it)
+    ext.config = new ConfigSlurper().parse prop
 }
- 
+
 group = "com.minecolonies"
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.minecolonies_build}"
 
 minecraft {
 
-        version = config.minecraft_version + "-" + config.forge_version
-        assetDir = "run/assets"
-                replace "@VERSION@", project.version
-                replaceIn "lib/Constants.java"
-                    if (project.hasProperty("signature"))
-                       replace "@FINGERPRINT@", signature
+    version = config.minecraft_version + "-" + config.forge_version
+    runDir = "run/assets"
+    replace "@VERSION@", project.version
+    replaceIn "lib/Constants.java"
+    if (project.hasProperty("signature"))
+        replace "@FINGERPRINT@", signature
 }
 
 processResources {
 
-        inputs.property "version", project.version
-        inputs.property "mcversion", project.minecraft.version
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
 
-        from(sourceSets.main.resources.srcDirs) {
-            include 'mcmod.info'
-            expand 'version': project.version, 'mcversion': project.minecraft.version
-        }
-
-        from(sourceSets.main.resources.srcDirs) {
-            exclude 'mcmod.info'
-        }
-}
-
-task("signJar") {
-
-    dependsOn 'reobf'
-    dependsOn 'incrementBuildNumber'
-
-    inputs.file jar.getArchivePath()
-    inputs.file keystore_location
-    inputs.property "keystore_alias", keystore_alias
-    inputs.property "keystore_password", keystore_password
-    outputs.file jar.getArchivePath()
-
-    onlyIf {
-        return keystore_location != "."
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
 
-    doLast {
-        ant.signjar(
-                destDir: jar.destinationDir,
-                jar: jar.getArchivePath(),
-                keystore: keystore_location,
-                alias: keystore_alias,
-                storepass: keystore_password
-        )
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
     }
 }
 
@@ -86,31 +60,25 @@ task sourceJar(type: Jar) {
 }
 
 task deobfJar(type: Jar) {
-        from sourceSets.main.output
-        appendix = 'deobf'
+    from sourceSets.main.output
+    appendix = 'deobf'
 }
 
 task incrementBuildNumber() {
-        dependsOn "reobf"
-        doLast {
-                config.minecolonies_build = (config.minecolonies_build.toString().toInteger()) + 1
+    dependsOn "reobf"
+    doLast {
+        config.minecolonies_build = (config.minecolonies_build.toString().toInteger()) + 1
 
-                configFile.withWriter {
-                                config.toProperties().store(it, "")
-                }
+        configFile.withWriter {
+            config.toProperties().store(it, "")
+        }
     }
 }
 
 jar {
-        appendix = 'universal'
+    appendix = 'universal'
 }
 
-task release(type: Copy) {
-    dependsOn "signJar"
-
-    from project.tasks.jar.destinationDir
-    into project.file(project.release_loc)
-    onlyIf {
-        return project.release_loc != "."
-    }
+if(new File(config.signing + ".gradle").exists()) {
+    apply from: config.signing + ".gradle";
 }
