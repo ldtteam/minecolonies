@@ -20,12 +20,6 @@ import net.minecraft.world.World;
 
 public class GuiHandler implements IGuiHandler
 {
-    private static int nextGuiId = 0;
-
-    public static int getNextGuiId()
-    {
-        return nextGuiId++;
-    }
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)

@@ -4,6 +4,8 @@ import com.minecolonies.entity.EntityWorker;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 
+import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
+
 public abstract class EntityAIWork extends EntityAIBase
 {
     private final   EntityWorker worker;
@@ -25,6 +27,6 @@ public abstract class EntityAIWork extends EntityAIBase
     @Override
     public void resetTask()
     {
-        worker.setStatus(EntityWorker.Status.IDLE);
+        worker.setStatus(IDLE);
     }
 }

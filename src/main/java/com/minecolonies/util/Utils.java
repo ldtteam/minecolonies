@@ -342,11 +342,16 @@ public class Utils
     {
         for(ItemStack listItem : list)
         {
-            if(listItem.equals(itemstack))
+            if(listItem.isItemEqual(itemstack))
             {
                 return true;
             }
         }
         return false;
+    }
+
+    public static double square(double number)
+    {
+        return number * number;
     }
 }

@@ -50,15 +50,17 @@ public class TileEntityTownHall extends TileEntityHut
     public void onBlockAdded()
     {
         for(Object o : worldObj.loadedTileEntityList)
+        {
             if(o instanceof TileEntityHut)
             {
                 TileEntityHut hut = (TileEntityHut) o;
-                if(hut.getDistanceFrom(getPosition()) < Math.pow(Configurations.workingRangeTownhall, 2))
+                if(hut.getDistanceFrom(getPosition()) < Utils.square(Configurations.workingRangeTownhall))
                 {
                     hut.setTownHall(this);
                     huts.add(hut.getPosition());
                 }
             }
+        }
     }
 
     @Override
@@ -218,6 +220,7 @@ public class TileEntityTownHall extends TileEntityHut
             Vec3 hut;
             if(nbtTagBuildingCompound.getTag("hut") instanceof NBTTagIntArray)
             {
+                //TODO remove before release
                 int[] coords = nbtTagBuildingCompound.getIntArray("hut");
                 hut = Vec3.createVectorHelper(coords[0], coords[1], coords[2]);
             }
@@ -233,6 +236,7 @@ public class TileEntityTownHall extends TileEntityHut
             Vec3 coords;
             if(nbtTagBuilderRequiredCompound.getTag("coords") instanceof NBTTagIntArray)
             {
+                //TODO remove before release
                 int[] hut = nbtTagBuilderRequiredCompound.getIntArray("coords");
                 coords = Vec3.createVectorHelper(hut[0], hut[1], hut[2]);
             }

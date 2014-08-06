@@ -76,13 +76,16 @@ public class EntityAIWorkBuilder extends EntityAIWork
     @Override
     public void updateTask()
     {
-        if(builder.getStatus() != EntityBuilder.Status.GETTING_ITEMS && !Vec3Utils.isWorkerAtSite(builder, builder.getSchematic().getPosition()))
-            return;
-
-        builder.setStatus(EntityBuilder.Status.WORKING);
+        if(!builder.hasSchematic())
+            return;//Fixes crash caused by buildings needing no repairs
 
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
+            if(builder.getStatus() != EntityBuilder.Status.GETTING_ITEMS && !Vec3Utils.isWorkerAtSite(builder, builder.getSchematic().getPosition()))
+            return;
+
+            builder.setStatus(EntityBuilder.Status.WORKING);
+
             Block block = builder.getSchematic().getBlock();
             int metadata = builder.getSchematic().getMetadata();
 

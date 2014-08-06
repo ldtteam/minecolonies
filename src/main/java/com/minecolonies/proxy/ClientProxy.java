@@ -39,7 +39,7 @@ public class ClientProxy extends CommonProxy
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, new RenderBipedCitizenMulti(new ModelBiped(), new ModelEntityCitizenFemaleCitizen(), new ModelEntityCitizenFemaleNoble(), new ModelEntityCitizenFemaleAristocrat()));
         RenderingRegistry.registerEntityRenderingHandler(EntityBuilder.class, new RenderBipedWorker(new ModelBiped(), new ModelEntityBuilderFemale()));
-        RenderingRegistry.registerEntityRenderingHandler(EntityDeliveryman.class, new RenderBipedWorker(new ModelEntityDeliveryman(), new ModelEntityDeliveryman()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityDeliveryman.class, new RenderBipedWorker(new ModelEntityDeliveryman(), new ModelEntityDeliveryman()));//TODO female model
     }
 
     @Override

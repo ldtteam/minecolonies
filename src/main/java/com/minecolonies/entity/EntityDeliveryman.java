@@ -48,7 +48,10 @@ public class EntityDeliveryman extends EntityWorker
     public void readEntityFromNBT(NBTTagCompound compound)
     {
         super.readEntityFromNBT(compound);
-        if(compound.hasKey("destination")) destination = Vec3Utils.readVecFromNBT(compound, "destination");
+        if(compound.hasKey("destination"))
+        {
+            destination = Vec3Utils.readVecFromNBT(compound, "destination");
+        }
     }
 
     @Override

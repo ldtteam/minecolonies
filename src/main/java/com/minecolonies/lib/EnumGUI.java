@@ -1,6 +1,5 @@
 package com.minecolonies.lib;
 
-import com.minecolonies.network.GuiHandler;
 import com.minecolonies.tileentities.*;
 import net.minecraft.tileentity.TileEntity;
 
@@ -23,21 +22,9 @@ public enum EnumGUI
     MINER,
     STONEMASON;
 
-    private final int id;
-
-    EnumGUI()
-    {
-        this(GuiHandler.getNextGuiId());
-    }
-
-    EnumGUI(int id)
-    {
-        this.id = id;
-    }
-
     public int getID()
     {
-        return this.id;
+        return this.ordinal();
     }
 
     public static int getGuiIdByInstance(TileEntity tileEntity)

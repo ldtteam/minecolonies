@@ -3,6 +3,8 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 
+import static com.minecolonies.entity.EntityCitizen.Status.SLEEPING;
+
 public class EntityAISleep extends EntityAIBase
 {
     private EntityCitizen citizen;
@@ -28,7 +30,7 @@ public class EntityAISleep extends EntityAIBase
     public void startExecuting()
     {
         //TODO sleep
-        citizen.setStatus(EntityCitizen.Status.SLEEPING);
+        citizen.setStatus(SLEEPING);
     }
 
     @Override

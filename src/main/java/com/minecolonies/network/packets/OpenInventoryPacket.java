@@ -19,16 +19,25 @@ public class OpenInventoryPacket extends AbstractPacket
     private IInventory inventory;
     private String     name;
 
-    private int    inventoryType;
-    private Object info;
+    private int inventoryType;
+
+    private int  entityID;
+    private Vec3 tePos;
 
     public OpenInventoryPacket(){}
 
-    public OpenInventoryPacket(IInventory iinventory, String iinventoryName, Object information)
+    public OpenInventoryPacket(IInventory iinventory, String iinventoryName, int entityID)
     {
         inventory = iinventory;
         name = iinventoryName;
-        info = information;
+        this.entityID = entityID;
+    }
+
+    public OpenInventoryPacket(IInventory iinventory, String iinventoryName, Vec3 pos)
+    {
+        inventory = iinventory;
+        name = iinventoryName;
+        this.tePos = pos;
     }
 
     @Override
@@ -38,14 +47,14 @@ public class OpenInventoryPacket extends AbstractPacket
         {
             buffer.writeInt(INVENTORY_CITIZEN);
             ByteBufUtils.writeUTF8String(buffer, name);
-            buffer.writeInt((Integer) info);
+            buffer.writeInt(entityID);
         }
         else if(inventory instanceof TileEntityChest)
         {
             buffer.writeInt(INVENTORY_CHEST);
             ByteBufUtils.writeUTF8String(buffer, name);
             NBTTagCompound compound = new NBTTagCompound();
-            Vec3Utils.writeVecToNBT(compound, "pos", (Vec3) info);
+            Vec3Utils.writeVecToNBT(compound, "pos", tePos);
             ByteBufUtils.writeTag(buffer, compound);
         }
         else
@@ -62,12 +71,12 @@ public class OpenInventoryPacket extends AbstractPacket
         {
             case INVENTORY_CITIZEN:
                 name = ByteBufUtils.readUTF8String(buffer);
-                info = buffer.readInt();
+                entityID = buffer.readInt();
                 break;
             case INVENTORY_CHEST:
                 name = ByteBufUtils.readUTF8String(buffer);
                 NBTTagCompound compound = ByteBufUtils.readTag(buffer);
-                info = Vec3Utils.readVecFromNBT(compound, "pos");
+                tePos = Vec3Utils.readVecFromNBT(compound, "pos");
                 break;
         }
     }
@@ -81,12 +90,12 @@ public class OpenInventoryPacket extends AbstractPacket
         switch(inventoryType)
         {
             case INVENTORY_CITIZEN:
-                InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID((Integer) info)).getInventory();
+                InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(entityID)).getInventory();
                 if(!StringUtils.isNullOrEmpty(name)) citizenInventory.func_110133_a(name);
                 player.displayGUIChest(citizenInventory);
                 break;
             case INVENTORY_CHEST:
-                TileEntityChest chest = (TileEntityChest) Vec3Utils.getTileEntityFromVec(player.worldObj, (Vec3) info);
+                TileEntityChest chest = (TileEntityChest) Vec3Utils.getTileEntityFromVec(player.worldObj, tePos);
                 if(!StringUtils.isNullOrEmpty(name)) chest.func_145976_a(name);
                 player.displayGUIChest(chest);
                 break;

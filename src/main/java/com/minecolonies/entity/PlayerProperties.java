@@ -45,7 +45,10 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = new NBTTagCompound();
 
         properties.setBoolean("hasPlacedTownHall", hasPlacedTownHall);
-        if(townhallPos != null) Vec3Utils.writeVecToNBT(properties, "townhall", townhallPos);
+        if(townhallPos != null)
+        {
+            Vec3Utils.writeVecToNBT(properties, "townhall", townhallPos);
+        }
         properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
         compound.setTag(Constants.PlayerPropertyName, properties);
@@ -57,7 +60,10 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PlayerPropertyName);
 
         this.hasPlacedTownHall = properties.getBoolean("hasPlacedTownHall");
-        if(properties.hasKey("townhall")) this.townhallPos = Vec3Utils.readVecFromNBT(properties, "townhall");
+        if(properties.hasKey("townhall"))
+        {
+            this.townhallPos = Vec3Utils.readVecFromNBT(properties, "townhall");
+        }
         else if(properties.hasKey("townhallX") && properties.hasKey("townhallY") && properties.hasKey("townhallZ"))
         {
             int x = properties.getInteger("townhallX");

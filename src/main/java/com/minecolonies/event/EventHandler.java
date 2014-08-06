@@ -63,38 +63,33 @@ public class EventHandler
 
         if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
         {
-            boolean useBlock = !player.isSneaking() || player.getHeldItem() == null;
-            if(!useBlock) useBlock = player.getHeldItem().getItem().doesSneakBypassUse(world, x, y, z, player);
-            if(!useBlock)
+            if(!player.isSneaking() && player.getHeldItem() != null)
             {
-                if(player.getHeldItem() != null)
+                Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
+                if(heldBlock instanceof BlockHut)
                 {
-                    Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
-                    if(heldBlock instanceof BlockHut)
+                    switch(event.face)
                     {
-                        switch(event.face)
-                        {
-                            case 0:
-                                y--;
-                                break;
-                            case 1:
-                                y++;
-                                break;
-                            case 2:
-                                z--;
-                                break;
-                            case 3:
-                                z++;
-                                break;
-                            case 4:
-                                x--;
-                                break;
-                            case 5:
-                                x++;
-                                break;
-                        }
-                        event.setCanceled(!onBlockHutPlaced(world, player, heldBlock, x, y, z));
+                        case 0:
+                            y--;
+                            break;
+                        case 1:
+                            y++;
+                            break;
+                        case 2:
+                            z--;
+                            break;
+                        case 3:
+                            z++;
+                            break;
+                        case 4:
+                            x--;
+                            break;
+                        case 5:
+                            x++;
+                            break;
                     }
+                    event.setCanceled(!onBlockHutPlaced(world, player, heldBlock, x, y, z));
                 }
             }
         }
@@ -122,7 +117,7 @@ public class EventHandler
             }
 
             TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z);
-            if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < Math.pow(2 * Configurations.workingRangeTownhall + Configurations.townhallPadding, 2))
+            if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < Utils.square(2 * Configurations.workingRangeTownhall + Configurations.townhallPadding))
             {
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
                 return false;
