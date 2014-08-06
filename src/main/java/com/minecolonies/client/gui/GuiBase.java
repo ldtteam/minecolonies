@@ -121,10 +121,10 @@ public abstract class GuiBase extends GuiScreen
     {
         int x = middleX;
         int maxStringWidth = 0;
-        for (String string : strings)
+        for(String string : strings)
         {
             int stringWidth = fontRendererObj.getStringWidth(string);
-            if (stringWidth > maxStringWidth)
+            if(stringWidth > maxStringWidth)
             {
                 maxStringWidth = stringWidth;
                 x = middleX - stringWidth / 2;

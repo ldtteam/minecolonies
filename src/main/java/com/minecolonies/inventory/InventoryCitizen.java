@@ -1,6 +1,5 @@
 package com.minecolonies.inventory;
 
-import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;

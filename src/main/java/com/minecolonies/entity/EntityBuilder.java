@@ -1,21 +1,11 @@
 package com.minecolonies.entity;
 
-import com.minecolonies.entity.ai.EntityAIGoHome;
-import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Vec3Utils;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EntityBuilder extends EntityWorker
 {

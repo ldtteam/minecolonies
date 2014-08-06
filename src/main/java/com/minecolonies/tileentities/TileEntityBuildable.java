@@ -38,7 +38,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
         super.readFromNBT(compound);
         this.buildingLevel = compound.getInteger("buildingLevel");
 
-        if (compound.hasKey("townhall"))
+        if(compound.hasKey("townhall"))
         {
             townhallPos = Vec3Utils.readVecFromNBT(compound, "townhall");
         }

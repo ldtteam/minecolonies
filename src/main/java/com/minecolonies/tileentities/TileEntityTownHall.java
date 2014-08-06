@@ -24,7 +24,7 @@ public class TileEntityTownHall extends TileEntityHut
     private List<UUID> owners   = new ArrayList<UUID>();
 
     private int maxCitizens;
-    private List<UUID>  citizens = new ArrayList<UUID>();
+    private List<UUID> citizens = new ArrayList<UUID>();
     private List<Vec3> huts     = new ArrayList<Vec3>();
 
     private Map<Vec3, String> builderRequired = new HashMap<Vec3, String>();

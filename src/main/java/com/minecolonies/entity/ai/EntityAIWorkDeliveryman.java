@@ -6,10 +6,7 @@ import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.util.Utils;
 import com.minecolonies.util.Vec3Utils;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 
 /**
  * Performs deliveryman work

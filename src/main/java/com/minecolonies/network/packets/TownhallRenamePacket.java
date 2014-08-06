@@ -6,9 +6,6 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
-
-import java.io.IOException;
 
 public class TownhallRenamePacket extends AbstractPacket
 {

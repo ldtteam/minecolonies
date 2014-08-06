@@ -19,7 +19,7 @@ public class OpenInventoryPacket extends AbstractPacket
     private IInventory inventory;
     private String     name;
 
-    private int inventoryType;
+    private int    inventoryType;
     private Object info;
 
     public OpenInventoryPacket(){}

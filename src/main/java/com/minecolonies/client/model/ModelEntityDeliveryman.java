@@ -47,7 +47,8 @@ public class ModelEntityDeliveryman extends ModelBiped
     }
 
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
+    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
+    {
         setRotationAngles(f, f1, f2, f3, f4, f5, entity);
         bipedHead.render(f5);
         bipedBody.render(f5);
@@ -59,7 +60,8 @@ public class ModelEntityDeliveryman extends ModelBiped
     }
 
     @Override
-    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity) {
+    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity)
+    {
         bipedHead.rotateAngleY = f3 / 57.29578F;
         bipedHead.rotateAngleX = f4 / 57.29578F + 0.45F;
 
@@ -71,7 +73,8 @@ public class ModelEntityDeliveryman extends ModelBiped
         bipedLeftLeg.rotateAngleX = MathHelper.cos(f * 0.6662F + 3.141593F) * 1.4F * f1;
         bipedRightLeg.rotateAngleY = 0.0F;
         bipedLeftLeg.rotateAngleY = 0.0F;
-        if (isRiding) {
+        if(isRiding)
+        {
             bipedRightArm.rotateAngleX += -0.6283185F;
             bipedLeftArm.rotateAngleX += -0.6283185F;
             bipedRightLeg.rotateAngleX = -1.256637F;
@@ -81,7 +84,8 @@ public class ModelEntityDeliveryman extends ModelBiped
         }
         bipedRightArm.rotateAngleY = 0.0F;
         bipedLeftArm.rotateAngleY = 0.0F;
-        if (onGround > -9990F) {
+        if(onGround > -9990F)
+        {
             float f6 = onGround;
             bipedBody.rotateAngleY = MathHelper.sin(MathHelper.sqrt_float(f6) * 3.141593F * 2.0F) * 0.2F;
             bipedRightArm.rotationPointZ = MathHelper.sin(bipedBody.rotateAngleY) * 5F;
@@ -101,7 +105,8 @@ public class ModelEntityDeliveryman extends ModelBiped
             bipedRightArm.rotateAngleY += bipedBody.rotateAngleY * 2.0F;
             bipedRightArm.rotateAngleZ = MathHelper.sin(onGround * 3.141593F) * -0.4F;
         }
-        if (isSneak) {
+        if(isSneak)
+        {
             bipedBody.rotateAngleX = 0.5F;
             bipedRightLeg.rotateAngleX -= 0.0F;
             bipedLeftLeg.rotateAngleX -= 0.0F;
@@ -112,7 +117,9 @@ public class ModelEntityDeliveryman extends ModelBiped
             bipedRightLeg.rotationPointX = 9F;
             bipedLeftLeg.rotationPointY = 9F;
             bipedHead.rotationPointY = 1.0F;
-        } else {
+        }
+        else
+        {
             bipedHead.rotationPointY = 1.5F;
             bipedHead.rotationPointZ = -5.0F;
             bipedBody.rotationPointZ = -3.0F;

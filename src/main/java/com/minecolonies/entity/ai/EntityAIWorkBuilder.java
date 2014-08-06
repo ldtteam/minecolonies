@@ -76,7 +76,8 @@ public class EntityAIWorkBuilder extends EntityAIWork
     @Override
     public void updateTask()
     {
-        if(builder.getStatus() != EntityBuilder.Status.GETTING_ITEMS && !Vec3Utils.isWorkerAtSite(builder, builder.getSchematic().getPosition())) return;
+        if(builder.getStatus() != EntityBuilder.Status.GETTING_ITEMS && !Vec3Utils.isWorkerAtSite(builder, builder.getSchematic().getPosition()))
+            return;
 
         builder.setStatus(EntityBuilder.Status.WORKING);
 
@@ -347,7 +348,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
                 int slotID = world.rand.nextInt(builder.getInventory().getSizeInventory());
                 for(int i = 0; i < builder.getInventory().getSizeInventory(); i++)
                 {
-                    ItemStack invItem =  builder.getInventory().getStackInSlot(i);
+                    ItemStack invItem = builder.getInventory().getStackInSlot(i);
                     if(!Utils.containsItemStack(builder.getSchematic().getMaterials(), invItem))
                     {
                         leftOvers = invItem;
