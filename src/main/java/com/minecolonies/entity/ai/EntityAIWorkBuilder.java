@@ -70,19 +70,25 @@ public class EntityAIWorkBuilder extends EntityAIWork
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
         }
         Vec3Utils.tryMoveLivingToXYZ(builder, builder.getSchematic().getPosition());
-        if(!Configurations.builderInfiniteResources) requestMaterials();
+        if(!Configurations.builderInfiniteResources)
+        {
+            requestMaterials();
+        }
     }
 
     @Override
     public void updateTask()
     {
-        if(!builder.hasSchematic())
-            return;//Fixes crash caused by buildings needing no repairs
-
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
+            if(!builder.hasSchematic())
+                return;//Fixes crash caused by buildings needing no repairs
+
             if(builder.getStatus() != EntityBuilder.Status.GETTING_ITEMS && !Vec3Utils.isWorkerAtSite(builder, builder.getSchematic().getPosition()))
-            return;
+                return;
+
+            if(builder.getSchematic().doesSchematicBlockEqualWorldBlock())
+                return;//findNextBlock count was reached and we can ignore this block
 
             builder.setStatus(EntityBuilder.Status.WORKING);
 
@@ -242,9 +248,9 @@ public class EntityAIWorkBuilder extends EntityAIWork
                 int chestSlotID = builder.getWorkHut().containsItemStack(material);
                 if(chestSlotID != -1)//chest contains item
                 {
-                    if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 64) //Square Distance - within 8 blocks
+                    if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 16) //Square Distance - within 4 blocks
                     {
-                        if(!builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, 1))
+                        if(!builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, 64))
                         {
                             ItemStack chestItem = builder.getWorkHut().getStackInSlot(chestSlotID);
                             builder.getWorkHut().setInventorySlotContents(chestSlotID, null);

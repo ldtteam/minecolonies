@@ -8,6 +8,8 @@ import com.minecolonies.util.Utils;
 import com.minecolonies.util.Vec3Utils;
 import net.minecraft.item.ItemStack;
 
+import static com.minecolonies.entity.EntityCitizen.Status.*;
+
 /**
  * Performs deliveryman work
  * Created: July 18, 2014
@@ -43,9 +45,19 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
     @Override
     public void updateTask()
     {
-        deliveryman.setStatus(EntityDeliveryman.Status.WORKING);
+        if(!Vec3Utils.isWorkerAtSite(deliveryman, deliveryman.getDestination()))
+        {
+            if(deliveryman.getNavigator().noPath())
+            {
+                if(!Vec3Utils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination()))
+                {
+                    deliveryman.setStatus(PATHFINDING_ERROR);
+                }
+            }
+            return;
+        }
 
-        if(!Vec3Utils.isWorkerAtSite(deliveryman, deliveryman.getDestination())) return;
+        deliveryman.setStatus(WORKING);
 
         TileEntityHutWorker workHut = (TileEntityHutWorker) Vec3Utils.getTileEntityFromVec(world, deliveryman.getDestination());
         EntityWorker worker = (EntityWorker) Utils.getEntityFromUUID(world, workHut.getWorkerID());

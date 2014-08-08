@@ -202,7 +202,7 @@ public class Schematic
         return true;
     }
 
-    private boolean doesSchematicBlockEqualWorldBlock()
+    public boolean doesSchematicBlockEqualWorldBlock()
     {
         Vec3 pos = this.getBlockPosition();
         if(pos.yCoord <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
