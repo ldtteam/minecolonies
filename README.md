@@ -56,7 +56,7 @@ This section assumes that you're using the command-line version of Git.
 
 1. Open up your command line.
 2. Navigate to a place where you want to download MineColonies source (eg `C:\BitBucket\MineColonies\`) by executing `cd [folder location]`.  This location is known as `basefolder` from now on.
-3. Execute `git clone https://martijnwoudstra@bitbucket.org/martijnwoudstra/minecolonies.git`.  This will download MineColonies' source into `basefolder`.
+3. Execute `git clone https://cltnschlosser@bitbucket.org/cltnschlosser/minecolonies.git`.  This will download MineColonies' source into `basefolder`.
 4. Right now, you should have a directory that looks something like:
 
 ***
@@ -100,7 +100,7 @@ So you found a bug in our code?  Think you can make it more efficient?  Want to 
 MineColonies crashes every time?  Have a suggestion?  Found a bug?  Create an issue now!
 
 1. Make sure your issue hasn't already been answered or fixed.  Also think about whether your issue is a valid one before submitting it.
-2. Go to [the issues page](https://bitbucket.org/martijnwoudstra/minecolonies/issues?status=new&status=open).
+2. Go to [the issues page](https://bitbucket.org/cltnschlosser/minecolonies/issues?status=new&status=open).
 3. Click `Create Issue`
 4. Fill in the form:
     * `Title`: Short summary of your issue
