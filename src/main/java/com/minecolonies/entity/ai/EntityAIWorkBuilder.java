@@ -1,5 +1,6 @@
 package com.minecolonies.entity.ai;
 
+import com.github.lunatrius.schematica.config.BlockInfo;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
@@ -241,7 +242,27 @@ public class EntityAIWorkBuilder extends EntityAIWork
     {
         if(block != Blocks.air)
         {
+            System.out.println(block.toString());
             ItemStack material = new ItemStack(block, 1, metadata);
+            if(BlockInfo.BLOCK_LIST_IGNORE_METADATA.contains(block))
+            {
+                material = new ItemStack(block, 1);
+            }
+            if(material.getItem() == null)
+            {
+                System.out.println("null item");
+                Item item = BlockInfo.BLOCK_ITEM_MAP.get(block);
+                if(item != null)
+                {
+                    material = new ItemStack(item, 1, metadata);
+                }
+                if(BlockInfo.BLOCK_LIST_IGNORE_METADATA.contains(block))
+                {
+                    material = new ItemStack(item, 1);
+                }
+            }
+            System.out.println(material.getItem() + " : " + material.getItemDamage());
+
             int slotID = builder.getInventory().containsItemStack(material);
             if(slotID == -1)//inventory doesn't contain item
             {
