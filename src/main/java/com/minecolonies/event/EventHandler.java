@@ -57,17 +57,19 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent event)
     {
-        EntityPlayer player = event.entityPlayer;
-        int x = event.x, y = event.y, z = event.z;
-
-        boolean useBlock = !player.isSneaking() || player.getHeldItem() == null;
-        if(!useBlock)
+        if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
         {
-            useBlock = player.getHeldItem().getItem().doesSneakBypassUse(event.world, x, y, z, player);
-        }
+            EntityPlayer player = event.entityPlayer;
+            World world = event.world;
+            int x = event.x, y = event.y, z = event.z;
 
-        if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && !useBlock)
-        {
+            if(!player.isSneaking() || player.getHeldItem() == null || player.getHeldItem().getItem().doesSneakBypassUse(world, x, y, z, player))
+            {
+                if(world.getBlock(x, y, z) instanceof BlockHut)//this was the simple way of doing it, minecraft calls onBlockActivated
+                {                                              // and uses that return value, but I didn't want to call it twice
+                    return;
+                }
+            }
             Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
             if(heldBlock instanceof BlockHut)
             {
