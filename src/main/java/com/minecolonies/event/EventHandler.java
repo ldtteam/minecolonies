@@ -58,14 +58,19 @@ public class EventHandler
     public void onPlayerInteract(PlayerInteractEvent event)
     {
         EntityPlayer player = event.entityPlayer;
+        int x = event.x, y = event.y, z = event.z;
 
-        if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && player.getHeldItem() != null)
+        boolean useBlock = !player.isSneaking() || player.getHeldItem() == null;
+        if(!useBlock)
+        {
+            useBlock = player.getHeldItem().getItem().doesSneakBypassUse(event.world, x, y, z, player);
+        }
+
+        if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && !useBlock)
         {
             Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
             if(heldBlock instanceof BlockHut)
             {
-                int x = event.x, y = event.y, z = event.z;
-
                 switch(event.face)
                 {
                     case 0:

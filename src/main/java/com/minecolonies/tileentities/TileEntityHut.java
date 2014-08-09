@@ -159,12 +159,22 @@ public abstract class TileEntityHut extends TileEntityBuildable
 
     public boolean takeItem(InventoryCitizen inventory, int slotID, int amount)
     {
+        return takeItem(inventory, slotID, amount, false);
+    }
+
+    public boolean takeItem(InventoryCitizen inventory, int slotID, int amount, boolean takeAll)
+    {
         if(inventory != null && slotID >= 0 && amount >= 0)
         {
             ItemStack stack = getStackInSlot(slotID);
             if(stack != null)
             {
-                stack = decrStackSize(slotID, Math.min(amount, stack.stackSize));
+                int newAmount = Math.min(amount, stack.stackSize);
+                if(takeAll)
+                {
+                    newAmount = stack.stackSize;
+                }
+                stack = decrStackSize(slotID, newAmount);
                 stack = inventory.setStackInInventory(stack);
                 if(stack != null)
                 {

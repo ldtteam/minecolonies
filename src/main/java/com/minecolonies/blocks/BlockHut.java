@@ -92,7 +92,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float px, float py, float pz)
     {
-        if(world.getTileEntity(x, y, z) instanceof TileEntityHut && !player.isSneaking())
+        if(world.getTileEntity(x, y, z) instanceof TileEntityHut)
         {
             if(!world.isRemote)
             {

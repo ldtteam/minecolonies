@@ -268,7 +268,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
                 {
                     if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 16) //Square Distance - within 4 blocks
                     {
-                        if(!builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, 64))
+                        if(!builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, 1, true))
                         {
                             ItemStack chestItem = builder.getWorkHut().getStackInSlot(chestSlotID);
                             builder.getWorkHut().setInventorySlotContents(chestSlotID, null);
