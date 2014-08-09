@@ -56,7 +56,7 @@ This section assumes that you're using the command-line version of Git.
 
 1. Open up your command line.
 2. Navigate to a place where you want to download MineColonies source (eg `C:\BitBucket\MineColonies\`) by executing `cd [folder location]`.  This location is known as `basefolder` from now on.
-3. Execute `git clone https://cltnschlosser@bitbucket.org/cltnschlosser/minecolonies.git`.  This will download MineColonies' source into `basefolder`.
+3. Execute `git clone https://bitbucket.org/cltnschlosser/minecolonies.git`.  This will download MineColonies' source into `basefolder`.
 4. Right now, you should have a directory that looks something like:
 
 ***
