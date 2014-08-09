@@ -1,11 +1,12 @@
 package com.minecolonies.tileentities;
 
 import com.minecolonies.lib.IColony;
+import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Schematic;
-import com.minecolonies.util.Vec3Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
 
 import java.util.UUID;
@@ -14,7 +15,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 {
     private int                buildingLevel;
     private TileEntityTownHall townhall;
-    private Vec3               townhallPos;
+    private ChunkCoordinates               townhallPos;
 
     public TileEntityBuildable()
     {
@@ -28,7 +29,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
         if(townhall == null && townhallPos != null)
         {
-            townhall = (TileEntityTownHall) Vec3Utils.getTileEntityFromVec(worldObj, townhallPos);
+            townhall = (TileEntityTownHall) ChunkCoordUtils.getTileEntity(worldObj, townhallPos);
         }
     }
 
@@ -40,7 +41,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
         if(compound.hasKey("townhall"))
         {
-            townhallPos = Vec3Utils.readVecFromNBT(compound, "townhall");
+            townhallPos = ChunkCoordUtils.readFromNBT(compound, "townhall");
         }
     }
 
@@ -51,7 +52,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
         compound.setInteger("buildingLevel", buildingLevel);
         if(this.townhall != null)
         {
-            Vec3Utils.writeVecToNBT(compound, "townhall", townhall.getPosition());
+            ChunkCoordUtils.writeToNBT(compound, "townhall", townhall.getPosition());
         }
     }
 
@@ -77,9 +78,9 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
     public void requestBuilding()
     {
-        for(Vec3 key : getTownHall().getBuilderRequired().keySet())
+        for(ChunkCoordinates key : getTownHall().getBuilderRequired().keySet())
         {
-            if(Vec3Utils.equals(getPosition(), key))
+            if(getPosition().equals(key))
             {
                 return;
             }
@@ -90,9 +91,9 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
     public void requestRepair()
     {
-        for(Vec3 key : getTownHall().getBuilderRequired().keySet())
+        for(ChunkCoordinates key : getTownHall().getBuilderRequired().keySet())
         {
-            if(Vec3Utils.equals(getPosition(), key))
+            if(getPosition().equals(key))
             {
                 return;
             }
@@ -114,9 +115,14 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
         return false;
     }
 
-    public Vec3 getPosition()
+    public ChunkCoordinates getPosition()
     {
-        return Vec3.createVectorHelper(xCoord, yCoord, zCoord);
+        return new ChunkCoordinates(xCoord, yCoord, zCoord);
+    }
+
+    public double getDistanceFrom(ChunkCoordinates coords)
+    {
+        return getDistanceFrom(coords.posX, coords.posY, coords.posZ);
     }
 
     public double getDistanceFrom(Vec3 pos)

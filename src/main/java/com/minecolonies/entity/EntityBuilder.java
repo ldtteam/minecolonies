@@ -1,10 +1,10 @@
 package com.minecolonies.entity;
 
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
+import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Schematic;
-import com.minecolonies.util.Vec3Utils;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 public class EntityBuilder extends EntityWorker
@@ -43,8 +43,8 @@ public class EntityBuilder extends EntityWorker
         {
             NBTTagCompound schematicTag = new NBTTagCompound();
             schematicTag.setString("name", schematic.getName());
-            Vec3Utils.writeVecToNBT(schematicTag, "position", schematic.getPosition());
-            Vec3Utils.writeVecToNBT(schematicTag, "progress", schematic.getLocalPosition());
+            ChunkCoordUtils.writeToNBT(schematicTag, "position", schematic.getPosition());
+            ChunkCoordUtils.writeToNBT(schematicTag, "progress", schematic.getLocalPosition());
             compound.setTag("schematic", schematicTag);
         }
     }
@@ -57,8 +57,8 @@ public class EntityBuilder extends EntityWorker
         {
             NBTTagCompound schematicTag = compound.getCompoundTag("schematic");
             String name = schematicTag.getString("name");
-            Vec3 pos = Vec3Utils.readVecFromNBT(schematicTag, "position");
-            Vec3 progress = Vec3Utils.readVecFromNBT(schematicTag, "progress");
+            ChunkCoordinates pos = ChunkCoordUtils.readFromNBT(schematicTag, "position");
+            ChunkCoordinates progress = ChunkCoordUtils.readFromNBT(schematicTag, "progress");
             schematic = Schematic.loadSchematic(worldObj, name);
             if(schematic == null)
             {

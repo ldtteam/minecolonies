@@ -10,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class Utils
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if(Vec3Utils.equals(townHall.getPosition(), x, y, z)) continue;
+                if(ChunkCoordUtils.equals(townHall.getPosition(), x, y, z)) continue;
 
                 double distanceSquared = townHall.getDistanceFrom(x, y, z);
                 if(closestDist > distanceSquared)
@@ -72,7 +72,7 @@ public class Utils
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if(Vec3Utils.equals(townHall.getPosition(), x, y, z)) continue;
+                if(ChunkCoordUtils.equals(townHall.getPosition(), x, y, z)) continue;
 
                 double distanceSquared = townHall.getDistanceFrom(x, y, z);
                 if(closestDist > distanceSquared)
@@ -97,9 +97,9 @@ public class Utils
         return Math.sqrt(tileEntity.getDistanceFrom(x, y, z));
     }
 
-    public static Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
+    public static ChunkCoordinates scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
     {
-        Vec3 closestVec = null;
+        ChunkCoordinates closestCoords = null;
         double minDistance = Double.MAX_VALUE;
 
         for(int i = x - radiusX; i <= x + radiusX; i++)
@@ -110,18 +110,18 @@ public class Utils
                 {
                     if(world.getBlock(i, j, k) == block)
                     {
-                        Vec3 tempVec = Vec3.createVectorHelper(i, j, k);
+                        ChunkCoordinates tempCoords = new ChunkCoordinates(i, j, k);
 
-                        if(closestVec == null || Vec3Utils.distanceTo(tempVec, x, y, z) < minDistance)
+                        if(closestCoords == null || ChunkCoordUtils.distanceTo(tempCoords, x, y, z) < minDistance)
                         {
-                            closestVec = tempVec;
-                            minDistance = Vec3Utils.distanceTo(closestVec, x, y, z);
+                            closestCoords = tempCoords;
+                            minDistance = ChunkCoordUtils.distanceTo(closestCoords, x, y, z);
                         }
                     }
                 }
             }
         }
-        return closestVec;
+        return closestCoords;
     }
 
     public static boolean isWorkerAtSite(EntityWorker worker, int x, int y, int z)
@@ -169,7 +169,7 @@ public class Utils
         PlayerProperties props = PlayerProperties.get(player);
         if(props.hasPlacedTownHall())
         {
-            return (TileEntityTownHall) Vec3Utils.getTileEntityFromVec(world, props.getTownhallPos());
+            return (TileEntityTownHall) ChunkCoordUtils.getTileEntity(world, props.getTownhallPos());
         }
         return null;
     }

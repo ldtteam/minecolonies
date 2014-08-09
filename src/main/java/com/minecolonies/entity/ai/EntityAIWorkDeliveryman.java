@@ -4,8 +4,8 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.tileentities.TileEntityHutWorker;
+import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
-import com.minecolonies.util.Vec3Utils;
 import net.minecraft.item.ItemStack;
 
 import static com.minecolonies.entity.EntityCitizen.Status.*;
@@ -39,17 +39,17 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
         {
             deliveryman.setDestination(deliveryman.getTownHall().getDeliverymanRequired().get(0));
         }
-        Vec3Utils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination());
+        ChunkCoordUtils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination());
     }
 
     @Override
     public void updateTask()
     {
-        if(!Vec3Utils.isWorkerAtSite(deliveryman, deliveryman.getDestination()))
+        if(!ChunkCoordUtils.isWorkerAtSite(deliveryman, deliveryman.getDestination()))
         {
             if(deliveryman.getNavigator().noPath())
             {
-                if(!Vec3Utils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination()))
+                if(!ChunkCoordUtils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination()))
                 {
                     deliveryman.setStatus(PATHFINDING_ERROR);
                 }
@@ -59,7 +59,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
 
         deliveryman.setStatus(WORKING);
 
-        TileEntityHutWorker workHut = (TileEntityHutWorker) Vec3Utils.getTileEntityFromVec(world, deliveryman.getDestination());
+        TileEntityHutWorker workHut = (TileEntityHutWorker) ChunkCoordUtils.getTileEntity(world, deliveryman.getDestination());
         EntityWorker worker = (EntityWorker) Utils.getEntityFromUUID(world, workHut.getWorkerID());
         for(int i = 0; i < worker.getItemsNeeded().size(); i++)
         {

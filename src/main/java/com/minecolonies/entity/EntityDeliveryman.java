@@ -1,14 +1,14 @@
 package com.minecolonies.entity;
 
 import com.minecolonies.entity.ai.EntityAIWorkDeliveryman;
-import com.minecolonies.util.Vec3Utils;
+import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 public class EntityDeliveryman extends EntityWorker
 {
-    private Vec3 destination;
+    private ChunkCoordinates destination;
 
     public EntityDeliveryman(World world)
     {
@@ -40,7 +40,7 @@ public class EntityDeliveryman extends EntityWorker
         super.writeEntityToNBT(compound);
         if(hasDestination())
         {
-            Vec3Utils.writeVecToNBT(compound, "destination", destination);
+            ChunkCoordUtils.writeToNBT(compound, "destination", destination);
         }
     }
 
@@ -50,7 +50,7 @@ public class EntityDeliveryman extends EntityWorker
         super.readEntityFromNBT(compound);
         if(compound.hasKey("destination"))
         {
-            destination = Vec3Utils.readVecFromNBT(compound, "destination");
+            destination = ChunkCoordUtils.readFromNBT(compound, "destination");
         }
     }
 
@@ -65,12 +65,12 @@ public class EntityDeliveryman extends EntityWorker
         return destination != null;
     }
 
-    public Vec3 getDestination()
+    public ChunkCoordinates getDestination()
     {
         return destination;
     }
 
-    public void setDestination(Vec3 destination)
+    public void setDestination(ChunkCoordinates destination)
     {
         this.destination = destination;
     }

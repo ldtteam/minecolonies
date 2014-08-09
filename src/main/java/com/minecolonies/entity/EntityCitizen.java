@@ -10,9 +10,9 @@ import com.minecolonies.network.GuiHandler;
 import com.minecolonies.tileentities.TileEntityHutCitizen;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
-import com.minecolonies.util.Vec3Utils;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
@@ -47,11 +48,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private InventoryCitizen inventory;
 
     private TileEntityTownHall   tileEntityTownHall;
-    private Vec3                 townPos;
+    private ChunkCoordinates     townPos;
     private TileEntityHutWorker  tileEntityWorkHut;
-    private Vec3                 workPos;
+    private ChunkCoordinates     workPos;
     private TileEntityHutCitizen tileEntityHomeHut;
-    private Vec3                 homePos;
+    private ChunkCoordinates     homePos;
 
     protected Status status = Status.IDLE;
 
@@ -179,15 +180,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if(tileEntityTownHall == null && townPos != null)
         {
-            tileEntityTownHall = (TileEntityTownHall) Vec3Utils.getTileEntityFromVec(worldObj, townPos);
+            tileEntityTownHall = (TileEntityTownHall) ChunkCoordUtils.getTileEntity(worldObj, townPos);
         }
         if(tileEntityWorkHut == null && workPos != null)
         {
-            tileEntityWorkHut = (TileEntityHutWorker) Vec3Utils.getTileEntityFromVec(worldObj, workPos);
+            tileEntityWorkHut = (TileEntityHutWorker) ChunkCoordUtils.getTileEntity(worldObj, workPos);
         }
         if(tileEntityHomeHut == null && homePos != null)
         {
-            tileEntityHomeHut = (TileEntityHutCitizen) Vec3Utils.getTileEntityFromVec(worldObj, homePos);
+            tileEntityHomeHut = (TileEntityHutCitizen) ChunkCoordUtils.getTileEntity(worldObj, homePos);
         }
     }
 
@@ -341,15 +342,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if(tileEntityTownHall != null)
         {
-            Vec3Utils.writeVecToNBT(compound, "townhall", tileEntityTownHall.getPosition());
+            ChunkCoordUtils.writeToNBT(compound, "townhall", tileEntityTownHall.getPosition());
         }
         if(tileEntityWorkHut != null)
         {
-            Vec3Utils.writeVecToNBT(compound, "workhut", tileEntityWorkHut.getPosition());
+            ChunkCoordUtils.writeToNBT(compound, "workhut", tileEntityWorkHut.getPosition());
         }
         if(tileEntityHomeHut != null)
         {
-            Vec3Utils.writeVecToNBT(compound, "homehut", tileEntityHomeHut.getPosition());
+            ChunkCoordUtils.writeToNBT(compound, "homehut", tileEntityHomeHut.getPosition());
         }
         NBTTagList inventoryList = new NBTTagList();
         for(int i = 0; i < inventory.getSizeInventory(); i++)
@@ -387,15 +388,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if(compound.hasKey("townhall"))
         {
-            townPos = Vec3Utils.readVecFromNBT(compound, "townhall");
+            townPos = ChunkCoordUtils.readFromNBT(compound, "townhall");
         }
         if(compound.hasKey("workhut"))
         {
-            workPos = Vec3Utils.readVecFromNBT(compound, "workhut");
+            workPos = ChunkCoordUtils.readFromNBT(compound, "workhut");
         }
         if(compound.hasKey("homehut"))
         {
-            homePos = Vec3Utils.readVecFromNBT(compound, "homehut");
+            homePos = ChunkCoordUtils.readFromNBT(compound, "homehut");
         }
         NBTTagList nbttaglist = compound.getTagList("Inventory", NBT.TAG_COMPOUND);
         for(int i = 0; i < nbttaglist.tagCount(); i++)
@@ -497,7 +498,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         getTownHall().addCitizenToTownhall(worker);
         tileEntityHutWorker.bindWorker(worker);
         worldObj.spawnEntityInWorld(worker);
-        Vec3Utils.tryMoveLivingToXYZ(worker, tileEntityHutWorker.getPosition());
+        ChunkCoordUtils.tryMoveLivingToXYZ(worker, tileEntityHutWorker.getPosition());
     }
 
     public void removeFromWorkHut()

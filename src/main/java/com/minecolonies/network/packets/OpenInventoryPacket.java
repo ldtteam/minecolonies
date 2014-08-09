@@ -2,7 +2,7 @@ package com.minecolonies.network.packets;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
-import com.minecolonies.util.Vec3Utils;
+import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,8 +10,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringUtils;
-import net.minecraft.util.Vec3;
 
 public class OpenInventoryPacket extends AbstractPacket
 {
@@ -21,8 +21,8 @@ public class OpenInventoryPacket extends AbstractPacket
 
     private int inventoryType;
 
-    private int  entityID;
-    private Vec3 tePos;
+    private int              entityID;
+    private ChunkCoordinates tePos;
 
     public OpenInventoryPacket(){}
 
@@ -33,11 +33,11 @@ public class OpenInventoryPacket extends AbstractPacket
         this.entityID = entityID;
     }
 
-    public OpenInventoryPacket(IInventory iinventory, String iinventoryName, Vec3 pos)
+    public OpenInventoryPacket(IInventory iinventory, String iinventoryName, ChunkCoordinates pos)
     {
         inventory = iinventory;
         name = iinventoryName;
-        this.tePos = pos;
+        tePos = pos;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class OpenInventoryPacket extends AbstractPacket
             buffer.writeInt(INVENTORY_CHEST);
             ByteBufUtils.writeUTF8String(buffer, name);
             NBTTagCompound compound = new NBTTagCompound();
-            Vec3Utils.writeVecToNBT(compound, "pos", tePos);
+            ChunkCoordUtils.writeToNBT(compound, "pos", tePos);
             ByteBufUtils.writeTag(buffer, compound);
         }
         else
@@ -76,7 +76,7 @@ public class OpenInventoryPacket extends AbstractPacket
             case INVENTORY_CHEST:
                 name = ByteBufUtils.readUTF8String(buffer);
                 NBTTagCompound compound = ByteBufUtils.readTag(buffer);
-                tePos = Vec3Utils.readVecFromNBT(compound, "pos");
+                tePos = ChunkCoordUtils.readFromNBT(compound, "pos");
                 break;
         }
     }
@@ -95,7 +95,7 @@ public class OpenInventoryPacket extends AbstractPacket
                 player.displayGUIChest(citizenInventory);
                 break;
             case INVENTORY_CHEST:
-                TileEntityChest chest = (TileEntityChest) Vec3Utils.getTileEntityFromVec(player.worldObj, tePos);
+                TileEntityChest chest = (TileEntityChest) ChunkCoordUtils.getTileEntity(player.worldObj, tePos);
                 if(!StringUtils.isNullOrEmpty(name)) chest.func_145976_a(name);
                 player.displayGUIChest(chest);
                 break;

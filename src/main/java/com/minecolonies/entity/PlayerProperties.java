@@ -2,18 +2,18 @@ package com.minecolonies.entity;
 
 import com.minecolonies.lib.Constants;
 import com.minecolonies.proxy.CommonProxy;
-import com.minecolonies.util.Vec3Utils;
+import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
 public class PlayerProperties implements IExtendedEntityProperties
 {
     private boolean hasPlacedTownHall = false;
-    private Vec3 townhallPos;
+    private ChunkCoordinates townhallPos;
     private boolean hasPlacedSupplyChest = false;
 
     private PlayerProperties(){}
@@ -47,7 +47,7 @@ public class PlayerProperties implements IExtendedEntityProperties
         properties.setBoolean("hasPlacedTownHall", hasPlacedTownHall);
         if(townhallPos != null)
         {
-            Vec3Utils.writeVecToNBT(properties, "townhall", townhallPos);
+            ChunkCoordUtils.writeToNBT(properties, "townhall", townhallPos);
         }
         properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
@@ -62,14 +62,14 @@ public class PlayerProperties implements IExtendedEntityProperties
         this.hasPlacedTownHall = properties.getBoolean("hasPlacedTownHall");
         if(properties.hasKey("townhall"))
         {
-            this.townhallPos = Vec3Utils.readVecFromNBT(properties, "townhall");
+            this.townhallPos = ChunkCoordUtils.readFromNBT(properties, "townhall");
         }
         else if(properties.hasKey("townhallX") && properties.hasKey("townhallY") && properties.hasKey("townhallZ"))
         {
             int x = properties.getInteger("townhallX");
             int y = properties.getInteger("townhallY");
             int z = properties.getInteger("townhallZ");
-            this.townhallPos = Vec3.createVectorHelper(x, y, z);
+            this.townhallPos = new ChunkCoordinates(x, y, z);
         }
         this.hasPlacedSupplyChest = properties.getBoolean("hasPlacedSupplyChest");
     }
@@ -152,7 +152,7 @@ public class PlayerProperties implements IExtendedEntityProperties
     public void placeTownhall(int x, int y, int z)
     {
         setHasPlacedTownHall(true);
-        setTownhallPos(Vec3.createVectorHelper(x, y, z));
+        setTownhallPos(new ChunkCoordinates(x, y, z));
     }
 
     /**
@@ -186,12 +186,12 @@ public class PlayerProperties implements IExtendedEntityProperties
      *
      * @return townhall position
      */
-    public Vec3 getTownhallPos()
+    public ChunkCoordinates getTownhallPos()
     {
         return townhallPos;
     }
 
-    private void setTownhallPos(Vec3 pos)
+    private void setTownhallPos(ChunkCoordinates pos)
     {
         townhallPos = pos;
     }

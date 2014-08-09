@@ -4,15 +4,15 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
-import com.minecolonies.util.Vec3Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.ChunkCoordinates;
 
 import java.util.*;
 
@@ -24,10 +24,10 @@ public class TileEntityTownHall extends TileEntityHut
     private List<UUID> owners   = new ArrayList<UUID>();
 
     private int maxCitizens;
-    private List<UUID> citizens = new ArrayList<UUID>();
-    private List<Vec3> huts     = new ArrayList<Vec3>();
+    private List<UUID>             citizens = new ArrayList<UUID>();
+    private List<ChunkCoordinates> huts     = new ArrayList<ChunkCoordinates>();
 
-    private Map<Vec3, String> builderRequired = new HashMap<Vec3, String>();
+    private Map<ChunkCoordinates, String> builderRequired = new HashMap<ChunkCoordinates, String>();
 
     private List<Integer> entityIDs = new ArrayList<Integer>();
 
@@ -73,13 +73,13 @@ public class TileEntityTownHall extends TileEntityHut
         {
             if(getCitizens().size() < getMaxCitizens())
             {
-                Vec3 spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
+                ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
                 if(spawnPoint == null)
                     spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.snow_layer, xCoord, yCoord, zCoord, 1, 0, 1);
 
                 if(spawnPoint != null)
                 {
-                    EntityCitizen ec = spawnCitizen(spawnPoint.xCoord, spawnPoint.yCoord, spawnPoint.zCoord);
+                    EntityCitizen ec = spawnCitizen(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
                     if(ec != null)
                     {
                         addCitizen(ec);
@@ -116,9 +116,9 @@ public class TileEntityTownHall extends TileEntityHut
                 }
             }
         }
-        for(Vec3 pos : huts)
+        for(ChunkCoordinates coords : huts)
         {
-            TileEntityHut hut = (TileEntityHut) Vec3Utils.getTileEntityFromVec(worldObj, pos);
+            TileEntityHut hut = (TileEntityHut) ChunkCoordUtils.getTileEntity(worldObj, coords);
             if(hut != null)
             {
                 hut.setTownHall(null);
@@ -149,10 +149,10 @@ public class TileEntityTownHall extends TileEntityHut
         if(!huts.isEmpty())
         {
             NBTTagList nbtTagBuildingsList = new NBTTagList();
-            for(Vec3 coords : huts)
+            for(ChunkCoordinates coords : huts)
             {
                 NBTTagCompound compound = new NBTTagCompound();
-                Vec3Utils.writeVecToNBT(compound, "hut", coords);
+                ChunkCoordUtils.writeToNBT(compound, "hut", coords);
                 nbtTagBuildingsList.appendTag(compound);
             }
             nbtTagCompound.setTag("huts", nbtTagBuildingsList);
@@ -160,10 +160,10 @@ public class TileEntityTownHall extends TileEntityHut
         if(!builderRequired.isEmpty())
         {
             NBTTagList nbtTagBuildingsList = new NBTTagList();
-            for(Map.Entry<Vec3, String> entry : builderRequired.entrySet())
+            for(Map.Entry<ChunkCoordinates, String> entry : builderRequired.entrySet())
             {
                 NBTTagCompound compound = new NBTTagCompound();
-                Vec3Utils.writeVecToNBT(compound, "coords", entry.getKey());
+                ChunkCoordUtils.writeToNBT(compound, "coords", entry.getKey());
                 compound.setString("name", entry.getValue());
                 nbtTagBuildingsList.appendTag(compound);
             }
@@ -217,32 +217,32 @@ public class TileEntityTownHall extends TileEntityHut
         for(int i = 0; i < nbtTagBuildingsList.tagCount(); i++)
         {
             NBTTagCompound nbtTagBuildingCompound = nbtTagBuildingsList.getCompoundTagAt(i);
-            Vec3 hut;
+            ChunkCoordinates hut;
             if(nbtTagBuildingCompound.getTag("hut") instanceof NBTTagIntArray)
             {
                 //TODO remove before release
                 int[] coords = nbtTagBuildingCompound.getIntArray("hut");
-                hut = Vec3.createVectorHelper(coords[0], coords[1], coords[2]);
+                hut = new ChunkCoordinates(coords[0], coords[1], coords[2]);
             }
             else
             {
-                hut = Vec3Utils.readVecFromNBT(nbtTagBuildingCompound, "hut");
+                hut = ChunkCoordUtils.readFromNBT(nbtTagBuildingCompound, "hut");
             }
             huts.add(hut);
         }
         for(int i = 0; i < nbtTagBuilderRequiredList.tagCount(); i++)
         {
             NBTTagCompound nbtTagBuilderRequiredCompound = nbtTagBuilderRequiredList.getCompoundTagAt(i);
-            Vec3 coords;
+            ChunkCoordinates coords;
             if(nbtTagBuilderRequiredCompound.getTag("coords") instanceof NBTTagIntArray)
             {
                 //TODO remove before release
                 int[] hut = nbtTagBuilderRequiredCompound.getIntArray("coords");
-                coords = Vec3.createVectorHelper(hut[0], hut[1], hut[2]);
+                coords = new ChunkCoordinates(hut[0], hut[1], hut[2]);
             }
             else
             {
-                coords = Vec3Utils.readVecFromNBT(nbtTagBuilderRequiredCompound, "coords");
+                coords = ChunkCoordUtils.readFromNBT(nbtTagBuilderRequiredCompound, "coords");
             }
             String name = nbtTagBuilderRequiredCompound.getString("name");
             builderRequired.put(coords, name);
@@ -333,23 +333,23 @@ public class TileEntityTownHall extends TileEntityHut
     public List<TileEntityBuildable> getHuts()
     {
         List<TileEntityBuildable> list = new ArrayList<TileEntityBuildable>();
-        for(Vec3 vec : huts)
+        for(ChunkCoordinates coords : huts)
         {
-            list.add((TileEntityBuildable) Vec3Utils.getTileEntityFromVec(worldObj, vec));
+            list.add((TileEntityBuildable) ChunkCoordUtils.getTileEntity(worldObj, coords));
         }
         return list;
     }
 
-    public void addHut(Vec3 pos)
+    public void addHut(ChunkCoordinates pos)
     {
         huts.add(pos);
     }
 
-    public void removeHut(Vec3 pos)
+    public void removeHut(ChunkCoordinates pos)
     {
-        for(Vec3 coords : huts)
+        for(ChunkCoordinates coords : huts)
         {
-            if(Vec3Utils.equals(pos, coords))
+            if(pos.equals(coords))
             {
                 huts.remove(coords);
                 return;
@@ -357,16 +357,16 @@ public class TileEntityTownHall extends TileEntityHut
         }
     }
 
-    public void addHutForUpgrade(String name, Vec3 pos)
+    public void addHutForUpgrade(String name, ChunkCoordinates pos)
     {
         builderRequired.put(pos, name);
     }
 
-    public void removeHutForUpgrade(Vec3 coords)
+    public void removeHutForUpgrade(ChunkCoordinates coords)
     {
-        for(Vec3 key : builderRequired.keySet())
+        for(ChunkCoordinates key : builderRequired.keySet())
         {
-            if(Vec3Utils.equals(coords, key))
+            if(coords.equals(key))
             {
                 builderRequired.remove(key);
                 return;
@@ -374,14 +374,14 @@ public class TileEntityTownHall extends TileEntityHut
         }
     }
 
-    public Map<Vec3, String> getBuilderRequired()
+    public Map<ChunkCoordinates, String> getBuilderRequired()
     {
         return builderRequired;
     }
 
-    public List<Vec3> getDeliverymanRequired()
+    public List<ChunkCoordinates> getDeliverymanRequired()
     {
-        List<Vec3> deliverymanRequired = new ArrayList<Vec3>();
+        List<ChunkCoordinates> deliverymanRequired = new ArrayList<ChunkCoordinates>();
         for(Entity entity : Utils.getEntitiesFromUUID(worldObj, citizens))
         {
             if(entity instanceof EntityWorker)

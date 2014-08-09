@@ -7,10 +7,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityHut;
-import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Schematic;
-import com.minecolonies.util.Utils;
-import com.minecolonies.util.Vec3Utils;
+import com.minecolonies.util.*;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -23,8 +20,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -70,7 +67,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
 
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
         }
-        Vec3Utils.tryMoveLivingToXYZ(builder, builder.getSchematic().getPosition());
+        ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getSchematic().getPosition());
         if(!Configurations.builderInfiniteResources)
         {
             requestMaterials();
@@ -85,7 +82,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
             if(!builder.hasSchematic())
                 return;//Fixes crash caused by buildings needing no repairs
 
-            if(builder.getStatus() != EntityBuilder.Status.GETTING_ITEMS && !Vec3Utils.isWorkerAtSite(builder, builder.getSchematic().getPosition()))
+            if(builder.getStatus() != EntityBuilder.Status.GETTING_ITEMS && !ChunkCoordUtils.isWorkerAtSite(builder, builder.getSchematic().getPosition()))
                 return;
 
             if(builder.getSchematic().doesSchematicBlockEqualWorldBlock())
@@ -96,15 +93,15 @@ public class EntityAIWorkBuilder extends EntityAIWork
             Block block = builder.getSchematic().getBlock();
             int metadata = builder.getSchematic().getMetadata();
 
-            Vec3 vec = builder.getSchematic().getBlockPosition();
-            int x = (int) vec.xCoord, y = (int) vec.yCoord, z = (int) vec.zCoord;
+            ChunkCoordinates coords = builder.getSchematic().getBlockPosition();
+            int x = coords.posX, y = coords.posY, z = coords.posZ;
 
             Block worldBlock = world.getBlock(x, y, z);
 
             if(block == null)//should never happen
             {
-                Vec3 local = builder.getSchematic().getLocalPosition();
-                MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.schematicNullBlock", x, y, z, local.xCoord, local.yCoord, local.zCoord));
+                ChunkCoordinates local = builder.getSchematic().getLocalPosition();
+                MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.schematicNullBlock", x, y, z, local.posX, local.posY, local.posZ));
                 findNextBlock();
                 return;
             }
@@ -189,8 +186,8 @@ public class EntityAIWorkBuilder extends EntityAIWork
             int metadata = schematic.getMetadata();
             ItemStack itemstack = new ItemStack(block, 1, metadata);
 
-            Vec3 pos = schematic.getBlockPosition();
-            int x = (int) pos.xCoord, y = (int) pos.yCoord, z = (int) pos.zCoord;
+            ChunkCoordinates pos = schematic.getBlockPosition();
+            int x = (int) pos.posX, y = (int) pos.posY, z = (int) pos.posZ;
 
             Block worldBlock = world.getBlock(x, y, z);
 
@@ -280,14 +277,14 @@ public class EntityAIWorkBuilder extends EntityAIWork
                     }
                     else
                     {
-                        if(!Vec3Utils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))
+                        if(!ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))
                         {
                             builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
                         }
                         else
                         {
                             builder.setStatus(EntityBuilder.Status.GETTING_ITEMS);
-                            return Vec3Utils.isWorkerAtSite(builder, builder.getWorkHut().getPosition());
+                            return ChunkCoordUtils.isWorkerAtSite(builder, builder.getWorkHut().getPosition());
                         }
                     }
                 }
@@ -395,7 +392,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
             }
             /*else
             {
-                if(!Vec3Utils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))//TODO
+                if(!ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))//TODO
                 {
                     builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
                 }
@@ -693,8 +690,8 @@ public class EntityAIWorkBuilder extends EntityAIWork
 
     private void loadSchematic()
     {
-        Map.Entry<Vec3, String> entry = builder.getTownHall().getBuilderRequired().entrySet().iterator().next();
-        Vec3 pos = entry.getKey();
+        Map.Entry<ChunkCoordinates, String> entry = builder.getTownHall().getBuilderRequired().entrySet().iterator().next();
+        ChunkCoordinates pos = entry.getKey();
         String name = entry.getValue();
 
         builder.setSchematic(Schematic.loadSchematic(world, name));
@@ -714,13 +711,13 @@ public class EntityAIWorkBuilder extends EntityAIWork
 
         String schematicName = builder.getSchematic().getName();
         LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", schematicName);
-        Vec3 pos = builder.getSchematic().getPosition();
+        ChunkCoordinates pos = builder.getSchematic().getPosition();
 
-        if(Vec3Utils.getTileEntityFromVec(world, pos) instanceof TileEntityBuildable)
+        if(ChunkCoordUtils.getTileEntity(world, pos) instanceof TileEntityBuildable)
         {
             int schematicLevel = Integer.parseInt(schematicName.substring(schematicName.length() - 1));
 
-            TileEntityBuildable hut = (TileEntityBuildable) Vec3Utils.getTileEntityFromVec(world, pos);
+            TileEntityBuildable hut = (TileEntityBuildable) ChunkCoordUtils.getTileEntity(world, pos);
             hut.setBuildingLevel(schematicLevel);
         }
 
@@ -735,15 +732,15 @@ public class EntityAIWorkBuilder extends EntityAIWork
         {
             if(entity != null)
             {
-                Vec3 pos = builder.getSchematic().getOffsetPosition();//min position
+                ChunkCoordinates pos = builder.getSchematic().getOffsetPosition();//min position
 
                 if(entity instanceof EntityHanging)
                 {
                     EntityHanging entityHanging = (EntityHanging) entity;
 
-                    entityHanging.field_146063_b += pos.xCoord;//tileX
-                    entityHanging.field_146064_c += pos.yCoord;//tileY
-                    entityHanging.field_146062_d += pos.zCoord;//tileZ
+                    entityHanging.field_146063_b += pos.posX;//tileX
+                    entityHanging.field_146064_c += pos.posY;//tileY
+                    entityHanging.field_146062_d += pos.posZ;//tileZ
                     entityHanging.setDirection(entityHanging.hangingDirection);//also sets position based on tile
 
                     entityHanging.setWorld(world);
@@ -755,9 +752,9 @@ public class EntityAIWorkBuilder extends EntityAIWork
                 {
                     EntityMinecart minecart = (EntityMinecart) entity;
                     minecart.riddenByEntity = null;
-                    minecart.posX += pos.xCoord;
-                    minecart.posY += pos.yCoord;
-                    minecart.posZ += pos.zCoord;
+                    minecart.posX += pos.posX;
+                    minecart.posY += pos.posY;
+                    minecart.posZ += pos.posZ;
 
                     minecart.setWorld(world);
                     minecart.dimension = world.provider.dimensionId;
