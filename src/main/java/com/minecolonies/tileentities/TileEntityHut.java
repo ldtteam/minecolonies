@@ -169,14 +169,25 @@ public abstract class TileEntityHut extends TileEntityBuildable
             ItemStack stack = getStackInSlot(slotID);
             if(stack != null)
             {
-                int newAmount = takeAll ? stack.stackSize : Math.min(amount, stack.stackSize);
-                stack = decrStackSize(slotID, newAmount);
+                stack = decrStackSize(slotID, amount);
                 stack = inventory.setStackInInventory(stack);
                 if(stack != null)
                 {
-                    this.setStackInInventory(stack);
+                    setStackInInventory(stack);
                     return false;
                 }
+
+                if(takeAll)
+                {
+                    stack = getStackInSlot(slotID);
+                    stack = decrStackSize(slotID, stack.stackSize);
+                    stack = inventory.setStackInInventory(stack);
+                    if(stack != null)
+                    {
+                        setStackInInventory(stack);
+                    }
+                }
+
                 return true;
             }
         }
