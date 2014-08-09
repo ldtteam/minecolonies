@@ -30,6 +30,7 @@ public class ItemScanTool extends ItemMinecolonies
 
         if(!itemStack.hasTagCompound()) itemStack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = itemStack.getTagCompound().getCompoundTag("ScanTool");
+
         if(!compound.hasKey("pos1"))
         {
             ChunkCoordUtils.writeToNBT(compound, "pos1", new ChunkCoordinates(x, y, z));
@@ -40,13 +41,12 @@ public class ItemScanTool extends ItemMinecolonies
         {
             ChunkCoordinates pos1 = ChunkCoordUtils.readFromNBT(compound, "pos1");
             ChunkCoordinates pos2 = new ChunkCoordinates(x, y, z);
-            ChunkCoordUtils.writeToNBT(compound, "pos2", pos2);
             if(pos2.getDistanceSquaredToChunkCoordinates(pos1) > 0)
             {
+                ChunkCoordUtils.writeToNBT(compound, "pos2", pos2);
                 LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point2");
                 return true;
             }
-            compound.removeTag("pos2");
             LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.samePoint");
             return false;
         }
