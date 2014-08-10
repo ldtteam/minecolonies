@@ -162,33 +162,39 @@ public abstract class TileEntityHut extends TileEntityBuildable
         return takeItem(inventory, slotID, amount, false);
     }
 
+    /**
+     * @param takeAll Whether or not {@code inventory} will take the rest if possible
+     * @return true if itemstack in specified {@code slotID} is not null and if {@code inventory} received
+     * at least {@code amount} of itemstack
+     */
     public boolean takeItem(InventoryCitizen inventory, int slotID, int amount, boolean takeAll)
     {
         if(inventory != null && slotID >= 0 && amount >= 0)
         {
-            ItemStack stack = getStackInSlot(slotID);
-            if(stack != null)
+            ItemStack stack = decrStackSize(slotID, amount); // gets itemstack in slot, and decreases stacksize
+            if(stack != null) // stack is null if no itemstack was in slot
             {
-                stack = decrStackSize(slotID, amount);
-                stack = inventory.setStackInInventory(stack);
-                if(stack != null)
+                stack = inventory.setStackInInventory(stack); // puts stack in citizen's inventory
+                if(stack != null) // checks for leftovers
                 {
-                    setStackInInventory(stack);
+                    setStackInInventory(stack); // puts leftovers back in hut
                     return false;
                 }
-
-                if(takeAll)
+                else
                 {
-                    stack = getStackInSlot(slotID);
-                    stack = decrStackSize(slotID, stack.stackSize);
-                    stack = inventory.setStackInInventory(stack);
-                    if(stack != null)
+                    if(takeAll)
                     {
-                        setStackInInventory(stack);
+                        stack = getStackInSlot(slotID); // gets itemstack in slot
+                        if(stack != null) // checks if itemstack is still in slot
+                        {
+                            stack = decrStackSize(slotID, stack.stackSize);
+                            stack = inventory.setStackInInventory(stack);
+                            setStackInInventory(stack);
+                        }
                     }
-                }
 
-                return true;
+                    return true;
+                }
             }
         }
         return false;
