@@ -5,6 +5,7 @@ import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.item.ItemStack;
 
@@ -80,7 +81,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
                 {
                     //TODO: resource handling
                 }
-                workHut.setStackInInventory(new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
+                InventoryUtils.setStack(workHut, new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
             }
             worker.getItemsNeeded().remove(i);
             i--;

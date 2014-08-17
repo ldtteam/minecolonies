@@ -26,7 +26,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 import static com.minecolonies.lib.Constants.BlockData.*;
@@ -187,7 +186,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
             ItemStack itemstack = new ItemStack(block, 1, metadata);
 
             ChunkCoordinates pos = schematic.getBlockPosition();
-            int x = (int) pos.posX, y = (int) pos.posY, z = (int) pos.posZ;
+            int x = pos.posX, y = pos.posY, z = pos.posZ;
 
             Block worldBlock = world.getBlock(x, y, z);
 
@@ -198,36 +197,24 @@ public class EntityAIWorkBuilder extends EntityAIWork
 
             placesBlock = true;
 
-            for(ItemStack material : builder.getSchematic().getMaterials())
+            /*for(ItemStack material : builder.getSchematic().getMaterials())
             {
                 if(material.isItemEqual(itemstack))
                 {
                     if(material.stackSize > 0)
-                    {
-                        if(builder.getInventory().containsItemStack(itemstack) == -1)
+                    {*/
+                        if(InventoryUtils.containsStack(builder.getInventory(), itemstack) == -1)
                         {
                             builder.addItemNeeded(itemstack);
                         }
-                    }
+                    /*}
                     break;
                 }
-            }
+            }*/
         }
 
         if(placesBlock)
         {
-            for(int slotID = 0; slotID < builder.getInventory().getSizeInventory(); slotID++)
-            {
-                ItemStack invItem = builder.getInventory().getStackInSlot(slotID);
-                if(invItem != null && Utils.containsItemStack(builder.getItemsNeeded(), invItem))
-                {
-                    for(int i = 0; i < invItem.stackSize; i++)
-                    {
-                        builder.getSchematic().useMaterial(invItem);
-                        if(builder.getSchematic().getMaterials().isEmpty()) break;
-                    }
-                }
-            }
             for(ItemStack neededItem : builder.getItemsNeeded())
             {
                 LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
@@ -260,15 +247,15 @@ public class EntityAIWorkBuilder extends EntityAIWork
             }
             System.out.println(material.getItem() + " : " + material.getItemDamage());
 
-            int slotID = builder.getInventory().containsItemStack(material);
+            int slotID = InventoryUtils.containsStack(builder.getInventory(), material);
             if(slotID == -1)//inventory doesn't contain item
             {
-                int chestSlotID = builder.getWorkHut().containsItemStack(material);
+                int chestSlotID = InventoryUtils.containsStack(builder.getWorkHut(), material);
                 if(chestSlotID != -1)//chest contains item
                 {
                     if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 16) //Square Distance - within 4 blocks
                     {
-                        if(!builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, 1, true))
+                        if(!InventoryUtils.takeStackInSlot(builder.getWorkHut(), builder.getInventory(), chestSlotID, 1, true))
                         {
                             ItemStack chestItem = builder.getWorkHut().getStackInSlot(chestSlotID);
                             builder.getWorkHut().setInventorySlotContents(chestSlotID, null);
@@ -302,12 +289,12 @@ public class EntityAIWorkBuilder extends EntityAIWork
                             for(Object obj2 : recipe.recipeItems)
                             {
                                 ItemStack recipeItem = (ItemStack) obj2;
-                                boolean itemNeeded = !Utils.containsItemStack(containedItems, recipeItem);
-                                boolean hasItem = Utils.containsItemStack(Arrays.asList(builder.getInventory().getAllItemsInInventory()), recipeItem);
+                                boolean itemNeeded = !Utils.containsStackInList(containedItems, recipeItem);
+                                boolean hasItem = Utils.containsStackInArray(InventoryUtils.getAllItemStacks(builder.getInventory()), recipeItem);
                                 if(itemNeeded && hasItem)
                                 {
                                     int amount = recipeItem.stackSize;
-                                    for(ItemStack invItem : builder.getInventory().getAllItemsInInventory())
+                                    for(ItemStack invItem : InventoryUtils.getAllItemStacks(builder.getInventory()))
                                     {
                                         if(invItem.isItemEqual(recipeItem))
                                         {
@@ -329,7 +316,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
                                     int amount = recipeItem.stackSize;
                                     while(amount > 0)
                                     {
-                                        int itemSlotID = builder.getInventory().containsItemStack(recipeItem);
+                                        int itemSlotID = InventoryUtils.containsStack(builder.getInventory(), recipeItem);
                                         amount -= builder.getInventory().getStackInSlot(itemSlotID).stackSize;
                                         builder.getInventory().decrStackSize(itemSlotID, recipeItem.stackSize);
                                     }
@@ -369,14 +356,14 @@ public class EntityAIWorkBuilder extends EntityAIWork
     {
         if(stack != null && stack.getItem() != null && stack.stackSize > 0)
         {
-            ItemStack leftOvers = builder.getInventory().setStackInInventory(stack);
+            ItemStack leftOvers = InventoryUtils.setStack(builder.getInventory(), stack);
             if(shouldUseForce && leftOvers != null)
             {
                 int slotID = world.rand.nextInt(builder.getInventory().getSizeInventory());
                 for(int i = 0; i < builder.getInventory().getSizeInventory(); i++)
                 {
                     ItemStack invItem = builder.getInventory().getStackInSlot(i);
-                    if(!Utils.containsItemStack(builder.getSchematic().getMaterials(), invItem))
+                    if(!Utils.containsStackInList(builder.getSchematic().getMaterials(), invItem))
                     {
                         leftOvers = invItem;
                         slotID = i;
@@ -386,9 +373,9 @@ public class EntityAIWorkBuilder extends EntityAIWork
                 builder.getInventory().setInventorySlotContents(slotID, stack);
             }
 
-            if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 64)
+            if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 16)
             {
-                leftOvers = builder.getWorkHut().setStackInInventory(leftOvers);
+                leftOvers = InventoryUtils.setStack(builder.getWorkHut(), leftOvers);
             }
             /*else
             {
