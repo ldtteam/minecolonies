@@ -63,13 +63,16 @@ public class EventHandler
             World world = event.world;
             int x = event.x, y = event.y, z = event.z;
 
-            if(!player.isSneaking() || player.getHeldItem() == null || player.getHeldItem().getItem().doesSneakBypassUse(world, x, y, z, player))
+            if(!player.isSneaking() || player.getHeldItem() == null || player.getHeldItem().getItem() == null || player.getHeldItem().getItem().doesSneakBypassUse(world, x, y, z, player))
             {
                 if(world.getBlock(x, y, z) instanceof BlockHut)//this was the simple way of doing it, minecraft calls onBlockActivated
                 {                                              // and uses that return value, but I didn't want to call it twice
                     return;
                 }
             }
+
+            if(player.getHeldItem() == null || player.getHeldItem().getItem() == null) return;
+
             Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
             if(heldBlock instanceof BlockHut)
             {
