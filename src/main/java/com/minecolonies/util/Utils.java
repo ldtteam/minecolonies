@@ -339,12 +339,12 @@ public class Utils
         return null;
     }
 
-    public static boolean containsStackInArray(Object[] array, ItemStack itemstack)
+    public static boolean containsStackInArray(ItemStack itemstack, Object... array)
     {
-        return containsStackInList(Arrays.asList(array), itemstack);
+        return containsStackInList(itemstack, Arrays.asList(array));
     }
 
-    public static boolean containsStackInList(List list, ItemStack itemstack)
+    public static boolean containsStackInList(ItemStack itemstack, List list)
     {
         for(Object obj : list)
         {

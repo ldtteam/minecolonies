@@ -289,21 +289,17 @@ public class EntityAIWorkBuilder extends EntityAIWork
                             for(Object obj2 : recipe.recipeItems)
                             {
                                 ItemStack recipeItem = (ItemStack) obj2;
-                                boolean itemNeeded = !Utils.containsStackInList(containedItems, recipeItem);
-                                boolean hasItem = Utils.containsStackInArray(InventoryUtils.getAllItemStacks(builder.getInventory()), recipeItem);
-                                if(itemNeeded && hasItem)
+                                int slot = InventoryUtils.containsStack(builder.getInventory(), recipeItem);
+                                if(!Utils.containsStackInList(recipeItem, containedItems) && slot >= 0)
                                 {
                                     int amount = recipeItem.stackSize;
-                                    for(ItemStack invItem : InventoryUtils.getAllItemStacks(builder.getInventory()))
+                                    ItemStack invItem = builder.getInventory().getStackInSlot(slot);
+                                    if(invItem.isItemEqual(recipeItem))
                                     {
-                                        if(invItem.isItemEqual(recipeItem))
+                                        amount -= invItem.stackSize;
+                                        if(amount <= 0)
                                         {
-                                            amount -= invItem.stackSize;
-                                            if(amount <= 0)
-                                            {
-                                                containedItems.add(recipeItem);
-                                                break;
-                                            }
+                                            containedItems.add(recipeItem);
                                         }
                                     }
                                 }
@@ -363,7 +359,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
                 for(int i = 0; i < builder.getInventory().getSizeInventory(); i++)
                 {
                     ItemStack invItem = builder.getInventory().getStackInSlot(i);
-                    if(!Utils.containsStackInList(builder.getSchematic().getMaterials(), invItem))
+                    if(!Utils.containsStackInList(invItem, builder.getSchematic().getMaterials()))
                     {
                         leftOvers = invItem;
                         slotID = i;
