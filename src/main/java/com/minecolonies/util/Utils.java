@@ -14,6 +14,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -338,13 +339,22 @@ public class Utils
         return null;
     }
 
-    public static boolean containsItemStack(List<ItemStack> list, ItemStack itemstack)
+    public static boolean containsStackInArray(ItemStack itemstack, Object... array)
     {
-        for(ItemStack listItem : list)
+        return containsStackInList(itemstack, Arrays.asList(array));
+    }
+
+    public static boolean containsStackInList(ItemStack itemstack, List list)
+    {
+        for(Object obj : list)
         {
-            if(listItem.isItemEqual(itemstack))
+            if(obj instanceof ItemStack)
             {
-                return true;
+                ItemStack listStack = (ItemStack) obj;
+                if(listStack.isItemEqual(itemstack))
+                {
+                    return true;
+                }
             }
         }
         return false;

@@ -129,4 +129,9 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     {
         return getDistanceFrom(pos.xCoord, pos.yCoord, pos.zCoord);
     }
+
+    public void setInventoryName(String name)
+    {
+        func_145976_a(name);
+    }
 }
