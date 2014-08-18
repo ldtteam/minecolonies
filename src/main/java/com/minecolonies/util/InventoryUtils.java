@@ -33,11 +33,17 @@ public class InventoryUtils
                 }
             }
 
-            slot = getOpenSlot(inventory);
-            if(slot != -1 && returnStack != null)
+            while((slot = getOpenSlot(inventory)) != -1 && returnStack != null)
             {
                 inventory.setInventorySlotContents(slot, returnStack);
-                returnStack = null;
+                if(returnStack.stackSize > inventory.getInventoryStackLimit())
+                {
+                    returnStack.stackSize -= inventory.getInventoryStackLimit();
+                }
+                else
+                {
+                    returnStack = null;
+                }
             }
             return returnStack;
         }
