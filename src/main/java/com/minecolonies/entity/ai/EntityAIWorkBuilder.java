@@ -200,7 +200,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
 
             Block worldBlock = world.getBlock(pos.posX, pos.posY, pos.posZ);
 
-            if(block == null || block == Blocks.air || worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock)
+            if(itemstack.getItem() == null || block == null || block == Blocks.air || worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock)
             {
                 continue;
             }
