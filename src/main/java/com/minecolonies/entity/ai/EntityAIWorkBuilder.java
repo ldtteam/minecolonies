@@ -5,9 +5,12 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.util.*;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.SidedProxy;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -71,6 +74,8 @@ public class EntityAIWorkBuilder extends EntityAIWork
         {
             requestMaterials();
         }
+
+        builder.setStatus(EntityBuilder.Status.WORKING);
     }
 
     @Override
@@ -81,13 +86,18 @@ public class EntityAIWorkBuilder extends EntityAIWork
             if(!builder.hasSchematic())
                 return;//Fixes crash caused by buildings needing no repairs
 
-            if(builder.getStatus() != EntityBuilder.Status.GETTING_ITEMS && !ChunkCoordUtils.isWorkerAtSite(builder, builder.getSchematic().getPosition()))
-                return;
-
             if(builder.getSchematic().doesSchematicBlockEqualWorldBlock())
                 return;//findNextBlock count was reached and we can ignore this block
 
-            builder.setStatus(EntityBuilder.Status.WORKING);
+            System.out.println(builder.getStatus().toString());
+
+            if(builder.getStatus() != EntityBuilder.Status.GETTING_ITEMS) {
+			    if(!ChunkCoordUtils.isWorkerAtSiteWithMove(builder, builder.getSchematic().getPosition()))
+				{
+                    return;
+				}
+				builder.setStatus(EntityBuilder.Status.WORKING);
+			}
 
             Block block = builder.getSchematic().getBlock();
             int metadata = builder.getSchematic().getMetadata();
@@ -96,6 +106,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
             int x = coords.posX, y = coords.posY, z = coords.posZ;
 
             Block worldBlock = world.getBlock(x, y, z);
+            int worldBlockMetadata = world.getBlockMetadata(x, y, z);
 
             if(block == null)//should never happen
             {
@@ -112,7 +123,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
 
             if(!Configurations.builderInfiniteResources)//We need to deal with materials
             {
-                if(!handleMaterials(block, metadata, worldBlock, world.getBlockMetadata(x, y, z))) return;
+                if(!handleMaterials(block, metadata, worldBlock, worldBlockMetadata)) return;
             }
 
             if(block == Blocks.air)
@@ -186,9 +197,8 @@ public class EntityAIWorkBuilder extends EntityAIWork
             ItemStack itemstack = new ItemStack(block, 1, metadata);
 
             ChunkCoordinates pos = schematic.getBlockPosition();
-            int x = pos.posX, y = pos.posY, z = pos.posZ;
 
-            Block worldBlock = world.getBlock(x, y, z);
+            Block worldBlock = world.getBlock(pos.posX, pos.posY, pos.posZ);
 
             if(block == null || block == Blocks.air || worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock)
             {
@@ -224,28 +234,27 @@ public class EntityAIWorkBuilder extends EntityAIWork
 
     private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
     {
+        System.out.println(FMLCommonHandler.instance().getSide().toString() + " : " + FMLCommonHandler.instance().getEffectiveSide().toString());
         if(block != Blocks.air)
         {
-            System.out.println(block.toString());
-            ItemStack material = new ItemStack(block, 1, metadata);
+            System.out.println(block.getUnlocalizedName());
+
+            if(Utils.isWater(block) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && testFlag(metadata, 0x08)) || (block instanceof BlockDoor && testFlag(metadata, 0x08))) return true;//free blocks
+
+            Item item = BlockInfo.getItemFromBlock(block);
             if(BlockInfo.BLOCK_LIST_IGNORE_METADATA.contains(block))
             {
-                material = new ItemStack(block, 1);
-            }
-            if(material.getItem() == null)
+                metadata = 0;
+            } else if(block == Blocks.log || block == Blocks.log2 || block == Blocks.wooden_slab)//will probably need more in the future, will fix as I come across them
             {
-                System.out.println("null item");
-                Item item = BlockInfo.BLOCK_ITEM_MAP.get(block);
-                if(item != null)
-                {
-                    material = new ItemStack(item, 1, metadata);
-                }
-                if(BlockInfo.BLOCK_LIST_IGNORE_METADATA.contains(block))
-                {
-                    material = new ItemStack(item, 1);
-                }
+                metadata %= 4;
+            } else if(block == Blocks.stone_slab)
+            {
+                metadata %= 8;
             }
-            System.out.println(material.getItem() + " : " + material.getItemDamage());
+
+            ItemStack material = new ItemStack(item, 1, metadata);
+            System.out.println(material.getItem().getUnlocalizedName() + " : " + material.getItemDamage());
 
             int slotID = InventoryUtils.containsStack(builder.getInventory(), material);
             if(slotID == -1)//inventory doesn't contain item
@@ -260,9 +269,10 @@ public class EntityAIWorkBuilder extends EntityAIWork
                             ItemStack chestItem = builder.getWorkHut().getStackInSlot(chestSlotID);
                             builder.getWorkHut().setInventorySlotContents(chestSlotID, null);
                             setStackInBuilder(chestItem, true);
+                            builder.setStatus(EntityBuilder.Status.WORKING);
                         }
                     }
-                    else
+                    else if(builder.getNavigator().noPath() || !ChunkCoordUtils.isPathingTo(builder, builder.getWorkHut().getPosition()))
                     {
                         if(!ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))
                         {
@@ -271,12 +281,12 @@ public class EntityAIWorkBuilder extends EntityAIWork
                         else
                         {
                             builder.setStatus(EntityBuilder.Status.GETTING_ITEMS);
-                            return ChunkCoordUtils.isWorkerAtSite(builder, builder.getWorkHut().getPosition());
+                            return false;
                         }
                     }
                 }
                 else
-                {
+                {/*
                     for(Object obj : CraftingManager.getInstance().getRecipeList())
                     {
                         if(obj instanceof ShapelessRecipes)
@@ -321,7 +331,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
                                 break;
                             }
                         }
-                    }
+                    }*/
                 }
                 return false;
             }
