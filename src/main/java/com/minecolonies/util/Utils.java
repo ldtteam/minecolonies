@@ -339,22 +339,18 @@ public class Utils
         return null;
     }
 
-    public static boolean containsStackInArray(ItemStack itemstack, Object... array)
+    public static boolean containsStackInArray(ItemStack itemstack, ItemStack... array)
     {
         return containsStackInList(itemstack, Arrays.asList(array));
     }
 
-    public static boolean containsStackInList(ItemStack itemstack, List list)
+    public static boolean containsStackInList(ItemStack itemstack, List<ItemStack> list)
     {
-        for(Object obj : list)
+        for(ItemStack listStack : list)
         {
-            if(obj instanceof ItemStack)
+            if(listStack.isItemEqual(itemstack))
             {
-                ItemStack listStack = (ItemStack) obj;
-                if(listStack.isItemEqual(itemstack))
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;
