@@ -46,15 +46,8 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
     @Override
     public void updateTask()
     {
-        if(!ChunkCoordUtils.isWorkerAtSite(deliveryman, deliveryman.getDestination()))
+        if(!ChunkCoordUtils.isWorkerAtSiteWithMove(deliveryman, deliveryman.getDestination()))
         {
-            if(deliveryman.getNavigator().noPath())
-            {
-                if(!ChunkCoordUtils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination()))
-                {
-                    deliveryman.setStatus(PATHFINDING_ERROR);
-                }
-            }
             return;
         }
 
