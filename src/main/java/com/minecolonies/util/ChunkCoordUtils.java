@@ -1,10 +1,12 @@
 package com.minecolonies.util;
 
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
@@ -86,9 +88,19 @@ public class ChunkCoordUtils
         return Utils.scanForBlockNearPoint(world, block, pos.posX, pos.posY, pos.posZ, radiusPos.posX, radiusPos.posY, radiusPos.posZ);
     }
 
+    public static boolean isPathingTo(EntityCitizen citizen, ChunkCoordinates pos)
+    {
+        return Utils.isPathingTo(citizen, pos.posX, pos.posZ);
+    }
+
     public static boolean isWorkerAtSite(EntityWorker worker, ChunkCoordinates site)
     {
         return Utils.isWorkerAtSite(worker, site.posX, site.posY, site.posZ);
+    }
+
+    public static boolean isWorkerAtSiteWithMove(EntityWorker worker, ChunkCoordinates site)
+    {
+        return Utils.isWorkerAtSiteWithMove(worker, site.posX, site.posY, site.posZ);
     }
 
     public static boolean tryMoveLivingToXYZ(EntityLiving living, ChunkCoordinates destination)
