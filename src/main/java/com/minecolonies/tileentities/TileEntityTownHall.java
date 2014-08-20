@@ -2,13 +2,17 @@ package com.minecolonies.tileentities;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.ChunkCoordinates;
 
 import java.util.*;
 
@@ -20,10 +24,12 @@ public class TileEntityTownHall extends TileEntityHut
     private List<UUID> owners   = new ArrayList<UUID>();
 
     private int maxCitizens;
-    private List<UUID>  citizens = new ArrayList<UUID>();
-    private List<int[]> huts     = new ArrayList<int[]>(); //Stores XYZ's
+    private List<UUID>             citizens = new ArrayList<UUID>();
+    private List<ChunkCoordinates> huts     = new ArrayList<ChunkCoordinates>();
 
-    private Map<int[], String> builderRequired = new HashMap<int[], String>(); //Stores XYZ's //TODO make this a Vec3
+    private Map<ChunkCoordinates, String> builderRequired = new HashMap<ChunkCoordinates, String>();
+
+    private List<Integer> entityIDs = new ArrayList<Integer>();
 
     public TileEntityTownHall()
     {
@@ -44,15 +50,17 @@ public class TileEntityTownHall extends TileEntityHut
     public void onBlockAdded()
     {
         for(Object o : worldObj.loadedTileEntityList)
+        {
             if(o instanceof TileEntityHut)
             {
                 TileEntityHut hut = (TileEntityHut) o;
-                if(hut.getDistanceFrom(xCoord, yCoord, zCoord) < Math.pow(Configurations.workingRangeTownhall, 2))
+                if(hut.getDistanceFrom(getPosition()) < Utils.square(Configurations.workingRangeTownhall))
                 {
                     hut.setTownHall(this);
-                    huts.add(new int[]{hut.xCoord, hut.yCoord, hut.zCoord});
+                    huts.add(hut.getPosition());
                 }
             }
+        }
     }
 
     @Override
@@ -65,13 +73,13 @@ public class TileEntityTownHall extends TileEntityHut
         {
             if(getCitizens().size() < getMaxCitizens())
             {
-                Vec3 spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
+                ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
                 if(spawnPoint == null)
                     spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.snow_layer, xCoord, yCoord, zCoord, 1, 0, 1);
 
                 if(spawnPoint != null)
                 {
-                    EntityCitizen ec = spawnCitizen(spawnPoint.xCoord, spawnPoint.yCoord, spawnPoint.zCoord);
+                    EntityCitizen ec = spawnCitizen(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
                     if(ec != null)
                     {
                         addCitizen(ec);
@@ -108,9 +116,9 @@ public class TileEntityTownHall extends TileEntityHut
                 }
             }
         }
-        for(int[] pos : huts)
+        for(ChunkCoordinates coords : huts)
         {
-            TileEntityHut hut = (TileEntityHut) worldObj.getTileEntity(pos[0], pos[1], pos[2]);
+            TileEntityHut hut = (TileEntityHut) ChunkCoordUtils.getTileEntity(worldObj, coords);
             if(hut != null)
             {
                 hut.setTownHall(null);
@@ -141,10 +149,10 @@ public class TileEntityTownHall extends TileEntityHut
         if(!huts.isEmpty())
         {
             NBTTagList nbtTagBuildingsList = new NBTTagList();
-            for(int[] coords : huts)
+            for(ChunkCoordinates coords : huts)
             {
                 NBTTagCompound compound = new NBTTagCompound();
-                compound.setIntArray("hut", coords);
+                ChunkCoordUtils.writeToNBT(compound, "hut", coords);
                 nbtTagBuildingsList.appendTag(compound);
             }
             nbtTagCompound.setTag("huts", nbtTagBuildingsList);
@@ -152,10 +160,10 @@ public class TileEntityTownHall extends TileEntityHut
         if(!builderRequired.isEmpty())
         {
             NBTTagList nbtTagBuildingsList = new NBTTagList();
-            for(Map.Entry<int[], String> entry : builderRequired.entrySet())
+            for(Map.Entry<ChunkCoordinates, String> entry : builderRequired.entrySet())
             {
                 NBTTagCompound compound = new NBTTagCompound();
-                compound.setIntArray("coords", entry.getKey());
+                ChunkCoordUtils.writeToNBT(compound, "coords", entry.getKey());
                 compound.setString("name", entry.getValue());
                 nbtTagBuildingsList.appendTag(compound);
             }
@@ -163,6 +171,20 @@ public class TileEntityTownHall extends TileEntityHut
         }
         nbtTagCompound.setTag("citizens", nbtTagCitizenList);
         nbtTagCompound.setTag("owners", nbtTagOwnersList);
+
+        if(!worldObj.isRemote && !this.getCitizens().isEmpty())
+        {
+            List<Entity> entities = Utils.getEntitiesFromUUID(worldObj, this.getCitizens());
+
+            NBTTagList nbtTagList = new NBTTagList();
+            for(Entity entity : entities)
+            {
+                NBTTagCompound nbtTagCompoundEntityID = new NBTTagCompound();
+                nbtTagCompoundEntityID.setInteger("id", entity.getEntityId());
+                nbtTagList.appendTag(nbtTagCompoundEntityID);
+            }
+            nbtTagCompound.setTag("EntityIDs", nbtTagList);
+        }
     }
 
     @Override
@@ -174,7 +196,7 @@ public class TileEntityTownHall extends TileEntityHut
 
         NBTTagList nbtTagOwnersList = nbtTagCompound.getTagList("owners", NBT.TAG_COMPOUND);
         NBTTagList nbtTagCitizenList = nbtTagCompound.getTagList("citizens", NBT.TAG_COMPOUND);
-        NBTTagList nbtTagBuildingsList = nbtTagCompound.getTagList("huts", NBT.TAG_INT_ARRAY);
+        NBTTagList nbtTagBuildingsList = nbtTagCompound.getTagList("huts", NBT.TAG_COMPOUND);
         NBTTagList nbtTagBuilderRequiredList = nbtTagCompound.getTagList("builderRequired", NBT.TAG_COMPOUND);
         this.owners.clear();
         this.citizens.clear();
@@ -195,15 +217,47 @@ public class TileEntityTownHall extends TileEntityHut
         for(int i = 0; i < nbtTagBuildingsList.tagCount(); i++)
         {
             NBTTagCompound nbtTagBuildingCompound = nbtTagBuildingsList.getCompoundTagAt(i);
-            int[] hut = nbtTagBuildingCompound.getIntArray("hut");
+            ChunkCoordinates hut;
+            if(nbtTagBuildingCompound.getTag("hut") instanceof NBTTagIntArray)
+            {
+                //TODO remove before release
+                int[] coords = nbtTagBuildingCompound.getIntArray("hut");
+                hut = new ChunkCoordinates(coords[0], coords[1], coords[2]);
+            }
+            else
+            {
+                hut = ChunkCoordUtils.readFromNBT(nbtTagBuildingCompound, "hut");
+            }
             huts.add(hut);
         }
         for(int i = 0; i < nbtTagBuilderRequiredList.tagCount(); i++)
         {
             NBTTagCompound nbtTagBuilderRequiredCompound = nbtTagBuilderRequiredList.getCompoundTagAt(i);
-            int[] coords = nbtTagBuilderRequiredCompound.getIntArray("coords");
+            ChunkCoordinates coords;
+            if(nbtTagBuilderRequiredCompound.getTag("coords") instanceof NBTTagIntArray)
+            {
+                //TODO remove before release
+                int[] hut = nbtTagBuilderRequiredCompound.getIntArray("coords");
+                coords = new ChunkCoordinates(hut[0], hut[1], hut[2]);
+            }
+            else
+            {
+                coords = ChunkCoordUtils.readFromNBT(nbtTagBuilderRequiredCompound, "coords");
+            }
             String name = nbtTagBuilderRequiredCompound.getString("name");
             builderRequired.put(coords, name);
+        }
+
+        if(nbtTagCompound.hasKey("EntityIDs"))
+        {
+            entityIDs.clear();
+            NBTTagList nbtList = nbtTagCompound.getTagList("EntityIDs", NBT.TAG_COMPOUND);
+
+            for(int i = 0; i < nbtList.tagCount(); i++)
+            {
+                NBTTagCompound tag = nbtList.getCompoundTagAt(i);
+                entityIDs.add(tag.getInteger("id"));
+            }
         }
     }
 
@@ -279,23 +333,23 @@ public class TileEntityTownHall extends TileEntityHut
     public List<TileEntityBuildable> getHuts()
     {
         List<TileEntityBuildable> list = new ArrayList<TileEntityBuildable>();
-        for(int[] i : huts)
+        for(ChunkCoordinates coords : huts)
         {
-            list.add((TileEntityBuildable) worldObj.getTileEntity(i[0], i[1], i[2]));
+            list.add((TileEntityBuildable) ChunkCoordUtils.getTileEntity(worldObj, coords));
         }
         return list;
     }
 
-    public void addHut(int x, int y, int z)
+    public void addHut(ChunkCoordinates pos)
     {
-        huts.add(new int[]{x, y, z});
+        huts.add(pos);
     }
 
-    public void removeHut(int x, int y, int z)
+    public void removeHut(ChunkCoordinates pos)
     {
-        for(int[] coords : huts)
+        for(ChunkCoordinates coords : huts)
         {
-            if(Arrays.equals(new int[]{x, y, z}, coords))
+            if(pos.equals(coords))
             {
                 huts.remove(coords);
                 return;
@@ -303,16 +357,16 @@ public class TileEntityTownHall extends TileEntityHut
         }
     }
 
-    public void addHutForUpgrade(String name, int x, int y, int z)
+    public void addHutForUpgrade(String name, ChunkCoordinates pos)
     {
-        builderRequired.put(new int[]{x, y, z}, name);
+        builderRequired.put(pos, name);
     }
 
-    public void removeHutForUpgrade(int[] coords)
+    public void removeHutForUpgrade(ChunkCoordinates coords)
     {
-        for(int[] key : builderRequired.keySet())
+        for(ChunkCoordinates key : builderRequired.keySet())
         {
-            if(Arrays.equals(coords, key))
+            if(coords.equals(key))
             {
                 builderRequired.remove(key);
                 return;
@@ -320,8 +374,30 @@ public class TileEntityTownHall extends TileEntityHut
         }
     }
 
-    public Map<int[], String> getBuilderRequired()
+    public Map<ChunkCoordinates, String> getBuilderRequired()
     {
         return builderRequired;
+    }
+
+    public List<ChunkCoordinates> getDeliverymanRequired()
+    {
+        List<ChunkCoordinates> deliverymanRequired = new ArrayList<ChunkCoordinates>();
+        for(Entity entity : Utils.getEntitiesFromUUID(worldObj, citizens))
+        {
+            if(entity instanceof EntityWorker)
+            {
+                EntityWorker worker = (EntityWorker) entity;
+                if(worker.getWorkHut() != null && !worker.hasItemsNeeded())
+                {
+                    deliverymanRequired.add(worker.getWorkHut().getPosition());
+                }
+            }
+        }
+        return deliverymanRequired;
+    }
+
+    public List<Integer> getEntityIDs()
+    {
+        return entityIDs;
     }
 }

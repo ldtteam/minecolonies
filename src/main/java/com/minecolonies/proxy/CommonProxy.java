@@ -3,6 +3,7 @@ package com.minecolonies.proxy;
 import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.tileentities.*;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -72,6 +73,7 @@ public class CommonProxy implements IProxy
     {
         EntityRegistry.registerModEntity(EntityCitizen.class, "entityCitizen", getNextEntityId(), MineColonies.instance, 250, 3, true);
         EntityRegistry.registerModEntity(EntityBuilder.class, "entityBuilder", getNextEntityId(), MineColonies.instance, 250, 3, true);
+        EntityRegistry.registerModEntity(EntityDeliveryman.class, "entityDeliveryman", getNextEntityId(), MineColonies.instance, 250, 3, true);
     }
 
     @Override

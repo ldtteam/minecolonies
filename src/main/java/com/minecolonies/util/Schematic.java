@@ -23,8 +23,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -41,10 +41,10 @@ import java.util.List;
  */
 public class Schematic
 {
-    private World          world;
-    private SchematicWorld schematic;
-    private Vec3           position;
-    private String         name;
+    private World            world;
+    private SchematicWorld   schematic;
+    private ChunkCoordinates position;
+    private String           name;
 
     /**
      * North-West corner
@@ -82,7 +82,7 @@ public class Schematic
 
     public void placeSchematic(int x, int y, int z)
     {
-        List<Vec3> delayedBlocks = new ArrayList<Vec3>();
+        List<ChunkCoordinates> delayedBlocks = new ArrayList<ChunkCoordinates>();
 
         for(int j = 0; j < schematic.getHeight(); j++)
         {
@@ -112,7 +112,7 @@ public class Schematic
                     }
                     else
                     {
-                        delayedBlocks.add(Vec3.createVectorHelper(i, j, k));
+                        delayedBlocks.add(new ChunkCoordinates(i, j, k));
                     }
                     if(schematic.getTileEntity(x, y, z) != null)
                     {
@@ -122,11 +122,11 @@ public class Schematic
             }
         }
 
-        for(Vec3 vec : delayedBlocks)
+        for(ChunkCoordinates coords : delayedBlocks)
         {
-            int i = (int) vec.xCoord;
-            int j = (int) vec.yCoord;
-            int k = (int) vec.zCoord;
+            int i = coords.posX;
+            int j = coords.posY;
+            int k = coords.posZ;
             Block block = this.schematic.getBlock(i, j, k);
             int metadata = this.schematic.getBlockMetadata(i, j, k);
             world.setBlock(x + i, y + j, z + k, block, metadata, 0x03);
@@ -202,17 +202,17 @@ public class Schematic
         return true;
     }
 
-    private boolean doesSchematicBlockEqualWorldBlock()
+    public boolean doesSchematicBlockEqualWorldBlock()
     {
-        int[] pos = Utils.vecToInt(this.getBlockPosition());
-        if(pos[1] <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
+        ChunkCoordinates pos = this.getBlockPosition();
+        if(pos.posY <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
         {
             return true;
         }
-        return schematic.getBlock(x, y, z) == world.getBlock(pos[0], pos[1], pos[2]) && schematic.getBlockMetadata(x, y, z) == world.getBlockMetadata(pos[0], pos[1], pos[2]);
+        return schematic.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematic.getBlockMetadata(x, y, z) == ChunkCoordUtils.getBlockMetadata(world, pos);
     }
 
-    public static String saveSchematic(World world, Vec3 from, Vec3 to)
+    public static String saveSchematic(World world, ChunkCoordinates from, ChunkCoordinates to)
     {
         if(world == null || from == null || to == null)
             return LanguageHandler.format("item.scepterSteel.invalidMethod");
@@ -255,14 +255,14 @@ public class Schematic
         }
     }
 
-    public static SchematicWorld scanSchematic(World world, Vec3 from, Vec3 to, ItemStack icon)
+    public static SchematicWorld scanSchematic(World world, ChunkCoordinates from, ChunkCoordinates to, ItemStack icon)
     {
-        int minX = (int) Math.min(from.xCoord, to.xCoord);
-        int maxX = (int) Math.max(from.xCoord, to.xCoord);
-        int minY = (int) Math.min(from.yCoord, to.yCoord);
-        int maxY = (int) Math.max(from.yCoord, to.yCoord);
-        int minZ = (int) Math.min(from.zCoord, to.zCoord);
-        int maxZ = (int) Math.max(from.zCoord, to.zCoord);
+        int minX = Math.min(from.posX, to.posX);
+        int maxX = Math.max(from.posX, to.posX);
+        int minY = Math.min(from.posY, to.posY);
+        int maxY = Math.max(from.posY, to.posY);
+        int minZ = Math.min(from.posZ, to.posZ);
+        int maxZ = Math.max(from.posZ, to.posZ);
         short width = (short) (Math.abs(maxX - minX) + 1);
         short height = (short) (Math.abs(maxY - minY) + 1);
         short length = (short) (Math.abs(maxZ - minZ) + 1);
@@ -432,32 +432,32 @@ public class Schematic
         return this.schematic.getTileEntity(x, y, z);
     }
 
-    public Vec3 getOffset()
+    public ChunkCoordinates getOffset()
     {
-        return Vec3.createVectorHelper(schematic.getOffsetX(), schematic.getOffsetY(), schematic.getOffsetZ());
+        return new ChunkCoordinates(schematic.getOffsetX(), schematic.getOffsetY(), schematic.getOffsetZ());
     }
 
-    public Vec3 getOffsetPosition()
+    public ChunkCoordinates getOffsetPosition()
     {
-        return getOffset().subtract(position);//I know this seems backwards, minecraft's fault
+        return ChunkCoordUtils.subtract(getOffset(), position);//I know this seems backwards, minecraft's fault
     }
 
-    public Vec3 getBlockPosition()
+    public ChunkCoordinates getBlockPosition()
     {
-        return getOffsetPosition().addVector(x, y, z);
+        return ChunkCoordUtils.add(getOffsetPosition(), x, y, z);
     }
 
-    public Vec3 getBlockPosition(int baseX, int baseY, int baseZ)
+    public ChunkCoordinates getBlockPosition(int baseX, int baseY, int baseZ)
     {
-        return Vec3.createVectorHelper(baseX + x, baseY + y, baseZ + z);
+        return new ChunkCoordinates(baseX + x, baseY + y, baseZ + z);
     }
 
-    public Vec3 getLocalPosition()
+    public ChunkCoordinates getLocalPosition()
     {
-        return Vec3.createVectorHelper(x, y, z);
+        return new ChunkCoordinates(x, y, z);
     }
 
-    public Vec3 getPosition()
+    public ChunkCoordinates getPosition()
     {
         return position;
     }
@@ -467,16 +467,16 @@ public class Schematic
         return name;
     }
 
-    public void setPosition(Vec3 position)
+    public void setPosition(ChunkCoordinates position)
     {
         this.position = position;
     }
 
-    public void setLocalPosition(Vec3 localPosition)
+    public void setLocalPosition(ChunkCoordinates localPosition)
     {
-        x = (int) localPosition.xCoord;
-        y = (int) localPosition.yCoord;
-        z = (int) localPosition.zCoord;
+        x = localPosition.posX;
+        y = localPosition.posY;
+        z = localPosition.posZ;
     }
 
     public List<ItemStack> getMaterials()

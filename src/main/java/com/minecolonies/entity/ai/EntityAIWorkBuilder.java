@@ -1,31 +1,34 @@
 package com.minecolonies.entity.ai;
 
+import com.github.lunatrius.schematica.config.BlockInfo;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
-import com.minecolonies.entity.EnumStatus;
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityHut;
-import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Schematic;
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.*;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.SidedProxy;
 import net.minecraft.block.*;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import static com.minecolonies.lib.Constants.BlockData.*;
@@ -36,23 +39,20 @@ import static com.minecolonies.lib.Constants.BlockData.*;
  *
  * @author Colton
  */
-public class EntityAIWorkBuilder extends EntityAIBase
+public class EntityAIWorkBuilder extends EntityAIWork
 {
-    private EntityBuilder builder;
-    private World         world;
-    int messageDelay = 0;
+    private final EntityBuilder builder;
 
     public EntityAIWorkBuilder(EntityBuilder builder)
     {
-        setMutexBits(3);
+        super(builder);
         this.builder = builder;
-        this.world = builder.worldObj;
     }
 
     @Override
     public boolean shouldExecute()
     {
-        return builder.isWorkTime() && (builder.hasSchematic() || builder.isBuilderNeeded());
+        return super.shouldExecute() && (builder.hasSchematic() || builder.isNeeded());
     }
 
     @Override
@@ -66,39 +66,52 @@ public class EntityAIWorkBuilder extends EntityAIBase
             {
                 return;
             }
-        }
-        Vec3 buildPos = builder.getSchematic().getPosition();
-        builder.getNavigator().tryMoveToXYZ(buildPos.xCoord, buildPos.yCoord, buildPos.zCoord, 1.0F);
 
-        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
+        }
+        ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getSchematic().getPosition());
+        if(!Configurations.builderInfiniteResources)
+        {
+            requestMaterials();
+        }
+
+        builder.setStatus(EntityBuilder.Status.WORKING);
     }
 
     @Override
     public void updateTask()
     {
-        if(!continueExecuting())
-            return;//not called from startExecuting to first check causes repairs to crash if unneeded
-
         if(builder.getOffsetTicks() % builder.getWorkInterval() == 0)
         {
-            messageDelay++;
+            if(!builder.hasSchematic())
+                return;//Fixes crash caused by buildings needing no repairs
 
-            builder.setStatus(EnumStatus.WORKING);
+            if(builder.getSchematic().doesSchematicBlockEqualWorldBlock())
+                return;//findNextBlock count was reached and we can ignore this block
 
-            if(!isBuilderAtSite()) return;
+            System.out.println(builder.getStatus().toString());
+
+            if(builder.getStatus() != EntityBuilder.Status.GETTING_ITEMS) {
+			    if(!ChunkCoordUtils.isWorkerAtSiteWithMove(builder, builder.getSchematic().getPosition()))
+				{
+                    return;
+				}
+				builder.setStatus(EntityBuilder.Status.WORKING);
+			}
 
             Block block = builder.getSchematic().getBlock();
             int metadata = builder.getSchematic().getMetadata();
 
-            Vec3 vec = builder.getSchematic().getBlockPosition();
-            int x = (int) vec.xCoord, y = (int) vec.yCoord, z = (int) vec.zCoord;
+            ChunkCoordinates coords = builder.getSchematic().getBlockPosition();
+            int x = coords.posX, y = coords.posY, z = coords.posZ;
 
             Block worldBlock = world.getBlock(x, y, z);
+            int worldBlockMetadata = world.getBlockMetadata(x, y, z);
 
             if(block == null)//should never happen
             {
-                Vec3 local = builder.getSchematic().getLocalPosition();
-                MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.schematicNullBlock", x, y, z, local.xCoord, local.yCoord, local.zCoord));
+                ChunkCoordinates local = builder.getSchematic().getLocalPosition();
+                MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.schematicNullBlock", x, y, z, local.posX, local.posY, local.posZ));
                 findNextBlock();
                 return;
             }
@@ -110,11 +123,13 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
             if(!Configurations.builderInfiniteResources)//We need to deal with materials
             {
-                if(!handleMaterials(block, metadata, worldBlock, world.getBlockMetadata(x, y, z))) return;
+                if(!handleMaterials(block, metadata, worldBlock, worldBlockMetadata)) return;
             }
 
             if(block == Blocks.air)
             {
+                builder.setCurrentItemOrArmor(0, null);
+
                 if(world.setBlockToAir(x, y, z))
                 {
                     findNextBlock();
@@ -127,6 +142,8 @@ public class EntityAIWorkBuilder extends EntityAIBase
             }
             else
             {
+                builder.setCurrentItemOrArmor(0, new ItemStack(block.getItem(world, x, y, z), 1, metadata));
+
                 placeRequiredSupportingBlocks(x, y, z, block, metadata);
 
                 if(placeBlock(x, y, z, block, metadata))
@@ -144,28 +161,17 @@ public class EntityAIWorkBuilder extends EntityAIBase
         }
     }
 
-    private boolean isBuilderAtSite()
+    @Override
+    public boolean continueExecuting()
     {
-        Vec3 buildPos = builder.getSchematic().getPosition();
-        if(builder.getPosition().squareDistanceTo(buildPos) > 4)//Too far away
-        {
-            if(builder.getNavigator().noPath())//Not moving
-            {
-                if(!builder.getNavigator().tryMoveToXYZ(buildPos.xCoord, buildPos.yCoord, buildPos.zCoord, 1.0F))
-                {
-                    builder.setStatus(EnumStatus.PATHFINDING_ERROR);
-                }
-            }
-            return false;
-        }
-        else
-        {
-            if(!builder.getNavigator().noPath())//within 2 blocks - can stop pathing //TODO may not need this check
-            {
-                builder.getNavigator().clearPathEntity();
-            }
-            return true;
-        }
+        return super.continueExecuting() && builder.hasSchematic();
+    }
+
+    @Override
+    public void resetTask()
+    {
+        super.resetTask();
+        builder.setCurrentItemOrArmor(0, null);
     }
 
     private boolean findNextBlock()
@@ -178,92 +184,218 @@ public class EntityAIWorkBuilder extends EntityAIBase
         return true;
     }
 
+    private void requestMaterials()
+    {
+        Schematic schematic = Schematic.loadSchematic(world, builder.getSchematic().getName());
+        schematic.setPosition(builder.getSchematic().getPosition());
+        boolean placesBlock = false;
+
+        while(schematic.findNextBlock())
+        {
+            Block block = schematic.getBlock();
+            int metadata = schematic.getMetadata();
+            ItemStack itemstack = new ItemStack(block, 1, metadata);
+
+            ChunkCoordinates pos = schematic.getBlockPosition();
+
+            Block worldBlock = world.getBlock(pos.posX, pos.posY, pos.posZ);
+
+            if(itemstack.getItem() == null || block == null || block == Blocks.air || worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock)
+            {
+                continue;
+            }
+
+            placesBlock = true;
+
+            /*for(ItemStack material : builder.getSchematic().getMaterials())
+            {
+                if(material.isItemEqual(itemstack))
+                {
+                    if(material.stackSize > 0)
+                    {*/
+                        if(InventoryUtils.containsStack(builder.getInventory(), itemstack) == -1)
+                        {
+                            builder.addItemNeeded(itemstack);
+                        }
+                    /*}
+                    break;
+                }
+            }*/
+        }
+
+        if(placesBlock)
+        {
+            for(ItemStack neededItem : builder.getItemsNeeded())
+            {
+                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
+            }
+        }
+    }
+
     private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
     {
-        if(block != Blocks.air)//We are breaking and don't need materials.
+        System.out.println(FMLCommonHandler.instance().getSide().toString() + " : " + FMLCommonHandler.instance().getEffectiveSide().toString());
+        if(block != Blocks.air)
         {
-            int slotID = builder.getInventory().containsItemStack(new ItemStack(block, 1, metadata));
+            System.out.println(block.getUnlocalizedName());
+
+            if(Utils.isWater(block) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && testFlag(metadata, 0x08)) || (block instanceof BlockDoor && testFlag(metadata, 0x08))) return true;//free blocks
+
+            Item item = BlockInfo.getItemFromBlock(block);
+            if(BlockInfo.BLOCK_LIST_IGNORE_METADATA.contains(block))
+            {
+                metadata = 0;
+            } else if(block == Blocks.log || block == Blocks.log2 || block == Blocks.wooden_slab)//will probably need more in the future, will fix as I come across them
+            {
+                metadata %= 4;
+            } else if(block == Blocks.stone_slab)
+            {
+                metadata %= 8;
+            }
+
+            ItemStack material = new ItemStack(item, 1, metadata);
+            System.out.println(material.getItem().getUnlocalizedName() + " : " + material.getItemDamage());
+
+            int slotID = InventoryUtils.containsStack(builder.getInventory(), material);
             if(slotID == -1)//inventory doesn't contain item
             {
-                ItemStack material = new ItemStack(block, 1, metadata);
-
-                int amount = -1;
-                for(ItemStack item : builder.getSchematic().getMaterials())//find amount needed
-                {
-                    if(item.isItemEqual(material))
-                    {
-                        amount = item.stackSize;
-                        break;
-                    }
-                }
-                if(amount == -1)
-                {
-                    System.out.println(block.getLocalizedName());
-                }
-
-                int chestSlotID = builder.getWorkHut().containsItemStack(material);
+                int chestSlotID = InventoryUtils.containsStack(builder.getWorkHut(), material);
                 if(chestSlotID != -1)//chest contains item
                 {
-                    if(builder.getWorkHut().getDistanceFrom(builder.posX, builder.posY, builder.posZ) < 64) //Square Distance - within 8 blocks
+                    if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 16) //Square Distance - within 4 blocks
                     {
-                        builder.getWorkHut().takeItem(builder.getInventory(), chestSlotID, amount);//if chest doesn't contain full amount, take all.
-                    }
-                    else
-                    {
-                        if(!builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D))
+                        if(!InventoryUtils.takeStackInSlot(builder.getWorkHut(), builder.getInventory(), chestSlotID, 1, true))
                         {
-                            builder.setStatus(EnumStatus.PATHFINDING_ERROR);
+                            ItemStack chestItem = builder.getWorkHut().getStackInSlot(chestSlotID);
+                            builder.getWorkHut().setInventorySlotContents(chestSlotID, null);
+                            setStackInBuilder(chestItem, true);
+                            builder.setStatus(EntityBuilder.Status.WORKING);
+                        }
+                    }
+                    else if(builder.getNavigator().noPath() || !ChunkCoordUtils.isPathingTo(builder, builder.getWorkHut().getPosition()))
+                    {
+                        if(!ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))
+                        {
+                            builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
+                        }
+                        else
+                        {
+                            builder.setStatus(EntityBuilder.Status.GETTING_ITEMS);
+                            return false;
                         }
                     }
                 }
-                else if(false)//TODO canCraft(material)
-                {
-                    //TODO craft item
-                }
                 else
-                {
-                    if(messageDelay % 10 == 0)
+                {/*
+                    for(Object obj : CraftingManager.getInstance().getRecipeList())
                     {
-                        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", material.getDisplayName(), amount);
-                    }
-                    builder.setStatus(EnumStatus.NEED_MATERIALS);
-                    //TODO request material - deliveryman
+                        if(obj instanceof ShapelessRecipes)
+                        {
+                            ShapelessRecipes recipe = (ShapelessRecipes) obj;
+                            ItemStack output = recipe.getRecipeOutput();
+                            if(!output.isItemEqual(material)) continue;
+
+                            ArrayList<ItemStack> containedItems = new ArrayList<ItemStack>();
+                            for(Object obj2 : recipe.recipeItems)
+                            {
+                                ItemStack recipeItem = (ItemStack) obj2;
+                                int slot = InventoryUtils.containsStack(builder.getInventory(), recipeItem);
+                                if(!Utils.containsStackInList(recipeItem, containedItems) && slot >= 0)
+                                {
+                                    int amount = recipeItem.stackSize;
+                                    ItemStack invItem = builder.getInventory().getStackInSlot(slot);
+                                    if(invItem.isItemEqual(recipeItem))
+                                    {
+                                        amount -= invItem.stackSize;
+                                        if(amount <= 0)
+                                        {
+                                            containedItems.add(recipeItem);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if(recipe.getRecipeSize() == containedItems.size())
+                            {
+                                for(ItemStack recipeItem : containedItems)
+                                {
+                                    int amount = recipeItem.stackSize;
+                                    while(amount > 0)
+                                    {
+                                        int itemSlotID = InventoryUtils.containsStack(builder.getInventory(), recipeItem);
+                                        amount -= builder.getInventory().getStackInSlot(itemSlotID).stackSize;
+                                        builder.getInventory().decrStackSize(itemSlotID, recipeItem.stackSize);
+                                    }
+                                }
+                                setStackInBuilder(output, true);
+                                break;
+                            }
+                        }
+                    }*/
                 }
                 return false;
             }
-            builder.getSchematic().useMaterial(builder.getInventory().getStackInSlot(slotID));//remove item from materials list (--stackSize)
-            builder.getInventory().decrStackSize(slotID, 1);
+            else
+            {
+                builder.getSchematic().useMaterial(builder.getInventory().getStackInSlot(slotID));//remove item from materials list (--stackSize)
+                builder.getInventory().decrStackSize(slotID, 1);
+            }
         }
 
         if(worldBlock != Blocks.air)//Don't collect air blocks.
         {
-            ItemStack stack = new ItemStack(Item.getItemFromBlock(worldBlock), 1, worldBlockMetadata);//get item for inventory
-            if(stack != null && stack.getItem() != null)
+            Item itemDropped = worldBlock.getItemDropped(worldBlockMetadata, world.rand, EnchantmentHelper.getFortuneModifier(builder));
+            int quantityDropped = worldBlock.quantityDropped(worldBlockMetadata, EnchantmentHelper.getFortuneModifier(builder), world.rand);
+            int damageDropped = worldBlock.damageDropped(worldBlockMetadata);
+            ItemStack stack = new ItemStack(itemDropped, quantityDropped, damageDropped);//get item for inventory
+
+            if(stack.getItem() != null && stack.stackSize > 0)
             {
-                ItemStack leftOvers = builder.getInventory().setStackInInventory(stack);
-                if(leftOvers != null)
-                {
-                    if(builder.getWorkHut().getDistanceFrom(builder.posX, builder.posY, builder.posZ) < 64) //Square Distance - within 8 blocks
-                    {
-                        ItemStack chestLeftOvers = builder.getWorkHut().setStackInInventory(leftOvers);
-                        if(chestLeftOvers != null)
-                        {
-                            builder.setStatus(EnumStatus.INVENTORY_FULL);
-                            EntityItem itemDrop = new EntityItem(world, builder.posX, builder.posY + 1, builder.posZ, chestLeftOvers);
-                            world.spawnEntityInWorld(itemDrop);
-                        }
-                    }
-                    else
-                    {
-                        if(!builder.getNavigator().tryMoveToXYZ(builder.getWorkHut().xCoord, builder.getWorkHut().yCoord, builder.getWorkHut().zCoord, 1.0D))
-                        {
-                            builder.setStatus(EnumStatus.PATHFINDING_ERROR);
-                        }
-                    }
-                }
+                setStackInBuilder(stack, false);
             }
         }
+        builder.setStatus(EntityBuilder.Status.WORKING);
         return true;
+    }
+
+    private void setStackInBuilder(ItemStack stack, boolean shouldUseForce)
+    {
+        if(stack != null && stack.getItem() != null && stack.stackSize > 0)
+        {
+            ItemStack leftOvers = InventoryUtils.setStack(builder.getInventory(), stack);
+            if(shouldUseForce && leftOvers != null)
+            {
+                int slotID = world.rand.nextInt(builder.getInventory().getSizeInventory());
+                for(int i = 0; i < builder.getInventory().getSizeInventory(); i++)
+                {
+                    ItemStack invItem = builder.getInventory().getStackInSlot(i);
+                    if(!Utils.containsStackInList(invItem, builder.getSchematic().getMaterials()))
+                    {
+                        leftOvers = invItem;
+                        slotID = i;
+                        break;
+                    }
+                }
+                builder.getInventory().setInventorySlotContents(slotID, stack);
+            }
+
+            if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 16)
+            {
+                leftOvers = InventoryUtils.setStack(builder.getWorkHut(), leftOvers);
+            }
+            /*else
+            {
+                if(!ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))//TODO
+                {
+                    builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
+                }
+            }*/
+
+            if(leftOvers != null)
+            {
+                builder.entityDropItem(leftOvers);
+            }
+        }
     }
 
     private boolean isSupportNeeded(World world, int x, int y, int z, ForgeDirection direction)
@@ -543,22 +675,16 @@ public class EntityAIWorkBuilder extends EntityAIBase
     private void setTileEntity(int x, int y, int z)
     {
         TileEntity tileEntity = builder.getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
-        if(tileEntity != null && !(world.getTileEntity(x, y, z) instanceof TileEntityHut))
+        if(tileEntity != null && !(world.getTileEntity(x, y, z) instanceof TileEntityHut))//TODO check if TileEntity already exists
         {
             world.setTileEntity(x, y, z, tileEntity);
         }
     }
 
-    @Override
-    public boolean continueExecuting()
-    {
-        return builder.isWorkTime() && builder.hasSchematic();// && (builder.hasMaterials() || Configurations.builderInfiniteResources);
-    }
-
     private void loadSchematic()
     {
-        Map.Entry<int[], String> entry = builder.getTownHall().getBuilderRequired().entrySet().iterator().next();
-        int[] pos = entry.getKey();
+        Map.Entry<ChunkCoordinates, String> entry = builder.getTownHall().getBuilderRequired().entrySet().iterator().next();
+        ChunkCoordinates pos = entry.getKey();
         String name = entry.getValue();
 
         builder.setSchematic(Schematic.loadSchematic(world, name));
@@ -569,7 +695,7 @@ public class EntityAIWorkBuilder extends EntityAIBase
             builder.getTownHall().removeHutForUpgrade(pos);
             return;
         }
-        builder.getSchematic().setPosition(Vec3.createVectorHelper(pos[0], pos[1], pos[2]));
+        builder.getSchematic().setPosition(pos);
     }
 
     private void completeBuild()
@@ -578,18 +704,19 @@ public class EntityAIWorkBuilder extends EntityAIBase
 
         String schematicName = builder.getSchematic().getName();
         LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", schematicName);
-        int[] pos = Utils.vecToInt(builder.getSchematic().getPosition());
+        ChunkCoordinates pos = builder.getSchematic().getPosition();
 
-        if(world.getTileEntity(pos[0], pos[1], pos[2]) instanceof TileEntityBuildable)
+        if(ChunkCoordUtils.getTileEntity(world, pos) instanceof TileEntityBuildable)
         {
             int schematicLevel = Integer.parseInt(schematicName.substring(schematicName.length() - 1));
 
-            TileEntityBuildable hut = (TileEntityBuildable) world.getTileEntity(pos[0], pos[1], pos[2]);
+            TileEntityBuildable hut = (TileEntityBuildable) ChunkCoordUtils.getTileEntity(world, pos);
             hut.setBuildingLevel(schematicLevel);
         }
 
         builder.getTownHall().removeHutForUpgrade(pos);
         builder.setSchematic(null);
+        resetTask();
     }
 
     private void spawnEntities()
@@ -598,15 +725,15 @@ public class EntityAIWorkBuilder extends EntityAIBase
         {
             if(entity != null)
             {
-                Vec3 pos = builder.getSchematic().getOffsetPosition();//min position
+                ChunkCoordinates pos = builder.getSchematic().getOffsetPosition();//min position
 
                 if(entity instanceof EntityHanging)
                 {
                     EntityHanging entityHanging = (EntityHanging) entity;
 
-                    entityHanging.field_146063_b += pos.xCoord;//tileX
-                    entityHanging.field_146064_c += pos.yCoord;//tileY
-                    entityHanging.field_146062_d += pos.zCoord;//tileZ
+                    entityHanging.field_146063_b += pos.posX;//tileX
+                    entityHanging.field_146064_c += pos.posY;//tileY
+                    entityHanging.field_146062_d += pos.posZ;//tileZ
                     entityHanging.setDirection(entityHanging.hangingDirection);//also sets position based on tile
 
                     entityHanging.setWorld(world);
@@ -618,9 +745,9 @@ public class EntityAIWorkBuilder extends EntityAIBase
                 {
                     EntityMinecart minecart = (EntityMinecart) entity;
                     minecart.riddenByEntity = null;
-                    minecart.posX += pos.xCoord;
-                    minecart.posY += pos.yCoord;
-                    minecart.posZ += pos.zCoord;
+                    minecart.posX += pos.posX;
+                    minecart.posY += pos.posY;
+                    minecart.posZ += pos.posZ;
 
                     minecart.setWorld(world);
                     minecart.dimension = world.provider.dimensionId;

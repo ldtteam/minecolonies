@@ -42,7 +42,7 @@ public class EventHandler
                     }
                     else if(townhall != null)
                     {
-                        townhall.removeHut(hut.xCoord, hut.yCoord, hut.zCoord);
+                        townhall.removeHut(hut.getPosition());
                     }
                     hut.breakBlock();
                 }
@@ -57,12 +57,25 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent event)
     {
-        if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.entityPlayer.getHeldItem() != null)
+        if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
         {
-            Block block = Block.getBlockFromItem(event.entityPlayer.getHeldItem().getItem());
-            if(block instanceof BlockHut)
+            EntityPlayer player = event.entityPlayer;
+            World world = event.world;
+            int x = event.x, y = event.y, z = event.z;
+
+            if(!player.isSneaking() || player.getHeldItem() == null || player.getHeldItem().getItem() == null || player.getHeldItem().getItem().doesSneakBypassUse(world, x, y, z, player))
             {
-                int x = event.x, y = event.y, z = event.z;
+                if(world.getBlock(x, y, z) instanceof BlockHut)//this was the simple way of doing it, minecraft calls onBlockActivated
+                {                                              // and uses that return value, but I didn't want to call it twice
+                    return;
+                }
+            }
+
+            if(player.getHeldItem() == null || player.getHeldItem().getItem() == null) return;
+
+            Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
+            if(heldBlock instanceof BlockHut)
+            {
                 switch(event.face)
                 {
                     case 0:
@@ -84,7 +97,7 @@ public class EventHandler
                         x++;
                         break;
                 }
-                event.setCanceled(!onBlockHutPlaced(event.entityPlayer.worldObj, event.entityPlayer, block, x, y, z));
+                event.setCanceled(!onBlockHutPlaced(event.world, player, heldBlock, x, y, z));
             }
         }
     }
@@ -111,7 +124,7 @@ public class EventHandler
             }
 
             TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z);
-            if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < Math.pow(2 * Configurations.workingRangeTownhall + Configurations.townhallPadding, 2))
+            if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < Utils.square(2 * Configurations.workingRangeTownhall + Configurations.townhallPadding))
             {
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
                 return false;

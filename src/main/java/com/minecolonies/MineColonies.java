@@ -25,7 +25,7 @@ public class MineColonies
 
     public static final PacketPipeline packetPipeline = new PacketPipeline();
 
-    @Mod.Instance
+    @Mod.Instance(Constants.MODID)
     public static MineColonies instance;
 
     @SidedProxy(clientSide = Constants.CLIENTPROXYLOCATION, serverSide = Constants.COMMONPROXYLOCATION)

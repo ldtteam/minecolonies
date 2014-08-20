@@ -1,7 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.network.packets.BuildRequestPacket;
+import com.minecolonies.network.packets.OpenInventoryPacket;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
@@ -10,23 +10,14 @@ import net.minecraft.world.World;
 
 public class GuiHutBuilder extends GuiBase
 {
-    private final EntityPlayer         player;
-    private final World                worldObj;
-    private final int                  x;
-    private final int                  y;
-    private final int                  z;
-    private       TileEntityHutBuilder tileEntity;
-    private int span = 10;
+    private final int BUTTON_INVENTORY = 4;
+    private TileEntityHutBuilder builderHut;
+    private final int span = 10;
 
     public GuiHutBuilder(TileEntityHutBuilder tileEntityHutBuilder, EntityPlayer player, World world, int x, int y, int z)
     {
-        super();
-        this.player = player;
-        this.worldObj = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.tileEntity = tileEntityHutBuilder;
+        super(player, world, x, y, z);
+        this.builderHut = tileEntityHutBuilder;
     }
 
     @Override
@@ -35,35 +26,18 @@ public class GuiHutBuilder extends GuiBase
         super.addElements();
 
         addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.buildersHut"), "John R. Jones", "xx (yy)", "xxxxxxxx", span);
+        addBottomButton(BUTTON_INVENTORY, LanguageHandler.format("container.inventory"), buttonMiddleX, buttonWidth, buttonHeight);
     }
 
     @Override
     protected void actionPerformed(GuiButton guiButton)
     {
+        super.actionPerformed(guiButton);
+
         switch(guiButton.id)
         {
-            case idHireWorker:
-                ((GuiButton) buttonList.get(idFireWorker)).visible = true;
-                break;
-            case idFireWorker:
-                GuiButton hireButton = (GuiButton) buttonList.get(idHireWorker);
-                if(hireButton.visible)
-                {
-                    hireButton.visible = false;
-                }
-                else
-                {
-                    guiButton.visible = false;
-                    hireButton.visible = true;
-                }
-                break;
-            case idRecallWorker:
-                break;
-            case idBuildBuilding:
-                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.BUILD));
-                break;
-            case idRepairBuilding:
-                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.REPAIR));
+            case BUTTON_INVENTORY:
+                MineColonies.packetPipeline.sendToServer(new OpenInventoryPacket(builderHut, builderHut.getName(), builderHut.getPosition()));
                 break;
         }
     }

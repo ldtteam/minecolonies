@@ -10,29 +10,21 @@ import net.minecraft.tileentity.TileEntity;
  */
 public enum EnumGUI
 {
-    TOWNHALL(0),
-    TOWNHALL_RENAME(1),
-    BUILDER(2),
-    WAREHOUSE(3),
-    WAREHOUSE_SETTINGS(4),
-    BAKER(5),
-    BLACKSMITH(6),
-    CITIZEN(7),
-    FARMER(8),
-    LUMBERJACK(9),
-    MINER(10),
-    STONEMASON(11);
-
-    private final int id;
-
-    EnumGUI(int id)
-    {
-        this.id = id;
-    }
+    TOWNHALL,
+    TOWNHALL_RENAME,
+    BUILDER,
+    WAREHOUSE,
+    BAKER,
+    BLACKSMITH,
+    CITIZEN,
+    FARMER,
+    LUMBERJACK,
+    MINER,
+    STONEMASON;
 
     public int getID()
     {
-        return this.id;
+        return this.ordinal();
     }
 
     public static int getGuiIdByInstance(TileEntity tileEntity)

@@ -2,16 +2,18 @@ package com.minecolonies.entity;
 
 import com.minecolonies.lib.Constants;
 import com.minecolonies.proxy.CommonProxy;
+import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
 public class PlayerProperties implements IExtendedEntityProperties
 {
     private boolean hasPlacedTownHall = false;
-    private int     townhallX         = 0, townhallY = 0, townhallZ = 0;
+    private ChunkCoordinates townhallPos;
     private boolean hasPlacedSupplyChest = false;
 
     private PlayerProperties(){}
@@ -43,9 +45,10 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = new NBTTagCompound();
 
         properties.setBoolean("hasPlacedTownHall", hasPlacedTownHall);
-        properties.setInteger("townhallX", townhallX);
-        properties.setInteger("townhallY", townhallY);
-        properties.setInteger("townhallZ", townhallZ);
+        if(townhallPos != null)
+        {
+            ChunkCoordUtils.writeToNBT(properties, "townhall", townhallPos);
+        }
         properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
         compound.setTag(Constants.PlayerPropertyName, properties);
@@ -57,9 +60,17 @@ public class PlayerProperties implements IExtendedEntityProperties
         NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PlayerPropertyName);
 
         this.hasPlacedTownHall = properties.getBoolean("hasPlacedTownHall");
-        this.townhallX = properties.getInteger("townhallX");
-        this.townhallY = properties.getInteger("townhallY");
-        this.townhallZ = properties.getInteger("townhallZ");
+        if(properties.hasKey("townhall"))
+        {
+            this.townhallPos = ChunkCoordUtils.readFromNBT(properties, "townhall");
+        }
+        else if(properties.hasKey("townhallX") && properties.hasKey("townhallY") && properties.hasKey("townhallZ"))
+        {
+            int x = properties.getInteger("townhallX");
+            int y = properties.getInteger("townhallY");
+            int z = properties.getInteger("townhallZ");
+            this.townhallPos = new ChunkCoordinates(x, y, z);
+        }
         this.hasPlacedSupplyChest = properties.getBoolean("hasPlacedSupplyChest");
     }
 
@@ -141,7 +152,7 @@ public class PlayerProperties implements IExtendedEntityProperties
     public void placeTownhall(int x, int y, int z)
     {
         setHasPlacedTownHall(true);
-        setTownhallPos(x, y, z);
+        setTownhallPos(new ChunkCoordinates(x, y, z));
     }
 
     /**
@@ -171,39 +182,17 @@ public class PlayerProperties implements IExtendedEntityProperties
     }
 
     /**
-     * Returns the townhall x coordinate
+     * Returns the townhall position
      *
-     * @return townhall x coordinate
+     * @return townhall position
      */
-    public int getTownhallX()
+    public ChunkCoordinates getTownhallPos()
     {
-        return townhallX;
+        return townhallPos;
     }
 
-    /**
-     * Returns the townhall y coordinate
-     *
-     * @return townhall y coordinate
-     */
-    public int getTownhallY()
+    private void setTownhallPos(ChunkCoordinates pos)
     {
-        return townhallY;
-    }
-
-    /**
-     * Returns the townhall z coordinate
-     *
-     * @return townhall z coordinate
-     */
-    public int getTownhallZ()
-    {
-        return townhallZ;
-    }
-
-    private void setTownhallPos(int x, int y, int z)
-    {
-        this.townhallX = x;
-        this.townhallY = y;
-        this.townhallZ = z;
+        townhallPos = pos;
     }
 }
