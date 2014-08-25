@@ -1,28 +1,15 @@
 package com.minecolonies.entity;
 
-import com.minecolonies.entity.ai.EntityAIGoHome;
-import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
-import com.minecolonies.lib.Constants;
+import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Schematic;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class EntityBuilder extends EntityCitizen
+public class EntityBuilder extends EntityWorker
 {
     private Schematic schematic;
-
-    private List<ItemStack> itemsNeeded = new ArrayList<ItemStack>();
 
     public EntityBuilder(World world)
     {
@@ -32,16 +19,8 @@ public class EntityBuilder extends EntityCitizen
     @Override
     protected void initTasks()
     {
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 0.6D));
-        this.tasks.addTask(2, new EntityAIGoHome(this));
-        this.tasks.addTask(3, new EntityAISleep(this));
+        super.initTasks();
         this.tasks.addTask(3, new EntityAIWorkBuilder(this));
-        this.tasks.addTask(4, new EntityAIOpenDoor(this, true));
-        this.tasks.addTask(5, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
-        this.tasks.addTask(6, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
-        this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
     }
 
     @Override
@@ -51,9 +30,9 @@ public class EntityBuilder extends EntityCitizen
     }
 
     @Override
-    public void setTexture()
+    public int getTextureID()//TODO remove method once more textures are added
     {
-        texture = new ResourceLocation(Constants.MODID + ":textures/entity/EntityBuilder.png");
+        return 1;
     }
 
     @Override
@@ -64,8 +43,8 @@ public class EntityBuilder extends EntityCitizen
         {
             NBTTagCompound schematicTag = new NBTTagCompound();
             schematicTag.setString("name", schematic.getName());
-            writeVecToNBT(schematicTag, "position", schematic.getPosition());
-            writeVecToNBT(schematicTag, "progress", schematic.getLocalPosition());
+            ChunkCoordUtils.writeToNBT(schematicTag, "position", schematic.getPosition());
+            ChunkCoordUtils.writeToNBT(schematicTag, "progress", schematic.getLocalPosition());
             compound.setTag("schematic", schematicTag);
         }
     }
@@ -78,8 +57,8 @@ public class EntityBuilder extends EntityCitizen
         {
             NBTTagCompound schematicTag = compound.getCompoundTag("schematic");
             String name = schematicTag.getString("name");
-            Vec3 pos = readVecFromNBT(schematicTag, "position");
-            Vec3 progress = readVecFromNBT(schematicTag, "progress");
+            ChunkCoordinates pos = ChunkCoordUtils.readFromNBT(schematicTag, "position");
+            ChunkCoordinates progress = ChunkCoordUtils.readFromNBT(schematicTag, "progress");
             schematic = Schematic.loadSchematic(worldObj, name);
             if(schematic == null)
             {
@@ -108,38 +87,14 @@ public class EntityBuilder extends EntityCitizen
         this.schematic = schematic;
     }
 
-    public boolean hasMaterials()
-    {
-        if(!hasSchematic()) return true;
-
-        //TODO possibly find a better method
-        for(ItemStack materialStack : this.getSchematic().getMaterials())
-        {
-            ItemStack materialStackCopy = materialStack.copy();
-            for(int i = 0; i < this.getInventory().getSizeInventory(); i++)
-            {
-                ItemStack builderStack = this.getInventory().getStackInSlot(i);
-                if(builderStack != null && builderStack.isItemEqual(materialStackCopy))
-                {
-                    materialStackCopy.stackSize -= builderStack.stackSize;
-                }
-            }
-            if(materialStackCopy.stackSize > 0)
-            {
-                itemsNeeded.add(materialStackCopy);
-            }
-        }
-
-        return itemsNeeded.isEmpty();
-    }
-
     public int getWorkInterval()
     {
         return 1;//Constants.BUILDERWORKINTERFALL - this.getLevel();//TODO
     }
 
-    public boolean isBuilderNeeded()
+    @Override
+    public boolean isNeeded()
     {
-        return this.getTownHall() != null && !this.getTownHall().getBuilderRequired().isEmpty();
+        return this.getTownHall() != null && !this.getTownHall().getBuilderRequired().isEmpty() && this.getWorkHut() != null;
     }
 }

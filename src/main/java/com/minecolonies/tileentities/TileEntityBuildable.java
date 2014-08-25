@@ -1,20 +1,21 @@
 package com.minecolonies.tileentities;
 
 import com.minecolonies.lib.IColony;
+import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Schematic;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 public abstract class TileEntityBuildable extends TileEntityChest implements IColony
 {
     private int                buildingLevel;
     private TileEntityTownHall townhall;
-    private int                townhallX, townhallY, townhallZ;
+    private ChunkCoordinates               townhallPos;
 
     public TileEntityBuildable()
     {
@@ -26,9 +27,9 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     {
         if(worldObj.isRemote) return;
 
-        if(townhall == null)
+        if(townhall == null && townhallPos != null)
         {
-            townhall = (TileEntityTownHall) worldObj.getTileEntity(townhallX, townhallY, townhallZ);
+            townhall = (TileEntityTownHall) ChunkCoordUtils.getTileEntity(worldObj, townhallPos);
         }
     }
 
@@ -37,9 +38,11 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     {
         super.readFromNBT(compound);
         this.buildingLevel = compound.getInteger("buildingLevel");
-        this.townhallX = compound.getInteger("townhall-x");
-        this.townhallY = compound.getInteger("townhall-y");
-        this.townhallZ = compound.getInteger("townhall-z");
+
+        if(compound.hasKey("townhall"))
+        {
+            townhallPos = ChunkCoordUtils.readFromNBT(compound, "townhall");
+        }
     }
 
     @Override
@@ -49,9 +52,7 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
         compound.setInteger("buildingLevel", buildingLevel);
         if(this.townhall != null)
         {
-            compound.setInteger("townhall-x", townhall.xCoord);
-            compound.setInteger("townhall-y", townhall.yCoord);
-            compound.setInteger("townhall-z", townhall.zCoord);
+            ChunkCoordUtils.writeToNBT(compound, "townhall", townhall.getPosition());
         }
     }
 
@@ -77,28 +78,28 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
     public void requestBuilding()
     {
-        for(int[] key : getTownHall().getBuilderRequired().keySet())
+        for(ChunkCoordinates key : getTownHall().getBuilderRequired().keySet())
         {
-            if(Arrays.equals(new int[]{xCoord, yCoord, zCoord}, key))
+            if(getPosition().equals(key))
             {
                 return;
             }
         }
         if(!(buildingLevel >= 3)) //TODO maxLevel
-            getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel + 1), xCoord, yCoord, zCoord);
+            getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel + 1), getPosition());
     }
 
     public void requestRepair()
     {
-        for(int[] key : getTownHall().getBuilderRequired().keySet())
+        for(ChunkCoordinates key : getTownHall().getBuilderRequired().keySet())
         {
-            if(Arrays.equals(new int[]{xCoord, yCoord, zCoord}, key))
+            if(getPosition().equals(key))
             {
                 return;
             }
         }
         if(buildingLevel == 0) return;
-        getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel), xCoord, yCoord, zCoord);
+        getTownHall().addHutForUpgrade(Schematic.getNameFromHut(this, buildingLevel), getPosition());
     }
 
     public boolean isPlayerOwner(EntityPlayer player)
@@ -114,8 +115,23 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
         return false;
     }
 
-    public Vec3 getPosition()
+    public ChunkCoordinates getPosition()
     {
-        return Vec3.createVectorHelper(xCoord, yCoord, zCoord);
+        return new ChunkCoordinates(xCoord, yCoord, zCoord);
+    }
+
+    public double getDistanceFrom(ChunkCoordinates coords)
+    {
+        return getDistanceFrom(coords.posX, coords.posY, coords.posZ);
+    }
+
+    public double getDistanceFrom(Vec3 pos)
+    {
+        return getDistanceFrom(pos.xCoord, pos.yCoord, pos.zCoord);
+    }
+
+    public void setInventoryName(String name)
+    {
+        func_145976_a(name);
     }
 }

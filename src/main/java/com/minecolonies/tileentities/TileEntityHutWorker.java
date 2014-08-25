@@ -81,16 +81,12 @@ public abstract class TileEntityHutWorker extends TileEntityHut
         {
             compound.setString("workerID", workerID.toString());
         }
-        else
-        {
-            compound.removeTag("workerID");
-        }
     }
 
     @Override
     public void breakBlock()
     {
-        if(workerID != null)
+        if(hasWorker())
         {
             EntityCitizen worker = (EntityCitizen) Utils.getEntityFromUUID(worldObj, workerID);
             if(worker != null)
@@ -103,5 +99,10 @@ public abstract class TileEntityHutWorker extends TileEntityHut
     public boolean hasWorker()
     {
         return workerID != null;
+    }
+
+    public UUID getWorkerID()
+    {
+        return workerID;
     }
 }

@@ -2,8 +2,9 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.ChunkCoordinates;
 
 /**
  * EntityCitizen go home AI
@@ -30,21 +31,21 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public void startExecuting()
     {
-        Vec3 vec;
+        ChunkCoordinates pos;
         if(citizen.getHomeHut() != null)
         {
-            vec = citizen.getHomeHut().getPosition();
+            pos = citizen.getHomeHut().getPosition();
         }
         else if(citizen.getTownHall() != null)
         {
-            vec = citizen.getTownHall().getPosition();
+            pos = citizen.getTownHall().getPosition();
         }
         else
         {
             MineColonies.logger.error("EntityCitizen has null townhall (And no home)");
             return;
         }
-        citizen.getNavigator().tryMoveToXYZ(vec.xCoord, vec.yCoord, vec.zCoord, 1.0F);
+        ChunkCoordUtils.tryMoveLivingToXYZ(citizen, pos);
     }
 
     @Override

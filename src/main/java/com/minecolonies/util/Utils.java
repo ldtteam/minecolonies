@@ -1,16 +1,22 @@
 package com.minecolonies.util;
 
+import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,14 +36,21 @@ public class Utils
         double closestDist = Double.MAX_VALUE;
         TileEntityTownHall closestTownHall = null;
 
-        if(world == null || world.loadedTileEntityList == null) return null;
+        if(world == null || world.loadedTileEntityList == null)
+        {
+            return null;
+        }
 
         for(Object o : world.loadedTileEntityList)
+        {
             if(o instanceof TileEntityTownHall)
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if(x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
+                if(ChunkCoordUtils.equals(townHall.getPosition(), x, y, z))
+                {
+                    continue;
+                }
 
                 double distanceSquared = townHall.getDistanceFrom(x, y, z);
                 if(closestDist > distanceSquared)
@@ -46,6 +59,7 @@ public class Utils
                     closestDist = distanceSquared;
                 }
             }
+        }
         return closestTownHall;
     }
 
@@ -62,14 +76,21 @@ public class Utils
     {
         double closestDist = Double.MAX_VALUE;
 
-        if(world == null || world.loadedTileEntityList == null) return -1;
+        if(world == null || world.loadedTileEntityList == null)
+        {
+            return -1;
+        }
 
         for(Object o : world.loadedTileEntityList)
+        {
             if(o instanceof TileEntityTownHall)
             {
                 TileEntityTownHall townHall = (TileEntityTownHall) o;
 
-                if(x == townHall.xCoord && y == townHall.yCoord && z == townHall.zCoord) continue;
+                if(ChunkCoordUtils.equals(townHall.getPosition(), x, y, z))
+                {
+                    continue;
+                }
 
                 double distanceSquared = townHall.getDistanceFrom(x, y, z);
                 if(closestDist > distanceSquared)
@@ -77,6 +98,7 @@ public class Utils
                     closestDist = distanceSquared;
                 }
             }
+        }
         return Math.sqrt(closestDist);
     }
 
@@ -94,6 +116,77 @@ public class Utils
         return Math.sqrt(tileEntity.getDistanceFrom(x, y, z));
     }
 
+    public static ChunkCoordinates scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
+    {
+        ChunkCoordinates closestCoords = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for(int i = x - radiusX; i <= x + radiusX; i++)
+        {
+            for(int j = y - radiusY; j <= y + radiusY; j++)
+            {
+                for(int k = z - radiusZ; k <= z + radiusZ; k++)
+                {
+                    if(world.getBlock(i, j, k) == block)
+                    {
+                        ChunkCoordinates tempCoords = new ChunkCoordinates(i, j, k);
+
+                        if(closestCoords == null || ChunkCoordUtils.distanceTo(tempCoords, x, y, z) < minDistance)
+                        {
+                            closestCoords = tempCoords;
+                            minDistance = ChunkCoordUtils.distanceTo(closestCoords, x, y, z);
+                        }
+                    }
+                }
+            }
+        }
+        return closestCoords;
+    }
+
+    public static boolean isPathingTo(EntityCitizen citizen, int x, int z)
+    {
+        PathPoint pathpoint = citizen.getNavigator().getPath().getFinalPathPoint();
+        return pathpoint != null && pathpoint.xCoord == x && pathpoint.zCoord == z;
+    }
+
+    public static boolean isWorkerAtSite(EntityWorker worker, int x, int y, int z)
+    {
+        return worker.getPosition().squareDistanceTo(x, y, z) < 4;
+    }
+
+    public static boolean isWorkerAtSiteWithMove(EntityWorker worker, int x, int y, int z)
+    {
+        if(!isWorkerAtSite(worker, x, y, z))//Too far away
+        {
+            if(worker.getNavigator().noPath())//Not moving
+            {
+                if(!tryMoveLivingToXYZ(worker, x, y, z))
+                {
+                    worker.setStatus(EntityWorker.Status.PATHFINDING_ERROR);
+                }
+            }
+            return false;
+        }
+        else
+        {
+            if(!worker.getNavigator().noPath())//within 2 blocks - can stop pathing //TODO may not need this check
+            {
+                worker.getNavigator().clearPathEntity();
+            }
+            return true;
+        }
+    }
+
+    public static boolean tryMoveLivingToXYZ(EntityLiving living, int x, int y, int z)
+    {
+        return tryMoveLivingToXYZ(living, x, y, z, 1.0D);
+    }
+
+    public static boolean tryMoveLivingToXYZ(EntityLiving living, int x, int y, int z, double speed)
+    {
+        return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
+    }
+
     /**
      * Gets a Townhall that a given player is owner of
      *
@@ -106,7 +199,7 @@ public class Utils
         PlayerProperties props = PlayerProperties.get(player);
         if(props.hasPlacedTownHall())
         {
-            return (TileEntityTownHall) world.getTileEntity(props.getTownhallX(), props.getTownhallY(), props.getTownhallZ());
+            return (TileEntityTownHall) ChunkCoordUtils.getTileEntity(world, props.getTownhallPos());
         }
         return null;
     }
@@ -136,35 +229,6 @@ public class Utils
             yHolder--;
         }
         return yHolder;
-    }
-
-    public static Vec3 scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
-    {
-        Vec3 entityVec = Vec3.createVectorHelper(x, y, z);
-
-        Vec3 closestVec = null;
-        double minDistance = Double.MAX_VALUE;
-
-        for(int i = x - radiusX; i <= x + radiusX; i++)
-        {
-            for(int j = y - radiusY; j <= y + radiusY; j++)
-            {
-                for(int k = z - radiusZ; k <= z + radiusZ; k++)
-                {
-                    if(world.getBlock(i, j, k) == block)
-                    {
-                        Vec3 tempVec = Vec3.createVectorHelper(i, j, k);
-
-                        if(closestVec == null || tempVec.distanceTo(entityVec) < minDistance)
-                        {
-                            closestVec = tempVec;
-                            minDistance = closestVec.distanceTo(entityVec);
-                        }
-                    }
-                }
-            }
-        }
-        return closestVec;
     }
 
     /**
@@ -282,8 +346,47 @@ public class Utils
         return null;
     }
 
-    public static int[] vecToInt(Vec3 vec)
+    /**
+     * Returns a list of loaded entities whose id's match the ones provided.
+     *
+     * @param world the world the entities are in.
+     * @param ids   List of Entity id's
+     * @return list of Entity's
+     */
+    public static List<Entity> getEntitiesFromID(World world, List<Integer> ids)
     {
-        return new int[]{(int) vec.xCoord, (int) vec.yCoord, (int) vec.zCoord};
+        List<Entity> entities = new ArrayList<Entity>();
+
+        for(int id : ids)
+        {
+            entities.add(world.getEntityByID(id));
+        }
+        if(!entities.isEmpty())
+        {
+            return entities;
+        }
+        return null;
+    }
+
+    public static boolean containsStackInArray(ItemStack itemstack, ItemStack... array)
+    {
+        return containsStackInList(itemstack, Arrays.asList(array));
+    }
+
+    public static boolean containsStackInList(ItemStack itemstack, List<ItemStack> list)
+    {
+        for(ItemStack listStack : list)
+        {
+            if(listStack.isItemEqual(itemstack))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static double square(double number)
+    {
+        return number * number;
     }
 }

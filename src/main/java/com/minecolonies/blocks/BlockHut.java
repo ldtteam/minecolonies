@@ -79,7 +79,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 TileEntityTownHall townhall = Utils.getTownhallByOwner(world, player);
 
                 hut.setTownHall(townhall);
-                townhall.addHut(hut.xCoord, hut.yCoord, hut.zCoord);
+                townhall.addHut(hut.getPosition());
 
                 if(hut instanceof TileEntityHutWorker)
                 {
@@ -92,12 +92,13 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float px, float py, float pz)
     {
-        if(world.isRemote) return false;
-
-        if(world.getTileEntity(x, y, z) instanceof TileEntityHut && !player.isSneaking())
+        if(world.getTileEntity(x, y, z) instanceof TileEntityHut)
         {
-            int guiID = EnumGUI.getGuiIdByInstance(world.getTileEntity(x, y, z));
-            player.openGui(MineColonies.instance, guiID, world, x, y, z);
+            if(!world.isRemote)
+            {
+                int guiID = EnumGUI.getGuiIdByInstance(world.getTileEntity(x, y, z));
+                player.openGui(MineColonies.instance, guiID, world, x, y, z);
+            }
             return true;
         }
         return false;

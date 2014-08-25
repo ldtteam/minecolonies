@@ -138,6 +138,8 @@ public class BlockInfo
         addIgnoredBlockMetadata(Blocks.hopper);
         addIgnoredBlockMetadata(Blocks.quartz_stairs);
         addIgnoredBlockMetadata(Blocks.dropper);
+        addIgnoredBlockMetadata(Blocks.dark_oak_stairs);
+        addIgnoredBlockMetadata(Blocks.acacia_stairs);
     }
 
     private static boolean addIgnoredBlockMetadata(Block block)

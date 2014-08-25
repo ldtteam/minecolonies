@@ -7,19 +7,18 @@ import net.minecraft.util.MathHelper;
 
 public class ModelEntityCitizenFemaleNoble extends ModelBiped
 {
-    // fields
-    ModelRenderer Breast;
-    ModelRenderer Hairs;
-    ModelRenderer DressPart5;
-    ModelRenderer DressPart4;
-    ModelRenderer DressPart3;
-    ModelRenderer DressPart2;
-    ModelRenderer DressPart1;
-    ModelRenderer Hat1;
-    ModelRenderer Hat2;
-    ModelRenderer Bag;
-    ModelRenderer BagHand1;
-    ModelRenderer BagHand2;
+    ModelRenderer breast;
+    ModelRenderer hair;
+    ModelRenderer dressPart1;
+    ModelRenderer dressPart2;
+    ModelRenderer dressPart3;
+    ModelRenderer dressPart4;
+    ModelRenderer dressPart5;
+    ModelRenderer hat1;
+    ModelRenderer hat2;
+    ModelRenderer bag;
+    ModelRenderer bagHand1;
+    ModelRenderer bagHand2;
 
     public ModelEntityCitizenFemaleNoble()
     {
@@ -70,77 +69,77 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
         bipedLeftLeg.setTextureSize(128, 64);
         setRotation(bipedLeftLeg, 0F, 0F, 0F);
 
-        Breast = new ModelRenderer(this, 0, 33);
-        Breast.addBox(-3F, 0F, -2F, 8, 4, 3);
-        Breast.setRotationPoint(-1F, 3F, 1F);
-        Breast.setTextureSize(128, 64);
-        setRotation(Breast, -0.5235988F, 0F, 0F);
+        breast = new ModelRenderer(this, 0, 33);
+        breast.addBox(-3F, 0F, -2F, 8, 4, 3);
+        breast.setRotationPoint(-1F, 3F, 1F);
+        breast.setTextureSize(128, 64);
+        setRotation(breast, -0.5235988F, 0F, 0F);
 
-        Hairs = new ModelRenderer(this, 46, 17);
-        Hairs.addBox(-4F, 0F, 3F, 8, 7, 1, 0.5F);
-        Hairs.setRotationPoint(0F, 0F, 1F);
-        Hairs.setTextureSize(128, 64);
-        setRotation(Hairs, 0F, 0F, 0F);
+        hair = new ModelRenderer(this, 46, 17);
+        hair.addBox(-4F, 0F, 3F, 8, 7, 1, 0.5F);
+        hair.setRotationPoint(0F, 0F, 1F);
+        hair.setTextureSize(128, 64);
+        setRotation(hair, 0F, 0F, 0F);
 
-        DressPart5 = new ModelRenderer(this, 65, 48);
-        DressPart5.addBox(-8F, 9F, -6F, 16, 3, 13);
-        DressPart5.setRotationPoint(0F, 11F, 0F);
-        DressPart5.setTextureSize(128, 64);
-        setRotation(DressPart5, 0F, 0F, 0F);
+        dressPart1 = new ModelRenderer(this, 65, 48);
+        dressPart1.addBox(-8F, 9F, -6F, 16, 3, 13);
+        dressPart1.setRotationPoint(0F, 11F, 0F);
+        dressPart1.setTextureSize(128, 64);
+        setRotation(dressPart1, 0F, 0F, 0F);
 
-        DressPart4 = new ModelRenderer(this, 65, 34);
-        DressPart4.addBox(-7F, 6F, -5F, 14, 3, 11);
-        DressPart4.setRotationPoint(0F, 11F, 0F);
-        DressPart4.setTextureSize(128, 64);
-        setRotation(DressPart4, 0F, 0F, 0F);
+        dressPart2 = new ModelRenderer(this, 65, 34);
+        dressPart2.addBox(-7F, 6F, -5F, 14, 3, 11);
+        dressPart2.setRotationPoint(0F, 11F, 0F);
+        dressPart2.setTextureSize(128, 64);
+        setRotation(dressPart2, 0F, 0F, 0F);
 
-        DressPart3 = new ModelRenderer(this, 65, 23);
-        DressPart3.addBox(-6F, 4F, -4F, 12, 2, 9);
-        DressPart3.setRotationPoint(0F, 11F, 0F);
-        DressPart3.setTextureSize(128, 64);
-        setRotation(DressPart3, 0F, 0F, 0F);
+        dressPart3 = new ModelRenderer(this, 65, 23);
+        dressPart3.addBox(-6F, 4F, -4F, 12, 2, 9);
+        dressPart3.setRotationPoint(0F, 11F, 0F);
+        dressPart3.setTextureSize(128, 64);
+        setRotation(dressPart3, 0F, 0F, 0F);
 
-        DressPart2 = new ModelRenderer(this, 65, 14);
-        DressPart2.addBox(-5F, 2F, -3F, 10, 2, 7);
-        DressPart2.setRotationPoint(0F, 11F, 0F);
-        DressPart2.setTextureSize(128, 64);
-        setRotation(DressPart2, 0F, 0F, 0F);
+        dressPart4 = new ModelRenderer(this, 65, 14);
+        dressPart4.addBox(-5F, 2F, -3F, 10, 2, 7);
+        dressPart4.setRotationPoint(0F, 11F, 0F);
+        dressPart4.setTextureSize(128, 64);
+        setRotation(dressPart4, 0F, 0F, 0F);
 
-        DressPart1 = new ModelRenderer(this, 65, 7);
-        DressPart1.addBox(-4F, 0F, -2F, 8, 2, 5);
-        DressPart1.setRotationPoint(0F, 11F, 0F);
-        DressPart1.setTextureSize(128, 64);
-        setRotation(DressPart1, 0F, 0F, 0F);
+        dressPart5 = new ModelRenderer(this, 65, 7);
+        dressPart5.addBox(-4F, 0F, -2F, 8, 2, 5);
+        dressPart5.setRotationPoint(0F, 11F, 0F);
+        dressPart5.setTextureSize(128, 64);
+        setRotation(dressPart5, 0F, 0F, 0F);
 
-        Hat1 = new ModelRenderer(this, 0, 48);
-        Hat1.addBox(-5F, -8F, -5F, 10, 2, 10, 0.1F);
-        Hat1.setRotationPoint(0F, 0F, 1F);
-        Hat1.setTextureSize(128, 64);
-        setRotation(Hat1, 0F, 0F, 0F);
+        hat1 = new ModelRenderer(this, 0, 48);
+        hat1.addBox(-5F, -8F, -5F, 10, 2, 10, 0.1F);
+        hat1.setRotationPoint(0F, 0F, 1F);
+        hat1.setTextureSize(128, 64);
+        setRotation(hat1, 0F, 0F, 0F);
 
-        Hat2 = new ModelRenderer(this, 0, 40);
-        Hat2.addBox(-3F, -10F, -3F, 6, 2, 6, 0.3F);
-        Hat2.setRotationPoint(0F, 0F, 1F);
-        Hat2.setTextureSize(128, 64);
-        setRotation(Hat2, 0F, 0F, 0F);
+        hat2 = new ModelRenderer(this, 0, 40);
+        hat2.addBox(-3F, -10F, -3F, 6, 2, 6, 0.3F);
+        hat2.setRotationPoint(0F, 0F, 1F);
+        hat2.setTextureSize(128, 64);
+        setRotation(hat2, 0F, 0F, 0F);
 
-        Bag = new ModelRenderer(this, 24, 32);
-        Bag.addBox(0F, 6F, -3F, 1, 4, 7);
-        Bag.setRotationPoint(4F, 0F, 0F);
-        Bag.setTextureSize(128, 64);
-        setRotation(Bag, 0F, 0F, 0F);
+        bag = new ModelRenderer(this, 24, 32);
+        bag.addBox(0F, 6F, -3F, 1, 4, 7);
+        bag.setRotationPoint(4F, 0F, 0F);
+        bag.setTextureSize(128, 64);
+        setRotation(bag, 0F, 0F, 0F);
 
-        BagHand1 = new ModelRenderer(this, 40, 32);
-        BagHand1.addBox(0F, 0F, 0F, 1, 7, 0);
-        BagHand1.setRotationPoint(4F, 0F, 0F);
-        BagHand1.setTextureSize(128, 64);
-        setRotation(BagHand1, -0.4014257F, 0F, 0F);
+        bagHand1 = new ModelRenderer(this, 40, 32);
+        bagHand1.addBox(0F, 0F, 0F, 1, 7, 0);
+        bagHand1.setRotationPoint(4F, 0F, 0F);
+        bagHand1.setTextureSize(128, 64);
+        setRotation(bagHand1, -0.4014257F, 0F, 0F);
 
-        BagHand2 = new ModelRenderer(this, 40, 32);
-        BagHand2.addBox(0F, 0F, 1F, 1, 7, 0);
-        BagHand2.setRotationPoint(4F, 0F, 0F);
-        BagHand2.setTextureSize(128, 64);
-        setRotation(BagHand2, 0.4014257F, 0F, 0F);
+        bagHand2 = new ModelRenderer(this, 40, 32);
+        bagHand2.addBox(0F, 0F, 1F, 1, 7, 0);
+        bagHand2.setRotationPoint(4F, 0F, 0F);
+        bagHand2.setTextureSize(128, 64);
+        setRotation(bagHand2, 0.4014257F, 0F, 0F);
     }
 
     @Override
@@ -154,18 +153,18 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
         bipedRightArm.render(f5);
         bipedRightLeg.render(f5);
         bipedLeftLeg.render(f5);
-        Breast.render(f5);
-        Hairs.render(f5);
-        DressPart5.render(f5);
-        DressPart4.render(f5);
-        DressPart3.render(f5);
-        DressPart2.render(f5);
-        DressPart1.render(f5);
-        Hat1.render(f5);
-        Hat2.render(f5);
-        Bag.render(f5);
-        BagHand1.render(f5);
-        BagHand2.render(f5);
+        breast.render(f5);
+        hair.render(f5);
+        dressPart1.render(f5);
+        dressPart2.render(f5);
+        dressPart3.render(f5);
+        dressPart4.render(f5);
+        dressPart5.render(f5);
+        hat1.render(f5);
+        hat2.render(f5);
+        bag.render(f5);
+        bagHand1.render(f5);
+        bagHand2.render(f5);
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z)
@@ -182,12 +181,12 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
         bipedHead.rotateAngleX = f4 / 57.29578F;
         bipedHeadwear.rotateAngleY = bipedHead.rotateAngleY;
         bipedHeadwear.rotateAngleX = bipedHead.rotateAngleX;
-        Hairs.rotateAngleY = bipedHead.rotateAngleY;
-        Hairs.rotateAngleX = bipedHead.rotateAngleX;
-        Hat1.rotateAngleY = bipedHead.rotateAngleY;
-        Hat1.rotateAngleX = bipedHead.rotateAngleX;
-        Hat2.rotateAngleY = bipedHead.rotateAngleY;
-        Hat2.rotateAngleX = bipedHead.rotateAngleX;
+        hair.rotateAngleY = bipedHead.rotateAngleY;
+        hair.rotateAngleX = bipedHead.rotateAngleX;
+        hat1.rotateAngleY = bipedHead.rotateAngleY;
+        hat1.rotateAngleX = bipedHead.rotateAngleX;
+        hat2.rotateAngleY = bipedHead.rotateAngleY;
+        hat2.rotateAngleX = bipedHead.rotateAngleX;
 
         bipedRightArm.rotateAngleX = MathHelper.cos(f * 0.6662F + 3.141593F) * 2.0F * f1 * 0.5F;
         bipedLeftArm.rotateAngleX = MathHelper.cos(f * 0.6662F) * 2.0F * f1 * 0.5F;

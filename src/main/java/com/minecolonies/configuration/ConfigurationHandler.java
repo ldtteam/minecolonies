@@ -15,6 +15,7 @@ import static com.minecolonies.configuration.Configurations.*;
 public class ConfigurationHandler
 {
     private static final String CATEGORY_GAMEPLAY = "Game Play";
+    private static final String CATEGORY_NAMES    = "Names";
 
     public static void init(File file)
     {
@@ -28,6 +29,11 @@ public class ConfigurationHandler
             Configurations.allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY, "Allow infinite placing of Supply Chests: ", DEFAULT_ALLOWINFINTESUPPLYCHESTS).getBoolean(DEFAULT_ALLOWINFINTESUPPLYCHESTS);
             Configurations.citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY, "Citizen Respawn Interval: ", DEFAULT_CITIZENRESPAWNINTERVAL, 10, 600, "Value in seconds");
             Configurations.builderInfiniteResources = config.get(CATEGORY_GAMEPLAY, "Does Builder have infinite resources: ", DEFAULT_BUILDERINFINITERESOURCES).getBoolean(DEFAULT_BUILDERINFINITERESOURCES);
+            Configurations.deliverymanInfiniteResources = config.get(CATEGORY_GAMEPLAY, "Does Deliveryman have infinite resources: ", DEFAULT_DELIVERYMANINFINITERESOURCES).getBoolean(DEFAULT_DELIVERYMANINFINITERESOURCES);
+
+            Configurations.maleFirstNames = config.get(CATEGORY_NAMES, "Male first names: ", DEFAULT_MALE_FIRST_NAMES).getStringList();
+            Configurations.femaleFirstNames = config.get(CATEGORY_NAMES, "Female first names: ", DEFAULT_FEMALE_FIRST_NAMES).getStringList();
+            Configurations.lastNames = config.get(CATEGORY_NAMES, "Last names: ", DEFAULT_LAST_NAMES).getStringList();
         }
         finally
         {
