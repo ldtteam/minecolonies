@@ -3,6 +3,7 @@ package com.github.lunatrius.schematica.world;
 import com.github.lunatrius.schematica.config.BlockInfo;
 import com.github.lunatrius.schematica.world.storage.EmptySaveHandler;
 import com.minecolonies.MineColonies;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -390,6 +391,12 @@ public class SchematicWorld extends World
             return true;
         }
         return _default;
+    }
+
+    @Override
+    protected int func_152379_p()
+    {
+        return -1;//Render distance - view distance
     }
 
     @Override
