@@ -5,7 +5,9 @@ import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.event.EventHandler;
+import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.tileentities.*;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +24,12 @@ public class CommonProxy implements IProxy
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn
      */
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<String, NBTTagCompound>();
+
+    @Override
+    public boolean isClient()
+    {
+        return false;
+    }
 
     @Override
     public void registerTileEntities()
@@ -80,6 +88,8 @@ public class CommonProxy implements IProxy
     public void registerEvents()
     {
         MinecraftForge.EVENT_BUS.register(new EventHandler());
+
+        FMLCommonHandler.instance().bus().register(new FMLEventHandler());
     }
 
     @Override

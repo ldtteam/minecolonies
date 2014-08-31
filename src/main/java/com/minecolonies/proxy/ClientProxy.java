@@ -16,6 +16,13 @@ public class ClientProxy extends CommonProxy
 {
     //private RendererSchematicGlobal rendererSchematicGlobal;
 
+    @Override
+    public boolean isClient()
+    {
+        return true;
+    }
+
+    @Override
     public void registerKeybindings()
     {
 //        for(KeyBinding keyBinding : KeyInputHandler.KEY_BINDINGS)
@@ -24,6 +31,7 @@ public class ClientProxy extends CommonProxy
 //        }
     }
 
+    @Override
     public void registerEvents()
     {
         super.registerEvents();

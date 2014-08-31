@@ -1,6 +1,7 @@
 package com.minecolonies;
 
 import com.minecolonies.blocks.ModBlocks;
+import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
@@ -74,11 +75,23 @@ public class MineColonies
         proxy.registerEntityRendering();
 
         proxy.registerTileEntityRendering();
+
+        ColonyManager.init();
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
         packetPipeline.postInitialize();
+    }
+
+    public static boolean isClient()
+    {
+        return proxy.isClient();
+    }
+
+    public static boolean isServer()
+    {
+        return !proxy.isClient();
     }
 }

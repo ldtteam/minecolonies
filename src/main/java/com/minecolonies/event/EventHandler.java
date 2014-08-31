@@ -2,6 +2,7 @@ package com.minecolonies.event;
 
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.blocks.ModBlocks;
+import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityHut;
@@ -17,9 +18,12 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.WorldEvent;
 
 public class EventHandler
 {
+    private int numWorldsLoaded = 0;
+
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent event)
     {
@@ -191,6 +195,40 @@ public class EventHandler
         if(!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer)
         {
             PlayerProperties.loadProxyData((EntityPlayer) event.entity);
+        }
+    }
+
+    @SubscribeEvent
+    public void onWorldLoad(WorldEvent.Load event)
+    {
+        if (!event.world.isRemote)
+        {
+            ++numWorldsLoaded;
+            ColonyManager.instance().onWorldLoad(event.world);
+        }
+    }
+
+    @SubscribeEvent
+    public void onWorldUnload(WorldEvent.Unload event)
+    {
+        if (!event.world.isRemote)
+        {
+            ColonyManager.instance().onWorldUnload(event.world);
+
+            --numWorldsLoaded;
+            if (numWorldsLoaded == 0)
+            {
+                ColonyManager.release();
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onWorldSave(WorldEvent.Save event)
+    {
+        if (!event.world.isRemote)
+        {
+            ColonyManager.instance().onWorldSave(event.world);
         }
     }
 }
