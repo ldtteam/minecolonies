@@ -4,6 +4,7 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -17,80 +18,83 @@ import net.minecraftforge.common.util.Constants.NBT;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-public class Colony {
-    private final UUID  id;
+public class Colony
+{
+    private final UUID id;
     //private final int   dimension;
 
-    private String      name = "ERROR(Wasn't placed by player)";
-    private Set<UUID>   owners = new HashSet<UUID>();
+    private String    name   = "ERROR(Wasn't placed by player)";
+    private Set<UUID> owners = new HashSet<UUID>();
 
-    private final WeakReference<World> world;
-    private ChunkCoordinates center;
+    private final int dimensionId;
+    private WeakReference<World> world;
+    private ChunkCoordinates     center;
 
     //  Buildings
     private BuildingTownHall townhall;
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
-    private int         maxCitizens = Constants.DEFAULTMAXCITIZENS;
-    private Set<UUID>   citizens = new HashSet<UUID>();
+    private int       maxCitizens = Constants.DEFAULTMAXCITIZENS;
+    private Set<UUID> citizens    = new HashSet<UUID>();
 
-    final static String TAG_ID = "id";
-    final static String TAG_NAME = "name";
-    final static String TAG_DIMENSION = "dimension";
-    final static String TAG_CENTER = "center";
+    final static String TAG_ID           = "id";
+    final static String TAG_NAME         = "name";
+    final static String TAG_DIMENSION    = "dimension";
+    final static String TAG_CENTER       = "center";
     final static String TAG_MAX_CITIZENS = "maxCitizens";
-    final static String TAG_OWNERS = "owners";
-    final static String TAG_BUILDINGS = "buidings";
-    final static String TAG_CITIZENS = "citizens";
+    final static String TAG_OWNERS       = "owners";
+    final static String TAG_BUILDINGS    = "buidings";
+    final static String TAG_CITIZENS     = "citizens";
 
     /**
-     * Constructor for a brand new Colony.
+     * Constructor for a newly created Colony.
+     *
+     * @param w The world the colony exists in
+     * @param c The center of the colony (location of Town Hall).
      */
-    public Colony(
-            World w,
-            ChunkCoordinates c)
+    public Colony(World w, ChunkCoordinates c)
     {
-        this(UUID.randomUUID(), w);
+        this(UUID.randomUUID(), w.provider.dimensionId);
         center = c;
-    }
-
-    /**
-     * Constructor for a colony.
-     * @param uuid
-     */
-    protected Colony(
-            UUID uuid,
-            World w)
-    {
-        id = uuid;
         world = new WeakReference<World>(w);
     }
 
     /**
+     * Base constructor for a colony.
+     *
+     * @param uuid The current id for the colony
+     * @param dim  The world the colony exists in
+     */
+    protected Colony(UUID uuid, int dim)
+    {
+        id = uuid;
+        dimensionId = dim;
+    }
+
+    /**
      * Load a saved colony
-     * @param compound
+     *
+     * @param compound The NBT compound containing the colony's data
      * @return loaded colony
      */
-    public static Colony createAndLoadColony(
-            World world,
-            NBTTagCompound compound)
+    public static Colony createAndLoadColony(NBTTagCompound compound)
     {
         UUID id = UUID.fromString(compound.getString(TAG_ID));
-        Colony c = new Colony(id, world);
+        int dimensionId = compound.getInteger(TAG_DIMENSION);
+        Colony c = new Colony(id, dimensionId);
         c.readFromNBT(compound);
         return c;
     }
 
     /**
      * Read colony from saved data
+     *
      * @param compound
      */
-    protected void readFromNBT(
-            NBTTagCompound compound)
+    protected void readFromNBT(NBTTagCompound compound)
     {
         name = compound.getString(TAG_NAME);
-        //dimension = compound.getInteger(TAG_DIMENSION);
         center = ChunkCoordUtils.readFromNBT(compound, TAG_CENTER);
 
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
@@ -126,27 +130,24 @@ public class Colony {
 
     /**
      * Write colony to save data
+     *
      * @param compound
      */
-    public boolean writeToNBT(
-            NBTTagCompound compound)
+    public void writeToNBT(NBTTagCompound compound)
     {
-        World worldActual = world.get();
-        if (worldActual == null)
-        {
-            return false;
-        }
-
+        //  Core attributes
         compound.setString(TAG_ID, id.toString());
+        compound.setInteger(TAG_DIMENSION, dimensionId);
+
+        //  Basic data
         compound.setString(TAG_NAME, name);
-        compound.setInteger(TAG_DIMENSION, worldActual.provider.dimensionId);
         ChunkCoordUtils.writeToNBT(compound, TAG_CENTER, center);
 
         compound.setInteger(TAG_CITIZENS, maxCitizens);
 
         //  Owners
         NBTTagList ownerTagList = new NBTTagList();
-        for(UUID owner : owners)
+        for (UUID owner : owners)
         {
             ownerTagList.appendTag(new NBTTagString(owner.toString()));
         }
@@ -164,21 +165,23 @@ public class Colony {
 
         //  Citizens
         NBTTagList citizenTagList = new NBTTagList();
-        for(UUID citizen : citizens)
+        for (UUID citizen : citizens)
         {
             citizenTagList.appendTag(new NBTTagString(citizen.toString()));
         }
         compound.setTag(TAG_CITIZENS, citizenTagList);
-
-        return true;
     }
 
-    public UUID getID() { return id; }
+    public UUID getID()
+    {
+        return id;
+    }
 
-    //public int getDimension() { return dimension; }
-    public World getWorld() { return world.get(); }
+    public int getDimensionId() { return dimensionId; }
+    public World getWorld() { return world != null ? world.get() : null; }
 
     public String getName() { return name; }
+
     public void setName(String n)
     {
         name = n;
@@ -195,7 +198,7 @@ public class Colony {
     public Set<UUID> getCitizens() { return Collections.unmodifiableSet(citizens); }
     public boolean isCitizen(UUID c) { return citizens.contains(c); }
 
-    public final ChunkCoordinates getCenter() { return center; }
+    public ChunkCoordinates getCenter() { return center; }
 
     /**
      * Get citizen in Colony by ID
@@ -208,73 +211,109 @@ public class Colony {
 
     /**
      * Determine if a given chunk coordinate is considered to be within the colony's bounds
+     *
      * @param coord
      * @return
      */
-    public boolean isCoordInColony(
-            World w,
-            ChunkCoordinates coord)
+    public boolean isCoordInColony(World w, ChunkCoordinates coord)
     {
         return w == world.get() &&
                 center.getDistanceSquaredToChunkCoordinates(coord) <= Utils.square(Configurations.workingRangeTownhall);
     }
 
-    public void onWorldLoad()
+    public float getDistanceSquared(ChunkCoordinates coord)
     {
-        //  Nothing for now
-
-//        if (w.provider.dimensionId == dimension)
-//        {
-//            world = new WeakReference<World>(w);
-//        }
+        return center.getDistanceSquaredToChunkCoordinates(coord);
     }
 
-    public void onWorldUnload()
+    public float getDistanceSquared(int posX, int posY, int posZ)
+    {
+        return center.getDistanceSquared(posX, posY, posZ);
+    }
+
+    /**
+     * When the Colony's world is loaded, associate with it
+     *
+     * @param w
+     */
+    public void onWorldLoad(World w)
+    {
+        if (w.provider.dimensionId == dimensionId)
+        {
+            world = new WeakReference<World>(w);
+        }
+    }
+
+    public void onWorldUnload(World w)
     {
         //  Nothing for now
     }
 
     /**
      * Any per-server-tick logic should be performed here
+     *
      * @param event
      */
-    public void onServerTick(
-            TickEvent.ServerTickEvent event)
+    public void onServerTick(TickEvent.ServerTickEvent event)
     {
     }
 
     /**
      * Any per-world-tick logic should be performed here
+     *
      * @param event
      */
-    public void onWorldTick(
-            TickEvent.WorldTickEvent event)
+    public void onWorldTick(TickEvent.WorldTickEvent event)
     {
     }
 
     /**
      * Get building in Colony by ID
+     *
      * @param buildingId
      * @return
      */
-    public Building getBuilding(
-            ChunkCoordinates buildingId)
+    public Building getBuilding(ChunkCoordinates buildingId)
     {
         return buildings.get(buildingId);
     }
 
-    public void addBuilding(
-            Building building)
+    /**
+     * Add a Building to the Colony
+     *
+     * @param building
+     */
+    private void addBuilding(Building building)
     {
-        buildings.put(building.GetLocation(), building);
+        buildings.put(building.getLocation(), building);
 
         if (building instanceof BuildingTownHall)
         {
             //  Limit 1 town hall
             if (townhall == null)
             {
-                townhall = (BuildingTownHall)building;
+                townhall = (BuildingTownHall) building;
             }
         }
+    }
+
+    public Building addNewBuilding(TileEntityBuildable parent)
+    {
+        Building building = Building.createBuilding(this, parent);
+        if (building != null)
+        {
+            addBuilding(building);
+        }
+        return building;
+    }
+
+    /**
+     * Remove a Building from the Colony (when it is destroyed)
+     *
+     * @param building
+     */
+    public void removeBuilding(Building building)
+    {
+        buildings.remove(building.getLocation());
     }
 }

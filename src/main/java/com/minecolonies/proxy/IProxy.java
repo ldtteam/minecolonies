@@ -1,18 +1,18 @@
 package com.minecolonies.proxy;
 
-public abstract interface IProxy
+public interface IProxy
 {
-    public abstract boolean isClient();
+    boolean isClient();
 
-    public abstract void registerTileEntities();
+    void registerTileEntities();
 
-    public abstract void registerKeybindings();
+    void registerKeybindings();
 
-    public abstract void registerEvents();
+    void registerEvents();
 
-    public abstract void registerEntities();
+    void registerEntities();
 
-    public abstract void registerEntityRendering();
+    void registerEntityRendering();
 
-    public abstract void registerTileEntityRendering();
+    void registerTileEntityRendering();
 }

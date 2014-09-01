@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 
 import java.io.*;
@@ -17,11 +18,12 @@ public class ColonyManager {
     private Map<UUID, Colony> colonies = new HashMap<UUID, Colony>();
     private Map<Integer, List<Colony>> coloniesByWorld = new HashMap<Integer, List<Colony>>();
 
+    private int numWorldsLoaded;    //  Used to trigger loading/unloading colonies
+
     private static ColonyManager instance = new ColonyManager();
 
     final static String FILENAME_MINECOLONIES_PATH = "minecolonies";
-    final static String FILENAME_MINECOLONIES_EXT = ".dat";
-    final static String FILENAME_MINECOLONIES = "colonies" + FILENAME_MINECOLONIES_EXT;
+    final static String FILENAME_MINECOLONIES = "colonies.dat";
 
     final static String TAG_COLONIES = "colonies";
 
@@ -30,36 +32,61 @@ public class ColonyManager {
         return instance;
     }
 
-    public static void release()
-    {
-        instance.colonies.clear();
-    }
-
     public static void init()
     {
-        Building.registerBuildings();
+        Building.init();
     }
 
-    public ColonyManager()
+    private ColonyManager()
     {
     }
 
+    /**
+     * Create a new Colony in the given world and at that location
+     *
+     * @param w
+     * @param coord
+     * @return
+     */
     public Colony createColony(
             World w,
             ChunkCoordinates coord)
     {
         Colony colony = new Colony(w, coord);
         colonies.put(colony.getID(), colony);
-        coloniesByWorld.get(w.provider.dimensionId).add(colony);
+
+        if (!coloniesByWorld.containsKey(colony.getDimensionId()))
+        {
+            coloniesByWorld.put(colony.getDimensionId(), new ArrayList<Colony>());
+        }
+
+        coloniesByWorld.get(colony.getDimensionId()).add(colony);
         return colony;
     }
 
+    /**
+     * Get Colony by UUID
+     *
+     * @param id UUID of colony
+     * @return
+     */
+    public Colony getColonyById(UUID id) { return colonies.get(id); }
+
+    /**
+     * Get Colony that contains a given ChunkCoordinates
+     *
+     * @param w
+     * @param coord
+     * @return
+     */
     public Colony getColonyByCoord(
             World w,
             ChunkCoordinates coord)
     {
-        //    TODO - Optimize this
-        for (Colony c : colonies.values())
+        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.dimensionId);
+        if (coloniesInWorld == null) return null;
+
+        for (Colony c : coloniesInWorld)
         {
             if (c.isCoordInColony(w, coord)) return c;
         }
@@ -67,10 +94,49 @@ public class ColonyManager {
         return null;
     }
 
-    public Colony getColonyById(
-            UUID id)
+    /**
+     * Get closest colony by ChunkCoordinate
+     *
+     * @param w
+     * @param coord
+     * @return
+     */
+    public Colony getClosestColony(World w, ChunkCoordinates coord)
     {
-        return colonies.get(id);
+        return getClosestColony(w, coord.posX, coord.posY, coord.posZ);
+    }
+
+    /**
+     * Get closest colony by x,y,z
+     *
+     * @param w
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public Colony getClosestColony(World w, int x, int y, int z)
+    {
+        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.dimensionId);
+        if (coloniesInWorld == null) return null;
+
+        Colony closestColony = null;
+        float closestDist = Float.MAX_VALUE;
+
+        for (Colony c : coloniesInWorld)
+        {
+            if (c.getWorld() == w)
+            {
+                float dist = c.getDistanceSquared(x, y, z);
+                if (dist < closestDist)
+                {
+                    closestColony = c;
+                    closestDist = dist;
+                }
+            }
+        }
+
+        return closestColony;
     }
 
     public void onServerTick(
@@ -94,56 +160,65 @@ public class ColonyManager {
         }
     }
 
-    public List<Colony> readFromNBT(
-            World world,
+    /**
+     * Read Colonies from saved NBT data
+     *
+     * @param compound
+     */
+    public void readFromNBT(
             NBTTagCompound compound)
     {
-        List<Colony> newColonies = new ArrayList<Colony>();
         NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
         for (int i = 0; i < colonyTags.tagCount(); ++i)
         {
-            Colony colony = Colony.createAndLoadColony(world, colonyTags.getCompoundTagAt(i));
+            Colony colony = Colony.createAndLoadColony(colonyTags.getCompoundTagAt(i));
             colonies.put(colony.getID(), colony);
-            //colony.onWorldLoad();
-            newColonies.add(colony);
+
+            if (!coloniesByWorld.containsKey(colony.getDimensionId()))
+            {
+                coloniesByWorld.put(colony.getDimensionId(), new ArrayList<Colony>());
+            }
+            coloniesByWorld.get(colony.getDimensionId()).add(colony);
         }
-        return newColonies;
     }
 
+    /**
+     * Write colonies to NBT data for saving
+     *
+     * @param compound
+     */
     public void writeToNBT(
-            World world,
             NBTTagCompound compound)
     {
         NBTTagList colonyTagList = new NBTTagList();
         for(Colony colony : colonies.values())
         {
-            if (colony.getWorld() == world)
-            {
-                NBTTagCompound colonyTagCompound = new NBTTagCompound();
-                if (colony.writeToNBT(colonyTagCompound))
-                {
-                    colonyTagList.appendTag(colonyTagCompound);
-                }
-            }
+            NBTTagCompound colonyTagCompound = new NBTTagCompound();
+            colony.writeToNBT(colonyTagCompound);
+            colonyTagList.appendTag(colonyTagCompound);
         }
         compound.setTag(TAG_COLONIES, colonyTagList);
     }
 
+    /**
+     * Get save location for Minecolonies data, from the world/save directory
+     *
+     * @param world
+     * @return
+     */
     private File getSaveLocation(
             World world)
     {
-        //  DimensionManager.getWorld(0)
-        File saveDir = new File(world.getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-
-        String worldSaveFolder = world.provider.getSaveFolder();
-        if (worldSaveFolder != null)
-        {
-            return new File(saveDir, worldSaveFolder + FILENAME_MINECOLONIES_EXT);
-        }
-
+        File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
     }
 
+    /**
+     * Load a file and return the data as an NBTTagCompound
+     *
+     * @param file The path to the file
+     * @return the data from the file as an NBTTagCompound, or null
+     */
     private NBTTagCompound loadNBTFromPath(
             File file)
     {
@@ -162,6 +237,12 @@ public class ColonyManager {
         return null;
     }
 
+    /**
+     * Save an NBTTagCompound to a file.  Does so in a safe manner using an intermediate tmp file
+     *
+     * @param file The destination file to write the data to
+     * @param compound The NBTTagCompound to write to the file
+     */
     private void saveNBTToPath(
             File file,
             NBTTagCompound compound)
@@ -188,43 +269,69 @@ public class ColonyManager {
         }
     }
 
+    /**
+     * When a world is loaded, Colonies in that world need to grab the reference to the World
+     * Additionally, when loading the first world, load all colonies.
+     *
+     * @param world
+     */
     public void onWorldLoad(World world)
     {
-        List<Colony> worldColonies = new ArrayList<Colony>();
-
-        File file = getSaveLocation(world);
-        NBTTagCompound data = loadNBTFromPath(file);
-        if (data != null)
+        if (numWorldsLoaded == 0)
         {
-            List<Colony> newColonies = readFromNBT(world, data);
-            worldColonies.addAll(newColonies);
-
-            for (Colony c : newColonies)
+            File file = getSaveLocation(world);
+            NBTTagCompound data = loadNBTFromPath(file);
+            if (data != null)
             {
-                c.onWorldLoad();
+                readFromNBT(data);
             }
         }
+        ++numWorldsLoaded;
 
-        coloniesByWorld.put(world.provider.dimensionId, worldColonies);
+        List<Colony> worldColonies = coloniesByWorld.get(world.provider.dimensionId);
+        if (worldColonies != null)
+        {
+            for (Colony c : worldColonies)
+            {
+                c.onWorldLoad(world);
+            }
+        }
     }
 
     public void onWorldSave(World world)
     {
-        NBTTagCompound compound = new NBTTagCompound();
-        writeToNBT(world, compound);
+        if (world.provider.dimensionId == 0)    //  For now, save when 0 saves...
+        {
+            NBTTagCompound compound = new NBTTagCompound();
+            writeToNBT(compound);
 
-        File file = getSaveLocation(world);
-        saveNBTToPath(file, compound);
+            File file = getSaveLocation(world);
+            saveNBTToPath(file, compound);
+        }
     }
 
+    /**
+     * When a world unloads, all colonies in that world are informed
+     * Additionally, when the last world is unloaded, delete all colonies
+     *
+     * @param world
+     */
     public void onWorldUnload(World world)
     {
-        for (Colony c : colonies.values())
+        List<Colony> worldColonies = coloniesByWorld.get(world.provider.dimensionId);
+        if (worldColonies != null)
         {
-            if (c.getWorld() == world)
+            for (Colony c : worldColonies)
             {
-                c.onWorldUnload();
+                c.onWorldUnload(world);
             }
+        }
+
+        --numWorldsLoaded;
+        if (numWorldsLoaded == 0)
+        {
+            colonies.clear();
+            coloniesByWorld.clear();
         }
     }
 }

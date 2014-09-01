@@ -22,8 +22,6 @@ import net.minecraftforge.event.world.WorldEvent;
 
 public class EventHandler
 {
-    private int numWorldsLoaded = 0;
-
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent event)
     {
@@ -203,7 +201,6 @@ public class EventHandler
     {
         if (!event.world.isRemote)
         {
-            ++numWorldsLoaded;
             ColonyManager.instance().onWorldLoad(event.world);
         }
     }
@@ -214,12 +211,6 @@ public class EventHandler
         if (!event.world.isRemote)
         {
             ColonyManager.instance().onWorldUnload(event.world);
-
-            --numWorldsLoaded;
-            if (numWorldsLoaded == 0)
-            {
-                ColonyManager.release();
-            }
         }
     }
 
