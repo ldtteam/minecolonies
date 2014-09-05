@@ -199,27 +199,18 @@ public class EventHandler
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event)
     {
-        if (!event.world.isRemote)
-        {
-            ColonyManager.instance().onWorldLoad(event.world);
-        }
+        ColonyManager.onWorldLoad(event.world);
     }
 
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload event)
     {
-        if (!event.world.isRemote)
-        {
-            ColonyManager.instance().onWorldUnload(event.world);
-        }
+        ColonyManager.onWorldUnload(event.world);
     }
 
     @SubscribeEvent
     public void onWorldSave(WorldEvent.Save event)
     {
-        if (!event.world.isRemote)
-        {
-            ColonyManager.instance().onWorldSave(event.world);
-        }
+        ColonyManager.onWorldSave(event.world);
     }
 }

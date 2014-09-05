@@ -1,5 +1,6 @@
 package com.minecolonies.colony;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.configuration.Configurations;
@@ -8,12 +9,15 @@ import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import scala.reflect.internal.util.WeakHashSet;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -21,17 +25,21 @@ import java.util.*;
 public class Colony
 {
     private final UUID id;
-    //private final int   dimension;
+    private final int  dimensionId;
 
-    private String    name   = "ERROR(Wasn't placed by player)";
-    private Set<UUID> owners = new HashSet<UUID>();
+    //  Update Subscriptions
+    private Set<EntityPlayerMP> subscribers = new HashSet<EntityPlayerMP>();
+    private boolean isViewDirty = false;
+    private boolean isBuildingViewDirty = false;
 
-    private final int dimensionId;
-    private WeakReference<World> world;
-    private ChunkCoordinates     center;
+    //  General Attributes
+    private String                  name   = "ERROR(Wasn't placed by player)";
+    private Set<UUID>               owners = new HashSet<UUID>();
+    private WeakReference<World>    world;
+    private ChunkCoordinates        center;
 
     //  Buildings
-    private BuildingTownHall townhall;
+    private BuildingTownHall                townhall;
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
@@ -181,7 +189,6 @@ public class Colony
     public World getWorld() { return world != null ? world.get() : null; }
 
     public String getName() { return name; }
-
     public void setName(String n)
     {
         name = n;
@@ -256,6 +263,79 @@ public class Colony
      */
     public void onServerTick(TickEvent.ServerTickEvent event)
     {
+        if (event.phase != TickEvent.Phase.END)
+        {
+            return;
+        }
+
+        //  Recompute subscribers every frame (for now)
+        //  Subscribers = Owners + Players within (double working town hall range)
+        Set<EntityPlayerMP> oldSubscribers = subscribers;
+        subscribers = new HashSet<EntityPlayerMP>();
+
+        for (Object o : MinecraftServer.getServer().getConfigurationManager().playerEntityList)
+        {
+            if (o instanceof EntityPlayerMP)
+            {
+                EntityPlayerMP player = (EntityPlayerMP)o;
+                if (owners.contains(player.getUniqueID()))
+                {
+                    subscribers.add(player);
+                }
+            }
+        }
+
+        World w = world.get();
+        if (w != null)
+        {
+            for (Object o : w.playerEntities)
+            {
+                if (o instanceof EntityPlayerMP)
+                {
+                    EntityPlayerMP player = (EntityPlayerMP)o;
+                    double distance = player.getDistanceSq(center.posX, center.posY, center.posZ);
+                    if (distance <= Utils.square(Configurations.workingRangeTownhall * 2))  //   Double range
+                    {
+                        subscribers.add(player);
+                    }
+                }
+            }
+        }
+
+        for (EntityPlayerMP player : subscribers)
+        {
+            boolean isNewSubscriber = !oldSubscribers.contains(player);
+
+            if (isViewDirty || isNewSubscriber)
+            {
+                NBTTagCompound compound = new NBTTagCompound();
+                ColonyView.createNetworkData(this, compound);
+                // TODO - MineColonies.packetPipeline.sendTo(new ColonyUpdatePacket(compound), player);
+            }
+            else if (isBuildingViewDirty && !buildings.isEmpty())
+            {
+                for (Building b : buildings.values())
+                {
+                    if (true /*b.getIsViewDirty() */)    //  TODO - FIXME
+                    {
+                        NBTTagCompound compound = new NBTTagCompound();
+                        b.createViewNetworkData(compound);
+                        // TODO - MineColonies.packetPipeline.sendTo(new BuildingUpdatePacket(compound), player);
+                    }
+                }
+            }
+        }
+
+//        for (EntityPlayerMP oldPlayers : oldSubscribers)
+//        {
+//            if (!subscribers.contains(oldPlayers))
+//            {
+//                //  This player should no longer subscribe
+//            }
+//        }
+
+        isViewDirty = false;
+        isBuildingViewDirty = false;
     }
 
     /**
@@ -265,6 +345,11 @@ public class Colony
      */
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
+    }
+
+    public Map<ChunkCoordinates, Building> getBuildings()
+    {
+        return Collections.unmodifiableMap(buildings);
     }
 
     /**

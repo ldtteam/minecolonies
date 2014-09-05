@@ -4,14 +4,14 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import net.minecraft.util.ChunkCoordinates;
 
-public class BuildingBuilder extends BuildingHut
+public class BuildingHut extends Building
 {
-    public BuildingBuilder(Colony c, ChunkCoordinates l)
+    public BuildingHut(Colony c, ChunkCoordinates l)
     {
         super(c, l);
     }
 
-    public class View extends BuildingHut.View
+    public class View extends Building.View
     {
         protected View(ColonyView c, ChunkCoordinates l)
         {

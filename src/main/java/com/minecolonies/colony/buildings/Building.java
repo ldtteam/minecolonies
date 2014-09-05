@@ -2,6 +2,7 @@ package com.minecolonies.colony.buildings;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.*;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -10,15 +11,16 @@ import net.minecraft.util.ChunkCoordinates;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Building
 {
     private final ChunkCoordinates      location;
-    private final WeakReference<Colony> colony;
+    private final WeakReference<Colony> colony;     //  WeakReference prevents circular references
 
-    private int                         buildingLevel = 0;
+    private int buildingLevel = 0;
 
     private static Map<String, Class<?>> nameToClassMap = new HashMap<String, Class<?>>();
     private static Map<Class<?>, String> classToNameMap = new HashMap<Class<?>, String>();
@@ -220,17 +222,10 @@ public abstract class Building
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
     }
 
-    public void getNetworkData(NBTTagCompound compound)
-    {
-    }
-
-    public void parseNetworkData(NBTTagCompound compound)
-    {
-    }
-
     public ChunkCoordinates getID() { return location; }    //  Location doubles as ID
     public ChunkCoordinates getLocation() { return location; }
-    public Colony getColony() { return colony.get(); }
+    //public Colony getColony() { return colony.get(); }
+    public int getBuildingLevel() { return buildingLevel; }
 
     public void update()
     {
@@ -238,6 +233,109 @@ public abstract class Building
 
     public void onBuildingDestroyed()
     {
-        getColony().removeBuilding(this);
+        Colony c = colony.get();
+        if (c != null)
+        {
+            c.removeBuilding(this);
+        }
+    }
+
+    /**
+     * The Building View is the client-side representation of a Building.
+     * Views contain the Building's data that is relevant to a Client, in a more client-friendly form
+     * Mutable operations on a View result in a message to the server to perform the operation
+     */
+    public class View
+    {
+        private final WeakReference<ColonyView> colony;
+        private final ChunkCoordinates          location;
+
+        private int buildingLevel = 0;
+
+        protected View(ColonyView c, ChunkCoordinates l)
+        {
+            colony = new WeakReference<ColonyView>(c);
+            location = new ChunkCoordinates(l);
+        }
+
+        public ChunkCoordinates getID(){ return location; }    //  Location doubles as ID
+        public ChunkCoordinates getLocation(){ return location; }
+        public ColonyView getColony(){ return colony.get(); }
+        public int getBuildingLevel() { return buildingLevel; }
+
+        public void parseNetworkData(NBTTagCompound compound)
+        {
+            //  TODO - Use a PacketBuffer
+            buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
+        }
+    }
+
+    public void createViewNetworkData(NBTTagCompound compound)
+    {
+        //  TODO - Use a PacketBuffer
+        String s = classToNameMap.get(this.getClass());
+        compound.setString(TAG_TYPE, s);
+        ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, location);
+        compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
+    }
+
+    /**
+     * Create a Building View given it's saved NBTTagCompound
+     * TODO - Use a PacketBuffer
+     *
+     * @param colony   The owning colony
+     * @param compound The network data
+     * @return
+     */
+    public static View createBuildingView(Colony colony, NBTTagCompound compound)
+    {
+        View view = null;
+        Class<?> oclass = null;
+
+        try
+        {
+            oclass = nameToClassMap.get(compound.getString(TAG_TYPE));
+
+            if (oclass != null)
+            {
+                //UUID id = UUID.fromString(compound.getString("id"));
+                ChunkCoordinates loc = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
+
+                //Method method = oclass.getMethod("createView", ColonyView.class, ChunkCoordinates.class);
+                //view = (Building.View)method.invoke(null, colony, loc);
+
+                for (Class<?> c : oclass.getDeclaredClasses())
+                {
+                    if (c.getName().equals("View"))
+                    {
+                        Constructor<?> constructor = oclass.getDeclaredConstructor(ColonyView.class, ChunkCoordinates.class);
+                        view = (View)constructor.newInstance(colony, loc);
+                    }
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
+        }
+
+        if (view != null)
+        {
+            try
+            {
+                view.parseNetworkData(compound);
+            }
+            catch (Exception ex)
+            {
+                MineColonies.logger.error(String.format("A Building View %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
+                view = null;
+            }
+        }
+        else
+        {
+            MineColonies.logger.warn(String.format("Unknown Building type '%s', missing View subclass, or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+        }
+
+        return view;
     }
 }

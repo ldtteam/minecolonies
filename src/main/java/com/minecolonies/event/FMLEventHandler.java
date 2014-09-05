@@ -11,6 +11,6 @@ public class FMLEventHandler
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event)
     {
-        ColonyManager.instance().onServerTick(event);
+        ColonyManager.onServerTick(event);
     }
 }
