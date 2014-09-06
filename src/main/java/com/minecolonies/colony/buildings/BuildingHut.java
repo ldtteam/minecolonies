@@ -11,7 +11,7 @@ public class BuildingHut extends Building
         super(c, l);
     }
 
-    public class View extends Building.View
+    public static class View extends Building.View
     {
         protected View(ColonyView c, ChunkCoordinates l)
         {

@@ -6,6 +6,7 @@ import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
@@ -26,6 +27,24 @@ public class ChunkCoordUtils
     public static ChunkCoordinates readFromNBT(NBTTagCompound compound, String name)
     {
         NBTTagCompound coordsCompound = compound.getCompoundTag(name);
+        int x = coordsCompound.getInteger("x");
+        int y = coordsCompound.getInteger("y");
+        int z = coordsCompound.getInteger("z");
+        return new ChunkCoordinates(x, y, z);
+    }
+
+    public static void writeToNBTTagList(NBTTagList tagList, ChunkCoordinates coords)
+    {
+        NBTTagCompound coordsCompound = new NBTTagCompound();
+        coordsCompound.setInteger("x", coords.posX);
+        coordsCompound.setInteger("y", coords.posY);
+        coordsCompound.setInteger("z", coords.posZ);
+        tagList.appendTag(coordsCompound);
+    }
+
+    public static ChunkCoordinates readFromNBTTagList(NBTTagList tagList, int index)
+    {
+        NBTTagCompound coordsCompound = tagList.getCompoundTagAt(index);
         int x = coordsCompound.getInteger("x");
         int y = coordsCompound.getInteger("y");
         int z = coordsCompound.getInteger("z");

@@ -17,13 +17,15 @@ import java.util.*;
 public class ColonyView
 {
     private final UUID              id;
-    private final int               dimensionId;
 
     //  General Attributes
     private String                  name   = "Unknown";
-    private Set<UUID>               owners = new HashSet<UUID>();
-    private WeakReference<World>    world;
+    private int                     dimensionId;
     private ChunkCoordinates        center;
+    private WeakReference<World>    world;
+
+    //  Administration
+    private Set<UUID>               owners = new HashSet<UUID>();
 
     //  Buildings
     private Map<ChunkCoordinates, Building.View> buildings = new HashMap<ChunkCoordinates, Building.View>();
@@ -32,7 +34,6 @@ public class ColonyView
     private int       maxCitizens = Constants.DEFAULTMAXCITIZENS;
 //    private Set<UUID> citizens    = new HashSet<UUID>();
 
-    final static String TAG_ID           = "id";
     final static String TAG_NAME         = "name";
     final static String TAG_DIMENSION    = "dimension";
     final static String TAG_CENTER       = "center";
@@ -40,18 +41,17 @@ public class ColonyView
     final static String TAG_OWNERS       = "owners";
     final static String TAG_BUILDINGS    = "buidings";
     final static String TAG_CITIZENS     = "citizens";
+    final static String TAG_BUILDINGS_REMOVED = "buildingsRemoved";
 
 
     /**
      * Base constructor for a colony.
      *
      * @param uuid The current id for the colony
-     * @param dim  The world the colony exists in
      */
-    protected ColonyView(UUID uuid, int dim)
+    protected ColonyView(UUID uuid)
     {
         id = uuid;
-        dimensionId = dim;
     }
 
     public UUID getID() { return id; }
@@ -91,11 +91,9 @@ public class ColonyView
      */
     static public void createNetworkData(Colony colony, NBTTagCompound compound)
     {
-        compound.setString(TAG_ID, colony.getID().toString());
-        compound.setInteger(TAG_DIMENSION, colony.getDimensionId());
-
         //  General Attributes
         compound.setString(TAG_NAME, colony.getName());
+        compound.setInteger(TAG_DIMENSION, colony.getDimensionId());
         ChunkCoordUtils.writeToNBT(compound, TAG_CENTER, colony.getCenter());
 
         //  Owners
@@ -110,31 +108,16 @@ public class ColonyView
         compound.setInteger(TAG_MAX_CITIZENS, colony.getMaxCitizens());
 
         //  Buildings
-        NBTTagList buildingTagList = new NBTTagList();
-        for (Building building : colony.getBuildings().values())
+        List<ChunkCoordinates> removedBuildings = colony.getRemovedBuildings();
+        if (!removedBuildings.isEmpty())
         {
-            NBTTagCompound buildingCompound = new NBTTagCompound();
-            building.writeToNBT(buildingCompound);
-            buildingTagList.appendTag(buildingCompound);
+            NBTTagList buildingTagList = new NBTTagList();
+            for (ChunkCoordinates id : removedBuildings)
+            {
+                ChunkCoordUtils.writeToNBTTagList(buildingTagList, id);
+            }
+            compound.setTag(TAG_BUILDINGS_REMOVED, buildingTagList);
         }
-        compound.setTag(TAG_BUILDINGS, buildingTagList);
-    }
-
-    /**
-     * Create a ColonyView given the network data
-     * PLACEHOLDER - We will use eventually use PacketBuffers
-     *
-     * @param compound
-     * @return
-     */
-    static public ColonyView createFromNetworkData(NBTTagCompound compound)
-    {
-        UUID id = UUID.fromString(compound.getString(TAG_ID));
-        int dimensionId = compound.getInteger(TAG_DIMENSION);
-
-        ColonyView view = new ColonyView(id, dimensionId);
-        view.populateFromNetworkData(compound);
-        return view;
     }
 
     /**
@@ -143,10 +126,11 @@ public class ColonyView
      *
      * @param compound
      */
-    private void populateFromNetworkData(NBTTagCompound compound)
+    public void handleColonyViewPacket(NBTTagCompound compound)
     {
         //  General Attributes
         name = compound.getString(TAG_NAME);
+        dimensionId = compound.getInteger(TAG_DIMENSION);
         center = ChunkCoordUtils.readFromNBT(compound, TAG_CENTER);
 
         //  Citizenry
@@ -160,7 +144,15 @@ public class ColonyView
             owners.add(UUID.fromString(owner));
         }
 
-        updateFromNetworkData(compound);
+        if (compound.hasKey(TAG_BUILDINGS_REMOVED))
+        {
+            NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
+            for (int i = 0; i < buildingTagList.tagCount(); ++i)
+            {
+                ChunkCoordinates id = ChunkCoordUtils.readFromNBTTagList(buildingTagList, i);
+                buildings.remove(id);
+            }
+        }
     }
 
     /**
@@ -170,21 +162,12 @@ public class ColonyView
      * @param compound
      * @return
      */
-    public void updateFromNetworkData(NBTTagCompound compound)
+    public void handleColonyBuildingViewPacket(NBTTagCompound compound)
     {
-        //  Update buildings by replacing them in-place; does not remove any buildings (a new ColonyView is required for that)
-        if (compound.hasKey(TAG_BUILDINGS))
+        Building.View b = Building.createBuildingView(this, compound);    //  At the moment we are re-using the save/load code
+        if (b != null)
         {
-            NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
-            for (int i = 0; i < buildingTagList.tagCount(); ++i)
-            {
-                NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
-                Building.View b = Building.createBuildingView(null, buildingCompound);    //  At the moment we are re-using the save/load code
-                if (b != null)
-                {
-                    buildings.put(b.getLocation(), b);
-                }
-            }
+            buildings.put(b.getLocation(), b);
         }
     }
 }

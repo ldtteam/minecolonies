@@ -1,8 +1,10 @@
 package com.minecolonies.network.packets;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.PacketBuffer;
+
+import java.io.IOException;
 
 /**
  * AbstractPacket class. Should be the parent of all packets wishing to use the PacketPipeline.
@@ -18,7 +20,7 @@ public abstract class AbstractPacket
      * @param ctx    channel context
      * @param buffer the buffer to encode into
      */
-    public abstract void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer);
+    public abstract void encodeInto(ChannelHandlerContext ctx, PacketBuffer buffer) throws IOException;
 
     /**
      * Decode the packet data from the ByteBuf stream. Complex data sets may need specific data handlers (See @link{cpw.mods.fml.common.network.ByteBuffUtils})
@@ -26,7 +28,7 @@ public abstract class AbstractPacket
      * @param ctx    channel context
      * @param buffer the buffer to decode from
      */
-    public abstract void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer);
+    public abstract void decodeInto(ChannelHandlerContext ctx, PacketBuffer buffer) throws IOException;
 
     /**
      * Handle a packet on the client side. Note this occurs after decoding has completed.

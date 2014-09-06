@@ -1,6 +1,5 @@
 package com.minecolonies.colony;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -360,6 +359,42 @@ public class ColonyManager {
                 colonies.clear();
                 coloniesByWorld.clear();
             }
+        }
+    }
+
+    /**
+     *
+     * @param colonyId
+     * @param colonyData
+     */
+    static public void handleColonyViewPacket(UUID colonyId, NBTTagCompound colonyData)
+    {
+        ColonyView view = getColonyViewById(colonyId);
+        if (view == null)
+        {
+            int dimensionId = colonyData.getInteger(ColonyView.TAG_DIMENSION);
+            view = new ColonyView(colonyId);
+            colonyViews.put(colonyId, view);
+        }
+
+        view.handleColonyViewPacket(colonyData);
+    }
+
+    /**
+     *
+     * @param colonyId The ID of the colony
+     * @param buildingData The building data, or null if it was removed
+     */
+    static public void handleColonyBuildingViewPacket(UUID colonyId, NBTTagCompound buildingData)
+    {
+        ColonyView view = getColonyViewById(colonyId);
+        if (view != null)
+        {
+            view.handleColonyBuildingViewPacket(buildingData);
+        }
+        else
+        {
+            //  TODO - Log this.  We should have the colony
         }
     }
 }

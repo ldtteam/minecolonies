@@ -9,9 +9,12 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringUtils;
+
+import java.io.IOException;
 
 public class OpenInventoryPacket extends AbstractPacket
 {
@@ -41,7 +44,7 @@ public class OpenInventoryPacket extends AbstractPacket
     }
 
     @Override
-    public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer)
+    public void encodeInto(ChannelHandlerContext ctx, PacketBuffer buffer) throws IOException
     {
         if(inventory instanceof InventoryCitizen)
         {
@@ -64,7 +67,7 @@ public class OpenInventoryPacket extends AbstractPacket
     }
 
     @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer)
+    public void decodeInto(ChannelHandlerContext ctx, PacketBuffer buffer) throws IOException
     {
         inventoryType = buffer.readInt();
         switch(inventoryType)

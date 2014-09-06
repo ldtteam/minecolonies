@@ -5,6 +5,8 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.network.packets.ColonyBuildingViewPacket;
+import com.minecolonies.network.packets.ColonyViewPacket;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
@@ -17,7 +19,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
-import scala.reflect.internal.util.WeakHashSet;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -28,18 +29,21 @@ public class Colony
     private final int  dimensionId;
 
     //  Update Subscriptions
-    private Set<EntityPlayerMP> subscribers = new HashSet<EntityPlayerMP>();
-    private boolean isViewDirty = false;
-    private boolean isBuildingViewDirty = false;
+    private Set<EntityPlayerMP>    subscribers      = new HashSet<EntityPlayerMP>();
+    private boolean                isDirty          = false;
+    private boolean                isBuildingsDirty = false;
+    private List<ChunkCoordinates> removedBuildings = new ArrayList<ChunkCoordinates>();
 
     //  General Attributes
-    private String                  name   = "ERROR(Wasn't placed by player)";
-    private Set<UUID>               owners = new HashSet<UUID>();
-    private WeakReference<World>    world;
-    private ChunkCoordinates        center;
+    private String               name   = "ERROR(Wasn't placed by player)";
+    private WeakReference<World> world;
+    private ChunkCoordinates     center;
+
+    //  Administration
+    private Set<UUID> owners = new HashSet<UUID>();
 
     //  Buildings
-    private BuildingTownHall                townhall;
+    private BuildingTownHall townhall;
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
@@ -207,6 +211,9 @@ public class Colony
 
     public ChunkCoordinates getCenter() { return center; }
 
+    private void markDirty() { isDirty = true; }
+    public void markBuildingsDirty() { isBuildingsDirty = true; }
+
     /**
      * Get citizen in Colony by ID
      * @param citizenId
@@ -294,7 +301,7 @@ public class Colony
                 {
                     EntityPlayerMP player = (EntityPlayerMP)o;
                     double distance = player.getDistanceSq(center.posX, center.posY, center.posZ);
-                    if (distance <= Utils.square(Configurations.workingRangeTownhall * 2))  //   Double range
+                    if (distance <= Utils.square(Configurations.workingRangeTownhall + 16))  //   16 beyond max Hut block distance, so it is loaded at interactive distance
                     {
                         subscribers.add(player);
                     }
@@ -306,25 +313,28 @@ public class Colony
         {
             boolean isNewSubscriber = !oldSubscribers.contains(player);
 
-            if (isViewDirty || isNewSubscriber)
+            if (isNewSubscriber || isDirty)
             {
                 NBTTagCompound compound = new NBTTagCompound();
                 ColonyView.createNetworkData(this, compound);
-                // TODO - MineColonies.packetPipeline.sendTo(new ColonyUpdatePacket(compound), player);
+                MineColonies.packetPipeline.sendTo(new ColonyViewPacket(id, compound), player);
             }
-            else if (isBuildingViewDirty && !buildings.isEmpty())
+
+            if (isNewSubscriber || isBuildingsDirty)
             {
                 for (Building b : buildings.values())
                 {
-                    if (true /*b.getIsViewDirty() */)    //  TODO - FIXME
+                    if (isNewSubscriber || b.getIsDirty())
                     {
                         NBTTagCompound compound = new NBTTagCompound();
                         b.createViewNetworkData(compound);
-                        // TODO - MineColonies.packetPipeline.sendTo(new BuildingUpdatePacket(compound), player);
+                        MineColonies.packetPipeline.sendTo(new ColonyBuildingViewPacket(id, compound), player);
                     }
                 }
             }
         }
+
+        removedBuildings.clear();   //  We will have set these
 
 //        for (EntityPlayerMP oldPlayers : oldSubscribers)
 //        {
@@ -334,8 +344,12 @@ public class Colony
 //            }
 //        }
 
-        isViewDirty = false;
-        isBuildingViewDirty = false;
+        isDirty = false;
+        isBuildingsDirty = false;
+        for (Building b : buildings.values())
+        {
+            b.clearDirty();
+        }
     }
 
     /**
@@ -351,6 +365,8 @@ public class Colony
     {
         return Collections.unmodifiableMap(buildings);
     }
+
+    public List<ChunkCoordinates> getRemovedBuildings() { return Collections.unmodifiableList(removedBuildings); }
 
     /**
      * Get building in Colony by ID
@@ -371,6 +387,7 @@ public class Colony
     private void addBuilding(Building building)
     {
         buildings.put(building.getLocation(), building);
+        building.markDirty();
 
         if (building instanceof BuildingTownHall)
         {
@@ -399,6 +416,10 @@ public class Colony
      */
     public void removeBuilding(Building building)
     {
-        buildings.remove(building.getLocation());
+        if (buildings.remove(building.getLocation()) != null)
+        {
+            removedBuildings.add(building.getLocation());
+            markDirty();
+        }
     }
 }

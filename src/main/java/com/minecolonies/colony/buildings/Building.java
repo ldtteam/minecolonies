@@ -21,6 +21,7 @@ public abstract class Building
     private final WeakReference<Colony> colony;     //  WeakReference prevents circular references
 
     private int buildingLevel = 0;
+    private boolean isDirty = false;
 
     private static Map<String, Class<?>> nameToClassMap = new HashMap<String, Class<?>>();
     private static Map<Class<?>, String> classToNameMap = new HashMap<Class<?>, String>();
@@ -226,6 +227,19 @@ public abstract class Building
     public ChunkCoordinates getLocation() { return location; }
     //public Colony getColony() { return colony.get(); }
     public int getBuildingLevel() { return buildingLevel; }
+    public boolean getIsDirty() { return isDirty; }
+
+    public void clearDirty() { isDirty = false; }
+    public void markDirty()
+    {
+        isDirty = true;
+        Colony c = colony.get();
+        if (c != null)
+        {
+            c.markBuildingsDirty();
+        }
+    }
+
 
     public void update()
     {
@@ -245,7 +259,7 @@ public abstract class Building
      * Views contain the Building's data that is relevant to a Client, in a more client-friendly form
      * Mutable operations on a View result in a message to the server to perform the operation
      */
-    public class View
+    public static class View
     {
         private final WeakReference<ColonyView> colony;
         private final ChunkCoordinates          location;
@@ -275,7 +289,7 @@ public abstract class Building
         //  TODO - Use a PacketBuffer
         String s = classToNameMap.get(this.getClass());
         compound.setString(TAG_TYPE, s);
-        ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, location);
+        //ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, location);
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
     }
 
@@ -287,7 +301,7 @@ public abstract class Building
      * @param compound The network data
      * @return
      */
-    public static View createBuildingView(Colony colony, NBTTagCompound compound)
+    public static View createBuildingView(ColonyView colony, NBTTagCompound compound)
     {
         View view = null;
         Class<?> oclass = null;
@@ -306,10 +320,11 @@ public abstract class Building
 
                 for (Class<?> c : oclass.getDeclaredClasses())
                 {
-                    if (c.getName().equals("View"))
+                    if (c.getName().endsWith("$View"))
                     {
-                        Constructor<?> constructor = oclass.getDeclaredConstructor(ColonyView.class, ChunkCoordinates.class);
+                        Constructor<?> constructor = c.getDeclaredConstructor(ColonyView.class, ChunkCoordinates.class);
                         view = (View)constructor.newInstance(colony, loc);
+                        break;
                     }
                 }
             }

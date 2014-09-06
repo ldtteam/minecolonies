@@ -1,10 +1,7 @@
 package com.minecolonies.network;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.network.packets.AbstractPacket;
-import com.minecolonies.network.packets.BuildRequestPacket;
-import com.minecolonies.network.packets.OpenInventoryPacket;
-import com.minecolonies.network.packets.TownhallRenamePacket;
+import com.minecolonies.network.packets.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
@@ -22,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.PacketBuffer;
 
 import java.util.*;
 
@@ -40,6 +38,8 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
         registerPacket(TownhallRenamePacket.class);
         registerPacket(BuildRequestPacket.class);
         registerPacket(OpenInventoryPacket.class);
+        registerPacket(ColonyViewPacket.class);
+        registerPacket(ColonyBuildingViewPacket.class);
     }
 
     private EnumMap<Side, FMLEmbeddedChannel> channels;
@@ -89,7 +89,7 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
 
         byte discriminator = (byte) this.packets.indexOf(clazz);
         buffer.writeByte(discriminator);
-        msg.encodeInto(ctx, buffer);
+        msg.encodeInto(ctx, new PacketBuffer(buffer));
         FMLProxyPacket proxyPacket = new FMLProxyPacket(buffer.copy(), ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
         out.add(proxyPacket);
     }
@@ -107,7 +107,7 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
         }
 
         AbstractPacket pkt = clazz.newInstance();
-        pkt.decodeInto(ctx, payload.slice());
+        pkt.decodeInto(ctx, new PacketBuffer(payload.slice()));
 
         EntityPlayer player;
         switch(FMLCommonHandler.instance().getEffectiveSide())

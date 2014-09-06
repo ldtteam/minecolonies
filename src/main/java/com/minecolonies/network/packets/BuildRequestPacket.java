@@ -4,6 +4,7 @@ import com.minecolonies.tileentities.TileEntityHut;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.PacketBuffer;
 
 /**
  * Adds a entry to the builderRequired map
@@ -30,7 +31,7 @@ public class BuildRequestPacket extends AbstractPacket
     }
 
     @Override
-    public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer)
+    public void encodeInto(ChannelHandlerContext ctx, PacketBuffer buffer)
     {
         buffer.writeInt(x);
         buffer.writeInt(y);
@@ -39,7 +40,7 @@ public class BuildRequestPacket extends AbstractPacket
     }
 
     @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer)
+    public void decodeInto(ChannelHandlerContext ctx, PacketBuffer buffer)
     {
         x = buffer.readInt();
         y = buffer.readInt();
