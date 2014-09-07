@@ -1,4 +1,4 @@
-package com.minecolonies.network.packets;
+package com.minecolonies.network.messages;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;

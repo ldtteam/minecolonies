@@ -2,7 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.packets.BuildRequestMessage;
+import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;

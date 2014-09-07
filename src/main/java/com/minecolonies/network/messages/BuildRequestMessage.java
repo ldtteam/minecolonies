@@ -1,4 +1,4 @@
-package com.minecolonies.network.packets;
+package com.minecolonies.network.messages;
 
 import com.minecolonies.tileentities.TileEntityHut;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;

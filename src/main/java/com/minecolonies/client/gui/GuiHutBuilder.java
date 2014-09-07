@@ -1,7 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.network.packets.OpenInventoryMessage;
+import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
