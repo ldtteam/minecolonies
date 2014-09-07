@@ -17,8 +17,8 @@ import java.util.Map;
 
 public abstract class Building
 {
-    private final ChunkCoordinates      location;
-    private final WeakReference<Colony> colony;     //  WeakReference prevents circular references
+    private final ChunkCoordinates  location;
+    private final Colony            colony;
 
     private int buildingLevel = 0;
     private boolean isDirty = false;
@@ -26,6 +26,7 @@ public abstract class Building
     private static Map<String, Class<?>> nameToClassMap = new HashMap<String, Class<?>>();
     private static Map<Class<?>, String> classToNameMap = new HashMap<Class<?>, String>();
     private static Map<Class<?>, Class<?>> tileEntityClassToBuildingClassMap = new HashMap<Class<?>, Class<?>>();
+    private static Map<Integer, Class<?>> classNameHashToClassMap = new HashMap<Integer, Class<?>>();
 
     final static String TAG_TYPE     = "type";
     //final static String TAG_ID       = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
@@ -40,7 +41,7 @@ public abstract class Building
      */
     private static void addMapping(Class<?> c, Class<?> parentTE, String name)
     {
-        if (nameToClassMap.containsKey(name))
+        if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(c.getName().hashCode()))
         {
             throw new IllegalArgumentException("Duplicate type '" + name + "' when adding Building class mapping");
         }
@@ -52,6 +53,7 @@ public abstract class Building
                 {
                     nameToClassMap.put(name, c);
                     classToNameMap.put(c, name);
+                    classNameHashToClassMap.put(c.getName().hashCode(), c);
                 }
             }
             catch (NoSuchMethodException exception)
@@ -97,7 +99,7 @@ public abstract class Building
     protected Building(Colony c, ChunkCoordinates l)
     {
         location = new ChunkCoordinates(l);
-        colony = new WeakReference<Colony>(c);
+        colony = c;
     }
 
     /**
@@ -223,35 +225,22 @@ public abstract class Building
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
     }
 
+    public Colony getColony() { return colony; }
     public ChunkCoordinates getID() { return location; }    //  Location doubles as ID
     public ChunkCoordinates getLocation() { return location; }
-    //public Colony getColony() { return colony.get(); }
     public int getBuildingLevel() { return buildingLevel; }
-    public boolean getIsDirty() { return isDirty; }
 
+    public boolean getIsDirty() { return isDirty; }
     public void clearDirty() { isDirty = false; }
     public void markDirty()
     {
         isDirty = true;
-        Colony c = colony.get();
-        if (c != null)
-        {
-            c.markBuildingsDirty();
-        }
+        colony.markBuildingsDirty();
     }
 
-
-    public void update()
+    public void onDestroyed()
     {
-    }
-
-    public void onBuildingDestroyed()
-    {
-        Colony c = colony.get();
-        if (c != null)
-        {
-            c.removeBuilding(this);
-        }
+        colony.removeBuilding(this);
     }
 
     /**
@@ -261,20 +250,20 @@ public abstract class Building
      */
     public static class View
     {
-        private final WeakReference<ColonyView> colony;
-        private final ChunkCoordinates          location;
+        private final ColonyView       colony;
+        private final ChunkCoordinates location;
 
         private int buildingLevel = 0;
 
         protected View(ColonyView c, ChunkCoordinates l)
         {
-            colony = new WeakReference<ColonyView>(c);
+            colony = c;
             location = new ChunkCoordinates(l);
         }
 
-        public ChunkCoordinates getID(){ return location; }    //  Location doubles as ID
-        public ChunkCoordinates getLocation(){ return location; }
-        public ColonyView getColony(){ return colony.get(); }
+        public ChunkCoordinates getID() { return location; }    //  Location doubles as ID
+        public ChunkCoordinates getLocation() { return location; }
+        public ColonyView getColony() { return colony; }
         public int getBuildingLevel() { return buildingLevel; }
 
         public void parseNetworkData(NBTTagCompound compound)
@@ -287,9 +276,8 @@ public abstract class Building
     public void createViewNetworkData(NBTTagCompound compound)
     {
         //  TODO - Use a PacketBuffer
-        String s = classToNameMap.get(this.getClass());
-        compound.setString(TAG_TYPE, s);
-        //ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, location);
+        //String s = classToNameMap.get(this.getClass());
+        compound.setInteger(TAG_TYPE, this.getClass().getName().hashCode());
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
     }
 
@@ -301,29 +289,24 @@ public abstract class Building
      * @param compound The network data
      * @return
      */
-    public static View createBuildingView(ColonyView colony, NBTTagCompound compound)
+    public static View createBuildingView(ColonyView colony, ChunkCoordinates id, NBTTagCompound compound)
     {
         View view = null;
         Class<?> oclass = null;
 
         try
         {
-            oclass = nameToClassMap.get(compound.getString(TAG_TYPE));
+            int typeHash = compound.getInteger(TAG_TYPE);
+            oclass = classNameHashToClassMap.get(typeHash);
 
             if (oclass != null)
             {
-                //UUID id = UUID.fromString(compound.getString("id"));
-                ChunkCoordinates loc = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
-
-                //Method method = oclass.getMethod("createView", ColonyView.class, ChunkCoordinates.class);
-                //view = (Building.View)method.invoke(null, colony, loc);
-
                 for (Class<?> c : oclass.getDeclaredClasses())
                 {
                     if (c.getName().endsWith("$View"))
                     {
                         Constructor<?> constructor = c.getDeclaredConstructor(ColonyView.class, ChunkCoordinates.class);
-                        view = (View)constructor.newInstance(colony, loc);
+                        view = (View)constructor.newInstance(colony, id);
                         break;
                     }
                 }

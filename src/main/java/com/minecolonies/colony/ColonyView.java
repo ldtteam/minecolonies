@@ -5,6 +5,7 @@ import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -67,6 +68,7 @@ public class ColonyView
 
     public Set<UUID> getOwners() { return Collections.unmodifiableSet(owners); }
     public boolean isOwner(UUID o) { return owners.contains(o); }
+    public boolean isOwner(EntityPlayer player) { return owners.contains(player.getUniqueID()); }
     public void addOwner(UUID o) { owners.add(o); }
     public void removeOwner(UUID o) { owners.remove(o); }
 
@@ -145,14 +147,11 @@ public class ColonyView
             owners.add(UUID.fromString(owner));
         }
 
-        if (compound.hasKey(TAG_BUILDINGS_REMOVED))
+        NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS_REMOVED, NBT.TAG_COMPOUND);
+        for (int i = 0; i < buildingTagList.tagCount(); ++i)
         {
-            NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
-            for (int i = 0; i < buildingTagList.tagCount(); ++i)
-            {
-                ChunkCoordinates id = ChunkCoordUtils.readFromNBTTagList(buildingTagList, i);
-                buildings.remove(id);
-            }
+            ChunkCoordinates id = ChunkCoordUtils.readFromNBTTagList(buildingTagList, i);
+            buildings.remove(id);
         }
 
         return null;
@@ -165,9 +164,9 @@ public class ColonyView
      * @param compound
      * @return
      */
-    public IMessage handleColonyBuildingViewPacket(NBTTagCompound compound)
+    public IMessage handleColonyBuildingViewPacket(ChunkCoordinates buildingId, NBTTagCompound compound)
     {
-        Building.View b = Building.createBuildingView(this, compound);    //  At the moment we are re-using the save/load code
+        Building.View b = Building.createBuildingView(this, buildingId, compound);    //  At the moment we are re-using the save/load code
         if (b != null)
         {
             buildings.put(b.getLocation(), b);

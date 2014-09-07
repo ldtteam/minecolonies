@@ -13,4 +13,10 @@ public class FMLEventHandler
     {
         ColonyManager.onServerTick(event);
     }
+
+    @SubscribeEvent
+    public void onWorldTick(TickEvent.WorldTickEvent event)
+    {
+        ColonyManager.onWorldTick(event);
+    }
 }

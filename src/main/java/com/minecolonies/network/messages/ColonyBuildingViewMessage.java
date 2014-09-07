@@ -1,12 +1,14 @@
 package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChunkCoordinates;
 
 import java.util.UUID;
 
@@ -15,14 +17,16 @@ import java.util.UUID;
  */
 public class ColonyBuildingViewMessage implements IMessage
 {
-    private UUID           colonyId;
-    private NBTTagCompound building;
+    private UUID             colonyId;
+    private ChunkCoordinates buildingId;
+    private NBTTagCompound   building;
 
     public ColonyBuildingViewMessage(){}
 
-    public ColonyBuildingViewMessage(UUID colonyId, NBTTagCompound building)
+    public ColonyBuildingViewMessage(UUID colonyId, ChunkCoordinates buildingId, NBTTagCompound building)
     {
         this.colonyId = colonyId;
+        this.buildingId = buildingId;
         this.building = building;
     }
 
@@ -31,6 +35,7 @@ public class ColonyBuildingViewMessage implements IMessage
     {
         buf.writeLong(colonyId.getMostSignificantBits());
         buf.writeLong(colonyId.getLeastSignificantBits());
+        ChunkCoordUtils.writeToByteBuf(buf, buildingId);
         ByteBufUtils.writeTag(buf, building);
     }
 
@@ -38,6 +43,7 @@ public class ColonyBuildingViewMessage implements IMessage
     public void fromBytes(ByteBuf buf)
     {
         colonyId = new UUID(buf.readLong(), buf.readLong());
+        buildingId = ChunkCoordUtils.readFromByteBuf(buf);
         building = ByteBufUtils.readTag(buf);
     }
 
@@ -46,7 +52,7 @@ public class ColonyBuildingViewMessage implements IMessage
         @Override
         public IMessage onMessage(ColonyBuildingViewMessage message, MessageContext ctx)
         {
-            return ColonyManager.handleColonyBuildingViewPacket(message.colonyId, message.building);
+            return ColonyManager.handleColonyBuildingViewPacket(message.colonyId, message.buildingId, message.building);
         }
     }
 }

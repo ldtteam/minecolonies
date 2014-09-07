@@ -11,6 +11,7 @@ import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -196,12 +197,22 @@ public class Colony
     public void setName(String n)
     {
         name = n;
+        markDirty();
     }
 
     public Set<UUID> getOwners() { return Collections.unmodifiableSet(owners); }
     public boolean isOwner(UUID o) { return owners.contains(o); }
-    public void addOwner(UUID o) { owners.add(o); }
-    public void removeOwner(UUID o) { owners.remove(o); }
+    public boolean isOwner(EntityPlayer player) { return owners.contains(player.getUniqueID()); }
+    public void addOwner(UUID o)
+    {
+        owners.add(o);
+        markDirty();
+    }
+    public void removeOwner(UUID o)
+    {
+        owners.remove(o);
+        markDirty();
+    }
 
     public int getMaxCitizens() { return maxCitizens; }
     //public void setMaxCitizens();
@@ -231,18 +242,25 @@ public class Colony
      */
     public boolean isCoordInColony(World w, ChunkCoordinates coord)
     {
+        return isCoordInColony(w, coord.posX, coord.posY, coord.posZ);
+    }
+
+    public boolean isCoordInColony(World w, int x, int y, int z)
+    {
+        //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w == world.get() &&
-                center.getDistanceSquaredToChunkCoordinates(coord) <= Utils.square(Configurations.workingRangeTownhall);
+                center.getDistanceSquared(x, center.posY, z) <= Utils.square(Configurations.workingRangeTownhall);
     }
 
     public float getDistanceSquared(ChunkCoordinates coord)
     {
-        return center.getDistanceSquaredToChunkCoordinates(coord);
+        return getDistanceSquared(coord.posX, coord.posY, coord.posZ);
     }
 
     public float getDistanceSquared(int posX, int posY, int posZ)
     {
-        return center.getDistanceSquared(posX, posY, posZ);
+        //  Perform a 2D distance calculation, so pass center.posY as the Y
+        return center.getDistanceSquared(posX, center.posY, posZ);
     }
 
     /**
@@ -300,9 +318,23 @@ public class Colony
                 if (o instanceof EntityPlayerMP)
                 {
                     EntityPlayerMP player = (EntityPlayerMP)o;
-                    double distance = player.getDistanceSq(center.posX, center.posY, center.posZ);
-                    if (distance <= Utils.square(Configurations.workingRangeTownhall + 16))  //   16 beyond max Hut block distance, so it is loaded at interactive distance
+
+                    if (subscribers.contains(player))
                     {
+                        //  Already a subscriber
+                        continue;
+                    }
+
+                    double distance = player.getDistanceSq(center.posX, center.posY, center.posZ);
+                    if (distance < Utils.square(Configurations.workingRangeTownhall + 16))
+                    {
+                        //  Players become subscribers if they come within 16 blocks of the edge of the colony
+                        subscribers.add(player);
+                    }
+                    else if (oldSubscribers.contains(player) &&
+                            distance < Utils.square(Configurations.workingRangeTownhall * 2))
+                    {
+                        //  Players remain subscribers while they remain within double the colony's radius
                         subscribers.add(player);
                     }
                 }
@@ -328,7 +360,7 @@ public class Colony
                     {
                         NBTTagCompound compound = new NBTTagCompound();
                         b.createViewNetworkData(compound);
-                        MineColonies.network.sendTo(new ColonyBuildingViewMessage(id, compound), player);
+                        MineColonies.network.sendTo(new ColonyBuildingViewMessage(id, b.getID(), compound), player);
                     }
                 }
             }

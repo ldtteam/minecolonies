@@ -2,7 +2,9 @@ package com.minecolonies.event;
 
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.blocks.ModBlocks;
+import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityHut;
@@ -29,6 +31,21 @@ public class EventHandler
 
         if(!world.isRemote && event.block instanceof BlockHut)
         {
+            Building building = ColonyManager.getBuilding(world, event.x, event.y, event.z);
+            if (building == null)
+            {
+                return;
+            }
+
+            if (!building.getColony().isOwner(event.getPlayer()))
+            {
+                event.setCanceled(true);
+                return;
+            }
+
+            building.onDestroyed();
+
+            //  OLD CODE
             TileEntityHut hut = (TileEntityHut) world.getTileEntity(event.x, event.y, event.z);
             EntityPlayer player = event.getPlayer();
 
@@ -53,6 +70,7 @@ public class EventHandler
             {
                 event.setCanceled(true);
             }
+            //  END OLD CODE
         }
     }
 

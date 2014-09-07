@@ -86,10 +86,11 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                     throw new NullPointerException("TownHall placed in existing colony");
                 }
 
+                String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
                 colony = ColonyManager.createColony(world, hut.getPosition());
+                colony.setName(colonyName);
                 colony.addOwner(player.getUniqueID());
-                colony.setName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName()));
-                //  TODO: Player Properties
+                //  TODO: Player Properties ???
             }
             else
             {

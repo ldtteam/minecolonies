@@ -70,16 +70,20 @@ public class ColonyManager {
      * @param coord
      * @return
      */
-    public static Colony getColonyByCoord(
-            World w,
-            ChunkCoordinates coord)
+    public static Colony getColonyByCoord(World w, ChunkCoordinates coord)
+    {
+        return getColonyByCoord(w, coord.posX, coord.posY, coord.posZ);
+    }
+
+
+    public static Colony getColonyByCoord(World w, int x, int y, int z)
     {
         List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.dimensionId);
         if (coloniesInWorld == null) return null;
 
         for (Colony c : coloniesInWorld)
         {
-            if (c.isCoordInColony(w, coord)) return c;
+            if (c.isCoordInColony(w, x, y, z)) return c;
         }
 
         return null;
@@ -128,6 +132,70 @@ public class ColonyManager {
         }
 
         return closestColony;
+    }
+
+    /**
+     * Get a Building by a World and coordinates
+     *
+     * @param w
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public static Building getBuilding(World w, int x, int y, int z)
+    {
+        ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
+        Colony colony = getColonyByCoord(w, coords);
+        if (colony != null)
+        {
+            Building building = colony.getBuilding(coords);
+            if (building != null)
+            {
+                return building;
+            }
+        }
+
+        //  Fallback - there might be a Building for this block, but it's outside of it's owning colony's radius
+        if (coloniesByWorld.containsKey(w.provider.dimensionId))
+        {
+            for (Colony otherColony : coloniesByWorld.get(w.provider.dimensionId))
+            {
+                Building building = otherColony.getBuilding(coords);
+                if (building != null)
+                {
+                    return building;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Get a Building by a World and coordinates
+     *
+     * @param w
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public static Building.View getBuildingView(World w, int x, int y, int z)
+    {
+        //  On client we will just check all known views
+        ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
+        for (ColonyView colony : colonyViews.values())
+        {
+            Building.View building = colony.getBuilding(coords);
+            if (building != null)
+            {
+                return building;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -386,12 +454,12 @@ public class ColonyManager {
      * @param colonyId The ID of the colony
      * @param buildingData The building data, or null if it was removed
      */
-    static public IMessage handleColonyBuildingViewPacket(UUID colonyId, NBTTagCompound buildingData)
+    static public IMessage handleColonyBuildingViewPacket(UUID colonyId, ChunkCoordinates buildingId, NBTTagCompound buildingData)
     {
         ColonyView view = getColonyViewById(colonyId);
         if (view != null)
         {
-            return view.handleColonyBuildingViewPacket(buildingData);
+            return view.handleColonyBuildingViewPacket(buildingId, buildingData);
         }
         else
         {
