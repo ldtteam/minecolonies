@@ -2,7 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.network.packets.OpenInventoryPacket;
+import com.minecolonies.network.packets.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,7 +48,7 @@ public class GuiEntityCitizen extends GuiBase
         switch(guiButton.id)
         {
             case BUTTON_INVENTORY:
-                MineColonies.packetPipeline.sendToServer(new OpenInventoryPacket(citizen.getInventory(), citizen.getCustomNameTag(), citizen.getEntityId()));
+                MineColonies.network.sendToServer(new OpenInventoryMessage(citizen.getInventory(), citizen.getCustomNameTag(), citizen.getEntityId()));
                 break;
         }
     }

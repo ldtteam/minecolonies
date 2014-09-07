@@ -5,8 +5,8 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.packets.ColonyBuildingViewPacket;
-import com.minecolonies.network.packets.ColonyViewPacket;
+import com.minecolonies.network.messages.ColonyBuildingViewMessage;
+import com.minecolonies.network.messages.ColonyViewMessage;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
@@ -317,7 +317,7 @@ public class Colony
             {
                 NBTTagCompound compound = new NBTTagCompound();
                 ColonyView.createNetworkData(this, compound);
-                MineColonies.packetPipeline.sendTo(new ColonyViewPacket(id, compound), player);
+                MineColonies.network.sendTo(new ColonyViewMessage(id, compound), player);
             }
 
             if (isNewSubscriber || isBuildingsDirty)
@@ -328,7 +328,7 @@ public class Colony
                     {
                         NBTTagCompound compound = new NBTTagCompound();
                         b.createViewNetworkData(compound);
-                        MineColonies.packetPipeline.sendTo(new ColonyBuildingViewPacket(id, compound), player);
+                        MineColonies.network.sendTo(new ColonyBuildingViewMessage(id, compound), player);
                     }
                 }
             }

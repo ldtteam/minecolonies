@@ -4,7 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.lib.EnumGUI;
-import com.minecolonies.network.packets.BuildRequestPacket;
+import com.minecolonies.network.packets.BuildRequestMessage;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -112,10 +112,10 @@ public class GuiTownHall extends GuiBase
         switch(guiButton.id)
         {
             case BUTTON_BUILD:
-                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.BUILD));
+                MineColonies.network.sendToServer(new BuildRequestMessage(x, y, z, BuildRequestMessage.BUILD));
                 break;
             case BUTTON_REPAIR:
-                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.REPAIR));
+                MineColonies.network.sendToServer(new BuildRequestMessage(x, y, z, BuildRequestMessage.REPAIR));
                 break;
             case BUTTON_RECALL:
                 break;

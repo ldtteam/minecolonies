@@ -4,6 +4,7 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.ChunkCoordUtils;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -126,7 +127,7 @@ public class ColonyView
      *
      * @param compound
      */
-    public void handleColonyViewPacket(NBTTagCompound compound)
+    public IMessage handleColonyViewPacket(NBTTagCompound compound)
     {
         //  General Attributes
         name = compound.getString(TAG_NAME);
@@ -153,6 +154,8 @@ public class ColonyView
                 buildings.remove(id);
             }
         }
+
+        return null;
     }
 
     /**
@@ -162,12 +165,14 @@ public class ColonyView
      * @param compound
      * @return
      */
-    public void handleColonyBuildingViewPacket(NBTTagCompound compound)
+    public IMessage handleColonyBuildingViewPacket(NBTTagCompound compound)
     {
         Building.View b = Building.createBuildingView(this, compound);    //  At the moment we are re-using the save/load code
         if (b != null)
         {
             buildings.put(b.getLocation(), b);
         }
+
+        return null;
     }
 }

@@ -2,6 +2,7 @@ package com.minecolonies.colony;
 
 import com.minecolonies.colony.buildings.Building;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -367,7 +368,7 @@ public class ColonyManager {
      * @param colonyId
      * @param colonyData
      */
-    static public void handleColonyViewPacket(UUID colonyId, NBTTagCompound colonyData)
+    static public IMessage handleColonyViewPacket(UUID colonyId, NBTTagCompound colonyData)
     {
         ColonyView view = getColonyViewById(colonyId);
         if (view == null)
@@ -377,7 +378,7 @@ public class ColonyManager {
             colonyViews.put(colonyId, view);
         }
 
-        view.handleColonyViewPacket(colonyData);
+        return view.handleColonyViewPacket(colonyData);
     }
 
     /**
@@ -385,16 +386,17 @@ public class ColonyManager {
      * @param colonyId The ID of the colony
      * @param buildingData The building data, or null if it was removed
      */
-    static public void handleColonyBuildingViewPacket(UUID colonyId, NBTTagCompound buildingData)
+    static public IMessage handleColonyBuildingViewPacket(UUID colonyId, NBTTagCompound buildingData)
     {
         ColonyView view = getColonyViewById(colonyId);
         if (view != null)
         {
-            view.handleColonyBuildingViewPacket(buildingData);
+            return view.handleColonyBuildingViewPacket(buildingData);
         }
         else
         {
             //  TODO - Log this.  We should have the colony
+            return null;
         }
     }
 }

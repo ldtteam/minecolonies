@@ -2,7 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.packets.BuildRequestPacket;
+import com.minecolonies.network.packets.BuildRequestMessage;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -163,10 +163,10 @@ public abstract class GuiBase extends GuiScreen
                 //TODO recall
                 break;
             case BUTTON_BUILD:
-                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.BUILD));
+                MineColonies.network.sendToServer(new BuildRequestMessage(x, y, z, BuildRequestMessage.BUILD));
                 break;
             case BUTTON_REPAIR:
-                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.REPAIR));
+                MineColonies.network.sendToServer(new BuildRequestMessage(x, y, z, BuildRequestMessage.REPAIR));
                 break;
         }
     }

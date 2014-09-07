@@ -1,6 +1,9 @@
 package com.minecolonies.blocks;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
@@ -66,16 +69,31 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
             EntityPlayer player = (EntityPlayer) entityLivingBase;
             TileEntityHut hut = (TileEntityHut) tileEntity;
 
+            Colony colony = ColonyManager.getColonyByCoord(world, hut.getPosition());
+
             if(hut instanceof TileEntityTownHall)
             {
+                //  OLD CODE
                 TileEntityTownHall townhall = (TileEntityTownHall) hut;
                 townhall.onBlockAdded();
                 townhall.addOwner(player.getUniqueID());
                 townhall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName()));
                 PlayerProperties.get(player).placeTownhall(x, y, z);
+                //  END OLD CODE
+
+                if (colony != null)
+                {
+                    throw new NullPointerException("TownHall placed in existing colony");
+                }
+
+                colony = ColonyManager.createColony(world, hut.getPosition());
+                colony.addOwner(player.getUniqueID());
+                colony.setName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName()));
+                //  TODO: Player Properties
             }
             else
             {
+                //  OLD CODE
                 TileEntityTownHall townhall = Utils.getTownhallByOwner(world, player);
 
                 hut.setTownHall(townhall);
@@ -85,7 +103,17 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 {
                     ((TileEntityHutWorker) hut).addJoblessCitizens(townhall);
                 }
+                //  END OLD CODE
             }
+
+
+            if (colony == null)
+            {
+                throw new NullPointerException("No colony to place block");
+            }
+
+            //hut.setColony(colony);
+            colony.addNewBuilding(hut);
         }
     }
 
