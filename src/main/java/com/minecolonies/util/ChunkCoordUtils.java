@@ -3,6 +3,7 @@ package com.minecolonies.util;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
@@ -48,6 +49,21 @@ public class ChunkCoordUtils
         int x = coordsCompound.getInteger("x");
         int y = coordsCompound.getInteger("y");
         int z = coordsCompound.getInteger("z");
+        return new ChunkCoordinates(x, y, z);
+    }
+
+    public static void writeToByteBuf(ByteBuf buf, ChunkCoordinates coords)
+    {
+        buf.writeInt(coords.posX);
+        buf.writeInt(coords.posY);
+        buf.writeInt(coords.posZ);
+    }
+
+    public static ChunkCoordinates readFromByteBuf(ByteBuf buf)
+    {
+        int x = buf.readInt();
+        int y = buf.readInt();
+        int z = buf.readInt();
         return new ChunkCoordinates(x, y, z);
     }
 

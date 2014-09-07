@@ -56,9 +56,7 @@ public class OpenInventoryMessage implements IMessage
         {
             buf.writeInt(INVENTORY_CHEST);
             ByteBufUtils.writeUTF8String(buf, name);
-            NBTTagCompound compound = new NBTTagCompound();
-            ChunkCoordUtils.writeToNBT(compound, "pos", tePos);
-            ByteBufUtils.writeTag(buf, compound);
+            ChunkCoordUtils.writeToByteBuf(buf, tePos);
         }
         else
         {
@@ -78,8 +76,7 @@ public class OpenInventoryMessage implements IMessage
                 break;
             case INVENTORY_CHEST:
                 name = ByteBufUtils.readUTF8String(buf);
-                NBTTagCompound compound = ByteBufUtils.readTag(buf);
-                tePos = ChunkCoordUtils.readFromNBT(compound, "pos");
+                tePos = ChunkCoordUtils.readFromByteBuf(buf);
                 break;
         }
     }
