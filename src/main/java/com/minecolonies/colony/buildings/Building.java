@@ -77,17 +77,16 @@ public abstract class Building
      */
     public static void init()
     {
-        //addMapping(BuildingBaker.class, "Baker");
-        //addMaping(BuildingBlacksmith.class, "Blacksmith");
+        addMapping(BuildingBaker.class, TileEntityHutBaker.class, "Baker");
+        addMapping(BuildingBlacksmith.class, TileEntityHutBlacksmith.class, "Blacksmith");
         addMapping(BuildingBuilder.class, TileEntityHutBuilder.class, "Builder");
-        //addMapping(BuildingCitizen.class, "Citizen");
-        //addMapping(BuildingFarmer.class, "Farmer");
-        //addMapping(BuildingLumberjack.class, "Lumberjack");
-        //addMapping(BuildingMiner.class, "Miner");
-        //addMapping(BuildingStonemason.class, "Stonemason");
+        addMapping(BuildingCitizen.class, TileEntityHutCitizen.class, "Citizen");
+        addMapping(BuildingFarmer.class, TileEntityHutFarmer.class, "Farmer");
+        addMapping(BuildingLumberjack.class, TileEntityHutLumberjack.class, "Lumberjack");
+        addMapping(BuildingMiner.class, TileEntityHutMiner.class, "Miner");
+        addMapping(BuildingStonemason.class, TileEntityHutStonemason.class, "Stonemason");
         addMapping(BuildingTownHall.class, TileEntityTownHall.class, "Townhall");
-        //addMapping(BuildingWarehouse.class, "Warehouse");
-        //addMapping(BuildingWorker.class, "Worker");
+        addMapping(BuildingWarehouse.class, TileEntityHutWarehouse.class, "Warehouse");
     }
 
     /**

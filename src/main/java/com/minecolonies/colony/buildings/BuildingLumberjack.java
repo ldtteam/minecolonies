@@ -4,9 +4,9 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import net.minecraft.util.ChunkCoordinates;
 
-public class BuildingBuilder extends BuildingWorker
+public class BuildingLumberjack extends BuildingWorker
 {
-    public BuildingBuilder(Colony c, ChunkCoordinates l)
+    public BuildingLumberjack(Colony c, ChunkCoordinates l)
     {
         super(c, l);
     }
