@@ -1,6 +1,11 @@
 package com.minecolonies.entity;
 
 import com.minecolonies.client.gui.GuiEntityCitizen;
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingHome;
+import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
@@ -33,7 +38,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static net.minecraftforge.common.util.Constants.NBT;
 
@@ -46,6 +53,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public  ResourceLocation texture;
     private String           job;
     private InventoryCitizen inventory;
+
+    private UUID                  colonyId;
+    private WeakReference<Colony> colony;
+
+    private ChunkCoordinates            homeBuildingId;
+    private WeakReference<BuildingHome> homeBuilding;
+
+    private ChunkCoordinates              workBuildingId;
+    private WeakReference<BuildingWorker> workBuilding;
 
     private TileEntityTownHall   tileEntityTownHall;
     private ChunkCoordinates     townPos;
@@ -110,9 +126,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void setTexture()
     {
         String textureBase = "textures/entity/";
-        if(this.getJob().equals("Citizen"))
+        if (this.getJob().equals("Citizen"))
         {
-            switch(getLevel())
+            switch (getLevel())
             {
                 case 0:
                     textureBase += "Settler";
@@ -173,6 +189,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         this.setTexture();
         updateTileEntities();
+        updateColony();
         super.onLivingUpdate();
     }
 
@@ -189,6 +206,35 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if(tileEntityHomeHut == null && homePos != null)
         {
             tileEntityHomeHut = (TileEntityHutCitizen) ChunkCoordUtils.getTileEntity(worldObj, homePos);
+        }
+    }
+
+    private void updateColony()
+    {
+        if (colony == null && colonyId != null)
+        {
+            Colony c = ColonyManager.getColonyById(colonyId);
+            colony = new WeakReference<Colony>(c);
+            if (c != null)
+            {
+                c.registerCitizen(this);
+            }
+        }
+
+        if (homeBuilding == null && homeBuildingId != null)
+        {
+            Colony c = colony.get();
+            Building b = (c != null) ? c.getBuilding(homeBuildingId) : null;
+            BuildingHome bCitizen = (b instanceof BuildingHome) ? (BuildingHome)b : null;
+            homeBuilding = new WeakReference<BuildingHome>(bCitizen);
+        }
+
+        if (workBuilding == null && workBuildingId != null && colony != null)
+        {
+            Colony c = colony.get();
+            Building b = (c != null) ? c.getBuilding(workBuildingId) : null;
+            BuildingWorker bWorker = (b instanceof BuildingWorker) ? (BuildingWorker)b : null;
+            workBuilding = new WeakReference<BuildingWorker>(bWorker);
         }
     }
 
@@ -218,19 +264,40 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onDeath(DamageSource par1DamageSource)
     {
-        if(this.getTownHall() != null && this.getTownHall().getCitizens().contains(this.getUniqueID()))
+        //  OLD CODE
+        if (this.getTownHall() != null && this.getTownHall().getCitizens().contains(this.getUniqueID()))
         {
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, tileEntityTownHall.getOwners()), "tile.blockHutTownhall.messageColonistDead");
 
             tileEntityTownHall.removeCitizen(this);
         }
-        if(this.getHomeHut() != null)
+        if (this.getHomeHut() != null)
         {
             this.getHomeHut().removeCitizen(this);
         }
-        if(this.getWorkHut() != null)
+        if (this.getWorkHut() != null)
         {
             this.getWorkHut().unbindWorker(this);
+        }
+        //  END OLD CODE
+
+        Colony c = (colony != null) ? colony.get() : null;
+        if (c != null)
+        {
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, new ArrayList<UUID>(c.getOwners())), "tile.blockHutTownhall.messageColonistDead");
+            c.removeCitizen(this);
+        }
+
+        BuildingHome bCitizen = (homeBuilding != null) ? homeBuilding.get() : null;
+        if (bCitizen != null)
+        {
+            bCitizen.removeCitizen(this);
+        }
+
+        BuildingWorker bWorker = (workBuilding != null) ? workBuilding.get() : null;
+        if (bWorker != null)
+        {
+            bWorker.unbindWorker(this);
         }
 
         super.onDeath(par1DamageSource);
@@ -307,6 +374,40 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tileEntityWorkHut = work;
     }
 
+    public Colony getColony() { return (colony != null) ? colony.get() : null; }
+    public void setColony(Colony c)
+    {
+        colony = new WeakReference<Colony>(c);
+        colonyId = (c != null) ? c.getID() : null;
+
+        if (c != null)
+        {
+            c.registerCitizen(this);
+        }
+    }
+
+    public BuildingHome getHomeBuilding()
+    {
+        return homeBuilding.get();
+    }
+
+    public void setHomeBuilding(BuildingHome b)
+    {
+        homeBuilding = new WeakReference<BuildingHome>(b);
+        homeBuildingId = (b != null) ? b.getID() : null;
+    }
+
+    public BuildingWorker getWorkBuilding()
+    {
+        return workBuilding.get();
+    }
+
+    public void setWorkBuilding(BuildingWorker b)
+    {
+        workBuilding = new WeakReference<BuildingWorker>(b);
+        workBuildingId = (b != null) ? b.getID() : null;
+    }
+
     public Status getStatus()
     {
         return status;
@@ -340,22 +441,36 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         nbtTagSkillsCompound.setInteger("charisma", charisma);
         compound.setTag("skills", nbtTagSkillsCompound);
 
-        if(tileEntityTownHall != null)
+        if (tileEntityTownHall != null)
         {
             ChunkCoordUtils.writeToNBT(compound, "townhall", tileEntityTownHall.getPosition());
         }
-        if(tileEntityWorkHut != null)
+        if (tileEntityWorkHut != null)
         {
             ChunkCoordUtils.writeToNBT(compound, "workhut", tileEntityWorkHut.getPosition());
         }
-        if(tileEntityHomeHut != null)
+        if (tileEntityHomeHut != null)
         {
             ChunkCoordUtils.writeToNBT(compound, "homehut", tileEntityHomeHut.getPosition());
         }
-        NBTTagList inventoryList = new NBTTagList();
-        for(int i = 0; i < inventory.getSizeInventory(); i++)
+
+        if (colonyId != null)
         {
-            if(inventory.getStackInSlot(i) != null)
+            compound.setString("colony", colonyId.toString());
+        }
+        if (homeBuildingId != null)
+        {
+            ChunkCoordUtils.writeToNBT(compound, "homebuilding", homeBuildingId);
+        }
+        if (workBuildingId != null)
+        {
+            ChunkCoordUtils.writeToNBT(compound, "workbuilding", workBuildingId);
+        }
+
+        NBTTagList inventoryList = new NBTTagList();
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            if (inventory.getStackInSlot(i) != null)
             {
                 NBTTagCompound tag = new NBTTagCompound();
                 tag.setInteger("slot", i);
@@ -386,20 +501,36 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         intelligence = nbtTagSkillsCompound.getInteger("intelligence");
         charisma = nbtTagSkillsCompound.getInteger("charisma");
 
-        if(compound.hasKey("townhall"))
+        //  OLD CODE
+        if (compound.hasKey("townhall"))
         {
             townPos = ChunkCoordUtils.readFromNBT(compound, "townhall");
         }
-        if(compound.hasKey("workhut"))
+        if (compound.hasKey("workhut"))
         {
             workPos = ChunkCoordUtils.readFromNBT(compound, "workhut");
         }
-        if(compound.hasKey("homehut"))
+        if (compound.hasKey("homehut"))
         {
             homePos = ChunkCoordUtils.readFromNBT(compound, "homehut");
         }
+        //  END OLD CODE
+
+        if (compound.hasKey("colony"))
+        {
+            colonyId = UUID.fromString(compound.getString("colony"));
+        }
+        if (compound.hasKey("homebuilding"))
+        {
+            homeBuildingId = ChunkCoordUtils.readFromNBT(compound, "homebuilding");
+        }
+        if (compound.hasKey("workbuilding"))
+        {
+            workBuildingId = ChunkCoordUtils.readFromNBT(compound, "workbuilding");
+        }
+
         NBTTagList nbttaglist = compound.getTagList("Inventory", NBT.TAG_COMPOUND);
-        for(int i = 0; i < nbttaglist.tagCount(); i++)
+        for (int i = 0; i < nbttaglist.tagCount(); i++)
         {
             NBTTagCompound tag = nbttaglist.getCompoundTagAt(i);
             int slot = tag.getInteger("slot");
@@ -426,11 +557,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     protected void dropEquipment(boolean par1, int par2)
     {
-        for(int i = 0; i < getLastActiveItems().length; i++) setCurrentItemOrArmor(i, null);
-        for(int i = 0; i < inventory.getSizeInventory(); i++)
+        for (int i = 0; i < getLastActiveItems().length; i++) setCurrentItemOrArmor(i, null);
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack itemstack = inventory.getStackInSlot(i);
-            if(itemstack != null && itemstack.stackSize > 0)
+            if (itemstack != null && itemstack.stackSize > 0)
             {
                 entityDropItem(itemstack);
             }
@@ -453,29 +584,29 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public void setInventorySize(int newSize, boolean dropLeftovers)
     {
-        if(!worldObj.isRemote)
+        if (!worldObj.isRemote)
         {
             InventoryCitizen newInventory = new InventoryCitizen(inventory.getInventoryName(), inventory.hasCustomInventoryName(), newSize);
             ArrayList<ItemStack> leftovers = new ArrayList<ItemStack>();
-            for(int i = 0; i < inventory.getSizeInventory(); i++)
+            for (int i = 0; i < inventory.getSizeInventory(); i++)
             {
                 ItemStack itemstack = inventory.getStackInSlot(i);
-                if(i < newInventory.getSizeInventory())
+                if (i < newInventory.getSizeInventory())
                 {
                     newInventory.setInventorySlotContents(i, itemstack);
                 }
                 else
                 {
-                    if(itemstack != null) leftovers.add(itemstack);
+                    if (itemstack != null) leftovers.add(itemstack);
                 }
             }
             inventory = newInventory;
             inventory.addIInvBasic(this);
-            if(dropLeftovers)
+            if (dropLeftovers)
             {
-                for(ItemStack leftover : leftovers)
+                for (ItemStack leftover : leftovers)
                 {
-                    if(leftover.stackSize > 0)
+                    if (leftover.stackSize > 0)
                     {
                         entityDropItem(leftover);
                     }

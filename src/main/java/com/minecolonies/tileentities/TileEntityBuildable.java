@@ -1,5 +1,8 @@
 package com.minecolonies.tileentities;
 
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.lib.IColony;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Schematic;
@@ -9,27 +12,49 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
 
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 public abstract class TileEntityBuildable extends TileEntityChest implements IColony
 {
-    private int                buildingLevel;
+    //  OLD CODE
+    private int buildingLevel = 0;
     private TileEntityTownHall townhall;
-    private ChunkCoordinates               townhallPos;
+    private ChunkCoordinates   townhallPos;
+    //  END OLD CODE
 
-    public TileEntityBuildable()
-    {
-        this.buildingLevel = 0;
-    }
+    private UUID                    colonyId;
+    private WeakReference<Building> building;
+
+    public TileEntityBuildable(){}
 
     @Override
     public void updateEntity()
     {
-        if(worldObj.isRemote) return;
+        if (worldObj.isRemote) return;
 
-        if(townhall == null && townhallPos != null)
+        //  OLD CODE
+        if (townhall == null && townhallPos != null)
         {
             townhall = (TileEntityTownHall) ChunkCoordUtils.getTileEntity(worldObj, townhallPos);
+        }
+        //  END OLD CODE
+
+//        if (colony == null && colonyId != null)
+//        {
+//            colony = ColonyManager.getColonyById(colonyId);
+//        }
+//
+//        if (building == null && colony != null)
+//        {
+//            building = colony.getBuilding(this.getPosition());
+//        }
+
+        if (building == null)
+        {
+            Colony c = ColonyManager.getColonyById(colonyId);
+            Building b = (c != null) ? c.getBuilding(getPosition()) : null;
+            building = new WeakReference<Building>(b);
         }
     }
 
@@ -37,12 +62,15 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
+
+        //  OLD CODE
         this.buildingLevel = compound.getInteger("buildingLevel");
 
         if(compound.hasKey("townhall"))
         {
             townhallPos = ChunkCoordUtils.readFromNBT(compound, "townhall");
         }
+        //  END OLD CODE
     }
 
     @Override
@@ -56,11 +84,12 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
         }
     }
 
+    public Building getBuilding() { return building.get(); }
+
     public int getBuildingLevel()
     {
         return buildingLevel;
     }
-
     public void setBuildingLevel(int buildingLevel)
     {
         this.buildingLevel = buildingLevel;
@@ -70,7 +99,6 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
     {
         return townhall;
     }
-
     public void setTownHall(TileEntityTownHall townhall)
     {
         this.townhall = townhall;
@@ -104,15 +132,24 @@ public abstract class TileEntityBuildable extends TileEntityChest implements ICo
 
     public boolean isPlayerOwner(EntityPlayer player)
     {
-        if(this.getTownHall() == null || this.getTownHall().getOwners().isEmpty()) return true;
-        for(UUID id : this.getTownHall().getOwners())
-        {
-            if(player.getUniqueID().equals(id))
-            {
-                return true;
-            }
-        }
-        return false;
+        if(building == null) return true;
+
+        Building b = building.get();
+        if (b == null) return true;
+
+        return b.getColony().isOwner(player);
+
+        //  OLD CODE
+//        if(this.getTownHall() == null || this.getTownHall().getOwners().isEmpty()) return true;
+//        for(UUID id : this.getTownHall().getOwners())
+//        {
+//            if(player.getUniqueID().equals(id))
+//            {
+//                return true;
+//            }
+//        }
+//        return false;
+        //  END OLD CODE
     }
 
     public ChunkCoordinates getPosition()

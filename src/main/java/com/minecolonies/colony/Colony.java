@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.ColonyBuildingViewMessage;
 import com.minecolonies.network.messages.ColonyViewMessage;
@@ -49,7 +50,7 @@ public class Colony
 
     //  Citizenry
     private int       maxCitizens = Constants.DEFAULTMAXCITIZENS;
-    private Set<UUID> citizens    = new HashSet<UUID>();
+    private Map<UUID, WeakReference<EntityCitizen>> citizens    = new HashMap<UUID, WeakReference<EntityCitizen>>();
 
     final static String TAG_ID           = "id";
     final static String TAG_NAME         = "name";
@@ -137,7 +138,7 @@ public class Colony
         for (int i = 0; i < citizenTagList.tagCount(); ++i)
         {
             String owner = citizenTagList.getStringTagAt(i);
-            citizens.add(UUID.fromString(owner));
+            citizens.put(UUID.fromString(owner), null);
         }
     }
 
@@ -178,7 +179,7 @@ public class Colony
 
         //  Citizens
         NBTTagList citizenTagList = new NBTTagList();
-        for (UUID citizen : citizens)
+        for (UUID citizen : citizens.keySet())
         {
             citizenTagList.appendTag(new NBTTagString(citizen.toString()));
         }
@@ -214,25 +215,10 @@ public class Colony
         markDirty();
     }
 
-    public int getMaxCitizens() { return maxCitizens; }
-    //public void setMaxCitizens();
-
-    public Set<UUID> getCitizens() { return Collections.unmodifiableSet(citizens); }
-    public boolean isCitizen(UUID c) { return citizens.contains(c); }
-
     public ChunkCoordinates getCenter() { return center; }
 
     private void markDirty() { isDirty = true; }
     public void markBuildingsDirty() { isBuildingsDirty = true; }
-
-    /**
-     * Get citizen in Colony by ID
-     * @param citizenId
-     * @return
-     */
-    //public String getCitizen(UUID citizenId) {
-    //    return citizens.get(citizenId);
-    //}
 
     /**
      * Determine if a given chunk coordinate is considered to be within the colony's bounds
@@ -288,6 +274,11 @@ public class Colony
      */
     public void onServerTick(TickEvent.ServerTickEvent event)
     {
+        for (Building b : buildings.values())
+        {
+            b.onServerTick(event);
+        }
+
         if (event.phase != TickEvent.Phase.END)
         {
             return;
@@ -391,7 +382,17 @@ public class Colony
      */
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
+        for (Building b : buildings.values())
+        {
+            b.onWorldTick(event);
+        }
     }
+
+    /*
+     *
+     * BUILDINGS
+     *
+     */
 
     public Map<ChunkCoordinates, Building> getBuildings()
     {
@@ -454,4 +455,66 @@ public class Colony
             markDirty();
         }
     }
+
+    /*
+     *
+     * CITIZENS
+     *
+     */
+
+    public int getMaxCitizens() { return maxCitizens; }
+    //public void setMaxCitizens();
+
+    public Set<UUID> getCitizens() { return Collections.unmodifiableSet(citizens.keySet()); }
+
+    public List<EntityCitizen> getActiveCitizens()
+    {
+        List<EntityCitizen> activeCitizens = new ArrayList<EntityCitizen>();
+
+        for (WeakReference<EntityCitizen> citizen : citizens.values())
+        {
+            EntityCitizen actualCitizen = (citizen != null) ? citizen.get() : null;
+            if (actualCitizen != null)
+            {
+                activeCitizens.add(actualCitizen);
+            }
+        }
+
+        return activeCitizens;
+    }
+
+    public boolean isCitizen(UUID c) { return citizens.containsKey(c); }
+
+    public void registerCitizen(EntityCitizen citizen)
+    {
+        citizens.put(citizen.getUniqueID(), new WeakReference<EntityCitizen>(citizen));
+    }
+
+    public void removeCitizen(EntityCitizen citizen)
+    {
+        citizens.remove(citizen.getUniqueID());
+    }
+
+    /**
+     * Get citizen in Colony by ID
+     * @param citizenId
+     * @return
+     */
+    public EntityCitizen getCitizen(UUID citizenId)
+    {
+        //  UNIMPLEMENTED
+        return null;    //citizens.get(citizenId);
+    }
+
+    /**
+     * Get an idle citizen
+     *
+     * @return Citizen with no current job
+     */
+    public EntityCitizen getIdleCitizen()
+    {
+        //  UNIMPLEMENTED
+        return null;
+    }
+
 }

@@ -3,15 +3,13 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.buildings.*;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,18 +18,22 @@ public abstract class Building
     private final ChunkCoordinates  location;
     private final Colony            colony;
 
+    //  Attributes
     private int buildingLevel = 0;
+
+    //  State
     private boolean isDirty = false;
 
-    private static Map<String, Class<?>> nameToClassMap = new HashMap<String, Class<?>>();
-    private static Map<Class<?>, String> classToNameMap = new HashMap<Class<?>, String>();
-    private static Map<Class<?>, Class<?>> tileEntityClassToBuildingClassMap = new HashMap<Class<?>, Class<?>>();
-    private static Map<Integer, Class<?>> classNameHashToClassMap = new HashMap<Integer, Class<?>>();
+    //  Building and View Class Mapping
+    private static Map<String, Class<?>>    nameToClassMap = new HashMap<String, Class<?>>();
+    private static Map<Class<?>, String>    classToNameMap = new HashMap<Class<?>, String>();
+    private static Map<Class<?>, Class<?>>  tileEntityClassToBuildingClassMap = new HashMap<Class<?>, Class<?>>();
+    private static Map<Integer, Class<?>>   classNameHashToClassMap = new HashMap<Integer, Class<?>>();
 
-    final static String TAG_TYPE     = "type";
-    //final static String TAG_ID       = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
-    final static String TAG_LOCATION = "location";  //  Location is unique (within a Colony) and so can double as the Id
-    final static String TAG_BUILDING_LEVEL = "level";
+    final static String TAG_TYPE            = "type";
+//    final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
+    final static String TAG_LOCATION        = "location";  //  Location is unique (within a Colony) and so can double as the Id
+    final static String TAG_BUILDING_LEVEL  = "level";
 
     /**
      * Add a given Building mapping
@@ -80,7 +82,7 @@ public abstract class Building
         addMapping(BuildingBaker.class, TileEntityHutBaker.class, "Baker");
         addMapping(BuildingBlacksmith.class, TileEntityHutBlacksmith.class, "Blacksmith");
         addMapping(BuildingBuilder.class, TileEntityHutBuilder.class, "Builder");
-        addMapping(BuildingCitizen.class, TileEntityHutCitizen.class, "Citizen");
+        addMapping(BuildingHome.class, TileEntityHutCitizen.class, "Citizen");
         addMapping(BuildingFarmer.class, TileEntityHutFarmer.class, "Farmer");
         addMapping(BuildingLumberjack.class, TileEntityHutLumberjack.class, "Lumberjack");
         addMapping(BuildingMiner.class, TileEntityHutMiner.class, "Miner");
@@ -241,6 +243,9 @@ public abstract class Building
     {
         colony.removeBuilding(this);
     }
+
+    public void onServerTick(TickEvent.ServerTickEvent event) {}
+    public void onWorldTick(TickEvent.WorldTickEvent event) {}
 
     /**
      * The Building View is the client-side representation of a Building.
