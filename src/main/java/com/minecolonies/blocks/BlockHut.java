@@ -4,11 +4,13 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.lib.IColony;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityHutWorker;
 import com.minecolonies.tileentities.TileEntityTownHall;
@@ -64,22 +66,16 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
         if(world.isRemote) return;
 
         TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if(entityLivingBase instanceof EntityPlayer && tileEntity instanceof TileEntityHut)
+        if(entityLivingBase instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
             EntityPlayer player = (EntityPlayer) entityLivingBase;
-            TileEntityHut hut = (TileEntityHut) tileEntity;
+            TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
 
             Colony colony = ColonyManager.getColonyByCoord(world, hut.getPosition());
 
-            if(hut instanceof TileEntityTownHall)
+            if(this instanceof BlockHutTownHall)
             {
-                //  OLD CODE
-                TileEntityTownHall townhall = (TileEntityTownHall) hut;
-                townhall.onBlockAdded();
-                townhall.addOwner(player.getUniqueID());
-                townhall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName()));
-                PlayerProperties.get(player).placeTownhall(x, y, z);
-                //  END OLD CODE
+                //  TODO BUGFIX - Allow placing a TownHall in a Colony if it doesn't have one
 
                 if (colony != null)
                 {
@@ -90,21 +86,9 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 colony = ColonyManager.createColony(world, hut.getPosition());
                 colony.setName(colonyName);
                 colony.addOwner(player.getUniqueID());
-                //  TODO: Player Properties ???
-            }
-            else
-            {
-                //  OLD CODE
-                TileEntityTownHall townhall = Utils.getTownhallByOwner(world, player);
 
-                hut.setTownHall(townhall);
-                townhall.addHut(hut.getPosition());
-
-                if(hut instanceof TileEntityHutWorker)
-                {
-                    ((TileEntityHutWorker) hut).addJoblessCitizens(townhall);
-                }
-                //  END OLD CODE
+                //  TODO: Deprecate this code?
+                PlayerProperties.get(player).placeTownhall(x, y, z);
             }
 
 
@@ -131,5 +115,15 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
             return true;
         }
         return false;
+    }
+
+
+    public abstract TileEntity createOldMineColoniesTileEntity(World var1, int var2);
+
+    @Override
+    public TileEntity createNewTileEntity(World var1, int var2)
+    {
+        //  return createOldMineColoniesTileEntity(var1, var2)
+        return new TileEntityColonyBuilding();
     }
 }

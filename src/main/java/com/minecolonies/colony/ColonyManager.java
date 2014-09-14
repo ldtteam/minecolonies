@@ -1,8 +1,13 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.jobs.ColonyJob;
+import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -21,6 +26,7 @@ public class ColonyManager {
     private static Map<UUID, ColonyView> colonyViews = new HashMap<UUID, ColonyView>();
 
     private static int numWorldsLoaded;    //  Used to trigger loading/unloading colonies
+    private static int numRemotesWorldsLoaded;
 
     final static String FILENAME_MINECOLONIES_PATH = "minecolonies";
     final static String FILENAME_MINECOLONIES = "colonies.dat";
@@ -30,6 +36,7 @@ public class ColonyManager {
     public static void init()
     {
         Building.init();
+        ColonyJob.init();
     }
 
     /**
@@ -120,7 +127,7 @@ public class ColonyManager {
 
         for (Colony c : coloniesInWorld)
         {
-            if (c.getWorld() == w)
+            if (c.getDimensionId() == w.provider.dimensionId)
             {
                 float dist = c.getDistanceSquared(x, y, z);
                 if (dist < closestDist)
@@ -132,6 +139,21 @@ public class ColonyManager {
         }
 
         return closestColony;
+    }
+
+    public static List<Colony> getColoniesByOwner(UUID owner)
+    {
+        List<Colony> results = new ArrayList<Colony>();
+
+        for (Colony c : colonies.values())
+        {
+            if (c.isOwner(owner))
+            {
+                results.add(c);
+            }
+        }
+
+        return results;
     }
 
     /**
@@ -210,6 +232,71 @@ public class ColonyManager {
     }
 
     /**
+     * Get Colony that contains a given ChunkCoordinates
+     *
+     * @param w
+     * @param coord
+     * @return
+     */
+    public static ColonyView getColonyViewByCoord(World w, ChunkCoordinates coord)
+    {
+        return getColonyViewByCoord(w, coord.posX, coord.posY, coord.posZ);
+    }
+
+
+    public static ColonyView getColonyViewByCoord(World w, int x, int y, int z)
+    {
+        for (ColonyView c : colonyViews.values())
+        {
+            if (c.isCoordInColony(w, x, y, z)) return c;
+        }
+
+        return null;
+    }
+
+    public static ColonyView getClosestColonyView(World w, int x, int y, int z)
+    {
+        ColonyView closestColony = null;
+        float closestDist = Float.MAX_VALUE;
+
+        for (ColonyView c : colonyViews.values())
+        {
+            if (c.getDimensionId() == w.provider.dimensionId)
+            {
+                float dist = c.getDistanceSquared(x, y, z);
+                if (dist < closestDist)
+                {
+                    closestColony = c;
+                    closestDist = dist;
+                }
+            }
+        }
+
+        return closestColony;
+    }
+
+    public static List<ColonyView> getColonyViewsOwnedByPlayer(EntityPlayer player)
+    {
+        List<ColonyView> results = new ArrayList<ColonyView>();
+
+        for (ColonyView c : colonyViews.values())
+        {
+            if (c.isOwner(player.getUniqueID()))
+            {
+                results.add(c);
+            }
+        }
+
+        return results;
+    }
+
+    public static double getMinimumDistanceBetweenTownHalls()
+    {
+        //  [Townhall](Radius)+(Padding)+(Radius)[TownHall]
+        return (2 * Configurations.DEFAULT_WORKINGRANGETOWNHALL) + Configurations.DEFAULT_TOWNHALLPADDING;
+    }
+
+    /**
      * On server tick, tick every Colony
      * NOTE: Review this for performance
      *
@@ -235,7 +322,7 @@ public class ColonyManager {
     {
         for (Colony c : colonies.values())
         {
-            if (c.getWorld() == event.world)
+            if (c.getDimensionId() == event.world.provider.dimensionId)
             {
                 c.onWorldTick(event);
             }
@@ -383,6 +470,7 @@ public class ColonyManager {
         }
         else
         {
+            ++numRemotesWorldsLoaded;
             for (ColonyView v : colonyViews.values())
             {
                 v.onWorldLoad(world);
@@ -427,6 +515,14 @@ public class ColonyManager {
             {
                 colonies.clear();
                 coloniesByWorld.clear();
+            }
+        }
+        else
+        {
+            --numRemotesWorldsLoaded;
+            if (numRemotesWorldsLoaded == 0)
+            {
+                colonyViews.clear();
             }
         }
     }

@@ -9,6 +9,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.ColonyBuildingViewMessage;
 import com.minecolonies.network.messages.ColonyViewMessage;
 import com.minecolonies.tileentities.TileEntityBuildable;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -126,7 +127,7 @@ public class Colony
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
         {
             NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
-            Building b = Building.createAndLoadBuilding(this, buildingCompound);
+            Building b = Building.createFromNBT(this, buildingCompound);
             if (b != null)
             {
                 addBuilding(b);
@@ -192,7 +193,7 @@ public class Colony
     }
 
     public int getDimensionId() { return dimensionId; }
-    public World getWorld() { return world != null ? world.get() : null; }
+//    public World getWorld() { return world != null ? world.get() : null; }
 
     public String getName() { return name; }
     public void setName(String n)
@@ -347,7 +348,7 @@ public class Colony
             {
                 for (Building b : buildings.values())
                 {
-                    if (isNewSubscriber || b.getIsDirty())
+                    if (isNewSubscriber || b.isDirty())
                     {
                         NBTTagCompound compound = new NBTTagCompound();
                         b.createViewNetworkData(compound);
@@ -432,12 +433,15 @@ public class Colony
         }
     }
 
-    public Building addNewBuilding(TileEntityBuildable parent)
+    public Building addNewBuilding(TileEntityColonyBuilding parent)
     {
-        Building building = Building.createBuilding(this, parent);
+        parent.setColonyId(getID());
+
+        Building building = Building.create(this, parent);
         if (building != null)
         {
             addBuilding(building);
+            parent.setBuilding(building);
         }
         return building;
     }

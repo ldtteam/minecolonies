@@ -3,6 +3,7 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -25,7 +26,8 @@ public abstract class BuildingWorker extends BuildingHut
     }
 
     public abstract String getJobName();
-    public abstract EntityCitizen createWorker();
+    //public abstract EntityCitizen createWorker();
+    public abstract Class<? extends ColonyJob> getJobClass();
 
     public UUID getWorkerId() { return workerId; }
     public boolean hasWorker() { return workerId != null; }

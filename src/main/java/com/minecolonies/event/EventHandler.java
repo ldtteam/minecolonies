@@ -1,9 +1,11 @@
 package com.minecolonies.event;
 
 import com.minecolonies.blocks.BlockHut;
+import com.minecolonies.blocks.BlockHutTownHall;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
@@ -135,46 +137,83 @@ public class EventHandler
      */
     private boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, int x, int y, int z)
     {
-        if(block == ModBlocks.blockHutTownhall)
+        //  Check if this Hut Block can be placed
+
+        if (!world.isRemote)
         {
-            if(!world.provider.isSurfaceWorld())
-            {
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageInvalidWorld");
-                return false;
-            }
+            //  Server-side check
+            Colony colony = ColonyManager.getClosestColony(world, x, y, z);
 
-            TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z);
-            if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < Utils.square(2 * Configurations.workingRangeTownhall + Configurations.townhallPadding))
+            if (block instanceof BlockHutTownHall)
             {
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
-                return false;
-            }
+                //  TODO BUGFIX - Allow placing a TownHall in a Colony if it doesn't have one
 
-            if(PlayerProperties.get(player).hasPlacedTownHall())
+                //  Town Halls must be far enough apart
+                if (colony != null && colony.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
+                    return false;
+                }
+
+                //  Players are currently only allowed a single colony
+                if (!ColonyManager.getColoniesByOwner(player.getUniqueID()).isEmpty())
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
+                    return false;
+                }
+            }
+            else
             {
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
-                return false;
+                if (colony == null)
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoTownhall");
+                    return false;
+                }
+
+                if (!colony.isCoordInColony(world, x, y, z))
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageTooFarFromTownhall");
+                    return false;
+                }
             }
         }
         else
         {
-            if(world.isRemote)
-                return true;//Player properties aren't stored client side, so we must do this or huts will never be placed
-            //Only downfall is it causes huts to flicker, when they get cancelled.
-            TileEntityTownHall townhall = Utils.getTownhallByOwner(world, player);
-            if(townhall == null || Utils.getDistanceToTileEntity(x, y, z, townhall) > Configurations.workingRangeTownhall)
+            //  Client-side check
+            ColonyView colonyView = ColonyManager.getClosestColonyView(world, x, y, z);
+
+            if (block instanceof BlockHutTownHall)
             {
-                if(townhall == null)
+                //  TODO BUGFIX - Allow placing a TownHall in a Colony if it doesn't have one
+
+                if (colonyView != null && colonyView.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
+                    return false;
+                }
+
+                if (!ColonyManager.getColonyViewsOwnedByPlayer(player).isEmpty())
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
+                    return false;
+                }
+            }
+            else
+            {
+                if (colonyView == null)
                 {
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoTownhall");
+                    return false;
                 }
-                else
+
+                if (!colonyView.isCoordInColony(world, x, y, z))
                 {
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageTooFarFromTownhall");
+                    return false;
                 }
-                return false;
             }
         }
+
         return true;
     }
 

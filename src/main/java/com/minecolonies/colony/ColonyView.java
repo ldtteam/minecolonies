@@ -2,8 +2,10 @@ package com.minecolonies.colony;
 
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,6 +13,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 
 import java.lang.ref.WeakReference;
@@ -24,7 +27,7 @@ public class ColonyView
     private String                  name   = "Unknown";
     private int                     dimensionId;
     private ChunkCoordinates        center;
-    private WeakReference<World>    world;
+//    private WeakReference<World>    world;
 
     //  Administration
     private Set<UUID>               owners = new HashSet<UUID>();
@@ -59,7 +62,7 @@ public class ColonyView
     public UUID getID() { return id; }
 
     public int getDimensionId() { return dimensionId; }
-    public World getWorld() { return world != null ? world.get() : null; }
+//    public World getWorld() { return world != null ? world.get() : null; }
 
     public String getName() { return name; }
     public void setName(String name) { /* CJJ TODO */ }
@@ -79,10 +82,10 @@ public class ColonyView
      */
     public void onWorldLoad(World w)
     {
-        if (w.provider.dimensionId == dimensionId)
-        {
-            world = new WeakReference<World>(w);
-        }
+//        if (w.provider.dimensionId == dimensionId)
+//        {
+//            world = new WeakReference<World>(w);
+//        }
     }
 
     /**
@@ -154,6 +157,15 @@ public class ColonyView
             buildings.remove(id);
         }
 
+//        if (world == null)
+//        {
+//            World w = DimensionManager.getWorld(dimensionId);
+//            if (w != null)
+//            {
+//                onWorldLoad(w);
+//            }
+//        }
+
         return null;
     }
 
@@ -173,5 +185,34 @@ public class ColonyView
         }
 
         return null;
+    }
+
+    /**
+     * Determine if a given chunk coordinate is considered to be within the colony's bounds
+     *
+     * @param coord
+     * @return
+     */
+    public boolean isCoordInColony(World w, ChunkCoordinates coord)
+    {
+        return isCoordInColony(w, coord.posX, coord.posY, coord.posZ);
+    }
+
+    public boolean isCoordInColony(World w, int x, int y, int z)
+    {
+        //  Perform a 2D distance calculation, so pass center.posY as the Y
+        return w.provider.dimensionId == dimensionId &&
+                center.getDistanceSquared(x, center.posY, z) <= Utils.square(Configurations.workingRangeTownhall);
+    }
+
+    public float getDistanceSquared(ChunkCoordinates coord)
+    {
+        return getDistanceSquared(coord.posX, coord.posY, coord.posZ);
+    }
+
+    public float getDistanceSquared(int posX, int posY, int posZ)
+    {
+        //  Perform a 2D distance calculation, so pass center.posY as the Y
+        return center.getDistanceSquared(posX, center.posY, posZ);
     }
 }

@@ -18,7 +18,7 @@ public class BlockHutCitizen extends BlockHut
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta)
+    public TileEntity createOldMineColoniesTileEntity(World world, int meta)
     {
         return new TileEntityHutCitizen();
     }

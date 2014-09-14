@@ -31,7 +31,7 @@ public class BuildingHome extends BuildingHut
 
         if (citizens.size() < getMaxInhabitants())
         {
-            //  TODO: 'Capture' a citizen
+            //  'Capture' as many citizens into this house as possible
             addHomelessCitizens();
         }
     }

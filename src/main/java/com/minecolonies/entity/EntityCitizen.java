@@ -9,6 +9,7 @@ import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
+import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.GuiHandler;
@@ -40,6 +41,7 @@ import net.minecraft.world.World;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static net.minecraftforge.common.util.Constants.NBT;
@@ -54,23 +56,32 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private String           job;
     private InventoryCitizen inventory;
 
-    private UUID                  colonyId;
-    private WeakReference<Colony> colony;
+    private UUID                            colonyId;
+    private WeakReference<Colony>           colony;
+    private ChunkCoordinates                homeBuildingId;
+    private WeakReference<BuildingHome>     homeBuilding;
+    private ChunkCoordinates                workBuildingId;
+    private WeakReference<BuildingWorker>   workBuilding;
 
-    private ChunkCoordinates            homeBuildingId;
-    private WeakReference<BuildingHome> homeBuilding;
+    private ColonyJob                       colonyJob;
 
-    private ChunkCoordinates              workBuildingId;
-    private WeakReference<BuildingWorker> workBuilding;
-
+    //  OLD CODE
     private TileEntityTownHall   tileEntityTownHall;
     private ChunkCoordinates     townPos;
     private TileEntityHutWorker  tileEntityWorkHut;
     private ChunkCoordinates     workPos;
     private TileEntityHutCitizen tileEntityHomeHut;
     private ChunkCoordinates     homePos;
+    //  END OLD CODE
 
     protected Status status = Status.IDLE;
+
+    public EntityCitizen(World world, Colony colony)
+    {
+        this(world);
+        this.colony = new WeakReference<Colony>(colony);
+        this.colonyId = colony.getID();
+    }
 
     public EntityCitizen(World world)
     {
@@ -116,6 +127,24 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tasks.addTask(6, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
         this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
+
+        if (colonyJob != null)
+        {
+            colonyJob.addTasks();
+        }
+    }
+
+    public void setColonyJob(ColonyJob j)
+    {
+        Object currentTasks[] = this.tasks.taskEntries.toArray();
+        for (Object task : currentTasks)
+        {
+            this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry)task).action);
+        }
+
+        colonyJob = j;
+
+        initTasks();
     }
 
     protected String initJob()
@@ -288,10 +317,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             c.removeCitizen(this);
         }
 
-        BuildingHome bCitizen = (homeBuilding != null) ? homeBuilding.get() : null;
-        if (bCitizen != null)
+        BuildingHome bHome = (homeBuilding != null) ? homeBuilding.get() : null;
+        if (bHome != null)
         {
-            bCitizen.removeCitizen(this);
+            bHome.removeCitizen(this);
         }
 
         BuildingWorker bWorker = (workBuilding != null) ? workBuilding.get() : null;
@@ -441,6 +470,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         nbtTagSkillsCompound.setInteger("charisma", charisma);
         compound.setTag("skills", nbtTagSkillsCompound);
 
+        //  OLD CODE
         if (tileEntityTownHall != null)
         {
             ChunkCoordUtils.writeToNBT(compound, "townhall", tileEntityTownHall.getPosition());
@@ -453,6 +483,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             ChunkCoordUtils.writeToNBT(compound, "homehut", tileEntityHomeHut.getPosition());
         }
+        //  END OLD CODE
 
         if (colonyId != null)
         {
@@ -465,6 +496,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (workBuildingId != null)
         {
             ChunkCoordUtils.writeToNBT(compound, "workbuilding", workBuildingId);
+        }
+        if (colonyJob != null)
+        {
+            NBTTagCompound jobCompound = new NBTTagCompound();
+            colonyJob.writeToNBT(jobCompound);
+            compound.setTag("job", jobCompound);
         }
 
         NBTTagList inventoryList = new NBTTagList();
@@ -527,6 +564,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (compound.hasKey("workbuilding"))
         {
             workBuildingId = ChunkCoordUtils.readFromNBT(compound, "workbuilding");
+        }
+        if (compound.hasKey("job"))
+        {
+            //colonyJob = ColonyJob.readJob(compound.getCompoundTag("job"));
         }
 
         NBTTagList nbttaglist = compound.getTagList("Inventory", NBT.TAG_COMPOUND);

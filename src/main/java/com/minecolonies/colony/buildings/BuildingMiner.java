@@ -3,6 +3,7 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.jobs.ColonyJob;
 import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingMiner extends BuildingWorker
@@ -14,9 +15,9 @@ public class BuildingMiner extends BuildingWorker
 
     public String getJobName() { return "Miner"; }
 
-    public EntityCitizen createWorker()
+    public Class<ColonyJob> getJobClass()
     {
-        return new EntityCitizen(getColony().getWorld()); //TODO Implement Later
+        return ColonyJob.class; //TODO Implement Later
     }
 
     public static class View extends BuildingWorker.View

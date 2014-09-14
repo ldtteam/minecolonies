@@ -1,6 +1,7 @@
 package com.minecolonies.colony.buildings;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.blocks.*;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.tileentities.*;
@@ -15,8 +16,8 @@ import java.util.Map;
 
 public abstract class Building
 {
-    private final ChunkCoordinates  location;
-    private final Colony            colony;
+    private final ChunkCoordinates location;
+    private final Colony           colony;
 
     //  Attributes
     private int buildingLevel = 0;
@@ -25,15 +26,15 @@ public abstract class Building
     private boolean isDirty = false;
 
     //  Building and View Class Mapping
-    private static Map<String, Class<?>>    nameToClassMap = new HashMap<String, Class<?>>();
-    private static Map<Class<?>, String>    classToNameMap = new HashMap<Class<?>, String>();
-    private static Map<Class<?>, Class<?>>  tileEntityClassToBuildingClassMap = new HashMap<Class<?>, Class<?>>();
-    private static Map<Integer, Class<?>>   classNameHashToClassMap = new HashMap<Integer, Class<?>>();
+    private static Map<String, Class<?>>   nameToClassMap               = new HashMap<String, Class<?>>();
+    private static Map<Class<?>, String>   classToNameMap               = new HashMap<Class<?>, String>();
+    private static Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<Class<?>, Class<?>>();
+    private static Map<Integer, Class<?>>  classNameHashToClassMap      = new HashMap<Integer, Class<?>>();
 
-    final static String TAG_TYPE            = "type";
-//    final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
-    final static String TAG_LOCATION        = "location";  //  Location is unique (within a Colony) and so can double as the Id
-    final static String TAG_BUILDING_LEVEL  = "level";
+    final static String TAG_TYPE           = "type";
+    //    final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
+    final static String TAG_LOCATION       = "location";  //  Location is unique (within a Colony) and so can double as the Id
+    final static String TAG_BUILDING_LEVEL = "level";
 
     /**
      * Add a given Building mapping
@@ -41,9 +42,9 @@ public abstract class Building
      * @param c    class of object
      * @param name name of object
      */
-    private static void addMapping(Class<?> c, Class<?> parentTE, String name)
+    private static void addMapping(String name, Class<?> buildingClass, Class<?> parentBlock)
     {
-        if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(c.getName().hashCode()))
+        if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(buildingClass.getName().hashCode()))
         {
             throw new IllegalArgumentException("Duplicate type '" + name + "' when adding Building class mapping");
         }
@@ -51,11 +52,11 @@ public abstract class Building
         {
             try
             {
-                if (c.getDeclaredConstructor(Colony.class, ChunkCoordinates.class) != null)
+                if (buildingClass.getDeclaredConstructor(Colony.class, ChunkCoordinates.class) != null)
                 {
-                    nameToClassMap.put(name, c);
-                    classToNameMap.put(c, name);
-                    classNameHashToClassMap.put(c.getName().hashCode(), c);
+                    nameToClassMap.put(name, buildingClass);
+                    classToNameMap.put(buildingClass, name);
+                    classNameHashToClassMap.put(buildingClass.getName().hashCode(), buildingClass);
                 }
             }
             catch (NoSuchMethodException exception)
@@ -64,13 +65,13 @@ public abstract class Building
             }
         }
 
-        if (tileEntityClassToBuildingClassMap.containsKey(parentTE))
+        if (blockClassToBuildingClassMap.containsKey(parentBlock))
         {
-            throw new IllegalArgumentException("Building type '" + name + "' uses TileEntity '" + parentTE.getClass().getName() + "' which is already in use.");
+            throw new IllegalArgumentException("Building type '" + name + "' uses TileEntity '" + parentBlock.getClass().getName() + "' which is already in use.");
         }
         else
         {
-            tileEntityClassToBuildingClassMap.put(parentTE, c);
+            blockClassToBuildingClassMap.put(parentBlock, buildingClass);
         }
     }
 
@@ -79,16 +80,16 @@ public abstract class Building
      */
     public static void init()
     {
-        addMapping(BuildingBaker.class, TileEntityHutBaker.class, "Baker");
-        addMapping(BuildingBlacksmith.class, TileEntityHutBlacksmith.class, "Blacksmith");
-        addMapping(BuildingBuilder.class, TileEntityHutBuilder.class, "Builder");
-        addMapping(BuildingHome.class, TileEntityHutCitizen.class, "Citizen");
-        addMapping(BuildingFarmer.class, TileEntityHutFarmer.class, "Farmer");
-        addMapping(BuildingLumberjack.class, TileEntityHutLumberjack.class, "Lumberjack");
-        addMapping(BuildingMiner.class, TileEntityHutMiner.class, "Miner");
-        addMapping(BuildingStonemason.class, TileEntityHutStonemason.class, "Stonemason");
-        addMapping(BuildingTownHall.class, TileEntityTownHall.class, "Townhall");
-        addMapping(BuildingWarehouse.class, TileEntityHutWarehouse.class, "Warehouse");
+        addMapping("Baker",         BuildingBaker.class,         BlockHutBaker.class);
+        addMapping("Blacksmith",    BuildingBlacksmith.class,    BlockHutBlacksmith.class);
+        addMapping("Builder",       BuildingBuilder.class,       BlockHutBuilder.class);
+        addMapping("Home",          BuildingHome.class,          BlockHutCitizen.class);
+        addMapping("Farmer",        BuildingFarmer.class,        BlockHutFarmer.class);
+        addMapping("Lumberjack",    BuildingLumberjack.class,    BlockHutLumberjack.class);
+        addMapping("Miner",         BuildingMiner.class,         BlockHutMiner.class);
+        addMapping("Stonemason",    BuildingStonemason.class,    BlockHutStonemason.class);
+        addMapping("Townhall",      BuildingTownHall.class,      BlockHutTownHall.class);
+        addMapping("Warehouse",     BuildingWarehouse.class,     BlockHutWarehouse.class);
     }
 
     /**
@@ -110,7 +111,7 @@ public abstract class Building
      * @param compound The saved data
      * @return
      */
-    public static Building createAndLoadBuilding(Colony colony, NBTTagCompound compound)
+    public static Building createFromNBT(Colony colony, NBTTagCompound compound)
     {
         Building building = null;
         Class<?> oclass = null;
@@ -163,14 +164,14 @@ public abstract class Building
      * @param parent    The Tile Entity the building belongs to.
      * @return
      */
-    public static Building createBuilding(Colony colony, TileEntityBuildable parent)
+    public static Building create(Colony colony, TileEntityColonyBuilding parent)
     {
         Building building = null;
         Class<?> oclass = null;
 
         try
         {
-            oclass = tileEntityClassToBuildingClassMap.get(parent.getClass());
+            oclass = blockClassToBuildingClassMap.get(parent.getBlockType().getClass());
 
             if (oclass != null)
             {
@@ -231,7 +232,7 @@ public abstract class Building
     public ChunkCoordinates getLocation() { return location; }
     public int getBuildingLevel() { return buildingLevel; }
 
-    public boolean getIsDirty() { return isDirty; }
+    public boolean isDirty() { return isDirty; }
     public void clearDirty() { isDirty = false; }
     public void markDirty()
     {

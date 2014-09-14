@@ -75,12 +75,14 @@ public class TileEntityColonyBuilding extends TileEntityChest
 //    }
 
     public UUID getColonyId() { return colonyId; }
+    public void setColonyId(UUID id) { colonyId = id; }
+    public void setBuilding(Building b) { building = new WeakReference<Building>(b); }
     public Building getBuilding() { return building != null ? building.get() : null; }
-    public Building.View getBuildingView()
-    {
-        ColonyView colony = ColonyManager.getColonyViewById(colonyId);
-        return colony.getBuilding(getPosition());
-    }
+//    public Building.View getBuildingView()
+//    {
+//        ColonyView colony = ColonyManager.getColonyViewById(colonyId);
+//        return colony.getBuilding(getPosition());
+//    }
 
     public boolean isPlayerOwner(EntityPlayer player)
     {
