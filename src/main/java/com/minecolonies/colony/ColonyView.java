@@ -1,14 +1,19 @@
 package com.minecolonies.colony;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.network.messages.TownhallRenameMessage;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
@@ -36,8 +41,8 @@ public class ColonyView
     private Map<ChunkCoordinates, Building.View> buildings = new HashMap<ChunkCoordinates, Building.View>();
 
     //  Citizenry
-    private int       maxCitizens = Constants.DEFAULTMAXCITIZENS;
-//    private Set<UUID> citizens    = new HashSet<UUID>();
+    private int           maxCitizens    = Constants.DEFAULTMAXCITIZENS;
+    private List<Integer> citizens       = new ArrayList<Integer>();
 
     final static String TAG_NAME         = "name";
     final static String TAG_DIMENSION    = "dimension";
@@ -65,8 +70,13 @@ public class ColonyView
 //    public World getWorld() { return world != null ? world.get() : null; }
 
     public String getName() { return name; }
-    public void setName(String name) { /* CJJ TODO */ }
+    public void setName(String name)
+    {
+        this.name = name;
+        MineColonies.network.sendToServer(new TownhallRenameMessage(getID(), name));
+    }
 
+    public Building.View getBuilding(int x, int y, int z) { return getBuilding(new ChunkCoordinates(x, y, z)); }
     public Building.View getBuilding(ChunkCoordinates buildingId) { return buildings.get(buildingId); }
 
     public Set<UUID> getOwners() { return Collections.unmodifiableSet(owners); }
@@ -74,6 +84,9 @@ public class ColonyView
     public boolean isOwner(EntityPlayer player) { return owners.contains(player.getUniqueID()); }
     public void addOwner(UUID o) { owners.add(o); }
     public void removeOwner(UUID o) { owners.remove(o); }
+
+    public int getMaxCitizens() { return maxCitizens; }
+    public List<Integer> getCitizens() { return Collections.unmodifiableList(citizens); }
 
     /**
      * When the ColonyView's world is loaded, associate with it
@@ -113,6 +126,26 @@ public class ColonyView
         //  Citizenry
         compound.setInteger(TAG_MAX_CITIZENS, colony.getMaxCitizens());
 
+        //  TODO Refactor - Colony should map UUID to EntityCitizen objects
+        World world = DimensionManager.getWorld(colony.getDimensionId());
+        if (world != null)
+        {
+            List<EntityCitizen> entities = colony.getActiveCitizens();
+//            List<Entity> entities = Utils.getEntitiesFromUUID(world, new ArrayList<UUID>(colony.getCitizens()));
+
+            if (entities != null && !entities.isEmpty())
+            {
+                int[] entityIds = new int[entities.size()];
+
+                for (int i = 0; i < entityIds.length; ++i)
+                {
+                    entityIds[i] = entities.get(i).getEntityId();
+                }
+
+                compound.setIntArray(TAG_CITIZENS, entityIds);
+            }
+        }
+
         //  Buildings
         List<ChunkCoordinates> removedBuildings = colony.getRemovedBuildings();
         if (!removedBuildings.isEmpty())
@@ -141,6 +174,12 @@ public class ColonyView
 
         //  Citizenry
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
+        int[] citizenIds = compound.getIntArray(TAG_CITIZENS);
+        citizens.clear();
+        for (int i : citizenIds)
+        {
+            citizens.add(i);
+        }
 
         //  Owners
         NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, NBT.TAG_STRING);

@@ -1,6 +1,8 @@
 package com.minecolonies.network.messages;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -10,68 +12,48 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
+import java.util.UUID;
+
 public class TownhallRenameMessage implements IMessage
 {
-    private int x, y, z;
+    private UUID colonyId;
     private String name;
 
     public TownhallRenameMessage(){}
 
-    public TownhallRenameMessage(int x, int y, int z, String name)
+    public TownhallRenameMessage(UUID colony, String name)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        colonyId = colony;
         this.name = name;
     }
 
     @Override
     public void toBytes(ByteBuf buf)
     {
-        buf.writeInt(x);
-        buf.writeInt(y);
-        buf.writeInt(z);
+        buf.writeLong(colonyId.getMostSignificantBits());
+        buf.writeLong(colonyId.getLeastSignificantBits());
         ByteBufUtils.writeUTF8String(buf, name);
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
-        x = buf.readInt();
-        y = buf.readInt();
-        z = buf.readInt();
+        colonyId = new UUID(buf.readLong(), buf.readLong());
         name = ByteBufUtils.readUTF8String(buf);
     }
 
-    public static class HandlerServer implements IMessageHandler<TownhallRenameMessage, IMessage>
+    public static class Handler implements IMessageHandler<TownhallRenameMessage, IMessage>
     {
         @Override
         public IMessage onMessage(TownhallRenameMessage message, MessageContext ctx)
         {
             EntityPlayer player = ctx.getServerHandler().playerEntity;
-            TileEntityTownHall townhall = (TileEntityTownHall) player.getEntityWorld().getTileEntity(message.x, message.y, message.z);
+            Colony colony = ColonyManager.getColonyById(message.colonyId);
 
-            if(townhall != null)
+            if (colony != null)
             {
-                townhall.setCityName(message.name);
+                colony.setName(message.name);
                 MineColonies.network.sendToAll(message);
-            }
-
-            return null;
-        }
-    }
-
-
-    public static class HandlerClient implements IMessageHandler<TownhallRenameMessage, IMessage>
-    {
-        @Override
-        public IMessage onMessage(TownhallRenameMessage message, MessageContext ctx)
-        {
-            TileEntityTownHall townhall = (TileEntityTownHall) Minecraft.getMinecraft().thePlayer.getEntityWorld().getTileEntity(message.x, message.y, message.z);
-
-            if(townhall != null)
-            {
-                townhall.setCityName(message.name);
             }
 
             return null;

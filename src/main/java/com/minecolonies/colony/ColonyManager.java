@@ -4,6 +4,7 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import net.minecraft.client.Minecraft;
@@ -26,7 +27,6 @@ public class ColonyManager {
     private static Map<UUID, ColonyView> colonyViews = new HashMap<UUID, ColonyView>();
 
     private static int numWorldsLoaded;    //  Used to trigger loading/unloading colonies
-    private static int numRemotesWorldsLoaded;
 
     final static String FILENAME_MINECOLONIES_PATH = "minecolonies";
     final static String FILENAME_MINECOLONIES = "colonies.dat";
@@ -311,6 +311,19 @@ public class ColonyManager {
         }
     }
 
+    public static void onClientTick(
+            TickEvent.ClientTickEvent event)
+    {
+        if (event.phase == TickEvent.Phase.END)
+        {
+            if (Minecraft.getMinecraft().theWorld == null && !colonyViews.isEmpty())
+            {
+                //  Player has left the game, clear the Colony View cache
+                colonyViews.clear();
+            }
+        }
+    }
+
     /**
      * On world tick, tick every Colony in that world
      * NOTE: Review this for performance
@@ -470,7 +483,6 @@ public class ColonyManager {
         }
         else
         {
-            ++numRemotesWorldsLoaded;
             for (ColonyView v : colonyViews.values())
             {
                 v.onWorldLoad(world);
@@ -515,14 +527,6 @@ public class ColonyManager {
             {
                 colonies.clear();
                 coloniesByWorld.clear();
-            }
-        }
-        else
-        {
-            --numRemotesWorldsLoaded;
-            if (numRemotesWorldsLoaded == 0)
-            {
-                colonyViews.clear();
             }
         }
     }

@@ -2,7 +2,6 @@ package com.minecolonies.colony.buildings;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.jobs.ColonyJob;
 import net.minecraft.util.ChunkCoordinates;
 

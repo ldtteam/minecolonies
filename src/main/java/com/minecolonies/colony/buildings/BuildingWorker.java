@@ -4,15 +4,13 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.jobs.ColonyJob;
-import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
 import java.util.UUID;
 
 public abstract class BuildingWorker extends BuildingHut
@@ -20,9 +18,28 @@ public abstract class BuildingWorker extends BuildingHut
     private UUID workerId;
     //private WeakReference<EntityCitizen> worker;
 
+    private final String TAG_WORKER_ID = "workerId";
+
     public BuildingWorker(Colony c, ChunkCoordinates l)
     {
         super(c, l);
+    }
+
+    public void onDestroyed()
+    {
+        //  TODO REFACTOR - Ideally we will have a WeakReference to the EntityCitizen
+        if (hasWorker())
+        {
+            World world = DimensionManager.getWorld(getColony().getDimensionId());
+
+            EntityCitizen worker = (EntityCitizen) Utils.getEntityFromUUID(world, workerId);
+            if (worker != null)
+            {
+                worker.setWorkBuilding(null);
+            }
+        }
+
+        super.onDestroyed();
     }
 
     public abstract String getJobName();
@@ -37,10 +54,11 @@ public abstract class BuildingWorker extends BuildingHut
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
-        String workerIdStr = compound.getString("workerId");
-        if (workerIdStr != null)
+        super.readFromNBT(compound);
+        
+        if (compound.hasKey(TAG_WORKER_ID))
         {
-            workerId = UUID.fromString(workerIdStr);
+            workerId = UUID.fromString(compound.getString(TAG_WORKER_ID));
         }
     }
 
@@ -51,7 +69,7 @@ public abstract class BuildingWorker extends BuildingHut
 
         if (workerId != null)
         {
-            compound.setString("workerId", workerId.toString());
+            compound.setString(TAG_WORKER_ID, workerId.toString());
         }
     }
 

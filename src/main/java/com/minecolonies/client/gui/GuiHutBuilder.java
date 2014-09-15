@@ -1,8 +1,8 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.network.messages.OpenInventoryMessage;
-import com.minecolonies.tileentities.TileEntityHutBuilder;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,13 +11,13 @@ import net.minecraft.world.World;
 public class GuiHutBuilder extends GuiBase
 {
     private final int BUTTON_INVENTORY = 4;
-    private TileEntityHutBuilder builderHut;
+    private BuildingBuilder.View builderHut;
     private final int span = 10;
 
-    public GuiHutBuilder(TileEntityHutBuilder tileEntityHutBuilder, EntityPlayer player, World world, int x, int y, int z)
+    public GuiHutBuilder(BuildingBuilder.View building, EntityPlayer player, World world, int x, int y, int z)
     {
-        super(player, world, x, y, z);
-        this.builderHut = tileEntityHutBuilder;
+        super(player, world, x, y, z, building);
+        this.builderHut = building;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class GuiHutBuilder extends GuiBase
         switch(guiButton.id)
         {
             case BUTTON_INVENTORY:
-                MineColonies.network.sendToServer(new OpenInventoryMessage(builderHut, builderHut.getName(), builderHut.getPosition()));
+                MineColonies.network.sendToServer(new OpenInventoryMessage(builderHut));
                 break;
         }
     }

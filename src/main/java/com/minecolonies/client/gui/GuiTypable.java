@@ -1,6 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.network.messages.TownhallRenameMessage;
 import com.minecolonies.tileentities.TileEntityTownHall;
@@ -15,7 +16,7 @@ import org.lwjgl.input.Keyboard;
 public class GuiTypable extends GuiScreen
 {
     private final int BUTTON_DONE = 0, BUTTON_CANCEL = 1;
-    private final TileEntityTownHall tileEntityTownHall;
+    private final ColonyView   colony;
     private       GuiTextField guiTextField = null;
     private final String       title        = LanguageHandler.format("com.minecolonies.gui.townhall.rename.title");
     private       String       newCityName;
@@ -23,16 +24,16 @@ public class GuiTypable extends GuiScreen
     private final World        world;
     private final int          x, y, z;
 
-    public GuiTypable(TileEntityTownHall tileEntityTownHall, EntityPlayer player, World world, int x, int y, int z)
+    public GuiTypable(ColonyView colony, EntityPlayer player, World world, int x, int y, int z)
     {
-        this.tileEntityTownHall = tileEntityTownHall;
+        this.colony = colony;
         this.player = player;
         this.world = world;
         this.x = x;
         this.y = y;
         this.z = z;
 
-        newCityName = tileEntityTownHall.getCityName();
+        newCityName = colony.getName();
     }
 
     @Override
@@ -82,8 +83,7 @@ public class GuiTypable extends GuiScreen
                 case BUTTON_DONE:
                     if(!newCityName.isEmpty())
                     {
-                        tileEntityTownHall.setCityName(newCityName);
-                        MineColonies.network.sendToServer(new TownhallRenameMessage(x, y, z, newCityName));
+                        colony.setName(newCityName);
                     }
                     player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
                     break;

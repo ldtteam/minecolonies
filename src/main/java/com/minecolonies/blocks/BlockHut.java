@@ -105,12 +105,19 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float px, float py, float pz)
     {
-        if(world.getTileEntity(x, y, z) instanceof TileEntityHut)
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+
+        if (tileEntity instanceof TileEntityColonyBuilding)
         {
             if(!world.isRemote)
             {
-                int guiID = EnumGUI.getGuiIdByInstance(world.getTileEntity(x, y, z));
-                player.openGui(MineColonies.instance, guiID, world, x, y, z);
+                TileEntityColonyBuilding buildingTileEntity = (TileEntityColonyBuilding) tileEntity;
+                Building building = ((TileEntityColonyBuilding)tileEntity).getBuilding();
+
+                if (building != null)
+                {
+                    player.openGui(MineColonies.instance, building.getGuiId(), world, x, y, z);
+                }
             }
             return true;
         }

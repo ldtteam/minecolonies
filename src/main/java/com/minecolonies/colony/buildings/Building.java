@@ -7,8 +7,10 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.World;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -240,10 +242,14 @@ public abstract class Building
         colony.markBuildingsDirty();
     }
 
-    public void onDestroyed()
+    public void onDestroyed() {}
+    public final void destroy()
     {
+        onDestroyed();
         colony.removeBuilding(this);
     }
+
+    public int getGuiId() { return 0; }
 
     public void onServerTick(TickEvent.ServerTickEvent event) {}
     public void onWorldTick(TickEvent.WorldTickEvent event) {}
@@ -270,6 +276,11 @@ public abstract class Building
         public ChunkCoordinates getLocation() { return location; }
         public ColonyView getColony() { return colony; }
         public int getBuildingLevel() { return buildingLevel; }
+
+        public Object getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        {
+            return null;
+        }
 
         public void parseNetworkData(NBTTagCompound compound)
         {

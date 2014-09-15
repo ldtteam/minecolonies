@@ -11,10 +11,12 @@ import com.minecolonies.network.messages.ColonyViewMessage;
 import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -38,9 +40,9 @@ public class Colony
     private List<ChunkCoordinates> removedBuildings = new ArrayList<ChunkCoordinates>();
 
     //  General Attributes
-    private String               name   = "ERROR(Wasn't placed by player)";
-    private WeakReference<World> world;
-    private ChunkCoordinates     center;
+    private String               name  = "ERROR(Wasn't placed by player)";
+    private WeakReference<World> world = new WeakReference<World>(null); // Enforce existence for code simplicity
+    private ChunkCoordinates center;
 
     //  Administration
     private Set<UUID> owners = new HashSet<UUID>();
@@ -50,7 +52,7 @@ public class Colony
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
-    private int       maxCitizens = Constants.DEFAULTMAXCITIZENS;
+    private int                                     maxCitizens = Constants.DEFAULTMAXCITIZENS;
     private Map<UUID, WeakReference<EntityCitizen>> citizens    = new HashMap<UUID, WeakReference<EntityCitizen>>();
 
     final static String TAG_ID           = "id";
@@ -158,7 +160,7 @@ public class Colony
         compound.setString(TAG_NAME, name);
         ChunkCoordUtils.writeToNBT(compound, TAG_CENTER, center);
 
-        compound.setInteger(TAG_CITIZENS, maxCitizens);
+        compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
         //  Owners
         NBTTagList ownerTagList = new NBTTagList();
@@ -383,10 +385,62 @@ public class Colony
      */
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
+        //  Spawn Citizens
+        if (event.phase == TickEvent.Phase.END)
+        {
+            World worldObj = world.get();
+            if (townhall != null &&
+                    citizens.size() < maxCitizens &&
+                    worldObj != null)
+            {
+                int respawnInterval = Configurations.citizenRespawnInterval * 20;
+                respawnInterval -= (60 * townhall.getBuildingLevel());
+
+                if (worldObj.getWorldInfo().getWorldTime() % respawnInterval == 0)
+                {
+                    spawnCitizen();
+                }
+            }
+        }
+
+        //  Tick Buildings
         for (Building b : buildings.values())
         {
             b.onWorldTick(event);
         }
+    }
+
+    private void spawnCitizen()
+    {
+        World worldObj = world.get();
+        int xCoord = center.posX, yCoord = center.posY, zCoord = center.posZ;
+
+        if (!worldObj.blockExists(center.posX, center.posY, center.posZ))
+        {
+            //  Chunk with TownHall Block is not loaded
+            return;
+        }
+
+        ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
+        if(spawnPoint == null)
+        {
+            spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.snow_layer, xCoord, yCoord, zCoord, 1, 0, 1);
+        }
+
+        if(spawnPoint != null)
+        {
+            EntityCitizen citizen = new EntityCitizen(worldObj);
+            citizen.setPosition(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
+            worldObj.spawnEntityInWorld(citizen);
+
+            addCitizen(citizen);
+
+            if(getMaxCitizens() == getCitizens().size())
+            {
+                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, new ArrayList<UUID>(owners)), "tile.blockHutTownhall.messageMaxSize");
+            }
+        }
+
     }
 
     /*
@@ -435,7 +489,7 @@ public class Colony
 
     public Building addNewBuilding(TileEntityColonyBuilding parent)
     {
-        parent.setColonyId(getID());
+        parent.setColony(this);
 
         Building building = Building.create(this, parent);
         if (building != null)
@@ -469,7 +523,7 @@ public class Colony
     public int getMaxCitizens() { return maxCitizens; }
     //public void setMaxCitizens();
 
-    public Set<UUID> getCitizens() { return Collections.unmodifiableSet(citizens.keySet()); }
+    public Map<UUID, WeakReference<EntityCitizen>> getCitizens() { return Collections.unmodifiableMap(citizens); }
 
     public List<EntityCitizen> getActiveCitizens()
     {
@@ -489,14 +543,27 @@ public class Colony
 
     public boolean isCitizen(UUID c) { return citizens.containsKey(c); }
 
-    public void registerCitizen(EntityCitizen citizen)
+    public void addCitizen(EntityCitizen citizen)
     {
         citizens.put(citizen.getUniqueID(), new WeakReference<EntityCitizen>(citizen));
+        citizen.setColony(this);
+        markDirty();
     }
 
     public void removeCitizen(EntityCitizen citizen)
     {
         citizens.remove(citizen.getUniqueID());
+    }
+
+    public boolean registerCitizen(EntityCitizen citizen)
+    {
+        if (!citizens.containsKey(citizen.getUniqueID()))
+        {
+            return false;
+        }
+
+        citizens.put(citizen.getUniqueID(), new WeakReference<EntityCitizen>(citizen));
+        return true;
     }
 
     /**
@@ -506,8 +573,8 @@ public class Colony
      */
     public EntityCitizen getCitizen(UUID citizenId)
     {
-        //  UNIMPLEMENTED
-        return null;    //citizens.get(citizenId);
+        WeakReference<EntityCitizen> citizen = citizens.get(citizenId);
+        return citizen != null ? citizen.get() : null;
     }
 
     /**
@@ -517,8 +584,15 @@ public class Colony
      */
     public EntityCitizen getIdleCitizen()
     {
-        //  UNIMPLEMENTED
+        for (WeakReference<EntityCitizen> citizenRef : citizens.values())
+        {
+            EntityCitizen citizen = (citizenRef != null) ? citizenRef.get() : null;
+            if (citizen != null && citizen.getColonyJob() == null)
+            {
+                return citizen;
+            }
+        }
+
         return null;
     }
-
 }

@@ -71,8 +71,7 @@ public class MineColonies
         network.registerMessage(ColonyBuildingViewMessage.Handler.class, ColonyBuildingViewMessage.class, 1, Side.CLIENT);
         network.registerMessage(BuildRequestMessage.Handler.class, BuildRequestMessage.class, 2, Side.SERVER);
         network.registerMessage(OpenInventoryMessage.Handler.class, OpenInventoryMessage.class, 3, Side.SERVER);
-        network.registerMessage(TownhallRenameMessage.HandlerServer.class, TownhallRenameMessage.class, 4, Side.SERVER);
-        network.registerMessage(TownhallRenameMessage.HandlerClient.class, TownhallRenameMessage.class, 4, Side.CLIENT);
+        network.registerMessage(TownhallRenameMessage.Handler.class, TownhallRenameMessage.class, 4, Side.SERVER);
 
         proxy.registerTileEntities();
 

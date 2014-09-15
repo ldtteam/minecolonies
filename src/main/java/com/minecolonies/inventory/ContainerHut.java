@@ -1,5 +1,8 @@
 package com.minecolonies.inventory;
 
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.buildings.BuildingTownHall;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
@@ -10,6 +13,9 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.network.Packet;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 /**
  * Handles gui operations on the server
  * Created: June 21, 2014
@@ -18,13 +24,13 @@ import net.minecraft.network.Packet;
  */
 public class ContainerHut extends Container //ContainerChest in future
 {
-    private TileEntityHut   hut;
-    private EntityPlayerMP  player;
-    private InventoryPlayer inventoryPlayer;
+    private TileEntityColonyBuilding hut;
+    private EntityPlayerMP           player;
+    private InventoryPlayer          inventoryPlayer;
 
     private int lastNumberOfCitizens = 0;
 
-    public ContainerHut(TileEntityHut hut, EntityPlayer player)
+    public ContainerHut(TileEntityColonyBuilding hut, EntityPlayer player)
     {
         this.hut = hut;
         this.player = (EntityPlayerMP) player;
@@ -34,13 +40,20 @@ public class ContainerHut extends Container //ContainerChest in future
     @Override
     public boolean canInteractWith(EntityPlayer player)
     {
-        if(hut.isUseableByPlayer(player))
+        assert !hut.getWorldObj().isRemote;
+
+        if (hut.isUseableByPlayer(player))
         {
             return true;
         }
-        else if(hut.getTownHall() != null)
+        else
         {
-            LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission", hut.getTownHall().getCityName());
+            Colony colony = hut.getColony();
+
+            if (colony != null)
+            {
+                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission", colony.getName());
+            }
         }
         return false;
     }
@@ -49,21 +62,5 @@ public class ContainerHut extends Container //ContainerChest in future
     public void detectAndSendChanges()
     {
         super.detectAndSendChanges();
-
-        if(hut instanceof TileEntityTownHall)
-        {
-            int numberOfCitizens = ((TileEntityTownHall) hut).getCitizens().size();
-            if(numberOfCitizens != lastNumberOfCitizens)
-            {
-                Utils.getEntitiesFromUUID(player.worldObj, ((TileEntityTownHall) hut).getCitizens());
-                Packet packet = hut.getDescriptionPacket();
-
-                if(packet != null)
-                {
-                    player.playerNetServerHandler.sendPacket(packet);
-                }
-                lastNumberOfCitizens = numberOfCitizens;
-            }
-        }
     }
 }

@@ -15,7 +15,7 @@ public class GuiEntityCitizen extends GuiBase
 
     public GuiEntityCitizen(EntityCitizen entityCitizen, EntityPlayer player, World world)
     {
-        super(player, world, (int) entityCitizen.posX, (int) entityCitizen.posY, (int) entityCitizen.posZ);
+        super(player, world, (int) entityCitizen.posX, (int) entityCitizen.posY, (int) entityCitizen.posZ, null);
         this.citizen = entityCitizen;
     }
 
@@ -48,7 +48,7 @@ public class GuiEntityCitizen extends GuiBase
         switch(guiButton.id)
         {
             case BUTTON_INVENTORY:
-                MineColonies.network.sendToServer(new OpenInventoryMessage(citizen.getInventory(), citizen.getCustomNameTag(), citizen.getEntityId()));
+                MineColonies.network.sendToServer(new OpenInventoryMessage(citizen));
                 break;
         }
     }

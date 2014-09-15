@@ -1,5 +1,6 @@
 package com.minecolonies.network.messages;
 
+import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -18,7 +19,6 @@ import net.minecraft.util.StringUtils;
 public class OpenInventoryMessage implements IMessage
 {
     private static final int INVENTORY_NULL = -1, INVENTORY_CITIZEN = 0, INVENTORY_CHEST = 1;
-    private IInventory inventory;
     private String     name;
 
     private int inventoryType;
@@ -28,39 +28,34 @@ public class OpenInventoryMessage implements IMessage
 
     public OpenInventoryMessage(){}
 
-    public OpenInventoryMessage(IInventory iinventory, String iinventoryName, int entityID)
+    public OpenInventoryMessage(EntityCitizen citizen)
     {
-        inventory = iinventory;
-        name = iinventoryName;
-        this.entityID = entityID;
+        inventoryType = INVENTORY_CITIZEN;
+        name = citizen.getCustomNameTag();
+        this.entityID = citizen.getEntityId();
     }
 
-    public OpenInventoryMessage(IInventory iinventory, String iinventoryName, ChunkCoordinates pos)
+    public OpenInventoryMessage(Building.View building)
     {
-        inventory = iinventory;
-        name = iinventoryName;
-        tePos = pos;
+        inventoryType = INVENTORY_CHEST;
+        name = ""; //builderHut.getName();
+        tePos = building.getLocation();
     }
 
 
     @Override
     public void toBytes(ByteBuf buf)
     {
-        if(inventory instanceof InventoryCitizen)
+        buf.writeInt(inventoryType);
+        ByteBufUtils.writeUTF8String(buf, name);
+        switch (inventoryType)
         {
-            buf.writeInt(INVENTORY_CITIZEN);
-            ByteBufUtils.writeUTF8String(buf, name);
-            buf.writeInt(entityID);
-        }
-        else if(inventory instanceof TileEntityChest)
-        {
-            buf.writeInt(INVENTORY_CHEST);
-            ByteBufUtils.writeUTF8String(buf, name);
-            ChunkCoordUtils.writeToByteBuf(buf, tePos);
-        }
-        else
-        {
-            buf.writeInt(INVENTORY_NULL);
+            case INVENTORY_CITIZEN:
+                buf.writeInt(entityID);
+                break;
+            case INVENTORY_CHEST:
+                ChunkCoordUtils.writeToByteBuf(buf, tePos);
+                break;
         }
     }
 
@@ -68,14 +63,13 @@ public class OpenInventoryMessage implements IMessage
     public void fromBytes(ByteBuf buf)
     {
         inventoryType = buf.readInt();
+        name = ByteBufUtils.readUTF8String(buf);
         switch(inventoryType)
         {
             case INVENTORY_CITIZEN:
-                name = ByteBufUtils.readUTF8String(buf);
                 entityID = buf.readInt();
                 break;
             case INVENTORY_CHEST:
-                name = ByteBufUtils.readUTF8String(buf);
                 tePos = ChunkCoordUtils.readFromByteBuf(buf);
                 break;
         }

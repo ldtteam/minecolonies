@@ -6,15 +6,12 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingHut extends Building
 {
-    private int maxInhabitants = 1;
-
     public BuildingHut(Colony c, ChunkCoordinates l)
     {
         super(c, l);
     }
 
-    public int getMaxInhabitants() { return maxInhabitants; }
-    protected void setMaxInhabitants(int m) { maxInhabitants = m; }
+    public int getMaxInhabitants() { return 1; }
 
     public static class View extends Building.View
     {

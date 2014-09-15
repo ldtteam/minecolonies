@@ -3,13 +3,14 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class BuildingHome extends BuildingHut
 {
@@ -18,7 +19,33 @@ public class BuildingHome extends BuildingHut
     public BuildingHome(Colony c, ChunkCoordinates l)
     {
         super(c, l);
-        setMaxInhabitants(2);
+    }
+
+    public int getMaxInhabitants() { return 2; }
+
+    public void onDestroyed()
+    {
+        //  TODO REFACTOR - Ideally we should have a live Map of WeakReferences to our EntityCitizens
+        World world = DimensionManager.getWorld(getColony().getDimensionId());
+        if (world == null)
+        {
+            return;
+        }
+
+        List<Entity> entityCitizens = Utils.getEntitiesFromUUID(world, new ArrayList<UUID>(citizens));
+        if(entityCitizens != null)
+        {
+            for(Entity entity : entityCitizens)
+            {
+                if(entity instanceof EntityCitizen)
+                {
+                    EntityCitizen citizen = (EntityCitizen) entity;
+                    citizen.setHomeBuilding(null);
+                }
+            }
+        }
+
+        super.onDestroyed();
     }
 
     @Override

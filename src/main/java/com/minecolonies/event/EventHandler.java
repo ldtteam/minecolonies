@@ -9,6 +9,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
@@ -16,6 +17,8 @@ import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -33,46 +36,35 @@ public class EventHandler
 
         if(!world.isRemote && event.block instanceof BlockHut)
         {
-            Building building = ColonyManager.getBuilding(world, event.x, event.y, event.z);
+            TileEntityColonyBuilding tileEntity = (TileEntityColonyBuilding)world.getTileEntity(event.x, event.y, event.z);
+
+            Colony colony = ColonyManager.getColonyById(tileEntity.getColonyId());
+            if (colony == null)
+            {
+                return;
+            }
+
+            if (!colony.isOwner(event.getPlayer()))
+            {
+                event.setCanceled(true);
+                return;
+            }
+
+            //Building building = ColonyManager.getBuilding(world, event.x, event.y, event.z);
+            Building building = colony.getBuilding(new ChunkCoordinates(event.x, event.y, event.z));
             if (building == null)
             {
                 return;
             }
 
-            if (!building.getColony().isOwner(event.getPlayer()))
-            {
-                event.setCanceled(true);
-                return;
-            }
+            //  Redundant with refactor above
+//            if (!building.getColony().isOwner(event.getPlayer()))
+//            {
+//                event.setCanceled(true);
+//                return;
+//            }
 
             building.onDestroyed();
-
-            //  OLD CODE
-            TileEntityHut hut = (TileEntityHut) world.getTileEntity(event.x, event.y, event.z);
-            EntityPlayer player = event.getPlayer();
-
-            if(isPlayerOwner(hut, player))
-            {
-                if(hut != null)
-                {
-                    TileEntityTownHall townhall = hut.getTownHall();
-
-                    if(hut instanceof TileEntityTownHall)
-                    {
-                        PlayerProperties.get(player).removeTownhall();
-                    }
-                    else if(townhall != null)
-                    {
-                        townhall.removeHut(hut.getPosition());
-                    }
-                    hut.breakBlock();
-                }
-            }
-            else
-            {
-                event.setCanceled(true);
-            }
-            //  END OLD CODE
         }
     }
 

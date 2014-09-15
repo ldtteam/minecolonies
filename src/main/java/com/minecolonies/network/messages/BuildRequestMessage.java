@@ -1,10 +1,18 @@
 package com.minecolonies.network.messages;
 
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.tileentities.TileEntityHut;
+import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.util.ChunkCoordinates;
+
+import java.util.UUID;
 
 /**
  * Adds a entry to the builderRequired map
@@ -14,7 +22,10 @@ import io.netty.buffer.ByteBuf;
  */
 public class BuildRequestMessage implements IMessage
 {
-    private int x, y, z, mode;
+    private UUID             colonyId;
+    private ChunkCoordinates buildingId;
+    private int              mode;
+
 
     public static final int BUILD  = 0;
     public static final int REPAIR = 1;
@@ -22,29 +33,27 @@ public class BuildRequestMessage implements IMessage
 
     public BuildRequestMessage(){}
 
-    public BuildRequestMessage(int x, int y, int z, int mode)
+    public BuildRequestMessage(Building.View building, int mode)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.colonyId = building.getColony().getID();
+        this.buildingId = building.getID();
         this.mode = mode;
     }
 
     @Override
     public void toBytes(ByteBuf buf)
     {
-        buf.writeInt(x);
-        buf.writeInt(y);
-        buf.writeInt(z);
+        buf.writeLong(colonyId.getMostSignificantBits());
+        buf.writeLong(colonyId.getLeastSignificantBits());
+        ChunkCoordUtils.writeToByteBuf(buf, buildingId);
         buf.writeInt(mode);
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
-        x = buf.readInt();
-        y = buf.readInt();
-        z = buf.readInt();
+        colonyId = new UUID(buf.readLong(), buf.readLong());
+        buildingId = ChunkCoordUtils.readFromByteBuf(buf);
         mode = buf.readInt();
     }
 
@@ -53,21 +62,27 @@ public class BuildRequestMessage implements IMessage
         @Override
         public IMessage onMessage(BuildRequestMessage message, MessageContext ctx)
         {
-            TileEntityHut tileEntity = (TileEntityHut) ctx.getServerHandler().playerEntity.getEntityWorld()
-                    .getTileEntity(message.x, message.y, message.z);
-
-            if(tileEntity != null)
+            Colony colony = ColonyManager.getColonyById(message.colonyId);
+            if (colony == null)
             {
-                switch(message.mode)
-                {
-                    case BUILD:
-                        tileEntity.requestBuilding();
-                        break;
-                    case REPAIR:
-                        tileEntity.requestRepair();
-                        break;
-                }
+                return null;
             }
+
+            Building building = colony.getBuilding(message.buildingId);
+            if (building == null)
+            {
+                return null;
+            }
+
+//            switch(message.mode)
+//            {
+//                case BUILD:
+//                    tileEntity.requestBuilding();
+//                    break;
+//                case REPAIR:
+//                    tileEntity.requestRepair();
+//                    break;
+//            }
 
             return null;
         }
