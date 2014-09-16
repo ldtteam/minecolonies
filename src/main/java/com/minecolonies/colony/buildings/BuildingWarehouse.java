@@ -3,6 +3,8 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.client.gui.GuiHutWarehouse;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.lib.EnumGUI;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,6 +31,13 @@ public class BuildingWarehouse extends BuildingWorker
 
     public String getJobName() { return "Deliveryman"; }
 
+    //  Classic Style of Jobs
+    public EntityCitizen createWorker(World world)
+    {
+        return new EntityDeliveryman(world);
+    }
+
+    //  Future Style of Jobs
     public Class<ColonyJob> getJobClass()
     {
         return ColonyJob.class; //TODO Implement Later
@@ -49,7 +58,7 @@ public class BuildingWarehouse extends BuildingWorker
         //  Stonemason
         NBTTagCompound stonemasonCompound = deliveryCompound.getCompoundTag("stonemason");
         stonemasonStone = stonemasonCompound.getBoolean("stone");
-        stonemasonStone = stonemasonCompound.getBoolean("sand");
+        stonemasonSand = stonemasonCompound.getBoolean("sand");
         stonemasonNetherrack = stonemasonCompound.getBoolean("netherrack");
         stonemasonQuartz = stonemasonCompound.getBoolean("quartz");
 
@@ -78,7 +87,7 @@ public class BuildingWarehouse extends BuildingWorker
         //  Stonemason
         NBTTagCompound stonemasonCompound = new NBTTagCompound();
         stonemasonCompound.setBoolean("stone", stonemasonStone);
-        stonemasonCompound.setBoolean("sand", stonemasonStone);
+        stonemasonCompound.setBoolean("sand", stonemasonSand);
         stonemasonCompound.setBoolean("netherrack", stonemasonNetherrack);
         stonemasonCompound.setBoolean("quartz", stonemasonQuartz);
         deliveryCompound.setTag("stonemason", stonemasonCompound);
@@ -140,7 +149,7 @@ public class BuildingWarehouse extends BuildingWorker
             //  Stonemason
             NBTTagCompound stonemasonCompound = deliveryCompound.getCompoundTag("stonemason");
             stonemasonStone = stonemasonCompound.getBoolean("stone");
-            stonemasonStone = stonemasonCompound.getBoolean("sand");
+            stonemasonSand = stonemasonCompound.getBoolean("sand");
             stonemasonNetherrack = stonemasonCompound.getBoolean("netherrack");
             stonemasonQuartz = stonemasonCompound.getBoolean("quartz");
 
@@ -170,7 +179,7 @@ public class BuildingWarehouse extends BuildingWorker
         //  Stonemason
         NBTTagCompound stonemasonCompound = new NBTTagCompound();
         stonemasonCompound.setBoolean("stone", stonemasonStone);
-        stonemasonCompound.setBoolean("sand", stonemasonStone);
+        stonemasonCompound.setBoolean("sand", stonemasonSand);
         stonemasonCompound.setBoolean("netherrack", stonemasonNetherrack);
         stonemasonCompound.setBoolean("quartz", stonemasonQuartz);
         deliveryCompound.setTag("stonemason", stonemasonCompound);

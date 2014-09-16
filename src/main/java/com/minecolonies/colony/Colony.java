@@ -8,7 +8,6 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.ColonyBuildingViewMessage;
 import com.minecolonies.network.messages.ColonyViewMessage;
-import com.minecolonies.tileentities.TileEntityBuildable;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
@@ -404,9 +403,35 @@ public class Colony
         }
 
         //  Tick Buildings
+        List<Building> cleanupBuildings = null;
+
         for (Building b : buildings.values())
         {
+            World w = world.get();
+            ChunkCoordinates loc = b.getLocation();
+            if (w != null &&
+                    w.blockExists(loc.posX, loc.posY, loc.posZ) &&
+                    !Building.buildingMatchesBlock(b, w.getBlock(loc.posX, loc.posY, loc.posZ)))
+            {
+                //  Sanity cleanup
+                if (cleanupBuildings == null)
+                {
+                    cleanupBuildings = new ArrayList<Building>();
+                }
+
+                cleanupBuildings.add(b);
+                continue;
+            }
+
             b.onWorldTick(event);
+        }
+
+        if (cleanupBuildings != null)
+        {
+            for (Building b : cleanupBuildings)
+            {
+                b.destroy();
+            }
         }
     }
 
@@ -553,6 +578,7 @@ public class Colony
     public void removeCitizen(EntityCitizen citizen)
     {
         citizens.remove(citizen.getUniqueID());
+        markDirty();
     }
 
     public boolean registerCitizen(EntityCitizen citizen)
@@ -565,6 +591,20 @@ public class Colony
         citizens.put(citizen.getUniqueID(), new WeakReference<EntityCitizen>(citizen));
         return true;
     }
+
+//    public void replaceCitizen(EntityCitizen oldCitizen, EntityCitizen newCitizen)
+//    {
+//        if (citizens.containsKey(oldCitizen.getUniqueID()))
+//        {
+//            citizens.remove(oldCitizen.getUniqueID());
+//            citizens.put(newCitizen.getUniqueID(), new WeakReference<EntityCitizen>(newCitizen));
+//            markDirty();
+//        }
+//        else
+//        {
+//            MineColonies.logger.error(String.format("Colony.replaceCitizen() - Citizen %s is not a member of the Colony.", oldCitizen.getUniqueID().toString()));
+//        }
+//    }
 
     /**
      * Get citizen in Colony by ID
@@ -587,7 +627,8 @@ public class Colony
         for (WeakReference<EntityCitizen> citizenRef : citizens.values())
         {
             EntityCitizen citizen = (citizenRef != null) ? citizenRef.get() : null;
-            if (citizen != null && citizen.getColonyJob() == null)
+            //if (citizen != null && citizen.getColonyJob() == null)
+            if (citizen != null && citizen.getWorkBuilding() == null)
             {
                 return citizen;
             }

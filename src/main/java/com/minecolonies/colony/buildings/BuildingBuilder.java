@@ -3,6 +3,9 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.client.gui.GuiHutBuilder;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.entity.EntityBuilder;
+import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.entity.jobs.JobBuilder;
 import com.minecolonies.lib.EnumGUI;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,10 +21,12 @@ public class BuildingBuilder extends BuildingWorker
 
     public String getJobName() { return "Builder"; }
 
-    public Class<JobBuilder> getJobClass()
-    {
-        return JobBuilder.class; //TODO Implement Later
-    }
+    //  Classic Style of Jobs
+    public EntityCitizen createWorker(World world) { return new EntityBuilder(world); }
+
+    //  Future Style of Jobs
+    public Class<JobBuilder> getJobClass() { return JobBuilder.class; }
+    public ColonyJob createJob(EntityCitizen citizen) { return new JobBuilder(citizen); }
 
     public int getGuiId() { return EnumGUI.BUILDER.getID(); }
 

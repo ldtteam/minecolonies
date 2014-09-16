@@ -7,6 +7,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
@@ -75,6 +76,12 @@ public abstract class Building
         {
             blockClassToBuildingClassMap.put(parentBlock, buildingClass);
         }
+    }
+
+    public static boolean buildingMatchesBlock(Building building, Block block)
+    {
+        Class<?> c = blockClassToBuildingClassMap.get(block.getClass());
+        return building.getClass().equals(c);
     }
 
     /**

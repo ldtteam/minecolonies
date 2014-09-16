@@ -2,8 +2,10 @@ package com.minecolonies.entity.jobs;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Schematic;
+import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
@@ -63,16 +65,19 @@ public class JobBuilder extends ColonyJob
 
     public boolean isNeeded()
     {
-        EntityCitizen c = getCitizen();
-
-        if (c.getWorkBuilding() == null)
+        if (getCitizen().getWorkBuilding() == null)
         {
             return false;
         }
 
-        Colony colony = c.getColony();
+        Colony colony = getCitizen().getColony();
 
         return colony != null; // && !colony.getBuilderRequired.isEmpty();
+    }
+
+    public void addTasks(EntityAITasks tasks)
+    {
+        //tasks.addTask(3, new EntityAIWorkBuilder(this));
     }
 
     public boolean hasSchematic()

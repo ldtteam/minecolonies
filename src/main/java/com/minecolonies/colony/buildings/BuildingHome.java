@@ -88,6 +88,16 @@ public class BuildingHome extends BuildingHut
         citizen.setHomeBuilding(null);
     }
 
+    public void replaceCitizen(EntityCitizen oldCitizen, EntityCitizen newCitizen)
+    {
+//        if (citizens.contains(oldCitizen.getUniqueID()))
+//        {
+//            citizens.remove(oldCitizen.getUniqueID());
+//            citizens.add(newCitizen.getUniqueID());
+//            newCitizen.setHomeBuilding(this);
+//        }
+    }
+
     public static class View extends BuildingHut.View
     {
         public View(ColonyView c, ChunkCoordinates l)

@@ -130,22 +130,22 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if (colonyJob != null)
         {
-            colonyJob.addTasks();
+            colonyJob.addTasks(this.tasks);
         }
     }
 
     public ColonyJob getColonyJob() { return colonyJob; }
     public void setColonyJob(ColonyJob j)
     {
-        Object currentTasks[] = this.tasks.taskEntries.toArray();
-        for (Object task : currentTasks)
-        {
-            this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry)task).action);
-        }
-
-        colonyJob = j;
-
-        initTasks();
+//        Object currentTasks[] = this.tasks.taskEntries.toArray();
+//        for (Object task : currentTasks)
+//        {
+//            this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry)task).action);
+//        }
+//
+//        colonyJob = j;
+//
+//        initTasks();
     }
 
     protected String initJob()
@@ -279,6 +279,32 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             BuildingWorker bWorker = (b instanceof BuildingWorker) ? (BuildingWorker)b : null;
             workBuilding = new WeakReference<BuildingWorker>(bWorker);
         }
+
+        if (!this.getClass().equals(EntityCitizen.class))
+        {
+            if (workBuildingId == null ||
+                    workBuilding == null ||
+                    workBuilding.get() == null)
+            {
+                removeFromWorkBuilding();
+            }
+        }
+//        BuildingWorker b = (workBuilding != null) ? workBuilding.get() : null;
+//        if (b != null)
+//        {
+//            if (colonyJob == null)
+//            {
+//                ColonyJob newJob = b.createJob(this);
+//                if (newJob != null)
+//                {
+//                    setColonyJob(newJob);
+//                }
+//            }
+//        }
+//        else if (colonyJob != null)
+//        {
+//            setColonyJob(null);
+//        }
     }
 
     @Override
@@ -427,7 +453,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public BuildingHome getHomeBuilding()
     {
-        return homeBuilding.get();
+        return (homeBuilding != null) ? homeBuilding.get() : null;
     }
 
     public void setHomeBuilding(BuildingHome b)
@@ -438,13 +464,65 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public BuildingWorker getWorkBuilding()
     {
-        return workBuilding.get();
+        return (workBuilding != null) ? workBuilding.get() : null;
     }
 
     public void setWorkBuilding(BuildingWorker b)
     {
         workBuilding = new WeakReference<BuildingWorker>(b);
         workBuildingId = (b != null) ? b.getID() : null;
+    }
+
+    public void addToWorkBuilding(BuildingWorker building)
+    {
+        setWorkBuilding(building);
+
+        NBTTagCompound nbt = new NBTTagCompound();
+        this.writeToNBT(nbt);
+        this.setDead();
+
+        EntityCitizen worker = building.createWorker(worldObj);
+        worker.readFromNBT(nbt);
+        building.bindWorker(worker);
+        worldObj.spawnEntityInWorld(worker);
+        ChunkCoordUtils.tryMoveLivingToXYZ(worker, building.getLocation());
+
+        if (getColony() != null)
+        {
+            getColony().registerCitizen(worker);
+            worker.setColony(getColony());
+        }
+
+        BuildingHome home = getHomeBuilding();
+        if (home != null)
+        {
+            home.replaceCitizen(this, worker);
+        }
+    }
+
+    public void removeFromWorkBuilding()
+    {
+        setWorkBuilding(null);
+
+        NBTTagCompound nbt = new NBTTagCompound();
+        this.writeToNBT(nbt);
+        this.setDead();
+
+        EntityCitizen citizen = new EntityCitizen(worldObj);
+        citizen.readFromNBT(nbt);
+        worldObj.spawnEntityInWorld(citizen);
+
+        if (getColony() != null)
+        {
+            getColony().registerCitizen(citizen);
+            citizen.setColony(getColony());
+        }
+
+        BuildingHome home = getHomeBuilding();
+        if (home != null)
+        {
+            home.replaceCitizen(this, citizen);
+        }
     }
 
     public Status getStatus()
@@ -503,16 +581,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             ChunkCoordUtils.writeToNBT(compound, "homebuilding", homeBuildingId);
         }
-        if (workBuildingId != null && homeBuilding != null && homeBuilding.get() != null)
+        if (workBuildingId != null && workBuilding != null && workBuilding.get() != null)
         {
             ChunkCoordUtils.writeToNBT(compound, "workbuilding", workBuildingId);
         }
-        if (colonyJob != null)
-        {
-            NBTTagCompound jobCompound = new NBTTagCompound();
-            colonyJob.writeToNBT(jobCompound);
-            compound.setTag("job", jobCompound);
-        }
+//        if (colonyJob != null)
+//        {
+//            NBTTagCompound jobCompound = new NBTTagCompound();
+//            colonyJob.writeToNBT(jobCompound);
+//            compound.setTag("job", jobCompound);
+//        }
 
         NBTTagList inventoryList = new NBTTagList();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
@@ -575,10 +653,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             workBuildingId = ChunkCoordUtils.readFromNBT(compound, "workbuilding");
         }
-        if (compound.hasKey("job") && compound.getTag("job") instanceof NBTTagCompound)
-        {
-            setColonyJob(ColonyJob.createFromNBT(this, compound.getCompoundTag("job")));
-        }
+//        if (compound.hasKey("job"))
+//        {
+//            setColonyJob(ColonyJob.createFromNBT(this, compound.getCompoundTag("job")));
+//        }
 
         NBTTagList nbttaglist = compound.getTagList("Inventory", NBT.TAG_COMPOUND);
         for (int i = 0; i < nbttaglist.tagCount(); i++)

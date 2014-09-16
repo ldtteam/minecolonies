@@ -74,7 +74,7 @@ public abstract class ColonyJob
 
     public abstract String getName();
 
-    protected EntityCitizen getCitizen(){ return citizen; }
+    public EntityCitizen getCitizen() { return citizen; }
 
     public static ColonyJob createFromNBT(EntityCitizen citizen, NBTTagCompound compound)
     {
@@ -221,7 +221,7 @@ public abstract class ColonyJob
         return itemCopy.stackSize == 0 ? null : itemstack;
     }
 
-    public void addTasks() {}
+    public void addTasks(EntityAITasks tasks) {}
 
 //    public void resetTasks()
 //    {

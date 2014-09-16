@@ -64,7 +64,7 @@ public class EventHandler
 //                return;
 //            }
 
-            building.onDestroyed();
+            building.destroy();
         }
     }
 

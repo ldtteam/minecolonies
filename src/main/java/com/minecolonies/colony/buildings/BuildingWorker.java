@@ -35,16 +35,27 @@ public abstract class BuildingWorker extends BuildingHut
             EntityCitizen worker = (EntityCitizen) Utils.getEntityFromUUID(world, workerId);
             if (worker != null)
             {
-                worker.setWorkBuilding(null);
+                worker.removeFromWorkBuilding();
+                worker.setColonyJob(null);
             }
+
+            workerId = null;
         }
 
         super.onDestroyed();
     }
 
     public abstract String getJobName();
-    //public abstract EntityCitizen createWorker();
+
+    //  Classic Style of Jobs
+    public /*abstract*/ EntityCitizen createWorker(World world)
+    {
+        return new EntityCitizen(world); //TODO Implement Later
+    }
+
+    //  Future Style of Jobs
     public abstract Class<? extends ColonyJob> getJobClass();
+    public ColonyJob createJob(EntityCitizen citizen) { return null; }
 
     public UUID getWorkerId() { return workerId; }
     public boolean hasWorker() { return workerId != null; }
@@ -77,7 +88,7 @@ public abstract class BuildingWorker extends BuildingHut
     {
         workerId = citizen.getUniqueID();
         ////worker = new WeakReference<EntityCitizen>(citizen);
-        //citizen.setBuilding(this);
+        citizen.setWorkBuilding(this);
     }
 
     public void unbindWorker(EntityCitizen citizen)
@@ -86,10 +97,10 @@ public abstract class BuildingWorker extends BuildingHut
         ////if (worker != null)
         ////{
         ////    EntityCitizen citizen = worker.get();
-        ////    if (citizen != null) citizen.setBuilding(null);
+        ////    if (citizen != null) citizen.setWorkBuilding(null);
         ////    worker = null;
         ////}
-        //citizen.setBuilding(null);
+        citizen.setWorkBuilding(null);
     }
 
     @Override
@@ -108,7 +119,13 @@ public abstract class BuildingWorker extends BuildingHut
             EntityCitizen idleCitizen = getColony().getIdleCitizen();
             if (idleCitizen != null)
             {
-                idleCitizen.setWorkBuilding(this);
+                //ColonyJob job = createJob(idleCitizen);
+                //if (job != null)
+                {
+                    idleCitizen.addToWorkBuilding(this);
+                    //idleCitizen.setWorkBuilding(this);
+                    //idleCitizen.setColonyJob(job);
+                }
             }
         }
 //        else if (worker != null && worker.get() == null)
