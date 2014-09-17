@@ -46,6 +46,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
             }
 
             building = new WeakReference<Building>(b);
+
+            if (b != null)
+            {
+                b.setTileEntity(this);
+            }
         }
     }
 

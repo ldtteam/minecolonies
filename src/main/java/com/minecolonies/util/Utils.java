@@ -15,10 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Utils
 {
@@ -131,10 +128,11 @@ public class Utils
                     {
                         ChunkCoordinates tempCoords = new ChunkCoordinates(i, j, k);
 
-                        if(closestCoords == null || ChunkCoordUtils.distanceTo(tempCoords, x, y, z) < minDistance)
+                        double distance = ChunkCoordUtils.distanceSqrd(tempCoords, x, y, z);
+                        if(closestCoords == null || distance < minDistance)
                         {
                             closestCoords = tempCoords;
-                            minDistance = ChunkCoordUtils.distanceTo(closestCoords, x, y, z);
+                            minDistance = distance;
                         }
                     }
                 }
@@ -287,7 +285,7 @@ public class Utils
      * @param ids   List of UUIDs
      * @return list of EntityPlayers
      */
-    public static List<EntityPlayer> getPlayersFromUUID(World world, List<UUID> ids)
+    public static List<EntityPlayer> getPlayersFromUUID(World world, Collection<UUID> ids)
     {
         List<EntityPlayer> players = new ArrayList<EntityPlayer>();
 

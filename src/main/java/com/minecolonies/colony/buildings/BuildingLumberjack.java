@@ -12,8 +12,13 @@ public class BuildingLumberjack extends BuildingWorker
         super(c, l);
     }
 
+    @Override
+    public String getSchematicName() { return "Lumberjack"; }
+
+    @Override
     public String getJobName() { return "Lumberjack"; }
 
+    @Override
     public Class<ColonyJob> getJobClass()
     {
         return ColonyJob.class; //TODO Implement Later

@@ -74,15 +74,15 @@ public class BuildRequestMessage implements IMessage
                 return null;
             }
 
-//            switch(message.mode)
-//            {
-//                case BUILD:
-//                    tileEntity.requestBuilding();
-//                    break;
-//                case REPAIR:
-//                    tileEntity.requestRepair();
-//                    break;
-//            }
+            switch(message.mode)
+            {
+                case BUILD:
+                    building.requestUpgrade();
+                    break;
+                case REPAIR:
+                    building.requestRepair();
+                    break;
+            }
 
             return null;
         }

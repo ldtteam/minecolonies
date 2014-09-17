@@ -29,19 +29,28 @@ public class BuildingWarehouse extends BuildingWorker
         super(c, l);
     }
 
+    @Override
+    public String getSchematicName() { return "Warehouse"; }
+
+    @Override
     public String getJobName() { return "Deliveryman"; }
 
     //  Classic Style of Jobs
+    @Override
     public EntityCitizen createWorker(World world)
     {
         return new EntityDeliveryman(world);
     }
 
     //  Future Style of Jobs
+    @Override
     public Class<ColonyJob> getJobClass()
     {
         return ColonyJob.class; //TODO Implement Later
     }
+
+    @Override
+    public int getGuiId() { return EnumGUI.WAREHOUSE.getID(); }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)

@@ -6,13 +6,16 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.Schematic;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +24,8 @@ public abstract class Building
 {
     private final ChunkCoordinates location;
     private final Colony           colony;
+
+    private WeakReference<TileEntityColonyBuilding> tileEntity;
 
     //  Attributes
     private int buildingLevel = 0;
@@ -240,6 +245,15 @@ public abstract class Building
     public ChunkCoordinates getID() { return location; }    //  Location doubles as ID
     public ChunkCoordinates getLocation() { return location; }
     public int getBuildingLevel() { return buildingLevel; }
+    public void setBuildingLevel(int level) { buildingLevel = level; markDirty(); }
+
+    public abstract String getSchematicName();
+
+    public void setTileEntity(TileEntityColonyBuilding te) { tileEntity = new WeakReference<TileEntityColonyBuilding>(te); }
+    public TileEntityColonyBuilding getTileEntity()
+    {
+        return (tileEntity != null) ? tileEntity.get() : null;
+    }
 
     public boolean isDirty() { return isDirty; }
     public void clearDirty() { isDirty = false; }
@@ -260,6 +274,23 @@ public abstract class Building
 
     public void onServerTick(TickEvent.ServerTickEvent event) {}
     public void onWorldTick(TickEvent.WorldTickEvent event) {}
+
+
+    public void requestUpgrade()
+    {
+        if (buildingLevel < 3) //  TODO maxLevel
+        {
+            colony.addBuildingForUpgrade(this, buildingLevel + 1);
+        }
+    }
+
+    public void requestRepair()
+    {
+        if (buildingLevel > 0)
+        {
+            colony.addBuildingForUpgrade(this, buildingLevel);
+        }
+    }
 
     /**
      * The Building View is the client-side representation of a Building.

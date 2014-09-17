@@ -19,15 +19,23 @@ public class BuildingBuilder extends BuildingWorker
         super(c, l);
     }
 
+    @Override
+    public String getSchematicName() { return "Builder"; }
+
+    @Override
     public String getJobName() { return "Builder"; }
 
     //  Classic Style of Jobs
+    @Override
     public EntityCitizen createWorker(World world) { return new EntityBuilder(world); }
 
     //  Future Style of Jobs
+    @Override
     public Class<JobBuilder> getJobClass() { return JobBuilder.class; }
+    @Override
     public ColonyJob createJob(EntityCitizen citizen) { return new JobBuilder(citizen); }
 
+    @Override
     public int getGuiId() { return EnumGUI.BUILDER.getID(); }
 
     public static class View extends BuildingWorker.View

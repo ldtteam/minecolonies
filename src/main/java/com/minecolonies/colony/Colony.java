@@ -5,14 +5,17 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.ColonyBuildingViewMessage;
 import com.minecolonies.network.messages.ColonyViewMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -53,6 +56,9 @@ public class Colony
     //  Citizenry
     private int                                     maxCitizens = Constants.DEFAULTMAXCITIZENS;
     private Map<UUID, WeakReference<EntityCitizen>> citizens    = new HashMap<UUID, WeakReference<EntityCitizen>>();
+
+    //  Workload and Jobs
+    private Map<ChunkCoordinates, String> buildingUpgradeMap = new HashMap<ChunkCoordinates, String>();
 
     final static String TAG_ID           = "id";
     final static String TAG_NAME         = "name";
@@ -462,7 +468,7 @@ public class Colony
 
             if(getMaxCitizens() == getCitizens().size())
             {
-                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, new ArrayList<UUID>(owners)), "tile.blockHutTownhall.messageMaxSize");
+                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, getOwners()), "tile.blockHutTownhall.messageMaxSize");
             }
         }
 
@@ -477,6 +483,11 @@ public class Colony
     public Map<ChunkCoordinates, Building> getBuildings()
     {
         return Collections.unmodifiableMap(buildings);
+    }
+
+    public BuildingTownHall getTownhall()
+    {
+        return townhall;
     }
 
     public List<ChunkCoordinates> getRemovedBuildings() { return Collections.unmodifiableList(removedBuildings); }
@@ -635,5 +646,42 @@ public class Colony
         }
 
         return null;
+    }
+
+    public void addBuildingForUpgrade(Building building, int level)
+    {
+        String upgradeName = building.getSchematicName() + level;
+        buildingUpgradeMap.put(building.getID(), upgradeName);
+    }
+
+    public void removeBuildingForUpgrade(ChunkCoordinates pos)
+    {
+        buildingUpgradeMap.remove(pos);
+    }
+
+    public Map<ChunkCoordinates, String> getBuildingUpgrades()
+    {
+        return buildingUpgradeMap;
+    }
+
+    public List<ChunkCoordinates> getDeliverymanRequired()
+    {
+        List<ChunkCoordinates> deliverymanRequired = new ArrayList<ChunkCoordinates>();
+
+        for (WeakReference<EntityCitizen> citizenRef : citizens.values())
+        {
+            EntityCitizen citizen = (citizenRef != null) ? citizenRef.get() : null;
+            if (citizen != null && citizen instanceof EntityWorker)
+            {
+                EntityWorker worker = (EntityWorker)citizen;
+
+                if (worker.getWorkBuilding() != null && !worker.hasItemsNeeded())
+                {
+                    deliverymanRequired.add(worker.getWorkBuilding().getLocation());
+                }
+            }
+        }
+
+        return deliverymanRequired;
     }
 }

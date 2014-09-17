@@ -38,7 +38,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
     {
         if(!deliveryman.hasDestination())
         {
-            deliveryman.setDestination(deliveryman.getTownHall().getDeliverymanRequired().get(0));
+            deliveryman.setDestination(deliveryman.getColony().getDeliverymanRequired().get(0));
         }
         ChunkCoordUtils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination());
     }

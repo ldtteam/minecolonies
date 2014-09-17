@@ -25,6 +25,7 @@ public abstract class BuildingWorker extends BuildingHut
         super(c, l);
     }
 
+    @Override
     public void onDestroyed()
     {
         //  TODO REFACTOR - Ideally we will have a WeakReference to the EntityCitizen
@@ -101,6 +102,11 @@ public abstract class BuildingWorker extends BuildingHut
         ////    worker = null;
         ////}
         citizen.setWorkBuilding(null);
+    }
+
+    public boolean isWorker(EntityCitizen citizen)
+    {
+        return citizen.getUniqueID().equals(workerId);
     }
 
     @Override

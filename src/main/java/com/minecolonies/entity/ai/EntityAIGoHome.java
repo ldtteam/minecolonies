@@ -32,13 +32,13 @@ public class EntityAIGoHome extends EntityAIBase
     public void startExecuting()
     {
         ChunkCoordinates pos;
-        if(citizen.getHomeHut() != null)
+        if(citizen.getHomeBuilding() != null)
         {
-            pos = citizen.getHomeHut().getPosition();
+            pos = citizen.getHomeBuilding().getLocation();
         }
-        else if(citizen.getTownHall() != null)
+        else if(citizen.getColony() != null && citizen.getColony().getTownhall() != null)
         {
-            pos = citizen.getTownHall().getPosition();
+            pos = citizen.getColony().getTownhall().getLocation();
         }
         else
         {

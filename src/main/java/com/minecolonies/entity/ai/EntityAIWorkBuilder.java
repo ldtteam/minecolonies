@@ -5,12 +5,9 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityBuilder;
-import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.tileentities.TileEntityBuildable;
-import com.minecolonies.tileentities.TileEntityHut;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.SidedProxy;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -62,12 +59,12 @@ public class EntityAIWorkBuilder extends EntityAIWork
         {
             loadSchematic();
 
-            if(!findNextBlock())
+            if(!builder.hasSchematic() || !findNextBlock())
             {
                 return;
             }
 
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
         }
         ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getSchematic().getPosition());
         if(!Configurations.builderInfiniteResources)
@@ -227,13 +224,15 @@ public class EntityAIWorkBuilder extends EntityAIWork
         {
             for(ItemStack neededItem : builder.getItemsNeeded())
             {
-                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
+                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getOwners()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
             }
         }
     }
 
     private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
     {
+        TileEntityColonyBuilding workBuildingTileEntity = builder.getWorkBuilding().getTileEntity();
+
         System.out.println(FMLCommonHandler.instance().getSide().toString() + " : " + FMLCommonHandler.instance().getEffectiveSide().toString());
         if(block != Blocks.air)
         {
@@ -259,22 +258,28 @@ public class EntityAIWorkBuilder extends EntityAIWork
             int slotID = InventoryUtils.containsStack(builder.getInventory(), material);
             if(slotID == -1)//inventory doesn't contain item
             {
-                int chestSlotID = InventoryUtils.containsStack(builder.getWorkHut(), material);
+                if (workBuildingTileEntity == null)
+                {
+                    //  Work Building is not loaded
+                    return false;
+                }
+
+                int chestSlotID = InventoryUtils.containsStack(workBuildingTileEntity, material);
                 if(chestSlotID != -1)//chest contains item
                 {
-                    if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 16) //Square Distance - within 4 blocks
+                    if(ChunkCoordUtils.distanceSqrd(builder.getWorkBuilding().getLocation(), builder.getPosition()) < 16)
                     {
-                        if(!InventoryUtils.takeStackInSlot(builder.getWorkHut(), builder.getInventory(), chestSlotID, 1, true))
+                        if(!InventoryUtils.takeStackInSlot(workBuildingTileEntity, builder.getInventory(), chestSlotID, 1, true))
                         {
-                            ItemStack chestItem = builder.getWorkHut().getStackInSlot(chestSlotID);
-                            builder.getWorkHut().setInventorySlotContents(chestSlotID, null);
+                            ItemStack chestItem = workBuildingTileEntity.getStackInSlot(chestSlotID);
+                            workBuildingTileEntity.setInventorySlotContents(chestSlotID, null);
                             setStackInBuilder(chestItem, true);
                             builder.setStatus(EntityBuilder.Status.WORKING);
                         }
                     }
-                    else if(builder.getNavigator().noPath() || !ChunkCoordUtils.isPathingTo(builder, builder.getWorkHut().getPosition()))
+                    else if(builder.getNavigator().noPath() || !ChunkCoordUtils.isPathingTo(builder, builder.getWorkBuilding().getLocation()))
                     {
-                        if(!ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getWorkHut().getPosition()))
+                        if(!ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getWorkBuilding().getLocation()))
                         {
                             builder.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
                         }
@@ -379,9 +384,13 @@ public class EntityAIWorkBuilder extends EntityAIWork
                 builder.getInventory().setInventorySlotContents(slotID, stack);
             }
 
-            if(builder.getWorkHut().getDistanceFrom(builder.getPosition()) < 16)
+            if(ChunkCoordUtils.distanceSqrd(builder.getWorkBuilding().getLocation(), builder.getPosition()) < 16)
             {
-                leftOvers = InventoryUtils.setStack(builder.getWorkHut(), leftOvers);
+                TileEntityColonyBuilding tileEntity = builder.getWorkBuilding().getTileEntity();
+                if (tileEntity != null)
+                {
+                    leftOvers = InventoryUtils.setStack(tileEntity, leftOvers);
+                }
             }
             /*else
             {
@@ -675,7 +684,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
     private void setTileEntity(int x, int y, int z)
     {
         TileEntity tileEntity = builder.getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
-        if(tileEntity != null && !(world.getTileEntity(x, y, z) instanceof TileEntityHut))//TODO check if TileEntity already exists
+        if(tileEntity != null && !(world.getTileEntity(x, y, z) instanceof TileEntityColonyBuilding))//TODO check if TileEntity already exists
         {
             world.setTileEntity(x, y, z, tileEntity);
         }
@@ -683,7 +692,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
 
     private void loadSchematic()
     {
-        Map.Entry<ChunkCoordinates, String> entry = builder.getTownHall().getBuilderRequired().entrySet().iterator().next();
+        Map.Entry<ChunkCoordinates, String> entry = builder.getColony().getBuildingUpgrades().entrySet().iterator().next();
         ChunkCoordinates pos = entry.getKey();
         String name = entry.getValue();
 
@@ -692,7 +701,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
         if(builder.getSchematic() == null)
         {
             MineColonies.logger.warn(LanguageHandler.format("entity.builder.ai.schematicLoadFailure", name));
-            builder.getTownHall().removeHutForUpgrade(pos);
+            builder.getColony().removeBuildingForUpgrade(pos);
             return;
         }
         builder.getSchematic().setPosition(pos);
@@ -703,18 +712,18 @@ public class EntityAIWorkBuilder extends EntityAIWork
         spawnEntities();//TODO handle materials - would work well in staged building
 
         String schematicName = builder.getSchematic().getName();
-        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getTownHall().getOwners()), "entity.builder.messageBuildComplete", schematicName);
+        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getOwners()), "entity.builder.messageBuildComplete", schematicName);
         ChunkCoordinates pos = builder.getSchematic().getPosition();
 
-        if(ChunkCoordUtils.getTileEntity(world, pos) instanceof TileEntityBuildable)
+        if(ChunkCoordUtils.getTileEntity(world, pos) instanceof TileEntityColonyBuilding)
         {
             int schematicLevel = Integer.parseInt(schematicName.substring(schematicName.length() - 1));
 
-            TileEntityBuildable hut = (TileEntityBuildable) ChunkCoordUtils.getTileEntity(world, pos);
-            hut.setBuildingLevel(schematicLevel);
+            TileEntityColonyBuilding hut = (TileEntityColonyBuilding) ChunkCoordUtils.getTileEntity(world, pos);
+            hut.getBuilding().setBuildingLevel(schematicLevel);
         }
 
-        builder.getTownHall().removeHutForUpgrade(pos);
+        builder.getColony().removeBuildingForUpgrade(pos);
         builder.setSchematic(null);
         resetTask();
     }

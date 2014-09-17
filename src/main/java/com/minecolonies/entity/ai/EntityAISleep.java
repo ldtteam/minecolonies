@@ -1,6 +1,7 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 
 import static com.minecolonies.entity.EntityCitizen.Status.SLEEPING;
@@ -23,7 +24,8 @@ public class EntityAISleep extends EntityAIBase
 
     private boolean isHome()
     {
-        return this.citizen.getHomeHut() != null && this.citizen.getHomeHut().getDistanceFrom(citizen.getPosition()) < 4;
+        return this.citizen.getHomeBuilding() != null &&
+                ChunkCoordUtils.distanceSqrd(this.citizen.getHomeBuilding().getLocation(), citizen.getPosition()) < 16;
     }
 
     @Override

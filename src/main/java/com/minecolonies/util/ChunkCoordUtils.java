@@ -12,6 +12,7 @@ import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class ChunkCoordUtils
@@ -148,14 +149,19 @@ public class ChunkCoordUtils
         return Utils.tryMoveLivingToXYZ(living, destination.posX, destination.posY, destination.posZ, speed);
     }
 
-    public static float distanceTo(ChunkCoordinates coords, int x, int y, int z)
+    public static float distanceSqrd(ChunkCoordinates coords, int x, int y, int z)
     {
-        return distanceTo(coords, new ChunkCoordinates(x, y, z));
+        return coords.getDistanceSquared(x, y, z);
     }
 
-    public static float distanceTo(ChunkCoordinates coords1, ChunkCoordinates coords2)
+    public static float distanceSqrd(ChunkCoordinates coords1, ChunkCoordinates coords2)
     {
-        return MathHelper.sqrt_float(coords2.getDistanceSquaredToChunkCoordinates(coords1));
+        return coords1.getDistanceSquaredToChunkCoordinates(coords2);
+    }
+
+    public static float distanceSqrd(ChunkCoordinates coords1, Vec3 coords2)
+    {
+        return coords1.getDistanceSquared((int)coords2.xCoord, (int)coords2.yCoord, (int)coords2.zCoord);
     }
 
     public static boolean equals(ChunkCoordinates coords, int x, int y, int z)

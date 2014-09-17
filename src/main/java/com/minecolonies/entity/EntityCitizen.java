@@ -156,7 +156,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void setTexture()
     {
         String textureBase = "textures/entity/";
-        if (colonyJob == null)
+        if (/*colonyJob*/ job == null)
         {
             switch (getLevel())
             {
@@ -176,7 +176,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         else
         {
-            textureBase += colonyJob.getName();
+            textureBase += job; //colonyJob.getName();
         }
 
         textureBase += getSex() == SEX_MALE ? "Male" : "Female";
@@ -269,7 +269,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             Colony c = colony.get();
             Building b = (c != null) ? c.getBuilding(homeBuildingId) : null;
             BuildingHome bCitizen = (b instanceof BuildingHome) ? (BuildingHome)b : null;
-            homeBuilding = new WeakReference<BuildingHome>(bCitizen);
+
+            if (bCitizen.isCitizen(this))
+            {
+                homeBuilding = new WeakReference<BuildingHome>(bCitizen);
+            }
+            else
+            {
+                homeBuildingId = null;
+            }
         }
 
         if (workBuilding == null && workBuildingId != null && colony != null)
@@ -277,7 +285,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             Colony c = colony.get();
             Building b = (c != null) ? c.getBuilding(workBuildingId) : null;
             BuildingWorker bWorker = (b instanceof BuildingWorker) ? (BuildingWorker)b : null;
-            workBuilding = new WeakReference<BuildingWorker>(bWorker);
+
+            if (bWorker.isWorker(this))
+            {
+                workBuilding = new WeakReference<BuildingWorker>(bWorker);
+            }
+            else
+            {
+                workBuildingId = null;
+            }
         }
 
         if (!this.getClass().equals(EntityCitizen.class))
@@ -353,7 +369,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         Colony c = (colony != null) ? colony.get() : null;
         if (c != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, new ArrayList<UUID>(c.getOwners())), "tile.blockHutTownhall.messageColonistDead");
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, c.getOwners()), "tile.blockHutTownhall.messageColonistDead");
             c.removeCitizen(this);
         }
 

@@ -16,6 +16,9 @@ public class BuildingTownHall extends BuildingHut
         super(c, l);
     }
 
+    @Override
+    public String getSchematicName() { return "Townhall"; }
+
     public static class View extends BuildingHut.View
     {
         public View(ColonyView c, ChunkCoordinates l)

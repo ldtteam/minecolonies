@@ -12,6 +12,10 @@ public class BuildingBaker extends BuildingWorker
         super(c, l);
     }
 
+    @Override
+    public String getSchematicName() { return "Baker"; }
+
+    @Override
     public String getJobName() { return "Baker"; }
 
     public Class<ColonyJob> getJobClass()

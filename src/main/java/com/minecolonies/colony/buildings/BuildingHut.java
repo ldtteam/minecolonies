@@ -4,7 +4,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import net.minecraft.util.ChunkCoordinates;
 
-public class BuildingHut extends Building
+public abstract class BuildingHut extends Building
 {
     public BuildingHut(Colony c, ChunkCoordinates l)
     {

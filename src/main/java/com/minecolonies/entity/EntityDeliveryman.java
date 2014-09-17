@@ -1,5 +1,6 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.colony.Colony;
 import com.minecolonies.entity.ai.EntityAIWorkDeliveryman;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.nbt.NBTTagCompound;
@@ -57,7 +58,8 @@ public class EntityDeliveryman extends EntityWorker
     @Override
     public boolean isNeeded()
     {
-        return getTownHall() != null && !getTownHall().getDeliverymanRequired().isEmpty();
+        Colony colony = getColony();
+        return colony != null && !colony.getDeliverymanRequired().isEmpty();
     }
 
     public boolean hasDestination()
