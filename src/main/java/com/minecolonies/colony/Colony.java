@@ -8,6 +8,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.ColonyBuildingViewMessage;
+import com.minecolonies.network.messages.ColonyViewCitizensMessage;
 import com.minecolonies.network.messages.ColonyViewMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -38,6 +39,7 @@ public class Colony
     //  Update Subscriptions
     private Set<EntityPlayerMP>    subscribers      = new HashSet<EntityPlayerMP>();
     private boolean                isDirty          = false;
+    private boolean                isCitizensDirty  = false;
     private boolean                isBuildingsDirty = false;
     private List<ChunkCoordinates> removedBuildings = new ArrayList<ChunkCoordinates>();
 
@@ -66,8 +68,10 @@ public class Colony
     final static String TAG_CENTER       = "center";
     final static String TAG_MAX_CITIZENS = "maxCitizens";
     final static String TAG_OWNERS       = "owners";
-    final static String TAG_BUILDINGS    = "buidings";
+    final static String TAG_BUILDINGS_TYPO = "buidings";
+    final static String TAG_BUILDINGS    = "buildings";
     final static String TAG_CITIZENS     = "citizens";
+    final static String TAG_BUILDING_UPGRADES = "buildingUpgrades";
 
     /**
      * Constructor for a newly created Colony.
@@ -130,7 +134,8 @@ public class Colony
         }
 
         //  Buildings
-        NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
+        String buildingsTagName = compound.hasKey(TAG_BUILDINGS_TYPO) ? TAG_BUILDINGS_TYPO : TAG_BUILDINGS;
+        NBTTagList buildingTagList =  compound.getTagList(buildingsTagName, NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
         {
             NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
@@ -147,6 +152,16 @@ public class Colony
         {
             String owner = citizenTagList.getStringTagAt(i);
             citizens.put(UUID.fromString(owner), null);
+        }
+
+        //  Workload
+        NBTTagList buildingUpgradeTagList = compound.getTagList(TAG_BUILDING_UPGRADES, NBT.TAG_COMPOUND);
+        for (int i = 0; i < buildingUpgradeTagList.tagCount(); ++i)
+        {
+            NBTTagCompound upgrade = buildingUpgradeTagList.getCompoundTagAt(i);
+            ChunkCoordinates coords = ChunkCoordUtils.readFromNBT(upgrade, TAG_ID);
+            String name = upgrade.getString(TAG_NAME);
+            buildingUpgradeMap.put(coords, name);
         }
     }
 
@@ -192,6 +207,20 @@ public class Colony
             citizenTagList.appendTag(new NBTTagString(citizen.toString()));
         }
         compound.setTag(TAG_CITIZENS, citizenTagList);
+
+        //  Workload
+        if (!buildingUpgradeMap.isEmpty())
+        {
+            NBTTagList buildingUpgradeTagList = new NBTTagList();
+            for (Map.Entry<ChunkCoordinates, String> entry : buildingUpgradeMap.entrySet())
+            {
+                NBTTagCompound upgrade = new NBTTagCompound();
+                ChunkCoordUtils.writeToNBT(upgrade, TAG_ID, entry.getKey());
+                upgrade.setString(TAG_NAME, entry.getValue());
+                buildingUpgradeTagList.appendTag(upgrade);
+            }
+            compound.setTag(TAG_BUILDING_UPGRADES, buildingUpgradeTagList);
+        }
     }
 
     public UUID getID()
@@ -226,6 +255,7 @@ public class Colony
     public ChunkCoordinates getCenter() { return center; }
 
     private void markDirty() { isDirty = true; }
+    private void markCitizensDirty() { isCitizensDirty = true; }
     public void markBuildingsDirty() { isBuildingsDirty = true; }
 
     /**
@@ -340,26 +370,68 @@ public class Colony
             }
         }
 
+        //  Determine if any new subscribers were added this pass
+        boolean hasNewSubscribers = false;
         for (EntityPlayerMP player : subscribers)
         {
-            boolean isNewSubscriber = !oldSubscribers.contains(player);
-
-            if (isNewSubscriber || isDirty)
+            if (!oldSubscribers.contains(player))
             {
-                NBTTagCompound compound = new NBTTagCompound();
-                ColonyView.createNetworkData(this, compound);
-                MineColonies.network.sendTo(new ColonyViewMessage(id, compound), player);
+                hasNewSubscribers = true;
+                break;
             }
+        }
 
-            if (isNewSubscriber || isBuildingsDirty)
+        //  Send each type of update packet as appropriate:
+        //      - To Subscribers if the data changes
+        //      - To New Subscribers even if it hasn't changed
+
+        //  ColonyView
+        if (isDirty || hasNewSubscribers)
+        {
+            NBTTagCompound compound = new NBTTagCompound();
+            ColonyView.createNetworkData(this, compound);
+
+            for (EntityPlayerMP player : subscribers)
             {
-                for (Building b : buildings.values())
+                boolean isNewSubscriber = !oldSubscribers.contains(player);
+                if (isDirty || isNewSubscriber)
                 {
-                    if (isNewSubscriber || b.isDirty())
+                    MineColonies.network.sendTo(new ColonyViewMessage(id, compound, isNewSubscriber), player);
+                }
+            }
+        }
+
+        //  Citizens
+        if (isCitizensDirty || hasNewSubscribers)
+        {
+            NBTTagCompound compound = new NBTTagCompound();
+            ColonyView.createCitizenNetworkData(this, compound);
+
+            for (EntityPlayerMP player : subscribers)
+            {
+                if (isCitizensDirty || !oldSubscribers.contains(player))
+                {
+                    MineColonies.network.sendTo(new ColonyViewCitizensMessage(id, compound), player);
+                }
+            }
+        }
+
+        //  Buildings
+        if (isBuildingsDirty || hasNewSubscribers)
+        {
+            for (Building b : buildings.values())
+            {
+                if (b.isDirty() || hasNewSubscribers)
+                {
+                    NBTTagCompound compound = new NBTTagCompound();
+                    b.createViewNetworkData(compound);
+
+                    for (EntityPlayerMP player : subscribers)
                     {
-                        NBTTagCompound compound = new NBTTagCompound();
-                        b.createViewNetworkData(compound);
-                        MineColonies.network.sendTo(new ColonyBuildingViewMessage(id, b.getID(), compound), player);
+                        if (b.isDirty() || !oldSubscribers.contains(player))
+                        {
+                            MineColonies.network.sendTo(new ColonyBuildingViewMessage(id, b.getID(), compound), player);
+                        }
                     }
                 }
             }
@@ -376,6 +448,7 @@ public class Colony
 //        }
 
         isDirty = false;
+        isCitizensDirty = false;
         isBuildingsDirty = false;
         for (Building b : buildings.values())
         {
@@ -583,13 +656,13 @@ public class Colony
     {
         citizens.put(citizen.getUniqueID(), new WeakReference<EntityCitizen>(citizen));
         citizen.setColony(this);
-        markDirty();
+        markCitizensDirty();
     }
 
     public void removeCitizen(EntityCitizen citizen)
     {
         citizens.remove(citizen.getUniqueID());
-        markDirty();
+        markCitizensDirty();
     }
 
     public boolean registerCitizen(EntityCitizen citizen)
@@ -600,6 +673,7 @@ public class Colony
         }
 
         citizens.put(citizen.getUniqueID(), new WeakReference<EntityCitizen>(citizen));
+        markCitizensDirty();
         return true;
     }
 

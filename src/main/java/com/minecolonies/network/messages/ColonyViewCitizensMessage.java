@@ -13,19 +13,17 @@ import java.util.UUID;
 /**
  * Add or Update a ColonyView on the client
  */
-public class ColonyViewMessage implements IMessage
+public class ColonyViewCitizensMessage implements IMessage
 {
     private UUID colonyId;
-    private NBTTagCompound colonyView;
-    private boolean newSubscription;
+    private NBTTagCompound colonyCitizens;
 
-    public ColonyViewMessage(){}
+    public ColonyViewCitizensMessage(){}
 
-    public ColonyViewMessage(UUID colonyId, NBTTagCompound colonyView, boolean newSubscription)
+    public ColonyViewCitizensMessage(UUID colonyId, NBTTagCompound colonyCitizens)
     {
         this.colonyId = colonyId;
-        this.colonyView = colonyView;
-        this.newSubscription = newSubscription;
+        this.colonyCitizens = colonyCitizens;
     }
 
     @Override
@@ -33,24 +31,22 @@ public class ColonyViewMessage implements IMessage
     {
         buf.writeLong(colonyId.getMostSignificantBits());
         buf.writeLong(colonyId.getLeastSignificantBits());
-        buf.writeBoolean(newSubscription);
-        ByteBufUtils.writeTag(buf, colonyView);
+        ByteBufUtils.writeTag(buf, colonyCitizens);
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = new UUID(buf.readLong(), buf.readLong());
-        newSubscription = buf.readBoolean();
-        colonyView = ByteBufUtils.readTag(buf);
+        colonyCitizens = ByteBufUtils.readTag(buf);
     }
 
-    public static class Handler implements IMessageHandler<ColonyViewMessage, IMessage>
+    public static class Handler implements IMessageHandler<ColonyViewCitizensMessage, IMessage>
     {
         @Override
-        public IMessage onMessage(ColonyViewMessage message, MessageContext ctx)
+        public IMessage onMessage(ColonyViewCitizensMessage message, MessageContext ctx)
         {
-            return ColonyManager.handleColonyViewPacket(message.colonyId, message.colonyView, message.newSubscription);
+            return ColonyManager.handleColonyViewCitizensPacket(message.colonyId, message.colonyCitizens);
         }
     }
 }

@@ -67,11 +67,12 @@ public class MineColonies
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
         network = NetworkRegistry.INSTANCE.newSimpleChannel("MineColonies");
-        network.registerMessage(ColonyViewMessage.Handler.class, ColonyViewMessage.class, 0, Side.CLIENT);
-        network.registerMessage(ColonyBuildingViewMessage.Handler.class, ColonyBuildingViewMessage.class, 1, Side.CLIENT);
-        network.registerMessage(BuildRequestMessage.Handler.class, BuildRequestMessage.class, 2, Side.SERVER);
-        network.registerMessage(OpenInventoryMessage.Handler.class, OpenInventoryMessage.class, 3, Side.SERVER);
-        network.registerMessage(TownhallRenameMessage.Handler.class, TownhallRenameMessage.class, 4, Side.SERVER);
+        network.registerMessage(ColonyViewMessage.Handler.class,            ColonyViewMessage.class,            0,  Side.CLIENT);
+        network.registerMessage(ColonyViewCitizensMessage.Handler.class,    ColonyViewCitizensMessage.class,    1,  Side.CLIENT);
+        network.registerMessage(ColonyBuildingViewMessage.Handler.class,    ColonyBuildingViewMessage.class,    2,  Side.CLIENT);
+        network.registerMessage(BuildRequestMessage.Handler.class,          BuildRequestMessage.class,          10,  Side.SERVER);
+        network.registerMessage(OpenInventoryMessage.Handler.class,         OpenInventoryMessage.class,         11,  Side.SERVER);
+        network.registerMessage(TownhallRenameMessage.Handler.class,        TownhallRenameMessage.class,        12,  Side.SERVER);
 
         proxy.registerTileEntities();
 

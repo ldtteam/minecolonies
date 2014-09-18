@@ -536,7 +536,7 @@ public class ColonyManager {
      * @param colonyId
      * @param colonyData
      */
-    static public IMessage handleColonyViewPacket(UUID colonyId, NBTTagCompound colonyData)
+    static public IMessage handleColonyViewPacket(UUID colonyId, NBTTagCompound colonyData, boolean newSubscription)
     {
         ColonyView view = getColonyViewById(colonyId);
         if (view == null)
@@ -546,7 +546,23 @@ public class ColonyManager {
             colonyViews.put(colonyId, view);
         }
 
-        return view.handleColonyViewPacket(colonyData);
+        return view.handleColonyViewPacket(colonyData, newSubscription);
+    }
+
+    /**
+     *
+     * @param colonyId
+     * @param colonyData
+     */
+    static public IMessage handleColonyViewCitizensPacket(UUID colonyId, NBTTagCompound colonyData)
+    {
+        ColonyView view = getColonyViewById(colonyId);
+        if (view != null)
+        {
+            return view.handleColonyViewCitizensPacket(colonyData);
+        }
+
+        return null;
     }
 
     /**

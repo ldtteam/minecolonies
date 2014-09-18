@@ -49,7 +49,6 @@ public class ColonyView
     final static String TAG_CENTER       = "center";
     final static String TAG_MAX_CITIZENS = "maxCitizens";
     final static String TAG_OWNERS       = "owners";
-    final static String TAG_BUILDINGS    = "buidings";
     final static String TAG_CITIZENS     = "citizens";
     final static String TAG_BUILDINGS_REMOVED = "buildingsRemoved";
 
@@ -125,28 +124,9 @@ public class ColonyView
 
         //  Citizenry
         compound.setInteger(TAG_MAX_CITIZENS, colony.getMaxCitizens());
+        //  Citizens are sent as a separate packet
 
-        //  TODO Refactor - Colony should map UUID to EntityCitizen objects
-        World world = DimensionManager.getWorld(colony.getDimensionId());
-        if (world != null)
-        {
-            List<EntityCitizen> entities = colony.getActiveCitizens();
-//            List<Entity> entities = Utils.getEntitiesFromUUID(world, new ArrayList<UUID>(colony.getCitizens()));
-
-            if (entities != null && !entities.isEmpty())
-            {
-                int[] entityIds = new int[entities.size()];
-
-                for (int i = 0; i < entityIds.length; ++i)
-                {
-                    entityIds[i] = entities.get(i).getEntityId();
-                }
-
-                compound.setIntArray(TAG_CITIZENS, entityIds);
-            }
-        }
-
-        //  Buildings
+        //  Removed Buildings
         List<ChunkCoordinates> removedBuildings = colony.getRemovedBuildings();
         if (!removedBuildings.isEmpty())
         {
@@ -160,12 +140,40 @@ public class ColonyView
     }
 
     /**
+     * Populate an NBT compound for a network packet representing a ColonyView
+     * PLACEHOLDER - We will use eventually use PacketBuffers
+     *
+     * @param colony
+     * @param compound
+     */
+    static public void createCitizenNetworkData(Colony colony, NBTTagCompound compound)
+    {
+        World world = DimensionManager.getWorld(colony.getDimensionId());
+        if (world != null)
+        {
+            List<EntityCitizen> entities = colony.getActiveCitizens();
+
+            if (entities != null && !entities.isEmpty())
+            {
+                int[] entityIds = new int[entities.size()];
+
+                for (int i = 0; i < entityIds.length; ++i)
+                {
+                    entityIds[i] = entities.get(i).getEntityId();
+                }
+
+                compound.setIntArray(TAG_CITIZENS, entityIds);
+            }
+        }
+    }
+
+    /**
      * Populate a ColonyView from the network data
      * PLACEHOLDER - We will use eventually use PacketBuffers
      *
      * @param compound
      */
-    public IMessage handleColonyViewPacket(NBTTagCompound compound)
+    public IMessage handleColonyViewPacket(NBTTagCompound compound, boolean newSubscription)
     {
         //  General Attributes
         name = compound.getString(TAG_NAME);
@@ -174,12 +182,6 @@ public class ColonyView
 
         //  Citizenry
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
-        int[] citizenIds = compound.getIntArray(TAG_CITIZENS);
-        citizens.clear();
-        for (int i : citizenIds)
-        {
-            citizens.add(i);
-        }
 
         //  Owners
         NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, NBT.TAG_STRING);
@@ -189,11 +191,18 @@ public class ColonyView
             owners.add(UUID.fromString(owner));
         }
 
-        NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS_REMOVED, NBT.TAG_COMPOUND);
-        for (int i = 0; i < buildingTagList.tagCount(); ++i)
+        if (newSubscription)
         {
-            ChunkCoordinates id = ChunkCoordUtils.readFromNBTTagList(buildingTagList, i);
-            buildings.remove(id);
+            buildings.clear();
+        }
+        else if (compound.hasKey(TAG_BUILDINGS_REMOVED))
+        {
+            NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS_REMOVED, NBT.TAG_COMPOUND);
+            for (int i = 0; i < buildingTagList.tagCount(); ++i)
+            {
+                ChunkCoordinates id = ChunkCoordUtils.readFromNBTTagList(buildingTagList, i);
+                buildings.remove(id);
+            }
         }
 
 //        if (world == null)
@@ -204,6 +213,18 @@ public class ColonyView
 //                onWorldLoad(w);
 //            }
 //        }
+
+        return null;
+    }
+
+    public IMessage handleColonyViewCitizensPacket(NBTTagCompound compound)
+    {
+        int[] citizenIds = compound.getIntArray(TAG_CITIZENS);
+        citizens.clear();
+        for (int i : citizenIds)
+        {
+            citizens.add(i);
+        }
 
         return null;
     }
