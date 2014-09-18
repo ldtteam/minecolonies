@@ -8,6 +8,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.entity.jobs.JobBuilder;
 import com.minecolonies.lib.EnumGUI;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -45,7 +46,7 @@ public class BuildingBuilder extends BuildingWorker
             super(c, l);
         }
 
-        public Object getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
         {
             if (guiId == EnumGUI.BUILDER.getID())
             {

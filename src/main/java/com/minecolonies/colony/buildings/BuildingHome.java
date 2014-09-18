@@ -1,14 +1,12 @@
 package com.minecolonies.colony.buildings;
 
-import com.minecolonies.client.gui.GuiBase;
-import com.minecolonies.client.gui.GuiHutBuilder;
-import com.minecolonies.client.gui.GuiHutWarehouse;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -153,7 +151,7 @@ public class BuildingHome extends BuildingHut
         }
 
 
-        public Object getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
         {
             if (guiId == EnumGUI.CITIZEN.getID())
             {

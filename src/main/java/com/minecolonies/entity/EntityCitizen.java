@@ -268,11 +268,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             Colony c = colony.get();
             Building b = (c != null) ? c.getBuilding(homeBuildingId) : null;
-            BuildingHome bCitizen = (b instanceof BuildingHome) ? (BuildingHome)b : null;
+            BuildingHome homeBuilding = (b instanceof BuildingHome) ? (BuildingHome)b : null;
 
-            if (bCitizen.isCitizen(this))
+            if (homeBuilding.isCitizen(this))
             {
-                homeBuilding = new WeakReference<BuildingHome>(bCitizen);
+                this.homeBuilding = new WeakReference<BuildingHome>(homeBuilding);
             }
             else
             {
@@ -284,11 +284,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             Colony c = colony.get();
             Building b = (c != null) ? c.getBuilding(workBuildingId) : null;
-            BuildingWorker bWorker = (b instanceof BuildingWorker) ? (BuildingWorker)b : null;
+            BuildingWorker workBuilding = (b instanceof BuildingWorker) ? (BuildingWorker)b : null;
 
-            if (bWorker.isWorker(this))
+            if (workBuilding.isWorker(this))
             {
-                workBuilding = new WeakReference<BuildingWorker>(bWorker);
+                this.workBuilding = new WeakReference<BuildingWorker>(workBuilding);
             }
             else
             {

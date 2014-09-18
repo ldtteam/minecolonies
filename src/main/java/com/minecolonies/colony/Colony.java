@@ -523,15 +523,15 @@ public class Colony
         }
     }
 
-    public Building addNewBuilding(TileEntityColonyBuilding parent)
+    public Building addNewBuilding(TileEntityColonyBuilding tileEntity)
     {
-        parent.setColony(this);
+        tileEntity.setColony(this);
 
-        Building building = Building.create(this, parent);
+        Building building = Building.create(this, tileEntity);
         if (building != null)
         {
             addBuilding(building);
-            parent.setBuilding(building);
+            tileEntity.setBuilding(building);
         }
         return building;
     }

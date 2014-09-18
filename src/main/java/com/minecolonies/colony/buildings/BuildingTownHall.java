@@ -5,6 +5,7 @@ import com.minecolonies.client.gui.GuiTypable;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.EnumGUI;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -26,7 +27,7 @@ public class BuildingTownHall extends BuildingHut
             super(c, l);
         }
 
-        public Object getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
         {
             if (guiId == EnumGUI.TOWNHALL.getID())
             {

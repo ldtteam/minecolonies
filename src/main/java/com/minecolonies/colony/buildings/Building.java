@@ -6,12 +6,11 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
-import com.minecolonies.util.Schematic;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
@@ -315,7 +314,7 @@ public abstract class Building
         public ColonyView getColony() { return colony; }
         public int getBuildingLevel() { return buildingLevel; }
 
-        public Object getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
         {
             return null;
         }
