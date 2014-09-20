@@ -8,7 +8,6 @@ import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.tileentities.TileEntityHut;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.client.model.ModelBiped;
@@ -54,7 +53,6 @@ public class ClientProxy extends CommonProxy
     @Override
     public void registerTileEntityRendering()
     {
-//        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHut.class, new EmptyTileEntitySpecialRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
     }
 }

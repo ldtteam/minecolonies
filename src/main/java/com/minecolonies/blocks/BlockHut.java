@@ -4,18 +4,12 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.lib.IColony;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.tileentities.TileEntityHut;
-import com.minecolonies.tileentities.TileEntityHutWorker;
-import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -124,13 +118,9 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
         return false;
     }
 
-
-    public abstract TileEntity createOldMineColoniesTileEntity(World var1, int var2);
-
     @Override
     public TileEntity createNewTileEntity(World var1, int var2)
     {
-        //  return createOldMineColoniesTileEntity(var1, var2)
         return new TileEntityColonyBuilding();
     }
 }

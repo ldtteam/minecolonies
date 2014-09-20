@@ -1,20 +1,12 @@
 package com.minecolonies.inventory;
 
 import com.minecolonies.colony.Colony;
-import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.tileentities.TileEntityHut;
-import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.network.Packet;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * Handles gui operations on the server

@@ -1,9 +1,5 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.tileentities.TileEntityHutBuilder;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-
 public class BlockHutBuilder extends BlockHut
 {
     protected BlockHutBuilder()
@@ -15,11 +11,5 @@ public class BlockHutBuilder extends BlockHut
     public String getName()
     {
         return "blockHutBuilder";
-    }
-
-    @Override
-    public TileEntity createOldMineColoniesTileEntity(World world, int meta)
-    {
-        return new TileEntityHutBuilder();
     }
 }

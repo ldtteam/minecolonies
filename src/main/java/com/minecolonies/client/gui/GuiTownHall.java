@@ -7,7 +7,6 @@ import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.network.messages.BuildRequestMessage;
-import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import net.minecraft.client.gui.GuiButton;

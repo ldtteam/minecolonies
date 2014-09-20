@@ -50,21 +50,6 @@ public class GuiHandler implements IGuiHandler
         }
 
         return building.getGui(player, world, ID, x, y, z);
-
-//        EnumGUI guiID = EnumGUI.values()[ID];
-//        switch(guiID)
-//        {
-//            case TOWNHALL:
-//                return new GuiTownHall((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
-//            case TOWNHALL_RENAME:
-//                return new GuiTypable((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
-//            case BUILDER:
-//                return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z), player, world, x, y, z);
-//            case WAREHOUSE:
-//                return new GuiHutWarehouse((TileEntityHutWarehouse) world.getTileEntity(x, y, z), player, world, x, y, z);
-//            default:
-//                return null;
-//        }
     }
 
     public static void showGuiScreen(GuiScreen gui)

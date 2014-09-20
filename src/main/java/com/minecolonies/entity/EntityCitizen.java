@@ -13,9 +13,6 @@ import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.GuiHandler;
-import com.minecolonies.tileentities.TileEntityHutCitizen;
-import com.minecolonies.tileentities.TileEntityHutWorker;
-import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -377,42 +374,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return job;
     }
 
-    public void setJob(String job, TileEntity tileEntity)
-    {
-//        this.job = job;
-//        this.tileEntityWorkHut = (TileEntityHutWorker) tileEntity;
-    }
-
-    public TileEntityTownHall getTownHall()
-    {
-        return null; //tileEntityTownHall;
-    }
-
-    public TileEntityHutCitizen getHomeHut()
-    {
-        return null; //tileEntityHomeHut;
-    }
-
-    public TileEntityHutWorker getWorkHut()
-    {
-        return null; //tileEntityWorkHut;
-    }
-
-    public void setTownHall(TileEntityTownHall tileEntityTownHall)
-    {
-//        this.tileEntityTownHall = tileEntityTownHall;
-    }
-
-    public void setHomeHut(TileEntityHutCitizen home)
-    {
-//        this.tileEntityHomeHut = home;
-    }
-
-    public void setWorkHut(TileEntityHutWorker work)
-    {
-//        this.tileEntityWorkHut = work;
-    }
-
     public Colony getColony() { return colony; }
     public void setColony(Colony c)
     {
@@ -692,16 +653,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 }
             }
         }
-    }
-
-    public void addToWorkHut(TileEntityHutWorker tileEntityHutWorker)
-    {
-        //  DEPRECATED
-    }
-
-    public void removeFromWorkHut()
-    {
-        //  DEPRECATED
     }
 
     /**

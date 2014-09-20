@@ -2,22 +2,17 @@ package com.minecolonies.event;
 
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.blocks.BlockHutTownHall;
-import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.tileentities.TileEntityHut;
-import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -207,11 +202,6 @@ public class EventHandler
         }
 
         return true;
-    }
-
-    private boolean isPlayerOwner(TileEntityHut hut, EntityPlayer player)
-    {
-        return hut == null || hut.isPlayerOwner(player);
     }
 
     @SubscribeEvent

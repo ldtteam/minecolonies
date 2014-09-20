@@ -2,16 +2,13 @@ package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityWorker;
-import com.minecolonies.tileentities.TileEntityTownHall;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -130,7 +127,7 @@ public class ChunkCoordUtils
 
     public static boolean equals(ChunkCoordinates coords, int x, int y, int z)
     {
-        return coords.equals(new ChunkCoordinates(x, y, z));
+        return coords.posX == x && coords.posY == y && coords.posZ == z;
     }
 
     /**

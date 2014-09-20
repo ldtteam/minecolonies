@@ -2,8 +2,6 @@ package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityWorker;
-import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.tileentities.TileEntityTownHall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -11,7 +9,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 

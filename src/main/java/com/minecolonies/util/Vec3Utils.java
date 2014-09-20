@@ -1,13 +1,6 @@
 package com.minecolonies.util;
 
-import com.minecolonies.entity.EntityWorker;
-import com.minecolonies.tileentities.TileEntityTownHall;
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 
 public class Vec3Utils
 {

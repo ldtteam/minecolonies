@@ -2,9 +2,7 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.tileentities.TileEntityHut;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
