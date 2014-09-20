@@ -94,10 +94,10 @@ public class BuildingHome extends BuildingHut
         }
     }
 
-    public void removeCitizen(EntityCitizen citizen)
+    @Override
+    public void removeCitizen(UUID citizenId)
     {
-        citizens.remove(citizen.getUniqueID());
-        citizen.setHomeBuilding(null);
+        citizens.remove(citizenId);
     }
 
     public void replaceCitizen(EntityCitizen oldCitizen, EntityCitizen newCitizen)

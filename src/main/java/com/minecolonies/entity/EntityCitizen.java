@@ -324,16 +324,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             colony.removeCitizen(this);
         }
 
-        BuildingHome bHome = getHomeBuilding();
-        if (bHome != null)
+        if (getHomeBuilding() != null)
         {
-            bHome.removeCitizen(this);
+            getHomeBuilding().removeCitizen(getUniqueID());
+            setHomeBuilding(null);
         }
 
-        BuildingWorker bWorker = getWorkBuilding();
-        if (bWorker != null)
+        if (getWorkBuilding() != null)
         {
-            bWorker.unbindWorker(this);
+            getWorkBuilding().removeCitizen(getUniqueID());
+            setWorkBuilding(null);
         }
 
         super.onDeath(par1DamageSource);
@@ -418,19 +418,19 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         NBTTagCompound nbt = new NBTTagCompound();
         this.writeToNBT(nbt);
+        setWorkBuilding(null);
         this.setDead();
 
         EntityCitizen worker = building.createWorker(worldObj);
         worker.readFromNBT(nbt);
         worker.setColony(getColony());
-        building.bindWorker(worker);
+        building.setWorker(worker);
         worldObj.spawnEntityInWorld(worker);
         ChunkCoordUtils.tryMoveLivingToXYZ(worker, building.getLocation());
 
-        if (getColony() != null)
+        if (worker.getColony() != null)
         {
-            getColony().registerCitizen(worker);
-            worker.setColony(getColony());
+            worker.getColony().registerCitizen(worker);
         }
 
         BuildingHome home = getHomeBuilding();

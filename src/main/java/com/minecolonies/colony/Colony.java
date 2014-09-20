@@ -478,6 +478,79 @@ public class Colony
      */
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
+        //  Cleanup disappeared citizens
+        //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
+        if (event.phase == TickEvent.Phase.START &&
+                world.get() != null)
+        {
+            World worldObj = world.get();
+            boolean playerIsCloseEnoughForEntityCleanup = false;
+            boolean allColonyChunksLoaded = false;
+
+            for (Object o : worldObj.playerEntities)
+            {
+                if (o instanceof EntityPlayerMP)
+                {
+                    EntityPlayerMP player = (EntityPlayerMP)o;
+
+                    if (player.getPlayerCoordinates().getDistanceSquaredToChunkCoordinates(getCenter()) <= (16 * 16))
+                    {
+                        playerIsCloseEnoughForEntityCleanup = true;
+                        break;
+                    }
+                }
+            }
+
+            if (playerIsCloseEnoughForEntityCleanup)
+            {
+                //  If we have a player close enough to town hall, check if all the colony chunks are loaded
+
+                //  Assume all chunks are loaded until we find one that isn't
+                allColonyChunksLoaded = true;
+
+                int distanceFromCenter = Configurations.workingRangeTownhall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+                for (int x = getCenter().posX - distanceFromCenter, endX = getCenter().posX + distanceFromCenter; x <= endX; x += 16)
+                {
+                    for (int z = getCenter().posZ - distanceFromCenter, endZ = getCenter().posZ + distanceFromCenter; z <= endZ; z += 16)
+                    {
+                        if (!worldObj.blockExists(x, 128, z))
+                        {
+                            allColonyChunksLoaded = false;
+                            break;
+                        }
+                    }
+
+                    if (!allColonyChunksLoaded)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (allColonyChunksLoaded)
+            {
+                //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
+                //  If we don't have any references to them, destroy the citizen
+
+                for (Iterator<Map.Entry<UUID, WeakReference<EntityCitizen>>> it = citizens.entrySet().iterator(); it.hasNext(); )
+                {
+                    Map.Entry<UUID, WeakReference<EntityCitizen>> entry = it.next();
+                    if (entry.getValue() == null || entry.getValue().get() == null)
+                    {
+                        MineColonies.logger.warn(String.format("Citizen '%s' has gone AWOL, removing them!", entry.getKey().toString()));
+
+                        for (Building b : buildings.values())
+                        {
+                            b.removeCitizen(entry.getKey());
+                        }
+
+                        it.remove();
+                        isCitizensDirty = true;
+                    }
+                }
+            }
+        }
+
         //  Spawn Citizens
         if (event.phase == TickEvent.Phase.END)
         {
@@ -671,8 +744,18 @@ public class Colony
 
     public void removeCitizen(EntityCitizen citizen)
     {
-        citizens.remove(citizen.getUniqueID());
+        removeCitizen(citizen.getUniqueID());
+    }
+
+    public void removeCitizen(UUID citizenId)
+    {
+        citizens.remove(citizenId);
         markCitizensDirty();
+
+        for (Building building : buildings.values())
+        {
+            building.removeCitizen(citizenId);
+        }
     }
 
     public boolean registerCitizen(EntityCitizen citizen)

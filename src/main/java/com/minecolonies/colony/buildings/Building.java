@@ -18,6 +18,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class Building
 {
@@ -268,6 +269,8 @@ public abstract class Building
         onDestroyed();
         colony.removeBuilding(this);
     }
+
+    public void removeCitizen(UUID citizenId) {}
 
     public int getGuiId() { return 0; }
 

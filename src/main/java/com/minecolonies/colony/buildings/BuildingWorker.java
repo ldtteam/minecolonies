@@ -85,31 +85,30 @@ public abstract class BuildingWorker extends BuildingHut
         }
     }
 
-    public void bindWorker(EntityCitizen citizen)
+    public void setWorker(EntityCitizen citizen)
     {
         workerId = citizen.getUniqueID();
         ////worker = new WeakReference<EntityCitizen>(citizen);
         citizen.setWorkBuilding(this);
     }
 
-    public void unbindWorker(EntityCitizen citizen)
+    @Override
+    public void removeCitizen(UUID citizenId)
     {
-        if (isWorker(citizen))
+        if (isWorker(citizenId))
         {
             workerId = null;
         }
-        ////if (worker != null)
-        ////{
-        ////    EntityCitizen citizen = worker.get();
-        ////    if (citizen != null) citizen.setWorkBuilding(null);
-        ////    worker = null;
-        ////}
-        citizen.setWorkBuilding(null);
     }
 
     public boolean isWorker(EntityCitizen citizen)
     {
-        return citizen.getUniqueID().equals(workerId);
+        return isWorker(citizen.getUniqueID());
+    }
+
+    public boolean isWorker(UUID citizenId)
+    {
+        return citizenId.equals(workerId);
     }
 
     @Override

@@ -40,7 +40,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
             Colony c = colony.get();
             Building b = null;
 
-            if (colony != null)
+            if (c != null)
             {
                 b = c.getBuilding(getPosition());
             }
