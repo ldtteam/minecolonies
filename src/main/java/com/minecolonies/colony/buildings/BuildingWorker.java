@@ -94,7 +94,10 @@ public abstract class BuildingWorker extends BuildingHut
 
     public void unbindWorker(EntityCitizen citizen)
     {
-        workerId = null;
+        if (isWorker(citizen))
+        {
+            workerId = null;
+        }
         ////if (worker != null)
         ////{
         ////    EntityCitizen citizen = worker.get();

@@ -19,100 +19,6 @@ import java.util.*;
 
 public class Utils
 {
-    /**
-     * Method to find the closest townhall
-     *
-     * @param world world obj
-     * @param x     x coordinate to check from
-     * @param y     y coordinate to check from
-     * @param z     z coordinate to check from
-     * @return closest TileEntityTownHall
-     */
-    public static TileEntityTownHall getClosestTownHall(World world, int x, int y, int z)
-    {
-        double closestDist = Double.MAX_VALUE;
-        TileEntityTownHall closestTownHall = null;
-
-        if(world == null || world.loadedTileEntityList == null)
-        {
-            return null;
-        }
-
-        for(Object o : world.loadedTileEntityList)
-        {
-            if(o instanceof TileEntityTownHall)
-            {
-                TileEntityTownHall townHall = (TileEntityTownHall) o;
-
-                if(ChunkCoordUtils.equals(townHall.getPosition(), x, y, z))
-                {
-                    continue;
-                }
-
-                double distanceSquared = townHall.getDistanceFrom(x, y, z);
-                if(closestDist > distanceSquared)
-                {
-                    closestTownHall = townHall;
-                    closestDist = distanceSquared;
-                }
-            }
-        }
-        return closestTownHall;
-    }
-
-    /**
-     * find the distance to the closest townhall.
-     *
-     * @param world world townhall is in
-     * @param x     x coordinate to check from
-     * @param y     y coordinate to check from
-     * @param z     z coordinate to check from
-     * @return distance to nearest townhall
-     */
-    public static double getDistanceToClosestTownHall(World world, int x, int y, int z)
-    {
-        double closestDist = Double.MAX_VALUE;
-
-        if(world == null || world.loadedTileEntityList == null)
-        {
-            return -1;
-        }
-
-        for(Object o : world.loadedTileEntityList)
-        {
-            if(o instanceof TileEntityTownHall)
-            {
-                TileEntityTownHall townHall = (TileEntityTownHall) o;
-
-                if(ChunkCoordUtils.equals(townHall.getPosition(), x, y, z))
-                {
-                    continue;
-                }
-
-                double distanceSquared = townHall.getDistanceFrom(x, y, z);
-                if(closestDist > distanceSquared)
-                {
-                    closestDist = distanceSquared;
-                }
-            }
-        }
-        return Math.sqrt(closestDist);
-    }
-
-    /**
-     * Gives the distance to a given townhall
-     *
-     * @param x          x coordinate to check from
-     * @param y          y coordinate to check from
-     * @param z          z coordinate to check from
-     * @param tileEntity TileEntityTownhall to check to.
-     * @return distance
-     */
-    public static double getDistanceToTileEntity(int x, int y, int z, TileEntity tileEntity)
-    {
-        return Math.sqrt(tileEntity.getDistanceFrom(x, y, z));
-    }
-
     public static ChunkCoordinates scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
     {
         ChunkCoordinates closestCoords = null;
@@ -183,23 +89,6 @@ public class Utils
     public static boolean tryMoveLivingToXYZ(EntityLiving living, int x, int y, int z, double speed)
     {
         return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
-    }
-
-    /**
-     * Gets a Townhall that a given player is owner of
-     *
-     * @param world  world object
-     * @param player player to be checked
-     * @return TileEntityTownHall the player is user of, or null when he is no owner.
-     */
-    public static TileEntityTownHall getTownhallByOwner(World world, EntityPlayer player)
-    {
-        PlayerProperties props = PlayerProperties.get(player);
-        if(props.hasPlacedTownHall())
-        {
-            return (TileEntityTownHall) ChunkCoordUtils.getTileEntity(world, props.getTownhallPos());
-        }
-        return null;
     }
 
     //TODO world.getTopSolidOrLiquidBlock(x, z)?
@@ -318,7 +207,7 @@ public class Utils
      * @param ids   List of UUIDs
      * @return list of Entity's
      */
-    public static List<Entity> getEntitiesFromUUID(World world, List<UUID> ids)
+    public static List<Entity> getEntitiesFromUUID(World world, Collection<UUID> ids)
     {
         List<Entity> entities = new ArrayList<Entity>();
 

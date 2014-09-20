@@ -50,7 +50,7 @@ public class ContainerHut extends Container //ContainerChest in future
         {
             Colony colony = hut.getColony();
 
-            if (colony != null)
+            if (colony != null && !colony.isOwner(player))
             {
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission", colony.getName());
             }

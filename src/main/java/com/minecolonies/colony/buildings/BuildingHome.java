@@ -44,7 +44,7 @@ public class BuildingHome extends BuildingHut
             return;
         }
 
-        List<Entity> entityCitizens = Utils.getEntitiesFromUUID(world, new ArrayList<UUID>(citizens));
+        List<Entity> entityCitizens = Utils.getEntitiesFromUUID(world, citizens);
         if(entityCitizens != null)
         {
             for(Entity entity : entityCitizens)

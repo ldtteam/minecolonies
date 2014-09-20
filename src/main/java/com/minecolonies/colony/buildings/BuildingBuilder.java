@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.client.gui.GuiBase;
 import com.minecolonies.client.gui.GuiHutBuilder;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;

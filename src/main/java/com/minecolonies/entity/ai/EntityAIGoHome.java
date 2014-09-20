@@ -36,7 +36,7 @@ public class EntityAIGoHome extends EntityAIBase
         {
             pos = citizen.getHomeBuilding().getLocation();
         }
-        else if(citizen.getColony() != null && citizen.getColony().getTownhall() != null)
+        else if(/*citizen.getColony() != null &&*/ citizen.getColony().getTownhall() != null)
         {
             pos = citizen.getColony().getTownhall().getLocation();
         }

@@ -35,19 +35,6 @@ public class CommonProxy implements IProxy
     public void registerTileEntities()
     {
         GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, "tileEntityColonyBuilding");
-
-        //  OLD CODE
-//        GameRegistry.registerTileEntity(TileEntityTownHall.class, "tileEntityTownHall");
-//        GameRegistry.registerTileEntity(TileEntityHutBuilder.class, "tileEntityHutBuilder");
-//        GameRegistry.registerTileEntity(TileEntityHutCitizen.class, "tileEntityHutCitizen");
-//        GameRegistry.registerTileEntity(TileEntityHutBaker.class, "tileEntityHutBaker");
-//        GameRegistry.registerTileEntity(TileEntityHutBlacksmith.class, "tileEntityHutBlacksmith");
-//        GameRegistry.registerTileEntity(TileEntityHutFarmer.class, "tileEntityHutFarmer");
-//        GameRegistry.registerTileEntity(TileEntityHutLumberjack.class, "tileEntityHutLumberjack");
-//        GameRegistry.registerTileEntity(TileEntityHutMiner.class, "tileEntityHutMiner");
-//        GameRegistry.registerTileEntity(TileEntityHutStonemason.class, "tileEntityHutStonemason");
-//        GameRegistry.registerTileEntity(TileEntityHutWarehouse.class, "tileEntityHutWarehouse");
-        //  END OLD CODE
     }
 
     /**

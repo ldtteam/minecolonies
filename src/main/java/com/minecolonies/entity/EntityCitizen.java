@@ -57,7 +57,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private InventoryCitizen inventory;
 
     private UUID                            colonyId;
-    private WeakReference<Colony>           colony;
+    private Colony                          colony;
     private ChunkCoordinates                homeBuildingId;
     private WeakReference<BuildingHome>     homeBuilding;
     private ChunkCoordinates                workBuildingId;
@@ -65,23 +65,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     private ColonyJob                       colonyJob;
 
-    //  OLD CODE
-//    private TileEntityTownHall   tileEntityTownHall;
-//    private ChunkCoordinates     townPos;
-//    private TileEntityHutWorker  tileEntityWorkHut;
-//    private ChunkCoordinates     workPos;
-//    private TileEntityHutCitizen tileEntityHomeHut;
-//    private ChunkCoordinates     homePos;
-    //  END OLD CODE
-
     protected Status status = Status.IDLE;
-
-    public EntityCitizen(World world, Colony colony)
-    {
-        this(world);
-        this.colony = new WeakReference<Colony>(colony);
-        this.colonyId = colony.getID();
-    }
 
     public EntityCitizen(World world)
     {
@@ -217,29 +201,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onLivingUpdate()
     {
-        this.setTexture();
-        //updateTileEntities();
+        setTexture();
         updateColony();
         super.onLivingUpdate();
     }
-
-    //  OLD CODE
-//    private void updateTileEntities()
-//    {
-//        if(tileEntityTownHall == null && townPos != null)
-//        {
-//            tileEntityTownHall = (TileEntityTownHall) ChunkCoordUtils.getTileEntity(worldObj, townPos);
-//        }
-//        if(tileEntityWorkHut == null && workPos != null)
-//        {
-//            tileEntityWorkHut = (TileEntityHutWorker) ChunkCoordUtils.getTileEntity(worldObj, workPos);
-//        }
-//        if(tileEntityHomeHut == null && homePos != null)
-//        {
-//            tileEntityHomeHut = (TileEntityHutCitizen) ChunkCoordUtils.getTileEntity(worldObj, homePos);
-//        }
-//    }
-    //  END OLD CODE
 
     private void updateColony()
     {
@@ -248,26 +213,34 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             return;
         }
 
-        if (colony == null && colonyId != null)
+        if (colonyId == null)
         {
-            Colony c = ColonyManager.getColonyById(colonyId);
-            if (c != null)
-            {
-                if (!c.registerCitizen(this))
-                {
-                    //  Failed to register citizen to the Colony, it must not actually be a citizen of the colony anymore
-                    setDead();
-                    c = null;
-                }
-            }
-
-            colony = new WeakReference<Colony>(c);
+            setDead();
+            return;
         }
 
-        if (homeBuilding == null && homeBuildingId != null && colony != null)
+        if (colony == null)
         {
-            Colony c = colony.get();
-            Building b = (c != null) ? c.getBuilding(homeBuildingId) : null;
+            colony = ColonyManager.getColonyById(colonyId);
+
+            if (colony == null)
+            {
+                setDead();
+                return;
+            }
+
+            if (!colony.registerCitizen(this))
+            {
+                //  Failed to register citizen to the Colony, it must not actually be a citizen of the colony anymore
+                colony = null;
+                setDead();
+                return;
+            }
+        }
+
+        if (homeBuilding == null && homeBuildingId != null)
+        {
+            Building b = colony.getBuilding(homeBuildingId);
             BuildingHome homeBuilding = (b instanceof BuildingHome) ? (BuildingHome)b : null;
 
             if (homeBuilding.isCitizen(this))
@@ -280,10 +253,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
         }
 
-        if (workBuilding == null && workBuildingId != null && colony != null)
+        if (workBuilding == null && workBuildingId != null)
         {
-            Colony c = colony.get();
-            Building b = (c != null) ? c.getBuilding(workBuildingId) : null;
+            Building b = colony.getBuilding(workBuildingId);
             BuildingWorker workBuilding = (b instanceof BuildingWorker) ? (BuildingWorker)b : null;
 
             if (workBuilding.isWorker(this))
@@ -349,37 +321,19 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onDeath(DamageSource par1DamageSource)
     {
-        //  OLD CODE
-//        if (this.getTownHall() != null && this.getTownHall().getCitizens().contains(this.getUniqueID()))
-//        {
-//            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, tileEntityTownHall.getOwners()), "tile.blockHutTownhall.messageColonistDead");
-//
-//            tileEntityTownHall.removeCitizen(this);
-//        }
-//        if (this.getHomeHut() != null)
-//        {
-//            this.getHomeHut().removeCitizen(this);
-//        }
-//        if (this.getWorkHut() != null)
-//        {
-//            this.getWorkHut().unbindWorker(this);
-//        }
-        //  END OLD CODE
-
-        Colony c = (colony != null) ? colony.get() : null;
-        if (c != null)
+        if (colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, c.getOwners()), "tile.blockHutTownhall.messageColonistDead");
-            c.removeCitizen(this);
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getOwners()), "tile.blockHutTownhall.messageColonistDead");
+            colony.removeCitizen(this);
         }
 
-        BuildingHome bHome = (homeBuilding != null) ? homeBuilding.get() : null;
+        BuildingHome bHome = getHomeBuilding();
         if (bHome != null)
         {
             bHome.removeCitizen(this);
         }
 
-        BuildingWorker bWorker = (workBuilding != null) ? workBuilding.get() : null;
+        BuildingWorker bWorker = getWorkBuilding();
         if (bWorker != null)
         {
             bWorker.unbindWorker(this);
@@ -459,12 +413,20 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 //        this.tileEntityWorkHut = work;
     }
 
-    public Colony getColony() { return (colony != null) ? colony.get() : null; }
+    public Colony getColony() { return colony; }
     public void setColony(Colony c)
     {
-        //  Only for use by Colony when spawning the EntityCitizen for the first time
-        colony = new WeakReference<Colony>(c);
-        colonyId = c.getID();
+        if (c == null)
+        {
+            colony = null;
+            colonyId = null;
+            setDead();
+        }
+        else
+        {
+            colony = c;
+            colonyId = colony.getID();
+        }
     }
 
     public BuildingHome getHomeBuilding()
@@ -499,6 +461,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         EntityCitizen worker = building.createWorker(worldObj);
         worker.readFromNBT(nbt);
+        worker.setColony(getColony());
         building.bindWorker(worker);
         worldObj.spawnEntityInWorld(worker);
         ChunkCoordUtils.tryMoveLivingToXYZ(worker, building.getLocation());
@@ -526,6 +489,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         EntityCitizen citizen = new EntityCitizen(worldObj);
         citizen.readFromNBT(nbt);
+        citizen.setColony(getColony());
         worldObj.spawnEntityInWorld(citizen);
 
         if (getColony() != null)
@@ -574,24 +538,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         nbtTagSkillsCompound.setInteger("charisma", charisma);
         compound.setTag("skills", nbtTagSkillsCompound);
 
-        //  OLD CODE
-//        if (tileEntityTownHall != null)
-//        {
-//            ChunkCoordUtils.writeToNBT(compound, "townhall", tileEntityTownHall.getPosition());
-//        }
-//        if (tileEntityWorkHut != null)
-//        {
-//            ChunkCoordUtils.writeToNBT(compound, "workhut", tileEntityWorkHut.getPosition());
-//        }
-//        if (tileEntityHomeHut != null)
-//        {
-//            ChunkCoordUtils.writeToNBT(compound, "homehut", tileEntityHomeHut.getPosition());
-//        }
-        //  END OLD CODE
-
-        if (colonyId != null)
+        if (colony != null)
         {
-            compound.setString("colony", colonyId.toString());
+            compound.setString("colony", colony.getID().toString());
         }
         if (homeBuildingId != null && homeBuilding != null && homeBuilding.get() != null)
         {
@@ -641,21 +590,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         wisdom = nbtTagSkillsCompound.getInteger("wisdom");
         intelligence = nbtTagSkillsCompound.getInteger("intelligence");
         charisma = nbtTagSkillsCompound.getInteger("charisma");
-
-        //  OLD CODE
-//        if (compound.hasKey("townhall"))
-//        {
-//            townPos = ChunkCoordUtils.readFromNBT(compound, "townhall");
-//        }
-//        if (compound.hasKey("workhut"))
-//        {
-//            workPos = ChunkCoordUtils.readFromNBT(compound, "workhut");
-//        }
-//        if (compound.hasKey("homehut"))
-//        {
-//            homePos = ChunkCoordUtils.readFromNBT(compound, "homehut");
-//        }
-        //  END OLD CODE
 
         if (compound.hasKey("colony"))
         {
@@ -762,35 +696,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public void addToWorkHut(TileEntityHutWorker tileEntityHutWorker)
     {
-//        setJob(tileEntityHutWorker.getJobName(), tileEntityHutWorker);
-//
-//        NBTTagCompound nbt = new NBTTagCompound();
-//        this.writeToNBT(nbt);
-//        getTownHall().removeCitizen(this);
-//        this.setDead();
-//
-//        EntityCitizen worker = tileEntityHutWorker.createWorker();
-//        worker.readFromNBT(nbt);
-//        getTownHall().addCitizenToTownhall(worker);
-//        tileEntityHutWorker.bindWorker(worker);
-//        worldObj.spawnEntityInWorld(worker);
-//        ChunkCoordUtils.tryMoveLivingToXYZ(worker, tileEntityHutWorker.getPosition());
+        //  DEPRECATED
     }
 
     public void removeFromWorkHut()
     {
-//        NBTTagCompound nbt = new NBTTagCompound();
-//        this.writeToNBT(nbt);
-//        nbt.removeTag("workhut");
-//        getTownHall().removeCitizen(this);
-//        getWorkHut().unbindWorker(this);
-//        this.setDead();
-//
-//        EntityCitizen citizen = new EntityCitizen(worldObj);
-//        citizen.readFromNBT(nbt);
-//        citizen.setJob("Citizen", null);
-//        getTownHall().addCitizenToTownhall(citizen);
-//        worldObj.spawnEntityInWorld(citizen);
+        //  DEPRECATED
     }
 
     /**

@@ -99,6 +99,21 @@ public class Colony
     }
 
     /**
+     * Call when a Colony must be destroyed; it ensures Citizens are cleaned up properly
+     */
+    protected void Cleanup()
+    {
+        for (WeakReference<EntityCitizen> citizen : citizens.values())
+        {
+            EntityCitizen actualCitizen = (citizen != null) ? citizen.get() : null;
+            if (actualCitizen != null)
+            {
+                actualCitizen.setColony(null);
+            }
+        }
+    }
+
+    /**
      * Load a saved colony
      *
      * @param compound The NBT compound containing the colony's data
@@ -534,10 +549,12 @@ public class Colony
         if(spawnPoint != null)
         {
             EntityCitizen citizen = new EntityCitizen(worldObj);
+            citizen.setColony(this);
             citizen.setPosition(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
             worldObj.spawnEntityInWorld(citizen);
 
-            addCitizen(citizen);
+            citizens.put(citizen.getUniqueID(), new WeakReference<EntityCitizen>(citizen));
+            markCitizensDirty();
 
             if(getMaxCitizens() == getCitizens().size())
             {
@@ -651,13 +668,6 @@ public class Colony
     }
 
     public boolean isCitizen(UUID c) { return citizens.containsKey(c); }
-
-    public void addCitizen(EntityCitizen citizen)
-    {
-        citizens.put(citizen.getUniqueID(), new WeakReference<EntityCitizen>(citizen));
-        citizen.setColony(this);
-        markCitizensDirty();
-    }
 
     public void removeCitizen(EntityCitizen citizen)
     {

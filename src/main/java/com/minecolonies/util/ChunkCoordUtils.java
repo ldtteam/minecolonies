@@ -83,42 +83,6 @@ public class ChunkCoordUtils
         return world.getBlockMetadata(coords.posX, coords.posY, coords.posZ);
     }
 
-    /**
-     * Method to find the closest townhall
-     *
-     * @param world world obj
-     * @param pos   {@link ChunkCoordinates} to check from
-     * @return closest TileEntityTownHall
-     */
-    public static TileEntityTownHall getClosestTownHall(World world, ChunkCoordinates pos)
-    {
-        return Utils.getClosestTownHall(world, pos.posX, pos.posY, pos.posZ);
-    }
-
-    /**
-     * find the distance to the closest townhall.
-     *
-     * @param world world townhall is in
-     * @param pos   {@link ChunkCoordinates} to check from
-     * @return distance to nearest townhall
-     */
-    public static double getDistanceToClosestTownHall(World world, ChunkCoordinates pos)
-    {
-        return Utils.getDistanceToClosestTownHall(world, pos.posX, pos.posY, pos.posZ);
-    }
-
-    /**
-     * Gives the distance to a given townhall
-     *
-     * @param pos        {@link ChunkCoordinates} to check from
-     * @param tileEntity TileEntityTownhall to check to.
-     * @return distance
-     */
-    public static double getDistanceToTileEntity(ChunkCoordinates pos, TileEntity tileEntity)
-    {
-        return Utils.getDistanceToTileEntity(pos.posX, pos.posY, pos.posZ, tileEntity);
-    }
-
     public static ChunkCoordinates scanForBlockNearPoint(World world, Block block, ChunkCoordinates pos, ChunkCoordinates radiusPos)
     {
         return Utils.scanForBlockNearPoint(world, block, pos.posX, pos.posY, pos.posZ, radiusPos.posX, radiusPos.posY, radiusPos.posZ);
