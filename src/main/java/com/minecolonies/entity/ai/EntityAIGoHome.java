@@ -25,26 +25,33 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return !citizen.isWorkTime();
+        return !citizen.worldObj.isDaytime() && !citizen.isHome();
     }
 
     @Override
     public void startExecuting()
     {
-        ChunkCoordinates pos;
-        if(citizen.getHomeBuilding() != null)
-        {
-            pos = citizen.getHomeBuilding().getLocation();
-        }
-        else if(/*citizen.getColony() != null &&*/ citizen.getColony().getTownhall() != null)
-        {
-            pos = citizen.getColony().getTownhall().getLocation();
-        }
-        else
+        ChunkCoordinates pos = citizen.getHomePosition();
+        if(pos == null)
         {
             MineColonies.logger.error("EntityCitizen has null townhall (And no home)");
             return;
         }
+
+//        if (citizen.getDistanceSq((double)pos.posZ, (double)pos.posY, (double)pos.posZ) > 256.0D)
+//        {
+//            Vec3 vec3 = RandomPositionGenerator.findRandomTargetBlockTowards(citizen, 14, 3, Vec3.createVectorHelper((double) pos.posX + 0.5D, (double) pos.posY, (double) pos.posZ + 0.5D));
+//
+//            if (vec3 != null)
+//            {
+//                citizen.getNavigator().tryMoveToXYZ(vec3.xCoord, vec3.yCoord, vec3.zCoord, 1.0D);
+//            }
+//        }
+//        else
+//        {
+//            citizen.getNavigator().tryMoveToXYZ((double)pos.posX + 0.5D, (double)pos.posY, (double)pos.posZ + 0.5D, 1.0D);
+//        }
+
         ChunkCoordUtils.tryMoveLivingToXYZ(citizen, pos);
     }
 

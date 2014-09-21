@@ -226,6 +226,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 return;
             }
 
+            EntityCitizen existingCitizen = colony.getCitizen(getUniqueID());
+            if (existingCitizen != null && existingCitizen != this)
+            {
+                //  There's already an existing registered EntityCitizen with this ID... we should suicide.
+                colony = null;
+                setDead();
+                return;
+            }
+
             if (!colony.registerCitizen(this))
             {
                 //  Failed to register citizen to the Colony, it must not actually be a citizen of the colony anymore
@@ -399,6 +408,27 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         homeBuilding = new WeakReference<BuildingHome>(b);
         homeBuildingId = (b != null) ? b.getID() : null;
+    }
+
+    public ChunkCoordinates getHomePosition()
+    {
+        if (getHomeBuilding() != null)
+        {
+            return getHomeBuilding().getLocation();
+        }
+        else if (getColony() != null && getColony().getTownhall() != null)
+        {
+            return getColony().getTownhall().getLocation();
+        }
+
+        return null;
+    }
+
+    public boolean isHome()
+    {
+        ChunkCoordinates homePosition = getHomePosition();
+        return homePosition != null &&
+                homePosition.getDistanceSquared((int)posX, (int)posY, (int)posZ) <= 16;
     }
 
     public BuildingWorker getWorkBuilding()
