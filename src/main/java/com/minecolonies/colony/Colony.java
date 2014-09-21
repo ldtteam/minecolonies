@@ -27,6 +27,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import sun.plugin.dom.exception.InvalidStateException;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -34,43 +35,46 @@ import java.util.*;
 public class Colony
 {
     private final UUID id;
-    private final int  dimensionId;
 
-    //  Update Subscriptions
+    //  Runtime Data
+    private World world = null;
+
+    //  Updates and Subscriptions
     private Set<EntityPlayerMP>    subscribers      = new HashSet<EntityPlayerMP>();
-    private boolean                isDirty          = false;
+    private boolean                isDirty          = false;   //  TODO - Move to using bits, and more of them for targetted update packets
     private boolean                isCitizensDirty  = false;
     private boolean                isBuildingsDirty = false;
     private List<ChunkCoordinates> removedBuildings = new ArrayList<ChunkCoordinates>();
 
     //  General Attributes
-    private String               name  = "ERROR(Wasn't placed by player)";
-    private WeakReference<World> world = new WeakReference<World>(null); // Enforce existence for code simplicity
+    private String           name  = "ERROR(Wasn't placed by player)";
+    private final int        dimensionId;
     private ChunkCoordinates center;
 
     //  Administration
     private Set<UUID> owners = new HashSet<UUID>();
 
     //  Buildings
-    private BuildingTownHall townhall;
+    private BuildingTownHall                townhall;
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
     private int                                     maxCitizens = Constants.DEFAULTMAXCITIZENS;
     private Map<UUID, WeakReference<EntityCitizen>> citizens    = new HashMap<UUID, WeakReference<EntityCitizen>>();
+    final static private int                        CITIZEN_CLEANUP_TICK_DELAY = 60 * 20;   //  Once a minute
 
     //  Workload and Jobs
     private Map<ChunkCoordinates, String> buildingUpgradeMap = new HashMap<ChunkCoordinates, String>();
 
-    final static String TAG_ID           = "id";
-    final static String TAG_NAME         = "name";
-    final static String TAG_DIMENSION    = "dimension";
-    final static String TAG_CENTER       = "center";
-    final static String TAG_MAX_CITIZENS = "maxCitizens";
-    final static String TAG_OWNERS       = "owners";
-    final static String TAG_BUILDINGS_TYPO = "buidings";
-    final static String TAG_BUILDINGS    = "buildings";
-    final static String TAG_CITIZENS     = "citizens";
+    final static String TAG_ID                = "id";
+    final static String TAG_NAME              = "name";
+    final static String TAG_DIMENSION         = "dimension";
+    final static String TAG_CENTER            = "center";
+    final static String TAG_MAX_CITIZENS      = "maxCitizens";
+    final static String TAG_OWNERS            = "owners";
+    final static String TAG_BUILDINGS_TYPO    = "buidings";
+    final static String TAG_BUILDINGS         = "buildings";
+    final static String TAG_CITIZENS          = "citizens";
     final static String TAG_BUILDING_UPGRADES = "buildingUpgrades";
 
     /**
@@ -83,11 +87,11 @@ public class Colony
     {
         this(UUID.randomUUID(), w.provider.dimensionId);
         center = c;
-        world = new WeakReference<World>(w);
+        world = w;
     }
 
     /**
-     * Base constructor for a colony.
+     * Base constructor.
      *
      * @param uuid The current id for the colony
      * @param dim  The world the colony exists in
@@ -99,7 +103,8 @@ public class Colony
     }
 
     /**
-     * Call when a Colony must be destroyed; it ensures Citizens are cleaned up properly
+     * Call when a Colony will be destroyed.
+     * Cleans up Citizens properly (removing their Colony)
      */
     protected void Cleanup()
     {
@@ -119,7 +124,7 @@ public class Colony
      * @param compound The NBT compound containing the colony's data
      * @return loaded colony
      */
-    public static Colony createAndLoadColony(NBTTagCompound compound)
+    public static Colony loadColony(NBTTagCompound compound)
     {
         UUID id = UUID.fromString(compound.getString(TAG_ID));
         int dimensionId = compound.getInteger(TAG_DIMENSION);
@@ -243,8 +248,15 @@ public class Colony
         return id;
     }
 
-    public int getDimensionId() { return dimensionId; }
-//    public World getWorld() { return world != null ? world.get() : null; }
+    public int getDimensionId()
+    {
+        return dimensionId;
+    }
+
+    public World getWorld()
+    {
+        return world;
+    }
 
     public String getName() { return name; }
     public void setName(String n)
@@ -287,7 +299,7 @@ public class Colony
     public boolean isCoordInColony(World w, int x, int y, int z)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w == world.get() &&
+        return w.equals(getWorld()) &&
                 center.getDistanceSquared(x, center.posY, z) <= Utils.square(Configurations.workingRangeTownhall);
     }
 
@@ -311,13 +323,18 @@ public class Colony
     {
         if (w.provider.dimensionId == dimensionId)
         {
-            world = new WeakReference<World>(w);
+            world = w;
         }
     }
 
     public void onWorldUnload(World w)
     {
-        //  Nothing for now
+        if (!w.equals(world))
+        {
+            throw new InvalidStateException("Colony's world does not match the event.");
+        }
+
+        world = null;
     }
 
     /**
@@ -342,6 +359,7 @@ public class Colony
         Set<EntityPlayerMP> oldSubscribers = subscribers;
         subscribers = new HashSet<EntityPlayerMP>();
 
+        //  Add owners
         for (Object o : MinecraftServer.getServer().getConfigurationManager().playerEntityList)
         {
             if (o instanceof EntityPlayerMP)
@@ -354,10 +372,10 @@ public class Colony
             }
         }
 
-        World w = world.get();
-        if (w != null)
+        //  Add nearby players
+        if (world != null)
         {
-            for (Object o : w.playerEntities)
+            for (Object o : world.playerEntities)
             {
                 if (o instanceof EntityPlayerMP)
                 {
@@ -473,57 +491,43 @@ public class Colony
 
     /**
      * Any per-world-tick logic should be performed here
+     * NOTE: If the Colony's world isn't loaded, it won't have a worldtick.
+     * Use onServerTick for logic that should _always_ run
      *
      * @param event
      */
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
+        if (event.world != getWorld())
+        {
+            throw new InvalidStateException("Colony's world does not match the event.");
+        }
+
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
         if (event.phase == TickEvent.Phase.START &&
-                world.get() != null)
+            (event.world.getWorldInfo().getWorldTime() % CITIZEN_CLEANUP_TICK_DELAY) == 0)
         {
-            World worldObj = world.get();
-            boolean playerIsCloseEnoughForEntityCleanup = false;
-            boolean allColonyChunksLoaded = false;
+            //  Every CITIZEN_CLEANUP_TICK_DELAY, cleanup any 'lost' citizens
 
-            for (Object o : worldObj.playerEntities)
+            //  Assume all chunks are loaded until we find one that isn't
+            boolean allColonyChunksLoaded = true;
+
+            int distanceFromCenter = Configurations.workingRangeTownhall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+            for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
             {
-                if (o instanceof EntityPlayerMP)
+                for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
                 {
-                    EntityPlayerMP player = (EntityPlayerMP)o;
-
-                    if (player.getPlayerCoordinates().getDistanceSquaredToChunkCoordinates(getCenter()) <= (16 * 16))
+                    if (!event.world.blockExists(getCenter().posX + x, 128, getCenter().posZ + z))
                     {
-                        playerIsCloseEnoughForEntityCleanup = true;
+                        allColonyChunksLoaded = false;
                         break;
                     }
                 }
-            }
 
-            if (playerIsCloseEnoughForEntityCleanup)
-            {
-                //  If we have a player close enough to town hall, check if all the colony chunks are loaded
-
-                //  Assume all chunks are loaded until we find one that isn't
-                allColonyChunksLoaded = true;
-
-                int distanceFromCenter = Configurations.workingRangeTownhall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
-                for (int x = getCenter().posX - distanceFromCenter, endX = getCenter().posX + distanceFromCenter; x <= endX; x += 16)
+                if (!allColonyChunksLoaded)
                 {
-                    for (int z = getCenter().posZ - distanceFromCenter, endZ = getCenter().posZ + distanceFromCenter; z <= endZ; z += 16)
-                    {
-                        if (!worldObj.blockExists(x, 128, z))
-                        {
-                            allColonyChunksLoaded = false;
-                            break;
-                        }
-                    }
-
-                    if (!allColonyChunksLoaded)
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
 
@@ -544,6 +548,7 @@ public class Colony
                             b.removeCitizen(entry.getKey());
                         }
 
+                        //  TODO: Spawn a new citizen instead, and inherit the old data, or flag them for respawn below
                         it.remove();
                         isCitizensDirty = true;
                     }
@@ -551,87 +556,79 @@ public class Colony
             }
         }
 
-        //  Spawn Citizens
-        if (event.phase == TickEvent.Phase.END)
+        //  Cleanup Buildings whose Blocks have gone AWOL
+        if (event.phase == TickEvent.Phase.START)
         {
-            World worldObj = world.get();
-            if (townhall != null &&
-                    citizens.size() < maxCitizens &&
-                    worldObj != null)
+            for (Iterator<Map.Entry<ChunkCoordinates, Building>> it = buildings.entrySet().iterator(); it.hasNext(); )
             {
-                int respawnInterval = Configurations.citizenRespawnInterval * 20;
-                respawnInterval -= (60 * townhall.getBuildingLevel());
+                Map.Entry<ChunkCoordinates, Building> entry = it.next();
+                Building building = entry.getValue();
 
-                if (worldObj.getWorldInfo().getWorldTime() % respawnInterval == 0)
+                ChunkCoordinates loc = building.getLocation();
+                if (event.world.blockExists(loc.posX, loc.posY, loc.posZ) &&
+                        !building.isMatchingBlock(event.world.getBlock(loc.posX, loc.posY, loc.posZ)))
                 {
-                    spawnCitizen();
+                    //  Sanity cleanup
+                    it.remove();
+
+                    removedBuildings.add(building.getLocation());
+                    markDirty();
+
+                    building.destroy();
                 }
+            }
+        }
+
+        //  Spawn Citizens
+        if (event.phase == TickEvent.Phase.START &&
+                townhall != null &&
+                citizens.size() < maxCitizens)
+        {
+            int respawnInterval = Configurations.citizenRespawnInterval * 20;
+            respawnInterval -= (60 * townhall.getBuildingLevel());
+
+            if (event.world.getWorldInfo().getWorldTime() % respawnInterval == 0)
+            {
+                spawnCitizen();
             }
         }
 
         //  Tick Buildings
-        List<Building> cleanupBuildings = null;
-
-        for (Building b : buildings.values())
+        for (Building building : buildings.values())
         {
-            World w = world.get();
-            ChunkCoordinates loc = b.getLocation();
-            if (w != null &&
-                    w.blockExists(loc.posX, loc.posY, loc.posZ) &&
-                    !Building.buildingMatchesBlock(b, w.getBlock(loc.posX, loc.posY, loc.posZ)))
-            {
-                //  Sanity cleanup
-                if (cleanupBuildings == null)
-                {
-                    cleanupBuildings = new ArrayList<Building>();
-                }
-
-                cleanupBuildings.add(b);
-                continue;
-            }
-
-            b.onWorldTick(event);
-        }
-
-        if (cleanupBuildings != null)
-        {
-            for (Building b : cleanupBuildings)
-            {
-                b.destroy();
-            }
+            building.onWorldTick(event);
         }
     }
 
     private void spawnCitizen()
     {
-        World worldObj = world.get();
         int xCoord = center.posX, yCoord = center.posY, zCoord = center.posZ;
 
-        if (!worldObj.blockExists(center.posX, center.posY, center.posZ))
+        if (!world.blockExists(center.posX, center.posY, center.posZ))
         {
             //  Chunk with TownHall Block is not loaded
             return;
         }
 
-        ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
+        ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
         if(spawnPoint == null)
         {
-            spawnPoint = Utils.scanForBlockNearPoint(worldObj, Blocks.snow_layer, xCoord, yCoord, zCoord, 1, 0, 1);
+            spawnPoint = Utils.scanForBlockNearPoint(world, Blocks.snow_layer, xCoord, yCoord, zCoord, 1, 0, 1);
         }
 
         if(spawnPoint != null)
         {
-            EntityCitizen citizen = new EntityCitizen(worldObj);
+            EntityCitizen citizen = new EntityCitizen(world);
             citizen.setColony(this);
             citizen.setPosition(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
-            worldObj.spawnEntityInWorld(citizen);
+            world.spawnEntityInWorld(citizen);
 
             citizens.put(citizen.getUniqueID(), new WeakReference<EntityCitizen>(citizen));
             markCitizensDirty();
 
             if(getMaxCitizens() == getCitizens().size())
             {
-                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, getOwners()), "tile.blockHutTownhall.messageMaxSize");
+                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, getOwners()), "tile.blockHutTownhall.messageMaxSize");
             }
         }
 

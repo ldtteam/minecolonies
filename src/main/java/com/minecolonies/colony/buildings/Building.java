@@ -50,7 +50,7 @@ public abstract class Building
      * @param c    class of object
      * @param name name of object
      */
-    private static void addMapping(String name, Class<?> buildingClass, Class<?> parentBlock)
+    private static void addMapping(String name, Class<? extends Building> buildingClass, Class<? extends BlockHut> parentBlock)
     {
         if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(buildingClass.getName().hashCode()))
         {
@@ -83,10 +83,10 @@ public abstract class Building
         }
     }
 
-    public static boolean buildingMatchesBlock(Building building, Block block)
+    public boolean isMatchingBlock(Block block)
     {
         Class<?> c = blockClassToBuildingClassMap.get(block.getClass());
-        return building.getClass().equals(c);
+        return getClass().equals(c);
     }
 
     /**

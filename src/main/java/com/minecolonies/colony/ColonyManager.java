@@ -3,8 +3,6 @@ package com.minecolonies.colony;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.jobs.ColonyJob;
-import com.minecolonies.util.Utils;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import net.minecraft.client.Minecraft;
@@ -353,7 +351,7 @@ public class ColonyManager {
         NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
         for (int i = 0; i < colonyTags.tagCount(); ++i)
         {
-            Colony colony = Colony.createAndLoadColony(colonyTags.getCompoundTagAt(i));
+            Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i));
             colonies.put(colony.getID(), colony);
 
             if (!coloniesByWorld.containsKey(colony.getDimensionId()))
