@@ -25,7 +25,7 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return !citizen.worldObj.isDaytime() && !citizen.isHome();
+        return citizen.isSleepTime() && !citizen.isAtHome();
     }
 
     @Override

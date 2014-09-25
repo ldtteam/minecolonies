@@ -13,10 +13,8 @@ import com.minecolonies.network.messages.ColonyViewMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -27,7 +25,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
-import sun.plugin.dom.exception.InvalidStateException;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -59,9 +56,9 @@ public class Colony
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
-    private int                                     maxCitizens = Constants.DEFAULTMAXCITIZENS;
-    private Map<UUID, WeakReference<EntityCitizen>> citizens    = new HashMap<UUID, WeakReference<EntityCitizen>>();
-    final static private int                        CITIZEN_CLEANUP_TICK_DELAY = 60 * 20;   //  Once a minute
+    private int                    maxCitizens = Constants.DEFAULTMAXCITIZENS;
+    private Map<UUID, CitizenData> citizens = new HashMap<UUID, CitizenData>();
+    final static private int       CITIZEN_CLEANUP_TICK_DELAY = 60 * 20;   //  Once a minute
 
     //  Workload and Jobs
     private Map<ChunkCoordinates, String> buildingUpgradeMap = new HashMap<ChunkCoordinates, String>();
@@ -106,14 +103,14 @@ public class Colony
      * Call when a Colony will be destroyed.
      * Cleans up Citizens properly (removing their Colony)
      */
-    protected void Cleanup()
+    protected void cleanup()
     {
-        for (WeakReference<EntityCitizen> citizen : citizens.values())
+        for (CitizenData citizen : citizens.values())
         {
-            EntityCitizen actualCitizen = (citizen != null) ? citizen.get() : null;
+            EntityCitizen actualCitizen = citizen.getCitizenEntity();
             if (actualCitizen != null)
             {
-                actualCitizen.setColony(null);
+                actualCitizen.clearColony();
             }
         }
     }
@@ -154,8 +151,7 @@ public class Colony
         }
 
         //  Buildings
-        String buildingsTagName = compound.hasKey(TAG_BUILDINGS_TYPO) ? TAG_BUILDINGS_TYPO : TAG_BUILDINGS;
-        NBTTagList buildingTagList =  compound.getTagList(buildingsTagName, NBT.TAG_COMPOUND);
+        NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
         {
             NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
@@ -167,11 +163,12 @@ public class Colony
         }
 
         //  Citizens
-        NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS, NBT.TAG_STRING);
+        NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS, NBT.TAG_COMPOUND);
         for (int i = 0; i < citizenTagList.tagCount(); ++i)
         {
-            String owner = citizenTagList.getStringTagAt(i);
-            citizens.put(UUID.fromString(owner), null);
+            CitizenData data = new CitizenData();
+            data.readFromNBT(citizenTagList.getCompoundTagAt(i));
+            citizens.put(data.getId(), data);
         }
 
         //  Workload
@@ -222,9 +219,11 @@ public class Colony
 
         //  Citizens
         NBTTagList citizenTagList = new NBTTagList();
-        for (UUID citizen : citizens.keySet())
+        for (CitizenData citizen : citizens.values())
         {
-            citizenTagList.appendTag(new NBTTagString(citizen.toString()));
+            NBTTagCompound citizenCompound = new NBTTagCompound();
+            citizen.writeToNBT(citizenCompound);
+            citizenTagList.appendTag(citizenCompound);
         }
         compound.setTag(TAG_CITIZENS, citizenTagList);
 
@@ -331,7 +330,7 @@ public class Colony
     {
         if (!w.equals(world))
         {
-            throw new InvalidStateException("Colony's world does not match the event.");
+            throw new IllegalStateException("Colony's world does not match the event.");
         }
 
         world = null;
@@ -500,7 +499,20 @@ public class Colony
     {
         if (event.world != getWorld())
         {
-            throw new InvalidStateException("Colony's world does not match the event.");
+            throw new IllegalStateException("Colony's world does not match the event.");
+        }
+
+        if (event.phase == TickEvent.Phase.START)
+        {
+            for (CitizenData citizen : citizens.values())
+            {
+                EntityCitizen entity = citizen.getCitizenEntity();
+                if (entity != null &&
+                    entity.worldObj.getEntityByID(entity.getEntityId()) != entity)
+                {
+                    citizen.clearCitizenEntity();
+                }
+            }
         }
 
         //  Cleanup disappeared citizens
@@ -536,21 +548,14 @@ public class Colony
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
 
-                for (Iterator<Map.Entry<UUID, WeakReference<EntityCitizen>>> it = citizens.entrySet().iterator(); it.hasNext(); )
+                for (Iterator<Map.Entry<UUID, CitizenData>> it = citizens.entrySet().iterator(); it.hasNext(); )
                 {
-                    Map.Entry<UUID, WeakReference<EntityCitizen>> entry = it.next();
-                    if (entry.getValue() == null || entry.getValue().get() == null)
+                    Map.Entry<UUID, CitizenData> entry = it.next();
+                    CitizenData citizen = entry.getValue();
+                    if (citizen.getCitizenEntity() == null)
                     {
-                        MineColonies.logger.warn(String.format("Citizen '%s' has gone AWOL, removing them!", entry.getKey().toString()));
-
-                        for (Building b : buildings.values())
-                        {
-                            b.removeCitizen(entry.getKey());
-                        }
-
-                        //  TODO: Spawn a new citizen instead, and inherit the old data, or flag them for respawn below
-                        it.remove();
-                        isCitizensDirty = true;
+                        MineColonies.logger.warn(String.format("Citizen '%s' has gone AWOL, respawning them!", entry.getKey().toString()));
+                        spawnCitizen(citizen);
                     }
                 }
             }
@@ -581,15 +586,17 @@ public class Colony
 
         //  Spawn Citizens
         if (event.phase == TickEvent.Phase.START &&
-                townhall != null &&
-                citizens.size() < maxCitizens)
+                townhall != null)
         {
-            int respawnInterval = Configurations.citizenRespawnInterval * 20;
-            respawnInterval -= (60 * townhall.getBuildingLevel());
-
-            if (event.world.getWorldInfo().getWorldTime() % respawnInterval == 0)
+            if (citizens.size() < maxCitizens)
             {
-                spawnCitizen();
+                int respawnInterval = Configurations.citizenRespawnInterval * 20;
+                respawnInterval -= (60 * townhall.getBuildingLevel());
+
+                if (event.world.getWorldInfo().getWorldTime() % respawnInterval == 0)
+                {
+                    spawnCitizen();
+                }
             }
         }
 
@@ -601,6 +608,11 @@ public class Colony
     }
 
     private void spawnCitizen()
+    {
+        spawnCitizen(null);
+    }
+
+    private void spawnCitizen(CitizenData data)
     {
         int xCoord = center.posX, yCoord = center.posY, zCoord = center.posZ;
 
@@ -618,20 +630,35 @@ public class Colony
 
         if(spawnPoint != null)
         {
-            EntityCitizen citizen = new EntityCitizen(world);
-            citizen.setColony(this);
+            EntityCitizen citizen = null;
+
+            if (data == null)
+            {
+                citizen = new EntityCitizen(world);
+
+                data = new CitizenData();
+                citizen.setColony(this, data);
+                citizens.put(data.getId(), data);
+
+                if (getMaxCitizens() == getCitizens().size())
+                {
+                    LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, getOwners()), "tile.blockHutTownhall.messageMaxSize");
+                }
+            }
+            else
+            {
+                citizen = new EntityCitizen(world, data.getId());
+                citizen.setColony(this, data);
+
+                //  FIXME - The workplace and home for this Citizen will still think they are members, but
+                //  the Citizen will have forgotten it's employer and home
+            }
+
             citizen.setPosition(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
             world.spawnEntityInWorld(citizen);
 
-            citizens.put(citizen.getUniqueID(), new WeakReference<EntityCitizen>(citizen));
             markCitizensDirty();
-
-            if(getMaxCitizens() == getCitizens().size())
-            {
-                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, getOwners()), "tile.blockHutTownhall.messageMaxSize");
-            }
         }
-
     }
 
     /*
@@ -719,15 +746,15 @@ public class Colony
     public int getMaxCitizens() { return maxCitizens; }
     //public void setMaxCitizens();
 
-    public Map<UUID, WeakReference<EntityCitizen>> getCitizens() { return Collections.unmodifiableMap(citizens); }
+    public Map<UUID, CitizenData> getCitizens() { return Collections.unmodifiableMap(citizens); }
 
     public List<EntityCitizen> getActiveCitizens()
     {
         List<EntityCitizen> activeCitizens = new ArrayList<EntityCitizen>();
 
-        for (WeakReference<EntityCitizen> citizen : citizens.values())
+        for (CitizenData citizen : citizens.values())
         {
-            EntityCitizen actualCitizen = (citizen != null) ? citizen.get() : null;
+            EntityCitizen actualCitizen = citizen.getCitizenEntity();
             if (actualCitizen != null)
             {
                 activeCitizens.add(actualCitizen);
@@ -755,31 +782,49 @@ public class Colony
         }
     }
 
-    public boolean registerCitizen(EntityCitizen citizen)
+    public CitizenData registerCitizen(EntityCitizen citizen)
     {
         if (!citizens.containsKey(citizen.getUniqueID()))
         {
-            return false;
+            MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but not known to colony",
+                    citizen.getUniqueID()));
+            return null;
         }
 
-        citizens.put(citizen.getUniqueID(), new WeakReference<EntityCitizen>(citizen));
+        CitizenData data = citizens.get(citizen.getUniqueID());
+        if (data == null)
+        {
+            throw new IllegalStateException("CitizenData missing in Citizen map.");
+        }
+
+        EntityCitizen existingCitizen = data.getCitizenEntity();
+        if (existingCitizen != null && existingCitizen != citizen)
+        {
+            //  This Citizen already has a different Entity registered to it
+            MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but already have a citizen ('%s')",
+                    citizen.getUniqueID(), existingCitizen.getUniqueID()));
+            return null;
+        }
+
+        data.registerCitizenEntity(citizen);
+
         markCitizensDirty();
-        return true;
+        return data;
     }
 
-//    public void replaceCitizen(EntityCitizen oldCitizen, EntityCitizen newCitizen)
-//    {
-//        if (citizens.containsKey(oldCitizen.getUniqueID()))
-//        {
-//            citizens.remove(oldCitizen.getUniqueID());
-//            citizens.put(newCitizen.getUniqueID(), new WeakReference<EntityCitizen>(newCitizen));
-//            markDirty();
-//        }
-//        else
-//        {
-//            MineColonies.logger.error(String.format("Colony.replaceCitizen() - Citizen %s is not a member of the Colony.", oldCitizen.getUniqueID().toString()));
-//        }
-//    }
+    public void replaceCitizen(EntityCitizen oldCitizen, EntityCitizen newCitizen)
+    {
+        CitizenData data = citizens.get(oldCitizen.getUniqueID());
+        if (data != null)
+        {
+            data.registerCitizenEntity(newCitizen);
+            markCitizensDirty();
+        }
+        else
+        {
+            MineColonies.logger.error(String.format("Colony.replaceCitizen() - Citizen %s is not a member of the Colony.", oldCitizen.getUniqueID().toString()));
+        }
+    }
 
     /**
      * Get citizen in Colony by ID
@@ -788,8 +833,8 @@ public class Colony
      */
     public EntityCitizen getCitizen(UUID citizenId)
     {
-        WeakReference<EntityCitizen> citizen = citizens.get(citizenId);
-        return citizen != null ? citizen.get() : null;
+        CitizenData citizen = citizens.get(citizenId);
+        return citizen != null ? citizen.getCitizenEntity() : null;
     }
 
     /**
@@ -799,13 +844,13 @@ public class Colony
      */
     public EntityCitizen getIdleCitizen()
     {
-        for (WeakReference<EntityCitizen> citizenRef : citizens.values())
+        for (CitizenData citizen : citizens.values())
         {
-            EntityCitizen citizen = (citizenRef != null) ? citizenRef.get() : null;
+            EntityCitizen entity = citizen.getCitizenEntity();
             //if (citizen != null && citizen.getColonyJob() == null)
-            if (citizen != null && citizen.getWorkBuilding() == null)
+            if (entity != null && entity.getWorkBuilding() == null)
             {
-                return citizen;
+                return entity;
             }
         }
 
@@ -832,12 +877,12 @@ public class Colony
     {
         List<ChunkCoordinates> deliverymanRequired = new ArrayList<ChunkCoordinates>();
 
-        for (WeakReference<EntityCitizen> citizenRef : citizens.values())
+        for (CitizenData citizen : citizens.values())
         {
-            EntityCitizen citizen = (citizenRef != null) ? citizenRef.get() : null;
-            if (citizen != null && citizen instanceof EntityWorker)
+            EntityCitizen entity = citizen.getCitizenEntity();
+            if (entity != null && entity instanceof EntityWorker)
             {
-                EntityWorker worker = (EntityWorker)citizen;
+                EntityWorker worker = (EntityWorker)entity;
 
                 if (worker.getWorkBuilding() != null && !worker.hasItemsNeeded())
                 {

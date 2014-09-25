@@ -1,7 +1,6 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 
 import static com.minecolonies.entity.EntityCitizen.Status.SLEEPING;
@@ -19,7 +18,7 @@ public class EntityAISleep extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return !citizen.worldObj.isDaytime() && citizen.isHome();//!this.citizen.isWorkTime? - sleep when raining?
+        return citizen.isSleepTime() && citizen.isAtHome();//!this.citizen.isWorkTime? - sleep when raining?
     }
 
     @Override

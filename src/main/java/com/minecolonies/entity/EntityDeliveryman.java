@@ -24,7 +24,7 @@ public class EntityDeliveryman extends EntityWorker
     }
 
     @Override
-    protected String initJob()
+    protected String getJobName()
     {
         return "Deliveryman";
     }

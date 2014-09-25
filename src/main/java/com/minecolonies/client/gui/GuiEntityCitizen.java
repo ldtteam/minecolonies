@@ -24,21 +24,36 @@ public class GuiEntityCitizen extends GuiBase
     {
         super.addElements();
 
-        String strength = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength);
-        String stamina = LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina);
-        String wisdom = LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom);
-        String intelligence = LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence);
-        String charisma = LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma);
+        int strength = 0;
+        int stamina = 0;
+        int wisdom = 0;
+        int intelligence = 0;
+        int charisma = 0;
 
-        int x = getSameCenterX(strength, stamina, wisdom, intelligence, charisma);
+        if (citizen.getCitizenData() != null)
+        {
+            strength = citizen.getCitizenData().strength;
+            stamina = citizen.getCitizenData().stamina;
+            wisdom = citizen.getCitizenData().wisdom;
+            intelligence = citizen.getCitizenData().intelligence;
+            charisma = citizen.getCitizenData().charisma;
+        }
+
+        String strengthStr = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", strength);
+        String staminaStr = LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", stamina);
+        String wisdomStr = LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", wisdom);
+        String intelligenceStr = LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", intelligence);
+        String charismaStr = LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", charisma);
+
+        int x = getSameCenterX(strengthStr, staminaStr, wisdomStr, intelligenceStr, charismaStr);
         int y = topY + labelSpan;
 
         addCenteredLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills"), y);
-        addLabel(strength, x, y += labelSpan * 2);
-        addLabel(stamina, x, y += labelSpan);
-        addLabel(wisdom, x, y += labelSpan);
-        addLabel(intelligence, x, y += labelSpan);
-        addLabel(charisma, x, y += labelSpan);
+        addLabel(strengthStr, x, y += labelSpan * 2);
+        addLabel(staminaStr, x, y += labelSpan);
+        addLabel(wisdomStr, x, y += labelSpan);
+        addLabel(intelligenceStr, x, y += labelSpan);
+        addLabel(charismaStr, x, y += labelSpan);
         addBottomButton(BUTTON_INVENTORY, LanguageHandler.format("container.inventory"), buttonMiddleX, buttonWidth, buttonHeight);
     }
 
