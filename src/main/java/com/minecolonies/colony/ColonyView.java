@@ -151,7 +151,7 @@ public class ColonyView
         World world = DimensionManager.getWorld(colony.getDimensionId());
         if (world != null)
         {
-            List<EntityCitizen> entities = colony.getActiveCitizens();
+            List<EntityCitizen> entities = colony.getActiveCitizenEntities();
 
             if (entities != null && !entities.isEmpty())
             {

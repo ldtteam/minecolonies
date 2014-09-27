@@ -10,6 +10,8 @@ import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 
+import java.util.UUID;
+
 import static com.minecolonies.entity.EntityCitizen.Status.*;
 
 /**
@@ -63,7 +65,8 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
             return;
         }
 
-        EntityWorker worker = (EntityWorker)deliveryman.getColony().getCitizen(((BuildingWorker)destinationBuilding).getWorkerId());
+        UUID targetWorkerId = ((BuildingWorker)destinationBuilding).getWorkerId();
+        EntityWorker worker = (EntityWorker)deliveryman.getColony().getCitizenEntity(targetWorkerId);
         TileEntityColonyBuilding destinationTileEntity = destinationBuilding.getTileEntity();
 
         if (worker == null || destinationTileEntity == null)

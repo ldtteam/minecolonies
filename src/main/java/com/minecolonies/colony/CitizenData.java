@@ -1,8 +1,13 @@
 package com.minecolonies.colony;
 
+import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingHome;
+import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import java.lang.ref.WeakReference;
@@ -20,27 +25,33 @@ public class CitizenData
 
     //  Attributes
     private UUID   id;
-    private int    texture;
+    private int    textureId;
     private String name;
     private int    gender;
+
+    private WeakReference<BuildingHome>   homeBuilding;
+    private WeakReference<BuildingWorker> workBuilding;
 
     //  Citizen
     public WeakReference<EntityCitizen> entity;
 
     //  Placeholder skills
     private int level;
-    public int strength, stamina, wisdom, intelligence, charisma;
+    public  int strength, stamina, wisdom, intelligence, charisma;
 
-    private static final String TAG_ID     = "id";
-    private static final String TAG_NAME   = "name";
-    private static final String TAG_GENDER = "gender";
-    private static final String TAG_LEVEL  = "level";
+    private static final String TAG_ID      = "id";
+    private static final String TAG_NAME    = "name";
+    private static final String TAG_GENDER  = "gender";
     private static final String TAG_TEXTURE = "texture";
+    private static final String TAG_LEVEL   = "level";
+
+    private static final String TAG_HOME_BUILDING = "homebuilding";
+    private static final String TAG_WORK_BUILDING = "workbuilding";
 
     private static final String TAG_SKILLS         = "skills";
     private static final String TAG_SKILL_STRENGTH = "strength";
-    private static final String TAG_SKILL_STAMINA = "stamina";
-    private static final String TAG_SKILL_WISDOM = "wisdom";
+    private static final String TAG_SKILL_STAMINA  = "stamina";
+    private static final String TAG_SKILL_WISDOM   = "wisdom";
     private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
     private static final String TAG_SKILL_CHARISMA = "charisma";
 
@@ -62,7 +73,7 @@ public class CitizenData
         id = citizen.getUniqueID();
         gender = rand.nextInt(2);   //  Gender before name
         name = generateName(rand);
-        texture = citizen.getTextureID();
+        textureId = citizen.getTextureID();
 
         strength = rand.nextInt(10) + 1;
         stamina = rand.nextInt(10) + 1;
@@ -74,7 +85,14 @@ public class CitizenData
     public UUID getId() { return id; }
     public String getName() { return name; }
     public int getSex() { return gender; }
-    public int getTexture() { return texture; }
+    public int getTextureId() { return textureId; }
+    public int getLevel() { return level; }
+
+    public BuildingHome getHomeBuilding() { return (homeBuilding != null) ? homeBuilding.get() : null; }
+    public void setHomeBuilding(BuildingHome b) { homeBuilding = new WeakReference<BuildingHome>(b); }
+
+    public BuildingWorker getWorkBuilding() { return (workBuilding != null) ? workBuilding.get() : null; }
+    public void setWorkBuilding(BuildingWorker b) { workBuilding = new WeakReference<BuildingWorker>(b); }
 
     public EntityCitizen getCitizenEntity() { return (entity != null) ? entity.get() : null; }
     public void registerCitizenEntity(EntityCitizen citizen)
@@ -96,8 +114,22 @@ public class CitizenData
         compound.setString(TAG_ID, id.toString());
         compound.setString(TAG_NAME, name);
         compound.setInteger(TAG_GENDER, gender);
+        compound.setInteger(TAG_TEXTURE, textureId);
+
+        BuildingHome home = getHomeBuilding();
+        if (home != null)
+        {
+            ChunkCoordUtils.writeToNBT(compound, TAG_HOME_BUILDING, home.getID());
+        }
+
+        BuildingWorker work = getWorkBuilding();
+        if (work != null)
+        {
+            ChunkCoordUtils.writeToNBT(compound, TAG_WORK_BUILDING, work.getID());
+        }
+
+        //  Attributes
         compound.setInteger(TAG_LEVEL, level);
-        compound.setInteger(TAG_TEXTURE, texture);
 
         NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
         nbtTagSkillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
@@ -108,13 +140,34 @@ public class CitizenData
         compound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
     }
 
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(NBTTagCompound compound, Colony colony)
     {
         id = UUID.fromString(compound.getString(TAG_ID));
         name = compound.getString(TAG_NAME);
         gender = compound.getInteger(TAG_GENDER);
+        textureId = compound.getInteger(TAG_TEXTURE);
+
+        if (compound.hasKey(TAG_HOME_BUILDING))
+        {
+            ChunkCoordinates homeBuildingId = ChunkCoordUtils.readFromNBT(compound, TAG_HOME_BUILDING);
+            Building building = colony.getBuilding(homeBuildingId);
+            if (building instanceof BuildingHome)
+            {
+                homeBuilding = new WeakReference<BuildingHome>((BuildingHome)building);
+            }
+        }
+        if (compound.hasKey(TAG_WORK_BUILDING))
+        {
+            ChunkCoordinates workBuildingId = ChunkCoordUtils.readFromNBT(compound, TAG_WORK_BUILDING);
+            Building building = colony.getBuilding(workBuildingId);
+            if (building instanceof BuildingWorker)
+            {
+                workBuilding = new WeakReference<BuildingWorker>((BuildingWorker) building);
+            }
+        }
+
+        //  Attributes
         level = compound.getInteger(TAG_LEVEL);
-        texture = compound.getInteger(TAG_TEXTURE);
 
         NBTTagCompound nbtTagSkillsCompound = compound.getCompoundTag("skills");
         strength = nbtTagSkillsCompound.getInteger("strength");

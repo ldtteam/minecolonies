@@ -49,10 +49,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private UUID                          colonyId;
     private Colony                        colony;
     private CitizenData                   citizenData;
-    private ChunkCoordinates              homeBuildingId;
-    private WeakReference<BuildingHome>   homeBuilding;
-    private ChunkCoordinates              workBuildingId;
-    private WeakReference<BuildingWorker> workBuilding;
 
     private ColonyJob colonyJob;
 
@@ -218,45 +214,28 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             setColony(c, data);
         }
 
-        if (homeBuilding == null && homeBuildingId != null)
+        if (citizenData == null)
         {
-            Building b = colony.getBuilding(homeBuildingId);
-            BuildingHome homeBuilding = (b instanceof BuildingHome) ? (BuildingHome)b : null;
-
-            if (homeBuilding.isCitizen(this))
-            {
-                this.homeBuilding = new WeakReference<BuildingHome>(homeBuilding);
-            }
-            else
-            {
-                homeBuildingId = null;
-            }
-        }
-
-        if (workBuilding == null && workBuildingId != null)
-        {
-            Building b = colony.getBuilding(workBuildingId);
-            BuildingWorker workBuilding = (b instanceof BuildingWorker) ? (BuildingWorker)b : null;
-
-            if (workBuilding.isWorker(this))
-            {
-                this.workBuilding = new WeakReference<BuildingWorker>(workBuilding);
-            }
-            else
-            {
-                workBuildingId = null;
-            }
+            setDead();
+            return;
         }
 
         if (!this.getClass().equals(EntityCitizen.class))
         {
-            if (workBuildingId == null ||
-                    workBuilding == null ||
-                    workBuilding.get() == null)
+            if (citizenData.getWorkBuilding() == null)
             {
                 removeFromWorkBuilding();
             }
         }
+        else
+        {
+            BuildingWorker work = citizenData.getWorkBuilding();
+            if (work != null)
+            {
+                addToWorkBuilding(work);
+            }
+        }
+
 //        BuildingWorker b = (workBuilding != null) ? workBuilding.get() : null;
 //        if (b != null)
 //        {
@@ -332,6 +311,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return dataWatcher.getWatchableObjectInt(DATA_LEVEL);
     }
 
+    private void updateLevel()
+    {
+        dataWatcher.updateObject(DATA_LEVEL, citizenData != null ? citizenData.getLevel() : 0);
+    }
+
     public int getSex()
     {
         return dataWatcher.getWatchableObjectInt(DATA_GENDER);
@@ -352,44 +336,47 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             colonyId = null;
             citizenData = null;
             setDead();
+            return;
         }
-        else
+
+        colony = c;
+        colonyId = colony.getID();
+        citizenData = data;
+
+        //  Is this newly created Citizen Data?
+        if (citizenData.getId() == null)
         {
-            colony = c;
-            colonyId = colony.getID();
-            citizenData = data;
-
-            //  Is this newly created Citizen Data?
-            if (citizenData.getId() == null)
-            {
-                citizenData.setup(this);
-            }
-
-            dataWatcher.updateObject(DATA_TEXTURE, citizenData.getTexture());
-            //dataWatcher.updateObject(DATA_LEVEL, citizenData.getLevel());
-            dataWatcher.updateObject(DATA_GENDER, citizenData.getSex());
-
-            setCustomNameTag(citizenData.getName());
-            setTexture();
+            citizenData.setup(this);
         }
+
+        setCustomNameTag(citizenData.getName());
+
+        dataWatcher.updateObject(DATA_GENDER, citizenData.getSex());
+        dataWatcher.updateObject(DATA_TEXTURE, citizenData != null ? citizenData.getTextureId() : 0);
+        updateLevel();
+
+        setTexture();
     }
 
     public BuildingHome getHomeBuilding()
     {
-        return (homeBuilding != null) ? homeBuilding.get() : null;
+        return (citizenData != null) ? citizenData.getHomeBuilding() : null;
     }
 
     public void setHomeBuilding(BuildingHome b)
     {
-        homeBuilding = new WeakReference<BuildingHome>(b);
-        homeBuildingId = (b != null) ? b.getID() : null;
+        if (citizenData != null)
+        {
+            citizenData.setHomeBuilding(b);
+        }
     }
 
     public ChunkCoordinates getHomePosition()
     {
-        if (getHomeBuilding() != null)
+        BuildingHome homeBuilding = getHomeBuilding();
+        if (homeBuilding != null)
         {
-            return getHomeBuilding().getLocation();
+            return homeBuilding.getLocation();
         }
         else if (getColony() != null && getColony().getTownhall() != null)
         {
@@ -408,13 +395,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public BuildingWorker getWorkBuilding()
     {
-        return (workBuilding != null) ? workBuilding.get() : null;
+        return (citizenData != null) ? citizenData.getWorkBuilding() : null;
     }
 
     public void setWorkBuilding(BuildingWorker b)
     {
-        workBuilding = new WeakReference<BuildingWorker>(b);
-        workBuildingId = (b != null) ? b.getID() : null;
+        if (citizenData != null)
+        {
+            citizenData.setWorkBuilding(b);
+        }
     }
 
     public void addToWorkBuilding(BuildingWorker building)
@@ -438,12 +427,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             colony.replaceCitizen(this, worker);
         }
 
-        BuildingHome home = getHomeBuilding();
-        if (home != null)
-        {
-            home.replaceCitizen(this, worker);
-        }
-
         this.clearColony();
     }
 
@@ -463,12 +446,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (colony != null)
         {
             colony.replaceCitizen(this, citizen);
-        }
-
-        BuildingHome home = getHomeBuilding();
-        if (home != null)
-        {
-            home.replaceCitizen(this, citizen);
         }
 
         this.clearColony();
@@ -498,14 +475,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (colony != null)
         {
             compound.setString("colony", colony.getID().toString());
-        }
-        if (homeBuildingId != null && homeBuilding != null && homeBuilding.get() != null)
-        {
-            ChunkCoordUtils.writeToNBT(compound, "homebuilding", homeBuildingId);
-        }
-        if (workBuildingId != null && workBuilding != null && workBuilding.get() != null)
-        {
-            ChunkCoordUtils.writeToNBT(compound, "workbuilding", workBuildingId);
         }
 //        if (colonyJob != null)
 //        {
@@ -538,14 +507,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (compound.hasKey("colony"))
         {
             colonyId = UUID.fromString(compound.getString("colony"));
-        }
-        if (compound.hasKey("homebuilding"))
-        {
-            homeBuildingId = ChunkCoordUtils.readFromNBT(compound, "homebuilding");
-        }
-        if (compound.hasKey("workbuilding"))
-        {
-            workBuildingId = ChunkCoordUtils.readFromNBT(compound, "workbuilding");
         }
 //        if (compound.hasKey("job"))
 //        {

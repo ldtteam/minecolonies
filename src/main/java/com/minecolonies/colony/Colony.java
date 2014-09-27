@@ -167,7 +167,7 @@ public class Colony
         for (int i = 0; i < citizenTagList.tagCount(); ++i)
         {
             CitizenData data = new CitizenData();
-            data.readFromNBT(citizenTagList.getCompoundTagAt(i));
+            data.readFromNBT(citizenTagList.getCompoundTagAt(i), this);
             citizens.put(data.getId(), data);
         }
 
@@ -647,11 +647,10 @@ public class Colony
             }
             else
             {
+                //  TODO: Restore the actual EntityCitizen subclass
+                //  (Although the current code is pretty good about detecting and fixing the issue)
                 citizen = new EntityCitizen(world, data.getId());
                 citizen.setColony(this, data);
-
-                //  FIXME - The workplace and home for this Citizen will still think they are members, but
-                //  the Citizen will have forgotten it's employer and home
             }
 
             citizen.setPosition(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
@@ -735,6 +734,20 @@ public class Colony
             removedBuildings.add(building.getLocation());
             markDirty();
         }
+
+        for (CitizenData citizen : citizens.values())
+        {
+            if (citizen.getHomeBuilding() == building)
+            {
+                citizen.setHomeBuilding(null);
+            }
+
+            if (citizen.getWorkBuilding() == building)
+            {
+                EntityCitizen entity = citizen.getCitizenEntity();
+                citizen.setWorkBuilding(null);
+            }
+        }
     }
 
     /*
@@ -748,7 +761,7 @@ public class Colony
 
     public Map<UUID, CitizenData> getCitizens() { return Collections.unmodifiableMap(citizens); }
 
-    public List<EntityCitizen> getActiveCitizens()
+    public List<EntityCitizen> getActiveCitizenEntities()
     {
         List<EntityCitizen> activeCitizens = new ArrayList<EntityCitizen>();
 
@@ -827,14 +840,24 @@ public class Colony
     }
 
     /**
-     * Get citizen in Colony by ID
+     * Get citizen by ID
      * @param citizenId
      * @return
      */
-    public EntityCitizen getCitizen(UUID citizenId)
+    public CitizenData getCitizen(UUID citizenId)
+    {
+        return citizens.get(citizenId);
+    }
+
+    /**
+     * Get citizen's entity by ID
+     * @param citizenId
+     * @return
+     */
+    public EntityCitizen getCitizenEntity(UUID citizenId)
     {
         CitizenData citizen = citizens.get(citizenId);
-        return citizen != null ? citizen.getCitizenEntity() : null;
+        return (citizen != null) ? citizen.getCitizenEntity() : null;
     }
 
     /**

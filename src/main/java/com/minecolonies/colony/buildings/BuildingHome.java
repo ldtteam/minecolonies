@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
@@ -37,23 +38,13 @@ public class BuildingHome extends BuildingHut
     @Override
     public void onDestroyed()
     {
-        //  TODO REFACTOR - Ideally we should have a live Map of WeakReferences to our EntityCitizens
-        World world = DimensionManager.getWorld(getColony().getDimensionId());
-        if (world == null)
+        //  TODO REFACTOR - Ideally we should have a live Map of references to our CitizenData
+        for (UUID tenant : citizens)
         {
-            return;
-        }
-
-        List<Entity> entityCitizens = Utils.getEntitiesFromUUID(world, citizens);
-        if(entityCitizens != null)
-        {
-            for(Entity entity : entityCitizens)
+            CitizenData citizen = getColony().getCitizen(tenant);
+            if (citizen != null)
             {
-                if(entity instanceof EntityCitizen)
-                {
-                    EntityCitizen citizen = (EntityCitizen) entity;
-                    citizen.setHomeBuilding(null);
-                }
+                citizen.setHomeBuilding(null);
             }
         }
 
@@ -77,14 +68,12 @@ public class BuildingHome extends BuildingHut
 
     public void addHomelessCitizens()
     {
-        List<EntityCitizen> availableCitizens = getColony().getActiveCitizens();
-
-        for (EntityCitizen c : availableCitizens)
+        for (CitizenData citizen : getColony().getCitizens().values())
         {
-            if (c.getHomeBuilding() == null)
+            if (citizen.getHomeBuilding() == null)
             {
-                citizens.add(c.getUniqueID());
-                c.setHomeBuilding(this);
+                citizens.add(citizen.getId());
+                citizen.setHomeBuilding(this);
 
                 if (citizens.size() >= getMaxInhabitants())
                 {
@@ -98,16 +87,6 @@ public class BuildingHome extends BuildingHut
     public void removeCitizen(UUID citizenId)
     {
         citizens.remove(citizenId);
-    }
-
-    public void replaceCitizen(EntityCitizen oldCitizen, EntityCitizen newCitizen)
-    {
-//        if (citizens.contains(oldCitizen.getUniqueID()))
-//        {
-//            citizens.remove(oldCitizen.getUniqueID());
-//            citizens.add(newCitizen.getUniqueID());
-//            newCitizen.setHomeBuilding(this);
-//        }
     }
 
     public boolean isCitizen(EntityCitizen citizen)

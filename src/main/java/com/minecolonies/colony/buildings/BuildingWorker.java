@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
@@ -28,16 +29,22 @@ public abstract class BuildingWorker extends BuildingHut
     @Override
     public void onDestroyed()
     {
-        //  TODO REFACTOR - Ideally we will have a WeakReference to the EntityCitizen
+        //  TODO REFACTOR - Ideally we will have a reference to the CitizenData
         if (hasWorker())
         {
-            World world = DimensionManager.getWorld(getColony().getDimensionId());
-
-            EntityCitizen worker = (EntityCitizen) Utils.getEntityFromUUID(world, workerId);
-            if (worker != null)
+            CitizenData citizen = getColony().getCitizen(workerId);
+            if (citizen != null)
             {
-                worker.removeFromWorkBuilding();
-                worker.setColonyJob(null);
+                EntityCitizen entity = citizen.getCitizenEntity();
+                if (entity != null)
+                {
+                    //  Possibly not necessary, workers now detect they need to remove themselves
+                    entity.removeFromWorkBuilding();
+                }
+                else
+                {
+                    citizen.setWorkBuilding(null);
+                }
             }
 
             workerId = null;
