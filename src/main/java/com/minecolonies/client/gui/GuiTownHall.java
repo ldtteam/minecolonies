@@ -1,11 +1,12 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.lib.EnumGUI;
-import com.minecolonies.network.packets.BuildRequestPacket;
-import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import net.minecraft.client.gui.GuiButton;
@@ -18,15 +19,17 @@ import java.util.List;
 public class GuiTownHall extends GuiBase
 {
     private final int BUTTON_BUILD = 0, BUTTON_REPAIR = 1, BUTTON_RECALL = 2, BUTTON_SPECIALIZATION_TOGGLE = 3, BUTTON_RENAME = 4, BUTTON_INFORMATION = 5, BUTTON_ACTIONS = 6, BUTTON_SETTINGS = 7;
-    private final TileEntityTownHall tileEntityTownHall;
+    private final BuildingTownHall.View townhall;
+    private final ColonyView colony;
 
     private final int PAGE_ACTIONS = 0, PAGE_INFORMATION = 1, PAGE_SETTINGS = 2;
     private int page = PAGE_ACTIONS;
 
-    public GuiTownHall(TileEntityTownHall tileEntityTownHall, EntityPlayer player, World world, int x, int y, int z)
+    public GuiTownHall(BuildingTownHall.View building, EntityPlayer player, World world, int x, int y, int z)
     {
-        super(player, world, x, y, z);
-        this.tileEntityTownHall = tileEntityTownHall;
+        super(player, world, x, y, z, building);
+        this.townhall = building;
+        this.colony = building.getColony();
     }
 
     @Override
@@ -47,7 +50,7 @@ public class GuiTownHall extends GuiBase
             String currentSpec = LanguageHandler.format("com.minecolonies.gui.townhall.currentSpecialization");
             String spec = "<Industrial>"; //TODO replace with actual specialisation
             String currentTownhallName = LanguageHandler.format("com.minecolonies.gui.townhall.currTownhallName");
-            String townhallName = tileEntityTownHall.getCityName();
+            String townhallName = colony.getName();
 
             int y = labelSpan * 3;
 
@@ -67,10 +70,10 @@ public class GuiTownHall extends GuiBase
         {
             infoButton.enabled = false;
 
-            int citizensSize = tileEntityTownHall.getCitizens().size();
+            int citizensSize = colony.getCitizens().size();
             int workers = 0;
             int builders = 0, deliverymen = 0;
-            List<Entity> citizens = Utils.getEntitiesFromID(world, tileEntityTownHall.getEntityIDs());
+            List<Entity> citizens = Utils.getEntitiesFromID(world, colony.getCitizens());
             if(citizens != null)
             {
                 for(Entity citizen : citizens)
@@ -87,7 +90,7 @@ public class GuiTownHall extends GuiBase
                 workers = builders + deliverymen;
             }
 
-            String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens", citizensSize, tileEntityTownHall.getMaxCitizens());
+            String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens", citizensSize, colony.getMaxCitizens());
             String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed", (citizensSize - workers));
             String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townhall.population.builders", builders);
             String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townhall.population.deliverymen", deliverymen);
@@ -112,10 +115,10 @@ public class GuiTownHall extends GuiBase
         switch(guiButton.id)
         {
             case BUTTON_BUILD:
-                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.BUILD));
+                MineColonies.network.sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.BUILD));
                 break;
             case BUTTON_REPAIR:
-                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.REPAIR));
+                MineColonies.network.sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.REPAIR));
                 break;
             case BUTTON_RECALL:
                 break;

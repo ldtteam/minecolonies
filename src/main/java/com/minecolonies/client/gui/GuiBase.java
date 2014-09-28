@@ -1,8 +1,10 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.packets.BuildRequestPacket;
+import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -23,13 +25,14 @@ public abstract class GuiBase extends GuiScreen
     protected final int              buttonWidth = 116, buttonHeight = 20, buttonSpan = 4, labelSpan = 11;
     protected int middleX, middleY, topY, xSize, ySize, buttonMiddleX, buttonMiddleY;
 
-    protected final EntityPlayer player;
-    protected final World        world;
-    protected final int          x, y, z;
+    protected final EntityPlayer  player;
+    protected final World         world;
+    protected final int           x, y, z;
+    protected final Building.View building;
 
     private ArrayList<GuiModIcon> iconList;
 
-    public GuiBase(EntityPlayer player, World world, int x, int y, int z)
+    public GuiBase(EntityPlayer player, World world, int x, int y, int z, Building.View building)
     {
         super();
 
@@ -38,6 +41,7 @@ public abstract class GuiBase extends GuiScreen
         this.x = x;
         this.y = y;
         this.z = z;
+        this.building = building;
 
         xSize = 171;
         ySize = 247;
@@ -163,10 +167,10 @@ public abstract class GuiBase extends GuiScreen
                 //TODO recall
                 break;
             case BUTTON_BUILD:
-                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.BUILD));
+                MineColonies.network.sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
                 break;
             case BUTTON_REPAIR:
-                MineColonies.packetPipeline.sendToServer(new BuildRequestPacket(x, y, z, BuildRequestPacket.REPAIR));
+                MineColonies.network.sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
                 break;
         }
     }

@@ -24,7 +24,7 @@ public class EntityBuilder extends EntityWorker
     }
 
     @Override
-    protected String initJob()
+    protected String getJobName()
     {
         return "Builder";
     }
@@ -95,6 +95,6 @@ public class EntityBuilder extends EntityWorker
     @Override
     public boolean isNeeded()
     {
-        return this.getTownHall() != null && !this.getTownHall().getBuilderRequired().isEmpty() && this.getWorkHut() != null;
+        return this.getColony() != null && !getColony().getBuildingUpgrades().isEmpty() && getWorkBuilding() != null;
     }
 }

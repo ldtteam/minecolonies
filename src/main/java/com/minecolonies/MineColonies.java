@@ -1,11 +1,12 @@
 package com.minecolonies;
 
 import com.minecolonies.blocks.ModBlocks;
+import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.GuiHandler;
-import com.minecolonies.network.PacketPipeline;
+import com.minecolonies.network.messages.*;
 import com.minecolonies.proxy.IProxy;
 import com.minecolonies.util.RecipeHandler;
 import cpw.mods.fml.common.Mod;
@@ -15,6 +16,8 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,7 +26,7 @@ public class MineColonies
 {
     public static Logger logger = LogManager.getLogger(Constants.MODID);
 
-    public static final PacketPipeline packetPipeline = new PacketPipeline();
+    public static SimpleNetworkWrapper network;
 
     @Mod.Instance(Constants.MODID)
     public static MineColonies instance;
@@ -35,7 +38,7 @@ public class MineColonies
     @SuppressWarnings("unused")
     public void invalidFingerprint(FMLFingerprintViolationEvent event)
     {
-        if(Constants.FINGERPRINT.equals("@FINGERPRINT@"))
+        if (Constants.FINGERPRINT.equals("@FINGERPRINT@"))
         {
             //logger.log(Level.ERROR, LanguageHandler.format("com.minecolonies.error.noFingerprint"));
             logger.error("No Fingerprint. Might not be a valid version!");
@@ -59,9 +62,17 @@ public class MineColonies
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-        packetPipeline.initialize();
+//        packetPipeline.initialize();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+
+        network = NetworkRegistry.INSTANCE.newSimpleChannel("MineColonies");
+        network.registerMessage(ColonyViewMessage.Handler.class,            ColonyViewMessage.class,            0,  Side.CLIENT);
+        network.registerMessage(ColonyViewCitizensMessage.Handler.class,    ColonyViewCitizensMessage.class,    1,  Side.CLIENT);
+        network.registerMessage(ColonyBuildingViewMessage.Handler.class,    ColonyBuildingViewMessage.class,    2,  Side.CLIENT);
+        network.registerMessage(BuildRequestMessage.Handler.class,          BuildRequestMessage.class,          10,  Side.SERVER);
+        network.registerMessage(OpenInventoryMessage.Handler.class,         OpenInventoryMessage.class,         11,  Side.SERVER);
+        network.registerMessage(TownhallRenameMessage.Handler.class,        TownhallRenameMessage.class,        12,  Side.SERVER);
 
         proxy.registerTileEntities();
 
@@ -74,11 +85,22 @@ public class MineColonies
         proxy.registerEntityRendering();
 
         proxy.registerTileEntityRendering();
+
+        ColonyManager.init();
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
-        packetPipeline.postInitialize();
+    }
+
+    public static boolean isClient()
+    {
+        return proxy.isClient();
+    }
+
+    public static boolean isServer()
+    {
+        return !proxy.isClient();
     }
 }

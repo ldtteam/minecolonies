@@ -2,14 +2,14 @@ package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityWorker;
-import com.minecolonies.tileentities.TileEntityTownHall;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class ChunkCoordUtils
@@ -32,6 +32,39 @@ public class ChunkCoordUtils
         return new ChunkCoordinates(x, y, z);
     }
 
+    public static void writeToNBTTagList(NBTTagList tagList, ChunkCoordinates coords)
+    {
+        NBTTagCompound coordsCompound = new NBTTagCompound();
+        coordsCompound.setInteger("x", coords.posX);
+        coordsCompound.setInteger("y", coords.posY);
+        coordsCompound.setInteger("z", coords.posZ);
+        tagList.appendTag(coordsCompound);
+    }
+
+    public static ChunkCoordinates readFromNBTTagList(NBTTagList tagList, int index)
+    {
+        NBTTagCompound coordsCompound = tagList.getCompoundTagAt(index);
+        int x = coordsCompound.getInteger("x");
+        int y = coordsCompound.getInteger("y");
+        int z = coordsCompound.getInteger("z");
+        return new ChunkCoordinates(x, y, z);
+    }
+
+    public static void writeToByteBuf(ByteBuf buf, ChunkCoordinates coords)
+    {
+        buf.writeInt(coords.posX);
+        buf.writeInt(coords.posY);
+        buf.writeInt(coords.posZ);
+    }
+
+    public static ChunkCoordinates readFromByteBuf(ByteBuf buf)
+    {
+        int x = buf.readInt();
+        int y = buf.readInt();
+        int z = buf.readInt();
+        return new ChunkCoordinates(x, y, z);
+    }
+
     public static TileEntity getTileEntity(World world, ChunkCoordinates coords)
     {
         return world.getTileEntity(coords.posX, coords.posY, coords.posZ);
@@ -45,42 +78,6 @@ public class ChunkCoordUtils
     public static int getBlockMetadata(World world, ChunkCoordinates coords)
     {
         return world.getBlockMetadata(coords.posX, coords.posY, coords.posZ);
-    }
-
-    /**
-     * Method to find the closest townhall
-     *
-     * @param world world obj
-     * @param pos   {@link ChunkCoordinates} to check from
-     * @return closest TileEntityTownHall
-     */
-    public static TileEntityTownHall getClosestTownHall(World world, ChunkCoordinates pos)
-    {
-        return Utils.getClosestTownHall(world, pos.posX, pos.posY, pos.posZ);
-    }
-
-    /**
-     * find the distance to the closest townhall.
-     *
-     * @param world world townhall is in
-     * @param pos   {@link ChunkCoordinates} to check from
-     * @return distance to nearest townhall
-     */
-    public static double getDistanceToClosestTownHall(World world, ChunkCoordinates pos)
-    {
-        return Utils.getDistanceToClosestTownHall(world, pos.posX, pos.posY, pos.posZ);
-    }
-
-    /**
-     * Gives the distance to a given townhall
-     *
-     * @param pos        {@link ChunkCoordinates} to check from
-     * @param tileEntity TileEntityTownhall to check to.
-     * @return distance
-     */
-    public static double getDistanceToTileEntity(ChunkCoordinates pos, TileEntity tileEntity)
-    {
-        return Utils.getDistanceToTileEntity(pos.posX, pos.posY, pos.posZ, tileEntity);
     }
 
     public static ChunkCoordinates scanForBlockNearPoint(World world, Block block, ChunkCoordinates pos, ChunkCoordinates radiusPos)
@@ -113,19 +110,24 @@ public class ChunkCoordUtils
         return Utils.tryMoveLivingToXYZ(living, destination.posX, destination.posY, destination.posZ, speed);
     }
 
-    public static float distanceTo(ChunkCoordinates coords, int x, int y, int z)
+    public static float distanceSqrd(ChunkCoordinates coords, int x, int y, int z)
     {
-        return distanceTo(coords, new ChunkCoordinates(x, y, z));
+        return coords.getDistanceSquared(x, y, z);
     }
 
-    public static float distanceTo(ChunkCoordinates coords1, ChunkCoordinates coords2)
+    public static float distanceSqrd(ChunkCoordinates coords1, ChunkCoordinates coords2)
     {
-        return MathHelper.sqrt_float(coords2.getDistanceSquaredToChunkCoordinates(coords1));
+        return coords1.getDistanceSquaredToChunkCoordinates(coords2);
+    }
+
+    public static float distanceSqrd(ChunkCoordinates coords1, Vec3 coords2)
+    {
+        return coords1.getDistanceSquared((int)coords2.xCoord, (int)coords2.yCoord, (int)coords2.zCoord);
     }
 
     public static boolean equals(ChunkCoordinates coords, int x, int y, int z)
     {
-        return coords.equals(new ChunkCoordinates(x, y, z));
+        return coords.posX == x && coords.posY == y && coords.posZ == z;
     }
 
     /**

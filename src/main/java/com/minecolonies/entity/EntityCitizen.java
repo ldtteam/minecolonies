@@ -1,15 +1,18 @@
 package com.minecolonies.entity;
 
 import com.minecolonies.client.gui.GuiEntityCitizen;
-import com.minecolonies.configuration.Configurations;
+import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingHome;
+import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
+import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.GuiHandler;
-import com.minecolonies.tileentities.TileEntityHutCitizen;
-import com.minecolonies.tileentities.TileEntityHutWorker;
-import com.minecolonies.tileentities.TileEntityTownHall;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -26,53 +29,50 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static net.minecraftforge.common.util.Constants.NBT;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
-    public static final int SEX_MALE   = 0;
-    public static final int SEX_FEMALE = 1;
-
-    public int strength, stamina, wisdom, intelligence, charisma;
     public  ResourceLocation texture;
-    private String           job;
     private InventoryCitizen inventory;
 
-    private TileEntityTownHall   tileEntityTownHall;
-    private ChunkCoordinates     townPos;
-    private TileEntityHutWorker  tileEntityWorkHut;
-    private ChunkCoordinates     workPos;
-    private TileEntityHutCitizen tileEntityHomeHut;
-    private ChunkCoordinates     homePos;
+    private UUID                          colonyId;
+    private Colony                        colony;
+    private CitizenData                   citizenData;
+
+    private ColonyJob colonyJob;
 
     protected Status status = Status.IDLE;
+
+    private static final int DATA_TEXTURE = 13;
+    private static final int DATA_LEVEL   = 14;
+    private static final int DATA_GENDER  = 15;
+
+    public EntityCitizen(World world, UUID id)
+    {
+        this(world);
+        entityUniqueID = id;
+    }
 
     public EntityCitizen(World world)
     {
         super(world);
         setSize(0.6F, 1.8F);
         this.func_110163_bv();//Set persistenceRequired = true;
-        this.job = initJob();
         setTexture();
-        this.setCustomNameTag(generateName());
         this.setAlwaysRenderNameTag(true);//TODO: configurable
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
-
-        this.strength = worldObj.rand.nextInt(10) + 1;
-        this.stamina = worldObj.rand.nextInt(10) + 1;
-        this.wisdom = worldObj.rand.nextInt(10) + 1;
-        this.intelligence = worldObj.rand.nextInt(10) + 1;
-        this.charisma = worldObj.rand.nextInt(10) + 1;
 
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setCanSwim(true);
@@ -84,9 +84,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void entityInit()
     {
         super.entityInit();
-        dataWatcher.addObject(13, worldObj.rand.nextInt(3) + 1);//textureID
-        dataWatcher.addObject(14, 0);//level
-        dataWatcher.addObject(15, worldObj.rand.nextInt(2));//sex
+        dataWatcher.addObject(DATA_TEXTURE, worldObj.rand.nextInt(3) + 1);//textureID
+        dataWatcher.addObject(DATA_LEVEL, 0);
+        dataWatcher.addObject(DATA_GENDER, 0);
     }
 
     protected void initTasks()
@@ -100,9 +100,28 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tasks.addTask(6, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
         this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
+
+        if (colonyJob != null)
+        {
+            colonyJob.addTasks(this.tasks);
+        }
     }
 
-    protected String initJob()
+    public ColonyJob getColonyJob(){ return colonyJob; }
+    public void setColonyJob(ColonyJob j)
+    {
+//        Object currentTasks[] = this.tasks.taskEntries.toArray();
+//        for (Object task : currentTasks)
+//        {
+//            this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry)task).action);
+//        }
+//
+//        colonyJob = j;
+//
+//        initTasks();
+    }
+
+    protected String getJobName()
     {
         return "Citizen";
     }
@@ -110,9 +129,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void setTexture()
     {
         String textureBase = "textures/entity/";
-        if(this.getJob().equals("Citizen"))
+        if (getJobName().equals("Citizen"))
         {
-            switch(getLevel())
+            switch (getLevel())
             {
                 case 0:
                     textureBase += "Settler";
@@ -130,36 +149,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         else
         {
-            textureBase += this.getJob();
+            textureBase += getJobName(); //colonyJob.getName();
         }
 
-        textureBase += getSex() == SEX_MALE ? "Male" : "Female";
+        textureBase += getSex() == CitizenData.SEX_MALE ? "Male" : "Female";
 
         texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
-    }
-
-    private String generateName()
-    {
-        String firstName;
-        if(getSex() == 0)
-        {
-            firstName = getRandomElement(Configurations.maleFirstNames);
-        }
-        else
-        {
-            firstName = getRandomElement(Configurations.femaleFirstNames);
-        }
-        return String.format("%s %s. %s", firstName, getRandomLetter(), getRandomElement(Configurations.lastNames));
-    }
-
-    private String getRandomElement(String[] array)
-    {
-        return array[rand.nextInt(array.length)];
-    }
-
-    private char getRandomLetter()
-    {
-        return (char) (rand.nextInt(26) + 'A');
     }
 
     @Override
@@ -171,25 +166,92 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onLivingUpdate()
     {
-        this.setTexture();
-        updateTileEntities();
+        setTexture();
+        updateColony();
         super.onLivingUpdate();
     }
 
-    private void updateTileEntities()
+    private void updateColony()
     {
-        if(tileEntityTownHall == null && townPos != null)
+        if (worldObj.isRemote)
         {
-            tileEntityTownHall = (TileEntityTownHall) ChunkCoordUtils.getTileEntity(worldObj, townPos);
+            return;
         }
-        if(tileEntityWorkHut == null && workPos != null)
+
+        if (colonyId == null)
         {
-            tileEntityWorkHut = (TileEntityHutWorker) ChunkCoordUtils.getTileEntity(worldObj, workPos);
+            setDead();
+            return;
         }
-        if(tileEntityHomeHut == null && homePos != null)
+
+        if (colony == null)
         {
-            tileEntityHomeHut = (TileEntityHutCitizen) ChunkCoordUtils.getTileEntity(worldObj, homePos);
+            Colony c = ColonyManager.getColonyById(colonyId);
+
+            if (c == null)
+            {
+                setDead();
+                return;
+            }
+
+//            EntityCitizen existingCitizen = colony.getCitizen(getUniqueID());
+//            if (existingCitizen != null && existingCitizen != this)
+//            {
+//                //  There's already an existing registered EntityCitizen with this ID... we should suicide.
+//                colony = null;
+//                setDead();
+//                return;
+//            }
+
+            CitizenData data = c.registerCitizen(this);
+            if (data == null)
+            {
+                //  Failed to register citizen to the Colony, it must not actually be a citizen of the colony anymore
+                setDead();
+                return;
+            }
+
+            setColony(c, data);
         }
+
+        if (citizenData == null)
+        {
+            setDead();
+            return;
+        }
+
+        if (!this.getClass().equals(EntityCitizen.class))
+        {
+            if (citizenData.getWorkBuilding() == null)
+            {
+                removeFromWorkBuilding();
+            }
+        }
+        else
+        {
+            BuildingWorker work = citizenData.getWorkBuilding();
+            if (work != null)
+            {
+                addToWorkBuilding(work);
+            }
+        }
+
+//        BuildingWorker b = (workBuilding != null) ? workBuilding.get() : null;
+//        if (b != null)
+//        {
+//            if (colonyJob == null)
+//            {
+//                ColonyJob newJob = b.createJob(this);
+//                if (newJob != null)
+//                {
+//                    setColonyJob(newJob);
+//                }
+//            }
+//        }
+//        else if (colonyJob != null)
+//        {
+//            setColonyJob(null);
+//        }
     }
 
     @Override
@@ -218,19 +280,22 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onDeath(DamageSource par1DamageSource)
     {
-        if(this.getTownHall() != null && this.getTownHall().getCitizens().contains(this.getUniqueID()))
+        if (colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, tileEntityTownHall.getOwners()), "tile.blockHutTownhall.messageColonistDead");
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getOwners()), "tile.blockHutTownhall.messageColonistDead");
+            colony.removeCitizen(this);
+        }
 
-            tileEntityTownHall.removeCitizen(this);
-        }
-        if(this.getHomeHut() != null)
+        if (getHomeBuilding() != null)
         {
-            this.getHomeHut().removeCitizen(this);
+            getHomeBuilding().removeCitizen(getUniqueID());
+            setHomeBuilding(null);
         }
-        if(this.getWorkHut() != null)
+
+        if (getWorkBuilding() != null)
         {
-            this.getWorkHut().unbindWorker(this);
+            getWorkBuilding().removeCitizen(getUniqueID());
+            setWorkBuilding(null);
         }
 
         super.onDeath(par1DamageSource);
@@ -238,73 +303,152 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public int getTextureID()
     {
-        return dataWatcher.getWatchableObjectInt(13);
-    }
-
-    public void setTextureID(int textureID)
-    {
-        dataWatcher.updateObject(13, textureID);
+        return dataWatcher.getWatchableObjectInt(DATA_TEXTURE);
     }
 
     public int getLevel()
     {
-        return dataWatcher.getWatchableObjectInt(14);
+        return dataWatcher.getWatchableObjectInt(DATA_LEVEL);
     }
 
-    public void setLevel(int level)
+    private void updateLevel()
     {
-        dataWatcher.updateObject(14, level);
+        dataWatcher.updateObject(DATA_LEVEL, citizenData != null ? citizenData.getLevel() : 0);
     }
 
     public int getSex()
     {
-        return dataWatcher.getWatchableObjectInt(15);
+        return dataWatcher.getWatchableObjectInt(DATA_GENDER);
     }
 
-    public void setSex(int sex)
+    public CitizenData getCitizenData()
     {
-        dataWatcher.updateObject(15, sex);
+        return citizenData;
     }
 
-    public String getJob()
+    public Colony getColony() { return colony; }
+    public void clearColony() { setColony(null, null); }
+    public void setColony(Colony c, CitizenData data)
     {
-        return job;
+        if (c == null)
+        {
+            colony = null;
+            colonyId = null;
+            citizenData = null;
+            setDead();
+            return;
+        }
+
+        colony = c;
+        colonyId = colony.getID();
+        citizenData = data;
+
+        //  Is this newly created Citizen Data?
+        if (citizenData.getId() == null)
+        {
+            citizenData.setup(this);
+        }
+
+        setCustomNameTag(citizenData.getName());
+
+        dataWatcher.updateObject(DATA_GENDER, citizenData.getSex());
+        dataWatcher.updateObject(DATA_TEXTURE, citizenData != null ? citizenData.getTextureId() : 0);
+        updateLevel();
+
+        setTexture();
     }
 
-    public void setJob(String job, TileEntity tileEntity)
+    public BuildingHome getHomeBuilding()
     {
-        this.job = job;
-        this.tileEntityWorkHut = (TileEntityHutWorker) tileEntity;
+        return (citizenData != null) ? citizenData.getHomeBuilding() : null;
     }
 
-    public TileEntityTownHall getTownHall()
+    public void setHomeBuilding(BuildingHome b)
     {
-        return tileEntityTownHall;
+        if (citizenData != null)
+        {
+            citizenData.setHomeBuilding(b);
+        }
     }
 
-    public TileEntityHutCitizen getHomeHut()
+    public ChunkCoordinates getHomePosition()
     {
-        return tileEntityHomeHut;
+        BuildingHome homeBuilding = getHomeBuilding();
+        if (homeBuilding != null)
+        {
+            return homeBuilding.getLocation();
+        }
+        else if (getColony() != null && getColony().getTownhall() != null)
+        {
+            return getColony().getTownhall().getLocation();
+        }
+
+        return null;
     }
 
-    public TileEntityHutWorker getWorkHut()
+    public boolean isAtHome()
     {
-        return tileEntityWorkHut;
+        ChunkCoordinates homePosition = getHomePosition();
+        return homePosition != null &&
+                homePosition.getDistanceSquared((int)posX, (int)posY, (int)posZ) <= 16;
     }
 
-    public void setTownHall(TileEntityTownHall tileEntityTownHall)
+    public BuildingWorker getWorkBuilding()
     {
-        this.tileEntityTownHall = tileEntityTownHall;
+        return (citizenData != null) ? citizenData.getWorkBuilding() : null;
     }
 
-    public void setHomeHut(TileEntityHutCitizen home)
+    public void setWorkBuilding(BuildingWorker b)
     {
-        this.tileEntityHomeHut = home;
+        if (citizenData != null)
+        {
+            citizenData.setWorkBuilding(b);
+        }
     }
 
-    public void setWorkHut(TileEntityHutWorker work)
+    public void addToWorkBuilding(BuildingWorker building)
     {
-        this.tileEntityWorkHut = work;
+        setWorkBuilding(building);
+
+        NBTTagCompound nbt = new NBTTagCompound();
+        this.writeToNBT(nbt);
+        setWorkBuilding(null);
+        this.setDead();
+
+        EntityCitizen worker = building.createWorker(worldObj);
+        worker.readFromNBT(nbt);
+        worker.setColony(colony, citizenData);
+        building.setWorker(worker);
+        worldObj.spawnEntityInWorld(worker);
+        ChunkCoordUtils.tryMoveLivingToXYZ(worker, building.getLocation());
+
+        if (colony != null)
+        {
+            colony.replaceCitizen(this, worker);
+        }
+
+        this.clearColony();
+    }
+
+    public void removeFromWorkBuilding()
+    {
+        setWorkBuilding(null);
+
+        NBTTagCompound nbt = new NBTTagCompound();
+        this.writeToNBT(nbt);
+        this.setDead();
+
+        EntityCitizen citizen = new EntityCitizen(worldObj);
+        citizen.readFromNBT(nbt);
+        citizen.setColony(colony, citizenData);
+        worldObj.spawnEntityInWorld(citizen);
+
+        if (colony != null)
+        {
+            colony.replaceCitizen(this, citizen);
+        }
+
+        this.clearColony();
     }
 
     public Status getStatus()
@@ -326,36 +470,23 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void writeEntityToNBT(NBTTagCompound compound)
     {
         super.writeEntityToNBT(compound);
-        compound.setString("job", job);
         compound.setInteger("status", status.ordinal());
-        compound.setInteger("level", getLevel());
-        compound.setInteger("textureID", getTextureID());
-        compound.setInteger("sex", getSex());
 
-        NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
-        nbtTagSkillsCompound.setInteger("strength", strength);
-        nbtTagSkillsCompound.setInteger("stamina", stamina);
-        nbtTagSkillsCompound.setInteger("wisdom", wisdom);
-        nbtTagSkillsCompound.setInteger("intelligence", intelligence);
-        nbtTagSkillsCompound.setInteger("charisma", charisma);
-        compound.setTag("skills", nbtTagSkillsCompound);
+        if (colony != null)
+        {
+            compound.setString("colony", colony.getID().toString());
+        }
+//        if (colonyJob != null)
+//        {
+//            NBTTagCompound jobCompound = new NBTTagCompound();
+//            colonyJob.writeToNBT(jobCompound);
+//            compound.setTag("job", jobCompound);
+//        }
 
-        if(tileEntityTownHall != null)
-        {
-            ChunkCoordUtils.writeToNBT(compound, "townhall", tileEntityTownHall.getPosition());
-        }
-        if(tileEntityWorkHut != null)
-        {
-            ChunkCoordUtils.writeToNBT(compound, "workhut", tileEntityWorkHut.getPosition());
-        }
-        if(tileEntityHomeHut != null)
-        {
-            ChunkCoordUtils.writeToNBT(compound, "homehut", tileEntityHomeHut.getPosition());
-        }
         NBTTagList inventoryList = new NBTTagList();
-        for(int i = 0; i < inventory.getSizeInventory(); i++)
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            if(inventory.getStackInSlot(i) != null)
+            if (inventory.getStackInSlot(i) != null)
             {
                 NBTTagCompound tag = new NBTTagCompound();
                 tag.setInteger("slot", i);
@@ -371,35 +502,19 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         super.readEntityFromNBT(compound);
 
-        this.job = compound.getString("job");
         status = Status.values()[compound.getInteger("status")];
 
-        setTextureID(compound.getInteger("textureID"));
-        setLevel(compound.hasKey("level") ? compound.getInteger("level") : this.getLevel());
-        setSex(compound.hasKey("sex") ? compound.getInteger("sex") : this.getSex());
-        setTexture();
+        if (compound.hasKey("colony"))
+        {
+            colonyId = UUID.fromString(compound.getString("colony"));
+        }
+//        if (compound.hasKey("job"))
+//        {
+//            setColonyJob(ColonyJob.createFromNBT(this, compound.getCompoundTag("job")));
+//        }
 
-        NBTTagCompound nbtTagSkillsCompound = compound.getCompoundTag("skills");
-        strength = nbtTagSkillsCompound.getInteger("strength");
-        stamina = nbtTagSkillsCompound.getInteger("stamina");
-        wisdom = nbtTagSkillsCompound.getInteger("wisdom");
-        intelligence = nbtTagSkillsCompound.getInteger("intelligence");
-        charisma = nbtTagSkillsCompound.getInteger("charisma");
-
-        if(compound.hasKey("townhall"))
-        {
-            townPos = ChunkCoordUtils.readFromNBT(compound, "townhall");
-        }
-        if(compound.hasKey("workhut"))
-        {
-            workPos = ChunkCoordUtils.readFromNBT(compound, "workhut");
-        }
-        if(compound.hasKey("homehut"))
-        {
-            homePos = ChunkCoordUtils.readFromNBT(compound, "homehut");
-        }
         NBTTagList nbttaglist = compound.getTagList("Inventory", NBT.TAG_COMPOUND);
-        for(int i = 0; i < nbttaglist.tagCount(); i++)
+        for (int i = 0; i < nbttaglist.tagCount(); i++)
         {
             NBTTagCompound tag = nbttaglist.getCompoundTagAt(i);
             int slot = tag.getInteger("slot");
@@ -418,6 +533,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return worldObj.isDaytime() && !worldObj.isRaining();
     }
 
+    public boolean isSleepTime()
+    {
+        return !worldObj.isDaytime();
+    }
+
     public EntityItem entityDropItem(ItemStack itemstack)
     {
         return entityDropItem(itemstack, getEyeHeight() - 0.3F);
@@ -426,11 +546,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     protected void dropEquipment(boolean par1, int par2)
     {
-        for(int i = 0; i < getLastActiveItems().length; i++) setCurrentItemOrArmor(i, null);
-        for(int i = 0; i < inventory.getSizeInventory(); i++)
+        for (int i = 0; i < getLastActiveItems().length; i++) setCurrentItemOrArmor(i, null);
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack itemstack = inventory.getStackInSlot(i);
-            if(itemstack != null && itemstack.stackSize > 0)
+            if (itemstack != null && itemstack.stackSize > 0)
             {
                 entityDropItem(itemstack);
             }
@@ -453,68 +573,35 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public void setInventorySize(int newSize, boolean dropLeftovers)
     {
-        if(!worldObj.isRemote)
+        if (!worldObj.isRemote)
         {
             InventoryCitizen newInventory = new InventoryCitizen(inventory.getInventoryName(), inventory.hasCustomInventoryName(), newSize);
             ArrayList<ItemStack> leftovers = new ArrayList<ItemStack>();
-            for(int i = 0; i < inventory.getSizeInventory(); i++)
+            for (int i = 0; i < inventory.getSizeInventory(); i++)
             {
                 ItemStack itemstack = inventory.getStackInSlot(i);
-                if(i < newInventory.getSizeInventory())
+                if (i < newInventory.getSizeInventory())
                 {
                     newInventory.setInventorySlotContents(i, itemstack);
                 }
                 else
                 {
-                    if(itemstack != null) leftovers.add(itemstack);
+                    if (itemstack != null) leftovers.add(itemstack);
                 }
             }
             inventory = newInventory;
             inventory.addIInvBasic(this);
-            if(dropLeftovers)
+            if (dropLeftovers)
             {
-                for(ItemStack leftover : leftovers)
+                for (ItemStack leftover : leftovers)
                 {
-                    if(leftover.stackSize > 0)
+                    if (leftover.stackSize > 0)
                     {
                         entityDropItem(leftover);
                     }
                 }
             }
         }
-    }
-
-    public void addToWorkHut(TileEntityHutWorker tileEntityHutWorker)
-    {
-        setJob(tileEntityHutWorker.getJobName(), tileEntityHutWorker);
-
-        NBTTagCompound nbt = new NBTTagCompound();
-        this.writeToNBT(nbt);
-        getTownHall().removeCitizen(this);
-        this.setDead();
-
-        EntityCitizen worker = tileEntityHutWorker.createWorker();
-        worker.readFromNBT(nbt);
-        getTownHall().addCitizenToTownhall(worker);
-        tileEntityHutWorker.bindWorker(worker);
-        worldObj.spawnEntityInWorld(worker);
-        ChunkCoordUtils.tryMoveLivingToXYZ(worker, tileEntityHutWorker.getPosition());
-    }
-
-    public void removeFromWorkHut()
-    {
-        NBTTagCompound nbt = new NBTTagCompound();
-        this.writeToNBT(nbt);
-        nbt.removeTag("workhut");
-        getTownHall().removeCitizen(this);
-        getWorkHut().unbindWorker(this);
-        this.setDead();
-
-        EntityCitizen citizen = new EntityCitizen(worldObj);
-        citizen.readFromNBT(nbt);
-        citizen.setJob("Citizen", null);
-        getTownHall().addCitizenToTownhall(citizen);
-        worldObj.spawnEntityInWorld(citizen);
     }
 
     /**

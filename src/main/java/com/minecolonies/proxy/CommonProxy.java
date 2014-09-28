@@ -5,7 +5,9 @@ import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.event.EventHandler;
+import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.tileentities.*;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,18 +26,15 @@ public class CommonProxy implements IProxy
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<String, NBTTagCompound>();
 
     @Override
+    public boolean isClient()
+    {
+        return false;
+    }
+
+    @Override
     public void registerTileEntities()
     {
-        GameRegistry.registerTileEntity(TileEntityTownHall.class, "tileEntityTownHall");
-        GameRegistry.registerTileEntity(TileEntityHutBuilder.class, "tileEntityHutBuilder");
-        GameRegistry.registerTileEntity(TileEntityHutCitizen.class, "tileEntityHutCitizen");
-        GameRegistry.registerTileEntity(TileEntityHutBaker.class, "tileEntityHutBaker");
-        GameRegistry.registerTileEntity(TileEntityHutBlacksmith.class, "tileEntityHutBlacksmith");
-        GameRegistry.registerTileEntity(TileEntityHutFarmer.class, "tileEntityHutFarmer");
-        GameRegistry.registerTileEntity(TileEntityHutLumberjack.class, "tileEntityHutLumberjack");
-        GameRegistry.registerTileEntity(TileEntityHutMiner.class, "tileEntityHutMiner");
-        GameRegistry.registerTileEntity(TileEntityHutStonemason.class, "tileEntityHutStonemason");
-        GameRegistry.registerTileEntity(TileEntityHutWarehouse.class, "tileEntityHutWarehouse");
+        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, "tileEntityColonyBuilding");
     }
 
     /**
@@ -80,6 +79,8 @@ public class CommonProxy implements IProxy
     public void registerEvents()
     {
         MinecraftForge.EVENT_BUS.register(new EventHandler());
+
+        FMLCommonHandler.instance().bus().register(new FMLEventHandler());
     }
 
     @Override

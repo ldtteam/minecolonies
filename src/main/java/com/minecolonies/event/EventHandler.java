@@ -1,22 +1,26 @@
 package com.minecolonies.event;
 
 import com.minecolonies.blocks.BlockHut;
-import com.minecolonies.blocks.ModBlocks;
-import com.minecolonies.configuration.Configurations;
+import com.minecolonies.blocks.BlockHutTownHall;
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.tileentities.TileEntityHut;
-import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.WorldEvent;
 
 public class EventHandler
 {
@@ -27,30 +31,35 @@ public class EventHandler
 
         if(!world.isRemote && event.block instanceof BlockHut)
         {
-            TileEntityHut hut = (TileEntityHut) world.getTileEntity(event.x, event.y, event.z);
-            EntityPlayer player = event.getPlayer();
+            TileEntityColonyBuilding tileEntity = (TileEntityColonyBuilding)world.getTileEntity(event.x, event.y, event.z);
 
-            if(isPlayerOwner(hut, player))
+            Colony colony = ColonyManager.getColonyById(tileEntity.getColonyId());
+            if (colony == null)
             {
-                if(hut != null)
-                {
-                    TileEntityTownHall townhall = hut.getTownHall();
-
-                    if(hut instanceof TileEntityTownHall)
-                    {
-                        PlayerProperties.get(player).removeTownhall();
-                    }
-                    else if(townhall != null)
-                    {
-                        townhall.removeHut(hut.getPosition());
-                    }
-                    hut.breakBlock();
-                }
+                return;
             }
-            else
+
+            if (!colony.isOwner(event.getPlayer()))
             {
                 event.setCanceled(true);
+                return;
             }
+
+            //Building building = ColonyManager.getBuilding(world, event.x, event.y, event.z);
+            Building building = colony.getBuilding(new ChunkCoordinates(event.x, event.y, event.z));
+            if (building == null)
+            {
+                return;
+            }
+
+            //  Redundant with refactor above
+//            if (!building.getColony().isOwner(event.getPlayer()))
+//            {
+//                event.setCanceled(true);
+//                return;
+//            }
+
+            building.destroy();
         }
     }
 
@@ -115,52 +124,84 @@ public class EventHandler
      */
     private boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, int x, int y, int z)
     {
-        if(block == ModBlocks.blockHutTownhall)
+        //  Check if this Hut Block can be placed
+
+        if (!world.isRemote)
         {
-            if(!world.provider.isSurfaceWorld())
-            {
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageInvalidWorld");
-                return false;
-            }
+            //  Server-side check
+            Colony colony = ColonyManager.getClosestColony(world, x, y, z);
 
-            TileEntityTownHall closestTownHall = Utils.getClosestTownHall(world, x, y, z);
-            if(closestTownHall != null && closestTownHall.getDistanceFrom(x, y, z) < Utils.square(2 * Configurations.workingRangeTownhall + Configurations.townhallPadding))
+            if (block instanceof BlockHutTownHall)
             {
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
-                return false;
-            }
+                //  TODO BUGFIX - Allow placing a TownHall in a Colony if it doesn't have one
 
-            if(PlayerProperties.get(player).hasPlacedTownHall())
+                //  Town Halls must be far enough apart
+                if (colony != null && colony.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
+                    return false;
+                }
+
+                //  Players are currently only allowed a single colony
+                if (!ColonyManager.getColoniesByOwner(player.getUniqueID()).isEmpty())
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
+                    return false;
+                }
+            }
+            else
             {
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
-                return false;
+                if (colony == null)
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoTownhall");
+                    return false;
+                }
+
+                if (!colony.isCoordInColony(world, x, y, z))
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageTooFarFromTownhall");
+                    return false;
+                }
             }
         }
         else
         {
-            if(world.isRemote)
-                return true;//Player properties aren't stored client side, so we must do this or huts will never be placed
-            //Only downfall is it causes huts to flicker, when they get cancelled.
-            TileEntityTownHall townhall = Utils.getTownhallByOwner(world, player);
-            if(townhall == null || Utils.getDistanceToTileEntity(x, y, z, townhall) > Configurations.workingRangeTownhall)
+            //  Client-side check
+            ColonyView colonyView = ColonyManager.getClosestColonyView(world, x, y, z);
+
+            if (block instanceof BlockHutTownHall)
             {
-                if(townhall == null)
+                //  TODO BUGFIX - Allow placing a TownHall in a Colony if it doesn't have one
+
+                if (colonyView != null && colonyView.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
+                    return false;
+                }
+
+                if (!ColonyManager.getColonyViewsOwnedByPlayer(player).isEmpty())
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
+                    return false;
+                }
+            }
+            else
+            {
+                if (colonyView == null)
                 {
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoTownhall");
+                    return false;
                 }
-                else
+
+                if (!colonyView.isCoordInColony(world, x, y, z))
                 {
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageTooFarFromTownhall");
+                    return false;
                 }
-                return false;
             }
         }
-        return true;
-    }
 
-    private boolean isPlayerOwner(TileEntityHut hut, EntityPlayer player)
-    {
-        return hut == null || hut.isPlayerOwner(player);
+        return true;
     }
 
     @SubscribeEvent
@@ -192,5 +233,23 @@ public class EventHandler
         {
             PlayerProperties.loadProxyData((EntityPlayer) event.entity);
         }
+    }
+
+    @SubscribeEvent
+    public void onWorldLoad(WorldEvent.Load event)
+    {
+        ColonyManager.onWorldLoad(event.world);
+    }
+
+    @SubscribeEvent
+    public void onWorldUnload(WorldEvent.Unload event)
+    {
+        ColonyManager.onWorldUnload(event.world);
+    }
+
+    @SubscribeEvent
+    public void onWorldSave(WorldEvent.Save event)
+    {
+        ColonyManager.onWorldSave(event.world);
     }
 }

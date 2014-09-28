@@ -1,16 +1,15 @@
 package com.minecolonies.blocks;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.lib.IColony;
-import com.minecolonies.tileentities.TileEntityHut;
-import com.minecolonies.tileentities.TileEntityHutWorker;
-import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -61,46 +60,67 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
         if(world.isRemote) return;
 
         TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if(entityLivingBase instanceof EntityPlayer && tileEntity instanceof TileEntityHut)
+        if(entityLivingBase instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
             EntityPlayer player = (EntityPlayer) entityLivingBase;
-            TileEntityHut hut = (TileEntityHut) tileEntity;
+            TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
 
-            if(hut instanceof TileEntityTownHall)
+            Colony colony = ColonyManager.getColonyByCoord(world, hut.getPosition());
+
+            if(this instanceof BlockHutTownHall)
             {
-                TileEntityTownHall townhall = (TileEntityTownHall) hut;
-                townhall.onBlockAdded();
-                townhall.addOwner(player.getUniqueID());
-                townhall.setCityName(LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName()));
+                //  TODO BUGFIX - Allow placing a TownHall in a Colony if it doesn't have one
+
+                if (colony != null)
+                {
+                    throw new NullPointerException("TownHall placed in existing colony");
+                }
+
+                String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
+                colony = ColonyManager.createColony(world, hut.getPosition());
+                colony.setName(colonyName);
+                colony.addOwner(player.getUniqueID());
+
+                //  TODO: Deprecate this code?
                 PlayerProperties.get(player).placeTownhall(x, y, z);
             }
-            else
+
+
+            if (colony == null)
             {
-                TileEntityTownHall townhall = Utils.getTownhallByOwner(world, player);
-
-                hut.setTownHall(townhall);
-                townhall.addHut(hut.getPosition());
-
-                if(hut instanceof TileEntityHutWorker)
-                {
-                    ((TileEntityHutWorker) hut).addJoblessCitizens(townhall);
-                }
+                throw new NullPointerException("No colony to place block");
             }
+
+            //hut.setColony(colony);
+            colony.addNewBuilding(hut);
         }
     }
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float px, float py, float pz)
     {
-        if(world.getTileEntity(x, y, z) instanceof TileEntityHut)
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+
+        if (tileEntity instanceof TileEntityColonyBuilding)
         {
             if(!world.isRemote)
             {
-                int guiID = EnumGUI.getGuiIdByInstance(world.getTileEntity(x, y, z));
-                player.openGui(MineColonies.instance, guiID, world, x, y, z);
+                TileEntityColonyBuilding buildingTileEntity = (TileEntityColonyBuilding) tileEntity;
+                Building building = ((TileEntityColonyBuilding)tileEntity).getBuilding();
+
+                if (building != null)
+                {
+                    player.openGui(MineColonies.instance, building.getGuiId(), world, x, y, z);
+                }
             }
             return true;
         }
         return false;
+    }
+
+    @Override
+    public TileEntity createNewTileEntity(World var1, int var2)
+    {
+        return new TileEntityColonyBuilding();
     }
 }

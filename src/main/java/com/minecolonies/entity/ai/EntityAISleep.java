@@ -18,12 +18,13 @@ public class EntityAISleep extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return !citizen.worldObj.isDaytime() && isHome();//!this.citizen.isWorkTime? - sleep when raining?
+        return citizen.isSleepTime() && citizen.isAtHome();//!this.citizen.isWorkTime? - sleep when raining?
     }
 
-    private boolean isHome()
+    @Override
+    public boolean continueExecuting()
     {
-        return this.citizen.getHomeHut() != null && this.citizen.getHomeHut().getDistanceFrom(citizen.getPosition()) < 4;
+        return !citizen.worldObj.isDaytime();
     }
 
     @Override
@@ -38,6 +39,4 @@ public class EntityAISleep extends EntityAIBase
     {
         //TODO snore?
     }
-
-
 }

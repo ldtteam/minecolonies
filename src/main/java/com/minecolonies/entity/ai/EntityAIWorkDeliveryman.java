@@ -1,13 +1,16 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.entity.EntityWorker;
-import com.minecolonies.tileentities.TileEntityHutWorker;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
-import com.minecolonies.util.Utils;
 import net.minecraft.item.ItemStack;
+
+import java.util.UUID;
 
 import static com.minecolonies.entity.EntityCitizen.Status.*;
 
@@ -38,7 +41,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
     {
         if(!deliveryman.hasDestination())
         {
-            deliveryman.setDestination(deliveryman.getTownHall().getDeliverymanRequired().get(0));
+            deliveryman.setDestination(deliveryman.getColony().getDeliverymanRequired().get(0));
         }
         ChunkCoordUtils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination());
     }
@@ -53,15 +56,32 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
 
         deliveryman.setStatus(WORKING);
 
-        TileEntityHutWorker workHut = (TileEntityHutWorker) ChunkCoordUtils.getTileEntity(world, deliveryman.getDestination());
-        EntityWorker worker = (EntityWorker) Utils.getEntityFromUUID(world, workHut.getWorkerID());
+        //  TODO - Actually know the Building, not the ID of it
+        Building destinationBuilding = deliveryman.getColony().getBuilding(deliveryman.getDestination());
+
+        if (destinationBuilding == null ||
+                !(destinationBuilding instanceof BuildingWorker))
+        {
+            return;
+        }
+
+        UUID targetWorkerId = ((BuildingWorker)destinationBuilding).getWorkerId();
+        EntityWorker worker = (EntityWorker)deliveryman.getColony().getCitizenEntity(targetWorkerId);
+        TileEntityColonyBuilding destinationTileEntity = destinationBuilding.getTileEntity();
+
+        if (worker == null || destinationTileEntity == null)
+        {
+            //  The recipient or their building's TE aren't loaded currently.  Maybe do something else?
+            return;
+        }
+
         for(int i = 0; i < worker.getItemsNeeded().size(); i++)
         {
             ItemStack itemstack = worker.getItemsNeeded().get(i);
             int amount = itemstack.stackSize;
-            for(int j = 0; j < workHut.getSizeInventory(); j++)
+            for(int j = 0; j < destinationTileEntity.getSizeInventory(); j++)
             {
-                ItemStack hutItem = workHut.getStackInSlot(j);
+                ItemStack hutItem = destinationTileEntity.getStackInSlot(j);
                 if(hutItem != null && hutItem.isItemEqual(itemstack))
                 {
                     amount -= hutItem.stackSize;
@@ -74,7 +94,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
                 {
                     //TODO: resource handling
                 }
-                InventoryUtils.setStack(workHut, new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
+                InventoryUtils.setStack(destinationTileEntity, new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
             }
             worker.getItemsNeeded().remove(i);
             i--;

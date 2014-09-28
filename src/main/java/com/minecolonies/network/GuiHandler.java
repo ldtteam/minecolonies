@@ -4,12 +4,12 @@ import com.minecolonies.client.gui.GuiHutBuilder;
 import com.minecolonies.client.gui.GuiHutWarehouse;
 import com.minecolonies.client.gui.GuiTownHall;
 import com.minecolonies.client.gui.GuiTypable;
+import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.inventory.ContainerHut;
 import com.minecolonies.lib.EnumGUI;
-import com.minecolonies.tileentities.TileEntityHut;
-import com.minecolonies.tileentities.TileEntityHutBuilder;
-import com.minecolonies.tileentities.TileEntityHutWarehouse;
-import com.minecolonies.tileentities.TileEntityTownHall;
+import com.minecolonies.tileentities.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -25,14 +25,9 @@ public class GuiHandler implements IGuiHandler
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
         TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if(tileEntity instanceof TileEntityHut)
+        if(tileEntity instanceof TileEntityColonyBuilding)
         {
-            return new ContainerHut((TileEntityHut) tileEntity, player);
-        }
-        switch(ID)
-        {
-            case 0:
-                break;
+            return new ContainerHut((TileEntityColonyBuilding) tileEntity, player);
         }
         return null;
     }
@@ -40,20 +35,21 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
-        EnumGUI guiID = EnumGUI.values()[ID];
-        switch(guiID)
+        TileEntityColonyBuilding tileEntity = (TileEntityColonyBuilding)world.getTileEntity(x, y, z);
+
+        ColonyView colony = ColonyManager.getColonyViewById(tileEntity.getColonyId());
+        if (colony == null)
         {
-            case TOWNHALL:
-                return new GuiTownHall((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
-            case TOWNHALL_RENAME:
-                return new GuiTypable((TileEntityTownHall) world.getTileEntity(x, y, z), player, world, x, y, z);
-            case BUILDER:
-                return new GuiHutBuilder((TileEntityHutBuilder) world.getTileEntity(x, y, z), player, world, x, y, z);
-            case WAREHOUSE:
-                return new GuiHutWarehouse((TileEntityHutWarehouse) world.getTileEntity(x, y, z), player, world, x, y, z);
-            default:
-                return null;
+            return null;
         }
+
+        Building.View building = colony.getBuilding(tileEntity.getPosition());
+        if (building == null)
+        {
+            return null;
+        }
+
+        return building.getGui(player, world, ID, x, y, z);
     }
 
     public static void showGuiScreen(GuiScreen gui)

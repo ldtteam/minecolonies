@@ -1,8 +1,8 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.network.packets.OpenInventoryPacket;
-import com.minecolonies.tileentities.TileEntityHutWarehouse;
+import com.minecolonies.colony.buildings.BuildingWarehouse;
+import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,17 +15,17 @@ public class GuiHutWarehouse extends GuiBase
 {
     private final int BUTTON_INFORMATION = 0, BUTTON_SETTINGS = 1, BUTTON_INVENTORY = 2;
     private final int BUTTON_BLACKSMITH_GOLD = 0, BUTTON_BLACKSMITH_DIAMOND = 1, BUTTON_STONEMASON_STONE = 2, BUTTON_STONEMASON_SAND = 3, BUTTON_STONEMASON_NETHERRACK = 4, BUTTON_STONEMASON_QUARTZ = 5, BUTTON_GUARD_ARMOR = 6, BUTTON_GUARD_WEAPON = 7, BUTTON_CITIZEN = 8, BUTTON_BACK = 9;
-    private final TileEntityHutWarehouse warehouse;
+    private final BuildingWarehouse.View warehouse;
 
     private final int span = 4;
 
     private final int PAGE_MENU = 0, PAGE_INFORMATION = 1, PAGE_SETTINGS = 2;
     private int page = PAGE_MENU;
 
-    public GuiHutWarehouse(TileEntityHutWarehouse tileEntityHutWarehouse, EntityPlayer player, World world, int x, int y, int z)
+    public GuiHutWarehouse(BuildingWarehouse.View building, EntityPlayer player, World world, int x, int y, int z)
     {
-        super(player, world, x, y, z);
-        warehouse = tileEntityHutWarehouse;
+        super(player, world, x, y, z, building);
+        warehouse = building;
     }
 
     private void addDeliverySettingElements()
@@ -116,7 +116,7 @@ public class GuiHutWarehouse extends GuiBase
                     addElements();
                     break;
                 case BUTTON_INVENTORY:
-                    MineColonies.packetPipeline.sendToServer(new OpenInventoryPacket(warehouse, warehouse.getName(), warehouse.getPosition()));
+                    MineColonies.network.sendToServer(new OpenInventoryMessage(warehouse));
                     break;
             }
         }

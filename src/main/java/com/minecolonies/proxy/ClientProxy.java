@@ -7,7 +7,7 @@ import com.minecolonies.client.render.RenderBipedWorker;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityDeliveryman;
-import com.minecolonies.tileentities.TileEntityHut;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.client.model.ModelBiped;
@@ -16,6 +16,13 @@ public class ClientProxy extends CommonProxy
 {
     //private RendererSchematicGlobal rendererSchematicGlobal;
 
+    @Override
+    public boolean isClient()
+    {
+        return true;
+    }
+
+    @Override
     public void registerKeybindings()
     {
 //        for(KeyBinding keyBinding : KeyInputHandler.KEY_BINDINGS)
@@ -24,6 +31,7 @@ public class ClientProxy extends CommonProxy
 //        }
     }
 
+    @Override
     public void registerEvents()
     {
         super.registerEvents();
@@ -45,6 +53,6 @@ public class ClientProxy extends CommonProxy
     @Override
     public void registerTileEntityRendering()
     {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHut.class, new EmptyTileEntitySpecialRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
     }
 }
