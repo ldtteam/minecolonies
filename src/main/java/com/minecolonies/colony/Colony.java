@@ -150,6 +150,15 @@ public class Colony
             owners.add(UUID.fromString(owner));
         }
 
+        //  Citizens before Buildings, because Buildings track the Citizens
+        NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS, NBT.TAG_COMPOUND);
+        for (int i = 0; i < citizenTagList.tagCount(); ++i)
+        {
+            NBTTagCompound citizenCompound = citizenTagList.getCompoundTagAt(i);
+            CitizenData data = CitizenData.createFromNBT(citizenCompound);
+            citizens.put(data.getId(), data);
+        }
+
         //  Buildings
         NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
@@ -160,15 +169,6 @@ public class Colony
             {
                 addBuilding(b);
             }
-        }
-
-        //  Citizens
-        NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < citizenTagList.tagCount(); ++i)
-        {
-            CitizenData data = new CitizenData();
-            data.readFromNBT(citizenTagList.getCompoundTagAt(i), this);
-            citizens.put(data.getId(), data);
         }
 
         //  Workload
@@ -504,6 +504,8 @@ public class Colony
 
         if (event.phase == TickEvent.Phase.START)
         {
+            //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
+            //  Consider handing this in an ChunkUnload Event instead?
             for (CitizenData citizen : citizens.values())
             {
                 EntityCitizen entity = citizen.getCitizenEntity();
@@ -636,9 +638,9 @@ public class Colony
             {
                 citizen = new EntityCitizen(world);
 
-                data = new CitizenData();
-                citizen.setColony(this, data);
+                data = CitizenData.createFromEntity(citizen);
                 citizens.put(data.getId(), data);
+                citizen.setColony(this, data);
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
@@ -737,16 +739,7 @@ public class Colony
 
         for (CitizenData citizen : citizens.values())
         {
-            if (citizen.getHomeBuilding() == building)
-            {
-                citizen.setHomeBuilding(null);
-            }
-
-            if (citizen.getWorkBuilding() == building)
-            {
-                EntityCitizen entity = citizen.getCitizenEntity();
-                citizen.setWorkBuilding(null);
-            }
+            citizen.onRemoveBuilding(building);
         }
     }
 
@@ -781,17 +774,27 @@ public class Colony
 
     public void removeCitizen(EntityCitizen citizen)
     {
-        removeCitizen(citizen.getUniqueID());
+        removeCitizen(citizen.getCitizenData());
     }
 
-    public void removeCitizen(UUID citizenId)
+    public void removeCitizen(CitizenData citizen)
     {
-        citizens.remove(citizenId);
+        citizens.remove(citizen.getId());
         markCitizensDirty();
+
+//        if (citizen.getHomeBuilding() != null)
+//        {
+//            citizen.getHomeBuilding().removeCitizen(citizen);
+//        }
+//
+//        if (citizen.getWorkBuilding() != null)
+//        {
+//            citizen.getWorkBuilding().removeCitizen(citizen);
+//        }
 
         for (Building building : buildings.values())
         {
-            building.removeCitizen(citizenId);
+            building.removeCitizen(citizen);
         }
     }
 
@@ -865,15 +868,13 @@ public class Colony
      *
      * @return Citizen with no current job
      */
-    public EntityCitizen getIdleCitizen()
+    public CitizenData getIdleCitizen()
     {
         for (CitizenData citizen : citizens.values())
         {
-            EntityCitizen entity = citizen.getCitizenEntity();
-            //if (citizen != null && citizen.getColonyJob() == null)
-            if (entity != null && entity.getWorkBuilding() == null)
+            if (citizen.getWorkBuilding() == null)
             {
-                return entity;
+                return citizen;
             }
         }
 
@@ -903,13 +904,14 @@ public class Colony
         for (CitizenData citizen : citizens.values())
         {
             EntityCitizen entity = citizen.getCitizenEntity();
-            if (entity != null && entity instanceof EntityWorker)
+            if (citizen.getWorkBuilding() != null &&
+                    entity != null &&
+                    entity instanceof EntityWorker)
             {
                 EntityWorker worker = (EntityWorker)entity;
-
-                if (worker.getWorkBuilding() != null && !worker.hasItemsNeeded())
+                if (!worker.hasItemsNeeded())
                 {
-                    deliverymanRequired.add(worker.getWorkBuilding().getLocation());
+                    deliverymanRequired.add(citizen.getWorkBuilding().getLocation());
                 }
             }
         }

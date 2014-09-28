@@ -80,6 +80,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         initTasks();
     }
 
+    public boolean isWorker() { return false; }
+
     @Override
     public void entityInit()
     {
@@ -220,20 +222,18 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             return;
         }
 
-        if (!this.getClass().equals(EntityCitizen.class))
+        if (isWorker())
         {
+            //  Worker entity subclass, with no work building
             if (citizenData.getWorkBuilding() == null)
             {
                 removeFromWorkBuilding();
             }
         }
-        else
+        else if (citizenData.getWorkBuilding() != null)
         {
-            BuildingWorker work = citizenData.getWorkBuilding();
-            if (work != null)
-            {
-                addToWorkBuilding(work);
-            }
+            //  Non-Worker entity subclass, with a work building - become that worker subclass
+            addToWorkBuilding(citizenData.getWorkBuilding());
         }
 
 //        BuildingWorker b = (workBuilding != null) ? workBuilding.get() : null;
@@ -286,18 +286,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             colony.removeCitizen(this);
         }
 
-        if (getHomeBuilding() != null)
-        {
-            getHomeBuilding().removeCitizen(getUniqueID());
-            setHomeBuilding(null);
-        }
-
-        if (getWorkBuilding() != null)
-        {
-            getWorkBuilding().removeCitizen(getUniqueID());
-            setWorkBuilding(null);
-        }
-
         super.onDeath(par1DamageSource);
     }
 
@@ -343,12 +331,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         colonyId = colony.getID();
         citizenData = data;
 
-        //  Is this newly created Citizen Data?
-        if (citizenData.getId() == null)
-        {
-            citizenData.setup(this);
-        }
-
         setCustomNameTag(citizenData.getName());
 
         dataWatcher.updateObject(DATA_GENDER, citizenData.getSex());
@@ -361,14 +343,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public BuildingHome getHomeBuilding()
     {
         return (citizenData != null) ? citizenData.getHomeBuilding() : null;
-    }
-
-    public void setHomeBuilding(BuildingHome b)
-    {
-        if (citizenData != null)
-        {
-            citizenData.setHomeBuilding(b);
-        }
     }
 
     public ChunkCoordinates getHomePosition()
@@ -398,27 +372,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return (citizenData != null) ? citizenData.getWorkBuilding() : null;
     }
 
-    public void setWorkBuilding(BuildingWorker b)
-    {
-        if (citizenData != null)
-        {
-            citizenData.setWorkBuilding(b);
-        }
-    }
-
     public void addToWorkBuilding(BuildingWorker building)
     {
-        setWorkBuilding(building);
-
         NBTTagCompound nbt = new NBTTagCompound();
         this.writeToNBT(nbt);
-        setWorkBuilding(null);
         this.setDead();
 
         EntityCitizen worker = building.createWorker(worldObj);
         worker.readFromNBT(nbt);
         worker.setColony(colony, citizenData);
-        building.setWorker(worker);
+
         worldObj.spawnEntityInWorld(worker);
         ChunkCoordUtils.tryMoveLivingToXYZ(worker, building.getLocation());
 
@@ -427,13 +390,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             colony.replaceCitizen(this, worker);
         }
 
-        this.clearColony();
+        clearColony();
     }
 
     public void removeFromWorkBuilding()
     {
-        setWorkBuilding(null);
-
         NBTTagCompound nbt = new NBTTagCompound();
         this.writeToNBT(nbt);
         this.setDead();
@@ -441,6 +402,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         EntityCitizen citizen = new EntityCitizen(worldObj);
         citizen.readFromNBT(nbt);
         citizen.setColony(colony, citizenData);
+
         worldObj.spawnEntityInWorld(citizen);
 
         if (colony != null)
@@ -448,7 +410,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             colony.replaceCitizen(this, citizen);
         }
 
-        this.clearColony();
+        clearColony();
     }
 
     public Status getStatus()

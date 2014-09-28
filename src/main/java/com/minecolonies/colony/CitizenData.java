@@ -24,13 +24,13 @@ public class CitizenData
     public static final int SEX_FEMALE = 1;
 
     //  Attributes
-    private UUID   id;
-    private int    textureId;
-    private String name;
-    private int    gender;
+    private final UUID   id;
+    private String       name;
+    private int          gender;
+    private int          textureId;
 
-    private WeakReference<BuildingHome>   homeBuilding;
-    private WeakReference<BuildingWorker> workBuilding;
+    private BuildingHome   homeBuilding;
+    private BuildingWorker workBuilding;
 
     //  Citizen
     public WeakReference<EntityCitizen> entity;
@@ -55,25 +55,22 @@ public class CitizenData
     private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
     private static final String TAG_SKILL_CHARISMA = "charisma";
 
-    public CitizenData()
+    private CitizenData(UUID id)
     {
+        this.id = id;
     }
 
-    /**
-     * Generate random attributes
-     *
-     * @param citizen
-     */
-    public void setup(EntityCitizen citizen)
+    private CitizenData(EntityCitizen entity)
     {
-        Random rand = citizen.getRNG();
+        this.id = entity.getUniqueID();
 
-        entity = new WeakReference<EntityCitizen>(citizen);
+        Random rand = entity.getRNG();
 
-        id = citizen.getUniqueID();
+        this.entity = new WeakReference<EntityCitizen>(entity);
+
         gender = rand.nextInt(2);   //  Gender before name
         name = generateName(rand);
-        textureId = citizen.getTextureID();
+        textureId = entity.getTextureID();
 
         strength = rand.nextInt(10) + 1;
         stamina = rand.nextInt(10) + 1;
@@ -82,17 +79,58 @@ public class CitizenData
         charisma = rand.nextInt(10) + 1;
     }
 
+    public static CitizenData createFromNBT(NBTTagCompound compound)
+    {
+        UUID id = UUID.fromString(compound.getString(TAG_ID));
+        CitizenData citizen = new CitizenData(id);
+        citizen.readFromNBT(compound);
+        return citizen;
+    }
+
+    public static CitizenData createFromEntity(EntityCitizen entity)
+    {
+        CitizenData citizen = new CitizenData(entity);
+        return citizen;
+    }
+
     public UUID getId() { return id; }
     public String getName() { return name; }
     public int getSex() { return gender; }
     public int getTextureId() { return textureId; }
     public int getLevel() { return level; }
 
-    public BuildingHome getHomeBuilding() { return (homeBuilding != null) ? homeBuilding.get() : null; }
-    public void setHomeBuilding(BuildingHome b) { homeBuilding = new WeakReference<BuildingHome>(b); }
+    public BuildingHome getHomeBuilding() { return homeBuilding; }
+    public void setHomeBuilding(BuildingHome building)
+    {
+        if (homeBuilding != null && building != null && homeBuilding != building)
+        {
+            throw new IllegalStateException("CitizenData.setHomeBuilding() - already assigned a hom building when setting a new home building");
+        }
+        homeBuilding = building;
+    }
 
-    public BuildingWorker getWorkBuilding() { return (workBuilding != null) ? workBuilding.get() : null; }
-    public void setWorkBuilding(BuildingWorker b) { workBuilding = new WeakReference<BuildingWorker>(b); }
+    public BuildingWorker getWorkBuilding() { return workBuilding; }
+    public void setWorkBuilding(BuildingWorker building)
+    {
+        if (workBuilding != null && building != null && workBuilding != building)
+        {
+            throw new IllegalStateException("CitizenData.setWorkBuilding() - already assigned a work building when setting a new work building");
+        }
+        workBuilding = building;
+    }
+
+    public void onRemoveBuilding(Building building)
+    {
+        if (getHomeBuilding() == building)
+        {
+            homeBuilding = null;
+        }
+
+        if (getWorkBuilding() == building)
+        {
+            workBuilding = null;
+        }
+    }
 
     public EntityCitizen getCitizenEntity() { return (entity != null) ? entity.get() : null; }
     public void registerCitizenEntity(EntityCitizen citizen)
@@ -116,18 +154,6 @@ public class CitizenData
         compound.setInteger(TAG_GENDER, gender);
         compound.setInteger(TAG_TEXTURE, textureId);
 
-        BuildingHome home = getHomeBuilding();
-        if (home != null)
-        {
-            ChunkCoordUtils.writeToNBT(compound, TAG_HOME_BUILDING, home.getID());
-        }
-
-        BuildingWorker work = getWorkBuilding();
-        if (work != null)
-        {
-            ChunkCoordUtils.writeToNBT(compound, TAG_WORK_BUILDING, work.getID());
-        }
-
         //  Attributes
         compound.setInteger(TAG_LEVEL, level);
 
@@ -140,31 +166,11 @@ public class CitizenData
         compound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
     }
 
-    public void readFromNBT(NBTTagCompound compound, Colony colony)
+    public void readFromNBT(NBTTagCompound compound)
     {
-        id = UUID.fromString(compound.getString(TAG_ID));
         name = compound.getString(TAG_NAME);
         gender = compound.getInteger(TAG_GENDER);
         textureId = compound.getInteger(TAG_TEXTURE);
-
-        if (compound.hasKey(TAG_HOME_BUILDING))
-        {
-            ChunkCoordinates homeBuildingId = ChunkCoordUtils.readFromNBT(compound, TAG_HOME_BUILDING);
-            Building building = colony.getBuilding(homeBuildingId);
-            if (building instanceof BuildingHome)
-            {
-                homeBuilding = new WeakReference<BuildingHome>((BuildingHome)building);
-            }
-        }
-        if (compound.hasKey(TAG_WORK_BUILDING))
-        {
-            ChunkCoordinates workBuildingId = ChunkCoordUtils.readFromNBT(compound, TAG_WORK_BUILDING);
-            Building building = colony.getBuilding(workBuildingId);
-            if (building instanceof BuildingWorker)
-            {
-                workBuilding = new WeakReference<BuildingWorker>((BuildingWorker) building);
-            }
-        }
 
         //  Attributes
         level = compound.getInteger(TAG_LEVEL);

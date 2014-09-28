@@ -2,6 +2,7 @@ package com.minecolonies.colony.buildings;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.*;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.tileentities.*;
@@ -270,7 +271,7 @@ public abstract class Building
         colony.removeBuilding(this);
     }
 
-    public void removeCitizen(UUID citizenId) {}
+    public void removeCitizen(CitizenData citizen) {}
 
     public int getGuiId() { return 0; }
 

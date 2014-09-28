@@ -1,8 +1,10 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
@@ -65,10 +67,19 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
             return;
         }
 
-        UUID targetWorkerId = ((BuildingWorker)destinationBuilding).getWorkerId();
-        EntityWorker worker = (EntityWorker)deliveryman.getColony().getCitizenEntity(targetWorkerId);
-        TileEntityColonyBuilding destinationTileEntity = destinationBuilding.getTileEntity();
+        CitizenData targetCitizen = ((BuildingWorker)destinationBuilding).getWorker();
+        EntityCitizen targetCitizenEntity = (targetCitizen != null) ? targetCitizen.getCitizenEntity() : null;
 
+        if (targetCitizenEntity == null ||
+                !(targetCitizenEntity instanceof EntityWorker))
+        {
+            return;
+        }
+
+
+        EntityWorker worker = (EntityWorker)targetCitizenEntity;
+
+        TileEntityColonyBuilding destinationTileEntity = destinationBuilding.getTileEntity();
         if (worker == null || destinationTileEntity == null)
         {
             //  The recipient or their building's TE aren't loaded currently.  Maybe do something else?

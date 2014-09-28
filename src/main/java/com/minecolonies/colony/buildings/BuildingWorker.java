@@ -16,10 +16,9 @@ import java.util.UUID;
 
 public abstract class BuildingWorker extends BuildingHut
 {
-    private UUID workerId;
-    //private WeakReference<EntityCitizen> worker;
+    private CitizenData worker;
 
-    private final String TAG_WORKER_ID = "workerId";
+    private final String TAG_WORKER = "worker";
 
     public BuildingWorker(Colony c, ChunkCoordinates l)
     {
@@ -29,25 +28,10 @@ public abstract class BuildingWorker extends BuildingHut
     @Override
     public void onDestroyed()
     {
-        //  TODO REFACTOR - Ideally we will have a reference to the CitizenData
         if (hasWorker())
         {
-            CitizenData citizen = getColony().getCitizen(workerId);
-            if (citizen != null)
-            {
-                EntityCitizen entity = citizen.getCitizenEntity();
-                if (entity != null)
-                {
-                    //  Possibly not necessary, workers now detect they need to remove themselves
-                    entity.removeFromWorkBuilding();
-                }
-                else
-                {
-                    citizen.setWorkBuilding(null);
-                }
-            }
-
-            workerId = null;
+            //  EntityCitizen will detect the workplace is gone and fix up it's Entity properly
+            removeCitizen(worker);
         }
 
         super.onDestroyed();
@@ -65,19 +49,29 @@ public abstract class BuildingWorker extends BuildingHut
     public abstract Class<? extends ColonyJob> getJobClass();
     public ColonyJob createJob(EntityCitizen citizen) { return null; }
 
-    public UUID getWorkerId() { return workerId; }
-    public boolean hasWorker() { return workerId != null; }
-    //public EntityCitizen getWorker() { return worker != null ? worker.get() : null; }
-    //public boolean hasWorker() { return worker != null && worker.get(); }
+    public CitizenData getWorker() { return worker; }
+    public boolean hasWorker() { return worker != null; }
+
+    public EntityCitizen getWorkerEntity()
+    {
+        return (worker != null) ? worker.getCitizenEntity() : null;
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         
-        if (compound.hasKey(TAG_WORKER_ID))
+        if (compound.hasKey(TAG_WORKER))
         {
-            workerId = UUID.fromString(compound.getString(TAG_WORKER_ID));
+            UUID workerId = UUID.fromString(compound.getString(TAG_WORKER));
+
+            //  Bypass setWorker, which marks dirty
+            worker = getColony().getCitizen(workerId);
+            if (worker != null)
+            {
+                worker.setWorkBuilding(this);
+            }
         }
     }
 
@@ -86,36 +80,53 @@ public abstract class BuildingWorker extends BuildingHut
     {
         super.writeToNBT(compound);
 
-        if (workerId != null)
+        if (worker != null)
         {
-            compound.setString(TAG_WORKER_ID, workerId.toString());
+            compound.setString(TAG_WORKER, worker.getId().toString());
         }
     }
 
-    public void setWorker(EntityCitizen citizen)
+    public void setWorker(CitizenData citizen)
     {
-        workerId = citizen.getUniqueID();
-        ////worker = new WeakReference<EntityCitizen>(citizen);
-        citizen.setWorkBuilding(this);
+        if (worker == citizen)
+        {
+            return;
+        }
+
+        //  If we have a worker, it no longer works here
+        if (worker != null)
+        {
+            worker.setWorkBuilding(null);
+        }
+
+        worker = citizen;
+
+        //  If we set a worker, inform it of such
+        if (worker != null)
+        {
+            worker.setWorkBuilding(this);
+        }
+
+        markDirty();
     }
 
     @Override
-    public void removeCitizen(UUID citizenId)
+    public void removeCitizen(CitizenData citizen)
     {
-        if (isWorker(citizenId))
+        if (isWorker(citizen))
         {
-            workerId = null;
+            setWorker(null);
         }
     }
 
     public boolean isWorker(EntityCitizen citizen)
     {
-        return isWorker(citizen.getUniqueID());
+        return isWorker(citizen.getCitizenData());
     }
 
-    public boolean isWorker(UUID citizenId)
+    public boolean isWorker(CitizenData citizen)
     {
-        return citizenId.equals(workerId);
+        return citizen == worker;
     }
 
     @Override
@@ -128,27 +139,16 @@ public abstract class BuildingWorker extends BuildingHut
             return;
         }
 
-        //  If we have no active worker, grab one from the Colony -- TODO Maybe the Colony should assign jobs out, instead?
+        //  If we have no active worker, grab one from the Colony
+        //  TODO Maybe the Colony should assign jobs out, instead?
         if (!hasWorker())
         {
-            EntityCitizen idleCitizen = getColony().getIdleCitizen();
+            CitizenData idleCitizen = getColony().getIdleCitizen();
             if (idleCitizen != null)
             {
-                //ColonyJob job = createJob(idleCitizen);
-                //if (job != null)
-                {
-                    idleCitizen.addToWorkBuilding(this);
-                    //idleCitizen.setWorkBuilding(this);
-                    //idleCitizen.setColonyJob(job);
-                }
+                setWorker(idleCitizen);
             }
         }
-//        else if (worker != null && worker.get() == null)
-//        {
-//            //  Our worker died... (or was unloaded?)
-//            workerId = null;
-//            worker = null;
-//        }
     }
 
     /**
