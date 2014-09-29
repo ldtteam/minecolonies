@@ -5,12 +5,10 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.jobs.ColonyJob;
-import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 import java.util.UUID;
 

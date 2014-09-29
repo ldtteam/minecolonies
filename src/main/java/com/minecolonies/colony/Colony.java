@@ -737,6 +737,7 @@ public class Colony
             markDirty();
         }
 
+        //  Allow Citizens to fix up any data that wasn't fixed up by the Building's own onDestroyed
         for (CitizenData citizen : citizens.values())
         {
             citizen.onRemoveBuilding(building);

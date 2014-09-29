@@ -5,10 +5,7 @@ import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 
 import java.lang.ref.WeakReference;
 import java.util.Random;
@@ -24,10 +21,10 @@ public class CitizenData
     public static final int SEX_FEMALE = 1;
 
     //  Attributes
-    private final UUID   id;
-    private String       name;
-    private int          gender;
-    private int          textureId;
+    private final UUID id;
+    private String     name;
+    private int        gender;
+    private int        textureId;
 
     private BuildingHome   homeBuilding;
     private BuildingWorker workBuilding;
@@ -119,6 +116,12 @@ public class CitizenData
         workBuilding = building;
     }
 
+    /**
+     * When a building is destroyed, inform the citizen so it can do any cleanup of associations that the building's
+     * own Building.onDestroyed did not do.
+     *
+     * @param building
+     */
     public void onRemoveBuilding(Building building)
     {
         if (getHomeBuilding() == building)

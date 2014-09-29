@@ -19,7 +19,6 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public abstract class Building
 {
@@ -256,9 +255,9 @@ public abstract class Building
         return (tileEntity != null) ? tileEntity.get() : null;
     }
 
-    public boolean isDirty() { return isDirty; }
-    public void clearDirty() { isDirty = false; }
-    public void markDirty()
+    public final boolean isDirty() { return isDirty; }
+    public final void clearDirty() { isDirty = false; }
+    public final void markDirty()
     {
         isDirty = true;
         colony.markBuildingsDirty();
@@ -277,7 +276,6 @@ public abstract class Building
 
     public void onServerTick(TickEvent.ServerTickEvent event) {}
     public void onWorldTick(TickEvent.WorldTickEvent event) {}
-
 
     public void requestUpgrade()
     {
