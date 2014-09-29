@@ -26,8 +26,11 @@ public class CitizenData
     private int        gender;
     private int        textureId;
 
+    private Colony         colony;
     private BuildingHome   homeBuilding;
     private BuildingWorker workBuilding;
+
+    private boolean isDirty;
 
     //  Citizen
     public WeakReference<EntityCitizen> entity;
@@ -52,14 +55,15 @@ public class CitizenData
     private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
     private static final String TAG_SKILL_CHARISMA = "charisma";
 
-    private CitizenData(UUID id)
+    private CitizenData(UUID id, Colony colony)
     {
         this.id = id;
+        this.colony = colony;
     }
 
-    private CitizenData(EntityCitizen entity)
+    private CitizenData(EntityCitizen entity, Colony colony)
     {
-        this.id = entity.getUniqueID();
+        this(entity.getUniqueID(), colony);
 
         Random rand = entity.getRNG();
 
@@ -74,20 +78,21 @@ public class CitizenData
         wisdom = rand.nextInt(10) + 1;
         intelligence = rand.nextInt(10) + 1;
         charisma = rand.nextInt(10) + 1;
+
+        markDirty();
     }
 
-    public static CitizenData createFromNBT(NBTTagCompound compound)
+    public static CitizenData createFromNBT(NBTTagCompound compound, Colony colony)
     {
         UUID id = UUID.fromString(compound.getString(TAG_ID));
-        CitizenData citizen = new CitizenData(id);
+        CitizenData citizen = new CitizenData(id, colony);
         citizen.readFromNBT(compound);
         return citizen;
     }
 
-    public static CitizenData createFromEntity(EntityCitizen entity)
+    public static CitizenData createFromEntity(EntityCitizen entity, Colony colony)
     {
-        CitizenData citizen = new CitizenData(entity);
-        return citizen;
+        return new CitizenData(entity, colony);
     }
 
     public UUID getId() { return id; }
@@ -95,6 +100,14 @@ public class CitizenData
     public int getSex() { return gender; }
     public int getTextureId() { return textureId; }
     public int getLevel() { return level; }
+
+    public boolean isDirty() { return isDirty; }
+    public void markDirty()
+    {
+        isDirty = true;
+        colony.markCitizensDirty();
+    }
+    public void clearDirty() { isDirty = false; }
 
     public BuildingHome getHomeBuilding() { return homeBuilding; }
     public void setHomeBuilding(BuildingHome building)
@@ -136,7 +149,7 @@ public class CitizenData
     }
 
     public EntityCitizen getCitizenEntity() { return (entity != null) ? entity.get() : null; }
-    public void registerCitizenEntity(EntityCitizen citizen)
+    public void setCitizenEntity(EntityCitizen citizen)
     {
         if (!citizen.getUniqueID().equals(id))
         {
@@ -144,6 +157,7 @@ public class CitizenData
         }
 
         entity = new WeakReference<EntityCitizen>(citizen);
+        markDirty();
     }
     public void clearCitizenEntity()
     {

@@ -1,5 +1,6 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.client.gui.GuiEntityCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -35,7 +36,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -196,30 +196,27 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 return;
             }
 
-//            EntityCitizen existingCitizen = colony.getCitizen(getUniqueID());
-//            if (existingCitizen != null && existingCitizen != this)
-//            {
-//                //  There's already an existing registered EntityCitizen with this ID... we should suicide.
-//                colony = null;
-//                setDead();
-//                return;
-//            }
-
-            CitizenData data = c.registerCitizen(this);
+            CitizenData data = c.getCitizen(getUniqueID());
             if (data == null)
             {
-                //  Failed to register citizen to the Colony, it must not actually be a citizen of the colony anymore
+                //  Citizen does not exist in the Colony
+                MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but not known to colony",
+                        getUniqueID()));
+                setDead();
+                return;
+            }
+
+            EntityCitizen existingCitizen = data.getCitizenEntity();
+            if (existingCitizen != null && existingCitizen != this)
+            {
+                //  This Citizen already has a different Entity registered to it
+                MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but already have a citizen ('%s')",
+                        getUniqueID(), existingCitizen.getUniqueID()));
                 setDead();
                 return;
             }
 
             setColony(c, data);
-        }
-
-        if (citizenData == null)
-        {
-            setDead();
-            return;
         }
 
         if (isWorker())
@@ -338,6 +335,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         updateLevel();
 
         setTexture();
+
+        citizenData.setCitizenEntity(this);
     }
 
     public BuildingHome getHomeBuilding()
@@ -385,11 +384,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         worldObj.spawnEntityInWorld(worker);
         ChunkCoordUtils.tryMoveLivingToXYZ(worker, building.getLocation());
 
-        if (colony != null)
-        {
-            colony.replaceCitizen(this, worker);
-        }
-
         clearColony();
     }
 
@@ -404,11 +398,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         citizen.setColony(colony, citizenData);
 
         worldObj.spawnEntityInWorld(citizen);
-
-        if (colony != null)
-        {
-            colony.replaceCitizen(this, citizen);
-        }
 
         clearColony();
     }

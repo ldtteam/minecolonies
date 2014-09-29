@@ -26,7 +26,6 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 
-import java.lang.ref.WeakReference;
 import java.util.*;
 
 public class Colony
@@ -155,7 +154,7 @@ public class Colony
         for (int i = 0; i < citizenTagList.tagCount(); ++i)
         {
             NBTTagCompound citizenCompound = citizenTagList.getCompoundTagAt(i);
-            CitizenData data = CitizenData.createFromNBT(citizenCompound);
+            CitizenData data = CitizenData.createFromNBT(citizenCompound, this);
             citizens.put(data.getId(), data);
         }
 
@@ -281,7 +280,7 @@ public class Colony
     public ChunkCoordinates getCenter() { return center; }
 
     private void markDirty() { isDirty = true; }
-    private void markCitizensDirty() { isCitizensDirty = true; }
+    public void markCitizensDirty() { isCitizensDirty = true; }
     public void markBuildingsDirty() { isBuildingsDirty = true; }
 
     /**
@@ -632,15 +631,15 @@ public class Colony
 
         if(spawnPoint != null)
         {
-            EntityCitizen citizen = null;
+            EntityCitizen entity = null;
 
             if (data == null)
             {
-                citizen = new EntityCitizen(world);
+                entity = new EntityCitizen(world);
 
-                data = CitizenData.createFromEntity(citizen);
+                data = CitizenData.createFromEntity(entity, this);
                 citizens.put(data.getId(), data);
-                citizen.setColony(this, data);
+                entity.setColony(this, data);
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
@@ -651,12 +650,12 @@ public class Colony
             {
                 //  TODO: Restore the actual EntityCitizen subclass
                 //  (Although the current code is pretty good about detecting and fixing the issue)
-                citizen = new EntityCitizen(world, data.getId());
-                citizen.setColony(this, data);
+                entity = new EntityCitizen(world, data.getId());
+                entity.setColony(this, data);
             }
 
-            citizen.setPosition(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
-            world.spawnEntityInWorld(citizen);
+            entity.setPosition(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
+            world.spawnEntityInWorld(entity);
 
             markCitizensDirty();
         }
@@ -796,50 +795,6 @@ public class Colony
         for (Building building : buildings.values())
         {
             building.removeCitizen(citizen);
-        }
-    }
-
-    public CitizenData registerCitizen(EntityCitizen citizen)
-    {
-        if (!citizens.containsKey(citizen.getUniqueID()))
-        {
-            MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but not known to colony",
-                    citizen.getUniqueID()));
-            return null;
-        }
-
-        CitizenData data = citizens.get(citizen.getUniqueID());
-        if (data == null)
-        {
-            throw new IllegalStateException("CitizenData missing in Citizen map.");
-        }
-
-        EntityCitizen existingCitizen = data.getCitizenEntity();
-        if (existingCitizen != null && existingCitizen != citizen)
-        {
-            //  This Citizen already has a different Entity registered to it
-            MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but already have a citizen ('%s')",
-                    citizen.getUniqueID(), existingCitizen.getUniqueID()));
-            return null;
-        }
-
-        data.registerCitizenEntity(citizen);
-
-        markCitizensDirty();
-        return data;
-    }
-
-    public void replaceCitizen(EntityCitizen oldCitizen, EntityCitizen newCitizen)
-    {
-        CitizenData data = citizens.get(oldCitizen.getUniqueID());
-        if (data != null)
-        {
-            data.registerCitizenEntity(newCitizen);
-            markCitizensDirty();
-        }
-        else
-        {
-            MineColonies.logger.error(String.format("Colony.replaceCitizen() - Citizen %s is not a member of the Colony.", oldCitizen.getUniqueID().toString()));
         }
     }
 

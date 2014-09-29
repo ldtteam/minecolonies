@@ -32,7 +32,6 @@ public class ColonyView
     private String                  name   = "Unknown";
     private int                     dimensionId;
     private ChunkCoordinates        center;
-//    private WeakReference<World>    world;
 
     //  Administration
     private Set<UUID>               owners = new HashSet<UUID>();
