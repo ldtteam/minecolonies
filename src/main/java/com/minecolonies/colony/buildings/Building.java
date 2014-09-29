@@ -39,10 +39,10 @@ public abstract class Building
     private static Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<Class<?>, Class<?>>();
     private static Map<Integer, Class<?>>  classNameHashToClassMap      = new HashMap<Integer, Class<?>>();
 
-    final static String TAG_TYPE           = "type";
-    //    final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
-    final static String TAG_LOCATION       = "location";  //  Location is unique (within a Colony) and so can double as the Id
-    final static String TAG_BUILDING_LEVEL = "level";
+    private final static String TAG_TYPE           = "type";
+    //    private final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
+    private final static String TAG_LOCATION       = "location";  //  Location is unique (within a Colony) and so can double as the Id
+    private final static String TAG_BUILDING_LEVEL = "level";
 
     /**
      * Add a given Building mapping

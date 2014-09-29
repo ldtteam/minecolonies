@@ -25,7 +25,7 @@ public class GuiHutBuilder extends GuiBase
     {
         super.addElements();
 
-        addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.buildersHut"), "John R. Jones", "xx (yy)", "xxxxxxxx", span);
+        addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.buildersHut"), builderHut.getWorkerName(), "xx (yy)", "xxxxxxxx", span);
         addBottomButton(BUTTON_INVENTORY, LanguageHandler.format("container.inventory"), buttonMiddleX, buttonWidth, buttonHeight);
     }
 

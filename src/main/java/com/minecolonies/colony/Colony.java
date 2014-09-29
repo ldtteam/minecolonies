@@ -62,16 +62,16 @@ public class Colony
     //  Workload and Jobs
     private Map<ChunkCoordinates, String> buildingUpgradeMap = new HashMap<ChunkCoordinates, String>();
 
-    final static String TAG_ID                = "id";
-    final static String TAG_NAME              = "name";
-    final static String TAG_DIMENSION         = "dimension";
-    final static String TAG_CENTER            = "center";
-    final static String TAG_MAX_CITIZENS      = "maxCitizens";
-    final static String TAG_OWNERS            = "owners";
-    final static String TAG_BUILDINGS_TYPO    = "buidings";
-    final static String TAG_BUILDINGS         = "buildings";
-    final static String TAG_CITIZENS          = "citizens";
-    final static String TAG_BUILDING_UPGRADES = "buildingUpgrades";
+    private final static String TAG_ID                = "id";
+    private final static String TAG_NAME              = "name";
+    private final static String TAG_DIMENSION         = "dimension";
+    private final static String TAG_CENTER            = "center";
+    private final static String TAG_MAX_CITIZENS      = "maxCitizens";
+    private final static String TAG_OWNERS            = "owners";
+    private final static String TAG_BUILDINGS_TYPO    = "buidings";
+    private final static String TAG_BUILDINGS         = "buildings";
+    private final static String TAG_CITIZENS          = "citizens";
+    private final static String TAG_BUILDING_UPGRADES = "buildingUpgrades";
 
     /**
      * Constructor for a newly created Colony.

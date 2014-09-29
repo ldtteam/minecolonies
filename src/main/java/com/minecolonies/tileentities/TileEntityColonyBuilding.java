@@ -21,7 +21,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     private WeakReference<Colony>   colony;
     private WeakReference<Building> building;
 
-    private final String TAG_COLONY = "colony";
+    private final static String TAG_COLONY = "colony";
 
     public TileEntityColonyBuilding(){}
 

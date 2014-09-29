@@ -43,23 +43,36 @@ public class ColonyView
     private int           maxCitizens    = Constants.DEFAULTMAXCITIZENS;
     private List<Integer> citizens       = new ArrayList<Integer>();
 
-    final static String TAG_NAME         = "name";
-    final static String TAG_DIMENSION    = "dimension";
-    final static String TAG_CENTER       = "center";
-    final static String TAG_MAX_CITIZENS = "maxCitizens";
-    final static String TAG_OWNERS       = "owners";
-    final static String TAG_CITIZENS     = "citizens";
-    final static String TAG_BUILDINGS_REMOVED = "buildingsRemoved";
+    private final static String TAG_NAME         = "name";
+    public  final static String TAG_DIMENSION    = "dimension";
+    private final static String TAG_CENTER       = "center";
+    private final static String TAG_MAX_CITIZENS = "maxCitizens";
+    private final static String TAG_OWNERS       = "owners";
+    private final static String TAG_CITIZENS     = "citizens";
+    private final static String TAG_BUILDINGS_REMOVED = "buildingsRemoved";
 
 
     /**
      * Base constructor for a colony.
      *
-     * @param uuid The current id for the colony
+     * @param id The current id for the colony
      */
-    protected ColonyView(UUID uuid)
+    private ColonyView(UUID id)
     {
-        id = uuid;
+        this.id = id;
+    }
+
+    /**
+     * Create a ColonyView given a UUID and NBTTagCompound
+     *
+     * @param id
+     * @param compound
+     * @return
+     */
+    public static ColonyView createFromNBT(UUID id, NBTTagCompound compound)
+    {
+        int dimensionId = compound.getInteger(ColonyView.TAG_DIMENSION);
+        return new ColonyView(id);
     }
 
     public UUID getID() { return id; }
@@ -172,7 +185,7 @@ public class ColonyView
      *
      * @param compound
      */
-    public IMessage handleColonyViewPacket(NBTTagCompound compound, boolean newSubscription)
+    public IMessage handleColonyViewPacket(NBTTagCompound compound, boolean isNewSubscription)
     {
         //  General Attributes
         name = compound.getString(TAG_NAME);
@@ -190,7 +203,7 @@ public class ColonyView
             owners.add(UUID.fromString(owner));
         }
 
-        if (newSubscription)
+        if (isNewSubscription)
         {
             buildings.clear();
         }

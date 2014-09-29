@@ -16,7 +16,7 @@ public abstract class BuildingWorker extends BuildingHut
 {
     private CitizenData worker;
 
-    private final String TAG_WORKER = "worker";
+    private static final String TAG_WORKER = "worker";
 
     public BuildingWorker(Colony c, ChunkCoordinates l)
     {
@@ -154,11 +154,34 @@ public abstract class BuildingWorker extends BuildingHut
      */
     public static class View extends BuildingHut.View
     {
+        //  TODO - Reference the workers ID, when we introduce CitizenViews
         //private int workerId = 0; //  Client uses int Entity IDs
+        private String workerName;
 
         public View(ColonyView c, ChunkCoordinates l)
         {
             super(c, l);
+        }
+
+        public String getWorkerName() { return workerName; }
+
+        public void parseNetworkData(NBTTagCompound compound)
+        {
+            super.parseNetworkData(compound);
+
+            workerName = compound.hasKey(TAG_WORKER) ? compound.getString(TAG_WORKER) : null;
+        }
+    }
+
+
+    public void createViewNetworkData(NBTTagCompound compound)
+    {
+        //  TODO - Use a PacketBuffer
+        super.createViewNetworkData(compound);
+
+        if (worker != null)
+        {
+            compound.setString(TAG_WORKER, worker.getName());
         }
     }
 }

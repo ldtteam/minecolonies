@@ -90,7 +90,7 @@ public class GuiHutWarehouse extends GuiBase
                 break;
             case PAGE_INFORMATION:
                 addBottomButton(BUTTON_BACK, LanguageHandler.format("gui.back"), buttonMiddleX, buttonWidth, buttonHeight);
-                addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.warehouse"), "John R. Jones", "xx (yy)", "xxxxxxxx", this.span);
+                addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.warehouse"), warehouse.getWorkerName(), "xx (yy)", "xxxxxxxx", this.span);
                 break;
             case PAGE_SETTINGS:
                 addBottomButton(BUTTON_BACK, LanguageHandler.format("gui.back"), buttonMiddleX, buttonWidth, buttonHeight);

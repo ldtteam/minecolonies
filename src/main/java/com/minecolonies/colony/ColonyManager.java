@@ -26,10 +26,10 @@ public class ColonyManager {
 
     private static int numWorldsLoaded;    //  Used to trigger loading/unloading colonies
 
-    final static String FILENAME_MINECOLONIES_PATH = "minecolonies";
-    final static String FILENAME_MINECOLONIES = "colonies.dat";
+    private final static String FILENAME_MINECOLONIES_PATH = "minecolonies";
+    private final static String FILENAME_MINECOLONIES = "colonies.dat";
 
-    final static String TAG_COLONIES = "colonies";
+    private final static String TAG_COLONIES = "colonies";
 
     public static void init()
     {
@@ -534,17 +534,16 @@ public class ColonyManager {
      * @param colonyId
      * @param colonyData
      */
-    static public IMessage handleColonyViewPacket(UUID colonyId, NBTTagCompound colonyData, boolean newSubscription)
+    static public IMessage handleColonyViewPacket(UUID colonyId, NBTTagCompound colonyData, boolean isNewSubscription)
     {
         ColonyView view = getColonyViewById(colonyId);
         if (view == null)
         {
-            int dimensionId = colonyData.getInteger(ColonyView.TAG_DIMENSION);
-            view = new ColonyView(colonyId);
+            view = ColonyView.createFromNBT(colonyId, colonyData);
             colonyViews.put(colonyId, view);
         }
 
-        return view.handleColonyViewPacket(colonyData, newSubscription);
+        return view.handleColonyViewPacket(colonyData, isNewSubscription);
     }
 
     /**
