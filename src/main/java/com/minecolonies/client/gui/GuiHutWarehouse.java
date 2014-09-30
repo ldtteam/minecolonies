@@ -1,6 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.BuildingWarehouse;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
@@ -89,8 +90,21 @@ public class GuiHutWarehouse extends GuiBase
                 addButton(BUTTON_INVENTORY, inventory, buttonMiddleX, buttonMiddleY + span, buttonWidth, buttonHeight);
                 break;
             case PAGE_INFORMATION:
+                String workerName = "";
+                String workerLevel = "";
+
+                if (warehouse.getWorkerId() != null)
+                {
+                    CitizenData.View worker = warehouse.getColony().getCitizen(warehouse.getWorkerId());
+                    if (worker != null)
+                    {
+                        workerName = worker.getName();
+                        workerLevel = String.format("%d", worker.getLevel());
+                    }
+                }
+
                 addBottomButton(BUTTON_BACK, LanguageHandler.format("gui.back"), buttonMiddleX, buttonWidth, buttonHeight);
-                addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.warehouse"), warehouse.getWorkerName(), "xx (yy)", "xxxxxxxx", this.span);
+                addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.warehouse"), workerName, workerLevel, "xxxxxxxx", this.span);
                 break;
             case PAGE_SETTINGS:
                 addBottomButton(BUTTON_BACK, LanguageHandler.format("gui.back"), buttonMiddleX, buttonWidth, buttonHeight);

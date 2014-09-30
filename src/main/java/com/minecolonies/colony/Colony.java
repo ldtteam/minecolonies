@@ -40,6 +40,7 @@ public class Colony
     private boolean                isDirty          = false;   //  TODO - Move to using bits, and more of them for targetted update packets
     private boolean                isCitizensDirty  = false;
     private boolean                isBuildingsDirty = false;
+    private List<UUID>             removedCitizens  = new ArrayList<UUID>();
     private List<ChunkCoordinates> removedBuildings = new ArrayList<ChunkCoordinates>();
 
     //  General Attributes
@@ -412,62 +413,74 @@ public class Colony
             }
         }
 
-        //  Send each type of update packet as appropriate:
-        //      - To Subscribers if the data changes
-        //      - To New Subscribers even if it hasn't changed
-
-        //  ColonyView
-        if (isDirty || hasNewSubscribers)
+        if (!subscribers.isEmpty())
         {
-            NBTTagCompound compound = new NBTTagCompound();
-            ColonyView.createNetworkData(this, compound);
+            //  Send each type of update packet as appropriate:
+            //      - To Subscribers if the data changes
+            //      - To New Subscribers even if it hasn't changed
 
-            for (EntityPlayerMP player : subscribers)
+            //  ColonyView
+            if (isDirty || hasNewSubscribers)
             {
-                boolean isNewSubscriber = !oldSubscribers.contains(player);
-                if (isDirty || isNewSubscriber)
+                NBTTagCompound compound = new NBTTagCompound();
+                ColonyView.createNetworkData(this, compound);
+
+                for (EntityPlayerMP player : subscribers)
                 {
-                    MineColonies.network.sendTo(new ColonyViewMessage(id, compound, isNewSubscriber), player);
-                }
-            }
-        }
-
-        //  Citizens
-        if (isCitizensDirty || hasNewSubscribers)
-        {
-            NBTTagCompound compound = new NBTTagCompound();
-            ColonyView.createCitizenNetworkData(this, compound);
-
-            for (EntityPlayerMP player : subscribers)
-            {
-                if (isCitizensDirty || !oldSubscribers.contains(player))
-                {
-                    MineColonies.network.sendTo(new ColonyViewCitizensMessage(id, compound), player);
-                }
-            }
-        }
-
-        //  Buildings
-        if (isBuildingsDirty || hasNewSubscribers)
-        {
-            for (Building b : buildings.values())
-            {
-                if (b.isDirty() || hasNewSubscribers)
-                {
-                    NBTTagCompound compound = new NBTTagCompound();
-                    b.createViewNetworkData(compound);
-
-                    for (EntityPlayerMP player : subscribers)
+                    boolean isNewSubscriber = !oldSubscribers.contains(player);
+                    if (isDirty || isNewSubscriber)
                     {
-                        if (b.isDirty() || !oldSubscribers.contains(player))
+                        MineColonies.network.sendTo(new ColonyViewMessage(id, compound, isNewSubscriber), player);
+                    }
+                }
+            }
+
+            //  Citizens
+            if (isCitizensDirty || hasNewSubscribers)
+            {
+                for (CitizenData citizen : citizens.values())
+                {
+                    if (citizen.isDirty() || hasNewSubscribers)
+                    {
+                        NBTTagCompound compound = new NBTTagCompound();
+                        citizen.createViewNetworkData(compound);
+                        ColonyViewCitizensMessage msg = new ColonyViewCitizensMessage(id, citizen.getId(), compound);
+
+                        for (EntityPlayerMP player : subscribers)
                         {
-                            MineColonies.network.sendTo(new ColonyBuildingViewMessage(id, b.getID(), compound), player);
+                            if (citizen.isDirty() || !oldSubscribers.contains(player))
+                            {
+                                MineColonies.network.sendTo(msg, player);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //  Buildings
+            if (isBuildingsDirty || hasNewSubscribers)
+            {
+                for (Building building : buildings.values())
+                {
+                    if (building.isDirty() || hasNewSubscribers)
+                    {
+                        NBTTagCompound compound = new NBTTagCompound();
+                        building.createViewNetworkData(compound);
+                        ColonyBuildingViewMessage msg = new ColonyBuildingViewMessage(id, building.getID(), compound);
+
+                        for (EntityPlayerMP player : subscribers)
+                        {
+                            if (building.isDirty() || !oldSubscribers.contains(player))
+                            {
+                                MineColonies.network.sendTo(msg, player);
+                            }
                         }
                     }
                 }
             }
         }
 
+        removedCitizens.clear();
         removedBuildings.clear();   //  We will have set these
 
 //        for (EntityPlayerMP oldPlayers : oldSubscribers)
@@ -481,9 +494,14 @@ public class Colony
         isDirty = false;
         isCitizensDirty = false;
         isBuildingsDirty = false;
-        for (Building b : buildings.values())
+
+        for (Building building : buildings.values())
         {
-            b.clearDirty();
+            building.clearDirty();
+        }
+        for (CitizenData citizen : citizens.values())
+        {
+            citizen.clearDirty();
         }
     }
 
@@ -677,6 +695,7 @@ public class Colony
         return townhall;
     }
 
+    public List<UUID> getRemovedCitizens() { return Collections.unmodifiableList(removedCitizens); }
     public List<ChunkCoordinates> getRemovedBuildings() { return Collections.unmodifiableList(removedBuildings); }
 
     /**
@@ -779,8 +798,9 @@ public class Colony
 
     public void removeCitizen(CitizenData citizen)
     {
+        removedCitizens.add(citizen.getId());
         citizens.remove(citizen.getId());
-        markCitizensDirty();
+        markDirty();
 
 //        if (citizen.getHomeBuilding() != null)
 //        {

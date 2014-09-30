@@ -5,7 +5,7 @@ import com.minecolonies.client.gui.GuiEntityCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.entity.ai.EntityAIGoHome;
@@ -46,17 +46,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public  ResourceLocation texture;
     private InventoryCitizen inventory;
 
-    private UUID                          colonyId;
-    private Colony                        colony;
-    private CitizenData                   citizenData;
+    private UUID        colonyId;
+    private Colony      colony;
+    private CitizenData citizenData;
+
+    private UUID citizenViewId;
 
     private ColonyJob colonyJob;
 
     protected Status status = Status.IDLE;
 
-    private static final int DATA_TEXTURE = 13;
-    private static final int DATA_LEVEL   = 14;
-    private static final int DATA_GENDER  = 15;
+    private static final int DATA_TEXTURE    = 13;
+    private static final int DATA_LEVEL      = 14;
+    private static final int DATA_IS_FEMALE  = 15;
+    private static final int DATA_COLONY_ID  = 16;
+    private static final int DATA_CITIZEN_ID = 17;  //  Because Entity UniqueIDs are not identical between client and server
 
     public EntityCitizen(World world, UUID id)
     {
@@ -80,15 +84,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         initTasks();
     }
 
-    public boolean isWorker() { return false; }
+    public boolean isWorker(){ return false; }
 
     @Override
     public void entityInit()
     {
         super.entityInit();
+        dataWatcher.addObject(DATA_COLONY_ID, "");
+        dataWatcher.addObject(DATA_CITIZEN_ID, "");
         dataWatcher.addObject(DATA_TEXTURE, worldObj.rand.nextInt(3) + 1);//textureID
         dataWatcher.addObject(DATA_LEVEL, 0);
-        dataWatcher.addObject(DATA_GENDER, 0);
+        dataWatcher.addObject(DATA_IS_FEMALE, 0);
     }
 
     protected void initTasks()
@@ -154,7 +160,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             textureBase += getJobName(); //colonyJob.getName();
         }
 
-        textureBase += getSex() == CitizenData.SEX_MALE ? "Male" : "Female";
+        textureBase += getIsFemale() ? "Female" : "Male";
 
         texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
     }
@@ -177,6 +183,24 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if (worldObj.isRemote)
         {
+            if (colonyId == null)
+            {
+                String colonyIdString = dataWatcher.getWatchableObjectString(DATA_COLONY_ID);
+                if (colonyIdString != null)
+                {
+                    colonyId = UUID.fromString(colonyIdString);
+                }
+            }
+
+            if (citizenViewId == null)
+            {
+                String colonyViewIdString = dataWatcher.getWatchableObjectString(DATA_CITIZEN_ID);
+                if (colonyViewIdString != null)
+                {
+                    citizenViewId = UUID.fromString(colonyViewIdString);
+                }
+            }
+
             return;
         }
 
@@ -270,7 +294,19 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public boolean interact(EntityPlayer player)
     {
-        GuiHandler.showGuiScreen(new GuiEntityCitizen(this, player, worldObj));
+        if (worldObj.isRemote && colonyId != null && citizenViewId != null)
+        {
+            ColonyView colonyView = ColonyManager.getColonyViewById(colonyId);
+            if (colonyView != null)
+            {
+                CitizenData.View citizenView = colonyView.getCitizen(citizenViewId);
+
+                if (citizenView != null)
+                {
+                    GuiHandler.showGuiScreen(new GuiEntityCitizen(this, citizenView, player, worldObj));
+                }
+            }
+        }
         return true;
     }
 
@@ -301,9 +337,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.updateObject(DATA_LEVEL, citizenData != null ? citizenData.getLevel() : 0);
     }
 
-    public int getSex()
+    public boolean getIsFemale()
     {
-        return dataWatcher.getWatchableObjectInt(DATA_GENDER);
+        return (dataWatcher.getWatchableObjectInt(DATA_IS_FEMALE) != 0);
     }
 
     public CitizenData getCitizenData()
@@ -330,7 +366,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         setCustomNameTag(citizenData.getName());
 
-        dataWatcher.updateObject(DATA_GENDER, citizenData.getSex());
+        dataWatcher.updateObject(DATA_COLONY_ID, colonyId.toString());
+        dataWatcher.updateObject(DATA_CITIZEN_ID, citizenData.getId().toString());
+        dataWatcher.updateObject(DATA_IS_FEMALE, citizenData.getIsFemale() ? 1 : 0);
         dataWatcher.updateObject(DATA_TEXTURE, citizenData != null ? citizenData.getTextureId() : 0);
         updateLevel();
 

@@ -1,6 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
@@ -23,9 +24,22 @@ public class GuiHutBuilder extends GuiBase
     @Override
     protected void addElements()
     {
+        String workerName = "";
+        String workerLevel = "";
+
+        if (builderHut.getWorkerId() != null)
+        {
+            CitizenData.View worker = builderHut.getColony().getCitizen(builderHut.getWorkerId());
+            if (worker != null)
+            {
+                workerName = worker.getName();
+                workerLevel = String.format("%d", worker.getLevel());
+            }
+        }
+
         super.addElements();
 
-        addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.buildersHut"), builderHut.getWorkerName(), "xx (yy)", "xxxxxxxx", span);
+        addDefaultWorkerLayout(LanguageHandler.format("com.minecolonies.gui.workerHuts.buildersHut"), workerName, workerLevel, "xxxxxxxx", span);
         addBottomButton(BUTTON_INVENTORY, LanguageHandler.format("container.inventory"), buttonMiddleX, buttonWidth, buttonHeight);
     }
 

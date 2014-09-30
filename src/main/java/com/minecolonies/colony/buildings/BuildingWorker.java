@@ -154,22 +154,20 @@ public abstract class BuildingWorker extends BuildingHut
      */
     public static class View extends BuildingHut.View
     {
-        //  TODO - Reference the workers ID, when we introduce CitizenViews
-        //private int workerId = 0; //  Client uses int Entity IDs
-        private String workerName;
+        private UUID workerId;
 
         public View(ColonyView c, ChunkCoordinates l)
         {
             super(c, l);
         }
 
-        public String getWorkerName() { return workerName; }
+        public UUID getWorkerId() { return workerId; }
 
         public void parseNetworkData(NBTTagCompound compound)
         {
             super.parseNetworkData(compound);
 
-            workerName = compound.hasKey(TAG_WORKER) ? compound.getString(TAG_WORKER) : null;
+            workerId = compound.hasKey(TAG_WORKER) ? UUID.fromString(compound.getString(TAG_WORKER)) : null;
         }
     }
 
@@ -181,7 +179,7 @@ public abstract class BuildingWorker extends BuildingHut
 
         if (worker != null)
         {
-            compound.setString(TAG_WORKER, worker.getName());
+            compound.setString(TAG_WORKER, worker.getId().toString());
         }
     }
 }

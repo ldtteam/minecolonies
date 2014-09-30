@@ -73,22 +73,23 @@ public class GuiTownHall extends GuiBase
             int citizensSize = colony.getCitizens().size();
             int workers = 0;
             int builders = 0, deliverymen = 0;
-            List<Entity> citizens = Utils.getEntitiesFromID(world, colony.getCitizens());
-            if(citizens != null)
-            {
-                for(Entity citizen : citizens)
-                {
-                    if(citizen instanceof EntityBuilder)
-                    {
-                        builders++;
-                    }
-                    else if(citizen instanceof EntityDeliveryman)
-                    {
-                        deliverymen++;
-                    }
-                }
-                workers = builders + deliverymen;
-            }
+            //  TODO - Rewrite this based on the CitizenData
+//            List<Entity> citizens = Utils.getEntitiesFromID(world, colony.getCitizens());
+//            if(citizens != null)
+//            {
+//                for(Entity citizen : citizens)
+//                {
+//                    if(citizen instanceof EntityBuilder)
+//                    {
+//                        builders++;
+//                    }
+//                    else if(citizen instanceof EntityDeliveryman)
+//                    {
+//                        deliverymen++;
+//                    }
+//                }
+//                workers = builders + deliverymen;
+//            }
 
             String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens", citizensSize, colony.getMaxCitizens());
             String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed", (citizensSize - workers));

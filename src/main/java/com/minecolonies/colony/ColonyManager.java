@@ -551,12 +551,12 @@ public class ColonyManager {
      * @param colonyId
      * @param colonyData
      */
-    static public IMessage handleColonyViewCitizensPacket(UUID colonyId, NBTTagCompound colonyData)
+    static public IMessage handleColonyViewCitizensPacket(UUID colonyId, UUID citizenId, NBTTagCompound colonyData)
     {
         ColonyView view = getColonyViewById(colonyId);
         if (view != null)
         {
-            return view.handleColonyViewCitizensPacket(colonyData);
+            return view.handleColonyViewCitizensPacket(citizenId, colonyData);
         }
 
         return null;

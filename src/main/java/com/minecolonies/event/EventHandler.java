@@ -45,19 +45,11 @@ public class EventHandler
                 return;
             }
 
-            //Building building = ColonyManager.getBuilding(world, event.x, event.y, event.z);
             Building building = colony.getBuilding(new ChunkCoordinates(event.x, event.y, event.z));
             if (building == null)
             {
                 return;
             }
-
-            //  Redundant with refactor above
-//            if (!building.getColony().isOwner(event.getPlayer()))
-//            {
-//                event.setCanceled(true);
-//                return;
-//            }
 
             building.destroy();
         }

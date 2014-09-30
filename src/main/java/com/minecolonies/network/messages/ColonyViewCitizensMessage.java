@@ -16,14 +16,16 @@ import java.util.UUID;
 public class ColonyViewCitizensMessage implements IMessage
 {
     private UUID colonyId;
-    private NBTTagCompound colonyCitizens;
+    private UUID citizenId;
+    private NBTTagCompound citizen;
 
     public ColonyViewCitizensMessage(){}
 
-    public ColonyViewCitizensMessage(UUID colonyId, NBTTagCompound colonyCitizens)
+    public ColonyViewCitizensMessage(UUID colonyId, UUID citizenId, NBTTagCompound citizen)
     {
         this.colonyId = colonyId;
-        this.colonyCitizens = colonyCitizens;
+        this.citizenId = citizenId;
+        this.citizen = citizen;
     }
 
     @Override
@@ -31,14 +33,17 @@ public class ColonyViewCitizensMessage implements IMessage
     {
         buf.writeLong(colonyId.getMostSignificantBits());
         buf.writeLong(colonyId.getLeastSignificantBits());
-        ByteBufUtils.writeTag(buf, colonyCitizens);
+        buf.writeLong(citizenId.getMostSignificantBits());
+        buf.writeLong(citizenId.getLeastSignificantBits());
+        ByteBufUtils.writeTag(buf, citizen);
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = new UUID(buf.readLong(), buf.readLong());
-        colonyCitizens = ByteBufUtils.readTag(buf);
+        citizenId = new UUID(buf.readLong(), buf.readLong());
+        citizen = ByteBufUtils.readTag(buf);
     }
 
     public static class Handler implements IMessageHandler<ColonyViewCitizensMessage, IMessage>
@@ -46,7 +51,7 @@ public class ColonyViewCitizensMessage implements IMessage
         @Override
         public IMessage onMessage(ColonyViewCitizensMessage message, MessageContext ctx)
         {
-            return ColonyManager.handleColonyViewCitizensPacket(message.colonyId, message.colonyCitizens);
+            return ColonyManager.handleColonyViewCitizensPacket(message.colonyId, message.citizenId, message.citizen);
         }
     }
 }
