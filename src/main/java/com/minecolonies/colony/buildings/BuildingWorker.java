@@ -141,10 +141,10 @@ public abstract class BuildingWorker extends BuildingHut
         //  TODO Maybe the Colony should assign jobs out, instead?
         if (!hasWorker())
         {
-            CitizenData idleCitizen = getColony().getIdleCitizen();
-            if (idleCitizen != null)
+            CitizenData joblessCitizen = getColony().getJoblessCitizen();
+            if (joblessCitizen != null)
             {
-                setWorker(idleCitizen);
+                setWorker(joblessCitizen);
             }
         }
     }

@@ -22,7 +22,7 @@ public class RenderBipedWorker extends RenderBipedCitizen
         {
             EntityCitizen entityCitizen = (EntityCitizen) entityliving;
 
-            if(entityCitizen.getIsFemale())
+            if(entityCitizen.isFemale())
             {
                 modelBipedMain = femaleModel;
             }

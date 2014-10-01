@@ -71,7 +71,6 @@ public class ColonyView
      */
     public static ColonyView createFromNBT(UUID id, NBTTagCompound compound)
     {
-        int dimensionId = compound.getInteger(ColonyView.TAG_DIMENSION);
         return new ColonyView(id);
     }
 

@@ -98,7 +98,7 @@ public class CitizenData
 
     public UUID getId() { return id; }
     public String getName() { return name; }
-    public boolean getIsFemale() { return isFemale; }
+    public boolean isFemale() { return isFemale; }
     public int getTextureId() { return textureId; }
     public int getLevel() { return level; }
 
@@ -115,7 +115,7 @@ public class CitizenData
     {
         if (homeBuilding != null && building != null && homeBuilding != building)
         {
-            throw new IllegalStateException("CitizenData.setHomeBuilding() - already assigned a hom building when setting a new home building");
+            throw new IllegalStateException("CitizenData.setHomeBuilding() - already assigned a home building when setting a new home building");
         }
         else if (homeBuilding != building)
         {

@@ -844,7 +844,7 @@ public class Colony
      *
      * @return Citizen with no current job
      */
-    public CitizenData getIdleCitizen()
+    public CitizenData getJoblessCitizen()
     {
         for (CitizenData citizen : citizens.values())
         {

@@ -160,7 +160,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             textureBase += getJobName(); //colonyJob.getName();
         }
 
-        textureBase += getIsFemale() ? "Female" : "Male";
+        textureBase += isFemale() ? "Female" : "Male";
 
         texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
     }
@@ -315,7 +315,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if (colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getOwners()), "tile.blockHutTownhall.messageColonistDead");
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getOwners()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
             colony.removeCitizen(this);
         }
 
@@ -337,7 +337,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.updateObject(DATA_LEVEL, citizenData != null ? citizenData.getLevel() : 0);
     }
 
-    public boolean getIsFemale()
+    public boolean isFemale()
     {
         return (dataWatcher.getWatchableObjectInt(DATA_IS_FEMALE) != 0);
     }
@@ -368,7 +368,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         dataWatcher.updateObject(DATA_COLONY_ID, colonyId.toString());
         dataWatcher.updateObject(DATA_CITIZEN_ID, citizenData.getId().toString());
-        dataWatcher.updateObject(DATA_IS_FEMALE, citizenData.getIsFemale() ? 1 : 0);
+        dataWatcher.updateObject(DATA_IS_FEMALE, citizenData.isFemale() ? 1 : 0);
         dataWatcher.updateObject(DATA_TEXTURE, citizenData != null ? citizenData.getTextureId() : 0);
         updateLevel();
 
