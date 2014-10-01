@@ -4,7 +4,6 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -102,11 +101,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         building = new WeakReference<Building>(b);
     }
-//    public Building.View getBuildingView()
-//    {
-//        ColonyView colony = ColonyManager.getColonyViewById(colonyId);
-//        return colony.getBuilding(getPosition());
-//    }
+    public Building.View getBuildingView()
+    {
+        ColonyView colony = ColonyManager.getColonyView(colonyId);
+        return colony.getBuilding(getPosition());
+    }
 
     public boolean isPlayerOwner(EntityPlayer player)
     {

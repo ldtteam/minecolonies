@@ -37,13 +37,7 @@ public class GuiHandler implements IGuiHandler
     {
         TileEntityColonyBuilding tileEntity = (TileEntityColonyBuilding)world.getTileEntity(x, y, z);
 
-        ColonyView colony = ColonyManager.getColonyViewById(tileEntity.getColonyId());
-        if (colony == null)
-        {
-            return null;
-        }
-
-        Building.View building = colony.getBuilding(tileEntity.getPosition());
+        Building.View building = tileEntity.getBuildingView();
         if (building == null)
         {
             return null;

@@ -348,11 +348,139 @@ public class Colony
             b.onServerTick(event);
         }
 
-        if (event.phase != TickEvent.Phase.END)
+        if (event.phase == TickEvent.Phase.END)
         {
-            return;
+            updateSubscribers();
+        }
+    }
+
+    /**
+     * Any per-world-tick logic should be performed here
+     * NOTE: If the Colony's world isn't loaded, it won't have a worldtick.
+     * Use onServerTick for logic that should _always_ run
+     *
+     * @param event
+     */
+    public void onWorldTick(TickEvent.WorldTickEvent event)
+    {
+        if (event.world != getWorld())
+        {
+            throw new IllegalStateException("Colony's world does not match the event.");
         }
 
+        if (event.phase == TickEvent.Phase.START)
+        {
+            //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
+            //  Consider handing this in an ChunkUnload Event instead?
+            for (CitizenData citizen : citizens.values())
+            {
+                EntityCitizen entity = citizen.getCitizenEntity();
+                if (entity != null &&
+                    entity.worldObj.getEntityByID(entity.getEntityId()) != entity)
+                {
+                    citizen.clearCitizenEntity();
+                }
+            }
+        }
+
+        //  Cleanup disappeared citizens
+        //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
+        if (event.phase == TickEvent.Phase.START &&
+            (event.world.getWorldInfo().getWorldTime() % CITIZEN_CLEANUP_TICK_DELAY) == 0)
+        {
+            //  Every CITIZEN_CLEANUP_TICK_DELAY, cleanup any 'lost' citizens
+
+            //  Assume all chunks are loaded until we find one that isn't
+            boolean allColonyChunksLoaded = true;
+
+            int distanceFromCenter = Configurations.workingRangeTownhall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+            for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
+            {
+                for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
+                {
+                    if (!event.world.blockExists(getCenter().posX + x, 128, getCenter().posZ + z))
+                    {
+                        allColonyChunksLoaded = false;
+                        break;
+                    }
+                }
+
+                if (!allColonyChunksLoaded)
+                {
+                    break;
+                }
+            }
+
+            if (allColonyChunksLoaded)
+            {
+                //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
+                //  If we don't have any references to them, destroy the citizen
+
+                for (Iterator<Map.Entry<UUID, CitizenData>> it = citizens.entrySet().iterator(); it.hasNext(); )
+                {
+                    Map.Entry<UUID, CitizenData> entry = it.next();
+                    CitizenData citizen = entry.getValue();
+                    if (citizen.getCitizenEntity() == null)
+                    {
+                        MineColonies.logger.warn(String.format("Citizen '%s' has gone AWOL, respawning them!", entry.getKey().toString()));
+                        spawnCitizen(citizen);
+                    }
+                }
+            }
+        }
+
+        //  Cleanup Buildings whose Blocks have gone AWOL
+        if (event.phase == TickEvent.Phase.START)
+        {
+            for (Iterator<Map.Entry<ChunkCoordinates, Building>> it = buildings.entrySet().iterator(); it.hasNext(); )
+            {
+                Map.Entry<ChunkCoordinates, Building> entry = it.next();
+                Building building = entry.getValue();
+
+                ChunkCoordinates loc = building.getLocation();
+                if (event.world.blockExists(loc.posX, loc.posY, loc.posZ) &&
+                        !building.isMatchingBlock(event.world.getBlock(loc.posX, loc.posY, loc.posZ)))
+                {
+                    //  Sanity cleanup
+                    it.remove();
+
+                    removedBuildings.add(building.getLocation());
+                    markDirty();
+
+                    building.destroy();
+                }
+            }
+        }
+
+        //  Spawn Citizens
+        if (event.phase == TickEvent.Phase.START &&
+                townhall != null)
+        {
+            if (citizens.size() < maxCitizens)
+            {
+                int respawnInterval = Configurations.citizenRespawnInterval * 20;
+                respawnInterval -= (60 * townhall.getBuildingLevel());
+
+                if (event.world.getWorldInfo().getWorldTime() % respawnInterval == 0)
+                {
+                    spawnCitizen();
+                }
+            }
+        }
+
+        //  Tick Buildings
+        for (Building building : buildings.values())
+        {
+            building.onWorldTick(event);
+        }
+    }
+
+
+    /**
+     * Update Subscribers with Colony, Citizen, and Building Views
+     */
+    public void updateSubscribers()
+    {
         //  Recompute subscribers every frame (for now)
         //  Subscribers = Owners + Players within (double working town hall range)
         Set<EntityPlayerMP> oldSubscribers = subscribers;
@@ -506,126 +634,8 @@ public class Colony
     }
 
     /**
-     * Any per-world-tick logic should be performed here
-     * NOTE: If the Colony's world isn't loaded, it won't have a worldtick.
-     * Use onServerTick for logic that should _always_ run
-     *
-     * @param event
+     * Spawn a brand new Citizen
      */
-    public void onWorldTick(TickEvent.WorldTickEvent event)
-    {
-        if (event.world != getWorld())
-        {
-            throw new IllegalStateException("Colony's world does not match the event.");
-        }
-
-        if (event.phase == TickEvent.Phase.START)
-        {
-            //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
-            //  Consider handing this in an ChunkUnload Event instead?
-            for (CitizenData citizen : citizens.values())
-            {
-                EntityCitizen entity = citizen.getCitizenEntity();
-                if (entity != null &&
-                    entity.worldObj.getEntityByID(entity.getEntityId()) != entity)
-                {
-                    citizen.clearCitizenEntity();
-                }
-            }
-        }
-
-        //  Cleanup disappeared citizens
-        //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
-        if (event.phase == TickEvent.Phase.START &&
-            (event.world.getWorldInfo().getWorldTime() % CITIZEN_CLEANUP_TICK_DELAY) == 0)
-        {
-            //  Every CITIZEN_CLEANUP_TICK_DELAY, cleanup any 'lost' citizens
-
-            //  Assume all chunks are loaded until we find one that isn't
-            boolean allColonyChunksLoaded = true;
-
-            int distanceFromCenter = Configurations.workingRangeTownhall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
-            for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
-            {
-                for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
-                {
-                    if (!event.world.blockExists(getCenter().posX + x, 128, getCenter().posZ + z))
-                    {
-                        allColonyChunksLoaded = false;
-                        break;
-                    }
-                }
-
-                if (!allColonyChunksLoaded)
-                {
-                    break;
-                }
-            }
-
-            if (allColonyChunksLoaded)
-            {
-                //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
-                //  If we don't have any references to them, destroy the citizen
-
-                for (Iterator<Map.Entry<UUID, CitizenData>> it = citizens.entrySet().iterator(); it.hasNext(); )
-                {
-                    Map.Entry<UUID, CitizenData> entry = it.next();
-                    CitizenData citizen = entry.getValue();
-                    if (citizen.getCitizenEntity() == null)
-                    {
-                        MineColonies.logger.warn(String.format("Citizen '%s' has gone AWOL, respawning them!", entry.getKey().toString()));
-                        spawnCitizen(citizen);
-                    }
-                }
-            }
-        }
-
-        //  Cleanup Buildings whose Blocks have gone AWOL
-        if (event.phase == TickEvent.Phase.START)
-        {
-            for (Iterator<Map.Entry<ChunkCoordinates, Building>> it = buildings.entrySet().iterator(); it.hasNext(); )
-            {
-                Map.Entry<ChunkCoordinates, Building> entry = it.next();
-                Building building = entry.getValue();
-
-                ChunkCoordinates loc = building.getLocation();
-                if (event.world.blockExists(loc.posX, loc.posY, loc.posZ) &&
-                        !building.isMatchingBlock(event.world.getBlock(loc.posX, loc.posY, loc.posZ)))
-                {
-                    //  Sanity cleanup
-                    it.remove();
-
-                    removedBuildings.add(building.getLocation());
-                    markDirty();
-
-                    building.destroy();
-                }
-            }
-        }
-
-        //  Spawn Citizens
-        if (event.phase == TickEvent.Phase.START &&
-                townhall != null)
-        {
-            if (citizens.size() < maxCitizens)
-            {
-                int respawnInterval = Configurations.citizenRespawnInterval * 20;
-                respawnInterval -= (60 * townhall.getBuildingLevel());
-
-                if (event.world.getWorldInfo().getWorldTime() % respawnInterval == 0)
-                {
-                    spawnCitizen();
-                }
-            }
-        }
-
-        //  Tick Buildings
-        for (Building building : buildings.values())
-        {
-            building.onWorldTick(event);
-        }
-    }
-
     private void spawnCitizen()
     {
         spawnCitizen(null);

@@ -192,7 +192,6 @@ public class ColonyManager {
         return null;
     }
 
-
     /**
      * Get a Building by a World and coordinates
      *
@@ -224,7 +223,7 @@ public class ColonyManager {
      * @param id UUID of colony
      * @return
      */
-    public static ColonyView getColonyViewById(UUID id)
+    public static ColonyView getColonyView(UUID id)
     {
         return colonyViews.get(id);
     }
@@ -236,13 +235,13 @@ public class ColonyManager {
      * @param coord
      * @return
      */
-    public static ColonyView getColonyViewByCoord(World w, ChunkCoordinates coord)
+    public static ColonyView getColonyView(World w, ChunkCoordinates coord)
     {
-        return getColonyViewByCoord(w, coord.posX, coord.posY, coord.posZ);
+        return getColonyView(w, coord.posX, coord.posY, coord.posZ);
     }
 
 
-    public static ColonyView getColonyViewByCoord(World w, int x, int y, int z)
+    public static ColonyView getColonyView(World w, int x, int y, int z)
     {
         for (ColonyView c : colonyViews.values())
         {
@@ -536,7 +535,7 @@ public class ColonyManager {
      */
     static public IMessage handleColonyViewPacket(UUID colonyId, NBTTagCompound colonyData, boolean isNewSubscription)
     {
-        ColonyView view = getColonyViewById(colonyId);
+        ColonyView view = getColonyView(colonyId);
         if (view == null)
         {
             view = ColonyView.createFromNBT(colonyId, colonyData);
@@ -553,7 +552,7 @@ public class ColonyManager {
      */
     static public IMessage handleColonyViewCitizensPacket(UUID colonyId, UUID citizenId, NBTTagCompound colonyData)
     {
-        ColonyView view = getColonyViewById(colonyId);
+        ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             return view.handleColonyViewCitizensPacket(citizenId, colonyData);
@@ -569,7 +568,7 @@ public class ColonyManager {
      */
     static public IMessage handleColonyBuildingViewPacket(UUID colonyId, ChunkCoordinates buildingId, NBTTagCompound buildingData)
     {
-        ColonyView view = getColonyViewById(colonyId);
+        ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             return view.handleColonyBuildingViewPacket(buildingId, buildingData);
