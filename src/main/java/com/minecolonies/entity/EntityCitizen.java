@@ -80,8 +80,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.renderDistanceWeight = 2.0D;
 
         this.getNavigator().setAvoidsWater(true);
-        this.getNavigator().setCanSwim(true);
-        this.getNavigator().setEnterDoors(true);
+        this.getNavigator().setBreakDoors(true);
         initTasks();
     }
 
