@@ -22,14 +22,19 @@ import java.util.*;
 
 public class BuildingHome extends BuildingHut
 {
-    private Set<UUID> citizens = new HashSet<UUID>();
+    private List<CitizenData> residents = new ArrayList<CitizenData>();
+
+    private static final String TAG_RESIDENTS = "residents";
 
     public BuildingHome(Colony c, ChunkCoordinates l)
     {
         super(c, l);
     }
 
+    @Override
     public String getSchematicName() { return "Citizen"; }
+
+    @Override
     public int getMaxInhabitants() { return 2; }
 
     @Override
@@ -38,10 +43,8 @@ public class BuildingHome extends BuildingHut
     @Override
     public void onDestroyed()
     {
-        //  TODO REFACTOR - Ideally we should have a live Map of references to our CitizenData
-        for (UUID tenant : citizens)
+        for (CitizenData citizen : residents)
         {
-            CitizenData citizen = getColony().getCitizen(tenant);
             if (citizen != null)
             {
                 citizen.setHomeBuilding(null);
@@ -59,7 +62,7 @@ public class BuildingHome extends BuildingHut
             return;
         }
 
-        if (citizens.size() < getMaxInhabitants())
+        if (residents.size() < getMaxInhabitants())
         {
             //  'Capture' as many citizens into this house as possible
             addHomelessCitizens();
@@ -72,10 +75,9 @@ public class BuildingHome extends BuildingHut
         {
             if (citizen.getHomeBuilding() == null)
             {
-                citizens.add(citizen.getId());
-                citizen.setHomeBuilding(this);
+                addResident(citizen);
 
-                if (citizens.size() >= getMaxInhabitants())
+                if (residents.size() >= getMaxInhabitants())
                 {
                     break;
                 }
@@ -83,15 +85,27 @@ public class BuildingHome extends BuildingHut
         }
     }
 
-    @Override
-    public void removeCitizen(UUID citizenId)
+    private void addResident(CitizenData citizen)
     {
-        citizens.remove(citizenId);
+        residents.add(citizen);
+        citizen.setHomeBuilding(this);
+
+        markDirty();
     }
 
-    public boolean isCitizen(EntityCitizen citizen)
+    @Override
+    public void removeCitizen(CitizenData citizen)
     {
-        return citizens.contains(citizen.getUniqueID());
+        if (residents.contains(citizen))
+        {
+            citizen.setHomeBuilding(null);
+            residents.remove(citizen);
+        }
+    }
+
+    public boolean hasResident(CitizenData citizen)
+    {
+        return residents.contains(citizen);
     }
 
     @Override
@@ -99,13 +113,20 @@ public class BuildingHome extends BuildingHut
     {
         super.readFromNBT(compound);
 
-        citizens.clear();
+        residents.clear();
 
-        NBTTagList nbtTagCitizenList = compound.getTagList("citizens", Constants.NBT.TAG_STRING);
+        NBTTagList nbtTagCitizenList = compound.getTagList(TAG_RESIDENTS, Constants.NBT.TAG_STRING);
         for(int i = 0; i < nbtTagCitizenList.tagCount(); i++)
         {
             UUID uuid = UUID.fromString(nbtTagCitizenList.getStringTagAt(i));
-            citizens.add(uuid);
+
+            CitizenData citizen = getColony().getCitizen(uuid);
+            if (citizen != null)
+            {
+                //  Bypass addResident (which marks dirty)
+                residents.add(citizen);
+                citizen.setHomeBuilding(this);
+            }
         }
     }
 
@@ -115,11 +136,11 @@ public class BuildingHome extends BuildingHut
         super.writeToNBT(compound);
 
         NBTTagList nbtTagCitizenList = new NBTTagList();
-        for(UUID citizen : citizens)
+        for(CitizenData resident : residents)
         {
-            nbtTagCitizenList.appendTag(new NBTTagString(citizen.toString()));
+            nbtTagCitizenList.appendTag(new NBTTagString(resident.getId().toString()));
         }
-        compound.setTag("citizens", nbtTagCitizenList);
+        compound.setTag(TAG_RESIDENTS, nbtTagCitizenList);
     }
 
     public static class View extends BuildingHut.View
@@ -128,7 +149,6 @@ public class BuildingHome extends BuildingHut
         {
             super(c, l);
         }
-
 
         public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
         {
@@ -139,6 +159,5 @@ public class BuildingHome extends BuildingHut
 
             return null;
         }
-
     }
 }

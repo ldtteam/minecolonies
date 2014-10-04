@@ -19,6 +19,9 @@ public abstract class EntityWorker extends EntityCitizen
     }
 
     @Override
+    public boolean isWorker() { return true; }
+
+    @Override
     public void writeEntityToNBT(NBTTagCompound compound)
     {
         super.writeEntityToNBT(compound);

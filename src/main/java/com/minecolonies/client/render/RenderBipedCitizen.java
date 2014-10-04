@@ -10,7 +10,7 @@ public class RenderBipedCitizen extends RenderBiped
 {
     public RenderBipedCitizen(ModelBiped model)
     {
-        super(model, 1F);
+        super(model, 0.5F);
     }
 
     @Override
