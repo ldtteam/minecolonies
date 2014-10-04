@@ -26,7 +26,6 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 
-import java.lang.ref.WeakReference;
 import java.util.*;
 
 public class Colony
@@ -41,6 +40,7 @@ public class Colony
     private boolean                isDirty          = false;   //  TODO - Move to using bits, and more of them for targetted update packets
     private boolean                isCitizensDirty  = false;
     private boolean                isBuildingsDirty = false;
+    private List<UUID>             removedCitizens  = new ArrayList<UUID>();
     private List<ChunkCoordinates> removedBuildings = new ArrayList<ChunkCoordinates>();
 
     //  General Attributes
@@ -63,16 +63,16 @@ public class Colony
     //  Workload and Jobs
     private Map<ChunkCoordinates, String> buildingUpgradeMap = new HashMap<ChunkCoordinates, String>();
 
-    final static String TAG_ID                = "id";
-    final static String TAG_NAME              = "name";
-    final static String TAG_DIMENSION         = "dimension";
-    final static String TAG_CENTER            = "center";
-    final static String TAG_MAX_CITIZENS      = "maxCitizens";
-    final static String TAG_OWNERS            = "owners";
-    final static String TAG_BUILDINGS_TYPO    = "buidings";
-    final static String TAG_BUILDINGS         = "buildings";
-    final static String TAG_CITIZENS          = "citizens";
-    final static String TAG_BUILDING_UPGRADES = "buildingUpgrades";
+    private final static String TAG_ID                = "id";
+    private final static String TAG_NAME              = "name";
+    private final static String TAG_DIMENSION         = "dimension";
+    private final static String TAG_CENTER            = "center";
+    private final static String TAG_MAX_CITIZENS      = "maxCitizens";
+    private final static String TAG_OWNERS            = "owners";
+    private final static String TAG_BUILDINGS_TYPO    = "buidings";
+    private final static String TAG_BUILDINGS         = "buildings";
+    private final static String TAG_CITIZENS          = "citizens";
+    private final static String TAG_BUILDING_UPGRADES = "buildingUpgrades";
 
     /**
      * Constructor for a newly created Colony.
@@ -150,6 +150,15 @@ public class Colony
             owners.add(UUID.fromString(owner));
         }
 
+        //  Citizens before Buildings, because Buildings track the Citizens
+        NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS, NBT.TAG_COMPOUND);
+        for (int i = 0; i < citizenTagList.tagCount(); ++i)
+        {
+            NBTTagCompound citizenCompound = citizenTagList.getCompoundTagAt(i);
+            CitizenData data = CitizenData.createFromNBT(citizenCompound, this);
+            citizens.put(data.getId(), data);
+        }
+
         //  Buildings
         NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
@@ -160,15 +169,6 @@ public class Colony
             {
                 addBuilding(b);
             }
-        }
-
-        //  Citizens
-        NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < citizenTagList.tagCount(); ++i)
-        {
-            CitizenData data = new CitizenData();
-            data.readFromNBT(citizenTagList.getCompoundTagAt(i), this);
-            citizens.put(data.getId(), data);
         }
 
         //  Workload
@@ -281,7 +281,7 @@ public class Colony
     public ChunkCoordinates getCenter() { return center; }
 
     private void markDirty() { isDirty = true; }
-    private void markCitizensDirty() { isCitizensDirty = true; }
+    public void markCitizensDirty() { isCitizensDirty = true; }
     public void markBuildingsDirty() { isBuildingsDirty = true; }
 
     /**
@@ -348,143 +348,9 @@ public class Colony
             b.onServerTick(event);
         }
 
-        if (event.phase != TickEvent.Phase.END)
+        if (event.phase == TickEvent.Phase.END)
         {
-            return;
-        }
-
-        //  Recompute subscribers every frame (for now)
-        //  Subscribers = Owners + Players within (double working town hall range)
-        Set<EntityPlayerMP> oldSubscribers = subscribers;
-        subscribers = new HashSet<EntityPlayerMP>();
-
-        //  Add owners
-        for (Object o : MinecraftServer.getServer().getConfigurationManager().playerEntityList)
-        {
-            if (o instanceof EntityPlayerMP)
-            {
-                EntityPlayerMP player = (EntityPlayerMP)o;
-                if (owners.contains(player.getUniqueID()))
-                {
-                    subscribers.add(player);
-                }
-            }
-        }
-
-        //  Add nearby players
-        if (world != null)
-        {
-            for (Object o : world.playerEntities)
-            {
-                if (o instanceof EntityPlayerMP)
-                {
-                    EntityPlayerMP player = (EntityPlayerMP)o;
-
-                    if (subscribers.contains(player))
-                    {
-                        //  Already a subscriber
-                        continue;
-                    }
-
-                    double distance = player.getDistanceSq(center.posX, center.posY, center.posZ);
-                    if (distance < Utils.square(Configurations.workingRangeTownhall + 16))
-                    {
-                        //  Players become subscribers if they come within 16 blocks of the edge of the colony
-                        subscribers.add(player);
-                    }
-                    else if (oldSubscribers.contains(player) &&
-                            distance < Utils.square(Configurations.workingRangeTownhall * 2))
-                    {
-                        //  Players remain subscribers while they remain within double the colony's radius
-                        subscribers.add(player);
-                    }
-                }
-            }
-        }
-
-        //  Determine if any new subscribers were added this pass
-        boolean hasNewSubscribers = false;
-        for (EntityPlayerMP player : subscribers)
-        {
-            if (!oldSubscribers.contains(player))
-            {
-                hasNewSubscribers = true;
-                break;
-            }
-        }
-
-        //  Send each type of update packet as appropriate:
-        //      - To Subscribers if the data changes
-        //      - To New Subscribers even if it hasn't changed
-
-        //  ColonyView
-        if (isDirty || hasNewSubscribers)
-        {
-            NBTTagCompound compound = new NBTTagCompound();
-            ColonyView.createNetworkData(this, compound);
-
-            for (EntityPlayerMP player : subscribers)
-            {
-                boolean isNewSubscriber = !oldSubscribers.contains(player);
-                if (isDirty || isNewSubscriber)
-                {
-                    MineColonies.network.sendTo(new ColonyViewMessage(id, compound, isNewSubscriber), player);
-                }
-            }
-        }
-
-        //  Citizens
-        if (isCitizensDirty || hasNewSubscribers)
-        {
-            NBTTagCompound compound = new NBTTagCompound();
-            ColonyView.createCitizenNetworkData(this, compound);
-
-            for (EntityPlayerMP player : subscribers)
-            {
-                if (isCitizensDirty || !oldSubscribers.contains(player))
-                {
-                    MineColonies.network.sendTo(new ColonyViewCitizensMessage(id, compound), player);
-                }
-            }
-        }
-
-        //  Buildings
-        if (isBuildingsDirty || hasNewSubscribers)
-        {
-            for (Building b : buildings.values())
-            {
-                if (b.isDirty() || hasNewSubscribers)
-                {
-                    NBTTagCompound compound = new NBTTagCompound();
-                    b.createViewNetworkData(compound);
-
-                    for (EntityPlayerMP player : subscribers)
-                    {
-                        if (b.isDirty() || !oldSubscribers.contains(player))
-                        {
-                            MineColonies.network.sendTo(new ColonyBuildingViewMessage(id, b.getID(), compound), player);
-                        }
-                    }
-                }
-            }
-        }
-
-        removedBuildings.clear();   //  We will have set these
-
-//        for (EntityPlayerMP oldPlayers : oldSubscribers)
-//        {
-//            if (!subscribers.contains(oldPlayers))
-//            {
-//                //  This player should no longer subscribe
-//            }
-//        }
-
-        isDirty = false;
-        isCitizensDirty = false;
-        isBuildingsDirty = false;
-        for (Building b : buildings.values())
-        {
-            b.clearDirty();
+            updateSubscribers();
         }
     }
 
@@ -504,6 +370,8 @@ public class Colony
 
         if (event.phase == TickEvent.Phase.START)
         {
+            //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
+            //  Consider handing this in an ChunkUnload Event instead?
             for (CitizenData citizen : citizens.values())
             {
                 EntityCitizen entity = citizen.getCitizenEntity();
@@ -607,6 +475,167 @@ public class Colony
         }
     }
 
+
+    /**
+     * Update Subscribers with Colony, Citizen, and Building Views
+     */
+    public void updateSubscribers()
+    {
+        //  Recompute subscribers every frame (for now)
+        //  Subscribers = Owners + Players within (double working town hall range)
+        Set<EntityPlayerMP> oldSubscribers = subscribers;
+        subscribers = new HashSet<EntityPlayerMP>();
+
+        //  Add owners
+        for (Object o : MinecraftServer.getServer().getConfigurationManager().playerEntityList)
+        {
+            if (o instanceof EntityPlayerMP)
+            {
+                EntityPlayerMP player = (EntityPlayerMP)o;
+                if (owners.contains(player.getUniqueID()))
+                {
+                    subscribers.add(player);
+                }
+            }
+        }
+
+        //  Add nearby players
+        if (world != null)
+        {
+            for (Object o : world.playerEntities)
+            {
+                if (o instanceof EntityPlayerMP)
+                {
+                    EntityPlayerMP player = (EntityPlayerMP)o;
+
+                    if (subscribers.contains(player))
+                    {
+                        //  Already a subscriber
+                        continue;
+                    }
+
+                    double distance = player.getDistanceSq(center.posX, center.posY, center.posZ);
+                    if (distance < Utils.square(Configurations.workingRangeTownhall + 16))
+                    {
+                        //  Players become subscribers if they come within 16 blocks of the edge of the colony
+                        subscribers.add(player);
+                    }
+                    else if (oldSubscribers.contains(player) &&
+                            distance < Utils.square(Configurations.workingRangeTownhall * 2))
+                    {
+                        //  Players remain subscribers while they remain within double the colony's radius
+                        subscribers.add(player);
+                    }
+                }
+            }
+        }
+
+        //  Determine if any new subscribers were added this pass
+        boolean hasNewSubscribers = false;
+        for (EntityPlayerMP player : subscribers)
+        {
+            if (!oldSubscribers.contains(player))
+            {
+                hasNewSubscribers = true;
+                break;
+            }
+        }
+
+        if (!subscribers.isEmpty())
+        {
+            //  Send each type of update packet as appropriate:
+            //      - To Subscribers if the data changes
+            //      - To New Subscribers even if it hasn't changed
+
+            //  ColonyView
+            if (isDirty || hasNewSubscribers)
+            {
+                NBTTagCompound compound = new NBTTagCompound();
+                ColonyView.createNetworkData(this, compound);
+
+                for (EntityPlayerMP player : subscribers)
+                {
+                    boolean isNewSubscriber = !oldSubscribers.contains(player);
+                    if (isDirty || isNewSubscriber)
+                    {
+                        MineColonies.network.sendTo(new ColonyViewMessage(id, compound, isNewSubscriber), player);
+                    }
+                }
+            }
+
+            //  Citizens
+            if (isCitizensDirty || hasNewSubscribers)
+            {
+                for (CitizenData citizen : citizens.values())
+                {
+                    if (citizen.isDirty() || hasNewSubscribers)
+                    {
+                        NBTTagCompound compound = new NBTTagCompound();
+                        citizen.createViewNetworkData(compound);
+                        ColonyViewCitizensMessage msg = new ColonyViewCitizensMessage(id, citizen.getId(), compound);
+
+                        for (EntityPlayerMP player : subscribers)
+                        {
+                            if (citizen.isDirty() || !oldSubscribers.contains(player))
+                            {
+                                MineColonies.network.sendTo(msg, player);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //  Buildings
+            if (isBuildingsDirty || hasNewSubscribers)
+            {
+                for (Building building : buildings.values())
+                {
+                    if (building.isDirty() || hasNewSubscribers)
+                    {
+                        NBTTagCompound compound = new NBTTagCompound();
+                        building.createViewNetworkData(compound);
+                        ColonyBuildingViewMessage msg = new ColonyBuildingViewMessage(id, building.getID(), compound);
+
+                        for (EntityPlayerMP player : subscribers)
+                        {
+                            if (building.isDirty() || !oldSubscribers.contains(player))
+                            {
+                                MineColonies.network.sendTo(msg, player);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        removedCitizens.clear();
+        removedBuildings.clear();   //  We will have set these
+
+//        for (EntityPlayerMP oldPlayers : oldSubscribers)
+//        {
+//            if (!subscribers.contains(oldPlayers))
+//            {
+//                //  This player should no longer subscribe
+//            }
+//        }
+
+        isDirty = false;
+        isCitizensDirty = false;
+        isBuildingsDirty = false;
+
+        for (Building building : buildings.values())
+        {
+            building.clearDirty();
+        }
+        for (CitizenData citizen : citizens.values())
+        {
+            citizen.clearDirty();
+        }
+    }
+
+    /**
+     * Spawn a brand new Citizen
+     */
     private void spawnCitizen()
     {
         spawnCitizen(null);
@@ -630,15 +659,15 @@ public class Colony
 
         if(spawnPoint != null)
         {
-            EntityCitizen citizen = null;
+            EntityCitizen entity = null;
 
             if (data == null)
             {
-                citizen = new EntityCitizen(world);
+                entity = new EntityCitizen(world);
 
-                data = new CitizenData();
-                citizen.setColony(this, data);
+                data = CitizenData.createFromEntity(entity, this);
                 citizens.put(data.getId(), data);
+                entity.setColony(this, data);
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
@@ -649,12 +678,12 @@ public class Colony
             {
                 //  TODO: Restore the actual EntityCitizen subclass
                 //  (Although the current code is pretty good about detecting and fixing the issue)
-                citizen = new EntityCitizen(world, data.getId());
-                citizen.setColony(this, data);
+                entity = new EntityCitizen(world, data.getId());
+                entity.setColony(this, data);
             }
 
-            citizen.setPosition(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
-            world.spawnEntityInWorld(citizen);
+            entity.setPosition(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
+            world.spawnEntityInWorld(entity);
 
             markCitizensDirty();
         }
@@ -676,6 +705,7 @@ public class Colony
         return townhall;
     }
 
+    public List<UUID> getRemovedCitizens() { return Collections.unmodifiableList(removedCitizens); }
     public List<ChunkCoordinates> getRemovedBuildings() { return Collections.unmodifiableList(removedBuildings); }
 
     /**
@@ -735,18 +765,10 @@ public class Colony
             markDirty();
         }
 
+        //  Allow Citizens to fix up any data that wasn't fixed up by the Building's own onDestroyed
         for (CitizenData citizen : citizens.values())
         {
-            if (citizen.getHomeBuilding() == building)
-            {
-                citizen.setHomeBuilding(null);
-            }
-
-            if (citizen.getWorkBuilding() == building)
-            {
-                EntityCitizen entity = citizen.getCitizenEntity();
-                citizen.setWorkBuilding(null);
-            }
+            citizen.onRemoveBuilding(building);
         }
     }
 
@@ -781,61 +803,28 @@ public class Colony
 
     public void removeCitizen(EntityCitizen citizen)
     {
-        removeCitizen(citizen.getUniqueID());
+        removeCitizen(citizen.getCitizenData());
     }
 
-    public void removeCitizen(UUID citizenId)
+    public void removeCitizen(CitizenData citizen)
     {
-        citizens.remove(citizenId);
-        markCitizensDirty();
+        removedCitizens.add(citizen.getId());
+        citizens.remove(citizen.getId());
+        markDirty();
+
+//        if (citizen.getHomeBuilding() != null)
+//        {
+//            citizen.getHomeBuilding().removeCitizen(citizen);
+//        }
+//
+//        if (citizen.getWorkBuilding() != null)
+//        {
+//            citizen.getWorkBuilding().removeCitizen(citizen);
+//        }
 
         for (Building building : buildings.values())
         {
-            building.removeCitizen(citizenId);
-        }
-    }
-
-    public CitizenData registerCitizen(EntityCitizen citizen)
-    {
-        if (!citizens.containsKey(citizen.getUniqueID()))
-        {
-            MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but not known to colony",
-                    citizen.getUniqueID()));
-            return null;
-        }
-
-        CitizenData data = citizens.get(citizen.getUniqueID());
-        if (data == null)
-        {
-            throw new IllegalStateException("CitizenData missing in Citizen map.");
-        }
-
-        EntityCitizen existingCitizen = data.getCitizenEntity();
-        if (existingCitizen != null && existingCitizen != citizen)
-        {
-            //  This Citizen already has a different Entity registered to it
-            MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but already have a citizen ('%s')",
-                    citizen.getUniqueID(), existingCitizen.getUniqueID()));
-            return null;
-        }
-
-        data.registerCitizenEntity(citizen);
-
-        markCitizensDirty();
-        return data;
-    }
-
-    public void replaceCitizen(EntityCitizen oldCitizen, EntityCitizen newCitizen)
-    {
-        CitizenData data = citizens.get(oldCitizen.getUniqueID());
-        if (data != null)
-        {
-            data.registerCitizenEntity(newCitizen);
-            markCitizensDirty();
-        }
-        else
-        {
-            MineColonies.logger.error(String.format("Colony.replaceCitizen() - Citizen %s is not a member of the Colony.", oldCitizen.getUniqueID().toString()));
+            building.removeCitizen(citizen);
         }
     }
 
@@ -865,15 +854,13 @@ public class Colony
      *
      * @return Citizen with no current job
      */
-    public EntityCitizen getIdleCitizen()
+    public CitizenData getJoblessCitizen()
     {
         for (CitizenData citizen : citizens.values())
         {
-            EntityCitizen entity = citizen.getCitizenEntity();
-            //if (citizen != null && citizen.getColonyJob() == null)
-            if (entity != null && entity.getWorkBuilding() == null)
+            if (citizen.getWorkBuilding() == null)
             {
-                return entity;
+                return citizen;
             }
         }
 
@@ -903,13 +890,14 @@ public class Colony
         for (CitizenData citizen : citizens.values())
         {
             EntityCitizen entity = citizen.getCitizenEntity();
-            if (entity != null && entity instanceof EntityWorker)
+            if (citizen.getWorkBuilding() != null &&
+                    entity != null &&
+                    entity instanceof EntityWorker)
             {
                 EntityWorker worker = (EntityWorker)entity;
-
-                if (worker.getWorkBuilding() != null && !worker.hasItemsNeeded())
+                if (!worker.hasItemsNeeded())
                 {
-                    deliverymanRequired.add(worker.getWorkBuilding().getLocation());
+                    deliverymanRequired.add(citizen.getWorkBuilding().getLocation());
                 }
             }
         }

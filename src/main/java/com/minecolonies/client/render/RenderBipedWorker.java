@@ -22,13 +22,13 @@ public class RenderBipedWorker extends RenderBipedCitizen
         {
             EntityCitizen entityCitizen = (EntityCitizen) entityliving;
 
-            if(entityCitizen.getSex() == 0)
+            if(entityCitizen.isFemale())
             {
-                modelBipedMain = maleModel;
+                modelBipedMain = femaleModel;
             }
             else
             {
-                modelBipedMain = femaleModel;
+                modelBipedMain = maleModel;
             }
             mainModel = modelBipedMain;
         }

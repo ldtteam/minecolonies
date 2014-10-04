@@ -24,7 +24,7 @@ public class EntityAISleep extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        return !citizen.worldObj.isDaytime();
+        return citizen.isSleepTime();
     }
 
     @Override

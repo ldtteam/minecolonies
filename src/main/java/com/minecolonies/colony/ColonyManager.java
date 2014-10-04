@@ -26,10 +26,10 @@ public class ColonyManager {
 
     private static int numWorldsLoaded;    //  Used to trigger loading/unloading colonies
 
-    final static String FILENAME_MINECOLONIES_PATH = "minecolonies";
-    final static String FILENAME_MINECOLONIES = "colonies.dat";
+    private final static String FILENAME_MINECOLONIES_PATH = "minecolonies";
+    private final static String FILENAME_MINECOLONIES = "colonies.dat";
 
-    final static String TAG_COLONIES = "colonies";
+    private final static String TAG_COLONIES = "colonies";
 
     public static void init()
     {
@@ -192,7 +192,6 @@ public class ColonyManager {
         return null;
     }
 
-
     /**
      * Get a Building by a World and coordinates
      *
@@ -224,7 +223,7 @@ public class ColonyManager {
      * @param id UUID of colony
      * @return
      */
-    public static ColonyView getColonyViewById(UUID id)
+    public static ColonyView getColonyView(UUID id)
     {
         return colonyViews.get(id);
     }
@@ -236,13 +235,13 @@ public class ColonyManager {
      * @param coord
      * @return
      */
-    public static ColonyView getColonyViewByCoord(World w, ChunkCoordinates coord)
+    public static ColonyView getColonyView(World w, ChunkCoordinates coord)
     {
-        return getColonyViewByCoord(w, coord.posX, coord.posY, coord.posZ);
+        return getColonyView(w, coord.posX, coord.posY, coord.posZ);
     }
 
 
-    public static ColonyView getColonyViewByCoord(World w, int x, int y, int z)
+    public static ColonyView getColonyView(World w, int x, int y, int z)
     {
         for (ColonyView c : colonyViews.values())
         {
@@ -534,17 +533,16 @@ public class ColonyManager {
      * @param colonyId
      * @param colonyData
      */
-    static public IMessage handleColonyViewPacket(UUID colonyId, NBTTagCompound colonyData, boolean newSubscription)
+    static public IMessage handleColonyViewPacket(UUID colonyId, NBTTagCompound colonyData, boolean isNewSubscription)
     {
-        ColonyView view = getColonyViewById(colonyId);
+        ColonyView view = getColonyView(colonyId);
         if (view == null)
         {
-            int dimensionId = colonyData.getInteger(ColonyView.TAG_DIMENSION);
-            view = new ColonyView(colonyId);
+            view = ColonyView.createFromNBT(colonyId, colonyData);
             colonyViews.put(colonyId, view);
         }
 
-        return view.handleColonyViewPacket(colonyData, newSubscription);
+        return view.handleColonyViewPacket(colonyData, isNewSubscription);
     }
 
     /**
@@ -552,12 +550,12 @@ public class ColonyManager {
      * @param colonyId
      * @param colonyData
      */
-    static public IMessage handleColonyViewCitizensPacket(UUID colonyId, NBTTagCompound colonyData)
+    static public IMessage handleColonyViewCitizensPacket(UUID colonyId, UUID citizenId, NBTTagCompound colonyData)
     {
-        ColonyView view = getColonyViewById(colonyId);
+        ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
-            return view.handleColonyViewCitizensPacket(colonyData);
+            return view.handleColonyViewCitizensPacket(citizenId, colonyData);
         }
 
         return null;
@@ -570,7 +568,7 @@ public class ColonyManager {
      */
     static public IMessage handleColonyBuildingViewPacket(UUID colonyId, ChunkCoordinates buildingId, NBTTagCompound buildingData)
     {
-        ColonyView view = getColonyViewById(colonyId);
+        ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             return view.handleColonyBuildingViewPacket(buildingId, buildingData);

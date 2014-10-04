@@ -17,15 +17,15 @@ public class ColonyViewMessage implements IMessage
 {
     private UUID colonyId;
     private NBTTagCompound colonyView;
-    private boolean newSubscription;
+    private boolean isNewSubscription;
 
     public ColonyViewMessage(){}
 
-    public ColonyViewMessage(UUID colonyId, NBTTagCompound colonyView, boolean newSubscription)
+    public ColonyViewMessage(UUID colonyId, NBTTagCompound colonyView, boolean isNewSubscription)
     {
         this.colonyId = colonyId;
         this.colonyView = colonyView;
-        this.newSubscription = newSubscription;
+        this.isNewSubscription = isNewSubscription;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class ColonyViewMessage implements IMessage
     {
         buf.writeLong(colonyId.getMostSignificantBits());
         buf.writeLong(colonyId.getLeastSignificantBits());
-        buf.writeBoolean(newSubscription);
+        buf.writeBoolean(isNewSubscription);
         ByteBufUtils.writeTag(buf, colonyView);
     }
 
@@ -41,7 +41,7 @@ public class ColonyViewMessage implements IMessage
     public void fromBytes(ByteBuf buf)
     {
         colonyId = new UUID(buf.readLong(), buf.readLong());
-        newSubscription = buf.readBoolean();
+        isNewSubscription = buf.readBoolean();
         colonyView = ByteBufUtils.readTag(buf);
     }
 
@@ -50,7 +50,7 @@ public class ColonyViewMessage implements IMessage
         @Override
         public IMessage onMessage(ColonyViewMessage message, MessageContext ctx)
         {
-            return ColonyManager.handleColonyViewPacket(message.colonyId, message.colonyView, message.newSubscription);
+            return ColonyManager.handleColonyViewPacket(message.colonyId, message.colonyView, message.isNewSubscription);
         }
     }
 }

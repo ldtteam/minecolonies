@@ -1,15 +1,15 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.client.gui.GuiEntityCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
-import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.GuiHandler;
@@ -35,7 +35,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -46,17 +45,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public  ResourceLocation texture;
     private InventoryCitizen inventory;
 
-    private UUID                          colonyId;
-    private Colony                        colony;
-    private CitizenData                   citizenData;
+    private UUID        colonyId;   //  Client and Server
+    private UUID        citizenId;  //  Client Only
 
-    private ColonyJob colonyJob;
+    private Colony      colony;
+    private CitizenData citizenData;
+
+    //private ColonyJob colonyJob;
 
     protected Status status = Status.IDLE;
 
-    private static final int DATA_TEXTURE = 13;
-    private static final int DATA_LEVEL   = 14;
-    private static final int DATA_GENDER  = 15;
+    private static final int DATA_TEXTURE    = 13;
+    private static final int DATA_LEVEL      = 14;
+    private static final int DATA_IS_FEMALE  = 15;
+    private static final int DATA_COLONY_ID  = 16;
+    private static final int DATA_CITIZEN_ID = 17;  //  Because Entity UniqueIDs are not identical between client and server
 
     public EntityCitizen(World world, UUID id)
     {
@@ -74,19 +77,25 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
 
+        this.renderDistanceWeight = 2.0D;
+
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setCanSwim(true);
         this.getNavigator().setEnterDoors(true);
         initTasks();
     }
 
+    public boolean isWorker(){ return false; }
+
     @Override
     public void entityInit()
     {
         super.entityInit();
+        dataWatcher.addObject(DATA_COLONY_ID, "");
+        dataWatcher.addObject(DATA_CITIZEN_ID, "");
         dataWatcher.addObject(DATA_TEXTURE, worldObj.rand.nextInt(3) + 1);//textureID
         dataWatcher.addObject(DATA_LEVEL, 0);
-        dataWatcher.addObject(DATA_GENDER, 0);
+        dataWatcher.addObject(DATA_IS_FEMALE, 0);
     }
 
     protected void initTasks()
@@ -101,15 +110,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
 
-        if (colonyJob != null)
-        {
-            colonyJob.addTasks(this.tasks);
-        }
+//        if (colonyJob != null)
+//        {
+//            colonyJob.addTasks(this.tasks);
+//        }
     }
 
-    public ColonyJob getColonyJob(){ return colonyJob; }
-    public void setColonyJob(ColonyJob j)
-    {
+//    public ColonyJob getColonyJob(){ return colonyJob; }
+//    public void setColonyJob(ColonyJob j)
+//    {
 //        Object currentTasks[] = this.tasks.taskEntries.toArray();
 //        for (Object task : currentTasks)
 //        {
@@ -119,7 +128,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 //        colonyJob = j;
 //
 //        initTasks();
-    }
+//    }
 
     protected String getJobName()
     {
@@ -152,7 +161,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             textureBase += getJobName(); //colonyJob.getName();
         }
 
-        textureBase += getSex() == CitizenData.SEX_MALE ? "Male" : "Female";
+        textureBase += isFemale() ? "Female" : "Male";
 
         texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
     }
@@ -175,6 +184,24 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if (worldObj.isRemote)
         {
+            if (colonyId == null)
+            {
+                String colonyIdString = dataWatcher.getWatchableObjectString(DATA_COLONY_ID);
+                if (colonyIdString != null)
+                {
+                    colonyId = UUID.fromString(colonyIdString);
+                }
+            }
+
+            if (citizenId == null)
+            {
+                String citizenIdString = dataWatcher.getWatchableObjectString(DATA_CITIZEN_ID);
+                if (citizenIdString != null)
+                {
+                    citizenId = UUID.fromString(citizenIdString);
+                }
+            }
+
             return;
         }
 
@@ -194,19 +221,22 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 return;
             }
 
-//            EntityCitizen existingCitizen = colony.getCitizen(getUniqueID());
-//            if (existingCitizen != null && existingCitizen != this)
-//            {
-//                //  There's already an existing registered EntityCitizen with this ID... we should suicide.
-//                colony = null;
-//                setDead();
-//                return;
-//            }
-
-            CitizenData data = c.registerCitizen(this);
+            CitizenData data = c.getCitizen(getUniqueID());
             if (data == null)
             {
-                //  Failed to register citizen to the Colony, it must not actually be a citizen of the colony anymore
+                //  Citizen does not exist in the Colony
+                MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but not known to colony",
+                        getUniqueID()));
+                setDead();
+                return;
+            }
+
+            EntityCitizen existingCitizen = data.getCitizenEntity();
+            if (existingCitizen != null && existingCitizen != this)
+            {
+                //  This Citizen already has a different Entity registered to it
+                MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but already have a citizen ('%s')",
+                        getUniqueID(), existingCitizen.getUniqueID()));
                 setDead();
                 return;
             }
@@ -214,26 +244,18 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             setColony(c, data);
         }
 
-        if (citizenData == null)
+        if (isWorker())
         {
-            setDead();
-            return;
-        }
-
-        if (!this.getClass().equals(EntityCitizen.class))
-        {
+            //  Worker entity subclass, with no work building
             if (citizenData.getWorkBuilding() == null)
             {
                 removeFromWorkBuilding();
             }
         }
-        else
+        else if (citizenData.getWorkBuilding() != null)
         {
-            BuildingWorker work = citizenData.getWorkBuilding();
-            if (work != null)
-            {
-                addToWorkBuilding(work);
-            }
+            //  Non-Worker entity subclass, with a work building - become that worker subclass
+            addToWorkBuilding(citizenData.getWorkBuilding());
         }
 
 //        BuildingWorker b = (workBuilding != null) ? workBuilding.get() : null;
@@ -273,7 +295,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public boolean interact(EntityPlayer player)
     {
-        GuiHandler.showGuiScreen(new GuiEntityCitizen(this, player, worldObj));
+        if (worldObj.isRemote)
+        {
+            CitizenData.View view = getCitizenDataView();
+            if (view != null)
+            {
+                GuiHandler.showGuiScreen(new GuiEntityCitizen(this, view, player, worldObj));
+            }
+        }
         return true;
     }
 
@@ -282,20 +311,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if (colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getOwners()), "tile.blockHutTownhall.messageColonistDead");
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getOwners()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
             colony.removeCitizen(this);
-        }
-
-        if (getHomeBuilding() != null)
-        {
-            getHomeBuilding().removeCitizen(getUniqueID());
-            setHomeBuilding(null);
-        }
-
-        if (getWorkBuilding() != null)
-        {
-            getWorkBuilding().removeCitizen(getUniqueID());
-            setWorkBuilding(null);
         }
 
         super.onDeath(par1DamageSource);
@@ -316,14 +333,28 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.updateObject(DATA_LEVEL, citizenData != null ? citizenData.getLevel() : 0);
     }
 
-    public int getSex()
+    public boolean isFemale()
     {
-        return dataWatcher.getWatchableObjectInt(DATA_GENDER);
+        return (dataWatcher.getWatchableObjectInt(DATA_IS_FEMALE) != 0);
     }
 
     public CitizenData getCitizenData()
     {
         return citizenData;
+    }
+
+    public CitizenData.View getCitizenDataView()
+    {
+        if (colonyId != null && citizenId != null)
+        {
+            ColonyView colonyView = ColonyManager.getColonyView(colonyId);
+            if (colonyView != null)
+            {
+                return colonyView.getCitizen(citizenId);
+            }
+        }
+
+        return null;
     }
 
     public Colony getColony() { return colony; }
@@ -343,32 +374,22 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         colonyId = colony.getID();
         citizenData = data;
 
-        //  Is this newly created Citizen Data?
-        if (citizenData.getId() == null)
-        {
-            citizenData.setup(this);
-        }
-
         setCustomNameTag(citizenData.getName());
 
-        dataWatcher.updateObject(DATA_GENDER, citizenData.getSex());
-        dataWatcher.updateObject(DATA_TEXTURE, citizenData != null ? citizenData.getTextureId() : 0);
+        dataWatcher.updateObject(DATA_COLONY_ID, colonyId.toString());
+        dataWatcher.updateObject(DATA_CITIZEN_ID, citizenData.getId().toString());
+        dataWatcher.updateObject(DATA_IS_FEMALE, citizenData.isFemale() ? 1 : 0);
+        dataWatcher.updateObject(DATA_TEXTURE, citizenData.getTextureId());
         updateLevel();
 
         setTexture();
+
+        citizenData.setCitizenEntity(this);
     }
 
     public BuildingHome getHomeBuilding()
     {
         return (citizenData != null) ? citizenData.getHomeBuilding() : null;
-    }
-
-    public void setHomeBuilding(BuildingHome b)
-    {
-        if (citizenData != null)
-        {
-            citizenData.setHomeBuilding(b);
-        }
     }
 
     public ChunkCoordinates getHomePosition()
@@ -398,42 +419,24 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return (citizenData != null) ? citizenData.getWorkBuilding() : null;
     }
 
-    public void setWorkBuilding(BuildingWorker b)
-    {
-        if (citizenData != null)
-        {
-            citizenData.setWorkBuilding(b);
-        }
-    }
-
     public void addToWorkBuilding(BuildingWorker building)
     {
-        setWorkBuilding(building);
-
         NBTTagCompound nbt = new NBTTagCompound();
         this.writeToNBT(nbt);
-        setWorkBuilding(null);
         this.setDead();
 
         EntityCitizen worker = building.createWorker(worldObj);
         worker.readFromNBT(nbt);
         worker.setColony(colony, citizenData);
-        building.setWorker(worker);
+
         worldObj.spawnEntityInWorld(worker);
         ChunkCoordUtils.tryMoveLivingToXYZ(worker, building.getLocation());
 
-        if (colony != null)
-        {
-            colony.replaceCitizen(this, worker);
-        }
-
-        this.clearColony();
+        clearColony();
     }
 
     public void removeFromWorkBuilding()
     {
-        setWorkBuilding(null);
-
         NBTTagCompound nbt = new NBTTagCompound();
         this.writeToNBT(nbt);
         this.setDead();
@@ -441,14 +444,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         EntityCitizen citizen = new EntityCitizen(worldObj);
         citizen.readFromNBT(nbt);
         citizen.setColony(colony, citizenData);
+
         worldObj.spawnEntityInWorld(citizen);
 
-        if (colony != null)
-        {
-            colony.replaceCitizen(this, citizen);
-        }
-
-        this.clearColony();
+        clearColony();
     }
 
     public Status getStatus()

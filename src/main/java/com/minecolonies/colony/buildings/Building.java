@@ -2,6 +2,7 @@ package com.minecolonies.colony.buildings;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.*;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.tileentities.*;
@@ -18,7 +19,6 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public abstract class Building
 {
@@ -39,10 +39,10 @@ public abstract class Building
     private static Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<Class<?>, Class<?>>();
     private static Map<Integer, Class<?>>  classNameHashToClassMap      = new HashMap<Integer, Class<?>>();
 
-    final static String TAG_TYPE           = "type";
-    //    final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
-    final static String TAG_LOCATION       = "location";  //  Location is unique (within a Colony) and so can double as the Id
-    final static String TAG_BUILDING_LEVEL = "level";
+    private final static String TAG_TYPE           = "type";
+    //    private final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
+    private final static String TAG_LOCATION       = "location";  //  Location is unique (within a Colony) and so can double as the Id
+    private final static String TAG_BUILDING_LEVEL = "level";
 
     /**
      * Add a given Building mapping
@@ -255,9 +255,9 @@ public abstract class Building
         return (tileEntity != null) ? tileEntity.get() : null;
     }
 
-    public boolean isDirty() { return isDirty; }
-    public void clearDirty() { isDirty = false; }
-    public void markDirty()
+    public final boolean isDirty() { return isDirty; }
+    public final void clearDirty() { isDirty = false; }
+    public final void markDirty()
     {
         isDirty = true;
         colony.markBuildingsDirty();
@@ -270,13 +270,12 @@ public abstract class Building
         colony.removeBuilding(this);
     }
 
-    public void removeCitizen(UUID citizenId) {}
+    public void removeCitizen(CitizenData citizen) {}
 
     public int getGuiId() { return 0; }
 
     public void onServerTick(TickEvent.ServerTickEvent event) {}
     public void onWorldTick(TickEvent.WorldTickEvent event) {}
-
 
     public void requestUpgrade()
     {
