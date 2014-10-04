@@ -77,6 +77,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
 
+        this.renderDistanceWeight = 2.0D;
+
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setCanSwim(true);
         this.getNavigator().setEnterDoors(true);
