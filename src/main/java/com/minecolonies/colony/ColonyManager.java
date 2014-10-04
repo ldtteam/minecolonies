@@ -279,7 +279,7 @@ public class ColonyManager {
 
         for (ColonyView c : colonyViews.values())
         {
-            if (c.isOwner(player.getUniqueID()))
+            if (c.isOwner(player.getGameProfile().getId()))
             {
                 results.add(c);
             }

@@ -79,7 +79,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
                 colony = ColonyManager.createColony(world, hut.getPosition());
                 colony.setName(colonyName);
-                colony.addOwner(player.getUniqueID());
+                colony.addOwner(player.getGameProfile().getId());
 
                 //  TODO: Deprecate this code?
                 PlayerProperties.get(player).placeTownhall(x, y, z);

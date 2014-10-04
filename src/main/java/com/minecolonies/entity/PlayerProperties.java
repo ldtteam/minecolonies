@@ -88,7 +88,7 @@ public class PlayerProperties implements IExtendedEntityProperties
      */
     private static String getSaveKey(EntityPlayer player)
     {
-        return player.getUniqueID().toString() + ":" + Constants.PlayerPropertyName;
+        return player.getGameProfile().getId().toString() + ":" + Constants.PlayerPropertyName;
     }
 
     /**

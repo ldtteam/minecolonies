@@ -80,7 +80,7 @@ public class ColonyView
 
     public Set<UUID> getOwners() { return Collections.unmodifiableSet(owners); }
     public boolean isOwner(UUID o) { return owners.contains(o); }
-    public boolean isOwner(EntityPlayer player) { return owners.contains(player.getUniqueID()); }
+    public boolean isOwner(EntityPlayer player) { return owners.contains(player.getGameProfile().getId()); }
     public void addOwner(UUID o) { owners.add(o); }
     public void removeOwner(UUID o) { owners.remove(o); }
 
