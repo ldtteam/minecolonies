@@ -266,7 +266,7 @@ public class Colony
 
     public Set<UUID> getOwners() { return Collections.unmodifiableSet(owners); }
     public boolean isOwner(UUID o) { return owners.contains(o); }
-    public boolean isOwner(EntityPlayer player) { return owners.contains(player.getUniqueID()); }
+    public boolean isOwner(EntityPlayer player) { return owners.contains(player.getGameProfile().getId()); }
     public void addOwner(UUID o)
     {
         owners.add(o);
@@ -492,7 +492,7 @@ public class Colony
             if (o instanceof EntityPlayerMP)
             {
                 EntityPlayerMP player = (EntityPlayerMP)o;
-                if (owners.contains(player.getUniqueID()))
+                if (owners.contains(player.getGameProfile().getId()))
                 {
                     subscribers.add(player);
                 }

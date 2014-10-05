@@ -137,7 +137,7 @@ public class Utils
     {
         for(int i = 0; i < world.playerEntities.size(); ++i)
         {
-            if(id.equals(((EntityPlayer) world.playerEntities.get(i)).getUniqueID()))
+            if(id.equals(((EntityPlayer) world.playerEntities.get(i)).getGameProfile().getId()))
             {
                 return (EntityPlayer) world.playerEntities.get(i);
             }
@@ -180,7 +180,7 @@ public class Utils
             if(o instanceof EntityPlayer)
             {
                 EntityPlayer player = (EntityPlayer) o;
-                if(ids.contains(player.getUniqueID()))
+                if(ids.contains(player.getGameProfile().getId()))
                 {
                     players.add(player);
                     if(players.size() == ids.size())

@@ -135,7 +135,7 @@ public class EventHandler
                 }
 
                 //  Players are currently only allowed a single colony
-                if (!ColonyManager.getColoniesByOwner(player.getUniqueID()).isEmpty())
+                if (!ColonyManager.getColoniesByOwner(player.getGameProfile().getId()).isEmpty())
                 {
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
                     return false;
