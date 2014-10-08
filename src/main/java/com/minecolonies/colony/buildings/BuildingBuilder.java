@@ -6,6 +6,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.entity.jobs.JobBuilder;
 import com.minecolonies.lib.EnumGUI;
@@ -29,7 +30,7 @@ public class BuildingBuilder extends BuildingWorker
 
     //  Classic Style of Jobs
     @Override
-    public EntityCitizen createWorker(World world) { return new EntityBuilder(world); }
+    public EntityWorker createWorker(World world) { return new EntityBuilder(world); }
 
     //  Future Style of Jobs
     @Override
