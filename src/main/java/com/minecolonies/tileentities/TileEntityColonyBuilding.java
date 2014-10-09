@@ -4,6 +4,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -12,6 +14,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ChunkCoordinates;
 
 import java.lang.ref.WeakReference;
+import java.util.Map;
 import java.util.UUID;
 
 public class TileEntityColonyBuilding extends TileEntityChest
@@ -70,7 +73,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Override
     public boolean isUseableByPlayer(EntityPlayer player)
     {
-        return super.isUseableByPlayer(player) && this.isPlayerOwner(player);
+        return super.isUseableByPlayer(player) && this.hasAccessPermission(player);
     }
 
     @Override
@@ -107,14 +110,14 @@ public class TileEntityColonyBuilding extends TileEntityChest
         return colony.getBuilding(getPosition());
     }
 
-    public boolean isPlayerOwner(EntityPlayer player)
+    public boolean hasAccessPermission(EntityPlayer player)//This is called every tick the GUI is open. Is that bad?
     {
         if(building == null) return true;
 
         Building b = building.get();
         if (b == null) return true;
 
-        return b.getColony().isOwner(player);
+        return b.getColony().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
 
     public ChunkCoordinates getPosition()

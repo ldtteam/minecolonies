@@ -3,6 +3,7 @@ package com.minecolonies.colony;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityWorker;
@@ -48,8 +49,10 @@ public class Colony
     private final int        dimensionId;
     private ChunkCoordinates center;
 
-    //  Administration
-    private Set<UUID> owners = new HashSet<UUID>();
+    //  Administration/permissions
+    private Map<UUID, Permissions.Rank> owners = new HashMap<UUID, Permissions.Rank>();
+    private Map<Permissions.Rank, Integer> permissions = Constants.DEFAULT_PERMISSIONS;
+    private int autoHostile = 0;//Off
 
     //  Buildings
     private BuildingTownHall                townhall;
@@ -69,10 +72,14 @@ public class Colony
     private final static String TAG_CENTER            = "center";
     private final static String TAG_MAX_CITIZENS      = "maxCitizens";
     private final static String TAG_OWNERS            = "owners";
-    private final static String TAG_BUILDINGS_TYPO    = "buidings";
+    private final static String TAG_OWNERS_ID         = "ownersID";
+    private final static String TAG_OWNERS_RANK       = "ownersRank";
     private final static String TAG_BUILDINGS         = "buildings";
     private final static String TAG_CITIZENS          = "citizens";
     private final static String TAG_BUILDING_UPGRADES = "buildingUpgrades";
+    private final static String TAG_AUTO_HOSTILE = "autoHostile";
+    private final static String TAG_PERMISSIONS = "permissions";
+    private final static String TAG_PERMISSIONS_FLAGS = "permissionsFlags";
 
     /**
      * Constructor for a newly created Colony.
@@ -143,11 +150,32 @@ public class Colony
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 
         //  Owners
-        NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, NBT.TAG_STRING);
-        for (int i = 0; i < ownerTagList.tagCount(); ++i)
+        try {
+            NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, NBT.TAG_COMPOUND);
+            for (int i = 0; i < ownerTagList.tagCount(); ++i) {
+                NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
+                String owner = ownerCompound.getString(TAG_OWNERS_ID);
+                Permissions.Rank rank = Permissions.Rank.valueOf(ownerCompound.getString(TAG_OWNERS_RANK));
+                owners.put(UUID.fromString(owner), rank);
+            }
+        }
+        catch(ClassCastException e)//old way
         {
-            String owner = ownerTagList.getStringTagAt(i);
-            owners.add(UUID.fromString(owner));
+            NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, NBT.TAG_STRING);
+            for (int i = 0; i < ownerTagList.tagCount(); ++i) {
+                String owner = ownerTagList.getStringTagAt(i);
+                owners.put(UUID.fromString(owner), Permissions.Rank.OWNER);
+            }
+        }
+
+        //Permissions
+        NBTTagList permissionsTagList = compound.getTagList(TAG_PERMISSIONS, NBT.TAG_COMPOUND);
+        for (int i = 0; i < permissionsTagList.tagCount(); ++i)
+        {
+            NBTTagCompound permissionsCompound = permissionsTagList.getCompoundTagAt(i);
+            Permissions.Rank rank = Permissions.Rank.valueOf(permissionsCompound.getString(TAG_OWNERS_RANK));
+            int flags = permissionsCompound.getInteger(TAG_PERMISSIONS_FLAGS);
+            permissions.put(rank, flags);
         }
 
         //  Citizens before Buildings, because Buildings track the Citizens
@@ -180,6 +208,8 @@ public class Colony
             String name = upgrade.getString(TAG_NAME);
             buildingUpgradeMap.put(coords, name);
         }
+
+        autoHostile = compound.getInteger(TAG_AUTO_HOSTILE);
     }
 
     /**
@@ -201,11 +231,25 @@ public class Colony
 
         //  Owners
         NBTTagList ownerTagList = new NBTTagList();
-        for (UUID owner : owners)
+        for (Map.Entry<UUID, Permissions.Rank> owner : owners.entrySet())
         {
+            NBTTagCompound ownersCompound = new NBTTagCompound();
+            ownersCompound.setString(TAG_OWNERS_ID, owner.getKey().toString());
+            ownersCompound.setString(TAG_OWNERS_RANK, owner.getValue().name());
             ownerTagList.appendTag(new NBTTagString(owner.toString()));
         }
         compound.setTag(TAG_OWNERS, ownerTagList);
+
+        // Permissions
+        NBTTagList permissionsTagList = new NBTTagList();
+        for (Map.Entry<Permissions.Rank, Integer> entry : permissions.entrySet())
+        {
+            NBTTagCompound permissionsCompound = new NBTTagCompound();
+            permissionsCompound.setString(TAG_OWNERS_RANK, entry.getKey().name());
+            permissionsCompound.setInteger(TAG_PERMISSIONS_FLAGS, entry.getValue());
+            permissionsTagList.appendTag(permissionsCompound);
+        }
+        compound.setTag(TAG_PERMISSIONS, permissionsTagList);
 
         //  Buildings
         NBTTagList buildingTagList = new NBTTagList();
@@ -240,6 +284,8 @@ public class Colony
             }
             compound.setTag(TAG_BUILDING_UPGRADES, buildingUpgradeTagList);
         }
+
+        compound.setInteger(TAG_AUTO_HOSTILE, autoHostile);
     }
 
     public UUID getID()
@@ -264,17 +310,90 @@ public class Colony
         markDirty();
     }
 
-    public Set<UUID> getOwners() { return Collections.unmodifiableSet(owners); }
-    public boolean isOwner(UUID o) { return owners.contains(o); }
-    public boolean isOwner(EntityPlayer player) { return owners.contains(player.getGameProfile().getId()); }
-    public void addOwner(UUID o)
+    //TODO improve all permissions methods
+    public Map<UUID, Permissions.Rank> getPlayers() { return Collections.unmodifiableMap(owners); }
+
+    public Set<UUID> getMessagePlayers()
     {
-        owners.add(o);
+        Set<Permissions.Rank> ranks = new HashSet<Permissions.Rank>();
+        for(Permissions.Rank rank : permissions.keySet())
+        {
+            if(hasPermission(rank, Permissions.Action.SEND_MESSAGES))
+            {
+                ranks.add(rank);
+            }
+        }
+        return getPlayersByRank(ranks);
+    }
+
+    public Set<UUID> getPlayersByRank(Permissions.Rank rank)
+    {
+        Set<UUID> players = new HashSet<UUID>();
+        for(Map.Entry<UUID, Permissions.Rank> entry : owners.entrySet())
+        {
+            if(entry.getValue().equals(rank))
+            {
+                players.add(entry.getKey());
+            }
+        }
+        return Collections.unmodifiableSet(players);
+    }
+
+    public Set<UUID> getPlayersByRank(Set<Permissions.Rank> ranks)
+    {
+        Set<UUID> players = new HashSet<UUID>();
+        for(Map.Entry<UUID, Permissions.Rank> entry : owners.entrySet())
+        {
+            if(ranks.contains(entry.getValue()))
+            {
+                players.add(entry.getKey());
+            }
+        }
+        return Collections.unmodifiableSet(players);
+    }
+
+    public Map<Permissions.Rank, Integer> getPermissions()
+    {
+        return permissions;
+    }
+
+    public boolean hasPermission(EntityPlayer player, Permissions.Action action)
+    {
+        return hasPermission(player.getGameProfile().getId(), action);
+    }
+    public boolean hasPermission(UUID id, Permissions.Action action)
+    {
+        Permissions.Rank rank = owners.get(id);
+        return rank != null && hasPermission(rank, action);
+    }
+    public boolean hasPermission(Permissions.Rank rank, Permissions.Action action)
+    {
+        return Utils.testFlag(permissions.get(rank), action.flag);
+    }
+
+    public void setPermission(Permissions.Rank rank, Permissions.Action action)
+    {
+        permissions.put(rank, Utils.setFlag(permissions.get(rank), action.flag));
+    }
+
+    public void removePermission(Permissions.Rank rank, Permissions.Action action)
+    {
+        permissions.put(rank, Utils.unsetFlag(permissions.get(rank), action.flag));
+    }
+
+    public void togglePermission(Permissions.Rank rank, Permissions.Action action)
+    {
+        permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
+    }
+
+    public void addPlayer(UUID id, Permissions.Rank rank)
+    {
+        owners.put(id, rank);
         markDirty();
     }
-    public void removeOwner(UUID o)
+    public void removePlayer(UUID id)
     {
-        owners.remove(o);
+        owners.remove(id);
         markDirty();
     }
 
@@ -492,7 +611,7 @@ public class Colony
             if (o instanceof EntityPlayerMP)
             {
                 EntityPlayerMP player = (EntityPlayerMP)o;
-                if (owners.contains(player.getGameProfile().getId()))
+                if (owners.containsKey(player.getGameProfile().getId()))//TODO: adapt to new permissions
                 {
                     subscribers.add(player);
                 }
@@ -671,7 +790,7 @@ public class Colony
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
-                    LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, getOwners()), "tile.blockHutTownhall.messageMaxSize");
+                    LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, getMessagePlayers()), "tile.blockHutTownhall.messageMaxSize");//TODO: add Colony Name prefix?
                 }
             }
             else
@@ -903,5 +1022,15 @@ public class Colony
         }
 
         return deliverymanRequired;
+    }
+
+    public int getAutoHostile()
+    {
+        return autoHostile;
+    }
+
+    public void setAutoHostile(int value)
+    {
+        autoHostile = value;
     }
 }

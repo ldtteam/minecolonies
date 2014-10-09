@@ -6,6 +6,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.LanguageHandler;
@@ -39,7 +40,7 @@ public class EventHandler
                 return;
             }
 
-            if (!colony.isOwner(event.getPlayer()))
+            if (!colony.hasPermission(event.getPlayer(), Permissions.Action.BREAK_HUTS))
             {
                 event.setCanceled(true);
                 return;
@@ -114,7 +115,7 @@ public class EventHandler
      * @param z      The z coordinate of the block
      * @return false to cancel the event
      */
-    private boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, int x, int y, int z)
+    private boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, int x, int y, int z)//TODO use permissions
     {
         //  Check if this Hut Block can be placed
 

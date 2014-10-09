@@ -2,39 +2,36 @@ package com.minecolonies.colony;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingTownHall;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.TownhallRenameMessage;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 
-import java.lang.ref.WeakReference;
 import java.util.*;
 
-public class ColonyView
-{
-    private final UUID              id;
+public class ColonyView {
+
+    private final UUID id;
 
     //  General Attributes
-    private String                  name   = "Unknown";
-    private int                     dimensionId;
-    private ChunkCoordinates        center;
+    private String name = "Unknown";
+    private int dimensionId;
+    private ChunkCoordinates center;
 
-    //  Administration
-    private Set<UUID>               owners = new HashSet<UUID>();
+    //  Administration/permissions
+    private Map<UUID, Permissions.Rank> owners = new HashMap<UUID, Permissions.Rank>();
+    private Map<Permissions.Rank, Integer> permissions = Constants.DEFAULT_PERMISSIONS;
+    private int autoHostile = 0;//Off
 
     //  Buildings
     private Map<ChunkCoordinates, Building.View> buildings = new HashMap<ChunkCoordinates, Building.View>();
@@ -43,22 +40,25 @@ public class ColonyView
     private int maxCitizens = Constants.DEFAULTMAXCITIZENS;
     private Map<UUID, CitizenData.View> citizens = new HashMap<UUID, CitizenData.View>();
 
-    private final static String TAG_NAME         = "name";
-    public  final static String TAG_DIMENSION    = "dimension";
-    private final static String TAG_CENTER       = "center";
+    private final static String TAG_NAME = "name";
+    private final static String TAG_DIMENSION = "dimension";
+    private final static String TAG_CENTER = "center";
     private final static String TAG_MAX_CITIZENS = "maxCitizens";
-    private final static String TAG_OWNERS       = "owners";
-    private final static String TAG_CITIZENS_REMOVED  = "citizensRemoved";
+    private final static String TAG_OWNERS = "owners";
+    private final static String TAG_OWNERS_ID = "ownersID";
+    private final static String TAG_OWNERS_RANK = "ownersRank";
+    private final static String TAG_CITIZENS_REMOVED = "citizensRemoved";
     private final static String TAG_BUILDINGS_REMOVED = "buildingsRemoved";
-
+    private final static String TAG_AUTO_HOSTILE = "autoHostile";
+    private final static String TAG_PERMISSIONS = "permissions";
+    private final static String TAG_PERMISSIONS_FLAGS = "permissionsFlags";
 
     /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony
      */
-    private ColonyView(UUID id)
-    {
+    private ColonyView(UUID id) {
         this.id = id;
     }
 
@@ -69,47 +69,119 @@ public class ColonyView
      * @param compound
      * @return
      */
-    public static ColonyView createFromNBT(UUID id, NBTTagCompound compound)
-    {
+    public static ColonyView createFromNBT(UUID id, NBTTagCompound compound) {
         return new ColonyView(id);
     }
 
-    public UUID getID() { return id; }
+    public UUID getID() {
+        return id;
+    }
 
-    public int getDimensionId() { return dimensionId; }
-//    public World getWorld() { return world != null ? world.get() : null; }
+    public int getDimensionId() {
+        return dimensionId;
+    }
+    //    public World getWorld() { return world != null ? world.get() : null; }
 
-    public String getName() { return name; }
-    public void setName(String name)
-    {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
         this.name = name;
         MineColonies.network.sendToServer(new TownhallRenameMessage(getID(), name));
     }
 
-    public Building.View getBuilding(int x, int y, int z) { return getBuilding(new ChunkCoordinates(x, y, z)); }
-    public Building.View getBuilding(ChunkCoordinates buildingId) { return buildings.get(buildingId); }
+    public Building.View getBuilding(int x, int y, int z) {
+        return getBuilding(new ChunkCoordinates(x, y, z));
+    }
 
-    public Set<UUID> getOwners() { return Collections.unmodifiableSet(owners); }
-    public boolean isOwner(UUID o) { return owners.contains(o); }
-    public boolean isOwner(EntityPlayer player) { return owners.contains(player.getGameProfile().getId()); }
-    public void addOwner(UUID o) { owners.add(o); }
-    public void removeOwner(UUID o) { owners.remove(o); }
+    public Building.View getBuilding(ChunkCoordinates buildingId) {
+        return buildings.get(buildingId);
+    }
 
-    public int getMaxCitizens() { return maxCitizens; }
-    public Map<UUID, CitizenData.View> getCitizens() { return Collections.unmodifiableMap(citizens); }
-    public CitizenData.View getCitizen(UUID id) { return citizens.get(id); }
+    public Map<UUID, Permissions.Rank> getPlayers() {
+        return Collections.unmodifiableMap(owners);
+    }
+
+    public Set<UUID> getPlayersByRank(Permissions.Rank rank) {
+        Set<UUID> players = new HashSet<UUID>();
+        for (Map.Entry<UUID, Permissions.Rank> entry : owners.entrySet()) {
+            if (entry.getValue().equals(rank)) {
+                players.add(entry.getKey());
+            }
+        }
+        return Collections.unmodifiableSet(players);
+    }
+
+    public Set<UUID> getPlayersByRank(Set<Permissions.Rank> ranks) {
+        Set<UUID> players = new HashSet<UUID>();
+        for (Map.Entry<UUID, Permissions.Rank> entry : owners.entrySet()) {
+            if (ranks.contains(entry.getValue())) {
+                players.add(entry.getKey());
+            }
+        }
+        return Collections.unmodifiableSet(players);
+    }
+
+    public Map<Permissions.Rank, Integer> getPermissions() {
+        return permissions;
+    }
+
+    public boolean hasPermission(EntityPlayer player, Permissions.Action action) {
+        return hasPermission(player.getGameProfile().getId(), action);
+    }
+
+    public boolean hasPermission(UUID id, Permissions.Action action) {
+        Permissions.Rank rank = owners.get(id);
+        return rank != null && hasPermission(rank, action);
+    }
+
+    public boolean hasPermission(Permissions.Rank rank, Permissions.Action action) {
+        return Utils.testFlag(permissions.get(rank), action.flag);
+    }
+
+    public void setPermission(Permissions.Rank rank, Permissions.Action action) {
+        permissions.put(rank, Utils.setFlag(permissions.get(rank), action.flag));
+    }
+
+    public void removePermission(Permissions.Rank rank, Permissions.Action action) {
+        permissions.put(rank, Utils.unsetFlag(permissions.get(rank), action.flag));
+    }
+
+    public void togglePermission(Permissions.Rank rank, Permissions.Action action) {
+        permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
+    }
+
+    public void addPlayer(UUID id, Permissions.Rank rank) {
+        owners.put(id, rank);
+    }
+
+    public void removePlayer(UUID id) {
+        owners.remove(id);
+    }
+
+    public int getMaxCitizens() {
+        return maxCitizens;
+    }
+
+    public Map<UUID, CitizenData.View> getCitizens() {
+        return Collections.unmodifiableMap(citizens);
+    }
+
+    public CitizenData.View getCitizen(UUID id) {
+        return citizens.get(id);
+    }
 
     /**
      * When the ColonyView's world is loaded, associate with it
      *
      * @param w
      */
-    public void onWorldLoad(World w)
-    {
-//        if (w.provider.dimensionId == dimensionId)
-//        {
-//            world = new WeakReference<World>(w);
-//        }
+    public void onWorldLoad(World w) {
+        //        if (w.provider.dimensionId == dimensionId)
+        //        {
+        //            world = new WeakReference<World>(w);
+        //        }
     }
 
     /**
@@ -119,8 +191,7 @@ public class ColonyView
      * @param colony
      * @param compound
      */
-    static public void createNetworkData(Colony colony, NBTTagCompound compound)
-    {
+    static public void createNetworkData(Colony colony, NBTTagCompound compound) {
         //  General Attributes
         compound.setString(TAG_NAME, colony.getName());
         compound.setInteger(TAG_DIMENSION, colony.getDimensionId());
@@ -128,11 +199,23 @@ public class ColonyView
 
         //  Owners
         NBTTagList ownerTagList = new NBTTagList();
-        for (UUID owner : colony.getOwners())
-        {
+        for (Map.Entry<UUID, Permissions.Rank> owner : colony.getPlayers().entrySet()) {
+            NBTTagCompound ownersCompound = new NBTTagCompound();
+            ownersCompound.setString(TAG_OWNERS_ID, owner.getKey().toString());
+            ownersCompound.setString(TAG_OWNERS_RANK, owner.getValue().name());
             ownerTagList.appendTag(new NBTTagString(owner.toString()));
         }
         compound.setTag(TAG_OWNERS, ownerTagList);
+
+        // Permissions
+        NBTTagList permissionsTagList = new NBTTagList();
+        for (Map.Entry<Permissions.Rank, Integer> entry : colony.getPermissions().entrySet()) {
+            NBTTagCompound permissionsCompound = new NBTTagCompound();
+            permissionsCompound.setString(TAG_OWNERS_RANK, entry.getKey().name());
+            permissionsCompound.setInteger(TAG_PERMISSIONS_FLAGS, entry.getValue());
+            permissionsTagList.appendTag(permissionsCompound);
+        }
+        compound.setTag(TAG_PERMISSIONS, permissionsTagList);
 
         //  Citizenry
         compound.setInteger(TAG_MAX_CITIZENS, colony.getMaxCitizens());
@@ -140,11 +223,9 @@ public class ColonyView
 
         //  Removed Citizens
         List<UUID> removedCitizens = colony.getRemovedCitizens();
-        if (!removedCitizens.isEmpty())
-        {
+        if (!removedCitizens.isEmpty()) {
             NBTTagList buildingTagList = new NBTTagList();
-            for (UUID id : removedCitizens)
-            {
+            for (UUID id : removedCitizens) {
                 buildingTagList.appendTag(new NBTTagString(id.toString()));
             }
             compound.setTag(TAG_CITIZENS_REMOVED, buildingTagList);
@@ -152,15 +233,15 @@ public class ColonyView
 
         //  Removed Buildings
         List<ChunkCoordinates> removedBuildings = colony.getRemovedBuildings();
-        if (!removedBuildings.isEmpty())
-        {
+        if (!removedBuildings.isEmpty()) {
             NBTTagList buildingTagList = new NBTTagList();
-            for (ChunkCoordinates id : removedBuildings)
-            {
+            for (ChunkCoordinates id : removedBuildings) {
                 ChunkCoordUtils.writeToNBTTagList(buildingTagList, id);
             }
             compound.setTag(TAG_BUILDINGS_REMOVED, buildingTagList);
         }
+
+        compound.setInteger(TAG_AUTO_HOSTILE, colony.getAutoHostile());
     }
 
     /**
@@ -169,8 +250,7 @@ public class ColonyView
      *
      * @param compound
      */
-    public IMessage handleColonyViewPacket(NBTTagCompound compound, boolean isNewSubscription)
-    {
+    public IMessage handleColonyViewPacket(NBTTagCompound compound, boolean isNewSubscription) {
         //  General Attributes
         name = compound.getString(TAG_NAME);
         dimensionId = compound.getInteger(TAG_DIMENSION);
@@ -180,49 +260,54 @@ public class ColonyView
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 
         //  Owners
-        NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, NBT.TAG_STRING);
-        for (int i = 0; i < ownerTagList.tagCount(); ++i)
-        {
-            String owner = ownerTagList.getStringTagAt(i);
-            owners.add(UUID.fromString(owner));
+        NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, NBT.TAG_COMPOUND);
+        for (int i = 0; i < ownerTagList.tagCount(); ++i) {
+            NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
+            String owner = ownerCompound.getString(TAG_OWNERS_ID);
+            Permissions.Rank rank = Permissions.Rank.valueOf(ownerCompound.getString(TAG_OWNERS_RANK));
+            owners.put(UUID.fromString(owner), rank);
         }
 
-        if (isNewSubscription)
-        {
+        //Permissions
+        NBTTagList permissionsTagList = compound.getTagList(TAG_PERMISSIONS, NBT.TAG_COMPOUND);
+        for (int i = 0; i < permissionsTagList.tagCount(); ++i) {
+            NBTTagCompound permissionsCompound = permissionsTagList.getCompoundTagAt(i);
+            Permissions.Rank rank = Permissions.Rank.valueOf(permissionsCompound.getString(TAG_OWNERS_RANK));
+            int flags = permissionsCompound.getInteger(TAG_PERMISSIONS_FLAGS);
+            permissions.put(rank, flags);
+        }
+
+        if (isNewSubscription) {
             citizens.clear();
             buildings.clear();
-        }
-        else
-        {
-            if (compound.hasKey(TAG_CITIZENS_REMOVED))
-            {
+        } else {
+            if (compound.hasKey(TAG_CITIZENS_REMOVED)) {
                 NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS_REMOVED, NBT.TAG_STRING);
-                for (int i = 0; i < citizenTagList.tagCount(); ++i)
-                {
+                for (int i = 0; i < citizenTagList.tagCount(); ++i) {
                     UUID id = UUID.fromString(citizenTagList.getStringTagAt(i));
                     citizens.remove(id);
                 }
             }
 
-            if (compound.hasKey(TAG_BUILDINGS_REMOVED))
-            {
+            if (compound.hasKey(TAG_BUILDINGS_REMOVED)) {
                 NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS_REMOVED, NBT.TAG_COMPOUND);
-                for (int i = 0; i < buildingTagList.tagCount(); ++i)
-                {
+                for (int i = 0; i < buildingTagList.tagCount(); ++i) {
                     ChunkCoordinates id = ChunkCoordUtils.readFromNBTTagList(buildingTagList, i);
                     buildings.remove(id);
                 }
             }
         }
 
-//        if (world == null)
-//        {
-//            World w = DimensionManager.getWorld(dimensionId);
-//            if (w != null)
-//            {
-//                onWorldLoad(w);
-//            }
-//        }
+        autoHostile = compound.getInteger(TAG_AUTO_HOSTILE);
+
+        //        if (world == null)
+        //        {
+        //            World w = DimensionManager.getWorld(dimensionId);
+        //            if (w != null)
+        //            {
+        //                onWorldLoad(w);
+        //            }
+        //        }
 
         return null;
     }
@@ -235,11 +320,9 @@ public class ColonyView
      * @param compound
      * @return
      */
-    public IMessage handleColonyViewCitizensPacket(UUID id, NBTTagCompound compound)
-    {
+    public IMessage handleColonyViewCitizensPacket(UUID id, NBTTagCompound compound) {
         CitizenData.View citizen = CitizenData.createCitizenDataView(id, compound);
-        if (citizen != null)
-        {
+        if (citizen != null) {
             citizens.put(citizen.getID(), citizen);
         }
 
@@ -254,11 +337,9 @@ public class ColonyView
      * @param compound
      * @return
      */
-    public IMessage handleColonyBuildingViewPacket(ChunkCoordinates buildingId, NBTTagCompound compound)
-    {
+    public IMessage handleColonyBuildingViewPacket(ChunkCoordinates buildingId, NBTTagCompound compound) {
         Building.View building = Building.createBuildingView(this, buildingId, compound);    //  At the moment we are re-using the save/load code
-        if (building != null)
-        {
+        if (building != null) {
             buildings.put(building.getID(), building);
         }
 
@@ -271,25 +352,21 @@ public class ColonyView
      * @param coord
      * @return
      */
-    public boolean isCoordInColony(World w, ChunkCoordinates coord)
-    {
+    public boolean isCoordInColony(World w, ChunkCoordinates coord) {
         return isCoordInColony(w, coord.posX, coord.posY, coord.posZ);
     }
 
-    public boolean isCoordInColony(World w, int x, int y, int z)
-    {
+    public boolean isCoordInColony(World w, int x, int y, int z) {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.provider.dimensionId == dimensionId &&
                 center.getDistanceSquared(x, center.posY, z) <= Utils.square(Configurations.workingRangeTownhall);
     }
 
-    public float getDistanceSquared(ChunkCoordinates coord)
-    {
+    public float getDistanceSquared(ChunkCoordinates coord) {
         return getDistanceSquared(coord.posX, coord.posY, coord.posZ);
     }
 
-    public float getDistanceSquared(int posX, int posY, int posZ)
-    {
+    public float getDistanceSquared(int posX, int posY, int posZ) {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return center.getDistanceSquared(posX, center.posY, posZ);
     }

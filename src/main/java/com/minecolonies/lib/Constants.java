@@ -1,5 +1,10 @@
 package com.minecolonies.lib;
 
+import com.minecolonies.colony.permissions.Permissions;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Constants
 {
     public static final String MODID               = "minecolonies";
@@ -12,6 +17,18 @@ public class Constants
 
     public static final int DEFAULTMAXCITIZENS   = 4;
     public static final int BUILDERWORKINTERFALL = 5;
+
+    public static final Map<Permissions.Rank, Integer> DEFAULT_PERMISSIONS = new HashMap<Permissions.Rank, Integer>();//TODO move defaults into enum?
+    static
+    {
+        DEFAULT_PERMISSIONS.put(Permissions.Rank.OWNER,   0b1111101);
+        DEFAULT_PERMISSIONS.put(Permissions.Rank.OFFICER, 0b1111101);
+        DEFAULT_PERMISSIONS.put(Permissions.Rank.FRIEND,  0b0000001);
+        DEFAULT_PERMISSIONS.put(Permissions.Rank.NEUTRAL, 0b0000000);
+        DEFAULT_PERMISSIONS.put(Permissions.Rank.HOSTILE, 0b0000010);
+    }
+
+    //TODO default permissions
 
     public class BlockData
     {

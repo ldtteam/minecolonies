@@ -1,6 +1,7 @@
 package com.minecolonies.inventory;
 
 import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,7 +43,7 @@ public class ContainerHut extends Container //ContainerChest in future
         {
             Colony colony = hut.getColony();
 
-            if (colony != null && !colony.isOwner(player))
+            if (colony != null && !colony.hasPermission(player, Permissions.Action.ACCESS_HUTS))
             {
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission", colony.getName());
             }

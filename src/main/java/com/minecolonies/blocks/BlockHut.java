@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
@@ -79,7 +80,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
                 colony = ColonyManager.createColony(world, hut.getPosition());
                 colony.setName(colonyName);
-                colony.addOwner(player.getGameProfile().getId());
+                colony.addPlayer(player.getGameProfile().getId(), Permissions.Rank.OWNER);
 
                 //  TODO: Deprecate this code?
                 PlayerProperties.get(player).placeTownhall(x, y, z);
@@ -105,7 +106,6 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
         {
             if(!world.isRemote)
             {
-                TileEntityColonyBuilding buildingTileEntity = (TileEntityColonyBuilding) tileEntity;
                 Building building = ((TileEntityColonyBuilding)tileEntity).getBuilding();
 
                 if (building != null)

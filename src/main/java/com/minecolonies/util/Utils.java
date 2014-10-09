@@ -273,4 +273,29 @@ public class Utils
     {
         return number * number;
     }
+
+    public static boolean testFlag(int data, int flag)
+    {
+        return (data & flag) == flag;
+    }
+
+    public static int mask(int data, int mask)
+    {
+        return data & mask;
+    }
+
+    public static int setFlag(int data, int flag)
+    {
+        return data | flag;
+    }
+
+    public static int unsetFlag(int data, int flag)
+    {
+        return data & ~flag;
+    }
+
+    public static int toggleFlag(int data, int flag)
+    {
+        return data ^ flag;
+    }
 }

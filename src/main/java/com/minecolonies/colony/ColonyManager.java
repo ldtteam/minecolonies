@@ -1,6 +1,7 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.jobs.ColonyJob;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -145,7 +146,7 @@ public class ColonyManager {
 
         for (Colony c : colonies.values())
         {
-            if (c.isOwner(owner))
+            if (c.getPlayers().get(owner).equals(Permissions.Rank.OWNER))//TODO is this what we want? Also improve
             {
                 results.add(c);
             }
@@ -278,7 +279,7 @@ public class ColonyManager {
 
         for (ColonyView c : colonyViews.values())
         {
-            if (c.isOwner(player.getGameProfile().getId()))
+            if (c.getPlayers().get(player.getGameProfile().getId()).equals(Permissions.Rank.OWNER))//TODO update for permissions
             {
                 results.add(c);
             }

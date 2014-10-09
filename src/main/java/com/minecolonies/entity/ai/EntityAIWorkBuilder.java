@@ -17,15 +17,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import static com.minecolonies.lib.Constants.BlockData.*;
@@ -64,7 +61,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
                 return;
             }
 
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getOwners()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getMessagePlayers()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
         }
         ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getSchematic().getPosition());
         if(!Configurations.builderInfiniteResources)
@@ -224,7 +221,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
         {
             for(ItemStack neededItem : builder.getItemsNeeded())
             {
-                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getOwners()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
+                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getMessagePlayers()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
             }
         }
     }
@@ -238,7 +235,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
         {
             System.out.println(block.getUnlocalizedName());
 
-            if(Utils.isWater(block) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && testFlag(metadata, 0x08)) || (block instanceof BlockDoor && testFlag(metadata, 0x08))) return true;//free blocks
+            if(Utils.isWater(block) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && Utils.testFlag(metadata, 0x08)) || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08))) return true;//free blocks
 
             Item item = BlockInfo.getItemFromBlock(block);
             if(BlockInfo.BLOCK_LIST_IGNORE_METADATA.contains(block))
@@ -439,7 +436,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
         else if(block instanceof BlockLever || block instanceof BlockButton)
         {
             ForgeDirection direction = ForgeDirection.UNKNOWN;
-            switch(mask(metadata, BUTTON_LEVER_MASK))
+            switch(Utils.mask(metadata, BUTTON_LEVER_MASK))
             {
                 case BUTTON_LEVER_CEILING:
                     direction = ForgeDirection.DOWN;
@@ -508,7 +505,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
         else if(block instanceof BlockTrapDoor)
         {
             ForgeDirection direction = ForgeDirection.UNKNOWN;
-            switch(mask(metadata, TRAPDOOR_MASK))
+            switch(Utils.mask(metadata, TRAPDOOR_MASK))
             {
                 case TRAPDOOR_EAST:
                     direction = ForgeDirection.EAST;
@@ -535,19 +532,19 @@ public class EntityAIWorkBuilder extends EntityAIWork
             }
             else
             {
-                if(testFlag(metadata, VINE_EAST) && vineCheck(world.getBlock(x - 1, y, z)))
+                if(Utils.testFlag(metadata, VINE_EAST) && vineCheck(world.getBlock(x - 1, y, z)))
                 {
                     world.setBlock(x - 1, y, z, Blocks.dirt);
                 }
-                if(testFlag(metadata, VINE_WEST) && vineCheck(world.getBlock(x + 1, y, z)))
+                if(Utils.testFlag(metadata, VINE_WEST) && vineCheck(world.getBlock(x + 1, y, z)))
                 {
                     world.setBlock(x + 1, y, z, Blocks.dirt);
                 }
-                if(testFlag(metadata, VINE_SOUTH) && vineCheck(world.getBlock(x, y, z - 1)))
+                if(Utils.testFlag(metadata, VINE_SOUTH) && vineCheck(world.getBlock(x, y, z - 1)))
                 {
                     world.setBlock(x, y, z - 1, Blocks.dirt);
                 }
-                if(testFlag(metadata, VINE_NORTH) && vineCheck(world.getBlock(x, y, z + 1)))
+                if(Utils.testFlag(metadata, VINE_NORTH) && vineCheck(world.getBlock(x, y, z + 1)))
                 {
                     world.setBlock(x, y, z + 1, Blocks.dirt);
                 }
@@ -558,7 +555,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
             int l = BlockDirectional.getDirection(metadata);
             Block testBlock = world.getBlock(x + Direction.offsetX[l], y, z + Direction.offsetZ[l]);
             int testMetadata = world.getBlockMetadata(x + Direction.offsetX[l], y, z + Direction.offsetZ[l]);
-            if(testBlock == Blocks.log && testFlag(testMetadata, 0x3))
+            if(testBlock == Blocks.log && Utils.testFlag(testMetadata, 0x3))
             {
                 world.setBlock(x + Direction.offsetX[l], y, z + Direction.offsetZ[l], Blocks.log, 3, 0x03);
             }
@@ -566,7 +563,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
         else if(block instanceof BlockTripWireHook)
         {
             ForgeDirection direction = ForgeDirection.UNKNOWN;
-            switch(mask(metadata, TRIPWIRE_HOOK_MASK))
+            switch(Utils.mask(metadata, TRIPWIRE_HOOK_MASK))
             {
                 case LADDER_EAST:
                     direction = ForgeDirection.EAST;
@@ -619,23 +616,13 @@ public class EntityAIWorkBuilder extends EntityAIWork
         return (block.getMaterial().isOpaque() && block.renderAsNormalBlock() || block == Blocks.glowstone || block instanceof BlockSlab || block instanceof BlockStairs);
     }
 
-    private boolean testFlag(int data, int flag)
-    {
-        return (data & flag) == flag;
-    }
-
-    private int mask(int data, int mask)
-    {
-        return data & mask;
-    }
-
     private boolean placeBlock(int x, int y, int z, Block block, int metadata)
     {
         if(block instanceof BlockDoor)
         {
             ItemDoor.placeDoorBlock(world, x, y, z, metadata, block);
         }
-        else if(block instanceof BlockBed && !testFlag(metadata, 0x8))
+        else if(block instanceof BlockBed && !Utils.testFlag(metadata, 0x8))
         {
             world.setBlock(x, y, z, block, metadata, 0x03);
 
@@ -712,7 +699,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
         spawnEntities();//TODO handle materials - would work well in staged building
 
         String schematicName = builder.getSchematic().getName();
-        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getOwners()), "entity.builder.messageBuildComplete", schematicName);
+        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
         ChunkCoordinates pos = builder.getSchematic().getPosition();
 
         if(ChunkCoordUtils.getTileEntity(world, pos) instanceof TileEntityColonyBuilding)

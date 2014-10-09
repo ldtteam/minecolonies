@@ -311,7 +311,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if (colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getOwners()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getMessagePlayers()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
             colony.removeCitizen(this);
         }
 
