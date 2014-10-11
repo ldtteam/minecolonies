@@ -5,6 +5,7 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.TownhallRenameMessage;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
@@ -29,8 +30,7 @@ public class ColonyView {
     private ChunkCoordinates center;
 
     //  Administration/permissions
-    private Map<UUID, Permissions.Rank> owners = new HashMap<UUID, Permissions.Rank>();
-    private Map<Permissions.Rank, Integer> permissions = Constants.DEFAULT_PERMISSIONS;
+    private Permissions.View permissions;
     private int autoHostile = 0;//Off
 
     //  Buildings
@@ -44,14 +44,9 @@ public class ColonyView {
     private final static String TAG_DIMENSION = "dimension";
     private final static String TAG_CENTER = "center";
     private final static String TAG_MAX_CITIZENS = "maxCitizens";
-    private final static String TAG_OWNERS = "owners";
-    private final static String TAG_OWNERS_ID = "ownersID";
-    private final static String TAG_OWNERS_RANK = "ownersRank";
     private final static String TAG_CITIZENS_REMOVED = "citizensRemoved";
     private final static String TAG_BUILDINGS_REMOVED = "buildingsRemoved";
     private final static String TAG_AUTO_HOSTILE = "autoHostile";
-    private final static String TAG_PERMISSIONS = "permissions";
-    private final static String TAG_PERMISSIONS_FLAGS = "permissionsFlags";
 
     /**
      * Base constructor for a colony.
@@ -70,7 +65,9 @@ public class ColonyView {
      * @return
      */
     public static ColonyView createFromNBT(UUID id, NBTTagCompound compound) {
-        return new ColonyView(id);
+        ColonyView view = new ColonyView(id);
+        view.permissions = Permissions.createPermissionsView(compound);
+        return view;
     }
 
     public UUID getID() {
@@ -100,64 +97,36 @@ public class ColonyView {
     }
 
     public Map<UUID, Permissions.Rank> getPlayers() {
-        return Collections.unmodifiableMap(owners);
-    }
-
-    public Set<UUID> getPlayersByRank(Permissions.Rank rank) {
-        Set<UUID> players = new HashSet<UUID>();
-        for (Map.Entry<UUID, Permissions.Rank> entry : owners.entrySet()) {
-            if (entry.getValue().equals(rank)) {
-                players.add(entry.getKey());
-            }
-        }
-        return Collections.unmodifiableSet(players);
-    }
-
-    public Set<UUID> getPlayersByRank(Set<Permissions.Rank> ranks) {
-        Set<UUID> players = new HashSet<UUID>();
-        for (Map.Entry<UUID, Permissions.Rank> entry : owners.entrySet()) {
-            if (ranks.contains(entry.getValue())) {
-                players.add(entry.getKey());
-            }
-        }
-        return Collections.unmodifiableSet(players);
-    }
-
-    public Map<Permissions.Rank, Integer> getPermissions() {
-        return permissions;
-    }
-
-    public boolean hasPermission(EntityPlayer player, Permissions.Action action) {
-        return hasPermission(player.getGameProfile().getId(), action);
-    }
-
-    public boolean hasPermission(UUID id, Permissions.Action action) {
-        Permissions.Rank rank = owners.get(id);
-        return rank != null && hasPermission(rank, action);
-    }
-
-    public boolean hasPermission(Permissions.Rank rank, Permissions.Action action) {
-        return Utils.testFlag(permissions.get(rank), action.flag);
+        return permissions.getPlayers();
     }
 
     public void setPermission(Permissions.Rank rank, Permissions.Action action) {
-        permissions.put(rank, Utils.setFlag(permissions.get(rank), action.flag));
+        if(permissions.setPermission(rank, action))
+        {
+            MineColonies.network.sendToServer(new PermissionsMessage.Permission(id, PermissionsMessage.MessageType.SET_PERMISSION, rank, action));
+        }
     }
 
     public void removePermission(Permissions.Rank rank, Permissions.Action action) {
-        permissions.put(rank, Utils.unsetFlag(permissions.get(rank), action.flag));
+        if(permissions.removePermission(rank, action))
+        {
+            MineColonies.network.sendToServer(new PermissionsMessage.Permission(id, PermissionsMessage.MessageType.REMOVE_PERMISSION, rank, action));
+        }
     }
 
     public void togglePermission(Permissions.Rank rank, Permissions.Action action) {
-        permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
+        permissions.togglePermission(rank, action);
+        MineColonies.network.sendToServer(new PermissionsMessage.Permission(id, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
     }
 
-    public void addPlayer(UUID id, Permissions.Rank rank) {
-        owners.put(id, rank);
+    public void addPlayer(UUID player, Permissions.Rank rank) {
+        permissions.addPlayer(player, rank);
+        MineColonies.network.sendToServer(new PermissionsMessage.AddPlayer(id, player, rank));
     }
 
-    public void removePlayer(UUID id) {
-        owners.remove(id);
+    public void removePlayer(UUID player) {
+        permissions.removePlayer(player);
+        MineColonies.network.sendToServer(new PermissionsMessage.RemovePlayer(id, player));
     }
 
     public int getMaxCitizens() {
@@ -196,26 +165,6 @@ public class ColonyView {
         compound.setString(TAG_NAME, colony.getName());
         compound.setInteger(TAG_DIMENSION, colony.getDimensionId());
         ChunkCoordUtils.writeToNBT(compound, TAG_CENTER, colony.getCenter());
-
-        //  Owners
-        NBTTagList ownerTagList = new NBTTagList();
-        for (Map.Entry<UUID, Permissions.Rank> owner : colony.getPlayers().entrySet()) {
-            NBTTagCompound ownersCompound = new NBTTagCompound();
-            ownersCompound.setString(TAG_OWNERS_ID, owner.getKey().toString());
-            ownersCompound.setString(TAG_OWNERS_RANK, owner.getValue().name());
-            ownerTagList.appendTag(new NBTTagString(owner.toString()));
-        }
-        compound.setTag(TAG_OWNERS, ownerTagList);
-
-        // Permissions
-        NBTTagList permissionsTagList = new NBTTagList();
-        for (Map.Entry<Permissions.Rank, Integer> entry : colony.getPermissions().entrySet()) {
-            NBTTagCompound permissionsCompound = new NBTTagCompound();
-            permissionsCompound.setString(TAG_OWNERS_RANK, entry.getKey().name());
-            permissionsCompound.setInteger(TAG_PERMISSIONS_FLAGS, entry.getValue());
-            permissionsTagList.appendTag(permissionsCompound);
-        }
-        compound.setTag(TAG_PERMISSIONS, permissionsTagList);
 
         //  Citizenry
         compound.setInteger(TAG_MAX_CITIZENS, colony.getMaxCitizens());
@@ -259,24 +208,6 @@ public class ColonyView {
         //  Citizenry
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 
-        //  Owners
-        NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < ownerTagList.tagCount(); ++i) {
-            NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
-            String owner = ownerCompound.getString(TAG_OWNERS_ID);
-            Permissions.Rank rank = Permissions.Rank.valueOf(ownerCompound.getString(TAG_OWNERS_RANK));
-            owners.put(UUID.fromString(owner), rank);
-        }
-
-        //Permissions
-        NBTTagList permissionsTagList = compound.getTagList(TAG_PERMISSIONS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < permissionsTagList.tagCount(); ++i) {
-            NBTTagCompound permissionsCompound = permissionsTagList.getCompoundTagAt(i);
-            Permissions.Rank rank = Permissions.Rank.valueOf(permissionsCompound.getString(TAG_OWNERS_RANK));
-            int flags = permissionsCompound.getInteger(TAG_PERMISSIONS_FLAGS);
-            permissions.put(rank, flags);
-        }
-
         if (isNewSubscription) {
             citizens.clear();
             buildings.clear();
@@ -309,6 +240,12 @@ public class ColonyView {
         //            }
         //        }
 
+        return null;
+    }
+
+    public IMessage handlePermissionsViewPacket(NBTTagCompound data)
+    {
+        permissions = Permissions.createPermissionsView(data);
         return null;
     }
 

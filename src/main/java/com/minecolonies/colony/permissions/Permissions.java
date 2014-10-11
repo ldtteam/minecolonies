@@ -1,15 +1,27 @@
 package com.minecolonies.colony.permissions;
 
+import com.minecolonies.MineColonies;
+import com.minecolonies.colony.ColonyView;
+import com.minecolonies.lib.Constants;
+import com.minecolonies.util.Utils;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.ChunkCoordinates;
+
+import java.lang.reflect.Constructor;
+import java.util.*;
+
 /**
- * CLASS DESCRIPTION
+ * Colony Permissions System
  * Created: October 08, 2014
  *
  * @author Colton
  */
 public class Permissions {
 
-    public enum Rank
-    {
+    public enum Rank {
         OWNER,
         OFFICER,
         FRIEND,
@@ -17,24 +29,401 @@ public class Permissions {
         HOSTILE
     }
 
-    private static int nextBit = 0;
-
-    public enum Action
-    {
-        ACCESS_HUTS,
-        GUARDS_ATTACK,
-        PLACE_HUTS,
-        BREAK_HUTS,
-        CAN_PROMOTE,
-        CAN_DEMOTE,
-        SEND_MESSAGES;
+    public enum Action {
+        ACCESS_HUTS(0),
+        GUARDS_ATTACK(1),
+        PLACE_HUTS(2),
+        BREAK_HUTS(3),
+        CAN_PROMOTE(4),
+        CAN_DEMOTE(5),
+        SEND_MESSAGES(6);
         //TODO grief control?
 
-        public int flag;
+        private final int flag;
 
-        Action()
-        {
-            this.flag = 0x1 << nextBit++;//Gives each successive Action a bitflag, ex: GUARDS_ATTACK.flag = 0b0010 || 0x2
+        Action(int bit) {
+            this.flag = 0x1 << bit;
         }
+
+        public int getFlag() {
+            return flag;
+        }
+    }
+
+    private final static String TAG_OWNERS = "owners";
+    private final static String TAG_OWNERS_ID = "ownersID";
+    private final static String TAG_OWNERS_RANK = "ownersRank";
+    private final static String TAG_PERMISSIONS = "permissions";
+    private final static String TAG_PERMISSIONS_FLAGS = "permissionsFlags";
+
+    private Map<UUID, Rank> players;
+    private Map<Rank, Integer> permissions;
+
+    public Permissions() {
+        players = new HashMap<>();
+        permissions = Constants.getDefaultPermissions();
+    }
+
+    public void loadPermissions(NBTTagCompound compound) {
+        //  Owners
+        try {
+            NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < ownerTagList.tagCount(); ++i) {
+                NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
+                String owner = ownerCompound.getString(TAG_OWNERS_ID);
+                Rank rank = Rank.valueOf(ownerCompound.getString(TAG_OWNERS_RANK));
+                players.put(UUID.fromString(owner), rank);
+            }
+        } catch (ClassCastException e)//old way
+        {
+            NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+            String owner = ownerTagList.getStringTagAt(0);//Should only be one owner
+            players.put(UUID.fromString(owner), Rank.OWNER);
+        }
+
+        //Permissions
+        NBTTagList permissionsTagList = compound.getTagList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < permissionsTagList.tagCount(); ++i) {
+            NBTTagCompound permissionsCompound = permissionsTagList.getCompoundTagAt(i);
+            Rank rank = Rank.valueOf(permissionsCompound.getString(TAG_OWNERS_RANK));
+
+            NBTTagList flagsTagList = permissionsCompound.getTagList(TAG_PERMISSIONS_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+
+            int flags = 0;
+
+            for (int j = 0; j < flagsTagList.tagCount(); ++j) {
+                String flag = flagsTagList.getStringTagAt(j);
+                flags = Utils.setFlag(flags, Action.valueOf(flag).flag);
+            }
+            permissions.put(rank, flags);
+        }
+    }
+
+    public void savePermissions(NBTTagCompound compound) {
+        //  Owners
+        NBTTagList ownerTagList = new NBTTagList();
+        for (Map.Entry<UUID, Rank> owner : players.entrySet()) {
+            NBTTagCompound ownersCompound = new NBTTagCompound();
+            ownersCompound.setString(TAG_OWNERS_ID, owner.getKey().toString());
+            ownersCompound.setString(TAG_OWNERS_RANK, owner.getValue().name());
+            ownerTagList.appendTag(ownersCompound);
+        }
+        compound.setTag(TAG_OWNERS, ownerTagList);
+
+        // Permissions
+        NBTTagList permissionsTagList = new NBTTagList();
+        for (Map.Entry<Rank, Integer> entry : permissions.entrySet()) {
+            NBTTagCompound permissionsCompound = new NBTTagCompound();
+            permissionsCompound.setString(TAG_OWNERS_RANK, entry.getKey().name());
+
+            NBTTagList flagsTagList = new NBTTagList();
+            for (Action action : Action.values()) {
+                if (Utils.testFlag(entry.getValue(), action.flag)) {
+                    flagsTagList.appendTag(new NBTTagString(action.name()));
+                }
+            }
+            permissionsCompound.setTag(TAG_PERMISSIONS_FLAGS, flagsTagList);
+
+            permissionsTagList.appendTag(permissionsCompound);
+        }
+        compound.setTag(TAG_PERMISSIONS, permissionsTagList);
+
+    }
+
+    public Map<UUID, Rank> getPlayers() {
+        return Collections.unmodifiableMap(players);
+    }
+
+    public Set<UUID> getMessagePlayers() {
+        Set<Rank> ranks = new HashSet<Rank>();
+        for (Rank rank : permissions.keySet()) {
+            if (hasPermission(rank, Action.SEND_MESSAGES)) {
+                ranks.add(rank);
+            }
+        }
+        return getPlayersByRank(ranks);
+    }
+
+    public Set<UUID> getPlayersByRank(Rank rank) {
+        Set<UUID> players = new HashSet<UUID>();
+        for (Map.Entry<UUID, Rank> entry : this.players.entrySet()) {
+            if (entry.getValue().equals(rank)) {
+                players.add(entry.getKey());
+            }
+        }
+        return Collections.unmodifiableSet(players);
+    }
+
+    public Set<UUID> getPlayersByRank(Set<Rank> ranks) {
+        Set<UUID> players = new HashSet<UUID>();
+        for (Map.Entry<UUID, Rank> entry : this.players.entrySet()) {
+            if (ranks.contains(entry.getValue())) {
+                players.add(entry.getKey());
+            }
+        }
+        return Collections.unmodifiableSet(players);
+    }
+
+    public Map<Rank, Integer> getPermissions() {
+        return permissions;
+    }
+
+    public boolean hasPermission(EntityPlayer player, Action action) {
+        return hasPermission(player.getGameProfile().getId(), action);
+    }
+
+    public boolean hasPermission(UUID id, Action action) {
+        Rank rank = players.get(id);
+        return rank != null && hasPermission(rank, action);
+    }
+
+    public boolean hasPermission(Rank rank, Action action) {
+
+        for(Map.Entry<Rank, Integer> entry : permissions.entrySet())
+        {
+            System.out.println(entry.getKey().name() + " : " + entry.getValue());
+        }
+
+        return Utils.testFlag(permissions.get(rank), action.flag);
+    }
+
+    public void setPermission(Rank rank, Action action) {
+        int flags = permissions.get(rank);
+        if(!Utils.testFlag(flags, action.flag))//check that flag isn't set
+        {
+            permissions.put(rank, Utils.setFlag(flags, action.flag));
+            markDirty();
+        }
+    }
+
+    public void removePermission(Rank rank, Action action) {
+        int flags = permissions.get(rank);
+        if(Utils.testFlag(flags, action.flag))
+        {
+            permissions.put(rank, Utils.unsetFlag(flags, action.flag));
+            markDirty();
+        }
+    }
+
+    public void togglePermission(Rank rank, Action action) {
+        permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
+        markDirty();
+    }
+
+    public void addPlayer(UUID id, Rank rank) {
+        players.put(id, rank);
+        markDirty();
+    }
+
+    public void removePlayer(UUID id) {
+        players.remove(id);
+        markDirty();
+    }
+
+    public UUID getOwner() {
+        for (Map.Entry<UUID, Rank> entry : players.entrySet()) {
+            if (entry.getValue().equals(Rank.OWNER)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public Set<UUID> getSubscribers() {
+        Set<Rank> ranks = new HashSet<>();
+        ranks.add(Rank.OWNER);
+        ranks.add(Rank.OFFICER);
+        ranks.add(Rank.FRIEND);
+        return getPlayersByRank(ranks);
+    }
+
+    boolean isDirty = false;
+
+    public void markDirty()
+    {
+        isDirty = true;
+    }
+
+    public boolean isDirty()
+    {
+        return isDirty;
+    }
+
+    public void clearDirty()
+    {
+        isDirty = false;
+    }
+
+    public static class View {
+        private Map<UUID, Rank> players;
+        private Map<Rank, Integer> permissions;
+
+        protected View() {
+            players = new HashMap<>();
+            permissions = Constants.getDefaultPermissions();
+        }
+
+        public Map<UUID, Rank> getPlayers() {
+            return Collections.unmodifiableMap(players);
+        }
+
+        public Set<UUID> getPlayersByRank(Rank rank) {
+            Set<UUID> players = new HashSet<UUID>();
+            for (Map.Entry<UUID, Rank> entry : this.players.entrySet()) {
+                if (entry.getValue().equals(rank)) {
+                    players.add(entry.getKey());
+                }
+            }
+            return Collections.unmodifiableSet(players);
+        }
+
+        public Set<UUID> getPlayersByRank(Set<Rank> ranks) {
+            Set<UUID> players = new HashSet<UUID>();
+            for (Map.Entry<UUID, Rank> entry : this.players.entrySet()) {
+                if (ranks.contains(entry.getValue())) {
+                    players.add(entry.getKey());
+                }
+            }
+            return Collections.unmodifiableSet(players);
+        }
+
+        public Map<Rank, Integer> getPermissions() {
+            return permissions;
+        }
+
+        public boolean hasPermission(EntityPlayer player, Action action) {
+            return hasPermission(player.getGameProfile().getId(), action);
+        }
+
+        public boolean hasPermission(UUID id, Action action) {
+            Rank rank = players.get(id);
+            return rank != null && hasPermission(rank, action);
+        }
+
+        public boolean hasPermission(Rank rank, Action action) {
+            return Utils.testFlag(permissions.get(rank), action.flag);
+        }
+
+        public boolean setPermission(Rank rank, Action action) {
+            int flags = permissions.get(rank);
+            if(!Utils.testFlag(flags, action.flag))//check that flag isn't set
+            {
+                permissions.put(rank, Utils.setFlag(flags, action.flag));
+                return true;
+            }
+            return false;
+        }
+
+        public boolean removePermission(Rank rank, Action action) {
+            int flags = permissions.get(rank);
+            if(Utils.testFlag(flags, action.flag))
+            {
+                permissions.put(rank, Utils.unsetFlag(flags, action.flag));
+                return true;
+            }
+            return false;
+        }
+
+        public void togglePermission(Rank rank, Action action) {
+            permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
+        }
+
+        public void addPlayer(UUID id, Rank rank) {
+            players.put(id, rank);
+        }
+
+        public void removePlayer(UUID id) {
+            players.remove(id);
+        }
+
+        public void parseNetworkData(NBTTagCompound compound) {
+            //  TODO - Use a PacketBuffer
+            //  Owners
+            NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < ownerTagList.tagCount(); ++i) {
+                NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
+                String owner = ownerCompound.getString(TAG_OWNERS_ID);
+                Rank rank = Rank.valueOf(ownerCompound.getString(TAG_OWNERS_RANK));
+                players.put(UUID.fromString(owner), rank);
+            }
+
+            //Permissions
+            NBTTagList permissionsTagList = compound.getTagList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < permissionsTagList.tagCount(); ++i) {
+                NBTTagCompound permissionsCompound = permissionsTagList.getCompoundTagAt(i);
+                Rank rank = Rank.valueOf(permissionsCompound.getString(TAG_OWNERS_RANK));
+
+                NBTTagList flagsTagList = permissionsCompound
+                        .getTagList(TAG_PERMISSIONS_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);//TODO convert flags to strings and do the same for loading
+
+                int flags = 0;
+
+                for (int j = 0; j < flagsTagList.tagCount(); ++j) {
+                    String flag = flagsTagList.getStringTagAt(j);
+                    flags = Utils.setFlag(flags, Action.valueOf(flag).flag);
+                }
+                permissions.put(rank, flags);
+            }
+        }
+    }
+
+    public void createViewNetworkData(NBTTagCompound compound)
+    {
+        //  TODO - Use a PacketBuffer
+        //  Owners
+        NBTTagList ownerTagList = new NBTTagList();
+        for (Map.Entry<UUID, Rank> owner : players.entrySet())
+        {
+            NBTTagCompound ownersCompound = new NBTTagCompound();
+            ownersCompound.setString(TAG_OWNERS_ID, owner.getKey().toString());
+            ownersCompound.setString(TAG_OWNERS_RANK, owner.getValue().name());
+            ownerTagList.appendTag(new NBTTagString(owner.toString()));
+        }
+        compound.setTag(TAG_OWNERS, ownerTagList);
+
+        // Permissions
+        NBTTagList permissionsTagList = new NBTTagList();
+        for (Map.Entry<Rank, Integer> entry : permissions.entrySet())
+        {
+            NBTTagCompound permissionsCompound = new NBTTagCompound();
+            permissionsCompound.setString(TAG_OWNERS_RANK, entry.getKey().name());
+
+            NBTTagList flagsTagList = new NBTTagList();
+            for(Action action : Action.values())
+            {
+                if(Utils.testFlag(entry.getValue(), action.flag))
+                {
+                    flagsTagList.appendTag(new NBTTagString(action.name()));
+                }
+            }
+            permissionsCompound.setTag(TAG_PERMISSIONS_FLAGS, flagsTagList);
+
+            permissionsTagList.appendTag(permissionsCompound);
+        }
+        compound.setTag(TAG_PERMISSIONS, permissionsTagList);
+    }
+
+    /**
+     * Create a Permission View given it's saved NBTTagCompound
+     * TODO - Use a PacketBuffer
+     *
+     * @param compound The network data
+     * @return
+     */
+    public static View createPermissionsView(NBTTagCompound compound)
+    {
+        View view = new View();
+
+        try
+        {
+            view.parseNetworkData(compound);
+        }
+        catch (Exception ex)
+        {
+            MineColonies.logger.error(String.format("A Permissions View has thrown an exception during loading, its state cannot be restored. Report this to the mod author"), ex);
+            view = null;
+        }
+
+        return view;
     }
 }

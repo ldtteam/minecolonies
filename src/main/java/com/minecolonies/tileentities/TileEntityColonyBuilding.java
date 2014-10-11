@@ -117,7 +117,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         Building b = building.get();
         if (b == null) return true;
 
-        return b.getColony().hasPermission(player, Permissions.Action.ACCESS_HUTS);
+        return b.getColony().getPermissionHandler().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
 
     public ChunkCoordinates getPosition()

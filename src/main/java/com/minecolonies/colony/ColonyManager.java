@@ -146,7 +146,7 @@ public class ColonyManager {
 
         for (Colony c : colonies.values())
         {
-            if (c.getPlayers().get(owner).equals(Permissions.Rank.OWNER))//TODO is this what we want? Also improve
+            if (c.getOwner().equals(owner))//TODO is this what we want? Also improve
             {
                 results.add(c);
             }
@@ -544,6 +544,20 @@ public class ColonyManager {
         }
 
         return view.handleColonyViewPacket(colonyData, isNewSubscription);
+    }
+
+    public static IMessage handlePermissionsViewPacket(UUID colonyID, NBTTagCompound data)
+    {
+        ColonyView view = getColonyView(colonyID);
+        if(view != null)
+        {
+            return view.handlePermissionsViewPacket(data);
+        }
+        else
+        {
+            //TODO log, error
+            return null;
+        }
     }
 
     /**
