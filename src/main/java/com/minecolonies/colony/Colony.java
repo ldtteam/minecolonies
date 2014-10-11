@@ -271,32 +271,6 @@ public class Colony
         return permissions;
     }
 
-    public UUID getOwner()
-    {
-        return permissions.getOwner();
-    }
-
-    public Set<UUID> getMessagePlayers()
-    {
-        return permissions.getMessagePlayers();
-    }
-
-    public Set<UUID> getSubscribers()
-    {
-        return permissions.getSubscribers();
-    }
-
-    public void addPlayer(UUID id, Permissions.Rank rank)
-    {
-        permissions.addPlayer(id, rank);
-        markDirty();
-    }
-    public void removePlayer(UUID id)
-    {
-        permissions.removePlayer(id);
-        markDirty();
-    }
-
     /**
      * Determine if a given chunk coordinate is considered to be within the colony's bounds
      *
@@ -700,7 +674,7 @@ public class Colony
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
-                    LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, getMessagePlayers()), "tile.blockHutTownhall.messageMaxSize");//TODO: add Colony Name prefix?
+                    LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, permissions.getMessagePlayers()), "tile.blockHutTownhall.messageMaxSize");//TODO: add Colony Name prefix?
                 }
             }
             else

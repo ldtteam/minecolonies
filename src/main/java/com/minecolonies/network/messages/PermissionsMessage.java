@@ -174,7 +174,7 @@ public class PermissionsMessage {
                 Colony colony = ColonyManager.getColonyById(message.colonyID);
 
                 if (colony != null) {
-                    colony.addPlayer(message.playerID, message.rank);
+                    colony.getPermissionHandler().addPlayer(message.playerID, message.rank);
                 } else {
                     //todo log error
                 }
@@ -217,7 +217,7 @@ public class PermissionsMessage {
                 Colony colony = ColonyManager.getColonyById(message.colonyID);
 
                 if (colony != null) {
-                    colony.removePlayer(message.playerID);
+                    colony.getPermissionHandler().removePlayer(message.playerID);
                 } else {
                     //todo log error
                 }

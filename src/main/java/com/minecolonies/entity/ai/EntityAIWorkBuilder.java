@@ -61,7 +61,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
                 return;
             }
 
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getMessagePlayers()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getPermissionHandler().getMessagePlayers()), "entity.builder.messageBuildStart", builder.getSchematic().getName());
         }
         ChunkCoordUtils.tryMoveLivingToXYZ(builder, builder.getSchematic().getPosition());
         if(!Configurations.builderInfiniteResources)
@@ -221,7 +221,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
         {
             for(ItemStack neededItem : builder.getItemsNeeded())
             {
-                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getMessagePlayers()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
+                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getPermissionHandler().getMessagePlayers()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
             }
         }
     }
@@ -699,7 +699,7 @@ public class EntityAIWorkBuilder extends EntityAIWork
         spawnEntities();//TODO handle materials - would work well in staged building
 
         String schematicName = builder.getSchematic().getName();
-        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
+        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, builder.getColony().getPermissionHandler().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
         ChunkCoordinates pos = builder.getSchematic().getPosition();
 
         if(ChunkCoordUtils.getTileEntity(world, pos) instanceof TileEntityColonyBuilding)
