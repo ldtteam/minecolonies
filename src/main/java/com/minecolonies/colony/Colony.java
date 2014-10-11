@@ -577,7 +577,7 @@ public class Colony
             }
 
             // Permissions
-            if(isDirty || permissions.isDirty() || hasNewSubscribers)
+            if(permissions.isDirty() || hasNewSubscribers)
             {
                 NBTTagCompound compound = new NBTTagCompound();
                 permissions.createViewNetworkData(compound);
