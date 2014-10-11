@@ -527,14 +527,27 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return this.ticksExisted + 7 * this.getEntityId();
     }
 
-    public boolean isWorkTime()
+    public enum DesiredActivity
     {
-        return worldObj.isDaytime() && !worldObj.isRaining();
+        SLEEP,
+        IDLE,
+        WORK
     }
 
-    public boolean isSleepTime()
+    public DesiredActivity getDesiredActivity()
     {
-        return !worldObj.isDaytime();
+        if (!worldObj.isDaytime())
+        {
+            return DesiredActivity.SLEEP;
+        }
+        else if (worldObj.isRaining())
+        {
+            return DesiredActivity.IDLE;
+        }
+        else
+        {
+            return DesiredActivity.WORK;
+        }
     }
 
     public EntityItem entityDropItem(ItemStack itemstack)
