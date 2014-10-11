@@ -77,7 +77,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
 
-        this.renderDistanceWeight = 2.0D;
+        // Half as much render distance as players
+        this.renderDistanceWeight = 5.0D;
 
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setBreakDoors(true);
@@ -162,7 +163,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         textureBase += isFemale() ? "Female" : "Male";
 
-        texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
+        texture = new ResourceLocation(Constants.MOD_ID, textureBase + getTextureID() + ".png");
     }
 
     @Override

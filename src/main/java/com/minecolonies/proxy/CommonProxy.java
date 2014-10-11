@@ -6,6 +6,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
+import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -34,7 +35,7 @@ public class CommonProxy implements IProxy
     @Override
     public void registerTileEntities()
     {
-        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, "tileEntityColonyBuilding");
+        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, Constants.MOD_ID + ".ColonyBuilding");
     }
 
     /**
@@ -70,9 +71,11 @@ public class CommonProxy implements IProxy
     @Override
     public void registerEntities()
     {
-        EntityRegistry.registerModEntity(EntityCitizen.class, "entityCitizen", getNextEntityId(), MineColonies.instance, 250, 3, true);
-        EntityRegistry.registerModEntity(EntityBuilder.class, "entityBuilder", getNextEntityId(), MineColonies.instance, 250, 3, true);
-        EntityRegistry.registerModEntity(EntityDeliveryman.class, "entityDeliveryman", getNextEntityId(), MineColonies.instance, 250, 3, true);
+        // Half as much tracking range and same update frequency as a player
+        // See EntityTracker.addEntityToTracker for more default values
+        EntityRegistry.registerModEntity(EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
+        EntityRegistry.registerModEntity(EntityBuilder.class, "Builder", getNextEntityId(), MineColonies.instance, 256, 2, true);
+        EntityRegistry.registerModEntity(EntityDeliveryman.class, "Deliveryman", getNextEntityId(), MineColonies.instance, 256, 2, true);
     }
 
     @Override

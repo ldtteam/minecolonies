@@ -19,6 +19,6 @@ public abstract class ItemMinecolonies extends Item implements IColony
     @Override
     public void registerIcons(IIconRegister par1IconRegister)
     {
-        this.itemIcon = par1IconRegister.registerIcon(Constants.MODID + ":" + getName());
+        this.itemIcon = par1IconRegister.registerIcon(Constants.MOD_ID + ":" + getName());
     }
 }

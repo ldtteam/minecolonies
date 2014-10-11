@@ -2,52 +2,46 @@ package com.minecolonies.colony;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.TownhallRenameMessage;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 
-import java.lang.ref.WeakReference;
 import java.util.*;
 
 public class ColonyView
 {
-    private final UUID              id;
+    private final UUID id;
 
     //  General Attributes
-    private String                  name   = "Unknown";
-    private int                     dimensionId;
-    private ChunkCoordinates        center;
+    private String name = "Unknown";
+    private int              dimensionId;
+    private ChunkCoordinates center;
 
     //  Administration
-    private Set<UUID>               owners = new HashSet<UUID>();
+    private Set<UUID> owners = new HashSet<UUID>();
 
     //  Buildings
     private Map<ChunkCoordinates, Building.View> buildings = new HashMap<ChunkCoordinates, Building.View>();
 
     //  Citizenry
-    private int maxCitizens = Constants.DEFAULTMAXCITIZENS;
-    private Map<UUID, CitizenData.View> citizens = new HashMap<UUID, CitizenData.View>();
+    private int                         maxCitizens = Constants.DEFAULT_MAX_CITIZENS;
+    private Map<UUID, CitizenData.View> citizens    = new HashMap<UUID, CitizenData.View>();
 
-    private final static String TAG_NAME         = "name";
-    public  final static String TAG_DIMENSION    = "dimension";
-    private final static String TAG_CENTER       = "center";
-    private final static String TAG_MAX_CITIZENS = "maxCitizens";
-    private final static String TAG_OWNERS       = "owners";
+    private final static String TAG_NAME              = "name";
+    public final static  String TAG_DIMENSION         = "dimension";
+    private final static String TAG_CENTER            = "center";
+    private final static String TAG_MAX_CITIZENS      = "maxCitizens";
+    private final static String TAG_OWNERS            = "owners";
     private final static String TAG_CITIZENS_REMOVED  = "citizensRemoved";
     private final static String TAG_BUILDINGS_REMOVED = "buildingsRemoved";
 
@@ -74,20 +68,22 @@ public class ColonyView
         return new ColonyView(id);
     }
 
-    public UUID getID() { return id; }
+    public UUID getID(){ return id; }
 
-    public int getDimensionId() { return dimensionId; }
+    public int getDimensionId(){ return dimensionId; }
 //    public World getWorld() { return world != null ? world.get() : null; }
 
-    public String getName() { return name; }
+    public String getName(){ return name; }
+
     public void setName(String name)
     {
         this.name = name;
         MineColonies.network.sendToServer(new TownhallRenameMessage(getID(), name));
     }
 
-    public Building.View getBuilding(int x, int y, int z) { return getBuilding(new ChunkCoordinates(x, y, z)); }
-    public Building.View getBuilding(ChunkCoordinates buildingId) { return buildings.get(buildingId); }
+    public Building.View getBuilding(int x, int y, int z){ return getBuilding(new ChunkCoordinates(x, y, z)); }
+
+    public Building.View getBuilding(ChunkCoordinates buildingId){ return buildings.get(buildingId); }
 
     public Set<UUID> getOwners() { return Collections.unmodifiableSet(owners); }
     public boolean isOwner(UUID o) { return owners.contains(o); }

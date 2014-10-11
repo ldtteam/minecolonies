@@ -13,11 +13,11 @@ public class SoundHandler
 
     public static void playSound(World world, String name, double x, double y, double z, float volume, float pitch)
     {
-        world.playSoundEffect(x, y, z, Constants.MODID + ":" + name, volume, pitch);
+        world.playSoundEffect(x, y, z, Constants.MOD_ID + ":" + name, volume, pitch);
     }
 
     public static void playSoundAtEntity(Entity entity, String name, float volume, float pitch)
     {
-        entity.worldObj.playSoundAtEntity(entity, Constants.MODID + ":" + name, volume, pitch);
+        entity.worldObj.playSoundAtEntity(entity, Constants.MOD_ID + ":" + name, volume, pitch);
     }
 }

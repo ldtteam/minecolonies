@@ -1,7 +1,6 @@
 package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildRequestMessage;
@@ -21,13 +20,13 @@ public abstract class GuiBase extends GuiScreen
 {
     //IDs for default layout
     protected final int BUTTON_HIRE_FIRE = 0, BUTTON_RECALL = 1, BUTTON_BUILD = 2, BUTTON_REPAIR = 3;
-    protected final ResourceLocation background  = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiHutBackground.png");
+    protected final ResourceLocation background  = new ResourceLocation(Constants.MOD_ID + ":" + "textures/gui/guiHutBackground.png");
     protected final int              buttonWidth = 116, buttonHeight = 20, buttonSpan = 4, labelSpan = 11;
     protected int middleX, middleY, topY, xSize, ySize, buttonMiddleX, buttonMiddleY;
 
-    protected final EntityPlayer  player;
-    protected final World         world;
-    protected final int           x, y, z;
+    protected final EntityPlayer player;
+    protected final World        world;
+    protected final int          x, y, z;
     protected final Building.View building;
 
     private ArrayList<GuiModIcon> iconList;
