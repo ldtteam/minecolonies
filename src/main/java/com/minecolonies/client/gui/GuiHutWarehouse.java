@@ -12,7 +12,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class GuiHutWarehouse extends GuiBase
+public class GuiHutWarehouse extends GuiBuilding
 {
     private final int BUTTON_INFORMATION = 0, BUTTON_SETTINGS = 1, BUTTON_INVENTORY = 2;
     private final int BUTTON_BLACKSMITH_GOLD = 0, BUTTON_BLACKSMITH_DIAMOND = 1, BUTTON_STONEMASON_STONE = 2, BUTTON_STONEMASON_SAND = 3, BUTTON_STONEMASON_NETHERRACK = 4, BUTTON_STONEMASON_QUARTZ = 5, BUTTON_GUARD_ARMOR = 6, BUTTON_GUARD_WEAPON = 7, BUTTON_CITIZEN = 8, BUTTON_BACK = 9;
@@ -23,9 +23,9 @@ public class GuiHutWarehouse extends GuiBase
     private final int PAGE_MENU = 0, PAGE_INFORMATION = 1, PAGE_SETTINGS = 2;
     private int page = PAGE_MENU;
 
-    public GuiHutWarehouse(BuildingWarehouse.View building, EntityPlayer player, World world, int x, int y, int z)
+    public GuiHutWarehouse(BuildingWarehouse.View building)
     {
-        super(player, world, x, y, z, building);
+        super(building);
         warehouse = building;
     }
 

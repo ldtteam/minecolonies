@@ -37,6 +37,7 @@ public class ColonyView
     private Set<UUID>               owners = new HashSet<UUID>();
 
     //  Buildings
+    private BuildingTownHall.View   townhall;
     private Map<ChunkCoordinates, Building.View> buildings = new HashMap<ChunkCoordinates, Building.View>();
 
     //  Citizenry
@@ -86,6 +87,7 @@ public class ColonyView
         MineColonies.network.sendToServer(new TownhallRenameMessage(getID(), name));
     }
 
+    public BuildingTownHall.View getTownhall() { return townhall; }
     public Building.View getBuilding(int x, int y, int z) { return getBuilding(new ChunkCoordinates(x, y, z)); }
     public Building.View getBuilding(ChunkCoordinates buildingId) { return buildings.get(buildingId); }
 
@@ -190,6 +192,7 @@ public class ColonyView
         if (isNewSubscription)
         {
             citizens.clear();
+            townhall = null;
             buildings.clear();
         }
         else
@@ -210,7 +213,12 @@ public class ColonyView
                 for (int i = 0; i < buildingTagList.tagCount(); ++i)
                 {
                     ChunkCoordinates id = ChunkCoordUtils.readFromNBTTagList(buildingTagList, i);
-                    buildings.remove(id);
+
+                    Building.View building = buildings.remove(id);
+                    if (townhall == building)
+                    {
+                        townhall = null;
+                    }
                 }
             }
         }
@@ -260,6 +268,11 @@ public class ColonyView
         if (building != null)
         {
             buildings.put(building.getID(), building);
+
+            if (building instanceof BuildingTownHall.View)
+            {
+                townhall = (BuildingTownHall.View)building;
+            }
         }
 
         return null;

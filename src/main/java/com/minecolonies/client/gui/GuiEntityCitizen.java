@@ -14,9 +14,9 @@ public class GuiEntityCitizen extends GuiBase
     private final int BUTTON_INVENTORY = 0;
     private CitizenData.View citizen;
 
-    public GuiEntityCitizen(EntityCitizen entityCitizen, CitizenData.View citizen, EntityPlayer player, World world)
+    public GuiEntityCitizen(CitizenData.View citizen)
     {
-        super(player, world, (int) entityCitizen.posX, (int) entityCitizen.posY, (int) entityCitizen.posZ, null);
+        super();
         this.citizen = citizen;
     }
 
@@ -25,21 +25,22 @@ public class GuiEntityCitizen extends GuiBase
     {
         super.addElements();
 
-        String strengthStr = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength);
-        String staminaStr = LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina);
-        String wisdomStr = LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom);
-        String intelligenceStr = LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence);
-        String charismaStr = LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma);
+        String[] attributes = new String[5];
+        attributes[0] = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength);
+        attributes[1] = LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina);
+        attributes[2] = LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom);
+        attributes[3] = LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence);
+        attributes[4] = LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma);
 
-        int x = getSameCenterX(strengthStr, staminaStr, wisdomStr, intelligenceStr, charismaStr);
+        int x = getSameCenterX(attributes);
         int y = topY + labelSpan;
 
         addCenteredLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills"), y);
-        addLabel(strengthStr, x, y += labelSpan * 2);
-        addLabel(staminaStr, x, y += labelSpan);
-        addLabel(wisdomStr, x, y += labelSpan);
-        addLabel(intelligenceStr, x, y += labelSpan);
-        addLabel(charismaStr, x, y += labelSpan);
+        y += labelSpan;
+        for (String attr : attributes)
+        {
+            addLabel(attr, x, y += labelSpan);
+        }
         addBottomButton(BUTTON_INVENTORY, LanguageHandler.format("container.inventory"), buttonMiddleX, buttonWidth, buttonHeight);
     }
 

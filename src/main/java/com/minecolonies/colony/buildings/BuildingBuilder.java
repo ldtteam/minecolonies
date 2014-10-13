@@ -48,11 +48,11 @@ public class BuildingBuilder extends BuildingWorker
             super(c, l);
         }
 
-        public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        public GuiScreen getGui(int guiId)
         {
             if (guiId == EnumGUI.BUILDER.getID())
             {
-                return new GuiHutBuilder(this, player, world, x, y, z);
+                return new GuiHutBuilder(this);
             }
 
             return null;

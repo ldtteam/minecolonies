@@ -33,17 +33,20 @@ public class GuiHandler implements IGuiHandler
     }
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    public Object getClientGuiElement(int guiId, EntityPlayer player, World world, int x, int y, int z)
     {
-        TileEntityColonyBuilding tileEntity = (TileEntityColonyBuilding)world.getTileEntity(x, y, z);
-
-        Building.View building = tileEntity.getBuildingView();
-        if (building == null)
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        if (tileEntity instanceof TileEntityColonyBuilding)
         {
-            return null;
-        }
+            Building.View building = ((TileEntityColonyBuilding)tileEntity).getBuildingView();
+            if (building == null)
+            {
+                return null;
+            }
 
-        return building.getGui(player, world, ID, x, y, z);
+            return building.getGui(guiId);
+        }
+        return null;
     }
 
     public static void showGuiScreen(GuiScreen gui)

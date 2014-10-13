@@ -2,6 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
@@ -18,19 +19,10 @@ public class GuiTypable extends GuiScreen
     private       GuiTextField guiTextField = null;
     private final String       title        = LanguageHandler.format("com.minecolonies.gui.townhall.rename.title");
     private       String       newCityName;
-    private final EntityPlayer player;
-    private final World        world;
-    private final int          x, y, z;
 
-    public GuiTypable(ColonyView colony, EntityPlayer player, World world, int x, int y, int z)
+    public GuiTypable(ColonyView colony)
     {
         this.colony = colony;
-        this.player = player;
-        this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-
         newCityName = colony.getName();
     }
 
@@ -76,6 +68,8 @@ public class GuiTypable extends GuiScreen
     {
         if(guiButton.enabled)
         {
+            BuildingTownHall.View townhall = colony.getTownhall();
+
             switch(guiButton.id)
             {
                 case BUTTON_DONE:
@@ -83,10 +77,16 @@ public class GuiTypable extends GuiScreen
                     {
                         colony.setName(newCityName);
                     }
-                    player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
+                    if (townhall != null)
+                    {
+                        townhall.openGui(EnumGUI.TOWNHALL);
+                    }
                     break;
                 case BUTTON_CANCEL:
-                    player.openGui(MineColonies.instance, EnumGUI.TOWNHALL.getID(), world, x, y, z);
+                    if (townhall != null)
+                    {
+                        townhall.openGui(EnumGUI.TOWNHALL);
+                    }
                     break;
             }
         }

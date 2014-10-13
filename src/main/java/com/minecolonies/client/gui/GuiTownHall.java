@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class GuiTownHall extends GuiBase
+public class GuiTownHall extends GuiBuilding
 {
     private final int BUTTON_BUILD = 0, BUTTON_REPAIR = 1, BUTTON_RECALL = 2, BUTTON_SPECIALIZATION_TOGGLE = 3, BUTTON_RENAME = 4, BUTTON_INFORMATION = 5, BUTTON_ACTIONS = 6, BUTTON_SETTINGS = 7;
     private final BuildingTownHall.View townhall;
@@ -25,9 +25,9 @@ public class GuiTownHall extends GuiBase
     private final int PAGE_ACTIONS = 0, PAGE_INFORMATION = 1, PAGE_SETTINGS = 2;
     private int page = PAGE_ACTIONS;
 
-    public GuiTownHall(BuildingTownHall.View building, EntityPlayer player, World world, int x, int y, int z)
+    public GuiTownHall(BuildingTownHall.View building)
     {
-        super(player, world, x, y, z, building);
+        super(building);
         this.townhall = building;
         this.colony = building.getColony();
     }
@@ -126,7 +126,7 @@ public class GuiTownHall extends GuiBase
             case BUTTON_SPECIALIZATION_TOGGLE:
                 break;
             case BUTTON_RENAME:
-                player.openGui(MineColonies.instance, EnumGUI.TOWNHALL_RENAME.getID(), world, x, y, z);
+                building.openGui(EnumGUI.TOWNHALL_RENAME);
                 break;
             case BUTTON_INFORMATION:
                 page = PAGE_INFORMATION;

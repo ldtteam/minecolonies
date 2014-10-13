@@ -110,7 +110,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
 
                 if (building != null)
                 {
-                    player.openGui(MineColonies.instance, building.getGuiId(), world, x, y, z);
+                    building.openGui(player);
                 }
             }
             return true;

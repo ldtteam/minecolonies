@@ -9,15 +9,15 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-public class GuiHutBuilder extends GuiBase
+public class GuiHutBuilder extends GuiBuilding
 {
     private final int BUTTON_INVENTORY = 4;
     private BuildingBuilder.View builderHut;
     private final int span = 10;
 
-    public GuiHutBuilder(BuildingBuilder.View building, EntityPlayer player, World world, int x, int y, int z)
+    public GuiHutBuilder(BuildingBuilder.View building)
     {
-        super(player, world, x, y, z, building);
+        super(building);
         this.builderHut = building;
     }
 
