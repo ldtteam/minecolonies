@@ -7,7 +7,7 @@ import net.minecraft.item.Item;
 
 public class ModCreativeTabs
 {
-    public static final CreativeTabs MINECOLONIES = new CreativeTabs(Constants.MODID)
+    public static final CreativeTabs MINECOLONIES = new CreativeTabs(Constants.MOD_ID)
     {
         @Override
         public Item getTabIconItem()

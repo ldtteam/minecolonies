@@ -41,11 +41,11 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
     @Override
     public void registerBlockIcons(IIconRegister iconRegister)
     {
-        icons[0] = iconRegister.registerIcon(Constants.MODID + ":" + getName() + "Top");
+        icons[0] = iconRegister.registerIcon(Constants.MOD_ID + ":" + getName() + "Top");
         icons[1] = icons[0];
         for(int i = 2; i <= 5; i++)
         {
-            icons[i] = iconRegister.registerIcon(Constants.MODID + ":" + "sideChest");
+            icons[i] = iconRegister.registerIcon(Constants.MOD_ID + ":" + "sideChest");
         }
     }
 

@@ -18,7 +18,7 @@ import java.util.UUID;
  *
  * @author Colton
  */
-public class BuildRequestMessage implements IMessage
+public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
 {
     private UUID             colonyId;
     private ChunkCoordinates buildingId;
@@ -55,34 +55,31 @@ public class BuildRequestMessage implements IMessage
         mode = buf.readInt();
     }
 
-    public static class Handler implements IMessageHandler<BuildRequestMessage, IMessage>
+    @Override
+    public IMessage onMessage(BuildRequestMessage message, MessageContext ctx)
     {
-        @Override
-        public IMessage onMessage(BuildRequestMessage message, MessageContext ctx)
+        Colony colony = ColonyManager.getColonyById(message.colonyId);
+        if (colony == null)
         {
-            Colony colony = ColonyManager.getColonyById(message.colonyId);
-            if (colony == null)
-            {
-                return null;
-            }
-
-            Building building = colony.getBuilding(message.buildingId);
-            if (building == null)
-            {
-                return null;
-            }
-
-            switch(message.mode)
-            {
-                case BUILD:
-                    building.requestUpgrade();
-                    break;
-                case REPAIR:
-                    building.requestRepair();
-                    break;
-            }
-
             return null;
         }
+
+        Building building = colony.getBuilding(message.buildingId);
+        if (building == null)
+        {
+            return null;
+        }
+
+        switch(message.mode)
+        {
+            case BUILD:
+                building.requestUpgrade();
+                break;
+            case REPAIR:
+                building.requestRepair();
+                break;
+        }
+
+        return null;
     }
 }

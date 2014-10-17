@@ -25,7 +25,7 @@ public class PlayerProperties implements IExtendedEntityProperties
      */
     public static void register(EntityPlayer player)
     {
-        player.registerExtendedProperties(Constants.PlayerPropertyName, new PlayerProperties());
+        player.registerExtendedProperties(Constants.PLAYER_PROPERTY_NAME, new PlayerProperties());
     }
 
     /**
@@ -36,7 +36,7 @@ public class PlayerProperties implements IExtendedEntityProperties
      */
     public static PlayerProperties get(EntityPlayer player)
     {
-        return (PlayerProperties) player.getExtendedProperties(Constants.PlayerPropertyName);
+        return (PlayerProperties) player.getExtendedProperties(Constants.PLAYER_PROPERTY_NAME);
     }
 
     @Override
@@ -51,13 +51,13 @@ public class PlayerProperties implements IExtendedEntityProperties
         }
         properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
-        compound.setTag(Constants.PlayerPropertyName, properties);
+        compound.setTag(Constants.PLAYER_PROPERTY_NAME, properties);
     }
 
     @Override
     public void loadNBTData(NBTTagCompound compound)
     {
-        NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PlayerPropertyName);
+        NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PLAYER_PROPERTY_NAME);
 
         this.hasPlacedTownHall = properties.getBoolean("hasPlacedTownHall");
         if(properties.hasKey("townhall"))
@@ -88,7 +88,7 @@ public class PlayerProperties implements IExtendedEntityProperties
      */
     private static String getSaveKey(EntityPlayer player)
     {
-        return player.getGameProfile().getId().toString() + ":" + Constants.PlayerPropertyName;
+        return player.getGameProfile().getId().toString() + ":" + Constants.PLAYER_PROPERTY_NAME;
     }
 
     /**

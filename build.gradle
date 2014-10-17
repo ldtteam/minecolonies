@@ -32,7 +32,7 @@ version = "${config.minecraft_version}-${config.minecolonies_major}.${config.min
 minecraft {
 
     version = config.minecraft_version + "-" + config.forge_version
-    runDir = "run/assets"
+    runDir = "run"
     replace "@VERSION@", project.version
     replaceIn "lib/Constants.java"
     if (project.hasProperty("signature"))

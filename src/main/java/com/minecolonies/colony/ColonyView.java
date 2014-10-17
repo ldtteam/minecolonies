@@ -21,13 +21,13 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.*;
 
-public class ColonyView {
-
+public class ColonyView
+{
     private final UUID id;
 
     //  General Attributes
     private String name = "Unknown";
-    private int dimensionId;
+    private int              dimensionId;
     private ChunkCoordinates center;
 
     //  Administration/permissions
@@ -39,16 +39,16 @@ public class ColonyView {
     private Map<ChunkCoordinates, Building.View> buildings = new HashMap<ChunkCoordinates, Building.View>();
 
     //  Citizenry
-    private int maxCitizens = Constants.DEFAULTMAXCITIZENS;
+    private int                         maxCitizens = Constants.DEFAULT_MAX_CITIZENS;
     private Map<UUID, CitizenData.View> citizens = new HashMap<UUID, CitizenData.View>();
 
-    private final static String TAG_NAME = "name";
-    private final static String TAG_DIMENSION = "dimension";
-    private final static String TAG_CENTER = "center";
-    private final static String TAG_MAX_CITIZENS = "maxCitizens";
-    private final static String TAG_CITIZENS_REMOVED = "citizensRemoved";
+    private final static String TAG_NAME              = "name";
+    private final static String TAG_DIMENSION         = "dimension";
+    private final static String TAG_CENTER            = "center";
+    private final static String TAG_MAX_CITIZENS      = "maxCitizens";
+    private final static String TAG_CITIZENS_REMOVED  = "citizensRemoved";
     private final static String TAG_BUILDINGS_REMOVED = "buildingsRemoved";
-    private final static String TAG_AUTO_HOSTILE = "autoHostile";
+    //private final static String TAG_AUTO_HOSTILE = "autoHostile";
 
     /**
      * Base constructor for a colony.
@@ -85,7 +85,8 @@ public class ColonyView {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name)
+    {
         this.name = name;
         MineColonies.network.sendToServer(new TownhallRenameMessage(getID(), name));
     }

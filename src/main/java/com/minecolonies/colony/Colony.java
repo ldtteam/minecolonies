@@ -46,22 +46,22 @@ public class Colony
     private List<ChunkCoordinates> removedBuildings = new ArrayList<ChunkCoordinates>();
 
     //  General Attributes
-    private String           name  = "ERROR(Wasn't placed by player)";
-    private final int        dimensionId;
-    private ChunkCoordinates center;
+    private String name = "ERROR(Wasn't placed by player)";
+    private final int              dimensionId;
+    private       ChunkCoordinates center;
 
     //  Administration/permissions
     private Permissions permissions = new Permissions();
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private BuildingTownHall                townhall;
+    private BuildingTownHall townhall;
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
-    private int                    maxCitizens = Constants.DEFAULTMAXCITIZENS;
-    private Map<UUID, CitizenData> citizens = new HashMap<UUID, CitizenData>();
-    final static private int       CITIZEN_CLEANUP_TICK_DELAY = 60 * 20;   //  Once a minute
+    private              int                    maxCitizens                = Constants.DEFAULT_MAX_CITIZENS;
+    private              Map<UUID, CitizenData> citizens                   = new HashMap<UUID, CitizenData>();
+    final static private int                    CITIZEN_CLEANUP_TICK_DELAY = 60 * 20;   //  Once a minute
 
     //  Workload and Jobs
     private Map<ChunkCoordinates, String> buildingUpgradeMap = new HashMap<ChunkCoordinates, String>();
@@ -107,10 +107,10 @@ public class Colony
      */
     protected void cleanup()
     {
-        for (CitizenData citizen : citizens.values())
+        for(CitizenData citizen : citizens.values())
         {
             EntityCitizen actualCitizen = citizen.getCitizenEntity();
-            if (actualCitizen != null)
+            if(actualCitizen != null)
             {
                 actualCitizen.clearColony();
             }
