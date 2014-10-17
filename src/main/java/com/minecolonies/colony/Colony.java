@@ -52,7 +52,7 @@ public class Colony
 
     //  Administration/permissions
     private Permissions permissions = new Permissions();
-    private int autoHostile = 0;//Off
+    //private int autoHostile = 0;//Off
 
     //  Buildings
     private BuildingTownHall                townhall;
@@ -178,7 +178,7 @@ public class Colony
             buildingUpgradeMap.put(coords, name);
         }
 
-        autoHostile = compound.getInteger(TAG_AUTO_HOSTILE);
+        //autoHostile = compound.getInteger(TAG_AUTO_HOSTILE);
     }
 
     /**
@@ -235,7 +235,7 @@ public class Colony
             compound.setTag(TAG_BUILDING_UPGRADES, buildingUpgradeTagList);
         }
 
-        compound.setInteger(TAG_AUTO_HOSTILE, autoHostile);
+        //compound.setInteger(TAG_AUTO_HOSTILE, autoHostile);
     }
 
     public UUID getID()
@@ -908,13 +908,13 @@ public class Colony
         return deliverymanRequired;
     }
 
-    public int getAutoHostile()
-    {
-        return autoHostile;
-    }
+    //public int getAutoHostile()
+    //{
+    //    return autoHostile;
+    //}
 
-    public void setAutoHostile(int value)
-    {
-        autoHostile = value;
-    }
+    //public void setAutoHostile(int value)
+    //{
+    //    autoHostile = value;
+    //}
 }

@@ -31,7 +31,7 @@ public class ColonyView {
 
     //  Administration/permissions
     private Permissions.View permissions;
-    private int autoHostile = 0;//Off
+    //private int autoHostile = 0;//Off
 
     //  Buildings
     private Map<ChunkCoordinates, Building.View> buildings = new HashMap<ChunkCoordinates, Building.View>();
@@ -190,7 +190,7 @@ public class ColonyView {
             compound.setTag(TAG_BUILDINGS_REMOVED, buildingTagList);
         }
 
-        compound.setInteger(TAG_AUTO_HOSTILE, colony.getAutoHostile());
+        //compound.setInteger(TAG_AUTO_HOSTILE, colony.getAutoHostile());
     }
 
     /**
@@ -229,7 +229,7 @@ public class ColonyView {
             }
         }
 
-        autoHostile = compound.getInteger(TAG_AUTO_HOSTILE);
+        //autoHostile = compound.getInteger(TAG_AUTO_HOSTILE);
 
         //        if (world == null)
         //        {
