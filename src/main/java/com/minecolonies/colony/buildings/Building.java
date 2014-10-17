@@ -5,10 +5,12 @@ import com.minecolonies.blocks.*;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,8 +49,9 @@ public abstract class Building
     /**
      * Add a given Building mapping
      *
-     * @param c    class of object
      * @param name name of object
+     * @param buildingClass subclass of Building
+     * @param parentBlock subclass of Block
      */
     private static void addMapping(String name, Class<? extends Building> buildingClass, Class<? extends BlockHut> parentBlock)
     {
@@ -293,6 +296,11 @@ public abstract class Building
         }
     }
 
+    public void openGui(EntityPlayer player)
+    {
+        player.openGui(MineColonies.instance, getGuiId(), getColony().getWorld(), location.posX, location.posY, location.posZ);
+    }
+
     /**
      * The Building View is the client-side representation of a Building.
      * Views contain the Building's data that is relevant to a Client, in a more client-friendly form
@@ -316,7 +324,13 @@ public abstract class Building
         public ColonyView getColony() { return colony; }
         public int getBuildingLevel() { return buildingLevel; }
 
-        public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        public void openGui(EnumGUI gui)
+        {
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            player.openGui(MineColonies.instance, gui.getID(), player.worldObj, location.posX, location.posY, location.posZ);
+        }
+
+        public GuiScreen getGui(int guiId)
         {
             return null;
         }

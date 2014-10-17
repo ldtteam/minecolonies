@@ -8,10 +8,8 @@ import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -20,28 +18,15 @@ import java.util.ArrayList;
 public abstract class GuiBase extends GuiScreen
 {
     //IDs for default layout
-    protected final int BUTTON_HIRE_FIRE = 0, BUTTON_RECALL = 1, BUTTON_BUILD = 2, BUTTON_REPAIR = 3;
     protected final ResourceLocation background  = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiHutBackground.png");
     protected final int              buttonWidth = 116, buttonHeight = 20, buttonSpan = 4, labelSpan = 11;
     protected int middleX, middleY, topY, xSize, ySize, buttonMiddleX, buttonMiddleY;
 
-    protected final EntityPlayer  player;
-    protected final World         world;
-    protected final int           x, y, z;
-    protected final Building.View building;
-
     private ArrayList<GuiModIcon> iconList;
 
-    public GuiBase(EntityPlayer player, World world, int x, int y, int z, Building.View building)
+    public GuiBase()
     {
         super();
-
-        this.player = player;
-        this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.building = building;
 
         xSize = 171;
         ySize = 247;
@@ -66,6 +51,7 @@ public abstract class GuiBase extends GuiScreen
         return addButton(id, text, x, topY + ySize - labelSpan * 3, w, h);
     }
 
+    @SuppressWarnings("unchecked")
     protected GuiButton addButton(int id, String text, int x, int y, int w, int h)
     {
         GuiButton button = new GuiButton(id, x, y, w, h, text);
@@ -78,6 +64,7 @@ public abstract class GuiBase extends GuiScreen
         addLabel(text, x, y, 0x000000);
     }
 
+    @SuppressWarnings("unchecked")
     protected void addLabel(String text, int x, int y, int color)
     {
         labelList.add(new GuiModLabel(text, x, y, color));
@@ -96,29 +83,6 @@ public abstract class GuiBase extends GuiScreen
     protected void addIcon(ItemStack is, int x, int y)
     {
         iconList.add(new GuiModIcon(is, x, y));
-    }
-
-    protected void addDefaultWorkerLayout(String hutName, String workerName, String level, String type)
-    {
-        addDefaultWorkerLayout(hutName, workerName, level, type, 0);
-    }
-
-    protected void addDefaultWorkerLayout(String hutName, String workerName, String level, String type, int yPadding)
-    {
-        String workerAssigned = LanguageHandler.format("com.minecolonies.gui.workerHuts.workerAssigned");
-        String workerLevel = LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", level);
-        String buildType = LanguageHandler.format("com.minecolonies.gui.workerHuts.buildType");
-
-        addCenteredLabel(hutName, topY + yPadding, 0xff0000);
-        addCenteredLabel(workerAssigned, topY + yPadding + 18);
-        addCenteredLabel(workerName, topY + yPadding + 28);
-        addCenteredLabel(workerLevel, topY + yPadding + 44);
-        addButton(BUTTON_HIRE_FIRE, LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"), buttonMiddleX, topY + yPadding + 64, buttonWidth, buttonHeight);
-        addButton(BUTTON_RECALL, LanguageHandler.format("com.minecolonies.gui.workerHuts.recall"), buttonMiddleX, topY + yPadding + 88, buttonWidth, buttonHeight);
-        addButton(BUTTON_BUILD, LanguageHandler.format("com.minecolonies.gui.workerHuts.build"), buttonMiddleX, topY + yPadding + 120, buttonWidth, buttonHeight);
-        addButton(BUTTON_REPAIR, LanguageHandler.format("com.minecolonies.gui.workerHuts.repair"), buttonMiddleX, topY + yPadding + 144, buttonWidth, buttonHeight);
-        addCenteredLabel(buildType, topY + yPadding + 172);
-        addCenteredLabel(type, topY + yPadding + 182);
     }
 
     protected int getSameCenterX(String... strings)
@@ -144,35 +108,6 @@ public abstract class GuiBase extends GuiScreen
         int xCoord = (width - xSize) / 2;
         int yCoord = (height - ySize - 10) / 2;
         drawTexturedModalRect(xCoord, yCoord, 0, 0, xSize, ySize);
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton guiButton)
-    {
-        switch(guiButton.id)
-        {
-            case BUTTON_HIRE_FIRE:
-                if(guiButton.displayString.equals(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire")))
-                {
-                    //TODO: hire worker
-                    guiButton.displayString = LanguageHandler.format("com.minecolonies.gui.workerHuts.fire");
-                }
-                else
-                {
-                    //TODO: fire worker
-                    guiButton.displayString = LanguageHandler.format("com.minecolonies.gui.workerHuts.hire");
-                }
-                break;
-            case BUTTON_RECALL:
-                //TODO recall
-                break;
-            case BUTTON_BUILD:
-                MineColonies.network.sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
-                break;
-            case BUTTON_REPAIR:
-                MineColonies.network.sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
-                break;
-        }
     }
 
     @Override

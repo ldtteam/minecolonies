@@ -150,11 +150,11 @@ public class BuildingHome extends BuildingHut
             super(c, l);
         }
 
-        public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        public GuiScreen getGui(int guiId)
         {
             if (guiId == EnumGUI.CITIZEN.getID())
             {
-                //return new GuiHutCitizen(this, player, world, x, y, z);
+                //return new GuiHutCitizen(this);
             }
 
             return null;

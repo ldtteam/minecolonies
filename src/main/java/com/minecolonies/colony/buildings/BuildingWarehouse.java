@@ -135,11 +135,11 @@ public class BuildingWarehouse extends BuildingWorker
             super(c, l);
         }
 
-        public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        public GuiScreen getGui(int guiId)
         {
             if (guiId == EnumGUI.WAREHOUSE.getID())
             {
-                return new GuiHutWarehouse(this, player, world, x, y, z);
+                return new GuiHutWarehouse(this);
             }
 
             return null;

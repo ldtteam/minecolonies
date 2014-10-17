@@ -27,15 +27,15 @@ public class BuildingTownHall extends BuildingHut
             super(c, l);
         }
 
-        public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        public GuiScreen getGui(int guiId)
         {
             if (guiId == EnumGUI.TOWNHALL.getID())
             {
-                return new GuiTownHall(this, player, world, x, y, z);
+                return new GuiTownHall(this);
             }
             else if (guiId == EnumGUI.TOWNHALL_RENAME.getID())
             {
-                return new GuiTypable(getColony(), player, world, x, y, z);
+                return new GuiTypable(getColony());
             }
 
             return null;

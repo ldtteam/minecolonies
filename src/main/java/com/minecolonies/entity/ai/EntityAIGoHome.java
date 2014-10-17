@@ -4,7 +4,9 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.Vec3;
 
 /**
  * EntityCitizen go home AI
@@ -25,7 +27,8 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return citizen.isSleepTime() && !citizen.isAtHome();
+        return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP &&
+                !citizen.isAtHome();
     }
 
     @Override
@@ -38,21 +41,19 @@ public class EntityAIGoHome extends EntityAIBase
             return;
         }
 
-//        if (citizen.getDistanceSq((double)pos.posZ, (double)pos.posY, (double)pos.posZ) > 256.0D)
-//        {
-//            Vec3 vec3 = RandomPositionGenerator.findRandomTargetBlockTowards(citizen, 14, 3, Vec3.createVectorHelper((double) pos.posX + 0.5D, (double) pos.posY, (double) pos.posZ + 0.5D));
-//
-//            if (vec3 != null)
-//            {
-//                citizen.getNavigator().tryMoveToXYZ(vec3.xCoord, vec3.yCoord, vec3.zCoord, 1.0D);
-//            }
-//        }
-//        else
-//        {
-//            citizen.getNavigator().tryMoveToXYZ((double)pos.posX + 0.5D, (double)pos.posY, (double)pos.posZ + 0.5D, 1.0D);
-//        }
+        if (citizen.getDistanceSq((double)pos.posX, (double)pos.posY, (double)pos.posZ) > (40 * 40))
+        {
+            Vec3 vec3 = RandomPositionGenerator.findRandomTargetBlockTowards(citizen, 14, 3, Vec3.createVectorHelper((double) pos.posX + 0.5D, (double) pos.posY, (double) pos.posZ + 0.5D));
 
-        ChunkCoordUtils.tryMoveLivingToXYZ(citizen, pos);
+            if (vec3 != null)
+            {
+                citizen.getNavigator().tryMoveToXYZ(vec3.xCoord, vec3.yCoord, vec3.zCoord, 1.0D);
+            }
+        }
+        else
+        {
+            citizen.getNavigator().tryMoveToXYZ((double)pos.posX + 0.5D, (double)pos.posY, (double)pos.posZ + 0.5D, 1.0D);
+        }
     }
 
     @Override

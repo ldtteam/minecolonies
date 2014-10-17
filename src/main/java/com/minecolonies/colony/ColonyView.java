@@ -2,6 +2,7 @@ package com.minecolonies.colony;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
@@ -34,6 +35,7 @@ public class ColonyView {
     //private int autoHostile = 0;//Off
 
     //  Buildings
+    private BuildingTownHall.View   townhall;
     private Map<ChunkCoordinates, Building.View> buildings = new HashMap<ChunkCoordinates, Building.View>();
 
     //  Citizenry
@@ -86,6 +88,10 @@ public class ColonyView {
     public void setName(String name) {
         this.name = name;
         MineColonies.network.sendToServer(new TownhallRenameMessage(getID(), name));
+    }
+
+    public BuildingTownHall.View getTownhall() {
+        return townhall;
     }
 
     public Building.View getBuilding(int x, int y, int z) {
@@ -210,6 +216,7 @@ public class ColonyView {
 
         if (isNewSubscription) {
             citizens.clear();
+            townhall = null;
             buildings.clear();
         } else {
             if (compound.hasKey(TAG_CITIZENS_REMOVED)) {
@@ -224,7 +231,12 @@ public class ColonyView {
                 NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS_REMOVED, NBT.TAG_COMPOUND);
                 for (int i = 0; i < buildingTagList.tagCount(); ++i) {
                     ChunkCoordinates id = ChunkCoordUtils.readFromNBTTagList(buildingTagList, i);
-                    buildings.remove(id);
+
+                    Building.View building = buildings.remove(id);
+                    if (townhall == building)
+                    {
+                        townhall = null;
+                    }
                 }
             }
         }
@@ -278,6 +290,11 @@ public class ColonyView {
         Building.View building = Building.createBuildingView(this, buildingId, compound);    //  At the moment we are re-using the save/load code
         if (building != null) {
             buildings.put(building.getID(), building);
+
+            if (building instanceof BuildingTownHall.View)
+            {
+                townhall = (BuildingTownHall.View)building;
+            }
         }
 
         return null;
