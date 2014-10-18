@@ -765,6 +765,11 @@ public class Colony
             markDirty();
         }
 
+        if (building == townhall)
+        {
+            townhall = null;
+        }
+
         //  Allow Citizens to fix up any data that wasn't fixed up by the Building's own onDestroyed
         for (CitizenData citizen : citizens.values())
         {

@@ -69,22 +69,21 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
 
             if(this instanceof BlockHutTownHall)
             {
-                //  TODO BUGFIX - Allow placing a TownHall in a Colony if it doesn't have one
-
-                if (colony != null)
+                if (colony == null)
                 {
-                    throw new NullPointerException("TownHall placed in existing colony");
+                    String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
+                    colony = ColonyManager.createColony(world, hut.getPosition());
+                    colony.setName(colonyName);
+                    colony.addOwner(player.getGameProfile().getId());
+
+                    //  TODO: Deprecate this code?
+                    PlayerProperties.get(player).placeTownhall(x, y, z);
                 }
-
-                String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
-                colony = ColonyManager.createColony(world, hut.getPosition());
-                colony.setName(colonyName);
-                colony.addOwner(player.getGameProfile().getId());
-
-                //  TODO: Deprecate this code?
-                PlayerProperties.get(player).placeTownhall(x, y, z);
+                else if (colony.getTownhall() != null)
+                {
+                    throw new NullPointerException("TownHall placed in colony with an existing townhall");
+                }
             }
-
 
             if (colony == null)
             {

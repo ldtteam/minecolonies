@@ -125,32 +125,45 @@ public class EventHandler
 
             if (block instanceof BlockHutTownHall)
             {
-                //  TODO BUGFIX - Allow placing a TownHall in a Colony if it doesn't have one
-
                 //  Town Halls must be far enough apart
-                if (colony != null && colony.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+                if (colony == null)
                 {
+                    //  No nearby colony is OK
+                }
+                else if (colony.isCoordInColony(world, x, y, z))
+                {
+                    //  Placing in a colony which already has a town hall
+                    if (colony.getTownhall() != null)
+                    {
+                        LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
+                        return false;
+                    }
+                }
+                else if (colony.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+                {
+                    //  Placing too close to an existing colony
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
                     return false;
                 }
-
-                //  Players are currently only allowed a single colony
-                if (!ColonyManager.getColoniesByOwner(player.getGameProfile().getId()).isEmpty())
+                else if (!ColonyManager.getColoniesByOwner(player.getGameProfile().getId()).isEmpty())
                 {
+                    //  Players are currently only allowed a single colony
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
                     return false;
                 }
             }
             else
             {
+                //  Not a Townhall
                 if (colony == null)
                 {
+                    //  Not in a colony
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoTownhall");
                     return false;
                 }
-
-                if (!colony.isCoordInColony(world, x, y, z))
+                else if (!colony.isCoordInColony(world, x, y, z))
                 {
+                    //  Not close enough to colony
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageTooFarFromTownhall");
                     return false;
                 }
@@ -165,28 +178,44 @@ public class EventHandler
             {
                 //  TODO BUGFIX - Allow placing a TownHall in a Colony if it doesn't have one
 
-                if (colonyView != null && colonyView.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+                if (colonyView == null)
                 {
+                    //  No nearby colony is OK
+                }
+                else if (colonyView.isCoordInColony(world, x, y, z))
+                {
+                    //  Placing in a colony which already has a town hall
+                    if (colonyView.getTownhall() != null)
+                    {
+                        LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
+                        return false;
+                    }
+                }
+                else if (colonyView.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+                {
+                    //  Placing too close to an existing colony
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
                     return false;
                 }
-
-                if (!ColonyManager.getColonyViewsOwnedByPlayer(player).isEmpty())
+                else if (!ColonyManager.getColonyViewsOwnedByPlayer(player).isEmpty())
                 {
+                    //  Player already owns a colony
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
                     return false;
                 }
             }
             else
             {
+                //  Not a Townhall
                 if (colonyView == null)
                 {
+                    //  Not in a colony
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoTownhall");
                     return false;
                 }
-
-                if (!colonyView.isCoordInColony(world, x, y, z))
+                else if (!colonyView.isCoordInColony(world, x, y, z))
                 {
+                    //  Not close enough to colony
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageTooFarFromTownhall");
                     return false;
                 }
