@@ -1,5 +1,6 @@
 package com.minecolonies.network;
 
+import com.blockout.Window;
 import com.minecolonies.client.gui.GuiHutBuilder;
 import com.minecolonies.client.gui.GuiHutWarehouse;
 import com.minecolonies.client.gui.GuiTownHall;
@@ -54,6 +55,14 @@ public class GuiHandler implements IGuiHandler
         if(FMLCommonHandler.instance().getSide().equals(Side.CLIENT))
         {
             FMLCommonHandler.instance().showGuiScreen(gui);
+        }
+    }
+
+    public static void showGuiWindow(Window window)
+    {
+        if(FMLCommonHandler.instance().getSide().equals(Side.CLIENT))
+        {
+            FMLCommonHandler.instance().showGuiScreen(window.getScreen());
         }
     }
 }
