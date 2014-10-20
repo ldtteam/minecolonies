@@ -40,7 +40,7 @@ public class EventHandler
                 return;
             }
 
-            if (!colony.getPermissionHandler().hasPermission(event.getPlayer(), Permissions.Action.BREAK_HUTS))
+            if (!colony.getPermissions().hasPermission(event.getPlayer(), Permissions.Action.BREAK_HUTS))
             {
                 event.setCanceled(true);
                 return;

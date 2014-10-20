@@ -58,7 +58,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
                 return;
             }
 
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissionHandler().getMessagePlayers()), "entity.builder.messageBuildStart", worker.getSchematic().getName());
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", worker.getSchematic().getName());
         }
         ChunkCoordUtils.tryMoveLivingToXYZ(worker, worker.getSchematic().getPosition());
         if(!Configurations.builderInfiniteResources)
@@ -218,7 +218,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
         {
             for(ItemStack neededItem : worker.getItemsNeeded())
             {
-                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissionHandler().getMessagePlayers()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
+                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
             }
         }
     }
@@ -696,7 +696,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
         spawnEntities();//TODO handle materials - would work well in staged building
 
         String schematicName = worker.getSchematic().getName();
-        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissionHandler().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
+        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
         ChunkCoordinates pos = worker.getSchematic().getPosition();
 
         if(ChunkCoordUtils.getTileEntity(world, pos) instanceof TileEntityColonyBuilding)

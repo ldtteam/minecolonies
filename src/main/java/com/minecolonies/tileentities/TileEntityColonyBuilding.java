@@ -5,7 +5,6 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
-import com.minecolonies.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -14,7 +13,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ChunkCoordinates;
 
 import java.lang.ref.WeakReference;
-import java.util.Map;
 import java.util.UUID;
 
 public class TileEntityColonyBuilding extends TileEntityChest
@@ -117,7 +115,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         Building b = building.get();
         if (b == null) return true;
 
-        return b.getColony().getPermissionHandler().hasPermission(player, Permissions.Action.ACCESS_HUTS);
+        return b.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
 
     public ChunkCoordinates getPosition()

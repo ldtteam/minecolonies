@@ -122,13 +122,13 @@ public class PermissionsMessage
             switch (message.type)
             {
             case SET_PERMISSION:
-                colony.getPermissionHandler().setPermission(message.rank, message.action);
+                colony.getPermissions().setPermission(message.rank, message.action);
                 break;
             case REMOVE_PERMISSION:
-                colony.getPermissionHandler().removePermission(message.rank, message.action);
+                colony.getPermissions().removePermission(message.rank, message.action);
                 break;
             case TOGGLE_PERMISSION:
-                colony.getPermissionHandler().togglePermission(message.rank, message.action);
+                colony.getPermissions().togglePermission(message.rank, message.action);
                 break;
             default:
                 //todo log error
@@ -182,7 +182,7 @@ public class PermissionsMessage
 
             if (colony != null)
             {
-                colony.getPermissionHandler().addPlayer(message.playerID, message.rank);
+                colony.getPermissions().addPlayer(message.playerID, message.rank);
             } else
             {
                 //todo log error
@@ -231,7 +231,7 @@ public class PermissionsMessage
 
             if (colony != null)
             {
-                colony.getPermissionHandler().removePlayer(message.playerID);
+                colony.getPermissions().removePlayer(message.playerID);
             } else
             {
                 //todo log error

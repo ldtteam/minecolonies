@@ -146,7 +146,7 @@ public class ColonyManager {
 
         for (Colony c : colonies.values())
         {
-            if (c.getPermissionHandler().getOwner().equals(owner))//TODO is this what we want? Also improve
+            if (c.getPermissions().getOwner().equals(owner))//TODO is this what we want? Also improve
             {
                 results.add(c);
             }

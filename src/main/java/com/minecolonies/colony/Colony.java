@@ -266,7 +266,7 @@ public class Colony
     public void markCitizensDirty() { isCitizensDirty = true; }
     public void markBuildingsDirty() { isBuildingsDirty = true; }
 
-    public Permissions getPermissionHandler()
+    public Permissions getPermissions()
     {
         return permissions;
     }

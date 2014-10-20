@@ -1,16 +1,11 @@
 package com.minecolonies.colony.permissions;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.ColonyView;
-import com.minecolonies.lib.Constants;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.ChunkCoordinates;
-
-import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
@@ -61,24 +56,42 @@ public class Permissions {
 
     public Permissions() {
         players = new HashMap<>();
-        permissions = Constants.getDefaultPermissions();
+        permissions = new HashMap<>();
+
+        //Owner
+        permissions.put(Rank.OWNER, 0);
+        this.setPermission(Rank.OWNER, Action.ACCESS_HUTS);
+        this.setPermission(Rank.OWNER, Action.PLACE_HUTS);
+        this.setPermission(Rank.OWNER, Action.BREAK_HUTS);
+        this.setPermission(Rank.OWNER, Action.CAN_PROMOTE);
+        this.setPermission(Rank.OWNER, Action.CAN_DEMOTE);
+        this.setPermission(Rank.OWNER, Action.SEND_MESSAGES);
+        //Officer
+        permissions.put(Rank.OFFICER, 0);
+        this.setPermission(Rank.OFFICER, Action.ACCESS_HUTS);
+        this.setPermission(Rank.OFFICER, Action.PLACE_HUTS);
+        this.setPermission(Rank.OFFICER, Action.BREAK_HUTS);
+        this.setPermission(Rank.OFFICER, Action.CAN_PROMOTE);
+        this.setPermission(Rank.OFFICER, Action.CAN_DEMOTE);
+        this.setPermission(Rank.OFFICER, Action.SEND_MESSAGES);
+        //Friend
+        permissions.put(Rank.FRIEND, 0);
+        this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
+        //Neutral
+        permissions.put(Rank.NEUTRAL, 0);
+        //Hostile
+        permissions.put(Rank.HOSTILE, 0);
+        this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
     }
 
     public void loadPermissions(NBTTagCompound compound) {
         //  Owners
-        try {
-            NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < ownerTagList.tagCount(); ++i) {
-                NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
-                String owner = ownerCompound.getString(TAG_OWNERS_ID);
-                Rank rank = Rank.valueOf(ownerCompound.getString(TAG_OWNERS_RANK));
-                players.put(UUID.fromString(owner), rank);
-            }
-        } catch (ClassCastException e)//old way
-        {
-            NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
-            String owner = ownerTagList.getStringTagAt(0);//Should only be one owner
-            players.put(UUID.fromString(owner), Rank.OWNER);
+        NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < ownerTagList.tagCount(); ++i) {
+            NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
+            String owner = ownerCompound.getString(TAG_OWNERS_ID);
+            Rank rank = Rank.valueOf(ownerCompound.getString(TAG_OWNERS_RANK));
+            players.put(UUID.fromString(owner), rank);
         }
 
         //Permissions
@@ -135,7 +148,7 @@ public class Permissions {
     }
 
     public Set<UUID> getMessagePlayers() {
-        Set<Rank> ranks = new HashSet<Rank>();
+        Set<Rank> ranks = new HashSet<>();
         for (Rank rank : permissions.keySet()) {
             if (hasPermission(rank, Action.SEND_MESSAGES)) {
                 ranks.add(rank);
@@ -145,7 +158,7 @@ public class Permissions {
     }
 
     public Set<UUID> getPlayersByRank(Rank rank) {
-        Set<UUID> players = new HashSet<UUID>();
+        Set<UUID> players = new HashSet<>();
         for (Map.Entry<UUID, Rank> entry : this.players.entrySet()) {
             if (entry.getValue().equals(rank)) {
                 players.add(entry.getKey());
@@ -260,7 +273,7 @@ public class Permissions {
 
         protected View() {
             players = new HashMap<>();
-            permissions = Constants.getDefaultPermissions();
+            permissions = new HashMap<>();
         }
 
         public Map<UUID, Rank> getPlayers() {

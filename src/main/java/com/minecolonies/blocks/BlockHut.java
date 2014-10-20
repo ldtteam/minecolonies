@@ -1,6 +1,5 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
@@ -80,7 +79,7 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
                 colony = ColonyManager.createColony(world, hut.getPosition());
                 colony.setName(colonyName);
-                colony.getPermissionHandler().addPlayer(player.getGameProfile().getId(), Permissions.Rank.OWNER);
+                colony.getPermissions().addPlayer(player.getGameProfile().getId(), Permissions.Rank.OWNER);
 
                 //  TODO: Deprecate this code?
                 PlayerProperties.get(player).placeTownhall(x, y, z);

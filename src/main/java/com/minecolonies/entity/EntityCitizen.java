@@ -77,8 +77,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
 
-        // Half as much render distance as players
-        this.renderDistanceWeight = 5.0D;
+        this.renderDistanceWeight = 2.0D;
 
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setCanSwim(true);
@@ -312,7 +311,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if (colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissionHandler().getMessagePlayers()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
             colony.removeCitizen(this);
         }
 
