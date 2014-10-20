@@ -207,6 +207,12 @@ public class ColonyView
      * @param compound
      */
     public IMessage handleColonyViewPacket(NBTTagCompound compound, boolean isNewSubscription) {
+
+        if(compound == null)
+        {
+            System.out.println("ColonyView.handleColonyViewPacket: Compound was null");// This occurred once and I couldn't open my world, but ever packet afterward was fine.
+            return null;
+        }
         //  General Attributes
         name = compound.getString(TAG_NAME);
         dimensionId = compound.getInteger(TAG_DIMENSION);
