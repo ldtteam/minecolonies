@@ -17,17 +17,6 @@ public class View extends Pane
     View(PaneInfo info, View parent) { super(info, parent); }
     View(PaneInfo info) { super(info); }
 
-//    @Override
-//    public void finalize(int px, int py)
-//    {
-//        super.finalize(px, py);
-//
-//        for (Pane child : children)
-//        {
-//            child.finalize(gx, gy);
-//        }
-//    }
-
     public void expandChild(Pane child)
     {
         int childWidth = child.getWidth(),
@@ -52,9 +41,9 @@ public class View extends Pane
     }
 
     @Override
-    protected void drawSelf(int mx, int my, int scale)
+    protected void drawSelf(int mx, int my)
     {
-        //  Translate the drawing context origin to our x,y
+        //  Translate the drawing origin to our x,y
         GL11.glPushMatrix();
         GL11.glTranslatef((float)x, (float)y, 0);
 
@@ -64,7 +53,7 @@ public class View extends Pane
 
         for (Pane child : children)
         {
-            child.draw(mx, my, scale);
+            child.draw(mx, my);
         }
 
         GL11.glPopMatrix();
@@ -92,6 +81,34 @@ public class View extends Pane
         return null;
     }
 
+    @Override
+    public Pane findPaneByCoord(int mx, int my)
+    {
+        if (!isClickable() || super.findPaneByCoord(mx, my) == null)
+        {
+            return null;
+        }
+
+        //  Adjust coordinates to new origin
+        mx -= x;
+        my -= y;
+
+        for (Pane child : children)
+        {
+            if (child.isClickable())
+            {
+                Pane found = child.findPaneByCoord(mx, my);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
     public void addChild(Pane child)
     {
         children.add(child);
@@ -105,22 +122,34 @@ public class View extends Pane
     public void removeAllChildren() { children.clear(); }
 
     //  Mouse
-    @Override
-    public boolean isClickable() { return false; }
+//    @Override
+//    public boolean isClickable() { return false; }
 
-    @Override
-    public void onClick(int mx, int my)
+//    @Override
+//    public boolean onMouseClicked(int mx, int my)
+//    {
+//        for (Pane child : children)
+//        {
+//            if (child.isPointInPane(mx, my) && child.isClickable())
+//            {
+//                if (child.onMouseClicked(mx - child.getX(), my - child.getY()))
+//                {
+//                    child.setFocus();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        }
+//
+//        return false;
+//    }
+
+    public void onUpdate()
     {
-        mx -= x;
-        my -= y;
-
         for (Pane child : children)
         {
-            if (child.isPointInPane(mx, my) && child.isClickable())
-            {
-                child.onClick(mx, my);
-                return;
-            }
+            child.onUpdate();
         }
     }
+
 }

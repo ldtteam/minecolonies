@@ -1,5 +1,6 @@
 package com.blockout;
 
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -10,22 +11,19 @@ public class ButtonVanilla extends Button
 
     private String label;
 
-    public ButtonVanilla() { setSize(200, 20); }
-    public ButtonVanilla(ButtonVanilla other) { super(other); }
+    public ButtonVanilla(){ setSize(200, 20); }
+    public ButtonVanilla(ButtonVanilla other){ super(other); }
     public ButtonVanilla(Pane.PaneInfo info) { super(info); }
-    public ButtonVanilla(Pane.PaneInfo info, View view)
-    {
-        super(info, view);
-    }
+    public ButtonVanilla(Pane.PaneInfo info, View view) { super(info, view); }
 
     @Override
     public String getLabel() { return label; }
 
     @Override
-    public void setLabel(String s) { label = s; }
+    public void setLabel(String s) { label = s;; }
 
     @Override
-    public void drawSelf(int mx, int my, int scale)
+    public void drawSelf(int mx, int my)
     {
         mc.renderEngine.bindTexture(TEXTURE);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -54,5 +52,12 @@ public class ButtonVanilla extends Button
 
         int textColor = enabled ? (isMouseOver ? 16777120 : 14737632) : 10526880;
         drawCenteredString(mc.fontRenderer, label, x + width / 2, y + (height - 8) / 2, textColor);
+    }
+
+    @Override
+    public void onMouseClicked(int mx, int my)
+    {
+        mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+        super.onMouseClicked(mx, my);
     }
 }

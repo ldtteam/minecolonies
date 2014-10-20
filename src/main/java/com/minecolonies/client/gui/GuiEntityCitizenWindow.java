@@ -1,9 +1,6 @@
 package com.minecolonies.client.gui;
 
-import com.blockout.Alignment;
-import com.blockout.Label;
-import com.blockout.Button;
-import com.blockout.ButtonVanilla;
+import com.blockout.*;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.network.messages.OpenInventoryMessage;
@@ -11,9 +8,7 @@ import com.minecolonies.util.LanguageHandler;
 
 public class GuiEntityCitizenWindow extends GuiMineColoniesWindow implements Button.Handler
 {
-    private Label   title;
-    private Label[] attributes;
-    private Button  inventory;
+    private String INVENTORY_BUTTON_ID = "inventory";
 
     private CitizenData.View citizen;
 
@@ -21,45 +16,52 @@ public class GuiEntityCitizenWindow extends GuiMineColoniesWindow implements But
     {
         super();
         this.citizen = citizen;
-    }
 
-    public void createGui()
-    {
-        title = new Label();
+        Label title = new Label();
         title.setSize(-1, 11);
         title.setPosition(0, 9);
         title.setTextAlignment(Alignment.TopMiddle);
         title.setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills"));
-        title.setColor(0x0, 0x0);
-        //title.setShadowedText(false);
+        title.setColor(0x0);
         title.putInside(this);
 
-        attributes = new Label[5];
+        String [] attributes = new String[5];
+        attributes[0] = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength);
+        attributes[1] = LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina);
+        attributes[2] = LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom);
+        attributes[3] = LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence);
+        attributes[4] = LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma);
 
         int y = 31;
-        for (int i = 0; i < attributes.length; ++i)
+        for (String attr : attributes)
         {
-            Label attribute = new Label();
-            attributes[i] = attribute;
+            Label label = new Label();
 
-            attribute.setColor(0x0, 0x0);
-            attribute.setSize(100, 11);
-            attribute.setPosition(30, y);
-            attribute.putInside(this);
+            label.setSize(100, 11);
+            label.setPosition(30, y);
+            label.setColor(0x0);
+            label.setLabel(attr);
+            label.putInside(this);
 
-            y += attribute.getHeight();
+            y += label.getHeight();
         }
 
-        attributes[0].setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength));
-        attributes[1].setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina));
-        attributes[2].setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom));
-        attributes[3].setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
-        attributes[4].setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
+        for (int i = 0; i < 2; ++i)
+        {
+            TextField text = new TextFieldVanilla();
+            text.setSize(-1, 20);
+            text.setPosition(0, y);
+            text.setText("This is just a test");
+            text.putInside(this);
 
-        inventory = new ButtonVanilla();
+            y += text.getHeight();
+        }
+
+        Button inventory = new ButtonVanilla();
+        inventory.setID(INVENTORY_BUTTON_ID);
         inventory.setSize(116, 20);
-        inventory.setAlignment(Alignment.BottomMiddle);
         inventory.setPosition(0, 13);
+        inventory.setAlignment(Alignment.BottomMiddle);
         inventory.setLabel(LanguageHandler.format("container.inventory"));
         inventory.setHandler(this);
         inventory.putInside(this);
@@ -68,7 +70,7 @@ public class GuiEntityCitizenWindow extends GuiMineColoniesWindow implements But
     @Override
     public void onButtonClicked(Button button)
     {
-        if (button == inventory)
+        if (button.getID() == INVENTORY_BUTTON_ID)
         {
             MineColonies.network.sendToServer(new OpenInventoryMessage(citizen));
         }

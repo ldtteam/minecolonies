@@ -13,7 +13,6 @@ public class Pane extends Gui
     //  Attributes
     protected String    id = "";
     protected int       x  = 0, y = 0;
-    //protected int       gx = 0, gy = 0;
     protected int width = 0, height = 0;
     protected Alignment alignment = Alignment.TopLeft;
     protected boolean   visible   = true;
@@ -22,6 +21,8 @@ public class Pane extends Gui
 
     //  Runtime
     protected View parent;
+    protected static Pane lastClickedPane;
+    protected static Pane focus;
 
     //  ---
     public static class PaneInfo
@@ -88,8 +89,23 @@ public class Pane extends Gui
         this(info, null);
     }
 
-    public String getID() { return id; }
-    public void setID(String id) { this.id = id; }
+    public static Pane getFocus() { return focus; }
+    public static void setFocus(Pane f)
+    {
+        if (focus != null) focus.onFocusLost();
+        focus = f;
+        if (focus != null) focus.onFocus();
+    }
+    public static void clearFocus() { setFocus(null); }
+    public final void setFocus() { setFocus(this); }
+    public final boolean isFocus() { return focus == this; }
+
+    public void onFocusLost() {}
+    public void onFocus() {}
+
+    //  ID
+    public final String getID() { return id; }
+    public final void setID(String id) { this.id = id; }
 
     //  Dimensions
     public int getWidth() { return width; }
@@ -110,15 +126,6 @@ public class Pane extends Gui
     public Alignment getAlignment() { return alignment; }
     public void setAlignment(Alignment alignment) { this.alignment = alignment; }
 
-//    public int getGlobalX() { return gx; }
-//    public int getGlobalY() { return gy; }
-//
-//    public void finalize(int px, int py)
-//    {
-//        gx = px + x;
-//        gy = py + y;
-//    }
-
     //  Visibility
     public boolean isVisible() { return visible; }
     public void setVisible(boolean v) { visible = v; }
@@ -127,13 +134,11 @@ public class Pane extends Gui
     public void hide() { setVisible(false); }
 
     //  Activation
-//    public boolean isActive() { return (active == TriState.On); }
-//    public TriState getActiveState() { return active; }
-//    public void setActiveState(TriState state) { active = state; }
+//    public boolean isActive() { return active; }
+//    public void setActive(boolean a) { active = a; }
 //
-//    public void activate() {}
-//    public void deactive() {}
-//    public void setActive(boolean makeActive) {}
+//    public void activate() { setActive(true); }
+//    public void deactive() { setActive(false); }
 
     //  Enabling
     public boolean isEnabled() { return enabled; }
@@ -143,11 +148,11 @@ public class Pane extends Gui
     public void disable() { setEnabled(false); }
 
     //  Drawing
-    public final void draw(int mx, int my, int scale)
+    public final void draw(int mx, int my)
     {
         if (visible)
         {
-            drawSelf(mx, my, scale);
+            drawSelf(mx, my);
         }
     }
 
@@ -157,12 +162,17 @@ public class Pane extends Gui
      * @param mx Mouse x (relative to parent)
      * @param my Mouse y (relative to parent)
      */
-    protected void drawSelf(int mx, int my, int scale) {}
+    protected void drawSelf(int mx, int my) {}
 
     //  Subpanes
     public Pane findPaneByID(String other)
     {
         return id.equals(other) ? this : null;
+    }
+
+    public Pane findPaneByCoord(int mx, int my)
+    {
+        return enabled && isPointInPane(mx, my) ? this : null;
     }
 
     public View getParent() { return parent; }
@@ -178,32 +188,9 @@ public class Pane extends Gui
 
         if (parent != null)
         {
-            //  Adjust for horizontal alignment
-            if (alignment.rightAligned)
-            {
-                x = parent.getWidth() - width - x;
-            }
-            else if (alignment.horizontalCentered)
-            {
-                x = ((parent.getWidth() - getWidth()) / 2) + x;
-            }
-
-            //  Adjust for vertical alignment
-            if (alignment.bottomAligned)
-            {
-                y = parent.getHeight() - height - y;
-            }
-            else if (alignment.verticalCentered)
-            {
-                y = ((parent.getHeight() - getHeight()) / 2) + y;
-            }
-
             parent.addChild(this);
 
-            if (width < 0 || height < 0)
-            {
-                parent.expandChild(this);
-            }
+            alignToParent();
         }
     }
 
@@ -211,6 +198,34 @@ public class Pane extends Gui
 //    {
 //        putInside(window.getRoot());
 //    }
+
+    protected void alignToParent()
+    {
+        //  Adjust for horizontal alignment
+        if (alignment.rightAligned)
+        {
+            x = parent.getWidth() - width - x;
+        }
+        else if (alignment.horizontalCentered)
+        {
+            x = ((parent.getWidth() - getWidth()) / 2) + x;
+        }
+
+        //  Adjust for vertical alignment
+        if (alignment.bottomAligned)
+        {
+            y = parent.getHeight() - height - y;
+        }
+        else if (alignment.verticalCentered)
+        {
+            y = ((parent.getHeight() - getHeight()) / 2) + y;
+        }
+
+        if (width < 0 || height < 0)
+        {
+            parent.expandChild(this);
+        }
+    }
 
     //  Mouse
 
@@ -227,6 +242,10 @@ public class Pane extends Gui
                my >= y && my < (y + height);
     }
 
-    public boolean isClickable() { return false; }
-    public void onClick(int mx, int my) {}
+    public boolean isClickable() { return visible && enabled; }
+    public void onMouseClicked(int mx, int my) {}
+
+    public boolean onKeyTyped(char ch, int key) { return false; }
+
+    public void onUpdate() {}
 }

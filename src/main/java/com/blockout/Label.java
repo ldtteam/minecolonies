@@ -11,7 +11,15 @@ public class Label extends Pane
     boolean shadow = false;
 
     public Label() {}
-    public Label(Label other) { super(other); }
+    public Label(Label other)
+    {
+        super(other);
+        label = other.label;
+        textAlignment = other.textAlignment;
+        textColor = other.textColor;
+        hoverColor = other.hoverColor;
+        shadow = other.shadow;
+    }
     public Label(PaneInfo info) { super(info); }
     public Label(PaneInfo info, View view) { super(info, view); }
 
@@ -34,7 +42,7 @@ public class Label extends Pane
     public void setTextAlignment(Alignment align) { textAlignment = align; }
 
     @Override
-    public void drawSelf(int mx, int my, int scale)
+    public void drawSelf(int mx, int my)
     {
         int color = isPointInPane(mx, my) ? hoverColor : textColor;
 
