@@ -21,7 +21,7 @@ import java.util.UUID;
 public class PermissionsMessage
 {
 
-    public static class View implements IMessage
+    public static class View implements IMessage, IMessageHandler<View, IMessage>
     {
         public View()
         {
@@ -51,13 +51,10 @@ public class PermissionsMessage
             ByteBufUtils.writeTag(buf, data);
         }
 
-        public static class Handler implements IMessageHandler<View, IMessage>
+        @Override
+        public IMessage onMessage(View message, MessageContext ctx)
         {
-            @Override
-            public IMessage onMessage(View message, MessageContext ctx)
-            {
-                return ColonyManager.handlePermissionsViewPacket(message.colonyID, message.data);
-            }
+            return ColonyManager.handlePermissionsViewPacket(message.colonyID, message.data);
         }
     }
 

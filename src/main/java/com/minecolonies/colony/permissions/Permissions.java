@@ -191,12 +191,6 @@ public class Permissions {
     }
 
     public boolean hasPermission(Rank rank, Action action) {
-
-        for(Map.Entry<Rank, Integer> entry : permissions.entrySet())
-        {
-            System.out.println(entry.getKey().name() + " : " + entry.getValue());
-        }
-
         return Utils.testFlag(permissions.get(rank), action.flag);
     }
 

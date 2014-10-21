@@ -67,15 +67,16 @@ public class MineColonies
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Constants.MOD_NAME);
-        network.registerMessage(ColonyViewMessage.class, ColonyViewMessage.class, 0, Side.CLIENT);
-        network.registerMessage(ColonyViewCitizensMessage.class,    ColonyViewCitizensMessage.class,    1,  Side.CLIENT);
-        network.registerMessage(ColonyBuildingViewMessage.class,    ColonyBuildingViewMessage.class,    2,  Side.CLIENT);
+        network.registerMessage(ColonyViewMessage.class,            ColonyViewMessage.class,            1,  Side.CLIENT);
+        network.registerMessage(ColonyViewCitizensMessage.class,    ColonyViewCitizensMessage.class,    2,  Side.CLIENT);
+        network.registerMessage(ColonyBuildingViewMessage.class,    ColonyBuildingViewMessage.class,    3,  Side.CLIENT);
         network.registerMessage(BuildRequestMessage.class,          BuildRequestMessage.class,          10,  Side.SERVER);
         network.registerMessage(OpenInventoryMessage.class,         OpenInventoryMessage.class,         11,  Side.SERVER);
         network.registerMessage(TownhallRenameMessage.class,        TownhallRenameMessage.class,        12,  Side.SERVER);
-        network.registerMessage(PermissionsMessage.Permission.class,    PermissionsMessage.Permission.class,    13, Side.SERVER);
-        network.registerMessage(PermissionsMessage.AddPlayer.class,     PermissionsMessage.AddPlayer.class,     14, Side.SERVER);
-        network.registerMessage(PermissionsMessage.RemovePlayer.class,  PermissionsMessage.RemovePlayer.class,  15, Side.SERVER);
+        network.registerMessage(PermissionsMessage.View.class,      PermissionsMessage.View.class,      13,  Side.CLIENT);
+        network.registerMessage(PermissionsMessage.Permission.class,    PermissionsMessage.Permission.class,    14, Side.SERVER);
+        network.registerMessage(PermissionsMessage.AddPlayer.class,     PermissionsMessage.AddPlayer.class,     15, Side.SERVER);
+        network.registerMessage(PermissionsMessage.RemovePlayer.class,  PermissionsMessage.RemovePlayer.class,  16, Side.SERVER);
 
         proxy.registerTileEntities();
 
