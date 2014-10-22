@@ -8,6 +8,7 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
@@ -24,7 +25,8 @@ public class Loader
         register("view",        View.class);
         register("button",      ButtonVanilla.class);
         register("label",       Label.class);
-        register("textfield",   TextFieldVanilla.class);
+        register("text",        TextFieldVanilla.class);
+        register("textfield",   TextFieldVanilla.class);    //  Alternate name
 
         //  Would love to load these from a file
         nameToColorMap.put("aqua",      0x00FFFF);
@@ -44,14 +46,14 @@ public class Loader
         nameToColorMap.put("yellow",    0xFFFF00);
     }
 
-    public static String makeFactorKey(String name, String style)
+    public static String makeFactoryKey(String name, String style)
     {
         return name + ":" + (style != null ? style : "");
     }
 
     public static void register(String name, String style, Class<? extends Pane> paneClass)
     {
-        String key = makeFactorKey(name, style);
+        String key = makeFactoryKey(name, style);
 
         if (paneConstructorMap.containsKey(key))
         {
@@ -81,11 +83,11 @@ public class Loader
         String paneType = xml.getName();
         String style = xml.getStringAttribute("style", null);
 
-        String key = makeFactorKey(paneType, style);
+        String key = makeFactoryKey(paneType, style);
         Constructor<? extends Pane> constructor = paneConstructorMap.get(key);
         if (constructor == null && style != null)
         {
-            key = makeFactorKey(paneType, null);
+            key = makeFactoryKey(paneType, null);
             constructor = paneConstructorMap.get(key);
         }
 
@@ -110,7 +112,22 @@ public class Loader
         return null;
     }
 
-    public static void createFromXML(String xmlString, Window window)
+    private static void createFromXML(Document doc, Window window)
+    {
+        doc.getDocumentElement().normalize();
+
+        Node node = doc.getDocumentElement().getFirstChild();
+        while (node != null)
+        {
+            if (node.getNodeType() == Node.ELEMENT_NODE)
+            {
+                createFromXML(new XMLNode(node), window);
+            }
+            node = node.getNextSibling();
+        }
+    }
+
+    public static void createFromXMLString(String xmlString, Window window)
     {
         try
         {
@@ -118,17 +135,23 @@ public class Loader
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(new InputSource(new StringReader(xmlString)));
 
-            doc.getDocumentElement().normalize();
+            createFromXML(doc, window);
+        }
+        catch (Exception exc)
+        {
+            exc.printStackTrace();
+            MineColonies.logger.error("Exception when parsing XML.", exc);
+        }
+    }
 
-            Node node = doc.getDocumentElement().getFirstChild();
-            while (node != null)
-            {
-                if (node.getNodeType() == Node.ELEMENT_NODE)
-                {
-                    createFromXML(new XMLNode(node), window);
-                }
-                node = node.getNextSibling();
-            }
+    public static void createFromXMLFile(String filename, Window window)
+    {
+        try
+        {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(new InputSource(new FileInputStream(filename)));
+            createFromXML(doc, window);
         }
         catch (Exception exc)
         {

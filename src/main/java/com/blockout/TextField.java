@@ -16,13 +16,10 @@ public class TextField extends Pane
 
     //  Attributes
     protected int     maxTextLength     = 32;
-    protected int     textColor         = 0xE0E0E0; //14737632
-    protected int     textColorDisabled = 0x707070; //7368816
+    protected int     textColor         = 0xE0E0E0;
+    protected int     textColorDisabled = 0x707070;
     protected boolean shadow            = true;
-
-    protected boolean backgroundEnabled    = true;
-    protected int     backgroundOuterColor = 0xFFA0A09F; //-6250336
-    protected int     backgroundInnerColor = 0xFEFFFFFF; //-16777216
+    protected String  tabNextPaneID     = null;
 
     //  Runtime
     protected String text = "";
@@ -41,9 +38,9 @@ public class TextField extends Pane
         textColor = other.textColor;
         textColorDisabled = other.textColorDisabled;
         shadow = other.shadow;
-        backgroundEnabled = other.backgroundEnabled;
-        backgroundOuterColor = other.backgroundOuterColor;
-        backgroundInnerColor = other.backgroundInnerColor;
+        text = other.text;
+        tabNextPaneID = other.tabNextPaneID;
+        filter = other.filter;
     }
 
     public TextField(XMLNode xml)
@@ -53,9 +50,8 @@ public class TextField extends Pane
         textColor            = xml.getColorAttribute("color", textColor);
         textColorDisabled    = xml.getColorAttribute("colordisabled", textColorDisabled);
         shadow               = xml.getBooleanAttribute("shadow", shadow);
-        backgroundEnabled    = xml.getBooleanAttribute("background", backgroundEnabled);
-        backgroundOuterColor = xml.getColorAttribute("backgroundOuter", backgroundOuterColor);
-        backgroundInnerColor = xml.getColorAttribute("backgroundInner", backgroundInnerColor);
+        text                 = xml.getLocalizedStringAttribute("text", text);
+        tabNextPaneID = xml.getStringAttribute("tab", null);
     }
 
     public Filter getFilter() { return filter; }
@@ -76,12 +72,8 @@ public class TextField extends Pane
     public void setTextColor(int c) { textColor = c; }
     public void setTextColorDisabled(int c) { textColorDisabled = c; }
 
-    public boolean getBackgroundEnabled() { return backgroundEnabled; }
-    public int getBackgroundOuterColor() { return backgroundOuterColor; }
-    public int getBackgroundInnerColor() { return backgroundInnerColor; }
-    public void setBackgroundEnabled(boolean e) { backgroundEnabled = e; }
-    public void setBackgroundOuterColor(int c) { backgroundOuterColor = c; }
-    public void setBackgroundInnerColor(int c) { backgroundInnerColor = c; }
+    public String getTabNextPaneID() { return tabNextPaneID; }
+    public void setTabNextPaneID(String nextID) { tabNextPaneID = nextID; }
 
     public int getCursorPosition() { return cursorPosition; }
     public void setCursorPosition(int pos)
@@ -98,20 +90,20 @@ public class TextField extends Pane
     {
         selectionEnd = MathHelper.clamp_int(pos, 0, text.length());
 
-        int drawWidth = backgroundEnabled ? getWidth() - 8 : getWidth();
-        if (drawWidth > 0)
+        int internalWidth = getInternalWidth();
+        if (internalWidth > 0)
         {
             if (scrollOffset > text.length())
             {
                 scrollOffset = text.length();
             }
 
-            String visibleString = mc.fontRenderer.trimStringToWidth(text.substring(scrollOffset), drawWidth);
+            String visibleString = mc.fontRenderer.trimStringToWidth(text.substring(scrollOffset), internalWidth);
             int rightmostVisibleChar = visibleString.length() + scrollOffset;
 
             if (selectionEnd == scrollOffset)
             {
-                scrollOffset -= mc.fontRenderer.trimStringToWidth(text, drawWidth, true).length();
+                scrollOffset -= mc.fontRenderer.trimStringToWidth(text, internalWidth, true).length();
             }
 
             if (selectionEnd > rightmostVisibleChar)
@@ -134,6 +126,8 @@ public class TextField extends Pane
         return text.substring(start, end);
     }
 
+    public int getInternalWidth() { return getWidth(); }
+
     @Override
     public void putInside(View view)
     {
@@ -145,20 +139,9 @@ public class TextField extends Pane
     protected void drawSelf(int mx, int my)
     {
         int color = enabled ? textColor : textColorDisabled;
+        int drawWidth = getInternalWidth();
         int drawX = x;
         int drawY = y;
-        int drawWidth = width;
-
-        if (backgroundEnabled)
-        {
-            //  Draw box
-            drawRect(x - 1, y - 1, x + width + 1, y + height + 1, backgroundOuterColor);
-            drawRect(x, y, x + width, y + height, backgroundInnerColor);
-
-            drawX += 4;
-            drawY += (height - 8) / 2;
-            drawWidth -= 8;
-        }
 
         //  Determine the portion of the string that is visible on screen
         String visibleString = mc.fontRenderer.trimStringToWidth(text.substring(scrollOffset), drawWidth);
@@ -252,21 +235,15 @@ public class TextField extends Pane
     {
         if (mx < 0) return;
 
-        int clickX = mx;
-        int drawWidth = width;
+        String visibleString = mc.fontRenderer.trimStringToWidth(text.substring(scrollOffset), getInternalWidth());
+        String trimmedString = mc.fontRenderer.trimStringToWidth(visibleString, mx);
 
-        if (backgroundEnabled)
-        {
-            clickX -= 4;
-            drawWidth -= 8;
-        }
-
-        String visibleString = mc.fontRenderer.trimStringToWidth(text.substring(scrollOffset), drawWidth);
-        String trimmedString = mc.fontRenderer.trimStringToWidth(visibleString, clickX);
-
-        setCursorPosition(trimmedString.length() + scrollOffset);
-
+        // Cache and restore scrollOffset when we change focus via click,
+        // because onFocus() sets the cursor (and thus scroll offset) to the end
+        int oldScrollOffset = scrollOffset;
         setFocus();
+        scrollOffset = oldScrollOffset;
+        setCursorPosition(trimmedString.length() + scrollOffset);
     }
 
     @Override
@@ -355,6 +332,19 @@ public class TextField extends Pane
                         return true;
                     }
 
+                    case Keyboard.KEY_TAB:
+                    {
+                        if (tabNextPaneID != null)
+                        {
+                            Pane next = getWindow().findPaneByID(tabNextPaneID);
+                            if (next != null)
+                            {
+                                next.setFocus();
+                            }
+                        }
+                        return true;
+                    }
+
                     default:
                         if (filter.isAllowedCharacter(c))
                         {
@@ -377,6 +367,7 @@ public class TextField extends Pane
     @Override
     public void onFocus()
     {
+        setCursorPosition(text.length());
         cursorBlinkCounter = 0;
     }
 

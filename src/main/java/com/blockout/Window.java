@@ -19,6 +19,7 @@ public class Window extends View
     {
         setSize(w, h);
         screen = new Screen(this);
+        window = this;
     }
 
     /**

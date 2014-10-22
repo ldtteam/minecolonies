@@ -30,9 +30,24 @@ public class Button extends Pane
     @Override
     public void onMouseClicked(int mx, int my)
     {
-        if (handler != null)
+        Handler delegatedHandler = handler;
+
+        if (delegatedHandler == null)
         {
-            handler.onButtonClicked(this);
+            //  If we do not have a designated handler, find the closest ancestor that is a Handler
+            for (Pane p = parent; p != null; p = p.parent)
+            {
+                if (p instanceof Handler)
+                {
+                    delegatedHandler = (Handler)p;
+                    break;
+                }
+            }
+        }
+
+        if (delegatedHandler != null)
+        {
+            delegatedHandler.onButtonClicked(this);
         }
     }
 }

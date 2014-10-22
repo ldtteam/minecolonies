@@ -61,6 +61,16 @@ public class View extends Pane
     }
 
     @Override
+    protected void setWindow(Window w)
+    {
+        super.setWindow(w);
+        for (Pane child : children)
+        {
+            child.setWindow(w);
+        }
+    }
+
+    @Override
     protected void drawSelf(int mx, int my)
     {
         //  Translate the drawing origin to our x,y
@@ -99,6 +109,12 @@ public class View extends Pane
         }
 
         return null;
+    }
+
+    public <T extends Pane> T findPaneOfTypeByID(String id, Class<T> type)
+    {
+        Pane p = findPaneByID(id);
+        return type.isInstance(p) ? type.cast(p) : null;
     }
 
     @Override

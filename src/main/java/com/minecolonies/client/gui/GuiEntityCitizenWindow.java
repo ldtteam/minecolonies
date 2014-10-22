@@ -24,8 +24,7 @@ public class GuiEntityCitizenWindow extends GuiMineColoniesWindow implements But
                 "            textalign=\"TopMiddle\"\n" +
                 "            color=\"0\"\n" +
                 "            label=\"$(com.minecolonies.gui.citizen.skills)\" />\n" +
-                "    <view\n" +
-                "            width=\"100\" height=\"55\" x=\"30\" y=\"30\">\n" +
+                "    <view width=\"100\" height=\"55\" x=\"30\" y=\"30\">\n" +
                 "        <label id=\"strength\"\n" +
                 "                width=\"100\" height=\"11\" y=\"0\"\n" +
                 "                color=\"0\" />\n" +
@@ -42,19 +41,27 @@ public class GuiEntityCitizenWindow extends GuiMineColoniesWindow implements But
                 "                width=\"100\" height=\"11\" y=\"44\"\n" +
                 "                color=\"rgba(0,255,0,0.5)\" />\n" +
                 "    </view>\n" +
+                "    <view width=\"-1\" height=\"60\" y=\"85\">\n" +
+                "        <text id=\"text1\"\n" +
+                "                width=\"-1\" height=\"20\" y=\"0\" text=\"This is just a test\"\n" +
+                "                tab=\"text2\" />\n" +
+                "        <text id=\"text2\"\n" +
+                "                width=\"-1\" height=\"20\" y=\"20\" text=\"This is just a test\"\n" +
+                "                tab=\"text1\" />\n" +
+                "    </view>\n" +
                 "    <button id=\"inventory\"\n" +
                 "            width=\"116\" height=\"20\" x=\"0\" y=\"13\"\n" +
                 "            align=\"BottomMiddle\"\n" +
                 "            label=\"$(container.inventory)\" />\n" +
                 "</window>\n";
 
-        Loader.createFromXML(xml, this);
+        Loader.createFromXMLString(xml, this);
 
-        ((Label)findPaneByID("strength")).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength));
-        ((Label)findPaneByID("stamina")).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina));
-        ((Label)findPaneByID("wisdom")).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom));
-        ((Label)findPaneByID("intelligence")).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
-        ((Label)findPaneByID("charisma")).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
+        findPaneOfTypeByID("strength", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength));
+        findPaneOfTypeByID("stamina", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina));
+        findPaneOfTypeByID("wisdom", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom));
+        findPaneOfTypeByID("intelligence", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
+        findPaneOfTypeByID("charisma", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
 
 
 //        Label title = new Label();
@@ -118,7 +125,7 @@ public class GuiEntityCitizenWindow extends GuiMineColoniesWindow implements But
     @Override
     public void onButtonClicked(Button button)
     {
-        if (button.getID() == INVENTORY_BUTTON_ID)
+        if (button.getID().equals(INVENTORY_BUTTON_ID))
         {
             MineColonies.network.sendToServer(new OpenInventoryMessage(citizen));
         }

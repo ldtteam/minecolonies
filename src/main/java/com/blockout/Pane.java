@@ -23,6 +23,7 @@ public class Pane extends Gui
     protected boolean   enabled   = true;
 
     //  Runtime
+    protected Window      window;
     protected View        parent;
     protected static Pane lastClickedPane;
     protected static Pane focus;
@@ -156,12 +157,18 @@ public class Pane extends Gui
     /**
      * Clear the currently focused Pane.
      */
-    public static void clearFocus() { setFocus(null); }
+    public static void clearFocus()
+    {
+        setFocus(null);
+    }
 
     /**
      * Set Focus to this Pane.
      */
-    public final void setFocus() { setFocus(this); }
+    public final void setFocus()
+    {
+        setFocus(this);
+    }
 
     /**
      * Return <tt>true</tt> if this Pane is the current focus.
@@ -236,7 +243,19 @@ public class Pane extends Gui
      *
      * @return the Pane that contains this one
      */
-    public View getParent() { return parent; }
+    public final View getParent() { return parent; }
+
+    /**
+     * Return the Window that this Pane ultimately belongs to.
+     *
+     * @return the Window that this Pane belongs to.
+     */
+    public final Window getWindow() { return window; }
+
+    protected void setWindow(Window w)
+    {
+        window = w;
+    }
 
     /**
      * Put this Pane inside a View.  Only Views and subclasses can contain Panes
@@ -254,6 +273,8 @@ public class Pane extends Gui
 
         if (parent != null)
         {
+            setWindow(parent.getWindow());
+
             parent.addChild(this);
 
             alignToParent();
