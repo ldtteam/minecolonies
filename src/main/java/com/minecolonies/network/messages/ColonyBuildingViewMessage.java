@@ -15,7 +15,7 @@ import java.util.UUID;
 /**
  * Add or Update a Building.View to a ColonyView on the client
  */
-public class ColonyBuildingViewMessage implements IMessage
+public class ColonyBuildingViewMessage implements IMessage, IMessageHandler<ColonyBuildingViewMessage, IMessage>
 {
     private UUID             colonyId;
     private ChunkCoordinates buildingId;
@@ -47,12 +47,9 @@ public class ColonyBuildingViewMessage implements IMessage
         building = ByteBufUtils.readTag(buf);
     }
 
-    public static class Handler implements IMessageHandler<ColonyBuildingViewMessage, IMessage>
+    @Override
+    public IMessage onMessage(ColonyBuildingViewMessage message, MessageContext ctx)
     {
-        @Override
-        public IMessage onMessage(ColonyBuildingViewMessage message, MessageContext ctx)
-        {
-            return ColonyManager.handleColonyBuildingViewPacket(message.colonyId, message.buildingId, message.building);
-        }
+        return ColonyManager.handleColonyBuildingViewPacket(message.colonyId, message.buildingId, message.building);
     }
 }

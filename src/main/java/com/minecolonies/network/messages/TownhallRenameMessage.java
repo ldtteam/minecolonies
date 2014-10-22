@@ -12,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.UUID;
 
-public class TownhallRenameMessage implements IMessage
+public class TownhallRenameMessage implements IMessage, IMessageHandler<TownhallRenameMessage, IMessage>
 {
     private UUID colonyId;
     private String name;
@@ -40,21 +40,18 @@ public class TownhallRenameMessage implements IMessage
         name = ByteBufUtils.readUTF8String(buf);
     }
 
-    public static class Handler implements IMessageHandler<TownhallRenameMessage, IMessage>
+    @Override
+    public IMessage onMessage(TownhallRenameMessage message, MessageContext ctx)
     {
-        @Override
-        public IMessage onMessage(TownhallRenameMessage message, MessageContext ctx)
+        EntityPlayer player = ctx.getServerHandler().playerEntity;
+        Colony colony = ColonyManager.getColonyById(message.colonyId);
+
+        if (colony != null)
         {
-            EntityPlayer player = ctx.getServerHandler().playerEntity;
-            Colony colony = ColonyManager.getColonyById(message.colonyId);
-
-            if (colony != null)
-            {
-                colony.setName(message.name);
-                MineColonies.network.sendToAll(message);
-            }
-
-            return null;
+            colony.setName(message.name);
+            MineColonies.network.sendToAll(message);
         }
+
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package com.minecolonies.colony;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityWorker;
@@ -10,6 +11,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.ColonyBuildingViewMessage;
 import com.minecolonies.network.messages.ColonyViewCitizensMessage;
 import com.minecolonies.network.messages.ColonyViewMessage;
+import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
@@ -44,21 +46,22 @@ public class Colony
     private List<ChunkCoordinates> removedBuildings = new ArrayList<ChunkCoordinates>();
 
     //  General Attributes
-    private String           name  = "ERROR(Wasn't placed by player)";
-    private final int        dimensionId;
-    private ChunkCoordinates center;
+    private String name = "ERROR(Wasn't placed by player)";
+    private final int              dimensionId;
+    private       ChunkCoordinates center;
 
-    //  Administration
-    private Set<UUID> owners = new HashSet<UUID>();
+    //  Administration/permissions
+    private Permissions permissions = new Permissions();
+    //private int autoHostile = 0;//Off
 
     //  Buildings
-    private BuildingTownHall                townhall;
+    private BuildingTownHall townhall;
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
-    private int                    maxCitizens = Constants.DEFAULTMAXCITIZENS;
-    private Map<UUID, CitizenData> citizens = new HashMap<UUID, CitizenData>();
-    final static private int       CITIZEN_CLEANUP_TICK_DELAY = 60 * 20;   //  Once a minute
+    private              int                    maxCitizens                = Constants.DEFAULT_MAX_CITIZENS;
+    private              Map<UUID, CitizenData> citizens                   = new HashMap<UUID, CitizenData>();
+    final static private int                    CITIZEN_CLEANUP_TICK_DELAY = 60 * 20;   //  Once a minute
 
     //  Workload and Jobs
     private Map<ChunkCoordinates, String> buildingUpgradeMap = new HashMap<ChunkCoordinates, String>();
@@ -68,11 +71,10 @@ public class Colony
     private final static String TAG_DIMENSION         = "dimension";
     private final static String TAG_CENTER            = "center";
     private final static String TAG_MAX_CITIZENS      = "maxCitizens";
-    private final static String TAG_OWNERS            = "owners";
-    private final static String TAG_BUILDINGS_TYPO    = "buidings";
     private final static String TAG_BUILDINGS         = "buildings";
     private final static String TAG_CITIZENS          = "citizens";
     private final static String TAG_BUILDING_UPGRADES = "buildingUpgrades";
+    private final static String TAG_AUTO_HOSTILE = "autoHostile";
 
     /**
      * Constructor for a newly created Colony.
@@ -105,10 +107,10 @@ public class Colony
      */
     protected void cleanup()
     {
-        for (CitizenData citizen : citizens.values())
+        for(CitizenData citizen : citizens.values())
         {
             EntityCitizen actualCitizen = citizen.getCitizenEntity();
-            if (actualCitizen != null)
+            if(actualCitizen != null)
             {
                 actualCitizen.clearColony();
             }
@@ -142,13 +144,8 @@ public class Colony
 
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 
-        //  Owners
-        NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, NBT.TAG_STRING);
-        for (int i = 0; i < ownerTagList.tagCount(); ++i)
-        {
-            String owner = ownerTagList.getStringTagAt(i);
-            owners.add(UUID.fromString(owner));
-        }
+        // Permissions
+        permissions.loadPermissions(compound);
 
         //  Citizens before Buildings, because Buildings track the Citizens
         NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS, NBT.TAG_COMPOUND);
@@ -180,6 +177,8 @@ public class Colony
             String name = upgrade.getString(TAG_NAME);
             buildingUpgradeMap.put(coords, name);
         }
+
+        //autoHostile = compound.getInteger(TAG_AUTO_HOSTILE);
     }
 
     /**
@@ -199,13 +198,8 @@ public class Colony
 
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
-        //  Owners
-        NBTTagList ownerTagList = new NBTTagList();
-        for (UUID owner : owners)
-        {
-            ownerTagList.appendTag(new NBTTagString(owner.toString()));
-        }
-        compound.setTag(TAG_OWNERS, ownerTagList);
+        // Permissions
+        permissions.savePermissions(compound);
 
         //  Buildings
         NBTTagList buildingTagList = new NBTTagList();
@@ -240,6 +234,8 @@ public class Colony
             }
             compound.setTag(TAG_BUILDING_UPGRADES, buildingUpgradeTagList);
         }
+
+        //compound.setInteger(TAG_AUTO_HOSTILE, autoHostile);
     }
 
     public UUID getID()
@@ -264,25 +260,16 @@ public class Colony
         markDirty();
     }
 
-    public Set<UUID> getOwners() { return Collections.unmodifiableSet(owners); }
-    public boolean isOwner(UUID o) { return owners.contains(o); }
-    public boolean isOwner(EntityPlayer player) { return owners.contains(player.getGameProfile().getId()); }
-    public void addOwner(UUID o)
-    {
-        owners.add(o);
-        markDirty();
-    }
-    public void removeOwner(UUID o)
-    {
-        owners.remove(o);
-        markDirty();
-    }
-
     public ChunkCoordinates getCenter() { return center; }
 
     private void markDirty() { isDirty = true; }
     public void markCitizensDirty() { isCitizensDirty = true; }
     public void markBuildingsDirty() { isBuildingsDirty = true; }
+
+    public Permissions getPermissions()
+    {
+        return permissions;
+    }
 
     /**
      * Determine if a given chunk coordinate is considered to be within the colony's bounds
@@ -492,7 +479,7 @@ public class Colony
             if (o instanceof EntityPlayerMP)
             {
                 EntityPlayerMP player = (EntityPlayerMP)o;
-                if (owners.contains(player.getGameProfile().getId()))
+                if (permissions.getSubscribers().contains(player.getGameProfile().getId()))//TODO: adapt to new permissions
                 {
                     subscribers.add(player);
                 }
@@ -563,6 +550,21 @@ public class Colony
                 }
             }
 
+            // Permissions
+            if(permissions.isDirty() || hasNewSubscribers)
+            {
+                NBTTagCompound compound = new NBTTagCompound();
+                permissions.createViewNetworkData(compound);
+                PermissionsMessage.View msg = new PermissionsMessage.View(id, compound);
+
+                for (EntityPlayerMP player : subscribers)
+                {
+                    if (permissions.isDirty() || !oldSubscribers.contains(player))
+                    {
+                        MineColonies.network.sendTo(msg, player);
+                    }
+                }
+            }
             //  Citizens
             if (isCitizensDirty || hasNewSubscribers)
             {
@@ -622,6 +624,7 @@ public class Colony
         isDirty = false;
         isCitizensDirty = false;
         isBuildingsDirty = false;
+        permissions.clearDirty();
 
         for (Building building : buildings.values())
         {
@@ -671,7 +674,7 @@ public class Colony
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
-                    LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, getOwners()), "tile.blockHutTownhall.messageMaxSize");
+                    LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, permissions.getMessagePlayers()), "tile.blockHutTownhall.messageMaxSize");//TODO: add Colony Name prefix?
                 }
             }
             else
@@ -908,4 +911,14 @@ public class Colony
 
         return deliverymanRequired;
     }
+
+    //public int getAutoHostile()
+    //{
+    //    return autoHostile;
+    //}
+
+    //public void setAutoHostile(int value)
+    //{
+    //    autoHostile = value;
+    //}
 }

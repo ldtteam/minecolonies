@@ -163,7 +163,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         textureBase += isFemale() ? "Female" : "Male";
 
-        texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
+        texture = new ResourceLocation(Constants.MOD_ID, textureBase + getTextureID() + ".png");
     }
 
     @Override
@@ -311,7 +311,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if (colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getOwners()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
             colony.removeCitizen(this);
         }
 
