@@ -3,6 +3,8 @@ package com.blockout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
+import java.lang.reflect.Constructor;
+
 /*
  * A Pane is the root of all UI objects
  */
@@ -12,55 +14,37 @@ public class Pane extends Gui
 
     //  Attributes
     protected String    id = "";
+    protected int       originalX = 0, originalY = 0;
     protected int       x  = 0, y = 0;
-    protected int width = 0, height = 0;
+    protected int       width = 0, height = 0;
     protected Alignment alignment = Alignment.TopLeft;
     protected boolean   visible   = true;
     //protected boolean active = true;
     protected boolean   enabled   = true;
 
     //  Runtime
-    protected View parent;
+    protected View        parent;
     protected static Pane lastClickedPane;
     protected static Pane focus;
 
-    //  ---
-    public static class PaneInfo
-    {
-        public String id = "";
-
-        public int x = 0, y = 0;
-        public int width = 0, height = 0;
-        public Alignment alignment = Alignment.TopLeft;
-
-        public boolean visible = true;
-        public boolean enabled = true;
-
-        public PaneInfo(){}
-
-        public PaneInfo(PaneInfo other)
-        {
-            id = other.id;
-            x = other.x;
-            y = other.y;
-            width = other.width;
-            height = other.height;
-            alignment = other.alignment;
-            visible = other.visible;
-            enabled = other.enabled;
-        }
-    }
-
+    /**
+     * Default constructor
+     */
     public Pane()
     {
     }
 
+    /**
+     * Constructs a Pane by copying (most) attributes of another Pane
+     *
+     * @param other Another Pane to copy the attributes from
+     */
     public Pane(Pane other)
     {
         id = other.id;
 
-        x = other.x;
-        y = other.y;
+        x = originalX = other.originalX;
+        y = originalY = other.originalY;
         width = other.width;
         height = other.height;
         alignment = other.alignment;
@@ -70,38 +54,24 @@ public class Pane extends Gui
         enabled = other.enabled;
     }
 
-    public Pane(PaneInfo info, View parentView)
+    /**
+     * Constructs a Pane from XML
+     *
+     * @param xml XML Node for the Pane
+     */
+    public Pane(XMLNode xml)
     {
-        id = info.id;
-        width = info.width;
-        height = info.height;
-        x = info.x;
-        y = info.y;
-        alignment = info.alignment;
-        visible = info.visible;
-        enabled = info.enabled;
-
-        putInside(parentView);
+        id            = xml.getStringAttribute("id", id);
+        width         = xml.getIntegerAttribute("width", width);
+        height        = xml.getIntegerAttribute("height", height);
+        x = originalX = xml.getIntegerAttribute("x", x);
+        y = originalY = xml.getIntegerAttribute("y", y);
+        alignment     = xml.getEnumAttribute("align", alignment);
+        visible       = xml.getBooleanAttribute("visible", visible);
+        enabled       = xml.getBooleanAttribute("enabled", enabled);
     }
 
-    public Pane(PaneInfo info)
-    {
-        this(info, null);
-    }
-
-    public static Pane getFocus() { return focus; }
-    public static void setFocus(Pane f)
-    {
-        if (focus != null) focus.onFocusLost();
-        focus = f;
-        if (focus != null) focus.onFocus();
-    }
-    public static void clearFocus() { setFocus(null); }
-    public final void setFocus() { setFocus(this); }
-    public final boolean isFocus() { return focus == this; }
-
-    public void onFocusLost() {}
-    public void onFocus() {}
+    public void parseChildren(XMLNode xml) {}
 
     //  ID
     public final String getID() { return id; }
@@ -115,10 +85,22 @@ public class Pane extends Gui
     //  Position
     public int getX() { return x; }
     public int getY() { return y; }
-    public void setPosition(int newX, int newY) { x = newX; y = newY; }
+    public void setPosition(int newX, int newY)
+    {
+        x = originalX = newX;
+        y = originalY = newY;
+
+        if (parent != null)
+        {
+            alignToParent();
+        }
+    }
 
     public void moveBy(int dx, int dy)
     {
+        originalX += x;
+        originalY += y;
+
         x += dx;
         y += dy;
     }
@@ -147,7 +129,66 @@ public class Pane extends Gui
     public void enable() { setEnabled(true); }
     public void disable() { setEnabled(false); }
 
+
+    //  Focus
+
+    /**
+     * Returns the currently focused Pane
+     * @return the currently focused Pane
+     */
+    public static Pane getFocus()
+    {
+        return focus;
+    }
+
+    /**
+     * Set the currently focused Pane
+     *
+     * @param f Pane to focus, or nil
+     */
+    public static void setFocus(Pane f)
+    {
+        if (focus != null) focus.onFocusLost();
+        focus = f;
+        if (focus != null) focus.onFocus();
+    }
+
+    /**
+     * Clear the currently focused Pane.
+     */
+    public static void clearFocus() { setFocus(null); }
+
+    /**
+     * Set Focus to this Pane.
+     */
+    public final void setFocus() { setFocus(this); }
+
+    /**
+     * Return <tt>true</tt> if this Pane is the current focus.
+     *
+     * @return <tt>true</tt> if this Pane is the current focus
+     */
+    public final boolean isFocus() { return focus == this; }
+
+    /**
+     * Override to respond to the Pane losing focus
+     */
+    public void onFocusLost() {}
+
+    /**
+     * Override to respond to the Pane becoming the current focus
+     */
+    public void onFocus() {}
+
+
     //  Drawing
+
+    /**
+     * Draw the current Pane if visible.
+     *
+     * @param mx
+     * @param my
+     */
     public final void draw(int mx, int my)
     {
         if (visible)
@@ -157,7 +198,7 @@ public class Pane extends Gui
     }
 
     /**
-     * Draw self, graphics port is already relative to the appropriate location
+     * Draw self.  The graphics port is already relative to the appropriate location
      *
      * @param mx Mouse x (relative to parent)
      * @param my Mouse y (relative to parent)
@@ -165,18 +206,43 @@ public class Pane extends Gui
     protected void drawSelf(int mx, int my) {}
 
     //  Subpanes
-    public Pane findPaneByID(String other)
+
+    /**
+     * Find a Pane by the given ID.  If this Pane has children, it will search children as well.
+     *
+     * @param id
+     * @return
+     */
+    public Pane findPaneByID(String id)
     {
-        return id.equals(other) ? this : null;
+        return this.id.equals(id) ? this : null;
     }
 
-    public Pane findPaneByCoord(int mx, int my)
+    /**
+     * Find a valid Pane for a mouse click.  Panes must generally be Enabled (but do not need to
+     * be visible) to receive clicks.
+     *
+     * @param mx mouse X coordinate
+     * @param my mouse Y coordinate
+     * @return the Pane that can accept the click
+     */
+    public Pane findPaneForClick(int mx, int my)
     {
         return enabled && isPointInPane(mx, my) ? this : null;
     }
 
+    /**
+     * Return the Pane that contains this one.
+     *
+     * @return the Pane that contains this one
+     */
     public View getParent() { return parent; }
 
+    /**
+     * Put this Pane inside a View.  Only Views and subclasses can contain Panes
+     *
+     * @param newParent the View to put this Pane into, or null to remove from Parents
+     */
     public void putInside(View newParent)
     {
         if (parent != null)
@@ -201,6 +267,9 @@ public class Pane extends Gui
 
     protected void alignToParent()
     {
+        x = originalX;
+        y = originalY;
+
         //  Adjust for horizontal alignment
         if (alignment.rightAligned)
         {

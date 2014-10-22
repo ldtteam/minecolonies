@@ -12,10 +12,30 @@ public class View extends Pane
 {
     List<Pane> children = new ArrayList<Pane>();
 
-    View() { super(); }
-    View(View other) { super(other); }
-    View(PaneInfo info, View parent) { super(info, parent); }
-    View(PaneInfo info) { super(info); }
+    public View() { super(); }
+    public View(View other) { super(other); }
+
+    /**
+     * Constructs a View from XML, and place it into the given Parent
+     *
+     * @param xml XML Node for the Pane
+     */
+    public View(XMLNode xml)
+    {
+        super(xml);
+        //  TODO - Any attributes of our own?
+    }
+
+    public void parseChildren(XMLNode xml)
+    {
+        List<XMLNode> childNodes = xml.getChildren();
+        if (childNodes == null) return;
+
+        for (XMLNode node : childNodes)
+        {
+            Loader.createFromXML(node, this);
+        }
+    }
 
     public void expandChild(Pane child)
     {
@@ -82,9 +102,9 @@ public class View extends Pane
     }
 
     @Override
-    public Pane findPaneByCoord(int mx, int my)
+    public Pane findPaneForClick(int mx, int my)
     {
-        if (!isClickable() || super.findPaneByCoord(mx, my) == null)
+        if (!isClickable() || super.findPaneForClick(mx, my) == null)
         {
             return null;
         }
@@ -97,7 +117,7 @@ public class View extends Pane
         {
             if (child.isClickable())
             {
-                Pane found = child.findPaneByCoord(mx, my);
+                Pane found = child.findPaneForClick(mx, my);
                 if (found != null)
                 {
                     return found;

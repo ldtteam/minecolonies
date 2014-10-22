@@ -17,18 +17,10 @@ public class Button extends Pane
         super(other);
         this.handler = other.handler;
     }
-
-    public Button(Pane.PaneInfo info)
+    public Button(XMLNode xml)
     {
-        super(info);
+        super(xml);
     }
-    public Button(Pane.PaneInfo info, View view)
-    {
-        super(info, view);
-    }
-
-    public String getLabel() { return ""; }
-    public void setLabel(String s) {}
 
     public void setHandler(Handler h)
     {

@@ -12,15 +12,19 @@ public class ButtonVanilla extends Button
     private String label;
 
     public ButtonVanilla(){ setSize(200, 20); }
-    public ButtonVanilla(ButtonVanilla other){ super(other); }
-    public ButtonVanilla(Pane.PaneInfo info) { super(info); }
-    public ButtonVanilla(Pane.PaneInfo info, View view) { super(info, view); }
+    public ButtonVanilla(ButtonVanilla other)
+    {
+        super(other);
+        label = other.label;
+    }
+    public ButtonVanilla(XMLNode xml)
+    {
+        super(xml);
+        label = xml.getLocalizedStringAttribute("label", label);
+    }
 
-    @Override
     public String getLabel() { return label; }
-
-    @Override
-    public void setLabel(String s) { label = s;; }
+    public void setLabel(String s) { label = s; }
 
     @Override
     public void drawSelf(int mx, int my)

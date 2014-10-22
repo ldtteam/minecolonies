@@ -20,8 +20,16 @@ public class Label extends Pane
         hoverColor = other.hoverColor;
         shadow = other.shadow;
     }
-    public Label(PaneInfo info) { super(info); }
-    public Label(PaneInfo info, View view) { super(info, view); }
+
+    public Label(XMLNode xml)
+    {
+        super(xml);
+        label         = xml.getLocalizedStringAttribute("label", label);
+        textAlignment = xml.getEnumAttribute("textalign", textAlignment);
+        textColor     = xml.getColorAttribute("color", textColor);
+        hoverColor    = xml.getColorAttribute("hovercolor", textColor /* match textcolor by default */);
+        shadow        = xml.getBooleanAttribute("shadow", shadow);
+    }
 
     public String getLabel() { return label; }
     public void setLabel(String s) { label = s; }

@@ -38,8 +38,6 @@ public class Screen extends GuiScreen
         y = (height - window.getHeight()) / 2;
 
         Keyboard.enableRepeatEvents(true);
-
-        window.onInitGui();
     }
 
     @Override
@@ -84,6 +82,7 @@ public class Screen extends GuiScreen
     public void onGuiClosed()
     {
         window.onClosed();
+        window.clearFocus();
         Keyboard.enableRepeatEvents(false);
     }
 

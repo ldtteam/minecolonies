@@ -16,13 +16,13 @@ public class TextField extends Pane
 
     //  Attributes
     protected int     maxTextLength     = 32;
-    protected int     textColor         = 14737632;
-    protected int     textColorDisabled = 7368816;
+    protected int     textColor         = 0xE0E0E0; //14737632
+    protected int     textColorDisabled = 0x707070; //7368816
     protected boolean shadow            = true;
 
     protected boolean backgroundEnabled    = true;
-    protected int     backgroundOuterColor = -6250336;
-    protected int     backgroundInnerColor = -16777216;
+    protected int     backgroundOuterColor = 0xFFA0A09F; //-6250336
+    protected int     backgroundInnerColor = 0xFEFFFFFF; //-16777216
 
     //  Runtime
     protected String text = "";
@@ -45,13 +45,17 @@ public class TextField extends Pane
         backgroundOuterColor = other.backgroundOuterColor;
         backgroundInnerColor = other.backgroundInnerColor;
     }
-    public TextField(Pane.PaneInfo info)
+
+    public TextField(XMLNode xml)
     {
-        super(info);
-    }
-    public TextField(Pane.PaneInfo info, View view)
-    {
-        super(info, view);
+        super(xml);
+        maxTextLength        = xml.getIntegerAttribute("maxlength", maxTextLength);
+        textColor            = xml.getColorAttribute("color", textColor);
+        textColorDisabled    = xml.getColorAttribute("colordisabled", textColorDisabled);
+        shadow               = xml.getBooleanAttribute("shadow", shadow);
+        backgroundEnabled    = xml.getBooleanAttribute("background", backgroundEnabled);
+        backgroundOuterColor = xml.getColorAttribute("backgroundOuter", backgroundOuterColor);
+        backgroundInnerColor = xml.getColorAttribute("backgroundInner", backgroundInnerColor);
     }
 
     public Filter getFilter() { return filter; }
