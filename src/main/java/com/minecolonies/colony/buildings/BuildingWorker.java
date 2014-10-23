@@ -4,6 +4,8 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityWorker;
+import com.minecolonies.entity.EntityWorkerPlaceholder;
 import com.minecolonies.entity.jobs.ColonyJob;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,10 +40,7 @@ public abstract class BuildingWorker extends BuildingHut
     public abstract String getJobName();
 
     //  Classic Style of Jobs
-    public /*abstract*/ EntityCitizen createWorker(World world)
-    {
-        return new EntityCitizen(world); //TODO Implement Later
-    }
+    public abstract EntityWorker createWorker(World world);
 
     //  Future Style of Jobs
     public abstract Class<? extends ColonyJob> getJobClass();

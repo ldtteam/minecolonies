@@ -18,13 +18,14 @@ public class EntityAISleep extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return citizen.isSleepTime() && citizen.isAtHome();//!this.citizen.isWorkTime? - sleep when raining?
+        return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP &&
+                citizen.isAtHome();
     }
 
     @Override
     public boolean continueExecuting()
     {
-        return citizen.isSleepTime();
+        return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP;
     }
 
     @Override

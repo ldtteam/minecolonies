@@ -6,6 +6,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.entity.jobs.JobBuilder;
 import com.minecolonies.lib.EnumGUI;
@@ -29,7 +30,7 @@ public class BuildingBuilder extends BuildingWorker
 
     //  Classic Style of Jobs
     @Override
-    public EntityCitizen createWorker(World world) { return new EntityBuilder(world); }
+    public EntityWorker createWorker(World world) { return new EntityBuilder(world); }
 
     //  Future Style of Jobs
     @Override
@@ -47,11 +48,11 @@ public class BuildingBuilder extends BuildingWorker
             super(c, l);
         }
 
-        public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        public GuiScreen getGui(int guiId)
         {
             if (guiId == EnumGUI.BUILDER.getID())
             {
-                return new GuiHutBuilder(this, player, world, x, y, z);
+                return new GuiHutBuilder(this);
             }
 
             return null;

@@ -17,7 +17,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringUtils;
 
-public class OpenInventoryMessage implements IMessage
+public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInventoryMessage, IMessage>
 {
     private static final int INVENTORY_NULL = -1, INVENTORY_CITIZEN = 0, INVENTORY_CHEST = 1;
     private String     name;
@@ -76,28 +76,25 @@ public class OpenInventoryMessage implements IMessage
         }
     }
 
-    public static class Handler implements IMessageHandler<OpenInventoryMessage, IMessage>
+    @Override
+    public IMessage onMessage(OpenInventoryMessage message, MessageContext ctx)
     {
-        @Override
-        public IMessage onMessage(OpenInventoryMessage message, MessageContext ctx)
+        EntityPlayer player = ctx.getServerHandler().playerEntity;
+
+        switch(message.inventoryType)
         {
-            EntityPlayer player = ctx.getServerHandler().playerEntity;
-
-            switch(message.inventoryType)
-            {
-                case INVENTORY_CITIZEN:
-                    InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventory();
-                    if(!StringUtils.isNullOrEmpty(message.name)) citizenInventory.func_110133_a(message.name);
-                    player.displayGUIChest(citizenInventory);
-                    break;
-                case INVENTORY_CHEST:
-                    TileEntityChest chest = (TileEntityChest) ChunkCoordUtils.getTileEntity(player.worldObj, message.tePos);
-                    if(!StringUtils.isNullOrEmpty(message.name)) chest.func_145976_a(message.name);
-                    player.displayGUIChest(chest);
-                    break;
-            }
-
-            return null;
+            case INVENTORY_CITIZEN:
+                InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventory();
+                if(!StringUtils.isNullOrEmpty(message.name)) citizenInventory.func_110133_a(message.name);
+                player.displayGUIChest(citizenInventory);
+                break;
+            case INVENTORY_CHEST:
+                TileEntityChest chest = (TileEntityChest) ChunkCoordUtils.getTileEntity(player.worldObj, message.tePos);
+                if(!StringUtils.isNullOrEmpty(message.name)) chest.func_145976_a(message.name);
+                player.displayGUIChest(chest);
+                break;
         }
+
+        return null;
     }
 }

@@ -1,17 +1,18 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityWorker;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 
 import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
 
-public abstract class EntityAIWork extends EntityAIBase
+public abstract class EntityAIWork<WORKER extends EntityWorker> extends EntityAIBase
 {
-    private final   EntityWorker worker;
+    protected final WORKER       worker;
     protected final World        world;
 
-    public EntityAIWork(EntityWorker worker)
+    public EntityAIWork(WORKER worker)
     {
         setMutexBits(3);
         this.worker = worker;
@@ -21,7 +22,7 @@ public abstract class EntityAIWork extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return worker.isWorkTime();
+        return worker.getDesiredActivity() == EntityCitizen.DesiredActivity.WORK;
     }
 
     @Override

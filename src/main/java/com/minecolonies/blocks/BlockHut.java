@@ -1,9 +1,9 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
@@ -40,11 +40,11 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
     @Override
     public void registerBlockIcons(IIconRegister iconRegister)
     {
-        icons[0] = iconRegister.registerIcon(Constants.MODID + ":" + getName() + "Top");
+        icons[0] = iconRegister.registerIcon(Constants.MOD_ID + ":" + getName() + "Top");
         icons[1] = icons[0];
         for(int i = 2; i <= 5; i++)
         {
-            icons[i] = iconRegister.registerIcon(Constants.MODID + ":" + "sideChest");
+            icons[i] = iconRegister.registerIcon(Constants.MOD_ID + ":" + "sideChest");
         }
     }
 
@@ -69,22 +69,21 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
 
             if(this instanceof BlockHutTownHall)
             {
-                //  TODO BUGFIX - Allow placing a TownHall in a Colony if it doesn't have one
-
-                if (colony != null)
+                if (colony == null)
                 {
-                    throw new NullPointerException("TownHall placed in existing colony");
+                    String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
+                    colony = ColonyManager.createColony(world, hut.getPosition());
+                    colony.setName(colonyName);
+                    colony.getPermissions().addPlayer(player.getGameProfile().getId(), Permissions.Rank.OWNER);
+
+                    //  TODO: Deprecate this code?
+                    PlayerProperties.get(player).placeTownhall(x, y, z);
                 }
-
-                String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
-                colony = ColonyManager.createColony(world, hut.getPosition());
-                colony.setName(colonyName);
-                colony.addOwner(player.getGameProfile().getId());
-
-                //  TODO: Deprecate this code?
-                PlayerProperties.get(player).placeTownhall(x, y, z);
+                else if (colony.getTownhall() != null)
+                {
+                    throw new NullPointerException("TownHall placed in colony with an existing townhall");
+                }
             }
-
 
             if (colony == null)
             {
@@ -105,12 +104,11 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
         {
             if(!world.isRemote)
             {
-                TileEntityColonyBuilding buildingTileEntity = (TileEntityColonyBuilding) tileEntity;
                 Building building = ((TileEntityColonyBuilding)tileEntity).getBuilding();
 
                 if (building != null)
                 {
-                    player.openGui(MineColonies.instance, building.getGuiId(), world, x, y, z);
+                    building.openGui(player);
                 }
             }
             return true;

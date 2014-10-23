@@ -5,6 +5,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityDeliveryman;
+import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.lib.EnumGUI;
 import net.minecraft.client.gui.GuiScreen;
@@ -38,7 +39,7 @@ public class BuildingWarehouse extends BuildingWorker
 
     //  Classic Style of Jobs
     @Override
-    public EntityCitizen createWorker(World world)
+    public EntityWorker createWorker(World world)
     {
         return new EntityDeliveryman(world);
     }
@@ -134,11 +135,11 @@ public class BuildingWarehouse extends BuildingWorker
             super(c, l);
         }
 
-        public GuiScreen getGui(EntityPlayer player, World world, int guiId, int x, int y, int z)
+        public GuiScreen getGui(int guiId)
         {
             if (guiId == EnumGUI.WAREHOUSE.getID())
             {
-                return new GuiHutWarehouse(this, player, world, x, y, z);
+                return new GuiHutWarehouse(this);
             }
 
             return null;

@@ -80,7 +80,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.renderDistanceWeight = 2.0D;
 
         this.getNavigator().setAvoidsWater(true);
-        this.getNavigator().setBreakDoors(true);
+        this.getNavigator().setCanSwim(true);
+        this.getNavigator().setEnterDoors(true);
         initTasks();
     }
 
@@ -162,7 +163,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         textureBase += isFemale() ? "Female" : "Male";
 
-        texture = new ResourceLocation(Constants.MODID, textureBase + getTextureID() + ".png");
+        texture = new ResourceLocation(Constants.MOD_ID, textureBase + getTextureID() + ".png");
     }
 
     @Override
@@ -176,7 +177,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         setTexture();
         updateColony();
-        updateArmSwingProgress();
         super.onLivingUpdate();
     }
 
@@ -300,7 +300,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             CitizenData.View view = getCitizenDataView();
             if (view != null)
             {
-                GuiHandler.showGuiScreen(new GuiEntityCitizen(this, view, player, worldObj));
+                GuiHandler.showGuiScreen(new GuiEntityCitizen(view));
             }
         }
         return true;
@@ -311,7 +311,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if (colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getOwners()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
             colony.removeCitizen(this);
         }
 
@@ -527,14 +527,27 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return this.ticksExisted + 7 * this.getEntityId();
     }
 
-    public boolean isWorkTime()
+    public enum DesiredActivity
     {
-        return worldObj.isDaytime() && !worldObj.isRaining();
+        SLEEP,
+        IDLE,
+        WORK
     }
 
-    public boolean isSleepTime()
+    public DesiredActivity getDesiredActivity()
     {
-        return !worldObj.isDaytime();
+        if (!worldObj.isDaytime())
+        {
+            return DesiredActivity.SLEEP;
+        }
+        else if (worldObj.isRaining())
+        {
+            return DesiredActivity.IDLE;
+        }
+        else
+        {
+            return DesiredActivity.WORK;
+        }
     }
 
     public EntityItem entityDropItem(ItemStack itemstack)

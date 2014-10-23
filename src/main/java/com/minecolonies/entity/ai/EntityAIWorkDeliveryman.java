@@ -22,73 +22,71 @@ import static com.minecolonies.entity.EntityCitizen.Status.*;
  *
  * @author MrIbby
  */
-public class EntityAIWorkDeliveryman extends EntityAIWork
+public class EntityAIWorkDeliveryman extends EntityAIWork<EntityDeliveryman>
 {
-    private final EntityDeliveryman deliveryman;
-
     public EntityAIWorkDeliveryman(EntityDeliveryman deliveryman)
     {
         super(deliveryman);
-        this.deliveryman = deliveryman;
     }
 
     @Override
     public boolean shouldExecute()
     {
-        return super.shouldExecute() && (deliveryman.hasDestination() || deliveryman.isNeeded());
+        return super.shouldExecute() && (worker.hasDestination() || worker.isNeeded());
     }
 
     @Override
     public void startExecuting()
     {
-        if(!deliveryman.hasDestination())
+        if(!worker.hasDestination())
         {
-            deliveryman.setDestination(deliveryman.getColony().getDeliverymanRequired().get(0));
+            worker.setDestination(worker.getColony().getDeliverymanRequired().get(0));
         }
-        ChunkCoordUtils.tryMoveLivingToXYZ(deliveryman, deliveryman.getDestination());
+        ChunkCoordUtils.tryMoveLivingToXYZ(worker, worker.getDestination());
     }
 
     @Override
     public void updateTask()
     {
-        if(!ChunkCoordUtils.isWorkerAtSiteWithMove(deliveryman, deliveryman.getDestination()))
+        if(!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getDestination()))
         {
             return;
         }
 
-        deliveryman.setStatus(WORKING);
+        worker.setStatus(WORKING);
 
         //  TODO - Actually know the Building, not the ID of it
-        Building destinationBuilding = deliveryman.getColony().getBuilding(deliveryman.getDestination());
+        Building destinationBuilding = worker.getColony().getBuilding(worker.getDestination());
 
-        if (destinationBuilding == null ||
-                !(destinationBuilding instanceof BuildingWorker))
+        if (!(destinationBuilding instanceof BuildingWorker))
         {
             return;
         }
 
         CitizenData targetCitizen = ((BuildingWorker)destinationBuilding).getWorker();
-        EntityCitizen targetCitizenEntity = (targetCitizen != null) ? targetCitizen.getCitizenEntity() : null;
-
-        if (targetCitizenEntity == null ||
-                !(targetCitizenEntity instanceof EntityWorker))
+        if (targetCitizen == null)
         {
             return;
         }
 
+        EntityCitizen targetCitizenEntity = targetCitizen.getCitizenEntity();
+        if (!(targetCitizenEntity instanceof EntityWorker))
+        {
+            return;
+        }
 
-        EntityWorker worker = (EntityWorker)targetCitizenEntity;
+        EntityWorker target = (EntityWorker)targetCitizenEntity;
 
         TileEntityColonyBuilding destinationTileEntity = destinationBuilding.getTileEntity();
-        if (worker == null || destinationTileEntity == null)
+        if (target == null || destinationTileEntity == null)
         {
             //  The recipient or their building's TE aren't loaded currently.  Maybe do something else?
             return;
         }
 
-        for(int i = 0; i < worker.getItemsNeeded().size(); i++)
+        for(int i = 0; i < target.getItemsNeeded().size(); i++)
         {
-            ItemStack itemstack = worker.getItemsNeeded().get(i);
+            ItemStack itemstack = target.getItemsNeeded().get(i);
             int amount = itemstack.stackSize;
             for(int j = 0; j < destinationTileEntity.getSizeInventory(); j++)
             {
@@ -107,17 +105,17 @@ public class EntityAIWorkDeliveryman extends EntityAIWork
                 }
                 InventoryUtils.setStack(destinationTileEntity, new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
             }
-            worker.getItemsNeeded().remove(i);
+            target.getItemsNeeded().remove(i);
             i--;
         }
 
-        deliveryman.setDestination(null);
+        worker.setDestination(null);
         resetTask();
     }
 
     @Override
     public boolean continueExecuting()
     {
-        return super.continueExecuting() && deliveryman.hasDestination();
+        return super.continueExecuting() && worker.hasDestination();
     }
 }
