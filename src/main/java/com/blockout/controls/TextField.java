@@ -1,5 +1,8 @@
-package com.blockout;
+package com.blockout.controls;
 
+import com.blockout.Pane;
+import com.blockout.View;
+import com.blockout.XMLNode;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.MathHelper;
@@ -231,7 +234,7 @@ public class TextField extends Pane
     }
 
     @Override
-    public void onMouseClicked(int mx, int my)
+    public void handleClick(int mx, int my)
     {
         if (mx < 0) return;
 

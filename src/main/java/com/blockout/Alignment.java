@@ -25,8 +25,8 @@ public enum Alignment
         verticalCentered = attributes.contains("vertical");
     }
 
-    boolean rightAligned;
-    boolean bottomAligned;
-    boolean horizontalCentered;
-    boolean verticalCentered;
+    public boolean rightAligned;
+    public boolean bottomAligned;
+    public boolean horizontalCentered;
+    public boolean verticalCentered;
 }

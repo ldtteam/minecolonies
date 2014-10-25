@@ -81,26 +81,6 @@ public class Window extends View
     }
 
     /**
-     * Mouse click handler for the Window; finds target pane and calls onMouseClicked on it,
-     * then sets the lastClickedPane.
-     *
-     * It is advised not to override this method.
-     *
-     * @param mx Mouse X position
-     * @param my Mouse Y position
-     */
-    @Override
-    public void onMouseClicked(int mx, int my)
-    {
-        Pane clickedPane = super.findPaneForClick(mx, my);
-        if (clickedPane != null)
-        {
-            clickedPane.onMouseClicked(mx, my);
-            lastClickedPane = clickedPane;
-        }
-    }
-
-    /**
      * Mouse click released handler.
      *
      * Currently does nothing.

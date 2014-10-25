@@ -1,7 +1,7 @@
-package com.blockout;
+package com.blockout.controls;
 
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import com.blockout.Pane;
+import com.blockout.XMLNode;
 
 public class Button extends Pane
 {
@@ -28,14 +28,14 @@ public class Button extends Pane
     }
 
     @Override
-    public void onMouseClicked(int mx, int my)
+    public void handleClick(int mx, int my)
     {
         Handler delegatedHandler = handler;
 
         if (delegatedHandler == null)
         {
             //  If we do not have a designated handler, find the closest ancestor that is a Handler
-            for (Pane p = parent; p != null; p = p.parent)
+            for (Pane p = parent; p != null; p = p.getParent())
             {
                 if (p instanceof Handler)
                 {

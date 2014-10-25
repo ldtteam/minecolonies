@@ -52,7 +52,7 @@ public class Screen extends GuiScreen
         if (code == 0)
         {
             //  Adjust coordinate to origin of window
-            window.onMouseClicked(mx - x, my - y);
+            window.click(mx - x, my - y);
         }
     }
 

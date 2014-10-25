@@ -1,16 +1,20 @@
 package com.blockout;
 
+import com.blockout.controls.ButtonVanilla;
+import com.blockout.controls.Label;
+import com.blockout.controls.TextFieldVanilla;
 import com.minecolonies.MineColonies;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.StringReader;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +27,8 @@ public class Loader
     static
     {
         register("view",        View.class);
+        register("group",       Group.class);
+        register("list",        ScrollingList.class);
         register("button",      ButtonVanilla.class);
         register("label",       Label.class);
         register("text",        TextFieldVanilla.class);
@@ -77,7 +83,7 @@ public class Loader
     }
 
 
-    public static Pane createFromXML(XMLNode xml, View newParent)
+    public static Pane createFromXML(XMLNode xml)
     {
         //  Parse Attributes first, to full construct
         String paneType = xml.getName();
@@ -96,10 +102,6 @@ public class Loader
             try
             {
                 Pane pane = (Pane)constructor.newInstance(xml);
-                //  TODO - Decide on put in parent before add children (top down)
-                //  TODO - or add children before put in parent? (bottom up)
-                pane.putInside(newParent);
-                pane.parseChildren(xml);
                 return pane;
             }
             catch (Exception exc)
@@ -112,7 +114,25 @@ public class Loader
         return null;
     }
 
-    private static void createFromXML(Document doc, Window window)
+    public static Pane createFromXML(XMLNode xml, View parent)
+    {
+        Pane pane = createFromXML(xml);
+
+        if (pane != null)
+        {
+            pane.putInside(parent);
+            pane.parseChildren(xml);
+        }
+
+        return pane;
+    }
+
+    /**
+     * Parse an XML Document into contents for a View
+     * @param doc
+     * @param parent
+     */
+    private static void createFromXML(Document doc, View parent)
     {
         doc.getDocumentElement().normalize();
 
@@ -121,21 +141,27 @@ public class Loader
         {
             if (node.getNodeType() == Node.ELEMENT_NODE)
             {
-                createFromXML(new XMLNode(node), window);
+                createFromXML(new XMLNode(node), parent);
             }
             node = node.getNextSibling();
         }
     }
 
-    public static void createFromXMLString(String xmlString, Window window)
+    /**
+     * Parse XML from an InputSource into contents for a View
+     *
+     * @param input
+     * @param parent
+     */
+    public static void createFromXML(InputSource input, View parent)
     {
         try
         {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(new InputSource(new StringReader(xmlString)));
+            Document doc = dBuilder.parse(input);
 
-            createFromXML(doc, window);
+            createFromXML(doc, parent);
         }
         catch (Exception exc)
         {
@@ -144,20 +170,46 @@ public class Loader
         }
     }
 
-    public static void createFromXMLFile(String filename, Window window)
+    /**
+     * Parse an XML String into contents for a View
+     *
+     * @param xmlString
+     * @param parent
+     */
+    public static void createFromXML(String xmlString, View parent)
+    {
+        createFromXML(new InputSource(new StringReader(xmlString)), parent);
+    }
+
+    /**
+     * Parse XML contains in a ResourceLocation into contents for a Window
+     *
+     * @param resource
+     * @param parent
+     */
+    public static void createFromXMLFile(ResourceLocation resource, View parent)
+    {
+        createFromXML(new InputSource(getStream(resource)), parent);
+    }
+
+    private static InputStream getStream(ResourceLocation res)
     {
         try
         {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(new InputSource(new FileInputStream(filename)));
-            createFromXML(doc, window);
+            if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+            {
+                return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
+            }
+            else
+            {
+                return Loader.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
+            }
         }
-        catch (Exception exc)
+        catch(IOException e)
         {
-            exc.printStackTrace();
-            MineColonies.logger.error("Exception when parsing XML.", exc);
+            e.printStackTrace();
         }
+        return null;
     }
 
     public static int getColorByName(String name, int def)

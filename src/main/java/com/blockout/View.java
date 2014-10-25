@@ -3,7 +3,9 @@ package com.blockout;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /*
  * A View is a Pane which can contain other Panes
@@ -26,6 +28,9 @@ public class View extends Pane
         //  TODO - Any attributes of our own?
     }
 
+    int getInteriorWidth() { return width; }
+    int getInteriorHeight() { return height; }
+
     public void parseChildren(XMLNode xml)
     {
         List<XMLNode> childNodes = xml.getChildren();
@@ -37,23 +42,41 @@ public class View extends Pane
         }
     }
 
-    public void expandChild(Pane child)
+    protected void adjustChild(Pane child)
     {
-        int childWidth = child.getWidth(),
-            childHeight = child.getHeight();
         int childX = child.getX(),
             childY = child.getY();
+        int childWidth = child.getWidth(),
+            childHeight = child.getHeight();
 
+        //  Adjust for horizontal size and alignment
         if (childWidth < 0)
         {
             childX = 0;
-            childWidth = width;
+            childWidth = getInteriorWidth();
+        }
+        else if (child.alignment.rightAligned)
+        {
+            childX = (getInteriorWidth() - childWidth) - childX;
+        }
+        else if (child.alignment.horizontalCentered)
+        {
+            childX = ((getInteriorWidth() - childWidth) / 2) + childX;
         }
 
+        //  Adjust for vertical size and alignment
         if (childHeight < 0)
         {
             childY = 0;
-            childHeight = height;
+            childHeight = getInteriorHeight();
+        }
+        else if (child.alignment.bottomAligned)
+        {
+            childY = (getInteriorHeight() - childHeight) - childY;
+        }
+        else if (child.alignment.verticalCentered)
+        {
+            childY = ((getInteriorHeight() - childHeight) / 2) + childY;
         }
 
         child.setSize(childWidth, childHeight);
@@ -111,33 +134,24 @@ public class View extends Pane
         return null;
     }
 
-    public <T extends Pane> T findPaneOfTypeByID(String id, Class<T> type)
-    {
-        Pane p = findPaneByID(id);
-        return type.isInstance(p) ? type.cast(p) : null;
-    }
-
-    @Override
+    /**
+     * Return a Pane that will handle a click action at the specified mouse coordinates
+     *
+     * @param mx Mouse X, relative to the top-left of this Pane
+     * @param my Mouse Y, relative to the top-left of this Pane
+     * @return a Pane that will handle a click action
+     */
     public Pane findPaneForClick(int mx, int my)
     {
-        if (!isClickable() || super.findPaneForClick(mx, my) == null)
-        {
-            return null;
-        }
+        ListIterator<Pane> it = children.listIterator(children.size());
 
-        //  Adjust coordinates to new origin
-        mx -= x;
-        my -= y;
-
-        for (Pane child : children)
+        //  Iterate in reverse, since Panes later in the list draw on top of earlier panes
+        while (it.hasPrevious())
         {
-            if (child.isClickable())
+            Pane child = it.previous();
+            if (child.canHandleClick(mx, my))
             {
-                Pane found = child.findPaneForClick(mx, my);
-                if (found != null)
-                {
-                    return found;
-                }
+                return child;
             }
         }
 
@@ -147,7 +161,9 @@ public class View extends Pane
 
     public void addChild(Pane child)
     {
+        child.setWindow(getWindow());
         children.add(child);
+        adjustChild(child);
     }
 
     public void removeChild(Pane child)
@@ -155,31 +171,24 @@ public class View extends Pane
         children.remove(child);
     }
 
-    public void removeAllChildren() { children.clear(); }
+    //public void removeAllChildren() { children.clear(); }
 
     //  Mouse
-//    @Override
-//    public boolean isClickable() { return false; }
+    @Override
+    public void click(int mx, int my)
+    {
+        Pane clickedPane = findPaneForClick(mx - x, my - y);
+        if (clickedPane != null)
+        {
+            clickedPane.click(mx - x, my - y);
+        }
+        else
+        {
+            super.click(mx, my);
+        }
+    }
 
-//    @Override
-//    public boolean onMouseClicked(int mx, int my)
-//    {
-//        for (Pane child : children)
-//        {
-//            if (child.isPointInPane(mx, my) && child.isClickable())
-//            {
-//                if (child.onMouseClicked(mx - child.getX(), my - child.getY()))
-//                {
-//                    child.setFocus();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        }
-//
-//        return false;
-//    }
-
+    @Override
     public void onUpdate()
     {
         for (Pane child : children)
@@ -187,5 +196,4 @@ public class View extends Pane
             child.onUpdate();
         }
     }
-
 }

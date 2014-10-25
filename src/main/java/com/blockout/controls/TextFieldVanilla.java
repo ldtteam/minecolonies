@@ -1,5 +1,6 @@
-package com.blockout;
+package com.blockout.controls;
 
+import com.blockout.XMLNode;
 import net.minecraft.util.ChatAllowedCharacters;
 import org.lwjgl.opengl.GL11;
 
@@ -66,14 +67,14 @@ public class TextFieldVanilla extends TextField
     }
 
     @Override
-    public void onMouseClicked(int mx, int my)
+    public void handleClick(int mx, int my)
     {
         if (backgroundEnabled)
         {
             mx -= 4;
         }
 
-        super.onMouseClicked(mx, my);
+        super.handleClick(mx, my);
     }
 
     public static class FilterNumeric implements Filter {

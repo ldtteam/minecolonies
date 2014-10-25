@@ -3,8 +3,6 @@ package com.blockout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
-import java.lang.reflect.Constructor;
-
 /*
  * A Pane is the root of all UI objects
  */
@@ -14,7 +12,6 @@ public class Pane extends Gui
 
     //  Attributes
     protected String    id = "";
-    protected int       originalX = 0, originalY = 0;
     protected int       x  = 0, y = 0;
     protected int       width = 0, height = 0;
     protected Alignment alignment = Alignment.TopLeft;
@@ -44,8 +41,8 @@ public class Pane extends Gui
     {
         id = other.id;
 
-        x = originalX = other.originalX;
-        y = originalY = other.originalY;
+        x = other.x;
+        y = other.y;
         width = other.width;
         height = other.height;
         alignment = other.alignment;
@@ -62,14 +59,14 @@ public class Pane extends Gui
      */
     public Pane(XMLNode xml)
     {
-        id            = xml.getStringAttribute("id", id);
-        width         = xml.getIntegerAttribute("width", width);
-        height        = xml.getIntegerAttribute("height", height);
-        x = originalX = xml.getIntegerAttribute("x", x);
-        y = originalY = xml.getIntegerAttribute("y", y);
-        alignment     = xml.getEnumAttribute("align", alignment);
-        visible       = xml.getBooleanAttribute("visible", visible);
-        enabled       = xml.getBooleanAttribute("enabled", enabled);
+        id        = xml.getStringAttribute("id", id);
+        width     = xml.getIntegerAttribute("width", width);
+        height    = xml.getIntegerAttribute("height", height);
+        x         = xml.getIntegerAttribute("x", x);
+        y         = xml.getIntegerAttribute("y", y);
+        alignment = xml.getEnumAttribute("align", alignment);
+        visible   = xml.getBooleanAttribute("visible", visible);
+        enabled   = xml.getBooleanAttribute("enabled", enabled);
     }
 
     public void parseChildren(XMLNode xml) {}
@@ -88,20 +85,12 @@ public class Pane extends Gui
     public int getY() { return y; }
     public void setPosition(int newX, int newY)
     {
-        x = originalX = newX;
-        y = originalY = newY;
-
-        if (parent != null)
-        {
-            alignToParent();
-        }
+        x = newX;
+        y = newY;
     }
 
     public void moveBy(int dx, int dy)
     {
-        originalX += x;
-        originalY += y;
-
         x += dx;
         y += dy;
     }
@@ -207,6 +196,8 @@ public class Pane extends Gui
     /**
      * Draw self.  The graphics port is already relative to the appropriate location
      *
+     * Override this to actually draw.
+     *
      * @param mx Mouse x (relative to parent)
      * @param my Mouse y (relative to parent)
      */
@@ -215,10 +206,11 @@ public class Pane extends Gui
     //  Subpanes
 
     /**
-     * Find a Pane by the given ID.  If this Pane has children, it will search children as well.
+     * Returns the first Pane of a given ID
+     * Performs a depth-first search on the hierarchy of Panes and Views
      *
-     * @param id
-     * @return
+     * @param id ID of Pane to find
+     * @return a Pane of the given ID
      */
     public Pane findPaneByID(String id)
     {
@@ -226,16 +218,18 @@ public class Pane extends Gui
     }
 
     /**
-     * Find a valid Pane for a mouse click.  Panes must generally be Enabled (but do not need to
-     * be visible) to receive clicks.
+     * Returns the first Pane (depth-first search) of a given ID,
+     * if it matches the specifiedtype
+     * Performs a depth-first search on the hierarchy of Panes and Views
      *
-     * @param mx mouse X coordinate
-     * @param my mouse Y coordinate
-     * @return the Pane that can accept the click
+     * @param id ID of Pane to find
+     * @param type Class of the desired Pane type
+     * @return a Pane of the given ID, if it matches the specified type
      */
-    public Pane findPaneForClick(int mx, int my)
+    public final <T extends Pane> T findPaneOfTypeByID(String id, Class<T> type)
     {
-        return enabled && isPointInPane(mx, my) ? this : null;
+        Pane p = findPaneByID(id);
+        return type.isInstance(p) ? type.cast(p) : null;
     }
 
     /**
@@ -251,7 +245,6 @@ public class Pane extends Gui
      * @return the Window that this Pane belongs to.
      */
     public final Window getWindow() { return window; }
-
     protected void setWindow(Window w)
     {
         window = w;
@@ -273,54 +266,14 @@ public class Pane extends Gui
 
         if (parent != null)
         {
-            setWindow(parent.getWindow());
-
             parent.addChild(this);
-
-            alignToParent();
-        }
-    }
-
-//    public void putInside(Window window)
-//    {
-//        putInside(window.getRoot());
-//    }
-
-    protected void alignToParent()
-    {
-        x = originalX;
-        y = originalY;
-
-        //  Adjust for horizontal alignment
-        if (alignment.rightAligned)
-        {
-            x = parent.getWidth() - width - x;
-        }
-        else if (alignment.horizontalCentered)
-        {
-            x = ((parent.getWidth() - getWidth()) / 2) + x;
-        }
-
-        //  Adjust for vertical alignment
-        if (alignment.bottomAligned)
-        {
-            y = parent.getHeight() - height - y;
-        }
-        else if (alignment.verticalCentered)
-        {
-            y = ((parent.getHeight() - getHeight()) / 2) + y;
-        }
-
-        if (width < 0 || height < 0)
-        {
-            parent.expandChild(this);
         }
     }
 
     //  Mouse
 
     /**
-     * Is a locally relative point in the pane?
+     * Is a point relative to the parent's origin within the pane?
      *
      * @param mx
      * @param my
@@ -333,7 +286,37 @@ public class Pane extends Gui
     }
 
     public boolean isClickable() { return visible && enabled; }
-    public void onMouseClicked(int mx, int my) {}
+
+    /**
+     * Process a click on the Pane
+     *
+     * Override this to process the actual click
+     *
+     * @param mx mouse X coordinate, relative to Pane's top-left
+     * @param my mouse Y coordinate, relative to Pane's top-left
+     */
+    public void handleClick(int mx, int my)
+    {
+    }
+
+    /**
+     * Process a mouse down on the Pane.
+     *
+     * It is advised that only containers of other panes override this method
+     *
+     * @param mx mouse X coordinate, relative to parent's top-left
+     * @param my mouse Y coordinate, relative to parent's top-left
+     */
+    public void click(int mx, int my)
+    {
+        lastClickedPane = this;
+        handleClick(mx - x, my - y);
+    }
+    
+    public boolean canHandleClick(int mx, int my)
+    {
+        return visible && enabled && isPointInPane(mx, my);
+    }
 
     public boolean onKeyTyped(char ch, int key) { return false; }
 

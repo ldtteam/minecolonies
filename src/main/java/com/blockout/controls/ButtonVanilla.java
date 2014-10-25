@@ -1,5 +1,6 @@
-package com.blockout;
+package com.blockout.controls;
 
+import com.blockout.XMLNode;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
@@ -20,6 +21,8 @@ public class ButtonVanilla extends Button
     public ButtonVanilla(XMLNode xml)
     {
         super(xml);
+        if (getWidth() == 0)    width = 200;
+        if (getHeight() == 0)   height = 20;
         label = xml.getLocalizedStringAttribute("label", label);
     }
 
@@ -59,9 +62,9 @@ public class ButtonVanilla extends Button
     }
 
     @Override
-    public void onMouseClicked(int mx, int my)
+    public void handleClick(int mx, int my)
     {
         mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
-        super.onMouseClicked(mx, my);
+        super.handleClick(mx, my);
     }
 }

@@ -1,16 +1,19 @@
-package com.blockout;
+package com.blockout.controls;
 
-import org.lwjgl.opengl.GL11;
+import com.blockout.Alignment;
+import com.blockout.Pane;
+import com.blockout.XMLNode;
 
 public class Label extends Pane
 {
     String label;
     Alignment textAlignment = Alignment.MiddleLeft;
-    int textColor = 0xffffff;
-    int hoverColor = 0xffffff;
-    boolean shadow = false;
+    int       textColor     = 0xffffff;
+    int       hoverColor    = 0xffffff;
+    boolean   shadow        = false;
 
-    public Label() {}
+    public Label(){}
+
     public Label(Label other)
     {
         super(other);
@@ -27,7 +30,7 @@ public class Label extends Pane
         label         = xml.getLocalizedStringAttribute("label", label);
         textAlignment = xml.getEnumAttribute("textalign", textAlignment);
         textColor     = xml.getColorAttribute("color", textColor);
-        hoverColor    = xml.getColorAttribute("hovercolor", textColor /* match textcolor by default */);
+        hoverColor    = xml.getColorAttribute("hovercolor", textColor); //  match textcolor by default
         shadow        = xml.getBooleanAttribute("shadow", shadow);
     }
 
