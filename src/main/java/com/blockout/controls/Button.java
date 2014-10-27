@@ -1,7 +1,7 @@
 package com.blockout.controls;
 
 import com.blockout.Pane;
-import com.blockout.XMLNode;
+import com.blockout.PaneParams;
 
 public class Button extends Pane
 {
@@ -17,9 +17,9 @@ public class Button extends Pane
         super(other);
         this.handler = other.handler;
     }
-    public Button(XMLNode xml)
+    public Button(PaneParams params)
     {
-        super(xml);
+        super(params);
     }
 
     public void setHandler(Handler h)

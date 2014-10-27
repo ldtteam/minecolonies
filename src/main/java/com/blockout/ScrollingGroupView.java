@@ -7,17 +7,17 @@ import org.lwjgl.opengl.GL11;
 import java.nio.FloatBuffer;
 import java.util.ListIterator;
 
-public class ScrollView extends View
+public class ScrollingGroupView extends View
 {
     int scrollY = 0;
     int listElementHeight = 0;
     int contentHeight = 0;
 
-    public ScrollView()
+    public ScrollingGroupView()
     {
         super();
     }
-    public ScrollView(ScrollView other) { super(other); }
+    public ScrollingGroupView(ScrollingGroupView other) { super(other); }
 
     public int getScrollY() { return scrollY; }
     public void setScrollY(int offset)
@@ -93,7 +93,7 @@ public class ScrollView extends View
     {
         //  Children in a ScrollView don't exist in normal locations...
         child.setPosition(0, 0);
-        child.setSize(getWidth() - 16, child.getHeight());
+        child.setSize(getWidth(), child.getHeight());
     }
 
     @Override

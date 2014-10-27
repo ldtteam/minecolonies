@@ -1,6 +1,6 @@
 package com.blockout.controls;
 
-import com.blockout.XMLNode;
+import com.blockout.PaneParams;
 import net.minecraft.util.ChatAllowedCharacters;
 import org.lwjgl.opengl.GL11;
 
@@ -24,12 +24,12 @@ public class TextFieldVanilla extends TextField
         setFilter(new FilterVanilla());
     }
 
-    public TextFieldVanilla(XMLNode xml)
+    public TextFieldVanilla(PaneParams params)
     {
-        super(xml);
-        backgroundEnabled    = xml.getBooleanAttribute("background", backgroundEnabled);
-        backgroundOuterColor = xml.getColorAttribute("backgroundOuter", backgroundOuterColor);
-        backgroundInnerColor = xml.getColorAttribute("backgroundInner", backgroundInnerColor);
+        super(params);
+        backgroundEnabled    = params.getBooleanAttribute("background", backgroundEnabled);
+        backgroundOuterColor = params.getColorAttribute("backgroundOuter", backgroundOuterColor);
+        backgroundInnerColor = params.getColorAttribute("backgroundInner", backgroundInnerColor);
         setFilter(new FilterVanilla());
     }
 

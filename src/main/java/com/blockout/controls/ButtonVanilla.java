@@ -1,6 +1,6 @@
 package com.blockout.controls;
 
-import com.blockout.XMLNode;
+import com.blockout.PaneParams;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
@@ -18,12 +18,12 @@ public class ButtonVanilla extends Button
         super(other);
         label = other.label;
     }
-    public ButtonVanilla(XMLNode xml)
+    public ButtonVanilla(PaneParams params)
     {
-        super(xml);
+        super(params);
         if (getWidth() == 0)    width = 200;
         if (getHeight() == 0)   height = 20;
-        label = xml.getLocalizedStringAttribute("label", label);
+        label = params.getLocalizedStringAttribute("label", label);
     }
 
     public String getLabel() { return label; }

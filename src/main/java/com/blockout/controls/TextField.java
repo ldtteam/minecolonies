@@ -1,8 +1,8 @@
 package com.blockout.controls;
 
 import com.blockout.Pane;
+import com.blockout.PaneParams;
 import com.blockout.View;
-import com.blockout.XMLNode;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.MathHelper;
@@ -46,15 +46,15 @@ public class TextField extends Pane
         filter = other.filter;
     }
 
-    public TextField(XMLNode xml)
+    public TextField(PaneParams params)
     {
-        super(xml);
-        maxTextLength        = xml.getIntegerAttribute("maxlength", maxTextLength);
-        textColor            = xml.getColorAttribute("color", textColor);
-        textColorDisabled    = xml.getColorAttribute("colordisabled", textColorDisabled);
-        shadow               = xml.getBooleanAttribute("shadow", shadow);
-        text                 = xml.getLocalizedStringAttribute("text", text);
-        tabNextPaneID = xml.getStringAttribute("tab", null);
+        super(params);
+        maxTextLength        = params.getIntegerAttribute("maxlength", maxTextLength);
+        textColor            = params.getColorAttribute("color", textColor);
+        textColorDisabled    = params.getColorAttribute("colordisabled", textColorDisabled);
+        shadow               = params.getBooleanAttribute("shadow", shadow);
+        text                 = params.getLocalizedStringAttribute("text", text);
+        tabNextPaneID = params.getStringAttribute("tab", null);
     }
 
     public Filter getFilter() { return filter; }

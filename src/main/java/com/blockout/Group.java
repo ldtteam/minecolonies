@@ -1,10 +1,5 @@
 package com.blockout;
 
-import org.lwjgl.opengl.GL11;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /*
  * A Group is a View which enforces the position of children to be
  * a Y-sorted list in the order they are added.
@@ -13,20 +8,21 @@ import java.util.List;
  */
 public class Group extends View
 {
-    int padding = 0;
+    int spacing = 0;
 
-    public Group() { super(); }
-    public Group(Group other) { super(other); }
+    public Group(){ super(); }
+
+    public Group(Group other){ super(other); }
 
     /**
-     * Constructs a View from XML, and place it into the given Parent
+     * Constructs a View from PaneParams
      *
-     * @param xml XML Node for the Pane
+     * @param params Params for the Pane
      */
-    public Group(XMLNode xml)
+    public Group(PaneParams params)
     {
-        super(xml);
-        padding = xml.getIntegerAttribute("padding", padding);
+        super(params);
+        spacing = params.getIntegerAttribute("spacing", spacing);
     }
 
     @Override
@@ -40,23 +36,28 @@ public class Group extends View
         //  Adjust for horizontal size and alignment
         if (childWidth < 0)
         {
-            childX = 0;
+            //childX = 0;
             childWidth = getInteriorWidth();
+            //childX += padding;
         }
         else if (child.alignment.rightAligned)
         {
-            childX = (getInteriorWidth() - childWidth) - childX;
+            childX = (getInteriorWidth() - childWidth) - childX;// + padding;
         }
         else if (child.alignment.horizontalCentered)
         {
-            childX = ((getInteriorWidth() - childWidth) / 2) + childX;
+            childX = ((getInteriorWidth() - childWidth) / 2) + childX;// + padding;
         }
+//        else
+//        {
+//            childX += padding;
+//        }
 
-        childY = 0;
+        childY = spacing;
         for (Pane c : children)
         {
             if (c == child) break;
-            childY = c.getY() + c.getHeight() + padding;
+            childY = c.getY() + c.getHeight() + spacing;
         }
 
         child.setSize(childWidth, childHeight);

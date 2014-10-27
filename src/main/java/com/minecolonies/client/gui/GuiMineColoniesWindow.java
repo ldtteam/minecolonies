@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 
 public abstract class GuiMineColoniesWindow extends Window
 {
-    protected final ResourceLocation background = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiHutBackground.png");
+//    protected final ResourceLocation background = new ResourceLocation(Constants.MODID + ":" + "textures/gui/guiHutBackground.png");
 
     public GuiMineColoniesWindow()
     {
@@ -31,13 +31,13 @@ public abstract class GuiMineColoniesWindow extends Window
 //        }
 //    }
 
-    @Override
-    protected void drawBackground()
-    {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(background);
-        drawTexturedModalRect(0, -5,
-                0, 0,
-                /*root.*/getWidth(), /*root.*/getHeight());
-    }
+//    @Override
+//    protected void drawBackground()
+//    {
+//        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+//        mc.renderEngine.bindTexture(background);
+//        drawTexturedModalRect(0, -5,
+//                0, 0,
+//                /*root.*/getWidth(), /*root.*/getHeight());
+//    }
 }

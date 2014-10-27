@@ -1,8 +1,6 @@
 package com.blockout;
 
-import com.blockout.controls.ButtonVanilla;
-import com.blockout.controls.Label;
-import com.blockout.controls.TextFieldVanilla;
+import com.blockout.controls.*;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -28,11 +26,14 @@ public class Loader
     {
         register("view",        View.class);
         register("group",       Group.class);
-        register("list",        ScrollingList.class);
+        register("list",        ScrollingGroup.class);
         register("button",      ButtonVanilla.class);
         register("label",       Label.class);
         register("text",        TextFieldVanilla.class);
         register("textfield",   TextFieldVanilla.class);    //  Alternate name
+        register("field",       TextFieldVanilla.class);    //  Alternate name
+        register("image",       Image.class);
+        register("box",         Box.class);
 
         //  Would love to load these from a file
         nameToColorMap.put("aqua",      0x00FFFF);
@@ -68,7 +69,7 @@ public class Loader
 
         try
         {
-            Constructor<? extends Pane> constructor = paneClass.getDeclaredConstructor(XMLNode.class);
+            Constructor<? extends Pane> constructor = paneClass.getDeclaredConstructor(PaneParams.class);
             paneConstructorMap.put(key, constructor);
         }
         catch (NoSuchMethodException exception)
@@ -83,11 +84,11 @@ public class Loader
     }
 
 
-    public static Pane createFromXML(XMLNode xml)
+    public static Pane createFromPaneParams(PaneParams params)
     {
         //  Parse Attributes first, to full construct
-        String paneType = xml.getName();
-        String style = xml.getStringAttribute("style", null);
+        String paneType = params.getType();
+        String style = params.getStringAttribute("style", null);
 
         String key = makeFactoryKey(paneType, style);
         Constructor<? extends Pane> constructor = paneConstructorMap.get(key);
@@ -101,7 +102,7 @@ public class Loader
         {
             try
             {
-                Pane pane = (Pane)constructor.newInstance(xml);
+                Pane pane = (Pane)constructor.newInstance(params);
                 return pane;
             }
             catch (Exception exc)
@@ -114,14 +115,15 @@ public class Loader
         return null;
     }
 
-    public static Pane createFromXML(XMLNode xml, View parent)
+    public static Pane createFromPaneParams(PaneParams params, View parent)
     {
-        Pane pane = createFromXML(xml);
+        params.setParentView(parent);
+        Pane pane = createFromPaneParams(params);
 
         if (pane != null)
         {
             pane.putInside(parent);
-            pane.parseChildren(xml);
+            pane.parseChildren(params);
         }
 
         return pane;
@@ -141,7 +143,7 @@ public class Loader
         {
             if (node.getNodeType() == Node.ELEMENT_NODE)
             {
-                createFromXML(new XMLNode(node), parent);
+                createFromPaneParams(new PaneParams(node), parent);
             }
             node = node.getNextSibling();
         }

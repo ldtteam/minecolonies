@@ -2,7 +2,7 @@ package com.blockout.controls;
 
 import com.blockout.Alignment;
 import com.blockout.Pane;
-import com.blockout.XMLNode;
+import com.blockout.PaneParams;
 
 public class Label extends Pane
 {
@@ -24,14 +24,14 @@ public class Label extends Pane
         shadow = other.shadow;
     }
 
-    public Label(XMLNode xml)
+    public Label(PaneParams params)
     {
-        super(xml);
-        label         = xml.getLocalizedStringAttribute("label", label);
-        textAlignment = xml.getEnumAttribute("textalign", textAlignment);
-        textColor     = xml.getColorAttribute("color", textColor);
-        hoverColor    = xml.getColorAttribute("hovercolor", textColor); //  match textcolor by default
-        shadow        = xml.getBooleanAttribute("shadow", shadow);
+        super(params);
+        label         = params.getLocalizedStringAttribute("label", label);
+        textAlignment = params.getEnumAttribute("textalign", textAlignment);
+        textColor     = params.getColorAttribute("color", textColor);
+        hoverColor    = params.getColorAttribute("hovercolor", textColor); //  match textcolor by default
+        shadow        = params.getBooleanAttribute("shadow", shadow);
     }
 
     public String getLabel() { return label; }

@@ -22,6 +22,15 @@ public class Window extends View
         window = this;
     }
 
+    public Window(PaneParams params)
+    {
+        super(params);
+        setPosition(0, 0);
+    }
+
+    @Override
+    public void parseChildren(PaneParams params) {}
+
     /**
      * Window constructor to create a Window that occupies the entirety of the screen
      */

@@ -53,23 +53,23 @@ public class Pane extends Gui
     }
 
     /**
-     * Constructs a Pane from XML
+     * Constructs a Pane from PaneParams
      *
-     * @param xml XML Node for the Pane
+     * @param params Params for the Pane
      */
-    public Pane(XMLNode xml)
+    public Pane(PaneParams params)
     {
-        id        = xml.getStringAttribute("id", id);
-        width     = xml.getIntegerAttribute("width", width);
-        height    = xml.getIntegerAttribute("height", height);
-        x         = xml.getIntegerAttribute("x", x);
-        y         = xml.getIntegerAttribute("y", y);
-        alignment = xml.getEnumAttribute("align", alignment);
-        visible   = xml.getBooleanAttribute("visible", visible);
-        enabled   = xml.getBooleanAttribute("enabled", enabled);
+        id        = params.getStringAttribute("id", id);
+        width     = params.getSizeAttribute("width", width, params.getParentWidth());
+        height    = params.getSizeAttribute("height", height, params.getParentHeight());
+        x         = params.getIntegerAttribute("x", x);
+        y         = params.getIntegerAttribute("y", y);
+        alignment = params.getEnumAttribute("align", alignment);
+        visible   = params.getBooleanAttribute("visible", visible);
+        enabled   = params.getBooleanAttribute("enabled", enabled);
     }
 
-    public void parseChildren(XMLNode xml) {}
+    public void parseChildren(PaneParams params) {}
 
     //  ID
     public final String getID() { return id; }
@@ -312,7 +312,7 @@ public class Pane extends Gui
         lastClickedPane = this;
         handleClick(mx - x, my - y);
     }
-    
+
     public boolean canHandleClick(int mx, int my)
     {
         return visible && enabled && isPointInPane(mx, my);

@@ -1,118 +1,120 @@
 <window>
+    <image path="minecolonies:textures/gui/guiHutBackground.png" width="100%" height="100%" y="-5"/>
     <label id="title"
-           width="-1" height="11" x="0" y="9"
+           width="100%" height="11" x="0" y="9"
            textalign="TopMiddle"
            color="0"
            label="$(com.minecolonies.gui.citizen.skills)" />
     <group width="100" height="55" x="30" y="30">
         <label id="strength"
-               width="-1" height="11"
+               width="100%" height="11"
                color="0" />
         <label id="stamina"
-               width="-1" height="11"
+               width="100%" height="11"
                color="black" />
         <label id="wisdom"
-               width="-1" height="11"
+               width="100%" height="11"
                color="#ff0000" />
         <label id="intelligence"
-               width="-1" height="11"
+               width="100%" height="11"
                color="rgb(255,0,0)" />
         <label id="charisma"
-               width="-1" height="11"
+               width="100%" height="11"
                color="rgba(0,255,0,0.5)" />
     </group>
-    <view width="-1" height="60" y="85">
+    <view width="80%" height="60" y="85" align="TopMiddle">
         <text id="text1"
-              width="-1" height="20" y="0" text="This is just a test"
+              width="100%" height="20" y="0" text="This is just a test"
               tab="text2" />
         <text id="text2"
-              width="-1" height="20" y="20" text="This is just a test"
+              width="100%" height="20" y="20" text="This is just a test"
               tab="text1" />
     </view>
-    <list id="list"
-          width="100" height="105"
-          y="125" align="TopMiddle">
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="1"  />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="2"  />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="3"  />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="4"  />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="5"  />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="6"  />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="7"  />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="8"  />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="9"  />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="10" />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="11" />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="12" />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="13" />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="14" />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-           <label height="11" color="black" hovercolor="white" label="15" />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="16" />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="17" />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="18" />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="19" />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-        <view height="11" width="-1">
-            <label height="11" color="black" hovercolor="white" label="20" />
-            <button width="30" height="11" x="-5" align="MiddleRight" label="B" />
-        </view>
-    </list>
+    <box padding="3" width="100" height="105" y="125" align="TopMiddle">
+        <list id="list"
+              width="100%" height="100%">
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="1"  />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="2"  />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="3"  />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="4"  />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="5"  />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="6"  />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="7"  />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="8"  />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="9"  />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="10" />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="11" />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="12" />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="13" />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="14" />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+               <label height="11" color="black" hovercolor="white" label="15" />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="16" />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="17" />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="18" />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="19" />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+            <view height="11" width="100%">
+                <label height="11" color="black" hovercolor="white" label="20" />
+                <button width="30" height="11" x="5" align="MiddleRight" label="B" />
+            </view>
+        </list>
+    </box>
     <button id="inventory"
             width="116" height="20" x="0" y="13"
             align="BottomMiddle"

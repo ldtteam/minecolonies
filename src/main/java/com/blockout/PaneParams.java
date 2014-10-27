@@ -2,7 +2,6 @@ package com.blockout;
 
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.util.MathHelper;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
@@ -10,20 +9,27 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class XMLNode
+public class PaneParams
 {
     Node node;
+    View parentView;
 
-    public XMLNode(Node n)
+    public PaneParams(Node n)
     {
         node = n;
     }
 
-    public String getName() { return node.getNodeName(); }
+    public String getType() { return node.getNodeName(); }
 
-    public List<XMLNode> getChildren()
+    public void setParentView(View parent) { parentView = parent; }
+    public View getParentView() { return parentView; }
+
+    public int getParentWidth() { return parentView != null ? parentView.getInteriorWidth() : 0; }
+    public int getParentHeight() { return parentView != null ? parentView.getInteriorHeight() : 0; }
+
+    public List<PaneParams> getChildren()
     {
-        List<XMLNode> list = null;
+        List<PaneParams> list = null;
 
         Node child = node.getFirstChild();
         while (child != null)
@@ -32,10 +38,10 @@ public class XMLNode
             {
                 if (list == null)
                 {
-                    list = new ArrayList<XMLNode>();
+                    list = new ArrayList<PaneParams>();
                 }
 
-                list.add(new XMLNode(child));
+                list.add(new PaneParams(child));
             }
             child = child.getNextSibling();
         }
@@ -59,10 +65,10 @@ public class XMLNode
     public int getIntegerAttribute(String name) { return getIntegerAttribute(name, 0); }
     public int getIntegerAttribute(String name, int def)
     {
-        Node attr = getAttribute(name);
+        String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            try { return Integer.parseInt(attr.getNodeValue()); }
+            try { return Integer.parseInt(attr); }
             catch (NumberFormatException ex) {}
         }
         return def;
@@ -71,10 +77,10 @@ public class XMLNode
     public float getFloatAttribute(String name) { return getFloatAttribute(name, 0); }
     public float getFloatAttribute(String name, float def)
     {
-        Node attr = getAttribute(name);
+        String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            try { return Float.parseFloat(attr.getNodeValue()) ; }
+            try { return Float.parseFloat(attr) ; }
             catch (NumberFormatException ex) {}
         }
         return def;
@@ -83,10 +89,10 @@ public class XMLNode
     public double getDoubleAttribute(String name) { return getDoubleAttribute(name, 0); }
     public double getDoubleAttribute(String name, double def)
     {
-        Node attr = getAttribute(name);
+        String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            try { return Double.parseDouble(attr.getNodeValue()); }
+            try { return Double.parseDouble(attr); }
             catch (NumberFormatException ex) {}
         }
 
@@ -96,10 +102,10 @@ public class XMLNode
     public boolean getBooleanAttribute(String name) { return getBooleanAttribute(name, false); }
     public boolean getBooleanAttribute(String name, boolean def)
     {
-        Node attr = getAttribute(name);
+        String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            return Boolean.parseBoolean(attr.getNodeValue());
+            return Boolean.parseBoolean(attr);
         }
         return def;
     }
@@ -107,32 +113,67 @@ public class XMLNode
     @SuppressWarnings("unchecked")
     public <T extends Enum<T>> T getEnumAttribute(String name, T def)
     {
-        Node attr = getAttribute(name);
+        String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            try { return def.valueOf((Class<T>)def.getClass(), attr.getNodeValue()); }
+            try { return def.valueOf((Class<T>)def.getClass(), attr); }
             catch (IllegalArgumentException exc) {}
         }
+        return def;
+    }
+
+    static Pattern sizePattern = Pattern.compile("([-+]?\\d+)%", Pattern.CASE_INSENSITIVE);
+    public int getSizeAttribute(String name, int def, int scale)
+    {
+        String attr = getStringAttribute(name, null);
+        if (attr != null)
+        {
+            if (attr.contains("%"))
+            {
+                Matcher m = sizePattern.matcher(attr);
+                if (m.find())
+                {
+                    try
+                    {
+                        return scale * MathHelper.clamp_int(Integer.parseInt(m.group(1)), 0, 100) / 100;
+                    }
+                    catch (Exception ex)
+                    {
+                        //  NumberFormatException | NullPointerException | IndexOutOfBoundsException | IllegalStateException ex
+                    }
+                }
+            }
+            else
+            {
+                if (attr.contains("px"))
+                {
+                    attr = attr.replace("px", "");
+                }
+
+                try { return Integer.parseInt(attr); }
+                catch (NumberFormatException ex) {}
+            }
+        }
+
         return def;
     }
 
     static Pattern rgbaPattern = Pattern.compile("rgba?\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*(?:,\\s*([01]\\.\\d+)\\s*)?\\)", Pattern.CASE_INSENSITIVE);
     public int getColorAttribute(String name, int def)
     {
-        Node attr = getAttribute(name);
+        String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            String value = attr.getNodeValue();
-            if (value.startsWith("#"))
+            if (attr.startsWith("#"))
             {
                 //  CSS Hex format: #00112233
-                try{ return Integer.parseInt(value.substring(1), 16); }
+                try{ return Integer.parseInt(attr.substring(1), 16); }
                 catch (NumberFormatException ex){}
             }
-            else if (value.startsWith("rgb(") || value.startsWith("rgba("))
+            else if (attr.startsWith("rgb(") || attr.startsWith("rgba("))
             {
                 //  CSS RGB format: rgb(255,0,0) and rgba(255,0,0,0.3)
-                Matcher m = rgbaPattern.matcher(value);
+                Matcher m = rgbaPattern.matcher(attr);
 
                 if (m.find())
                 {
@@ -144,7 +185,7 @@ public class XMLNode
 
                         int color = ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
 
-                        if (value.startsWith("rgba"))
+                        if (attr.startsWith("rgba"))
                         {
                             int alpha = (int)(Float.parseFloat(m.group(4)) * 255.0f);
                             color |= MathHelper.clamp_int(alpha, 0, 255) << 24;
@@ -161,9 +202,10 @@ public class XMLNode
             else
             {
                 //  Integer
-                try{ return Integer.parseInt(value); } catch (NumberFormatException ex){}
+                try{ return Integer.parseInt(attr); }
+                catch (NumberFormatException ex){}
 
-                return Loader.getColorByName(value, def);
+                return Loader.getColorByName(attr, def);
             }
         }
         return def;

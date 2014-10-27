@@ -3,7 +3,6 @@ package com.blockout;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -13,32 +12,34 @@ import java.util.ListIterator;
 public class View extends Pane
 {
     List<Pane> children = new ArrayList<Pane>();
+    int padding = 0;
 
     public View() { super(); }
     public View(View other) { super(other); }
 
     /**
-     * Constructs a View from XML, and place it into the given Parent
+     * Constructs a View from PaneParams, and place it into the given Parent
      *
-     * @param xml XML Node for the Pane
+     * @param params Params for the View
      */
-    public View(XMLNode xml)
+    public View(PaneParams params)
     {
-        super(xml);
+        super(params);
+        padding = params.getIntegerAttribute("padding", padding);
         //  TODO - Any attributes of our own?
     }
 
-    int getInteriorWidth() { return width; }
-    int getInteriorHeight() { return height; }
+    int getInteriorWidth() { return width - (padding * 2); }
+    int getInteriorHeight() { return height - (padding * 2); }
 
-    public void parseChildren(XMLNode xml)
+    public void parseChildren(PaneParams params)
     {
-        List<XMLNode> childNodes = xml.getChildren();
+        List<PaneParams> childNodes = params.getChildren();
         if (childNodes == null) return;
 
-        for (XMLNode node : childNodes)
+        for (PaneParams node : childNodes)
         {
-            Loader.createFromXML(node, this);
+            Loader.createFromPaneParams(node, this);
         }
     }
 
@@ -52,32 +53,42 @@ public class View extends Pane
         //  Adjust for horizontal size and alignment
         if (childWidth < 0)
         {
-            childX = 0;
+            //childX = 0;
             childWidth = getInteriorWidth();
+            //childX += padding;
         }
         else if (child.alignment.rightAligned)
         {
-            childX = (getInteriorWidth() - childWidth) - childX;
+            childX = (getInteriorWidth() - childWidth) - childX;// - padding;
         }
         else if (child.alignment.horizontalCentered)
         {
-            childX = ((getInteriorWidth() - childWidth) / 2) + childX;
+            childX = ((getInteriorWidth() - childWidth) / 2) + childX;// + padding;
         }
+//        else
+//        {
+//            childX += padding;
+//        }
 
         //  Adjust for vertical size and alignment
         if (childHeight < 0)
         {
-            childY = 0;
+            //childY = 0;
             childHeight = getInteriorHeight();
+            //childY += padding;
         }
         else if (child.alignment.bottomAligned)
         {
-            childY = (getInteriorHeight() - childHeight) - childY;
+            childY = (getInteriorHeight() - childHeight) - childY;// - padding;
         }
         else if (child.alignment.verticalCentered)
         {
-            childY = ((getInteriorHeight() - childHeight) / 2) + childY;
+            childY = ((getInteriorHeight() - childHeight) / 2) + childY;// + padding;
         }
+//        else
+//        {
+//            childY += padding;
+//        }
 
         child.setSize(childWidth, childHeight);
         child.setPosition(childX, childY);
@@ -98,11 +109,11 @@ public class View extends Pane
     {
         //  Translate the drawing origin to our x,y
         GL11.glPushMatrix();
-        GL11.glTranslatef((float)x, (float)y, 0);
+        GL11.glTranslatef((float)x + padding, (float)y + padding, 0);
 
         //  Translate Mouse into the View
-        mx -= x;
-        my -= y;
+        mx -= x + padding;
+        my -= y + padding;
 
         for (Pane child : children)
         {
@@ -177,10 +188,12 @@ public class View extends Pane
     @Override
     public void click(int mx, int my)
     {
-        Pane clickedPane = findPaneForClick(mx - x, my - y);
+        int childmx = mx - x - padding;
+        int childmy = my - y - padding;
+        Pane clickedPane = findPaneForClick(childmx, childmy);
         if (clickedPane != null)
         {
-            clickedPane.click(mx - x, my - y);
+            clickedPane.click(childmx, childmy);
         }
         else
         {
