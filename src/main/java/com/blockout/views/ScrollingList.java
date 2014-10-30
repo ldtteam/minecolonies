@@ -29,15 +29,15 @@ public class ScrollingList extends View
     }
 
     //  Params
-    int scrollbarWidth          = 12;
-    int scrollbarBackground     = 0xFF000000;
-    int scrollbarColor          = 0xFFC0C0C0;
-    int scrollbarColorHighlight = 0xFF808080;
+    protected int scrollbarWidth          = 8;
+    protected int scrollbarBackground     = 0xFF000000;
+    protected int scrollbarColor          = 0xFFC0C0C0;
+    protected int scrollbarColorHighlight = 0xFF808080;
 
     //  Runtime
-    ScrollingListView scrollView;
-    DataProvider      dataProvider;
-    int               barClickY = 0;
+    protected ScrollingListView scrollView;
+    protected DataProvider      dataProvider;
+    protected int               barClickY = 0;
 
     public ScrollingList(){ super(); }
 
@@ -67,7 +67,7 @@ public class ScrollingList extends View
     /**
      * Override to change scroll bar width
      */
-    private int getScrollbarWidth() { return scrollbarWidth; }
+    public int getScrollbarWidth() { return scrollbarWidth; }
 
     @Override
     public void parseChildren(PaneParams params)
