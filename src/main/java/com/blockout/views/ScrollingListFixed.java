@@ -1,5 +1,9 @@
-package com.blockout;
+package com.blockout.views;
 
+import com.blockout.Loader;
+import com.blockout.Pane;
+import com.blockout.PaneParams;
+import com.blockout.View;
 import net.minecraft.util.MathHelper;
 
 import java.util.List;
@@ -10,7 +14,7 @@ import java.util.List;
  *
  * All children are set to a Top version of their alignment, and have their Y coordinates overwritten
  */
-public class ScrollingList extends View
+public class ScrollingListFixed extends View
 {
     public static interface DataProvider
     {
@@ -25,11 +29,11 @@ public class ScrollingList extends View
     int scrollOffset        = 0;    //  Scroll offset (in elements)
     DataProvider provider;
 
-    public ScrollingList(){ super(); }
+    public ScrollingListFixed(){ super(); }
 
-    public ScrollingList(ScrollingList other){ super(other); }
+    public ScrollingListFixed(ScrollingListFixed other){ super(other); }
 
-    public ScrollingList(PaneParams params)
+    public ScrollingListFixed(PaneParams params)
     {
         super(params);
     }

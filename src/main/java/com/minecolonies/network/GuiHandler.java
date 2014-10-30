@@ -1,15 +1,8 @@
 package com.minecolonies.network;
 
-import com.blockout.Window;
-import com.minecolonies.client.gui.GuiHutBuilder;
-import com.minecolonies.client.gui.GuiHutWarehouse;
-import com.minecolonies.client.gui.GuiTownHall;
-import com.minecolonies.client.gui.GuiTypable;
-import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.ColonyView;
+import com.blockout.views.Window;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.inventory.ContainerHut;
-import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;

@@ -1,13 +1,15 @@
 package com.blockout;
 
 import com.blockout.controls.*;
+import com.blockout.views.Group;
+import com.blockout.views.ScrollingList;
+import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -26,7 +28,7 @@ public class Loader
     {
         register("view",        View.class);
         register("group",       Group.class);
-        register("list",        ScrollingGroup.class);
+        register("list",        ScrollingList.class);
         register("button",      ButtonVanilla.class);
         register("label",       Label.class);
         register("text",        TextFieldVanilla.class);
@@ -138,14 +140,21 @@ public class Loader
     {
         doc.getDocumentElement().normalize();
 
-        Node node = doc.getDocumentElement().getFirstChild();
-        while (node != null)
+        PaneParams root = new PaneParams(doc.getDocumentElement());
+        if (parent instanceof Window)
         {
-            if (node.getNodeType() == Node.ELEMENT_NODE)
+            String inherit = root.getStringAttribute("inherit", null);
+            if (inherit != null)
             {
-                createFromPaneParams(new PaneParams(node), parent);
+                createFromXMLFile(new ResourceLocation(inherit), parent);
             }
-            node = node.getNextSibling();
+
+            ((Window)parent).loadParams(root);
+        }
+
+        for (PaneParams child : root.getChildren())
+        {
+            createFromPaneParams(child, parent);
         }
     }
 
@@ -181,6 +190,17 @@ public class Loader
     public static void createFromXML(String xmlString, View parent)
     {
         createFromXML(new InputSource(new StringReader(xmlString)), parent);
+    }
+
+    /**
+     * Parse XML contains in a ResourceLocation into contents for a Window
+     *
+     * @param filename
+     * @param parent
+     */
+    public static void createFromXMLFile(String filename, View parent)
+    {
+        createFromXMLFile(new ResourceLocation(filename), parent);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.blockout;
 
+import com.blockout.views.Window;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Keyboard;
@@ -8,21 +9,25 @@ import org.lwjgl.opengl.GL11;
 public class Screen extends GuiScreen
 {
     protected Window window;
-    protected int x = 0,
-                  y = 0;
+    protected int x = 0, y = 0;
 
     protected static int scale = 0;
 
-    Screen(Window w)
+    public Screen(Window w)
     {
         window = w;
     }
 
-    public static int getScale() { return scale; }
+    public static int getScale(){ return scale; }
 
     @Override
     public void drawScreen(int mx, int my, float f)
     {
+        if (window.hasLightbox())
+        {
+            super.drawDefaultBackground();
+        }
+
         scale = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
 
         GL11.glPushMatrix();
@@ -38,6 +43,7 @@ public class Screen extends GuiScreen
         y = (height - window.getHeight()) / 2;
 
         Keyboard.enableRepeatEvents(true);
+        window.onOpened();
     }
 
     @Override
@@ -67,6 +73,12 @@ public class Screen extends GuiScreen
     }
 
     @Override
+    protected void mouseClickMove(int mx, int my, int buttons, long timeElapsed)
+    {
+        window.mouseDownMoved(mx, my, buttons, timeElapsed);
+    }
+
+    @Override
     protected void keyTyped(char ch, int key)
     {
         window.onKeyTyped(ch, key);
@@ -89,9 +101,6 @@ public class Screen extends GuiScreen
     @Override
     public void drawDefaultBackground()
     {
-        if (window.hasLightbox())
-        {
-            super.drawDefaultBackground();
-        }
+        super.drawDefaultBackground();
     }
 }

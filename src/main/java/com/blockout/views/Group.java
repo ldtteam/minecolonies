@@ -1,4 +1,8 @@
-package com.blockout;
+package com.blockout.views;
+
+import com.blockout.Pane;
+import com.blockout.PaneParams;
+import com.blockout.View;
 
 /*
  * A Group is a View which enforces the position of children to be
@@ -40,11 +44,11 @@ public class Group extends View
             childWidth = getInteriorWidth();
             //childX += padding;
         }
-        else if (child.alignment.rightAligned)
+        else if (child.getAlignment().rightAligned)
         {
             childX = (getInteriorWidth() - childWidth) - childX;// + padding;
         }
-        else if (child.alignment.horizontalCentered)
+        else if (child.getAlignment().horizontalCentered)
         {
             childX = ((getInteriorWidth() - childWidth) / 2) + childX;// + padding;
         }

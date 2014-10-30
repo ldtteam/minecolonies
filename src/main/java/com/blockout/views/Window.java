@@ -1,13 +1,26 @@
-package com.blockout;
+package com.blockout.views;
 
+import com.blockout.Loader;
+import com.blockout.PaneParams;
+import com.blockout.Screen;
+import com.blockout.View;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
 public class Window extends View
 {
     protected Minecraft mc = Minecraft.getMinecraft();
     protected Screen screen;
+
+    protected boolean windowPausesGame = true;
+    protected boolean hasLightbox      = true;
+
+    public Window()
+    {
+        this(420, 240);
+    }
 
     /**
      * Window constructor when there is a fixed Width and Height
@@ -22,10 +35,26 @@ public class Window extends View
         window = this;
     }
 
-    public Window(PaneParams params)
+    public Window(ResourceLocation resource)
     {
-        super(params);
-        setPosition(0, 0);
+        this();
+        Loader.createFromXMLFile(resource, this);
+    }
+
+    public Window(String resource)
+    {
+        this();
+        Loader.createFromXMLFile(resource, this);
+    }
+
+    public void loadParams(PaneParams params)
+    {
+        int w = params.getIntegerAttribute("width", width);
+        int h = params.getIntegerAttribute("height", height);
+        setSize(w, h);
+
+        hasLightbox = params.getBooleanAttribute("lightbox", hasLightbox);
+        windowPausesGame = params.getBooleanAttribute("pause", windowPausesGame);
     }
 
     @Override
@@ -53,14 +82,14 @@ public class Window extends View
      *
      * @return <tt>true</tt> if the 'lightbox' should be displayed
      */
-    public boolean hasLightbox() { return true; }
+    public boolean hasLightbox() { return hasLightbox; }
 
     /**
      * Return <tt>true</tt> if the game should be paused when the Window is displayed
      *
      * @return <tt>true</tt> if the game should be paused when the Window is displayed
      */
-    protected boolean doesWindowPauseGame() { return true; }
+    public boolean doesWindowPauseGame() { return windowPausesGame; }
 
     /**
      * Close the Window
@@ -69,24 +98,6 @@ public class Window extends View
     {
         this.mc.displayGuiScreen((GuiScreen) null);
         this.mc.setIngameFocus();
-    }
-
-    /**
-     * Draw a background
-     */
-    protected void drawBackground() {}
-
-    /**
-     * Default draw function.  Do not override this unless absolutely necessary.
-     *
-     * @param mx Mouse X position
-     * @param my Mouse Y position
-     */
-    @Override
-    protected void drawSelf(int mx, int my)
-    {
-        drawBackground();
-        super.drawSelf(mx, my);
     }
 
     /**
@@ -138,6 +149,11 @@ public class Window extends View
             close();
         }
     }
+
+    /**
+     * Called when the Window is displayed.
+     */
+    public void onOpened() {}
 
     /**
      * Called when the Window is closed.

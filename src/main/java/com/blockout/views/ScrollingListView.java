@@ -1,5 +1,6 @@
-package com.blockout;
+package com.blockout.views;
 
+import com.blockout.*;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -7,19 +8,22 @@ import org.lwjgl.opengl.GL11;
 import java.nio.FloatBuffer;
 import java.util.ListIterator;
 
-public class ScrollingGroupView extends View
+public class ScrollingListView extends View
 {
-    int scrollY = 0;
+    int scrollY           = 0;
     int listElementHeight = 0;
-    int contentHeight = 0;
+    int contentHeight     = 0;
+    PaneParams listNodeParams;
 
-    public ScrollingGroupView()
+    public ScrollingListView()
     {
         super();
     }
-    public ScrollingGroupView(ScrollingGroupView other) { super(other); }
 
-    public int getScrollY() { return scrollY; }
+    public ScrollingListView(ScrollingListView other){ super(other); }
+
+    public int getScrollY(){ return scrollY; }
+
     public void setScrollY(int offset)
     {
         scrollY = offset;
@@ -38,13 +42,24 @@ public class ScrollingGroupView extends View
 
     public int getContentHeight() { return contentHeight; }
     public int getMaxScrollY() { return contentHeight - getHeight(); }
-
     public int getListElementHeight() { return listElementHeight; }
-    public void setListElementHeight(int elementHeight)
+//    public void setListElementHeight(int elementHeight)
+//    {
+//        listElementHeight = elementHeight;
+//        computeContentHeight();
+//    }
+
+    public void setListNodeParams(PaneParams params)
     {
-        listElementHeight = elementHeight;
-        computeContentHeight();
+        listNodeParams = params;
+
+        while (children.size() > 0)
+        {
+            removeChild(children.get(0));
+        }
     }
+
+    public int getVisibleListElementCount() { return getHeight() / listElementHeight; }
 
     private void computeContentHeight()
     {
@@ -72,21 +87,21 @@ public class ScrollingGroupView extends View
         scrollBy(delta * getHeight());
     }
 
-    @Override
-    public void addChild(Pane child)
-    {
-        super.addChild(child);
-        computeContentHeight();
-    }
-
-    @Override
-    public void removeChild(Pane child)
-    {
-        int index = children.indexOf(child);
-
-        super.removeChild(child);
-        computeContentHeight();
-    }
+//    @Override
+//    public void addChild(Pane child)
+//    {
+//        super.addChild(child);
+//        computeContentHeight();
+//    }
+//
+//    @Override
+//    public void removeChild(Pane child)
+//    {
+//        int index = children.indexOf(child);
+//
+//        super.removeChild(child);
+//        computeContentHeight();
+//    }
 
     @Override
     public void adjustChild(Pane child)
@@ -99,6 +114,11 @@ public class ScrollingGroupView extends View
     @Override
     protected void drawSelf(int mx, int my)
     {
+        if (listElementHeight == 0)
+        {
+            return;
+        }
+
         //  Translate the drawing origin to our x,y
         GL11.glPushMatrix();
         GL11.glTranslatef((float)x, (float)y, 0);
@@ -203,5 +223,37 @@ public class ScrollingGroupView extends View
         }
 
         return null;
+    }
+
+
+    protected void refreshElementPanes(ScrollingList.DataProvider dataProvider)
+    {
+        int numElements = (dataProvider != null) ? dataProvider.getElementCount() : 0;
+        for (int i = 0; i < numElements; ++i)
+        {
+            Pane child = null;
+            if (i < children.size())
+            {
+                child = children.get(i);
+            }
+            else
+            {
+                child = Loader.createFromPaneParams(listNodeParams, this);
+
+                if (i == 0)
+                {
+                    listElementHeight = child.getHeight();
+                }
+            }
+
+            dataProvider.updateElement(i, child);
+        }
+
+        while (children.size() > numElements)
+        {
+            removeChild(children.get(numElements));
+        }
+
+        computeContentHeight();
     }
 }

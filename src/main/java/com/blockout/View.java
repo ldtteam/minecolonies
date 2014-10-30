@@ -1,5 +1,6 @@
 package com.blockout;
 
+import com.blockout.views.Window;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -11,8 +12,8 @@ import java.util.ListIterator;
  */
 public class View extends Pane
 {
-    List<Pane> children = new ArrayList<Pane>();
-    int padding = 0;
+    protected List<Pane> children = new ArrayList<Pane>();
+    protected int padding = 0;
 
     public View() { super(); }
     public View(View other) { super(other); }
@@ -29,8 +30,10 @@ public class View extends Pane
         //  TODO - Any attributes of our own?
     }
 
-    int getInteriorWidth() { return width - (padding * 2); }
-    int getInteriorHeight() { return height - (padding * 2); }
+    public List<Pane> getChildren() { return children; }
+
+    public int getInteriorWidth() { return width - (padding * 2); }
+    public int getInteriorHeight() { return height - (padding * 2); }
 
     public void parseChildren(PaneParams params)
     {

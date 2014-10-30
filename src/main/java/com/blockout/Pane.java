@@ -1,5 +1,6 @@
 package com.blockout;
 
+import com.blockout.views.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -20,10 +21,10 @@ public class Pane extends Gui
     protected boolean   enabled   = true;
 
     //  Runtime
-    protected Window      window;
-    protected View        parent;
-    protected static Pane lastClickedPane;
-    protected static Pane focus;
+    protected        Window window;
+    protected        View   parent;
+    protected static Pane   lastClickedPane;
+    protected static Pane   focus;
 
     /**
      * Default constructor
@@ -311,6 +312,26 @@ public class Pane extends Gui
     {
         lastClickedPane = this;
         handleClick(mx - x, my - y);
+    }
+
+    public void handleMouseDownMoved(int mx, int my, int buttons, long timeElapsed)
+    {
+    }
+
+    public void mouseDownMoved(int mx, int my, int buttons, long timeElapsed)
+    {
+        if (lastClickedPane != null)
+        {
+            Pane p = lastClickedPane.getParent();
+            while (p != null)
+            {
+                mx -= p.getX();
+                my -= p.getY();
+                p = p.getParent();
+            }
+
+            lastClickedPane.handleMouseDownMoved(mx, my, buttons, timeElapsed);
+        }
     }
 
     public boolean canHandleClick(int mx, int my)

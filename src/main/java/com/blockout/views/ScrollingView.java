@@ -1,5 +1,8 @@
-package com.blockout;
+package com.blockout.views;
 
+import com.blockout.Pane;
+import com.blockout.Screen;
+import com.blockout.View;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
