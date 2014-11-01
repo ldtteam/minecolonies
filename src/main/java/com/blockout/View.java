@@ -53,14 +53,14 @@ public class View extends Pane
         int childWidth = child.getWidth(),
             childHeight = child.getHeight();
 
-        //  Adjust for horizontal size and alignment
+        //  Negative width = 100% of parents width minus abs(width)
         if (childWidth < 0)
         {
-            //childX = 0;
-            childWidth = getInteriorWidth();
-            //childX += padding;
+            childWidth = Math.max(0, getInteriorWidth() + childWidth);
         }
-        else if (child.alignment.rightAligned)
+
+        //  Adjust for horizontal alignment
+        if (child.alignment.rightAligned)
         {
             childX = (getInteriorWidth() - childWidth) - childX;// - padding;
         }
@@ -73,14 +73,14 @@ public class View extends Pane
 //            childX += padding;
 //        }
 
-        //  Adjust for vertical size and alignment
+        //  Negative height = 100% of parents height minus abs(height)
         if (childHeight < 0)
         {
-            //childY = 0;
-            childHeight = getInteriorHeight();
-            //childY += padding;
+            childHeight = Math.max(0, getInteriorHeight() + childHeight);
         }
-        else if (child.alignment.bottomAligned)
+
+        //  Adjust for vertical alignment
+        if (child.alignment.bottomAligned)
         {
             childY = (getInteriorHeight() - childHeight) - childY;// - padding;
         }
@@ -191,12 +191,12 @@ public class View extends Pane
     @Override
     public void click(int mx, int my)
     {
-        int childmx = mx - x - padding;
-        int childmy = my - y - padding;
-        Pane clickedPane = findPaneForClick(childmx, childmy);
+        int mxChild = mx - x - padding;
+        int myChild = my - y - padding;
+        Pane clickedPane = findPaneForClick(mxChild, myChild);
         if (clickedPane != null)
         {
-            clickedPane.click(childmx, childmy);
+            clickedPane.click(mxChild, myChild);
         }
         else
         {

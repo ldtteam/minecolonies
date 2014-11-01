@@ -135,7 +135,7 @@ public class PaneParams
                 {
                     try
                     {
-                        return scale * MathHelper.clamp_int(Integer.parseInt(m.group(1)), 0, 100) / 100;
+                        return scale * MathHelper.clamp_int(Integer.parseInt(m.group(1)), -100, 100) / 100;
                     }
                     catch (Exception ex)
                     {
