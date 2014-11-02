@@ -22,12 +22,12 @@ The Java JDK is used to compile MineColonies
     * Click on `Environment Variables`.
     * Under `System Variables`, click `New`.
     * For `Variable Name`, input `JAVA_HOME`.
-    * For `Variable Value`, input something similar to `C:\Program Files\Java\jdk1.7.0_45` exactly as shown (or wherever your Java JDK installation is), and click `Ok`.
+    * For `Variable Value`, input something similar to `C:\Program Files\Java\jdk1.7.0_45` exactly as shown (or wherever your Java JDK installation is), and click `OK`.
     * Scroll down to a variable named `Path`, and double-click on it.
-    * Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `Ok`.  Make sure the location is correct; double-check just to make sure.
+    * Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `OK`.  Make sure the location is correct; double-check just to make sure.
 3. Open up your command line and run `javac`.  If it spews out a bunch of possible options and the usage, then you're good to go.  If not, either try the steps again.
 
-####Setup Gradle
+####Setup Gradle (Optional)
 Gradle is used to execute the various build tasks when compiling MineColonies
 
 1. Download and install Gradle.
@@ -49,7 +49,7 @@ Gradle is used to execute the various build tasks when compiling MineColonies
 Git is used to clone MineColonies and update your local copy.
 
 1. Download and install Git [here](http://git-scm.com/download/).
-2. *Optional*: Download and install a Git GUI client, such as Github for Windows/Mac, SmartGitHg, TortoiseGit, etc.  A nice list is available [here](http://git-scm.com/downloads/guis).
+2. *Optional*: Download and install a Git GUI client, such as SourceTree, Github for Windows/Mac, SmartGitHg, TortoiseGit, etc.  A nice list is available [here](http://git-scm.com/downloads/guis).
 
 ####Setup MineColonies
 This section assumes that you're using the command-line version of Git.
@@ -66,9 +66,9 @@ This section assumes that you're using the command-line version of Git.
 ***
 
 ####Compile MineColonies
-1. Execute `gradle setupDevWorkspace`. This sets up Forge and downloads the necessary libraries to build MineColonies.  This might take some time, be patient.
+1. Execute `gradlew setupDecompWorkspace`. This sets up Forge and downloads the necessary libraries to build MineColonies.  This might take some time, be patient.
     * You will generally only have to do this once until the Forge version in `build.properties` changes.
-2. Execute `gradle build`. If you did everything right, `BUILD SUCCESSFUL` will be displayed after it finishes.  This should be relatively quick.
+2. Execute `gradlew build`. If you did everything right, `BUILD SUCCESSFUL` will be displayed after it finishes.  This should be relatively quick.
     * If you see `BUILD FAILED`, check the error output (it should be right around `BUILD FAILED`), fix everything (if possible), and try again.
 3. Go to `basefolder\MineColonies\build\libs`.
     *  You should see a `.jar` file named `MineColonies-universal--0.0.#.jar`, where # is the `build_number` value in `build.properties`.
@@ -104,8 +104,8 @@ MineColonies crashes every time?  Have a suggestion?  Found a bug?  Create an is
 3. Click `Create Issue`
 4. Fill in the form:
     * `Title`: Short summary of your issue
-    * `Discription`: A discription of what your problem is, with additional info. What have you tried to fix it etc.
-    * `Assignee`: Assign either Colton or Martijn
+    * `Description`: A description of what your problem is, with additional info. What have you tried to fix it etc.
+    * `Assignee`: (Optional) Assign someone to the issue.
     * `Kind`: Select the kind of issue
     * `Priority`: Select the priority. Think very well if it is a major issue before you select that!
     * `Attachments`: Add the latest.log from %appdata%/.minecraft/logs
@@ -114,11 +114,11 @@ MineColonies crashes every time?  Have a suggestion?  Found a bug?  Create an is
 
 NOTE: A video explaining how to is [here](http://youtu.be/2SscjHmLvss)
 
-For Devs
+For Developers
 --
 
 Do not push to the main branch anymore!
 Only PR's (pull requests) are acceptable for this branch.
 
-To do this, the easiest way is to download [sourcetree](http://www.sourcetreeapp.com/). Install it, and add a repo (either clone, or select working directory)
-Then, click on branch, and create a new one. You can push to your own branch! Make sure your branch is selected, before you push! [Example](http://gyazo.com/4b453a55a8baf59f573bb1c4636a5ca2) So it should be big black. Once you are statisfied, go to github, and create a pull request.
+To do this, the easiest way is to download [sourcetree](http://www.sourcetreeapp.com/). Install it, and add a repository (either clone, or select working directory)
+Then, click on branch, and create a new one. You can push to your own branch! Make sure your branch is selected, before you push! [Example](http://gyazo.com/4b453a55a8baf59f573bb1c4636a5ca2) So it should be big black. Once you are satisfied, go to [bitbucket](https://bitbucket.org/cltnschlosser/minecolonies/pull-requests), and create a pull request.
