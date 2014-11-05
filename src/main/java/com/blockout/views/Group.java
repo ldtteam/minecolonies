@@ -40,22 +40,16 @@ public class Group extends View
         //  Adjust for horizontal size and alignment
         if (childWidth < 0)
         {
-            //childX = 0;
             childWidth = getInteriorWidth();
-            //childX += padding;
         }
         else if (child.getAlignment().rightAligned)
         {
-            childX = (getInteriorWidth() - childWidth) - childX;// + padding;
+            childX = (getInteriorWidth() - childWidth) - childX;
         }
         else if (child.getAlignment().horizontalCentered)
         {
-            childX = ((getInteriorWidth() - childWidth) / 2) + childX;// + padding;
+            childX = ((getInteriorWidth() - childWidth) / 2) + childX;
         }
-//        else
-//        {
-//            childX += padding;
-//        }
 
         childY = spacing;
         for (Pane c : children)

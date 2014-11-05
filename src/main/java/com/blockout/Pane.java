@@ -3,6 +3,12 @@ package com.blockout;
 import com.blockout.views.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+
+import java.nio.FloatBuffer;
+import java.util.*;
 
 /*
  * A Pane is the root of all UI objects
@@ -190,7 +196,9 @@ public class Pane extends Gui
     {
         if (visible)
         {
+            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
             drawSelf(mx, my);
+            GL11.glPopAttrib();
         }
     }
 
@@ -314,26 +322,6 @@ public class Pane extends Gui
         handleClick(mx - x, my - y);
     }
 
-    public void handleMouseDownMoved(int mx, int my, int buttons, long timeElapsed)
-    {
-    }
-
-    public void mouseDownMoved(int mx, int my, int buttons, long timeElapsed)
-    {
-        if (lastClickedPane != null)
-        {
-            Pane p = lastClickedPane.getParent();
-            while (p != null)
-            {
-                mx -= p.getX();
-                my -= p.getY();
-                p = p.getParent();
-            }
-
-            lastClickedPane.handleMouseDownMoved(mx, my, buttons, timeElapsed);
-        }
-    }
-
     public boolean canHandleClick(int mx, int my)
     {
         return visible && enabled && isPointInPane(mx, my);
@@ -342,4 +330,64 @@ public class Pane extends Gui
     public boolean onKeyTyped(char ch, int key) { return false; }
 
     public void onUpdate() {}
+
+    private static class ScissorsInfo
+    {
+        int x, y, width, height;
+
+        ScissorsInfo(int x, int y, int w, int h) { this.x = x; this.y = y; this.width = w; this.height = h; }
+    }
+
+    private static Stack<ScissorsInfo> scissorsInfoStack = new Stack<ScissorsInfo>();
+
+    protected void scissorsStart()
+    {
+        FloatBuffer fb = BufferUtils.createFloatBuffer(16 * 4);
+        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, fb);
+
+        int scissorsX = (int) fb.get(12) + getX();
+        int scissorsY = (int) fb.get(13) + getY();
+        int h = getHeight();
+        int w = getWidth();
+
+        if (!scissorsInfoStack.isEmpty())
+        {
+            ScissorsInfo parentInfo = scissorsInfoStack.peek();
+            int right = scissorsX + w;
+            int bottom = scissorsY + h;
+            int parentRight = parentInfo.x + parentInfo.width;
+            int parentBottom = parentInfo.y + parentInfo.height;
+
+            scissorsX = Math.max(scissorsX, parentInfo.x);
+            scissorsY = Math.max(scissorsY, parentInfo.y);
+
+            w = Math.max(0, Math.min(right, parentRight) - scissorsX);
+            h = Math.max(0, Math.min(bottom, parentBottom) - scissorsY);
+        }
+
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+
+        ScissorsInfo info = new ScissorsInfo(scissorsX, scissorsY, w, h);
+        scissorsInfoStack.push(info);
+
+        int scale = Screen.getScale();
+        GL11.glScissor(info.x * scale, mc.displayHeight - ((info.y + info.height) * scale), info.width * scale, info.height * scale);
+    }
+
+    protected void scissorsEnd()
+    {
+        scissorsInfoStack.pop();
+
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        if (!scissorsInfoStack.isEmpty())
+        {
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+
+            ScissorsInfo info = scissorsInfoStack.peek();
+            int scale = Screen.getScale();
+            GL11.glScissor(info.x * scale, mc.displayHeight - ((info.y + info.height) * scale), info.width * scale, info.height * scale);
+        }
+
+    }
 }

@@ -38,6 +38,7 @@ public class ScrollingList extends View
     protected ScrollingListView scrollView;
     protected DataProvider      dataProvider;
     protected int               barClickY = 0;
+    protected boolean           barClicked = false;
 
     public ScrollingList(){ super(); }
 
@@ -72,7 +73,7 @@ public class ScrollingList extends View
     @Override
     public void parseChildren(PaneParams params)
     {
-        scrollView = new ScrollingListView();
+        scrollView = new ScrollingListView(this);
         scrollView.setSize(getWidth() - getScrollbarWidth(), getHeight());
         scrollView.putInside(this);
 
@@ -88,6 +89,14 @@ public class ScrollingList extends View
     public void drawSelf(int mx, int my)
     {
         super.drawSelf(mx, my);
+
+        barClicked = barClicked && Mouse.isButtonDown(0);
+        if (barClicked)
+        {
+            //  Current relative position of the click position on the bar
+            dragScroll(my - y);
+        }
+
         drawScrollbar(mx, my);
     }
 
@@ -139,23 +148,27 @@ public class ScrollingList extends View
             else
             {
                 barClickY = my - scrollBarStartY;
+                barClicked = true;
             }
         }
     }
 
-    public void handleMouseDownMoved(int mx, int my, int buttons, long timeElapsed)
+    public void dragScroll(int my)
     {
-        int barHeight = getBarHeight();
-        int scrollBarStartY = getScrollBarYPos();
+        int barClickYNow = getScrollBarYPos() + barClickY;
+        int deltaFromClickPos = my - barClickYNow;
 
-        //  Current relative position of the click position on the bar
-        int barClickYNow = scrollBarStartY + barClickY;
-        scrollView.scrollBy(my - barClickYNow);
-
-        //
-        if (scrollView.getScrollY() == 0 || scrollView.getScrollY() >= scrollView.getMaxScrollY())
+        if (deltaFromClickPos == 0)
         {
-            barClickY = MathHelper.clamp_int(my - scrollBarStartY, 0, barHeight);
+            return;
+        }
+
+        int scaledY = deltaFromClickPos * scrollView.getMaxScrollY() / getHeight();
+        scrollView.scrollBy(scaledY);
+
+        if (scrollView.getScrollY() == 0 || scrollView.getScrollY() == scrollView.getMaxScrollY())
+        {
+            barClickY = MathHelper.clamp_int(my - getScrollBarYPos(), 0, getBarHeight() - 1);
         }
     }
 
@@ -175,6 +188,6 @@ public class ScrollingList extends View
     }
 
     private int getContentHeightDiff() { return scrollView.getContentHeight() - getHeight(); }
-    private int getBarHeight() { return (getHeight() * getHeight()) / scrollView.getContentHeight(); }
+    private int getBarHeight() { return Math.max(Math.min(20, getHeight() / 2), (getHeight() * getHeight()) / scrollView.getContentHeight()); }
     private int getScrollBarYPos() { return scrollView.getScrollY() * (getHeight() - getBarHeight()) / getContentHeightDiff(); }
 }

@@ -75,7 +75,6 @@ public class Screen extends GuiScreen
     @Override
     protected void mouseClickMove(int mx, int my, int buttons, long timeElapsed)
     {
-        window.mouseDownMoved(mx, my, buttons, timeElapsed);
     }
 
     @Override

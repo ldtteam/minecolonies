@@ -36,6 +36,7 @@ public class Loader
         register("field",       TextFieldVanilla.class);    //  Alternate name
         register("image",       Image.class);
         register("box",         Box.class);
+        register("itemicon",    ItemIcon.class);
 
         //  Would love to load these from a file
         nameToColorMap.put("aqua",      0x00FFFF);

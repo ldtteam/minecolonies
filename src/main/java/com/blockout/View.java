@@ -62,16 +62,12 @@ public class View extends Pane
         //  Adjust for horizontal alignment
         if (child.alignment.rightAligned)
         {
-            childX = (getInteriorWidth() - childWidth) - childX;// - padding;
+            childX = (getInteriorWidth() - childWidth) - childX;
         }
         else if (child.alignment.horizontalCentered)
         {
-            childX = ((getInteriorWidth() - childWidth) / 2) + childX;// + padding;
+            childX = ((getInteriorWidth() - childWidth) / 2) + childX;
         }
-//        else
-//        {
-//            childX += padding;
-//        }
 
         //  Negative height = 100% of parents height minus abs(height)
         if (childHeight < 0)
@@ -82,16 +78,12 @@ public class View extends Pane
         //  Adjust for vertical alignment
         if (child.alignment.bottomAligned)
         {
-            childY = (getInteriorHeight() - childHeight) - childY;// - padding;
+            childY = (getInteriorHeight() - childHeight) - childY;
         }
         else if (child.alignment.verticalCentered)
         {
-            childY = ((getInteriorHeight() - childHeight) / 2) + childY;// + padding;
+            childY = ((getInteriorHeight() - childHeight) / 2) + childY;
         }
-//        else
-//        {
-//            childY += padding;
-//        }
 
         child.setSize(childWidth, childHeight);
         child.setPosition(childX, childY);
@@ -107,6 +99,14 @@ public class View extends Pane
         }
     }
 
+    protected boolean childIsVisible(Pane child)
+    {
+        return  child.getX() < getInteriorWidth() &&
+                child.getY() < getInteriorHeight() &&
+               (child.getX() + child.getWidth()) >= 0 &&
+               (child.getY() + child.getHeight()) >= 0;
+    }
+
     @Override
     protected void drawSelf(int mx, int my)
     {
@@ -120,7 +120,10 @@ public class View extends Pane
 
         for (Pane child : children)
         {
-            child.draw(mx, my);
+            if (childIsVisible(child))
+            {
+                child.draw(mx, my);
+            }
         }
 
         GL11.glPopMatrix();
@@ -133,15 +136,13 @@ public class View extends Pane
         {
             return this;
         }
-        else
+
+        for (Pane child : children)
         {
-            for (Pane child : children)
+            Pane found = child.findPaneByID(id);
+            if (found != null)
             {
-                Pane found = child.findPaneByID(id);
-                if (found != null)
-                {
-                    return found;
-                }
+                return found;
             }
         }
 
