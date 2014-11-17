@@ -122,37 +122,71 @@ public class PaneParams
         return def;
     }
 
-    static Pattern sizePattern = Pattern.compile("([-+]?\\d+)%", Pattern.CASE_INSENSITIVE);
-    public int getSizeAttribute(String name, int def, int scale)
+    static Pattern percentagePattern = Pattern.compile("([-+]?\\d+)(%|px)?", Pattern.CASE_INSENSITIVE);
+    private int parseScalableIntegerRegexMatch(Matcher m, int def, int scale)
+    {
+        try
+        {
+            int value = Integer.parseInt(m.group(1));
+
+            if ("%".equals(m.group(2)))
+            {
+                value = scale * MathHelper.clamp_int(value, 0, 100) / 100;
+            }
+
+            return value;
+        }
+        catch (Exception ex)
+        {
+            //  NumberFormatException | NullPointerException | IndexOutOfBoundsException | IllegalStateException ex
+        }
+
+        return def;
+    }
+
+    public int getScalableIntegerAttribute(String name, int def, int scale)
     {
         String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            if (attr.contains("%"))
+            Matcher m = percentagePattern.matcher(attr);
+            if (m.find())
             {
-                Matcher m = sizePattern.matcher(attr);
-                if (m.find())
-                {
-                    try
-                    {
-                        return scale * MathHelper.clamp_int(Integer.parseInt(m.group(1)), -100, 100) / 100;
-                    }
-                    catch (Exception ex)
-                    {
-                        //  NumberFormatException | NullPointerException | IndexOutOfBoundsException | IllegalStateException ex
-                    }
-                }
+                return parseScalableIntegerRegexMatch(m, def, scale);
             }
-            else
-            {
-                if (attr.contains("px"))
-                {
-                    attr = attr.replace("px", "");
-                }
+        }
 
-                try { return Integer.parseInt(attr); }
-                catch (NumberFormatException ex) {}
+        return def;
+    }
+
+    static class SizePair
+    {
+        SizePair(int w, int h) { width = w; height = h; }
+        int width;
+        int height;
+    }
+
+    public SizePair getSizePairAttribute(String name, SizePair def, SizePair scale)
+    {
+        String attr = getStringAttribute(name, null);
+        if (attr != null)
+        {
+            int w = def != null ? def.width : 0;
+            int h = def != null ? def.height : 0;
+
+            Matcher m = percentagePattern.matcher(attr);
+            if (m.find())
+            {
+                w = parseScalableIntegerRegexMatch(m, w, scale != null ? scale.width : 0);
+
+                if (m.find() || m.find(0))
+                {
+                    //  If no second value is passed, use the first value
+                    h = parseScalableIntegerRegexMatch(m, h, scale != null ? scale.height : 0);
+                }
             }
+
+            return new SizePair(w, h);
         }
 
         return def;
@@ -187,7 +221,7 @@ public class PaneParams
 
                         if (attr.startsWith("rgba"))
                         {
-                            int alpha = (int)(Float.parseFloat(m.group(4)) * 255.0f);
+                            int alpha = (int) (Float.parseFloat(m.group(4)) * 255.0f);
                             color |= MathHelper.clamp_int(alpha, 0, 255) << 24;
                         }
 
@@ -205,7 +239,7 @@ public class PaneParams
                 try{ return Integer.parseInt(attr); }
                 catch (NumberFormatException ex){}
 
-                return Loader.getColorByName(attr, def);
+                return Color.getByName(attr, def);
             }
         }
         return def;

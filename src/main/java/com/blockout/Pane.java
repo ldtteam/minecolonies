@@ -4,7 +4,6 @@ import com.blockout.views.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
@@ -23,7 +22,6 @@ public class Pane extends Gui
     protected int       width = 0, height = 0;
     protected Alignment alignment = Alignment.TopLeft;
     protected boolean   visible   = true;
-    //protected boolean active = true;
     protected boolean   enabled   = true;
 
     //  Runtime
@@ -55,7 +53,6 @@ public class Pane extends Gui
         alignment = other.alignment;
 
         visible = other.visible;
-        //active = other.active;
         enabled = other.enabled;
     }
 
@@ -67,10 +64,32 @@ public class Pane extends Gui
     public Pane(PaneParams params)
     {
         id        = params.getStringAttribute("id", id);
-        width     = params.getSizeAttribute("width", width, params.getParentWidth());
-        height    = params.getSizeAttribute("height", height, params.getParentHeight());
-        x         = params.getIntegerAttribute("x", x);
-        y         = params.getIntegerAttribute("y", y);
+
+        PaneParams.SizePair parentSizePair = new PaneParams.SizePair(params.getParentWidth(), params.getParentHeight());
+        PaneParams.SizePair sizePair = params.getSizePairAttribute("size", null, parentSizePair);
+        if (sizePair != null)
+        {
+            width = sizePair.width;
+            height = sizePair.height;
+        }
+        else
+        {
+            width = params.getScalableIntegerAttribute("width", width, parentSizePair.width);
+            height = params.getScalableIntegerAttribute("height", height, parentSizePair.height);
+        }
+
+        sizePair = params.getSizePairAttribute("pos", null, parentSizePair);
+        if (sizePair != null)
+        {
+            x = sizePair.width;
+            y = sizePair.height;
+        }
+        else
+        {
+            x = params.getScalableIntegerAttribute("x", x, parentSizePair.width);
+            y = params.getScalableIntegerAttribute("y", y, parentSizePair.height);
+        }
+
         alignment = params.getEnumAttribute("align", alignment);
         visible   = params.getBooleanAttribute("visible", visible);
         enabled   = params.getBooleanAttribute("enabled", enabled);
@@ -111,13 +130,6 @@ public class Pane extends Gui
 
     public void show() { setVisible(true); }
     public void hide() { setVisible(false); }
-
-    //  Activation
-//    public boolean isActive() { return active; }
-//    public void setActive(boolean a) { active = a; }
-//
-//    public void activate() { setActive(true); }
-//    public void deactive() { setActive(false); }
 
     //  Enabling
     public boolean isEnabled() { return enabled; }

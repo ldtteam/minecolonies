@@ -1,14 +1,13 @@
 package com.blockout;
 
 import com.blockout.controls.*;
-import com.blockout.views.Group;
-import com.blockout.views.ScrollingList;
-import com.blockout.views.Window;
-import com.minecolonies.MineColonies;
+import com.blockout.views.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -21,39 +20,21 @@ import java.util.Map;
 
 public class Loader
 {
+    public static Logger logger = LogManager.getLogger("BlockOut");
+
     private static Map<String, Constructor<? extends Pane>> paneConstructorMap = new HashMap<String, Constructor<? extends Pane>>();
-    private static Map<String, Integer> nameToColorMap = new HashMap<String, Integer>();
 
     static
     {
-        register("view",        View.class);
-        register("group",       Group.class);
-        register("list",        ScrollingList.class);
-        register("button",      ButtonVanilla.class);
-        register("label",       Label.class);
-        register("text",        TextFieldVanilla.class);
-        register("textfield",   TextFieldVanilla.class);    //  Alternate name
-        register("field",       TextFieldVanilla.class);    //  Alternate name
-        register("image",       Image.class);
-        register("box",         Box.class);
-        register("itemicon",    ItemIcon.class);
-
-        //  Would love to load these from a file
-        nameToColorMap.put("aqua",      0x00FFFF);
-        nameToColorMap.put("black",     0x000000);
-        nameToColorMap.put("blue",      0x0000FF);
-        nameToColorMap.put("cyan",      0x00FFFF);
-        nameToColorMap.put("fuchsia",   0xFF00FF);
-        nameToColorMap.put("green",     0x008000);
-        nameToColorMap.put("ivory",     0xFFFFF0);
-        nameToColorMap.put("lime",      0x00FF00);
-        nameToColorMap.put("magenta",   0xFF00FF);
-        nameToColorMap.put("orange",    0xFFA500);
-        nameToColorMap.put("orangered", 0xFF4500);
-        nameToColorMap.put("purple",    0x800080);
-        nameToColorMap.put("red",       0xFF0000);
-        nameToColorMap.put("white",     0xFFFFFF);
-        nameToColorMap.put("yellow",    0xFFFF00);
+        register("view", View.class);
+        register("group", Group.class);
+        register("list", ScrollingList.class);
+        register("button", ButtonVanilla.class);
+        register("label", Label.class);
+        register("input", TextFieldVanilla.class);
+        register("image", Image.class);
+        register("box", Box.class);
+        register("itemicon", ItemIcon.class);
     }
 
     public static String makeFactoryKey(String name, String style)
@@ -111,7 +92,7 @@ public class Loader
             catch (Exception exc)
             {
                 exc.printStackTrace();
-                MineColonies.logger.error("Exception when parsing XML.", exc);
+                logger.error("Exception when parsing XML.", exc);
             }
         }
 
@@ -178,7 +159,7 @@ public class Loader
         catch (Exception exc)
         {
             exc.printStackTrace();
-            MineColonies.logger.error("Exception when parsing XML.", exc);
+            logger.error("Exception when parsing XML.", exc);
         }
     }
 
@@ -212,10 +193,16 @@ public class Loader
      */
     public static void createFromXMLFile(ResourceLocation resource, View parent)
     {
-        createFromXML(new InputSource(getStream(resource)), parent);
+        createFromXML(new InputSource(createInputStream(resource)), parent);
     }
 
-    private static InputStream getStream(ResourceLocation res)
+    /**
+     * Create an InputStream from a ResourceLocation
+     *
+     * @param res
+     * @return
+     */
+    private static InputStream createInputStream(ResourceLocation res)
     {
         try
         {
@@ -233,11 +220,5 @@ public class Loader
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static int getColorByName(String name, int def)
-    {
-        Integer i = nameToColorMap.get(name.toLowerCase());
-        return i != null ? i : def;
     }
 }
