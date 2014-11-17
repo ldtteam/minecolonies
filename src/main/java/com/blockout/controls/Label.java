@@ -3,6 +3,7 @@ package com.blockout.controls;
 import com.blockout.Alignment;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
+import org.lwjgl.input.Mouse;
 
 public class Label extends Pane
 {
@@ -32,6 +33,11 @@ public class Label extends Pane
         textColor     = params.getColorAttribute("color", textColor);
         hoverColor    = params.getColorAttribute("hovercolor", textColor); //  match textcolor by default
         shadow        = params.getBooleanAttribute("shadow", shadow);
+
+        if (width == 0)
+        {
+            width = Math.min(mc.fontRenderer.getStringWidth(label), params.getParentWidth());
+        }
     }
 
     public String getLabel() { return label; }

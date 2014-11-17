@@ -1,134 +1,201 @@
 package com.blockout.views;
 
 import com.blockout.Pane;
-import com.blockout.Screen;
+import com.blockout.PaneParams;
 import com.blockout.View;
 import net.minecraft.util.MathHelper;
-import org.lwjgl.BufferUtils;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
-import java.nio.FloatBuffer;
 
 public class ScrollingView extends View
 {
-    int scrollX = 0;
-    int scrollY = 0;
-    int contentWidth = 0;
-    int contentHeight = 0;
+    //  Params
+    protected int scrollbarWidth          = 8;
+    protected int scrollbarBackground     = 0xFF000000;
+    protected int scrollbarColor          = 0xFFC0C0C0;
+    protected int scrollbarColorHighlight = 0xFF808080;
+
+    //  Runtime
+    protected int     barClickY     = 0;
+    protected boolean barClicked    = false;
+    protected int     scrollY       = 0;
+    protected int     contentHeight = 0;
 
     public ScrollingView()
     {
         super();
     }
-    public ScrollingView(ScrollingView other) { super(other); }
 
-    public int getScrollX() { return scrollX; }
-    public int getScrollY() { return scrollY; }
-    public void setScroll(int newScrollX, int newScrollY)
+    public ScrollingView(ScrollingView other){ super(other); }
+
+    public ScrollingView(PaneParams params)
     {
-        scrollX = MathHelper.clamp_int(newScrollX, 0, getMaxScrollX());
-        scrollY = MathHelper.clamp_int(newScrollY, 0, getMaxScrollY());
+        super(params);
     }
 
-    public int getContentWidth() { return contentWidth; }
-    public int getMaxScrollX() { return Math.max(0, contentWidth - getInteriorHeight()); }
+    @Override
+    public void parseChildren(PaneParams params)
+    {
+        super.parseChildren(params);
+        computeContentHeight();
+    }
+
+    @Override
+    public int getInteriorWidth() { return width - (padding * 2) - getScrollbarWidth(); }
+
+    public int getScrollbarWidth() { return scrollbarWidth; }
+
+    public int getScrollY() { return scrollY; }
+    public void setScrollY(int offset)
+    {
+        scrollY = offset;
+
+        int maxScrollY = getMaxScrollY();
+        if (scrollY > maxScrollY)
+        {
+            scrollY = maxScrollY;
+        }
+
+        if (scrollY < 0)
+        {
+            scrollY = 0;
+        }
+    }
 
     public int getContentHeight() { return contentHeight; }
     public int getMaxScrollY() { return Math.max(0, contentHeight - getInteriorHeight()); }
+    public int getScrollPageSize() { return getInteriorHeight() * 90 / 100; }
 
-    private void computeContentHeight()
+    public void computeContentHeight()
     {
-        contentWidth = 0;
         contentHeight = 0;
 
         for (Pane child : children)
         {
-            contentWidth = Math.max(contentWidth, child.getX() + child.getWidth());
             contentHeight = Math.max(contentHeight, child.getY() + child.getHeight());
         }
 
         //  Recompute scroll
-        setScroll(scrollX, scrollY);
+        setScrollY(scrollY);
     }
 
-    public void scrollBy(int deltaX, int deltaY)
+    public void scrollBy(int deltaY)
     {
-        setScroll(scrollX + deltaX, scrollY + deltaY);
-    }
-
-    public void scrollByPages(int deltaX, int deltaY)
-    {
-        scrollBy(deltaX * getInteriorHeight(), deltaY * getInteriorHeight());
+        setScrollY(scrollY + deltaY);
     }
 
     @Override
-    public void addChild(Pane child)
+    protected boolean childIsVisible(Pane child)
     {
-        super.addChild(child);
-        computeContentHeight();
+        return child.getX() < getWidth() &&
+                child.getY() < getHeight() + scrollY &&
+                (child.getX() + child.getWidth()) >= 0 &&
+                (child.getY() + child.getHeight()) >= scrollY;
     }
 
     @Override
-    public void removeChild(Pane child)
+    public void drawSelf(int mx, int my)
     {
-        int index = children.indexOf(child);
+        scissorsStart();
 
-        super.removeChild(child);
-        computeContentHeight();
-    }
-
-    @Override
-    protected void drawSelf(int mx, int my)
-    {
-        //  Translate the drawing origin to our x,y
+        //  Translate the scroll
         GL11.glPushMatrix();
-        GL11.glTranslatef((float)x + padding, (float)y - padding, 0);
+        GL11.glTranslatef(0, -scrollY, 0);
+        super.drawSelf(mx, my + scrollY);
+        GL11.glPopMatrix();
 
-        //  Translate Mouse into the View
-        mx -= x;
-        my -= y;
+        scissorsEnd();
 
-        //  TODO - Scissor Stack
-        FloatBuffer fb = BufferUtils.createFloatBuffer(16 * 4);
-        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, fb);
-
-        int scale = Screen.getScale();
-        int scissorsX = (int)fb.get(12) * scale;
-        int scissorsY = (int)(fb.get(13) + getHeight()) * scale;
-
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor(scissorsX, mc.displayHeight - scissorsY, getInteriorWidth() * scale, getInteriorHeight() * scale);
-
-        //  Translate to parent view...
-        GL11.glPushMatrix();
-        GL11.glTranslatef(-scrollX, -scrollY, 0);
-        for (Pane child : children)
+        barClicked = barClicked && Mouse.isButtonDown(0);
+        if (barClicked)
         {
-            child.draw(mx, my);
+            //  Current relative position of the click position on the bar
+            dragScrollY(my - y);
         }
-        GL11.glPopMatrix();
 
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        drawVerticalScrollbar();
+    }
 
-        //  TODO: Draw the scroll bars
+    public void drawVerticalScrollbar()
+    {
+        if (getContentHeight() < getInteriorHeight())
+        {
+            return;
+        }
 
-        GL11.glPopMatrix();
+        int scrollBarBackX1 = x + getInteriorWidth();
+        int scrollBarBackX2 = scrollBarBackX1 + (getScrollbarWidth() - 2);
+
+        //  Scroll Area Back
+        drawGradientRect(scrollBarBackX2, y + getHeight(), scrollBarBackX1, y,
+                scrollbarBackground, scrollbarBackground);
+
+        int scrollBarStartY = y + getScrollBarYPos();
+        int scrollBarEndY = scrollBarStartY + getBarHeight();
+
+        //  Scroll Bar (Bottom/Right Edge line) - Fill whole Scroll area
+        drawGradientRect(scrollBarBackX2, scrollBarEndY, scrollBarBackX1, scrollBarStartY,
+                scrollbarColorHighlight, scrollbarColorHighlight);
+
+        //  Scroll Bar (Inset color)
+        drawGradientRect(scrollBarBackX2 - 1, scrollBarEndY - 1, scrollBarBackX1, scrollBarStartY,
+                scrollbarColor, scrollbarColor);
+    }
+
+    @Override
+    public void handleClick(int mx, int my)
+    {
+        my -= scrollY;
+        if (mx >= getWidth() - getScrollbarWidth())
+        {
+            int barHeight = getBarHeight();
+
+            int scrollBarStartY = getScrollBarYPos();
+            int scrollBarEndY = scrollBarStartY + barHeight;
+
+            if (my < scrollBarStartY)
+            {
+                scrollBy(-getScrollPageSize());
+            }
+            else if (my > scrollBarEndY)
+            {
+                scrollBy(getScrollPageSize());
+            }
+            else
+            {
+                barClickY = my - scrollBarStartY;
+                barClicked = true;
+            }
+        }
     }
 
     @Override
     public void click(int mx, int my)
     {
         //  Offset click by the scroll amounts; we'll adjust it back on clickSelf
-        super.click(mx + scrollX, my + scrollY);
+        super.click(mx, my + scrollY);
     }
 
-    @Override
-    public void handleClick(int mx, int my)
+    public void dragScrollY(int my)
     {
-        //  Adjust the scroll amounts back
-        mx -= scrollX;
-        my -= scrollY;
+        int barClickYNow = getScrollBarYPos() + barClickY;
+        int deltaFromClickPos = my - barClickYNow;
 
-        //  TODO - handle scrollbar click
+        if (deltaFromClickPos == 0)
+        {
+            return;
+        }
+
+        int scaledY = deltaFromClickPos * getMaxScrollY() / getHeight();
+        scrollBy(scaledY);
+
+        if (getScrollY() == 0 || getScrollY() == getMaxScrollY())
+        {
+            barClickY = MathHelper.clamp_int(my - getScrollBarYPos(), 0, getBarHeight() - 1);
+        }
     }
+
+    private int getContentHeightDiff() { return getContentHeight() - getHeight(); }
+    private int getBarHeight() { return Math.max(Math.min(20, getHeight() / 2), (getHeight() * getHeight()) / getContentHeight()); }
+    private int getScrollBarYPos() { return getScrollY() * (getHeight() - getBarHeight()) / getContentHeightDiff(); }
 }

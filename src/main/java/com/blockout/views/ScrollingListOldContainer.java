@@ -1,18 +1,17 @@
 package com.blockout.views;
 
 import com.blockout.*;
-import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 
-public class ScrollingListView extends View
+public class ScrollingListOldContainer extends View
 {
     private int scrollY           = 0;
     private int listElementHeight = 0;
     private int contentHeight     = 0;
-    private PaneParams listNodeParams;
-    private final ScrollingList list;
+    private       PaneParams       listNodeParams;
+    private final ScrollingListOld list;
 
-    public ScrollingListView(ScrollingList list)
+    public ScrollingListOldContainer(ScrollingListOld list)
     {
         super();
         this.list = list;
@@ -39,11 +38,6 @@ public class ScrollingListView extends View
     public int getContentHeight() { return contentHeight; }
     public int getMaxScrollY() { return contentHeight - getHeight(); }
     public int getListElementHeight() { return listElementHeight; }
-//    public void setListElementHeight(int elementHeight)
-//    {
-//        listElementHeight = elementHeight;
-//        computeContentHeight();
-//    }
 
     public void setListNodeParams(PaneParams params)
     {
@@ -55,8 +49,6 @@ public class ScrollingListView extends View
         }
     }
 
-    public int getVisibleListElementCount() { return getHeight() / listElementHeight; }
-
     private void computeContentHeight()
     {
         contentHeight = children.size() * listElementHeight;
@@ -66,21 +58,6 @@ public class ScrollingListView extends View
     public void scrollBy(int delta)
     {
         setScrollY(scrollY + delta);
-    }
-
-    public void scrollToElement(int index)
-    {
-        setScrollY(MathHelper.clamp_int(index, 0, children.size()) * listElementHeight);
-    }
-
-    public void scrollByElementCount(int delta)
-    {
-        scrollBy(delta * listElementHeight);
-    }
-
-    public void scrollByPages(int delta)
-    {
-        scrollBy(delta * getHeight());
     }
 
     @Override
@@ -152,7 +129,7 @@ public class ScrollingListView extends View
      *
      * @param dataProvider
      */
-    protected void refreshElementPanes(ScrollingList.DataProvider dataProvider)
+    protected void refreshElementPanes(ScrollingListOld.DataProvider dataProvider)
     {
         int numElements = (dataProvider != null) ? dataProvider.getElementCount() : 0;
         for (int i = 0; i < numElements; ++i)

@@ -28,6 +28,7 @@ public class Loader
     {
         register("view", View.class);
         register("group", Group.class);
+        register("scrollgroup", ScrollingGroup.class);
         register("list", ScrollingList.class);
         register("button", ButtonVanilla.class);
         register("label", Label.class);
