@@ -1,0 +1,6 @@
+<window inherit="minecolonies:gui/windowBase.xml">
+    <button id="inventory"
+            width="116" height="20" x="0" y="13"
+            align="BottomMiddle"
+            label="$(container.inventory)" />
+</window>

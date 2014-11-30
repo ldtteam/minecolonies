@@ -1,0 +1,57 @@
+<window inherit="minecolonies:gui/windowBase.xml">
+    <switch id="pages" size="100% 212px" pos="0 0" default="pageActions">
+        <view id="pageActions">
+
+            <group size="100% 22" pos="0 4">
+                <label size="100% 11"
+                       label="$(com.minecolonies.gui.townhall.currTownhallName)" textalign="Middle" color="green"/>
+                <label size="100% 11"
+                       id="colonyName" textalign="Middle" color="black"/>
+            </group>
+
+            <group spacing="4" size="100% 92" pos="0 29">
+                <button id="build" align="TopMiddle" size="116 20"
+                        label="$(com.minecolonies.gui.townhall.build)"
+                        />
+                <button id="repair" align="TopMiddle" size="116 20"
+                        label="$(com.minecolonies.gui.townhall.repair)"/>
+                <button id="recall" align="TopMiddle" size="116 20"
+                        label="$(com.minecolonies.gui.townhall.recall)"/>
+                <button id="changeSpec" align="TopMiddle" size="116 20"
+                        label="$(com.minecolonies.gui.townhall.togglespec)"/>
+            </group>
+
+            <group size="100% 22" pos="0 129">
+                <label  size="100% 11"
+                       label="$(com.minecolonies.gui.townhall.currentSpecialization)" color="black"
+                       textalign="Middle"/>
+                <label id="currentSpec" size="100% 11"
+                       color="black" textalign="Middle"/>
+            </group>
+
+            <button id="rename" size="116 20" pos="0 153"
+                    label="$(com.minecolonies.gui.townhall.rename)"
+                    align="TopMiddle"/>
+        </view>
+        <view id="pageInfo">
+            <group align="TopMiddle" size="80% 100%" pos="0 11">
+                <label id="totalCitizens" label="Unknown" size="100% 11" textalign="MiddleLeft" color="black"/>
+                <label size="100% 11"/>
+                <label id="unemployedCitizens" label="Unknown" size="100% 11" textalign="MiddleLeft" color="black"/>
+                <label id="builders" label="Unknown" size="100% 11" textalign="MiddleLeft" color="black"/>
+                <label id="deliverymen" label="Unknown" size="100% 11" textalign="MiddleLeft" color="black"/>
+            </group>
+        </view>
+        <view id="pageSettings">
+
+        </view>
+    </switch>
+
+    <button id="info" label="$(com.minecolonies.gui.workerHuts.information)"
+            align="BottomLeft" size="64 20" pos="9 13"/>
+    <button id="actions" label="$(com.minecolonies.gui.townhall.actions)"
+            align="BottomLeft" size="44 20" pos="75 13"/>
+    <button id="settings" label="$(com.minecolonies.gui.workerHuts.settings)"
+            align="BottomRight" size="46 20" pos="5 13"/>
+
+</window>
