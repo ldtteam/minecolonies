@@ -36,6 +36,7 @@ public class Loader
         register("image", Image.class);
         register("box", Box.class);
         register("itemicon", ItemIcon.class);
+        register("switch", SwitchView.class);
     }
 
     public static String makeFactoryKey(String name, String style)

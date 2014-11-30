@@ -173,7 +173,6 @@ public class View extends Pane
         return null;
     }
 
-
     public void addChild(Pane child)
     {
         child.setWindow(getWindow());

@@ -250,7 +250,15 @@ public class Pane extends Gui
     public final <T extends Pane> T findPaneOfTypeByID(String id, Class<T> type)
     {
         Pane p = findPaneByID(id);
-        return type.isInstance(p) ? type.cast(p) : null;
+        try
+        {
+            return type.cast(p);
+        }
+        catch (ClassCastException exc)
+        {
+        }
+
+        return null;
     }
 
     /**
