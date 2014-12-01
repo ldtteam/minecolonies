@@ -49,6 +49,12 @@ public class Window extends View
 
     public void loadParams(PaneParams params)
     {
+        String inherit = params.getStringAttribute("inherit", null);
+        if (inherit != null)
+        {
+            Loader.createFromXMLFile(new ResourceLocation(inherit), this);
+        }
+
         int w = params.getIntegerAttribute("width", width);
         int h = params.getIntegerAttribute("height", height);
         setSize(w, h);

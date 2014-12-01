@@ -133,6 +133,9 @@ public class PaneParams
             {
                 value = scale * MathHelper.clamp_int(value, 0, 100) / 100;
             }
+            //  DO NOT attempt to do a "value < 0" treated as (100% of parent) - abs(size)
+            //  without differentiating between 'size' and 'position' value types
+            //  even then, it's probably not actually necessary...
 
             return value;
         }

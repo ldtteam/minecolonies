@@ -103,6 +103,17 @@ public class Loader
 
     public static Pane createFromPaneParams(PaneParams params, View parent)
     {
+        if (params.getType().equalsIgnoreCase("include"))
+        {
+            String resource = params.getStringAttribute("source", null);
+            if (resource != null)
+            {
+                createFromXMLFile(resource, parent);
+            }
+
+            return null;
+        }
+
         params.setParentView(parent);
         Pane pane = createFromPaneParams(params);
 
@@ -127,12 +138,6 @@ public class Loader
         PaneParams root = new PaneParams(doc.getDocumentElement());
         if (parent instanceof Window)
         {
-            String inherit = root.getStringAttribute("inherit", null);
-            if (inherit != null)
-            {
-                createFromXMLFile(new ResourceLocation(inherit), parent);
-            }
-
             ((Window)parent).loadParams(root);
         }
 
