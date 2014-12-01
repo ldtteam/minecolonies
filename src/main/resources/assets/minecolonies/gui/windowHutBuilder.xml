@@ -1,0 +1,10 @@
+<window inherit="minecolonies:gui/windowBase.xml">
+    <view size="100% -40" pos="0 7">
+        <include source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
+    </view>
+
+    <button id="inventory"
+            size="116 20" pos="0 13"
+            align="BottomMiddle"
+            label="$(container.inventory)" />
+</window>

@@ -323,6 +323,7 @@ public abstract class Building
         public ChunkCoordinates getLocation() { return location; }
         public ColonyView getColony() { return colony; }
         public int getBuildingLevel() { return buildingLevel; }
+        public String getName() { return ""; }
 
         public void openGui(EnumGUI gui)
         {

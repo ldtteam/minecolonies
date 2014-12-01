@@ -13,7 +13,13 @@ import java.util.List;
  */
 public class LanguageHandler
 {
-    private static String getString(String key)
+    /**
+     * Localize a non-formatted string.
+     *
+     * @param key  unlocalized key
+     * @return Localized string
+     */
+    public static String getString(String key)
     {
         return LanguageRegistry.instance().getStringLocalization(key);
     }
