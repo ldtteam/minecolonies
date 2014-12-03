@@ -48,8 +48,6 @@ public class BuildingBuilder extends BuildingWorker
             super(c, l);
         }
 
-        public String getName() { return "com.minecolonies.gui.workerHuts.buildersHut"; }
-
         public GuiScreen getGui(int guiId)
         {
             if (guiId == EnumGUI.BUILDER.getID())

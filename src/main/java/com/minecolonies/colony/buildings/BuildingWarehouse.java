@@ -135,8 +135,6 @@ public class BuildingWarehouse extends BuildingWorker
             super(c, l);
         }
 
-        public String getName() { return "com.minecolonies.gui.workerHuts.warehouse"; }
-
         public GuiScreen getGui(int guiId)
         {
             if (guiId == EnumGUI.WAREHOUSE.getID())

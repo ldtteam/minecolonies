@@ -9,4 +9,6 @@ public class WindowHutBuilder extends WindowWorkerBuilding<BuildingBuilder.View>
     {
         super(building, Constants.MODID + ":gui/windowHutBuilder.xml");
     }
+
+    public String getBuildingName() { return "com.minecolonies.gui.workerHuts.buildersHut"; }
 }

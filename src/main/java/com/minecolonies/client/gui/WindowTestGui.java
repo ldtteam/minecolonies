@@ -11,13 +11,13 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
 
-public class GuiTestWindow extends Window implements Button.Handler
+public class WindowTestGui extends Window implements Button.Handler
 {
     private static String INVENTORY_BUTTON_ID = "inventory";
 
     private CitizenData.View citizen;
 
-    public GuiTestWindow(CitizenData.View citizen)
+    public WindowTestGui(CitizenData.View citizen)
     {
         super(Constants.MODID + ":" + "gui/windowTestGUI.xml");
         this.citizen = citizen;

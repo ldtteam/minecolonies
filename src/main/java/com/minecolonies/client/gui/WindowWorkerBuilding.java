@@ -10,7 +10,7 @@ import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
 
-public class WindowWorkerBuilding<BUILDING extends BuildingWorker.View> extends Window implements Button.Handler
+public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View> extends Window implements Button.Handler
 {
     private static String BUTTON_INVENTORY = "inventory",
             BUTTON_HIRE = "hire",
@@ -29,6 +29,8 @@ public class WindowWorkerBuilding<BUILDING extends BuildingWorker.View> extends 
         super(resource);
         this.building = building;
     }
+
+    public abstract String getBuildingName();
 
     @Override
     public void onOpened()
@@ -54,7 +56,7 @@ public class WindowWorkerBuilding<BUILDING extends BuildingWorker.View> extends 
                             workerLevel));
 
             findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
-                    LanguageHandler.getString(building.getName()));
+                    LanguageHandler.getString(getBuildingName()));
             findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabel("xxxxxxxx");
         }
         catch (NullPointerException exc) {}
