@@ -1,33 +1,22 @@
-package com.blockout.controls;
+package com.blockout;
 
-import com.blockout.PaneParams;
-import com.blockout.View;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
 
-public class Box extends View
+public class Render
 {
-    float lineWidth = 1.0f;
-    int color = 0xff000000;
-
-    public Box() { super(); }
-    public Box(Box img) { super(img); }
-    public Box(PaneParams params)
+    public static void drawOutlineRect(int x1, int y1, int x2, int y2, int color)
     {
-        super(params);
-        lineWidth = params.getFloatAttribute("linewidth", lineWidth);
-        color = params.getColorAttribute("color", color);
+        drawOutlineRect(x1, y1, x2, y2, 1.0f, color);
     }
 
-    @Override
-    protected void drawSelf(int mx, int my)
+    public static void drawOutlineRect(int x1, int y1, int x2, int y2, float lineWidth, int color)
     {
         float a = (float)(color >> 24 & 255) / 255.0F;
         float r = (float)(color >> 16 & 255) / 255.0F;
         float g = (float)(color >> 8 & 255) / 255.0F;
         float b = (float)(color & 255) / 255.0F;
-        double x1 = x, x2 = x + getWidth();
-        double y1 = y, y2 = y + getHeight();
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawing(GL11.GL_LINE_LOOP);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -40,6 +29,5 @@ public class Box extends View
         tessellator.draw();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
 
-        super.drawSelf(mx, my);
     }
 }

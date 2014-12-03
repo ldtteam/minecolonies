@@ -30,6 +30,8 @@ public class Pane extends Gui
     protected static Pane   lastClickedPane;
     protected static Pane   focus;
 
+    protected static boolean debugging = false;
+
     /**
      * Default constructor
      */
@@ -211,6 +213,24 @@ public class Pane extends Gui
             GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
             drawSelf(mx, my);
             GL11.glPopAttrib();
+
+            if (debugging)
+            {
+                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+
+                boolean isMouseOver = isPointInPane(mx, my);
+                int color = isMouseOver ? 0xFF00FF00 : 0xFF0000FF;
+
+                Render.drawOutlineRect(x, y, x+getWidth(), y+getHeight(), color);
+
+                if (isMouseOver && !id.equals(""))
+                {
+                    int stringWidth = mc.fontRenderer.getStringWidth(id);
+                    mc.fontRenderer.drawString(id, x + getWidth() - stringWidth, y + getHeight() - mc.fontRenderer.FONT_HEIGHT, color);
+                }
+
+                GL11.glPopAttrib();
+            }
         }
     }
 

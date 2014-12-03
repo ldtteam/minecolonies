@@ -98,8 +98,12 @@ public class SwitchView extends View
     @Override
     public void adjustChild(Pane child)
     {
-        child.setPosition(0, 0);
-        child.setSize(width, height);
+        if (child.getWidth() == 0 || child.getHeight() == 0)
+        {
+            child.setSize(width - child.getX(), height - child.getY());
+        }
+
+        super.adjustChild(child);
     }
 
     @Override

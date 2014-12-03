@@ -64,7 +64,7 @@ public class Label extends Pane
         int color = isPointInPane(mx, my) ? hoverColor : textColor;
 
         int offsetX = 0;
-        int offsetY = 2;
+        int offsetY = 0;
 
         if (textAlignment.rightAligned)
         {

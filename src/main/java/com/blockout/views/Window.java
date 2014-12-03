@@ -66,6 +66,16 @@ public class Window extends View
     @Override
     public void parseChildren(PaneParams params) {}
 
+    @Override
+    protected void drawSelf(int mx, int my)
+    {
+        debugging = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) &&
+                Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) &&
+                Keyboard.isKeyDown(Keyboard.KEY_LMENU);
+
+        super.drawSelf(mx, my);
+    }
+
     /**
      * Window constructor to create a Window that occupies the entirety of the screen
      */
