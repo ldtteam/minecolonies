@@ -1,3 +1,5 @@
-<window width="171" height="247" pause="false" lightbox="false">
-    <image path="minecolonies:textures/gui/guiHutBackground.png" width="100%" height="100%" y="-5"/>
+<window width="171" height="247" pause="false" lightbox="false"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="file:blockOut.xsd">
+    <image source="minecolonies:textures/gui/guiHutBackground.png" width="100%" height="100%" y="-5"/>
 </window>

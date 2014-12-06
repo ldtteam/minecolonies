@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="window" type="windowType"/>
+    <xs:element name="layout" type="layoutType"/>
+
+    <xs:complexType name="windowType">
+        <xs:group ref="paneContainerGroup" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:attribute name="inherit"  type="xs:string"/>
+        <xs:attribute name="width"    type="xs:string"/>
+        <xs:attribute name="height"   type="xs:string"/>
+        <xs:attribute name="lightbox" type="xs:boolean"/>
+        <xs:attribute name="pause"    type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="layoutType">
+        <xs:group ref="paneContainerGroup" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:complexType>
+
+    <!-- Pane basic attributes -->
+    <xs:complexType name="paneType">
+        <xs:attribute name="id"      type="xs:string"/>
+
+        <xs:attribute name="align"   type="xs:string"/>
+        <xs:attribute name="size"    type="xs:string"/>
+        <xs:attribute name="width"   type="xs:string"/>
+        <xs:attribute name="height"  type="xs:string"/>
+        <xs:attribute name="pos"     type="xs:string"/>
+        <xs:attribute name="x"       type="xs:string"/>
+        <xs:attribute name="y"       type="xs:string"/>
+
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="enabled" type="xs:boolean"/>
+    </xs:complexType>
+
+    <!-- View basic attributes and contents -->
+    <xs:complexType name="viewType">
+        <xs:complexContent>
+            <xs:extension base="paneType">
+                <xs:group ref="paneContainerGroup" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:attribute name="padding" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Master group for all panes that can be used -->
+    <xs:group name="paneContainerGroup">
+        <xs:choice>
+            <xs:element name="layout"       type="layoutElementType"/>
+            <xs:element name="view"         type="viewType"/>
+            <xs:element name="group"        type="groupType"/>
+            <!-- xs:element name="scrollgroup"  type="scrollGroupType"/ -->
+            <xs:element name="list"         type="listType"/>
+            <xs:element name="button"       type="buttonType"/>
+            <xs:element name="label"        type="labelType"/>
+            <xs:element name="input"        type="inputType"/>
+            <xs:element name="image"        type="imageType"/>
+            <xs:element name="box"          type="boxType"/>
+            <xs:element name="itemicon"     type="itemIconType"/>
+            <xs:element name="switch"       type="switchType"/>
+        </xs:choice>
+    </xs:group>
+
+    <!-- <layout> -->
+    <xs:complexType name="layoutElementType">
+        <xs:attribute name="source" use="required"/>
+    </xs:complexType>
+
+    <!-- <group> -->
+    <xs:complexType name="groupType">
+        <xs:complexContent>
+            <xs:extension base="viewType">
+                <xs:attribute name="spacing" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- <switch> -->
+    <xs:complexType name="switchType">
+        <xs:complexContent>
+            <xs:extension base="viewType">
+                <xs:attribute name="default" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- <box> -->
+    <xs:complexType name="boxType">
+        <xs:complexContent>
+            <xs:extension base="viewType">
+                <xs:attribute name="color" type="xs:string"/>
+                <xs:attribute name="linewidth" type="xs:decimal"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- <list> -->
+    <xs:complexType name="listType">
+        <xs:complexContent>
+            <xs:extension base="paneType">
+                <xs:group ref="paneContainerGroup" minOccurs="1" maxOccurs="1"/>
+                <xs:attribute name="padding" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- <button> -->
+    <xs:complexType name="buttonType">
+        <xs:complexContent>
+            <xs:extension base="paneType">
+                <xs:attribute name="label"      type="xs:string"/>
+                <xs:attribute name="textalign"  type="xs:string"/>
+                <xs:attribute name="color"      type="xs:string"/>
+                <xs:attribute name="hovercolor" type="xs:string"/>
+                <xs:attribute name="shadow"     type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- <label> -->
+    <xs:complexType name="labelType">
+        <xs:complexContent>
+            <xs:extension base="paneType">
+                <xs:attribute name="label"      type="xs:string"/>
+                <xs:attribute name="textalign"  type="xs:string"/>
+                <xs:attribute name="color"      type="xs:string"/>
+                <xs:attribute name="hovercolor" type="xs:string"/>
+                <xs:attribute name="shadow"     type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- <itemicon> -->
+    <xs:complexType name="itemIconType">
+        <xs:complexContent>
+            <xs:extension base="paneType">
+                <xs:attribute name="item" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- <image> -->
+    <xs:complexType name="imageType">
+        <xs:complexContent>
+            <xs:extension base="paneType">
+                <xs:attribute name="source" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- <input> -->
+    <xs:complexType name="inputType">
+        <xs:complexContent>
+            <xs:extension base="paneType">
+                <xs:attribute name="text"          type="xs:string"/>
+                <xs:attribute name="maxlength"     type="xs:integer"/>
+                <xs:attribute name="color"         type="xs:string"/>
+                <xs:attribute name="colordisabled" type="xs:string"/>
+                <xs:attribute name="shadow"        type="xs:boolean"/>
+                <xs:attribute name="tab"           type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+</xs:schema>

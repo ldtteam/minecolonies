@@ -1,7 +1,9 @@
-<window inherit="minecolonies:gui/windowBase.xml">
+<window inherit="minecolonies:gui/windowBase.xml"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="file:blockOut.xsd">
     <switch id="pages" size="100% 200px" pos="0 7">
         <view id="pageActions" size="100% 100%">
-            <include source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
+            <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
         </view>
         <view id="pageSettings" size="100% 100%" pos="0 1">
 

@@ -18,7 +18,7 @@ public class Image extends Pane
     public Image(PaneParams params)
     {
         super(params);
-        String path = params.getStringAttribute("path", null);
+        String path = params.getStringAttribute("source", null);
         if (path != null)
         {
             image = new ResourceLocation(path);

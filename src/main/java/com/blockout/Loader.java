@@ -103,7 +103,7 @@ public class Loader
 
     public static Pane createFromPaneParams(PaneParams params, View parent)
     {
-        if (params.getType().equalsIgnoreCase("include"))
+        if (params.getType().equalsIgnoreCase("layout"))
         {
             String resource = params.getStringAttribute("source", null);
             if (resource != null)
