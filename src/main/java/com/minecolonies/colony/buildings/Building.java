@@ -330,7 +330,7 @@ public abstract class Building
             player.openGui(MineColonies.instance, gui.getID(), player.worldObj, location.posX, location.posY, location.posZ);
         }
 
-        public GuiScreen getGui(int guiId)
+        public com.blockout.views.Window getWindow(int guiId)
         {
             return null;
         }

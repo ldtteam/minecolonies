@@ -1,7 +1,7 @@
 package com.minecolonies.entity;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.client.gui.GuiEntityCitizen;
+import com.minecolonies.client.gui.WindowCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
@@ -300,7 +300,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             CitizenData.View view = getCitizenDataView();
             if (view != null)
             {
-                GuiHandler.showGuiScreen(new GuiEntityCitizen(view));
+                GuiHandler.showGuiWindow(new WindowCitizen(view));
             }
         }
         return true;

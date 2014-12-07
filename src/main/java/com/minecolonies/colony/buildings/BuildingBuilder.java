@@ -1,7 +1,7 @@
 package com.minecolonies.colony.buildings;
 
-import com.minecolonies.client.gui.GuiBase;
-import com.minecolonies.client.gui.GuiHutBuilder;
+import com.blockout.views.Window;
+import com.minecolonies.client.gui.WindowHutBuilder;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityBuilder;
@@ -10,8 +10,6 @@ import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.entity.jobs.JobBuilder;
 import com.minecolonies.lib.EnumGUI;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
@@ -48,11 +46,11 @@ public class BuildingBuilder extends BuildingWorker
             super(c, l);
         }
 
-        public GuiScreen getGui(int guiId)
+        public Window getWindow(int guiId)
         {
             if (guiId == EnumGUI.BUILDER.getID())
             {
-                return new GuiHutBuilder(this);
+                return new WindowHutBuilder(this);
             }
 
             return null;

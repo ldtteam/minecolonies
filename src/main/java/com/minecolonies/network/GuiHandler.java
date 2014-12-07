@@ -38,7 +38,11 @@ public class GuiHandler implements IGuiHandler
                 return null;
             }
 
-            return building.getGui(guiId);
+            Window window = building.getWindow(guiId);
+            if (window != null)
+            {
+                return window.getScreen();
+            }
         }
         return null;
     }

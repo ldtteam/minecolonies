@@ -3,19 +3,12 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.EnumGUI;
-import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -150,7 +143,7 @@ public class BuildingHome extends BuildingHut
             super(c, l);
         }
 
-        public GuiScreen getGui(int guiId)
+        public com.blockout.views.Window getWindow(int guiId)
         {
             if (guiId == EnumGUI.CITIZEN.getID())
             {

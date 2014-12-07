@@ -1,14 +1,13 @@
 package com.minecolonies.colony.buildings;
 
-import com.minecolonies.client.gui.GuiTownHall;
+import com.blockout.views.Window;
 import com.minecolonies.client.gui.GuiTypable;
+import com.minecolonies.client.gui.WindowTownhall;
+import com.minecolonies.client.gui.WindowTownhallNameEntry;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.EnumGUI;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 
 public class BuildingTownHall extends BuildingHut
 {
@@ -27,15 +26,15 @@ public class BuildingTownHall extends BuildingHut
             super(c, l);
         }
 
-        public GuiScreen getGui(int guiId)
+        public Window getWindow(int guiId)
         {
             if (guiId == EnumGUI.TOWNHALL.getID())
             {
-                return new GuiTownHall(this);
+                return new WindowTownhall(this);
             }
             else if (guiId == EnumGUI.TOWNHALL_RENAME.getID())
             {
-                return new GuiTypable(getColony());
+                return new WindowTownhallNameEntry(getColony());
             }
 
             return null;
