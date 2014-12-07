@@ -12,11 +12,6 @@ public class Button extends Pane
     protected Handler handler;
 
     public Button() {}
-    public Button(Button other)
-    {
-        super(other);
-        this.handler = other.handler;
-    }
     public Button(PaneParams params)
     {
         super(params);

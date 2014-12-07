@@ -27,8 +27,6 @@ public class ScrollingList extends ScrollingView
 
     public ScrollingList() { super(); }
 
-    public ScrollingList(ScrollingList other){ super(other); }
-
     /**
      * Constructs a ScrollingList from PaneParams
      *

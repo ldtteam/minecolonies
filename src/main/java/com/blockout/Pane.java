@@ -40,25 +40,6 @@ public class Pane extends Gui
     }
 
     /**
-     * Constructs a Pane by copying (most) attributes of another Pane
-     *
-     * @param other Another Pane to copy the attributes from
-     */
-    public Pane(Pane other)
-    {
-        id = other.id;
-
-        x = other.x;
-        y = other.y;
-        width = other.width;
-        height = other.height;
-        alignment = other.alignment;
-
-        visible = other.visible;
-        enabled = other.enabled;
-    }
-
-    /**
      * Constructs a Pane from PaneParams
      *
      * @param params Params for the Pane

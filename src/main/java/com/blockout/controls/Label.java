@@ -15,16 +15,6 @@ public class Label extends Pane
 
     public Label(){}
 
-    public Label(Label other)
-    {
-        super(other);
-        label = other.label;
-        textAlignment = other.textAlignment;
-        textColor = other.textColor;
-        hoverColor = other.hoverColor;
-        shadow = other.shadow;
-    }
-
     public Label(PaneParams params)
     {
         super(params);

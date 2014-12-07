@@ -8,16 +8,12 @@ import org.lwjgl.opengl.GL11;
 
 public class ButtonVanilla extends Button
 {
+    private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
 
     private String label;
 
     public ButtonVanilla(){ setSize(200, 20); }
-    public ButtonVanilla(ButtonVanilla other)
-    {
-        super(other);
-        label = other.label;
-    }
     public ButtonVanilla(PaneParams params)
     {
         super(params);

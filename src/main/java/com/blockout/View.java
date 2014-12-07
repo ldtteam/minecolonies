@@ -15,11 +15,16 @@ public class View extends Pane
     protected List<Pane> children = new ArrayList<Pane>();
     protected int padding = 0;
 
-    public View() { super(); }
-    public View(View other) { super(other); }
+    /**
+     * Constructs a barebones View
+     */
+    public View()
+    {
+        super();
+    }
 
     /**
-     * Constructs a View from PaneParams, and place it into the given Parent
+     * Constructs a View from PaneParams
      *
      * @param params Params for the View
      */
@@ -27,7 +32,6 @@ public class View extends Pane
     {
         super(params);
         padding = params.getIntegerAttribute("padding", padding);
-        //  TODO - Any attributes of our own?
     }
 
     public List<Pane> getChildren() { return children; }

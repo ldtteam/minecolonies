@@ -162,11 +162,12 @@ public class PaneParams
         return def;
     }
 
-    static class SizePair
+    public static class SizePair
     {
-        SizePair(int w, int h) { width = w; height = h; }
-        int width;
-        int height;
+        public SizePair(int w, int h) { width = w; height = h; }
+
+        public int width;
+        public int height;
     }
 
     public SizePair getSizePairAttribute(String name, SizePair def, SizePair scale)
@@ -196,6 +197,7 @@ public class PaneParams
     }
 
     static Pattern rgbaPattern = Pattern.compile("rgba?\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*(?:,\\s*([01]\\.\\d+)\\s*)?\\)", Pattern.CASE_INSENSITIVE);
+
     public int getColorAttribute(String name, int def)
     {
         String attr = getStringAttribute(name, null);

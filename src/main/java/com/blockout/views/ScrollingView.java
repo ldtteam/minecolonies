@@ -23,12 +23,6 @@ public class ScrollingView extends View
         setup();
     }
 
-    public ScrollingView(ScrollingView other)
-    {
-        super(other);
-        setup();
-    }
-
     public ScrollingView(PaneParams params)
     {
         super(params);

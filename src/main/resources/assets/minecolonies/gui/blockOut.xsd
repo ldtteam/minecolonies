@@ -31,6 +31,8 @@
 
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="enabled" type="xs:boolean"/>
+
+        <xs:attribute name="style"   type="xs:string"/>
     </xs:complexType>
 
     <!-- View basic attributes and contents -->
@@ -55,6 +57,7 @@
             <xs:element name="label"        type="labelType"/>
             <xs:element name="input"        type="inputType"/>
             <xs:element name="image"        type="imageType"/>
+            <xs:element name="imagebutton"  type="imageButtonType"/>
             <xs:element name="box"          type="boxType"/>
             <xs:element name="itemicon"     type="itemIconType"/>
             <xs:element name="switch"       type="switchType"/>
@@ -139,11 +142,27 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- <imagebutton> -->
+    <xs:complexType name="imageButtonType">
+        <xs:complexContent>
+            <xs:extension base="paneType">
+                <xs:attribute name="source" type="xs:string"/>
+                <xs:attribute name="imageoffset" type="xs:string"/>
+                <xs:attribute name="imagesize" type="xs:string"/>
+                <xs:attribute name="highlight" type="xs:string"/>
+                <xs:attribute name="highlightoffset" type="xs:string"/>
+                <xs:attribute name="highlightsize" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- <image> -->
     <xs:complexType name="imageType">
         <xs:complexContent>
             <xs:extension base="paneType">
                 <xs:attribute name="source" type="xs:string"/>
+                <xs:attribute name="imageoffset" type="xs:string"/>
+                <xs:attribute name="imagesize" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

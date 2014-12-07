@@ -10,7 +10,6 @@ public class Box extends View
     int color = 0xff000000;
 
     public Box() { super(); }
-    public Box(Box img) { super(img); }
     public Box(PaneParams params)
     {
         super(params);

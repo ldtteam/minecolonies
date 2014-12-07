@@ -16,12 +16,6 @@ public class ItemIcon extends Pane
 
     public ItemIcon(){ super(); }
 
-    public ItemIcon(ItemIcon icon)
-    {
-        super(icon);
-        itemStack = icon.itemStack;
-    }
-
     public ItemIcon(PaneParams params)
     {
         super(params);

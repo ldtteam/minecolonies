@@ -34,18 +34,6 @@ public class TextField extends Pane
 
     public TextField(){}
 
-    public TextField(TextField other)
-    {
-        super(other);
-        maxTextLength = other.maxTextLength;
-        textColor = other.textColor;
-        textColorDisabled = other.textColorDisabled;
-        shadow = other.shadow;
-        text = other.text;
-        tabNextPaneID = other.tabNextPaneID;
-        filter = other.filter;
-    }
-
     public TextField(PaneParams params)
     {
         super(params);

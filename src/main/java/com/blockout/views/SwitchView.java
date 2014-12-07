@@ -12,8 +12,6 @@ public class SwitchView extends View
 
     public SwitchView() { super(); }
 
-    public SwitchView(Group other) { super(other); }
-
     /**
      * Constructs a View from PaneParams
      *

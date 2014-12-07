@@ -18,8 +18,6 @@ public class ScrollingGroup extends ScrollingView
 {
     public ScrollingGroup(){ super(); }
 
-    public ScrollingGroup(ScrollingGroup other){ super(other); }
-
     public ScrollingGroup(PaneParams params)
     {
         super(params);

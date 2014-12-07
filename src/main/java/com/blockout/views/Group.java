@@ -16,8 +16,6 @@ public class Group extends View
 
     public Group(){ super(); }
 
-    public Group(Group other){ super(other); }
-
     /**
      * Constructs a View from PaneParams
      *

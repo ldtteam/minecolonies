@@ -15,15 +15,6 @@ public class TextFieldVanilla extends TextField
         setFilter(new FilterVanilla());
     }
 
-    public TextFieldVanilla(TextFieldVanilla other)
-    {
-        super(other);
-        backgroundEnabled = other.backgroundEnabled;
-        backgroundOuterColor = other.backgroundOuterColor;
-        backgroundInnerColor = other.backgroundInnerColor;
-        setFilter(new FilterVanilla());
-    }
-
     public TextFieldVanilla(PaneParams params)
     {
         super(params);
