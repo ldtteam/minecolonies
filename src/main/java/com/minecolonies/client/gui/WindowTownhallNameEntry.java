@@ -18,7 +18,7 @@ public class WindowTownhallNameEntry extends Window implements Button.Handler
 
     public WindowTownhallNameEntry(ColonyView c)
     {
-        super(Constants.MODID + ":" + "gui/windowTownhallNameEntry.xml");
+        super(Constants.MOD_ID + ":" + "gui/windowTownhallNameEntry.xml");
         this.colony = c;
     }
 

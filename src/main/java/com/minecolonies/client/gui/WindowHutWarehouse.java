@@ -29,7 +29,7 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
 
     public WindowHutWarehouse(BuildingWarehouse.View building)
     {
-        super(building, Constants.MODID + ":gui/windowHutWarehouse.xml");
+        super(building, Constants.MOD_ID + ":gui/windowHutWarehouse.xml");
     }
 
     public String getBuildingName() { return "com.minecolonies.gui.workerHuts.warehouse"; }

@@ -37,7 +37,7 @@ public class WindowTownhall extends Window implements Button.Handler
 
     public WindowTownhall(BuildingTownHall.View townhall)
     {
-        super(Constants.MODID + ":" + "gui/windowTownhall.xml");
+        super(Constants.MOD_ID + ":" + "gui/windowTownhall.xml");
         this.townhall = townhall;
         this.colony = townhall.getColony();
     }

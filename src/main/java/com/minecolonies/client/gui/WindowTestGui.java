@@ -19,7 +19,7 @@ public class WindowTestGui extends Window implements Button.Handler
 
     public WindowTestGui(CitizenData.View citizen)
     {
-        super(Constants.MODID + ":" + "gui/windowTestGUI.xml");
+        super(Constants.MOD_ID + ":" + "gui/windowTestGUI.xml");
         this.citizen = citizen;
     }
 

@@ -13,7 +13,7 @@ import java.util.UUID;
 /**
  * Add or Update a ColonyView on the client
  */
-public class ColonyViewCitizensMessage implements IMessage
+public class ColonyViewCitizensMessage implements IMessage, IMessageHandler<ColonyViewCitizensMessage, IMessage>
 {
     private UUID colonyId;
     private UUID citizenId;
@@ -46,12 +46,9 @@ public class ColonyViewCitizensMessage implements IMessage
         citizen = ByteBufUtils.readTag(buf);
     }
 
-    public static class Handler implements IMessageHandler<ColonyViewCitizensMessage, IMessage>
+    @Override
+    public IMessage onMessage(ColonyViewCitizensMessage message, MessageContext ctx)
     {
-        @Override
-        public IMessage onMessage(ColonyViewCitizensMessage message, MessageContext ctx)
-        {
-            return ColonyManager.handleColonyViewCitizensPacket(message.colonyId, message.citizenId, message.citizen);
-        }
+        return ColonyManager.handleColonyViewCitizensPacket(message.colonyId, message.citizenId, message.citizen);
     }
 }

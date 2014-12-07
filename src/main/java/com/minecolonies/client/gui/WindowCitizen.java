@@ -19,7 +19,7 @@ public class WindowCitizen extends Window implements Button.Handler
 
     public WindowCitizen(CitizenData.View citizen)
     {
-        super(Constants.MODID + ":gui/windowCitizen.xml");
+        super(Constants.MOD_ID + ":gui/windowCitizen.xml");
         this.citizen = citizen;
     }
 

@@ -21,24 +21,24 @@ import cpw.mods.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, certificateFingerprint = Constants.FINGERPRINT)
+@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, certificateFingerprint = Constants.FINGERPRINT)
 public class MineColonies
 {
-    public static Logger logger = LogManager.getLogger(Constants.MODID);
+    public static Logger logger = LogManager.getLogger(Constants.MOD_ID);
 
     public static SimpleNetworkWrapper network;
 
-    @Mod.Instance(Constants.MODID)
+    @Mod.Instance(Constants.MOD_ID)
     public static MineColonies instance;
 
-    @SidedProxy(clientSide = Constants.CLIENTPROXYLOCATION, serverSide = Constants.COMMONPROXYLOCATION)
+    @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
     public static IProxy proxy;
 
     @Mod.EventHandler
     @SuppressWarnings("unused")
     public void invalidFingerprint(FMLFingerprintViolationEvent event)
     {
-        if (Constants.FINGERPRINT.equals("@FINGERPRINT@"))
+        if(Constants.FINGERPRINT.equals("@FINGERPRINT@"))
         {
             //logger.log(Level.ERROR, LanguageHandler.format("com.minecolonies.error.noFingerprint"));
             logger.error("No Fingerprint. Might not be a valid version!");
@@ -66,13 +66,17 @@ public class MineColonies
 
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
-        network = NetworkRegistry.INSTANCE.newSimpleChannel("MineColonies");
-        network.registerMessage(ColonyViewMessage.Handler.class,            ColonyViewMessage.class,            0,  Side.CLIENT);
-        network.registerMessage(ColonyViewCitizensMessage.Handler.class,    ColonyViewCitizensMessage.class,    1,  Side.CLIENT);
-        network.registerMessage(ColonyBuildingViewMessage.Handler.class,    ColonyBuildingViewMessage.class,    2,  Side.CLIENT);
-        network.registerMessage(BuildRequestMessage.Handler.class,          BuildRequestMessage.class,          10,  Side.SERVER);
-        network.registerMessage(OpenInventoryMessage.Handler.class,         OpenInventoryMessage.class,         11,  Side.SERVER);
-        network.registerMessage(TownhallRenameMessage.Handler.class,        TownhallRenameMessage.class,        12,  Side.SERVER);
+        network = NetworkRegistry.INSTANCE.newSimpleChannel(Constants.MOD_NAME);
+        network.registerMessage(ColonyViewMessage.class,            ColonyViewMessage.class,            1,  Side.CLIENT);
+        network.registerMessage(ColonyViewCitizensMessage.class,    ColonyViewCitizensMessage.class,    2,  Side.CLIENT);
+        network.registerMessage(ColonyBuildingViewMessage.class,    ColonyBuildingViewMessage.class,    3,  Side.CLIENT);
+        network.registerMessage(BuildRequestMessage.class,          BuildRequestMessage.class,          10,  Side.SERVER);
+        network.registerMessage(OpenInventoryMessage.class,         OpenInventoryMessage.class,         11,  Side.SERVER);
+        network.registerMessage(TownhallRenameMessage.class,        TownhallRenameMessage.class,        12,  Side.SERVER);
+        network.registerMessage(PermissionsMessage.View.class,      PermissionsMessage.View.class,      13,  Side.CLIENT);
+        network.registerMessage(PermissionsMessage.Permission.class,    PermissionsMessage.Permission.class,    14, Side.SERVER);
+        network.registerMessage(PermissionsMessage.AddPlayer.class,     PermissionsMessage.AddPlayer.class,     15, Side.SERVER);
+        network.registerMessage(PermissionsMessage.RemovePlayer.class,  PermissionsMessage.RemovePlayer.class,  16, Side.SERVER);
 
         proxy.registerTileEntities();
 
