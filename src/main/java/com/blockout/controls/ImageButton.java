@@ -31,12 +31,18 @@ public class ImageButton extends Button
         }
 
         PaneParams.SizePair size = params.getSizePairAttribute("imageoffset", null, null);
-        imageOffsetX = size.width;
-        imageOffsetY = size.height;
+        if (size != null)
+        {
+            imageOffsetX = size.width;
+            imageOffsetY = size.height;
+        }
 
         size = params.getSizePairAttribute("imagesize", null, null);
-        imageWidth = size.width;
-        imageHeight = size.height;
+        if (size != null)
+        {
+            imageWidth = size.width;
+            imageHeight = size.height;
+        }
 
         path = params.getStringAttribute("highlight", null);
         if (path != null)
@@ -45,17 +51,34 @@ public class ImageButton extends Button
         }
 
         size = params.getSizePairAttribute("highlightoffset", null, null);
-        highlightOffsetX = size.width;
-        highlightOffsetY = size.height;
+        if (size != null)
+        {
+            highlightOffsetX = size.width;
+            highlightOffsetY = size.height;
+        }
 
         size = params.getSizePairAttribute("highlightsize", null, null);
-        highlightWidth = size.width;
-        highlightHeight = size.height;
+        if (size != null)
+        {
+            highlightWidth = size.width;
+            highlightHeight = size.height;
+        }
+    }
+
+    public void setImage(String source)
+    {
+        setImage(source, 0, 0, 0, 0);
     }
 
     public void setImage(String source, int offsetX, int offsetY, int w, int h)
     {
         setImage(source != null ? new ResourceLocation(source) : null, offsetX, offsetY, w, h);
+    }
+
+
+    public void setImage(ResourceLocation loc)
+    {
+        setImage(loc, 0, 0, 0, 0);
     }
 
     public void setImage(ResourceLocation loc, int offsetX, int offsetY, int w, int h)
@@ -67,9 +90,19 @@ public class ImageButton extends Button
         imageWidth = h;
     }
 
+    public void setImageHighlight(String source)
+    {
+        setImageHighlight(source, 0, 0, 0, 0);
+    }
+
     public void setImageHighlight(String source, int offsetX, int offsetY, int w, int h)
     {
         setImageHighlight(source != null ? new ResourceLocation(source) : null, offsetX, offsetY, w, h);
+    }
+
+    public void setImageHighlight(ResourceLocation loc)
+    {
+        setImageHighlight(loc, 0, 0, 0, 0);
     }
 
     public void setImageHighlight(ResourceLocation loc, int offsetX, int offsetY, int w, int h)

@@ -7,6 +7,7 @@
     <xs:complexType name="windowType">
         <xs:group ref="paneContainerGroup" minOccurs="0" maxOccurs="unbounded"/>
         <xs:attribute name="inherit"  type="xs:string"/>
+        <xs:attribute name="size"     type="xs:string"/>
         <xs:attribute name="width"    type="xs:string"/>
         <xs:attribute name="height"   type="xs:string"/>
         <xs:attribute name="lightbox" type="xs:boolean"/>

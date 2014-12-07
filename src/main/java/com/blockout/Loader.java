@@ -95,7 +95,9 @@ public class Loader
             catch (Exception exc)
             {
                 exc.printStackTrace();
-                logger.error("Exception when parsing XML.", exc);
+                logger.error(
+                        String.format("Exception when parsing XML for pane type %s", paneType),
+                        exc);
             }
         }
 

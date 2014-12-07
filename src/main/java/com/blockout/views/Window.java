@@ -55,9 +55,17 @@ public class Window extends View
             Loader.createFromXMLFile(new ResourceLocation(inherit), this);
         }
 
-        int w = params.getIntegerAttribute("width", width);
-        int h = params.getIntegerAttribute("height", height);
-        setSize(w, h);
+        PaneParams.SizePair size = params.getSizePairAttribute("size", null, null);
+        if (size != null)
+        {
+            setSize(size.width, size.height);
+        }
+        else
+        {
+            int w = params.getIntegerAttribute("width", width);
+            int h = params.getIntegerAttribute("height", height);
+            setSize(w, h);
+        }
 
         hasLightbox = params.getBooleanAttribute("lightbox", hasLightbox);
         windowPausesGame = params.getBooleanAttribute("pause", windowPausesGame);

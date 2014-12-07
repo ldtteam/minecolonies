@@ -24,22 +24,42 @@ public class Image extends Pane
         }
 
         PaneParams.SizePair size = params.getSizePairAttribute("imageoffset", null, null);
-        imageOffsetX = size.width;
-        imageOffsetY = size.height;
+        if (size != null)
+        {
+            imageOffsetX = size.width;
+            imageOffsetY = size.height;
+        }
 
         size = params.getSizePairAttribute("imagesize", null, null);
-        imageWidth = size.width;
-        imageHeight = size.height;
+        if (size != null)
+        {
+            imageWidth = size.width;
+            imageHeight = size.height;
+        }
     }
 
     public void setImage(String source)
     {
-        image = (source != null) ? new ResourceLocation(source) : null;
+        setImage(source, 0, 0, 0, 0);
+    }
+
+    public void setImage(String source, int offsetX, int offsetY, int w, int h)
+    {
+        setImage((source != null) ? new ResourceLocation(source) : null, offsetX, offsetY, w, h);
     }
 
     public void setImage(ResourceLocation loc)
     {
+        setImage(loc, 0, 0, 0, 0);
+    }
+
+    public void setImage(ResourceLocation loc, int offsetX, int offsetY, int w, int h)
+    {
         image = loc;
+        imageOffsetX = offsetX;
+        imageOffsetY = offsetY;
+        imageWidth = w;
+        imageHeight = h;
     }
 
     @Override
