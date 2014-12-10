@@ -1,9 +1,7 @@
 package com.minecolonies.client.gui;
 
-import com.blockout.Pane;
 import com.blockout.controls.Button;
 import com.blockout.controls.Label;
-import com.blockout.views.ScrollingList;
 import com.blockout.views.SwitchView;
 import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
@@ -17,18 +15,18 @@ import com.minecolonies.util.LanguageHandler;
 public class WindowTownhall extends Window implements Button.Handler
 {
     private static String BUTTON_INFO = "info",
-                          BUTTON_ACTIONS = "actions",
-                          BUTTON_SETTINGS = "settings",
-                          BUTTON_BUILD = "build",
-                          BUTTON_REPAIR = "repair",
-                          BUTTON_RECEALL = "recall",
-                          BUTTON_CHANGESPEC = "changeSpec",
-                          BUTTON_RENAME = "rename",
+            BUTTON_ACTIONS = "actions",
+            BUTTON_SETTINGS = "settings",
+            BUTTON_BUILD = "build",
+            BUTTON_REPAIR = "repair",
+            BUTTON_RECEALL = "recall",
+            BUTTON_CHANGESPEC = "changeSpec",
+            BUTTON_RENAME = "rename",
 
-                          VIEW_PAGES = "pages",
-                          PAGE_INFO = "pageInfo",
-                          PAGE_ACTIONS = "pageActions",
-                          PAGE_SETTINGS = "pageSettings";
+    VIEW_PAGES = "pages",
+            PAGE_INFO = "pageInfo",
+            PAGE_ACTIONS = "pageActions",
+            PAGE_SETTINGS = "pageSettings";
 
     private ColonyView colony;
     private BuildingTownHall.View townhall;
@@ -47,6 +45,25 @@ public class WindowTownhall extends Window implements Button.Handler
         int citizensSize = colony.getCitizens().size();
         int workers = 0;
         int builders = 0, deliverymen = 0;
+
+        //TODO - Rewrite this based on the CitizenData
+        /*Map<UUID, CitizenData.View> citizens = colony.getCitizens();
+        if (citizens != null)
+        {
+            //TODO access job without
+            for (CitizenData.View citizen : citizens.values())
+            {
+                //if(citizen.)
+                //{
+                //    builders++;
+                //}
+                //else if(citizen instanceof EntityDeliveryman)
+                //{
+                //    deliverymen++;
+                //}
+            }
+            //workers = builders + deliverymen;
+        }*/
 
         String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens", citizensSize, colony.getMaxCitizens());
         String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed", (citizensSize - workers));
@@ -69,7 +86,9 @@ public class WindowTownhall extends Window implements Button.Handler
 
             buttonActions.setEnabled(false);
         }
-        catch (NullPointerException exc) {}
+        catch (NullPointerException exc)
+        {
+        }
     }
 
     @Override
@@ -104,8 +123,12 @@ public class WindowTownhall extends Window implements Button.Handler
         {
             MineColonies.network.sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.REPAIR));
         }
-        else if (button.getID().equals(BUTTON_RECEALL)) {}
-        else if (button.getID().equals(BUTTON_CHANGESPEC)) {}
+        else if (button.getID().equals(BUTTON_RECEALL))
+        {
+        }
+        else if (button.getID().equals(BUTTON_CHANGESPEC))
+        {
+        }
         else if (button.getID().equals(BUTTON_RENAME))
         {
             townhall.openGui(EnumGUI.TOWNHALL_RENAME);
