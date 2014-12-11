@@ -2,6 +2,7 @@ package com.minecolonies.colony.buildings;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.entity.EntityMiner;
 import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.entity.EntityWorkerPlaceholder;
 import com.minecolonies.entity.jobs.ColonyJob;
@@ -24,7 +25,7 @@ public class BuildingMiner extends BuildingWorker
     @Override
     public EntityWorker createWorker(World world)
     {
-        return new EntityWorkerPlaceholder(world); //TODO Implement Later
+        return new EntityMiner(world);
     }
 
     @Override

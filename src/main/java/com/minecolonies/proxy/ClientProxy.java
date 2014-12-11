@@ -7,6 +7,7 @@ import com.minecolonies.client.render.RenderBipedWorker;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityDeliveryman;
+import com.minecolonies.entity.EntityMiner;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -48,6 +49,7 @@ public class ClientProxy extends CommonProxy
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, new RenderBipedCitizenMulti(new ModelBiped(), new ModelEntityCitizenFemaleCitizen(), new ModelEntityCitizenFemaleNoble(), new ModelEntityCitizenFemaleAristocrat()));
         RenderingRegistry.registerEntityRenderingHandler(EntityBuilder.class, new RenderBipedWorker(new ModelBiped(), new ModelEntityBuilderFemale()));
         RenderingRegistry.registerEntityRenderingHandler(EntityDeliveryman.class, new RenderBipedWorker(new ModelEntityDeliveryman(), new ModelEntityDeliveryman()));//TODO female model
+        RenderingRegistry.registerEntityRenderingHandler(EntityMiner.class, new RenderBipedWorker(new ModelBiped(), new ModelEntityMinerFemale()));
     }
 
     @Override

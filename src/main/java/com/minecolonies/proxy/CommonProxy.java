@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityDeliveryman;
+import com.minecolonies.entity.EntityMiner;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.lib.Constants;
@@ -76,6 +77,7 @@ public class CommonProxy implements IProxy
         EntityRegistry.registerModEntity(EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
         EntityRegistry.registerModEntity(EntityBuilder.class, "Builder", getNextEntityId(), MineColonies.instance, 256, 2, true);
         EntityRegistry.registerModEntity(EntityDeliveryman.class, "Deliveryman", getNextEntityId(), MineColonies.instance, 256, 2, true);
+        EntityRegistry.registerModEntity(EntityMiner.class, "Miner", getNextEntityId(), MineColonies.instance, 256, 2, true);
     }
 
     @Override
