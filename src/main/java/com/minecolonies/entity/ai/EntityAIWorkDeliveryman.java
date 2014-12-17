@@ -5,14 +5,11 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityDeliveryman;
-import com.minecolonies.entity.EntityWorker;
+import com.minecolonies.entity.jobs.JobDeliveryman;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
-
-import java.util.UUID;
 
 import static com.minecolonies.entity.EntityCitizen.Status.*;
 
@@ -22,9 +19,9 @@ import static com.minecolonies.entity.EntityCitizen.Status.*;
  *
  * @author MrIbby
  */
-public class EntityAIWorkDeliveryman extends EntityAIWork<EntityDeliveryman>
+public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
 {
-    public EntityAIWorkDeliveryman(EntityDeliveryman deliveryman)
+    public EntityAIWorkDeliveryman(JobDeliveryman deliveryman)
     {
         super(deliveryman);
     }
@@ -32,23 +29,23 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<EntityDeliveryman>
     @Override
     public boolean shouldExecute()
     {
-        return super.shouldExecute() && (worker.hasDestination() || worker.isNeeded());
+        return super.shouldExecute() && (job.hasDestination() || job.isNeeded());
     }
 
     @Override
     public void startExecuting()
     {
-        if(!worker.hasDestination())
+        if(!job.hasDestination())
         {
-            worker.setDestination(worker.getColony().getDeliverymanRequired().get(0));
+            job.setDestination(worker.getColony().getDeliverymanRequired().get(0));
         }
-        ChunkCoordUtils.tryMoveLivingToXYZ(worker, worker.getDestination());
+        ChunkCoordUtils.tryMoveLivingToXYZ(worker, job.getDestination());
     }
 
     @Override
     public void updateTask()
     {
-        if(!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getDestination()))
+        if(!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getDestination()))
         {
             return;
         }
@@ -56,7 +53,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<EntityDeliveryman>
         worker.setStatus(WORKING);
 
         //  TODO - Actually know the Building, not the ID of it
-        Building destinationBuilding = worker.getColony().getBuilding(worker.getDestination());
+        Building destinationBuilding = worker.getColony().getBuilding(job.getDestination());
 
         if (!(destinationBuilding instanceof BuildingWorker))
         {
@@ -69,24 +66,22 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<EntityDeliveryman>
             return;
         }
 
-        EntityCitizen targetCitizenEntity = targetCitizen.getCitizenEntity();
-        if (!(targetCitizenEntity instanceof EntityWorker))
+        EntityCitizen target = targetCitizen.getCitizenEntity();
+        if (target == null || target.getColonyJob() == null)
         {
             return;
         }
 
-        EntityWorker target = (EntityWorker)targetCitizenEntity;
-
         TileEntityColonyBuilding destinationTileEntity = destinationBuilding.getTileEntity();
-        if (target == null || destinationTileEntity == null)
+        if (destinationTileEntity == null)
         {
             //  The recipient or their building's TE aren't loaded currently.  Maybe do something else?
             return;
         }
 
-        for(int i = 0; i < target.getItemsNeeded().size(); i++)
+        for(int i = 0; i < target.getColonyJob().getItemsNeeded().size(); i++)
         {
-            ItemStack itemstack = target.getItemsNeeded().get(i);
+            ItemStack itemstack = target.getColonyJob().getItemsNeeded().get(i);
             int amount = itemstack.stackSize;
             for(int j = 0; j < destinationTileEntity.getSizeInventory(); j++)
             {
@@ -105,17 +100,17 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<EntityDeliveryman>
                 }
                 InventoryUtils.setStack(destinationTileEntity, new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
             }
-            target.getItemsNeeded().remove(i);
+            target.getColonyJob().getItemsNeeded().remove(i);
             i--;
         }
 
-        worker.setDestination(null);
+        job.setDestination(null);
         resetTask();
     }
 
     @Override
     public boolean continueExecuting()
     {
-        return super.continueExecuting() && worker.hasDestination();
+        return super.continueExecuting() && job.hasDestination();
     }
 }

@@ -1,7 +1,6 @@
 package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityWorker;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
@@ -90,12 +89,12 @@ public class ChunkCoordUtils
         return Utils.isPathingTo(citizen, pos.posX, pos.posZ);
     }
 
-    public static boolean isWorkerAtSite(EntityWorker worker, ChunkCoordinates site)
+    public static boolean isWorkerAtSite(EntityCitizen worker, ChunkCoordinates site)
     {
         return Utils.isWorkerAtSite(worker, site.posX, site.posY, site.posZ);
     }
 
-    public static boolean isWorkerAtSiteWithMove(EntityWorker worker, ChunkCoordinates site)
+    public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, ChunkCoordinates site)
     {
         return Utils.isWorkerAtSiteWithMove(worker, site.posX, site.posY, site.posZ);
     }
