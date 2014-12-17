@@ -4,7 +4,8 @@ import com.github.lunatrius.schematica.config.BlockInfo;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.EntityBuilder;
+import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.jobs.JobBuilder;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -33,67 +34,70 @@ import static com.minecolonies.lib.Constants.BlockData.*;
  *
  * @author Colton
  */
-public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
+public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 {
-    public EntityAIWorkBuilder(EntityBuilder builder)
+    public EntityAIWorkBuilder(JobBuilder job)
     {
-        super(builder);
+        super(job);
     }
 
     @Override
     public boolean shouldExecute()
     {
-        return super.shouldExecute() && (worker.hasSchematic() || worker.isNeeded());
+        return super.shouldExecute() && (job.hasSchematic() || job.isNeeded());
     }
 
     @Override
     public void startExecuting()
     {
-        if(!worker.hasSchematic())//is build in progress
+        if(!job.hasSchematic())//is build in progress
         {
             loadSchematic();
 
-            if(!worker.hasSchematic() || !findNextBlock())
+            if(!job.hasSchematic() || !findNextBlock())
             {
                 return;
             }
 
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", worker.getSchematic().getName());
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", job.getSchematic().getName());
         }
-        ChunkCoordUtils.tryMoveLivingToXYZ(worker, worker.getSchematic().getPosition());
+        ChunkCoordUtils.tryMoveLivingToXYZ(worker, job.getSchematic().getPosition());
         if(!Configurations.builderInfiniteResources)
         {
             requestMaterials();
         }
 
-        worker.setStatus(EntityBuilder.Status.WORKING);
+        worker.setStatus(EntityCitizen.Status.WORKING);
     }
 
     @Override
     public void updateTask()
     {
-        if(worker.getOffsetTicks() % worker.getWorkInterval() == 0)
+        if(worker.getOffsetTicks() % job.getWorkInterval() == 0)
         {
-            if(!worker.hasSchematic())
+            if(!job.hasSchematic())
                 return;//Fixes crash caused by buildings needing no repairs
 
-            if(worker.getSchematic().doesSchematicBlockEqualWorldBlock())
+            if(job.getSchematic().doesSchematicBlockEqualWorldBlock())
+            {
+                findNextBlock();
                 return;//findNextBlock count was reached and we can ignore this block
+            }
 
             System.out.println(worker.getStatus().toString());
 
-            if(worker.getStatus() != EntityBuilder.Status.GETTING_ITEMS) {
-			    if(!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getSchematic().getPosition()))
+            if(worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS) {
+			    if(!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition()))
 				{
                     return;
 				}
-                worker.setStatus(EntityBuilder.Status.WORKING);
+                worker.setStatus(EntityCitizen.Status.WORKING);
 			}
 
-            Block block = worker.getSchematic().getBlock();
-            int metadata = worker.getSchematic().getMetadata();
+            Block block = job.getSchematic().getBlock();
+            int metadata = job.getSchematic().getMetadata();
 
-            ChunkCoordinates coords = worker.getSchematic().getBlockPosition();
+            ChunkCoordinates coords = job.getSchematic().getBlockPosition();
             int x = coords.posX, y = coords.posY, z = coords.posZ;
 
             Block worldBlock = world.getBlock(x, y, z);
@@ -101,7 +105,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
 
             if(block == null)//should never happen
             {
-                ChunkCoordinates local = worker.getSchematic().getLocalPosition();
+                ChunkCoordinates local = job.getSchematic().getLocalPosition();
                 MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.schematicNullBlock", x, y, z, local.posX, local.posY, local.posZ));
                 findNextBlock();
                 return;
@@ -155,7 +159,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
     @Override
     public boolean continueExecuting()
     {
-        return super.continueExecuting() && worker.hasSchematic();
+        return super.continueExecuting() && job.hasSchematic();
     }
 
     @Override
@@ -167,7 +171,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
 
     private boolean findNextBlock()
     {
-        if(!worker.getSchematic().findNextBlock())//method returns false if there is no next block (schematic finished)
+        if(!job.getSchematic().findNextBlock())//method returns false if there is no next block (schematic finished)
         {
             completeBuild();
             return false;
@@ -177,8 +181,8 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
 
     private void requestMaterials()
     {
-        Schematic schematic = Schematic.loadSchematic(world, worker.getSchematic().getName());
-        schematic.setPosition(worker.getSchematic().getPosition());
+        Schematic schematic = Schematic.loadSchematic(world, job.getSchematic().getName());
+        schematic.setPosition(job.getSchematic().getPosition());
         boolean placesBlock = false;
 
         while(schematic.findNextBlock())
@@ -206,7 +210,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
                     {*/
                         if(InventoryUtils.containsStack(worker.getInventory(), itemstack) == -1)
                         {
-                            worker.addItemNeeded(itemstack);
+                            job.addItemNeeded(itemstack);
                         }
                     /*}
                     break;
@@ -216,7 +220,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
 
         if(placesBlock)
         {
-            for(ItemStack neededItem : worker.getItemsNeeded())
+            for(ItemStack neededItem : job.getItemsNeeded())
             {
                 LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageNeedMaterial", neededItem.getDisplayName(), neededItem.stackSize);
             }
@@ -268,18 +272,18 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
                             ItemStack chestItem = workBuildingTileEntity.getStackInSlot(chestSlotID);
                             workBuildingTileEntity.setInventorySlotContents(chestSlotID, null);
                             setStackInBuilder(chestItem, true);
-                            worker.setStatus(EntityBuilder.Status.WORKING);
+                            worker.setStatus(EntityCitizen.Status.WORKING);
                         }
                     }
                     else if(worker.getNavigator().noPath() || !ChunkCoordUtils.isPathingTo(worker, worker.getWorkBuilding().getLocation()))
                     {
                         if(!ChunkCoordUtils.tryMoveLivingToXYZ(worker, worker.getWorkBuilding().getLocation()))
                         {
-                            worker.setStatus(EntityBuilder.Status.PATHFINDING_ERROR);
+                            worker.setStatus(EntityCitizen.Status.PATHFINDING_ERROR);
                         }
                         else
                         {
-                            worker.setStatus(EntityBuilder.Status.GETTING_ITEMS);
+                            worker.setStatus(EntityCitizen.Status.GETTING_ITEMS);
                             return false;
                         }
                     }
@@ -336,7 +340,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
             }
             else
             {
-                worker.getSchematic().useMaterial(worker.getInventory().getStackInSlot(slotID));//remove item from materials list (--stackSize)
+                job.getSchematic().useMaterial(worker.getInventory().getStackInSlot(slotID));//remove item from materials list (--stackSize)
                 worker.getInventory().decrStackSize(slotID, 1);
             }
         }
@@ -353,7 +357,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
                 setStackInBuilder(stack, false);
             }
         }
-        worker.setStatus(EntityBuilder.Status.WORKING);
+        worker.setStatus(EntityCitizen.Status.WORKING);
         return true;
     }
 
@@ -368,7 +372,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
                 for(int i = 0; i < worker.getInventory().getSizeInventory(); i++)
                 {
                     ItemStack invItem = worker.getInventory().getStackInSlot(i);
-                    if(!Utils.containsStackInList(invItem, worker.getSchematic().getMaterials()))
+                    if(!Utils.containsStackInList(invItem, job.getSchematic().getMaterials()))
                     {
                         leftOvers = invItem;
                         slotID = i;
@@ -667,7 +671,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
 
     private void setTileEntity(int x, int y, int z)
     {
-        TileEntity tileEntity = worker.getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
+        TileEntity tileEntity = job.getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
         if(tileEntity != null && !(world.getTileEntity(x, y, z) instanceof TileEntityColonyBuilding))//TODO check if TileEntity already exists
         {
             world.setTileEntity(x, y, z, tileEntity);
@@ -680,24 +684,24 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
         ChunkCoordinates pos = entry.getKey();
         String name = entry.getValue();
 
-        worker.setSchematic(Schematic.loadSchematic(world, name));
+        job.setSchematic(Schematic.loadSchematic(world, name));
 
-        if(worker.getSchematic() == null)
+        if(job.getSchematic() == null)
         {
             MineColonies.logger.warn(LanguageHandler.format("entity.builder.ai.schematicLoadFailure", name));
             worker.getColony().removeBuildingForUpgrade(pos);
             return;
         }
-        worker.getSchematic().setPosition(pos);
+        job.getSchematic().setPosition(pos);
     }
 
     private void completeBuild()
     {
         spawnEntities();//TODO handle materials - would work well in staged building
 
-        String schematicName = worker.getSchematic().getName();
+        String schematicName = job.getSchematic().getName();
         LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
-        ChunkCoordinates pos = worker.getSchematic().getPosition();
+        ChunkCoordinates pos = job.getSchematic().getPosition();
 
         if(ChunkCoordUtils.getTileEntity(world, pos) instanceof TileEntityColonyBuilding)
         {
@@ -708,17 +712,17 @@ public class EntityAIWorkBuilder extends EntityAIWork<EntityBuilder>
         }
 
         worker.getColony().removeBuildingForUpgrade(pos);
-        worker.setSchematic(null);
+        job.setSchematic(null);
         resetTask();
     }
 
     private void spawnEntities()
     {
-        for(Entity entity : worker.getSchematic().getEntities())
+        for(Entity entity : job.getSchematic().getEntities())
         {
             if(entity != null)
             {
-                ChunkCoordinates pos = worker.getSchematic().getOffsetPosition();//min position
+                ChunkCoordinates pos = job.getSchematic().getOffsetPosition();//min position
 
                 if(entity instanceof EntityHanging)
                 {

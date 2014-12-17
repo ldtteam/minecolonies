@@ -1,5 +1,6 @@
 package com.minecolonies.entity.jobs;
 
+import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
@@ -14,9 +15,9 @@ public class JobBuilder extends ColonyJob
     private Schematic schematic;
 
     private final String TAG_SCHEMATIC = "schematic";
-    private final String TAG_NAME = "name";
-    private final String TAG_POSITION = "position";
-    private final String TAG_PROGRESS = "progress";
+    private final String TAG_NAME      = "name";
+    private final String TAG_POSITION  = "position";
+    private final String TAG_PROGRESS  = "progress";
 
     public JobBuilder(EntityCitizen entity)
     {
@@ -24,13 +25,19 @@ public class JobBuilder extends ColonyJob
     }
 
     @Override
-    public String getName() { return "Builder"; }
+    public String getName(){ return "Builder"; }
+
+    @Override
+    public RenderBipedCitizen.Model getModel()
+    {
+        return RenderBipedCitizen.Model.BUILDER;
+    }
 
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if(hasSchematic())
+        if (hasSchematic())
         {
             NBTTagCompound schematicTag = new NBTTagCompound();
             schematicTag.setString(TAG_NAME, schematic.getName());
@@ -63,21 +70,19 @@ public class JobBuilder extends ColonyJob
         }
     }
 
+    @Override
     public boolean isNeeded()
     {
-        if (getCitizen().getWorkBuilding() == null)
-        {
-            return false;
-        }
-
         Colony colony = getCitizen().getColony();
-
-        return colony != null; // && !colony.getBuilderRequired.isEmpty();
+        return colony != null &&
+                getCitizen().getWorkBuilding() != null &&
+                !colony.getBuildingUpgrades().isEmpty();
     }
 
+    @Override
     public void addTasks(EntityAITasks tasks)
     {
-        //tasks.addTask(3, new EntityAIWorkBuilder(this));
+        tasks.addTask(3, new EntityAIWorkBuilder(this));
     }
 
     public boolean hasSchematic()

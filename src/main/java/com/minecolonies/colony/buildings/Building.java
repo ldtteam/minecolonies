@@ -95,7 +95,7 @@ public abstract class Building
     /**
      * Set up mappings of name->Building and TileEntity->Building
      */
-    public static void init()
+    static
     {
         addMapping("Baker",         BuildingBaker.class,         BlockHutBaker.class);
         addMapping("Blacksmith",    BuildingBlacksmith.class,    BlockHutBlacksmith.class);

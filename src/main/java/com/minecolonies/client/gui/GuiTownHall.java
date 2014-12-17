@@ -3,18 +3,10 @@ package com.minecolonies.client.gui;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.BuildingTownHall;
-import com.minecolonies.entity.EntityBuilder;
-import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Utils;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-
-import java.util.List;
 
 public class GuiTownHall extends GuiBuilding
 {

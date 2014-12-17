@@ -4,13 +4,10 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityWorker;
-import com.minecolonies.entity.EntityWorkerPlaceholder;
 import com.minecolonies.entity.jobs.ColonyJob;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 
 import java.util.UUID;
 
@@ -39,12 +36,7 @@ public abstract class BuildingWorker extends BuildingHut
 
     public abstract String getJobName();
 
-    //  Classic Style of Jobs
-    public abstract EntityWorker createWorker(World world);
-
-    //  Future Style of Jobs
-    public abstract Class<? extends ColonyJob> getJobClass();
-    public ColonyJob createJob(EntityCitizen citizen) { return null; }
+    public abstract ColonyJob createJob(EntityCitizen citizen);
 
     public CitizenData getWorker() { return worker; }
     public boolean hasWorker() { return worker != null; }

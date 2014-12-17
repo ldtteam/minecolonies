@@ -6,7 +6,6 @@ import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.ColonyBuildingViewMessage;
 import com.minecolonies.network.messages.ColonyViewCitizensMessage;
@@ -17,12 +16,10 @@ import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -899,10 +896,9 @@ public class Colony
         {
             EntityCitizen entity = citizen.getCitizenEntity();
             if (citizen.getWorkBuilding() != null &&
-                    entity instanceof EntityWorker)
+                    entity.getColonyJob() != null)
             {
-                EntityWorker worker = (EntityWorker)entity;
-                if (!worker.hasItemsNeeded())
+                if (!entity.getColonyJob().hasItemsNeeded())
                 {
                     deliverymanRequired.add(citizen.getWorkBuilding().getLocation());
                 }

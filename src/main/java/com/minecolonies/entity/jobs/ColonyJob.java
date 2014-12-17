@@ -1,14 +1,12 @@
 package com.minecolonies.entity.jobs;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.Colony;
+import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.ai.EntityAIWork;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.Constants;
 
 import java.lang.reflect.Constructor;
@@ -19,24 +17,29 @@ import java.util.Map;
 
 public abstract class ColonyJob
 {
-    private EntityCitizen   citizen;  //  CJJ TODO - This needs to go away
+    private EntityCitizen   citizen;
     private List<ItemStack> itemsNeeded = new ArrayList<ItemStack>();
 
     //  Building and View Class Mapping
-    private static Map<String, Class<?>> nameToClassMap = new HashMap<String, Class<?>>();
-    private static Map<Class<?>, String> classToNameMap = new HashMap<Class<?>, String>();
+    private static Map<String, Class<? extends ColonyJob>> nameToClassMap = new HashMap<String, Class<? extends ColonyJob>>();
+    private static Map<Class<? extends ColonyJob>, String> classToNameMap = new HashMap<Class<? extends ColonyJob>, String>();
 
     private static String TAG_TYPE = "type";
     private static String TAG_ITEMS_NEEDED = "itemsNeeded";
 
+    static
+    {
+        addMapping("Builder", JobBuilder.class);
+        addMapping("Deliveryman", JobDeliveryman.class);
+    }
 
     /**
      * Add a given Building mapping
      *
-     * @param c    class of object
-     * @param name name of object
+     * @param name     name of job class
+     * @param jobClass class of job
      */
-    private static void addMapping(String name, Class<?> jobClass)
+    private static void addMapping(String name, Class<? extends ColonyJob> jobClass)
     {
         if (nameToClassMap.containsKey(name))
         {
@@ -59,14 +62,6 @@ public abstract class ColonyJob
         }
     }
 
-    /**
-     * Set up mappings of name->Building and TileEntity->Building
-     */
-    public static void init()
-    {
-        addMapping("Builder",       JobBuilder.class);
-    }
-
     public ColonyJob(EntityCitizen entity)
     {
         citizen = entity;
@@ -74,12 +69,17 @@ public abstract class ColonyJob
 
     public abstract String getName();
 
+    public RenderBipedCitizen.Model getModel()
+    {
+        return RenderBipedCitizen.Model.CITIZEN;
+    }
+
     public EntityCitizen getCitizen() { return citizen; }
 
     public static ColonyJob createFromNBT(EntityCitizen citizen, NBTTagCompound compound)
     {
         ColonyJob job = null;
-        Class<?> oclass = null;
+        Class<? extends ColonyJob> oclass = null;
 
         try
         {

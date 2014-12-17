@@ -1,9 +1,7 @@
 package com.minecolonies.proxy;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.entity.EntityBuilder;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityDeliveryman;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.lib.Constants;
@@ -74,8 +72,6 @@ public class CommonProxy implements IProxy
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
         EntityRegistry.registerModEntity(EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
-        EntityRegistry.registerModEntity(EntityBuilder.class, "Builder", getNextEntityId(), MineColonies.instance, 256, 2, true);
-        EntityRegistry.registerModEntity(EntityDeliveryman.class, "Deliveryman", getNextEntityId(), MineColonies.instance, 256, 2, true);
     }
 
     @Override

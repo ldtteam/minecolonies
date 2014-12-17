@@ -1,7 +1,6 @@
 package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityWorker;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -50,12 +49,12 @@ public class Utils
         return pathpoint != null && pathpoint.xCoord == x && pathpoint.zCoord == z;
     }
 
-    public static boolean isWorkerAtSite(EntityWorker worker, int x, int y, int z)
+    public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z)
     {
         return worker.getPosition().squareDistanceTo(x, y, z) < 4;
     }
 
-    public static boolean isWorkerAtSiteWithMove(EntityWorker worker, int x, int y, int z)
+    public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, int x, int y, int z)
     {
         if(!isWorkerAtSite(worker, x, y, z))//Too far away
         {
@@ -63,7 +62,7 @@ public class Utils
             {
                 if(!tryMoveLivingToXYZ(worker, x, y, z))
                 {
-                    worker.setStatus(EntityWorker.Status.PATHFINDING_ERROR);
+                    worker.setStatus(EntityCitizen.Status.PATHFINDING_ERROR);
                 }
             }
             return false;
