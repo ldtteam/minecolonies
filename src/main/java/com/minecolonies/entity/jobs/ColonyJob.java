@@ -222,23 +222,4 @@ public abstract class ColonyJob
     }
 
     public void addTasks(EntityAITasks tasks) {}
-
-//    public void resetTasks()
-//    {
-//        //  Remove existing EntityAIWork tasks
-//        EntityCitizen citizen = getCitizen();
-//
-//        for (Object o : citizen.targetTasks.taskEntries)
-//        {
-//            if (o instanceof EntityAITasks.EntityAITaskEntry)
-//            {
-//                EntityAITasks.EntityAITaskEntry taskEntry = (EntityAITasks.EntityAITaskEntry) o;
-//
-//                if (taskEntry.action instanceof EntityAIWork)
-//                {
-//                    citizen.targetTasks.removeTask(taskEntry.action);
-//                }
-//            }
-//        }
-//    }
 }

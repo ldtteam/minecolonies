@@ -11,6 +11,7 @@ import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
+import com.minecolonies.entity.ai.EntityAIWork;
 import com.minecolonies.entity.jobs.ColonyJob;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
@@ -141,9 +142,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         Object currentTasks[] = this.tasks.taskEntries.toArray();
         for (Object task : currentTasks)
         {
-            this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry)task).action);
+            if (((EntityAITasks.EntityAITaskEntry)task).action instanceof EntityAIWork)
+            {
+                this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry) task).action);
+            }
         }
-        initTasks();
+
+        if (colonyJob != null)
+        {
+            colonyJob.addTasks(this.tasks);
+        }
     }
 
     public void setTexture()
@@ -165,7 +173,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public void updateModel()
     {
-        RenderBipedCitizen.Model model = RenderBipedCitizen.Model.CITIZEN;
+        RenderBipedCitizen.Model model = RenderBipedCitizen.Model.SETTLER;
 
         if (colonyJob != null)
         {
@@ -175,8 +183,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             switch (getLevel())
             {
-                case 0: model = RenderBipedCitizen.Model.SETTLER;    break;
-                default:
                 case 1: model = RenderBipedCitizen.Model.CITIZEN;    break;
                 case 2: model = RenderBipedCitizen.Model.NOBLE;      break;
                 case 3: model = RenderBipedCitizen.Model.ARISTOCRAT; break;
@@ -264,36 +270,22 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             setColony(c, data);
         }
 
-        if (colonyJob != null)
+        BuildingWorker workBuilding = getWorkBuilding();
+        if (workBuilding != null)
         {
-            //  Worker entity subclass, with no work building
-            if (citizenData.getWorkBuilding() == null)
+            //  We have a place to work, do we have the assigned Job?
+            if (colonyJob == null)
             {
-                removeFromWorkBuilding();
+                //  No job, create one!
+                setColonyJob(workBuilding.createJob(this));
+                ChunkCoordUtils.tryMoveLivingToXYZ(this, workBuilding.getLocation());
             }
         }
-        else if (citizenData.getWorkBuilding() != null)
+        else if (colonyJob != null)
         {
-            //  Non-Worker entity subclass, with a work building - become that worker subclass
-            addToWorkBuilding(citizenData.getWorkBuilding());
+            //  No place of employment, get rid of our job
+            setColonyJob(null);
         }
-
-//        BuildingWorker b = (workBuilding != null) ? workBuilding.get() : null;
-//        if (b != null)
-//        {
-//            if (colonyJob == null)
-//            {
-//                ColonyJob newJob = b.createJob(this);
-//                if (newJob != null)
-//                {
-//                    setColonyJob(newJob);
-//                }
-//            }
-//        }
-//        else if (colonyJob != null)
-//        {
-//            setColonyJob(null);
-//        }
     }
 
     @Override
@@ -445,42 +437,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public BuildingWorker getWorkBuilding()
     {
         return (citizenData != null) ? citizenData.getWorkBuilding() : null;
-    }
-
-    public void addToWorkBuilding(BuildingWorker building)
-    {
-        setColonyJob(building.createJob(this));
-        ChunkCoordUtils.tryMoveLivingToXYZ(this, building.getLocation());
-
-//        NBTTagCompound nbt = new NBTTagCompound();
-//        this.writeToNBT(nbt);
-//        this.setDead();
-//
-//        EntityCitizen worker = building.createWorker(worldObj);
-//        worker.readFromNBT(nbt);
-//        worker.setColony(colony, citizenData);
-//
-//        worldObj.spawnEntityInWorld(worker);
-//        ChunkCoordUtils.tryMoveLivingToXYZ(worker, building.getLocation());
-//
-//        clearColony();
-    }
-
-    public void removeFromWorkBuilding()
-    {
-        setColonyJob(null);
-
-//        NBTTagCompound nbt = new NBTTagCompound();
-//        this.writeToNBT(nbt);
-//        this.setDead();
-//
-//        EntityCitizen citizen = new EntityCitizen(worldObj);
-//        citizen.readFromNBT(nbt);
-//        citizen.setColony(colony, citizenData);
-//
-//        worldObj.spawnEntityInWorld(citizen);
-//
-//        clearColony();
     }
 
     public Status getStatus()
