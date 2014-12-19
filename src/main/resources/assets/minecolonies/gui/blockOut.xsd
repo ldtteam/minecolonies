@@ -55,10 +55,10 @@
             <!-- xs:element name="scrollgroup"  type="scrollGroupType"/ -->
             <xs:element name="list"         type="listType"/>
             <xs:element name="button"       type="buttonType"/>
+            <xs:element name="buttonimage"  type="buttonImageType"/>
             <xs:element name="label"        type="labelType"/>
             <xs:element name="input"        type="inputType"/>
             <xs:element name="image"        type="imageType"/>
-            <xs:element name="imagebutton"  type="imageButtonType"/>
             <xs:element name="box"          type="boxType"/>
             <xs:element name="itemicon"     type="itemIconType"/>
             <xs:element name="switch"       type="switchType"/>
@@ -113,10 +113,6 @@
         <xs:complexContent>
             <xs:extension base="paneType">
                 <xs:attribute name="label"      type="xs:string"/>
-                <xs:attribute name="textalign"  type="xs:string"/>
-                <xs:attribute name="color"      type="xs:string"/>
-                <xs:attribute name="hovercolor" type="xs:string"/>
-                <xs:attribute name="shadow"     type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -143,16 +139,25 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- <imagebutton> -->
-    <xs:complexType name="imageButtonType">
+    <!-- <buttonimage> -->
+    <xs:complexType name="buttonImageType">
         <xs:complexContent>
             <xs:extension base="paneType">
-                <xs:attribute name="source" type="xs:string"/>
-                <xs:attribute name="imageoffset" type="xs:string"/>
-                <xs:attribute name="imagesize" type="xs:string"/>
-                <xs:attribute name="highlight" type="xs:string"/>
+                <!-- Image and Highlight -->
+                <xs:attribute name="source"          type="xs:string" use="required"/>
+                <xs:attribute name="imageoffset"     type="xs:string"/>
+                <xs:attribute name="imagesize"       type="xs:string"/>
+                <xs:attribute name="highlight"       type="xs:string"/>
                 <xs:attribute name="highlightoffset" type="xs:string"/>
-                <xs:attribute name="highlightsize" type="xs:string"/>
+                <xs:attribute name="highlightsize"   type="xs:string"/>
+                <!-- Label (optional) -->
+                <xs:attribute name="label"           type="xs:string"/>
+                <xs:attribute name="textalign"       type="xs:string"/>
+                <xs:attribute name="textoffset"      type="xs:string"/>
+                <xs:attribute name="textcolor"       type="xs:string"/>
+                <xs:attribute name="texthovercolor"  type="xs:string"/>
+                <xs:attribute name="textdisabledcolor" type="xs:string"/>
+                <xs:attribute name="shadow"          type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

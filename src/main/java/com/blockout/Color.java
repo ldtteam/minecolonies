@@ -31,5 +31,10 @@ public class Color
         nameToColorMap.put("red",       0xFF0000);
         nameToColorMap.put("white",     0xFFFFFF);
         nameToColorMap.put("yellow",    0xFFFF00);
+        nameToColorMap.put("gray",      0x808080);
+        nameToColorMap.put("darkgray",  0xA9A9A9);
+        nameToColorMap.put("dimgray",   0x696969);
+        nameToColorMap.put("lightgray", 0xD3D3D3);
+        nameToColorMap.put("slategray", 0x708090);
     }
 }

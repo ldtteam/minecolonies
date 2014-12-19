@@ -116,7 +116,7 @@ public class PaneParams
         String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            try { return def.valueOf((Class<T>)def.getClass(), attr); }
+            try { return def.valueOf((Class<T>)(Object)def.getClass(), attr); }
             catch (IllegalArgumentException exc) {}
         }
         return def;
@@ -164,10 +164,10 @@ public class PaneParams
 
     public static class SizePair
     {
-        public SizePair(int w, int h) { width = w; height = h; }
+        public SizePair(int w, int h) { x = w; y = h; }
 
-        public int width;
-        public int height;
+        public int x;
+        public int y;
     }
 
     public SizePair getSizePairAttribute(String name, SizePair def, SizePair scale)
@@ -175,18 +175,18 @@ public class PaneParams
         String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            int w = def != null ? def.width : 0;
-            int h = def != null ? def.height : 0;
+            int w = def != null ? def.x : 0;
+            int h = def != null ? def.y : 0;
 
             Matcher m = percentagePattern.matcher(attr);
             if (m.find())
             {
-                w = parseScalableIntegerRegexMatch(m, w, scale != null ? scale.width : 0);
+                w = parseScalableIntegerRegexMatch(m, w, scale != null ? scale.x : 0);
 
                 if (m.find() || m.find(0))
                 {
                     //  If no second value is passed, use the first value
-                    h = parseScalableIntegerRegexMatch(m, h, scale != null ? scale.height : 0);
+                    h = parseScalableIntegerRegexMatch(m, h, scale != null ? scale.y : 0);
                 }
             }
 

@@ -10,12 +10,17 @@ public class Button extends Pane
     }
 
     protected Handler handler;
+    protected String label;
 
     public Button() {}
     public Button(PaneParams params)
     {
         super(params);
+        label = params.getLocalizedStringAttribute("label", label);
     }
+
+    public String getLabel() { return label; }
+    public void setLabel(String s) { label = s; }
 
     public void setHandler(Handler h)
     {

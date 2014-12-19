@@ -1,26 +1,33 @@
 package com.blockout.controls;
 
+import com.blockout.Alignment;
 import com.blockout.PaneParams;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-public class ImageButton extends Button
+public class ButtonImage extends Button
 {
     private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
     protected ResourceLocation image;
     protected ResourceLocation imageHighlight;
 
-    protected int imageOffsetX = 0, imageOffsetY = 0, imageWidth = 0, imageHeight = 0;
-    protected int highlightOffsetX = 0, highlightOffsetY = 0, highlightWidth = 0, highlightHeight = 0;
+    protected int       imageOffsetX = 0, imageOffsetY = 0, imageWidth = 0, imageHeight = 0;
+    protected int       highlightOffsetX = 0, highlightOffsetY = 0, highlightWidth = 0, highlightHeight = 0;
+    protected Alignment textAlignment     = Alignment.Middle;
+    protected int       textColor         = 0xffffff;
+    protected int       textHoverColor    = 0xffffff;
+    protected int       textDisabledColor = 0xffffff;
+    protected boolean   shadow            = false;
+    protected int       textOffsetX = 0, textOffsetY = 0;
 
-    public ImageButton()
+    public ButtonImage()
     {
         setSize(20, 20);
     }
 
-    public ImageButton(PaneParams params)
+    public ButtonImage(PaneParams params)
     {
         super(params);
 
@@ -33,15 +40,15 @@ public class ImageButton extends Button
         PaneParams.SizePair size = params.getSizePairAttribute("imageoffset", null, null);
         if (size != null)
         {
-            imageOffsetX = size.width;
-            imageOffsetY = size.height;
+            imageOffsetX = size.x;
+            imageOffsetY = size.y;
         }
 
         size = params.getSizePairAttribute("imagesize", null, null);
         if (size != null)
         {
-            imageWidth = size.width;
-            imageHeight = size.height;
+            imageWidth = size.x;
+            imageHeight = size.y;
         }
 
         path = params.getStringAttribute("highlight", null);
@@ -53,15 +60,28 @@ public class ImageButton extends Button
         size = params.getSizePairAttribute("highlightoffset", null, null);
         if (size != null)
         {
-            highlightOffsetX = size.width;
-            highlightOffsetY = size.height;
+            highlightOffsetX = size.x;
+            highlightOffsetY = size.y;
         }
 
         size = params.getSizePairAttribute("highlightsize", null, null);
         if (size != null)
         {
-            highlightWidth = size.width;
-            highlightHeight = size.height;
+            highlightWidth = size.x;
+            highlightHeight = size.y;
+        }
+
+        textAlignment     = params.getEnumAttribute("textalign", textAlignment);
+        textColor         = params.getColorAttribute("textcolor", textColor);
+        textHoverColor    = params.getColorAttribute("texthovercolor", textColor); //  match textcolor by default
+        textDisabledColor = params.getColorAttribute("textdisabledcolor", textColor); //  match textcolor by default
+        shadow            = params.getBooleanAttribute("shadow", shadow);
+
+        size = params.getSizePairAttribute("textoffset", null, null);
+        if (size != null)
+        {
+            textOffsetX = size.x;
+            textOffsetY = size.y;
         }
     }
 
@@ -74,7 +94,6 @@ public class ImageButton extends Button
     {
         setImage(source != null ? new ResourceLocation(source) : null, offsetX, offsetY, w, h);
     }
-
 
     public void setImage(ResourceLocation loc)
     {
@@ -123,7 +142,9 @@ public class ImageButton extends Button
         int w = imageWidth;
         int h = imageHeight;
 
-        if (imageHighlight != null && isPointInPane(mx, my))
+        boolean mouseOver = isPointInPane(mx, my);
+
+        if (mouseOver && imageHighlight != null)
         {
             bind = imageHighlight;
             offsetX = highlightOffsetX;
@@ -135,11 +156,50 @@ public class ImageButton extends Button
         if (w == 0 || w > getWidth())   w = getWidth();
         if (h == 0 || h > getHeight())  h = getHeight();
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(bind);
-        drawTexturedModalRect(x, y,
-                offsetX, offsetY,
-                w, h);
+        if (enabled)
+        {
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        }
+        else
+        {
+            GL11.glColor4f(0.5F, 0.5F, 0.5F, 1.0F);
+        }
+
+        GL11.glEnable(GL11.GL_BLEND);
+        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        drawTexturedModalRect(x, y, offsetX, offsetY, w, h);
+
+        //  Label, if any
+        if (label != null)
+        {
+            int color = enabled ? (mouseOver ? textHoverColor : textColor) : textDisabledColor;
+
+            offsetX = textOffsetX;
+            offsetY = textOffsetY;
+
+            if (textAlignment.rightAligned)
+            {
+                offsetX += (getWidth() - mc.fontRenderer.getStringWidth(label));
+            }
+            else if (textAlignment.horizontalCentered)
+            {
+                offsetX += (getWidth() - mc.fontRenderer.getStringWidth(label)) / 2;
+            }
+
+            if (textAlignment.bottomAligned)
+            {
+                offsetY += (getHeight() - mc.fontRenderer.FONT_HEIGHT);
+            }
+            else if (textAlignment.verticalCentered)
+            {
+                offsetY += (getHeight() - mc.fontRenderer.FONT_HEIGHT) / 2;
+            }
+
+            mc.fontRenderer.drawString(label, getX() + offsetX, getY() + offsetY, color, shadow);
+        }
     }
 
     @Override

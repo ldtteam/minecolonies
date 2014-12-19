@@ -31,10 +31,10 @@ public class Loader
         register("scrollgroup", ScrollingGroup.class);
         register("list", ScrollingList.class);
         register("button", ButtonVanilla.class);
+        register("buttonimage", ButtonImage.class);
         register("label", Label.class);
         register("input", TextFieldVanilla.class);
         register("image", Image.class);
-        register("imagebutton", ImageButton.class);
         register("box", Box.class);
         register("itemicon", ItemIcon.class);
         register("switch", SwitchView.class);

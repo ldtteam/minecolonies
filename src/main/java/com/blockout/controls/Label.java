@@ -7,11 +7,11 @@ import org.lwjgl.input.Mouse;
 
 public class Label extends Pane
 {
-    String label;
-    Alignment textAlignment = Alignment.MiddleLeft;
-    int       textColor     = 0xffffff;
-    int       hoverColor    = 0xffffff;
-    boolean   shadow        = false;
+    protected String label;
+    protected Alignment textAlignment = Alignment.MiddleLeft;
+    protected int       textColor     = 0xffffff;
+    protected int       hoverColor    = 0xffffff;
+    protected boolean   shadow        = false;
 
     public Label(){}
 
