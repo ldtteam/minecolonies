@@ -49,6 +49,16 @@ public class PaneParams
         return list;
     }
 
+    public String getText()
+    {
+        return node.getTextContent().trim();
+    }
+
+    public String getLocalizedText()
+    {
+        return Localize(node.getTextContent().trim());
+    }
+
     public String getStringAttribute(String name) { return getStringAttribute(name, ""); }
     public String getStringAttribute(String name, String def)
     {

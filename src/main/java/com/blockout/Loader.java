@@ -30,6 +30,7 @@ public class Loader
         register("group", Group.class);
         register("scrollgroup", ScrollingGroup.class);
         register("list", ScrollingList.class);
+        register("text", Text.class);
         register("button", ButtonVanilla.class);
         register("buttonimage", ButtonImage.class);
         register("label", Label.class);

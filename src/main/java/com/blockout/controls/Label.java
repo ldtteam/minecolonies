@@ -84,8 +84,9 @@ public class Label extends Pane
         }
 
         GL11.glPushMatrix();
+        GL11.glTranslated(getX() + offsetX, getY() + offsetY, 0);
         GL11.glScalef(scale, scale, scale);
-        mc.fontRenderer.drawString(label, (int)((getX() + offsetX) / scale), (int)((getY() + offsetY) / scale), color, shadow);
+        mc.fontRenderer.drawString(label, 0, 0, color, shadow);
         GL11.glPopMatrix();
     }
 }
