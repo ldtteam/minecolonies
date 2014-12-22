@@ -15,6 +15,7 @@ public class ButtonImage extends Button
 
     protected int       imageOffsetX = 0, imageOffsetY = 0, imageWidth = 0, imageHeight = 0;
     protected int       highlightOffsetX = 0, highlightOffsetY = 0, highlightWidth = 0, highlightHeight = 0;
+    protected float     textScale         = 1.0f;
     protected Alignment textAlignment     = Alignment.Middle;
     protected int       textColor         = 0xffffff;
     protected int       textHoverColor    = 0xffffff;
@@ -71,8 +72,9 @@ public class ButtonImage extends Button
             highlightHeight = size.y;
         }
 
+        textScale         = params.getFloatAttribute("scale", textScale);
         textAlignment     = params.getEnumAttribute("textalign", textAlignment);
-        textColor         = params.getColorAttribute("textcolor", textColor);
+        textColor = params.getColorAttribute("textcolor", textColor);
         textHoverColor    = params.getColorAttribute("texthovercolor", textColor); //  match textcolor by default
         textDisabledColor = params.getColorAttribute("textdisabledcolor", textColor); //  match textcolor by default
         shadow            = params.getBooleanAttribute("shadow", shadow);
@@ -133,6 +135,28 @@ public class ButtonImage extends Button
         highlightWidth = h;
     }
 
+    public int getTextColor() { return textColor; }
+    public int getTextHoverColor() { return textHoverColor; }
+    public void setTextColor(int c) { setTextColor(c, c, c); }
+    public void setTextColor(int c, int d, int h)
+    {
+        textColor = c;
+        textDisabledColor = d;
+        textHoverColor = h;
+    }
+
+    public boolean getShadow() { return shadow; }
+    public void setShadow(boolean s) { shadow = s; }
+
+    public Alignment getTextAlignment() { return textAlignment; }
+    public void setTextAlignment(Alignment align) { textAlignment = align; }
+
+    public float getTextScale() { return textScale; }
+    public void setTextScale(float s) { textScale = s; }
+
+    public int getTextHeight() { return (int)(mc.fontRenderer.FONT_HEIGHT * textScale); }
+    public int getStringWidth() { return (int)(mc.fontRenderer.getStringWidth(label) * textScale); }
+
     @Override
     protected void drawSelf(int mx, int my)
     {
@@ -182,23 +206,26 @@ public class ButtonImage extends Button
 
             if (textAlignment.rightAligned)
             {
-                offsetX += (getWidth() - mc.fontRenderer.getStringWidth(label));
+                offsetX += (getWidth() - getStringWidth());
             }
             else if (textAlignment.horizontalCentered)
             {
-                offsetX += (getWidth() - mc.fontRenderer.getStringWidth(label)) / 2;
+                offsetX += (getWidth() - getStringWidth()) / 2;
             }
 
             if (textAlignment.bottomAligned)
             {
-                offsetY += (getHeight() - mc.fontRenderer.FONT_HEIGHT);
+                offsetY += (getHeight() - getTextHeight());
             }
             else if (textAlignment.verticalCentered)
             {
-                offsetY += (getHeight() - mc.fontRenderer.FONT_HEIGHT) / 2;
+                offsetY += (getHeight() - getTextHeight()) / 2;
             }
 
+            GL11.glPushMatrix();
+            GL11.glTranslatef(textScale, textScale, textScale);
             mc.fontRenderer.drawString(label, getX() + offsetX, getY() + offsetY, color, shadow);
+            GL11.glPopMatrix();
         }
     }
 

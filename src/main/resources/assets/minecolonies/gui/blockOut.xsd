@@ -122,6 +122,7 @@
         <xs:complexContent>
             <xs:extension base="paneType">
                 <xs:attribute name="label"      type="xs:string"/>
+                <xs:attribute name="textscale"  type="xs:string"/>
                 <xs:attribute name="textalign"  type="xs:string"/>
                 <xs:attribute name="color"      type="xs:string"/>
                 <xs:attribute name="hovercolor" type="xs:string"/>
@@ -151,7 +152,8 @@
                 <xs:attribute name="highlightoffset" type="xs:string"/>
                 <xs:attribute name="highlightsize"   type="xs:string"/>
                 <!-- Label (optional) -->
-                <xs:attribute name="label"           type="xs:string"/>
+                <xs:attribute name="label"      type="xs:string"/>
+                <xs:attribute name="textscale"       type="xs:string"/>
                 <xs:attribute name="textalign"       type="xs:string"/>
                 <xs:attribute name="textoffset"      type="xs:string"/>
                 <xs:attribute name="textcolor"       type="xs:string"/>

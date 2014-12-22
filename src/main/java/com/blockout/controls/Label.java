@@ -4,10 +4,12 @@ import com.blockout.Alignment;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 public class Label extends Pane
 {
     protected String label;
+    protected float     scale         = 1.0f;
     protected Alignment textAlignment = Alignment.MiddleLeft;
     protected int       textColor     = 0xffffff;
     protected int       hoverColor    = 0xffffff;
@@ -19,6 +21,7 @@ public class Label extends Pane
     {
         super(params);
         label         = params.getLocalizedStringAttribute("label", label);
+        scale         = params.getFloatAttribute("textscale", scale);
         textAlignment = params.getEnumAttribute("textalign", textAlignment);
         textColor     = params.getColorAttribute("color", textColor);
         hoverColor    = params.getColorAttribute("hovercolor", textColor); //  match textcolor by default
@@ -33,20 +36,26 @@ public class Label extends Pane
     public String getLabel() { return label; }
     public void setLabel(String s) { label = s; }
 
+    public int getColor() { return textColor; }
+    public int getHoverColor() { return hoverColor; }
     public void setColor(int c) { setColor(c, c); }
     public void setColor(int c, int h)
     {
         textColor = c;
         hoverColor = h;
     }
-    public int getColor() { return textColor; }
-    public int getHoverColor() { return hoverColor; }
 
-    public void setShadow(boolean s) { shadow = s; }
     public boolean getShadow() { return shadow; }
+    public void setShadow(boolean s) { shadow = s; }
 
     public Alignment getTextAlignment() { return textAlignment; }
     public void setTextAlignment(Alignment align) { textAlignment = align; }
+
+    public float getScale() { return scale; }
+    public void setScale(float s) { scale = s; }
+
+    public int getTextHeight() { return (int)(mc.fontRenderer.FONT_HEIGHT * scale); }
+    public int getStringWidth() { return (int)(mc.fontRenderer.getStringWidth(label) * scale); }
 
     @Override
     public void drawSelf(int mx, int my)
@@ -58,22 +67,25 @@ public class Label extends Pane
 
         if (textAlignment.rightAligned)
         {
-            offsetX = (getWidth() - mc.fontRenderer.getStringWidth(label));
+            offsetX = (getWidth() - getStringWidth());
         }
         else if (textAlignment.horizontalCentered)
         {
-            offsetX = (getWidth() - mc.fontRenderer.getStringWidth(label)) / 2;
+            offsetX = (getWidth() - getStringWidth()) / 2;
         }
 
         if (textAlignment.bottomAligned)
         {
-            offsetY = (getHeight() - mc.fontRenderer.FONT_HEIGHT);
+            offsetY = (getHeight() - getTextHeight());
         }
         else if (textAlignment.verticalCentered)
         {
-            offsetY = (getHeight() - mc.fontRenderer.FONT_HEIGHT) / 2;
+            offsetY = (getHeight() - getTextHeight()) / 2;
         }
 
-        mc.fontRenderer.drawString(label, getX() + offsetX, getY() + offsetY, color, shadow);
+        GL11.glPushMatrix();
+        GL11.glScalef(scale, scale, scale);
+        mc.fontRenderer.drawString(label, (int)((getX() + offsetX) / scale), (int)((getY() + offsetY) / scale), color, shadow);
+        GL11.glPopMatrix();
     }
 }
