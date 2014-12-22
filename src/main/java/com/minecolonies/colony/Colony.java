@@ -896,6 +896,7 @@ public class Colony
         {
             EntityCitizen entity = citizen.getCitizenEntity();
             if (citizen.getWorkBuilding() != null &&
+                    entity != null &&
                     entity.getColonyJob() != null)
             {
                 if (!entity.getColonyJob().hasItemsNeeded())
