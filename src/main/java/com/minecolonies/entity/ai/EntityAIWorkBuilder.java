@@ -5,7 +5,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.jobs.JobBuilder;
+import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
 import cpw.mods.fml.common.FMLCommonHandler;

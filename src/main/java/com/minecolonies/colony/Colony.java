@@ -719,6 +719,17 @@ public class Colony
         return buildings.get(buildingId);
     }
 
+    public <BUILDING extends Building> BUILDING getBuilding(ChunkCoordinates buildingId, Class<BUILDING> type)
+    {
+        try
+        {
+            return type.cast(buildings.get(buildingId));
+        }
+        catch (ClassCastException exc) {}
+
+        return null;
+    }
+
     /**
      * Add a Building to the Colony
      *

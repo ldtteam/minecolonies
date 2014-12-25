@@ -2,6 +2,7 @@ package com.minecolonies.entity;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.gui.WindowCitizen;
+import com.minecolonies.client.gui.WindowTestGui;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -12,7 +13,7 @@ import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.entity.ai.EntityAIWork;
-import com.minecolonies.entity.jobs.ColonyJob;
+import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.GuiHandler;
@@ -53,8 +54,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     private Colony      colony;
     private CitizenData citizenData;
-
-    private ColonyJob   colonyJob;
 
     protected Status status = Status.IDLE;
 
@@ -114,31 +113,37 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
 
-        if (colonyJob != null)
-        {
-            colonyJob.addTasks(this.tasks);
-        }
+        onJobChanged(getColonyJob());
     }
 
-    public ColonyJob getColonyJob(){ return colonyJob; }
-    public <JOB extends ColonyJob> JOB getColonyJob(Class<JOB> type)
+    public Job getColonyJob(){ return citizenData != null ? citizenData.getColonyJob() : null; }
+    public <JOB extends Job> JOB getColonyJob(Class<JOB> type)
     {
-        try
-        {
-            return type.cast(colonyJob);
-        }
-        catch (ClassCastException exc)
-        {
-        }
-
-        return null;
+        return citizenData != null ? citizenData.getColonyJob(type) : null;
     }
 
-    public void setColonyJob(ColonyJob j)
+    public void onJobChanged(Job job)
     {
-        colonyJob = j;
-        updateModel();
+        //  Model
+        RenderBipedCitizen.Model model = RenderBipedCitizen.Model.SETTLER;
 
+        if (job != null)
+        {
+            model = job.getModel();
+        }
+        else
+        {
+            switch (getLevel())
+            {
+                case 1: model = RenderBipedCitizen.Model.CITIZEN;    break;
+                case 2: model = RenderBipedCitizen.Model.NOBLE;      break;
+                case 3: model = RenderBipedCitizen.Model.ARISTOCRAT; break;
+            }
+        }
+
+        dataWatcher.updateObject(DATA_MODEL_ID, model.name());
+
+        //  AI Tasks
         Object currentTasks[] = this.tasks.taskEntries.toArray();
         for (Object task : currentTasks)
         {
@@ -148,9 +153,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
         }
 
-        if (colonyJob != null)
+        if (job != null)
         {
-            colonyJob.addTasks(this.tasks);
+            job.addTasks(this.tasks);
+            ChunkCoordUtils.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
         }
     }
 
@@ -169,27 +175,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         int textureId = (getTextureID() % model.numTextures) + 1;
         texture = new ResourceLocation(Constants.MOD_ID, textureBase + textureId + ".png");
-    }
-
-    public void updateModel()
-    {
-        RenderBipedCitizen.Model model = RenderBipedCitizen.Model.SETTLER;
-
-        if (colonyJob != null)
-        {
-            model = colonyJob.getModel();
-        }
-        else
-        {
-            switch (getLevel())
-            {
-                case 1: model = RenderBipedCitizen.Model.CITIZEN;    break;
-                case 2: model = RenderBipedCitizen.Model.NOBLE;      break;
-                case 3: model = RenderBipedCitizen.Model.ARISTOCRAT; break;
-            }
-        }
-
-        dataWatcher.updateObject(DATA_MODEL_ID, model.name());
     }
 
     @Override
@@ -269,23 +254,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
             setColony(c, data);
         }
-
-        BuildingWorker workBuilding = getWorkBuilding();
-        if (workBuilding != null)
-        {
-            //  We have a place to work, do we have the assigned Job?
-            if (colonyJob == null)
-            {
-                //  No job, create one!
-                setColonyJob(workBuilding.createJob(this));
-                ChunkCoordUtils.tryMoveLivingToXYZ(this, workBuilding.getLocation());
-            }
-        }
-        else if (colonyJob != null)
-        {
-            //  No place of employment, get rid of our job
-            setColonyJob(null);
-        }
     }
 
     @Override
@@ -312,7 +280,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             CitizenData.View view = getCitizenDataView();
             if (view != null)
             {
-                GuiHandler.showGuiWindow(new WindowCitizen(view));
+                //GuiHandler.showGuiWindow(new WindowCitizen(view));
+                GuiHandler.showGuiWindow(new WindowTestGui(view));
             }
         }
         return true;
@@ -405,6 +374,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         updateLevel();
 
         citizenData.setCitizenEntity(this);
+
+        onJobChanged(getColonyJob());
     }
 
     public BuildingHome getHomeBuilding()
@@ -464,12 +435,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             compound.setString("colony", colony.getID().toString());
         }
-        if (colonyJob != null)
-        {
-            NBTTagCompound jobCompound = new NBTTagCompound();
-            colonyJob.writeToNBT(jobCompound);
-            compound.setTag("job", jobCompound);
-        }
 
         NBTTagList inventoryList = new NBTTagList();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
@@ -495,10 +460,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (compound.hasKey("colony"))
         {
             colonyId = UUID.fromString(compound.getString("colony"));
-        }
-        if (compound.hasKey("job"))
-        {
-            setColonyJob(ColonyJob.createFromNBT(this, compound.getCompoundTag("job")));
         }
 
         NBTTagList nbttaglist = compound.getTagList("Inventory", NBT.TAG_COMPOUND);

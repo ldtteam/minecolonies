@@ -1,8 +1,8 @@
-package com.minecolonies.entity.jobs;
+package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Schematic;
@@ -10,16 +10,19 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
-public class JobBuilder extends ColonyJob
+public class JobBuilder extends Job
 {
-    private Schematic schematic;
+    protected Schematic        schematic;
+    protected String           schematicName;
+    protected ChunkCoordinates schematicPos;
+    protected ChunkCoordinates schematicProgress;
 
     private final String TAG_SCHEMATIC = "schematic";
     private final String TAG_NAME      = "name";
     private final String TAG_POSITION  = "position";
     private final String TAG_PROGRESS  = "progress";
 
-    public JobBuilder(EntityCitizen entity)
+    public JobBuilder(CitizenData entity)
     {
         super(entity);
     }
@@ -54,19 +57,9 @@ public class JobBuilder extends ColonyJob
         if(compound.hasKey(TAG_SCHEMATIC))
         {
             NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
-            String name = schematicTag.getString(TAG_NAME);
-            ChunkCoordinates pos = ChunkCoordUtils.readFromNBT(schematicTag, TAG_POSITION);
-            ChunkCoordinates progress = ChunkCoordUtils.readFromNBT(schematicTag, TAG_PROGRESS);
-            schematic = Schematic.loadSchematic(getCitizen().worldObj, name);
-            if(schematic != null)
-            {
-                schematic.setPosition(pos);
-                schematic.setLocalPosition(progress);
-            }
-            else
-            {
-                compound.removeTag(TAG_SCHEMATIC);
-            }
+            schematicName = schematicTag.getString(TAG_NAME);
+            schematicPos = ChunkCoordUtils.readFromNBT(schematicTag, TAG_POSITION);
+            schematicProgress = ChunkCoordUtils.readFromNBT(schematicTag, TAG_PROGRESS);
         }
     }
 
@@ -82,6 +75,20 @@ public class JobBuilder extends ColonyJob
     @Override
     public void addTasks(EntityAITasks tasks)
     {
+        if (schematicName != null)
+        {
+            schematic = Schematic.loadSchematic(getCitizen().getColony().getWorld(), schematicName);
+            if (schematic != null)
+            {
+                schematic.setPosition(schematicPos);
+                schematic.setLocalPosition(schematicProgress);
+            }
+
+            schematicName = null;
+            schematicPos = null;
+            schematicProgress = null;
+        }
+
         tasks.addTask(3, new EntityAIWorkBuilder(this));
     }
 

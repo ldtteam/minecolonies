@@ -1,11 +1,9 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.jobs.JobDeliveryman;
+import com.minecolonies.colony.jobs.JobDeliveryman;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
@@ -53,21 +51,14 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
         worker.setStatus(WORKING);
 
         //  TODO - Actually know the Building, not the ID of it
-        Building destinationBuilding = worker.getColony().getBuilding(job.getDestination());
-
-        if (!(destinationBuilding instanceof BuildingWorker))
+        BuildingWorker destinationBuilding = worker.getColony().getBuilding(job.getDestination(), BuildingWorker.class);
+        if (destinationBuilding == null)
         {
             return;
         }
 
-        CitizenData targetCitizen = ((BuildingWorker)destinationBuilding).getWorker();
-        if (targetCitizen == null)
-        {
-            return;
-        }
-
-        EntityCitizen target = targetCitizen.getCitizenEntity();
-        if (target == null || target.getColonyJob() == null)
+        CitizenData targetCitizen = destinationBuilding.getWorker();
+        if (targetCitizen == null || targetCitizen.getColonyJob() == null)
         {
             return;
         }
@@ -79,9 +70,9 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
             return;
         }
 
-        for(int i = 0; i < target.getColonyJob().getItemsNeeded().size(); i++)
+        for(int i = 0; i < targetCitizen.getColonyJob().getItemsNeeded().size(); i++)
         {
-            ItemStack itemstack = target.getColonyJob().getItemsNeeded().get(i);
+            ItemStack itemstack = targetCitizen.getColonyJob().getItemsNeeded().get(i);
             int amount = itemstack.stackSize;
             for(int j = 0; j < destinationTileEntity.getSizeInventory(); j++)
             {
@@ -100,7 +91,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
                 }
                 InventoryUtils.setStack(destinationTileEntity, new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
             }
-            target.getColonyJob().getItemsNeeded().remove(i);
+            targetCitizen.getColonyJob().getItemsNeeded().remove(i);
             i--;
         }
 

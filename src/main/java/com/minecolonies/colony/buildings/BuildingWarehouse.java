@@ -2,11 +2,11 @@ package com.minecolonies.colony.buildings;
 
 import com.blockout.views.Window;
 import com.minecolonies.client.gui.WindowHutWarehouse;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.jobs.ColonyJob;
-import com.minecolonies.entity.jobs.JobDeliveryman;
+import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.JobDeliveryman;
 import com.minecolonies.lib.EnumGUI;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
@@ -41,7 +41,7 @@ public class BuildingWarehouse extends BuildingWorker
     }
 
     @Override
-    public ColonyJob createJob(EntityCitizen citizen)
+    public Job createJob(CitizenData citizen)
     {
         return new JobDeliveryman(citizen);
     }

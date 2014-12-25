@@ -1,21 +1,21 @@
-package com.minecolonies.entity.jobs;
+package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.EntityAIWorkDeliveryman;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
-public class JobDeliveryman extends ColonyJob
+public class JobDeliveryman extends Job
 {
     private ChunkCoordinates destination;
 
     private final String TAG_DESTINATION = "destination";
 
-    public JobDeliveryman(EntityCitizen entity)
+    public JobDeliveryman(CitizenData entity)
     {
         super(entity);
     }

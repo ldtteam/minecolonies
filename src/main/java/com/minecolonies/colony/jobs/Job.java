@@ -1,8 +1,8 @@
-package com.minecolonies.entity.jobs;
+package com.minecolonies.colony.jobs;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.render.RenderBipedCitizen;
-import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.colony.CitizenData;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,16 +15,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ColonyJob
+public abstract class Job
 {
-    private EntityCitizen   citizen;
+    private CitizenData citizen;
     private List<ItemStack> itemsNeeded = new ArrayList<ItemStack>();
 
     //  Building and View Class Mapping
-    private static Map<String, Class<? extends ColonyJob>> nameToClassMap = new HashMap<String, Class<? extends ColonyJob>>();
-    private static Map<Class<? extends ColonyJob>, String> classToNameMap = new HashMap<Class<? extends ColonyJob>, String>();
+    private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<String, Class<? extends Job>>();
+    private static Map<Class<? extends Job>, String> classToNameMap = new HashMap<Class<? extends Job>, String>();
 
-    private static String TAG_TYPE = "type";
+    private static String TAG_TYPE         = "type";
     private static String TAG_ITEMS_NEEDED = "itemsNeeded";
 
     static
@@ -39,7 +39,7 @@ public abstract class ColonyJob
      * @param name     name of job class
      * @param jobClass class of job
      */
-    private static void addMapping(String name, Class<? extends ColonyJob> jobClass)
+    private static void addMapping(String name, Class<? extends Job> jobClass)
     {
         if (nameToClassMap.containsKey(name))
         {
@@ -49,7 +49,7 @@ public abstract class ColonyJob
         {
             try
             {
-                if (jobClass.getDeclaredConstructor(EntityCitizen.class) != null)
+                if (jobClass.getDeclaredConstructor(CitizenData.class) != null)
                 {
                     nameToClassMap.put(name, jobClass);
                     classToNameMap.put(jobClass, name);
@@ -62,7 +62,7 @@ public abstract class ColonyJob
         }
     }
 
-    public ColonyJob(EntityCitizen entity)
+    public Job(CitizenData entity)
     {
         citizen = entity;
     }
@@ -74,12 +74,12 @@ public abstract class ColonyJob
         return RenderBipedCitizen.Model.CITIZEN;
     }
 
-    public EntityCitizen getCitizen() { return citizen; }
+    public CitizenData getCitizen() { return citizen; }
 
-    public static ColonyJob createFromNBT(EntityCitizen citizen, NBTTagCompound compound)
+    public static Job createFromNBT(CitizenData citizen, NBTTagCompound compound)
     {
-        ColonyJob job = null;
-        Class<? extends ColonyJob> oclass = null;
+        Job job = null;
+        Class<? extends Job> oclass = null;
 
         try
         {
@@ -88,8 +88,8 @@ public abstract class ColonyJob
             if (oclass != null)
             {
                 String type = compound.getString(TAG_TYPE);
-                Constructor<?> constructor = oclass.getDeclaredConstructor(EntityCitizen.class);
-                job = (ColonyJob)constructor.newInstance(citizen);
+                Constructor<?> constructor = oclass.getDeclaredConstructor(CitizenData.class);
+                job = (Job)constructor.newInstance(citizen);
             }
         }
         catch (Exception exception)

@@ -1,7 +1,6 @@
 package com.minecolonies.colony.buildings;
 
 import com.blockout.views.Window;
-import com.minecolonies.client.gui.GuiTypable;
 import com.minecolonies.client.gui.WindowTownhall;
 import com.minecolonies.client.gui.WindowTownhallNameEntry;
 import com.minecolonies.colony.Colony;
