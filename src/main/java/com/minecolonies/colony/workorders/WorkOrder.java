@@ -2,6 +2,7 @@ package com.minecolonies.colony.workorders;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.jobs.Job;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -172,4 +173,13 @@ public class WorkOrder
             claimedBy = UUID.fromString(compound.getString(TAG_CLAIMED_BY));
         }
     }
+
+    /**
+     * Attempt to fulfill the Work Order.
+     *
+     * Override this with an implementation for the Work Order to find a Citizen to perform the job
+     *
+     * @param colony The colony that owns the Work Order
+     */
+    public void attemptToFulfill(Colony colony) {}
 }

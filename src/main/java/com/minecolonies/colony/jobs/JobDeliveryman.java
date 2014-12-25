@@ -49,7 +49,6 @@ public class JobDeliveryman extends Job
         }
     }
 
-    @Override
     public boolean isNeeded()
     {
         Colony colony = getCitizen().getColony();

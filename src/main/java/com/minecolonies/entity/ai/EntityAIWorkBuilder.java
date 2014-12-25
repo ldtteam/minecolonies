@@ -45,7 +45,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
     @Override
     public boolean shouldExecute()
     {
-        return super.shouldExecute() && (job.hasSchematic() || job.isNeeded());
+        return super.shouldExecute() && job.hasWorkOrder();
     }
 
     @Override
@@ -74,93 +74,98 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
     @Override
     public void updateTask()
     {
-        if(worker.getOffsetTicks() % job.getWorkInterval() == 0)
+        if(worker.getOffsetTicks() % job.getWorkInterval() != 0)
         {
-            if(!job.hasSchematic())
-                return;//Fixes crash caused by buildings needing no repairs
+            return;
+        }
 
-            if(job.getSchematic().doesSchematicBlockEqualWorldBlock())
+        if(!job.hasSchematic())
+        {
+            job.complete();
+            return;//Fixes crash caused by buildings needing no repairs
+        }
+
+        if(job.getSchematic().doesSchematicBlockEqualWorldBlock())
+        {
+            findNextBlock();
+            return;//findNextBlock count was reached and we can ignore this block
+        }
+
+        System.out.println(worker.getStatus().toString());
+
+        if(worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS) {
+            if(!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition()))
             {
-                findNextBlock();
-                return;//findNextBlock count was reached and we can ignore this block
-            }
-
-            System.out.println(worker.getStatus().toString());
-
-            if(worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS) {
-			    if(!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition()))
-				{
-                    return;
-				}
-                worker.setStatus(EntityCitizen.Status.WORKING);
-			}
-
-            Block block = job.getSchematic().getBlock();
-            int metadata = job.getSchematic().getMetadata();
-
-            ChunkCoordinates coords = job.getSchematic().getBlockPosition();
-            int x = coords.posX, y = coords.posY, z = coords.posZ;
-
-            Block worldBlock = world.getBlock(x, y, z);
-            int worldBlockMetadata = world.getBlockMetadata(x, y, z);
-
-            if(block == null)//should never happen
-            {
-                ChunkCoordinates local = job.getSchematic().getLocalPosition();
-                MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.schematicNullBlock", x, y, z, local.posX, local.posY, local.posZ));
-                findNextBlock();
                 return;
             }
-            if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock)//don't overwrite huts or bedrock
+            worker.setStatus(EntityCitizen.Status.WORKING);
+        }
+
+        Block block = job.getSchematic().getBlock();
+        int metadata = job.getSchematic().getMetadata();
+
+        ChunkCoordinates coords = job.getSchematic().getBlockPosition();
+        int x = coords.posX, y = coords.posY, z = coords.posZ;
+
+        Block worldBlock = world.getBlock(x, y, z);
+        int worldBlockMetadata = world.getBlockMetadata(x, y, z);
+
+        if(block == null)//should never happen
+        {
+            ChunkCoordinates local = job.getSchematic().getLocalPosition();
+            MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.schematicNullBlock", x, y, z, local.posX, local.posY, local.posZ));
+            findNextBlock();
+            return;
+        }
+        if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock)//don't overwrite huts or bedrock
+        {
+            findNextBlock();
+            return;
+        }
+
+        if(!Configurations.builderInfiniteResources)//We need to deal with materials
+        {
+            if(!handleMaterials(block, metadata, worldBlock, worldBlockMetadata)) return;
+        }
+
+        if(block == Blocks.air)
+        {
+            worker.setCurrentItemOrArmor(0, null);
+
+            if(world.setBlockToAir(x, y, z))
             {
                 findNextBlock();
-                return;
-            }
-
-            if(!Configurations.builderInfiniteResources)//We need to deal with materials
-            {
-                if(!handleMaterials(block, metadata, worldBlock, worldBlockMetadata)) return;
-            }
-
-            if(block == Blocks.air)
-            {
-                worker.setCurrentItemOrArmor(0, null);
-
-                if(world.setBlockToAir(x, y, z))
-                {
-                    findNextBlock();
-                }
-                else
-                {
-                    MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.blockBreakFailure", x, y, z));
-                    findNextBlock();//TODO handle - for now, just skipping
-                }
             }
             else
             {
-                worker.setCurrentItemOrArmor(0, new ItemStack(block.getItem(world, x, y, z), 1, metadata));
-
-                placeRequiredSupportingBlocks(x, y, z, block, metadata);
-
-                if(placeBlock(x, y, z, block, metadata))
-                {
-                    setTileEntity(x, y, z);
-                    findNextBlock();
-                }
-                else
-                {
-                    MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.blockPlaceFailure", block.getUnlocalizedName(), x, y, z));
-                    findNextBlock();//TODO handle - for now, just skipping
-                }
+                MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.blockBreakFailure", x, y, z));
+                findNextBlock();//TODO handle - for now, just skipping
             }
-            worker.swingItem();//TODO doesn't work, may need item in hand
         }
+        else
+        {
+            worker.setCurrentItemOrArmor(0, new ItemStack(block.getItem(world, x, y, z), 1, metadata));
+
+            placeRequiredSupportingBlocks(x, y, z, block, metadata);
+
+            if(placeBlock(x, y, z, block, metadata))
+            {
+                setTileEntity(x, y, z);
+                findNextBlock();
+            }
+            else
+            {
+                MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.blockPlaceFailure", block.getUnlocalizedName(), x, y, z));
+                findNextBlock();//TODO handle - for now, just skipping
+            }
+        }
+        worker.swingItem();//TODO doesn't work, may need item in hand
     }
 
     @Override
     public boolean continueExecuting()
     {
-        return super.continueExecuting() && job.hasSchematic();
+        return super.continueExecuting() && job.hasWorkOrder() && job.hasSchematic();
     }
 
     @Override
@@ -681,7 +686,12 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
     private void loadSchematic()
     {
-        WorkOrderBuild workOrder = worker.getColony().getWorkManager().getAvailableWorkOrder(WorkOrderBuild.class);
+        WorkOrderBuild workOrder = worker.getColony().getWorkManager().getWorkOrder(job.getWorkOrderId(), WorkOrderBuild.class);
+        if (workOrder == null)
+        {
+            return;
+        }
+
         ChunkCoordinates pos = workOrder.getBuildingId();
         String name = workOrder.getUpgradeName();
 
@@ -694,8 +704,8 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             return;
         }
 
-        workOrder.setClaimedBy(job);
-        job.setWorkOrderId(workOrder.getID());
+//        workOrder.setClaimedBy(job);
+//        job.setWorkOrderId(workOrder.getID());
         job.getSchematic().setPosition(pos);
     }
 
@@ -715,8 +725,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             hut.getBuilding().setBuildingLevel(schematicLevel);
         }
 
-        job.getCitizen().getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
-        job.setSchematic(null);
+        job.complete();
         resetTask();
     }
 

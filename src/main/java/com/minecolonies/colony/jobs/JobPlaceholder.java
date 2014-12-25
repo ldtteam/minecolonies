@@ -10,6 +10,4 @@ public class JobPlaceholder extends Job
     }
 
     public String getName() { return "Placeholder"; }
-
-    public boolean isNeeded() { return false; }
 }

@@ -3,6 +3,7 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.Colony;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -75,6 +76,8 @@ public abstract class Job
     }
 
     public CitizenData getCitizen() { return citizen; }
+
+    public Colony getColony() { return citizen.getColony(); }
 
     public static Job createFromNBT(CitizenData citizen, NBTTagCompound compound)
     {
@@ -152,8 +155,6 @@ public abstract class Job
             itemsNeeded.add(ItemStack.loadItemStackFromNBT(itemCompound));
         }
     }
-
-    public abstract boolean isNeeded();
 
     public boolean hasItemsNeeded()
     {

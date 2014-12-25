@@ -318,6 +318,7 @@ public class Colony
 
         if (event.phase == TickEvent.Phase.END)
         {
+            workManager.update();
             updateSubscribers();
         }
     }

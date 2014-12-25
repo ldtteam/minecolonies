@@ -1,6 +1,9 @@
 package com.minecolonies.colony.workorders;
 
+import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
@@ -55,5 +58,20 @@ public class WorkOrderBuild extends WorkOrder
         super.readFromNBT(compound);
         buildingId = ChunkCoordUtils.readFromNBT(compound, TAG_BUILDING);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
+    }
+
+    @Override
+    public void attemptToFulfill(Colony colony)
+    {
+        for (CitizenData citizen : colony.getCitizens().values())
+        {
+            JobBuilder job = citizen.getColonyJob(JobBuilder.class);
+            if (job != null && !job.hasWorkOrder())
+            {
+                job.setWorkOrder(this);
+                setClaimedBy(job);
+                return;
+            }
+        }
     }
 }

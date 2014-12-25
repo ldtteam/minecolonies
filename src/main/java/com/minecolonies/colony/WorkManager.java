@@ -168,4 +168,15 @@ public class WorkManager
             }
         }
     }
+
+    public void update()
+    {
+        for (WorkOrder o : orders)
+        {
+            if (!o.isClaimed())
+            {
+                o.attemptToFulfill(colony);
+            }
+        }
+    }
 }
