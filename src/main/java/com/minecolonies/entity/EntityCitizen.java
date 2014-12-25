@@ -280,8 +280,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             CitizenData.View view = getCitizenDataView();
             if (view != null)
             {
-                //GuiHandler.showGuiWindow(new WindowCitizen(view));
-                GuiHandler.showGuiWindow(new WindowTestGui(view));
+                GuiHandler.showGuiWindow(new WindowCitizen(view));
             }
         }
         return true;
