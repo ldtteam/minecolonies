@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai;
 import com.github.lunatrius.schematica.config.BlockInfo;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
+import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.colony.jobs.JobBuilder;
@@ -680,18 +681,21 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
     private void loadSchematic()
     {
-        Map.Entry<ChunkCoordinates, String> entry = worker.getColony().getBuildingUpgrades().entrySet().iterator().next();
-        ChunkCoordinates pos = entry.getKey();
-        String name = entry.getValue();
+        WorkOrderBuild workOrder = worker.getColony().getWorkManager().getAvailableWorkOrder(WorkOrderBuild.class);
+        ChunkCoordinates pos = workOrder.getBuildingId();
+        String name = workOrder.getUpgradeName();
 
         job.setSchematic(Schematic.loadSchematic(world, name));
 
         if(job.getSchematic() == null)
         {
             MineColonies.logger.warn(LanguageHandler.format("entity.builder.ai.schematicLoadFailure", name));
-            worker.getColony().removeBuildingForUpgrade(pos);
+            worker.getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
         }
+
+        workOrder.setClaimedBy(job);
+        job.setWorkOrderId(workOrder.getID());
         job.getSchematic().setPosition(pos);
     }
 
@@ -711,7 +715,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             hut.getBuilding().setBuildingLevel(schematicLevel);
         }
 
-        worker.getColony().removeBuildingForUpgrade(pos);
+        job.getCitizen().getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
         job.setSchematic(null);
         resetTask();
     }

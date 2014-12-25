@@ -61,7 +61,7 @@ public class Colony
     final static private int                    CITIZEN_CLEANUP_TICK_DELAY = 60 * 20;   //  Once a minute
 
     //  Workload and Jobs
-    private Map<ChunkCoordinates, String> buildingUpgradeMap = new HashMap<ChunkCoordinates, String>();
+    private final WorkManager workManager = new WorkManager(this);
 
     private final static String TAG_ID                = "id";
     private final static String TAG_NAME              = "name";
@@ -70,7 +70,7 @@ public class Colony
     private final static String TAG_MAX_CITIZENS      = "maxCitizens";
     private final static String TAG_BUILDINGS         = "buildings";
     private final static String TAG_CITIZENS          = "citizens";
-    private final static String TAG_BUILDING_UPGRADES = "buildingUpgrades";
+    private final static String TAG_WORK              = "work";
     private final static String TAG_AUTO_HOSTILE = "autoHostile";
 
     /**
@@ -166,14 +166,7 @@ public class Colony
         }
 
         //  Workload
-        NBTTagList buildingUpgradeTagList = compound.getTagList(TAG_BUILDING_UPGRADES, NBT.TAG_COMPOUND);
-        for (int i = 0; i < buildingUpgradeTagList.tagCount(); ++i)
-        {
-            NBTTagCompound upgrade = buildingUpgradeTagList.getCompoundTagAt(i);
-            ChunkCoordinates coords = ChunkCoordUtils.readFromNBT(upgrade, TAG_ID);
-            String name = upgrade.getString(TAG_NAME);
-            buildingUpgradeMap.put(coords, name);
-        }
+        workManager.readFromNBT(compound.getCompoundTag(TAG_WORK));
 
         //autoHostile = compound.getInteger(TAG_AUTO_HOSTILE);
     }
@@ -219,18 +212,9 @@ public class Colony
         compound.setTag(TAG_CITIZENS, citizenTagList);
 
         //  Workload
-        if (!buildingUpgradeMap.isEmpty())
-        {
-            NBTTagList buildingUpgradeTagList = new NBTTagList();
-            for (Map.Entry<ChunkCoordinates, String> entry : buildingUpgradeMap.entrySet())
-            {
-                NBTTagCompound upgrade = new NBTTagCompound();
-                ChunkCoordUtils.writeToNBT(upgrade, TAG_ID, entry.getKey());
-                upgrade.setString(TAG_NAME, entry.getValue());
-                buildingUpgradeTagList.appendTag(upgrade);
-            }
-            compound.setTag(TAG_BUILDING_UPGRADES, buildingUpgradeTagList);
-        }
+        NBTTagCompound workManagerCompound = new NBTTagCompound();
+        workManager.writeToNBT(workManagerCompound);
+        compound.setTag(TAG_WORK, workManagerCompound);
 
         //compound.setInteger(TAG_AUTO_HOSTILE, autoHostile);
     }
@@ -842,6 +826,8 @@ public class Colony
         {
             building.removeCitizen(citizen);
         }
+
+        workManager.clearWorkForCitizen(citizen);
     }
 
     /**
@@ -883,20 +869,13 @@ public class Colony
         return null;
     }
 
-    public void addBuildingForUpgrade(Building building, int level)
+    /**
+     * Get the Work Manager for the Colony
+     * @return
+     */
+    public WorkManager getWorkManager()
     {
-        String upgradeName = building.getSchematicName() + level;
-        buildingUpgradeMap.put(building.getID(), upgradeName);
-    }
-
-    public void removeBuildingForUpgrade(ChunkCoordinates pos)
-    {
-        buildingUpgradeMap.remove(pos);
-    }
-
-    public Map<ChunkCoordinates, String> getBuildingUpgrades()
-    {
-        return buildingUpgradeMap;
+        return workManager;
     }
 
     public List<ChunkCoordinates> getDeliverymanRequired()

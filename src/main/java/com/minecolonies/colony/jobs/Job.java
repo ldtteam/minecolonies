@@ -87,7 +87,6 @@ public abstract class Job
 
             if (oclass != null)
             {
-                String type = compound.getString(TAG_TYPE);
                 Constructor<?> constructor = oclass.getDeclaredConstructor(CitizenData.class);
                 job = (Job)constructor.newInstance(citizen);
             }
@@ -128,10 +127,8 @@ public abstract class Job
         {
             throw new RuntimeException(this.getClass() + " is missing a mapping! This is a bug!");
         }
-        else
-        {
-            compound.setString(TAG_TYPE, s);
-        }
+
+        compound.setString(TAG_TYPE, s);
 
         if (!itemsNeeded.isEmpty())
         {

@@ -145,12 +145,14 @@ public class CitizenData
                 {
                     //  No job, create one!
                     setColonyJob(workBuilding.createJob(this));
+                    colony.getWorkManager().clearWorkForCitizen(this);
                 }
             }
             else if (job != null)
             {
                 //  No place of employment, get rid of our job
                 setColonyJob(null);
+                colony.getWorkManager().clearWorkForCitizen(this);
             }
 
             markDirty();
@@ -167,12 +169,12 @@ public class CitizenData
     {
         if (getHomeBuilding() == building)
         {
-            homeBuilding = null;
+            setHomeBuilding(null);
         }
 
         if (getWorkBuilding() == building)
         {
-            workBuilding = null;
+            setWorkBuilding(null);
         }
     }
 

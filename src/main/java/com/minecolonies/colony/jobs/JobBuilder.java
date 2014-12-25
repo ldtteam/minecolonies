@@ -3,6 +3,7 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Schematic;
@@ -10,17 +11,21 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
+import java.util.UUID;
+
 public class JobBuilder extends Job
 {
+    protected UUID             workOrderId;
     protected Schematic        schematic;
     protected String           schematicName;
     protected ChunkCoordinates schematicPos;
     protected ChunkCoordinates schematicProgress;
 
-    private final String TAG_SCHEMATIC = "schematic";
-    private final String TAG_NAME      = "name";
-    private final String TAG_POSITION  = "position";
-    private final String TAG_PROGRESS  = "progress";
+    private final static String TAG_WORK_ORDER= "workorder";
+    private final static String TAG_SCHEMATIC = "schematic";
+    private final static String TAG_NAME      = "name";
+    private final static String TAG_POSITION  = "position";
+    private final static String TAG_PROGRESS  = "progress";
 
     public JobBuilder(CitizenData entity)
     {
@@ -40,6 +45,11 @@ public class JobBuilder extends Job
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
+        if (workOrderId != null)
+        {
+            compound.setString(TAG_WORK_ORDER, workOrderId.toString());
+        }
+
         if (hasSchematic())
         {
             NBTTagCompound schematicTag = new NBTTagCompound();
@@ -54,6 +64,11 @@ public class JobBuilder extends Job
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
+        if(compound.hasKey(TAG_WORK_ORDER))
+        {
+            workOrderId = UUID.fromString(compound.getString(TAG_WORK_ORDER));
+        }
+
         if(compound.hasKey(TAG_SCHEMATIC))
         {
             NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
@@ -69,7 +84,7 @@ public class JobBuilder extends Job
         Colony colony = getCitizen().getColony();
         return colony != null &&
                 getCitizen().getWorkBuilding() != null &&
-                !colony.getBuildingUpgrades().isEmpty();
+                colony.getWorkManager().getAvailableWorkOrder(WorkOrderBuild.class) != null;
     }
 
     @Override
@@ -91,6 +106,9 @@ public class JobBuilder extends Job
 
         tasks.addTask(3, new EntityAIWorkBuilder(this));
     }
+
+    public void setWorkOrderId(UUID orderId) { workOrderId = orderId; }
+    public UUID getWorkOrderId() { return workOrderId; }
 
     public boolean hasSchematic()
     {
