@@ -20,7 +20,7 @@ public abstract class Job
     private CitizenData citizen;
     private List<ItemStack> itemsNeeded = new ArrayList<ItemStack>();
 
-    //  Building and View Class Mapping
+    //  Job and View Class Mapping
     private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<String, Class<? extends Job>>();
     private static Map<Class<? extends Job>, String> classToNameMap = new HashMap<Class<? extends Job>, String>();
 
@@ -34,7 +34,7 @@ public abstract class Job
     }
 
     /**
-     * Add a given Building mapping
+     * Add a given Job mapping
      *
      * @param name     name of job class
      * @param jobClass class of job
@@ -106,7 +106,7 @@ public abstract class Job
             catch (Exception ex)
             {
                 MineColonies.logger.error(
-                        String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                        String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
                                 compound.getString(TAG_TYPE), oclass.getName()), ex);
                 job = null;
             }
@@ -114,7 +114,7 @@ public abstract class Job
         else
         {
             MineColonies.logger.warn(
-                    String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+                    String.format("Unknown Job type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
         }
 
         return job;
