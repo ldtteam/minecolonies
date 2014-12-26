@@ -52,25 +52,25 @@ public class Pane extends Gui
         PaneParams.SizePair sizePair = params.getSizePairAttribute("size", null, parentSizePair);
         if (sizePair != null)
         {
-            width = sizePair.width;
-            height = sizePair.height;
+            width = sizePair.x;
+            height = sizePair.y;
         }
         else
         {
-            width = params.getScalableIntegerAttribute("width", width, parentSizePair.width);
-            height = params.getScalableIntegerAttribute("height", height, parentSizePair.height);
+            width = params.getScalableIntegerAttribute("width", width, parentSizePair.x);
+            height = params.getScalableIntegerAttribute("height", height, parentSizePair.y);
         }
 
         sizePair = params.getSizePairAttribute("pos", null, parentSizePair);
         if (sizePair != null)
         {
-            x = sizePair.width;
-            y = sizePair.height;
+            x = sizePair.x;
+            y = sizePair.y;
         }
         else
         {
-            x = params.getScalableIntegerAttribute("x", x, parentSizePair.width);
-            y = params.getScalableIntegerAttribute("y", y, parentSizePair.height);
+            x = params.getScalableIntegerAttribute("x", x, parentSizePair.x);
+            y = params.getScalableIntegerAttribute("y", y, parentSizePair.y);
         }
 
         alignment = params.getEnumAttribute("align", alignment);

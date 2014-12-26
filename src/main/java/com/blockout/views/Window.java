@@ -58,7 +58,7 @@ public class Window extends View
         PaneParams.SizePair size = params.getSizePairAttribute("size", null, null);
         if (size != null)
         {
-            setSize(size.width, size.height);
+            setSize(size.x, size.y);
         }
         else
         {

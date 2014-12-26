@@ -2,15 +2,14 @@ package com.minecolonies.colony.buildings;
 
 import com.blockout.views.Window;
 import com.minecolonies.client.gui.WindowHutWarehouse;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.entity.EntityDeliveryman;
-import com.minecolonies.entity.EntityWorker;
-import com.minecolonies.entity.jobs.ColonyJob;
+import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.JobDeliveryman;
 import com.minecolonies.lib.EnumGUI;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 
 public class BuildingWarehouse extends BuildingWorker
 {
@@ -30,23 +29,21 @@ public class BuildingWarehouse extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName() { return "Warehouse"; }
-
-    @Override
-    public String getJobName() { return "Deliveryman"; }
-
-    //  Classic Style of Jobs
-    @Override
-    public EntityWorker createWorker(World world)
+    public String getSchematicName()
     {
-        return new EntityDeliveryman(world);
+        return "Warehouse";
     }
 
-    //  Future Style of Jobs
     @Override
-    public Class<ColonyJob> getJobClass()
+    public String getJobName()
     {
-        return ColonyJob.class; //TODO Implement Later
+        return "Deliveryman";
+    }
+
+    @Override
+    public Job createJob(CitizenData citizen)
+    {
+        return new JobDeliveryman(citizen);
     }
 
     @Override

@@ -1,12 +1,11 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.entity.EntityWorker;
-import com.minecolonies.entity.EntityWorkerPlaceholder;
-import com.minecolonies.entity.jobs.ColonyJob;
+import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.JobPlaceholder;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 
 public class BuildingStonemason extends BuildingWorker
 {
@@ -22,15 +21,9 @@ public class BuildingStonemason extends BuildingWorker
     public String getJobName() { return "Stonemason"; }
 
     @Override
-    public EntityWorker createWorker(World world)
+    public Job createJob(CitizenData citizen)
     {
-        return new EntityWorkerPlaceholder(world); //TODO Implement Later
-    }
-
-    @Override
-    public Class<ColonyJob> getJobClass()
-    {
-        return ColonyJob.class; //TODO Implement Later
+        return new JobPlaceholder(citizen); //TODO Implement Later
     }
 
     public static class View extends BuildingWorker.View

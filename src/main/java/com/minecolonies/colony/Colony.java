@@ -6,7 +6,6 @@ import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityWorker;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.ColonyBuildingViewMessage;
 import com.minecolonies.network.messages.ColonyViewCitizensMessage;
@@ -17,12 +16,10 @@ import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -64,7 +61,7 @@ public class Colony
     final static private int                    CITIZEN_CLEANUP_TICK_DELAY = 60 * 20;   //  Once a minute
 
     //  Workload and Jobs
-    private Map<ChunkCoordinates, String> buildingUpgradeMap = new HashMap<ChunkCoordinates, String>();
+    private final WorkManager workManager = new WorkManager(this);
 
     private final static String TAG_ID                = "id";
     private final static String TAG_NAME              = "name";
@@ -73,7 +70,7 @@ public class Colony
     private final static String TAG_MAX_CITIZENS      = "maxCitizens";
     private final static String TAG_BUILDINGS         = "buildings";
     private final static String TAG_CITIZENS          = "citizens";
-    private final static String TAG_BUILDING_UPGRADES = "buildingUpgrades";
+    private final static String TAG_WORK              = "work";
     private final static String TAG_AUTO_HOSTILE = "autoHostile";
 
     /**
@@ -169,14 +166,7 @@ public class Colony
         }
 
         //  Workload
-        NBTTagList buildingUpgradeTagList = compound.getTagList(TAG_BUILDING_UPGRADES, NBT.TAG_COMPOUND);
-        for (int i = 0; i < buildingUpgradeTagList.tagCount(); ++i)
-        {
-            NBTTagCompound upgrade = buildingUpgradeTagList.getCompoundTagAt(i);
-            ChunkCoordinates coords = ChunkCoordUtils.readFromNBT(upgrade, TAG_ID);
-            String name = upgrade.getString(TAG_NAME);
-            buildingUpgradeMap.put(coords, name);
-        }
+        workManager.readFromNBT(compound.getCompoundTag(TAG_WORK));
 
         //autoHostile = compound.getInteger(TAG_AUTO_HOSTILE);
     }
@@ -222,18 +212,9 @@ public class Colony
         compound.setTag(TAG_CITIZENS, citizenTagList);
 
         //  Workload
-        if (!buildingUpgradeMap.isEmpty())
-        {
-            NBTTagList buildingUpgradeTagList = new NBTTagList();
-            for (Map.Entry<ChunkCoordinates, String> entry : buildingUpgradeMap.entrySet())
-            {
-                NBTTagCompound upgrade = new NBTTagCompound();
-                ChunkCoordUtils.writeToNBT(upgrade, TAG_ID, entry.getKey());
-                upgrade.setString(TAG_NAME, entry.getValue());
-                buildingUpgradeTagList.appendTag(upgrade);
-            }
-            compound.setTag(TAG_BUILDING_UPGRADES, buildingUpgradeTagList);
-        }
+        NBTTagCompound workManagerCompound = new NBTTagCompound();
+        workManager.writeToNBT(workManagerCompound);
+        compound.setTag(TAG_WORK, workManagerCompound);
 
         //compound.setInteger(TAG_AUTO_HOSTILE, autoHostile);
     }
@@ -337,6 +318,7 @@ public class Colony
 
         if (event.phase == TickEvent.Phase.END)
         {
+            workManager.update();
             updateSubscribers();
         }
     }
@@ -721,6 +703,17 @@ public class Colony
         return buildings.get(buildingId);
     }
 
+    public <BUILDING extends Building> BUILDING getBuilding(ChunkCoordinates buildingId, Class<BUILDING> type)
+    {
+        try
+        {
+            return type.cast(buildings.get(buildingId));
+        }
+        catch (ClassCastException exc) {}
+
+        return null;
+    }
+
     /**
      * Add a Building to the Colony
      *
@@ -833,6 +826,8 @@ public class Colony
         {
             building.removeCitizen(citizen);
         }
+
+        workManager.clearWorkForCitizen(citizen);
     }
 
     /**
@@ -874,20 +869,13 @@ public class Colony
         return null;
     }
 
-    public void addBuildingForUpgrade(Building building, int level)
+    /**
+     * Get the Work Manager for the Colony
+     * @return
+     */
+    public WorkManager getWorkManager()
     {
-        String upgradeName = building.getSchematicName() + level;
-        buildingUpgradeMap.put(building.getID(), upgradeName);
-    }
-
-    public void removeBuildingForUpgrade(ChunkCoordinates pos)
-    {
-        buildingUpgradeMap.remove(pos);
-    }
-
-    public Map<ChunkCoordinates, String> getBuildingUpgrades()
-    {
-        return buildingUpgradeMap;
+        return workManager;
     }
 
     public List<ChunkCoordinates> getDeliverymanRequired()
@@ -898,10 +886,10 @@ public class Colony
         {
             EntityCitizen entity = citizen.getCitizenEntity();
             if (citizen.getWorkBuilding() != null &&
-                    entity instanceof EntityWorker)
+                    entity != null &&
+                    entity.getColonyJob() != null)
             {
-                EntityWorker worker = (EntityWorker)entity;
-                if (!worker.hasItemsNeeded())
+                if (!entity.getColonyJob().hasItemsNeeded())
                 {
                     deliverymanRequired.add(citizen.getWorkBuilding().getLocation());
                 }

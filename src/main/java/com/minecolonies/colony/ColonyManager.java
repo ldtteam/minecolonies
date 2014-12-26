@@ -3,7 +3,6 @@ package com.minecolonies.colony;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.jobs.ColonyJob;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import net.minecraft.client.Minecraft;
@@ -34,8 +33,6 @@ public class ColonyManager {
 
     public static void init()
     {
-        Building.init();
-        ColonyJob.init();
     }
 
     /**

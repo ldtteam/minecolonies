@@ -1,6 +1,31 @@
-<window inherit="minecolonies:gui/windowBase.xml"
+<window size="171 247" pause="false" lightbox="false"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="file:blockOut.xsd">
+    <group size="100 110" pos="-90 10" spacing="1">
+        <buttonimage id="info" size="100% 30"
+                     source="minecolonies:textures/gui/guiBanners.png"
+                     imageoffset="0 0" imagesize="100 30"
+                     label="$(com.minecolonies.gui.workerHuts.information)"
+                     textalign="MiddleRight" textoffset="-15 1"
+                     textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
+
+        <buttonimage id="actions" size="100% 30"
+                     source="minecolonies:textures/gui/guiBanners.png"
+                     imageoffset="0 30" imagesize="100 30"
+                     label="$(com.minecolonies.gui.townhall.actions)"
+                     textalign="MiddleRight" textoffset="-15 1"
+                     textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
+
+        <buttonimage id="settings" size="100% 30"
+                     source="minecolonies:textures/gui/guiBanners.png"
+                     imageoffset="0 60" imagesize="100 30"
+                     label="$(com.minecolonies.gui.workerHuts.settings)"
+                     textalign="MiddleRight" textoffset="-15 1"
+                     textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
+    </group>
+
+    <image source="minecolonies:textures/gui/guiHutBackground.png" size="100% 100%" y="-5"/>
+
     <switch id="pages" size="100% 212px" pos="0 0" default="pageActions">
         <view id="pageActions">
 
@@ -48,12 +73,4 @@
 
         </view>
     </switch>
-
-    <button id="info" label="$(com.minecolonies.gui.workerHuts.information)"
-            align="BottomLeft" size="64 20" pos="9 13"/>
-    <button id="actions" label="$(com.minecolonies.gui.townhall.actions)"
-            align="BottomLeft" size="44 20" pos="75 13"/>
-    <button id="settings" label="$(com.minecolonies.gui.workerHuts.settings)"
-            align="BottomRight" size="46 20" pos="5 13"/>
-
 </window>

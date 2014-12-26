@@ -1,8 +1,8 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.EntityBuilder;
-import com.minecolonies.entity.EntityMiner;
+import com.minecolonies.entity.EntityCitizen;
 
 /**
  * Miner AI class
@@ -10,17 +10,17 @@ import com.minecolonies.entity.EntityMiner;
  *
  * @author Colton
  */
-public class EntityAIWorkMiner extends EntityAIWork<EntityMiner>
+public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 {
-    public EntityAIWorkMiner(EntityMiner worker)
+    public EntityAIWorkMiner(JobMiner job)
     {
-        super(worker);
+        super(job);
     }
 
     @Override
     public boolean shouldExecute()
     {
-        return super.shouldExecute() && worker.isNeeded();
+        return super.shouldExecute();
     }
 
     @Override
@@ -31,17 +31,12 @@ public class EntityAIWorkMiner extends EntityAIWork<EntityMiner>
             //requestMaterials();
         }
 
-        worker.setStatus(EntityBuilder.Status.WORKING);
+        worker.setStatus(EntityCitizen.Status.WORKING);
     }
 
     @Override
     public void updateTask()
     {
-        if (worker.getOffsetTicks() % worker.getWorkInterval() != 0)
-        {
-            return;
-        }
-
         //TODO Miner AI
     }
 

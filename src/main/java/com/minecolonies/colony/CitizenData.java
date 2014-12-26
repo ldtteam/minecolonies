@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -21,14 +22,15 @@ import java.util.UUID;
 public class CitizenData
 {
     //  Attributes
-    private final UUID id;
-    private String     name;
-    private boolean    isFemale;
-    private int        textureId;
+    private final UUID    id;
+    private       String  name;
+    private       boolean isFemale;
+    private       int     textureId;
 
     private Colony         colony;
     private BuildingHome   homeBuilding;
     private BuildingWorker workBuilding;
+    private Job            job;
 
     private boolean isDirty;
 
@@ -45,7 +47,7 @@ public class CitizenData
     private static final String TAG_TEXTURE = "texture";
     private static final String TAG_LEVEL   = "level";
 
-    private static final String TAG_ENTITY_ID = "entity";
+    private static final String TAG_ENTITY_ID     = "entity";
     private static final String TAG_HOME_BUILDING = "homeBuilding";
     private static final String TAG_WORK_BUILDING = "workBuilding";
 
@@ -72,7 +74,7 @@ public class CitizenData
 
         isFemale = rand.nextBoolean();   //  Gender before name
         name = generateName(rand);
-        textureId = entity.getTextureID();
+        textureId = Math.abs(entity.worldObj.rand.nextInt());
 
         strength = rand.nextInt(10) + 1;
         stamina = rand.nextInt(10) + 1;
@@ -97,6 +99,7 @@ public class CitizenData
     }
 
     public UUID getId() { return id; }
+    public Colony getColony() { return colony; }
     public String getName() { return name; }
     public boolean isFemale() { return isFemale; }
     public int getTextureId() { return textureId; }
@@ -134,6 +137,24 @@ public class CitizenData
         else if (workBuilding != building)
         {
             workBuilding = building;
+
+            if (workBuilding != null)
+            {
+                //  We have a place to work, do we have the assigned Job?
+                if (job == null)
+                {
+                    //  No job, create one!
+                    setColonyJob(workBuilding.createJob(this));
+                    colony.getWorkManager().clearWorkForCitizen(this);
+                }
+            }
+            else if (job != null)
+            {
+                //  No place of employment, get rid of our job
+                setColonyJob(null);
+                colony.getWorkManager().clearWorkForCitizen(this);
+            }
+
             markDirty();
         }
     }
@@ -148,12 +169,12 @@ public class CitizenData
     {
         if (getHomeBuilding() == building)
         {
-            homeBuilding = null;
+            setHomeBuilding(null);
         }
 
         if (getWorkBuilding() == building)
         {
-            workBuilding = null;
+            setWorkBuilding(null);
         }
     }
 
@@ -173,6 +194,32 @@ public class CitizenData
         entity = null;
     }
 
+
+    public Job getColonyJob(){ return job; }
+    public <JOB extends Job> JOB getColonyJob(Class<JOB> type)
+    {
+        try
+        {
+            return type.cast(job);
+        }
+        catch (ClassCastException exc)
+        {
+        }
+
+        return null;
+    }
+
+    public void setColonyJob(Job j)
+    {
+        job = j;
+
+        EntityCitizen entity = getCitizenEntity();
+        if (entity != null)
+        {
+            entity.onJobChanged(job);
+        }
+    }
+
     public void writeToNBT(NBTTagCompound compound)
     {
         compound.setString(TAG_ID, id.toString());
@@ -190,6 +237,13 @@ public class CitizenData
         nbtTagSkillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_CHARISMA, charisma);
         compound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
+
+        if (job != null)
+        {
+            NBTTagCompound jobCompound = new NBTTagCompound();
+            job.writeToNBT(jobCompound);
+            compound.setTag("job", jobCompound);
+        }
     }
 
     public void readFromNBT(NBTTagCompound compound)
@@ -207,6 +261,11 @@ public class CitizenData
         wisdom = nbtTagSkillsCompound.getInteger("wisdom");
         intelligence = nbtTagSkillsCompound.getInteger("intelligence");
         charisma = nbtTagSkillsCompound.getInteger("charisma");
+
+        if (compound.hasKey("job"))
+        {
+            setColonyJob(Job.createFromNBT(this, compound.getCompoundTag("job")));
+        }
     }
 
     private String generateName(Random rand)

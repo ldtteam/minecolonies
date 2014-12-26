@@ -2,6 +2,7 @@ package com.minecolonies.entity;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.gui.WindowCitizen;
+import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
@@ -10,6 +11,8 @@ import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
+import com.minecolonies.entity.ai.EntityAIWork;
+import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.GuiHandler;
@@ -42,7 +45,7 @@ import static net.minecraftforge.common.util.Constants.NBT;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
-    public  ResourceLocation texture;
+    private ResourceLocation texture;
     private InventoryCitizen inventory;
 
     private UUID        colonyId;   //  Client and Server
@@ -51,8 +54,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private Colony      colony;
     private CitizenData citizenData;
 
-    //private ColonyJob colonyJob;
-
     protected Status status = Status.IDLE;
 
     private static final int DATA_TEXTURE    = 13;
@@ -60,6 +61,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int DATA_IS_FEMALE  = 15;
     private static final int DATA_COLONY_ID  = 16;
     private static final int DATA_CITIZEN_ID = 17;  //  Because Entity UniqueIDs are not identical between client and server
+    private static final int DATA_MODEL_ID   = 18;
 
     public EntityCitizen(World world, UUID id)
     {
@@ -72,7 +74,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super(world);
         setSize(0.6F, 1.8F);
         this.func_110163_bv();//Set persistenceRequired = true;
-        setTexture();
         this.setAlwaysRenderNameTag(true);//TODO: configurable
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
@@ -93,9 +94,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.entityInit();
         dataWatcher.addObject(DATA_COLONY_ID, "");
         dataWatcher.addObject(DATA_CITIZEN_ID, "");
-        dataWatcher.addObject(DATA_TEXTURE, worldObj.rand.nextInt(3) + 1);//textureID
+        dataWatcher.addObject(DATA_TEXTURE, 0);
         dataWatcher.addObject(DATA_LEVEL, 0);
         dataWatcher.addObject(DATA_IS_FEMALE, 0);
+        dataWatcher.addObject(DATA_MODEL_ID, RenderBipedCitizen.Model.SETTLER.name());
     }
 
     protected void initTasks()
@@ -110,60 +112,68 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
 
-//        if (colonyJob != null)
-//        {
-//            colonyJob.addTasks(this.tasks);
-//        }
+        onJobChanged(getColonyJob());
     }
 
-//    public ColonyJob getColonyJob(){ return colonyJob; }
-//    public void setColonyJob(ColonyJob j)
-//    {
-//        Object currentTasks[] = this.tasks.taskEntries.toArray();
-//        for (Object task : currentTasks)
-//        {
-//            this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry)task).action);
-//        }
-//
-//        colonyJob = j;
-//
-//        initTasks();
-//    }
-
-    protected String getJobName()
+    public Job getColonyJob(){ return citizenData != null ? citizenData.getColonyJob() : null; }
+    public <JOB extends Job> JOB getColonyJob(Class<JOB> type)
     {
-        return "Citizen";
+        return citizenData != null ? citizenData.getColonyJob(type) : null;
+    }
+
+    public void onJobChanged(Job job)
+    {
+        //  Model
+        RenderBipedCitizen.Model model = RenderBipedCitizen.Model.SETTLER;
+
+        if (job != null)
+        {
+            model = job.getModel();
+        }
+        else
+        {
+            switch (getLevel())
+            {
+                case 1: model = RenderBipedCitizen.Model.CITIZEN;    break;
+                case 2: model = RenderBipedCitizen.Model.NOBLE;      break;
+                case 3: model = RenderBipedCitizen.Model.ARISTOCRAT; break;
+            }
+        }
+
+        dataWatcher.updateObject(DATA_MODEL_ID, model.name());
+
+        //  AI Tasks
+        Object currentTasks[] = this.tasks.taskEntries.toArray();
+        for (Object task : currentTasks)
+        {
+            if (((EntityAITasks.EntityAITaskEntry)task).action instanceof EntityAIWork)
+            {
+                this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry) task).action);
+            }
+        }
+
+        if (job != null)
+        {
+            job.addTasks(this.tasks);
+            ChunkCoordUtils.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
+        }
     }
 
     public void setTexture()
     {
-        String textureBase = "textures/entity/";
-        if (getJobName().equals("Citizen"))
+        if (!worldObj.isRemote)
         {
-            switch (getLevel())
-            {
-                case 0:
-                    textureBase += "Settler";
-                    break;
-                case 1:
-                    textureBase += "Citizen";
-                    break;
-                case 2:
-                    textureBase += "Noble";
-                    break;
-                case 3:
-                    textureBase += "Aristocrat";
-                    break;
-            }
-        }
-        else
-        {
-            textureBase += getJobName(); //colonyJob.getName();
+            return;
         }
 
+        RenderBipedCitizen.Model model = getModelID();
+
+        String textureBase = "textures/entity/";
+        textureBase += model.textureBase;
         textureBase += isFemale() ? "Female" : "Male";
 
-        texture = new ResourceLocation(Constants.MOD_ID, textureBase + getTextureID() + ".png");
+        int textureId = (getTextureID() % model.numTextures) + 1;
+        texture = new ResourceLocation(Constants.MOD_ID, textureBase + textureId + ".png");
     }
 
     @Override
@@ -243,37 +253,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
             setColony(c, data);
         }
-
-        if (isWorker())
-        {
-            //  Worker entity subclass, with no work building
-            if (citizenData.getWorkBuilding() == null)
-            {
-                removeFromWorkBuilding();
-            }
-        }
-        else if (citizenData.getWorkBuilding() != null)
-        {
-            //  Non-Worker entity subclass, with a work building - become that worker subclass
-            addToWorkBuilding(citizenData.getWorkBuilding());
-        }
-
-//        BuildingWorker b = (workBuilding != null) ? workBuilding.get() : null;
-//        if (b != null)
-//        {
-//            if (colonyJob == null)
-//            {
-//                ColonyJob newJob = b.createJob(this);
-//                if (newJob != null)
-//                {
-//                    setColonyJob(newJob);
-//                }
-//            }
-//        }
-//        else if (colonyJob != null)
-//        {
-//            setColonyJob(null);
-//        }
     }
 
     @Override
@@ -318,9 +297,19 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.onDeath(par1DamageSource);
     }
 
+    public ResourceLocation getTexture()
+    {
+        return texture;
+    }
+
     public int getTextureID()
     {
         return dataWatcher.getWatchableObjectInt(DATA_TEXTURE);
+    }
+
+    public RenderBipedCitizen.Model getModelID()
+    {
+        return RenderBipedCitizen.Model.valueOf(dataWatcher.getWatchableObjectString(DATA_MODEL_ID));
     }
 
     public int getLevel()
@@ -382,9 +371,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.updateObject(DATA_TEXTURE, citizenData.getTextureId());
         updateLevel();
 
-        setTexture();
-
         citizenData.setCitizenEntity(this);
+
+        onJobChanged(getColonyJob());
     }
 
     public BuildingHome getHomeBuilding()
@@ -419,37 +408,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return (citizenData != null) ? citizenData.getWorkBuilding() : null;
     }
 
-    public void addToWorkBuilding(BuildingWorker building)
-    {
-        NBTTagCompound nbt = new NBTTagCompound();
-        this.writeToNBT(nbt);
-        this.setDead();
-
-        EntityCitizen worker = building.createWorker(worldObj);
-        worker.readFromNBT(nbt);
-        worker.setColony(colony, citizenData);
-
-        worldObj.spawnEntityInWorld(worker);
-        ChunkCoordUtils.tryMoveLivingToXYZ(worker, building.getLocation());
-
-        clearColony();
-    }
-
-    public void removeFromWorkBuilding()
-    {
-        NBTTagCompound nbt = new NBTTagCompound();
-        this.writeToNBT(nbt);
-        this.setDead();
-
-        EntityCitizen citizen = new EntityCitizen(worldObj);
-        citizen.readFromNBT(nbt);
-        citizen.setColony(colony, citizenData);
-
-        worldObj.spawnEntityInWorld(citizen);
-
-        clearColony();
-    }
-
     public Status getStatus()
     {
         return status;
@@ -475,12 +433,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             compound.setString("colony", colony.getID().toString());
         }
-//        if (colonyJob != null)
-//        {
-//            NBTTagCompound jobCompound = new NBTTagCompound();
-//            colonyJob.writeToNBT(jobCompound);
-//            compound.setTag("job", jobCompound);
-//        }
 
         NBTTagList inventoryList = new NBTTagList();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
@@ -507,10 +459,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             colonyId = UUID.fromString(compound.getString("colony"));
         }
-//        if (compound.hasKey("job"))
-//        {
-//            setColonyJob(ColonyJob.createFromNBT(this, compound.getCompoundTag("job")));
-//        }
 
         NBTTagList nbttaglist = compound.getTagList("Inventory", NBT.TAG_COMPOUND);
         for (int i = 0; i < nbttaglist.tagCount(); i++)

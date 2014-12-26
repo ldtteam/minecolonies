@@ -1,14 +1,13 @@
-package com.minecolonies.entity.jobs;
+package com.minecolonies.colony.jobs;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.client.render.RenderBipedCitizen;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
-import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.ai.EntityAIWork;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.Constants;
 
 import java.lang.reflect.Constructor;
@@ -17,26 +16,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ColonyJob
+public abstract class Job
 {
-    private EntityCitizen   citizen;  //  CJJ TODO - This needs to go away
+    private CitizenData citizen;
     private List<ItemStack> itemsNeeded = new ArrayList<ItemStack>();
 
-    //  Building and View Class Mapping
-    private static Map<String, Class<?>> nameToClassMap = new HashMap<String, Class<?>>();
-    private static Map<Class<?>, String> classToNameMap = new HashMap<Class<?>, String>();
+    //  Job and View Class Mapping
+    private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<String, Class<? extends Job>>();
+    private static Map<Class<? extends Job>, String> classToNameMap = new HashMap<Class<? extends Job>, String>();
 
-    private static String TAG_TYPE = "type";
+    private static String TAG_TYPE         = "type";
     private static String TAG_ITEMS_NEEDED = "itemsNeeded";
 
+    static
+    {
+        addMapping("Builder", JobBuilder.class);
+        addMapping("Deliveryman", JobDeliveryman.class);
+        addMapping("Miner", JobMiner.class);
+    }
 
     /**
-     * Add a given Building mapping
+     * Add a given Job mapping
      *
-     * @param c    class of object
-     * @param name name of object
+     * @param name     name of job class
+     * @param jobClass class of job
      */
-    private static void addMapping(String name, Class<?> jobClass)
+    private static void addMapping(String name, Class<? extends Job> jobClass)
     {
         if (nameToClassMap.containsKey(name))
         {
@@ -46,7 +51,7 @@ public abstract class ColonyJob
         {
             try
             {
-                if (jobClass.getDeclaredConstructor(EntityCitizen.class) != null)
+                if (jobClass.getDeclaredConstructor(CitizenData.class) != null)
                 {
                     nameToClassMap.put(name, jobClass);
                     classToNameMap.put(jobClass, name);
@@ -59,27 +64,26 @@ public abstract class ColonyJob
         }
     }
 
-    /**
-     * Set up mappings of name->Building and TileEntity->Building
-     */
-    public static void init()
-    {
-        addMapping("Builder",       JobBuilder.class);
-    }
-
-    public ColonyJob(EntityCitizen entity)
+    public Job(CitizenData entity)
     {
         citizen = entity;
     }
 
     public abstract String getName();
 
-    public EntityCitizen getCitizen() { return citizen; }
-
-    public static ColonyJob createFromNBT(EntityCitizen citizen, NBTTagCompound compound)
+    public RenderBipedCitizen.Model getModel()
     {
-        ColonyJob job = null;
-        Class<?> oclass = null;
+        return RenderBipedCitizen.Model.CITIZEN;
+    }
+
+    public CitizenData getCitizen() { return citizen; }
+
+    public Colony getColony() { return citizen.getColony(); }
+
+    public static Job createFromNBT(CitizenData citizen, NBTTagCompound compound)
+    {
+        Job job = null;
+        Class<? extends Job> oclass = null;
 
         try
         {
@@ -87,9 +91,8 @@ public abstract class ColonyJob
 
             if (oclass != null)
             {
-                String type = compound.getString(TAG_TYPE);
-                Constructor<?> constructor = oclass.getDeclaredConstructor(EntityCitizen.class);
-                job = (ColonyJob)constructor.newInstance(citizen);
+                Constructor<?> constructor = oclass.getDeclaredConstructor(CitizenData.class);
+                job = (Job)constructor.newInstance(citizen);
             }
         }
         catch (Exception exception)
@@ -106,7 +109,7 @@ public abstract class ColonyJob
             catch (Exception ex)
             {
                 MineColonies.logger.error(
-                        String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                        String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
                                 compound.getString(TAG_TYPE), oclass.getName()), ex);
                 job = null;
             }
@@ -114,7 +117,7 @@ public abstract class ColonyJob
         else
         {
             MineColonies.logger.warn(
-                    String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+                    String.format("Unknown Job type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
         }
 
         return job;
@@ -128,10 +131,8 @@ public abstract class ColonyJob
         {
             throw new RuntimeException(this.getClass() + " is missing a mapping! This is a bug!");
         }
-        else
-        {
-            compound.setString(TAG_TYPE, s);
-        }
+
+        compound.setString(TAG_TYPE, s);
 
         if (!itemsNeeded.isEmpty())
         {
@@ -155,8 +156,6 @@ public abstract class ColonyJob
             itemsNeeded.add(ItemStack.loadItemStackFromNBT(itemCompound));
         }
     }
-
-    public abstract boolean isNeeded();
 
     public boolean hasItemsNeeded()
     {
@@ -222,23 +221,4 @@ public abstract class ColonyJob
     }
 
     public void addTasks(EntityAITasks tasks) {}
-
-//    public void resetTasks()
-//    {
-//        //  Remove existing EntityAIWork tasks
-//        EntityCitizen citizen = getCitizen();
-//
-//        for (Object o : citizen.targetTasks.taskEntries)
-//        {
-//            if (o instanceof EntityAITasks.EntityAITaskEntry)
-//            {
-//                EntityAITasks.EntityAITaskEntry taskEntry = (EntityAITasks.EntityAITaskEntry) o;
-//
-//                if (taskEntry.action instanceof EntityAIWork)
-//                {
-//                    citizen.targetTasks.removeTask(taskEntry.action);
-//                }
-//            }
-//        }
-//    }
 }

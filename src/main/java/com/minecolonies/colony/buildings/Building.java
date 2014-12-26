@@ -5,6 +5,7 @@ import com.minecolonies.blocks.*;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -20,6 +21,7 @@ import net.minecraft.world.World;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class Building
@@ -95,7 +97,7 @@ public abstract class Building
     /**
      * Set up mappings of name->Building and TileEntity->Building
      */
-    public static void init()
+    static
     {
         addMapping("Baker",         BuildingBaker.class,         BlockHutBaker.class);
         addMapping("Blacksmith",    BuildingBlacksmith.class,    BlockHutBlacksmith.class);
@@ -280,11 +282,29 @@ public abstract class Building
     public void onServerTick(TickEvent.ServerTickEvent event) {}
     public void onWorldTick(TickEvent.WorldTickEvent event) {}
 
+    private void requestWorkOrder(int level)
+    {
+        boolean found = false;
+        for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        {
+            if (o.getBuildingId().equals(getID()))
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            colony.getWorkManager().addWorkOrder(WorkOrderBuild.create(this, level));
+        }
+    }
+
     public void requestUpgrade()
     {
         if (buildingLevel < 3) //  TODO maxLevel
         {
-            colony.addBuildingForUpgrade(this, buildingLevel + 1);
+            requestWorkOrder(buildingLevel + 1);
         }
     }
 
@@ -292,7 +312,7 @@ public abstract class Building
     {
         if (buildingLevel > 0)
         {
-            colony.addBuildingForUpgrade(this, buildingLevel);
+            requestWorkOrder(buildingLevel);
         }
     }
 
