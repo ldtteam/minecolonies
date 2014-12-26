@@ -34,7 +34,7 @@ public abstract class BuildingWorker extends BuildingHut
         super.onDestroyed();
     }
 
-    public abstract String getJobName();
+    public abstract String getJobName(); //TODO remove this?
 
     public abstract Job createJob(CitizenData citizen);
 
