@@ -56,9 +56,9 @@ public class Colony
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
-    private              int                    maxCitizens                = Constants.DEFAULT_MAX_CITIZENS;
-    private              Map<UUID, CitizenData> citizens                   = new HashMap<UUID, CitizenData>();
-    final static private int                    CITIZEN_CLEANUP_TICK_DELAY = 60 * 20;   //  Once a minute
+    private              int                    maxCitizens                    = Constants.DEFAULT_MAX_CITIZENS;
+    private              Map<UUID, CitizenData> citizens                       = new HashMap<UUID, CitizenData>();
+    private final static int                    CITIZEN_CLEANUP_TICK_INCREMENT = 60 * 20;   //  Once a minute
 
     //  Workload and Jobs
     private final WorkManager workManager = new WorkManager(this);
@@ -71,7 +71,7 @@ public class Colony
     private final static String TAG_BUILDINGS         = "buildings";
     private final static String TAG_CITIZENS          = "citizens";
     private final static String TAG_WORK              = "work";
-    private final static String TAG_AUTO_HOSTILE = "autoHostile";
+    private final static String TAG_AUTO_HOSTILE      = "autoHostile";
 
     /**
      * Constructor for a newly created Colony.
@@ -318,7 +318,6 @@ public class Colony
 
         if (event.phase == TickEvent.Phase.END)
         {
-            workManager.update();
             updateSubscribers();
         }
     }
@@ -355,9 +354,9 @@ public class Colony
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
         if (event.phase == TickEvent.Phase.START &&
-            (event.world.getWorldInfo().getWorldTime() % CITIZEN_CLEANUP_TICK_DELAY) == 0)
+            (event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0)
         {
-            //  Every CITIZEN_CLEANUP_TICK_DELAY, cleanup any 'lost' citizens
+            //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
 
             //  Assume all chunks are loaded until we find one that isn't
             boolean allColonyChunksLoaded = true;
@@ -430,7 +429,7 @@ public class Colony
                 int respawnInterval = Configurations.citizenRespawnInterval * 20;
                 respawnInterval -= (60 * townhall.getBuildingLevel());
 
-                if (event.world.getWorldInfo().getWorldTime() % respawnInterval == 0)
+                if (event.world.getWorldTime() % respawnInterval == 0)
                 {
                     spawnCitizen();
                 }
@@ -442,6 +441,8 @@ public class Colony
         {
             building.onWorldTick(event);
         }
+
+        workManager.onWorldTick(event);
     }
 
 
@@ -800,28 +801,18 @@ public class Colony
         return activeCitizens;
     }
 
+    /**
+     * Is the Citizen ID an actual Citizen in the Colony?
+     * @param c ID of the Citizen
+     * @return true if a Citizen of the given ID exists in the Colony
+     */
     public boolean isCitizen(UUID c) { return citizens.containsKey(c); }
-
-    public void removeCitizen(EntityCitizen citizen)
-    {
-        removeCitizen(citizen.getCitizenData());
-    }
 
     public void removeCitizen(CitizenData citizen)
     {
         removedCitizens.add(citizen.getId());
         citizens.remove(citizen.getId());
         markDirty();
-
-//        if (citizen.getHomeBuilding() != null)
-//        {
-//            citizen.getHomeBuilding().removeCitizen(citizen);
-//        }
-//
-//        if (citizen.getWorkBuilding() != null)
-//        {
-//            citizen.getWorkBuilding().removeCitizen(citizen);
-//        }
 
         for (Building building : buildings.values())
         {
@@ -833,8 +824,9 @@ public class Colony
 
     /**
      * Get citizen by ID
-     * @param citizenId
-     * @return
+     *
+     * @param citizenId ID of the Citizen
+     * @return CitizenData associated with the ID, or null if it was not found
      */
     public CitizenData getCitizen(UUID citizenId)
     {
@@ -843,8 +835,10 @@ public class Colony
 
     /**
      * Get citizen's entity by ID
-     * @param citizenId
-     * @return
+     *
+     * @param citizenId ID of the Citizen
+     * @return EntityCitizen of the CitizenData associated with the ID, or null if the citizen was not found or it has
+     * no currently loaded EntityCitizen
      */
     public EntityCitizen getCitizenEntity(UUID citizenId)
     {
@@ -853,7 +847,7 @@ public class Colony
     }
 
     /**
-     * Get an idle citizen
+     * Get the first unemployed citizen
      *
      * @return Citizen with no current job
      */
@@ -872,7 +866,8 @@ public class Colony
 
     /**
      * Get the Work Manager for the Colony
-     * @return
+     *
+     * @return WorkManager for the Colony
      */
     public WorkManager getWorkManager()
     {

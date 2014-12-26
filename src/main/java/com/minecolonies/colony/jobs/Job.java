@@ -11,27 +11,25 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class Job
 {
-    private CitizenData citizen;
+    private final CitizenData citizen;
     private List<ItemStack> itemsNeeded = new ArrayList<ItemStack>();
 
     //  Job and View Class Mapping
     private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<String, Class<? extends Job>>();
     private static Map<Class<? extends Job>, String> classToNameMap = new HashMap<Class<? extends Job>, String>();
 
-    private static String TAG_TYPE         = "type";
-    private static String TAG_ITEMS_NEEDED = "itemsNeeded";
+    private static final String TAG_TYPE         = "type";
+    private static final String TAG_ITEMS_NEEDED = "itemsNeeded";
 
     static
     {
         addMapping("Builder", JobBuilder.class);
         addMapping("Deliveryman", JobDeliveryman.class);
+        addMapping("Placeholder", JobPlaceholder.class);
     }
 
     /**
@@ -68,17 +66,39 @@ public abstract class Job
         citizen = entity;
     }
 
+    /**
+     * Return a Localization label for the Job
+     * @return localization label String
+     */
     public abstract String getName();
 
+    /**
+     * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
+     * @return
+     */
     public RenderBipedCitizen.Model getModel()
     {
         return RenderBipedCitizen.Model.CITIZEN;
     }
 
+    /**
+     * Get the CitizenData that this Job belongs to
+     * @return CitizenData that owns this Job
+     */
     public CitizenData getCitizen() { return citizen; }
 
+    /**
+     * Get the Colony that this Job is associated with (shortcut for getCitizen().getColony())
+     * @return
+     */
     public Colony getColony() { return citizen.getColony(); }
 
+    /**
+     * Create a Job from saved NBTTagCompound data
+     * @param citizen The citizen that owns the Job
+     * @param compound The NBTTagCompound containing the saved Job data
+     * @return new Job created from the data, or null
+     */
     public static Job createFromNBT(CitizenData citizen, NBTTagCompound compound)
     {
         Job job = null;
@@ -122,6 +142,10 @@ public abstract class Job
         return job;
     }
 
+    /**
+     * Save the Job to an NBTTagCompound
+     * @param compound NBTTagCompound to save the Job to
+     */
     public void writeToNBT(NBTTagCompound compound)
     {
         String s = classToNameMap.get(this.getClass());
@@ -146,6 +170,10 @@ public abstract class Job
         }
     }
 
+    /**
+     * Restore the Job from an NBTTagCompound
+     * @param compound NBTTagCompound containing saved Job data
+     */
     public void readFromNBT(NBTTagCompound compound)
     {
         NBTTagList itemsNeededTag = compound.getTagList(TAG_ITEMS_NEEDED, Constants.NBT.TAG_COMPOUND);
@@ -156,68 +184,78 @@ public abstract class Job
         }
     }
 
+    /**
+     * Does the Job have _all_ the needed items?
+     *
+     * @return true if the Job has no needed items
+     */
     public boolean hasItemsNeeded()
     {
         return itemsNeeded.isEmpty();
     }
 
+    /**
+     * Get the list of items needed by the Job
+     *
+     * @return List of items needed by the Job
+     */
     public List<ItemStack> getItemsNeeded()
     {
-        return itemsNeeded;
+        return Collections.unmodifiableList(itemsNeeded);
     }
 
     /**
-     * Add an item those needed to do the Job
+     * Add (or increment) an ItemStack to the items needed by the Job
      *
-     * @param itemstack
+     * @param stack Item+count needed to do the job
      */
-    public void addItemNeeded(ItemStack itemstack)
+    public void addItemNeeded(ItemStack stack)
     {
-        boolean isAlreadyNeeded = false;
         for(ItemStack neededItem : itemsNeeded)
         {
-            if(itemstack.isItemEqual(neededItem))
+            if(stack.isItemEqual(neededItem))
             {
-                for(int i = 0; i < itemstack.stackSize; i++)
-                {
-                    neededItem.stackSize++;
-                }
-                isAlreadyNeeded = true;
+                neededItem.stackSize += stack.stackSize;
+                return;
             }
         }
-        if(!isAlreadyNeeded)
-        {
-            itemsNeeded.add(itemstack);
-        }
+
+        itemsNeeded.add(stack);
     }
 
     /**
-     * Remove an item from those needed to do the Job
+     * Remove a items from those required to do the Job
      *
-     * @param itemstack
-     * @return
+     * @param stack ItemStack (item+count) to remove from the list of needed items
+     * @return modified ItemStack with remaining items (or null)
      */
-    public ItemStack removeItemNeeded(ItemStack itemstack)
+    public ItemStack removeItemNeeded(ItemStack stack)
     {
-        ItemStack itemCopy = itemstack.copy();
+        ItemStack stackCopy = stack.copy();
         for(ItemStack neededItem : itemsNeeded)
         {
-            if(itemCopy.isItemEqual(neededItem))
+            if(stackCopy.isItemEqual(neededItem))
             {
-                for(int i = 0; i < itemCopy.stackSize; i++)
+                int itemsToRemove = Math.min(neededItem.stackSize, stackCopy.stackSize);
+                neededItem.stackSize -= itemsToRemove;
+                stackCopy.stackSize -= itemsToRemove;
+
+                if(neededItem.stackSize == 0)
                 {
-                    itemCopy.stackSize--;
-                    neededItem.stackSize--;
-                    if(neededItem.stackSize == 0)
-                    {
-                        itemsNeeded.remove(itemsNeeded.indexOf(neededItem));
-                        break;
-                    }
+                    itemsNeeded.remove(neededItem);
                 }
+
+                break;
             }
         }
-        return itemCopy.stackSize == 0 ? null : itemstack;
+
+        return stackCopy.stackSize == 0 ? null : stackCopy;
     }
 
+    /**
+     * Override to add Job-specific AI tasks to the given EntityAITask list
+     *
+     * @param tasks EntityAITasks list to add tasks to
+     */
     public void addTasks(EntityAITasks tasks) {}
 }

@@ -13,8 +13,8 @@ public class WorkOrderBuild extends WorkOrder
     protected ChunkCoordinates buildingId;
     protected String           upgradeName;
 
-    private final static String TAG_BUILDING     = "building";
-    private final static String TAG_UPGRADE_NAME = "upgrade";
+    private static final String TAG_BUILDING     = "building";
+    private static final String TAG_UPGRADE_NAME = "upgrade";
 
     public WorkOrderBuild()
     {
@@ -38,6 +38,12 @@ public class WorkOrderBuild extends WorkOrder
         return upgradeName;
     }
 
+    /**
+     * Create a Build WorkOrder for a given Building at a given Level
+     * @param building
+     * @param level
+     * @return
+     */
     public static WorkOrderBuild create(Building building, int level)
     {
         String upgradeName = building.getSchematicName() + level;
@@ -69,7 +75,7 @@ public class WorkOrderBuild extends WorkOrder
             if (job != null && !job.hasWorkOrder())
             {
                 job.setWorkOrder(this);
-                setClaimedBy(job);
+                setClaimedBy(citizen);
                 return;
             }
         }

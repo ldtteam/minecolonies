@@ -13,7 +13,7 @@ public class JobDeliveryman extends Job
 {
     private ChunkCoordinates destination;
 
-    private final String TAG_DESTINATION = "destination";
+    private static final String TAG_DESTINATION = "destination";
 
     public JobDeliveryman(CitizenData entity)
     {
@@ -21,7 +21,10 @@ public class JobDeliveryman extends Job
     }
 
     @Override
-    public String getName(){ return "Deliveryman"; }
+    public String getName()
+    {
+        return "com.minecolonies.job.Deliveryman";
+    }
 
     @Override
     public RenderBipedCitizen.Model getModel()

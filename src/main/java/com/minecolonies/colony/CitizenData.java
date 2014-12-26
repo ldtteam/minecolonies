@@ -58,12 +58,25 @@ public class CitizenData
     private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
     private static final String TAG_SKILL_CHARISMA = "charisma";
 
+    /**
+     * Create a CitizenData given an ID
+     * Used as a super-constructor or during loading
+     *
+     * @param id ID of the Citizen
+     * @param colony Colony the Citizen belongs to
+     */
     private CitizenData(UUID id, Colony colony)
     {
         this.id = id;
         this.colony = colony;
     }
 
+    /**
+     * Create a CitizenData given a CitizenEntity
+     *
+     * @param entity
+     * @param colony
+     */
     private CitizenData(EntityCitizen entity, Colony colony)
     {
         this(entity.getUniqueID(), colony);
