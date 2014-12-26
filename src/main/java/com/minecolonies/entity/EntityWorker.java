@@ -52,6 +52,8 @@ public abstract class EntityWorker extends EntityCitizen
 
     public abstract boolean isNeeded();
 
+    public abstract int getWorkInterval();
+
     public boolean hasItemsNeeded()
     {
         return itemsNeeded.isEmpty();

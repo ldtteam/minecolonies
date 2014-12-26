@@ -403,9 +403,8 @@ public class Colony
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
 
-                for (Iterator<Map.Entry<UUID, CitizenData>> it = citizens.entrySet().iterator(); it.hasNext(); )
+                for (Map.Entry<UUID, CitizenData> entry : citizens.entrySet())
                 {
-                    Map.Entry<UUID, CitizenData> entry = it.next();
                     CitizenData citizen = entry.getValue();
                     if (citizen.getCitizenEntity() == null)
                     {

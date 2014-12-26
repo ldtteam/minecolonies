@@ -1,5 +1,6 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.entity.ai.EntityAIWorkMiner;
 import com.minecolonies.util.Schematic;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -23,7 +24,7 @@ public class EntityMiner extends EntityWorker
     protected void initTasks()
     {
         super.initTasks();
-        //this.tasks.addTask(3, new EntityAIWorkMiner(this));
+        this.tasks.addTask(3, new EntityAIWorkMiner(this));
     }
 
     @Override
@@ -54,5 +55,10 @@ public class EntityMiner extends EntityWorker
     public boolean isNeeded()
     {
         return getWorkBuilding() != null;//TODO
+    }
+
+    @Override public int getWorkInterval()
+    {
+        return 1;
     }
 }
