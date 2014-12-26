@@ -26,15 +26,15 @@ public class Image extends Pane
         PaneParams.SizePair size = params.getSizePairAttribute("imageoffset", null, null);
         if (size != null)
         {
-            imageOffsetX = size.width;
-            imageOffsetY = size.height;
+            imageOffsetX = size.x;
+            imageOffsetY = size.y;
         }
 
         size = params.getSizePairAttribute("imagesize", null, null);
         if (size != null)
         {
-            imageWidth = size.width;
-            imageHeight = size.height;
+            imageWidth = size.x;
+            imageHeight = size.y;
         }
     }
 

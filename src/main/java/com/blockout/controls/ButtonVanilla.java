@@ -11,19 +11,13 @@ public class ButtonVanilla extends Button
     private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
 
-    private String label;
-
     public ButtonVanilla(){ setSize(200, 20); }
     public ButtonVanilla(PaneParams params)
     {
         super(params);
         if (getWidth() == 0)    width = 200;
         if (getHeight() == 0)   height = 20;
-        label = params.getLocalizedStringAttribute("label", label);
     }
-
-    public String getLabel() { return label; }
-    public void setLabel(String s) { label = s; }
 
     @Override
     public void drawSelf(int mx, int my)
