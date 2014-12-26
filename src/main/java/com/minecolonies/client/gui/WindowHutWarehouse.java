@@ -23,7 +23,7 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
 
             VIEW_PAGES = "pages",
             PAGE_ACTIONS = "pageActions",
-            PAGE_SETTINGS = "pageSettings";;
+            PAGE_SETTINGS = "pageSettings";
 
     Button buttonPrevPage, buttonNextPage;
 

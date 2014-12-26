@@ -2,7 +2,6 @@ package com.minecolonies.entity;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.gui.WindowCitizen;
-import com.minecolonies.client.gui.WindowTestGui;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;

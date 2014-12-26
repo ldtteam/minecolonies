@@ -30,8 +30,10 @@ public abstract class Job
 
     static
     {
+        addMapping("Placeholder", JobPlaceholder.class);
         addMapping("Builder", JobBuilder.class);
         addMapping("Deliveryman", JobDeliveryman.class);
+        addMapping("Miner", JobMiner.class);
     }
 
     /**
