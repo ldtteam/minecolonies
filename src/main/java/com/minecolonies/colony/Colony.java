@@ -879,12 +879,10 @@ public class Colony
 
         for (CitizenData citizen : citizens.values())
         {
-            EntityCitizen entity = citizen.getCitizenEntity();
             if (citizen.getWorkBuilding() != null &&
-                    entity != null &&
-                    entity.getColonyJob() != null)
+                    citizen.getJob() != null)
             {
-                if (!entity.getColonyJob().hasItemsNeeded())
+                if (!citizen.getJob().hasItemsNeeded())
                 {
                     deliverymanRequired.add(citizen.getWorkBuilding().getLocation());
                 }

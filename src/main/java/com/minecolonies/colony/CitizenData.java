@@ -58,6 +58,8 @@ public class CitizenData
     private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
     private static final String TAG_SKILL_CHARISMA = "charisma";
 
+    private static final String TAG_JOB            = "job";
+
     /**
      * Create a CitizenData given an ID
      * Used as a super-constructor or during loading
@@ -157,14 +159,14 @@ public class CitizenData
                 if (job == null)
                 {
                     //  No job, create one!
-                    setColonyJob(workBuilding.createJob(this));
+                    setJob(workBuilding.createJob(this));
                     colony.getWorkManager().clearWorkForCitizen(this);
                 }
             }
             else if (job != null)
             {
                 //  No place of employment, get rid of our job
-                setColonyJob(null);
+                setJob(null);
                 colony.getWorkManager().clearWorkForCitizen(this);
             }
 
@@ -208,8 +210,8 @@ public class CitizenData
     }
 
 
-    public Job getColonyJob(){ return job; }
-    public <JOB extends Job> JOB getColonyJob(Class<JOB> type)
+    public Job getJob(){ return job; }
+    public <JOB extends Job> JOB getJob(Class<JOB> type)
     {
         try
         {
@@ -222,7 +224,7 @@ public class CitizenData
         return null;
     }
 
-    public void setColonyJob(Job j)
+    public void setJob(Job j)
     {
         job = j;
 
@@ -231,6 +233,8 @@ public class CitizenData
         {
             entity.onJobChanged(job);
         }
+
+        markDirty();
     }
 
     public void writeToNBT(NBTTagCompound compound)
@@ -277,7 +281,7 @@ public class CitizenData
 
         if (compound.hasKey("job"))
         {
-            setColonyJob(Job.createFromNBT(this, compound.getCompoundTag("job")));
+            setJob(Job.createFromNBT(this, compound.getCompoundTag("job")));
         }
     }
 
@@ -322,6 +326,8 @@ public class CitizenData
         private int level;
         public  int strength, stamina, wisdom, intelligence, charisma;
 
+        private String job;
+
         private ChunkCoordinates homeBuilding;
         private ChunkCoordinates workBuilding;
 
@@ -339,6 +345,8 @@ public class CitizenData
         public boolean isFemale(){ return isFemale; }
 
         public int getLevel(){ return level; }
+
+        public String getJob(){ return job; }
 
         public ChunkCoordinates getHomeBuilding(){ return homeBuilding; }
 
@@ -363,6 +371,8 @@ public class CitizenData
             wisdom = skillsCompound.getInteger(TAG_SKILL_WISDOM);
             intelligence = skillsCompound.getInteger(TAG_SKILL_INTELLIGENCE);
             charisma = skillsCompound.getInteger(TAG_SKILL_CHARISMA);
+
+            job = compound.getString(TAG_JOB);
         }
     }
 
@@ -397,6 +407,11 @@ public class CitizenData
         skillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
         skillsCompound.setInteger(TAG_SKILL_CHARISMA, charisma);
         compound.setTag(TAG_SKILLS, skillsCompound);
+
+        if (job != null)
+        {
+            compound.setString(TAG_JOB, job.getName());
+        }
     }
 
     /**

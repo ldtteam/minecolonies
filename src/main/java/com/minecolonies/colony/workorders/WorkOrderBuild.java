@@ -71,7 +71,7 @@ public class WorkOrderBuild extends WorkOrder
     {
         for (CitizenData citizen : colony.getCitizens().values())
         {
-            JobBuilder job = citizen.getColonyJob(JobBuilder.class);
+            JobBuilder job = citizen.getJob(JobBuilder.class);
             if (job != null && !job.hasWorkOrder())
             {
                 job.setWorkOrder(this);
