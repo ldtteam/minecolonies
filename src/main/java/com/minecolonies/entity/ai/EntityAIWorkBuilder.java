@@ -165,7 +165,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
     @Override
     public boolean continueExecuting()
     {
-        return super.continueExecuting() && job.hasWorkOrder() && job.hasSchematic();
+        return super.continueExecuting() /* <== this.shouldExecute() */ && job.hasSchematic();
     }
 
     @Override

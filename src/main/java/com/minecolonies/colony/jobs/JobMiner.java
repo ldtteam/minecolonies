@@ -6,12 +6,6 @@ import com.minecolonies.entity.ai.EntityAIWorkMiner;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 
-/**
- * CLASS DESCRIPTION
- * Created: December 26, 2014
- *
- * @author Colton
- */
 public class JobMiner extends Job
 {
     public JobMiner(CitizenData entity)
@@ -20,7 +14,7 @@ public class JobMiner extends Job
     }
 
     @Override
-    public String getName(){ return "Miner"; }
+    public String getName(){ return "com.minecolonies.job.Miner"; }
 
     @Override
     public RenderBipedCitizen.Model getModel()
