@@ -2,6 +2,7 @@ package com.minecolonies.util;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTool;
 
 public class InventoryUtils
 {
@@ -175,5 +176,38 @@ public class InventoryUtils
         {
             inventory.setInventorySlotContents(slot, null);
         }
+    }
+
+    /**
+     * returns a slot number if an inventory contains given tool type
+     *
+     * @return returns slot number if found, -1 if not found.
+     */
+    public static int getFirstSlotContainingTool(IInventory inventory, Class<? extends ItemTool> tool)
+    {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack item = inventory.getStackInSlot(i);
+            if (item != null && item.getItem().getClass().isAssignableFrom(tool)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * returns total number of uses left for given tool type
+     *
+     * @return returns total uses left for the given tool class - 0 if no tools of that type are found
+     */
+    public static int inventoryToolUsesLeft(IInventory inventory, Class<? extends ItemTool> tool)
+    {
+        int usesLeft = 0;
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack item = inventory.getStackInSlot(i);
+            if (item != null && item.getItem().getClass().isAssignableFrom(tool)) {
+                usesLeft += (item.getMaxDamage() - item.getItemDamage());
+            }
+        }
+        return usesLeft;
     }
 }

@@ -5,11 +5,11 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 
-public class ModelEntityDeliveryman extends ModelBiped
+public class ModelEntityDeliverymanMale extends ModelBiped
 {
     public ModelRenderer backpack;
 
-    public ModelEntityDeliveryman()
+    public ModelEntityDeliverymanMale()
     {
         float scale = 0F;
         bipedHead = new ModelRenderer(this, 0, 0);

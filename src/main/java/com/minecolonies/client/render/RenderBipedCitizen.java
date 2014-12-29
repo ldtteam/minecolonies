@@ -21,7 +21,8 @@ public class RenderBipedCitizen extends RenderBiped
         ARISTOCRAT  ( "Aristocrat",     3 ),
         BUILDER     ( "Builder",        1 ),
         DELIVERYMAN ( "Deliveryman",    1 ),
-        MINER       ( "Miner",          1 );
+        MINER       ( "Miner",          1 ),
+        LUMBERJACK  ( "Lumberjack",     1 );
 
         Model(String textureBase, int numTextures)
         {
@@ -40,13 +41,15 @@ public class RenderBipedCitizen extends RenderBiped
 
     static
     {
-        idToMaleModelMap.put(Model.DELIVERYMAN,     new ModelEntityDeliveryman());
+        idToMaleModelMap.put(Model.DELIVERYMAN,     new ModelEntityDeliverymanMale());
+        idToMaleModelMap.put(Model.LUMBERJACK,      new ModelEntityLumberjackMale());
 
         idToFemaleModelMap.put(Model.NOBLE,         new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put(Model.ARISTOCRAT,    new ModelEntityCitizenFemaleAristocrat());
         idToFemaleModelMap.put(Model.BUILDER,       new ModelEntityBuilderFemale());
-        idToFemaleModelMap.put(Model.DELIVERYMAN,   new ModelEntityDeliveryman());
+        idToFemaleModelMap.put(Model.DELIVERYMAN,   new ModelEntityDeliverymanMale());//TODO female
         idToFemaleModelMap.put(Model.MINER,         new ModelEntityMinerFemale());
+        idToFemaleModelMap.put(Model.LUMBERJACK,    new ModelEntityLumberjackFemale());
     }
 
     public RenderBipedCitizen()
