@@ -115,10 +115,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         onJobChanged(getColonyJob());
     }
 
-    public Job getColonyJob(){ return citizenData != null ? citizenData.getColonyJob() : null; }
+    public Job getColonyJob(){ return citizenData != null ? citizenData.getJob() : null; }
     public <JOB extends Job> JOB getColonyJob(Class<JOB> type)
     {
-        return citizenData != null ? citizenData.getColonyJob(type) : null;
+        return citizenData != null ? citizenData.getJob(type) : null;
     }
 
     public void onJobChanged(Job job)
@@ -291,7 +291,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (colony != null)
         {
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
-            colony.removeCitizen(this);
+            colony.removeCitizen(getCitizenData());
         }
 
         super.onDeath(par1DamageSource);

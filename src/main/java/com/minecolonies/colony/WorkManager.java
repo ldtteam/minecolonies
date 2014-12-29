@@ -1,6 +1,8 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.colony.workorders.WorkOrder;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -16,6 +18,8 @@ public class WorkManager
 //    protected final List<WorkOrder>      claimedOrders   = new ArrayList<WorkOrder>();
 
     private final static String TAG_ORDERS = "orders";
+
+    private final static int                    WORK_ORDER_CLEANUP_INCREMENT = 1 * 20;   //  Once a second
 
     public WorkManager(Colony c)
     {
@@ -128,7 +132,7 @@ public class WorkManager
         {
             if (o.isClaimedBy(citizen))
             {
-                o.removeClaimedBy();
+                o.clearClaimedBy();
             }
         }
     }
@@ -165,17 +169,36 @@ public class WorkManager
             if (o != null)
             {
                 addWorkOrder(o);
+
+                //  If this Work Order is claimed, and the Citizen who claimed it no longer exists
+                //  then clear the Claimed status
+                //  This is just a failsafe cleanup; this should not happen under normal circumstances
+                if (o.isClaimed() && colony.getCitizen(o.getClaimedBy()) == null)
+                {
+                    o.clearClaimedBy();
+                }
             }
         }
     }
 
-    public void update()
+    /**
+     * Process updates on the World Tick
+     * Currently, does periodic Work Order cleanup
+     * @param event
+     */
+    public void onWorldTick(TickEvent.WorldTickEvent event)
     {
-        for (WorkOrder o : orders)
+        if (event.phase == TickEvent.Phase.END)
         {
-            if (!o.isClaimed())
+            if ((event.world.getWorldTime() % WORK_ORDER_CLEANUP_INCREMENT) == 0)
             {
-                o.attemptToFulfill(colony);
+                for (WorkOrder o : orders)
+                {
+                    if (!o.isClaimed())
+                    {
+                        o.attemptToFulfill(colony);
+                    }
+                }
             }
         }
     }
