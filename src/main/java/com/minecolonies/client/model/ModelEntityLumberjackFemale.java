@@ -40,7 +40,6 @@ public class ModelEntityLumberjackFemale extends ModelBiped
         bipedRightArm.setTextureSize(128, 64);
         bipedRightArm.mirror = true;
         setRotation(bipedRightArm, 0F, 0F, 0F);
-        LeftArm.mirror = true;
         LeftArm = new ModelRenderer(this, 40, 16);
         LeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
         LeftArm.setRotationPoint(5F, 2F, 0F);
@@ -60,7 +59,6 @@ public class ModelEntityLumberjackFemale extends ModelBiped
         RightLeg.setTextureSize(128, 64);
         RightLeg.mirror = true;
         setRotation(RightLeg, 0F, 0F, 0F);
-        LeftLeg.mirror = true;
         LeftLeg = new ModelRenderer(this, 0, 16);
         LeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         LeftLeg.setRotationPoint(2F, 12F, 0F);

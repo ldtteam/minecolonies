@@ -3,7 +3,6 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.EntityAIWorkLumberjack;
-import com.minecolonies.entity.ai.EntityAIWorkMiner;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 
