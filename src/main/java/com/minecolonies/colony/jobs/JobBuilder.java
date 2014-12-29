@@ -22,11 +22,11 @@ public class JobBuilder extends Job
     protected ChunkCoordinates schematicPos;
     protected ChunkCoordinates schematicProgress;
 
-    private final static String TAG_WORK_ORDER= "workorder";
-    private final static String TAG_SCHEMATIC = "schematic";
-    private final static String TAG_NAME      = "name";
-    private final static String TAG_POSITION  = "position";
-    private final static String TAG_PROGRESS  = "progress";
+    private static final String TAG_WORK_ORDER = "workorder";
+    private static final String TAG_SCHEMATIC  = "schematic";
+    private static final String TAG_NAME       = "name";
+    private static final String TAG_POSITION   = "position";
+    private static final String TAG_PROGRESS   = "progress";
 
     public JobBuilder(CitizenData entity)
     {
@@ -34,7 +34,10 @@ public class JobBuilder extends Job
     }
 
     @Override
-    public String getName(){ return "Builder"; }
+    public String getName()
+    {
+        return "com.minecolonies.job.Builder";
+    }
 
     @Override
     public RenderBipedCitizen.Model getModel()
@@ -99,26 +102,51 @@ public class JobBuilder extends Job
         tasks.addTask(3, new EntityAIWorkBuilder(this));
     }
 
+    /**
+     * Set a Work Order for this Job
+     *
+     * @param order Work Order to associate with this job, or null
+     */
     public void setWorkOrder(WorkOrder order)
     {
         workOrderId = (order != null) ? order.getID() : null;
     }
 
+    /**
+     * Get the Work Order ID for this Job
+     *
+     * @return UUID of the Work Order claimed by this Job, or null
+     */
     public UUID getWorkOrderId()
     {
         return workOrderId;
     }
 
+    /**
+     * Does this job have a Work Order it has claimed?
+     *
+     * @return true if there is a Work Order claimed by this Job
+     */
     public boolean hasWorkOrder()
     {
         return workOrderId != null;
     }
 
+    /**
+     * Does this job have a loaded Schematic?
+     *
+     * @return true if there is a loaded schematic for this Job
+     */
     public boolean hasSchematic()
     {
         return schematic != null && schematic.hasSchematic();
     }
 
+    /**
+     * Get the Schematic loaded by the Job
+     *
+     * @return Schematic loaded by the Job
+     */
     public Schematic getSchematic()
     {
         return schematic;
@@ -134,6 +162,9 @@ public class JobBuilder extends Job
         return 1;//Constants.BUILDERWORKINTERFALL - this.getLevel();//TODO
     }
 
+    /**
+     * Do final completion when the Job's current work is complete
+     */
     public void complete()
     {
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class WorkOrder
+public abstract class WorkOrder
 {
     protected UUID id;
     protected UUID claimedBy;
@@ -20,9 +20,9 @@ public class WorkOrder
     private static Map<String, Class<? extends WorkOrder>> nameToClassMap = new HashMap<String, Class<? extends WorkOrder>>();
     private static Map<Class<? extends WorkOrder>, String> classToNameMap = new HashMap<Class<? extends WorkOrder>, String>();
 
-    private final static String TAG_TYPE = "type";
-    private final static String TAG_ID   = "id";
-    private final static String TAG_CLAIMED_BY = "claimedBy";
+    private static final String TAG_TYPE = "type";
+    private static final String TAG_ID   = "id";
+    private static final String TAG_CLAIMED_BY = "claimedBy";
 
     static
     {
@@ -41,73 +41,89 @@ public class WorkOrder
         {
             throw new IllegalArgumentException("Duplicate type '" + name + "' when adding Work Order class mapping");
         }
-        else
+
+        try
         {
-            try
+            if (orderClass.getDeclaredConstructor() != null)
             {
-                if (orderClass.getDeclaredConstructor() != null)
-                {
-                    nameToClassMap.put(name, orderClass);
-                    classToNameMap.put(orderClass, name);
-                }
+                nameToClassMap.put(name, orderClass);
+                classToNameMap.put(orderClass, name);
             }
-            catch (NoSuchMethodException exception)
-            {
-                throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Work Order class mapping");
-            }
+        }
+        catch (NoSuchMethodException exception)
+        {
+            throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Work Order class mapping");
         }
     }
 
+    /**
+     * Default constructor; we also start with a new id and replace it during loading;
+     * this greatly simplifies creating subclasses
+     */
     public WorkOrder()
     {
         id = UUID.randomUUID();
     }
 
+    /**
+     * Get the ID of the Work Order
+     * @return uuid of the work order
+     */
     public UUID getID()
     {
         return id;
     }
 
+    /**
+     * Is the Work Order claimed?
+     * @return true if the Work Order has been claimed
+     */
     public boolean isClaimed()
     {
         return claimedBy != null;
     }
 
-    public boolean isClaimedBy(UUID uuid)
-    {
-        return uuid.equals(claimedBy);
-    }
-
+    /**
+     * Is the Work Order claimed by the given citizen?
+     * @param citizen The citizen to check
+     * @return true if the Work Order is claimed by this Citizen
+     */
     public boolean isClaimedBy(CitizenData citizen)
     {
-        return isClaimedBy(citizen.getId());
+        return citizen.getId().equals(claimedBy);
     }
 
+    /**
+     * Get the UUID of the Citizen that the Work Order is claimed by
+     * @return uuid of citizen the Work Order has been claimed by, or null
+     */
     public UUID getClaimedBy()
     {
         return claimedBy;
     }
 
-    public void setClaimedBy(UUID c)
-    {
-        this.claimedBy = c;
-    }
-
+    /**
+     * Set the Work Order as claimed by the given Citizen
+     * @param citizen
+     */
     public void setClaimedBy(CitizenData citizen)
     {
-        setClaimedBy(citizen.getId());
+        claimedBy = (citizen != null) ? citizen.getId() : null;
     }
 
-    public void setClaimedBy(Job job)
-    {
-        setClaimedBy(job.getCitizen());
-    }
-
-    public void removeClaimedBy()
+    /**
+     * Clear the Claimed By status of the Work Order
+     */
+    public void clearClaimedBy()
     {
         claimedBy = null;
     }
 
+    /**
+     * Create a Work Order from a saved NBTTagCompound
+     * @param compound the compound that contains the data for the Work Order
+     * @return
+     */
     public static WorkOrder createFromNBT(NBTTagCompound compound)
     {
         WorkOrder order = null;
@@ -142,12 +158,16 @@ public class WorkOrder
         }
         else
         {
-            MineColonies.logger.warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            MineColonies.logger.warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
         }
 
         return order;
     }
 
+    /**
+     * Save the Work Order to an NBTTagCompound
+     * @param compound
+     */
     public void writeToNBT(NBTTagCompound compound)
     {
         String s = classToNameMap.get(this.getClass());
@@ -165,6 +185,10 @@ public class WorkOrder
         }
     }
 
+    /**
+     * Read the WorkOrder data from the NBTTagCompound
+     * @param compound
+     */
     public void readFromNBT(NBTTagCompound compound)
     {
         id = UUID.fromString(compound.getString(TAG_ID));

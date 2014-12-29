@@ -91,19 +91,38 @@ public class ColonyView
         MineColonies.network.sendToServer(new TownhallRenameMessage(getID(), name));
     }
 
+    /**
+     * Get the Townhall View for this ColonyView
+     * @return BuildingTownHall.View of the colony
+     */
     public BuildingTownHall.View getTownhall() {
         return townhall;
     }
 
-    public Building.View getBuilding(int x, int y, int z) {
+    /**
+     * Get a Building.View for a given building (by coordinate-id) using raw x,y,z
+     *
+     * @param x,y,z Coordinates/ID of the Building
+     * @return Building.View of a Building for the given Coordinates/ID, or null
+     */
+    public Building.View getBuilding(int x, int y, int z)
+    {
         return getBuilding(new ChunkCoordinates(x, y, z));
     }
 
-    public Building.View getBuilding(ChunkCoordinates buildingId) {
+    /**
+     * Get a Building.View for a given building (by coordinate-id) using ChunkCoordinates
+     *
+     * @param buildingId Coordinates/ID of the Building
+     * @return Building.View of a Building for the given Coordinates/ID, or null
+     */
+    public Building.View getBuilding(ChunkCoordinates buildingId)
+    {
         return buildings.get(buildingId);
     }
 
-    public Map<UUID, Permissions.Rank> getPlayers() {
+    public Map<UUID, Permissions.Rank> getPlayers()
+    {
         return permissions.getPlayers();
     }
 

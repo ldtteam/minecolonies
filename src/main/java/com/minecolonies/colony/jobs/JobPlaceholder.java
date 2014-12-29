@@ -9,5 +9,9 @@ public class JobPlaceholder extends Job
         super(entity);
     }
 
-    public String getName() { return "Placeholder"; }
+    @Override
+    public String getName()
+    {
+        return "com.minecolonies.job.Placeholder";
+    }
 }

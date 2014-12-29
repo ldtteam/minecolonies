@@ -58,7 +58,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
         }
 
         CitizenData targetCitizen = destinationBuilding.getWorker();
-        if (targetCitizen == null || targetCitizen.getColonyJob() == null)
+        if (targetCitizen == null || targetCitizen.getJob() == null)
         {
             return;
         }
@@ -70,9 +70,9 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
             return;
         }
 
-        for(int i = 0; i < targetCitizen.getColonyJob().getItemsNeeded().size(); i++)
+        for(int i = 0; i < targetCitizen.getJob().getItemsNeeded().size(); i++)
         {
-            ItemStack itemstack = targetCitizen.getColonyJob().getItemsNeeded().get(i);
+            ItemStack itemstack = targetCitizen.getJob().getItemsNeeded().get(i);
             int amount = itemstack.stackSize;
             for(int j = 0; j < destinationTileEntity.getSizeInventory(); j++)
             {
@@ -91,7 +91,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
                 }
                 InventoryUtils.setStack(destinationTileEntity, new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
             }
-            targetCitizen.getColonyJob().getItemsNeeded().remove(i);
+            targetCitizen.getJob().getItemsNeeded().remove(i);
             i--;
         }
 
