@@ -3,58 +3,62 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.network.PacketUtils;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.PacketBuffer;
 
+import java.io.IOException;
 import java.util.UUID;
 
-/**
- * CLASS DESCRIPTION
- * Created: October 10, 2014
- *
- * @author Colton
- */
 public class PermissionsMessage
 {
 
     public static class View implements IMessage, IMessageHandler<View, IMessage>
     {
+        private UUID colonyID;
+        private PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+
         public View()
         {
         }
 
-        UUID colonyID;
-        NBTTagCompound data;
-
-        public View(UUID id, NBTTagCompound data)
+        public View(Colony colony) throws IOException
         {
-            this.colonyID = id;
-            this.data = data;
-        }
-
-        @Override
-        public void fromBytes(ByteBuf buf)
-        {
-            this.colonyID = new UUID(buf.readLong(), buf.readLong());
-            this.data = ByteBufUtils.readTag(buf);
+            this.colonyID = colony.getID();
+            colony.getPermissions().serializeViewNetworkData(this.data);
         }
 
         @Override
         public void toBytes(ByteBuf buf)
         {
-            buf.writeLong(colonyID.getMostSignificantBits());
-            buf.writeLong(colonyID.getLeastSignificantBits());
-            ByteBufUtils.writeTag(buf, data);
+            PacketUtils.writeUUID(buf, colonyID);
+            buf.writeBytes(data);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            colonyID = PacketUtils.readUUID(buf);
+            buf.readBytes(data, buf.readableBytes());
         }
 
         @Override
         public IMessage onMessage(View message, MessageContext ctx)
         {
-            return ColonyManager.handlePermissionsViewPacket(message.colonyID, message.data);
+            try
+            {
+                return ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
+            }
+            catch (IOException exc)
+            {
+                exc.printStackTrace();
+                return null;
+            }
         }
     }
 
@@ -85,23 +89,21 @@ public class PermissionsMessage
         }
 
         @Override
-        public void fromBytes(ByteBuf buf)
-        {
-            colonyID = new UUID(buf.readLong(), buf.readLong());
-            type = MessageType.valueOf(ByteBufUtils.readUTF8String(buf));
-            rank = Permissions.Rank.valueOf(ByteBufUtils.readUTF8String(buf));
-            action = Permissions.Action.valueOf(ByteBufUtils.readUTF8String(buf));
-        }
-
-        @Override
         public void toBytes(ByteBuf buf)
         {
-            buf.writeLong(colonyID.getMostSignificantBits());
-            buf.writeLong(colonyID.getLeastSignificantBits());
-
+            PacketUtils.writeUUID(buf, colonyID);
             ByteBufUtils.writeUTF8String(buf, type.name());
             ByteBufUtils.writeUTF8String(buf, rank.name());
             ByteBufUtils.writeUTF8String(buf, action.name());
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            colonyID = PacketUtils.readUUID(buf);
+            type = MessageType.valueOf(ByteBufUtils.readUTF8String(buf));
+            rank = Permissions.Rank.valueOf(ByteBufUtils.readUTF8String(buf));
+            action = Permissions.Action.valueOf(ByteBufUtils.readUTF8String(buf));
         }
 
         @Override
@@ -152,23 +154,19 @@ public class PermissionsMessage
         }
 
         @Override
-        public void fromBytes(ByteBuf buf)
+        public void toBytes(ByteBuf buf)
         {
-            colonyID = new UUID(buf.readLong(), buf.readLong());
-            playerID = new UUID(buf.readLong(), buf.readLong());
-            rank = Permissions.Rank.valueOf(ByteBufUtils.readUTF8String(buf));
+            PacketUtils.writeUUID(buf, colonyID);
+            PacketUtils.writeUUID(buf, playerID);
+            ByteBufUtils.writeUTF8String(buf, rank.name());
         }
 
         @Override
-        public void toBytes(ByteBuf buf)
+        public void fromBytes(ByteBuf buf)
         {
-            buf.writeLong(colonyID.getMostSignificantBits());
-            buf.writeLong(colonyID.getLeastSignificantBits());
-
-            buf.writeLong(playerID.getMostSignificantBits());
-            buf.writeLong(playerID.getLeastSignificantBits());
-
-            ByteBufUtils.writeUTF8String(buf, rank.name());
+            colonyID = PacketUtils.readUUID(buf);
+            playerID = PacketUtils.readUUID(buf);
+            rank = Permissions.Rank.valueOf(ByteBufUtils.readUTF8String(buf));
         }
 
         @Override
@@ -204,20 +202,17 @@ public class PermissionsMessage
         }
 
         @Override
-        public void fromBytes(ByteBuf buf)
+        public void toBytes(ByteBuf buf)
         {
-            colonyID = new UUID(buf.readLong(), buf.readLong());
-            playerID = new UUID(buf.readLong(), buf.readLong());
+            PacketUtils.writeUUID(buf, colonyID);
+            PacketUtils.writeUUID(buf, playerID);
         }
 
         @Override
-        public void toBytes(ByteBuf buf)
+        public void fromBytes(ByteBuf buf)
         {
-            buf.writeLong(colonyID.getMostSignificantBits());
-            buf.writeLong(colonyID.getLeastSignificantBits());
-
-            buf.writeLong(playerID.getMostSignificantBits());
-            buf.writeLong(playerID.getLeastSignificantBits());
+            colonyID = PacketUtils.readUUID(buf);
+            playerID = PacketUtils.readUUID(buf);
         }
 
         @Override

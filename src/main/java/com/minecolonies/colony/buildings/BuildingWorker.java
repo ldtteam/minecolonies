@@ -5,10 +5,13 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.network.PacketUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
 
+import java.io.IOException;
 import java.util.UUID;
 
 public abstract class BuildingWorker extends BuildingHut
@@ -154,23 +157,25 @@ public abstract class BuildingWorker extends BuildingHut
 
         public UUID getWorkerId() { return workerId; }
 
-        public void parseNetworkData(NBTTagCompound compound)
+        @Override
+        public void deserialize(PacketBuffer buf) throws IOException
         {
-            super.parseNetworkData(compound);
+            super.deserialize(buf);
 
-            workerId = compound.hasKey(TAG_WORKER) ? UUID.fromString(compound.getString(TAG_WORKER)) : null;
+            boolean hasWorker = buf.readBoolean();
+            workerId = hasWorker ? PacketUtils.readUUID(buf) : null;
         }
     }
 
-
-    public void createViewNetworkData(NBTTagCompound compound)
+    @Override
+    public void serializeToView(PacketBuffer buf)
     {
-        //  TODO - Use a PacketBuffer
-        super.createViewNetworkData(compound);
+        super.serializeToView(buf);
 
+        buf.writeBoolean(worker != null);
         if (worker != null)
         {
-            compound.setString(TAG_WORKER, worker.getId().toString());
+            PacketUtils.writeUUID(buf, worker.getId());
         }
     }
 }

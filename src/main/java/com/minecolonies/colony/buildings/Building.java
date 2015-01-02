@@ -12,16 +12,15 @@ import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class Building
@@ -355,37 +354,33 @@ public abstract class Building
             return null;
         }
 
-        public void parseNetworkData(NBTTagCompound compound)
+        public void deserialize(PacketBuffer buf) throws IOException
         {
-            //  TODO - Use a PacketBuffer
-            buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
+            buildingLevel = buf.readInt();
         }
     }
 
-    public void createViewNetworkData(NBTTagCompound compound)
+    public void serializeToView(PacketBuffer buf)
     {
-        //  TODO - Use a PacketBuffer
-        //String s = classToNameMap.get(this.getClass());
-        compound.setInteger(TAG_TYPE, this.getClass().getName().hashCode());
-        compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
+        buf.writeInt(this.getClass().getName().hashCode());
+        buf.writeInt(buildingLevel);
     }
 
     /**
      * Create a Building View given it's saved NBTTagCompound
-     * TODO - Use a PacketBuffer
      *
-     * @param colony   The owning colony
-     * @param compound The network data
+     * @param colony The owning colony
+     * @param buf    The network data
      * @return
      */
-    public static View createBuildingView(ColonyView colony, ChunkCoordinates id, NBTTagCompound compound)
+    public static View createBuildingView(ColonyView colony, ChunkCoordinates id, PacketBuffer buf)
     {
         View view = null;
         Class<?> oclass = null;
 
         try
         {
-            int typeHash = compound.getInteger(TAG_TYPE);
+            int typeHash = buf.readInt();
             oclass = classNameHashToClassMap.get(typeHash);
 
             if (oclass != null)
@@ -410,17 +405,17 @@ public abstract class Building
         {
             try
             {
-                view.parseNetworkData(compound);
+                view.deserialize(buf);
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(String.format("A Building View %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
+                MineColonies.logger.error(String.format("A Building View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author", oclass.getName()), ex);
                 view = null;
             }
         }
         else
         {
-            MineColonies.logger.warn(String.format("Unknown Building type '%s', missing View subclass, or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            MineColonies.logger.warn(String.format("Unknown Building type, missing View subclass, or missing constructor of proper format."));
         }
 
         return view;

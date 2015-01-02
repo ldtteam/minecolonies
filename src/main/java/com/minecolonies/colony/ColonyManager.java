@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -531,24 +532,24 @@ public class ColonyManager {
      * @param colonyId
      * @param colonyData
      */
-    static public IMessage handleColonyViewPacket(UUID colonyId, NBTTagCompound colonyData, boolean isNewSubscription)
+    static public IMessage handleColonyViewMessage(UUID colonyId, PacketBuffer colonyData, boolean isNewSubscription) throws IOException
     {
         ColonyView view = getColonyView(colonyId);
         if (view == null)
         {
-            view = ColonyView.createFromNBT(colonyId, colonyData);
+            view = ColonyView.createFromNetwork(colonyId);
             colonyViews.put(colonyId, view);
         }
 
-        return view.handleColonyViewPacket(colonyData, isNewSubscription);
+        return view.handleColonyViewMessage(colonyData, isNewSubscription);
     }
 
-    public static IMessage handlePermissionsViewPacket(UUID colonyID, NBTTagCompound data)
+    public static IMessage handlePermissionsViewMessage(UUID colonyID, PacketBuffer data) throws IOException
     {
         ColonyView view = getColonyView(colonyID);
         if(view != null)
         {
-            return view.handlePermissionsViewPacket(data);
+            return view.handlePermissionsViewMessage(data);
         }
         else
         {
@@ -560,14 +561,33 @@ public class ColonyManager {
     /**
      *
      * @param colonyId
-     * @param colonyData
+     * @param citizenId
+     * @param buf
      */
-    static public IMessage handleColonyViewCitizensPacket(UUID colonyId, UUID citizenId, NBTTagCompound colonyData)
+    static public IMessage handleColonyViewCitizensMessage(UUID colonyId, UUID citizenId, PacketBuffer buf)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
-            return view.handleColonyViewCitizensPacket(citizenId, colonyData);
+            return view.handleColonyViewCitizensMessage(citizenId, buf);
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     * @param colonyId
+     * @param citizenId
+     */
+    static public IMessage handleColonyViewRemoveCitizenMessage(UUID colonyId, UUID citizenId)
+    {
+        ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            //  Can legitimately be NULL, because (to keep the code simple and fast), it is
+            //  possible to receive a 'remove' notice before receiving the View
+            return view.handleColonyViewRemoveCitizenMessage(citizenId);
         }
 
         return null;
@@ -576,19 +596,37 @@ public class ColonyManager {
     /**
      *
      * @param colonyId The ID of the colony
-     * @param buildingData The building data, or null if it was removed
+     * @param buf      The building data, or null if it was removed
      */
-    static public IMessage handleColonyBuildingViewPacket(UUID colonyId, ChunkCoordinates buildingId, NBTTagCompound buildingData)
+    static public IMessage handleColonyBuildingViewMessage(UUID colonyId, ChunkCoordinates buildingId, PacketBuffer buf)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
-            return view.handleColonyBuildingViewPacket(buildingId, buildingData);
+            return view.handleColonyBuildingViewMessage(buildingId, buf);
         }
         else
         {
             //  TODO - Log this.  We should have the colony
             return null;
         }
+    }
+
+    /**
+     *
+     * @param colonyId
+     * @param buildingId
+     */
+    static public IMessage handleColonyViewRemoveBuildingMessage(UUID colonyId, ChunkCoordinates buildingId)
+    {
+        ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            //  Can legitimately be NULL, because (to keep the code simple and fast), it is
+            //  possible to receive a 'remove' notice before receiving the View
+            return view.handleColonyViewRemoveBuildingMessage(buildingId);
+        }
+
+        return null;
     }
 }

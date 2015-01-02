@@ -9,7 +9,10 @@ import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobDeliveryman;
 import com.minecolonies.lib.EnumGUI;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
+
+import java.io.IOException;
 
 public class BuildingWarehouse extends BuildingWorker
 {
@@ -140,65 +143,50 @@ public class BuildingWarehouse extends BuildingWorker
             return null;
         }
 
-        public void parseNetworkData(NBTTagCompound compound)
+        @Override
+        public void deserialize(PacketBuffer buf) throws IOException
         {
-            //  TODO - Use a PacketBuffer
-            super.parseNetworkData(compound);
-
-            NBTTagCompound deliveryCompound = compound.getCompoundTag("delivery");
+            super.deserialize(buf);
 
             //  Blacksmith
-            NBTTagCompound blacksmithCompound = deliveryCompound.getCompoundTag("blacksmith");
-            blacksmithGold = blacksmithCompound.getBoolean("gold");
-            blacksmithDiamond = blacksmithCompound.getBoolean("diamond");
+            blacksmithGold = buf.readBoolean();
+            blacksmithDiamond = buf.readBoolean();
 
             //  Stonemason
-            NBTTagCompound stonemasonCompound = deliveryCompound.getCompoundTag("stonemason");
-            stonemasonStone = stonemasonCompound.getBoolean("stone");
-            stonemasonSand = stonemasonCompound.getBoolean("sand");
-            stonemasonNetherrack = stonemasonCompound.getBoolean("netherrack");
-            stonemasonQuartz = stonemasonCompound.getBoolean("quartz");
+            stonemasonStone = buf.readBoolean();
+            stonemasonSand = buf.readBoolean();
+            stonemasonNetherrack = buf.readBoolean();
+            stonemasonQuartz = buf.readBoolean();
 
             //  Guard
-            NBTTagCompound guardCompound = deliveryCompound.getCompoundTag("guard");
-            guardArmor = guardCompound.getBoolean("armor");
-            guardWeapon = guardCompound.getBoolean("weapon");
+            guardArmor = buf.readBoolean();
+            guardWeapon = buf.readBoolean();
 
             //  Misc
-            citizenVisit = deliveryCompound.getBoolean("citizen");
+            citizenVisit = buf.readBoolean();
         }
     }
 
-    public void createViewNetworkData(NBTTagCompound compound)
+    @Override
+    public void serializeToView(PacketBuffer buf)
     {
-        //  TODO - Use a PacketBuffer
-        super.createViewNetworkData(compound);
-
-        NBTTagCompound deliveryCompound = new NBTTagCompound();
+        super.serializeToView(buf);
 
         //  Blacksmith
-        NBTTagCompound blacksmithCompound = new NBTTagCompound();
-        blacksmithCompound.setBoolean("gold", blacksmithGold);
-        blacksmithCompound.setBoolean("diamond", blacksmithDiamond);
-        deliveryCompound.setTag("blacksmith", blacksmithCompound);
+        buf.writeBoolean(blacksmithGold);
+        buf.writeBoolean(blacksmithDiamond);
 
         //  Stonemason
-        NBTTagCompound stonemasonCompound = new NBTTagCompound();
-        stonemasonCompound.setBoolean("stone", stonemasonStone);
-        stonemasonCompound.setBoolean("sand", stonemasonSand);
-        stonemasonCompound.setBoolean("netherrack", stonemasonNetherrack);
-        stonemasonCompound.setBoolean("quartz", stonemasonQuartz);
-        deliveryCompound.setTag("stonemason", stonemasonCompound);
+        buf.writeBoolean(stonemasonStone);
+        buf.writeBoolean(stonemasonSand);
+        buf.writeBoolean(stonemasonNetherrack);
+        buf.writeBoolean(stonemasonQuartz);
 
         //  Guard
-        NBTTagCompound guardCompound = new NBTTagCompound();
-        guardCompound.setBoolean("armor", guardArmor);
-        guardCompound.setBoolean("weapon", guardWeapon);
-        deliveryCompound.setTag("guard", guardCompound);
+        buf.writeBoolean(guardArmor);
+        buf.writeBoolean(guardWeapon);
 
         //  Misc
-        deliveryCompound.setBoolean("citizen", citizenVisit);
-
-        compound.setTag("delivery", deliveryCompound);
+        buf.writeBoolean(citizenVisit);
     }
 }

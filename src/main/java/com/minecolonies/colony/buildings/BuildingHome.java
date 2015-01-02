@@ -4,13 +4,16 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.EnumGUI;
+import com.minecolonies.network.PacketUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.Constants;
 
+import java.io.IOException;
 import java.util.*;
 
 public class BuildingHome extends BuildingHut
@@ -143,6 +146,8 @@ public class BuildingHome extends BuildingHut
             super(c, l);
         }
 
+        public List<UUID> getResidents() { return Collections.unmodifiableList(residents); }
+
         public com.blockout.views.Window getWindow(int guiId)
         {
             if (guiId == EnumGUI.CITIZEN.getID())
@@ -151,6 +156,32 @@ public class BuildingHome extends BuildingHut
             }
 
             return null;
+        }
+
+        @Override
+        public void deserialize(PacketBuffer buf) throws IOException
+        {
+            super.deserialize(buf);
+
+            int numResidents = buf.readInt();
+            for (int i = 0; i < numResidents; ++i)
+            {
+                residents.add(PacketUtils.readUUID(buf));
+            }
+        }
+
+        private List<UUID> residents = new ArrayList<UUID>();
+    }
+
+    @Override
+    public void serializeToView(PacketBuffer buf)
+    {
+        super.serializeToView(buf);
+
+        buf.writeInt(residents.size());
+        for (CitizenData citizen : residents)
+        {
+            PacketUtils.writeUUID(buf, citizen.getId());
         }
     }
 }

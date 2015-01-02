@@ -1,11 +1,15 @@
 package com.minecolonies.colony.permissions;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.network.PacketUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.network.PacketBuffer;
+
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -262,8 +266,7 @@ public class Permissions {
         private Map<UUID, Rank> players = new HashMap<UUID, Rank>();
         private Map<Rank, Integer> permissions = new HashMap<Rank, Integer>();
 
-        protected View() {
-        }
+        public View() {}
 
         public Map<UUID, Rank> getPlayers() {
             return Collections.unmodifiableMap(players);
@@ -338,94 +341,44 @@ public class Permissions {
             players.remove(id);
         }
 
-        public void parseNetworkData(NBTTagCompound compound) {
-            //  TODO - Use a PacketBuffer
+        public void deserialize(PacketBuffer buf) throws IOException
+        {
             //  Owners
-            NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < ownerTagList.tagCount(); ++i) {
-                NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
-                String owner = ownerCompound.getString(TAG_OWNERS_ID);
-                Rank rank = Rank.valueOf(ownerCompound.getString(TAG_OWNERS_RANK));
-                players.put(UUID.fromString(owner), rank);
+            int numOwners = buf.readInt();
+            for (int i = 0; i < numOwners; ++i)
+            {
+                UUID owner = PacketUtils.readUUID(buf);
+                Rank rank = Rank.valueOf(buf.readStringFromBuffer(1024));
+                players.put(owner, rank);
             }
 
             //Permissions
-            NBTTagList permissionsTagList = compound.getTagList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < permissionsTagList.tagCount(); ++i) {
-                NBTTagCompound permissionsCompound = permissionsTagList.getCompoundTagAt(i);
-                Rank rank = Rank.valueOf(permissionsCompound.getString(TAG_OWNERS_RANK));
-
-                NBTTagList flagsTagList = permissionsCompound
-                        .getTagList(TAG_PERMISSIONS_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);//TODO convert flags to strings and do the same for loading
-
-                int flags = 0;
-
-                for (int j = 0; j < flagsTagList.tagCount(); ++j) {
-                    String flag = flagsTagList.getStringTagAt(j);
-                    flags = Utils.setFlag(flags, Action.valueOf(flag).flag);
-                }
+            int numPermissions = buf.readInt();
+            for (int i = 0; i < numPermissions; ++i)
+            {
+                Rank rank = Rank.valueOf(buf.readStringFromBuffer(1024));
+                int flags = buf.readInt();
                 permissions.put(rank, flags);
             }
         }
     }
 
-    public void createViewNetworkData(NBTTagCompound compound)
+    public void serializeViewNetworkData(PacketBuffer buf) throws IOException
     {
-        //  TODO - Use a PacketBuffer
         //  Owners
-        NBTTagList ownerTagList = new NBTTagList();
+        buf.writeInt(players.size());
         for (Map.Entry<UUID, Rank> owner : players.entrySet())
         {
-            NBTTagCompound ownersCompound = new NBTTagCompound();
-            ownersCompound.setString(TAG_OWNERS_ID, owner.getKey().toString());
-            ownersCompound.setString(TAG_OWNERS_RANK, owner.getValue().name());
-            ownerTagList.appendTag(new NBTTagString(owner.toString()));
+            PacketUtils.writeUUID(buf, owner.getKey());
+            buf.writeStringToBuffer(owner.getValue().name());
         }
-        compound.setTag(TAG_OWNERS, ownerTagList);
 
         // Permissions
-        NBTTagList permissionsTagList = new NBTTagList();
+        buf.writeInt(permissions.size());
         for (Map.Entry<Rank, Integer> entry : permissions.entrySet())
         {
-            NBTTagCompound permissionsCompound = new NBTTagCompound();
-            permissionsCompound.setString(TAG_OWNERS_RANK, entry.getKey().name());
-
-            NBTTagList flagsTagList = new NBTTagList();
-            for(Action action : Action.values())
-            {
-                if(Utils.testFlag(entry.getValue(), action.flag))
-                {
-                    flagsTagList.appendTag(new NBTTagString(action.name()));
-                }
-            }
-            permissionsCompound.setTag(TAG_PERMISSIONS_FLAGS, flagsTagList);
-
-            permissionsTagList.appendTag(permissionsCompound);
+            buf.writeStringToBuffer(entry.getKey().name());
+            buf.writeInt(entry.getValue());
         }
-        compound.setTag(TAG_PERMISSIONS, permissionsTagList);
-    }
-
-    /**
-     * Create a Permission View given it's saved NBTTagCompound
-     * TODO - Use a PacketBuffer
-     *
-     * @param compound The network data
-     * @return
-     */
-    public static View createPermissionsView(NBTTagCompound compound)
-    {
-        View view = new View();
-
-        try
-        {
-            view.parseNetworkData(compound);
-        }
-        catch (Exception ex)
-        {
-            MineColonies.logger.error(String.format("A Permissions View has thrown an exception during loading, its state cannot be restored. Report this to the mod author"), ex);
-            view = null;
-        }
-
-        return view;
     }
 }

@@ -9,8 +9,10 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Random;
 import java.util.UUID;
@@ -352,83 +354,74 @@ public class CitizenData
 
         public ChunkCoordinates getWorkBuilding(){ return workBuilding; }
 
-        public void parseNetworkData(NBTTagCompound compound)
+        public void deserialize(PacketBuffer buf) throws IOException
         {
-            //  TODO - Use a PacketBuffer
-            name = compound.getString(TAG_NAME);
-            isFemale = compound.getBoolean(TAG_FEMALE);
-            entityId = compound.hasKey(TAG_ENTITY_ID) ? compound.getInteger(TAG_ENTITY_ID) : -1;
+            name = buf.readStringFromBuffer(1024);
+            isFemale = buf.readBoolean();
+            entityId = buf.readInt();
 
-            homeBuilding = compound.hasKey(TAG_HOME_BUILDING) ? ChunkCoordUtils.readFromNBT(compound, TAG_HOME_BUILDING) : null;
-            workBuilding = compound.hasKey(TAG_WORK_BUILDING) ? ChunkCoordUtils.readFromNBT(compound, TAG_WORK_BUILDING) : null;
+            homeBuilding = buf.readBoolean() ? ChunkCoordUtils.readFromByteBuf(buf) : null;
+            workBuilding = buf.readBoolean() ? ChunkCoordUtils.readFromByteBuf(buf) : null;
 
             //  Attributes
-            level = compound.getInteger(TAG_LEVEL);
+            level = buf.readInt();
 
-            NBTTagCompound skillsCompound = compound.getCompoundTag(TAG_SKILLS);
-            strength = skillsCompound.getInteger(TAG_SKILL_STRENGTH);
-            stamina = skillsCompound.getInteger(TAG_SKILL_STAMINA);
-            wisdom = skillsCompound.getInteger(TAG_SKILL_WISDOM);
-            intelligence = skillsCompound.getInteger(TAG_SKILL_INTELLIGENCE);
-            charisma = skillsCompound.getInteger(TAG_SKILL_CHARISMA);
+            strength = buf.readInt();
+            stamina = buf.readInt();
+            wisdom = buf.readInt();
+            intelligence = buf.readInt();
+            charisma = buf.readInt();
 
-            job = compound.getString(TAG_JOB);
+            job = buf.readStringFromBuffer(1024);
         }
     }
 
-    public void createViewNetworkData(NBTTagCompound compound)
+    public void serializeViewNetworkData(PacketBuffer buf) throws IOException
     {
-        //  TODO - Use a PacketBuffer
-        compound.setString(TAG_NAME, name);
-        compound.setBoolean(TAG_FEMALE, isFemale);
+        buf.writeStringToBuffer(name);
+        buf.writeBoolean(isFemale);
 
         EntityCitizen entity = getCitizenEntity();
-        if (entity != null)
-        {
-            compound.setInteger(TAG_ENTITY_ID, entity.getEntityId());
-        }
+        buf.writeInt(entity != null ? entity.getEntityId() : -1);
 
+        buf.writeBoolean(homeBuilding != null);
         if (homeBuilding != null)
         {
-            ChunkCoordUtils.writeToNBT(compound, TAG_HOME_BUILDING, homeBuilding.getID());
+            ChunkCoordUtils.writeToByteBuf(buf, homeBuilding.getID());
         }
+
+        buf.writeBoolean(workBuilding != null);
         if (workBuilding != null)
         {
-            ChunkCoordUtils.writeToNBT(compound, TAG_WORK_BUILDING, workBuilding.getID());
+            ChunkCoordUtils.writeToByteBuf(buf, workBuilding.getID());
         }
 
         //  Attributes
-        compound.setInteger(TAG_LEVEL, level);
+        buf.writeInt(level);
 
-        NBTTagCompound skillsCompound = new NBTTagCompound();
-        skillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
-        skillsCompound.setInteger(TAG_SKILL_STAMINA, stamina);
-        skillsCompound.setInteger(TAG_SKILL_WISDOM, wisdom);
-        skillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
-        skillsCompound.setInteger(TAG_SKILL_CHARISMA, charisma);
-        compound.setTag(TAG_SKILLS, skillsCompound);
+        buf.writeInt(strength);
+        buf.writeInt(stamina);
+        buf.writeInt(wisdom);
+        buf.writeInt(intelligence);
+        buf.writeInt(charisma);
 
-        if (job != null)
-        {
-            compound.setString(TAG_JOB, job.getName());
-        }
+        buf.writeStringToBuffer(job != null ? job.getName() : "");
     }
 
     /**
      * Create a CitizenData View given it's saved NBTTagCompound
-     * TODO - Use a PacketBuffer
      *
-     * @param id       The citizen's id
-     * @param compound The network data
+     * @param id  The citizen's id
+     * @param buf The network data
      * @return
      */
-    public static View createCitizenDataView(UUID id, NBTTagCompound compound)
+    public static View createCitizenDataView(UUID id, PacketBuffer buf)
     {
         View view = new View(id);
 
         try
         {
-            view.parseNetworkData(compound);
+            view.deserialize(buf);
         }
         catch (Exception ex)
         {
