@@ -160,16 +160,14 @@ public abstract class Building
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(
-                        String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                            compound.getString(TAG_TYPE), oclass.getName()), ex);
+                String message = "A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author";
+                MineColonies.logger.error(String.format(message, compound.getString(TAG_TYPE), oclass.getName()), ex);
                 building = null;
             }
         }
         else
         {
-            MineColonies.logger.warn(
-                    String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            MineColonies.logger.warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
         }
 
         return building;
@@ -201,8 +199,7 @@ public abstract class Building
             }
             else
             {
-                MineColonies.logger.error(
-                        String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
+                MineColonies.logger.error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
             }
         }
         catch (Exception exception)

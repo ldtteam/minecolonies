@@ -235,8 +235,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             if (data == null)
             {
                 //  Citizen does not exist in the Colony
-                MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but not known to colony",
-                        getUniqueID()));
+                MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but not known to colony", getUniqueID()));
                 setDead();
                 return;
             }
@@ -245,8 +244,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             if (existingCitizen != null && existingCitizen != this)
             {
                 //  This Citizen already has a different Entity registered to it
-                MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but already have a citizen ('%s')",
-                        getUniqueID(), existingCitizen.getUniqueID()));
+                String message = "Citizen '%s' attempting to register with colony, but already have a citizen ('%s')";
+                MineColonies.logger.warn(String.format(message, getUniqueID(), existingCitizen.getUniqueID()));
                 setDead();
                 return;
             }
