@@ -128,8 +128,7 @@ public abstract class Job
             }
             catch (Exception ex)
             {
-                String message = "A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author";
-                MineColonies.logger.error(String.format(message, compound.getString(TAG_TYPE), oclass.getName()), ex);
+                MineColonies.logger.error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
                 job = null;
             }
         }
