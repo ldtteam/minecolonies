@@ -8,11 +8,11 @@ import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Random;
 import java.util.UUID;
@@ -354,9 +354,9 @@ public class CitizenData
 
         public ChunkCoordinates getWorkBuilding(){ return workBuilding; }
 
-        public void deserialize(PacketBuffer buf) throws IOException
+        public void deserialize(ByteBuf buf)
         {
-            name = buf.readStringFromBuffer(1024);
+            name = ByteBufUtils.readUTF8String(buf);
             isFemale = buf.readBoolean();
             entityId = buf.readInt();
 
@@ -372,13 +372,13 @@ public class CitizenData
             intelligence = buf.readInt();
             charisma = buf.readInt();
 
-            job = buf.readStringFromBuffer(1024);
+            job = ByteBufUtils.readUTF8String(buf);
         }
     }
 
-    public void serializeViewNetworkData(PacketBuffer buf) throws IOException
+    public void serializeViewNetworkData(ByteBuf buf)
     {
-        buf.writeStringToBuffer(name);
+        ByteBufUtils.writeUTF8String(buf, name);
         buf.writeBoolean(isFemale);
 
         EntityCitizen entity = getCitizenEntity();
@@ -405,7 +405,7 @@ public class CitizenData
         buf.writeInt(intelligence);
         buf.writeInt(charisma);
 
-        buf.writeStringToBuffer(job != null ? job.getName() : "");
+        ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
     }
 
     /**
@@ -415,7 +415,7 @@ public class CitizenData
      * @param buf The network data
      * @return
      */
-    public static View createCitizenDataView(UUID id, PacketBuffer buf)
+    public static View createCitizenDataView(UUID id, ByteBuf buf)
     {
         View view = new View(id);
 

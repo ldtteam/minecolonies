@@ -8,11 +8,9 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobDeliveryman;
 import com.minecolonies.lib.EnumGUI;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
-
-import java.io.IOException;
 
 public class BuildingWarehouse extends BuildingWorker
 {
@@ -144,7 +142,7 @@ public class BuildingWarehouse extends BuildingWorker
         }
 
         @Override
-        public void deserialize(PacketBuffer buf) throws IOException
+        public void deserialize(ByteBuf buf)
         {
             super.deserialize(buf);
 
@@ -168,7 +166,7 @@ public class BuildingWarehouse extends BuildingWorker
     }
 
     @Override
-    public void serializeToView(PacketBuffer buf)
+    public void serializeToView(ByteBuf buf)
     {
         super.serializeToView(buf);
 

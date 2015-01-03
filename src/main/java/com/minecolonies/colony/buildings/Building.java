@@ -10,14 +10,13 @@ import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -354,13 +353,13 @@ public abstract class Building
             return null;
         }
 
-        public void deserialize(PacketBuffer buf) throws IOException
+        public void deserialize(ByteBuf buf)
         {
             buildingLevel = buf.readInt();
         }
     }
 
-    public void serializeToView(PacketBuffer buf)
+    public void serializeToView(ByteBuf buf)
     {
         buf.writeInt(this.getClass().getName().hashCode());
         buf.writeInt(buildingLevel);
@@ -373,7 +372,7 @@ public abstract class Building
      * @param buf    The network data
      * @return
      */
-    public static View createBuildingView(ColonyView colony, ChunkCoordinates id, PacketBuffer buf)
+    public static View createBuildingView(ColonyView colony, ChunkCoordinates id, ByteBuf buf)
     {
         View view = null;
         Class<?> oclass = null;

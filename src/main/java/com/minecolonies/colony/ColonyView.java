@@ -10,12 +10,12 @@ import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.TownhallRenameMessage;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import net.minecraft.network.PacketBuffer;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
-import java.io.IOException;
 import java.util.*;
 
 public class ColonyView
@@ -172,10 +172,10 @@ public class ColonyView
      * @param colony
      * @param buf
      */
-    static public void serializeNetworkData(Colony colony, boolean isNewSubscription, PacketBuffer buf) throws IOException
+    static public void serializeNetworkData(Colony colony, boolean isNewSubscription, ByteBuf buf)
     {
         //  General Attributes
-        buf.writeStringToBuffer(colony.getName());
+        ByteBufUtils.writeUTF8String(buf, colony.getName());
         buf.writeInt(colony.getDimensionId());
         ChunkCoordUtils.writeToByteBuf(buf, colony.getCenter());
 
@@ -192,10 +192,10 @@ public class ColonyView
      * @param buf
      * @param isNewSubscription
      */
-    public IMessage handleColonyViewMessage(PacketBuffer buf, boolean isNewSubscription) throws IOException
+    public IMessage handleColonyViewMessage(ByteBuf buf, boolean isNewSubscription)
     {
         //  General Attributes
-        name = buf.readStringFromBuffer(1024);
+        name = ByteBufUtils.readUTF8String(buf);
         dimensionId = buf.readInt();
         center = ChunkCoordUtils.readFromByteBuf(buf);
 
@@ -223,7 +223,7 @@ public class ColonyView
         return null;
     }
 
-    public IMessage handlePermissionsViewMessage(PacketBuffer buf) throws IOException
+    public IMessage handlePermissionsViewMessage(ByteBuf buf)
     {
         permissions.deserialize(buf);
         return null;
@@ -236,7 +236,7 @@ public class ColonyView
      * @param buf
      * @return
      */
-    public IMessage handleColonyViewCitizensMessage(UUID id, PacketBuffer buf)
+    public IMessage handleColonyViewCitizensMessage(UUID id, ByteBuf buf)
     {
         CitizenData.View citizen = CitizenData.createCitizenDataView(id, buf);
         if (citizen != null)
@@ -280,7 +280,7 @@ public class ColonyView
      * @param buf
      * @return
      */
-    public IMessage handleColonyBuildingViewMessage(ChunkCoordinates buildingId, PacketBuffer buf)
+    public IMessage handleColonyBuildingViewMessage(ChunkCoordinates buildingId, ByteBuf buf)
     {
         Building.View building = Building.createBuildingView(this, buildingId, buf);
         if (building != null)

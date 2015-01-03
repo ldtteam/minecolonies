@@ -9,9 +9,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketBuffer;
 
-import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -19,13 +17,13 @@ import java.util.UUID;
  */
 public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<ColonyViewCitizenViewMessage, IMessage>
 {
-    private UUID colonyId;
-    private UUID citizenId;
-    private PacketBuffer citizenBuffer = new PacketBuffer(Unpooled.buffer());
+    private UUID    colonyId;
+    private UUID    citizenId;
+    private ByteBuf citizenBuffer = Unpooled.buffer();
 
     public ColonyViewCitizenViewMessage(){}
 
-    public ColonyViewCitizenViewMessage(Colony colony, CitizenData citizen) throws IOException
+    public ColonyViewCitizenViewMessage(Colony colony, CitizenData citizen)
     {
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();

@@ -7,11 +7,10 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.network.PacketUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.io.IOException;
 import java.util.UUID;
 
 public abstract class BuildingWorker extends BuildingHut
@@ -158,7 +157,7 @@ public abstract class BuildingWorker extends BuildingHut
         public UUID getWorkerId() { return workerId; }
 
         @Override
-        public void deserialize(PacketBuffer buf) throws IOException
+        public void deserialize(ByteBuf buf)
         {
             super.deserialize(buf);
 
@@ -168,7 +167,7 @@ public abstract class BuildingWorker extends BuildingHut
     }
 
     @Override
-    public void serializeToView(PacketBuffer buf)
+    public void serializeToView(ByteBuf buf)
     {
         super.serializeToView(buf);
 

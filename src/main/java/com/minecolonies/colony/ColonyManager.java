@@ -5,12 +5,12 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -532,7 +532,7 @@ public class ColonyManager {
      * @param colonyId
      * @param colonyData
      */
-    static public IMessage handleColonyViewMessage(UUID colonyId, PacketBuffer colonyData, boolean isNewSubscription) throws IOException
+    static public IMessage handleColonyViewMessage(UUID colonyId, ByteBuf colonyData, boolean isNewSubscription)
     {
         ColonyView view = getColonyView(colonyId);
         if (view == null)
@@ -544,7 +544,7 @@ public class ColonyManager {
         return view.handleColonyViewMessage(colonyData, isNewSubscription);
     }
 
-    public static IMessage handlePermissionsViewMessage(UUID colonyID, PacketBuffer data) throws IOException
+    public static IMessage handlePermissionsViewMessage(UUID colonyID, ByteBuf data)
     {
         ColonyView view = getColonyView(colonyID);
         if(view != null)
@@ -564,7 +564,7 @@ public class ColonyManager {
      * @param citizenId
      * @param buf
      */
-    static public IMessage handleColonyViewCitizensMessage(UUID colonyId, UUID citizenId, PacketBuffer buf)
+    static public IMessage handleColonyViewCitizensMessage(UUID colonyId, UUID citizenId, ByteBuf buf)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
@@ -598,7 +598,7 @@ public class ColonyManager {
      * @param colonyId The ID of the colony
      * @param buf      The building data, or null if it was removed
      */
-    static public IMessage handleColonyBuildingViewMessage(UUID colonyId, ChunkCoordinates buildingId, PacketBuffer buf)
+    static public IMessage handleColonyBuildingViewMessage(UUID colonyId, ChunkCoordinates buildingId, ByteBuf buf)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)

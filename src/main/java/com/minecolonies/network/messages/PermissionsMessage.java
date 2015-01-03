@@ -10,9 +10,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketBuffer;
 
-import java.io.IOException;
 import java.util.UUID;
 
 public class PermissionsMessage
@@ -20,14 +18,14 @@ public class PermissionsMessage
 
     public static class View implements IMessage, IMessageHandler<View, IMessage>
     {
-        private UUID colonyID;
-        private PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+        private UUID    colonyID;
+        private ByteBuf data = Unpooled.buffer();
 
         public View()
         {
         }
 
-        public View(Colony colony) throws IOException
+        public View(Colony colony)
         {
             this.colonyID = colony.getID();
             colony.getPermissions().serializeViewNetworkData(this.data);
@@ -50,15 +48,7 @@ public class PermissionsMessage
         @Override
         public IMessage onMessage(View message, MessageContext ctx)
         {
-            try
-            {
-                return ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
-            }
-            catch (IOException exc)
-            {
-                exc.printStackTrace();
-                return null;
-            }
+            return ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
         }
     }
 

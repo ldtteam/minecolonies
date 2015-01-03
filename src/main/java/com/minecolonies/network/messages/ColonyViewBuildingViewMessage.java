@@ -8,7 +8,6 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.*;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
 
 import java.util.UUID;
@@ -20,7 +19,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
 {
     private UUID             colonyId;
     private ChunkCoordinates buildingId;
-    private PacketBuffer     buildingData = new PacketBuffer(Unpooled.buffer());
+    private ByteBuf          buildingData = Unpooled.buffer();
 
     public ColonyViewBuildingViewMessage(){}
 

@@ -1,15 +1,14 @@
 package com.minecolonies.colony.permissions;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.network.PacketUtils;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.network.PacketBuffer;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -341,14 +340,14 @@ public class Permissions {
             players.remove(id);
         }
 
-        public void deserialize(PacketBuffer buf) throws IOException
+        public void deserialize(ByteBuf buf)
         {
             //  Owners
             int numOwners = buf.readInt();
             for (int i = 0; i < numOwners; ++i)
             {
                 UUID owner = PacketUtils.readUUID(buf);
-                Rank rank = Rank.valueOf(buf.readStringFromBuffer(1024));
+                Rank rank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
                 players.put(owner, rank);
             }
 
@@ -356,28 +355,28 @@ public class Permissions {
             int numPermissions = buf.readInt();
             for (int i = 0; i < numPermissions; ++i)
             {
-                Rank rank = Rank.valueOf(buf.readStringFromBuffer(1024));
+                Rank rank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
                 int flags = buf.readInt();
                 permissions.put(rank, flags);
             }
         }
     }
 
-    public void serializeViewNetworkData(PacketBuffer buf) throws IOException
+    public void serializeViewNetworkData(ByteBuf buf)
     {
         //  Owners
         buf.writeInt(players.size());
         for (Map.Entry<UUID, Rank> owner : players.entrySet())
         {
             PacketUtils.writeUUID(buf, owner.getKey());
-            buf.writeStringToBuffer(owner.getValue().name());
+            ByteBufUtils.writeUTF8String(buf, owner.getValue().name());
         }
 
         // Permissions
         buf.writeInt(permissions.size());
         for (Map.Entry<Rank, Integer> entry : permissions.entrySet())
         {
-            buf.writeStringToBuffer(entry.getKey().name());
+            ByteBufUtils.writeUTF8String(buf, entry.getKey().name());
             buf.writeInt(entry.getValue());
         }
     }

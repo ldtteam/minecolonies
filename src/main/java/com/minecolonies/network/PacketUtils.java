@@ -1,7 +1,6 @@
 package com.minecolonies.network;
 
 import io.netty.buffer.ByteBuf;
-
 import java.util.UUID;
 
 public class PacketUtils

@@ -6,14 +6,13 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.network.PacketUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.Constants;
 
-import java.io.IOException;
 import java.util.*;
 
 public class BuildingHome extends BuildingHut
@@ -159,7 +158,7 @@ public class BuildingHome extends BuildingHut
         }
 
         @Override
-        public void deserialize(PacketBuffer buf) throws IOException
+        public void deserialize(ByteBuf buf)
         {
             super.deserialize(buf);
 
@@ -174,7 +173,7 @@ public class BuildingHome extends BuildingHut
     }
 
     @Override
-    public void serializeToView(PacketBuffer buf)
+    public void serializeToView(ByteBuf buf)
     {
         super.serializeToView(buf);
 

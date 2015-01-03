@@ -22,7 +22,6 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 
-import java.io.IOException;
 import java.util.*;
 
 public class Colony
@@ -526,14 +525,7 @@ public class Colony
                     boolean isNewSubscriber = !oldSubscribers.contains(player);
                     if (isDirty || isNewSubscriber)
                     {
-                        try
-                        {
-                            MineColonies.network.sendTo(new ColonyViewMessage(id, this, isNewSubscriber), player);
-                        }
-                        catch (IOException exc)
-                        {
-                            exc.printStackTrace();
-                        }
+                        MineColonies.network.sendTo(new ColonyViewMessage(id, this, isNewSubscriber), player);
                     }
                 }
             }
@@ -541,21 +533,14 @@ public class Colony
             // Permissions
             if(permissions.isDirty() || hasNewSubscribers)
             {
-                try
-                {
-                    PermissionsMessage.View msg = new PermissionsMessage.View(this);
+                PermissionsMessage.View msg = new PermissionsMessage.View(this);
 
-                    for (EntityPlayerMP player : subscribers)
-                    {
-                        if (permissions.isDirty() || !oldSubscribers.contains(player))
-                        {
-                            MineColonies.network.sendTo(msg, player);
-                        }
-                    }
-                }
-                catch (IOException exc)
+                for (EntityPlayerMP player : subscribers)
                 {
-                    exc.printStackTrace();
+                    if (permissions.isDirty() || !oldSubscribers.contains(player))
+                    {
+                        MineColonies.network.sendTo(msg, player);
+                    }
                 }
             }
 
@@ -566,21 +551,14 @@ public class Colony
                 {
                     if (citizen.isDirty() || hasNewSubscribers)
                     {
-                        try
-                        {
-                            ColonyViewCitizenViewMessage msg = new ColonyViewCitizenViewMessage(this, citizen);
+                        ColonyViewCitizenViewMessage msg = new ColonyViewCitizenViewMessage(this, citizen);
 
-                            for (EntityPlayerMP player : subscribers)
-                            {
-                                if (citizen.isDirty() || !oldSubscribers.contains(player))
-                                {
-                                    MineColonies.network.sendTo(msg, player);
-                                }
-                            }
-                        }
-                        catch (IOException exc)
+                        for (EntityPlayerMP player : subscribers)
                         {
-                            exc.printStackTrace();
+                            if (citizen.isDirty() || !oldSubscribers.contains(player))
+                            {
+                                MineColonies.network.sendTo(msg, player);
+                            }
                         }
                     }
                 }
