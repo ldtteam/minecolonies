@@ -3,6 +3,7 @@ package com.minecolonies.network.messages;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.network.PacketUtils;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -28,15 +29,14 @@ public class TownhallRenameMessage implements IMessage, IMessageHandler<Townhall
     @Override
     public void toBytes(ByteBuf buf)
     {
-        buf.writeLong(colonyId.getMostSignificantBits());
-        buf.writeLong(colonyId.getLeastSignificantBits());
+        PacketUtils.writeUUID(buf, colonyId);
         ByteBufUtils.writeUTF8String(buf, name);
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
-        colonyId = new UUID(buf.readLong(), buf.readLong());
+        colonyId = PacketUtils.readUUID(buf);
         name = ByteBufUtils.readUTF8String(buf);
     }
 

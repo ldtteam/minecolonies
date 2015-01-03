@@ -3,6 +3,7 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.network.PacketUtils;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -41,8 +42,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     @Override
     public void toBytes(ByteBuf buf)
     {
-        buf.writeLong(colonyId.getMostSignificantBits());
-        buf.writeLong(colonyId.getLeastSignificantBits());
+        PacketUtils.writeUUID(buf, colonyId);
         ChunkCoordUtils.writeToByteBuf(buf, buildingId);
         buf.writeInt(mode);
     }
@@ -50,7 +50,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     @Override
     public void fromBytes(ByteBuf buf)
     {
-        colonyId = new UUID(buf.readLong(), buf.readLong());
+        colonyId = PacketUtils.readUUID(buf);
         buildingId = ChunkCoordUtils.readFromByteBuf(buf);
         mode = buf.readInt();
     }
