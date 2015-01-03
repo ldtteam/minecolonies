@@ -1,5 +1,6 @@
 package com.minecolonies.colony;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -410,7 +411,7 @@ public class ColonyManager {
         }
         catch (IOException exception)
         {
-            //  TODO LOG
+            MineColonies.logger.error("Exception when loading ColonyManger", exception);
         }
         return null;
     }
@@ -443,7 +444,7 @@ public class ColonyManager {
         }
         catch (IOException exception)
         {
-            //  TODO LOG
+            MineColonies.logger.error("Exception when saving ColonyManager", exception);
         }
     }
 
@@ -553,7 +554,7 @@ public class ColonyManager {
         }
         else
         {
-            //TODO log, error
+            MineColonies.logger.error(String.format("Colony view does not exist for ID '%s'", colonyID.toString()));
             return null;
         }
     }
@@ -607,7 +608,7 @@ public class ColonyManager {
         }
         else
         {
-            //  TODO - Log this.  We should have the colony
+            MineColonies.logger.error(String.format("Colony view does not exist for ID '%s'", colonyId.toString()));
             return null;
         }
     }
