@@ -32,6 +32,8 @@ public class ConfigurationHandler
             deliverymanInfiniteResources = config.get(CATEGORY_GAMEPLAY, "deliverymanInfiniteResources", deliverymanInfiniteResources, "Does Deliveryman have infinite resources?").getBoolean();
             maxBuildingLevel = config.get(CATEGORY_GAMEPLAY, "maxBuildingLevel", maxBuildingLevel, "Maximum Building Level").getInt();
             maxCitizens = config.get(CATEGORY_GAMEPLAY, "maxCitizens", maxCitizens, "Maximum number of citizens").getInt();
+            alwaysRenderNameTag = config.get(CATEGORY_GAMEPLAY, "alwaysRenderNameTag", alwaysRenderNameTag, "Always render Citizen's name tag?").getBoolean();
+            maxBlocksCheckedByBuilder = config.get(CATEGORY_GAMEPLAY, "maxBlocksCheckedByBuilder", maxBlocksCheckedByBuilder, "Limits the number of checked blocks per builder update").getInt();
 
             maleFirstNames = config.get(CATEGORY_NAMES, "maleFirstNames", maleFirstNames).getStringList();
             femaleFirstNames = config.get(CATEGORY_NAMES, "femaleFirstNames", femaleFirstNames).getStringList();

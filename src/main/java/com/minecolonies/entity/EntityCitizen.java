@@ -9,6 +9,7 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.entity.ai.EntityAIWork;
@@ -74,7 +75,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super(world);
         setSize(0.6F, 1.8F);
         this.func_110163_bv();//Set persistenceRequired = true;
-        this.setAlwaysRenderNameTag(true);//TODO: configurable
+        this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
 
