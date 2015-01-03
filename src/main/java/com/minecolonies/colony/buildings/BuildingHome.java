@@ -4,7 +4,9 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.EnumGUI;
+import com.minecolonies.network.PacketUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -143,6 +145,8 @@ public class BuildingHome extends BuildingHut
             super(c, l);
         }
 
+        public List<UUID> getResidents() { return Collections.unmodifiableList(residents); }
+
         public com.blockout.views.Window getWindow(int guiId)
         {
             if (guiId == EnumGUI.CITIZEN.getID())
@@ -151,6 +155,32 @@ public class BuildingHome extends BuildingHut
             }
 
             return null;
+        }
+
+        @Override
+        public void deserialize(ByteBuf buf)
+        {
+            super.deserialize(buf);
+
+            int numResidents = buf.readInt();
+            for (int i = 0; i < numResidents; ++i)
+            {
+                residents.add(PacketUtils.readUUID(buf));
+            }
+        }
+
+        private List<UUID> residents = new ArrayList<UUID>();
+    }
+
+    @Override
+    public void serializeToView(ByteBuf buf)
+    {
+        super.serializeToView(buf);
+
+        buf.writeInt(residents.size());
+        for (CitizenData citizen : residents)
+        {
+            PacketUtils.writeUUID(buf, citizen.getId());
         }
     }
 }
