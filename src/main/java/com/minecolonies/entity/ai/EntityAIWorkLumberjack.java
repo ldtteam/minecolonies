@@ -5,6 +5,8 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.World;
 
 public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 {
@@ -13,7 +15,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         super(job);
     }
 
-    enum Stage
+    public enum Stage
     {
         IDLE,//No resources
         SEARCHING,
@@ -46,9 +48,46 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     {
         //TODO work interval
 
-        if(!hasAxe())
+        switch(job.getStage())
         {
-            requestAxe();
+        case IDLE:
+            if(!hasAxe())
+            {
+                requestAxe();
+            }
+            else
+            {
+                //TODO plant, search, or wait
+            }
+            break;
+        case SEARCHING:
+            if(!hasAxe())
+            {
+                job.setStage(Stage.IDLE);
+            }
+            else
+            {
+                findTree();//Find tree location
+            }
+            break;
+        case CHOPPING:
+            if(!hasAxe())
+            {
+                job.setStage(Stage.IDLE);
+            }
+            else
+            {
+                chopTree();//Go through Queue
+            }
+            break;
+        case GATHERING:
+            pickupSaplings();
+            break;
+        case INVENTORY_FULL:
+            dumpInventory();
+            break;
+        default:
+            System.out.println("Invalid stage in EntityAIWorkLumberjack");
         }
     }
 
@@ -61,7 +100,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     @Override
     public void resetTask()
     {
-
+        job.setStage(Stage.IDLE);
     }
 
     private boolean hasAxe()
@@ -83,6 +122,33 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     {
         //TODO request by tool type
         //job.addItemNeeded();
+        //TODO go home or plant trees
+    }
+
+    private void findTree()
+    {
+        //TODO
+
+        //Search
+        //if(isTree())
+        //createTree()
+    }
+
+    private void chopTree()
+    {
+        //TODO
+        //if not near tree, walk to tree
+        ChunkCoordinates log;//todo
+    }
+
+    private void pickupSaplings()
+    {
+        //TODO
+    }
+
+    private void dumpInventory()
+    {
+        //TODO
     }
 
     private EntityCitizen getEntity()
@@ -94,4 +160,10 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     {
         return getEntity().getInventory();
     }
+
+    private World getWorld()
+    {
+        return job.getColony().getWorld();
+    }
 }
+
