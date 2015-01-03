@@ -14,7 +14,7 @@ import static com.minecolonies.configuration.Configurations.*;
  */
 public class ConfigurationHandler
 {
-    private static final String CATEGORY_GAMEPLAY = "Game Play";
+    private static final String CATEGORY_GAMEPLAY = "Gameplay";
     private static final String CATEGORY_NAMES    = "Names";
 
     public static void init(File file)
@@ -24,16 +24,18 @@ public class ConfigurationHandler
         try
         {
             config.load();
-            Configurations.workingRangeTownhall = config.get(CATEGORY_GAMEPLAY, "Working Range Townhall: ", DEFAULT_WORKINGRANGETOWNHALL).getInt(DEFAULT_WORKINGRANGETOWNHALL);
-            Configurations.townhallPadding = config.get(CATEGORY_GAMEPLAY, "Empty space between townhall boundaries: ", DEFAULT_TOWNHALLPADDING).getInt(DEFAULT_TOWNHALLPADDING);
-            Configurations.allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY, "Allow infinite placing of Supply Chests: ", DEFAULT_ALLOWINFINTESUPPLYCHESTS).getBoolean(DEFAULT_ALLOWINFINTESUPPLYCHESTS);
-            Configurations.citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY, "Citizen Respawn Interval: ", DEFAULT_CITIZENRESPAWNINTERVAL, 10, 600, "Value in seconds");
-            Configurations.builderInfiniteResources = config.get(CATEGORY_GAMEPLAY, "Does Builder have infinite resources: ", DEFAULT_BUILDERINFINITERESOURCES).getBoolean(DEFAULT_BUILDERINFINITERESOURCES);
-            Configurations.deliverymanInfiniteResources = config.get(CATEGORY_GAMEPLAY, "Does Deliveryman have infinite resources: ", DEFAULT_DELIVERYMANINFINITERESOURCES).getBoolean(DEFAULT_DELIVERYMANINFINITERESOURCES);
+            workingRangeTownhall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownhall", workingRangeTownhall, "Townhall Working Range").getInt();
+            townhallPadding = config.get(CATEGORY_GAMEPLAY, "townhallPadding", townhallPadding, "Empty space between townhall boundaries").getInt();
+            allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY, "allowInfiniteSupplyChests", allowInfiniteSupplyChests, "Allow infinite placing of Supply Chests?").getBoolean();
+            citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY, "citizenRespawnInterval", citizenRespawnInterval, 10, 600, "Citizen respawn interval in seconds");
+            builderInfiniteResources = config.get(CATEGORY_GAMEPLAY, "builderInfiniteResources", builderInfiniteResources, "Does Builder have infinite resources?").getBoolean();
+            deliverymanInfiniteResources = config.get(CATEGORY_GAMEPLAY, "deliverymanInfiniteResources", deliverymanInfiniteResources, "Does Deliveryman have infinite resources?").getBoolean();
+            maxBuildingLevel = config.get(CATEGORY_GAMEPLAY, "maxBuildingLevel", maxBuildingLevel, "Maximum Building Level").getInt();
+            maxCitizens = config.get(CATEGORY_GAMEPLAY, "maxCitizens", maxCitizens, "Maximum number of citizens").getInt();
 
-            Configurations.maleFirstNames = config.get(CATEGORY_NAMES, "Male first names: ", DEFAULT_MALE_FIRST_NAMES).getStringList();
-            Configurations.femaleFirstNames = config.get(CATEGORY_NAMES, "Female first names: ", DEFAULT_FEMALE_FIRST_NAMES).getStringList();
-            Configurations.lastNames = config.get(CATEGORY_NAMES, "Last names: ", DEFAULT_LAST_NAMES).getStringList();
+            maleFirstNames = config.get(CATEGORY_NAMES, "maleFirstNames", maleFirstNames).getStringList();
+            femaleFirstNames = config.get(CATEGORY_NAMES, "femaleFirstNames", femaleFirstNames).getStringList();
+            lastNames = config.get(CATEGORY_NAMES, "lastNames", lastNames).getStringList();
         }
         finally
         {

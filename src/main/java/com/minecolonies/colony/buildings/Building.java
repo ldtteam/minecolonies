@@ -6,6 +6,7 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -302,7 +303,7 @@ public abstract class Building
 
     public void requestUpgrade()
     {
-        if (buildingLevel < 3) //  TODO maxLevel
+        if (buildingLevel < Configurations.maxBuildingLevel)
         {
             requestWorkOrder(buildingLevel + 1);
         }

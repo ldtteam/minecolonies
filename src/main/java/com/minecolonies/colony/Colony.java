@@ -56,7 +56,7 @@ public class Colony
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
-    private              int                    maxCitizens                    = Constants.DEFAULT_MAX_CITIZENS;
+    private              int                    maxCitizens                    = Configurations.maxCitizens;
     private              Map<UUID, CitizenData> citizens                       = new HashMap<UUID, CitizenData>();
     private final static int                    CITIZEN_CLEANUP_TICK_INCREMENT = 60 * 20;   //  Once a minute
 
