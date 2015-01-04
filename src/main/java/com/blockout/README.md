@@ -79,7 +79,7 @@ These attributes are supported by all Pane types except the two root elements (<
 
 **Generic Attributes**
 
-* `id="_id_"`                     String identifier, for use by the code to access specific elements
+* `id="{id}"`                     String identifier, for use by the code to access specific elements
 * `visible="{true|false}"`        (Default=true) Visibility of a pane, allow a visual element to start hidden
 * `enabled="{true|false}"`        (Default=true) Disabled panes do not receive clicks and may render differently
 * `style="{style}"`               If additional styles have been registered for a Pane type, this will switch the
