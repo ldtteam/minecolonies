@@ -3,18 +3,17 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
+import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
+import java.util.*;
+
 public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 {
-    public EntityAIWorkLumberjack(JobLumberjack job)
-    {
-        super(job);
-    }
-
     public enum Stage
     {
         IDLE,//No resources
@@ -22,6 +21,13 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         CHOPPING,
         GATHERING,
         INVENTORY_FULL
+    }
+
+    private Queue<Tree> trees = new LinkedList<Tree>();
+
+    public EntityAIWorkLumberjack(JobLumberjack job)
+    {
+        super(job);
     }
 
     @Override
@@ -33,7 +39,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     @Override
     public void startExecuting()
     {
-        if(hasAxe())
+        if (hasAxe())
         {
             equipAxe();
         }
@@ -48,10 +54,10 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     {
         //TODO work interval
 
-        switch(job.getStage())
+        switch (job.getStage())
         {
         case IDLE:
-            if(!hasAxe())
+            if (!hasAxe())
             {
                 requestAxe();
             }
@@ -61,7 +67,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             break;
         case SEARCHING:
-            if(!hasAxe())
+            if (!hasAxe())//TODO don't really need an axe here
             {
                 job.setStage(Stage.IDLE);
             }
@@ -71,9 +77,20 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             break;
         case CHOPPING:
-            if(!hasAxe())
+            if (!hasAxe())
             {
                 job.setStage(Stage.IDLE);
+            }
+            else if(job.tree == null)
+            {
+                if(trees.size() > 0)
+                {
+                    job.tree = trees.poll();
+                }
+                else
+                {
+                    job.setStage(Stage.SEARCHING);
+                }
             }
             else
             {
@@ -136,9 +153,25 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
     private void chopTree()
     {
-        //TODO
-        //if not near tree, walk to tree
-        ChunkCoordinates log;//todo
+        //TODO walk to tree
+
+        ChunkCoordinates log = job.tree.getNextLog();
+        if(InventoryUtils.getOpenSlot(getInventory()) != -1)//inventory has an open slot - this doesn't account for slots with non full stacks
+        {                                                   //also we still may have problems if the block drops multiple items
+            List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, log, 0);//TODO get fortune level from axe (if it matters..)
+            for(ItemStack item : items)
+            {
+                InventoryUtils.setStack(getInventory(), item);
+            }
+        }
+
+        //tree is gone
+        if(!job.tree.hasLogs())
+        {
+            //TODO plant sapling at job.tree.getLocation()
+
+            job.tree = null;
+        }
     }
 
     private void pickupSaplings()

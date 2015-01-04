@@ -3,12 +3,14 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.EntityAIWorkLumberjack;
+import com.minecolonies.entity.ai.Tree;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class JobLumberjack extends Job
 {
     private EntityAIWorkLumberjack.Stage stage = EntityAIWorkLumberjack.Stage.IDLE;
+    public Tree tree;
 
     private static final String TAG_STAGE = "Stage";
 
@@ -35,6 +37,7 @@ public class JobLumberjack extends Job
         super.writeToNBT(compound);
 
         compound.setString(TAG_STAGE, stage.name());
+        //TODO save tree - So we don't have half chopped trees
     }
 
     @Override
@@ -43,6 +46,7 @@ public class JobLumberjack extends Job
         super.readFromNBT(compound);
 
         stage = EntityAIWorkLumberjack.Stage.valueOf(compound.getString(TAG_STAGE));
+        //TODO load tree
     }
 
     @Override

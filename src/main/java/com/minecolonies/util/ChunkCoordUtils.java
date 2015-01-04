@@ -4,12 +4,15 @@ import com.minecolonies.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class ChunkCoordUtils
 {
@@ -77,6 +80,11 @@ public class ChunkCoordUtils
     public static int getBlockMetadata(World world, ChunkCoordinates coords)
     {
         return world.getBlockMetadata(coords.posX, coords.posY, coords.posZ);
+    }
+
+    public static List<ItemStack> getBlockDrops(World world, ChunkCoordinates coords, int fortune)
+    {
+        return getBlock(world, coords).getDrops(world, coords.posX, coords.posY, coords.posZ, getBlockMetadata(world, coords), fortune);
     }
 
     public static ChunkCoordinates scanForBlockNearPoint(World world, Block block, ChunkCoordinates pos, ChunkCoordinates radiusPos)
