@@ -215,7 +215,7 @@ public class Schematic
     public static String saveSchematic(World world, ChunkCoordinates from, ChunkCoordinates to)
     {
         if(world == null || from == null || to == null)
-            return LanguageHandler.format("item.scepterSteel.invalidMethod");
+            throw new NullPointerException("Invalid method call, contact a developer.");
 
         SchematicWorld schematic = scanSchematic(world, from, to, new ItemStack(Blocks.red_flower));
 
