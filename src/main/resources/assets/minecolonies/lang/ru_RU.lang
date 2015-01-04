@@ -1,0 +1,88 @@
+com.minecolonies.error.supplyChestAlreadyPlaced=Вы уже основали колонию!
+
+com.minecolonies.gui.townhall.build=Построить Ратушу
+com.minecolonies.gui.townhall.repair=Ремонтировать Ратушу
+com.minecolonies.gui.townhall.recall=Позвать Жителей
+com.minecolonies.gui.townhall.togglespec=Сменить Профессию:
+com.minecolonies.gui.townhall.currTownhallName=Название Колонии:
+com.minecolonies.gui.townhall.currentSpecialization=Текущее Профессия:
+com.minecolonies.gui.townhall.rename=Переименовать Колонию
+com.minecolonies.gui.townhall.rename.title=Переименуйте Вашу Колонию
+com.minecolonies.gui.townhall.actions=Действия
+com.minecolonies.gui.townhall.defaultName=Колония %s'а
+
+com.minecolonies.gui.townhall.population.totalCitizens=Количество Жителей: %d/%d
+com.minecolonies.gui.townhall.population.unemployed=Свободные: %d
+com.minecolonies.gui.townhall.population.builders=Строители: %d
+com.minecolonies.gui.townhall.population.deliverymen=Курьеры: %d
+
+com.minecolonies.gui.workerHuts.buildersHut=Дом Строителя
+com.minecolonies.gui.workerHuts.warehouse=Склад
+com.minecolonies.gui.workerHuts.workerAssigned=Назначенный Рабочий:
+com.minecolonies.gui.workerHuts.workerLevel=Уровень Рабочего: %s
+com.minecolonies.gui.workerHuts.hire=Нанять Рабочего
+com.minecolonies.gui.workerHuts.fire=Уволить Рабочего
+com.minecolonies.gui.workerHuts.recall=Позвать Рабочего
+com.minecolonies.gui.workerHuts.build=Построить Здание
+com.minecolonies.gui.workerHuts.repair=Отремонтировать Здание
+com.minecolonies.gui.workerHuts.buildType=Тип Постройки:
+com.minecolonies.gui.workerHuts.information=Информация
+com.minecolonies.gui.workerHuts.settings=Настройки
+
+com.minecolonies.gui.warehouse.toBlacksmith=Отнести Кузнецу:
+com.minecolonies.gui.warehouse.toStonemason=Отнести Каменолому:
+com.minecolonies.gui.warehouse.toGuards=Отнести Страже:
+com.minecolonies.gui.warehouse.visitCitizenChests=Посетить Хранилище:
+
+com.minecolonies.gui.citizen.skills=Способности
+com.minecolonies.gui.citizen.skills.strength=Сила: %d
+com.minecolonies.gui.citizen.skills.stamina=Выносливость: %d
+com.minecolonies.gui.citizen.skills.wisdom=Мудрость: %d
+com.minecolonies.gui.citizen.skills.intelligence=Интеллект %d
+com.minecolonies.gui.citizen.skills.charisma=Харизма: %d
+
+tile.blockHutCitizen.name=Жилой Дом
+tile.blockHutBaker.name=Пекарня
+tile.blockHutBlacksmith.name=Кузница
+tile.blockHutBuilder.name=Дом Строителя
+tile.blockHutWarehouse.name=Склад
+tile.blockHutFarmer.name=Ферма
+tile.blockHutLumberjack.name=Лесопилка
+tile.blockHutMiner.name=Шахта
+tile.blockHutStonemason.name=Каменоломня
+tile.blockHutTownhall.name=Ратуша
+tile.blockHut.messageNoPermission=Вам запрещено открывать дома в %s.
+
+tile.blockHutTownhall.messageMaxSize=Колония полностью заселена
+tile.blockHutTownhall.messageColonistDead=Колонист погиб!
+tile.blockHutTownhall.messagePlacedAlready=Вы уже поставили Ратушу
+tile.blockHutTownhall.messageInvalidWorld=В этом мире нельзя ставить Ратушу
+tile.blockHutTownhall.messageTooClose=Слишком близко к другой Ратуше
+
+tile.blockHut.messageTooFarFromTownhall=Вам нужно быть ближе к Ратуше!
+tile.blockHut.messageNoTownhall=Сначала поставьте Ратушу!
+
+item.supplyChestDeployer.name=Хранилище Колонии
+item.scepterGold.name=Строительный Жезл
+item.scepterSteel.name=Сканер-Жезл
+item.caliper.name=Каверномер
+
+item.supplyChestDeployer.invalid=Вы должны быть около большого водоема
+
+item.scepterSteel.point=Первая точка сохранена
+item.scepterSteel.point2=Вторая точка сохранена, нажмите ПКМ для сохранения схемы
+item.scepterSteel.samePoint=Эта та же самая точка
+item.scepterSteel.scanFormat=SCAN_%s-%s.schematic
+item.scepterSteel.scanSuccess=Сканирование успешно сохранено как %s
+item.scepterSteel.scanFailure=Сканирование не получилось сохранить
+
+item.caliper.message.same=Это такой же блок.
+item.caliper.message.line=Это линия длиной %d блоков.
+item.caliper.message.square=Это квадрат %d на %d.
+item.caliper.message.cube=Это куб %d на %d на %d.
+
+itemGroup.minecolonies=MineColonies
+
+entity.builder.messageBuildStart=Постройка %s началась
+entity.builder.messageBuildComplete=Постройка %s завершилась
+entity.builder.messageNeedMaterial=Мне нужно %s (Количество: %d)
