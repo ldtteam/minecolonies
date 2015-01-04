@@ -1,6 +1,6 @@
 <window size="171 247" pause="false" lightbox="false"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="file:blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
     <group size="100 110" pos="-90 10" spacing="1">
         <buttonimage id="info" size="100% 30"
                      source="minecolonies:textures/gui/guiBanners.png"
