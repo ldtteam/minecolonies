@@ -1,14 +1,15 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.jobs.JobLumberjack;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLog;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 
 import java.util.*;
 
@@ -22,6 +23,9 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         GATHERING,
         INVENTORY_FULL
     }
+
+    private static final int SEARCH_RANGE = 20;
+    private static final int WORKER_INTERVAL = 10;
 
     private Queue<Tree> trees = new LinkedList<Tree>();
 
@@ -39,11 +43,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     @Override
     public void startExecuting()
     {
-        if (hasAxe())
-        {
-            equipAxe();
-        }
-        else
+        if (!hasAxeWithEquip())
         {
             requestAxe();
         }
@@ -53,31 +53,36 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     public void updateTask()
     {
         //TODO work interval
+        if(worker.getOffsetTicks() % WORKER_INTERVAL != 0)
+        {
+            return;
+        }
 
         switch (job.getStage())
         {
         case IDLE:
-            if (!hasAxe())
+            if (!hasAxeWithEquip())
             {
                 requestAxe();
             }
             else
             {
                 //TODO plant, search, or wait
+                job.setStage(Stage.SEARCHING);
             }
             break;
         case SEARCHING:
-            if (!hasAxe())//TODO don't really need an axe here
+            if (!hasAxeWithEquip())//TODO don't really need an axe here
             {
                 job.setStage(Stage.IDLE);
             }
             else
             {
-                findTree();//Find tree location
+                findTrees();//Find tree location
             }
             break;
         case CHOPPING:
-            if (!hasAxe())
+            if (!hasAxeWithEquip())
             {
                 job.setStage(Stage.IDLE);
             }
@@ -85,7 +90,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             {
                 if(trees.size() > 0)
                 {
-                    job.tree = trees.poll();
+                    job.tree = trees.poll();//TODO find trees more efficiently
                 }
                 else
                 {
@@ -125,6 +130,19 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         return getAxeSlot() != -1;
     }
 
+    private boolean hasAxeWithEquip()
+    {
+        if(hasAxe())
+        {
+            if(!(worker.getHeldItem() != null && worker.getHeldItem().getItem() instanceof ItemAxe))
+            {
+                equipAxe();
+            }
+            return true;
+        }
+        return false;
+    }
+
     private int getAxeSlot()
     {
         return InventoryUtils.getFirstSlotContainingTool(getInventory(), ItemAxe.class);
@@ -132,7 +150,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
     private void equipAxe()
     {
-        getEntity().setCurrentItemOrArmor(0, getInventory().getStackInSlot(getAxeSlot()));
+        worker.setCurrentItemOrArmor(0, getInventory().getStackInSlot(getAxeSlot()));
     }
 
     private void requestAxe()
@@ -142,18 +160,47 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         //TODO go home or plant trees
     }
 
-    private void findTree()
+    private void findTrees()
     {
-        //TODO
-
         //Search
-        //if(isTree())
-        //createTree()
+        int posX = (int) worker.posX;
+        int y = (int) worker.posY + 2;
+        int posZ = (int) worker.posZ;
+
+        for(int x = posX - SEARCH_RANGE; x < posX + SEARCH_RANGE; x++)
+        {
+            for(int z = posZ - SEARCH_RANGE; z < posZ + SEARCH_RANGE; z++)
+            {
+                Block block = world.getBlock(x, y, z);
+                //System.out.println(block.getLocalizedName());
+                if(block instanceof BlockLog)
+                {
+                    System.out.println("Block log found");
+                    Tree t = new Tree(world, new ChunkCoordinates(x, y, z));
+                    if(t.isTree())
+                    {
+                        System.out.println("Tree found");
+                        if(!trees.contains(t))
+                        {
+                            System.out.println("Tree added");
+                            trees.add(t);
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("Trees: " + trees.size());
+        job.setStage(Stage.CHOPPING);
     }
 
     private void chopTree()
     {
-        //TODO walk to tree
+        if(!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.tree.getLocation()))
+        {
+            System.out.println("Worker not at site: " + job.tree.getLocation().toString());
+            System.out.println("\tDistance: " + ChunkCoordUtils.distanceSqrd(job.tree.getLocation(), worker.getPosition()));
+            return;
+        }
 
         ChunkCoordinates log = job.tree.getNextLog();
         if(InventoryUtils.getOpenSlot(getInventory()) != -1)//inventory has an open slot - this doesn't account for slots with non full stacks
@@ -163,6 +210,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             {
                 InventoryUtils.setStack(getInventory(), item);
             }
+            ChunkCoordUtils.setBlock(world, log, Blocks.air);
+            worker.swingItem();
         }
 
         //tree is gone
@@ -184,19 +233,9 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         //TODO
     }
 
-    private EntityCitizen getEntity()
-    {
-        return job.getCitizen().getCitizenEntity();
-    }
-
     private InventoryCitizen getInventory()
     {
-        return getEntity().getInventory();
-    }
-
-    private World getWorld()
-    {
-        return job.getColony().getWorld();
+        return worker.getInventory();
     }
 }
 

@@ -87,6 +87,16 @@ public class ChunkCoordUtils
         return getBlock(world, coords).getDrops(world, coords.posX, coords.posY, coords.posZ, getBlockMetadata(world, coords), fortune);
     }
 
+    public static boolean setBlock(World world, ChunkCoordinates coords, Block block)
+    {
+        return world.setBlock(coords.posX, coords.posY, coords.posZ, block);
+    }
+
+    public static boolean setBlock(World world, ChunkCoordinates coords, Block block, int metadata, int flag)
+    {
+        return world.setBlock(coords.posX, coords.posY, coords.posZ, block, metadata, flag);
+    }
+
     public static ChunkCoordinates scanForBlockNearPoint(World world, Block block, ChunkCoordinates pos, ChunkCoordinates radiusPos)
     {
         return Utils.scanForBlockNearPoint(world, block, pos.posX, pos.posY, pos.posZ, radiusPos.posX, radiusPos.posY, radiusPos.posZ);

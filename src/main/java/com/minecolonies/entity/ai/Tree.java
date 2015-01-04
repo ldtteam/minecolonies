@@ -24,7 +24,7 @@ public class Tree
         if(block instanceof BlockLog)
         {
             ChunkCoordinates baseLog = getBaseLog(world, log);
-            location = baseLog;
+            location = new ChunkCoordinates(baseLog);
             woodBlocks = new LinkedList<ChunkCoordinates>();
 
             //woodBlocks.add(baseLog);
@@ -32,7 +32,7 @@ public class Tree
             //simple pillar
             while(ChunkCoordUtils.getBlock(world, baseLog) instanceof BlockLog)
             {
-                woodBlocks.add(baseLog);
+                woodBlocks.add(new ChunkCoordinates(baseLog));
                 baseLog.posY++;
             }
             baseLog.posY--;//Make baseLog the topLog
@@ -50,11 +50,11 @@ public class Tree
     private void checkTree(World world, ChunkCoordinates topLog)
     {
         int leafCount = 0;
-        for(int x = -1; x < 1; x++)
+        for(int x = -1; x <= 1; x++)
         {
-            for(int z = -1; x < 1; x++)
+            for(int z = -1; z <= 1; z++)
             {
-                for(int y = -1; x < 1; x++)
+                for(int y = -1; y <= 1; y++)
                 {
                     if(world.getBlock(topLog.posX + x, topLog.posY + y, topLog.posZ + z).getMaterial().equals(Material.leaves))
                     {
