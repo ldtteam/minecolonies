@@ -1,4 +1,3 @@
-com.minecolonies.error.noFingerprint=No Fingerprint. Might not be a valid version!
 com.minecolonies.error.supplyChestAlreadyPlaced=You have already placed a supply ship!
 
 com.minecolonies.gui.townhall.build=Build Townhall
@@ -76,7 +75,6 @@ item.scepterSteel.samePoint=That was the same point
 item.scepterSteel.scanFormat=SCAN_%s-%s.schematic
 item.scepterSteel.scanSuccess=Scan successfully saved as %s
 item.scepterSteel.scanFailure=Scan failed to save
-item.scepterSteel.invalidMethod=Invalid method call, contact a developer
 
 item.caliper.message.same=That's the same block.
 item.caliper.message.line=That's a %d block line.
@@ -85,10 +83,6 @@ item.caliper.message.cube=That's a %d by %d by %d cube.
 
 itemGroup.minecolonies=MineColonies
 
-entity.builder.ai.schematicLoadFailure=Schematic: (%s) does not exist - removing build request
-entity.builder.ai.schematicNullBlock=Schematic has null block at %d, %d, %d - local(%d, %d, %d)
-entity.builder.ai.blockPlaceFailure=Block place failure %s at %d, %d, %d
-entity.builder.ai.blockBreakFailure=Block break failure at %d, %d, %d
 entity.builder.messageBuildStart=Started building %s
 entity.builder.messageBuildComplete=Finished building %s
 entity.builder.messageNeedMaterial=I need %s (Amount: %d)

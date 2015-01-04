@@ -7,10 +7,7 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.messages.ColonyBuildingViewMessage;
-import com.minecolonies.network.messages.ColonyViewCitizensMessage;
-import com.minecolonies.network.messages.ColonyViewMessage;
-import com.minecolonies.network.messages.PermissionsMessage;
+import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
@@ -39,8 +36,6 @@ public class Colony
     private boolean                isDirty          = false;   //  TODO - Move to using bits, and more of them for targetted update packets
     private boolean                isCitizensDirty  = false;
     private boolean                isBuildingsDirty = false;
-    private List<UUID>             removedCitizens  = new ArrayList<UUID>();
-    private List<ChunkCoordinates> removedBuildings = new ArrayList<ChunkCoordinates>();
 
     //  General Attributes
     private String name = "ERROR(Wasn't placed by player)";
@@ -56,7 +51,7 @@ public class Colony
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
-    private              int                    maxCitizens                    = Constants.DEFAULT_MAX_CITIZENS;
+    private              int                    maxCitizens                    = Configurations.maxCitizens;
     private              Map<UUID, CitizenData> citizens                       = new HashMap<UUID, CitizenData>();
     private final static int                    CITIZEN_CLEANUP_TICK_INCREMENT = 60 * 20;   //  Once a minute
 
@@ -399,21 +394,27 @@ public class Colony
         //  Cleanup Buildings whose Blocks have gone AWOL
         if (event.phase == TickEvent.Phase.START)
         {
-            for (Iterator<Map.Entry<ChunkCoordinates, Building>> it = buildings.entrySet().iterator(); it.hasNext(); )
-            {
-                Map.Entry<ChunkCoordinates, Building> entry = it.next();
-                Building building = entry.getValue();
+            List<Building> removedBuildings = null;
 
+            for (Building building : buildings.values())
+            {
                 ChunkCoordinates loc = building.getLocation();
                 if (event.world.blockExists(loc.posX, loc.posY, loc.posZ) &&
                         !building.isMatchingBlock(event.world.getBlock(loc.posX, loc.posY, loc.posZ)))
                 {
                     //  Sanity cleanup
-                    it.remove();
+                    if (removedBuildings == null)
+                    {
+                        removedBuildings = new ArrayList<Building>();
+                    }
+                    removedBuildings.add(building);
+                }
+            }
 
-                    removedBuildings.add(building.getLocation());
-                    markDirty();
-
+            if (removedBuildings != null)
+            {
+                for (Building building : removedBuildings)
+                {
                     building.destroy();
                 }
             }
@@ -519,15 +520,12 @@ public class Colony
             //  ColonyView
             if (isDirty || hasNewSubscribers)
             {
-                NBTTagCompound compound = new NBTTagCompound();
-                ColonyView.createNetworkData(this, compound);
-
                 for (EntityPlayerMP player : subscribers)
                 {
                     boolean isNewSubscriber = !oldSubscribers.contains(player);
                     if (isDirty || isNewSubscriber)
                     {
-                        MineColonies.network.sendTo(new ColonyViewMessage(id, compound, isNewSubscriber), player);
+                        MineColonies.network.sendTo(new ColonyViewMessage(id, this, isNewSubscriber), player);
                     }
                 }
             }
@@ -535,9 +533,7 @@ public class Colony
             // Permissions
             if(permissions.isDirty() || hasNewSubscribers)
             {
-                NBTTagCompound compound = new NBTTagCompound();
-                permissions.createViewNetworkData(compound);
-                PermissionsMessage.View msg = new PermissionsMessage.View(id, compound);
+                PermissionsMessage.View msg = new PermissionsMessage.View(this);
 
                 for (EntityPlayerMP player : subscribers)
                 {
@@ -547,6 +543,7 @@ public class Colony
                     }
                 }
             }
+
             //  Citizens
             if (isCitizensDirty || hasNewSubscribers)
             {
@@ -554,9 +551,7 @@ public class Colony
                 {
                     if (citizen.isDirty() || hasNewSubscribers)
                     {
-                        NBTTagCompound compound = new NBTTagCompound();
-                        citizen.createViewNetworkData(compound);
-                        ColonyViewCitizensMessage msg = new ColonyViewCitizensMessage(id, citizen.getId(), compound);
+                        ColonyViewCitizenViewMessage msg = new ColonyViewCitizenViewMessage(this, citizen);
 
                         for (EntityPlayerMP player : subscribers)
                         {
@@ -576,9 +571,7 @@ public class Colony
                 {
                     if (building.isDirty() || hasNewSubscribers)
                     {
-                        NBTTagCompound compound = new NBTTagCompound();
-                        building.createViewNetworkData(compound);
-                        ColonyBuildingViewMessage msg = new ColonyBuildingViewMessage(id, building.getID(), compound);
+                        ColonyViewBuildingViewMessage msg = new ColonyViewBuildingViewMessage(building);
 
                         for (EntityPlayerMP player : subscribers)
                         {
@@ -591,9 +584,6 @@ public class Colony
                 }
             }
         }
-
-        removedCitizens.clear();
-        removedBuildings.clear();   //  We will have set these
 
 //        for (EntityPlayerMP oldPlayers : oldSubscribers)
 //        {
@@ -690,9 +680,6 @@ public class Colony
         return townhall;
     }
 
-    public List<UUID> getRemovedCitizens() { return Collections.unmodifiableList(removedCitizens); }
-    public List<ChunkCoordinates> getRemovedBuildings() { return Collections.unmodifiableList(removedBuildings); }
-
     /**
      * Get building in Colony by ID
      *
@@ -722,7 +709,7 @@ public class Colony
      */
     private void addBuilding(Building building)
     {
-        buildings.put(building.getLocation(), building);
+        buildings.put(building.getID(), building);
         building.markDirty();
 
         if (building instanceof BuildingTownHall)
@@ -755,10 +742,13 @@ public class Colony
      */
     public void removeBuilding(Building building)
     {
-        if (buildings.remove(building.getLocation()) != null)
+        if (buildings.remove(building.getID()) != null)
         {
-            removedBuildings.add(building.getLocation());
-            markDirty();
+            ColonyViewRemoveBuildingMessage msg = new ColonyViewRemoveBuildingMessage(this, building.getID());
+            for (EntityPlayerMP player : subscribers)
+            {
+                MineColonies.network.sendTo(msg, player);
+            }
         }
 
         if (building == townhall)
@@ -809,9 +799,8 @@ public class Colony
 
     public void removeCitizen(CitizenData citizen)
     {
-        removedCitizens.add(citizen.getId());
+        //  Remove the Citizen
         citizens.remove(citizen.getId());
-        markDirty();
 
         for (Building building : buildings.values())
         {
@@ -819,6 +808,13 @@ public class Colony
         }
 
         workManager.clearWorkForCitizen(citizen);
+
+        //  Inform Subscribers of removed citizen
+        ColonyViewRemoveCitizenMessage msg = new ColonyViewRemoveCitizenMessage(this, citizen.getId());
+        for (EntityPlayerMP player : subscribers)
+        {
+            MineColonies.network.sendTo(msg, player);
+        }
     }
 
     /**

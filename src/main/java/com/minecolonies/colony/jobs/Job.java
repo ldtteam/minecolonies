@@ -129,16 +129,13 @@ public abstract class Job
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(
-                        String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                                compound.getString(TAG_TYPE), oclass.getName()), ex);
+                MineColonies.logger.error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
                 job = null;
             }
         }
         else
         {
-            MineColonies.logger.warn(
-                    String.format("Unknown Job type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            MineColonies.logger.warn(String.format("Unknown Job type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
         }
 
         return job;
