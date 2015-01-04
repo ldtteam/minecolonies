@@ -12,7 +12,6 @@ public class Configurations
 
     public static boolean   builderInfiniteResources        = true;//TODO change to false when material handling is implemented
     public static boolean   deliverymanInfiniteResources    = true;//TODO change to false when material handling is implemented
-    public static int       maxBuildingLevel                = 3;//TODO customize max building level - make apart of Building subClasses
     public static int       maxCitizens                     = 4;//TODO remove config value and set maxCitizens based on the colony buildings/levels
     public static boolean   alwaysRenderNameTag             = true;
     public static int       maxBlocksCheckedByBuilder       = 1000;//TODO change count to agreed upon value, possibly remove if we think this shouldn't be a problem

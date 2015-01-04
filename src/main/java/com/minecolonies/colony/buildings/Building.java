@@ -301,9 +301,14 @@ public abstract class Building
         }
     }
 
+    protected int getMaxBuildingLevel()
+    {
+        return 3;
+    }
+
     public void requestUpgrade()
     {
-        if (buildingLevel < Configurations.maxBuildingLevel)
+        if (buildingLevel < getMaxBuildingLevel())
         {
             requestWorkOrder(buildingLevel + 1);
         }
