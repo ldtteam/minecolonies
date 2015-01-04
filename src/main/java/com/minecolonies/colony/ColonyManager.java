@@ -289,7 +289,7 @@ public class ColonyManager {
     public static double getMinimumDistanceBetweenTownHalls()
     {
         //  [Townhall](Radius)+(Padding)+(Radius)[TownHall]
-        return (2 * Configurations.DEFAULT_WORKINGRANGETOWNHALL) + Configurations.DEFAULT_TOWNHALLPADDING;
+        return (2 * Configurations.workingRangeTownhall) + Configurations.townhallPadding;
     }
 
     /**
