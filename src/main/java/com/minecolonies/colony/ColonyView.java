@@ -36,7 +36,7 @@ public class ColonyView
     private Map<ChunkCoordinates, Building.View> buildings = new HashMap<ChunkCoordinates, Building.View>();
 
     //  Citizenry
-    private int                         maxCitizens = Constants.DEFAULT_MAX_CITIZENS;
+    private int                         maxCitizens = Configurations.maxCitizens;
     private Map<UUID, CitizenData.View> citizens = new HashMap<UUID, CitizenData.View>();
 
     /**

@@ -15,8 +15,6 @@ public class Constants
     public static final String SERVER_PROXY_LOCATION = "com.minecolonies.proxy.ServerProxy";
     public static final String PLAYER_PROPERTY_NAME  = MOD_ID + ".PlayerProperties";
 
-    public static final int DEFAULT_MAX_CITIZENS = 4;
-
     public class BlockData
     {
         public static final int TORCH_EAST  = 1;

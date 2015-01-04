@@ -113,7 +113,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
         if(block == null)//should never happen
         {
             ChunkCoordinates local = job.getSchematic().getLocalPosition();
-            MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.schematicNullBlock", x, y, z, local.posX, local.posY, local.posZ));
+            MineColonies.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.posX, local.posY, local.posZ));
             findNextBlock();
             return;
         }
@@ -138,7 +138,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             }
             else
             {
-                MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.blockBreakFailure", x, y, z));
+                MineColonies.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
                 findNextBlock();//TODO handle - for now, just skipping
             }
         }
@@ -155,7 +155,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             }
             else
             {
-                MineColonies.logger.error(LanguageHandler.format("entity.builder.ai.blockPlaceFailure", block.getUnlocalizedName(), x, y, z));
+                MineColonies.logger.error(String.format("Block place failure %s at %d, %d, %d", block.getUnlocalizedName(), x, y, z));
                 findNextBlock();//TODO handle - for now, just skipping
             }
         }
@@ -699,7 +699,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
         if(job.getSchematic() == null)
         {
-            MineColonies.logger.warn(LanguageHandler.format("entity.builder.ai.schematicLoadFailure", name));
+            MineColonies.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name));
             worker.getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
         }

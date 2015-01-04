@@ -6,6 +6,7 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -158,16 +159,13 @@ public abstract class Building
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(
-                        String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                            compound.getString(TAG_TYPE), oclass.getName()), ex);
+                MineColonies.logger.error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
                 building = null;
             }
         }
         else
         {
-            MineColonies.logger.warn(
-                    String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            MineColonies.logger.warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
         }
 
         return building;
@@ -199,8 +197,7 @@ public abstract class Building
             }
             else
             {
-                MineColonies.logger.error(
-                        String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
+                MineColonies.logger.error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
             }
         }
         catch (Exception exception)
@@ -298,9 +295,14 @@ public abstract class Building
         }
     }
 
+    protected int getMaxBuildingLevel()
+    {
+        return 3;
+    }
+
     public void requestUpgrade()
     {
-        if (buildingLevel < 3) //  TODO maxLevel
+        if (buildingLevel < getMaxBuildingLevel())
         {
             requestWorkOrder(buildingLevel + 1);
         }

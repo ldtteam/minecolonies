@@ -1,5 +1,6 @@
 package com.minecolonies.network.messages;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.permissions.Permissions;
@@ -104,7 +105,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                //todo log error
+                MineColonies.logger.error(String.format("Colony '%s' does not exist.", message.colonyID.toString()));
                 return null;
             }
 
@@ -120,7 +121,7 @@ public class PermissionsMessage
                 colony.getPermissions().togglePermission(message.rank, message.action);
                 break;
             default:
-                //todo log error
+                MineColonies.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
             }
             return null;
         }
@@ -168,9 +169,10 @@ public class PermissionsMessage
             if (colony != null)
             {
                 colony.getPermissions().addPlayer(message.playerID, message.rank);
-            } else
+            }
+            else
             {
-                //todo log error
+                MineColonies.logger.error(String.format("Colony '%s' does not exist.", message.colonyID.toString()));
             }
             return null;
         }
@@ -214,9 +216,10 @@ public class PermissionsMessage
             if (colony != null)
             {
                 colony.getPermissions().removePlayer(message.playerID);
-            } else
+            }
+            else
             {
-                //todo log error
+                MineColonies.logger.error(String.format("Colony '%s' does not exist.", message.colonyID.toString()));
             }
             return null;
         }
