@@ -6,12 +6,16 @@ import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
+import net.minecraft.block.BlockSapling;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 {
@@ -52,8 +56,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     @Override
     public void updateTask()
     {
-        //TODO work interval
-        if(worker.getOffsetTicks() % WORKER_INTERVAL != 0)
+        if (worker.getOffsetTicks() % WORKER_INTERVAL != 0)
         {
             return;
         }
@@ -67,28 +70,22 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             else
             {
-                //TODO plant, search, or wait
                 job.setStage(Stage.SEARCHING);
             }
             break;
         case SEARCHING:
-            if (!hasAxeWithEquip())//TODO don't really need an axe here
-            {
-                job.setStage(Stage.IDLE);
-            }
-            else
-            {
-                findTrees();//Find tree location
-            }
+            //TODO only search if needed
+            findTrees();//Find tree location
+
             break;
         case CHOPPING:
             if (!hasAxeWithEquip())
             {
                 job.setStage(Stage.IDLE);
             }
-            else if(job.tree == null)
+            else if (job.tree == null)
             {
-                if(trees.size() > 0)
+                if (trees.size() > 0)
                 {
                     job.tree = trees.poll();//TODO find trees more efficiently
                 }
@@ -102,7 +99,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                 chopTree();//Go through Queue
             }
             break;
-        case GATHERING:
+        case GATHERING://TODO never happens
             pickupSaplings();
             break;
         case INVENTORY_FULL:
@@ -125,6 +122,114 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         job.setStage(Stage.IDLE);
     }
 
+    private void requestAxe()
+    {
+        //TODO request by tool type
+        //job.addItemNeeded();
+        //TODO go home or plant trees
+    }
+
+    private void findTrees()
+    {
+        //Search
+        int posX = (int) worker.posX;
+        int y = (int) worker.posY + 2;
+        int posZ = (int) worker.posZ;
+
+        for (int x = posX - SEARCH_RANGE; x < posX + SEARCH_RANGE; x++)
+        {
+            for (int z = posZ - SEARCH_RANGE; z < posZ + SEARCH_RANGE; z++)
+            {
+                Block block = world.getBlock(x, y, z);
+                if (block instanceof BlockLog)
+                {
+                    System.out.println("BlockLog found");
+                    Tree t = new Tree(world, new ChunkCoordinates(x, y, z));
+                    if (t.isTree())
+                    {
+                        System.out.println("Tree found");
+                        if (!trees.contains(t))
+                        {
+                            System.out.println("Tree added");
+                            trees.add(t);
+                        }
+                    }
+                }
+            }
+        }
+        //TODO sort trees - IDEA(by distance(square distance) from TopMiddle of search square)
+        System.out.println("Trees: " + trees.size());
+        job.setStage(Stage.CHOPPING);
+    }
+
+    private void chopTree()
+    {
+        if (InventoryUtils.getOpenSlot(getInventory()) == -1)//inventory has an open slot - this doesn't account for slots with non full stacks
+        {                                                   //also we still may have problems if the block drops multiple items
+            job.setStage(Stage.INVENTORY_FULL);
+            return;
+        }
+        if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.tree.getLocation()))
+        {
+            System.out.println("Worker not at site: " + job.tree.getLocation().toString());
+            System.out.println("\tDistance: " + ChunkCoordUtils.distanceSqrd(job.tree.getLocation(), worker.getPosition()));
+            //TODO break leaves in way of path to tree
+            return;
+        }
+
+        ChunkCoordinates log = job.tree.getNextLog();
+        List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, log, 0);//0 is fortune level, it doesn't matter
+        for (ItemStack item : items)
+        {
+            InventoryUtils.setStack(getInventory(), item);
+        }
+        ChunkCoordUtils.setBlock(world, log, Blocks.air);
+        worker.getHeldItem().damageItem(1, worker);
+        worker.swingItem();
+
+        //tree is gone
+        if (!job.tree.hasLogs())
+        {
+            boolean success = plantSapling(job.tree.getLocation());
+            System.out.println("Tree planting success: " + success);
+            job.tree = null;
+        }
+    }
+
+    private void pickupSaplings()
+    {
+        //TODO
+    }
+
+    private void dumpInventory()
+    {
+        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+        {
+            for (int i = 0; i < getInventory().getSizeInventory(); i++)
+            {
+                ItemStack stack = getInventory().getStackInSlot(i);
+                if (stack != null && !(stack.getItem() instanceof ItemAxe || isStackSapling(stack)))
+                {
+                    ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(), stack);
+                    if (returnStack == null)
+                    {
+                        getInventory().decrStackSize(i, stack.stackSize);
+                    }
+                    else
+                    {
+                        getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+                    }
+                }
+            }
+            job.setStage(Stage.IDLE);
+        }
+    }
+
+    private InventoryCitizen getInventory()
+    {
+        return worker.getInventory();
+    }
+
     private boolean hasAxe()
     {
         return getAxeSlot() != -1;
@@ -132,9 +237,9 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
     private boolean hasAxeWithEquip()
     {
-        if(hasAxe())
+        if (hasAxe())
         {
-            if(!(worker.getHeldItem() != null && worker.getHeldItem().getItem() instanceof ItemAxe))
+            if (!(worker.getHeldItem() != null && worker.getHeldItem().getItem() instanceof ItemAxe))
             {
                 equipAxe();
             }
@@ -153,89 +258,39 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         worker.setCurrentItemOrArmor(0, getInventory().getStackInSlot(getAxeSlot()));
     }
 
-    private void requestAxe()
+    private boolean isStackSapling(ItemStack stack)
     {
-        //TODO request by tool type
-        //job.addItemNeeded();
-        //TODO go home or plant trees
+        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a instanceof BlockSapling;
     }
 
-    private void findTrees()
+    private int getSaplingSlot()
     {
-        //Search
-        int posX = (int) worker.posX;
-        int y = (int) worker.posY + 2;
-        int posZ = (int) worker.posZ;
-
-        for(int x = posX - SEARCH_RANGE; x < posX + SEARCH_RANGE; x++)
+        for (int i = 0; i < getInventory().getSizeInventory(); i++)
         {
-            for(int z = posZ - SEARCH_RANGE; z < posZ + SEARCH_RANGE; z++)
+            if (isStackSapling(getInventory().getStackInSlot(i)))
             {
-                Block block = world.getBlock(x, y, z);
-                //System.out.println(block.getLocalizedName());
-                if(block instanceof BlockLog)
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private boolean plantSapling(ChunkCoordinates location)
+    {
+        int slot = getSaplingSlot();
+        if (slot != -1)
+        {
+            ItemStack stack = getInventory().getStackInSlot(slot);
+            if (stack.getItem() instanceof ItemBlock)
+            {
+                Block block = ((ItemBlock) stack.getItem()).field_150939_a;
+                if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
                 {
-                    System.out.println("Block log found");
-                    Tree t = new Tree(world, new ChunkCoordinates(x, y, z));
-                    if(t.isTree())
-                    {
-                        System.out.println("Tree found");
-                        if(!trees.contains(t))
-                        {
-                            System.out.println("Tree added");
-                            trees.add(t);
-                        }
-                    }
+                    getInventory().decrStackSize(slot, 1);
+                    return true;
                 }
             }
         }
-        System.out.println("Trees: " + trees.size());
-        job.setStage(Stage.CHOPPING);
-    }
-
-    private void chopTree()
-    {
-        if(!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.tree.getLocation()))
-        {
-            System.out.println("Worker not at site: " + job.tree.getLocation().toString());
-            System.out.println("\tDistance: " + ChunkCoordUtils.distanceSqrd(job.tree.getLocation(), worker.getPosition()));
-            return;
-        }
-
-        ChunkCoordinates log = job.tree.getNextLog();
-        if(InventoryUtils.getOpenSlot(getInventory()) != -1)//inventory has an open slot - this doesn't account for slots with non full stacks
-        {                                                   //also we still may have problems if the block drops multiple items
-            List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, log, 0);//TODO get fortune level from axe (if it matters..)
-            for(ItemStack item : items)
-            {
-                InventoryUtils.setStack(getInventory(), item);
-            }
-            ChunkCoordUtils.setBlock(world, log, Blocks.air);
-            worker.swingItem();
-        }
-
-        //tree is gone
-        if(!job.tree.hasLogs())
-        {
-            //TODO plant sapling at job.tree.getLocation()
-
-            job.tree = null;
-        }
-    }
-
-    private void pickupSaplings()
-    {
-        //TODO
-    }
-
-    private void dumpInventory()
-    {
-        //TODO
-    }
-
-    private InventoryCitizen getInventory()
-    {
-        return worker.getInventory();
+        return false;
     }
 }
-
