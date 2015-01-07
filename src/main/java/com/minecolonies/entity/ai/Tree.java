@@ -96,6 +96,11 @@ public class Tree
         return location;
     }
 
+    public float squareDistance(Tree other)
+    {
+        return this.getLocation().getDistanceSquaredToChunkCoordinates(other.getLocation());
+    }
+
     @Override
     public boolean equals(Object o)
     {

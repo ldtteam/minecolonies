@@ -13,9 +13,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 {
@@ -29,9 +27,17 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     }
 
     private static final int SEARCH_RANGE = 20;
-    private static final int WORKER_INTERVAL = 10;
+    private static final int SEARCH_INTERVAL = 10;
+    private static final int SEARCH_STEPS = 2*SEARCH_RANGE / SEARCH_INTERVAL;
 
-    private Queue<Tree> trees = new LinkedList<Tree>();
+    private static final int WORKER_INTERVAL = 10;
+    private static final int CLUSTER_TREE_DISTANCE = 16;//square distance
+
+    private int searchX = 0;
+    private int searchZ = 0;
+
+    private List<Tree> trees = new ArrayList<Tree>();
+    private List<List<Tree>> clusters = new ArrayList<List<Tree>>();
 
     public EntityAIWorkLumberjack(JobLumberjack job)
     {
@@ -74,8 +80,10 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             break;
         case SEARCHING:
-            //TODO only search if needed
-            findTrees();//Find tree location
+            if(clusters.isEmpty())
+            {
+                findTrees();//Do tree search
+            }
 
             break;
         case CHOPPING:
@@ -85,9 +93,20 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             else if (job.tree == null)
             {
-                if (trees.size() > 0)
+                if(clusters.size() > 0)
                 {
-                    job.tree = trees.poll();//TODO find trees more efficiently
+                    if(clusters.get(0).size() > 0)
+                    {
+                        job.tree = clusters.get(0).remove(0);
+                    }
+                    else
+                    {
+                        clusters.remove(0);
+                    }
+                }
+                else if (trees.size() > 0)
+                {
+                    createTreeClusters();
                 }
                 else
                 {
@@ -96,10 +115,11 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             else
             {
-                chopTree();//Go through Queue
+                chopTree();
             }
             break;
         case GATHERING://TODO never happens
+            //TODO also pick up apples
             pickupSaplings();
             break;
         case INVENTORY_FULL:
@@ -129,16 +149,16 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         //TODO go home or plant trees
     }
 
+    //Splits search area into
     private void findTrees()
     {
-        //Search
-        int posX = (int) worker.posX;
-        int y = (int) worker.posY + 2;
-        int posZ = (int) worker.posZ;
+        int posX = worker.getWorkBuilding().getLocation().posX - SEARCH_RANGE + searchX*SEARCH_INTERVAL;
+        int y = worker.getWorkBuilding().getLocation().posY + 2;
+        int posZ = worker.getWorkBuilding().getLocation().posZ - SEARCH_RANGE + searchZ*SEARCH_INTERVAL;
 
-        for (int x = posX - SEARCH_RANGE; x < posX + SEARCH_RANGE; x++)
+        for (int x = posX; x < posX + SEARCH_INTERVAL; x++)
         {
-            for (int z = posZ - SEARCH_RANGE; z < posZ + SEARCH_RANGE; z++)
+            for (int z = posZ; z < posZ + SEARCH_INTERVAL; z++)
             {
                 Block block = world.getBlock(x, y, z);
                 if (block instanceof BlockLog)
@@ -157,9 +177,20 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                 }
             }
         }
-        //TODO sort trees - IDEA(by distance(square distance) from TopMiddle of search square)
         System.out.println("Trees: " + trees.size());
-        job.setStage(Stage.CHOPPING);
+
+        searchX++;
+        if(searchX == SEARCH_STEPS)
+        {
+            searchX = 0;
+            searchZ++;
+            if(searchZ == SEARCH_STEPS)
+            {
+                //TODO is trees.size() == 0 idle, gather, plant, or broaden search
+                searchZ = 0;
+                job.setStage(Stage.CHOPPING);
+            }
+        }
     }
 
     private void chopTree()
@@ -184,8 +215,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             InventoryUtils.setStack(getInventory(), item);
         }
         ChunkCoordUtils.setBlock(world, log, Blocks.air);
-        worker.getHeldItem().damageItem(1, worker);
-        worker.swingItem();
+        worker.getHeldItem().damageItem(1, worker);//TODO this doesn't work
+        worker.swingItem();//TODO this doesn't work
 
         //tree is gone
         if (!job.tree.hasLogs())
@@ -292,5 +323,42 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
         }
         return false;
+    }
+
+    private void createTreeClusters()
+    {
+        while (!trees.isEmpty())
+        {
+            //create a new cluster
+            List<Tree> cluster = new ArrayList<Tree>();
+            cluster.add(trees.remove(0));
+            clusters.add(cluster);
+
+            if (trees.isEmpty()) break;
+
+            //  Gather more trees into the Cluster
+            ListIterator<Tree> listIt = cluster.listIterator();
+            int count = 0;
+            while(listIt.hasNext())
+            {
+                System.out.println("Times: " + ++count);
+                Tree tree = listIt.next();
+
+                Iterator<Tree> it = trees.iterator();
+                while (it.hasNext())
+                {
+                    Tree other = it.next();
+
+                    if (tree.squareDistance(other) < CLUSTER_TREE_DISTANCE)
+                    {
+                        listIt.add(other);
+                        it.remove();
+                    }
+                }
+                System.out.println("Cluster size: " + cluster.size());
+            }
+        }
+        System.out.println("Clusters: " + clusters.size());
+        //TODO sort clusters
     }
 }
