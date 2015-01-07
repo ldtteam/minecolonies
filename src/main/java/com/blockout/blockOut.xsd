@@ -4,10 +4,36 @@
     <xs:element name="window" type="windowType"/>
     <xs:element name="layout" type="layoutType"/>
 
+    <xs:simpleType name="align">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TopLeft"/>
+            <xs:enumeration value="TopMiddle"/>
+            <xs:enumeration value="TopRight"/>
+            <xs:enumeration value="MiddleLeft"/>
+            <xs:enumeration value="Middle"/>
+            <xs:enumeration value="MiddleRight"/>
+            <xs:enumeration value="BottomLeft"/>
+            <xs:enumeration value="BottomMiddle"/>
+            <xs:enumeration value="BottomRight"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="sizePair">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="([-+]?\d+)(%|px)? +([-+]?\d+)(%|px)?"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="fixedSizePair">
+        <xs:restriction>
+            <xs:pattern value="\d+ +\d+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:complexType name="windowType">
         <xs:group ref="paneContainerGroup" minOccurs="0" maxOccurs="unbounded"/>
         <xs:attribute name="inherit"  type="xs:string"/>
-        <xs:attribute name="size"     type="xs:string"/>
+        <xs:attribute name="size"     type="sizePair"/>
         <xs:attribute name="width"    type="xs:string"/>
         <xs:attribute name="height"   type="xs:string"/>
         <xs:attribute name="lightbox" type="xs:boolean"/>
@@ -22,11 +48,11 @@
     <xs:complexType name="paneType">
         <xs:attribute name="id"      type="xs:string"/>
 
-        <xs:attribute name="align"   type="xs:string"/>
-        <xs:attribute name="size"    type="xs:string"/>
+        <xs:attribute name="align"   type="align"/>
+        <xs:attribute name="size"    type="sizePair"/>
         <xs:attribute name="width"   type="xs:string"/>
         <xs:attribute name="height"  type="xs:string"/>
-        <xs:attribute name="pos"     type="xs:string"/>
+        <xs:attribute name="pos"     type="sizePair"/>
         <xs:attribute name="x"       type="xs:string"/>
         <xs:attribute name="y"       type="xs:string"/>
 
@@ -124,7 +150,7 @@
             <xs:extension base="paneType">
                 <xs:attribute name="label"      type="xs:string"/>
                 <xs:attribute name="textscale"  type="xs:string"/>
-                <xs:attribute name="textalign"  type="xs:string"/>
+                <xs:attribute name="textalign"  type="align"/>
                 <xs:attribute name="color"      type="xs:string"/>
                 <xs:attribute name="hovercolor" type="xs:string"/>
                 <xs:attribute name="shadow"     type="xs:boolean"/>
@@ -138,7 +164,7 @@
             <xs:extension base="paneType">
                 <xs:attribute name="linespace"  type="xs:integer"/>
                 <xs:attribute name="textscale"  type="xs:string"/>
-                <xs:attribute name="textalign"  type="xs:string"/>
+                <xs:attribute name="textalign"  type="align"/>
                 <xs:attribute name="color"      type="xs:string"/>
                 <xs:attribute name="shadow"     type="xs:boolean"/>
             </xs:extension>
@@ -160,16 +186,16 @@
             <xs:extension base="paneType">
                 <!-- Image and Highlight -->
                 <xs:attribute name="source"          type="xs:string" use="required"/>
-                <xs:attribute name="imageoffset"     type="xs:string"/>
-                <xs:attribute name="imagesize"       type="xs:string"/>
+                <xs:attribute name="imageoffset"     type="fixedSizePair"/>
+                <xs:attribute name="imagesize"       type="fixedSizePair"/>
                 <xs:attribute name="highlight"       type="xs:string"/>
-                <xs:attribute name="highlightoffset" type="xs:string"/>
-                <xs:attribute name="highlightsize"   type="xs:string"/>
+                <xs:attribute name="highlightoffset" type="fixedSizePair"/>
+                <xs:attribute name="highlightsize"   type="fixedSizePair"/>
                 <!-- Label (optional) -->
-                <xs:attribute name="label"      type="xs:string"/>
+                <xs:attribute name="label"           type="xs:string"/>
                 <xs:attribute name="textscale"       type="xs:string"/>
-                <xs:attribute name="textalign"       type="xs:string"/>
-                <xs:attribute name="textoffset"      type="xs:string"/>
+                <xs:attribute name="textalign"       type="align"/>
+                <xs:attribute name="textoffset"      type="fixedSizePair"/>
                 <xs:attribute name="textcolor"       type="xs:string"/>
                 <xs:attribute name="texthovercolor"  type="xs:string"/>
                 <xs:attribute name="textdisabledcolor" type="xs:string"/>
@@ -182,9 +208,9 @@
     <xs:complexType name="imageType">
         <xs:complexContent>
             <xs:extension base="paneType">
-                <xs:attribute name="source" type="xs:string"/>
-                <xs:attribute name="imageoffset" type="xs:string"/>
-                <xs:attribute name="imagesize" type="xs:string"/>
+                <xs:attribute name="source"      type="xs:string"/>
+                <xs:attribute name="imageoffset" type="fixedSizePair"/>
+                <xs:attribute name="imagesize"   type="fixedSizePair"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

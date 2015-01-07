@@ -285,7 +285,7 @@ public class PaneParams
             String key = str.substring(index + 2, endIndex);
             String replacement = LanguageRegistry.instance().getStringLocalization(key);
 
-            if (replacement == null)
+            if (replacement.isEmpty())
             {
                 replacement = "MISSING:" + key;
             }
