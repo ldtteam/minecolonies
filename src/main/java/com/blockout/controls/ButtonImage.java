@@ -12,9 +12,11 @@ public class ButtonImage extends Button
     private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
     protected ResourceLocation image;
     protected ResourceLocation imageHighlight;
+    protected ResourceLocation imageDisabled;
 
     protected int       imageOffsetX = 0, imageOffsetY = 0, imageWidth = 0, imageHeight = 0;
     protected int       highlightOffsetX = 0, highlightOffsetY = 0, highlightWidth = 0, highlightHeight = 0;
+    protected int       disabledOffsetX = 0, disabledOffsetY = 0, disabledWidth = 0, disabledHeight = 0;
     protected float     textScale         = 1.0f;
     protected Alignment textAlignment     = Alignment.Middle;
     protected int       textColor         = 0xffffff;
@@ -70,6 +72,26 @@ public class ButtonImage extends Button
         {
             highlightWidth = size.x;
             highlightHeight = size.y;
+        }
+
+        path = params.getStringAttribute("disabled", null);
+        if (path != null)
+        {
+            imageDisabled = new ResourceLocation(path);
+        }
+
+        size = params.getSizePairAttribute("disabledoffset", null, null);
+        if (size != null)
+        {
+            disabledOffsetX = size.x;
+            disabledOffsetY = size.y;
+        }
+
+        size = params.getSizePairAttribute("disabledsize", null, null);
+        if (size != null)
+        {
+            disabledWidth = size.x;
+            disabledHeight = size.y;
         }
 
         textScale         = params.getFloatAttribute("scale", textScale);
@@ -168,7 +190,18 @@ public class ButtonImage extends Button
 
         boolean mouseOver = isPointInPane(mx, my);
 
-        if (mouseOver && imageHighlight != null)
+        if (!enabled)
+        {
+            if (imageDisabled != null)
+            {
+                bind = imageDisabled;
+                offsetX = disabledOffsetX;
+                offsetY = disabledOffsetY;
+                w = disabledWidth;
+                h = disabledHeight;
+            }
+        }
+        else if (mouseOver && imageHighlight != null)
         {
             bind = imageHighlight;
             offsetX = highlightOffsetX;
@@ -181,7 +214,7 @@ public class ButtonImage extends Button
         if (h == 0 || h > getHeight())  h = getHeight();
 
         mc.renderEngine.bindTexture(bind);
-        if (enabled)
+        if (enabled || imageDisabled != null)
         {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         }

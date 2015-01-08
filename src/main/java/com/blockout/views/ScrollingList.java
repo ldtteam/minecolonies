@@ -16,9 +16,20 @@ public class ScrollingList extends ScrollingView
 {
     public static interface DataProvider
     {
+        /**
+         * Override this to provide the number of rows
+         *
+         * @return number of rows in the list
+         */
         int getElementCount();
 
-        void updateElement(int index, Pane elementPane);
+        /**
+         * Override this to update the Panes for a given row
+         *
+         * @param index the index of the row/list element
+         * @param rowPane the parent Pane for the row, containing the elements to update
+         */
+        void updateElement(int index, Pane rowPane);
     }
 
     //  Runtime

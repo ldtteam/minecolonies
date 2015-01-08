@@ -38,6 +38,22 @@ the `onButtonClicked()`
 While you can programmatically create a BlockOut layout, the easiest method is to use a BlockOut layout files, which is
 an XML file that describes the layout of the Window.
 
+
+### Localization
+Text in Layout files is automatically localized.  All text that is displayed to the user is parsed for tokens of the
+format "$(identifier)" and replaced with matching localized text.
+
+For example, if you have the following localized string in the language assest file:
+
+`com.yourmod.gui.string=Oranges`
+
+then a button defined in a layout file as:
+
+`<button label="100 $(com.yourmod.gui.somestring)"/>`
+
+the button will display the text "100 Oranges".
+
+
 ***
 
 Layout File Definition
@@ -201,6 +217,9 @@ A clickable image which functions like a Button
 * `highlight="{path}"`            Path to texture png to use for mouse-over highlight render effect, if desired
 * `highlightoffset="{x y}"`       Offset of image in highlight texture to top left of image
 * `highlightsize="{width height}"` Size of highlight image in source texture
+* `disabled="{path}"`             Path to texture png to use for disabled button render effect, if desired
+* `disabledoffset="{x y}"`        Offset of image in disabled texture to top left of image
+* `disabledsize="{width height}"` Size of disabled image in source texture
 * `label="{text}"`                Text label for the button, if desired
 * `textscale="{scale}"`           Scale of text for label
 * `textalign="{align}"`           (Default=Middle) Alignment of the text label over the image

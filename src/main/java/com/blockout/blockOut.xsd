@@ -191,6 +191,9 @@
                 <xs:attribute name="highlight"       type="xs:string"/>
                 <xs:attribute name="highlightoffset" type="fixedSizePair"/>
                 <xs:attribute name="highlightsize"   type="fixedSizePair"/>
+                <xs:attribute name="disabled"        type="xs:string"/>
+                <xs:attribute name="disabledoffset"  type="fixedSizePair"/>
+                <xs:attribute name="disabledsize"    type="fixedSizePair"/>
                 <!-- Label (optional) -->
                 <xs:attribute name="label"           type="xs:string"/>
                 <xs:attribute name="textscale"       type="xs:string"/>
