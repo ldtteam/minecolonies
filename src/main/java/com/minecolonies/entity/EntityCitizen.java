@@ -187,6 +187,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void onLivingUpdate()
     {
         setTexture();
+        updateArmSwingProgress();
         updateColony();
         super.onLivingUpdate();
     }

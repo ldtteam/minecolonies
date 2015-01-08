@@ -216,7 +216,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         }
         ChunkCoordUtils.setBlock(world, log, Blocks.air);
         worker.getHeldItem().damageItem(1, worker);//TODO this doesn't work
-        worker.swingItem();//TODO this doesn't work
+        worker.swingItem();
 
         //tree is gone
         if (!job.tree.hasLogs())
