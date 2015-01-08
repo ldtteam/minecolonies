@@ -108,7 +108,7 @@ public class ColonyView
         return buildings.get(buildingId);
     }
 
-    public Map<UUID, Permissions.Rank> getPlayers()
+    public Map<UUID, Permissions.Player> getPlayers()
     {
         return permissions.getPlayers();
     }
@@ -132,15 +132,15 @@ public class ColonyView
         MineColonies.network.sendToServer(new PermissionsMessage.Permission(id, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
     }
 
-    public void addPlayer(UUID player, Permissions.Rank rank) {
-        permissions.addPlayer(player, rank);
-        MineColonies.network.sendToServer(new PermissionsMessage.AddPlayer(id, player, rank));
-    }
-
-    public void removePlayer(UUID player) {
-        permissions.removePlayer(player);
-        MineColonies.network.sendToServer(new PermissionsMessage.RemovePlayer(id, player));
-    }
+//    public void addPlayer(String player, Permissions.Rank rank)
+//    {
+//        MineColonies.network.sendToServer(new PermissionsMessage.AddPlayer(id, player));
+//    }
+//
+//    public void removePlayer(UUID player)
+//    {
+//        MineColonies.network.sendToServer(new PermissionsMessage.RemovePlayer(id, player));
+//    }
 
     public int getMaxCitizens() {
         return maxCitizens;
