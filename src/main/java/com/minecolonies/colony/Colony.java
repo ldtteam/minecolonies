@@ -533,13 +533,12 @@ public class Colony
             // Permissions
             if(permissions.isDirty() || hasNewSubscribers)
             {
-                PermissionsMessage.View msg = new PermissionsMessage.View(this);
-
                 for (EntityPlayerMP player : subscribers)
                 {
                     if (permissions.isDirty() || !oldSubscribers.contains(player))
                     {
-                        MineColonies.network.sendTo(msg, player);
+                        Permissions.Rank rank = getPermissions().getRank(player);
+                        MineColonies.network.sendTo(new PermissionsMessage.View(this, rank), player);
                     }
                 }
             }
