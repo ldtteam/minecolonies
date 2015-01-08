@@ -331,18 +331,20 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         {
             //create a new cluster
             List<Tree> cluster = new ArrayList<Tree>();
+            //cluster queue
+            Queue<Tree> clusterQueue = new LinkedList<Tree>();
             cluster.add(trees.remove(0));
+            clusterQueue.add(cluster.get(0));
             clusters.add(cluster);
 
             if (trees.isEmpty()) break;
 
-            //  Gather more trees into the Cluster
-            ListIterator<Tree> listIt = cluster.listIterator();
             int count = 0;
-            while(listIt.hasNext())
+            //  Gather more trees into the Cluster
+            while(!clusterQueue.isEmpty())
             {
                 System.out.println("Times: " + ++count);
-                Tree tree = listIt.next();
+                Tree tree = clusterQueue.poll();
 
                 Iterator<Tree> it = trees.iterator();
                 while (it.hasNext())
@@ -351,7 +353,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
                     if (tree.squareDistance(other) < CLUSTER_TREE_DISTANCE)
                     {
-                        listIt.add(other);
+                        clusterQueue.add(other);
+                        cluster.add(other);
                         it.remove();
                     }
                 }
@@ -359,6 +362,16 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
         }
         System.out.println("Clusters: " + clusters.size());
-        //TODO sort clusters
+
+        //Sort clusters by size
+        Collections.sort(clusters, new Comparator<List<Tree>>()
+        {
+            @Override
+            public int compare(List<Tree> cluster1, List<Tree> cluster2)
+            {
+                return cluster1.size() - cluster2.size();
+            }
+            //Maybe we should sort equal clusters based on distance to previous cluster
+        });
     }
 }
