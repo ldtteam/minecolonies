@@ -9,15 +9,16 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.entity.ai.EntityAIWork;
-import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.GuiHandler;
 import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.EntityAgeable;
@@ -40,6 +41,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static net.minecraftforge.common.util.Constants.NBT;
@@ -189,8 +191,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         setTexture();
         updateArmSwingProgress();
         updateColony();
+        pickupItems();
         super.onLivingUpdate();
     }
+
 
     private void updateColony()
     {
@@ -559,6 +563,45 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                     {
                         entityDropItem(leftover);
                     }
+                }
+            }
+        }
+    }
+
+    private void pickupItems()
+    {
+        @SuppressWarnings("unchecked")
+        List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, boundingBox.expand(2.0F, 0.0F, 2.0F));//TODO change range
+
+        for(EntityItem item : list)
+        {
+            if(item != null && !item.isDead)
+            {
+                tryPickupEntityItem(item);
+            }
+        }
+    }
+
+    public void tryPickupEntityItem(EntityItem entityItem)
+    {
+        if (!this.worldObj.isRemote)
+        {
+            if (entityItem.delayBeforeCanPickup > 0)
+            {
+                return;
+            }
+
+            ItemStack itemStack = entityItem.getEntityItem();
+            int i = itemStack.stackSize;
+
+            if ((i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventory(), itemStack)))
+            {
+                this.worldObj.playSoundAtEntity(this, "random.pop", 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                this.onItemPickup(this, i);
+
+                if (itemStack.stackSize <= 0)
+                {
+                    entityItem.setDead();
                 }
             }
         }

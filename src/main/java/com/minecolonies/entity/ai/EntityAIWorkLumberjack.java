@@ -118,6 +118,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                 chopTree();
             }
             break;
+        //Entities now pick up nearby items
         case GATHERING://TODO never happens
             //TODO also pick up apples
             pickupSaplings();
@@ -232,7 +233,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         //TODO
     }
 
-    private void dumpInventory()
+    private void dumpInventory()//TODO if full of saplings dump some of them too
     {
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
         {
