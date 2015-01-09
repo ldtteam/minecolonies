@@ -1,7 +1,6 @@
 package com.minecolonies.entity;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.client.gui.WindowCitizen;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -16,7 +15,6 @@ import com.minecolonies.entity.ai.EntityAIWork;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.GuiHandler;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
@@ -278,7 +276,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             CitizenData.View view = getCitizenDataView();
             if (view != null)
             {
-                GuiHandler.showGuiWindow(new WindowCitizen(view));
+                MineColonies.proxy.showCitizenWindow(view);
             }
         }
         return true;
