@@ -32,7 +32,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private static final int SEARCH_INTERVAL = 10;
     private static final int SEARCH_STEPS = 2*SEARCH_RANGE / SEARCH_INTERVAL;
 
-    private static final int CLUSTER_TREE_DISTANCE = 16;//square distance
+    private static final int CLUSTER_TREE_DISTANCE = 9;//square distance
 
     private int searchX = 0;
     private int searchZ = 0;
