@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
@@ -15,10 +16,13 @@ public class BuildingStonemason extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName() { return "Stonemason"; }
+    public String getSchematicName(){ return "Stonemason"; }
 
     @Override
-    public String getJobName() { return "Stonemason"; }
+    public int getMaxBuildingLevel(){ return 1; }
+
+    @Override
+    public String getJobName(){ return "Stonemason"; }
 
     @Override
     public Job createJob(CitizenData citizen)
@@ -31,6 +35,11 @@ public class BuildingStonemason extends BuildingWorker
         public View(ColonyView c, ChunkCoordinates l)
         {
             super(c, l);
+        }
+
+        public com.blockout.views.Window getWindow(int guiId)
+        {
+            return new WindowHutWorkerPlaceholder<BuildingStonemason.View>(this, "stonemasonHut");
         }
     }
 }

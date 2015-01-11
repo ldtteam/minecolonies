@@ -15,7 +15,7 @@
     <button id="recall" align="TopMiddle" size="116 20" pos="0 88"
             label="$(com.minecolonies.gui.workerHuts.recall)"/>
     <button id="build" align="TopMiddle" size="116 20" pos="0 120"
-            label="$(com.minecolonies.gui.workerHuts.build)"/>
+            label="$(com.minecolonies.gui.workerHuts.upgrade)"/>
     <button id="repair" align="TopMiddle" size="116 20" pos="0 144"
             label="$(com.minecolonies.gui.workerHuts.repair)"/>
 
