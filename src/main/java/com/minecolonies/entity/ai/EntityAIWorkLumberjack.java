@@ -26,6 +26,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         INVENTORY_FULL
     }
 
+    private static final String TOOL_TYPE_AXE = "axe";
+
     private static final int SEARCH_RANGE = 20;
     private static final int SEARCH_INTERVAL = 10;
     private static final int SEARCH_STEPS = 2*SEARCH_RANGE / SEARCH_INTERVAL;
@@ -307,8 +309,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     {
         if (hasAxe())
         {
-            //TODO forge tool types "axe"
-            if (!(worker.getHeldItem() != null && worker.getHeldItem().getItem() instanceof ItemAxe))
+            if (!(worker.getHeldItem() != null && worker.getHeldItem().getItem().getToolClasses(null /* not used */).contains(TOOL_TYPE_AXE)))
             {
                 equipAxe();
             }
@@ -319,7 +320,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
     private int getAxeSlot()
     {
-        return InventoryUtils.getFirstSlotContainingTool(getInventory(), ItemAxe.class);
+        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_AXE);
     }
 
     private void equipAxe()

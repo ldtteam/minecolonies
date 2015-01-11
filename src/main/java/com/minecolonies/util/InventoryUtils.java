@@ -185,32 +185,15 @@ public class InventoryUtils
      *
      * @return returns slot number if found, -1 if not found.
      */
-    public static int getFirstSlotContainingTool(IInventory inventory, Class<? extends ItemTool> tool)
+    public static int getFirstSlotContainingTool(IInventory inventory, String tool)
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack item = inventory.getStackInSlot(i);
-            if (item != null && item.getItem().getClass().isAssignableFrom(tool)) {
+            if (item != null && item.getItem().getToolClasses(null /* unused */).contains(tool)) {
                 return i;
             }
         }
         return -1;
-    }
-
-    /**
-     * returns total number of uses left for given tool type
-     *
-     * @return returns total uses left for the given tool class - 0 if no tools of that type are found
-     */
-    public static int inventoryToolUsesLeft(IInventory inventory, Class<? extends ItemTool> tool)
-    {
-        int usesLeft = 0;
-        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            ItemStack item = inventory.getStackInSlot(i);
-            if (item != null && item.getItem().getClass().isAssignableFrom(tool)) {
-                usesLeft += (item.getMaxDamage() - item.getItemDamage());
-            }
-        }
-        return usesLeft;
     }
 
     /**
