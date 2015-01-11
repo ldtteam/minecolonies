@@ -27,8 +27,6 @@ public class Tree
             location = new ChunkCoordinates(baseLog);
             woodBlocks = new LinkedList<ChunkCoordinates>();
 
-            //woodBlocks.add(baseLog);
-            //TODO add the rest of the logs
             //simple pillar
             while(ChunkCoordUtils.getBlock(world, baseLog) instanceof BlockLog)
             {
@@ -38,6 +36,8 @@ public class Tree
             baseLog.posY--;//Make baseLog the topLog
 
             checkTree(world, baseLog);
+
+            //TODO add the rest of the logs
         }
         //isTree = false
     }
@@ -81,9 +81,14 @@ public class Tree
         return log;
     }
 
-    public ChunkCoordinates getNextLog()
+    public ChunkCoordinates pollNextLog()
     {
         return woodBlocks.poll();
+    }
+
+    public ChunkCoordinates peekNextLog()
+    {
+        return woodBlocks.peek();
     }
 
     public boolean hasLogs()

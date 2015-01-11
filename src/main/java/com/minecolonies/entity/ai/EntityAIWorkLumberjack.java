@@ -36,6 +36,9 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private int searchX = 0;
     private int searchZ = 0;
 
+    private int chopTicks = 0;
+    private int delay = 0;
+
     private List<Tree> trees = new ArrayList<Tree>();
     private List<List<Tree>> clusters = new ArrayList<List<Tree>>();
 
@@ -62,8 +65,14 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     @Override
     public void updateTask()
     {
-        if (worker.getOffsetTicks() % WORKER_INTERVAL != 0)
+        //if (worker.getOffsetTicks() % WORKER_INTERVAL != 0)
+        //{
+        //    return;
+        //}
+
+        if(delay > 0)
         {
+            delay--;
             return;
         }
 
@@ -83,6 +92,10 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             if(clusters.isEmpty())
             {
                 findTrees();//Do tree search
+            }
+            else
+            {
+                job.setStage(Stage.CHOPPING);
             }
 
             break;
@@ -209,23 +222,46 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             return;
         }
 
-        ChunkCoordinates log = job.tree.getNextLog();
-        List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, log, 0);//0 is fortune level, it doesn't matter
-        for (ItemStack item : items)
+        //TODO optimize
+        if(chopTicks == 20)//log break
         {
-            InventoryUtils.setStack(getInventory(), item);
-        }
-        ChunkCoordUtils.setBlock(world, log, Blocks.air);
-        worker.getHeldItem().damageItem(1, worker);//TODO this doesn't work
-        worker.swingItem();
+            ChunkCoordinates log = job.tree.pollNextLog();
+            Block block = ChunkCoordUtils.getBlock(world, log);
+            List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, log, 0);//0 is fortune level, it doesn't matter
+            for (ItemStack item : items)
+            {
+                InventoryUtils.setStack(getInventory(), item);
+            }
+            ChunkCoordUtils.setBlock(world, log, Blocks.air);
+            world.playSoundEffect(
+                    (float) log.posX + 0.5F,
+                    (float) log.posY + 0.5F, (float) log.posZ + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
+            //TODO particles
+            //worker.getHeldItem().damageItem(1, worker);//TODO Doesn't work
+            //getInventory().getStackInSlot(getAxeSlot()).damageItem(1, worker);//this either, Item damages but doesn't break
 
-        //tree is gone
-        if (!job.tree.hasLogs())
-        {
-            boolean success = plantSapling(job.tree.getLocation());
-            System.out.println("Tree planting success: " + success);
-            job.tree = null;
+            //tree is gone
+            if (!job.tree.hasLogs())
+            {
+                boolean success = plantSapling(job.tree.getLocation());
+                System.out.println("Tree planting success: " + success);
+                job.tree = null;
+            }
+            chopTicks = -1;//will be increased to 0 at the end of the method
         }
+        else if(chopTicks % 5 == 0)//time to swing and play sounds
+        {
+            ChunkCoordinates log = job.tree.peekNextLog();
+            if(chopTicks == 0)
+            {
+                worker.getLookHelper().setLookPosition(log.posX, log.posY, log.posZ, 10f, worker.getVerticalFaceSpeed());//TODO doesn't work right
+            }
+            Block block = ChunkCoordUtils.getBlock(world, log);
+            worker.swingItem();
+            world.playSoundEffect((float)log.posX + 0.5F, (float)log.posY + 0.5F, (float)log.posZ + 0.5F, block.stepSound.getStepResourcePath(), (block.stepSound.getVolume() + 1.0F) / 8.0F, block.stepSound.getPitch() * 0.5F);
+            //TODO particles
+        }
+        chopTicks++;
     }
 
     private void pickupSaplings()
@@ -271,6 +307,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     {
         if (hasAxe())
         {
+            //TODO forge tool types "axe"
             if (!(worker.getHeldItem() != null && worker.getHeldItem().getItem() instanceof ItemAxe))
             {
                 equipAxe();
@@ -316,9 +353,15 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             if (stack.getItem() instanceof ItemBlock)
             {
                 Block block = ((ItemBlock) stack.getItem()).field_150939_a;
+                worker.setCurrentItemOrArmor(0, stack);
                 if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
                 {
+                    worker.swingItem();
+                    world.playSoundEffect(
+                            (float) location.posX + 0.5F,
+                            (float) location.posY + 0.5F, (float) location.posZ + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
                     getInventory().decrStackSize(slot, 1);
+                    delay = 10;
                     return true;
                 }
             }
