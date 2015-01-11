@@ -172,16 +172,13 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             for (int z = posZ; z < posZ + SEARCH_INTERVAL; z++)
             {
                 Block block = world.getBlock(x, y, z);
-                if (block instanceof BlockLog)
+                if (block.isWood(world, x, y, z))//Parameters unused
                 {
-                    System.out.println("BlockLog found");
                     Tree t = new Tree(world, new ChunkCoordinates(x, y, z));
                     if (t.isTree())
                     {
-                        System.out.println("Tree found");
                         if (!trees.contains(t))
                         {
-                            System.out.println("Tree added");
                             trees.add(t);
                         }
                     }
