@@ -32,7 +32,6 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private static final int SEARCH_INTERVAL = 10;
     private static final int SEARCH_STEPS = 2*SEARCH_RANGE / SEARCH_INTERVAL;
 
-    private static final int WORKER_INTERVAL = 10;
     private static final int CLUSTER_TREE_DISTANCE = 16;//square distance
 
     private int searchX = 0;
@@ -67,11 +66,6 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     @Override
     public void updateTask()
     {
-        //if (worker.getOffsetTicks() % WORKER_INTERVAL != 0)
-        //{
-        //    return;
-        //}
-
         if(delay > 0)
         {
             delay--;
@@ -168,6 +162,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     //Splits search area into
     private void findTrees()
     {
+        //TODO search a larger y range?
         int posX = worker.getWorkBuilding().getLocation().posX - SEARCH_RANGE + searchX*SEARCH_INTERVAL;
         int y = worker.getWorkBuilding().getLocation().posY + 2;
         int posZ = worker.getWorkBuilding().getLocation().posZ - SEARCH_RANGE + searchZ*SEARCH_INTERVAL;
@@ -239,8 +234,14 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                     (float) log.posX + 0.5F,
                     (float) log.posY + 0.5F, (float) log.posZ + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
             //TODO particles
-            //worker.getHeldItem().damageItem(1, worker);//TODO Doesn't work
-            //getInventory().getStackInSlot(getAxeSlot()).damageItem(1, worker);//this either, Item damages but doesn't break
+            ItemStack axe = worker.getInventory().getHeldItem();
+            axe.getItem().onBlockDestroyed(axe, world, block, log.posX, log.posY, log.posZ, worker);
+            if(axe.stackSize < 1)
+            {
+                worker.setCurrentItemOrArmor(0, null);
+                getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
+                //TODO particles
+            }
 
             //tree is gone
             if (!job.tree.hasLogs())
@@ -325,7 +326,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
     private void equipAxe()
     {
-        worker.setCurrentItemOrArmor(0, getInventory().getStackInSlot(getAxeSlot()));
+        worker.setHeldItem(getAxeSlot());
     }
 
     private boolean isStackSapling(ItemStack stack)
@@ -354,7 +355,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             if (stack.getItem() instanceof ItemBlock)
             {
                 Block block = ((ItemBlock) stack.getItem()).field_150939_a;
-                worker.setCurrentItemOrArmor(0, stack);
+                worker.setHeldItem(slot);
                 if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
                 {
                     worker.swingItem();

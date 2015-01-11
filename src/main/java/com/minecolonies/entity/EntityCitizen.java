@@ -450,6 +450,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
         }
         compound.setTag("Inventory", inventoryList);
+
+        compound.setInteger("HeldItemSlot", inventory.getHeldItemSlot());
     }
 
     @Override
@@ -472,6 +474,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             ItemStack itemstack = ItemStack.loadItemStackFromNBT(tag);
             inventory.setInventorySlotContents(slot, itemstack);
         }
+
+        inventory.setHeldItem(compound.getInteger("HeldItemSlot"));
     }
 
     public int getOffsetTicks()
@@ -605,6 +609,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 }
             }
         }
+    }
+
+    public void setHeldItem(int slot)
+    {
+        inventory.setHeldItem(slot);
+        setCurrentItemOrArmor(0, inventory.getStackInSlot(slot));
     }
 
     /**
