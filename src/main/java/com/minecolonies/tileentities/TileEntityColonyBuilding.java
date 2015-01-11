@@ -13,11 +13,10 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ChunkCoordinates;
 
 import java.lang.ref.WeakReference;
-import java.util.UUID;
 
 public class TileEntityColonyBuilding extends TileEntityChest
 {
-    private UUID                    colonyId;
+    private int                     colonyId = 0;
     private WeakReference<Colony>   colony;
     private WeakReference<Building> building;
 
@@ -30,7 +29,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         if (worldObj.isRemote) return;
 
-        if (colony == null && colonyId != null)
+        if (colony == null && colonyId != 0)
         {
             colony = new WeakReference<Colony>(ColonyManager.getColonyById(colonyId));
         }
@@ -58,14 +57,14 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        colonyId = UUID.fromString(compound.getString(TAG_COLONY));
+        colonyId = compound.getInteger(TAG_COLONY);
     }
 
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        compound.setString(TAG_COLONY, colonyId.toString());
+        compound.setInteger(TAG_COLONY, colonyId);
     }
 
     @Override
@@ -78,18 +77,18 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
     {
         NBTTagCompound compound = packet.func_148857_g();
-        colonyId = UUID.fromString(compound.getString(TAG_COLONY));
+        colonyId = compound.getInteger(TAG_COLONY);
     }
 
     @Override
     public S35PacketUpdateTileEntity getDescriptionPacket()
     {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setString(TAG_COLONY, colonyId.toString());
+        compound.setInteger(TAG_COLONY, colonyId);
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, compound);
     }
 
-    public UUID getColonyId() { return colonyId; }
+    public int getColonyId() { return colonyId; }
     public Colony getColony() { return colony != null ? colony.get() : null; }
     public void setColony(Colony colony)
     {
@@ -105,7 +104,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public Building.View getBuildingView()
     {
         ColonyView colony = ColonyManager.getColonyView(colonyId);
-        return colony.getBuilding(getPosition());
+        return colony != null ? colony.getBuilding(getPosition()) : null;
     }
 
     public boolean hasAccessPermission(EntityPlayer player)//This is called every tick the GUI is open. Is that bad?

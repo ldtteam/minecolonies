@@ -2,9 +2,7 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.workorders.WorkOrder;
-import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Schematic;
@@ -12,11 +10,9 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.util.UUID;
-
 public class JobBuilder extends Job
 {
-    protected UUID             workOrderId;
+    protected int              workOrderId;
     protected Schematic        schematic;
     protected String           schematicName;
     protected ChunkCoordinates schematicPos;
@@ -49,9 +45,9 @@ public class JobBuilder extends Job
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if (workOrderId != null)
+        if (workOrderId != 0)
         {
-            compound.setString(TAG_WORK_ORDER, workOrderId.toString());
+            compound.setInteger(TAG_WORK_ORDER, workOrderId);
 
             if (hasSchematic())
             {
@@ -70,7 +66,7 @@ public class JobBuilder extends Job
         super.readFromNBT(compound);
         if(compound.hasKey(TAG_WORK_ORDER))
         {
-            workOrderId = UUID.fromString(compound.getString(TAG_WORK_ORDER));
+            workOrderId = compound.getInteger(TAG_WORK_ORDER);
 
             if(compound.hasKey(TAG_SCHEMATIC))
             {
@@ -109,7 +105,7 @@ public class JobBuilder extends Job
      */
     public void setWorkOrder(WorkOrder order)
     {
-        workOrderId = (order != null) ? order.getID() : null;
+        workOrderId = (order != null) ? order.getID() : 0;
     }
 
     /**
@@ -117,7 +113,7 @@ public class JobBuilder extends Job
      *
      * @return UUID of the Work Order claimed by this Job, or null
      */
-    public UUID getWorkOrderId()
+    public int getWorkOrderId()
     {
         return workOrderId;
     }
@@ -129,7 +125,7 @@ public class JobBuilder extends Job
      */
     public boolean hasWorkOrder()
     {
-        return workOrderId != null;
+        return workOrderId != 0;
     }
 
     /**

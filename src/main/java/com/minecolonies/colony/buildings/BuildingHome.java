@@ -110,12 +110,10 @@ public class BuildingHome extends BuildingHut
 
         residents.clear();
 
-        NBTTagList nbtTagCitizenList = compound.getTagList(TAG_RESIDENTS, Constants.NBT.TAG_STRING);
-        for(int i = 0; i < nbtTagCitizenList.tagCount(); i++)
+        int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
+        for (int citizenId : residentIds)
         {
-            UUID uuid = UUID.fromString(nbtTagCitizenList.getStringTagAt(i));
-
-            CitizenData citizen = getColony().getCitizen(uuid);
+            CitizenData citizen = getColony().getCitizen(citizenId);
             if (citizen != null)
             {
                 //  Bypass addResident (which marks dirty)
@@ -130,12 +128,15 @@ public class BuildingHome extends BuildingHut
     {
         super.writeToNBT(compound);
 
-        NBTTagList nbtTagCitizenList = new NBTTagList();
-        for(CitizenData resident : residents)
+        if (!residents.isEmpty())
         {
-            nbtTagCitizenList.appendTag(new NBTTagString(resident.getId().toString()));
+            int[] residentIds = new int[residents.size()];
+            for (int i = 0; i < residents.size(); ++i)
+            {
+                residentIds[i] = residents.get(i).getId();
+            }
+            compound.setIntArray(TAG_RESIDENTS, residentIds);
         }
-        compound.setTag(TAG_RESIDENTS, nbtTagCitizenList);
     }
 
     public static class View extends BuildingHut.View
@@ -145,7 +146,7 @@ public class BuildingHome extends BuildingHut
             super(c, l);
         }
 
-        public List<UUID> getResidents() { return Collections.unmodifiableList(residents); }
+        public List<Integer> getResidents() { return Collections.unmodifiableList(residents); }
 
         public com.blockout.views.Window getWindow(int guiId)
         {
@@ -165,11 +166,11 @@ public class BuildingHome extends BuildingHut
             int numResidents = buf.readInt();
             for (int i = 0; i < numResidents; ++i)
             {
-                residents.add(PacketUtils.readUUID(buf));
+                residents.add(buf.readInt());
             }
         }
 
-        private List<UUID> residents = new ArrayList<UUID>();
+        private List<Integer> residents = new ArrayList<Integer>();
     }
 
     @Override
@@ -180,7 +181,7 @@ public class BuildingHome extends BuildingHut
         buf.writeInt(residents.size());
         for (CitizenData citizen : residents)
         {
-            PacketUtils.writeUUID(buf, citizen.getId());
+            buf.writeInt(citizen.getId());
         }
     }
 }

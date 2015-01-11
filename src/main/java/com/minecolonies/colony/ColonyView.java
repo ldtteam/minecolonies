@@ -20,10 +20,9 @@ import java.util.*;
 
 public class ColonyView
 {
-    private final UUID id;
-
     //  General Attributes
-    private String name = "Unknown";
+    private final int        id;
+    private String           name = "Unknown";
     private int              dimensionId;
     private ChunkCoordinates center;
 
@@ -32,19 +31,20 @@ public class ColonyView
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private BuildingTownHall.View   townhall;
+    private BuildingTownHall.View                townhall;
     private Map<ChunkCoordinates, Building.View> buildings = new HashMap<ChunkCoordinates, Building.View>();
 
     //  Citizenry
-    private int                         maxCitizens = Configurations.maxCitizens;
-    private Map<UUID, CitizenData.View> citizens = new HashMap<UUID, CitizenData.View>();
+    private Map<Integer, CitizenData.View> citizens = new HashMap<Integer, CitizenData.View>();
+    private int                            maxCitizens = Configurations.maxCitizens;
 
     /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony
      */
-    private ColonyView(UUID id) {
+    private ColonyView(int id)
+    {
         this.id = id;
     }
 
@@ -54,14 +54,12 @@ public class ColonyView
      * @param id
      * @return
      */
-    public static ColonyView createFromNetwork(UUID id)
+    public static ColonyView createFromNetwork(int id)
     {
         return new ColonyView(id);
     }
 
-    public UUID getID() {
-        return id;
-    }
+    public int getID() { return id; }
 
     public int getDimensionId() {
         return dimensionId;
@@ -75,7 +73,7 @@ public class ColonyView
     public void setName(String name)
     {
         this.name = name;
-        MineColonies.network.sendToServer(new TownhallRenameMessage(getID(), name));
+        MineColonies.network.sendToServer(new TownhallRenameMessage(this, name));
     }
 
     /**
@@ -116,20 +114,20 @@ public class ColonyView
     public void setPermission(Permissions.Rank rank, Permissions.Action action) {
         if(permissions.setPermission(rank, action))
         {
-            MineColonies.network.sendToServer(new PermissionsMessage.Permission(id, PermissionsMessage.MessageType.SET_PERMISSION, rank, action));
+            MineColonies.network.sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.SET_PERMISSION, rank, action));
         }
     }
 
     public void removePermission(Permissions.Rank rank, Permissions.Action action) {
         if(permissions.removePermission(rank, action))
         {
-            MineColonies.network.sendToServer(new PermissionsMessage.Permission(id, PermissionsMessage.MessageType.REMOVE_PERMISSION, rank, action));
+            MineColonies.network.sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.REMOVE_PERMISSION, rank, action));
         }
     }
 
     public void togglePermission(Permissions.Rank rank, Permissions.Action action) {
         permissions.togglePermission(rank, action);
-        MineColonies.network.sendToServer(new PermissionsMessage.Permission(id, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
+        MineColonies.network.sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
     }
 
 //    public void addPlayer(String player, Permissions.Rank rank)
@@ -146,11 +144,11 @@ public class ColonyView
         return maxCitizens;
     }
 
-    public Map<UUID, CitizenData.View> getCitizens() {
+    public Map<Integer, CitizenData.View> getCitizens() {
         return Collections.unmodifiableMap(citizens);
     }
 
-    public CitizenData.View getCitizen(UUID id) {
+    public CitizenData.View getCitizen(int id) {
         return citizens.get(id);
     }
 
@@ -236,7 +234,7 @@ public class ColonyView
      * @param buf
      * @return
      */
-    public IMessage handleColonyViewCitizensMessage(UUID id, ByteBuf buf)
+    public IMessage handleColonyViewCitizensMessage(int id, ByteBuf buf)
     {
         CitizenData.View citizen = CitizenData.createCitizenDataView(id, buf);
         if (citizen != null)
@@ -252,7 +250,7 @@ public class ColonyView
      *
      * @return
      */
-    public IMessage handleColonyViewRemoveCitizenMessage(UUID citizen)
+    public IMessage handleColonyViewRemoveCitizenMessage(int citizen)
     {
         citizens.remove(citizen);
         return null;

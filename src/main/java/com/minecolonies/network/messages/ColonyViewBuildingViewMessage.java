@@ -2,7 +2,6 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.network.PacketUtils;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -10,14 +9,12 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.*;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.util.UUID;
-
 /**
  * Add or Update a Building.View to a ColonyView on the client
  */
 public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<ColonyViewBuildingViewMessage, IMessage>
 {
-    private UUID             colonyId;
+    private int              colonyId;
     private ChunkCoordinates buildingId;
     private ByteBuf          buildingData = Unpooled.buffer();
 
@@ -33,7 +30,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     @Override
     public void toBytes(ByteBuf buf)
     {
-        PacketUtils.writeUUID(buf, colonyId);
+        buf.writeInt(colonyId);
         ChunkCoordUtils.writeToByteBuf(buf, buildingId);
         buf.writeBytes(buildingData);
     }
@@ -41,7 +38,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     @Override
     public void fromBytes(ByteBuf buf)
     {
-        colonyId = PacketUtils.readUUID(buf);
+        colonyId = buf.readInt();
         buildingId = ChunkCoordUtils.readFromByteBuf(buf);
         buf.readBytes(buildingData, buf.readableBytes());
     }

@@ -3,6 +3,7 @@ package com.minecolonies.network.messages;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.network.PacketUtils;
 import cpw.mods.fml.common.network.ByteBufUtils;
@@ -20,7 +21,7 @@ public class PermissionsMessage
 
     public static class View implements IMessage, IMessageHandler<View, IMessage>
     {
-        private UUID    colonyID;
+        private int     colonyID;
         private ByteBuf data = Unpooled.buffer();
 
         public View()
@@ -36,14 +37,14 @@ public class PermissionsMessage
         @Override
         public void toBytes(ByteBuf buf)
         {
-            PacketUtils.writeUUID(buf, colonyID);
+            buf.writeInt(colonyID);
             buf.writeBytes(data);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            colonyID = PacketUtils.readUUID(buf);
+            colonyID = buf.readInt();
             buf.readBytes(data, buf.readableBytes());
         }
 
@@ -67,14 +68,14 @@ public class PermissionsMessage
         {
         }
 
-        UUID colonyID;
+        int colonyID;
         MessageType type;
         Permissions.Rank rank;
         Permissions.Action action;
 
-        public Permission(UUID id, MessageType type, Permissions.Rank rank, Permissions.Action action)
+        public Permission(ColonyView colony, MessageType type, Permissions.Rank rank, Permissions.Action action)
         {
-            this.colonyID = id;
+            this.colonyID = colony.getID();
             this.type = type;
             this.rank = rank;
             this.action = action;
@@ -83,7 +84,7 @@ public class PermissionsMessage
         @Override
         public void toBytes(ByteBuf buf)
         {
-            PacketUtils.writeUUID(buf, colonyID);
+            buf.writeInt(colonyID);
             ByteBufUtils.writeUTF8String(buf, type.name());
             ByteBufUtils.writeUTF8String(buf, rank.name());
             ByteBufUtils.writeUTF8String(buf, action.name());
@@ -92,7 +93,7 @@ public class PermissionsMessage
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            colonyID = PacketUtils.readUUID(buf);
+            colonyID = buf.readInt();
             type = MessageType.valueOf(ByteBufUtils.readUTF8String(buf));
             rank = Permissions.Rank.valueOf(ByteBufUtils.readUTF8String(buf));
             action = Permissions.Action.valueOf(ByteBufUtils.readUTF8String(buf));
@@ -106,7 +107,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                MineColonies.logger.error(String.format("Colony '%s' does not exist.", message.colonyID.toString()));
+                MineColonies.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
                 return null;
             }
 
@@ -130,28 +131,28 @@ public class PermissionsMessage
 
     public static class AddPlayer implements IMessage, IMessageHandler<AddPlayer, IMessage>
     {
-        UUID colonyID;
+        int colonyID;
         String playerName;
 
         public AddPlayer() {}
 
-        public AddPlayer(UUID id, String player)
+        public AddPlayer(ColonyView colony, String player)
         {
-            this.colonyID = id;
+            this.colonyID = colony.getID();
             this.playerName = player;
         }
 
         @Override
         public void toBytes(ByteBuf buf)
         {
-            PacketUtils.writeUUID(buf, colonyID);
+            buf.writeInt(colonyID);
             ByteBufUtils.writeUTF8String(buf, playerName);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            colonyID = PacketUtils.readUUID(buf);
+            colonyID = buf.readInt();
             playerName = ByteBufUtils.readUTF8String(buf);
         }
 
@@ -167,7 +168,7 @@ public class PermissionsMessage
             }
             else
             {
-                MineColonies.logger.error(String.format("Colony '%s' does not exist.", message.colonyID.toString()));
+                MineColonies.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
             }
             return null;
         }
@@ -175,15 +176,15 @@ public class PermissionsMessage
 
     public static class SetPlayerRank implements IMessage, IMessageHandler<SetPlayerRank, IMessage>
     {
-        UUID colonyID;
+        int colonyID;
         UUID playerID;
         Permissions.Rank rank;
 
         public SetPlayerRank() {}
 
-        public SetPlayerRank(UUID id, UUID player, Permissions.Rank rank)
+        public SetPlayerRank(ColonyView colony, UUID player, Permissions.Rank rank)
         {
-            this.colonyID = id;
+            this.colonyID = colony.getID();
             this.playerID = player;
             this.rank = rank;
         }
@@ -191,7 +192,7 @@ public class PermissionsMessage
         @Override
         public void toBytes(ByteBuf buf)
         {
-            PacketUtils.writeUUID(buf, colonyID);
+            buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
             ByteBufUtils.writeUTF8String(buf, rank.name());
         }
@@ -199,7 +200,7 @@ public class PermissionsMessage
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            colonyID = PacketUtils.readUUID(buf);
+            colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
             rank = Permissions.Rank.valueOf(ByteBufUtils.readUTF8String(buf));
         }
@@ -216,7 +217,7 @@ public class PermissionsMessage
             }
             else
             {
-                MineColonies.logger.error(String.format("Colony '%s' does not exist.", message.colonyID.toString()));
+                MineColonies.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
             }
             return null;
         }
@@ -224,28 +225,28 @@ public class PermissionsMessage
 
     public static class RemovePlayer implements IMessage, IMessageHandler<RemovePlayer, IMessage>
     {
-        UUID colonyID;
+        int colonyID;
         UUID playerID;
 
         public RemovePlayer() {}
 
-        public RemovePlayer(UUID id, UUID player)
+        public RemovePlayer(ColonyView colony, UUID player)
         {
-            this.colonyID = id;
+            this.colonyID = colony.getID();
             this.playerID = player;
         }
 
         @Override
         public void toBytes(ByteBuf buf)
         {
-            PacketUtils.writeUUID(buf, colonyID);
+            buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            colonyID = PacketUtils.readUUID(buf);
+            colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
         }
 
@@ -261,7 +262,7 @@ public class PermissionsMessage
             }
             else
             {
-                MineColonies.logger.error(String.format("Colony '%s' does not exist.", message.colonyID.toString()));
+                MineColonies.logger.error(String.format("Colony '#%d' does not exist.", message.colonyID));
             }
             return null;
         }

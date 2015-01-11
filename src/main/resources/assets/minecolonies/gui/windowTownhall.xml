@@ -87,12 +87,18 @@
             <label size="80 12" pos="20 7" textalign="MiddleLeft" color="black" label="§n§4NAME"/>
             <label size="25 12" pos="90 7" textalign="MiddleLeft" color="black" label="§n§4RANK"/>
 
-            <list id="users" size="140 100%" pos="15 20">
+            <list id="users" size="140 150" pos="15 20">
                 <view size="100% 15">
                     <label id="name" size="60 12" pos="5 4" textalign="MiddleLeft" color="black"/>
                     <label id="rank" size="25 12" pos="75 4" textalign="MiddleLeft" color="black"/>
                 </view>
             </list>
+
+            <label size="100 11" pos="15 170" textalign="TopLeft" color="black" label="Add Player:"/>
+            <input id="addPlayerName"
+                   size="120 20" pos="15 185" maxlength="32"/>
+            <button id="addPlayer"
+                    size="20 20" pos="140 185" label="+"/>
         </view>
         <view id="pageCitizens">
             <label size="80 12" pos="20 7" textalign="MiddleLeft" color="black" label="§n§4NAME"/>

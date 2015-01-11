@@ -3,6 +3,7 @@ package com.minecolonies.client.gui;
 import com.blockout.Pane;
 import com.blockout.controls.Button;
 import com.blockout.controls.Label;
+import com.blockout.controls.TextField;
 import com.blockout.views.ScrollingList;
 import com.blockout.views.SwitchView;
 import com.blockout.views.Window;
@@ -25,7 +26,7 @@ import java.util.Map;
 
 public class WindowTownhall extends Window implements Button.Handler
 {
-    private static String BUTTON_INFO = "info",
+    private static final String BUTTON_INFO = "info",
             BUTTON_ACTIONS = "actions",
             BUTTON_SETTINGS = "settings",
             BUTTON_PERMISSIONS = "permissions",
@@ -35,6 +36,9 @@ public class WindowTownhall extends Window implements Button.Handler
             BUTTON_RECALL = "recall",
             BUTTON_CHANGESPEC = "changeSpec",
             BUTTON_RENAME = "rename",
+
+            BUTTON_ADDPLAYER = "addPlayer",
+            INPUT_ADDPLAYER_NAME = "addPlayerName",
 
             VIEW_PAGES = "pages",
             PAGE_INFO = "pageInfo",
@@ -46,7 +50,6 @@ public class WindowTownhall extends Window implements Button.Handler
             LIST_USERS = "users",
             LIST_CITIZENS = "citizenList";
 
-    private ColonyView            colony;
     private BuildingTownHall.View townhall;
     private List<Permissions.Player> users = new ArrayList<Permissions.Player>();
     private List<CitizenData.View>   citizens = new ArrayList<CitizenData.View>();
@@ -58,9 +61,9 @@ public class WindowTownhall extends Window implements Button.Handler
     {
         super(Constants.MOD_ID + ":" + "gui/windowTownhall.xml");
         this.townhall = townhall;
-        this.colony = townhall.getColony();
-        this.users.addAll(colony.getPlayers().values());
-        this.citizens.addAll(colony.getCitizens().values());
+
+        updateUsers();
+        updateCitizens();
 
         tabsToPages.put(BUTTON_ACTIONS, PAGE_ACTIONS);
         tabsToPages.put(BUTTON_INFO, PAGE_INFO);
@@ -69,22 +72,34 @@ public class WindowTownhall extends Window implements Button.Handler
         tabsToPages.put(BUTTON_CITIZENS, PAGE_CITIZENS);
     }
 
+    private void updateUsers()
+    {
+        users.clear();
+        users.addAll(townhall.getColony().getPlayers().values());
+    }
+
+    private void updateCitizens()
+    {
+        citizens.clear();
+        citizens.addAll(townhall.getColony().getCitizens().values());
+    }
+
     public void onOpened()
     {
-        int citizensSize = colony.getCitizens().size();
+        int citizensSize = townhall.getColony().getCitizens().size();
 
         //TODO - Base these on server-side computed statistics
         int workers = 0;
         int builders = 0, deliverymen = 0;
 
-        String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens", citizensSize, colony.getMaxCitizens());
+        String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens", citizensSize, townhall.getColony().getMaxCitizens());
         String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed", (citizensSize - workers));
         String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townhall.population.builders", builders);
         String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townhall.population.deliverymen", deliverymen);
 
         try
         {
-            findPaneOfTypeByID("colonyName", Label.class).setLabel(colony.getName());
+            findPaneOfTypeByID("colonyName", Label.class).setLabel(townhall.getColony().getName());
             findPaneOfTypeByID("currentSpec", Label.class).setLabel("<Industrial>");
 
             findPaneOfTypeByID("totalCitizens", Label.class).setLabel(numberOfCitizens);
@@ -162,6 +177,22 @@ public class WindowTownhall extends Window implements Button.Handler
     }
 
     @Override
+    public void onUpdate()
+    {
+        String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
+        if (currentPage.equals(PAGE_PERMISSIONS))
+        {
+            updateUsers();
+            window.findPaneOfTypeByID(LIST_USERS, ScrollingList.class).refreshElementPanes();
+        }
+        else if (currentPage.equals(PAGE_CITIZENS))
+        {
+            updateCitizens();
+            window.findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class).refreshElementPanes();
+        }
+    }
+
+    @Override
     public void onButtonClicked(Button button)
     {
         if (tabsToPages.containsKey(button.getID()))
@@ -175,6 +206,12 @@ public class WindowTownhall extends Window implements Button.Handler
         else if (button.getID().equals(BUTTON_REPAIR))
         {
             MineColonies.network.sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.REPAIR));
+        }
+        else if (button.getID().equals(BUTTON_ADDPLAYER))
+        {
+            TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
+            MineColonies.network.sendToServer(new PermissionsMessage.AddPlayer(townhall.getColony(), input.getText()));
+            input.setText("");
         }
         else if (button.getID().equals(BUTTON_RECALL))
         {

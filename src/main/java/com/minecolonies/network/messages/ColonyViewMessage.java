@@ -3,29 +3,26 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.network.PacketUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import java.util.UUID;
-
 /**
  * Add or Update a ColonyView on the client
  */
 public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMessage, IMessage>
 {
-    private UUID    colonyId;
+    private int     colonyId;
     private boolean isNewSubscription;
     private ByteBuf colonyBuffer = Unpooled.buffer();
 
     public ColonyViewMessage(){}
 
-    public ColonyViewMessage(UUID colonyId, Colony colony, boolean isNewSubscription)
+    public ColonyViewMessage(Colony colony, boolean isNewSubscription)
     {
-        this.colonyId = colonyId;
+        this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
         ColonyView.serializeNetworkData(colony, isNewSubscription, colonyBuffer);
     }
@@ -33,7 +30,7 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     @Override
     public void toBytes(ByteBuf buf)
     {
-        PacketUtils.writeUUID(buf, colonyId);
+        buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
         buf.writeBytes(colonyBuffer);
     }
@@ -41,7 +38,7 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     @Override
     public void fromBytes(ByteBuf buf)
     {
-        colonyId = PacketUtils.readUUID(buf);
+        colonyId = buf.readInt();
         isNewSubscription = buf.readBoolean();
         buf.readBytes(colonyBuffer, buf.readableBytes());
     }

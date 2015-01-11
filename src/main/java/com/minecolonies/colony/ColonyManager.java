@@ -21,10 +21,11 @@ import java.io.*;
 import java.util.*;
 
 public class ColonyManager {
-    private static Map<UUID, Colony> colonies = new HashMap<UUID, Colony>();
+    private static Map<Integer, Colony>       colonies        = new HashMap<Integer, Colony>();
     private static Map<Integer, List<Colony>> coloniesByWorld = new HashMap<Integer, List<Colony>>();
+    private static int                        topColonyId     = 0;
 
-    private static Map<UUID, ColonyView> colonyViews = new HashMap<UUID, ColonyView>();
+    private static Map<Integer, ColonyView>   colonyViews     = new HashMap<Integer, ColonyView>();
 
     private static int numWorldsLoaded;    //  Used to trigger loading/unloading colonies
 
@@ -48,7 +49,7 @@ public class ColonyManager {
             World w,
             ChunkCoordinates coord)
     {
-        Colony colony = new Colony(w, coord);
+        Colony colony = new Colony(++topColonyId, w, coord);
         colonies.put(colony.getID(), colony);
 
         if (!coloniesByWorld.containsKey(colony.getDimensionId()))
@@ -66,7 +67,7 @@ public class ColonyManager {
      * @param id UUID of colony
      * @return
      */
-    public static Colony getColonyById(UUID id) { return colonies.get(id); }
+    public static Colony getColonyById(int id) { return colonies.get(id); }
 
     /**
      * Get Colony that contains a given ChunkCoordinates
@@ -223,7 +224,7 @@ public class ColonyManager {
      * @param id UUID of colony
      * @return
      */
-    public static ColonyView getColonyView(UUID id)
+    public static ColonyView getColonyView(int id)
     {
         return colonyViews.get(id);
     }
@@ -358,6 +359,8 @@ public class ColonyManager {
                 coloniesByWorld.put(colony.getDimensionId(), new ArrayList<Colony>());
             }
             coloniesByWorld.get(colony.getDimensionId()).add(colony);
+
+            topColonyId = Math.max(topColonyId, colony.getID());
         }
     }
 
@@ -533,7 +536,7 @@ public class ColonyManager {
      * @param colonyId
      * @param colonyData
      */
-    static public IMessage handleColonyViewMessage(UUID colonyId, ByteBuf colonyData, boolean isNewSubscription)
+    static public IMessage handleColonyViewMessage(int colonyId, ByteBuf colonyData, boolean isNewSubscription)
     {
         ColonyView view = getColonyView(colonyId);
         if (view == null)
@@ -545,7 +548,7 @@ public class ColonyManager {
         return view.handleColonyViewMessage(colonyData, isNewSubscription);
     }
 
-    public static IMessage handlePermissionsViewMessage(UUID colonyID, ByteBuf data)
+    public static IMessage handlePermissionsViewMessage(int colonyID, ByteBuf data)
     {
         ColonyView view = getColonyView(colonyID);
         if(view != null)
@@ -554,7 +557,7 @@ public class ColonyManager {
         }
         else
         {
-            MineColonies.logger.error(String.format("Colony view does not exist for ID '%s'", colonyID.toString()));
+            MineColonies.logger.error(String.format("Colony view does not exist for ID #%d", colonyID));
             return null;
         }
     }
@@ -565,7 +568,7 @@ public class ColonyManager {
      * @param citizenId
      * @param buf
      */
-    static public IMessage handleColonyViewCitizensMessage(UUID colonyId, UUID citizenId, ByteBuf buf)
+    static public IMessage handleColonyViewCitizensMessage(int colonyId, int citizenId, ByteBuf buf)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
@@ -581,7 +584,7 @@ public class ColonyManager {
      * @param colonyId
      * @param citizenId
      */
-    static public IMessage handleColonyViewRemoveCitizenMessage(UUID colonyId, UUID citizenId)
+    static public IMessage handleColonyViewRemoveCitizenMessage(int colonyId, int citizenId)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
@@ -599,7 +602,7 @@ public class ColonyManager {
      * @param colonyId The ID of the colony
      * @param buf      The building data, or null if it was removed
      */
-    static public IMessage handleColonyBuildingViewMessage(UUID colonyId, ChunkCoordinates buildingId, ByteBuf buf)
+    static public IMessage handleColonyBuildingViewMessage(int colonyId, ChunkCoordinates buildingId, ByteBuf buf)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
@@ -608,7 +611,7 @@ public class ColonyManager {
         }
         else
         {
-            MineColonies.logger.error(String.format("Colony view does not exist for ID '%s'", colonyId.toString()));
+            MineColonies.logger.error(String.format("Colony view does not exist for ID #%d", colonyId));
             return null;
         }
     }
@@ -618,7 +621,7 @@ public class ColonyManager {
      * @param colonyId
      * @param buildingId
      */
-    static public IMessage handleColonyViewRemoveBuildingMessage(UUID colonyId, ChunkCoordinates buildingId)
+    static public IMessage handleColonyViewRemoveBuildingMessage(int colonyId, ChunkCoordinates buildingId)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
