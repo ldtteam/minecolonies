@@ -30,25 +30,19 @@ public class BuildingWarehouse extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName()
-    {
-        return "Warehouse";
-    }
+    public String getSchematicName(){ return "Warehouse"; }
 
     @Override
-    public String getJobName()
-    {
-        return "Deliveryman";
-    }
+    public int getMaxBuildingLevel(){ return 4; }
 
     @Override
-    public Job createJob(CitizenData citizen)
-    {
-        return new JobDeliveryman(citizen);
-    }
+    public String getJobName(){ return "Deliveryman"; }
 
     @Override
-    public int getGuiId() { return EnumGUI.WAREHOUSE.getID(); }
+    public Job createJob(CitizenData citizen){ return new JobDeliveryman(citizen); }
+
+    @Override
+    public int getGuiId(){ return EnumGUI.WAREHOUSE.getID(); }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)

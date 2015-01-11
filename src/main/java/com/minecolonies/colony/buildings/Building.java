@@ -1,7 +1,10 @@
 package com.minecolonies.colony.buildings;
 
+import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.*;
+import com.minecolonies.client.gui.WindowTownhall;
+import com.minecolonies.client.gui.WindowTownhallNameEntry;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
@@ -248,6 +251,7 @@ public abstract class Building
     public void setBuildingLevel(int level) { buildingLevel = level; markDirty(); }
 
     public abstract String getSchematicName();
+    public abstract int getMaxBuildingLevel();
 
     public void setTileEntity(TileEntityColonyBuilding te) { tileEntity = new WeakReference<TileEntityColonyBuilding>(te); }
     public TileEntityColonyBuilding getTileEntity()
@@ -295,11 +299,6 @@ public abstract class Building
         }
     }
 
-    protected int getMaxBuildingLevel()
-    {
-        return 3;
-    }
-
     public void requestUpgrade()
     {
         if (buildingLevel < getMaxBuildingLevel())
@@ -332,6 +331,7 @@ public abstract class Building
         private final ChunkCoordinates location;
 
         private int buildingLevel = 0;
+        private int buildingMaxLevel = 0;
 
         protected View(ColonyView c, ChunkCoordinates l)
         {
@@ -343,6 +343,9 @@ public abstract class Building
         public ChunkCoordinates getLocation() { return location; }
         public ColonyView getColony() { return colony; }
         public int getBuildingLevel() { return buildingLevel; }
+        public int getBuildingMaxLevel() { return buildingMaxLevel; }
+
+        public boolean isBuildingMaxLevel() { return buildingLevel >= buildingMaxLevel; }
 
         public void openGui(EnumGUI gui)
         {
@@ -358,13 +361,15 @@ public abstract class Building
         public void deserialize(ByteBuf buf)
         {
             buildingLevel = buf.readInt();
+            buildingMaxLevel = buf.readInt();
         }
     }
 
     public void serializeToView(ByteBuf buf)
     {
         buf.writeInt(this.getClass().getName().hashCode());
-        buf.writeInt(buildingLevel);
+        buf.writeInt(getBuildingLevel());
+        buf.writeInt(getMaxBuildingLevel());
     }
 
     /**
