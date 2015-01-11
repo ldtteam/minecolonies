@@ -111,6 +111,19 @@ public class WindowTownhall extends Window implements Button.Handler
             lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
             lastTabButton.setEnabled(false);
 
+            if (townhall.getBuildingLevel() == 0)
+            {
+                findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
+                        LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
+                findPaneByID(BUTTON_REPAIR).disable();
+            }
+            else if (townhall.isBuildingMaxLevel())
+            {
+                Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+                button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
+                button.disable();
+            }
+
             findPaneOfTypeByID(LIST_USERS, ScrollingList.class).setDataProvider(
                     new ScrollingList.DataProvider()
             {

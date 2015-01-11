@@ -58,6 +58,19 @@ public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View>
             findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
                     LanguageHandler.getString(getBuildingName()));
             findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabel("xxxxxxxx");
+
+            if (building.getBuildingLevel() == 0)
+            {
+                findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
+                        LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
+                findPaneByID(BUTTON_REPAIR).disable();
+            }
+            else if (building.isBuildingMaxLevel())
+            {
+                Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+                button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
+                button.disable();
+            }
         }
         catch (NullPointerException exc) {}
     }

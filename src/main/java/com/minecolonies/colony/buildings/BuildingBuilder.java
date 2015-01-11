@@ -18,10 +18,13 @@ public class BuildingBuilder extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName() { return "Builder"; }
+    public String getSchematicName(){ return "Builder"; }
 
     @Override
-    public String getJobName() { return "Builder"; }
+    public int getMaxBuildingLevel(){ return 2; }
+
+    @Override
+    public String getJobName(){ return "Builder"; }
 
     @Override
     public Job createJob(CitizenData citizen)
@@ -30,7 +33,7 @@ public class BuildingBuilder extends BuildingWorker
     }
 
     @Override
-    public int getGuiId() { return EnumGUI.BUILDER.getID(); }
+    public int getGuiId(){ return EnumGUI.BUILDER.getID(); }
 
     public static class View extends BuildingWorker.View
     {

@@ -1,5 +1,7 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.client.gui.WindowHomeBuilding;
+import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
@@ -27,10 +29,13 @@ public class BuildingHome extends BuildingHut
     }
 
     @Override
-    public String getSchematicName() { return "Citizen"; }
+    public String getSchematicName(){ return "Citizen"; }
 
     @Override
-    public int getMaxInhabitants() { return 2; }
+    public int getMaxBuildingLevel(){ return 4; }
+
+    @Override
+    public int getMaxInhabitants(){ return 2; }
 
     @Override
     public int getGuiId() { return EnumGUI.CITIZEN.getID(); }
@@ -141,6 +146,8 @@ public class BuildingHome extends BuildingHut
 
     public static class View extends BuildingHut.View
     {
+        private List<Integer> residents = new ArrayList<Integer>();
+
         public View(ColonyView c, ChunkCoordinates l)
         {
             super(c, l);
@@ -152,7 +159,7 @@ public class BuildingHome extends BuildingHut
         {
             if (guiId == EnumGUI.CITIZEN.getID())
             {
-                //return new GuiHutCitizen(this);
+                return new WindowHomeBuilding(this);
             }
 
             return null;
@@ -169,8 +176,6 @@ public class BuildingHome extends BuildingHut
                 residents.add(buf.readInt());
             }
         }
-
-        private List<Integer> residents = new ArrayList<Integer>();
     }
 
     @Override

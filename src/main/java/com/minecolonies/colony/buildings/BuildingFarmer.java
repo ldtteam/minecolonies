@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
@@ -15,10 +16,13 @@ public class BuildingFarmer extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName() { return "Farmer"; }
+    public String getSchematicName(){ return "Farmer"; }
 
     @Override
-    public String getJobName() { return "Farmer"; }
+    public int getMaxBuildingLevel(){ return 3; }
+
+    @Override
+    public String getJobName(){ return "Farmer"; }
 
     @Override
     public Job createJob(CitizenData citizen)
@@ -31,6 +35,11 @@ public class BuildingFarmer extends BuildingWorker
         public View(ColonyView c, ChunkCoordinates l)
         {
             super(c, l);
+        }
+
+        public com.blockout.views.Window getWindow(int guiId)
+        {
+            return new WindowHutWorkerPlaceholder<BuildingFarmer.View>(this, "farmerHut");
         }
     }
 }
