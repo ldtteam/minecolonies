@@ -5,13 +5,10 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.colony.jobs.Job;
-import com.minecolonies.network.PacketUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
-
-import java.util.UUID;
 
 public abstract class BuildingWorker extends BuildingHut
 {
@@ -55,10 +52,8 @@ public abstract class BuildingWorker extends BuildingHut
         
         if (compound.hasKey(TAG_WORKER))
         {
-            UUID workerId = UUID.fromString(compound.getString(TAG_WORKER));
-
             //  Bypass setWorker, which marks dirty
-            worker = getColony().getCitizen(workerId);
+            worker = getColony().getCitizen(compound.getInteger(TAG_WORKER));
             if (worker != null)
             {
                 worker.setWorkBuilding(this);
@@ -73,7 +68,7 @@ public abstract class BuildingWorker extends BuildingHut
 
         if (worker != null)
         {
-            compound.setString(TAG_WORKER, worker.getId().toString());
+            compound.setInteger(TAG_WORKER, worker.getId());
         }
     }
 
@@ -147,22 +142,21 @@ public abstract class BuildingWorker extends BuildingHut
      */
     public static class View extends BuildingHut.View
     {
-        private UUID workerId;
+        private int workerId;
 
         public View(ColonyView c, ChunkCoordinates l)
         {
             super(c, l);
         }
 
-        public UUID getWorkerId() { return workerId; }
+        public int getWorkerId() { return workerId; }
 
         @Override
         public void deserialize(ByteBuf buf)
         {
             super.deserialize(buf);
 
-            boolean hasWorker = buf.readBoolean();
-            workerId = hasWorker ? PacketUtils.readUUID(buf) : null;
+            workerId = buf.readInt();
         }
     }
 
@@ -171,10 +165,6 @@ public abstract class BuildingWorker extends BuildingHut
     {
         super.serializeToView(buf);
 
-        buf.writeBoolean(worker != null);
-        if (worker != null)
-        {
-            PacketUtils.writeUUID(buf, worker.getId());
-        }
+        buf.writeInt(worker != null ? worker.getId() : 0);
     }
 }

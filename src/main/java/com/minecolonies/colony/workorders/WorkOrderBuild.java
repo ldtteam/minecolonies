@@ -21,11 +21,11 @@ public class WorkOrderBuild extends WorkOrder
         super();
     }
 
-    public WorkOrderBuild(ChunkCoordinates buildingId, String upgradeName)
+    public WorkOrderBuild(Building building, int level)
     {
         super();
-        this.buildingId = buildingId;
-        this.upgradeName = upgradeName;
+        this.buildingId = building.getID();
+        this.upgradeName = building.getSchematicName() + level;
     }
 
     public ChunkCoordinates getBuildingId()
@@ -36,18 +36,6 @@ public class WorkOrderBuild extends WorkOrder
     public String getUpgradeName()
     {
         return upgradeName;
-    }
-
-    /**
-     * Create a Build WorkOrder for a given Building at a given Level
-     * @param building
-     * @param level
-     * @return
-     */
-    public static WorkOrderBuild create(Building building, int level)
-    {
-        String upgradeName = building.getSchematicName() + level;
-        return new WorkOrderBuild(building.getID(), upgradeName);
     }
 
     @Override

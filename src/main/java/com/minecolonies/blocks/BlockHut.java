@@ -75,9 +75,6 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                     colony = ColonyManager.createColony(world, hut.getPosition());
                     colony.setName(colonyName);
                     colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
-
-                    //  TODO: Deprecate this code?
-                    PlayerProperties.get(player).placeTownhall(x, y, z);
                 }
                 else if (colony.getTownhall() != null)
                 {

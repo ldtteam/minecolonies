@@ -38,7 +38,7 @@ public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View>
         String workerName = "";
         String workerLevel = "";
 
-        if (building.getWorkerId() != null)
+        if (building.getWorkerId() != 0)
         {
             CitizenData.View worker = building.getColony().getCitizen(building.getWorkerId());
             if (worker != null)
