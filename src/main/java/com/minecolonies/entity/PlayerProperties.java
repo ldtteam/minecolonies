@@ -12,8 +12,6 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 
 public class PlayerProperties implements IExtendedEntityProperties
 {
-    private boolean hasPlacedTownHall = false;
-    private ChunkCoordinates townhallPos;
     private boolean hasPlacedSupplyChest = false;
 
     private PlayerProperties(){}
@@ -44,11 +42,6 @@ public class PlayerProperties implements IExtendedEntityProperties
     {
         NBTTagCompound properties = new NBTTagCompound();
 
-        properties.setBoolean("hasPlacedTownHall", hasPlacedTownHall);
-        if(townhallPos != null)
-        {
-            ChunkCoordUtils.writeToNBT(properties, "townhall", townhallPos);
-        }
         properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
         compound.setTag(Constants.PLAYER_PROPERTY_NAME, properties);
@@ -59,18 +52,6 @@ public class PlayerProperties implements IExtendedEntityProperties
     {
         NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PLAYER_PROPERTY_NAME);
 
-        this.hasPlacedTownHall = properties.getBoolean("hasPlacedTownHall");
-        if(properties.hasKey("townhall"))
-        {
-            this.townhallPos = ChunkCoordUtils.readFromNBT(properties, "townhall");
-        }
-        else if(properties.hasKey("townhallX") && properties.hasKey("townhallY") && properties.hasKey("townhallZ"))
-        {
-            int x = properties.getInteger("townhallX");
-            int y = properties.getInteger("townhallY");
-            int z = properties.getInteger("townhallZ");
-            this.townhallPos = new ChunkCoordinates(x, y, z);
-        }
         this.hasPlacedSupplyChest = properties.getBoolean("hasPlacedSupplyChest");
     }
 
@@ -123,47 +104,6 @@ public class PlayerProperties implements IExtendedEntityProperties
     }
 
     /**
-     * Gets the property whether the player has placed a townhall
-     *
-     * @return whether the player has placed a townhall
-     */
-    public boolean hasPlacedTownHall()
-    {
-        return hasPlacedTownHall;
-    }
-
-    /**
-     * Sets whether the player has placed a townhall
-     *
-     * @param hasPlacedTownHall boolean
-     */
-    private void setHasPlacedTownHall(boolean hasPlacedTownHall)
-    {
-        this.hasPlacedTownHall = hasPlacedTownHall;
-    }
-
-    /**
-     * Set hasPlacedTownHall to true and sets coordinates
-     *
-     * @param x x coordinate
-     * @param y y coordinate
-     * @param z z coordinate
-     */
-    public void placeTownhall(int x, int y, int z)
-    {
-        setHasPlacedTownHall(true);
-        setTownhallPos(new ChunkCoordinates(x, y, z));
-    }
-
-    /**
-     * Set hasPlacedTownHall to false. Should be called when removing the townhall.
-     */
-    public void removeTownhall()
-    {
-        setHasPlacedTownHall(false);
-    }
-
-    /**
      * Gets the property whether the player has placed a supply chest
      *
      * @return whether the player has placed a supply chest.
@@ -179,20 +119,5 @@ public class PlayerProperties implements IExtendedEntityProperties
     public void placeSupplyChest()
     {
         this.hasPlacedSupplyChest = true;
-    }
-
-    /**
-     * Returns the townhall position
-     *
-     * @return townhall position
-     */
-    public ChunkCoordinates getTownhallPos()
-    {
-        return townhallPos;
-    }
-
-    private void setTownhallPos(ChunkCoordinates pos)
-    {
-        townhallPos = pos;
     }
 }

@@ -15,7 +15,6 @@ import net.minecraft.util.ChunkCoordinates;
 
 import java.lang.ref.WeakReference;
 import java.util.Random;
-import java.util.UUID;
 
 /**
  * Extra data for Citizens
@@ -24,7 +23,7 @@ import java.util.UUID;
 public class CitizenData
 {
     //  Attributes
-    private final UUID    id;
+    private final int     id;
     private       String  name;
     private       boolean isFemale;
     private       int     textureId;
@@ -69,7 +68,7 @@ public class CitizenData
      * @param id ID of the Citizen
      * @param colony Colony the Citizen belongs to
      */
-    private CitizenData(UUID id, Colony colony)
+    public CitizenData(int id, Colony colony)
     {
         this.id = id;
         this.colony = colony;
@@ -79,12 +78,9 @@ public class CitizenData
      * Create a CitizenData given a CitizenEntity
      *
      * @param entity
-     * @param colony
      */
-    private CitizenData(EntityCitizen entity, Colony colony)
+    public void initializeFromEntity(EntityCitizen entity)
     {
-        this(entity.getUniqueID(), colony);
-
         Random rand = entity.getRNG();
 
         this.entity = new WeakReference<EntityCitizen>(entity);
@@ -104,18 +100,13 @@ public class CitizenData
 
     public static CitizenData createFromNBT(NBTTagCompound compound, Colony colony)
     {
-        UUID id = UUID.fromString(compound.getString(TAG_ID));
+        int id = compound.getInteger(TAG_ID);
         CitizenData citizen = new CitizenData(id, colony);
         citizen.readFromNBT(compound);
         return citizen;
     }
 
-    public static CitizenData createFromEntity(EntityCitizen entity, Colony colony)
-    {
-        return new CitizenData(entity, colony);
-    }
-
-    public UUID getId() { return id; }
+    public int getId() { return id; }
     public Colony getColony() { return colony; }
     public String getName() { return name; }
     public boolean isFemale() { return isFemale; }
@@ -198,11 +189,6 @@ public class CitizenData
     public EntityCitizen getCitizenEntity() { return (entity != null) ? entity.get() : null; }
     public void setCitizenEntity(EntityCitizen citizen)
     {
-        if (!citizen.getUniqueID().equals(id))
-        {
-            throw new IllegalArgumentException(String.format("Mismatch citizen '%s' registered to CitizenData for '%s'", citizen.getUniqueID().toString(), id.toString()));
-        }
-
         entity = new WeakReference<EntityCitizen>(citizen);
         markDirty();
     }
@@ -241,7 +227,7 @@ public class CitizenData
 
     public void writeToNBT(NBTTagCompound compound)
     {
-        compound.setString(TAG_ID, id.toString());
+        compound.setInteger(TAG_ID, id);
         compound.setString(TAG_NAME, name);
         compound.setBoolean(TAG_FEMALE, isFemale);
         compound.setInteger(TAG_TEXTURE, textureId);
@@ -319,10 +305,10 @@ public class CitizenData
      */
     public static class View
     {
-        private final UUID id;
-        private int        entityId;
-        private String     name;
-        private boolean    isFemale;
+        private final int id;
+        private int       entityId;
+        private String    name;
+        private boolean   isFemale;
 
         //  Placeholder skills
         private int level;
@@ -333,12 +319,12 @@ public class CitizenData
         private ChunkCoordinates homeBuilding;
         private ChunkCoordinates workBuilding;
 
-        protected View(UUID id)
+        protected View(int id)
         {
             this.id = id;
         }
 
-        public UUID getID(){ return id; }
+        public int getID(){ return id; }
 
         public int getEntityId(){ return entityId; }
 
@@ -415,7 +401,7 @@ public class CitizenData
      * @param buf The network data
      * @return
      */
-    public static View createCitizenDataView(UUID id, ByteBuf buf)
+    public static View createCitizenDataView(int id, ByteBuf buf)
     {
         View view = new View(id);
 
@@ -425,7 +411,7 @@ public class CitizenData
         }
         catch (Exception ex)
         {
-            MineColonies.logger.error(String.format("A CitizenData.View for %s has thrown an exception during loading, its state cannot be restored. Report this to the mod author", view.getID().toString()), ex);
+            MineColonies.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author", view.getID()), ex);
             view = null;
         }
 

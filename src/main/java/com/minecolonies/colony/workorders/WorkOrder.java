@@ -3,18 +3,16 @@ package com.minecolonies.colony.workorders;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
-import com.minecolonies.colony.jobs.Job;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public abstract class WorkOrder
 {
-    protected UUID id;
-    protected UUID claimedBy;
+    protected int id;
+    protected int claimedBy;
 
     //  Job and View Class Mapping
     private static Map<String, Class<? extends WorkOrder>> nameToClassMap = new HashMap<String, Class<? extends WorkOrder>>();
@@ -60,19 +58,14 @@ public abstract class WorkOrder
      * Default constructor; we also start with a new id and replace it during loading;
      * this greatly simplifies creating subclasses
      */
-    public WorkOrder()
-    {
-        id = UUID.randomUUID();
-    }
+    public WorkOrder() {}
 
     /**
      * Get the ID of the Work Order
-     * @return uuid of the work order
+     * @return ID of the work order
      */
-    public UUID getID()
-    {
-        return id;
-    }
+    public int getID() { return id; }
+    public void setID(int id) { this.id = id; }
 
     /**
      * Is the Work Order claimed?
@@ -80,7 +73,7 @@ public abstract class WorkOrder
      */
     public boolean isClaimed()
     {
-        return claimedBy != null;
+        return claimedBy != 0;
     }
 
     /**
@@ -90,14 +83,14 @@ public abstract class WorkOrder
      */
     public boolean isClaimedBy(CitizenData citizen)
     {
-        return citizen.getId().equals(claimedBy);
+        return citizen.getId() == claimedBy;
     }
 
     /**
-     * Get the UUID of the Citizen that the Work Order is claimed by
-     * @return uuid of citizen the Work Order has been claimed by, or null
+     * Get the ID of the Citizen that the Work Order is claimed by
+     * @return ID of citizen the Work Order has been claimed by, or null
      */
-    public UUID getClaimedBy()
+    public int getClaimedBy()
     {
         return claimedBy;
     }
@@ -108,7 +101,7 @@ public abstract class WorkOrder
      */
     public void setClaimedBy(CitizenData citizen)
     {
-        claimedBy = (citizen != null) ? citizen.getId() : null;
+        claimedBy = (citizen != null) ? citizen.getId() : 0;
     }
 
     /**
@@ -116,7 +109,7 @@ public abstract class WorkOrder
      */
     public void clearClaimedBy()
     {
-        claimedBy = null;
+        claimedBy = 0;
     }
 
     /**
@@ -178,10 +171,10 @@ public abstract class WorkOrder
         }
 
         compound.setString(TAG_TYPE, s);
-        compound.setString(TAG_ID, id.toString());
-        if (claimedBy != null)
+        compound.setInteger(TAG_ID, id);
+        if (claimedBy != 0)
         {
-            compound.setString(TAG_CLAIMED_BY, claimedBy.toString());
+            compound.setInteger(TAG_CLAIMED_BY, claimedBy);
         }
     }
 
@@ -191,11 +184,8 @@ public abstract class WorkOrder
      */
     public void readFromNBT(NBTTagCompound compound)
     {
-        id = UUID.fromString(compound.getString(TAG_ID));
-        if (compound.hasKey(TAG_CLAIMED_BY))
-        {
-            claimedBy = UUID.fromString(compound.getString(TAG_CLAIMED_BY));
-        }
+        id = compound.getInteger(TAG_ID);
+        claimedBy = compound.getInteger(TAG_CLAIMED_BY);
     }
 
     /**

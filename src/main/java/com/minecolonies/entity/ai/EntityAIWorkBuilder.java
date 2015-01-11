@@ -144,7 +144,8 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
         }
         else
         {
-            worker.setCurrentItemOrArmor(0, new ItemStack(block.getItem(world, x, y, z), 1, metadata));
+            Item item = Item.getItemFromBlock(block);
+            worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1, metadata) : null);
 
             placeRequiredSupportingBlocks(x, y, z, block, metadata);
 

@@ -1,7 +1,6 @@
 package com.minecolonies.entity;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.client.gui.WindowCitizen;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -16,7 +15,6 @@ import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.entity.ai.EntityAIWork;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.GuiHandler;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
@@ -42,7 +40,6 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static net.minecraftforge.common.util.Constants.NBT;
 
@@ -51,8 +48,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private ResourceLocation texture;
     private InventoryCitizen inventory;
 
-    private UUID        colonyId;   //  Client and Server
-    private UUID        citizenId;  //  Client Only
+    private int         colonyId;
+    private int         citizenId = 0;
 
     private Colony      colony;
     private CitizenData citizenData;
@@ -65,12 +62,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int DATA_COLONY_ID  = 16;
     private static final int DATA_CITIZEN_ID = 17;  //  Because Entity UniqueIDs are not identical between client and server
     private static final int DATA_MODEL_ID   = 18;
-
-    public EntityCitizen(World world, UUID id)
-    {
-        this(world);
-        entityUniqueID = id;
-    }
 
     public EntityCitizen(World world)
     {
@@ -86,6 +77,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setCanSwim(true);
         this.getNavigator().setEnterDoors(true);
+        this.getNavigator().setBreakDoors(true);
         initTasks();
     }
 
@@ -95,8 +87,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void entityInit()
     {
         super.entityInit();
-        dataWatcher.addObject(DATA_COLONY_ID, "");
-        dataWatcher.addObject(DATA_CITIZEN_ID, "");
+        dataWatcher.addObject(DATA_COLONY_ID, colonyId);
+        dataWatcher.addObject(DATA_CITIZEN_ID, citizenId);
         dataWatcher.addObject(DATA_TEXTURE, 0);
         dataWatcher.addObject(DATA_LEVEL, 0);
         dataWatcher.addObject(DATA_IS_FEMALE, 0);
@@ -188,40 +180,36 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onLivingUpdate()
     {
-        setTexture();
-        updateArmSwingProgress();
-        updateColony();
-        pickupItems();
+        if (worldObj.isRemote)  updateColonyClient();
+        else                    updateColonyServer();
+
         super.onLivingUpdate();
     }
 
-
-    private void updateColony()
+    private void updateColonyClient()
     {
-        if (worldObj.isRemote)
+        if (colonyId == 0)
         {
-            if (colonyId == null)
-            {
-                String colonyIdString = dataWatcher.getWatchableObjectString(DATA_COLONY_ID);
-                if (colonyIdString != null)
-                {
-                    colonyId = UUID.fromString(colonyIdString);
-                }
-            }
-
-            if (citizenId == null)
-            {
-                String citizenIdString = dataWatcher.getWatchableObjectString(DATA_CITIZEN_ID);
-                if (citizenIdString != null)
-                {
-                    citizenId = UUID.fromString(citizenIdString);
-                }
-            }
-
-            return;
+            colonyId = dataWatcher.getWatchableObjectInt(DATA_COLONY_ID);
         }
 
-        if (colonyId == null)
+        if (citizenId == 0)
+        {
+            citizenId = dataWatcher.getWatchableObjectInt(DATA_CITIZEN_ID);
+        }
+
+        setTexture();
+        updateArmSwingProgress();
+    }
+
+    /**
+     * Server-specific update for the EntityCitizen
+     */
+    private void updateColonyServer()
+    {
+        pickupItems();
+
+        if (colonyId == 0)
         {
             setDead();
             return;
@@ -233,15 +221,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
             if (c == null)
             {
+                MineColonies.logger.warn(String.format("EntityCitizen '%s' unable to find Colony #%d", getUniqueID(), colonyId));
                 setDead();
                 return;
             }
 
-            CitizenData data = c.getCitizen(getUniqueID());
+            CitizenData data = c.getCitizen(citizenId);
             if (data == null)
             {
                 //  Citizen does not exist in the Colony
-                MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but not known to colony", getUniqueID()));
+                MineColonies.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen %d, but not known to colony", getUniqueID(), colonyId, citizenId));
                 setDead();
                 return;
             }
@@ -250,7 +239,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             if (existingCitizen != null && existingCitizen != this)
             {
                 //  This Citizen already has a different Entity registered to it
-                MineColonies.logger.warn(String.format("Citizen '%s' attempting to register with colony, but already have a citizen ('%s')", getUniqueID(), existingCitizen.getUniqueID()));
+                MineColonies.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')", getUniqueID(), colonyId, citizenId, existingCitizen.getUniqueID()));
                 setDead();
                 return;
             }
@@ -283,7 +272,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             CitizenData.View view = getCitizenDataView();
             if (view != null)
             {
-                GuiHandler.showGuiWindow(new WindowCitizen(view));
+                MineColonies.proxy.showCitizenWindow(view);
             }
         }
         return true;
@@ -338,7 +327,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public CitizenData.View getCitizenDataView()
     {
-        if (colonyId != null && citizenId != null)
+        if (colonyId != 0 && citizenId != 0)
         {
             ColonyView colonyView = ColonyManager.getColonyView(colonyId);
             if (colonyView != null)
@@ -357,7 +346,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (c == null)
         {
             colony = null;
-            colonyId = null;
+            colonyId = 0;
+            citizenId = 0;
             citizenData = null;
             setDead();
             return;
@@ -365,12 +355,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         colony = c;
         colonyId = colony.getID();
+        citizenId = data.getId();
         citizenData = data;
 
         setCustomNameTag(citizenData.getName());
 
-        dataWatcher.updateObject(DATA_COLONY_ID, colonyId.toString());
-        dataWatcher.updateObject(DATA_CITIZEN_ID, citizenData.getId().toString());
+        dataWatcher.updateObject(DATA_COLONY_ID, colonyId);
+        dataWatcher.updateObject(DATA_CITIZEN_ID, citizenData.getId());
         dataWatcher.updateObject(DATA_IS_FEMALE, citizenData.isFemale() ? 1 : 0);
         dataWatcher.updateObject(DATA_TEXTURE, citizenData.getTextureId());
         updateLevel();
@@ -433,9 +424,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.writeEntityToNBT(compound);
         compound.setInteger("status", status.ordinal());
 
-        if (colony != null)
+        if (colony != null && citizenData != null)
         {
-            compound.setString("colony", colony.getID().toString());
+            compound.setInteger("colony", colony.getID());
+            compound.setInteger("citizen", citizenData.getId());
         }
 
         NBTTagList inventoryList = new NBTTagList();
@@ -461,10 +453,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         status = Status.values()[compound.getInteger("status")];
 
-        if (compound.hasKey("colony"))
-        {
-            colonyId = UUID.fromString(compound.getString("colony"));
-        }
+        colonyId = compound.getInteger("colony");
+        citizenId = compound.getInteger("citizen");
 
         NBTTagList nbttaglist = compound.getTagList("Inventory", NBT.TAG_COMPOUND);
         for (int i = 0; i < nbttaglist.tagCount(); i++)

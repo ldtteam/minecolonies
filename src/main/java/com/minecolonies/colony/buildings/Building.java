@@ -291,7 +291,7 @@ public abstract class Building
 
         if (!found)
         {
-            colony.getWorkManager().addWorkOrder(WorkOrderBuild.create(this, level));
+            colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
         }
     }
 

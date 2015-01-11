@@ -1,6 +1,6 @@
 <window inherit="minecolonies:gui/windowBase.xml"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="file:blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
     <label id="title"
            size="100% 11" pos="0 9"
            textalign="TopMiddle"
@@ -32,7 +32,7 @@
               size="100% 20" y="20" text="This is just a test"
               tab="text1" />
     </view>
-    <box padding="3" size="100 85" y="128" align="TopMiddle">
+    <!-- box padding="3" size="100 85" y="128" align="TopMiddle">
         <list id="scrollgroup"
               size="100%">
             <view size="100% 45px">
@@ -43,10 +43,17 @@
                 </list>
             </view>
         </list>
+    </box -->
+    <box size="80% 85" pos="0 128" align="TopMiddle">
+        <text size="100% 100%" color="black" textscale="1.0">
+This is just a test of text!
+The text has multiple lines...
+So let's see if it really works...
+It should also wrap on it's own.
+        </text>
     </box>
 
     <button id="inventory"
-            size="116 20" pos="0 13"
-            align="BottomMiddle"
+            align="BottomMiddle" size="116 20" pos="0 13"
             label="$(container.inventory)" />
 </window>

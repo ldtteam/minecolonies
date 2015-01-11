@@ -1,6 +1,7 @@
 package com.minecolonies.proxy;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
@@ -90,6 +91,10 @@ public class CommonProxy implements IProxy
 
     @Override
     public void registerKeybindings(){}
+
+
+    @Override
+    public void showCitizenWindow(CitizenData.View citizen) {}
 
     /**
      * Used for entity IDs, starts at 0 & increments for each call

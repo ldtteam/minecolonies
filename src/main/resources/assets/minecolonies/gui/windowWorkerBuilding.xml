@@ -27,7 +27,6 @@
     </view>
 
     <button id="inventory"
-            size="116 20" pos="0 13"
-            align="BottomMiddle"
+            align="BottomMiddle" size="116 20" pos="0 13"
             label="$(container.inventory)" />
 </window>

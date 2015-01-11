@@ -26,16 +26,16 @@ import java.util.*;
 
 public class Colony
 {
-    private final UUID id;
+    private final int id;
 
     //  Runtime Data
     private World world = null;
 
     //  Updates and Subscriptions
-    private Set<EntityPlayerMP>    subscribers      = new HashSet<EntityPlayerMP>();
-    private boolean                isDirty          = false;   //  TODO - Move to using bits, and more of them for targetted update packets
-    private boolean                isCitizensDirty  = false;
-    private boolean                isBuildingsDirty = false;
+    private Set<EntityPlayerMP> subscribers      = new HashSet<EntityPlayerMP>();
+    private boolean             isDirty          = false;   //  TODO - Move to using bits, and more of them for targetted update packets
+    private boolean             isCitizensDirty  = false;
+    private boolean             isBuildingsDirty = false;
 
     //  General Attributes
     private String name = "ERROR(Wasn't placed by player)";
@@ -51,22 +51,26 @@ public class Colony
     private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
 
     //  Citizenry
-    private              int                    maxCitizens                    = Configurations.maxCitizens;
-    private              Map<UUID, CitizenData> citizens                       = new HashMap<UUID, CitizenData>();
-    private final static int                    CITIZEN_CLEANUP_TICK_INCREMENT = 60 * 20;   //  Once a minute
+    private Map<Integer, CitizenData> citizens     = new HashMap<Integer, CitizenData>();
+    private int                       topCitizenId = 0;
+    private int                       maxCitizens  = Configurations.maxCitizens;
+
+
+    //  Settings
+    private final static int CITIZEN_CLEANUP_TICK_INCREMENT = /*60*/ 5 * 20;   //  Once a minute
 
     //  Workload and Jobs
     private final WorkManager workManager = new WorkManager(this);
 
-    private final static String TAG_ID                = "id";
-    private final static String TAG_NAME              = "name";
-    private final static String TAG_DIMENSION         = "dimension";
-    private final static String TAG_CENTER            = "center";
-    private final static String TAG_MAX_CITIZENS      = "maxCitizens";
-    private final static String TAG_BUILDINGS         = "buildings";
-    private final static String TAG_CITIZENS          = "citizens";
-    private final static String TAG_WORK              = "work";
-    private final static String TAG_AUTO_HOSTILE      = "autoHostile";
+    private final static String TAG_ID           = "id";
+    private final static String TAG_NAME         = "name";
+    private final static String TAG_DIMENSION    = "dimension";
+    private final static String TAG_CENTER       = "center";
+    private final static String TAG_MAX_CITIZENS = "maxCitizens";
+    private final static String TAG_BUILDINGS    = "buildings";
+    private final static String TAG_CITIZENS     = "citizens";
+    private final static String TAG_WORK         = "work";
+    private final static String TAG_AUTO_HOSTILE = "autoHostile";
 
     /**
      * Constructor for a newly created Colony.
@@ -74,9 +78,9 @@ public class Colony
      * @param w The world the colony exists in
      * @param c The center of the colony (location of Town Hall).
      */
-    public Colony(World w, ChunkCoordinates c)
+    public Colony(int id, World w, ChunkCoordinates c)
     {
-        this(UUID.randomUUID(), w.provider.dimensionId);
+        this(id, w.provider.dimensionId);
         center = c;
         world = w;
     }
@@ -84,13 +88,13 @@ public class Colony
     /**
      * Base constructor.
      *
-     * @param uuid The current id for the colony
-     * @param dim  The world the colony exists in
+     * @param id  The current id for the colony
+     * @param dim The world the colony exists in
      */
-    protected Colony(UUID uuid, int dim)
+    protected Colony(int id, int dim)
     {
-        id = uuid;
-        dimensionId = dim;
+        this.id = id;
+        this.dimensionId = dim;
     }
 
     /**
@@ -99,10 +103,10 @@ public class Colony
      */
     protected void cleanup()
     {
-        for(CitizenData citizen : citizens.values())
+        for (CitizenData citizen : citizens.values())
         {
             EntityCitizen actualCitizen = citizen.getCitizenEntity();
-            if(actualCitizen != null)
+            if (actualCitizen != null)
             {
                 actualCitizen.clearColony();
             }
@@ -117,7 +121,7 @@ public class Colony
      */
     public static Colony loadColony(NBTTagCompound compound)
     {
-        UUID id = UUID.fromString(compound.getString(TAG_ID));
+        int id = compound.getInteger(TAG_ID);
         int dimensionId = compound.getInteger(TAG_DIMENSION);
         Colony c = new Colony(id, dimensionId);
         c.readFromNBT(compound);
@@ -146,6 +150,7 @@ public class Colony
             NBTTagCompound citizenCompound = citizenTagList.getCompoundTagAt(i);
             CitizenData data = CitizenData.createFromNBT(citizenCompound, this);
             citizens.put(data.getId(), data);
+            topCitizenId = Math.max(topCitizenId, data.getId());
         }
 
         //  Buildings
@@ -174,7 +179,7 @@ public class Colony
     public void writeToNBT(NBTTagCompound compound)
     {
         //  Core attributes
-        compound.setString(TAG_ID, id.toString());
+        compound.setInteger(TAG_ID, id);
         compound.setInteger(TAG_DIMENSION, dimensionId);
 
         //  Basic data
@@ -214,7 +219,7 @@ public class Colony
         //compound.setInteger(TAG_AUTO_HOSTILE, autoHostile);
     }
 
-    public UUID getID()
+    public int getID()
     {
         return id;
     }
@@ -379,12 +384,11 @@ public class Colony
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
 
-                for (Map.Entry<UUID, CitizenData> entry : citizens.entrySet())
+                for (CitizenData citizen : citizens.values())
                 {
-                    CitizenData citizen = entry.getValue();
                     if (citizen.getCitizenEntity() == null)
                     {
-                        MineColonies.logger.warn(String.format("Citizen '%s' has gone AWOL, respawning them!", entry.getKey().toString()));
+                        MineColonies.logger.warn(String.format("Citizen '%d' has gone AWOL, respawning them!", citizen.getId()));
                         spawnCitizen(citizen);
                     }
                 }
@@ -525,7 +529,7 @@ public class Colony
                     boolean isNewSubscriber = !oldSubscribers.contains(player);
                     if (isDirty || isNewSubscriber)
                     {
-                        MineColonies.network.sendTo(new ColonyViewMessage(id, this, isNewSubscriber), player);
+                        MineColonies.network.sendTo(new ColonyViewMessage(this, isNewSubscriber), player);
                     }
                 }
             }
@@ -533,13 +537,12 @@ public class Colony
             // Permissions
             if(permissions.isDirty() || hasNewSubscribers)
             {
-                PermissionsMessage.View msg = new PermissionsMessage.View(this);
-
                 for (EntityPlayerMP player : subscribers)
                 {
                     if (permissions.isDirty() || !oldSubscribers.contains(player))
                     {
-                        MineColonies.network.sendTo(msg, player);
+                        Permissions.Rank rank = getPermissions().getRank(player);
+                        MineColonies.network.sendTo(new PermissionsMessage.View(this, rank), player);
                     }
                 }
             }
@@ -634,28 +637,22 @@ public class Colony
 
         if(spawnPoint != null)
         {
-            EntityCitizen entity = null;
+            EntityCitizen entity = new EntityCitizen(world);
 
             if (data == null)
             {
-                entity = new EntityCitizen(world);
+                data = new CitizenData(++topCitizenId, this);
+                data.initializeFromEntity(entity);
 
-                data = CitizenData.createFromEntity(entity, this);
                 citizens.put(data.getId(), data);
-                entity.setColony(this, data);
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
                     LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, permissions.getMessagePlayers()), "tile.blockHutTownhall.messageMaxSize");//TODO: add Colony Name prefix?
                 }
             }
-            else
-            {
-                //  TODO: Restore the actual EntityCitizen subclass
-                //  (Although the current code is pretty good about detecting and fixing the issue)
-                entity = new EntityCitizen(world, data.getId());
-                entity.setColony(this, data);
-            }
+
+            entity.setColony(this, data);
 
             entity.setPosition(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
             world.spawnEntityInWorld(entity);
@@ -772,7 +769,7 @@ public class Colony
     public int getMaxCitizens() { return maxCitizens; }
     //public void setMaxCitizens();
 
-    public Map<UUID, CitizenData> getCitizens() { return Collections.unmodifiableMap(citizens); }
+    public Map<Integer, CitizenData> getCitizens() { return Collections.unmodifiableMap(citizens); }
 
     public List<EntityCitizen> getActiveCitizenEntities()
     {
@@ -823,7 +820,7 @@ public class Colony
      * @param citizenId ID of the Citizen
      * @return CitizenData associated with the ID, or null if it was not found
      */
-    public CitizenData getCitizen(UUID citizenId)
+    public CitizenData getCitizen(int citizenId)
     {
         return citizens.get(citizenId);
     }
