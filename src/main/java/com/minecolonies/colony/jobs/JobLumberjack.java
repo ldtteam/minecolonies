@@ -6,6 +6,7 @@ import com.minecolonies.entity.ai.EntityAIWorkLumberjack;
 import com.minecolonies.entity.ai.Tree;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
 
 public class JobLumberjack extends Job
 {
@@ -13,6 +14,7 @@ public class JobLumberjack extends Job
     public Tree tree;
 
     private static final String TAG_STAGE = "Stage";
+    private static final String TAG_TREE = "Tree";
 
     public JobLumberjack(CitizenData entity)
     {
@@ -37,7 +39,12 @@ public class JobLumberjack extends Job
         super.writeToNBT(compound);
 
         compound.setString(TAG_STAGE, stage.name());
-        //TODO save tree - So we don't have half chopped trees
+
+        NBTTagCompound treeTag = new NBTTagCompound();
+        if(tree != null)
+        {
+            tree.writeToNBT(treeTag);
+        }
     }
 
     @Override
@@ -46,7 +53,10 @@ public class JobLumberjack extends Job
         super.readFromNBT(compound);
 
         stage = EntityAIWorkLumberjack.Stage.valueOf(compound.getString(TAG_STAGE));
-        //TODO load tree
+        if(compound.hasKey(TAG_TREE))
+        {
+            tree = Tree.readFromNBT(compound.getCompoundTag(TAG_TREE));
+        }
     }
 
     @Override

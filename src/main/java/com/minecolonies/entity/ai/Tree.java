@@ -4,8 +4,11 @@ import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.Material;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -17,6 +20,11 @@ public class Tree
     private ChunkCoordinates location;
     private Queue<ChunkCoordinates> woodBlocks;
     private boolean isTree = false;
+
+    private Tree()
+    {
+        isTree = true;
+    }
 
     public Tree(World world, ChunkCoordinates log)
     {
@@ -115,5 +123,39 @@ public class Tree
             return tree.getLocation().equals(location);
         }
         return false;
+    }
+
+    private static final String TAG_LOCATION = "Location";
+    private static final String TAG_LOGS = "Logs";
+
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        if(!isTree)
+        {
+            return;
+        }
+
+        ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, location);
+
+        NBTTagList logs = new NBTTagList();
+        for(ChunkCoordinates log : woodBlocks)
+        {
+            ChunkCoordUtils.writeToNBTTagList(logs, log);
+        }
+        compound.setTag(TAG_LOGS, logs);
+    }
+
+    public static Tree readFromNBT(NBTTagCompound compound)
+    {
+        Tree tree = new Tree();
+        tree.location = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
+
+        tree.woodBlocks = new LinkedList<ChunkCoordinates>();
+        NBTTagList logs = compound.getTagList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
+        for(int i = 0; i < logs.tagCount(); i++)
+        {
+            tree.woodBlocks.add(ChunkCoordUtils.readFromNBTTagList(logs, i));
+        }
+        return tree;
     }
 }
