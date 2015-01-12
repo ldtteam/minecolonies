@@ -62,6 +62,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int DATA_COLONY_ID  = 16;
     private static final int DATA_CITIZEN_ID = 17;  //  Because Entity UniqueIDs are not identical between client and server
     private static final int DATA_MODEL_ID   = 18;
+    private static final int DATA_RENDER_SPECIAL = 19;
 
     public EntityCitizen(World world)
     {
@@ -93,6 +94,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.addObject(DATA_LEVEL, 0);
         dataWatcher.addObject(DATA_IS_FEMALE, 0);
         dataWatcher.addObject(DATA_MODEL_ID, RenderBipedCitizen.Model.SETTLER.name());
+        dataWatcher.addObject(DATA_RENDER_SPECIAL, 0);
     }
 
     protected void initTasks()
@@ -136,6 +138,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
 
         dataWatcher.updateObject(DATA_MODEL_ID, model.name());
+        setRenderSpecial(false);
 
         //  AI Tasks
         Object currentTasks[] = this.tasks.taskEntries.toArray();
@@ -168,7 +171,19 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         textureBase += isFemale() ? "Female" : "Male";
 
         int textureId = (getTextureID() % model.numTextures) + 1;
-        texture = new ResourceLocation(Constants.MOD_ID, textureBase + textureId + ".png");
+        if(dataWatcher.getWatchableObjectInt(DATA_RENDER_SPECIAL) == 0)
+        {
+            texture = new ResourceLocation(Constants.MOD_ID, textureBase + textureId + ".png");
+        }
+        else
+        {
+            texture = new ResourceLocation(Constants.MOD_ID, textureBase + textureId + "S.png");
+        }
+    }
+
+    public void setRenderSpecial(boolean b)
+    {
+        dataWatcher.updateObject(DATA_RENDER_SPECIAL, b ? 1 : 0);
     }
 
     @Override
@@ -522,7 +537,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     @Override
-    public void onInventoryChanged(InventoryBasic inventoryBasic){}
+    public void onInventoryChanged(InventoryBasic inventoryBasic)
+    {
+        //TODO use in future for lumberjack rendering logs, etc
+    }
 
     public InventoryCitizen getInventory()
     {

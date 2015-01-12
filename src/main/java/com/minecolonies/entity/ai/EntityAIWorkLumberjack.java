@@ -76,6 +76,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             return;
         }
 
+        worker.setRenderSpecial(hasLogs());
+
         switch (job.getStage())
         {
         case IDLE:
@@ -481,5 +483,22 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             //Maybe we should sort equal clusters based on distance to previous cluster
         });
+    }
+
+    private boolean hasLogs()
+    {
+        for(int i = 0; i < getInventory().getSizeInventory(); i++)
+        {
+            if(isStackLog(getInventory().getStackInSlot(i)))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isStackLog(ItemStack stack)
+    {
+        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a.isWood(null, 0, 0, 0);
     }
 }

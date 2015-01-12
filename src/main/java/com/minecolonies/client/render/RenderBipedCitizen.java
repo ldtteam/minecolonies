@@ -22,7 +22,7 @@ public class RenderBipedCitizen extends RenderBiped
         BUILDER     ( "Builder",        1 ),
         DELIVERYMAN ( "Deliveryman",    1 ),
         MINER       ( "Miner",          1 ),
-        LUMBERJACK  ( "Lumberjack",     1 );
+        LUMBERJACK  ( "Lumberjack",     1 );//4 male, 1 female
 
         Model(String textureBase, int numTextures)
         {
