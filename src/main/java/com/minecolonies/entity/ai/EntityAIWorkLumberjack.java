@@ -4,14 +4,16 @@ import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
+import com.minecolonies.util.Vec3Utils;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 
 import java.util.*;
 
@@ -38,6 +40,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private int searchZ = 0;
 
     private int chopTicks = 0;
+    private int stillTicks = 0;
+    private int previousDistance = 0;
     private int delay = 0;
 
     private List<Tree> trees = new ArrayList<Tree>();
@@ -208,11 +212,72 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             job.setStage(Stage.INVENTORY_FULL);
             return;
         }
-        if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.tree.getLocation()))
+
+        ChunkCoordinates location = job.tree.getLocation();
+        if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, location))
         {
-            System.out.println("Worker not at site: " + job.tree.getLocation().toString());
-            System.out.println("\tDistance: " + ChunkCoordUtils.distanceSqrd(job.tree.getLocation(), worker.getPosition()));
-            //TODO break leaves in way of path to tree
+            int distance = (int) ChunkCoordUtils.distanceSqrd(location, worker.getPosition());
+            if(previousDistance == distance)
+            {
+                stillTicks++;
+                if(stillTicks >= 10)
+                {
+                    Vec3 workerStanding = Vec3Utils.vec3Floor(worker.getPosition());
+                    Vec3 treeDirection = workerStanding.subtract(Vec3.createVectorHelper(location.posX, location.posY + 2, location.posZ)).normalize();
+                    //Vec3 leaves = worker.getPosition().addVector(treeDirection.xCoord, 1.0, treeDirection.zCoord);
+
+                    int x = MathHelper.floor_double(worker.posX);
+                    int y = MathHelper.floor_double(worker.posY)+1;
+                    int z = MathHelper.floor_double(worker.posZ);
+                    if(treeDirection.xCoord > 0.5F)
+                    {
+                        x++;
+                    }
+                    else if(treeDirection.xCoord < -0.5F)
+                    {
+                        x--;
+                    }
+                    else if(treeDirection.zCoord > 0.5F)
+                    {
+                        z++;
+                    }
+                    else if(treeDirection.zCoord < -0.5F)
+                    {
+                        z--;
+                    }
+                    if(treeDirection.yCoord > 0.75F)
+                    {
+                        y++;
+                    }
+                    else if(treeDirection.yCoord < -0.75F)
+                    {
+                        y--;
+                    }
+
+                    Block block = world.getBlock(x, y, z);
+                    System.out.println(String.format("Block: %s  x:%d y:%d z:%d", block.getUnlocalizedName(), x, y, z));
+                    if(block.isLeaves(world, x, y, z))//Parameters not used
+                    {
+                        world.setBlockToAir(x, y, z);
+                        world.playSoundEffect(
+                                (float) x + 0.5F,
+                                (float) y + 0.5F, (float) z + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
+
+                        //TODO particles
+                        //TODO drops
+                        worker.swingItem();
+
+                        stillTicks = 0;
+                    }
+                }
+            }
+            else
+            {
+                System.out.println("Worker not at site: " + location.toString());
+                System.out.println("\tDistance: " + distance);
+                stillTicks = 0;
+                previousDistance = distance;
+            }
             return;
         }
 
@@ -243,7 +308,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             //tree is gone
             if (!job.tree.hasLogs())
             {
-                boolean success = plantSapling(job.tree.getLocation());
+                boolean success = plantSapling(location);
                 System.out.println("Tree planting success: " + success);
                 job.tree = null;
             }
