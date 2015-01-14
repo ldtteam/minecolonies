@@ -8,7 +8,6 @@ import com.minecolonies.util.Vec3Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
@@ -336,23 +335,31 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         //TODO
     }
 
-    private void dumpInventory()//TODO if full of saplings dump some of them too
+    private void dumpInventory()
     {
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
         {
+            int saplingStacks = 0;
             for (int i = 0; i < getInventory().getSizeInventory(); i++)
             {
                 ItemStack stack = getInventory().getStackInSlot(i);
-                if (stack != null && !(stack.getItem() instanceof ItemAxe || isStackSapling(stack)))
+                if (stack != null && !isStackAxe(stack))
                 {
-                    ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(), stack);
-                    if (returnStack == null)
+                    if(isStackSapling(stack) && saplingStacks < 5)
                     {
-                        getInventory().decrStackSize(i, stack.stackSize);
+                        saplingStacks++;
                     }
                     else
                     {
-                        getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+                        ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(), stack);
+                        if (returnStack == null)
+                        {
+                            getInventory().decrStackSize(i, stack.stackSize);
+                        }
+                        else
+                        {
+                            getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+                        }
                     }
                 }
             }
@@ -374,7 +381,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     {
         if (hasAxe())
         {
-            if (!(worker.getHeldItem() != null && worker.getHeldItem().getItem().getToolClasses(null /* not used */).contains(TOOL_TYPE_AXE)))
+            if (!isStackAxe(worker.getHeldItem()))
             {
                 equipAxe();
             }
@@ -391,6 +398,11 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private void equipAxe()
     {
         worker.setHeldItem(getAxeSlot());
+    }
+
+    private boolean isStackAxe(ItemStack stack)
+    {
+        return stack != null && stack.getItem().getToolClasses(null /* not used */).contains(TOOL_TYPE_AXE);
     }
 
     private boolean isStackSapling(ItemStack stack)
