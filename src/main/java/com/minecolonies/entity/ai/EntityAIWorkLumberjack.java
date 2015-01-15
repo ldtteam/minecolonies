@@ -35,7 +35,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private static final int SEARCH_INTERVAL = 10;
     private static final int SEARCH_STEPS = 2*SEARCH_RANGE / SEARCH_INTERVAL;
 
-    private static final int CLUSTER_TREE_DISTANCE = 9;//square distance
+    private static final int CLUSTER_TREE_DISTANCE_SQUARED = 9;//square distance
 
     private int searchX = 0;
     private int searchZ = 0;
@@ -97,7 +97,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         case SEARCHING:
             if(clusters.isEmpty())
             {
-                findTrees();//Do tree search
+                findTrees();
             }
             else
             {
@@ -180,7 +180,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation());//Go Home
     }
 
-    //Splits search area into
+    //Splits search area into intervals
     private void findTrees()
     {
         //TODO search a larger y range?
@@ -209,7 +209,6 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                                 t.findLogs(world);
                             }
                             trees.add(t);
-                            //check for adjacent locations
                         }
                     }
                 }
@@ -292,7 +291,10 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                     }
 
                     Block block = world.getBlock(x, y, z);
-                    System.out.println(String.format("Block: %s  x:%d y:%d z:%d", block.getUnlocalizedName(), x, y, z));
+                    if(worker.getOffsetTicks() % 20 == 0)//Less spam
+                    {
+                        System.out.println(String.format("Block: %s  x:%d y:%d z:%d", block.getUnlocalizedName(), x, y, z));
+                    }
                     if(block.isLeaves(world, x, y, z))//Parameters not used
                     {
                         //drops
@@ -360,8 +362,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             if (!job.tree.hasLogs())
             {
                 //TODO place correct sapling
-                boolean success = plantSapling(location);
-                System.out.println("Tree planting success: " + success);
+                plantSapling(location);
                 job.tree = null;
             }
             chopTicks = -1;//will be increased to 0 at the end of the method
@@ -581,17 +582,17 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                 {
                     Tree other = it.next();
 
-                    if (tree.squareDistance(other) < CLUSTER_TREE_DISTANCE)
+                    if (tree.squareDistance(other) < CLUSTER_TREE_DISTANCE_SQUARED)
                     {
                         clusterQueue.add(other);
                         cluster.add(other);
                         it.remove();
                     }
                 }
-                System.out.println("Cluster size: " + cluster.size());
             }
+            System.out.println("Cluster size: " + cluster.size());
         }
-        System.out.println("Clusters: " + clusters.size());
+        System.out.println("Total Clusters: " + clusters.size());
 
         //Sort clusters by size
         Collections.sort(clusters, new Comparator<List<Tree>>()

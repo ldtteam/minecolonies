@@ -16,6 +16,9 @@ import java.util.LinkedList;
 
 public class Tree
 {
+    private static final String TAG_LOCATION = "Location";
+    private static final String TAG_LOGS = "Logs";
+
     private static final int NUMBER_OF_LEAVES = 3;
 
     private ChunkCoordinates location;
@@ -30,25 +33,33 @@ public class Tree
     public Tree(World world, ChunkCoordinates log)
     {
         Block block = ChunkCoordUtils.getBlock(world, log);
-        if(block instanceof BlockLog)
+        if(block.isWood(world, log.posX, log.posY, log.posZ))
         {
-            location = getBaseLog(world, log);
+            location = getBaseLog(world, log.posX, log.posY, log.posZ);
             woodBlocks = new LinkedList<ChunkCoordinates>();
 
-            //get top log
-            while(ChunkCoordUtils.getBlock(world, log).isWood(null, 0,0,0))
-            {
-                log.posY++;
-            }
-            log.posY--;//Make log the topLog
-            checkTree(world, log);
+            checkTree(world, getTopLog(world, log.posX, log.posY, log.posZ));
         }
         //isTree = false
     }
 
     public void findLogs(World world)
     {
+        System.out.println("Starting findLogs recursive search.");
+        long startTime = System.nanoTime();
+
         addAndSearch(world, location);
+        System.out.println("Search time taken(ms): " + (System.nanoTime()-startTime)/1000000D);
+
+        Collections.sort(woodBlocks, new Comparator<ChunkCoordinates>()
+        {
+            @Override
+            public int compare(ChunkCoordinates c1, ChunkCoordinates c2)
+            {
+                return (int) (c1.getDistanceSquaredToChunkCoordinates(location) - c2.getDistanceSquaredToChunkCoordinates(location));
+            }
+        });
+        System.out.println("Time including sort(ms): " + (System.nanoTime()-startTime)/1000000D);
     }
 
     public void addBaseLog()
@@ -66,9 +77,6 @@ public class Tree
                 for(int z = -1; z <= 1; z++)
                 {
                     ChunkCoordinates temp = ChunkCoordUtils.add(log, x, y, z);
-                    System.out.println("pos: " + temp);
-                    System.out.println("\tisWood: " + ChunkCoordUtils.getBlock(world, temp).isWood(null,0,0,0));
-                    System.out.println("\tinList: " + woodBlocks.contains(temp));
                     if(ChunkCoordUtils.getBlock(world, temp).isWood(null,0,0,0) && !woodBlocks.contains(temp))//TODO reorder if more optimal
                     {
                         addAndSearch(world, temp);
@@ -76,15 +84,6 @@ public class Tree
                 }
             }
         }
-
-        Collections.sort(woodBlocks, new Comparator<ChunkCoordinates>()
-        {
-            @Override
-            public int compare(ChunkCoordinates c1, ChunkCoordinates c2)
-            {
-                return (int) (c1.getDistanceSquaredToChunkCoordinates(location) - c2.getDistanceSquaredToChunkCoordinates(location));
-            }
-        });
     }
 
     public boolean isTree()
@@ -116,14 +115,22 @@ public class Tree
         //isTree = false
     }
 
-    private ChunkCoordinates getBaseLog(World world, ChunkCoordinates log)
+    private ChunkCoordinates getBaseLog(World world, int x, int y, int z)
     {
-        while(ChunkCoordUtils.getBlock(world, log) instanceof BlockLog)
+        while(world.getBlock(x, y-1, z).isWood(world, x, y, z))
         {
-            log.posY--;
+            y--;
         }
-        log.posY++;
-        return new ChunkCoordinates(log);
+        return new ChunkCoordinates(x, y, z);
+    }
+
+    private ChunkCoordinates getTopLog(World world, int x, int y, int z)
+    {
+        while(world.getBlock(x, y+1, z).isWood(world, x, y, z))
+        {
+            y++;
+        }
+        return new ChunkCoordinates(x, y, z);
     }
 
     public ChunkCoordinates pollNextLog()
@@ -161,9 +168,6 @@ public class Tree
         }
         return false;
     }
-
-    private static final String TAG_LOCATION = "Location";
-    private static final String TAG_LOGS = "Logs";
 
     public void writeToNBT(NBTTagCompound compound)
     {
