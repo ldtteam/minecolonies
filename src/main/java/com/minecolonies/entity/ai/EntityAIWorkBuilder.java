@@ -695,7 +695,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
         }
 
         ChunkCoordinates pos = workOrder.getBuildingId();
-        String name = workOrder.getUpgradeName();
+        String name = "classic/" + workOrder.getUpgradeName();//TODO actually do styles
 
         job.setSchematic(Schematic.loadSchematic(world, name));
 

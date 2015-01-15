@@ -379,7 +379,7 @@ public class Schematic
 
     private static ResourceLocation getResourceLocation(String name)
     {
-        return new ResourceLocation("minecolonies:schematics/classic/" + name + ".schematic");
+        return new ResourceLocation("minecolonies:schematics/" + name + ".schematic");
     }
 
     private static String getNameFromResourceLocation(ResourceLocation res)
