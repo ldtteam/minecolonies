@@ -280,7 +280,8 @@ public class ColonyManager {
 
         for (ColonyView c : colonyViews.values())
         {
-            if (c.getPlayers().get(player.getGameProfile().getId()).equals(Permissions.Rank.OWNER))//TODO update for permissions
+            Permissions.Player p = c.getPlayers().get(player.getGameProfile().getId());
+            if (p != null && p.rank.equals(Permissions.Rank.OWNER))
             {
                 results.add(c);
             }
