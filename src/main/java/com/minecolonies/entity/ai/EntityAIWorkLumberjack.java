@@ -29,6 +29,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     }
 
     private static final String TOOL_TYPE_AXE = "axe";
+    private static final String RENDER_META_LOGS = "Logs";
 
     private static final int SEARCH_RANGE = 20;
     private static final int SEARCH_INTERVAL = 10;
@@ -79,7 +80,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             return;
         }
 
-        worker.setRenderSpecial(hasLogs());
+        worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
 
         switch (job.getStage())
         {
