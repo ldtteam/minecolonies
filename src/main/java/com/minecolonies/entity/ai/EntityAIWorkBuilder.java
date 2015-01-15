@@ -91,7 +91,10 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             return;//findNextBlock count was reached and we can ignore this block
         }
 
-        System.out.println(worker.getStatus().toString());
+        if(worker.getOffsetTicks() % 200 == 0)//Every 10 seconds
+        {
+            System.out.println(worker.getStatus().toString());
+        }
 
         if(worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS) {
             if(!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition()))
