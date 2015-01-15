@@ -160,7 +160,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
                 findNextBlock();//TODO handle - for now, just skipping
             }
         }
-        worker.swingItem();//TODO doesn't work, may need item in hand
+        worker.swingItem();
     }
 
     @Override

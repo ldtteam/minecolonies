@@ -31,6 +31,7 @@ public abstract class Job
         addMapping("Builder", JobBuilder.class);
         addMapping("Deliveryman", JobDeliveryman.class);
         addMapping("Miner", JobMiner.class);
+        addMapping("Lumberjack", JobLumberjack.class);
     }
 
     /**

@@ -8,14 +8,15 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.entity.ai.EntityAIWork;
-import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.EntityAgeable;
@@ -38,6 +39,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static net.minecraftforge.common.util.Constants.NBT;
 
@@ -60,6 +62,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int DATA_COLONY_ID  = 16;
     private static final int DATA_CITIZEN_ID = 17;  //  Because Entity UniqueIDs are not identical between client and server
     private static final int DATA_MODEL_ID   = 18;
+    private static final int DATA_RENDER_METADATA = 19;
 
     public EntityCitizen(World world)
     {
@@ -91,6 +94,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.addObject(DATA_LEVEL, 0);
         dataWatcher.addObject(DATA_IS_FEMALE, 0);
         dataWatcher.addObject(DATA_MODEL_ID, RenderBipedCitizen.Model.SETTLER.name());
+        dataWatcher.addObject(DATA_RENDER_METADATA, "");
     }
 
     protected void initTasks()
@@ -134,6 +138,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
 
         dataWatcher.updateObject(DATA_MODEL_ID, model.name());
+        setRenderMetadata("");
 
         //  AI Tasks
         Object currentTasks[] = this.tasks.taskEntries.toArray();
@@ -166,7 +171,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         textureBase += isFemale() ? "Female" : "Male";
 
         int textureId = (getTextureID() % model.numTextures) + 1;
-        texture = new ResourceLocation(Constants.MOD_ID, textureBase + textureId + ".png");
+        texture = new ResourceLocation(Constants.MOD_ID, textureBase + textureId + getRenderMetadata() + ".png");
+    }
+
+    public void setRenderMetadata(String metadata)
+    {
+        dataWatcher.updateObject(DATA_RENDER_METADATA, metadata);
+    }
+
+    public String getRenderMetadata()
+    {
+        return dataWatcher.getWatchableObjectString(DATA_RENDER_METADATA);
     }
 
     @Override
@@ -197,6 +212,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
 
         setTexture();
+        updateArmSwingProgress();
     }
 
     /**
@@ -204,6 +220,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     private void updateColonyServer()
     {
+        pickupItems();
+
         if (colonyId == 0)
         {
             setDead();
@@ -437,6 +455,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
         }
         compound.setTag("Inventory", inventoryList);
+
+        compound.setInteger("HeldItemSlot", inventory.getHeldItemSlot());
     }
 
     @Override
@@ -457,6 +477,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             ItemStack itemstack = ItemStack.loadItemStackFromNBT(tag);
             inventory.setInventorySlotContents(slot, itemstack);
         }
+
+        inventory.setHeldItem(compound.getInteger("HeldItemSlot"));
     }
 
     public int getOffsetTicks()
@@ -513,7 +535,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     @Override
-    public void onInventoryChanged(InventoryBasic inventoryBasic){}
+    public void onInventoryChanged(InventoryBasic inventoryBasic)
+    {
+        //TODO use in future for lumberjack rendering logs, etc
+    }
 
     public InventoryCitizen getInventory()
     {
@@ -551,6 +576,51 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 }
             }
         }
+    }
+
+    private void pickupItems()
+    {
+        @SuppressWarnings("unchecked")
+        List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, boundingBox.expand(2.0F, 0.0F, 2.0F));//TODO change range
+
+        for(EntityItem item : list)
+        {
+            if(item != null && !item.isDead)
+            {
+                tryPickupEntityItem(item);
+            }
+        }
+    }
+
+    public void tryPickupEntityItem(EntityItem entityItem)
+    {
+        if (!this.worldObj.isRemote)
+        {
+            if (entityItem.delayBeforeCanPickup > 0)
+            {
+                return;
+            }
+
+            ItemStack itemStack = entityItem.getEntityItem();
+            int i = itemStack.stackSize;
+
+            if ((i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventory(), itemStack)))
+            {
+                this.worldObj.playSoundAtEntity(this, "random.pop", 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                this.onItemPickup(this, i);
+
+                if (itemStack.stackSize <= 0)
+                {
+                    entityItem.setDead();
+                }
+            }
+        }
+    }
+
+    public void setHeldItem(int slot)
+    {
+        inventory.setHeldItem(slot);
+        setCurrentItemOrArmor(0, inventory.getStackInSlot(slot));
     }
 
     /**

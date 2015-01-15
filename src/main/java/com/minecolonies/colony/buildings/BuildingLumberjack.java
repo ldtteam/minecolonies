@@ -5,7 +5,7 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
-import com.minecolonies.colony.jobs.JobPlaceholder;
+import com.minecolonies.colony.jobs.JobLumberjack;
 import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingLumberjack extends BuildingWorker
@@ -27,7 +27,7 @@ public class BuildingLumberjack extends BuildingWorker
     @Override
     public Job createJob(CitizenData citizen)
     {
-        return new JobPlaceholder(citizen); //TODO Implement Later
+        return new JobLumberjack(citizen);
     }
 
     public static class View extends BuildingWorker.View
