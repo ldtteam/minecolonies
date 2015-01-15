@@ -538,6 +538,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void onInventoryChanged(InventoryBasic inventoryBasic)
     {
         //TODO use in future for lumberjack rendering logs, etc
+        setCurrentItemOrArmor(0, inventory.getHeldItem());
     }
 
     public InventoryCitizen getInventory()
