@@ -304,7 +304,9 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                         world.setBlockToAir(x, y, z);
                         world.playSoundEffect(
                                 (float) x + 0.5F,
-                                (float) y + 0.5F, (float) z + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
+                                (float) y + 0.5F,
+                                (float) z + 0.5F,
+                                block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
 
                         //TODO particles
                         worker.swingItem();
@@ -334,11 +336,14 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                     InventoryUtils.setStack(getInventory(), item);
                 }
                 //break block
-                ChunkCoordUtils.setBlock(world, log, Blocks.air);
                 world.playSoundEffect(
                         (float) log.posX + 0.5F,
-                        (float) log.posY + 0.5F, (float) log.posZ + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
+                        (float) log.posY + 0.5F,
+                        (float) log.posZ + 0.5F,
+                        block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
                 //TODO particles
+                //Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(log.posX, log.posY, log.posZ, block, ChunkCoordUtils.getBlockMetadata(world, log));
+                ChunkCoordUtils.setBlock(world, log, Blocks.air);
                 //Damage axe
                 ItemStack axe = worker.getInventory().getHeldItem();
                 axe.getItem().onBlockDestroyed(axe, world, block, log.posX, log.posY, log.posZ, worker);
@@ -516,42 +521,35 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a instanceof BlockSapling;
     }
 
-    private int getSaplingSlot()
-    {
-        for (int i = 0; i < getInventory().getSizeInventory(); i++)
-        {
-            if (isStackSapling(getInventory().getStackInSlot(i)))
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     private boolean plantSapling(ChunkCoordinates location)
     {
         if(ChunkCoordUtils.getBlock(world, location) != Blocks.air)
         {
             return false;
         }
-        //TODO optimize
-        int slot = getSaplingSlot();
-        if (slot != -1)
+
+        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
         {
             ItemStack stack = getInventory().getStackInSlot(slot);
-            if (stack.getItem() instanceof ItemBlock)
+            if (stack != null && stack.getItem() instanceof ItemBlock)
             {
                 Block block = ((ItemBlock) stack.getItem()).field_150939_a;
-                worker.setHeldItem(slot);
-                if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
+                if(block instanceof BlockSapling)
                 {
-                    worker.swingItem();
-                    world.playSoundEffect(
-                            (float) location.posX + 0.5F,
-                            (float) location.posY + 0.5F, (float) location.posZ + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
-                    getInventory().decrStackSize(slot, 1);
-                    delay = 10;
-                    return true;
+                    worker.setHeldItem(slot);
+                    if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
+                    {
+                        worker.swingItem();
+                        world.playSoundEffect(
+                                (float) location.posX + 0.5F,
+                                (float) location.posY + 0.5F,
+                                (float) location.posZ + 0.5F,
+                                block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
+                        getInventory().decrStackSize(slot, 1);
+                        delay = 10;
+                        return true;
+                    }
+                    break;
                 }
             }
         }
