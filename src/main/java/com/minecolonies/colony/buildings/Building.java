@@ -1,21 +1,25 @@
 package com.minecolonies.colony.buildings;
 
+import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.*;
+import com.minecolonies.client.gui.WindowTownhall;
+import com.minecolonies.client.gui.WindowTownhallNameEntry;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.workorders.WorkOrderBuild;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.*;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
@@ -95,7 +99,7 @@ public abstract class Building
     /**
      * Set up mappings of name->Building and TileEntity->Building
      */
-    public static void init()
+    static
     {
         addMapping("Baker",         BuildingBaker.class,         BlockHutBaker.class);
         addMapping("Blacksmith",    BuildingBlacksmith.class,    BlockHutBlacksmith.class);
@@ -158,16 +162,13 @@ public abstract class Building
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(
-                        String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                            compound.getString(TAG_TYPE), oclass.getName()), ex);
+                MineColonies.logger.error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
                 building = null;
             }
         }
         else
         {
-            MineColonies.logger.warn(
-                    String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            MineColonies.logger.warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
         }
 
         return building;
@@ -199,8 +200,7 @@ public abstract class Building
             }
             else
             {
-                MineColonies.logger.error(
-                        String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
+                MineColonies.logger.error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
             }
         }
         catch (Exception exception)
@@ -251,6 +251,7 @@ public abstract class Building
     public void setBuildingLevel(int level) { buildingLevel = level; markDirty(); }
 
     public abstract String getSchematicName();
+    public abstract int getMaxBuildingLevel();
 
     public void setTileEntity(TileEntityColonyBuilding te) { tileEntity = new WeakReference<TileEntityColonyBuilding>(te); }
     public TileEntityColonyBuilding getTileEntity()
@@ -280,11 +281,29 @@ public abstract class Building
     public void onServerTick(TickEvent.ServerTickEvent event) {}
     public void onWorldTick(TickEvent.WorldTickEvent event) {}
 
+    private void requestWorkOrder(int level)
+    {
+        boolean found = false;
+        for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        {
+            if (o.getBuildingId().equals(getID()))
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
+        }
+    }
+
     public void requestUpgrade()
     {
-        if (buildingLevel < 3) //  TODO maxLevel
+        if (buildingLevel < getMaxBuildingLevel())
         {
-            colony.addBuildingForUpgrade(this, buildingLevel + 1);
+            requestWorkOrder(buildingLevel + 1);
         }
     }
 
@@ -292,7 +311,7 @@ public abstract class Building
     {
         if (buildingLevel > 0)
         {
-            colony.addBuildingForUpgrade(this, buildingLevel);
+            requestWorkOrder(buildingLevel);
         }
     }
 
@@ -312,6 +331,7 @@ public abstract class Building
         private final ChunkCoordinates location;
 
         private int buildingLevel = 0;
+        private int buildingMaxLevel = 0;
 
         protected View(ColonyView c, ChunkCoordinates l)
         {
@@ -323,6 +343,9 @@ public abstract class Building
         public ChunkCoordinates getLocation() { return location; }
         public ColonyView getColony() { return colony; }
         public int getBuildingLevel() { return buildingLevel; }
+        public int getBuildingMaxLevel() { return buildingMaxLevel; }
+
+        public boolean isBuildingMaxLevel() { return buildingLevel >= buildingMaxLevel; }
 
         public void openGui(EnumGUI gui)
         {
@@ -330,42 +353,40 @@ public abstract class Building
             player.openGui(MineColonies.instance, gui.getID(), player.worldObj, location.posX, location.posY, location.posZ);
         }
 
-        public GuiScreen getGui(int guiId)
+        public com.blockout.views.Window getWindow(int guiId)
         {
             return null;
         }
 
-        public void parseNetworkData(NBTTagCompound compound)
+        public void deserialize(ByteBuf buf)
         {
-            //  TODO - Use a PacketBuffer
-            buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
+            buildingLevel = buf.readInt();
+            buildingMaxLevel = buf.readInt();
         }
     }
 
-    public void createViewNetworkData(NBTTagCompound compound)
+    public void serializeToView(ByteBuf buf)
     {
-        //  TODO - Use a PacketBuffer
-        //String s = classToNameMap.get(this.getClass());
-        compound.setInteger(TAG_TYPE, this.getClass().getName().hashCode());
-        compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
+        buf.writeInt(this.getClass().getName().hashCode());
+        buf.writeInt(getBuildingLevel());
+        buf.writeInt(getMaxBuildingLevel());
     }
 
     /**
      * Create a Building View given it's saved NBTTagCompound
-     * TODO - Use a PacketBuffer
      *
-     * @param colony   The owning colony
-     * @param compound The network data
+     * @param colony The owning colony
+     * @param buf    The network data
      * @return
      */
-    public static View createBuildingView(ColonyView colony, ChunkCoordinates id, NBTTagCompound compound)
+    public static View createBuildingView(ColonyView colony, ChunkCoordinates id, ByteBuf buf)
     {
         View view = null;
         Class<?> oclass = null;
 
         try
         {
-            int typeHash = compound.getInteger(TAG_TYPE);
+            int typeHash = buf.readInt();
             oclass = classNameHashToClassMap.get(typeHash);
 
             if (oclass != null)
@@ -390,17 +411,17 @@ public abstract class Building
         {
             try
             {
-                view.parseNetworkData(compound);
+                view.deserialize(buf);
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(String.format("A Building View %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
+                MineColonies.logger.error(String.format("A Building View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author", oclass.getName()), ex);
                 view = null;
             }
         }
         else
         {
-            MineColonies.logger.warn(String.format("Unknown Building type '%s', missing View subclass, or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            MineColonies.logger.warn(String.format("Unknown Building type, missing View subclass, or missing constructor of proper format."));
         }
 
         return view;

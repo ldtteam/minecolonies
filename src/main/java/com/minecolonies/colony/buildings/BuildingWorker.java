@@ -4,15 +4,11 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityWorker;
-import com.minecolonies.entity.EntityWorkerPlaceholder;
-import com.minecolonies.entity.jobs.ColonyJob;
+import com.minecolonies.colony.jobs.Job;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
-
-import java.util.UUID;
 
 public abstract class BuildingWorker extends BuildingHut
 {
@@ -37,14 +33,9 @@ public abstract class BuildingWorker extends BuildingHut
         super.onDestroyed();
     }
 
-    public abstract String getJobName();
+    public abstract String getJobName(); //TODO remove this?
 
-    //  Classic Style of Jobs
-    public abstract EntityWorker createWorker(World world);
-
-    //  Future Style of Jobs
-    public abstract Class<? extends ColonyJob> getJobClass();
-    public ColonyJob createJob(EntityCitizen citizen) { return null; }
+    public abstract Job createJob(CitizenData citizen);
 
     public CitizenData getWorker() { return worker; }
     public boolean hasWorker() { return worker != null; }
@@ -61,10 +52,8 @@ public abstract class BuildingWorker extends BuildingHut
         
         if (compound.hasKey(TAG_WORKER))
         {
-            UUID workerId = UUID.fromString(compound.getString(TAG_WORKER));
-
             //  Bypass setWorker, which marks dirty
-            worker = getColony().getCitizen(workerId);
+            worker = getColony().getCitizen(compound.getInteger(TAG_WORKER));
             if (worker != null)
             {
                 worker.setWorkBuilding(this);
@@ -79,7 +68,7 @@ public abstract class BuildingWorker extends BuildingHut
 
         if (worker != null)
         {
-            compound.setString(TAG_WORKER, worker.getId().toString());
+            compound.setInteger(TAG_WORKER, worker.getId());
         }
     }
 
@@ -153,32 +142,29 @@ public abstract class BuildingWorker extends BuildingHut
      */
     public static class View extends BuildingHut.View
     {
-        private UUID workerId;
+        private int workerId;
 
         public View(ColonyView c, ChunkCoordinates l)
         {
             super(c, l);
         }
 
-        public UUID getWorkerId() { return workerId; }
+        public int getWorkerId() { return workerId; }
 
-        public void parseNetworkData(NBTTagCompound compound)
+        @Override
+        public void deserialize(ByteBuf buf)
         {
-            super.parseNetworkData(compound);
+            super.deserialize(buf);
 
-            workerId = compound.hasKey(TAG_WORKER) ? UUID.fromString(compound.getString(TAG_WORKER)) : null;
+            workerId = buf.readInt();
         }
     }
 
-
-    public void createViewNetworkData(NBTTagCompound compound)
+    @Override
+    public void serializeToView(ByteBuf buf)
     {
-        //  TODO - Use a PacketBuffer
-        super.createViewNetworkData(compound);
+        super.serializeToView(buf);
 
-        if (worker != null)
-        {
-            compound.setString(TAG_WORKER, worker.getId().toString());
-        }
+        buf.writeInt(worker != null ? worker.getId() : 0);
     }
 }

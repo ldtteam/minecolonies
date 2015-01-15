@@ -4,15 +4,17 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
 import java.lang.ref.WeakReference;
 import java.util.Random;
-import java.util.UUID;
 
 /**
  * Extra data for Citizens
@@ -21,14 +23,15 @@ import java.util.UUID;
 public class CitizenData
 {
     //  Attributes
-    private final UUID id;
-    private String     name;
-    private boolean    isFemale;
-    private int        textureId;
+    private final int     id;
+    private       String  name;
+    private       boolean isFemale;
+    private       int     textureId;
 
     private Colony         colony;
     private BuildingHome   homeBuilding;
     private BuildingWorker workBuilding;
+    private Job            job;
 
     private boolean isDirty;
 
@@ -45,7 +48,7 @@ public class CitizenData
     private static final String TAG_TEXTURE = "texture";
     private static final String TAG_LEVEL   = "level";
 
-    private static final String TAG_ENTITY_ID = "entity";
+    private static final String TAG_ENTITY_ID     = "entity";
     private static final String TAG_HOME_BUILDING = "homeBuilding";
     private static final String TAG_WORK_BUILDING = "workBuilding";
 
@@ -56,23 +59,35 @@ public class CitizenData
     private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
     private static final String TAG_SKILL_CHARISMA = "charisma";
 
-    private CitizenData(UUID id, Colony colony)
+    private static final String TAG_JOB            = "job";
+
+    /**
+     * Create a CitizenData given an ID
+     * Used as a super-constructor or during loading
+     *
+     * @param id ID of the Citizen
+     * @param colony Colony the Citizen belongs to
+     */
+    public CitizenData(int id, Colony colony)
     {
         this.id = id;
         this.colony = colony;
     }
 
-    private CitizenData(EntityCitizen entity, Colony colony)
+    /**
+     * Create a CitizenData given a CitizenEntity
+     *
+     * @param entity
+     */
+    public void initializeFromEntity(EntityCitizen entity)
     {
-        this(entity.getUniqueID(), colony);
-
         Random rand = entity.getRNG();
 
         this.entity = new WeakReference<EntityCitizen>(entity);
 
         isFemale = rand.nextBoolean();   //  Gender before name
         name = generateName(rand);
-        textureId = entity.getTextureID();
+        textureId = Math.abs(entity.worldObj.rand.nextInt());
 
         strength = rand.nextInt(10) + 1;
         stamina = rand.nextInt(10) + 1;
@@ -85,18 +100,14 @@ public class CitizenData
 
     public static CitizenData createFromNBT(NBTTagCompound compound, Colony colony)
     {
-        UUID id = UUID.fromString(compound.getString(TAG_ID));
+        int id = compound.getInteger(TAG_ID);
         CitizenData citizen = new CitizenData(id, colony);
         citizen.readFromNBT(compound);
         return citizen;
     }
 
-    public static CitizenData createFromEntity(EntityCitizen entity, Colony colony)
-    {
-        return new CitizenData(entity, colony);
-    }
-
-    public UUID getId() { return id; }
+    public int getId() { return id; }
+    public Colony getColony() { return colony; }
     public String getName() { return name; }
     public boolean isFemale() { return isFemale; }
     public int getTextureId() { return textureId; }
@@ -134,6 +145,24 @@ public class CitizenData
         else if (workBuilding != building)
         {
             workBuilding = building;
+
+            if (workBuilding != null)
+            {
+                //  We have a place to work, do we have the assigned Job?
+                if (job == null)
+                {
+                    //  No job, create one!
+                    setJob(workBuilding.createJob(this));
+                    colony.getWorkManager().clearWorkForCitizen(this);
+                }
+            }
+            else if (job != null)
+            {
+                //  No place of employment, get rid of our job
+                setJob(null);
+                colony.getWorkManager().clearWorkForCitizen(this);
+            }
+
             markDirty();
         }
     }
@@ -148,23 +177,18 @@ public class CitizenData
     {
         if (getHomeBuilding() == building)
         {
-            homeBuilding = null;
+            setHomeBuilding(null);
         }
 
         if (getWorkBuilding() == building)
         {
-            workBuilding = null;
+            setWorkBuilding(null);
         }
     }
 
     public EntityCitizen getCitizenEntity() { return (entity != null) ? entity.get() : null; }
     public void setCitizenEntity(EntityCitizen citizen)
     {
-        if (!citizen.getUniqueID().equals(id))
-        {
-            throw new IllegalArgumentException(String.format("Mismatch citizen '%s' registered to CitizenData for '%s'", citizen.getUniqueID().toString(), id.toString()));
-        }
-
         entity = new WeakReference<EntityCitizen>(citizen);
         markDirty();
     }
@@ -173,9 +197,37 @@ public class CitizenData
         entity = null;
     }
 
+
+    public Job getJob(){ return job; }
+    public <JOB extends Job> JOB getJob(Class<JOB> type)
+    {
+        try
+        {
+            return type.cast(job);
+        }
+        catch (ClassCastException exc)
+        {
+        }
+
+        return null;
+    }
+
+    public void setJob(Job j)
+    {
+        job = j;
+
+        EntityCitizen entity = getCitizenEntity();
+        if (entity != null)
+        {
+            entity.onJobChanged(job);
+        }
+
+        markDirty();
+    }
+
     public void writeToNBT(NBTTagCompound compound)
     {
-        compound.setString(TAG_ID, id.toString());
+        compound.setInteger(TAG_ID, id);
         compound.setString(TAG_NAME, name);
         compound.setBoolean(TAG_FEMALE, isFemale);
         compound.setInteger(TAG_TEXTURE, textureId);
@@ -190,6 +242,13 @@ public class CitizenData
         nbtTagSkillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_CHARISMA, charisma);
         compound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
+
+        if (job != null)
+        {
+            NBTTagCompound jobCompound = new NBTTagCompound();
+            job.writeToNBT(jobCompound);
+            compound.setTag("job", jobCompound);
+        }
     }
 
     public void readFromNBT(NBTTagCompound compound)
@@ -207,6 +266,11 @@ public class CitizenData
         wisdom = nbtTagSkillsCompound.getInteger("wisdom");
         intelligence = nbtTagSkillsCompound.getInteger("intelligence");
         charisma = nbtTagSkillsCompound.getInteger("charisma");
+
+        if (compound.hasKey("job"))
+        {
+            setJob(Job.createFromNBT(this, compound.getCompoundTag("job")));
+        }
     }
 
     private String generateName(Random rand)
@@ -241,24 +305,26 @@ public class CitizenData
      */
     public static class View
     {
-        private final UUID id;
-        private int        entityId;
-        private String     name;
-        private boolean    isFemale;
+        private final int id;
+        private int       entityId;
+        private String    name;
+        private boolean   isFemale;
 
         //  Placeholder skills
         private int level;
         public  int strength, stamina, wisdom, intelligence, charisma;
 
+        private String job;
+
         private ChunkCoordinates homeBuilding;
         private ChunkCoordinates workBuilding;
 
-        protected View(UUID id)
+        protected View(int id)
         {
             this.id = id;
         }
 
-        public UUID getID(){ return id; }
+        public int getID(){ return id; }
 
         public int getEntityId(){ return entityId; }
 
@@ -268,84 +334,84 @@ public class CitizenData
 
         public int getLevel(){ return level; }
 
+        public String getJob(){ return job; }
+
         public ChunkCoordinates getHomeBuilding(){ return homeBuilding; }
 
         public ChunkCoordinates getWorkBuilding(){ return workBuilding; }
 
-        public void parseNetworkData(NBTTagCompound compound)
+        public void deserialize(ByteBuf buf)
         {
-            //  TODO - Use a PacketBuffer
-            name = compound.getString(TAG_NAME);
-            isFemale = compound.getBoolean(TAG_FEMALE);
-            entityId = compound.hasKey(TAG_ENTITY_ID) ? compound.getInteger(TAG_ENTITY_ID) : -1;
+            name = ByteBufUtils.readUTF8String(buf);
+            isFemale = buf.readBoolean();
+            entityId = buf.readInt();
 
-            homeBuilding = compound.hasKey(TAG_HOME_BUILDING) ? ChunkCoordUtils.readFromNBT(compound, TAG_HOME_BUILDING) : null;
-            workBuilding = compound.hasKey(TAG_WORK_BUILDING) ? ChunkCoordUtils.readFromNBT(compound, TAG_WORK_BUILDING) : null;
+            homeBuilding = buf.readBoolean() ? ChunkCoordUtils.readFromByteBuf(buf) : null;
+            workBuilding = buf.readBoolean() ? ChunkCoordUtils.readFromByteBuf(buf) : null;
 
             //  Attributes
-            level = compound.getInteger(TAG_LEVEL);
+            level = buf.readInt();
 
-            NBTTagCompound skillsCompound = compound.getCompoundTag(TAG_SKILLS);
-            strength = skillsCompound.getInteger(TAG_SKILL_STRENGTH);
-            stamina = skillsCompound.getInteger(TAG_SKILL_STAMINA);
-            wisdom = skillsCompound.getInteger(TAG_SKILL_WISDOM);
-            intelligence = skillsCompound.getInteger(TAG_SKILL_INTELLIGENCE);
-            charisma = skillsCompound.getInteger(TAG_SKILL_CHARISMA);
+            strength = buf.readInt();
+            stamina = buf.readInt();
+            wisdom = buf.readInt();
+            intelligence = buf.readInt();
+            charisma = buf.readInt();
+
+            job = ByteBufUtils.readUTF8String(buf);
         }
     }
 
-    public void createViewNetworkData(NBTTagCompound compound)
+    public void serializeViewNetworkData(ByteBuf buf)
     {
-        //  TODO - Use a PacketBuffer
-        compound.setString(TAG_NAME, name);
-        compound.setBoolean(TAG_FEMALE, isFemale);
+        ByteBufUtils.writeUTF8String(buf, name);
+        buf.writeBoolean(isFemale);
 
         EntityCitizen entity = getCitizenEntity();
-        if (entity != null)
-        {
-            compound.setInteger(TAG_ENTITY_ID, entity.getEntityId());
-        }
+        buf.writeInt(entity != null ? entity.getEntityId() : -1);
 
+        buf.writeBoolean(homeBuilding != null);
         if (homeBuilding != null)
         {
-            ChunkCoordUtils.writeToNBT(compound, TAG_HOME_BUILDING, homeBuilding.getID());
+            ChunkCoordUtils.writeToByteBuf(buf, homeBuilding.getID());
         }
+
+        buf.writeBoolean(workBuilding != null);
         if (workBuilding != null)
         {
-            ChunkCoordUtils.writeToNBT(compound, TAG_WORK_BUILDING, workBuilding.getID());
+            ChunkCoordUtils.writeToByteBuf(buf, workBuilding.getID());
         }
 
         //  Attributes
-        compound.setInteger(TAG_LEVEL, level);
+        buf.writeInt(level);
 
-        NBTTagCompound skillsCompound = new NBTTagCompound();
-        skillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
-        skillsCompound.setInteger(TAG_SKILL_STAMINA, stamina);
-        skillsCompound.setInteger(TAG_SKILL_WISDOM, wisdom);
-        skillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
-        skillsCompound.setInteger(TAG_SKILL_CHARISMA, charisma);
-        compound.setTag(TAG_SKILLS, skillsCompound);
+        buf.writeInt(strength);
+        buf.writeInt(stamina);
+        buf.writeInt(wisdom);
+        buf.writeInt(intelligence);
+        buf.writeInt(charisma);
+
+        ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
     }
 
     /**
      * Create a CitizenData View given it's saved NBTTagCompound
-     * TODO - Use a PacketBuffer
      *
-     * @param id       The citizen's id
-     * @param compound The network data
+     * @param id  The citizen's id
+     * @param buf The network data
      * @return
      */
-    public static View createCitizenDataView(UUID id, NBTTagCompound compound)
+    public static View createCitizenDataView(int id, ByteBuf buf)
     {
         View view = new View(id);
 
         try
         {
-            view.parseNetworkData(compound);
+            view.deserialize(buf);
         }
         catch (Exception ex)
         {
-            MineColonies.logger.error(String.format("A CitizenData.View for %s has thrown an exception during loading, its state cannot be restored. Report this to the mod author", view.getID().toString()), ex);
+            MineColonies.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author", view.getID()), ex);
             view = null;
         }
 

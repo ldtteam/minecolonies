@@ -1,12 +1,12 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.entity.EntityWorker;
-import com.minecolonies.entity.EntityWorkerPlaceholder;
-import com.minecolonies.entity.jobs.ColonyJob;
+import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.JobLumberjack;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 
 public class BuildingLumberjack extends BuildingWorker
 {
@@ -16,21 +16,18 @@ public class BuildingLumberjack extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName() { return "Lumberjack"; }
+    public String getSchematicName(){ return "Lumberjack"; }
 
     @Override
-    public String getJobName() { return "Lumberjack"; }
+    public int getMaxBuildingLevel(){ return 3; }
 
     @Override
-    public EntityWorker createWorker(World world)
+    public String getJobName(){ return "Lumberjack"; }
+
+    @Override
+    public Job createJob(CitizenData citizen)
     {
-        return new EntityWorkerPlaceholder(world); //TODO Implement Later
-    }
-
-    @Override
-    public Class<ColonyJob> getJobClass()
-    {
-        return ColonyJob.class; //TODO Implement Later
+        return new JobLumberjack(citizen);
     }
 
     public static class View extends BuildingWorker.View
@@ -38,6 +35,11 @@ public class BuildingLumberjack extends BuildingWorker
         public View(ColonyView c, ChunkCoordinates l)
         {
             super(c, l);
+        }
+
+        public com.blockout.views.Window getWindow(int guiId)
+        {
+            return new WindowHutWorkerPlaceholder<BuildingLumberjack.View>(this, "lumberjackHut");
         }
     }
 }

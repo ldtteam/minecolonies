@@ -1,19 +1,14 @@
 package com.minecolonies.colony.buildings;
 
-import com.minecolonies.client.gui.GuiBase;
-import com.minecolonies.client.gui.GuiHutBuilder;
+import com.blockout.views.Window;
+import com.minecolonies.client.gui.WindowHutBuilder;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.entity.EntityBuilder;
-import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityWorker;
-import com.minecolonies.entity.jobs.ColonyJob;
-import com.minecolonies.entity.jobs.JobBuilder;
+import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.lib.EnumGUI;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 
 public class BuildingBuilder extends BuildingWorker
 {
@@ -23,23 +18,22 @@ public class BuildingBuilder extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName() { return "Builder"; }
+    public String getSchematicName(){ return "Builder"; }
 
     @Override
-    public String getJobName() { return "Builder"; }
-
-    //  Classic Style of Jobs
-    @Override
-    public EntityWorker createWorker(World world) { return new EntityBuilder(world); }
-
-    //  Future Style of Jobs
-    @Override
-    public Class<JobBuilder> getJobClass() { return JobBuilder.class; }
-    @Override
-    public ColonyJob createJob(EntityCitizen citizen) { return new JobBuilder(citizen); }
+    public int getMaxBuildingLevel(){ return 2; }
 
     @Override
-    public int getGuiId() { return EnumGUI.BUILDER.getID(); }
+    public String getJobName(){ return "Builder"; }
+
+    @Override
+    public Job createJob(CitizenData citizen)
+    {
+        return new JobBuilder(citizen);
+    }
+
+    @Override
+    public int getGuiId(){ return EnumGUI.BUILDER.getID(); }
 
     public static class View extends BuildingWorker.View
     {
@@ -48,11 +42,11 @@ public class BuildingBuilder extends BuildingWorker
             super(c, l);
         }
 
-        public GuiScreen getGui(int guiId)
+        public Window getWindow(int guiId)
         {
             if (guiId == EnumGUI.BUILDER.getID())
             {
-                return new GuiHutBuilder(this);
+                return new WindowHutBuilder(this);
             }
 
             return null;

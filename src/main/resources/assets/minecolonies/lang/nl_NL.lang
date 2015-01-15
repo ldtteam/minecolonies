@@ -63,7 +63,6 @@ item.scepterSteel.samePoint=Dat was hetzelfde punt!
 item.scepterSteel.scanFormat=SCAN_%s-%s.schematic
 item.scepterSteel.scanSuccess=Scan succesvol opgeslagen als %s
 item.scepterSteel.scanFailure=Scan niet opgeslagen.
-item.scepterSteel.invalidMethod=Invalid method call, contact a developer. TODO remove error messages from lang
 
 item.caliper.message.same=Dat is hetzelfde blok.
 item.caliper.message.line=Dat is een %d blok(ken) lange lijn.
@@ -72,10 +71,6 @@ item.caliper.message.cube=Dat is een %d bij %d bij %d kubus.
 
 itemGroup.minecolonies=MineColonies
 
-entity.builder.ai.schematicLoadFailure=Schematic: (%s) bestaat niet - bouw aanvraag verwijderen
-entity.builder.ai.schematicNullBlock=Schematic has null block at %d, %d, %d - local(%d, %d, %d)
-entity.builder.ai.blockPlaceFailure=Blok plaatsing fout %s op de plek %d, %d, %d
-entity.builder.ai.blockBreakFailure=Blok breek fout op de plek %d, %d, %d
 entity.builder.messageBuildStart=Gestart met %s bouwen
 entity.builder.messageBuildComplete=Klaar met %s bouwen
 entity.builder.messageNeedMaterial=Ik heb %s(%d) nodig

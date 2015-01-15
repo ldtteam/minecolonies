@@ -1,53 +1,51 @@
 package com.minecolonies.network.messages;
 
+import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import cpw.mods.fml.common.network.ByteBufUtils;
+import com.minecolonies.colony.ColonyView;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
-
-import java.util.UUID;
+import io.netty.buffer.Unpooled;
 
 /**
  * Add or Update a ColonyView on the client
  */
 public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMessage, IMessage>
 {
-    private UUID colonyId;
-    private NBTTagCompound colonyView;
+    private int     colonyId;
     private boolean isNewSubscription;
+    private ByteBuf colonyBuffer = Unpooled.buffer();
 
     public ColonyViewMessage(){}
 
-    public ColonyViewMessage(UUID colonyId, NBTTagCompound colonyView, boolean isNewSubscription)
+    public ColonyViewMessage(Colony colony, boolean isNewSubscription)
     {
-        this.colonyId = colonyId;
-        this.colonyView = colonyView;
+        this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
+        ColonyView.serializeNetworkData(colony, isNewSubscription, colonyBuffer);
     }
 
     @Override
     public void toBytes(ByteBuf buf)
     {
-        buf.writeLong(colonyId.getMostSignificantBits());
-        buf.writeLong(colonyId.getLeastSignificantBits());
+        buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
-        ByteBufUtils.writeTag(buf, colonyView);
+        buf.writeBytes(colonyBuffer);
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
-        colonyId = new UUID(buf.readLong(), buf.readLong());
+        colonyId = buf.readInt();
         isNewSubscription = buf.readBoolean();
-        colonyView = ByteBufUtils.readTag(buf);
+        buf.readBytes(colonyBuffer, buf.readableBytes());
     }
 
     @Override
     public IMessage onMessage(ColonyViewMessage message, MessageContext ctx)
     {
-        return ColonyManager.handleColonyViewPacket(message.colonyId, message.colonyView, message.isNewSubscription);
+        return ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, message.isNewSubscription);
     }
 }

@@ -3,6 +3,7 @@ package com.minecolonies.network.messages;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.ColonyView;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -10,33 +11,30 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 
-import java.util.UUID;
-
 public class TownhallRenameMessage implements IMessage, IMessageHandler<TownhallRenameMessage, IMessage>
 {
-    private UUID colonyId;
+    private int    colonyId;
     private String name;
 
     public TownhallRenameMessage(){}
 
-    public TownhallRenameMessage(UUID colony, String name)
+    public TownhallRenameMessage(ColonyView colony, String name)
     {
-        colonyId = colony;
+        this.colonyId = colony.getID();
         this.name = name;
     }
 
     @Override
     public void toBytes(ByteBuf buf)
     {
-        buf.writeLong(colonyId.getMostSignificantBits());
-        buf.writeLong(colonyId.getLeastSignificantBits());
+        buf.writeInt(colonyId);
         ByteBufUtils.writeUTF8String(buf, name);
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
-        colonyId = new UUID(buf.readLong(), buf.readLong());
+        colonyId = buf.readInt();
         name = ByteBufUtils.readUTF8String(buf);
     }
 

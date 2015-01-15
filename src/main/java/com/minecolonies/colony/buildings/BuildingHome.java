@@ -1,21 +1,18 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.client.gui.WindowHomeBuilding;
+import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.lib.EnumGUI;
-import com.minecolonies.util.Utils;
+import com.minecolonies.network.PacketUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -32,10 +29,13 @@ public class BuildingHome extends BuildingHut
     }
 
     @Override
-    public String getSchematicName() { return "Citizen"; }
+    public String getSchematicName(){ return "Citizen"; }
 
     @Override
-    public int getMaxInhabitants() { return 2; }
+    public int getMaxBuildingLevel(){ return 4; }
+
+    @Override
+    public int getMaxInhabitants(){ return 2; }
 
     @Override
     public int getGuiId() { return EnumGUI.CITIZEN.getID(); }
@@ -115,12 +115,10 @@ public class BuildingHome extends BuildingHut
 
         residents.clear();
 
-        NBTTagList nbtTagCitizenList = compound.getTagList(TAG_RESIDENTS, Constants.NBT.TAG_STRING);
-        for(int i = 0; i < nbtTagCitizenList.tagCount(); i++)
+        int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
+        for (int citizenId : residentIds)
         {
-            UUID uuid = UUID.fromString(nbtTagCitizenList.getStringTagAt(i));
-
-            CitizenData citizen = getColony().getCitizen(uuid);
+            CitizenData citizen = getColony().getCitizen(citizenId);
             if (citizen != null)
             {
                 //  Bypass addResident (which marks dirty)
@@ -135,29 +133,60 @@ public class BuildingHome extends BuildingHut
     {
         super.writeToNBT(compound);
 
-        NBTTagList nbtTagCitizenList = new NBTTagList();
-        for(CitizenData resident : residents)
+        if (!residents.isEmpty())
         {
-            nbtTagCitizenList.appendTag(new NBTTagString(resident.getId().toString()));
+            int[] residentIds = new int[residents.size()];
+            for (int i = 0; i < residents.size(); ++i)
+            {
+                residentIds[i] = residents.get(i).getId();
+            }
+            compound.setIntArray(TAG_RESIDENTS, residentIds);
         }
-        compound.setTag(TAG_RESIDENTS, nbtTagCitizenList);
     }
 
     public static class View extends BuildingHut.View
     {
+        private List<Integer> residents = new ArrayList<Integer>();
+
         public View(ColonyView c, ChunkCoordinates l)
         {
             super(c, l);
         }
 
-        public GuiScreen getGui(int guiId)
+        public List<Integer> getResidents() { return Collections.unmodifiableList(residents); }
+
+        public com.blockout.views.Window getWindow(int guiId)
         {
             if (guiId == EnumGUI.CITIZEN.getID())
             {
-                //return new GuiHutCitizen(this);
+                return new WindowHomeBuilding(this);
             }
 
             return null;
+        }
+
+        @Override
+        public void deserialize(ByteBuf buf)
+        {
+            super.deserialize(buf);
+
+            int numResidents = buf.readInt();
+            for (int i = 0; i < numResidents; ++i)
+            {
+                residents.add(buf.readInt());
+            }
+        }
+    }
+
+    @Override
+    public void serializeToView(ByteBuf buf)
+    {
+        super.serializeToView(buf);
+
+        buf.writeInt(residents.size());
+        for (CitizenData citizen : residents)
+        {
+            buf.writeInt(citizen.getId());
         }
     }
 }

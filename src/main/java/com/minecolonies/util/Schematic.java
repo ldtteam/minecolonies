@@ -4,6 +4,7 @@ import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.github.lunatrius.schematica.world.schematic.SchematicFormat;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.IColony;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameData;
@@ -196,8 +197,7 @@ public class Schematic
                 }
             }
         }
-        while(doesSchematicBlockEqualWorldBlock() && count < 1000);//count limits the number of checked blocks per builder update
-        //TODO change count to agreed upon value, possibly add config option - possibly remove if we think this shouldn't be a problem
+        while(doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -215,7 +215,7 @@ public class Schematic
     public static String saveSchematic(World world, ChunkCoordinates from, ChunkCoordinates to)
     {
         if(world == null || from == null || to == null)
-            return LanguageHandler.format("item.scepterSteel.invalidMethod");
+            throw new NullPointerException("Invalid method call, contact a developer.");
 
         SchematicWorld schematic = scanSchematic(world, from, to, new ItemStack(Blocks.red_flower));
 
@@ -379,7 +379,7 @@ public class Schematic
 
     private static ResourceLocation getResourceLocation(String name)
     {
-        return new ResourceLocation("minecolonies:schematics/" + name + ".schematic");
+        return new ResourceLocation("minecolonies:schematics/classic/" + name + ".schematic");
     }
 
     private static String getNameFromResourceLocation(ResourceLocation res)

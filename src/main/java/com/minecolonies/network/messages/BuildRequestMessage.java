@@ -10,8 +10,6 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.util.UUID;
-
 /**
  * Adds a entry to the builderRequired map
  * Created: May 26, 2014
@@ -20,7 +18,7 @@ import java.util.UUID;
  */
 public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
 {
-    private UUID             colonyId;
+    private int              colonyId;
     private ChunkCoordinates buildingId;
     private int              mode;
 
@@ -41,8 +39,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     @Override
     public void toBytes(ByteBuf buf)
     {
-        buf.writeLong(colonyId.getMostSignificantBits());
-        buf.writeLong(colonyId.getLeastSignificantBits());
+        buf.writeInt(colonyId);
         ChunkCoordUtils.writeToByteBuf(buf, buildingId);
         buf.writeInt(mode);
     }
@@ -50,7 +47,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     @Override
     public void fromBytes(ByteBuf buf)
     {
-        colonyId = new UUID(buf.readLong(), buf.readLong());
+        colonyId = buf.readInt();
         buildingId = ChunkCoordUtils.readFromByteBuf(buf);
         mode = buf.readInt();
     }

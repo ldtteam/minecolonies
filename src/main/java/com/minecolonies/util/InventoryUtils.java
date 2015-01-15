@@ -1,7 +1,10 @@
 package com.minecolonies.util;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTool;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class InventoryUtils
 {
@@ -175,5 +178,174 @@ public class InventoryUtils
         {
             inventory.setInventorySlotContents(slot, null);
         }
+    }
+
+    /**
+     * returns a slot number if an inventory contains given tool type
+     *
+     * @return returns slot number if found, -1 if not found.
+     */
+    public static int getFirstSlotContainingTool(IInventory inventory, String tool)
+    {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack item = inventory.getStackInSlot(i);
+            if (item != null && item.getItem().getToolClasses(null /* unused */).contains(tool)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Adapted from InventoryPlayer
+     *
+     * @param inventory Inventory
+     * @param itemStack ItemStack to add
+     * @return Success
+     */
+    public static boolean addItemStackToInventory(IInventory inventory, final ItemStack itemStack)
+    {
+        if (itemStack != null && itemStack.stackSize != 0 && itemStack.getItem() != null)
+        {
+                int stackSize;
+
+                if (itemStack.isItemDamaged())
+                {
+                    stackSize = getOpenSlot(inventory);
+
+                    if (stackSize >= 0)
+                    {
+                        ItemStack copy = ItemStack.copyItemStack(itemStack);
+                        copy.animationsToGo = 5;
+                        inventory.setInventorySlotContents(stackSize, copy);
+
+                        itemStack.stackSize = 0;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    do
+                    {
+                        stackSize = itemStack.stackSize;
+                        itemStack.stackSize = storePartialItemStack(inventory, itemStack);
+                    }
+                    while (itemStack.stackSize > 0 && itemStack.stackSize < stackSize);
+
+
+                    return itemStack.stackSize < stackSize;
+                }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Adapted from InventoryPlayer
+     *
+     * This function stores as many items of an ItemStack as possible in a matching slot and returns the quantity of
+     * left over items.
+     */
+    private static int storePartialItemStack(IInventory inventory, ItemStack itemStack)
+    {
+        Item item = itemStack.getItem();
+        int stackSize = itemStack.stackSize;
+        int slot;
+
+        if (itemStack.getMaxStackSize() == 1)
+        {
+            slot = getOpenSlot(inventory);
+
+            if (slot < 0)
+            {
+                return stackSize;
+            }
+            else
+            {
+                if (inventory.getStackInSlot(slot) == null)
+                {
+                    inventory.setInventorySlotContents(slot, ItemStack.copyItemStack(itemStack));
+                }
+
+                return 0;
+            }
+        }
+        else
+        {
+            slot = findSlotForItemStack(inventory, itemStack);
+
+            if (slot < 0)
+            {
+                slot = getOpenSlot(inventory);
+            }
+
+            if (slot < 0)
+            {
+                return stackSize;
+            }
+            else
+            {
+                ItemStack stack = inventory.getStackInSlot(slot);
+                if (stack == null)
+                {
+                    stack = new ItemStack(item, 0, itemStack.getItemDamage());
+
+                    if (itemStack.hasTagCompound())
+                    {
+                        stack.setTagCompound((NBTTagCompound) itemStack.getTagCompound().copy());
+                    }
+                }
+
+                int inventoryStackSpace = stackSize;
+
+                if (stackSize > stack.getMaxStackSize() - stack.stackSize)
+                {
+                    inventoryStackSpace = stack.getMaxStackSize() - stack.stackSize;
+                }
+
+                if (inventoryStackSpace > inventory.getInventoryStackLimit() - stack.stackSize)
+                {
+                    inventoryStackSpace = inventory.getInventoryStackLimit() - stack.stackSize;
+                }
+
+                if (inventoryStackSpace == 0)
+                {
+                    return stackSize;
+                }
+                else
+                {
+                    stackSize -= inventoryStackSpace;
+                    stack.stackSize += inventoryStackSpace;
+                    stack.animationsToGo = 5;
+                    inventory.setInventorySlotContents(slot, stack);
+                    return stackSize;
+                }
+            }
+        }
+    }
+
+    /**
+     * Adapted from InventoryPlayer - storeItemStack
+     *
+     * find a slot to store an ItemStack in
+     */
+    private static int findSlotForItemStack(IInventory inventory, ItemStack itemStack)
+    {
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            ItemStack inventoryItem = inventory.getStackInSlot(i);
+            if (inventoryItem != null && inventoryItem.getItem() == itemStack.getItem() && inventoryItem.isStackable() && inventoryItem.stackSize < inventoryItem.getMaxStackSize() && inventoryItem.stackSize < inventory.getInventoryStackLimit() && (!inventoryItem.getHasSubtypes() || inventoryItem.getItemDamage() == itemStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(inventoryItem, itemStack))
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

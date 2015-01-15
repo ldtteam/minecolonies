@@ -1,5 +1,7 @@
 package com.minecolonies.proxy;
 
+import com.minecolonies.colony.CitizenData;
+
 public interface IProxy
 {
     boolean isClient();
@@ -15,4 +17,6 @@ public interface IProxy
     void registerEntityRendering();
 
     void registerTileEntityRendering();
+
+    void showCitizenWindow(CitizenData.View citizen);
 }

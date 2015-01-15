@@ -1,16 +1,14 @@
 package com.minecolonies.proxy;
 
-import com.minecolonies.client.model.*;
+import com.minecolonies.client.gui.WindowCitizen;
 import com.minecolonies.client.render.EmptyTileEntitySpecialRenderer;
-import com.minecolonies.client.render.RenderBipedCitizenMulti;
-import com.minecolonies.client.render.RenderBipedWorker;
-import com.minecolonies.entity.EntityBuilder;
+import com.minecolonies.client.render.RenderBipedCitizen;
+import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityDeliveryman;
+import com.minecolonies.network.GuiHandler;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import net.minecraft.client.model.ModelBiped;
 
 public class ClientProxy extends CommonProxy
 {
@@ -45,14 +43,18 @@ public class ClientProxy extends CommonProxy
     @Override
     public void registerEntityRendering()
     {
-        RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, new RenderBipedCitizenMulti(new ModelBiped(), new ModelEntityCitizenFemaleCitizen(), new ModelEntityCitizenFemaleNoble(), new ModelEntityCitizenFemaleAristocrat()));
-        RenderingRegistry.registerEntityRenderingHandler(EntityBuilder.class, new RenderBipedWorker(new ModelBiped(), new ModelEntityBuilderFemale()));
-        RenderingRegistry.registerEntityRenderingHandler(EntityDeliveryman.class, new RenderBipedWorker(new ModelEntityDeliveryman(), new ModelEntityDeliveryman()));//TODO female model
+        RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, new RenderBipedCitizen());
     }
 
     @Override
     public void registerTileEntityRendering()
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
+    }
+
+    @Override
+    public void showCitizenWindow(CitizenData.View citizen)
+    {
+        GuiHandler.showGuiWindow(new WindowCitizen(citizen));
     }
 }

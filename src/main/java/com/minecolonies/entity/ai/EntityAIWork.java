@@ -1,22 +1,24 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityWorker;
+import com.minecolonies.colony.jobs.Job;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 
 import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
 
-public abstract class EntityAIWork<WORKER extends EntityWorker> extends EntityAIBase
+public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
 {
-    protected final WORKER       worker;
-    protected final World        world;
+    protected final JOB           job;
+    protected final EntityCitizen worker;
+    protected final World         world;
 
-    public EntityAIWork(WORKER worker)
+    public EntityAIWork(JOB job)
     {
         setMutexBits(3);
-        this.worker = worker;
-        this.world = worker.worldObj;
+        this.job = job;
+        this.worker = this.job.getCitizen().getCitizenEntity();
+        this.world = this.worker.worldObj;
     }
 
     @Override

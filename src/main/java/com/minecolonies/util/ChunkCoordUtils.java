@@ -1,16 +1,20 @@
 package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.EntityWorker;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class ChunkCoordUtils
 {
@@ -80,6 +84,21 @@ public class ChunkCoordUtils
         return world.getBlockMetadata(coords.posX, coords.posY, coords.posZ);
     }
 
+    public static List<ItemStack> getBlockDrops(World world, ChunkCoordinates coords, int fortune)
+    {
+        return getBlock(world, coords).getDrops(world, coords.posX, coords.posY, coords.posZ, getBlockMetadata(world, coords), fortune);
+    }
+
+    public static boolean setBlock(World world, ChunkCoordinates coords, Block block)
+    {
+        return world.setBlock(coords.posX, coords.posY, coords.posZ, block);
+    }
+
+    public static boolean setBlock(World world, ChunkCoordinates coords, Block block, int metadata, int flag)
+    {
+        return world.setBlock(coords.posX, coords.posY, coords.posZ, block, metadata, flag);
+    }
+
     public static ChunkCoordinates scanForBlockNearPoint(World world, Block block, ChunkCoordinates pos, ChunkCoordinates radiusPos)
     {
         return Utils.scanForBlockNearPoint(world, block, pos.posX, pos.posY, pos.posZ, radiusPos.posX, radiusPos.posY, radiusPos.posZ);
@@ -90,12 +109,12 @@ public class ChunkCoordUtils
         return Utils.isPathingTo(citizen, pos.posX, pos.posZ);
     }
 
-    public static boolean isWorkerAtSite(EntityWorker worker, ChunkCoordinates site)
+    public static boolean isWorkerAtSite(EntityCitizen worker, ChunkCoordinates site)
     {
         return Utils.isWorkerAtSite(worker, site.posX, site.posY, site.posZ);
     }
 
-    public static boolean isWorkerAtSiteWithMove(EntityWorker worker, ChunkCoordinates site)
+    public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, ChunkCoordinates site)
     {
         return Utils.isWorkerAtSiteWithMove(worker, site.posX, site.posY, site.posZ);
     }
@@ -144,5 +163,10 @@ public class ChunkCoordUtils
     public static ChunkCoordinates add(ChunkCoordinates coords, int x, int y, int z)
     {
         return new ChunkCoordinates(coords.posX + x, coords.posY + y, coords.posZ + z);
+    }
+
+    public static ChunkCoordinates fromEntity(Entity entity)
+    {
+        return new ChunkCoordinates(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posY), MathHelper.floor_double(entity.posZ));
     }
 }
