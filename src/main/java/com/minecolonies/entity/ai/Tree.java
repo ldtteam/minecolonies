@@ -10,15 +10,16 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class Tree
 {
     private static final int NUMBER_OF_LEAVES = 3;
 
     private ChunkCoordinates location;
-    private Queue<ChunkCoordinates> woodBlocks;
+    private LinkedList<ChunkCoordinates> woodBlocks;
     private boolean isTree = false;
 
     private Tree()
@@ -31,23 +32,59 @@ public class Tree
         Block block = ChunkCoordUtils.getBlock(world, log);
         if(block instanceof BlockLog)
         {
-            ChunkCoordinates baseLog = getBaseLog(world, log);
-            location = new ChunkCoordinates(baseLog);
+            location = getBaseLog(world, log);
             woodBlocks = new LinkedList<ChunkCoordinates>();
 
-            //simple pillar
-            while(ChunkCoordUtils.getBlock(world, baseLog) instanceof BlockLog)
+            //get top log
+            while(ChunkCoordUtils.getBlock(world, log).isWood(null, 0,0,0))
             {
-                woodBlocks.add(new ChunkCoordinates(baseLog));
-                baseLog.posY++;
+                log.posY++;
             }
-            baseLog.posY--;//Make baseLog the topLog
-
-            checkTree(world, baseLog);
-
-            //TODO add the rest of the logs
+            log.posY--;//Make log the topLog
+            checkTree(world, log);
         }
         //isTree = false
+    }
+
+    public void findLogs(World world)
+    {
+        addAndSearch(world, location);
+    }
+
+    public void addBaseLog()
+    {
+        woodBlocks.add(new ChunkCoordinates(location));
+    }
+
+    private void addAndSearch(World world, ChunkCoordinates log)
+    {
+        woodBlocks.add(log);
+        for(int y = -1; y <= 1; y++)
+        {
+            for(int x = -1; x <= 1; x++)
+            {
+                for(int z = -1; z <= 1; z++)
+                {
+                    ChunkCoordinates temp = ChunkCoordUtils.add(log, x, y, z);
+                    System.out.println("pos: " + temp);
+                    System.out.println("\tisWood: " + ChunkCoordUtils.getBlock(world, temp).isWood(null,0,0,0));
+                    System.out.println("\tinList: " + woodBlocks.contains(temp));
+                    if(ChunkCoordUtils.getBlock(world, temp).isWood(null,0,0,0) && !woodBlocks.contains(temp))//TODO reorder if more optimal
+                    {
+                        addAndSearch(world, temp);
+                    }
+                }
+            }
+        }
+
+        Collections.sort(woodBlocks, new Comparator<ChunkCoordinates>()
+        {
+            @Override
+            public int compare(ChunkCoordinates c1, ChunkCoordinates c2)
+            {
+                return (int) (c1.getDistanceSquaredToChunkCoordinates(location) - c2.getDistanceSquaredToChunkCoordinates(location));
+            }
+        });
     }
 
     public boolean isTree()
@@ -86,7 +123,7 @@ public class Tree
             log.posY--;
         }
         log.posY++;
-        return log;
+        return new ChunkCoordinates(log);
     }
 
     public ChunkCoordinates pollNextLog()

@@ -199,7 +199,16 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                     {
                         if (!trees.contains(t))
                         {
+                            if(isTreeAdjacent(t))
+                            {
+                                t.addBaseLog();
+                            }
+                            else
+                            {
+                                t.findLogs(world);
+                            }
                             trees.add(t);
+                            //check for adjacent locations
                         }
                     }
                 }
@@ -316,31 +325,35 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         {
             ChunkCoordinates log = job.tree.pollNextLog();//remove log from queue
             Block block = ChunkCoordUtils.getBlock(world, log);
-            //handle drops (usually one log)
-            List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, log, 0);//0 is fortune level, it doesn't matter
-            for (ItemStack item : items)
+            if(block.isWood(null, 0,0,0))
             {
-                InventoryUtils.setStack(getInventory(), item);
-            }
-            //break block
-            ChunkCoordUtils.setBlock(world, log, Blocks.air);
-            world.playSoundEffect(
-                    (float) log.posX + 0.5F,
-                    (float) log.posY + 0.5F, (float) log.posZ + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
-            //TODO particles
-            //Damage axe
-            ItemStack axe = worker.getInventory().getHeldItem();
-            axe.getItem().onBlockDestroyed(axe, world, block, log.posX, log.posY, log.posZ, worker);
-            if(axe.stackSize < 1)//if axe breaks
-            {
-                worker.setCurrentItemOrArmor(0, null);
-                getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
+                //handle drops (usually one log)
+                List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, log, 0);//0 is fortune level, it doesn't matter
+                for (ItemStack item : items)
+                {
+                    InventoryUtils.setStack(getInventory(), item);
+                }
+                //break block
+                ChunkCoordUtils.setBlock(world, log, Blocks.air);
+                world.playSoundEffect(
+                        (float) log.posX + 0.5F,
+                        (float) log.posY + 0.5F, (float) log.posZ + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
                 //TODO particles
+                //Damage axe
+                ItemStack axe = worker.getInventory().getHeldItem();
+                axe.getItem().onBlockDestroyed(axe, world, block, log.posX, log.posY, log.posZ, worker);
+                if (axe.stackSize < 1)//if axe breaks
+                {
+                    worker.setCurrentItemOrArmor(0, null);
+                    getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
+                    //TODO particles
+                }
             }
 
             //tree is gone
             if (!job.tree.hasLogs())
             {
+                //TODO place correct sapling
                 boolean success = plantSapling(location);
                 System.out.println("Tree planting success: " + success);
                 job.tree = null;
@@ -350,11 +363,16 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         else if(chopTicks % 5 == 0)//time to swing and play sounds
         {
             ChunkCoordinates log = job.tree.peekNextLog();
+            Block block = ChunkCoordUtils.getBlock(world, log);
             if(chopTicks == 0)
             {
+                if(!block.isWood(null, 0,0,0))
+                {
+                    chopTicks = 20;
+                    return;
+                }
                 worker.getLookHelper().setLookPosition(log.posX, log.posY, log.posZ, 10f, worker.getVerticalFaceSpeed());//TODO doesn't work right
             }
-            Block block = ChunkCoordUtils.getBlock(world, log);
             worker.swingItem();
             world.playSoundEffect((float)log.posX + 0.5F, (float)log.posY + 0.5F, (float)log.posZ + 0.5F, block.stepSound.getStepResourcePath(), (block.stepSound.getVolume() + 1.0F) / 8.0F, block.stepSound.getPitch() * 0.5F);
             //TODO particles
@@ -512,6 +530,11 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
     private boolean plantSapling(ChunkCoordinates location)
     {
+        if(ChunkCoordUtils.getBlock(world, location) != Blocks.air)
+        {
+            return false;
+        }
+        //TODO optimize
         int slot = getSaplingSlot();
         if (slot != -1)
         {
@@ -581,6 +604,19 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             //Maybe we should sort equal clusters based on distance to previous cluster
         });
+    }
+
+    private boolean isTreeAdjacent(Tree tree)
+    {
+        for(Tree t : trees)
+        {
+            //right next to will be 1, corner should be 2, next closest will be 4, so 2.5 to be safe
+            if(t.getLocation().getDistanceSquaredToChunkCoordinates(tree.getLocation()) <= 2.5f)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasLogs()
