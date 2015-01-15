@@ -3,8 +3,6 @@ package com.blockout.views;
 import com.blockout.Loader;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
-import com.blockout.View;
-import org.lwjgl.opengl.GL11;
 
 public class ScrollingListContainer extends ScrollingContainer
 {

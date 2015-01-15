@@ -9,8 +9,6 @@ import com.blockout.views.SwitchView;
 import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.lib.Constants;

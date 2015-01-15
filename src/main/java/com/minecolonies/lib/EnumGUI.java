@@ -1,8 +1,5 @@
 package com.minecolonies.lib;
 
-import com.minecolonies.tileentities.*;
-import net.minecraft.tileentity.TileEntity;
-
 /**
  * Simple Enum for GUI ids
  *

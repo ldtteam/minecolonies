@@ -4,9 +4,6 @@ import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
 import com.blockout.controls.Scrollbar;
-import net.minecraft.util.MathHelper;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 public class ScrollingView extends View
 {

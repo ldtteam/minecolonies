@@ -4,8 +4,6 @@ import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
 
-import java.util.ListIterator;
-
 public class SwitchView extends View
 {
     Pane currentView;

@@ -3,7 +3,6 @@ package com.minecolonies.inventory;
 import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class InventoryCitizen extends InventoryBasic
 {

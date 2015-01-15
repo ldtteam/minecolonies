@@ -3,10 +3,8 @@ package com.blockout.controls;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import org.lwjgl.opengl.GL11;
 
 public class ItemIcon extends Pane
 {

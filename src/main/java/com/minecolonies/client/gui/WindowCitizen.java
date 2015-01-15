@@ -1,9 +1,7 @@
 package com.minecolonies.client.gui;
 
-import com.blockout.Pane;
 import com.blockout.controls.Button;
 import com.blockout.controls.Label;
-import com.blockout.views.ScrollingList;
 import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;

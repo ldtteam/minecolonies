@@ -1,6 +1,5 @@
 package com.blockout;
 
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
 

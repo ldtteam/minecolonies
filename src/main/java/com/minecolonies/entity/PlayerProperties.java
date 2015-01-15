@@ -2,11 +2,9 @@ package com.minecolonies.entity;
 
 import com.minecolonies.lib.Constants;
 import com.minecolonies.proxy.CommonProxy;
-import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 

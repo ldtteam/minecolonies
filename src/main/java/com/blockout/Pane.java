@@ -7,7 +7,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
-import java.util.*;
+import java.util.Stack;
 
 /*
  * A Pane is the root of all UI objects

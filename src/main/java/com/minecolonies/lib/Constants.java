@@ -1,10 +1,5 @@
 package com.minecolonies.lib;
 
-import com.minecolonies.colony.permissions.Permissions;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class Constants
 {
     public static final String MOD_ID                = "minecolonies";

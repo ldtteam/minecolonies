@@ -3,7 +3,6 @@ package com.github.lunatrius.schematica.world;
 import com.github.lunatrius.schematica.config.BlockInfo;
 import com.github.lunatrius.schematica.world.storage.EmptySaveHandler;
 import com.minecolonies.MineColonies;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

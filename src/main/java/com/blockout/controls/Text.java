@@ -3,13 +3,11 @@ package com.blockout.controls;
 import com.blockout.Alignment;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class Text extends Pane
 {

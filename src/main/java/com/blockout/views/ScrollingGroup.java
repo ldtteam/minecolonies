@@ -1,12 +1,7 @@
 package com.blockout.views;
 
-import com.blockout.Loader;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
-import com.blockout.View;
-import net.minecraft.util.MathHelper;
-
-import java.util.List;
 
 /*
  * A Group is a View which enforces the position of children to be

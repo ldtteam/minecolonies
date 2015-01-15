@@ -1,7 +1,7 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 

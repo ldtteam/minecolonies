@@ -3,7 +3,6 @@ package com.blockout.views;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class ScrollingContainer extends View

@@ -1,17 +1,13 @@
 package com.minecolonies.colony.buildings;
 
-import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.*;
-import com.minecolonies.client.gui.WindowTownhall;
-import com.minecolonies.client.gui.WindowTownhallNameEntry;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
-import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.EnumGUI;
-import com.minecolonies.tileentities.*;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import io.netty.buffer.ByteBuf;

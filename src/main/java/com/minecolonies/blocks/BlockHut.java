@@ -5,7 +5,6 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.creativetab.ModCreativeTabs;
-import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.lib.IColony;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;

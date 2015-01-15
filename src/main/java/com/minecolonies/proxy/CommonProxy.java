@@ -6,7 +6,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.tileentities.*;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;

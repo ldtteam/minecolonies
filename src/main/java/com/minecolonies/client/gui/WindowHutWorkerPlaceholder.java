@@ -1,6 +1,5 @@
 package com.minecolonies.client.gui;
 
-import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.lib.Constants;
 

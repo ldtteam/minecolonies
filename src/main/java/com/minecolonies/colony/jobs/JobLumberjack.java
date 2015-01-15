@@ -6,7 +6,6 @@ import com.minecolonies.entity.ai.EntityAIWorkLumberjack;
 import com.minecolonies.entity.ai.Tree;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.Constants;
 
 public class JobLumberjack extends Job
 {

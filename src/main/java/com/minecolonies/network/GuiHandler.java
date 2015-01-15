@@ -3,7 +3,7 @@ package com.minecolonies.network;
 import com.blockout.views.Window;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.inventory.ContainerHut;
-import com.minecolonies.tileentities.*;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;

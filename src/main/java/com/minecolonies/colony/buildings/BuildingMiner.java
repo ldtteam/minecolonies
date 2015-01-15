@@ -4,8 +4,8 @@ import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.JobMiner;
 import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingMiner extends BuildingWorker

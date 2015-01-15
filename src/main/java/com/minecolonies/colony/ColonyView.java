@@ -5,7 +5,6 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.TownhallRenameMessage;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -16,7 +15,10 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ColonyView
 {

@@ -2,14 +2,14 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.BuildingWorker;
-import com.minecolonies.configuration.Configurations;
 import com.minecolonies.colony.jobs.JobDeliveryman;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 
-import static com.minecolonies.entity.EntityCitizen.Status.*;
+import static com.minecolonies.entity.EntityCitizen.Status.WORKING;
 
 /**
  * Performs deliveryman work

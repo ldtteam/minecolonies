@@ -3,10 +3,10 @@ package com.minecolonies.entity.ai;
 import com.github.lunatrius.schematica.config.BlockInfo;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
+import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -24,8 +24,6 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-
-import java.util.Map;
 
 import static com.minecolonies.lib.Constants.BlockData.*;
 
