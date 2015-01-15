@@ -3,12 +3,14 @@ package com.minecolonies.util;
 import com.minecolonies.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -161,5 +163,10 @@ public class ChunkCoordUtils
     public static ChunkCoordinates add(ChunkCoordinates coords, int x, int y, int z)
     {
         return new ChunkCoordinates(coords.posX + x, coords.posY + y, coords.posZ + z);
+    }
+
+    public static ChunkCoordinates fromEntity(Entity entity)
+    {
+        return new ChunkCoordinates(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posY), MathHelper.floor_double(entity.posZ));
     }
 }

@@ -7,6 +7,7 @@ import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Vec3Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -41,10 +42,13 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private int chopTicks = 0;
     private int stillTicks = 0;
     private int previousDistance = 0;
+    private int previousIndex = 0;
+
     private int delay = 0;
 
     private List<Tree> trees = new ArrayList<Tree>();
     private List<List<Tree>> clusters = new ArrayList<List<Tree>>();
+    private List<ChunkCoordinates> items;
 
     public EntityAIWorkLumberjack(JobLumberjack job)
     {
@@ -133,9 +137,20 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             break;
         //Entities now pick up nearby items
-        case GATHERING://TODO never happens
-            //TODO also pick up apples
-            pickupSaplings();
+        case GATHERING:
+            if(items == null)
+            {
+                searchForItems();
+            }
+            else if(!items.isEmpty())
+            {
+                gatherItems();
+            }
+            else
+            {
+                items = null;
+                job.setStage(Stage.SEARCHING);
+            }
             break;
         case INVENTORY_FULL:
             dumpInventory();
@@ -161,7 +176,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     {
         //TODO request by tool type
         //job.addItemNeeded();
-        //TODO go home or plant trees
+        ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation());//Go Home
     }
 
     //Splits search area into
@@ -190,7 +205,6 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                 }
             }
         }
-        System.out.println("Trees: " + trees.size());
 
         searchX++;
         if(searchX == SEARCH_STEPS)
@@ -199,8 +213,17 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             searchZ++;
             if(searchZ == SEARCH_STEPS)
             {
-                //TODO is trees.size() == 0 idle, gather, plant, or broaden search
                 searchZ = 0;
+
+                System.out.println("Trees: " + trees.size());
+
+                //TODO is trees.size() == 0 idle, gather, plant, or broaden search
+                if(trees.size() == 0)
+                {
+                    //Doesn't work quite how I want it to
+                    job.setStage(Stage.GATHERING);
+                    return;
+                }
                 job.setStage(Stage.CHOPPING);
             }
         }
@@ -217,15 +240,17 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         ChunkCoordinates location = job.tree.getLocation();
         if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, location))
         {
+            //if(!worker.getNavigator().noPath())
+            //{
+            //    System.out.println(worker.getNavigator().getPath().getCurrentPathIndex());
+            //}
             int distance = (int) ChunkCoordUtils.distanceSqrd(location, worker.getPosition());
-            if(previousDistance == distance)
+            if(previousDistance == distance)//Stuck, probably on leaves
             {
                 stillTicks++;
                 if(stillTicks >= 10)
                 {
-                    Vec3 workerStanding = Vec3Utils.vec3Floor(worker.getPosition());
-                    Vec3 treeDirection = workerStanding.subtract(Vec3.createVectorHelper(location.posX, location.posY + 2, location.posZ)).normalize();
-                    //Vec3 leaves = worker.getPosition().addVector(treeDirection.xCoord, 1.0, treeDirection.zCoord);
+                    Vec3 treeDirection = Vec3Utils.vec3Floor(worker.getPosition()).subtract(Vec3.createVectorHelper(location.posX, location.posY + 2, location.posZ)).normalize();
 
                     int x = MathHelper.floor_double(worker.posX);
                     int y = MathHelper.floor_double(worker.posY)+1;
@@ -246,6 +271,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                     {
                         z--;
                     }
+                    //These need some work
                     if(treeDirection.yCoord > 0.75F)
                     {
                         y++;
@@ -259,13 +285,19 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                     System.out.println(String.format("Block: %s  x:%d y:%d z:%d", block.getUnlocalizedName(), x, y, z));
                     if(block.isLeaves(world, x, y, z))//Parameters not used
                     {
+                        //drops
+                        List<ItemStack> items = block.getDrops(world, x, y, z, world.getBlockMetadata(x, y, z), 0 /*worker.getHeldItem().getEnchantmentTagList()*/);//TODO fortune
+                        for (ItemStack item : items)
+                        {
+                            InventoryUtils.setStack(getInventory(), item);
+                        }
+                        //break leaves
                         world.setBlockToAir(x, y, z);
                         world.playSoundEffect(
                                 (float) x + 0.5F,
                                 (float) y + 0.5F, (float) z + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
 
                         //TODO particles
-                        //TODO drops
                         worker.swingItem();
 
                         stillTicks = 0;
@@ -274,32 +306,32 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             else
             {
-                System.out.println("Worker not at site: " + location.toString());
-                System.out.println("\tDistance: " + distance);
                 stillTicks = 0;
                 previousDistance = distance;
             }
             return;
         }
 
-        //TODO optimize
         if(chopTicks == 20)//log break
         {
-            ChunkCoordinates log = job.tree.pollNextLog();
+            ChunkCoordinates log = job.tree.pollNextLog();//remove log from queue
             Block block = ChunkCoordUtils.getBlock(world, log);
+            //handle drops (usually one log)
             List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, log, 0);//0 is fortune level, it doesn't matter
             for (ItemStack item : items)
             {
                 InventoryUtils.setStack(getInventory(), item);
             }
+            //break block
             ChunkCoordUtils.setBlock(world, log, Blocks.air);
             world.playSoundEffect(
                     (float) log.posX + 0.5F,
                     (float) log.posY + 0.5F, (float) log.posZ + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
             //TODO particles
+            //Damage axe
             ItemStack axe = worker.getInventory().getHeldItem();
             axe.getItem().onBlockDestroyed(axe, world, block, log.posX, log.posY, log.posZ, worker);
-            if(axe.stackSize < 1)
+            if(axe.stackSize < 1)//if axe breaks
             {
                 worker.setCurrentItemOrArmor(0, null);
                 getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
@@ -330,9 +362,65 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         chopTicks++;
     }
 
-    private void pickupSaplings()
+    private void searchForItems()
     {
-        //TODO
+        items = new ArrayList<ChunkCoordinates>();
+
+        @SuppressWarnings("unchecked")
+        List<EntityItem> list = world.getEntitiesWithinAABB(EntityItem.class, worker.boundingBox.expand(15.0F, 3.0F, 15.0F));
+
+        for(EntityItem item : list)
+        {
+            if(item != null && !item.isDead)//TODO check if sapling or apple (currently picks up all items, which may be okay)
+            {
+                items.add(ChunkCoordUtils.fromEntity(item));
+            }
+        }
+    }
+
+    private void gatherItems()
+    {
+        if(worker.getNavigator().noPath())
+        {
+            ChunkCoordinates pos = getAndRemoveClosestItem();
+            ChunkCoordUtils.isWorkerAtSiteWithMove(worker, pos);
+        }
+        else
+        {
+            int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
+            if(currentIndex == previousIndex)
+            {
+                stillTicks++;
+                if(stillTicks > 20)//Stuck
+                {
+                    worker.getNavigator().clearPathEntity();//Skip this item
+                    System.out.println("Lumberjack skipped item (couldn't reach)");
+                }
+            }
+            else
+            {
+                stillTicks = 0;
+                previousIndex = currentIndex;
+            }
+        }
+    }
+
+    private ChunkCoordinates getAndRemoveClosestItem()
+    {
+        int index = 0;
+        float distance = Float.MAX_VALUE;
+
+        for(int i = 0; i < items.size(); i++)
+        {
+            float tempDistance = ChunkCoordUtils.distanceSqrd(items.get(i), worker.getPosition());
+            if(tempDistance < distance)
+            {
+                index = i;
+                distance = tempDistance;
+            }
+        }
+
+        return items.remove(index);
     }
 
     private void dumpInventory()
@@ -461,11 +549,9 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
             if (trees.isEmpty()) break;
 
-            int count = 0;
             //  Gather more trees into the Cluster
             while(!clusterQueue.isEmpty())
             {
-                System.out.println("Times: " + ++count);
                 Tree tree = clusterQueue.poll();
 
                 Iterator<Tree> it = trees.iterator();
