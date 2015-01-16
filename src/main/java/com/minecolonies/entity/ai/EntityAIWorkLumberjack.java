@@ -34,11 +34,13 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private static final int SEARCH_RANGE = 20;
     private static final int SEARCH_INTERVAL = 10;
     private static final int SEARCH_STEPS = 2*SEARCH_RANGE / SEARCH_INTERVAL;
+    private static final int SEARCH_INTERVAL_Y = 4;
 
     private static final int CLUSTER_TREE_DISTANCE_SQUARED = 9;//square distance
 
     private int searchX = 0;
     private int searchZ = 0;
+    private int searchY = -SEARCH_INTERVAL_Y;
 
     private int chopTicks = 0;
     private int stillTicks = 0;
@@ -183,9 +185,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     //Splits search area into intervals
     private void findTrees()
     {
-        //TODO search a larger y range?
         int posX = worker.getWorkBuilding().getLocation().posX - SEARCH_RANGE + searchX*SEARCH_INTERVAL;
-        int y = worker.getWorkBuilding().getLocation().posY + 2;
+        int y = worker.getWorkBuilding().getLocation().posY + 2 + searchY;
         int posZ = worker.getWorkBuilding().getLocation().posZ - SEARCH_RANGE + searchZ*SEARCH_INTERVAL;
 
         for (int x = posX; x < posX + SEARCH_INTERVAL; x++)
@@ -223,17 +224,22 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             if(searchZ == SEARCH_STEPS)
             {
                 searchZ = 0;
-
-                System.out.println("Trees: " + trees.size());
-
-                //TODO is trees.size() == 0 idle, gather, plant, or broaden search
-                if(trees.size() == 0)
+                if(searchY == SEARCH_INTERVAL_Y)
                 {
-                    //Doesn't work quite how I want it to
-                    job.setStage(Stage.GATHERING);
+                    searchY = -SEARCH_INTERVAL_Y;
+                    System.out.println("Trees: " + trees.size());
+
+                    //TODO is trees.size() == 0 idle, gather, plant, or broaden search
+                    if (trees.size() == 0)
+                    {
+                        //Doesn't work quite how I want it to
+                        job.setStage(Stage.GATHERING);
+                        return;
+                    }
+                    job.setStage(Stage.CHOPPING);
                     return;
                 }
-                job.setStage(Stage.CHOPPING);
+                searchY += SEARCH_INTERVAL_Y;
             }
         }
     }
@@ -249,10 +255,6 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         ChunkCoordinates location = job.tree.getLocation();
         if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, location))
         {
-            //if(!worker.getNavigator().noPath())
-            //{
-            //    System.out.println(worker.getNavigator().getPath().getCurrentPathIndex());
-            //}
             int distance = (int) ChunkCoordUtils.distanceSqrd(location, worker.getPosition());
             if(previousDistance == distance)//Stuck, probably on leaves
             {
