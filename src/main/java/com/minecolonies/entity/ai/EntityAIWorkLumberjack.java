@@ -154,8 +154,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             break;
         case INVENTORY_FULL:
-            //dumpInventory();
-            job.setStage(Stage.IDLE);
+            dumpInventory();
             break;
         default:
             System.out.println("Invalid stage in EntityAIWorkLumberjack");
@@ -465,7 +464,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                     }
                     else
                     {
-                        ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(), stack);//TODO tile entity null
+                        ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(world), stack);
                         if (returnStack == null)
                         {
                             getInventory().decrStackSize(i, stack.stackSize);
