@@ -1,6 +1,6 @@
 package com.blockout;
 
-import cpw.mods.fml.common.registry.LanguageRegistry;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.MathHelper;
 import org.w3c.dom.Node;
 
@@ -283,9 +283,9 @@ public class PaneParams
             }
 
             String key = str.substring(index + 2, endIndex);
-            String replacement = LanguageRegistry.instance().getStringLocalization(key);
+            String replacement = I18n.format(key);
 
-            if (replacement.isEmpty())
+            if (replacement.equals(key))
             {
                 replacement = "MISSING:" + key;
             }
