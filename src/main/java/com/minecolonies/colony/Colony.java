@@ -247,6 +247,7 @@ public class Colony implements IColony
     public void markCitizensDirty() { isCitizensDirty = true; }
     public void markBuildingsDirty() { isBuildingsDirty = true; }
 
+    @Override
     public Permissions getPermissions()
     {
         return permissions;

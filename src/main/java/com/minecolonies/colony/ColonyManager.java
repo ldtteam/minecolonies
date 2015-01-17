@@ -318,7 +318,7 @@ public class ColonyManager {
 
     public static List<? extends IColony> getIColoniesByOwner(World w, EntityPlayer owner)
     {
-        return getIColoniesByOwner(w, w.isRemote ? owner.getPersistentID() : owner.getGameProfile().getId());
+        return getIColoniesByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
     }
 
     public static List<? extends IColony> getIColoniesByOwner(World w, UUID owner)

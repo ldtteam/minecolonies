@@ -111,6 +111,7 @@ public class ColonyView implements IColony
         return buildings.get(buildingId);
     }
 
+    @Override
     public Permissions.View getPermissions() { return permissions; }
 
     public Map<UUID, Permissions.Player> getPlayers()

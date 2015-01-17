@@ -127,8 +127,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void onJobChanged(Job job)
     {
         //  Model
-        modelId = RenderBipedCitizen.Model.SETTLER;
-
         if (job != null)
         {
             modelId = job.getModel();
@@ -137,6 +135,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             switch (getLevel())
             {
+                default: modelId = RenderBipedCitizen.Model.SETTLER;   break;
                 case 1: modelId = RenderBipedCitizen.Model.CITIZEN;    break;
                 case 2: modelId = RenderBipedCitizen.Model.NOBLE;      break;
                 case 3: modelId = RenderBipedCitizen.Model.ARISTOCRAT; break;
@@ -228,7 +227,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
             setTexture();
 
-            dataWatcher.func_111144_e();
+            dataWatcher.func_111144_e(); // clear hasChanges
         }
 
         updateArmSwingProgress();

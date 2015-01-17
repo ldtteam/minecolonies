@@ -407,7 +407,7 @@ public class Permissions implements IPermissions
 
         public Rank getRank(EntityPlayer player)
         {
-            return getRank(player.getPersistentID());
+            return getRank(player.getUniqueID());
         }
 
         public Rank getRank(UUID id)
