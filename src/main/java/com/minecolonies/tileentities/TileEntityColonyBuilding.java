@@ -31,7 +31,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         if (colony == null && colonyId != 0)
         {
-            colony = new WeakReference<Colony>(ColonyManager.getColonyById(colonyId));
+            colony = new WeakReference<Colony>(ColonyManager.getColony(colonyId));
         }
 
         if (building == null && colony != null)

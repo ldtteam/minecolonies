@@ -19,8 +19,8 @@ import java.util.*;
  *
  * @author Colton
  */
-public class Permissions {
-
+public class Permissions implements IPermissions
+{
     public enum Rank
     {
         OWNER(0),
@@ -360,7 +360,7 @@ public class Permissions {
         isDirty = false;
     }
 
-    public static class View
+    public static class View implements IPermissions
     {
         private Rank userRank = Rank.NEUTRAL;
         private Map<UUID, Player> players = new HashMap<UUID, Player>();

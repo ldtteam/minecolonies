@@ -42,7 +42,7 @@ public class TownhallRenameMessage implements IMessage, IMessageHandler<Townhall
     public IMessage onMessage(TownhallRenameMessage message, MessageContext ctx)
     {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
-        Colony colony = ColonyManager.getColonyById(message.colonyId);
+        Colony colony = ColonyManager.getColony(message.colonyId);
 
         if (colony != null)
         {

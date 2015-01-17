@@ -102,7 +102,7 @@ public class PermissionsMessage
         public IMessage onMessage(Permission message, MessageContext ctx)
         {
 
-            Colony colony = ColonyManager.getColonyById(message.colonyID);
+            Colony colony = ColonyManager.getColony(message.colonyID);
 
             if (colony == null)
             {
@@ -159,7 +159,7 @@ public class PermissionsMessage
         public IMessage onMessage(AddPlayer message, MessageContext ctx)
         {
 
-            Colony colony = ColonyManager.getColonyById(message.colonyID);
+            Colony colony = ColonyManager.getColony(message.colonyID);
 
             if (colony != null)
             {
@@ -208,7 +208,7 @@ public class PermissionsMessage
         public IMessage onMessage(SetPlayerRank message, MessageContext ctx)
         {
 
-            Colony colony = ColonyManager.getColonyById(message.colonyID);
+            Colony colony = ColonyManager.getColony(message.colonyID);
 
             if (colony != null)
             {
@@ -253,7 +253,7 @@ public class PermissionsMessage
         public IMessage onMessage(RemovePlayer message, MessageContext ctx)
         {
 
-            Colony colony = ColonyManager.getColonyById(message.colonyID);
+            Colony colony = ColonyManager.getColony(message.colonyID);
 
             if (colony != null)
             {

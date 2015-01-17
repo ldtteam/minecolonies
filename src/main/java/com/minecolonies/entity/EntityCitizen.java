@@ -230,7 +230,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if (colony == null)
         {
-            Colony c = ColonyManager.getColonyById(colonyId);
+            Colony c = ColonyManager.getColony(colonyId);
 
             if (c == null)
             {

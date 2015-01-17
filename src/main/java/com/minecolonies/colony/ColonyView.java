@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class ColonyView
+public class ColonyView implements IColony
 {
     //  General Attributes
     private final int        id;
@@ -86,6 +86,9 @@ public class ColonyView
         return townhall;
     }
 
+    @Override
+    public boolean hasTownhall() { return townhall != null; }
+
     /**
      * Get a Building.View for a given building (by coordinate-id) using raw x,y,z
      *
@@ -107,6 +110,8 @@ public class ColonyView
     {
         return buildings.get(buildingId);
     }
+
+    public Permissions.View getPermissions() { return permissions; }
 
     public Map<UUID, Permissions.Player> getPlayers()
     {

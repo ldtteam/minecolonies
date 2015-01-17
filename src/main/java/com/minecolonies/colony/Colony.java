@@ -23,7 +23,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.*;
 
-public class Colony
+public class Colony implements IColony
 {
     private final int id;
 
@@ -675,6 +675,9 @@ public class Colony
     {
         return townhall;
     }
+
+    @Override
+    public boolean hasTownhall() { return townhall != null; }
 
     /**
      * Get building in Colony by ID

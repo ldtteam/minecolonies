@@ -60,12 +60,13 @@ public abstract class BlockHut extends Block implements ITileEntityProvider
         if(world.isRemote) return;
 
         TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if(entityLivingBase instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
+        if(entityLivingBase instanceof EntityPlayer &&
+                tileEntity instanceof TileEntityColonyBuilding)
         {
             EntityPlayer player = (EntityPlayer) entityLivingBase;
             TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
 
-            Colony colony = ColonyManager.getColonyByCoord(world, hut.getPosition());
+            Colony colony = ColonyManager.getColony(world, hut.getPosition());
 
             if(this instanceof BlockHutTownHall)
             {
