@@ -6,7 +6,6 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.lib.IColony;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.LanguageHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -21,7 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-public abstract class BlockHut extends Block implements IColony, ITileEntityProvider
+public abstract class BlockHut extends Block implements ITileEntityProvider
 {
     protected int workingRange;//TODO unused
 
@@ -35,6 +34,8 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
         setResistance(1000f);
         GameRegistry.registerBlock(this, getName());
     }
+
+    public abstract String getName();
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister)
@@ -86,7 +87,6 @@ public abstract class BlockHut extends Block implements IColony, ITileEntityProv
                 throw new NullPointerException("No colony to place block");
             }
 
-            //hut.setColony(colony);
             colony.addNewBuilding(hut);
         }
     }
