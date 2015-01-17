@@ -465,7 +465,7 @@ public class Colony implements IColony
             if (o instanceof EntityPlayerMP)
             {
                 EntityPlayerMP player = (EntityPlayerMP)o;
-                if (permissions.getSubscribers().contains(player.getGameProfile().getId()))//TODO: adapt to new permissions
+                if (permissions.isSubscriber(player))
                 {
                     subscribers.add(player);
                 }
