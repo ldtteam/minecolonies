@@ -19,19 +19,19 @@ import java.util.*;
  *
  * @author Colton
  */
-public class Permissions {
-
+public class Permissions implements IPermissions
+{
     public enum Rank
     {
-        OWNER(0),
-        OFFICER(1),
-        FRIEND(2),
-        NEUTRAL(3),
-        HOSTILE(4);
+        OWNER   (true),
+        OFFICER (true),
+        FRIEND  (true),
+        NEUTRAL (false),
+        HOSTILE (false);
 
-        private final int rank; //  Lower is better
-        Rank(int r) { rank = r; }
-        public int getValue() { return rank; }
+        Rank(boolean isSubscriber) { this.isSubscriber = isSubscriber; }
+
+        public final boolean isSubscriber;
     }
 
     public enum Action {
@@ -334,13 +334,14 @@ public class Permissions {
         return null;
     }
 
-    public Set<Player> getSubscribers()
+    public boolean isSubscriber(EntityPlayer player)
     {
-        Set<Rank> ranks = new HashSet<Rank>();
-        ranks.add(Rank.OWNER);
-        ranks.add(Rank.OFFICER);
-        ranks.add(Rank.FRIEND);
-        return getPlayersByRank(ranks);
+        return isSubscriber(player.getGameProfile().getId());
+    }
+
+    public boolean isSubscriber(UUID player)
+    {
+        return getRank(player).isSubscriber;
     }
 
     boolean isDirty = false;
@@ -360,7 +361,7 @@ public class Permissions {
         isDirty = false;
     }
 
-    public static class View
+    public static class View implements IPermissions
     {
         private Rank userRank = Rank.NEUTRAL;
         private Map<UUID, Player> players = new HashMap<UUID, Player>();
@@ -406,7 +407,7 @@ public class Permissions {
 
         public Rank getRank(EntityPlayer player)
         {
-            return getRank(player.getGameProfile().getId());
+            return getRank(player.getUniqueID());
         }
 
         public Rank getRank(UUID id)

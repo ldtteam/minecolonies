@@ -35,6 +35,13 @@ public class BuildingHome extends BuildingHut
     public int getMaxInhabitants(){ return 2; }
 
     @Override
+    public void setBuildingLevel(int level)
+    {
+        super.setBuildingLevel(level);
+        getColony().calculateMaxCitizens();
+    }
+
+    @Override
     public int getGuiId() { return EnumGUI.CITIZEN.getID(); }
 
     @Override

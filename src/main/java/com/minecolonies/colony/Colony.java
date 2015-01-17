@@ -2,6 +2,7 @@ package com.minecolonies.colony;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -23,7 +24,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.*;
 
-public class Colony
+public class Colony implements IColony
 {
     private final int id;
 
@@ -246,6 +247,7 @@ public class Colony
     public void markCitizensDirty() { isCitizensDirty = true; }
     public void markBuildingsDirty() { isBuildingsDirty = true; }
 
+    @Override
     public Permissions getPermissions()
     {
         return permissions;
@@ -465,7 +467,7 @@ public class Colony
             if (o instanceof EntityPlayerMP)
             {
                 EntityPlayerMP player = (EntityPlayerMP)o;
-                if (permissions.getSubscribers().contains(player.getGameProfile().getId()))//TODO: adapt to new permissions
+                if (permissions.isSubscriber(player))
                 {
                     subscribers.add(player);
                 }
@@ -676,6 +678,9 @@ public class Colony
         return townhall;
     }
 
+    @Override
+    public boolean hasTownhall() { return townhall != null; }
+
     /**
      * Get building in Colony by ID
      *
@@ -728,6 +733,9 @@ public class Colony
             addBuilding(building);
             tileEntity.setBuilding(building);
         }
+
+        calculateMaxCitizens();
+
         return building;
     }
 
@@ -757,6 +765,8 @@ public class Colony
         {
             citizen.onRemoveBuilding(building);
         }
+
+        calculateMaxCitizens();
     }
 
     /*
@@ -767,6 +777,21 @@ public class Colony
 
     public int getMaxCitizens() { return maxCitizens; }
     //public void setMaxCitizens();
+
+    public void calculateMaxCitizens()
+    {
+        maxCitizens = Configurations.maxCitizens;
+        markDirty();
+
+        for (Building b : buildings.values())
+        {
+            if (b instanceof BuildingHome &&
+                    b.getBuildingLevel() > 0)
+            {
+                maxCitizens += ((BuildingHome) b).getMaxInhabitants();
+            }
+        }
+    }
 
     public Map<Integer, CitizenData> getCitizens() { return Collections.unmodifiableMap(citizens); }
 

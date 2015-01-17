@@ -5,7 +5,6 @@ import com.github.lunatrius.schematica.world.schematic.SchematicFormat;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.lib.IColony;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
@@ -59,11 +58,6 @@ public class Schematic
         world = worldObj;
         schematic = schematicWorld;
         this.name = name;
-    }
-
-    public static Schematic loadSchematic(World worldObj, IColony hut, int level)
-    {
-        return loadSchematic(worldObj, getNameFromHut(hut, level));
     }
 
     public static Schematic loadSchematic(World worldObj, String name)
@@ -407,11 +401,6 @@ public class Schematic
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static String getNameFromHut(IColony hut, int level)
-    {
-        return hut.getName() + level;
     }
 
     public Block getBlock()

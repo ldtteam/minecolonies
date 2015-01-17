@@ -68,7 +68,7 @@ public class ColonyManager {
      * @param id UUID of colony
      * @return
      */
-    public static Colony getColonyById(int id) { return colonies.get(id); }
+    public static Colony getColony(int id) { return colonies.get(id); }
 
     /**
      * Get Colony that contains a given ChunkCoordinates
@@ -77,13 +77,13 @@ public class ColonyManager {
      * @param coord
      * @return
      */
-    public static Colony getColonyByCoord(World w, ChunkCoordinates coord)
+    public static Colony getColony(World w, ChunkCoordinates coord)
     {
-        return getColonyByCoord(w, coord.posX, coord.posY, coord.posZ);
+        return getColony(w, coord.posX, coord.posY, coord.posZ);
     }
 
 
-    public static Colony getColonyByCoord(World w, int x, int y, int z)
+    public static Colony getColony(World w, int x, int y, int z)
     {
         List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.dimensionId);
         if (coloniesInWorld == null) return null;
@@ -168,7 +168,7 @@ public class ColonyManager {
     public static Building getBuilding(World w, int x, int y, int z)
     {
         ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
-        Colony colony = getColonyByCoord(w, coords);
+        Colony colony = getColony(w, coords);
         if (colony != null)
         {
             Building building = colony.getBuilding(coords);
@@ -274,13 +274,18 @@ public class ColonyManager {
         return closestColony;
     }
 
-    public static List<ColonyView> getColonyViewsOwnedByPlayer(EntityPlayer player)
+    public static List<ColonyView> getColonyViewsByOwner(EntityPlayer player)
+    {
+        return getColonyViewsByOwner(player.getGameProfile().getId());
+    }
+
+    public static List<ColonyView> getColonyViewsByOwner(UUID owner)
     {
         List<ColonyView> results = new ArrayList<ColonyView>();
 
         for (ColonyView c : colonyViews.values())
         {
-            Permissions.Player p = c.getPlayers().get(player.getGameProfile().getId());
+            Permissions.Player p = c.getPlayers().get(owner);
             if (p != null && p.rank.equals(Permissions.Rank.OWNER))
             {
                 results.add(c);
@@ -288,6 +293,37 @@ public class ColonyManager {
         }
 
         return results;
+    }
+
+    //  IColony Side-neutral
+    public static IColony getIColony(World world, int id)
+    {
+        return world.isRemote ? getColonyView(id) : getColony(id);
+    }
+
+    public static IColony getIColony(World w, int x, int y, int z)
+    {
+        return w.isRemote ? getColonyView(w, x, y, z) : getColony(w, x, y, z);
+    }
+
+    public static IColony getIColony(World w, ChunkCoordinates coord)
+    {
+        return getIColony(w, coord.posX, coord.posY, coord.posZ);
+    }
+
+    public static IColony getClosestIColony(World w, int x, int y, int z)
+    {
+        return w.isRemote ? getClosestColonyView(w, x, y, z) : getClosestColony(w, x, y, z);
+    }
+
+    public static List<? extends IColony> getIColoniesByOwner(World w, EntityPlayer owner)
+    {
+        return getIColoniesByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
+    }
+
+    public static List<? extends IColony> getIColoniesByOwner(World w, UUID owner)
+    {
+        return w.isRemote ? getColonyViewsByOwner(owner) : getColoniesByOwner(owner);
     }
 
     public static double getMinimumDistanceBetweenTownHalls()
