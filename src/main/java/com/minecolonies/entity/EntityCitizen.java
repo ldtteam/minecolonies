@@ -48,20 +48,26 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private ResourceLocation texture;
     private InventoryCitizen inventory;
 
-    private int         colonyId;
-    private int         citizenId = 0;
+    private int colonyId;
+    private int citizenId = 0;
 
     private Colony      colony;
     private CitizenData citizenData;
 
+    boolean isFemale;
+    private int level;
+    private int textureId;
+    RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
+    String renderMetadata;
+
     protected Status status = Status.IDLE;
 
-    private static final int DATA_TEXTURE    = 13;
-    private static final int DATA_LEVEL      = 14;
-    private static final int DATA_IS_FEMALE  = 15;
-    private static final int DATA_COLONY_ID  = 16;
-    private static final int DATA_CITIZEN_ID = 17;  //  Because Entity UniqueIDs are not identical between client and server
-    private static final int DATA_MODEL_ID   = 18;
+    private static final int DATA_TEXTURE         = 13;
+    private static final int DATA_LEVEL           = 14;
+    private static final int DATA_IS_FEMALE       = 15;
+    private static final int DATA_COLONY_ID       = 16;
+    private static final int DATA_CITIZEN_ID      = 17;  //  Because Entity UniqueIDs are not identical between client and server
+    private static final int DATA_MODEL           = 18;
     private static final int DATA_RENDER_METADATA = 19;
 
     public EntityCitizen(World world)
@@ -93,7 +99,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.addObject(DATA_TEXTURE, 0);
         dataWatcher.addObject(DATA_LEVEL, 0);
         dataWatcher.addObject(DATA_IS_FEMALE, 0);
-        dataWatcher.addObject(DATA_MODEL_ID, RenderBipedCitizen.Model.SETTLER.name());
+        dataWatcher.addObject(DATA_MODEL, RenderBipedCitizen.Model.SETTLER.name());
         dataWatcher.addObject(DATA_RENDER_METADATA, "");
     }
 
@@ -121,23 +127,23 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void onJobChanged(Job job)
     {
         //  Model
-        RenderBipedCitizen.Model model = RenderBipedCitizen.Model.SETTLER;
+        modelId = RenderBipedCitizen.Model.SETTLER;
 
         if (job != null)
         {
-            model = job.getModel();
+            modelId = job.getModel();
         }
         else
         {
             switch (getLevel())
             {
-                case 1: model = RenderBipedCitizen.Model.CITIZEN;    break;
-                case 2: model = RenderBipedCitizen.Model.NOBLE;      break;
-                case 3: model = RenderBipedCitizen.Model.ARISTOCRAT; break;
+                case 1: modelId = RenderBipedCitizen.Model.CITIZEN;    break;
+                case 2: modelId = RenderBipedCitizen.Model.NOBLE;      break;
+                case 3: modelId = RenderBipedCitizen.Model.ARISTOCRAT; break;
             }
         }
 
-        dataWatcher.updateObject(DATA_MODEL_ID, model.name());
+        dataWatcher.updateObject(DATA_MODEL, modelId.name());
         setRenderMetadata("");
 
         //  AI Tasks
@@ -168,20 +174,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         String textureBase = "textures/entity/";
         textureBase += model.textureBase;
-        textureBase += isFemale() ? "Female" : "Male";
+        textureBase += isFemale ? "Female" : "Male";
 
-        int textureId = (getTextureID() % model.numTextures) + 1;
-        texture = new ResourceLocation(Constants.MOD_ID, textureBase + textureId + getRenderMetadata() + ".png");
+        int moddedTextureId = (getTextureID() % model.numTextures) + 1;
+        texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + getRenderMetadata() + ".png");
     }
 
     public void setRenderMetadata(String metadata)
     {
-        dataWatcher.updateObject(DATA_RENDER_METADATA, metadata);
+        renderMetadata = metadata;
+        dataWatcher.updateObject(DATA_RENDER_METADATA, renderMetadata);
     }
 
     public String getRenderMetadata()
     {
-        return dataWatcher.getWatchableObjectString(DATA_RENDER_METADATA);
+        return renderMetadata;
     }
 
     @Override
@@ -201,17 +208,29 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     private void updateColonyClient()
     {
-        if (colonyId == 0)
+        if (dataWatcher.hasChanges())
         {
-            colonyId = dataWatcher.getWatchableObjectInt(DATA_COLONY_ID);
+            if (colonyId == 0)
+            {
+                colonyId = dataWatcher.getWatchableObjectInt(DATA_COLONY_ID);
+            }
+
+            if (citizenId == 0)
+            {
+                citizenId = dataWatcher.getWatchableObjectInt(DATA_CITIZEN_ID);
+            }
+
+            isFemale = dataWatcher.getWatchableObjectInt(DATA_IS_FEMALE) != 0;
+            level = dataWatcher.getWatchableObjectInt(DATA_LEVEL);
+            modelId = RenderBipedCitizen.Model.valueOf(dataWatcher.getWatchableObjectString(DATA_MODEL));
+            textureId = dataWatcher.getWatchableObjectInt(DATA_TEXTURE);
+            renderMetadata = dataWatcher.getWatchableObjectString(DATA_RENDER_METADATA);
+
+            setTexture();
+
+            dataWatcher.func_111144_e();
         }
 
-        if (citizenId == 0)
-        {
-            citizenId = dataWatcher.getWatchableObjectInt(DATA_CITIZEN_ID);
-        }
-
-        setTexture();
         updateArmSwingProgress();
     }
 
@@ -310,27 +329,28 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public int getTextureID()
     {
-        return dataWatcher.getWatchableObjectInt(DATA_TEXTURE);
+        return textureId;
     }
 
     public RenderBipedCitizen.Model getModelID()
     {
-        return RenderBipedCitizen.Model.valueOf(dataWatcher.getWatchableObjectString(DATA_MODEL_ID));
+        return modelId;
     }
 
     public int getLevel()
     {
-        return dataWatcher.getWatchableObjectInt(DATA_LEVEL);
+        return level;
     }
 
     private void updateLevel()
     {
-        dataWatcher.updateObject(DATA_LEVEL, citizenData != null ? citizenData.getLevel() : 0);
+        level = citizenData != null ? citizenData.getLevel() : 0;
+        dataWatcher.updateObject(DATA_LEVEL, level);
     }
 
     public boolean isFemale()
     {
-        return (dataWatcher.getWatchableObjectInt(DATA_IS_FEMALE) != 0);
+        return isFemale;
     }
 
     public CitizenData getCitizenData()
@@ -373,10 +393,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         setCustomNameTag(citizenData.getName());
 
+        isFemale = citizenData.isFemale();
+        textureId = citizenData.getTextureId();
+
         dataWatcher.updateObject(DATA_COLONY_ID, colonyId);
-        dataWatcher.updateObject(DATA_CITIZEN_ID, citizenData.getId());
-        dataWatcher.updateObject(DATA_IS_FEMALE, citizenData.isFemale() ? 1 : 0);
-        dataWatcher.updateObject(DATA_TEXTURE, citizenData.getTextureId());
+        dataWatcher.updateObject(DATA_CITIZEN_ID, citizenId);
+        dataWatcher.updateObject(DATA_IS_FEMALE, isFemale ? 1 : 0);
+        dataWatcher.updateObject(DATA_TEXTURE, textureId);
         updateLevel();
 
         citizenData.setCitizenEntity(this);
