@@ -38,7 +38,7 @@ public class ColonyView implements IColony
 
     //  Citizenry
     private Map<Integer, CitizenData.View> citizens = new HashMap<Integer, CitizenData.View>();
-    private int                            maxCitizens = Configurations.maxCitizens;
+    private int                            maxCitizens = 0;
 
     /**
      * Base constructor for a colony.

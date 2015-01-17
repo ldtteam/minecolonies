@@ -2,6 +2,7 @@ package com.minecolonies.colony;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -731,6 +732,9 @@ public class Colony implements IColony
             addBuilding(building);
             tileEntity.setBuilding(building);
         }
+
+        calculateMaxCitizens();
+
         return building;
     }
 
@@ -760,6 +764,8 @@ public class Colony implements IColony
         {
             citizen.onRemoveBuilding(building);
         }
+
+        calculateMaxCitizens();
     }
 
     /*
@@ -770,6 +776,21 @@ public class Colony implements IColony
 
     public int getMaxCitizens() { return maxCitizens; }
     //public void setMaxCitizens();
+
+    public void calculateMaxCitizens()
+    {
+        maxCitizens = Configurations.maxCitizens;
+        markDirty();
+
+        for (Building b : buildings.values())
+        {
+            if (b instanceof BuildingHome &&
+                    b.getBuildingLevel() > 0)
+            {
+                maxCitizens += ((BuildingHome) b).getMaxInhabitants();
+            }
+        }
+    }
 
     public Map<Integer, CitizenData> getCitizens() { return Collections.unmodifiableMap(citizens); }
 

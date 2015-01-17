@@ -127,7 +127,8 @@ public abstract class BuildingWorker extends BuildingHut
 
         //  If we have no active worker, grab one from the Colony
         //  TODO Maybe the Colony should assign jobs out, instead?
-        if (!hasWorker())
+        if (!hasWorker() &&
+                (getBuildingLevel() > 0 || this instanceof BuildingBuilder))
         {
             CitizenData joblessCitizen = getColony().getJoblessCitizen();
             if (joblessCitizen != null)
