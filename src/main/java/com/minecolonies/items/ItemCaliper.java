@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 public class ItemCaliper extends ItemMinecolonies
 {
-    public static RangedAttribute use = new RangedAttribute("player.caliberUse", 0.0, 0.0, 1.0);
+    private static final RangedAttribute ATTRIBUTE_CALIPER_USE = new RangedAttribute("player.caliperUse", 0.0, 0.0, 1.0);
 
     private int startPositionX;
     private int startPositionY;
@@ -31,11 +31,16 @@ public class ItemCaliper extends ItemMinecolonies
     public boolean onItemUse(ItemStack itemstack, EntityPlayer entityPlayer, World world, int x, int y, int z, int face, float px, float py, float pz)
     {
         if(world.isRemote) return false;
-        IAttributeInstance attribute = entityPlayer.getEntityAttribute(use);
+
+        IAttributeInstance attribute = null;
+        if(entityPlayer.getAttributeMap().getAllAttributes().contains(ATTRIBUTE_CALIPER_USE))
+        {
+            attribute = entityPlayer.getEntityAttribute(ATTRIBUTE_CALIPER_USE);
+        }
         if(attribute == null)
         {
-            entityPlayer.getAttributeMap().registerAttribute(use);
-            attribute = entityPlayer.getEntityAttribute(use);
+            entityPlayer.getAttributeMap().registerAttribute(ATTRIBUTE_CALIPER_USE);
+            attribute = entityPlayer.getEntityAttribute(ATTRIBUTE_CALIPER_USE);
         }
         if(attribute.getAttributeValue() == 0)
         {

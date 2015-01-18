@@ -34,11 +34,15 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private static final int SEARCH_RANGE = 20;
     private static final int SEARCH_INTERVAL = 10;
     private static final int SEARCH_STEPS = 2*SEARCH_RANGE / SEARCH_INTERVAL;
+    private static final int SEARCH_INTERVAL_Y = 4;
 
     private static final int CLUSTER_TREE_DISTANCE_SQUARED = 9;//square distance
 
+    private static final int MAX_LOG_BREAK_TIME = 30;
+
     private int searchX = 0;
     private int searchZ = 0;
+    private int searchY = -SEARCH_INTERVAL_Y;
 
     private int chopTicks = 0;
     private int stillTicks = 0;
@@ -46,6 +50,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private int previousIndex = 0;
 
     private int delay = 0;
+
+    private int logBreakTime = Integer.MAX_VALUE;
 
     private List<Tree> trees = new ArrayList<Tree>();
     private List<List<Tree>> clusters = new ArrayList<List<Tree>>();
@@ -134,7 +140,16 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             else
             {
+                if(logBreakTime == Integer.MAX_VALUE)
+                {
+                    ItemStack axe = worker.getHeldItem();
+                    logBreakTime = MAX_LOG_BREAK_TIME - (int) axe.getItem().getDigSpeed(axe,
+                            ChunkCoordUtils.getBlock(world, job.tree.getLocation()),
+                            ChunkCoordUtils.getBlockMetadata(world, job.tree.getLocation()));
+                }
+
                 chopTree();
+
             }
             break;
         //Entities now pick up nearby items
@@ -154,8 +169,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             break;
         case INVENTORY_FULL:
-            //dumpInventory();
-            job.setStage(Stage.IDLE);
+            dumpInventory();
             break;
         default:
             System.out.println("Invalid stage in EntityAIWorkLumberjack");
@@ -184,9 +198,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     //Splits search area into intervals
     private void findTrees()
     {
-        //TODO search a larger y range?
         int posX = worker.getWorkBuilding().getLocation().posX - SEARCH_RANGE + searchX*SEARCH_INTERVAL;
-        int y = worker.getWorkBuilding().getLocation().posY + 2;
+        int y = worker.getWorkBuilding().getLocation().posY + 2 + searchY;
         int posZ = worker.getWorkBuilding().getLocation().posZ - SEARCH_RANGE + searchZ*SEARCH_INTERVAL;
 
         for (int x = posX; x < posX + SEARCH_INTERVAL; x++)
@@ -224,17 +237,22 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             if(searchZ == SEARCH_STEPS)
             {
                 searchZ = 0;
-
-                System.out.println("Trees: " + trees.size());
-
-                //TODO is trees.size() == 0 idle, gather, plant, or broaden search
-                if(trees.size() == 0)
+                if(searchY == SEARCH_INTERVAL_Y)
                 {
-                    //Doesn't work quite how I want it to
-                    job.setStage(Stage.GATHERING);
+                    searchY = -SEARCH_INTERVAL_Y;
+                    System.out.println("Trees: " + trees.size());
+
+                    //TODO is trees.size() == 0 idle, gather, plant, or broaden search
+                    if (trees.size() == 0)
+                    {
+                        //Doesn't work quite how I want it to
+                        job.setStage(Stage.GATHERING);
+                        return;
+                    }
+                    job.setStage(Stage.CHOPPING);
                     return;
                 }
-                job.setStage(Stage.CHOPPING);
+                searchY += SEARCH_INTERVAL_Y;
             }
         }
     }
@@ -250,10 +268,6 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         ChunkCoordinates location = job.tree.getLocation();
         if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, location))
         {
-            //if(!worker.getNavigator().noPath())
-            //{
-            //    System.out.println(worker.getNavigator().getPath().getCurrentPathIndex());
-            //}
             int distance = (int) ChunkCoordUtils.distanceSqrd(location, worker.getPosition());
             if(previousDistance == distance)//Stuck, probably on leaves
             {
@@ -327,7 +341,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             return;
         }
 
-        if(chopTicks == 20)//log break
+        if(chopTicks == logBreakTime)//log break
         {
             ChunkCoordinates log = job.tree.pollNextLog();//remove log from queue
             Block block = ChunkCoordUtils.getBlock(world, log);
@@ -365,6 +379,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                 //TODO place correct sapling
                 plantSapling(location);
                 job.tree = null;
+                logBreakTime = Integer.MAX_VALUE;
             }
             chopTicks = -1;//will be increased to 0 at the end of the method
         }
@@ -376,7 +391,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             {
                 if(!block.isWood(null, 0,0,0))
                 {
-                    chopTicks = 20;
+                    chopTicks = logBreakTime;
                     return;
                 }
                 worker.getLookHelper().setLookPosition(log.posX, log.posY, log.posZ, 10f, worker.getVerticalFaceSpeed());//TODO doesn't work right

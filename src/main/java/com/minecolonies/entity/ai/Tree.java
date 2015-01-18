@@ -92,6 +92,10 @@ public class Tree
 
     private void checkTree(World world, ChunkCoordinates topLog)
     {
+        if(!world.getBlock(location.posX, location.posY-1, location.posZ).getMaterial().isSolid())
+        {
+            return;
+        }
         int leafCount = 0;
         for(int x = -1; x <= 1; x++)
         {
