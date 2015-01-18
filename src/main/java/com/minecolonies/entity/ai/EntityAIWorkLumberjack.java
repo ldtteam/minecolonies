@@ -38,6 +38,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
     private static final int CLUSTER_TREE_DISTANCE_SQUARED = 9;//square distance
 
+    private static final int MAX_LOG_BREAK_TIME = 30;
+
     private int searchX = 0;
     private int searchZ = 0;
     private int searchY = -SEARCH_INTERVAL_Y;
@@ -48,6 +50,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private int previousIndex = 0;
 
     private int delay = 0;
+
+    private int logBreakTime = Integer.MAX_VALUE;
 
     private List<Tree> trees = new ArrayList<Tree>();
     private List<List<Tree>> clusters = new ArrayList<List<Tree>>();
@@ -136,7 +140,16 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             else
             {
+                if(logBreakTime == Integer.MAX_VALUE)
+                {
+                    ItemStack axe = worker.getHeldItem();
+                    logBreakTime = MAX_LOG_BREAK_TIME - (int) axe.getItem().getDigSpeed(axe,
+                            ChunkCoordUtils.getBlock(world, job.tree.getLocation()),
+                            ChunkCoordUtils.getBlockMetadata(world, job.tree.getLocation()));
+                }
+
                 chopTree();
+
             }
             break;
         //Entities now pick up nearby items
@@ -328,7 +341,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             return;
         }
 
-        if(chopTicks == 20)//log break
+        if(chopTicks == logBreakTime)//log break
         {
             ChunkCoordinates log = job.tree.pollNextLog();//remove log from queue
             Block block = ChunkCoordUtils.getBlock(world, log);
@@ -366,6 +379,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                 //TODO place correct sapling
                 plantSapling(location);
                 job.tree = null;
+                logBreakTime = Integer.MAX_VALUE;
             }
             chopTicks = -1;//will be increased to 0 at the end of the method
         }
@@ -377,7 +391,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             {
                 if(!block.isWood(null, 0,0,0))
                 {
-                    chopTicks = 20;
+                    chopTicks = logBreakTime;
                     return;
                 }
                 worker.getLookHelper().setLookPosition(log.posX, log.posY, log.posZ, 10f, worker.getVerticalFaceSpeed());//TODO doesn't work right
