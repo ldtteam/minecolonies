@@ -480,7 +480,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                     }
                     else
                     {
-                        ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(world), stack);
+                        ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(), stack);//TODO tile entity null
                         if (returnStack == null)
                         {
                             getInventory().decrStackSize(i, stack.stackSize);

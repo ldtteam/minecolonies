@@ -16,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
@@ -254,10 +253,6 @@ public abstract class Building
     public TileEntityColonyBuilding getTileEntity()
     {
         return (tileEntity != null) ? tileEntity.get() : null;
-    }
-    public TileEntityColonyBuilding getTileEntity(World world)
-    {
-        return (TileEntityColonyBuilding) world.getTileEntity(location.posX, location.posY, location.posZ);
     }
 
     public final boolean isDirty() { return isDirty; }
