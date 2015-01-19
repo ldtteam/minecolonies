@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.*;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.lib.EnumGUI;
@@ -15,9 +16,9 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ public abstract class Building
     private final ChunkCoordinates location;
     private final Colony           colony;
 
-    private WeakReference<TileEntityColonyBuilding> tileEntity;
+    private TileEntityColonyBuilding tileEntity;
 
     //  Attributes
     private int buildingLevel = 0;
@@ -244,15 +245,42 @@ public abstract class Building
     public ChunkCoordinates getID() { return location; }    //  Location doubles as ID
     public ChunkCoordinates getLocation() { return location; }
     public int getBuildingLevel() { return buildingLevel; }
-    public void setBuildingLevel(int level) { buildingLevel = level; markDirty(); }
+    public void setBuildingLevel(int level)
+    {
+        buildingLevel = level;
+        markDirty();
+        ColonyManager.markDirty();
+    }
 
     public abstract String getSchematicName();
     public abstract int getMaxBuildingLevel();
 
-    public void setTileEntity(TileEntityColonyBuilding te) { tileEntity = new WeakReference<TileEntityColonyBuilding>(te); }
+    public void setTileEntity(TileEntityColonyBuilding te)
+    {
+        tileEntity = te;
+    }
+
     public TileEntityColonyBuilding getTileEntity()
     {
-        return (tileEntity != null) ? tileEntity.get() : null;
+        if (tileEntity == null)
+        {
+            //  Lazy evaluation
+            if (colony.getWorld().blockExists(location.posX, location.posY, location.posZ))
+            {
+                TileEntity te = getColony().getWorld().getTileEntity(location.posX, location.posY, location.posZ);
+                if (te instanceof TileEntityColonyBuilding)
+                {
+                    tileEntity = (TileEntityColonyBuilding)te;
+                    if (tileEntity.getBuilding() == null)
+                    {
+                        tileEntity.setColony(colony);
+                        tileEntity.setBuilding(this);
+                    }
+                }
+            }
+        }
+
+        return tileEntity;
     }
 
     public final boolean isDirty() { return isDirty; }

@@ -389,7 +389,7 @@ public class Colony implements IColony
                 {
                     if (citizen.getCitizenEntity() == null)
                     {
-                        MineColonies.logger.warn(String.format("Citizen '%d' has gone AWOL, respawning them!", citizen.getId()));
+                        MineColonies.logger.warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
                         spawnCitizen(citizen);
                     }
                 }
@@ -736,6 +736,8 @@ public class Colony implements IColony
 
         calculateMaxCitizens();
 
+        ColonyManager.markDirty();
+
         return building;
     }
 
@@ -767,6 +769,8 @@ public class Colony implements IColony
         }
 
         calculateMaxCitizens();
+
+        ColonyManager.markDirty();
     }
 
     /*

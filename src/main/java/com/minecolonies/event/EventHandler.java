@@ -153,8 +153,7 @@ public class EventHandler
                     return false;
                 }
             }
-
-            if (!ColonyManager.getIColoniesByOwner(world, player).isEmpty())
+            else if (!ColonyManager.getIColoniesByOwner(world, player).isEmpty())
             {
                 //  Players are currently only allowed a single colony
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
