@@ -16,6 +16,8 @@ public class Configurations
     public static boolean   alwaysRenderNameTag             = true;
     public static int       maxBlocksCheckedByBuilder       = 1000;//TODO change count to agreed upon value, possibly remove if we think this shouldn't be a problem
 
+    public static boolean   enableInDevelopmentFeatures = false;
+
     public static String[] maleFirstNames = new String[] {
             "Jim", "John", "James", "Robert", "Thomas", "Michael", "William", "David", "Richard", "Charles", "Joseph", "Christopher", "Paul", "Mark", "George", "Steven", "Peter", "Henrik", "Rory" };
 

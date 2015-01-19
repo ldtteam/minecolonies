@@ -1,11 +1,14 @@
 package com.minecolonies.proxy;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.client.gui.WindowCitizen;
 import com.minecolonies.client.render.EmptyTileEntitySpecialRenderer;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.network.GuiHandler;
+import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -55,6 +58,13 @@ public class ClientProxy extends CommonProxy
     @Override
     public void showCitizenWindow(CitizenData.View citizen)
     {
-        GuiHandler.showGuiWindow(new WindowCitizen(citizen));
+        if (Configurations.enableInDevelopmentFeatures)
+        {
+            GuiHandler.showGuiWindow(new WindowCitizen(citizen));
+        }
+        else
+        {
+            MineColonies.network.sendToServer(new OpenInventoryMessage(citizen));
+        }
     }
 }
