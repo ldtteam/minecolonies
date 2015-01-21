@@ -27,10 +27,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         super.updateEntity();
 
-        if (colonyId == 0)
+        if (!worldObj.isRemote)
         {
-            throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
-                    worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord));
+            if (colonyId == 0)
+            {
+                throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId", worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord));
+            }
         }
     }
 
