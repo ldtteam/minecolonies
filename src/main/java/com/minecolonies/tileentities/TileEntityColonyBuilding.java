@@ -139,6 +139,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         colony = c;
         colonyId = c.getID();
+        markDirty();
     }
 
     public Building getBuilding()

@@ -64,6 +64,11 @@ public class ColonyManager
         }
 
         coloniesByWorld.get(colony.getDimensionId()).add(colony);
+
+        markDirty();
+
+        MineColonies.logger.info(String.format("New Colony %d", colony.getID()));
+
         return colony;
     }
 
@@ -410,6 +415,8 @@ public class ColonyManager
 
             topColonyId = Math.max(topColonyId, colony.getID());
         }
+
+        MineColonies.logger.info(String.format("Loaded %d colonies", colonies.size()));
     }
 
     /**

@@ -732,6 +732,18 @@ public class Colony implements IColony
         {
             addBuilding(building);
             tileEntity.setBuilding(building);
+
+            MineColonies.logger.info(String.format("Colony %d - new Building for %s at %s",
+                    getID(),
+                    tileEntity.getBlockType().getClass(),
+                    tileEntity.getPosition()));
+        }
+        else
+        {
+            MineColonies.logger.error(String.format("Colony %d unable to create Building for %s at %s",
+                    getID(),
+                    tileEntity.getBlockType().getClass(),
+                    tileEntity.getPosition()));
         }
 
         calculateMaxCitizens();
@@ -755,6 +767,11 @@ public class Colony implements IColony
             {
                 MineColonies.network.sendTo(msg, player);
             }
+
+            MineColonies.logger.info(String.format("Colony %d - removed Building %s of type %s",
+                    getID(),
+                    building.getID(),
+                    building.getSchematicName()));
         }
 
         if (building == townhall)
