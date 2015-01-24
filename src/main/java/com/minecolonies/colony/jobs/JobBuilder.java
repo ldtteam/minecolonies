@@ -3,6 +3,7 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.workorders.WorkOrder;
+import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Schematic;
@@ -103,7 +104,7 @@ public class JobBuilder extends Job
      *
      * @param order Work Order to associate with this job, or null
      */
-    public void setWorkOrder(WorkOrder order)
+    public void setWorkOrder(WorkOrderBuild order)
     {
         workOrderId = (order != null) ? order.getID() : 0;
     }
@@ -116,6 +117,17 @@ public class JobBuilder extends Job
     public int getWorkOrderId()
     {
         return workOrderId;
+    }
+
+    /**
+     * Get the Work Order for the Job
+     * Warning: WorkOrder is not cached
+     *
+     * @return WorkOrderBuild for the Build
+     */
+    public WorkOrderBuild getWorkOrder()
+    {
+        return getColony().getWorkManager().getWorkOrder(workOrderId, WorkOrderBuild.class);
     }
 
     /**

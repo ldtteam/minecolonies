@@ -166,10 +166,10 @@ public class ColonyView implements IColony
      * @param w
      */
     public void onWorldLoad(World w) {
-        //        if (w.provider.dimensionId == dimensionId)
-        //        {
-        //            world = new WeakReference<World>(w);
-        //        }
+//        if (w.provider.dimensionId == dimensionId)
+//        {
+//            world = new WeakReference<World>(w);
+//        }
     }
 
     /**

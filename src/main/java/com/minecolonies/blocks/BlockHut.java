@@ -95,13 +95,11 @@ public abstract class BlockHut extends Block implements ITileEntityProvider
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float px, float py, float pz)
     {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-
-        if (tileEntity instanceof TileEntityColonyBuilding)
+        if (world.getBlock(x, y, z) instanceof BlockHut)
         {
             if(!world.isRemote)
             {
-                Building building = ((TileEntityColonyBuilding)tileEntity).getBuilding();
+                Building building = ColonyManager.getBuilding(world, x, y, z);
 
                 if (building != null)
                 {

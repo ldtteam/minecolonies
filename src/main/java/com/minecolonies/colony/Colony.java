@@ -389,7 +389,7 @@ public class Colony implements IColony
                 {
                     if (citizen.getCitizenEntity() == null)
                     {
-                        MineColonies.logger.warn(String.format("Citizen '%d' has gone AWOL, respawning them!", citizen.getId()));
+                        MineColonies.logger.warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
                         spawnCitizen(citizen);
                     }
                 }
@@ -732,9 +732,23 @@ public class Colony implements IColony
         {
             addBuilding(building);
             tileEntity.setBuilding(building);
+
+            MineColonies.logger.info(String.format("Colony %d - new Building for %s at %s",
+                    getID(),
+                    tileEntity.getBlockType().getClass(),
+                    tileEntity.getPosition()));
+        }
+        else
+        {
+            MineColonies.logger.error(String.format("Colony %d unable to create Building for %s at %s",
+                    getID(),
+                    tileEntity.getBlockType().getClass(),
+                    tileEntity.getPosition()));
         }
 
         calculateMaxCitizens();
+
+        ColonyManager.markDirty();
 
         return building;
     }
@@ -753,6 +767,11 @@ public class Colony implements IColony
             {
                 MineColonies.network.sendTo(msg, player);
             }
+
+            MineColonies.logger.info(String.format("Colony %d - removed Building %s of type %s",
+                    getID(),
+                    building.getID(),
+                    building.getSchematicName()));
         }
 
         if (building == townhall)
@@ -767,6 +786,8 @@ public class Colony implements IColony
         }
 
         calculateMaxCitizens();
+
+        ColonyManager.markDirty();
     }
 
     /*

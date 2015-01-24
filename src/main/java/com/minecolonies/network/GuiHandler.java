@@ -1,6 +1,7 @@
 package com.minecolonies.network;
 
 import com.blockout.views.Window;
+import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.inventory.ContainerHut;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
@@ -29,21 +30,18 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getClientGuiElement(int guiId, EntityPlayer player, World world, int x, int y, int z)
     {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if (tileEntity instanceof TileEntityColonyBuilding)
+        Building.View building = ColonyManager.getBuildingView(world, x, y, z);
+        if (building == null)
         {
-            Building.View building = ((TileEntityColonyBuilding)tileEntity).getBuildingView();
-            if (building == null)
-            {
-                return null;
-            }
-
-            Window window = building.getWindow(guiId);
-            if (window != null)
-            {
-                return window.getScreen();
-            }
+            return null;
         }
+
+        Window window = building.getWindow(guiId);
+        if (window != null)
+        {
+            return window.getScreen();
+        }
+
         return null;
     }
 

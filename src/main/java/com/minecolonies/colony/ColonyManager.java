@@ -4,15 +4,18 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.EntityCitizen;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -21,7 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class ColonyManager {
+public class ColonyManager
+{
     private static Map<Integer, Colony>       colonies        = new HashMap<Integer, Colony>();
     private static Map<Integer, List<Colony>> coloniesByWorld = new HashMap<Integer, List<Colony>>();
     private static int                        topColonyId     = 0;
@@ -29,6 +33,7 @@ public class ColonyManager {
     private static Map<Integer, ColonyView>   colonyViews     = new HashMap<Integer, ColonyView>();
 
     private static int numWorldsLoaded;    //  Used to trigger loading/unloading colonies
+    private static boolean saveNeeded;
 
     private final static String FILENAME_MINECOLONIES_PATH = "minecolonies";
     private final static String FILENAME_MINECOLONIES = "colonies.dat";
@@ -59,6 +64,11 @@ public class ColonyManager {
         }
 
         coloniesByWorld.get(colony.getDimensionId()).add(colony);
+
+        markDirty();
+
+        MineColonies.logger.info(String.format("New Colony %d", colony.getID()));
+
         return colony;
     }
 
@@ -345,6 +355,11 @@ public class ColonyManager {
         {
             c.onServerTick(event);
         }
+
+        if (saveNeeded)
+        {
+            saveColonies();
+        }
     }
 
     public static void onClientTick(
@@ -400,6 +415,8 @@ public class ColonyManager {
 
             topColonyId = Math.max(topColonyId, colony.getID());
         }
+
+        MineColonies.logger.info(String.format("Loaded %d colonies", colonies.size()));
     }
 
     /**
@@ -423,11 +440,9 @@ public class ColonyManager {
     /**
      * Get save location for Minecolonies data, from the world/save directory
      *
-     * @param world
      * @return
      */
-    private static File getSaveLocation(
-            World world)
+    private static File getSaveLocation()
     {
         File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
@@ -490,6 +505,25 @@ public class ColonyManager {
     }
 
     /**
+     * Save all the Colonies
+     */
+    private static void saveColonies()
+    {
+        NBTTagCompound compound = new NBTTagCompound();
+        writeToNBT(compound);
+
+        File file = getSaveLocation();
+        saveNBTToPath(file, compound);
+
+        saveNeeded = false;
+    }
+
+    public static void markDirty()
+    {
+        saveNeeded = true;
+    }
+
+    /**
      * When a world is loaded, Colonies in that world need to grab the reference to the World
      * Additionally, when loading the first world, load all colonies.
      *
@@ -501,7 +535,7 @@ public class ColonyManager {
         {
             if (numWorldsLoaded == 0)
             {
-                File file = getSaveLocation(world);
+                File file = getSaveLocation();
                 NBTTagCompound data = loadNBTFromPath(file);
                 if (data != null)
                 {
@@ -518,6 +552,8 @@ public class ColonyManager {
                     c.onWorldLoad(world);
                 }
             }
+
+            world.addWorldAccess(new ColonyManagerWorldAccess());
         }
         else
         {
@@ -533,11 +569,7 @@ public class ColonyManager {
         if (!world.isRemote &&
             world.provider.dimensionId == 0)    //  For now, save when 0 saves...
         {
-            NBTTagCompound compound = new NBTTagCompound();
-            writeToNBT(compound);
-
-            File file = getSaveLocation(world);
-            saveNBTToPath(file, compound);
+            saveColonies();
         }
     }
 
@@ -670,5 +702,43 @@ public class ColonyManager {
         }
 
         return null;
+    }
+
+    public static class ColonyManagerWorldAccess implements IWorldAccess
+    {
+        @Override public void markBlockForUpdate(int p_147586_1_, int p_147586_2_, int p_147586_3_) {}
+        @Override public void markBlockForRenderUpdate(int p_147588_1_, int p_147588_2_, int p_147588_3_) {}
+        @Override public void markBlockRangeForRenderUpdate(int p_147585_1_, int p_147585_2_, int p_147585_3_, int p_147585_4_, int p_147585_5_, int p_147585_6_) {}
+        @Override public void playSound(String p_72704_1_, double p_72704_2_, double p_72704_4_, double p_72704_6_, float p_72704_8_, float p_72704_9_) {}
+        @Override public void playSoundToNearExcept(EntityPlayer p_85102_1_, String p_85102_2_, double p_85102_3_, double p_85102_5_, double p_85102_7_, float p_85102_9_, float p_85102_10_) {}
+        @Override public void spawnParticle(String p_72708_1_, double p_72708_2_, double p_72708_4_, double p_72708_6_, double p_72708_8_, double p_72708_10_, double p_72708_12_) {}
+
+        @Override
+        public void onEntityCreate(Entity entity)
+        {
+            if (entity instanceof EntityCitizen)
+            {
+                ((EntityCitizen) entity).updateColonyServer();
+            }
+        }
+
+        @Override
+        public void onEntityDestroy(Entity entity)
+        {
+            if (entity instanceof EntityCitizen)
+            {
+                CitizenData citizen = ((EntityCitizen) entity).getCitizenData();
+                if (citizen != null)
+                {
+                    citizen.setCitizenEntity(null);
+                }
+            }
+        }
+
+        @Override public void playRecord(String p_72702_1_, int p_72702_2_, int p_72702_3_, int p_72702_4_) {}
+        @Override public void broadcastSound(int p_82746_1_, int p_82746_2_, int p_82746_3_, int p_82746_4_, int p_82746_5_) {}
+        @Override public void playAuxSFX(EntityPlayer p_72706_1_, int p_72706_2_, int p_72706_3_, int p_72706_4_, int p_72706_5_, int p_72706_6_) {}
+        @Override public void destroyBlockPartially(int p_147587_1_, int p_147587_2_, int p_147587_3_, int p_147587_4_, int p_147587_5_) {}
+        @Override public void onStaticEntitiesChanged() {}
     }
 }
