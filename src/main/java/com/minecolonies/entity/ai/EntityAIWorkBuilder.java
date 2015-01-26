@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai;
 import com.github.lunatrius.schematica.config.BlockInfo;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
+import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
@@ -77,6 +78,13 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             return;
         }
 
+        WorkOrderBuild wo = job.getWorkOrder();
+        if (wo == null || job.getColony().getBuilding(wo.getBuildingId()) == null)
+        {
+            job.complete();
+            return;
+        }
+
         if(!job.hasSchematic())
         {
             job.complete();
@@ -118,7 +126,8 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             findNextBlock();
             return;
         }
-        if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock)//don't overwrite huts or bedrock
+        if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock ||
+                block instanceof BlockHut)//don't overwrite huts or bedrock, nor place huts
         {
             findNextBlock();
             return;
@@ -237,8 +246,6 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
     private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
     {
-        TileEntityColonyBuilding workBuildingTileEntity = worker.getWorkBuilding().getTileEntity();
-
         System.out.println(FMLCommonHandler.instance().getSide().toString() + " : " + FMLCommonHandler.instance().getEffectiveSide().toString());
         if(block != Blocks.air)
         {
@@ -264,6 +271,8 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             int slotID = InventoryUtils.containsStack(worker.getInventory(), material);
             if(slotID == -1)//inventory doesn't contain item
             {
+                TileEntityColonyBuilding workBuildingTileEntity = worker.getWorkBuilding().getTileEntity();
+
                 if (workBuildingTileEntity == null)
                 {
                     //  Work Building is not loaded
@@ -688,7 +697,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
     private void loadSchematic()
     {
-        WorkOrderBuild workOrder = worker.getColony().getWorkManager().getWorkOrder(job.getWorkOrderId(), WorkOrderBuild.class);
+        WorkOrderBuild workOrder = job.getWorkOrder();
         if (workOrder == null)
         {
             return;
@@ -717,14 +726,25 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
         String schematicName = job.getSchematic().getName();
         LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
-        ChunkCoordinates pos = job.getSchematic().getPosition();
 
-        if(ChunkCoordUtils.getTileEntity(world, pos) instanceof TileEntityColonyBuilding)
+        WorkOrderBuild wo = job.getWorkOrder();
+        if(wo != null)
         {
-            int schematicLevel = Integer.parseInt(schematicName.substring(schematicName.length() - 1));
-
-            TileEntityColonyBuilding hut = (TileEntityColonyBuilding) ChunkCoordUtils.getTileEntity(world, pos);
-            hut.getBuilding().setBuildingLevel(schematicLevel);
+            Building building = job.getColony().getBuilding(wo.getBuildingId());
+            if (building != null)
+            {
+                building.setBuildingLevel(wo.getUpgradeLevel());
+            }
+            else
+            {
+                MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
+                        worker.getColony().getID(), worker.getCitizenData().getId(),
+                        wo.getBuildingId()));
+            }
+        }
+        else
+        {
+            MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)", worker.getColony().getID(), worker.getCitizenData().getId(), job.getWorkOrderId()));
         }
 
         job.complete();

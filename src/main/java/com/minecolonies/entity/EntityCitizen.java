@@ -200,7 +200,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void onLivingUpdate()
     {
         if (worldObj.isRemote)  updateColonyClient();
-        else                    updateColonyServer();
+        else
+        {
+            pickupItems();
+            updateColonyServer();
+        }
 
         super.onLivingUpdate();
     }
@@ -236,10 +240,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     /**
      * Server-specific update for the EntityCitizen
      */
-    private void updateColonyServer()
+    public void updateColonyServer()
     {
-        pickupItems();
-
         if (colonyId == 0)
         {
             setDead();

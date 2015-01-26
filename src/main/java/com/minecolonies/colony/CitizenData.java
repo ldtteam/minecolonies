@@ -13,7 +13,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.lang.ref.WeakReference;
 import java.util.Random;
 
 /**
@@ -36,7 +35,7 @@ public class CitizenData
     private boolean isDirty;
 
     //  Citizen
-    public WeakReference<EntityCitizen> entity;
+    public EntityCitizen entity;
 
     //  Placeholder skills
     private int level;
@@ -83,7 +82,7 @@ public class CitizenData
     {
         Random rand = entity.getRNG();
 
-        this.entity = new WeakReference<EntityCitizen>(entity);
+        this.entity = entity;
 
         isFemale = rand.nextBoolean();   //  Gender before name
         name = generateName(rand);
@@ -186,10 +185,10 @@ public class CitizenData
         }
     }
 
-    public EntityCitizen getCitizenEntity() { return (entity != null) ? entity.get() : null; }
+    public EntityCitizen getCitizenEntity() { return entity; /*(entity != null) ? entity.get() : null;*/ }
     public void setCitizenEntity(EntityCitizen citizen)
     {
-        entity = new WeakReference<EntityCitizen>(citizen);
+        entity = citizen;
         markDirty();
     }
     public void clearCitizenEntity()

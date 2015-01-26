@@ -2,19 +2,16 @@ package com.minecolonies.event;
 
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.blocks.BlockHutTownHall;
-import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.IColony;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -32,23 +29,15 @@ public class EventHandler
 
         if(!world.isRemote && event.block instanceof BlockHut)
         {
-            TileEntityColonyBuilding tileEntity = (TileEntityColonyBuilding)world.getTileEntity(event.x, event.y, event.z);
-
-            Colony colony = ColonyManager.getColony(tileEntity.getColonyId());
-            if (colony == null)
-            {
-                return;
-            }
-
-            if (!colony.getPermissions().hasPermission(event.getPlayer(), Permissions.Action.BREAK_HUTS))
-            {
-                event.setCanceled(true);
-                return;
-            }
-
-            Building building = colony.getBuilding(new ChunkCoordinates(event.x, event.y, event.z));
+            Building building = ColonyManager.getBuilding(world, event.x, event.y, event.z);
             if (building == null)
             {
+                return;
+            }
+
+            if (!building.getColony().getPermissions().hasPermission(event.getPlayer(), Permissions.Action.BREAK_HUTS))
+            {
+                event.setCanceled(true);
                 return;
             }
 
@@ -153,8 +142,7 @@ public class EventHandler
                     return false;
                 }
             }
-
-            if (!ColonyManager.getIColoniesByOwner(world, player).isEmpty())
+            else if (!ColonyManager.getIColoniesByOwner(world, player).isEmpty())
             {
                 //  Players are currently only allowed a single colony
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
