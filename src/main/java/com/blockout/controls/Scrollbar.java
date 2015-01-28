@@ -57,7 +57,7 @@ public class Scrollbar extends Pane
             dragScroll(my - y);
         }
 
-        if (container.getContentHeight() < getHeight())
+        if (getContentHeightDiff() <= 0)
         {
             return;
         }
@@ -84,6 +84,11 @@ public class Scrollbar extends Pane
     @Override
     public void handleClick(int mx, int my)
     {
+        if (getContentHeightDiff() <= 0)
+        {
+            return;
+        }
+
         int barHeight = getBarHeight();
 
         int scrollBarStartY = getScrollBarYPos();
