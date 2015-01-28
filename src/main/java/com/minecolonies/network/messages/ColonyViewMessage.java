@@ -16,7 +16,7 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
 {
     private int     colonyId;
     private boolean isNewSubscription;
-    private ByteBuf colonyBuffer = Unpooled.buffer();
+    private ByteBuf colonyBuffer;
 
     public ColonyViewMessage(){}
 
@@ -24,6 +24,7 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     {
         this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
+        this.colonyBuffer = Unpooled.buffer();
         ColonyView.serializeNetworkData(colony, isNewSubscription, colonyBuffer);
     }
 
@@ -40,7 +41,7 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     {
         colonyId = buf.readInt();
         isNewSubscription = buf.readBoolean();
-        buf.readBytes(colonyBuffer, buf.readableBytes());
+        colonyBuffer = buf;
     }
 
     @Override

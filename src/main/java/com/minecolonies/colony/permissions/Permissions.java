@@ -462,6 +462,7 @@ public class Permissions implements IPermissions
             userRank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
 
             //  Owners
+            players.clear();
             int numOwners = buf.readInt();
             for (int i = 0; i < numOwners; ++i)
             {
@@ -473,6 +474,7 @@ public class Permissions implements IPermissions
             }
 
             //Permissions
+            permissions.clear();
             int numPermissions = buf.readInt();
             for (int i = 0; i < numPermissions; ++i)
             {
@@ -503,5 +505,49 @@ public class Permissions implements IPermissions
             ByteBufUtils.writeUTF8String(buf, entry.getKey().name());
             buf.writeInt(entry.getValue());
         }
+    }
+
+    private static class RankPair
+    {
+        RankPair(Rank p, Rank d) { promote = p; demote = d; }
+
+        Rank promote;
+        Rank demote;
+    }
+
+    private static Map<Rank, RankPair> promotionRanks = new HashMap<Rank, RankPair>();
+
+    private static void setPromotionRanks(Rank r, Rank p, Rank d)
+    {
+        promotionRanks.put(r, new RankPair(p, d));
+    }
+
+    static
+    {
+        //setPromotionRanks(Rank.OWNER,   Rank.OWNER,     Rank.OWNER);
+        setPromotionRanks(Rank.OFFICER, Rank.OFFICER,   Rank.FRIEND);
+        setPromotionRanks(Rank.FRIEND,  Rank.OFFICER,   Rank.NEUTRAL);
+        setPromotionRanks(Rank.NEUTRAL, Rank.FRIEND,    Rank.HOSTILE);
+        setPromotionRanks(Rank.HOSTILE, Rank.NEUTRAL,   Rank.HOSTILE);
+    }
+
+    public static Rank getPromotionRank(Rank rank)
+    {
+        if (promotionRanks.containsKey(rank))
+        {
+            return promotionRanks.get(rank).promote;
+        }
+
+        return rank;
+    }
+
+    public static Rank getDemotionRank(Rank rank)
+    {
+        if (promotionRanks.containsKey(rank))
+        {
+            return promotionRanks.get(rank).demote;
+        }
+
+        return rank;
     }
 }

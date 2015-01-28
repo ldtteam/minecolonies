@@ -84,14 +84,18 @@
             </group>
         </view>
         <view id="pagePermissions">
-            <label size="80 12" pos="20 7" textalign="MiddleLeft" color="black" label="§n§4NAME"/>
-            <label size="25 12" pos="90 7" textalign="MiddleLeft" color="black" label="§n§4RANK"/>
+            <!-- label size="80 12" pos="20 7" textalign="MiddleLeft" color="black" label="§n§4NAME"/>
+            <label size="25 12" pos="90 7" textalign="MiddleLeft" color="black" label="§n§4RANK"/ -->
 
-            <list id="users" size="140 150" pos="15 20">
-                <view size="100% 15">
-                    <label id="name" size="60 12" pos="5 4" textalign="MiddleLeft" color="black"/>
-                    <label id="rank" size="25 12" pos="75 4" textalign="MiddleLeft" color="black"/>
-                </view>
+            <list id="users" size="140 150" pos="15 7">
+                <box size="100% 30" linewidth="2">
+                    <label id="name" size="100 12" pos="5 2" textalign="MiddleLeft" color="black"/>
+                    <button id="removePlayer" size="12 12" pos="5 2" align="TopRight" label="X"/>
+
+                    <button id="demote" size="12 12" pos="5 16" label="-"/>
+                    <button id="promote" size="12 12" pos="20 16" label="+"/>
+                    <label id="rank" size="50 12" pos="35 16" textalign="MiddleLeft" color="black"/>
+                </box>
             </list>
 
             <label size="100 11" pos="15 170" textalign="TopLeft" color="black" label="Add Player:"/>
