@@ -16,7 +16,7 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
 {
     private int     colonyId;
     private int     citizenId;
-    private ByteBuf citizenBuffer = Unpooled.buffer();
+    private ByteBuf citizenBuffer;
 
     public ColonyViewCitizenViewMessage(){}
 
@@ -24,6 +24,7 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
     {
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();
+        this.citizenBuffer = Unpooled.buffer();
         citizen.serializeViewNetworkData(citizenBuffer);
     }
 
@@ -40,7 +41,7 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
-        buf.readBytes(citizenBuffer, buf.readableBytes());
+        citizenBuffer = buf;
     }
 
     @Override
