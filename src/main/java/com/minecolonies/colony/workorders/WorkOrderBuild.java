@@ -65,6 +65,12 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     @Override
+    public boolean isValid(Colony colony)
+    {
+        return colony.getBuilding(buildingId) != null;
+    }
+
+    @Override
     public void attemptToFulfill(Colony colony)
     {
         for (CitizenData citizen : colony.getCitizens().values())
