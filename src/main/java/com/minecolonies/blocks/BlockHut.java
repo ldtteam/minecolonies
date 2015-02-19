@@ -95,20 +95,16 @@ public abstract class BlockHut extends Block implements ITileEntityProvider
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float px, float py, float pz)
     {
-        if (world.getBlock(x, y, z) instanceof BlockHut)
+        if(!world.isRemote)
         {
-            if(!world.isRemote)
-            {
-                Building building = ColonyManager.getBuilding(world, x, y, z);
+            Building building = ColonyManager.getBuilding(world, x, y, z);
 
-                if (building != null)
-                {
-                    building.openGui(player);
-                }
+            if (building != null)
+            {
+                building.openGui(player);
             }
-            return true;
         }
-        return false;
+        return true;
     }
 
     @Override
