@@ -38,6 +38,31 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     public void updateTask()
     {
         //TODO Miner AI
+        /*
+        Rough outline:
+            Data structures:
+                Nodes are 5x5x4 (3 tall + a ceiling)
+                connections are 3x5x3 tunnels
+            Connections should be automatically completed when moving from node to node
+
+            max level depth depends on current hut level
+                example:
+                    1: y=44
+                    2: y=28
+                    3: y=10
+                Personally I think our lowest level should be 4 or 5, whatever one you can't run into bedrock on
+
+            If the miner has a node, then he should create the connection, then mine the node
+
+            else findNewNode
+
+            That's basically it...
+            Also note we need to check the tool durability and for torches,
+                wood for building the tunnel structure (exact plan to be determined)
+
+            You also may want to create another node status before AVAILABLE for when the connection isn't completed.
+                Maybe even two status, one for can_connect_too then connection_in_progress
+         */
     }
 
     @Override
@@ -50,5 +75,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     public void resetTask()
     {
         super.resetTask();
+    }
+
+    private void findNewNode()
+    {
+        //TODO
     }
 }
