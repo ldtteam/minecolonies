@@ -2,8 +2,8 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.util.ChunkCoordUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockLadder;
+import net.minecraft.block.*;
+import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.ChunkCache;
@@ -24,31 +24,55 @@ public class PathJob implements Runnable
 
     protected final Queue<Node>     nodesOpen    = new PriorityQueue<Node>(500);
     protected final Map<Long, Node> nodesVisited = new HashMap<Long, Node>();
+    protected Node                  destinationNode;
 
     protected int totalNodesAdded = 0;
     protected int totalNodesVisited = 0;
+
+//    static public Set<Node>    debugNodesVisited = Collections.synchronizedSet(new HashSet<Node>());
+//    static public Set<Node>    debugNodesNotVisited = Collections.synchronizedSet(new HashSet<Node>());
+//    static public Set<Node>    debugNodesPath = Collections.synchronizedSet(new HashSet<Node>());
+
+    protected Set<Node>    debugNodesVisited = new HashSet<Node>();
+    protected Set<Node>    debugNodesNotVisited = new HashSet<Node>();
+    protected Set<Node>    debugNodesPath = new HashSet<Node>();
+
+    static public Long debugNodeMonitor = new Long(1);
+    static public Set<Node>    lastDebugNodesVisited;
+    static public Set<Node>    lastDebugNodesNotVisited;
+    static public Set<Node>    lastDebugNodesPath;
 
     public PathJob(PathPlanner owner, World world, ChunkCoordinates start, ChunkCoordinates end)
     {
 //        startX = start.posX;
 //        startY = start.posY;
 //        startZ = start.posZ;
-//
+
+        int minX = Math.min(start.posX, end.posX);
+        int minZ = Math.min(start.posZ, end.posZ);
+        int maxX = Math.max(start.posX, end.posX);
+        int maxZ = Math.max(start.posZ, end.posZ);
+
         this.start = start;
         this.destination = end;
 
         this.owner = owner;
-        this.world = new ChunkCache(world, start.posX, start.posY, start.posZ, end.posX, end.posY, end.posZ, 20);
+        this.world = new ChunkCache(world, minX, 0, minZ, maxX, 256, maxZ, 20);
     }
 
     @Override
     public void run()
     {
+        debugNodesVisited.clear();
+        debugNodesNotVisited.clear();
+        debugNodesPath.clear();
+
         MineColonies.logger.info(String.format("Pathing from [%d,%d,%d] to [%d,%d,%d]",
                 start.posX, start.posY, start.posZ, destination.posX, destination.posY, destination.posZ));
 //        double heuristic = Math.sqrt(ChunkCoordUtils.distanceSqrd(start, destination));   //  TODO
         Node startNode = new Node(start.posX, start.posY, start.posZ);
-        nodesVisited.put(computeNodeKey(start.posX, start.posY, start.posZ), startNode);
+        startNode.score = computeHeuristic(startNode.x, startNode.y, startNode.z);
+        //nodesVisited.put(computeNodeKey(start.posX, start.posY, start.posZ), startNode);
 
         Node currentNode = startNode;
         ++totalNodesAdded;
@@ -56,62 +80,120 @@ public class PathJob implements Runnable
         int cutoff = 0;
         while (currentNode != null)
         {
-            ++totalNodesVisited;
+            currentNode.counterVisited = ++totalNodesVisited;
+            debugNodesNotVisited.remove(currentNode);
+            debugNodesVisited.add(currentNode);
 
             currentNode.closed = true;
 
             //  TODO: is currentNode the end result?
-            MineColonies.logger.info(String.format("Examining node [%d,%d,%d]", currentNode.x, currentNode.y, currentNode.z));
-            if (ChunkCoordUtils.distanceSqrd(destination, currentNode.x, currentNode.y, currentNode.z) <= (1.5*1.5*2))
-            {
-                MineColonies.logger.info("Path found!");
-                List<Node> path = new ArrayList<Node>();
-                Node backtrace = currentNode;
-                while (backtrace != null)
-                {
-                    path.add(backtrace);
-                    backtrace = backtrace.parent;
-                }
-                Collections.reverse(path);
+            MineColonies.logger.info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f", currentNode.x, currentNode.y, currentNode.z, currentNode.cost, currentNode.score));
 
-                for (Node n : path)
+            //if (currentNode.score < 400)
+            {
+                int dx = 0, dy = 0, dz = 0;
+                if (currentNode.parent != null)
                 {
-                    MineColonies.logger.info(String.format("Step: [%d,%d,%d]", n.x, n.y, n.z));
+                    dx = currentNode.x - currentNode.parent.x;
+                    dy = currentNode.y - currentNode.parent.y;
+                    dz = currentNode.z - currentNode.parent.z;
                 }
 
-                MineColonies.logger.info(String.format("Total Nodes Added: %d    Visited: %d", totalNodesAdded, totalNodesVisited));
-
-                return;
-            }
-
-            if (currentNode.cost < 40)
-            {
                 if (currentNode.isLadder)
                 {
                     //  On a ladder, we can go 1 straight-up
-                    walk(currentNode, currentNode.x, currentNode.y + 1, currentNode.z, 2.0D, false);
+                    if (dy >= 0 || dx != 0 || dz != 0)
+                    {
+                        if (walk(currentNode, 0, 1, 0))
+                        {
+                            break;
+                        }
+                    }
+                }
 
-                    //  We can also go down 1, if the lower block is a ladder
+                //  We can also go down 1, if the lower block is a ladder
+                if (dy <= 0 || dx != 0 || dz != 0)
+                {
                     if (isLadder(currentNode.x, currentNode.y - 1, currentNode.z))
                     {
-                        walk(currentNode, currentNode.x, currentNode.y - 1, currentNode.z, 2.0D, false);
+                        if (walk(currentNode, 0, -1, 0))
+                        {
+                            break;
+                        }
                     }
                 }
 
-                for (int x = -1; x < 2; ++x)
-                {
-                    for (int z = -1; z < 2; ++z)
-                    {
-                        if (x == 0 && z == 0) continue;
+//                for (int x = -1; x < 2; ++x)
+//                {
+//                    for (int z = -1; z < 2; ++z)
+//                    {
+//                        if (x == 0 && z == 0) continue;
+//
+//                        walk(currentNode, x, 0, z);
+//                    }
+//                }
 
-                        boolean isDiagonal = (x != 0 && z != 0);
-                        double cost = isDiagonal ? 1.414D : 1D;
-                        walk(currentNode, currentNode.x + x, currentNode.y, currentNode.z + z, cost, isDiagonal);
-                    }
-                }
+//                walk(currentNode, 0, 0, -1);    //  N
+//                walk(currentNode, 1, 0, 0);     //  E
+//                walk(currentNode, 0, 0, 1);     //  S
+//                walk(currentNode, -1, 0, 0);    //  W
+//                walk(currentNode, 1, 0, -1);    //  NE
+//                walk(currentNode, 1, 0, 1);     //  SE
+//                walk(currentNode, -1, 0, 1);    //  SW
+//                walk(currentNode, -1, 0, -1);   //  NW
+
+                if ((dz <= 0) && walk(currentNode, 0, 0, -1))   break;  //  N
+                if ((dx >= 0) && walk(currentNode, 1, 0, 0))    break;  //  E
+                if ((dz >= 0) && walk(currentNode, 0, 0, 1))    break;  //  S
+                if ((dx <= 0) && walk(currentNode, -1, 0, 0))   break;  //  W
+                if ((dx >= 0 || dz < 0) && walk(currentNode, 1, 0, -1))     break;  //  NE
+                if ((dx >= 0 || dz > 0) && walk(currentNode, 1, 0, 1))      break;  //  SE
+                if ((dx <= 0 || dz > 0) && walk(currentNode, -1, 0, 1))     break;  //  SW
+                if ((dx <= 0 || dz < 0) && walk(currentNode, -1, 0, -1))    break;  //  NW
             }
 
             currentNode = nodesOpen.poll();
+
+            if (true)
+            {
+                synchronized (debugNodeMonitor)
+                {
+                    lastDebugNodesNotVisited = new HashSet<Node>(debugNodesNotVisited);
+                    lastDebugNodesVisited = new HashSet<Node>(debugNodesVisited);
+                    lastDebugNodesPath = new HashSet<Node>();
+                }
+
+                try { Thread.sleep(100); } catch (InterruptedException ex) {}
+            }
+        }
+
+        if (destinationNode != null)
+        {
+            MineColonies.logger.info("Path found!");
+            List<Node> path = new ArrayList<Node>();
+            Node backtrace = destinationNode;
+            while (backtrace != null)
+            {
+                path.add(backtrace);
+                backtrace = backtrace.parent;
+            }
+            Collections.reverse(path);
+
+            for (Node n : path)
+            {
+                MineColonies.logger.info(String.format("Step: [%d,%d,%d]", n.x, n.y, n.z));
+                debugNodesVisited.remove(n);
+                debugNodesPath.add(n);
+            }
+
+            MineColonies.logger.info(String.format("Total Nodes Added: %d    Visited: %d", totalNodesAdded, totalNodesVisited));
+        }
+
+        synchronized (debugNodeMonitor)
+        {
+            lastDebugNodesNotVisited = debugNodesNotVisited;
+            lastDebugNodesVisited = debugNodesVisited;
+            lastDebugNodesPath = debugNodesPath;
         }
     }
 
@@ -125,8 +207,52 @@ public class PathJob implements Runnable
                 (((long)z + 30000000) & 0x3FFFFFF);
     }
 
-    protected void walk(Node parent, int x, int y, int z, double stepCost, boolean isDiagonal)
+    protected double computeCost(int dx, int dy, int dz)
     {
+//        if (dy != 0 && dx == 0 && dz == 0)
+//        {
+//            //  Ladder up/down
+//            return 1.5D;
+//        }
+
+        if (dx != 0 && dz != 0)
+        {
+            //  Diagonal
+            return 1.414D;
+        }
+
+        return 1D;
+    }
+
+    protected double computeHeuristic(int x, int y, int z)
+    {
+//        return Math.sqrt(ChunkCoordUtils.distanceSqrd(destination, x, y, z));   //  TODO
+        int dx = Math.abs(x - destination.posX);
+        int dy = Math.abs(y - destination.posY);
+        int dz = Math.abs(z - destination.posZ);
+
+        return (double)Math.max(dx, dz) +
+                ((double)Math.min(dx, dz) * 0.414D) +
+                (double)dy;
+//        return dx + dy + dz;
+    }
+
+    protected boolean isAtDestination(Node n)
+    {
+        return ChunkCoordUtils.distanceSqrd(destination, n.x, n.y, n.z) <= (1.5*1.5*2);
+    }
+
+    protected double getScoreCutoff()
+    {
+        return 120D;
+    }
+
+    protected boolean walk(Node parent, int dx, int dy, int dz)
+    {
+        int x = parent.x + dx;
+        int y = parent.y + dy;
+        int z = parent.z + dz;
+
         //  Cheap test to perform before doing a 'y' test
         //  Has this node been visited?
         long nodeKey = computeNodeKey(x, y, z);
@@ -134,7 +260,7 @@ public class PathJob implements Runnable
         if (node != null && node.closed)
         {
             //  Early out on previously visited and closed nodes
-            return;
+            return false;
         }
 
         //  Can we traverse into this node?  Fix the y up
@@ -143,7 +269,7 @@ public class PathJob implements Runnable
             int newY = getGroundHeight(x, y, z, parent.isLadder);
             if (newY < 0)
             {
-                return;
+                return false;
             }
 
             if (y != newY)
@@ -155,25 +281,34 @@ public class PathJob implements Runnable
                 if (node != null && node.closed)
                 {
                     //  Early out on previously visited and closed nodes
-                    return;
+                    return false;
                 }
             }
         }
 
+        //  Cost may have changed due to a jump up or drop
+        double stepCost = computeCost(dx, dy, dz);
+//        if (parent != null &&
+//                dy == 0 &&
+//                y > parent.y)
+//        {
+//            //  Tax the cost for jumping up one (warning: also taxes stairs)
+//            stepCost *= 1.25D;
+//        }
 
-        if (isDiagonal)
+        double heuristic = computeHeuristic(x, y, z);
+        double cost = parent.cost + stepCost;
+        double score = cost + heuristic;
+
+        if (score >= getScoreCutoff())
+        {
+            //  If going to this node makes it impossible to reach the destination
+            return false;
+        }
+
+        if (dy == 0 && dx != 0 && dz != 0)
         {
             //  In case of diagonal, BOTH common neighbor non-diagonal blocks must be at the same level
-
-            int dX = x - parent.x;
-            int dZ = z - parent.z;
-
-            //  If we have JPS jumping, dX and dZ could be > 1, so we need to normalize
-            //  Cheap, fast normalize
-//            if (dX > 1)         dX = 1;
-//            else if (dX < -1)   dX = -1;
-//            if (dZ > 1)         dZ = 1;
-//            else if (dZ < -1)   dZ = -1;
 
             //  Test neighbors, with offset from new block, computed from delta of parent
             //  dX,dZ   x1,z1   x2,z2
@@ -183,28 +318,25 @@ public class PathJob implements Runnable
             //  -1,-1   1,0     0,1
 
             //  TODO - Verify this is actually testing the right blocks...
-            if (getGroundHeight(x - dX, y, z, parent.isLadder) != y ||
-                    getGroundHeight(x, y, z - dZ, parent.isLadder) != y)
+            //  ... so far it seems right
+            if (getGroundHeight(x - dx, y, z, parent.isLadder) != y ||
+                    getGroundHeight(x, y, z - dz, parent.isLadder) != y)
             {
-                return;
+                return false;
             }
         }
-
-        double heuristic = Math.sqrt(ChunkCoordUtils.distanceSqrd(destination, x, y, z));   //  TODO
-        double cost = parent.cost + stepCost;
-        double score = cost + heuristic;
 
         if (node != null)
         {
             //  This node already exists
             if (score >= node.score)
             {
-                return;
+                return false;
             }
 
             if (!nodesOpen.remove(node))
             {
-                return;
+                return false;
             }
 
             node.parent = parent;
@@ -215,15 +347,35 @@ public class PathJob implements Runnable
         {
             node = new Node(parent, x, y, z, cost, score);
             nodesVisited.put(nodeKey, node);
+            debugNodesNotVisited.add(node);
 
             if (isLadder(x, y, z))
             {
                 node.isLadder = true;
             }
+
+            node.counterAdded = ++totalNodesAdded;
+        }
+
+        if (isAtDestination(node))
+        {
+            destinationNode = node;
+            return true;
+        }
+
+        //  Jump Point Search-ish optimization:
+        //  If this node was an improvement on our parent, lets go another step in the same direction...
+        if (Math.abs(parent.score - node.score) < 0.1)
+        {
+            if (walk(node, dx, dy, dz))
+            {
+                return true;
+            }
         }
 
         nodesOpen.offer(node);
-        ++totalNodesAdded;
+
+        return false;
     }
 
     /**
@@ -234,18 +386,21 @@ public class PathJob implements Runnable
      */
     protected int getGroundHeight(int x, int y, int z, boolean sameLevelOnly)
     {
-        //  Check (y+1) first, as it's always needed, either
-        //  for the upper body (level), lower body (headroom drop) or lower body (jump)
-        if (!isPassable(x, y + 1, z))
+        Block b = world.getBlock(x, y + 1, z);
+
+        //  Check (y+1) first, as it's always needed, either for the upper body (level),
+        //  lower body (headroom drop) or lower body (jump up)
+        if (!isPassable(b, x, y + 1, z))
         {
             return -1;
         }
 
         //  Now check the block we want to move to
-        if (!isPassable(x, y, z))
+        Block target = world.getBlock(x, y, z);
+        if (!isPassable(target, x, y, z))
         {
-            //  Need to try jumping up one
-            if (sameLevelOnly)
+            //  Need to try jumping up one, if we can
+            if (sameLevelOnly || !isWalkableSurface(target, x, y, z))
             {
                 return -1;
             }
@@ -262,9 +417,19 @@ public class PathJob implements Runnable
 
         //  Do we have something to stand on in the target space?
         Block below = world.getBlock(x, y - 1, z);
-        if (!isPassable(below) || below.isLadder(world, x, y - 1, z, null))
+        if (!isPassable(below, x, y - 1, z))
         {
+            if (!isWalkableSurface(below, x, y - 1, z))
+            {
+                return -1;
+            }
+
             //  Level path, continue
+            return y;
+        }
+
+        if (below.isLadder(world, x, y - 1, z, null))
+        {
             return y;
         }
 
@@ -283,6 +448,79 @@ public class PathJob implements Runnable
         //  Too far
         return -1;
     }
+
+//
+//    protected int isPassableArea(int x, int y, int z)
+//    {
+//        Block floor = world.getBlock(x, y - 1, z);
+//        Block lower = world.getBlock(x, y, z);
+//        Block upper = world.getBlock(x, y + 1, z);
+//
+//        //  Check (y+1) first, as it's always needed, either for the upper body (level),
+//        //  lower body (headroom drop) or lower body (jump up)
+//        if (!isPassable(x, y + 1, z))
+//        {
+//            return -1;
+//        }
+//
+//        //  Now check the block we want to move to
+//        Block target = world.getBlock(x, y, z);
+//        if (!isPassable(target, x, y, z))
+//        {
+//            //  Need to try jumping up one
+//            if (sameLevelOnly)
+//            {
+//                return -1;
+//            }
+//
+//            if (!isWalkableSurface(target))
+//            {
+//                return -1;
+//            }
+//
+//            //  Check for headroom in the target space
+//            if (!isPassable(x, y + 2, z))
+//            {
+//                return -1;
+//            }
+//
+//            //  Jump up one
+//            return y + 1;
+//        }
+//
+//        //  Do we have something to stand on in the target space?
+//        Block below = world.getBlock(x, y - 1, z);
+//        if (!isPassable(below))
+//        {
+//            if (!isWalkableSurface(below))
+//            {
+//                return -1;
+//            }
+//
+//            //  Level path, continue
+//            return y;
+//        }
+//
+//        if (below.isLadder(world, x, y - 1, z, null))
+//        {
+//            return y;
+//        }
+//
+//        //  Nothing to stand on
+//        if (sameLevelOnly)
+//        {
+//            return -1;
+//        }
+//
+//        //  How far of a drop?
+//        if (!isPassable(x, y - 2, z))
+//        {
+//            return y - 1;
+//        }
+//
+//        //  Too far
+//        return -1;
+//    }
 
 //    protected int getGroundHeight(int x, int y, int z, boolean fromLadder)
 //    {
@@ -332,15 +570,73 @@ public class PathJob implements Runnable
 //
 //        return true;
 //    }
+//
+//    protected boolean isPassable(int x, int y, int z)
+//    {
+//        return isPassable(world.getBlock(x, y, z), x, y, z);
+//    }
+//
+//    protected boolean isPassable(int x, int y, int z)
+//    {
+//        Block block = world.getBlock(x, y, z);
+//
+//        if (block == null)
+//        {
+//            return false;
+//        }
+//
+//        if (block.getMaterial().isSolid())
+//        {
+//            if (block instanceof BlockDoor ||
+//                    block instanceof BlockTrapDoor)
+//            {
+//                return true;
+//            }
+//
+//            return false;
+//        }
+//
+//        return true;
+//    }
 
     protected boolean isPassable(int x, int y, int z)
     {
-        return isPassable(world.getBlock(x, y, z));
+        return isPassable(world.getBlock(x, y, z), x, y, z);
     }
 
-    protected boolean isPassable(Block block)
+    protected boolean isPassable(Block block, int x, int y, int z)
     {
-        return block != null && !block.getMaterial().isSolid();
+        if (block == null)
+        {
+            return false;
+        }
+
+        if (block.getMaterial() != Material.air)
+        {
+            if (!block.getBlocksMovement(world, x, y, z))
+            {
+                if (block instanceof BlockDoor /*||
+                        block instanceof BlockTrapDoor*/)
+                {
+                    return true;
+                }
+                if (block instanceof BlockFenceGate)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected boolean isWalkableSurface(Block block, int x, int y, int z)
+    {
+        return !block.getBlocksMovement(world, x, y, z) &&
+                !(block instanceof BlockFence) &&
+                !(block instanceof BlockFenceGate);
     }
 
     protected boolean isLadder(int x, int y, int z)

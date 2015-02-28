@@ -5,6 +5,8 @@ public class Node implements Comparable<Node>
     public Node parent;
     public final int x, y, z;
 
+    public int counterAdded;
+    public int counterVisited;
     public double cost;     //  A* g value
     public double score;    //  A* f value (g + heuristic) value
 
@@ -43,7 +45,10 @@ public class Node implements Comparable<Node>
         //  Comparing doubles and returning value as int; can't simply cast the result
         if (score < o.score) return -1;
         if (score > o.score) return 1;
-        return 0;
+////        if ((score - o.score) <= -1E-14) return -1;
+////        if ((score - o.score) >= 1E-14) return 1;
+//        return 0;
+        return counterAdded - o.counterAdded;   //  In case of score tie, older node has better score
     }
 
     @Override
