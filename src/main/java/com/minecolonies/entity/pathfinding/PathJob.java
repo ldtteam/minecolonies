@@ -22,8 +22,12 @@ public class PathJob implements Runnable
     //protected final World       world;
     protected final IBlockAccess world;
 
+    //  Job rules/configuration
+    protected boolean           allowDiagonalMovement = false;
+    protected boolean           allowJumpPointSearchTypeWalk = false;
+
     protected final Queue<Node>     nodesOpen    = new PriorityQueue<Node>(500);
-    protected final Map<Long, Node> nodesVisited = new HashMap<Long, Node>();
+    protected final Map<Integer, Node> nodesVisited = new HashMap<Integer, Node>();
     protected Node                  destinationNode;
 
     protected int totalNodesAdded = 0;
@@ -33,6 +37,7 @@ public class PathJob implements Runnable
 //    static public Set<Node>    debugNodesNotVisited = Collections.synchronizedSet(new HashSet<Node>());
 //    static public Set<Node>    debugNodesPath = Collections.synchronizedSet(new HashSet<Node>());
 
+    protected int          debugSleepMs = 25;
     protected Set<Node>    debugNodesVisited = new HashSet<Node>();
     protected Set<Node>    debugNodesNotVisited = new HashSet<Node>();
     protected Set<Node>    debugNodesPath = new HashSet<Node>();
@@ -58,6 +63,9 @@ public class PathJob implements Runnable
 
         this.owner = owner;
         this.world = new ChunkCache(world, minX, 0, minZ, maxX, 256, maxZ, 20);
+
+        allowDiagonalMovement = false;
+        allowJumpPointSearchTypeWalk = false;
     }
 
     @Override
@@ -72,14 +80,18 @@ public class PathJob implements Runnable
 //        double heuristic = Math.sqrt(ChunkCoordUtils.distanceSqrd(start, destination));   //  TODO
         Node startNode = new Node(start.posX, start.posY, start.posZ);
         startNode.score = computeHeuristic(startNode.x, startNode.y, startNode.z);
+        nodesOpen.offer(startNode);
         //nodesVisited.put(computeNodeKey(start.posX, start.posY, start.posZ), startNode);
 
-        Node currentNode = startNode;
         ++totalNodesAdded;
 
+        Node bestNode = startNode;
+        double bestNodeDestinationDistanceSqrd = Double.MAX_VALUE;
+
         int cutoff = 0;
-        while (currentNode != null)
+        while (!nodesOpen.isEmpty())
         {
+            Node currentNode = nodesOpen.poll();
             currentNode.counterVisited = ++totalNodesVisited;
             debugNodesNotVisited.remove(currentNode);
             debugNodesVisited.add(currentNode);
@@ -88,6 +100,14 @@ public class PathJob implements Runnable
 
             //  TODO: is currentNode the end result?
             MineColonies.logger.info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f", currentNode.x, currentNode.y, currentNode.z, currentNode.cost, currentNode.score));
+
+            //  If this is the closest node to our destination, treat it as our best node
+            double currentNodeDestinationDistanceSqrd = ChunkCoordUtils.distanceSqrd(destination, currentNode.x, currentNode.y, currentNode.z);
+            if (currentNodeDestinationDistanceSqrd < bestNodeDestinationDistanceSqrd)
+            {
+                bestNode = currentNode;
+                bestNodeDestinationDistanceSqrd = currentNodeDestinationDistanceSqrd;
+            }
 
             //if (currentNode.score < 400)
             {
@@ -137,22 +157,26 @@ public class PathJob implements Runnable
 //                walk(currentNode, 1, 0, 0);     //  E
 //                walk(currentNode, 0, 0, 1);     //  S
 //                walk(currentNode, -1, 0, 0);    //  W
-//                walk(currentNode, 1, 0, -1);    //  NE
-//                walk(currentNode, 1, 0, 1);     //  SE
-//                walk(currentNode, -1, 0, 1);    //  SW
-//                walk(currentNode, -1, 0, -1);   //  NW
+//                if (allowDiagonalMovement)
+//                {
+//                    walk(currentNode, 1, 0, -1);    //  NE
+//                    walk(currentNode, 1, 0, 1);     //  SE
+//                    walk(currentNode, -1, 0, 1);    //  SW
+//                    walk(currentNode, -1, 0, -1);   //  NW
+//                }
 
                 if ((dz <= 0) && walk(currentNode, 0, 0, -1))   break;  //  N
                 if ((dx >= 0) && walk(currentNode, 1, 0, 0))    break;  //  E
                 if ((dz >= 0) && walk(currentNode, 0, 0, 1))    break;  //  S
                 if ((dx <= 0) && walk(currentNode, -1, 0, 0))   break;  //  W
-                if ((dx >= 0 || dz < 0) && walk(currentNode, 1, 0, -1))     break;  //  NE
-                if ((dx >= 0 || dz > 0) && walk(currentNode, 1, 0, 1))      break;  //  SE
-                if ((dx <= 0 || dz > 0) && walk(currentNode, -1, 0, 1))     break;  //  SW
-                if ((dx <= 0 || dz < 0) && walk(currentNode, -1, 0, -1))    break;  //  NW
+                if (allowDiagonalMovement)
+                {
+                    if ((dx >= 0 || dz < 0) && walk(currentNode, 1, 0, -1))     break;  //  NE
+                    if ((dx >= 0 || dz > 0) && walk(currentNode, 1, 0, 1))      break;  //  SE
+                    if ((dx <= 0 || dz > 0) && walk(currentNode, -1, 0, 1))     break;  //  SW
+                    if ((dx <= 0 || dz < 0) && walk(currentNode, -1, 0, -1))    break;  //  NW
+                }
             }
-
-            currentNode = nodesOpen.poll();
 
             if (true)
             {
@@ -163,8 +187,16 @@ public class PathJob implements Runnable
                     lastDebugNodesPath = new HashSet<Node>();
                 }
 
-                try { Thread.sleep(100); } catch (InterruptedException ex) {}
+                if (debugSleepMs != 0)
+                {
+                    try { Thread.sleep(debugSleepMs); } catch (InterruptedException ex) {}
+                }
             }
+        }
+
+        if (destinationNode == null)
+        {
+            destinationNode = bestNode;
         }
 
         if (destinationNode != null)
@@ -200,11 +232,21 @@ public class PathJob implements Runnable
     //  60 bit value encoding 26 bits each of (x,z) and 8 bits of y [the maximum reachable boundaries)
     //  in form: yxz
     //  Can probably can skip the addition, and only mask 15 bits worth (range of 32768 blocks)
-    protected static long computeNodeKey(int x, int y, int z)
+//    protected static long computeNodeKey(int x, int y, int z)
+//    {
+//        return ((((long)x + 30000000) & 0x3FFFFFF) << 26) |
+//                (((long)y & 0xFF) << 52) |
+//                (((long)z + 30000000) & 0x3FFFFFF);
+//    }
+
+    //  32 bit variant, encodes lowest 12 bits of x,z and all bits of y;
+    //  This creates unique keys for all blocks within a 4096x256x4096 cube, which is FAR more
+    //  than you should be pathfinding
+    protected static int computeNodeKey(int x, int y, int z)
     {
-        return ((((long)x + 30000000) & 0x3FFFFFF) << 26) |
-                (((long)y & 0xFF) << 52) |
-                (((long)z + 30000000) & 0x3FFFFFF);
+        return ((x & 0xFFF) << 20) |
+                ((y & 0xFF) << 12) |
+                (z & 0xFFF);
     }
 
     protected double computeCost(int dx, int dy, int dz)
@@ -226,15 +268,19 @@ public class PathJob implements Runnable
 
     protected double computeHeuristic(int x, int y, int z)
     {
-//        return Math.sqrt(ChunkCoordUtils.distanceSqrd(destination, x, y, z));   //  TODO
-        int dx = Math.abs(x - destination.posX);
-        int dy = Math.abs(y - destination.posY);
-        int dz = Math.abs(z - destination.posZ);
+        //  Method 2 - Minimum distance in steps
+        int dx = x - destination.posX;
+        int dy = y - destination.posY;
+        int dz = z - destination.posZ;
 
-        return (double)Math.max(dx, dz) +
-                ((double)Math.min(dx, dz) * 0.414D) +
-                (double)dy;
-//        return dx + dy + dz;
+        //  This gives the best results; we ignore dy because (excepting ladders) dy translation
+        // comes free with dx/dz movement.  Including Y component results in strange behavior
+        // that prefers roundabout paths that bring it closer in the Y but are less optimal
+        dx = (dx * dx);
+        dy = 0; //(dy * dy);
+        dz = (dz * dz);
+        return (dx + dy + dz) / 2;
+        //return Math.sqrt(dx + dy + dz);
     }
 
     protected boolean isAtDestination(Node n)
@@ -244,7 +290,7 @@ public class PathJob implements Runnable
 
     protected double getScoreCutoff()
     {
-        return 120D;
+        return 120D * 120D;
     }
 
     protected boolean walk(Node parent, int dx, int dy, int dz)
@@ -255,7 +301,7 @@ public class PathJob implements Runnable
 
         //  Cheap test to perform before doing a 'y' test
         //  Has this node been visited?
-        long nodeKey = computeNodeKey(x, y, z);
+        int nodeKey = computeNodeKey(x, y, z);
         Node node = nodesVisited.get(nodeKey);
         if (node != null && node.closed)
         {
@@ -266,7 +312,7 @@ public class PathJob implements Runnable
         //  Can we traverse into this node?  Fix the y up
         if (parent != null)
         {
-            int newY = getGroundHeight(x, y, z, parent.isLadder);
+            int newY = getGroundHeight(parent, x, y, z, !parent.isLadder, !parent.isLadder);
             if (newY < 0)
             {
                 return false;
@@ -306,7 +352,7 @@ public class PathJob implements Runnable
             return false;
         }
 
-        if (dy == 0 && dx != 0 && dz != 0)
+        if (dx != 0 && dz != 0)
         {
             //  In case of diagonal, BOTH common neighbor non-diagonal blocks must be at the same level
 
@@ -319,11 +365,10 @@ public class PathJob implements Runnable
 
             //  TODO - Verify this is actually testing the right blocks...
             //  ... so far it seems right
-            if (getGroundHeight(x - dx, y, z, parent.isLadder) != y ||
-                    getGroundHeight(x, y, z - dz, parent.isLadder) != y)
-            {
-                return false;
-            }
+            int cornerY = getGroundHeight(parent, x - dx, y, z, true, !parent.isLadder);
+            if (cornerY > y || cornerY == -1) return false;
+            cornerY = getGroundHeight(parent, x, y, z - dz, true, !parent.isLadder);
+            if (cornerY > y || cornerY == -1) return false;
         }
 
         if (node != null)
@@ -341,11 +386,12 @@ public class PathJob implements Runnable
 
             node.parent = parent;
             node.cost = cost;
+            node.heuristic = heuristic;
             node.score = score;
         }
         else
         {
-            node = new Node(parent, x, y, z, cost, score);
+            node = new Node(parent, x, y, z, cost, heuristic, score);
             nodesVisited.put(nodeKey, node);
             debugNodesNotVisited.add(node);
 
@@ -364,8 +410,10 @@ public class PathJob implements Runnable
         }
 
         //  Jump Point Search-ish optimization:
-        //  If this node was an improvement on our parent, lets go another step in the same direction...
-        if (Math.abs(parent.score - node.score) < 0.1)
+        // If this node was a (heuristic-based) improvement on our parent,
+        // lets go another step in the same direction...
+        if (allowJumpPointSearchTypeWalk &&
+                node.heuristic <= parent.heuristic)
         {
             if (walk(node, dx, dy, dz))
             {
@@ -384,7 +432,7 @@ public class PathJob implements Runnable
      * @param x,y,z coordinate of block
      * @return y height of first open, viable block above ground, or -1 if blocked or too far a drop
      */
-    protected int getGroundHeight(int x, int y, int z, boolean sameLevelOnly)
+    protected int getGroundHeight(Node parent, int x, int y, int z, boolean canDrop, boolean canJump)
     {
         Block b = world.getBlock(x, y + 1, z);
 
@@ -400,13 +448,20 @@ public class PathJob implements Runnable
         if (!isPassable(target, x, y, z))
         {
             //  Need to try jumping up one, if we can
-            if (sameLevelOnly || !isWalkableSurface(target, x, y, z))
+            if (!canJump || !isWalkableSurface(target, x, y, z))
             {
                 return -1;
             }
 
             //  Check for headroom in the target space
-            if (!isPassable(x, y + 2, z))
+            target = world.getBlock(x, y + 2, z);
+            if (!isPassable(target, x, y+2, z))
+            {
+                return -1;
+            }
+
+            //  Check for jump room from the origin space
+            if (world.getBlock(parent.x, parent.y + 2, parent.z).getMaterial() != Material.air)
             {
                 return -1;
             }
@@ -434,7 +489,7 @@ public class PathJob implements Runnable
         }
 
         //  Nothing to stand on
-        if (sameLevelOnly)
+        if (!canDrop)
         {
             return -1;
         }

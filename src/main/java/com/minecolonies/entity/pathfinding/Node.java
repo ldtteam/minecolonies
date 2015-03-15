@@ -4,10 +4,12 @@ public class Node implements Comparable<Node>
 {
     public Node parent;
     public final int x, y, z;
+    public final int hash;
 
     public int counterAdded;
     public int counterVisited;
     public double cost;     //  A* g value
+    public double heuristic;
     public double score;    //  A* f value (g + heuristic) value
 
     public boolean closed = false;
@@ -20,14 +22,16 @@ public class Node implements Comparable<Node>
      * @param cost
      * @param score
      */
-    public Node(Node parent, int x, int y, int z, double cost, double score)
+    public Node(Node parent, int x, int y, int z, double cost, double heuristic, double score)
     {
         this.parent = parent;
         this.x = x;
         this.y = y;
         this.z = z;
         this.cost = cost;
+        this.heuristic = heuristic;
         this.score = score;
+        this.hash = x ^ (z << 12 | z >> 20) ^ (y << 24);
     }
 
     /**
@@ -36,7 +40,7 @@ public class Node implements Comparable<Node>
      */
     public Node(int x, int y, int z)
     {
-        this(null, x, y, z, 0, 0);
+        this(null, x, y, z, 0, Double.MAX_VALUE, Double.MAX_VALUE);
     }
 
     @Override
@@ -68,6 +72,6 @@ public class Node implements Comparable<Node>
     @Override
     public int hashCode()
     {
-        return x ^ (z << 12 | z >> 20) ^ (y << 24);
+        return hash;
     }
 }
