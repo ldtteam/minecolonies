@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Miner Node Data Structure
  *
- *  When a node is completed we should add the surrounding nodes to the level as AVAILABLE
+ *  When a node is completed we should add the surrounding nodes to the startinglevel as AVAILABLE
  *      also note that we don't want node (0, -1) because there will be a ladder on the back
  *      wall of the initial node, and we cant put the connection through the ladder
  *
