@@ -6,7 +6,6 @@ public class BlockHutMiner extends BlockHut
     {
         super();
     }
-    boolean cleared;
 
     @Override
     public String getName()
