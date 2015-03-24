@@ -135,6 +135,20 @@ public class CitizenData
     }
 
     public BuildingWorker getWorkBuilding() { return workBuilding; }
+
+    public <BUILDING extends BuildingWorker> BUILDING getWorkBuilding(Class<BUILDING> type)
+    {
+        try
+        {
+            return type.cast(workBuilding);
+        }
+        catch (ClassCastException exc)
+        {
+        }
+
+        return null;
+    }
+
     public void setWorkBuilding(BuildingWorker building)
     {
         if (workBuilding != null && building != null && workBuilding != building)

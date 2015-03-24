@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChunkCoordinates;
 
 import java.util.List;
 
@@ -28,6 +29,14 @@ public class JobMiner extends Job
     private static final String TAG_FLOOR_BLOCK = "floorBlock";
     private static final String TAG_FENCE_BLOCK = "fenceBlock";
     private static final String TAG_STARTING_LEVEL = "startingLevel";
+
+    public ChunkCoordinates ladderLocation;
+    public ChunkCoordinates cobbleLocation;
+    public ChunkCoordinates getLocation;
+
+    public boolean foundLadder = false;
+    public boolean cleared = false;
+
 
     public JobMiner(CitizenData entity)
     {
