@@ -20,13 +20,13 @@ public class Level
     private int depth;
     private List<Node> nodes;
 
-    public Level(int depth)
+    public Level(int x, int depth, int z)
     {
-        this.depth = depth;
+         this.depth = depth;
         nodes = new ArrayList<Node>();
-        nodes.add(new Node(-4,0));
-        nodes.add(new Node(0,4));
-        nodes.add(new Node(4,0));
+        nodes.add(new Node(x-4,z));
+        nodes.add(new Node(x,z+4));
+        nodes.add(new Node(x+4,z+0));
 
     }
 
