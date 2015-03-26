@@ -13,12 +13,14 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.EntityAIGoHome;
 import com.minecolonies.entity.ai.EntityAISleep;
 import com.minecolonies.entity.ai.EntityAIWork;
+import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -32,10 +34,7 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -62,6 +61,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     protected Status status = Status.IDLE;
 
+    private boolean useNewNavigation = false;
+
     private static final int DATA_TEXTURE         = 13;
     private static final int DATA_LEVEL           = 14;
     private static final int DATA_IS_FEMALE       = 15;
@@ -81,10 +82,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         this.renderDistanceWeight = 2.0D;
 
+        useNewNavigation = true;
+        if (useNewNavigation)
+        {
+            ReflectionHelper.setPrivateValue(EntityLiving.class, this, new PathNavigate(this, world), new String[]{"navigator"});
+        }
+
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setCanSwim(true);
         this.getNavigator().setEnterDoors(true);
         this.getNavigator().setBreakDoors(true);
+
         initTasks();
     }
 
@@ -158,7 +166,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (job != null)
         {
             job.addTasks(this.tasks);
-            ChunkCoordUtils.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
+            if (ticksExisted > 0)
+            {
+                ChunkCoordUtils.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
+            }
         }
     }
 
@@ -432,7 +443,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         ChunkCoordinates homePosition = getHomePosition();
         return homePosition != null &&
-                homePosition.getDistanceSquared((int)posX, (int)posY, (int)posZ) <= 16;
+                homePosition.getDistanceSquared(MathHelper.floor_double(posX), (int)posY, MathHelper.floor_double(posZ)) <= 16;
     }
 
     public BuildingWorker getWorkBuilding()

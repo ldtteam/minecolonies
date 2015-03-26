@@ -256,8 +256,8 @@ public class EventHandler
         double dz = n.z - entity.posZ;
         if (Math.sqrt(dx*dx + dy*dy + dz*dz) <= 5D)
         {
-            String s1 = String.format("F:%f [%d]", n.cost, n.counterAdded);
-            String s2 = String.format("G:%f [%d]", n.score, n.counterVisited);
+            String s1 = String.format("F: %.3f [%d]", n.cost, n.counterAdded);
+            String s2 = String.format("G: %.3f [%d]", n.score, n.counterVisited);
             FontRenderer fontrenderer = Minecraft.getMinecraft().fontRenderer;
             GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
             GL11.glPushMatrix();

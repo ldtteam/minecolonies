@@ -1,5 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
+import net.minecraft.pathfinding.PathEntity;
+
 import java.util.concurrent.*;
 
 public class Pathfinding
@@ -9,12 +11,12 @@ public class Pathfinding
 
     static
     {
-        executor = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, jobQueue);
+        executor = new ThreadPoolExecutor(1, 2, 10, TimeUnit.SECONDS, jobQueue);
     }
 
     @SuppressWarnings("unchecked")
-    public static Future<PathJob> enqueue(PathJob job)
+    public static Future<PathEntity> enqueue(PathJob job)
     {
-        return (Future<PathJob>)executor.submit(job);
+        return executor.submit(job);
     }
 }

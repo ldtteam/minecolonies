@@ -4,50 +4,53 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Blocks;
+import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 
-public class PathJob implements Runnable
+public class PathJob implements Callable<PathEntity>
 {
     //protected final int startX, startY, startZ;
 
     protected final ChunkCoordinates start, destination;
 
-    protected final PathPlanner  owner;
-    //protected final World       world;
+    protected final EntityLiving owner;
     protected final IBlockAccess world;
 
     //  Job rules/configuration
-    protected boolean           allowDiagonalMovement = false;
-    protected boolean           allowJumpPointSearchTypeWalk = false;
+    protected boolean allowDiagonalMovement        = false;
+    protected boolean allowJumpPointSearchTypeWalk = false;
 
-    protected final Queue<Node>     nodesOpen    = new PriorityQueue<Node>(500);
+    protected final Queue<Node>        nodesOpen    = new PriorityQueue<Node>(500);
     protected final Map<Integer, Node> nodesVisited = new HashMap<Integer, Node>();
-    protected Node                  destinationNode;
+    protected Node destinationNode;
 
-    protected int totalNodesAdded = 0;
+    protected int totalNodesAdded   = 0;
     protected int totalNodesVisited = 0;
 
 //    static public Set<Node>    debugNodesVisited = Collections.synchronizedSet(new HashSet<Node>());
 //    static public Set<Node>    debugNodesNotVisited = Collections.synchronizedSet(new HashSet<Node>());
 //    static public Set<Node>    debugNodesPath = Collections.synchronizedSet(new HashSet<Node>());
 
-    protected int          debugSleepMs = 25;
-    protected Set<Node>    debugNodesVisited = new HashSet<Node>();
-    protected Set<Node>    debugNodesNotVisited = new HashSet<Node>();
-    protected Set<Node>    debugNodesPath = new HashSet<Node>();
+    protected int       debugSleepMs         = 25;
+    protected Set<Node> debugNodesVisited    = new HashSet<Node>();
+    protected Set<Node> debugNodesNotVisited = new HashSet<Node>();
+    protected Set<Node> debugNodesPath       = new HashSet<Node>();
 
     static public Long debugNodeMonitor = new Long(1);
-    static public Set<Node>    lastDebugNodesVisited;
-    static public Set<Node>    lastDebugNodesNotVisited;
-    static public Set<Node>    lastDebugNodesPath;
+    static public Set<Node> lastDebugNodesVisited;
+    static public Set<Node> lastDebugNodesNotVisited;
+    static public Set<Node> lastDebugNodesPath;
 
-    public PathJob(PathPlanner owner, World world, ChunkCoordinates start, ChunkCoordinates end)
+    public PathJob(EntityLiving owner, World world, ChunkCoordinates start, ChunkCoordinates end)
     {
 //        startX = start.posX;
 //        startY = start.posY;
@@ -65,11 +68,11 @@ public class PathJob implements Runnable
         this.world = new ChunkCache(world, minX, 0, minZ, maxX, 256, maxZ, 20);
 
         allowDiagonalMovement = false;
-        allowJumpPointSearchTypeWalk = false;
+        allowJumpPointSearchTypeWalk = true;
     }
 
     @Override
-    public void run()
+    public PathEntity call()
     {
         debugNodesVisited.clear();
         debugNodesNotVisited.clear();
@@ -80,6 +83,12 @@ public class PathJob implements Runnable
 //        double heuristic = Math.sqrt(ChunkCoordUtils.distanceSqrd(start, destination));   //  TODO
         Node startNode = new Node(start.posX, start.posY, start.posZ);
         startNode.score = computeHeuristic(startNode.x, startNode.y, startNode.z);
+
+        if (isLadder(start.posX, start.posY, start.posZ))
+        {
+            startNode.isLadder = true;
+        }
+
         nodesOpen.offer(startNode);
         //nodesVisited.put(computeNodeKey(start.posX, start.posY, start.posZ), startNode);
 
@@ -187,10 +196,10 @@ public class PathJob implements Runnable
                     lastDebugNodesPath = new HashSet<Node>();
                 }
 
-                if (debugSleepMs != 0)
-                {
-                    try { Thread.sleep(debugSleepMs); } catch (InterruptedException ex) {}
-                }
+//                if (debugSleepMs != 0)
+//                {
+//                    try { Thread.sleep(debugSleepMs); } catch (InterruptedException ex) {}
+//                }
             }
         }
 
@@ -199,27 +208,7 @@ public class PathJob implements Runnable
             destinationNode = bestNode;
         }
 
-        if (destinationNode != null)
-        {
-            MineColonies.logger.info("Path found!");
-            List<Node> path = new ArrayList<Node>();
-            Node backtrace = destinationNode;
-            while (backtrace != null)
-            {
-                path.add(backtrace);
-                backtrace = backtrace.parent;
-            }
-            Collections.reverse(path);
-
-            for (Node n : path)
-            {
-                MineColonies.logger.info(String.format("Step: [%d,%d,%d]", n.x, n.y, n.z));
-                debugNodesVisited.remove(n);
-                debugNodesPath.add(n);
-            }
-
-            MineColonies.logger.info(String.format("Total Nodes Added: %d    Visited: %d", totalNodesAdded, totalNodesVisited));
-        }
+        PathEntity path = finalizePath();
 
         synchronized (debugNodeMonitor)
         {
@@ -227,6 +216,104 @@ public class PathJob implements Runnable
             lastDebugNodesVisited = debugNodesVisited;
             lastDebugNodesPath = debugNodesPath;
         }
+
+        return path;
+    }
+
+    PathEntity finalizePath()
+    {
+        MineColonies.logger.info("Path found!");
+
+        //  Trim Path
+        //  Simple implementation which removes intermediate nodes in a straight line
+        //  Doing this prohibits use of the 'straight line' movement
+//        int dx = 0, dy = 0, dz = 0;
+//        Node backtrace = destinationNode;
+//        Node last = null;
+//        while (backtrace != null)
+//        {
+//            Node prev = backtrace;
+//            backtrace = backtrace.parent;
+//
+//            if (backtrace != null)
+//            {
+//                int bdx = prev.x - backtrace.x;
+//                int bdy = prev.y - backtrace.y;
+//                int bdz = prev.z - backtrace.z;
+//
+////                bdx = (bdx < 0) ? -1 : ((bdx > 0) ? 1 : 0);
+////                bdy = (bdy < 0) ? -1 : ((bdy > 0) ? 1 : 0);
+////                bdz = (bdz < 0) ? -1 : ((bdz > 0) ? 1 : 0);
+//
+//                if (bdx != dx || bdy != dy || bdz != dz)
+//                {
+//                    //  Change in direction
+////                    last.parent = prev;
+//                    last = prev;
+//                    dx = bdx;
+//                    dy = bdy;
+//                    dz = bdz;
+//                }
+//                else
+//                {
+//                    last.parent = backtrace;
+//                }
+//            }
+//        }
+
+        int pathLength = 0;
+        Node backtrace = destinationNode;
+        while (backtrace != null)
+        {
+            ++pathLength;
+            backtrace = backtrace.parent;
+        }
+
+        PathPoint points[] = new PathPoint[pathLength];
+
+        Node prev = null;
+        backtrace = destinationNode;
+        while (backtrace != null)
+        {
+            debugNodesVisited.remove(backtrace);
+            debugNodesPath.add(backtrace);
+
+            --pathLength;
+
+            int x = backtrace.x;
+            int y = backtrace.y;
+            int z = backtrace.z;
+
+            //  Climbing a ladder?
+            if (backtrace.parent != null && backtrace.parent.isLadder &&
+                    (backtrace.parent.x == x && backtrace.parent.z == z) &&
+                    y > backtrace.parent.y)
+            {
+                int face = world.getBlockMetadata(x, y, z);
+
+                switch (face)
+                {
+                    case 2: z += 1; break;
+                    case 3: z -= 1; break;
+                    case 4: x += 1; break;
+                    case 5: x -= 1; break;
+                }
+            }
+
+            points[pathLength] = new PathPoint(x, y, z);
+
+            prev = backtrace;
+            backtrace = backtrace.parent;
+        }
+
+        for (PathPoint p : points)
+        {
+            MineColonies.logger.info(String.format("Step: [%d,%d,%d]", p.xCoord, p.yCoord, p.zCoord));
+        }
+
+        MineColonies.logger.info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
+
+        return new PathEntity(points);
     }
 
     //  60 bit value encoding 26 bits each of (x,z) and 8 bits of y [the maximum reachable boundaries)
@@ -334,13 +421,11 @@ public class PathJob implements Runnable
 
         //  Cost may have changed due to a jump up or drop
         double stepCost = computeCost(dx, dy, dz);
-//        if (parent != null &&
-//                dy == 0 &&
-//                y > parent.y)
-//        {
-//            //  Tax the cost for jumping up one (warning: also taxes stairs)
-//            stepCost *= 1.25D;
-//        }
+        if (y != parent.y && (dx != 0 || dz != 0))
+        {
+            //  Tax the cost for jumping or dropping (warning: also taxes stairs)
+            stepCost += 0.1D;
+        }
 
         double heuristic = computeHeuristic(x, y, z);
         double cost = parent.cost + stepCost;
@@ -658,6 +743,7 @@ public class PathJob implements Runnable
     {
         return isPassable(world.getBlock(x, y, z), x, y, z);
     }
+
 
     protected boolean isPassable(Block block, int x, int y, int z)
     {
