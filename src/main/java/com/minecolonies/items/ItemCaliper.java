@@ -32,15 +32,10 @@ public class ItemCaliper extends ItemMinecolonies
     {
         if(world.isRemote) return false;
 
-        IAttributeInstance attribute = null;
-        if(entityPlayer.getAttributeMap().getAllAttributes().contains(ATTRIBUTE_CALIPER_USE))
-        {
-            attribute = entityPlayer.getEntityAttribute(ATTRIBUTE_CALIPER_USE);
-        }
+        IAttributeInstance attribute = entityPlayer.getEntityAttribute(ATTRIBUTE_CALIPER_USE);
         if(attribute == null)
         {
-            entityPlayer.getAttributeMap().registerAttribute(ATTRIBUTE_CALIPER_USE);
-            attribute = entityPlayer.getEntityAttribute(ATTRIBUTE_CALIPER_USE);
+            attribute = entityPlayer.getAttributeMap().registerAttribute(ATTRIBUTE_CALIPER_USE);
         }
         if(attribute.getAttributeValue() == 0)
         {
