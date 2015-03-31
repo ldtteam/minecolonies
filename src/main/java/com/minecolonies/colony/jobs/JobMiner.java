@@ -3,6 +3,7 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.EntityAIWorkMiner;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
@@ -35,12 +36,6 @@ public class JobMiner extends Job
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-
-        //TODO save levels, and active node
-
-//NOTE .getUnlocalizedName isn't the right string
-//        compound.setString(TAG_FLOOR_BLOCK, floorBlock.getUnlocalizedName());
-//        compound.setString(TAG_FENCE_BLOCK, fenceBlock.getUnlocalizedName());
         compound.setString(TAG_STAGE, stage.name());
     }
 
@@ -48,16 +43,6 @@ public class JobMiner extends Job
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-
-        //TODO load levels, and active node
-//        if(compound.hasKey(TAG_FLOOR_BLOCK))
-//        {
-//            floorBlock = Block.getBlockFromName(compound.getString(TAG_FLOOR_BLOCK));
-//        }
-//        if(compound.hasKey(TAG_FENCE_BLOCK))
-//        {
-//            fenceBlock = Block.getBlockFromName(compound.getString(TAG_FENCE_BLOCK));
-//        }
         stage = EntityAIWorkMiner.Stage.valueOf(compound.getString(TAG_STAGE));
     }
 

@@ -25,8 +25,10 @@ public class Node
      * This is a list containing the id's of nodes that are adjacent to the current node
      * and have a completed/built connection between them
      */
-    private List<Point> connections;
+    private List<Node> connections;
     private Status status;
+    private int vectorX;
+    private int vectorZ;
 
     /**
      * Sets the status of the node
@@ -43,16 +45,18 @@ public class Node
         COMPLETED
     }
 
-    public Node(int x, int y)
+    public Node(int x, int y,int vectorX, int vectorZ)
     {
-        this(new Point(x, y));
+        this(new Point(x, y),vectorX,vectorZ);
     }
 
-    public Node(Point id)
+    public Node(Point id, int vectorX, int vectorZ)
     {
         this.id = id;
-        connections = new ArrayList<Point>();
+        connections = new ArrayList<Node>();
         status = Status.AVAILABLE;
+        this.vectorX = vectorX;
+        this.vectorZ = vectorZ;
     }
 
     public Point getID()
@@ -60,12 +64,12 @@ public class Node
         return id;
     }
 
-    public List<Point> getConnections()
+    public List<Node> getConnections()
     {
         return connections;
     }
 
-    public void addConnection(Point node)
+    public void addConnection(Node node)
     {
         connections.add(node);
     }
@@ -78,5 +82,26 @@ public class Node
     public void setStatus(Status status)
     {
         this.status = status;
+    }
+
+
+    public int getVectorZ()
+    {
+        return vectorZ;
+    }
+
+    public void setVectorZ(int vectorZ)
+    {
+        this.vectorZ = vectorZ;
+    }
+
+    public int getVectorX()
+    {
+        return vectorX;
+    }
+
+    public void setVectorX(int vectorX)
+    {
+        this.vectorZ = vectorX;
     }
 }
