@@ -163,35 +163,134 @@ public class Schematic
     {
         if(!this.hasSchematic()) return false;
 
-        if(x == -1)
+        int count = 0;
+
+        do
         {
-            y = z = 0;
+            count++;
+            if(!incrementBlock())
+            {
+                return false;
+            }
+
         }
+        while(doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+
+        return true;
+    }
+
+    public boolean findNextBlockWorldNonAir()
+    {
+        if(!this.hasSchematic()) return false;
 
         int count = 0;
 
         do
         {
             count++;
-
-            x++;
-            if(x == schematic.getWidth())
+            if(!decrementBlock())
             {
-                x = 0;
-                z++;
-                if(z == schematic.getLength())
+                return false;
+            }
+
+        }
+        while(worldBlockAir() && count < Configurations.maxBlocksCheckedByBuilder);
+
+        return true;
+    }
+
+    public boolean findNextBlockSolid()
+    {
+        if(!this.hasSchematic()) return false;
+
+        int count = 0;
+
+        do
+        {
+            count++;
+            if(!incrementBlock())
+            {
+                return false;
+            }
+
+        }
+        while(!schematic.getBlock(x, y, z).getMaterial().isSolid() && doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+
+        return true;
+    }
+
+    public boolean findNextBlockNonSolid()
+    {
+        if(!this.hasSchematic()) return false;
+
+        int count = 0;
+
+        do
+        {
+            count++;
+            if(!incrementBlock())
+            {
+                return false;
+            }
+
+        }
+        while(schematic.getBlock(x, y, z).getMaterial().isSolid() && doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+
+        return true;
+    }
+
+    public boolean incrementBlock()
+    {
+        if(x == -1)
+        {
+            y = z = 0;
+        }
+
+        x++;
+        if(x == schematic.getWidth())
+        {
+            x = 0;
+            z++;
+            if(z == schematic.getLength())
+            {
+                z = 0;
+                y++;
+                if(y == schematic.getHeight())
                 {
-                    z = 0;
-                    y++;
-                    if(y == schematic.getHeight())
-                    {
-                        x = y = z = -1;
-                        return false;
-                    }
+                    x = y = z = -1;
+                    return false;
                 }
             }
         }
-        while(doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+
+        return true;
+    }
+
+    public boolean decrementBlock()
+    {
+        if(x == -1 && y == -1 && z == -1)
+        {
+            x = schematic.getWidth();
+            y = schematic.getHeight()-1;
+            z = schematic.getLength()-1;
+        }
+
+        x--;
+        if(x == -1)
+        {
+            x = schematic.getWidth()-1;
+            z--;
+            if(z == -1)
+            {
+                z = schematic.getLength()-1;
+                y--;
+                if(y == -1)
+                {
+                    x = y = z = -1;
+                    return false;
+                }
+            }
+        }
 
         return true;
     }
@@ -204,6 +303,16 @@ public class Schematic
             return true;
         }
         return schematic.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematic.getBlockMetadata(x, y, z) == ChunkCoordUtils.getBlockMetadata(world, pos);
+    }
+
+    public boolean worldBlockAir()
+    {
+        ChunkCoordinates pos = this.getBlockPosition();
+        if(pos.posY <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
+        {
+            return true;
+        }
+        return world.isAirBlock(pos.posX, pos.posY, pos.posZ);
     }
 
     public static String saveSchematic(World world, ChunkCoordinates from, ChunkCoordinates to)
@@ -501,6 +610,13 @@ public class Schematic
     public List<Entity> getEntities()
     {
         return schematic.loadedEntityList;
+    }
+
+    public void reset()
+    {
+        x = -1;
+        y = -1;
+        z = -1;
     }
 
     //TODO rendering

@@ -2,7 +2,6 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.workorders.WorkOrder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -13,17 +12,20 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class JobBuilder extends Job
 {
+    //TODO save some of this in building
     protected int              workOrderId;
     protected Schematic        schematic;
     protected String           schematicName;
     protected ChunkCoordinates schematicPos;
     protected ChunkCoordinates schematicProgress;
+    public    Stage stage;
 
     private static final String TAG_WORK_ORDER = "workorder";
     private static final String TAG_SCHEMATIC  = "schematic";
     private static final String TAG_NAME       = "name";
     private static final String TAG_POSITION   = "position";
     private static final String TAG_PROGRESS   = "progress";
+    private static final String TAG_STAGE      = "stage";
 
     public JobBuilder(CitizenData entity)
     {
@@ -57,6 +59,7 @@ public class JobBuilder extends Job
                 ChunkCoordUtils.writeToNBT(schematicTag, TAG_POSITION, schematic.getPosition());
                 ChunkCoordUtils.writeToNBT(schematicTag, TAG_PROGRESS, schematic.getLocalPosition());
                 compound.setTag(TAG_SCHEMATIC, schematicTag);
+                compound.setString(TAG_STAGE, stage.name());
             }
         }
     }
@@ -75,6 +78,7 @@ public class JobBuilder extends Job
                 schematicName = schematicTag.getString(TAG_NAME);
                 schematicPos = ChunkCoordUtils.readFromNBT(schematicTag, TAG_POSITION);
                 schematicProgress = ChunkCoordUtils.readFromNBT(schematicTag, TAG_PROGRESS);
+                stage = Stage.valueOf(compound.getString(TAG_STAGE));
             }
         }
     }
@@ -178,5 +182,14 @@ public class JobBuilder extends Job
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
         setSchematic(null);
+    }
+
+    public enum Stage
+    {
+        CLEAR,
+        REQUEST_MATERIALS,
+        STRUCTURE,
+        DECORATIONS,
+        ENTITIES
     }
 }
