@@ -1,5 +1,6 @@
 package com.minecolonies.entity.ai;
 
+import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.util.Point;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class Node
      * This is a list containing the id's of nodes that are adjacent to the current node
      * and have a completed/built connection between them
      */
-    private List<Node> connections;
+//    private List<Node> connections;
     private Status status;
     private int vectorX;
     private int vectorZ;
@@ -45,18 +46,50 @@ public class Node
         COMPLETED
     }
 
+    private static final String TAG_ID_X = "idX";
+    private static final String TAG_ID_Y = "idY";
+//    private static final String TAG_CONNECTIONS = "Connections";
+    private static final String TAG_STATUS = "Status";
+    private static final String TAG_VECTOR_X = "vectorX";
+    private static final String TAG_VECTOR_Z = "vectorZ";
+
     public Node(int x, int y,int vectorX, int vectorZ)
     {
-        this(new Point(x, y),vectorX,vectorZ);
+        this(new Point(x, y), vectorX, vectorZ);
     }
 
     public Node(Point id, int vectorX, int vectorZ)
     {
         this.id = id;
-        connections = new ArrayList<Node>();
+//        connections = new ArrayList<Node>();
         status = Status.AVAILABLE;
         this.vectorX = vectorX;
         this.vectorZ = vectorZ;
+    }
+
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        //NOTE: connections would be saved by ID
+        compound.setInteger(TAG_ID_X, id.getX());
+        compound.setInteger(TAG_ID_Y, id.getY());
+
+        compound.setString(TAG_STATUS, status.name());
+
+        compound.setInteger(TAG_VECTOR_X, vectorX);
+        compound.setInteger(TAG_VECTOR_Z, vectorZ);
+    }
+
+    public static Node createFromNBT(NBTTagCompound compound)
+    {
+        Point id = new Point(compound.getInteger(TAG_ID_X), compound.getInteger(TAG_ID_Y));
+        Status status = Status.valueOf(compound.getString(TAG_STATUS));
+        int vectorX = compound.getInteger(TAG_VECTOR_X);
+        int vectorZ = compound.getInteger(TAG_VECTOR_Z);
+
+        Node node = new Node(id, vectorX, vectorZ);
+        node.status = status;
+
+        return node;
     }
 
     public Point getID()
@@ -64,15 +97,15 @@ public class Node
         return id;
     }
 
-    public List<Node> getConnections()
-    {
-        return connections;
-    }
-
-    public void addConnection(Node node)
-    {
-        connections.add(node);
-    }
+//    public List<Node> getConnections()
+//    {
+//        return connections;
+//    }
+//
+//    public void addConnection(Node node)
+//    {
+//        connections.add(node);
+//    }
 
     public Status getStatus()
     {
