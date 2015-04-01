@@ -49,7 +49,7 @@ public class BuildingMiner extends BuildingWorker {
     private static final String TAG_LEVELS = "levels";
     private static final String TAG_NODE = "nodes";
     private static final String TAG_CLEARED = "clearedShaft";
-    private static final String TAG_LOCATION = "location";
+    private static final String TAG_GET_LOCATION = "getLocation";
     private static final String TAG_LLOCATION = "ladderlocation";
     private static final String TAG_SLOCATION = "shaftLocation";
     private static final String TAG_LADDER = "found_ladder";
@@ -107,7 +107,7 @@ public class BuildingMiner extends BuildingWorker {
         {
             ChunkCoordUtils.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
             ChunkCoordUtils.writeToNBT(compound, TAG_SLOCATION, shaftStart);
-            ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, getLocation);
+            ChunkCoordUtils.writeToNBT(compound, TAG_GET_LOCATION, getLocation);
         }
 
         if(levels != null)
@@ -135,7 +135,7 @@ public class BuildingMiner extends BuildingWorker {
         clearedShaft = compound.getBoolean(TAG_CLEARED);
         foundLadder = compound.getBoolean(TAG_LADDER);
 
-        getLocation = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
+        getLocation = ChunkCoordUtils.readFromNBT(compound, TAG_GET_LOCATION);
         ladderLocation = ChunkCoordUtils.readFromNBT(compound, TAG_LLOCATION);
         shaftStart = ChunkCoordUtils.readFromNBT(compound, TAG_SLOCATION);
 
