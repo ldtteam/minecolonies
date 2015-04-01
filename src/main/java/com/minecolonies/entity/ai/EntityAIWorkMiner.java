@@ -226,6 +226,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private void mineNode(BuildingMiner b)
     {
         Level level = b.levels.get(0);
+        int depth = level.getDepth();
+
 
         if(b.activeNode == null || b.activeNode.getStatus() == Node.Status.COMPLETED)
         {
@@ -233,103 +235,93 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             int randomNum = (int)(Math.random() * b.levels.get(0).getNodes().size());
 
             Node node = level.getNodes().get(randomNum);
-            int depth = level.getDepth();
 
             if(node.getStatus() == Node.Status.AVAILABLE)
             {
                 loc  = new ChunkCoordinates(node.getID().getX(), depth, node.getID().getY());
                 b.activeNode = node;
-                node.setStatus(Node.Status.IN_PROGRESS);
+                b.active = randomNum;
+                b.activeNode.setStatus(Node.Status.IN_PROGRESS);
                 clearNode = 0;
+                b.startingLevelNode = 0;
             }
         }
         else if(b.activeNode.getStatus() == Node.Status.IN_PROGRESS && loc !=null)
         {
-            if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, loc))
+            if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, new ChunkCoordinates(loc.posX,loc.posY-1,loc.posZ)))
             {
                 Block block = ChunkCoordUtils.getBlock(world, loc);
                 int uVX = 0;
                 int uVZ = 0;
 
-                if(b.startingLevelNode == 4)
+                if(b.startingLevelNode == 5)
                 {
+                    level.getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
                     b.activeNode.setStatus(Node.Status.COMPLETED);
 
-                    level.addNewNode(b.activeNode.getID().getX() + plusX, b.activeNode.getID().getY() + plusZ, b.activeNode.getVectorX(), b.activeNode.getVectorZ());
+                    level.addNewNode(b.activeNode.getID().getX() + b.activeNode.getVectorX(), b.activeNode.getID().getY() + b.activeNode.getVectorZ(), b.activeNode.getVectorX(), b.activeNode.getVectorZ());
+
                     if(b.activeNode.getVectorX() == 0)
                     {
-                        level.addNewNode(b.activeNode.getID().getX()+2,b.activeNode.getID().getY()+plusZ-b.activeNode.getVectorZ(),b.activeNode.getVectorZ(),b.activeNode.getVectorX());
-                        level.addNewNode(b.activeNode.getID().getX()-2,b.activeNode.getID().getY()+plusZ-b.activeNode.getVectorZ(),b.activeNode.getVectorZ(),b.activeNode.getVectorX());
+                        level.addNewNode(b.activeNode.getID().getX()+2,b.activeNode.getID().getY()+4*b.activeNode.getVectorZ(),b.activeNode.getVectorZ(),b.activeNode.getVectorX());
+                        level.addNewNode(b.activeNode.getID().getX()-2,b.activeNode.getID().getY()+4*b.activeNode.getVectorZ(),b.activeNode.getVectorZ(),b.activeNode.getVectorX());
                     }
                     else
                     {
-                        level.addNewNode(b.activeNode.getID().getX()+plusX-b.activeNode.getVectorX(),b.activeNode.getID().getY()+2,b.activeNode.getVectorZ(),b.activeNode.getVectorX());
-                        level.addNewNode(b.activeNode.getID().getX()+plusX-b.activeNode.getVectorX(),b.activeNode.getID().getY()-2,b.activeNode.getVectorZ(),b.activeNode.getVectorX());
+                        level.addNewNode(b.activeNode.getID().getX()+4*b.activeNode.getVectorX(),b.activeNode.getID().getY()+2,b.activeNode.getVectorZ(),b.activeNode.getVectorX());
+                        level.addNewNode(b.activeNode.getID().getX()+4*b.activeNode.getVectorX(),b.activeNode.getID().getY()-2,b.activeNode.getVectorZ(),b.activeNode.getVectorX());
                     }
 
 
                 }
+                else {
 
+                    delay = getDelay(block) + 10;
 
-                delay = getDelay(block)+10;
+                    if (b.activeNode.getVectorX() == 0) {
+                        uVX = 1;
+                    } else {
+                        uVZ = 1;
+                    }
 
-                if(b.activeNode.getVectorX() == 0)
-                {
-                    uVX = 1;
+                    //TODO Check Mine above, check for close ores
+                    switch (clearNode) {
+
+                        case 0:
+                            doMining(block, loc.posX + plusX, loc.posY + 1, loc.posZ + plusZ);
+                        case 1:
+                            doMining(block, loc.posX - uVX + plusX, loc.posY + 1, loc.posZ - uVZ + plusZ);
+                            break;
+                        case 2:
+                            doMining(block, loc.posX + uVX + plusX, loc.posY + 1, loc.posZ + uVZ + plusZ);
+                            break;
+                        case 3:
+                            doMining(block, loc.posX + uVX + plusX, loc.posY, loc.posZ + uVZ + plusZ);
+                            break;
+                        case 4:
+                            doMining(block, loc.posX + plusX, loc.posY, loc.posZ + plusZ);
+                            break;
+                        case 5:
+                            doMining(block, loc.posX - uVX + plusX, loc.posY, loc.posZ - uVZ + plusZ);
+                            break;
+                        case 6:
+                            doMining(block, loc.posX - uVX + plusX, loc.posY - 1, loc.posZ - uVZ + plusZ);
+                            break;
+                        case 7:
+                            doMining(block, loc.posX + plusX, loc.posY - 1, loc.posZ + plusZ);
+                            break;
+                        case 8:
+                            doMining(block, loc.posX + uVX + plusX, loc.posY - 1, loc.posZ + uVZ + plusZ);
+                            break;
+                        case 9:
+                            b.startingLevelNode += 1;
+                            loc.set(loc.posX + b.activeNode.getVectorX(), loc.posY, loc.posZ + b.activeNode.getVectorZ());
+
+                            clearNode = -1;
+                            break;
+                    }
+                    clearNode += 1;
                 }
-                else
-                {
-                    uVZ = 1;
-                }
-
-
-                switch(clearNode)
-                {
-                    case 0:
-                        doMining(block, loc.posX+plusX, loc.posY+1, loc.posZ+plusZ);
-                        loc.set(loc.posX-uVX+plusX, loc.posY+1, loc.posZ-uVZ+plusZ);
-                    case 1:
-                        doMining(block, loc.posX-uVX+plusX, loc.posY+1, loc.posZ-uVZ+plusZ);
-                        loc.set(loc.posX+uVX+plusX, loc.posY+1, loc.posZ+uVZ+plusZ);
-                        break;
-                    case 2:
-                        doMining(block, loc.posX+uVX+plusX, loc.posY+1, loc.posZ+uVZ+plusZ);
-                        loc.set(loc.posX+uVX+plusX, loc.posY, loc.posZ+uVZ+plusZ);
-                        break;
-                    case 3:
-                        doMining(block, loc.posX+uVX+plusX, loc.posY, loc.posZ+uVZ+plusZ);
-                        loc.set(loc.posX+plusX, loc.posY, loc.posZ+plusZ);
-                        break;
-                    case 4:
-                        doMining(block, loc.posX+plusX, loc.posY, loc.posZ+plusZ);
-                        loc.set(loc.posX-uVX+plusX, loc.posY, loc.posZ-uVZ+plusZ);
-                        break;
-                    case 5:
-                        doMining(block, loc.posX-uVX+plusX, loc.posY, loc.posZ-uVZ+plusZ);
-                        loc.set(loc.posX-uVX+plusX, loc.posY-1, loc.posZ-uVZ+plusZ);
-                        break;
-                    case 6:
-                        doMining(block, loc.posX-uVX+plusX, loc.posY-1, loc.posZ-uVZ+plusZ);
-                        loc.set(loc.posX+plusX, loc.posY-1, loc.posZ+plusZ);
-                        break;
-                    case 7:
-                        doMining(block, loc.posX+plusX, loc.posY-1, loc.posZ+plusZ);
-                        loc.set(loc.posX+uVX+plusX, loc.posY-1, loc.posZ+uVZ+plusZ);
-                        break;
-                    case 8:
-                        doMining(block, loc.posX+uVX+plusX, loc.posY-1, loc.posZ+uVZ+plusZ);
-                        loc.set(loc.posX-uVX+plusX+b.activeNode.getVectorX(), loc.posY+1, loc.posZ-uVZ+plusZ+b.activeNode.getVectorZ());
-                        break;
-                    case 9:
-                        plusX += b.activeNode.getVectorX();
-                        plusZ += b.activeNode.getVectorZ();
-                        b.startingLevelNode +=1;
-
-                        clearNode = -1;
-                        break;
-
-                }
-                clearNode += 1;
             }
         }
 
@@ -932,6 +924,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         //Save Node
                         //(x-4, y+1, z) (x, y+1, Z+4) and (x+4, y+1, z) or (x,y+1,z-1) in case of rotation -> check ladder
 
+
                         if(b.levels == null)
                         {
                             b.levels = new ArrayList<Level>();
@@ -1349,7 +1342,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             ItemStack stack = worker.getInventory().getStackInSlot(slot);
 
-            if (stack != null && stack.getItem() instanceof Item)
+            if (stack != null && stack.getItem() != null)
             {
                 Item content = stack.getItem();
                 if(content.equals(item))
