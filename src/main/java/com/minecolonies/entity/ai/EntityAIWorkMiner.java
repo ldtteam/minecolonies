@@ -932,10 +932,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         //Save Node
                         //(x-4, y+1, z) (x, y+1, Z+4) and (x+4, y+1, z) or (x,y+1,z-1) in case of rotation -> check ladder
 
-                        if(b.levels == null)
-                        {
-                            b.levels = new ArrayList<Level>();
-                        }
                         if (vektorX == 0)
                         {
                             b.levels.add(new Level(b.shaftStart.posX,y + 5,b.shaftStart.posZ+3));
@@ -1349,7 +1345,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             ItemStack stack = worker.getInventory().getStackInSlot(slot);
 
-            if (stack != null && stack.getItem() instanceof Item)
+            if (stack != null && stack.getItem() != null)
             {
                 Item content = stack.getItem();
                 if(content.equals(item))
