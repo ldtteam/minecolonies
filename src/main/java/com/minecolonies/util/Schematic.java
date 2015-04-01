@@ -428,7 +428,7 @@ public class Schematic
 
     public ChunkCoordinates getOffsetPosition()
     {
-        return ChunkCoordUtils.subtract(getOffset(), position);//I know this seems backwards, minecraft's fault
+        return ChunkCoordUtils.subtract(position, getOffset());
     }
 
     public ChunkCoordinates getBlockPosition()

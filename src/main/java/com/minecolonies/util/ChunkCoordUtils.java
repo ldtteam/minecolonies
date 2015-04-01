@@ -150,11 +150,11 @@ public class ChunkCoordUtils
     }
 
     /**
-     * @return coordinates with the result of {@code coords2} minus {@code coords1}
+     * @return coordinates with the result of {@code coords1} minus {@code coords2}
      */
     public static ChunkCoordinates subtract(ChunkCoordinates coords1, ChunkCoordinates coords2)
     {
-        return new ChunkCoordinates(coords2.posX - coords1.posX, coords2.posY - coords1.posY, coords2.posZ - coords1.posZ);
+        return new ChunkCoordinates(coords1.posX - coords2.posX, coords1.posY - coords2.posY, coords1.posZ - coords2.posZ);
     }
 
     /**
