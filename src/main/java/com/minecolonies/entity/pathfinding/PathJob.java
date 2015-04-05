@@ -6,7 +6,6 @@ import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.ChunkCoordinates;
@@ -278,6 +277,7 @@ public class PathJob implements Callable<PathEntity>
 
         PathPoint points[] = new PathPoint[pathLength];
 
+        Node nextInPath = null;
         backtrace = bestNode;
         while (backtrace != null)
         {
@@ -293,24 +293,28 @@ public class PathJob implements Callable<PathEntity>
             int y = backtrace.y;
             int z = backtrace.z;
 
-            //  Climbing a ladder?
-            if (backtrace.parent != null && backtrace.parent.isLadder &&
-                    (backtrace.parent.x == x && backtrace.parent.z == z) &&
-                    y > backtrace.parent.y)
-            {
-                int face = world.getBlockMetadata(x, y, z);
+            PathPointExtended p = new PathPointExtended(x, y, z);
 
-                switch (face)
+            //  Climbing on a ladder?
+            if (nextInPath != null && backtrace.isLadder &&
+                    (nextInPath.x == x && nextInPath.z == z))
+            {
+                p.isOnLadder = true;
+                if (nextInPath.y > y)
                 {
-                    case 2: z += 1; break;
-                    case 3: z -= 1; break;
-                    case 4: x += 1; break;
-                    case 5: x -= 1; break;
+                    //  We only care about facing if going up
+                    p.ladderFacing = world.getBlockMetadata(x, y, z);
                 }
             }
+            else if (backtrace.parent != null && backtrace.parent.isLadder &&
+                    (backtrace.parent.x == x && backtrace.parent.z == z))
+            {
+                p.isOnLadder = true;
+            }
 
-            points[pathLength] = new PathPoint(x, y, z);
+            points[pathLength] = p;
 
+            nextInPath = backtrace;
             backtrace = backtrace.parent;
         }
 

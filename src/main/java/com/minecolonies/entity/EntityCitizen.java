@@ -220,6 +220,24 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.onLivingUpdate();
     }
 
+    /**
+     * Entities treat being on ladders as not on ground; this breaks navigation logic
+     */
+    @Override
+    protected void updateFallState(double y, boolean onGround)
+    {
+        if (!onGround)
+        {
+            int px = MathHelper.floor_double(posX);
+            int py = (int)posY;
+            int pz = MathHelper.floor_double(posZ);
+
+            this.onGround = worldObj.getBlock(px, py, pz).isLadder(worldObj, px, py, pz, this);
+        }
+
+        super.updateFallState(y, this.onGround);
+    }
+
     private void updateColonyClient()
     {
         if (dataWatcher.hasChanges())

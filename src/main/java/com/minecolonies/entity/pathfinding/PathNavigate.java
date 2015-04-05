@@ -7,6 +7,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import java.util.concurrent.Future;
@@ -49,16 +50,19 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     @Override
     public boolean tryMoveToXYZ(double x, double y, double z, double speed)
     {
-        ChunkCoordinates newDestination = new ChunkCoordinates(MathHelper.floor_double(x), (int)y, MathHelper.floor_double(z));
+        int newX = MathHelper.floor_double(x);
+        int newY = (int)y;
+        int newZ = MathHelper.floor_double(y);
 
-        if (destination.equals(newDestination))
+        if (destination != null &&
+                destination.posX == newX &&
+                destination.posY == newY &&
+                destination.posZ == newZ)
         {
             return true;
         }
 
         clearPathEntity();
-
-        destination = newDestination;
 
         if (future != null)
         {
@@ -66,12 +70,11 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
             future = null;
         }
 
+        ChunkCoordinates start = new ChunkCoordinates(MathHelper.floor_double(theEntity.posX), (int)theEntity.posY, MathHelper.floor_double(theEntity.posZ));
+        destination = new ChunkCoordinates(MathHelper.floor_double(x), (int)y, MathHelper.floor_double(z));
         this.speed = speed;
 
-        future = Pathfinding.enqueue(
-                new PathJob(theEntity, worldObj,
-                        new ChunkCoordinates(MathHelper.floor_double(theEntity.posX), (int)theEntity.posY, MathHelper.floor_double(theEntity.posZ)),
-                        destination));
+        future = Pathfinding.enqueue(new PathJob(theEntity, worldObj, start, destination));
 
         return true;
     }
@@ -102,6 +105,45 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         }
 
         super.onUpdateNavigation();
+
+        //  Ladder Workaround
+        if (!this.noPath())
+        {
+            PathPointExtended pEx = (PathPointExtended)this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
+
+            if (pEx.isOnLadder)
+            {
+                Vec3 vec3 = this.getPath().getPosition(this.theEntity);
+
+                if (vec3.squareDistanceTo(theEntity.posX, vec3.yCoord, theEntity.posZ) < 0.1)
+                {
+                    double newSpeed = this.speed;
+
+                    switch (pEx.ladderFacing)
+                    {
+                        //  Any of these values is climbing, so adjust our direction of travel towards the ladder
+                        case 2:
+                            vec3.zCoord += 1;
+                            break;
+                        case 3:
+                            vec3.zCoord -= 1;
+                            break;
+                        case 4:
+                            vec3.xCoord += 1;
+                            break;
+                        case 5:
+                            vec3.xCoord -= 1;
+                            break;
+                        //  Any other value is going down, so lets not move at all
+                        default:
+                            newSpeed = 0;
+                            break;
+                    }
+
+                    this.theEntity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, newSpeed);
+                }
+            }
+        }
     }
 
     @Override
