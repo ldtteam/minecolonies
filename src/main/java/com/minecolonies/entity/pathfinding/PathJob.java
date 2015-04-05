@@ -1,6 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -18,8 +19,6 @@ import java.util.concurrent.Callable;
 
 public class PathJob implements Callable<PathEntity>
 {
-    //protected final int startX, startY, startZ;
-
     protected final ChunkCoordinates start, destination;
 
     protected final EntityLiving owner;
@@ -31,19 +30,17 @@ public class PathJob implements Callable<PathEntity>
 
     protected final Queue<Node>        nodesOpen    = new PriorityQueue<Node>(500);
     protected final Map<Integer, Node> nodesVisited = new HashMap<Integer, Node>();
-    protected Node destinationNode;
+    protected Node bestNode;
 
+    //  Debug Output
     protected int totalNodesAdded   = 0;
     protected int totalNodesVisited = 0;
 
-//    static public Set<Node>    debugNodesVisited = Collections.synchronizedSet(new HashSet<Node>());
-//    static public Set<Node>    debugNodesNotVisited = Collections.synchronizedSet(new HashSet<Node>());
-//    static public Set<Node>    debugNodesPath = Collections.synchronizedSet(new HashSet<Node>());
-
-    protected int       debugSleepMs         = 25;
-    protected Set<Node> debugNodesVisited    = new HashSet<Node>();
-    protected Set<Node> debugNodesNotVisited = new HashSet<Node>();
-    protected Set<Node> debugNodesPath       = new HashSet<Node>();
+    //  Debug Rendering
+    protected int       debugSleepMs         = 0;
+    protected Set<Node> debugNodesVisited    = null;
+    protected Set<Node> debugNodesNotVisited = null;
+    protected Set<Node> debugNodesPath       = null;
 
     static public Long debugNodeMonitor = new Long(1);
     static public Set<Node> lastDebugNodesVisited;
@@ -52,37 +49,39 @@ public class PathJob implements Callable<PathEntity>
 
     public PathJob(EntityLiving owner, World world, ChunkCoordinates start, ChunkCoordinates end)
     {
-//        startX = start.posX;
-//        startY = start.posY;
-//        startZ = start.posZ;
+        this.start = new ChunkCoordinates(start);
+        this.destination = new ChunkCoordinates(end);
 
         int minX = Math.min(start.posX, end.posX);
         int minZ = Math.min(start.posZ, end.posZ);
         int maxX = Math.max(start.posX, end.posX);
         int maxZ = Math.max(start.posZ, end.posZ);
 
-        this.start = start;
-        this.destination = end;
-
         this.owner = owner;
         this.world = new ChunkCache(world, minX, 0, minZ, maxX, 256, maxZ, 20);
 
         allowDiagonalMovement = false;
-        allowJumpPointSearchTypeWalk = true;
+        allowJumpPointSearchTypeWalk = false;
+
+        if (Configurations.pathfindingDebugDraw)
+        {
+            debugSleepMs         = 25;
+            debugNodesVisited    = new HashSet<Node>();
+            debugNodesNotVisited = new HashSet<Node>();
+            debugNodesPath       = new HashSet<Node>();
+        }
     }
 
     @Override
     public PathEntity call()
     {
-        debugNodesVisited.clear();
-        debugNodesNotVisited.clear();
-        debugNodesPath.clear();
+        if (Configurations.pathfindingDebugVerbosity > 0)
+        {
+            MineColonies.logger.info(String.format("Pathing from [%d,%d,%d] to [%d,%d,%d]", start.posX, start.posY, start.posZ, destination.posX, destination.posY, destination.posZ));
+        }
 
-        MineColonies.logger.info(String.format("Pathing from [%d,%d,%d] to [%d,%d,%d]",
-                start.posX, start.posY, start.posZ, destination.posX, destination.posY, destination.posZ));
-//        double heuristic = Math.sqrt(ChunkCoordUtils.distanceSqrd(start, destination));   //  TODO
-        Node startNode = new Node(start.posX, start.posY, start.posZ);
-        startNode.score = computeHeuristic(startNode.x, startNode.y, startNode.z);
+        Node startNode = new Node(start.posX, start.posY, start.posZ,
+                computeHeuristic(start.posX, start.posY, start.posZ));
 
         if (isLadder(start.posX, start.posY, start.posZ))
         {
@@ -90,25 +89,36 @@ public class PathJob implements Callable<PathEntity>
         }
 
         nodesOpen.offer(startNode);
-        //nodesVisited.put(computeNodeKey(start.posX, start.posY, start.posZ), startNode);
+        nodesVisited.put(computeNodeKey(start.posX, start.posY, start.posZ), startNode);
 
         ++totalNodesAdded;
 
-        Node bestNode = startNode;
+        bestNode = startNode;
         double bestNodeDestinationDistanceSqrd = Double.MAX_VALUE;
 
         int cutoff = 0;
         while (!nodesOpen.isEmpty())
         {
+            if (Thread.currentThread().isInterrupted())
+            {
+                return null;
+            }
+
             Node currentNode = nodesOpen.poll();
             currentNode.counterVisited = ++totalNodesVisited;
-            debugNodesNotVisited.remove(currentNode);
-            debugNodesVisited.add(currentNode);
+            if (Configurations.pathfindingDebugDraw)
+            {
+                debugNodesNotVisited.remove(currentNode);
+                debugNodesVisited.add(currentNode);
+            }
 
             currentNode.closed = true;
 
             //  TODO: is currentNode the end result?
-            MineColonies.logger.info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f", currentNode.x, currentNode.y, currentNode.z, currentNode.cost, currentNode.score));
+            if (Configurations.pathfindingDebugVerbosity == 2)
+            {
+                MineColonies.logger.info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f", currentNode.x, currentNode.y, currentNode.z, currentNode.cost, currentNode.score));
+            }
 
             //  If this is the closest node to our destination, treat it as our best node
             double currentNodeDestinationDistanceSqrd = ChunkCoordUtils.distanceSqrd(destination, currentNode.x, currentNode.y, currentNode.z);
@@ -187,34 +197,33 @@ public class PathJob implements Callable<PathEntity>
                 }
             }
 
-            if (true)
+            if (Configurations.pathfindingDebugDraw)
             {
                 synchronized (debugNodeMonitor)
                 {
                     lastDebugNodesNotVisited = new HashSet<Node>(debugNodesNotVisited);
                     lastDebugNodesVisited = new HashSet<Node>(debugNodesVisited);
-                    lastDebugNodesPath = new HashSet<Node>();
+                    lastDebugNodesPath = null;
                 }
 
-//                if (debugSleepMs != 0)
-//                {
-//                    try { Thread.sleep(debugSleepMs); } catch (InterruptedException ex) {}
-//                }
+                if (debugSleepMs != 0)
+                {
+                    try { Thread.sleep(debugSleepMs); }
+                    catch (InterruptedException ex) { return null;}
+                }
             }
-        }
-
-        if (destinationNode == null)
-        {
-            destinationNode = bestNode;
         }
 
         PathEntity path = finalizePath();
 
-        synchronized (debugNodeMonitor)
+        if (Configurations.pathfindingDebugDraw)
         {
-            lastDebugNodesNotVisited = debugNodesNotVisited;
-            lastDebugNodesVisited = debugNodesVisited;
-            lastDebugNodesPath = debugNodesPath;
+            synchronized (debugNodeMonitor)
+            {
+                lastDebugNodesNotVisited = debugNodesNotVisited;
+                lastDebugNodesVisited = debugNodesVisited;
+                lastDebugNodesPath = debugNodesPath;
+            }
         }
 
         return path;
@@ -222,8 +231,6 @@ public class PathJob implements Callable<PathEntity>
 
     PathEntity finalizePath()
     {
-        MineColonies.logger.info("Path found!");
-
         //  Trim Path
         //  Simple implementation which removes intermediate nodes in a straight line
         //  Doing this prohibits use of the 'straight line' movement
@@ -262,7 +269,7 @@ public class PathJob implements Callable<PathEntity>
 //        }
 
         int pathLength = 0;
-        Node backtrace = destinationNode;
+        Node backtrace = bestNode;
         while (backtrace != null)
         {
             ++pathLength;
@@ -271,12 +278,14 @@ public class PathJob implements Callable<PathEntity>
 
         PathPoint points[] = new PathPoint[pathLength];
 
-        Node prev = null;
-        backtrace = destinationNode;
+        backtrace = bestNode;
         while (backtrace != null)
         {
-            debugNodesVisited.remove(backtrace);
-            debugNodesPath.add(backtrace);
+            if (Configurations.pathfindingDebugDraw)
+            {
+                debugNodesVisited.remove(backtrace);
+                debugNodesPath.add(backtrace);
+            }
 
             --pathLength;
 
@@ -302,16 +311,20 @@ public class PathJob implements Callable<PathEntity>
 
             points[pathLength] = new PathPoint(x, y, z);
 
-            prev = backtrace;
             backtrace = backtrace.parent;
         }
 
-        for (PathPoint p : points)
+        if (Configurations.pathfindingDebugVerbosity > 0)
         {
-            MineColonies.logger.info(String.format("Step: [%d,%d,%d]", p.xCoord, p.yCoord, p.zCoord));
-        }
+            MineColonies.logger.info("Path found:");
 
-        MineColonies.logger.info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
+            for (PathPoint p : points)
+            {
+                MineColonies.logger.info(String.format("Step: [%d,%d,%d]", p.xCoord, p.yCoord, p.zCoord));
+            }
+
+            MineColonies.logger.info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
+        }
 
         return new PathEntity(points);
     }
@@ -478,7 +491,10 @@ public class PathJob implements Callable<PathEntity>
         {
             node = new Node(parent, x, y, z, cost, heuristic, score);
             nodesVisited.put(nodeKey, node);
-            debugNodesNotVisited.add(node);
+            if (Configurations.pathfindingDebugDraw)
+            {
+                debugNodesNotVisited.add(node);
+            }
 
             if (isLadder(x, y, z))
             {
@@ -490,7 +506,7 @@ public class PathJob implements Callable<PathEntity>
 
         if (isAtDestination(node))
         {
-            destinationNode = node;
+            bestNode = node;
             return true;
         }
 

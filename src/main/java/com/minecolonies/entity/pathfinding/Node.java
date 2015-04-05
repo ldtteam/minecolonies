@@ -38,9 +38,9 @@ public class Node implements Comparable<Node>
      * Create initial Node
      * @param x,y,z coordinate of node
      */
-    public Node(int x, int y, int z)
+    public Node(int x, int y, int z, double heuristic)
     {
-        this(null, x, y, z, 0, Double.MAX_VALUE, Double.MAX_VALUE);
+        this(null, x, y, z, 0, heuristic, heuristic);
     }
 
     @Override

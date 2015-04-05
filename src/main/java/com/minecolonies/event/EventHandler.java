@@ -408,9 +408,12 @@ public class EventHandler
                 drawNode(n, (byte) 0, (byte) 0, (byte) 255);
             }
 
-            for (Node n : debugNodesPath)
+            if (debugNodesPath != null)
             {
-                drawNode(n, (byte) 0, (byte) 255, (byte) 0);
+                for (Node n : debugNodesPath)
+                {
+                    drawNode(n, (byte) 0, (byte) 255, (byte) 0);
+                }
             }
         }
         catch (ConcurrentModificationException exc) {}

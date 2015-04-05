@@ -49,17 +49,20 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     @Override
     public boolean tryMoveToXYZ(double x, double y, double z, double speed)
     {
-        ChunkCoordinates oldDestination = destination;
-        destination = new ChunkCoordinates(MathHelper.floor_double(x), (int)y, MathHelper.floor_double(z));
+        ChunkCoordinates newDestination = new ChunkCoordinates(MathHelper.floor_double(x), (int)y, MathHelper.floor_double(z));
 
-        if (destination.equals(oldDestination))
+        if (destination.equals(newDestination))
         {
             return true;
         }
 
+        clearPathEntity();
+
+        destination = newDestination;
+
         if (future != null)
         {
-            future.cancel(false);
+            future.cancel(true);
             future = null;
         }
 

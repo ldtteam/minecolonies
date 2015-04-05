@@ -1,5 +1,6 @@
 package com.minecolonies.entity.pathfinding;
 
+import com.minecolonies.configuration.Configurations;
 import net.minecraft.pathfinding.PathEntity;
 
 import java.util.concurrent.*;
@@ -11,7 +12,7 @@ public class Pathfinding
 
     static
     {
-        executor = new ThreadPoolExecutor(1, 2, 10, TimeUnit.SECONDS, jobQueue);
+        executor = new ThreadPoolExecutor(1, Configurations.pathfindingMaxThreadCount, 10, TimeUnit.SECONDS, jobQueue);
     }
 
     @SuppressWarnings("unchecked")
