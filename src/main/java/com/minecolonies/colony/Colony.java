@@ -801,16 +801,21 @@ public class Colony implements IColony
 
     public void calculateMaxCitizens()
     {
-        maxCitizens = Configurations.maxCitizens;
-        markDirty();
+        int newMaxCitizens = Configurations.maxCitizens;
 
         for (Building b : buildings.values())
         {
             if (b instanceof BuildingHome &&
                     b.getBuildingLevel() > 0)
             {
-                maxCitizens += ((BuildingHome) b).getMaxInhabitants();
+                newMaxCitizens += ((BuildingHome) b).getMaxInhabitants();
             }
+        }
+
+        if (maxCitizens != newMaxCitizens)
+        {
+            maxCitizens = newMaxCitizens;
+            markDirty();
         }
     }
 
