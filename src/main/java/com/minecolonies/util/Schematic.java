@@ -194,7 +194,8 @@ public class Schematic
             }
 
         }
-        while(worldBlockAir() && count < Configurations.maxBlocksCheckedByBuilder);
+        //Also check if blocks below the hut are different from the schematic - may want to rename the method
+        while((worldBlockAir() || (y <= getOffset().posY && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
