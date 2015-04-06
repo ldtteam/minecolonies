@@ -23,7 +23,7 @@ public class Level
      */
     private int depth;
 
-    private List<Node> nodes;
+    private List<Node> nodes = new ArrayList<Node>();
 
     private static final String TAG_DEPTH = "Depth";
     private static final String TAG_NODES = "Nodes";
