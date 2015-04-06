@@ -43,7 +43,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         FILL_VEIN
     }
 
-    //FIXME Miner goes down the shaft without tools
+    //FIXME Delay counts for block after
     private int delay = 0;                   //Must be saved here
     private String NEED_ITEM;
 
@@ -206,6 +206,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     {
                         job.setStage(Stage.MINING_SHAFT);
                     }
+                    else
+                    {
+                        job.setStage(Stage.MINING_NODE);
+                    }
 
                     break;
                 case NEED_HIGHER_TOOLS:
@@ -222,38 +226,17 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     break;
             }
         }
-        /*
-        Rough outline:
-            Data structures:
-                Nodes are 5x5x4 (3 tall + a ceiling)
-                connections are 3x5x3 tunnels
-            Connections should be automatically completed when moving from node to node
-
-            max Level depth depends on current hut startingLevelShaft
-                example:
-                    1: y=44
-                    2: y=28
-                    3: y=10
-                Personally I think our lowest Level should be 4 or 5, whatever one you can't run into bedrock on
-
-            If the miner has a node, then he should create the connection, then mine the node
-
-            else findNewNode
-
-            That's basically it...
-            Also note we need to check the tool durability and for torches,
-                wood for building the tunnel structure (exact plan to be determined)
-
-            You also may want to create another node status before AVAILABLE for when the connection isn't completed.
-                Maybe even two status, one for can_connect_too then connection_in_progress
-         */
     }
     private void mineNode(BuildingMiner b)
     {
         Level level = b.levels.get(b.currentLevel);
         int depth = level.getDepth();
+        //TODO If Empty behind - above => close wall and node
+        //TODO Search close ores
+        //FIXME Using Wrong Tool
+        //TODO Higher chance to stay on Node
 
-
+        //TODO Last: Use Wood and Coal
         if(b.activeNode == null || b.activeNode.getStatus() == Node.Status.COMPLETED)
         {
 
@@ -263,6 +246,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
             if(node.getStatus() == Node.Status.AVAILABLE)
             {
+                logger.info("Starting Node: " + randomNum);
+
                 loc  = new ChunkCoordinates(node.getID().getX(), depth, node.getID().getY());
                 b.activeNode = node;
                 b.active = randomNum;
@@ -286,21 +271,22 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                     level.addNewNode(b.activeNode.getID().getX() + 5*b.activeNode.getVectorX(), b.activeNode.getID().getY() + 5*b.activeNode.getVectorZ(), b.activeNode.getVectorX(), b.activeNode.getVectorZ());
 
+                    //FIXME Direct Nodes in the correct direction sometimes the -2 needs the - vector, sometimes the +2
                     if(b.activeNode.getVectorX() == 0)
                     {
                         level.addNewNode(b.activeNode.getID().getX()+2,b.activeNode.getID().getY()+4*b.activeNode.getVectorZ(),b.activeNode.getVectorZ(),b.activeNode.getVectorX());
-                        level.addNewNode(b.activeNode.getID().getX()-2,b.activeNode.getID().getY()+4*b.activeNode.getVectorZ(),b.activeNode.getVectorZ(),b.activeNode.getVectorX());
+                        level.addNewNode(b.activeNode.getID().getX()-2,b.activeNode.getID().getY()+4*b.activeNode.getVectorZ(),-b.activeNode.getVectorZ(),-b.activeNode.getVectorX());
                     }
                     else
                     {
                         level.addNewNode(b.activeNode.getID().getX()+4*b.activeNode.getVectorX(),b.activeNode.getID().getY()+2,b.activeNode.getVectorZ(),b.activeNode.getVectorX());
-                        level.addNewNode(b.activeNode.getID().getX()+4*b.activeNode.getVectorX(),b.activeNode.getID().getY()-2,b.activeNode.getVectorZ(),b.activeNode.getVectorX());
+                        level.addNewNode(b.activeNode.getID().getX()+4*b.activeNode.getVectorX(),b.activeNode.getID().getY()-2,-b.activeNode.getVectorZ(),-b.activeNode.getVectorX());
                     }
+                    logger.info("Finished Node: " + b.active);
 
 
                 }
                 else {
-                    delay = getDelay(block) + 10;
 
                     if (b.activeNode.getVectorX() == 0) {
                         uVX = 1;
@@ -308,7 +294,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         uVZ = 1;
                     }
 
-                    //TODO Check Mine above, check for close ores
                     switch (clearNode) {
                         case 0:
                             block = ChunkCoordUtils.getBlock(world, new ChunkCoordinates(loc.posX, loc.posY + 1, loc.posZ));
@@ -1469,6 +1454,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if (InventoryUtils.getOpenSlot(worker.getInventory()) == -1)    //inventory has an open slot - this doesn't account for slots with non full stacks
         {                                                               //also we still may have problems if the block drops multiple items
             job.setStage(Stage.INVENTORY_FULL);
+
+            if(job.getStage() == Stage.MINING_NODE)
+            {
+                clearNode-=1;
+            }
+            else if(job.getStage() == Stage.MINING_SHAFT)
+            {
+                clear -= 1;
+            }
             return;
         }
         if((block.isAir(world,x,y,z) || !canWalkOn(x,y,z)) && job.getStage() == Stage.MINING_NODE)
@@ -1476,12 +1470,19 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
             b.levels.get(b.currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
             b.activeNode.setStatus(Node.Status.COMPLETED);
+
+            logger.info("Finished because of Air Node: " + b.active + " x: " + x + " z: " + z +
+                    " vectorX: " + b.activeNode.getVectorX() + " vectorZ: " + b.activeNode.getVectorZ());
+
+
             return;
         }
         if(job.getStage() == Stage.MINING_NODE && b.shaftStart.posX == x && b.shaftStart.posZ == z)
         {
             b.levels.get(b.currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
             b.activeNode.setStatus(Node.Status.COMPLETED);
+            logger.info("Finished because of Ladder Node: " + b.active);
+
             return;
 
         }
@@ -1512,11 +1513,29 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if (Tool == null || !hasAllTheTools())
         {
             job.setStage(Stage.INSUFFICIENT_TOOLS);
+
+            if(job.getStage() == Stage.MINING_NODE)
+            {
+                clearNode-=1;
+            }
+            else if(job.getStage() == Stage.MINING_SHAFT)
+            {
+                clear -= 1;
+            }
         }
         else if(!ForgeHooks.canToolHarvestBlock(block,0,Tool) && block != Blocks.air && block != Blocks.fence && block !=Blocks.planks)
         {
             job.setStage(Stage.NEED_HIGHER_TOOLS);
             hasToMine = block;
+
+            if(job.getStage() == Stage.MINING_NODE)
+            {
+                clearNode-=1;
+            }
+            else if(job.getStage() == Stage.MINING_SHAFT)
+            {
+                clear -= 1;
+            }
         }
         else
         {
@@ -1592,10 +1611,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 worker.getInventory().decrStackSize(slot,1);
             }
 
-
-
-
-            if (world.isAirBlock(x, y - 1, z) || !canWalkOn(x, y - 1, z))
+            if (world.isAirBlock(x, y - 1, z) || !canWalkOn(x, y - 1, z) && job.getStage() != Stage.MINING_VEIN)
             {
                 world.setBlock(x, y - 1, z, Blocks.dirt);
                 int slot = inventoryContains(Blocks.dirt);
