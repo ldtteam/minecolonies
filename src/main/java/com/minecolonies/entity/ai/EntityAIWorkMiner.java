@@ -43,8 +43,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         FILL_VEIN
     }
 
-    //TODO Check if it is better to switch case for clear instead of if/else
     //FIXME Delay counts for block after
+    //TODO Check if Level is completely cleared
+    //TODO be able to change level
+    //TODO Mine shaft to depth first then go to first level
     private int delay = 0;                   //Must be saved here
     private String NEED_ITEM;
 
@@ -287,7 +289,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     level.getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
                     b.activeNode.setStatus(Node.Status.COMPLETED);
 
-                    level.addNewNode(b.activeNode.getID().getX() + 5*b.activeNode.getVectorX(), b.activeNode.getID().getY() + 5*b.activeNode.getVectorZ(), b.activeNode.getVectorX(), b.activeNode.getVectorZ());
+                    level.addNewNode(b.activeNode.getID().getX() + 5*b.activeNode.getVectorX(), b.activeNode.getID().getY() + 5*b.activeNode.getVectorZ(), b.activeNode                         .getVectorX(), b.activeNode.getVectorZ());
 
                     if(b.activeNode.getVectorX() == 0)
                     {
@@ -804,7 +806,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         int z = b.getLocation.posZ;
         currentY = b.getLocation.posY;
 
-
         if(b.ladderLocation == null)
         {
             job.setStage(Stage.SEARCHING_LADDER);
@@ -816,36 +817,24 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 {
                     if (clear < 50)
                     {
-                        if (clear == 1)
+                        switch(clear)
                         {
-                            if(ladderLeft)
-                            {
+                            case 1:
+                                if(ladderLeft)
+                                {
+                                    world.setBlock(x, y + 3, z, b.floorBlock);
+                                }
+                                break;
+                            case 2:
                                 world.setBlock(x, y + 3, z, b.floorBlock);
-                            }
-                            // Do nothing
-                        }
-                        else if (clear == 2)
-                        {
-                            world.setBlock(x, y + 3, z, b.floorBlock);
-                            world.setBlock(x, y + 4, z, b.fenceBlock);
-                        }
-                        else if (clear <= 5)
-                        {
-                            // Do nothing
-                        }
-                        else if (clear <= 7)
-                        {
-                            if (clear == 6)
-                            {
                                 world.setBlock(x, y + 4, z, b.fenceBlock);
-                            }
-
-                            world.setBlock(x, y + 3, z, b.floorBlock);
-                        }
-                        else if (clear <= 14)
-                        {
-                            if (clear == 8)
-                            {
+                                break;
+                            case 6:
+                                world.setBlock(x, y + 4, z, b.fenceBlock);
+                            case 7:
+                                world.setBlock(x, y + 3, z, b.floorBlock);
+                                break;
+                            case 8:
                                 if (vektorX == 0)
                                 {
                                     x += 1;
@@ -857,33 +846,22 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                     z += 1;
                                     x -= 7;
                                 }
-
                                 if(!ladderLeft)
                                 {
                                     world.setBlock(x, y + 3, z, b.floorBlock);
                                 }
-
-                            }
-                            else if (clear == 9)
-                            {
+                                break;
+                            case 9:
                                 world.setBlock(x, y + 3, z, b.floorBlock);
                                 world.setBlock(x, y + 4, z, b.fenceBlock);
-                            }
-                            else if (clear > 12)
-                            {
-                                if (clear == 13)
-                                {
-                                    world.setBlock(x, y + 4, z, b.fenceBlock);
-                                }
+                                break;
 
+                            case 13:
+                                world.setBlock(x, y + 4, z, b.fenceBlock);
+                            case 14:
                                 world.setBlock(x, y + 3, z, b.floorBlock);
-                            }
-
-                        }
-                        else if (clear <= 21)
-                        {
-                            if (clear == 15)
-                            {
+                                break;
+                            case 15:
                                 if (vektorX == 0)
                                 {
                                     x += 1;
@@ -893,25 +871,26 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                     z += 1;
                                     x -= 7;
                                 }
-
-                            }
-                            if (clear > 15 && clear < 21)
-                            {
+                                world.setBlock(x, y + 3, z, b.floorBlock);
+                                break;
+                            case 16:
+                                world.setBlock(x, y + 3, z, b.floorBlock);
                                 world.setBlock(x, y + 4, z, b.fenceBlock);
-
-                                if (clear == 16 || clear == 20)
-                                {
-                                    world.setBlock(x, y + 5, z, Blocks.torch);
-                                }
-                            }
-
-                            world.setBlock(x, y + 3, z, b.floorBlock);
-
-                        }
-                        else if (clear <= 28)
-                        {
-                            if (clear == 22)
-                            {
+                                world.setBlock(x, y + 5, z, Blocks.torch);
+                                break;
+                            case 17:
+                            case 18:
+                            case 19:
+                                world.setBlock(x, y + 3, z, b.floorBlock);
+                                world.setBlock(x, y + 4, z, b.fenceBlock);
+                                break;
+                            case 20:
+                                world.setBlock(x, y + 4, z, b.fenceBlock);
+                                world.setBlock(x, y + 5, z, Blocks.torch);
+                            case 21:
+                                world.setBlock(x, y + 3, z, b.floorBlock);
+                                break;
+                            case 22:
                                 if (vektorX == 0)
                                 {
                                     x += 1;
@@ -922,14 +901,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                     z += 1;
                                     x -= 7;
                                 }
-                            }
-                            world.setBlock(x, y + 3, z, b.floorBlock);
-
-                        }
-                        else if (clear <= 35)
-                        {
-                            if (clear == 29)
-                            {
+                            case 23:
+                            case 24:
+                            case 25:
+                            case 26:
+                            case 27:
+                            case 28:
+                                world.setBlock(x, y + 3, z, b.floorBlock);
+                                break;
+                            case 29:
                                 if (vektorX == 0)
                                 {
                                     x = x - 4;
@@ -941,28 +921,17 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                     x -= 7;
                                 }
                                 world.setBlock(x, y + 3, z, b.floorBlock);
-
-                            }
-                            else if (clear == 30)
-                            {
-
-                                world.setBlock(x, y + 3, z, b.floorBlock);
+                                break;
+                            case 30:
                                 world.setBlock(x, y + 4, z, b.fenceBlock);
-                            }
-                            else if (clear > 33)
-                            {
-                                if (clear == 34)
-                                {
-                                    world.setBlock(x, y + 4, z, b.fenceBlock);
-                                }
-
                                 world.setBlock(x, y + 3, z, b.floorBlock);
-                            }
-                        }
-                        else if (clear <= 42)
-                        {
-                            if (clear == 36)
-                            {
+                                break;
+                            case 34:
+                                world.setBlock(x, y + 4, z, b.fenceBlock);
+                            case 35:
+                                world.setBlock(x, y + 3, z, b.floorBlock);
+                                break;
+                            case 36:
                                 if (vektorX == 0)
                                 {
                                     x -= 1;
@@ -973,34 +942,45 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                     z -= 1;
                                     x -= 7;
                                 }
-                            }
-                            if (clear > 36 && clear < 42)
-                            {
+                                world.setBlock(x, y + 3, z, b.floorBlock);
+                                break;
+                            case 37:
+                                world.setBlock(x, y + 3, z, b.floorBlock);
                                 world.setBlock(x, y + 4, z, b.fenceBlock);
-                                if (clear == 37 || clear == 41)
-                                {
-                                    world.setBlock(x, y + 5, z, Blocks.torch);
-                                }
-                            }
-
-                            world.setBlock(x, y + 3, z, b.floorBlock);
-                        }
-                        else if (clear <= 49)
-                        {
-                            if (clear == 43)
-                            {
+                                world.setBlock(x, y + 5, z, Blocks.torch);
+                                break;
+                            case 38:
+                            case 39:
+                            case 40:
+                                world.setBlock(x, y + 3, z, b.floorBlock);
+                                world.setBlock(x, y + 4, z, b.fenceBlock);
+                                break;
+                            case 41:
+                                world.setBlock(x, y + 4, z, b.fenceBlock);
+                                world.setBlock(x, y + 5, z, Blocks.torch);
+                            case 42:
+                                world.setBlock(x, y + 3, z, b.floorBlock);
+                                break;
+                            case 43:
                                 if (vektorX == 0)
                                 {
                                     x -= 1;
                                     z -= 7;
-                                } else if (vektorZ == 0) {
+                                }
+                                else if (vektorZ == 0)
+                                {
                                     z -= 1;
                                     x -= 7;
                                 }
-                            }
-                            world.setBlock(x, y + 3, z, b.floorBlock);
+                            case 44:
+                            case 45:
+                            case 46:
+                            case 47:
+                            case 48:
+                            case 49:
+                                world.setBlock(x, y + 3, z, b.floorBlock);
+                                break;
                         }
-
                         x = x + vektorX;
                         z = z + vektorZ;
 
@@ -1024,7 +1004,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         //Save Node
                         //(x-4, y+1, z) (x, y+1, Z+4) and (x+4, y+1, z) or (x,y+1,z-1) in case of rotation -> check ladder
 
-
                         if(b.levels == null)
                         {
                             b.levels = new ArrayList<Level>();
@@ -1039,7 +1018,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             b.levels.add(new Level(b.shaftStart.posX+3,y + 5,b.shaftStart.posZ));
 
                         }
-                        clear = 1; // 200, 173    196 177    192 173
+                        clear = 1;
                         b.startingLevelShaft++;
                         b.getLocation.set(b.shaftStart.posX, b.ladderLocation.posY - 1, b.shaftStart.posZ);
                         job.setStage(Stage.MINING_NODE);
@@ -1122,9 +1101,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 {
                     if (!world.getBlock(x, y, z).isAir(world, x, y, z))
                     {
-
                         doMining(world.getBlock(x, y, z), x, y, z);
-
+                        if(job.getStage() != Stage.MINING_SHAFT)
+                        {
+                            return;
+                        }
 
                         logger.info("Mined at " + x + " " + y + " " + z);
                     }
@@ -1136,9 +1117,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                             if (world.isAirBlock(x - vektorX, y, z - vektorZ) || !canWalkOn(x - vektorX, y, z - vektorZ))
                             {
-                                world.setBlock(x - vektorX, y, z - vektorZ, Blocks.cobblestone);
-                                int slot = inventoryContains(Blocks.cobblestone);
-                                worker.getInventory().decrStackSize(slot,1);
+                                setBlockFromInventory(x - vektorX, y, z - vektorZ, Blocks.cobblestone);
                             }
                             isValuable(x - vektorX, y, z - vektorZ);
 
@@ -1147,21 +1126,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         {
                             if (world.isAirBlock(x + vektorX, y, z + vektorZ) || !canWalkOn(x + vektorX, y, z + vektorZ))
                             {
-                                world.setBlock(x + vektorX, y, z + vektorZ, Blocks.cobblestone);
-                                int slot = inventoryContains(Blocks.cobblestone);
-                                worker.getInventory().decrStackSize(slot,1);
+                                setBlockFromInventory(x + vektorX, y, z + vektorZ, Blocks.cobblestone);
                             }
                             isValuable(x + vektorX, y, z + vektorZ);
                         }
-
-                        if (clear < 7)
+                        switch(clear)
                         {
-                            //Do Nothing
-                        }
-                        else if (clear < 14)
-                        {
-                            if (clear == 7)
-                            {
+                            case 7:
+                            case 14:
                                 if (vektorX == 0)
                                 {
                                     x += 1;
@@ -1172,73 +1144,31 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                     z += 1;
                                     x -= 7;
                                 }
-                            }
-                        }
-                        else if (clear < 21)
-                        {
-                            if (clear == 14)
-                            {
+                                break;
+                            case 21:
                                 if (vektorX == 0)
                                 {
                                     x += 1;
                                     z -= 7;
-                                } else if (vektorZ == 0)
+                                }
+                                else if (vektorZ == 0)
                                 {
                                     z += 1;
                                     x -= 7;
                                 }
-                            }
-                        }
-                        else if (clear < 28)
-                        {
-                            if (clear == 21)
-                            {
+                            case 22:
+                            case 23:
+                            case 24:
+                            case 25:
+                            case 26:
+                            case 27:
                                 if (vektorX == 0)
                                 {
-                                    x += 1;
-                                    z -= 7;
-                                } else if (vektorZ == 0)
-                                {
-                                    z += 1;
-                                    x -= 7;
-                                }
-                            }
-                            if (vektorX == 0)
-                            {
-
-                                isValuable(x + 1, y, z);
-
-                                if (world.isAirBlock(x + 1, y, z) || !canWalkOn(x + 1, y, z))
-                                {
-                                    world.setBlock(x + 1, y, z, Blocks.cobblestone);
-                                    int slot = inventoryContains(Blocks.cobblestone);
-                                    worker.getInventory().decrStackSize(slot,1);
-                                }
-                            } else if (vektorZ == 0)
-                            {
-
-                                isValuable(x, y, z + 1);
-                                if (world.isAirBlock(x, y, z + 1) || !canWalkOn(x, y, z + 1))
-                                {
-                                    world.setBlock(x, y, z + 1, Blocks.cobblestone);
-                                    int slot = inventoryContains(Blocks.cobblestone);
-                                    worker.getInventory().decrStackSize(slot,1);
-                                }
-                            }
-                        }
-                        else if (clear < 35)
-                        {
-                            if (clear == 28)
-                            {
-                                if (vektorX == 0)
-                                {
-
                                     isValuable(x + 1, y, z);
+
                                     if (world.isAirBlock(x + 1, y, z) || !canWalkOn(x + 1, y, z))
                                     {
-                                        world.setBlock(x + 1, y, z, Blocks.cobblestone);
-                                        int slot = inventoryContains(Blocks.cobblestone);
-                                        worker.getInventory().decrStackSize(slot,1);
+                                        setBlockFromInventory(x+1, y, z, Blocks.cobblestone);
                                     }
                                 }
                                 else if (vektorZ == 0)
@@ -1247,9 +1177,27 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                     isValuable(x, y, z + 1);
                                     if (world.isAirBlock(x, y, z + 1) || !canWalkOn(x, y, z + 1))
                                     {
-                                        world.setBlock(x, y, z + 1, Blocks.cobblestone);
-                                        int slot = inventoryContains(Blocks.cobblestone);
-                                        worker.getInventory().decrStackSize(slot,1);
+                                        setBlockFromInventory(x, y, z+1, Blocks.cobblestone);
+                                    }
+                                }
+                                break;
+                            case 28:
+                                if (vektorX == 0)
+                                {
+
+                                    isValuable(x + 1, y, z);
+                                    if (world.isAirBlock(x + 1, y, z) || !canWalkOn(x + 1, y, z))
+                                    {
+                                        setBlockFromInventory(x+1, y, z, Blocks.cobblestone);
+                                    }
+                                }
+                                else if (vektorZ == 0)
+                                {
+
+                                    isValuable(x, y, z + 1);
+                                    if (world.isAirBlock(x, y, z + 1) || !canWalkOn(x, y, z + 1))
+                                    {
+                                        setBlockFromInventory(x, y, z+1, Blocks.cobblestone);
                                     }
                                 }
                                 if (vektorX == 0)
@@ -1262,68 +1210,66 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                     z = z - 4;
                                     x -= 7;
                                 }
-                            }
-                        } else if (clear < 42)
-                        {
-                            if (clear == 35)
-                            {
-                                if (vektorX == 0)
+                                break;
+                            case 35:
+                                if (clear == 35)
                                 {
-                                    x -= 1;
-                                    z -= 7;
-                                } else if (vektorZ == 0)
-                                {
-                                    z -= 1;
-                                    x -= 7;
+                                    if (vektorX == 0)
+                                    {
+                                        x -= 1;
+                                        z -= 7;
+                                    } else if (vektorZ == 0)
+                                    {
+                                        z -= 1;
+                                        x -= 7;
+                                    }
                                 }
-                            }
-                        }
-                        else if (clear <= 49)
-                        {
-                            if (clear == 42)
-                            {
+                                break;
+                            case 42:
+                                if (clear == 42)
+                                {
+                                    if (vektorX == 0)
+                                    {
+                                        x -= 1;
+                                        z -= 7;
+                                    }
+                                    else if (vektorZ == 0)
+                                    {
+                                        z -= 1;
+                                        x -= 7;
+                                    }
+                                }
+                            case 43:
+                            case 44:
+                            case 45:
+                            case 46:
+                            case 47:
+                            case 48:
+                            case 49:
                                 if (vektorX == 0)
                                 {
-                                    x -= 1;
-                                    z -= 7;
+                                    isValuable(x - 1, y, z);
+                                    if (world.isAirBlock(x - 1, y, z) || !canWalkOn(x - 1, y, z))
+                                    {
+                                        setBlockFromInventory(x - 1, y, z, Blocks.cobblestone);
+                                    }
                                 }
                                 else if (vektorZ == 0)
                                 {
-                                    z -= 1;
-                                    x -= 7;
+                                    isValuable(x, y, z - 1);
+                                    if (world.isAirBlock(x, y, z - 1) || !canWalkOn(x, y, z - 1))
+                                    {
+                                        setBlockFromInventory(x, y, z - 1, Blocks.cobblestone);
+                                    }
                                 }
-                            }
-                            if (vektorX == 0)
-                            {
-
-                                isValuable(x - 1, y, z);
-                                if (world.isAirBlock(x - 1, y, z) || !canWalkOn(x - 1, y, z))
-                                {
-                                    world.setBlock(x - 1, y, z, Blocks.cobblestone);
-                                    int slot = inventoryContains(Blocks.cobblestone);
-                                    worker.getInventory().decrStackSize(slot,1);
-                                }
-                            } else if (vektorZ == 0)
-                            {
-
-                                isValuable(x, y, z - 1);
-                                if (world.isAirBlock(x, y, z - 1) || !canWalkOn(x, y, z - 1))
-                                {
-                                    world.setBlock(x, y, z - 1, Blocks.cobblestone);
-                                    int slot = inventoryContains(Blocks.cobblestone);
-                                    worker.getInventory().decrStackSize(slot,1);
-                                }
-                            }
+                                break;
                         }
-
                         x = x + vektorX;
                         z = z + vektorZ;
 
                         if (world.isAirBlock(x, y - 1, z) || !canWalkOn(x, y - 1, z))
                         {
-                            world.setBlock(x, y - 1, z, Blocks.dirt);
-                            int slot = inventoryContains(Blocks.dirt);
-                            worker.getInventory().decrStackSize(slot,1);
+                            setBlockFromInventory(x, y - 1, z, Blocks.dirt);
                         }
 
                         b.getLocation.set(x, y, z);
@@ -1343,7 +1289,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     }
 
+    private void setBlockFromInventory(int x, int y, int z, Block block)
+    {
+        world.setBlock(x, y, z, block);
+        int slot = inventoryContains(block);
+        worker.getInventory().decrStackSize(slot,1);
 
+    }
 
     private int inventoryContains(Block block)
     {
@@ -1415,7 +1367,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         BuildingMiner b = (BuildingMiner)(worker.getWorkBuilding());
         if(b == null){return;};
 
-
         if (InventoryUtils.getOpenSlot(worker.getInventory()) == -1)    //inventory has an open slot - this doesn't account for slots with non full stacks
         {                                                               //also we still may have problems if the block drops multiple items
             job.setStage(Stage.INVENTORY_FULL);
@@ -1424,30 +1375,17 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             {
                 clearNode-=1;
             }
-            else if(job.getStage() == Stage.MINING_SHAFT)
-            {
-                //Do Something....
-            }
             return;
         }
 
-
-        if(b.activeNode!=null && job.getStage() == Stage.MINING_NODE &&
-                (block.isAir(world,x,y,z)
-                        || !canWalkOn(x,y,z)
-                        || block.isAir(world,x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())
-                        || !canWalkOn(x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())
-
-                        ))
+        if(b.activeNode!=null && job.getStage() == Stage.MINING_NODE && (block.isAir(world,x,y,z)
+                || !canWalkOn(x,y,z)
+                || block.isAir(world,x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())
+                || !canWalkOn(x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())))
         {
-            boolean a = block.isAir(world,x,y,z);
-            boolean b1 = !canWalkOn(x,y,z);
-            boolean c = block.isAir(world,x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ());
-            boolean d = !canWalkOn(x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ());
-
             b.levels.get(b.currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
             b.activeNode.setStatus(Node.Status.COMPLETED);
-            logger.info("Finished because of Air Node: " + b.active + " x: " + x + " z: " + z + " vectorX: " + b.activeNode.getVectorX() + " vectorZ: " + b.activeNode.getVectorZ());
+            logger.info("Finished because of Air Node: " + b.active + " x: " + x + " z: " + z + " vectorX: " + b.activeNode.getVectorX() + " vectorZ: " + b.activeNode                  .getVectorZ());
             return;
         }
 
@@ -1498,10 +1436,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             {
                 clearNode-=1;
             }
-            else if(job.getStage() == Stage.MINING_SHAFT)
-            {
-                clear -= 1;
-            }
+
         }
         else if(!ForgeHooks.canToolHarvestBlock(block,0,Tool) && block != Blocks.air && block != Blocks.fence && block !=Blocks.planks)
         {
@@ -1512,14 +1447,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             {
                 clearNode-=1;
             }
-            else if(job.getStage() == Stage.MINING_SHAFT)
-            {
-                clear -= 1;
-            }
         }
         else
         {
-            delay = getDelay(block);
+            delay = getDelay(block); //FIXME for this not next block
 
             Tool.getItem().onBlockDestroyed(Tool, world, block, x, y, z, worker);//Dangerous
             if (Tool.stackSize < 1)//if Tool breaks
@@ -1550,9 +1481,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     world.setBlockToAir(x, y, z);
 
                 }
-
-
-
             }
             else
             {
@@ -1564,32 +1492,22 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 world.setBlockToAir(x, y, z);
             }
 
-
             if((y < currentY && job.getStage() != Stage.MINING_NODE) && job.getStage() != Stage.MINING_VEIN)
             {
-                world.setBlock(x, y, z, Blocks.cobblestone);
-                int slot = inventoryContains(Blocks.cobblestone);
-                worker.getInventory().decrStackSize(slot,1);
+                setBlockFromInventory(x, y, z, Blocks.cobblestone);
             }
 
             if ((world.isAirBlock(x, y - 1, z) || !canWalkOn(x, y - 1, z)) && job.getStage() != Stage.MINING_VEIN)
             {
-                world.setBlock(x, y - 1, z, Blocks.dirt);
-                int slot = inventoryContains(Blocks.dirt);
-                worker.getInventory().decrStackSize(slot,1);
+                setBlockFromInventory(x, y-1, z, Blocks.cobblestone);
             }
-
-
         }
         if (!hasAllTheTools())
         {
             job.setStage(Stage.INSUFFICIENT_TOOLS);
         }
-
-
-
-
     }
+
     private void findVein(int x, int y, int z)
     {
         job.setStage(Stage.MINING_VEIN);
@@ -1620,8 +1538,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                 findVein(v.posX, v.posY, v.posZ);
             }
-
-
     }
 
     private int getLastLadder(int x, int y, int z)
@@ -1653,10 +1569,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             job.vein.add(new ChunkCoordinates(x, y, z));
             logger.info("Found ore");
 
-            if (job.getStage() == Stage.MINING_NODE) {
+            if (job.getStage() == Stage.MINING_NODE)
+            {
                 //clearNode -= 1;
-            } else if (job.getStage() == Stage.MINING_SHAFT) {
-                clear -= 1;
+            } else if (job.getStage() == Stage.MINING_SHAFT)
+            {
+                //clear -= 1;
             }
 
             findVein(x, y, z);
