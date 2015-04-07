@@ -312,15 +312,11 @@ public abstract class Building
         {
             if (o.getBuildingId().equals(getID()))
             {
-                found = true;
-                break;
+                return;
             }
         }
 
-        if (!found)
-        {
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
-        }
+        colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
     }
 
     public void requestUpgrade()

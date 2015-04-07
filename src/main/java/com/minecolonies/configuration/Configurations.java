@@ -18,6 +18,10 @@ public class Configurations
 
     public static boolean   enableInDevelopmentFeatures = false;
 
+    public static boolean   pathfindingDebugDraw = false;
+    public static int       pathfindingDebugVerbosity = 0;
+    public static int       pathfindingMaxThreadCount = 2;
+
     public static String[] maleFirstNames = new String[] {
             "Jim", "John", "James", "Robert", "Thomas", "Michael", "William", "David", "Richard", "Charles", "Joseph", "Christopher", "Paul", "Mark", "George", "Steven", "Peter", "Henrik", "Rory" };
 
