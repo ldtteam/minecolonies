@@ -102,6 +102,33 @@ public class BuildingMiner extends BuildingWorker {
         }
     }
 
+    public int getMaxX()
+    {
+        return this.getBuildingLevel()*30+20;
+    }
+    public int getMaxY()
+    {
+        if(this.getBuildingLevel() == 1)
+        {
+            return 50;
+        }
+        else if(this.getBuildingLevel() == 2)
+        {
+            return 30;
+        }
+        else if(this.getBuildingLevel() == 3)
+        {
+            return 4;
+        }
+
+        return 70;
+
+    }
+    public int getMaxZ()
+    {
+        return this.getBuildingLevel()*30+20;
+    }
+
     @Override
     public void writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
