@@ -1540,26 +1540,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
             if(job.vein == null)
             {
-                if (isValuable(x, y, z))
-                {
-                    job.vein = new ArrayList<ChunkCoordinates>();
-                    job.vein.add(new ChunkCoordinates(x, y, z));
-                    logger.info("Found ore");
-
-                    if(job.getStage() == Stage.MINING_NODE)
-                    {
-                        clearNode-=1;
-                    }
-                    else if(job.getStage() == Stage.MINING_SHAFT)
-                    {
-                        clear -= 1;
-                    }
-
-                    findVein(x, y, z);
-                    logger.info("finished finding ores: " + job.vein.size());
-
-                }
-                else
+                if(!isValuable(x, y, z))
                 {
                     List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, bk, 0);//0 is fortune level, it doesn't matter
                     for (ItemStack item : items)
@@ -1673,7 +1654,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             logger.info("Found ore");
 
             if (job.getStage() == Stage.MINING_NODE) {
-                clearNode -= 1;
+                //clearNode -= 1;
             } else if (job.getStage() == Stage.MINING_SHAFT) {
                 clear -= 1;
             }
