@@ -15,7 +15,6 @@ public class Pathfinding
         executor = new ThreadPoolExecutor(1, Configurations.pathfindingMaxThreadCount, 10, TimeUnit.SECONDS, jobQueue);
     }
 
-    @SuppressWarnings("unchecked")
     public static Future<PathEntity> enqueue(PathJob job)
     {
         return executor.submit(job);

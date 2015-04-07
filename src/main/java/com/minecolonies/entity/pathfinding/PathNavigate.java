@@ -71,7 +71,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         }
 
         ChunkCoordinates start = new ChunkCoordinates(MathHelper.floor_double(theEntity.posX), (int)theEntity.posY, MathHelper.floor_double(theEntity.posZ));
-        destination = new ChunkCoordinates(MathHelper.floor_double(x), (int)y, MathHelper.floor_double(z));
+        destination = new ChunkCoordinates(newX, newY, newZ);
         this.speed = speed;
 
         future = Pathfinding.enqueue(new PathJob(theEntity, worldObj, start, destination));
