@@ -52,7 +52,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     {
         int newX = MathHelper.floor_double(x);
         int newY = (int)y;
-        int newZ = MathHelper.floor_double(y);
+        int newZ = MathHelper.floor_double(z);
 
         if (destination != null &&
                 destination.posX == newX &&
