@@ -161,28 +161,6 @@ public class PathJob implements Callable<PathEntity>
                     }
                 }
 
-//                for (int x = -1; x < 2; ++x)
-//                {
-//                    for (int z = -1; z < 2; ++z)
-//                    {
-//                        if (x == 0 && z == 0) continue;
-//
-//                        walk(currentNode, x, 0, z);
-//                    }
-//                }
-
-//                walk(currentNode, 0, 0, -1);    //  N
-//                walk(currentNode, 1, 0, 0);     //  E
-//                walk(currentNode, 0, 0, 1);     //  S
-//                walk(currentNode, -1, 0, 0);    //  W
-//                if (allowDiagonalMovement)
-//                {
-//                    walk(currentNode, 1, 0, -1);    //  NE
-//                    walk(currentNode, 1, 0, 1);     //  SE
-//                    walk(currentNode, -1, 0, 1);    //  SW
-//                    walk(currentNode, -1, 0, -1);   //  NW
-//                }
-
                 if ((dz <= 0) && walk(currentNode, 0, 0, -1))   break;  //  N
                 if ((dx >= 0) && walk(currentNode, 1, 0, 0))    break;  //  E
                 if ((dz >= 0) && walk(currentNode, 0, 0, 1))    break;  //  S
@@ -230,43 +208,6 @@ public class PathJob implements Callable<PathEntity>
 
     PathEntity finalizePath()
     {
-        //  Trim Path
-        //  Simple implementation which removes intermediate nodes in a straight line
-        //  Doing this prohibits use of the 'straight line' movement
-//        int dx = 0, dy = 0, dz = 0;
-//        Node backtrace = destinationNode;
-//        Node last = null;
-//        while (backtrace != null)
-//        {
-//            Node prev = backtrace;
-//            backtrace = backtrace.parent;
-//
-//            if (backtrace != null)
-//            {
-//                int bdx = prev.x - backtrace.x;
-//                int bdy = prev.y - backtrace.y;
-//                int bdz = prev.z - backtrace.z;
-//
-////                bdx = (bdx < 0) ? -1 : ((bdx > 0) ? 1 : 0);
-////                bdy = (bdy < 0) ? -1 : ((bdy > 0) ? 1 : 0);
-////                bdz = (bdz < 0) ? -1 : ((bdz > 0) ? 1 : 0);
-//
-//                if (bdx != dx || bdy != dy || bdz != dz)
-//                {
-//                    //  Change in direction
-////                    last.parent = prev;
-//                    last = prev;
-//                    dx = bdx;
-//                    dy = bdy;
-//                    dz = bdz;
-//                }
-//                else
-//                {
-//                    last.parent = backtrace;
-//                }
-//            }
-//        }
-
         int pathLength = 0;
         Node backtrace = bestNode;
         while (backtrace != null)
