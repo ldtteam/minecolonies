@@ -149,7 +149,7 @@ public class BuildingMiner extends BuildingWorker {
         {
             ChunkCoordUtils.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
             ChunkCoordUtils.writeToNBT(compound, TAG_SLOCATION, shaftStart);
-            ChunkCoordUtils.writeToNBT(compound, TAG_GET_LOCATION, getLocation);
+            ChunkCoordUtils.writeToNBT(compound, TAG_LLOCATION, getLocation);
             ChunkCoordUtils.writeToNBT(compound, TAG_CLOCATION, cobbleLocation);
 
 
