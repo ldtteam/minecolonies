@@ -109,40 +109,48 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         //  Ladder Workaround
         if (!this.noPath())
         {
-            PathPointExtended pEx = (PathPointExtended)this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
-
-            if (pEx.isOnLadder)
+            try
             {
-                Vec3 vec3 = this.getPath().getPosition(this.theEntity);
+                PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
 
-                if (vec3.squareDistanceTo(theEntity.posX, vec3.yCoord, theEntity.posZ) < 0.1)
+                if (pEx.isOnLadder)
                 {
-                    double newSpeed = this.speed;
+                    Vec3 vec3 = this.getPath().getPosition(this.theEntity);
 
-                    switch (pEx.ladderFacing)
+                    if (vec3.squareDistanceTo(theEntity.posX, vec3.yCoord, theEntity.posZ) < 0.1)
                     {
-                        //  Any of these values is climbing, so adjust our direction of travel towards the ladder
-                        case 2:
-                            vec3.zCoord += 1;
-                            break;
-                        case 3:
-                            vec3.zCoord -= 1;
-                            break;
-                        case 4:
-                            vec3.xCoord += 1;
-                            break;
-                        case 5:
-                            vec3.xCoord -= 1;
-                            break;
-                        //  Any other value is going down, so lets not move at all
-                        default:
-                            newSpeed = 0;
-                            break;
-                    }
+                        double newSpeed = this.speed;
 
-                    this.theEntity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, newSpeed);
+                        switch (pEx.ladderFacing)
+                        {
+                            //  Any of these values is climbing, so adjust our direction of travel towards the ladder
+                            case 2:
+                                vec3.zCoord += 1;
+                                break;
+                            case 3:
+                                vec3.zCoord -= 1;
+                                break;
+                            case 4:
+                                vec3.xCoord += 1;
+                                break;
+                            case 5:
+                                vec3.xCoord -= 1;
+                                break;
+                            //  Any other value is going down, so lets not move at all
+                            default:
+                                newSpeed = 0;
+                                break;
+                        }
+
+                        this.theEntity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, newSpeed);
+                    }
                 }
             }
+            catch(Exception e)
+            {
+                //Just stop crashing!
+            }
+
         }
     }
 

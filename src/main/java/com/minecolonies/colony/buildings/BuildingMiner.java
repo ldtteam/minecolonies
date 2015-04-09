@@ -34,14 +34,12 @@ public class BuildingMiner extends BuildingWorker {
 
 
 
-    public ChunkCoordinates getLocation = new ChunkCoordinates(1,1,1);
-    public ChunkCoordinates ladderLocation;
+    public ChunkCoordinates getLocation;
+
     public ChunkCoordinates cobbleLocation;
 
-    public boolean foundLadder = false;
     public boolean clearedShaft = false;
 
-    public boolean clearedNode = false;
     public int startingLevelNode = 0; //Save in hut
     public int active = 0;
     public int currentLevel = 0;
@@ -57,12 +55,13 @@ public class BuildingMiner extends BuildingWorker {
     private static final String TAG_NODE = "nodes";
     private static final String TAG_CLEARED = "clearedShaft";
     private static final String TAG_GET_LOCATION = "getLocation";
-    private static final String TAG_LLOCATION = "ladderlocation";
+
     private static final String TAG_SLOCATION = "shaftLocation";
-    private static final String TAG_LADDER = "found_ladder";
     private static final String TAG_VECTORX = "vectorx";
     private static final String TAG_VECTORZ = "vectorz";
     private static final String TAG_CLOCATION = "cobblelocation";
+    private static final String TAG_ACTIVE = "activeNodeint";
+    private static final String TAG_CURRENT_LEVEL = "currentLevel";
 
     private static Logger logger = LogManager.getLogger("Miner");
 
@@ -137,19 +136,20 @@ public class BuildingMiner extends BuildingWorker {
         compound.setString(TAG_FENCE_BLOCK, GameRegistry.findUniqueIdentifierFor(fenceBlock).toString());
         compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.setBoolean(TAG_CLEARED, clearedShaft);
-        compound.setBoolean(TAG_LADDER, foundLadder);
-        compound.setInteger(TAG_VECTORX,vectorX);
+
+        compound.setInteger(TAG_VECTORX, vectorX);
         compound.setInteger(TAG_VECTORZ,vectorZ);
+        compound.setInteger(TAG_ACTIVE,active);
+        compound.setInteger(TAG_CURRENT_LEVEL,currentLevel);
 
 
 
 
 
-        if(ladderLocation!= null && getLocation!=null && shaftStart !=null && cobbleLocation!=null)
+        if( getLocation!=null && shaftStart !=null && cobbleLocation!=null)
         {
-            ChunkCoordUtils.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
             ChunkCoordUtils.writeToNBT(compound, TAG_SLOCATION, shaftStart);
-            ChunkCoordUtils.writeToNBT(compound, TAG_LLOCATION, getLocation);
+            //ChunkCoordUtils.writeToNBT(compound, TAG_GET_LOCATION, getLocation);
             ChunkCoordUtils.writeToNBT(compound, TAG_CLOCATION, cobbleLocation);
 
 
@@ -179,13 +179,14 @@ public class BuildingMiner extends BuildingWorker {
 
         startingLevelShaft = compound.getInteger(TAG_STARTING_LEVEL);
         clearedShaft = compound.getBoolean(TAG_CLEARED);
-        foundLadder = compound.getBoolean(TAG_LADDER);
         vectorX = compound.getInteger(TAG_VECTORX);
         vectorZ = compound.getInteger(TAG_VECTORZ);
+        active = compound.getInteger(TAG_ACTIVE);
+        currentLevel = compound.getInteger(TAG_CURRENT_LEVEL);
 
 
-        getLocation = ChunkCoordUtils.readFromNBT(compound, TAG_GET_LOCATION);
-        ladderLocation = ChunkCoordUtils.readFromNBT(compound, TAG_LLOCATION);
+
+
         shaftStart = ChunkCoordUtils.readFromNBT(compound, TAG_SLOCATION);
         cobbleLocation = ChunkCoordUtils.readFromNBT(compound, TAG_CLOCATION);
 
