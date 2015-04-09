@@ -341,7 +341,7 @@ public class PathJob implements Callable<PathEntity>
 
     protected boolean isAtDestination(Node n)
     {
-        if (destinationSlack == 0)
+        if (destinationSlack == DESTINATION_SLACK_NONE)
         {
             return n.x == destination.posX &&
                     n.y == destination.posY &&
