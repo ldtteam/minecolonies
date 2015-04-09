@@ -18,6 +18,9 @@ import java.util.concurrent.Callable;
 
 public class PathJob implements Callable<PathEntity>
 {
+    private static final float DESTINATION_SLACK_NONE = 0;
+    private static final float DESTINATION_SLACK_ADJACENT = 3.1F;    // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
+
     protected final ChunkCoordinates start, destination;
 
     protected final EntityLiving owner;
@@ -26,6 +29,8 @@ public class PathJob implements Callable<PathEntity>
     //  Job rules/configuration
     protected boolean allowDiagonalMovement        = false;
     protected boolean allowJumpPointSearchTypeWalk = false;
+
+    protected float destinationSlack = DESTINATION_SLACK_NONE; //  0 = exact match
 
     protected final Queue<Node>        nodesOpen    = new PriorityQueue<Node>(500);
     protected final Map<Integer, Node> nodesVisited = new HashMap<Integer, Node>();
@@ -77,6 +82,12 @@ public class PathJob implements Callable<PathEntity>
         if (Configurations.pathfindingDebugVerbosity > 0)
         {
             MineColonies.logger.info(String.format("Pathing from [%d,%d,%d] to [%d,%d,%d]", start.posX, start.posY, start.posZ, destination.posX, destination.posY, destination.posZ));
+        }
+
+        //  Compute destination slack - if the destination point cannot be stood in
+        if (getGroundHeight(null, destination.posX, destination.posY, destination.posZ, false, false) != destination.posY)
+        {
+            destinationSlack = DESTINATION_SLACK_ADJACENT;
         }
 
         Node startNode = new Node(start.posX, start.posY, start.posZ,
@@ -330,7 +341,14 @@ public class PathJob implements Callable<PathEntity>
 
     protected boolean isAtDestination(Node n)
     {
-        return ChunkCoordUtils.distanceSqrd(destination, n.x, n.y, n.z) <= (1.5*1.5*2);
+        if (destinationSlack == DESTINATION_SLACK_NONE)
+        {
+            return n.x == destination.posX &&
+                    n.y == destination.posY &&
+                    n.z == destination.posZ;
+        }
+
+        return ChunkCoordUtils.distanceSqrd(destination, n.x, n.y, n.z) <= destinationSlack;
     }
 
     protected double getScoreCutoff()
