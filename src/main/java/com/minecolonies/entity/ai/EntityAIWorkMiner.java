@@ -272,8 +272,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return;
         }
 
-        //FIXME Using Wrong Tool while Mining Node
-        //FIXME can't climb ladder when moving ladder to side
+        //TODO Check under and above for ores
         //TODO Last: Use Wood and Coal
         if(b.activeNode == null || b.activeNode.getStatus() == Node.Status.COMPLETED)
         {
@@ -1139,12 +1138,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     if(ChunkCoordUtils.tryMoveLivingToXYZ(worker,job.ladderLocation) && ChunkCoordUtils.isClose(job.ladderLocation,worker))
                     {
                         b.cobbleLocation.set(b.cobbleLocation.posX, job.ladderLocation.posY - 1, b.cobbleLocation.posZ);
-                        job.ladderLocation.set(job.ladderLocation.posX, job.ladderLocation.posY - 1, job.ladderLocation.posZ);
+                        job.ladderLocation.set(b.shaftStart.posX, job.ladderLocation.posY - 1, b.shaftStart.posZ);
 
                         clear = 1;
                         b.startingLevelShaft++;
                         b.markDirty();
-                        b.getLocation.set(b.shaftStart.posX, job.ladderLocation.posY - 1, b.shaftStart.posZ);
+                       b.getLocation.set(b.shaftStart.posX, job.ladderLocation.posY, b.shaftStart.posZ);
                     }
             }
             //else if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, new ChunkCoordinates(x, y, z)))
@@ -1194,8 +1193,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             {
                                 case 1:
                                     int meta = world.getBlockMetadata(job.ladderLocation.posX, job.ladderLocation.posY+1, job.ladderLocation.posZ);
-                                    setBlockFromInventory(b.cobbleLocation.posX,job.ladderLocation.posY-1,b.cobbleLocation.posZ,Blocks.cobblestone);
-                                    world.setBlock(job.ladderLocation.posX, job.ladderLocation.posY-1, job.ladderLocation.posZ, Blocks.ladder, meta, 0x3);
+                                    setBlockFromInventory(b.cobbleLocation.posX,job.ladderLocation.posY,b.cobbleLocation.posZ,Blocks.cobblestone);
+                                    world.setBlock(job.ladderLocation.posX, job.ladderLocation.posY, job.ladderLocation.posZ, Blocks.ladder, meta, 0x3);
                                     break;
                                 case 7:
                                 case 14:
