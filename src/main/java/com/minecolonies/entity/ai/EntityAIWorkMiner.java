@@ -104,7 +104,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 b.foundLadder = false;
                 job.setStage(Stage.SEARCHING_LADDER);
             }
-            tryThreeTimes--;
+            else
+            {
+                tryThreeTimes--;
+                return;
+            }
         }
 
         if (b.ladderLocation.posY-1 > b.getMaxY())
