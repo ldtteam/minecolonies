@@ -17,10 +17,8 @@ public class JobMiner extends Job
     public int veinId=0;
     private EntityAIWorkMiner.Stage stage = EntityAIWorkMiner.Stage.WORKING;
     private static final String TAG_STAGE = "Stage";
-    public ChunkCoordinates ladderLocation;
-    public boolean foundLadder = false;
-    private static final String TAG_LLOCATION = "ladderlocation";
-    private static final String TAG_LADDER = "found_ladder";
+
+
 
 
     public JobMiner(CitizenData entity)
@@ -42,11 +40,7 @@ public class JobMiner extends Job
     {
         super.writeToNBT(compound);
         compound.setString(TAG_STAGE, stage.name());
-        compound.setBoolean(TAG_LADDER, foundLadder);
-        if(ladderLocation!= null)
-        {
-            ChunkCoordUtils.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
-        }
+
 
     }
 
@@ -55,11 +49,6 @@ public class JobMiner extends Job
     {
         super.readFromNBT(compound);
         stage = EntityAIWorkMiner.Stage.valueOf(compound.getString(TAG_STAGE));
-        ladderLocation = ChunkCoordUtils.readFromNBT(compound, TAG_LLOCATION);
-
-
-        foundLadder = compound.getBoolean(TAG_LADDER);
-
 
 
     }

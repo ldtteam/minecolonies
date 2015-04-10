@@ -48,6 +48,9 @@ public class BuildingMiner extends BuildingWorker {
     public int vectorX = 1;
     public int vectorZ = 1;
 
+    public ChunkCoordinates ladderLocation;
+    public boolean foundLadder = false;
+
     private static final String TAG_FLOOR_BLOCK = "floorBlock";
     private static final String TAG_FENCE_BLOCK = "fenceBlock";
     private static final String TAG_STARTING_LEVEL = "startingLevelShaft";
@@ -62,6 +65,9 @@ public class BuildingMiner extends BuildingWorker {
     private static final String TAG_CLOCATION = "cobblelocation";
     private static final String TAG_ACTIVE = "activeNodeint";
     private static final String TAG_CURRENT_LEVEL = "currentLevel";
+
+    private static final String TAG_LLOCATION = "ladderlocation";
+    private static final String TAG_LADDER = "found_ladder";
 
     private static Logger logger = LogManager.getLogger("Miner");
 
@@ -142,10 +148,6 @@ public class BuildingMiner extends BuildingWorker {
         compound.setInteger(TAG_ACTIVE,active);
         compound.setInteger(TAG_CURRENT_LEVEL,currentLevel);
 
-
-
-
-
         if( getLocation!=null && shaftStart !=null && cobbleLocation!=null)
         {
             ChunkCoordUtils.writeToNBT(compound, TAG_SLOCATION, shaftStart);
@@ -153,6 +155,12 @@ public class BuildingMiner extends BuildingWorker {
             ChunkCoordUtils.writeToNBT(compound, TAG_CLOCATION, cobbleLocation);
 
 
+        }
+        compound.setBoolean(TAG_LADDER, foundLadder);
+
+        if(ladderLocation!= null)
+        {
+            ChunkCoordUtils.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
         }
 
         NBTTagList levelTagList = new NBTTagList();
@@ -183,9 +191,8 @@ public class BuildingMiner extends BuildingWorker {
         vectorZ = compound.getInteger(TAG_VECTORZ);
         active = compound.getInteger(TAG_ACTIVE);
         currentLevel = compound.getInteger(TAG_CURRENT_LEVEL);
-
-
-
+        ladderLocation = ChunkCoordUtils.readFromNBT(compound, TAG_LLOCATION); //206 59 157
+        foundLadder = compound.getBoolean(TAG_LADDER);
 
         shaftStart = ChunkCoordUtils.readFromNBT(compound, TAG_SLOCATION);
         cobbleLocation = ChunkCoordUtils.readFromNBT(compound, TAG_CLOCATION);
