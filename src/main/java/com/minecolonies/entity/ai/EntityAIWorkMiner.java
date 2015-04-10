@@ -110,8 +110,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 return;
             }
         }
-
-        if (b.ladderLocation.posY-1 > b.getMaxY())
+        else if (job.getStage() != Stage.SEARCHING_LADDER && b.ladderLocation.posY-1 > b.getMaxY() )
         {
             b.clearedShaft = false;
             job.setStage(Stage.MINING_SHAFT);
@@ -802,10 +801,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         BuildingMiner b = (BuildingMiner)worker.getWorkBuilding();
         if (b == null) return;
 
-        if(b.getLocation == null)
-        {
-            b.getLocation = new ChunkCoordinates(b.ladderLocation.posX,b.ladderLocation.posY,b.ladderLocation.posZ);
-        }
+
 
         int posX = worker.getWorkBuilding().getLocation().posX;
         int posY = worker.getWorkBuilding().getLocation().posY + 2;
@@ -832,6 +828,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             posYWorker = lastY;
                             logger.info("Found ladder at x:" + x + " y: " + lastY + " z: " + z);
                             delay = 10;
+
+                        if(b.getLocation == null)
+                        {
+                            b.getLocation = new ChunkCoordinates(b.ladderLocation.posX,b.ladderLocation.posY,b.ladderLocation.posZ);
+                        }
 
 
                         //if (/*ChunkCoordUtils.isWorkerAtSiteWithMove(worker, b.ladderLocation) &&*/  ChunkCoordUtils.tryMoveLivingToXYZ(worker, b.ladderLocation))
