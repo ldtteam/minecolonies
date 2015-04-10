@@ -95,26 +95,35 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         BuildingMiner b = (BuildingMiner)(worker.getWorkBuilding());
         if(b == null){return;}
 
-
-
-        if((b.ladderLocation == null  && job.getStage() != Stage.SEARCHING_LADDER) || (b.ladderLocation.equals(new ChunkCoordinates(0, 0, 0))  && job.getStage() != Stage.SEARCHING_LADDER) || b.shaftStart.equals(new ChunkCoordinates(0,0,0)))
+        if(b.ladderLocation == null ||  b.shaftStart == null )
         {
-            if(tryThreeTimes < 1)
-            {
+                if (tryThreeTimes < 1)
+                {
+                    b.foundLadder = false;
+                    job.setStage(Stage.SEARCHING_LADDER);
+                } else {
+                    tryThreeTimes--;
+                    return;
+                }
+        }
+        else if(b.ladderLocation.equals(new ChunkCoordinates(0, 0, 0)) ||  b.shaftStart.equals(new ChunkCoordinates(0,0,0)))
+        {
+            if (tryThreeTimes < 1) {
                 b.foundLadder = false;
                 job.setStage(Stage.SEARCHING_LADDER);
-            }
-            else
-            {
+            } else {
                 tryThreeTimes--;
                 return;
             }
         }
-        else if (job.getStage() != Stage.SEARCHING_LADDER && b.ladderLocation.posY-1 > b.getMaxY() )
+        else if(b.ladderLocation!=null)
         {
-            b.clearedShaft = false;
-            job.setStage(Stage.MINING_SHAFT);
-            //If level = +/- long ago, build on y or -1
+            if (b.ladderLocation.posY - 1 > b.getMaxY())
+            {
+                b.clearedShaft = false;
+                job.setStage(Stage.MINING_SHAFT);
+                //If level = +/- long ago, build on y or -1
+            }
         }
 
         if (delay > 0)
@@ -123,7 +132,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else
         {
-
             switch (job.getStage())
             {
                 case MINING_NODE:
