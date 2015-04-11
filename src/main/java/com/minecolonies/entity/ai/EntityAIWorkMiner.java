@@ -45,7 +45,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     //TODO be able to change level
     //FIXME Get Tools and Materials yourself
-    // TODO Longer Delay!
 
     private int delay = 0;                   //Must be saved here
     private String NEED_ITEM;
@@ -54,7 +53,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private int baseSpeed = 1;
     private int tryThreeTimes = 3;
-
+    private boolean hasDelayed = false;
     private int currentY=200;                //Can be saved here
     private int clear = 1;                   //Can be saved here for now
 
@@ -292,7 +291,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return;
         }
 
-        //TODO Check under and above for ores
         //TODO Last: Use Wood and Coal
         if(b.activeNode == null || b.activeNode.getStatus() == Node.Status.COMPLETED)
         {
@@ -409,54 +407,55 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 ChunkCoordinates mineThere = new ChunkCoordinates(loc.posX, loc.posY + 1, loc.posZ);
                                 checkAbove(loc.posX, loc.posY + 2, loc.posZ);
                                 block = ChunkCoordUtils.getBlock(world, mineThere);
-                                doMining(block, loc.posX, loc.posY + 1, loc.posZ);
-                                clearNode += 1;
+                                if(doMining(block, loc.posX, loc.posY + 1, loc.posZ))
+                                {
+                                    clearNode += 1;
+                                }
+                                break;
                             case 1:
                                 block = ChunkCoordUtils.getBlock(world, new ChunkCoordinates(loc.posX - uVX, loc.posY + 1, loc.posZ - uVZ));
                                 checkAbove(loc.posX - uVX, loc.posY + 2, loc.posZ - uVZ);
-                                doMining(block, loc.posX - uVX, loc.posY + 1, loc.posZ - uVZ);
-                                clearNode += 1;
+                                if(doMining(block, loc.posX - uVX, loc.posY + 1, loc.posZ - uVZ))
+                                {clearNode += 1;}
                                 break;
                             case 2:
                                 block = ChunkCoordUtils.getBlock(world, new ChunkCoordinates(loc.posX + uVX, loc.posY + 1, loc.posZ + uVZ));
                                 checkAbove(loc.posX + uVX, loc.posY + 2, loc.posZ + uVZ);
-                                doMining(block, loc.posX + uVX, loc.posY + 1, loc.posZ + uVZ);
-                                clearNode += 1;
+                                if(doMining(block, loc.posX + uVX, loc.posY + 1, loc.posZ + uVZ))
+                                {clearNode += 1;}
                                 break;
                             case 3:
                                 block = ChunkCoordUtils.getBlock(world, new ChunkCoordinates(loc.posX + uVX, loc.posY, loc.posZ + uVZ));
-                                doMining(block, loc.posX + uVX, loc.posY, loc.posZ + uVZ);
-                                clearNode += 1;
+                                if(doMining(block, loc.posX + uVX, loc.posY, loc.posZ + uVZ))
+                                {clearNode += 1;}
                                 break;
                             case 4:
                                 block = ChunkCoordUtils.getBlock(world, new ChunkCoordinates(loc.posX, loc.posY, loc.posZ));
-                                doMining(block, loc.posX, loc.posY, loc.posZ);
-                                clearNode += 1;
+                                if(doMining(block, loc.posX, loc.posY, loc.posZ))
+                                {clearNode += 1;}
                                 break;
                             case 5:
                                 block = ChunkCoordUtils.getBlock(world, new ChunkCoordinates(loc.posX - uVX, loc.posY, loc.posZ - uVZ));
-                                doMining(block, loc.posX - uVX, loc.posY, loc.posZ - uVZ);
-                                clearNode += 1;
+                                if(doMining(block, loc.posX - uVX, loc.posY, loc.posZ - uVZ))
+                                {clearNode += 1;}
                                 break;
                             case 6:
                                 block = ChunkCoordUtils.getBlock(world, new ChunkCoordinates(loc.posX - uVX, loc.posY - 1, loc.posZ - uVZ));
-                                doMining(block, loc.posX - uVX, loc.posY - 1, loc.posZ - uVZ);
-                                //Check under
-
-                                clearNode += 1;
+                                checkUnder(loc.posX + uVX, loc.posY - 2, loc.posZ + uVZ);
+                                if(doMining(block, loc.posX - uVX, loc.posY - 1, loc.posZ - uVZ))
+                                {clearNode += 1;}
                                 break;
                             case 7:
                                 block = ChunkCoordUtils.getBlock(world, new ChunkCoordinates(loc.posX, loc.posY - 1, loc.posZ));
-                                doMining(block, loc.posX, loc.posY - 1, loc.posZ);
-                                //Check under
-
-                                clearNode += 1;
+                                checkUnder(loc.posX + uVX, loc.posY - 2, loc.posZ + uVZ);
+                                if(doMining(block, loc.posX, loc.posY - 1, loc.posZ))
+                                {clearNode += 1;}
                                 break;
                             case 8:
                                 block = ChunkCoordUtils.getBlock(world, new ChunkCoordinates(loc.posX + uVX, loc.posY - 1, loc.posZ + uVZ));
-                                doMining(block, loc.posX + uVX, loc.posY - 1, loc.posZ + uVZ);
-                                //Check under
-                                clearNode += 1;
+                                checkUnder(loc.posX + uVX, loc.posY - 2, loc.posZ + uVZ);
+                                if(doMining(block, loc.posX + uVX, loc.posY - 1, loc.posZ + uVZ))
+                                {clearNode += 1;}
                                 break;
                             case 9:
 
@@ -514,9 +513,24 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     {
         ChunkCoordinates above = new ChunkCoordinates(x,y, z);
         Block blockAbove = ChunkCoordUtils.getBlock(world,above);
+        isValuable(x,y,z);
         if(blockAbove == Blocks.sand || blockAbove == Blocks.gravel || !canWalkOn(x,y,z))
         {
             ChunkCoordUtils.setBlock(world,above,Blocks.cobblestone);
+            int slot = inventoryContains(Blocks.cobblestone);
+            worker.getInventory().decrStackSize(slot, 1);
+        }
+
+    }
+
+    private void checkUnder(int x,int y,int z)
+    {
+        ChunkCoordinates under = new ChunkCoordinates(x,y, z);
+        Block blockUnder = ChunkCoordUtils.getBlock(world,under);
+        isValuable(x,y,z);
+        if(blockUnder == Blocks.sand || blockUnder == Blocks.gravel || !canWalkOn(x,y,z))
+        {
+            ChunkCoordUtils.setBlock(world,under,Blocks.cobblestone);
             int slot = inventoryContains(Blocks.cobblestone);
             worker.getInventory().decrStackSize(slot, 1);
         }
@@ -653,7 +667,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             int y = nextLoc.posY;
             int z = nextLoc.posZ;
 
-            doMining(block, nextLoc.posX, nextLoc.posY, nextLoc.posZ);
+            if(!doMining(block, nextLoc.posX, nextLoc.posY, nextLoc.posZ))
+            {
+                return;
+            }
+
             job.vein.remove(0);
 
             if (world.isAirBlock(x, y - 1, z) || !canWalkOn(x, y - 1, z))
@@ -1192,7 +1210,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     {
                         if (!world.getBlock(x, y, z).isAir(world, x, y, z))
                         {
-                            doMining(world.getBlock(x, y, z), x, y, z);
+                            if(!doMining(world.getBlock(x, y, z), x, y, z))
+                            {
+                                return;
+                            }
                             if (job.getStage() != Stage.MINING_SHAFT)
                             {
                                 return;
@@ -1480,20 +1501,20 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     }
 
 
-    private void doMining(Block block, int x, int y, int z)
+    private boolean doMining(Block block, int x, int y, int z)
     {
         BuildingMiner b = (BuildingMiner)(worker.getWorkBuilding());
-        if(b == null){return;};
+        if(b == null){return false;};
 
         if (InventoryUtils.getOpenSlot(worker.getInventory()) == -1)    //inventory has an open slot - this doesn't account for slots with non full stacks
         {                                                               //also we still may have problems if the block drops multiple items
             job.setStage(Stage.INVENTORY_FULL);
 
-            if(job.getStage() == Stage.MINING_NODE)
+            /*if(job.getStage() == Stage.MINING_NODE)
             {
                 clearNode-=1;
-            }
-            return;
+            }*/
+            return false;
         }
 
         if(b.activeNode!=null && job.getStage() == Stage.MINING_NODE && (block.isAir(world,x,y,z)
@@ -1506,7 +1527,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             logger.info("Finished because of Air Node: " + b.active + " x: " + x + " z: " + z + " vectorX: " + b.activeNode.getVectorX() + " vectorZ: " + b.activeNode.getVectorZ());
             b.levels.get(b.currentLevel).getNodes().remove(b.active);
 
-            return;
+            return true;
         }
 
         if(job.getStage() == Stage.MINING_NODE && b.shaftStart.posX == x && b.shaftStart.posZ == z)
@@ -1516,7 +1537,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             logger.info("Finished because of Ladder Node: " + b.active);
             b.levels.get(b.currentLevel).getNodes().remove(b.active);
 
-            return;
+            return true;
 
         }
 
@@ -1540,44 +1561,37 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             holdShovel();
         }
-        else if(block == Blocks.planks || block == Blocks.fence)
-        {
-            worker.setHeldItem(0);
-        }
         else
         {
             holdPickAxe();
         }
         hasToMine = block;
-        //Damage Tools
         ItemStack Tool = worker.getInventory().getHeldItem();
         if (Tool == null || !hasAllTheTools())
         {
             job.setStage(Stage.INSUFFICIENT_TOOLS);
-
-            if(job.getStage() == Stage.MINING_NODE)
-            {
-                clearNode-=1;
-            }
-
+            return false;
         }
         else if(!ForgeHooks.canToolHarvestBlock(block,0,Tool) && block != Blocks.air && block != Blocks.fence && block !=Blocks.planks && block != Blocks.ladder)
         {
             job.setStage(Stage.NEED_HIGHER_TOOLS);
             hasToMine = block;
 
-            if(job.getStage() == Stage.MINING_NODE)
+            /*if(job.getStage() == Stage.MINING_NODE)
             {
                 clearNode-=1;
-            }
+            }*/
+            return false;
         }
         else
         {
-            delay = getDelay(block,x,y,z)*5;
-            while(delay > 0)
+            if(!hasDelayed)
             {
-                delay --;
+                delay = getDelay(block,x,y,z);
+                hasDelayed = true;
+                return false;
             }
+            hasDelayed = false;
 
             Tool.getItem().onBlockDestroyed(Tool, world, block, x, y, z, worker);//Dangerous
             if (Tool.stackSize < 1)//if Tool breaks
@@ -1607,6 +1621,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         InventoryUtils.setStack(worker.getInventory(), item);
                     }
                     world.setBlockToAir(x, y, z);
+
 
                 }
             }
@@ -1639,6 +1654,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             job.setStage(Stage.INSUFFICIENT_TOOLS);
         }
+
+        return true;
     }
 
     private void findVein(int x, int y, int z)
@@ -1701,15 +1718,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             job.vein = new ArrayList<ChunkCoordinates>();
             job.vein.add(new ChunkCoordinates(x, y, z));
             logger.info("Found ore");
-
-            if (job.getStage() == Stage.MINING_NODE)
-            {
-                //clearNode -= 1;
-            }
-            else if (job.getStage() == Stage.MINING_SHAFT)
-            {
-                //clear -= 1;
-            }
 
             findVein(x, y, z);
             logger.info("finished finding ores: " + job.vein.size());
