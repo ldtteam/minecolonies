@@ -27,7 +27,6 @@ public class PathJob implements Callable<PathEntity>
     protected final IBlockAccess world;
 
     //  Job rules/configuration
-    protected boolean allowDiagonalMovement        = false;
     protected boolean allowJumpPointSearchTypeWalk = false;
 
     protected float destinationSlack = DESTINATION_SLACK_NONE; //  0 = exact match
@@ -64,7 +63,6 @@ public class PathJob implements Callable<PathEntity>
         this.owner = owner;
         this.world = new ChunkCache(world, minX, 0, minZ, maxX, 256, maxZ, 20);
 
-        allowDiagonalMovement = false;
         allowJumpPointSearchTypeWalk = false;
 
         if (Configurations.pathfindingDebugDraw)
@@ -85,17 +83,31 @@ public class PathJob implements Callable<PathEntity>
         }
 
         //  Compute destination slack - if the destination point cannot be stood in
-        if (getGroundHeight(null, destination.posX, destination.posY, destination.posZ, false, false) != destination.posY)
+        if (getGroundHeight(null, destination.posX, destination.posY, destination.posZ) != destination.posY)
         {
             destinationSlack = DESTINATION_SLACK_ADJACENT;
         }
 
+        boolean isSwimming = owner.isInWater();
+        if (isSwimming)
+        {
+            for (Block j = world.getBlock(start.posX, start.posY, start.posZ);
+                 j != null && j.getMaterial().isLiquid();
+                 j = world.getBlock(start.posX, start.posY, start.posZ))
+            {
+                ++start.posY;
+            }
+        }
         Node startNode = new Node(start.posX, start.posY, start.posZ,
                 computeHeuristic(start.posX, start.posY, start.posZ));
 
         if (isLadder(start.posX, start.posY, start.posZ))
         {
             startNode.isLadder = true;
+        }
+        else if (isSwimming)
+        {
+            startNode.isSwimming = true;
         }
 
         nodesOpen.offer(startNode);
@@ -176,13 +188,6 @@ public class PathJob implements Callable<PathEntity>
                 if ((dx >= 0) && walk(currentNode, 1, 0, 0))    break;  //  E
                 if ((dz >= 0) && walk(currentNode, 0, 0, 1))    break;  //  S
                 if ((dx <= 0) && walk(currentNode, -1, 0, 0))   break;  //  W
-                if (allowDiagonalMovement)
-                {
-                    if ((dx >= 0 || dz < 0) && walk(currentNode, 1, 0, -1))     break;  //  NE
-                    if ((dx >= 0 || dz > 0) && walk(currentNode, 1, 0, 1))      break;  //  SE
-                    if ((dx <= 0 || dz > 0) && walk(currentNode, -1, 0, 1))     break;  //  SW
-                    if ((dx <= 0 || dz < 0) && walk(currentNode, -1, 0, -1))    break;  //  NW
-                }
             }
 
             if (Configurations.pathfindingDebugDraw)
@@ -221,7 +226,7 @@ public class PathJob implements Callable<PathEntity>
     {
         int pathLength = 0;
         Node backtrace = bestNode;
-        while (backtrace != null)
+        while (backtrace.parent != null)
         {
             ++pathLength;
             backtrace = backtrace.parent;
@@ -231,7 +236,7 @@ public class PathJob implements Callable<PathEntity>
 
         Node nextInPath = null;
         backtrace = bestNode;
-        while (backtrace != null)
+        while (backtrace.parent != null)
         {
             if (Configurations.pathfindingDebugDraw)
             {
@@ -313,12 +318,6 @@ public class PathJob implements Callable<PathEntity>
 //            return 1.5D;
 //        }
 
-        if (dx != 0 && dz != 0)
-        {
-            //  Diagonal
-            return 1.414D;
-        }
-
         return 1D;
     }
 
@@ -375,7 +374,7 @@ public class PathJob implements Callable<PathEntity>
         //  Can we traverse into this node?  Fix the y up
         if (parent != null)
         {
-            int newY = getGroundHeight(parent, x, y, z, !parent.isLadder, !parent.isLadder);
+            int newY = getGroundHeight(parent, x, y, z);
             if (newY < 0)
             {
                 return false;
@@ -413,25 +412,6 @@ public class PathJob implements Callable<PathEntity>
             return false;
         }
 
-        if (dx != 0 && dz != 0)
-        {
-            //  In case of diagonal, BOTH common neighbor non-diagonal blocks must be at the same level
-
-            //  Test neighbors, with offset from new block, computed from delta of parent
-            //  dX,dZ   x1,z1   x2,z2
-            //  -1,1    1,0     0,-1
-            //  1,1     -1,0    0,-1
-            //  1,-1    -1,0    0,1
-            //  -1,-1   1,0     0,1
-
-            //  TODO - Verify this is actually testing the right blocks...
-            //  ... so far it seems right
-            int cornerY = getGroundHeight(parent, x - dx, y, z, true, !parent.isLadder);
-            if (cornerY > y || cornerY == -1) return false;
-            cornerY = getGroundHeight(parent, x, y, z - dz, true, !parent.isLadder);
-            if (cornerY > y || cornerY == -1) return false;
-        }
-
         if (node != null)
         {
             //  This node already exists
@@ -462,6 +442,11 @@ public class PathJob implements Callable<PathEntity>
             if (isLadder(x, y, z))
             {
                 node.isLadder = true;
+            }
+            else if (parent.isSwimming &&
+                    world.getBlock(x, y - 1, z).getMaterial().isLiquid())
+            {
+                node.isSwimming = true;
             }
 
             node.counterAdded = ++totalNodesAdded;
@@ -496,13 +481,15 @@ public class PathJob implements Callable<PathEntity>
      * @param x,y,z coordinate of block
      * @return y height of first open, viable block above ground, or -1 if blocked or too far a drop
      */
-    protected int getGroundHeight(Node parent, int x, int y, int z, boolean canDrop, boolean canJump)
+    protected int getGroundHeight(Node parent, int x, int y, int z)
     {
-        Block b = world.getBlock(x, y + 1, z);
+        boolean canDrop = parent != null && !parent.isLadder;
+        boolean canJump = parent != null && !parent.isLadder;
+        boolean isSwimming = parent != null && parent.isSwimming;
 
         //  Check (y+1) first, as it's always needed, either for the upper body (level),
         //  lower body (headroom drop) or lower body (jump up)
-        if (!isPassable(b, x, y + 1, z))
+        if (!isPassable(x, y + 1, z))
         {
             return -1;
         }
@@ -518,14 +505,13 @@ public class PathJob implements Callable<PathEntity>
             }
 
             //  Check for headroom in the target space
-            target = world.getBlock(x, y + 2, z);
-            if (!isPassable(target, x, y+2, z))
+            if (!isPassable(x, y + 2, z))
             {
                 return -1;
             }
 
             //  Check for jump room from the origin space
-            if (world.getBlock(parent.x, parent.y + 2, parent.z).getMaterial() != Material.air)
+            if (!isPassable(parent.x, parent.y + 2, parent.z))
             {
                 return -1;
             }
@@ -540,6 +526,11 @@ public class PathJob implements Callable<PathEntity>
         {
             if (!isWalkableSurface(below, x, y - 1, z))
             {
+                if (isSwimming && below.getMaterial().isLiquid())
+                {
+                    return y;
+                }
+
                 return -1;
             }
 
@@ -553,7 +544,7 @@ public class PathJob implements Callable<PathEntity>
         }
 
         //  Nothing to stand on
-        if (!canDrop)
+        if (!canDrop || isSwimming)
         {
             return -1;
         }
@@ -568,161 +559,10 @@ public class PathJob implements Callable<PathEntity>
         return -1;
     }
 
-//
-//    protected int isPassableArea(int x, int y, int z)
-//    {
-//        Block floor = world.getBlock(x, y - 1, z);
-//        Block lower = world.getBlock(x, y, z);
-//        Block upper = world.getBlock(x, y + 1, z);
-//
-//        //  Check (y+1) first, as it's always needed, either for the upper body (level),
-//        //  lower body (headroom drop) or lower body (jump up)
-//        if (!isPassable(x, y + 1, z))
-//        {
-//            return -1;
-//        }
-//
-//        //  Now check the block we want to move to
-//        Block target = world.getBlock(x, y, z);
-//        if (!isPassable(target, x, y, z))
-//        {
-//            //  Need to try jumping up one
-//            if (sameLevelOnly)
-//            {
-//                return -1;
-//            }
-//
-//            if (!isWalkableSurface(target))
-//            {
-//                return -1;
-//            }
-//
-//            //  Check for headroom in the target space
-//            if (!isPassable(x, y + 2, z))
-//            {
-//                return -1;
-//            }
-//
-//            //  Jump up one
-//            return y + 1;
-//        }
-//
-//        //  Do we have something to stand on in the target space?
-//        Block below = world.getBlock(x, y - 1, z);
-//        if (!isPassable(below))
-//        {
-//            if (!isWalkableSurface(below))
-//            {
-//                return -1;
-//            }
-//
-//            //  Level path, continue
-//            return y;
-//        }
-//
-//        if (below.isLadder(world, x, y - 1, z, null))
-//        {
-//            return y;
-//        }
-//
-//        //  Nothing to stand on
-//        if (sameLevelOnly)
-//        {
-//            return -1;
-//        }
-//
-//        //  How far of a drop?
-//        if (!isPassable(x, y - 2, z))
-//        {
-//            return y - 1;
-//        }
-//
-//        //  Too far
-//        return -1;
-//    }
-
-//    protected int getGroundHeight(int x, int y, int z, boolean fromLadder)
-//    {
-//        if (isViable(x, y, z, 0))       return y;       //  Level
-//        if (fromLadder) return -1;
-//        if (isViable(x, y - 1, z, -1))  return y - 1;   //  Drop
-//        if (isViable(x, y + 1, z, +1))  return y + 1;   //  Jump
-//        return -1;
-//    }
-//
-//    protected boolean isViable(int x, int y, int z, int yOffset)
-//    {
-//        Block block = world.getBlock(x, y, z);
-//
-//        //  If the block itself isn't passable, no joy!
-//        if (!isPassable(block))
-//        {
-//            return false;
-//        }
-//
-//        //  If a Human can't stand at the location, it's not passable!
-//        if (!isPassable(x, y + 1, z))
-//        {
-//            //  No room above
-//            return false;
-//        }
-//
-//        if (block == Blocks.ladder)
-//        {
-//            return true;
-//        }
-//
-//        //  Is this a drop?
-//        if (isPassable(x, y - 1, z) &&
-//                ((block == Blocks.air) ||
-//                block.getBlocksMovement(world, x, y - 1, z)))
-//        {
-//            //  This is a drop with no ladder
-//            return false;
-//        }
-//
-//        //  If descending, check for headroom
-//        if (yOffset < 0 && !isPassable(x, y - yOffset, z))
-//        {
-//            return false;
-//        }
-//
-//        return true;
-//    }
-//
-//    protected boolean isPassable(int x, int y, int z)
-//    {
-//        return isPassable(world.getBlock(x, y, z), x, y, z);
-//    }
-//
-//    protected boolean isPassable(int x, int y, int z)
-//    {
-//        Block block = world.getBlock(x, y, z);
-//
-//        if (block == null)
-//        {
-//            return false;
-//        }
-//
-//        if (block.getMaterial().isSolid())
-//        {
-//            if (block instanceof BlockDoor ||
-//                    block instanceof BlockTrapDoor)
-//            {
-//                return true;
-//            }
-//
-//            return false;
-//        }
-//
-//        return true;
-//    }
-
     protected boolean isPassable(int x, int y, int z)
     {
         return isPassable(world.getBlock(x, y, z), x, y, z);
     }
-
 
     protected boolean isPassable(Block block, int x, int y, int z)
     {
@@ -745,6 +585,10 @@ public class PathJob implements Callable<PathEntity>
                     return true;
                 }
 
+                return false;
+            }
+            else if (block.getMaterial().isLiquid())
+            {
                 return false;
             }
         }

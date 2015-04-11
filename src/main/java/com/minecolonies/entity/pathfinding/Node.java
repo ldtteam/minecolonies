@@ -14,6 +14,7 @@ public class Node implements Comparable<Node>
 
     public boolean closed = false;
     public boolean isLadder = false;
+    public boolean isSwimming = false;
 
     /**
      * Create a Node that inherits from a parent, and has a Cost and Heuristic estimate
