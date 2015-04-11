@@ -51,7 +51,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     public List<ChunkCoordinates> localVein;
 
-    private int baseSpeed = 1;
+    private double baseSpeed = 1;
     private int tryThreeTimes = 3;
     private boolean hasDelayed = false;
     private int currentY=200;                //Can be saved here
@@ -1415,7 +1415,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private int getDelay(Block block,int x, int y, int z)
     {
 
-        int dd = baseSpeed  * (int)(worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0) * block.getBlockHardness(world,x,y,z));
+        int dd = (int)(baseSpeed  * (int)(worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0) * block.getBlockHardness(world,x,y,z)));
         return dd;
 
     }
