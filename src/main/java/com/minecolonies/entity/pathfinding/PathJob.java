@@ -240,28 +240,14 @@ public class PathJob implements Callable<PathEntity>
         else if (world.getBlock(x, y, z) instanceof BlockFence)
         {
             //  Push away from fence
-            double eX = entity.posX;
-            double eZ = entity.posZ;
+            double dX = entity.posX - Math.floor(entity.posX);
+            double dZ = entity.posZ - Math.floor(entity.posZ);
 
-            double midX = Math.floor(eX) + 0.5;
-            double midZ = Math.floor(eZ) + 0.5;
+            if (dX < 0.1)       x -= 1;
+            else if (dX > 0.9)  x += 1;
 
-            double diffX = Math.abs(eX - midX);
-            double diffZ = Math.abs(eZ - midZ);
-
-            if (diffX > diffZ)
-            {
-                //  Push away on the x
-                if (eX < midX)  --x;
-                else            ++x;
-            }
-            else
-            {
-                //  Push away on the z
-                //  Push away on the x
-                if (eZ < midZ)  --z;
-                else            ++z;
-            }
+            if (dZ < 0.1)       z -= 1;
+            else if (dZ > 0.9)  z += 1;
         }
 
         return new ChunkCoordinates(x, y, z);
