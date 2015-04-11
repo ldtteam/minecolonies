@@ -44,8 +44,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     }
 
     //TODO be able to change level
-    //FIXME Shaft restart bugs
-    //TODO Longer Delay!
+    //FIXME Get Tools and Materials yourself
+    // TODO Longer Delay!
 
     private int delay = 0;                   //Must be saved here
     private String NEED_ITEM;
@@ -108,15 +108,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else if(b.ladderLocation.equals(new ChunkCoordinates(0, 0, 0)) ||  b.shaftStart.equals(new ChunkCoordinates(0,0,0)))
         {
-            if (tryThreeTimes < 1) {
+            if (tryThreeTimes < 1)
+            {
                 b.foundLadder = false;
                 job.setStage(Stage.SEARCHING_LADDER);
-            } else {
+            }
+            else
+            {
                 tryThreeTimes--;
                 return;
             }
         }
-        else if(b.ladderLocation!=null)
+        else if(b.ladderLocation!=null && (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.WORKING))
         {
             if (b.ladderLocation.posY - 1 > b.getMaxY())
             {
@@ -295,7 +298,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
 
             int rand1 = (int)(Math.random()*3);
-            int randomNum;
+            int randomNum = 0;
 
             if(b.levels.get(b.currentLevel).getNodes() == null)
             {
@@ -303,14 +306,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 {
                     b.activeNode = null;
                     job.setStage(Stage.MINING_SHAFT);
+                    return;
                 }
                 else
                 {
                     b.currentLevel +=1;
+                    return;
                 }
             }
-
-            if(rand1 != 1)
+            else if(rand1 != 1)
             {
                 randomNum = b.active;
 
@@ -324,35 +328,36 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                  randomNum = (int) (Math.random() * b.levels.get(b.currentLevel).getNodes().size());
             }
 
-            Node node = b.levels.get(b.currentLevel).getNodes().get(randomNum);
-
-            if(node.getStatus() == Node.Status.AVAILABLE)
+            if(b.levels.get(b.currentLevel).getNodes().size() > randomNum)
             {
-                int x1 = b.shaftStart.posX + b.getMaxX();
-                int x2 = b.shaftStart.posX - b.getMaxX();
-                int z1 = b.shaftStart.posZ + b.getMaxZ();
-                int z2 = b.shaftStart.posZ - b.getMaxZ();
+                Node node = b.levels.get(b.currentLevel).getNodes().get(randomNum);
 
-                boolean a1 = node.getID().getX() > x1;
-                boolean a2 = node.getID().getY() > z1;
-                boolean a3 = node.getID().getX() < x2;
-                boolean a4 = node.getID().getY() < z2;
+                if (node.getStatus() == Node.Status.AVAILABLE) {
+                    int x1 = b.shaftStart.posX + b.getMaxX();
+                    int x2 = b.shaftStart.posX - b.getMaxX();
+                    int z1 = b.shaftStart.posZ + b.getMaxZ();
+                    int z2 = b.shaftStart.posZ - b.getMaxZ();
 
-                if(a1 || a2 || a3 || a4)
-                {
-                    b.levels.get(b.currentLevel).getNodes().remove(randomNum);
-                    return;
+                    boolean a1 = node.getID().getX() > x1;
+                    boolean a2 = node.getID().getY() > z1;
+                    boolean a3 = node.getID().getX() < x2;
+                    boolean a4 = node.getID().getY() < z2;
+
+                    if (a1 || a2 || a3 || a4) {
+                        b.levels.get(b.currentLevel).getNodes().remove(randomNum);
+                        return;
+                    }
+
+                    logger.info("Starting Node: " + randomNum);
+
+                    loc = new ChunkCoordinates(node.getID().getX(), depth, node.getID().getY());
+                    b.activeNode = node;
+                    b.active = randomNum;
+                    b.activeNode.setStatus(Node.Status.IN_PROGRESS);
+                    clearNode = 0;
+                    b.startingLevelNode = 0;
+                    b.markDirty();
                 }
-
-                logger.info("Starting Node: " + randomNum);
-
-                loc  = new ChunkCoordinates(node.getID().getX(), depth, node.getID().getY());
-                b.activeNode = node;
-                b.active = randomNum;
-                b.activeNode.setStatus(Node.Status.IN_PROGRESS);
-                clearNode = 0;
-                b.startingLevelNode = 0;
-                b.markDirty();
             }
         }
         else if(b.activeNode.getStatus() == Node.Status.IN_PROGRESS && loc !=null)
@@ -1369,9 +1374,21 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             clear += 1;
                         }
                     }
-
             }
         }
+        else
+            {
+                if(!(inventoryContains(Blocks.cobblestone)!=-1 ))
+                {
+                    needBlock = Blocks.cobblestone;
+                }
+                else
+                {
+                    needBlock = Blocks.dirt;
+                }
+
+                job.setStage(Stage.INSUFFICIENT_BLOCKS);
+            }
     }
 
     private int getDelay(Block block,int x, int y, int z)
@@ -1481,12 +1498,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(b.activeNode!=null && job.getStage() == Stage.MINING_NODE && (block.isAir(world,x,y,z)
                 || !canWalkOn(x,y,z)
-                /*|| block.isAir(world,x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())*/
+                || block.isAir(world,x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())
                 || !canWalkOn(x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())))
         {
             b.levels.get(b.currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
             b.activeNode.setStatus(Node.Status.COMPLETED);
-            logger.info("Finished because of Air Node: " + b.active + " x: " + x + " z: " + z + " vectorX: " + b.activeNode.getVectorX() + " vectorZ: " + b.activeNode                  .getVectorZ());
+            logger.info("Finished because of Air Node: " + b.active + " x: " + x + " z: " + z + " vectorX: " + b.activeNode.getVectorX() + " vectorZ: " + b.activeNode.getVectorZ());
             b.levels.get(b.currentLevel).getNodes().remove(b.active);
 
             return;
