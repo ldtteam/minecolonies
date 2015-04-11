@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -88,16 +89,6 @@ public class PathJob implements Callable<PathEntity>
             destinationSlack = DESTINATION_SLACK_ADJACENT;
         }
 
-        boolean isSwimming = owner.isInWater();
-        if (isSwimming)
-        {
-            for (Block j = world.getBlock(start.posX, start.posY, start.posZ);
-                 j != null && j.getMaterial().isLiquid();
-                 j = world.getBlock(start.posX, start.posY, start.posZ))
-            {
-                ++start.posY;
-            }
-        }
         Node startNode = new Node(start.posX, start.posY, start.posZ,
                 computeHeuristic(start.posX, start.posY, start.posZ));
 
@@ -105,7 +96,7 @@ public class PathJob implements Callable<PathEntity>
         {
             startNode.isLadder = true;
         }
-        else if (isSwimming)
+        else if (owner.isInWater())
         {
             startNode.isSwimming = true;
         }
@@ -220,6 +211,60 @@ public class PathJob implements Callable<PathEntity>
         }
 
         return path;
+    }
+
+    public static ChunkCoordinates prepareStart(EntityLiving entity, World world)
+    {
+        int x = MathHelper.floor_double(entity.posX);
+        int y = (int)entity.posY;
+        int z = MathHelper.floor_double(entity.posZ);
+
+        if (entity.isInWater())
+        {
+            for (Block b = world.getBlock(x, y, z);
+                 b != null && b.getMaterial().isLiquid();
+                 b = world.getBlock(x, y, z))
+            {
+                ++y;
+            }
+        }
+//        else if (!owner.onGround)
+//        {
+//            for (Block j = world.getBlock(start.posX, start.posY - 1, start.posZ);
+//                 j != null && j.getMaterial() == Material.air;
+//                 j = world.getBlock(start.posX, start.posY - 1, start.posZ))
+//            {
+//                --start.posY;
+//            }
+//        }
+        else if (world.getBlock(x, y, z) instanceof BlockFence)
+        {
+            //  Push away from fence
+            double eX = entity.posX;
+            double eZ = entity.posZ;
+
+            double midX = Math.floor(eX) + 0.5;
+            double midZ = Math.floor(eZ) + 0.5;
+
+            double diffX = Math.abs(eX - midX);
+            double diffZ = Math.abs(eZ - midZ);
+
+            if (diffX > diffZ)
+            {
+                //  Push away on the x
+                if (eX < midX)  --x;
+                else            ++x;
+            }
+            else
+            {
+                //  Push away on the z
+                //  Push away on the x
+                if (eZ < midZ)  --z;
+                else            ++z;
+            }
+        }
+
+        return new ChunkCoordinates(x, y, z);
     }
 
     PathEntity finalizePath()

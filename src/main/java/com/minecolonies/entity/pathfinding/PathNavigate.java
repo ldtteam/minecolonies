@@ -71,7 +71,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
             future = null;
         }
 
-        ChunkCoordinates start = new ChunkCoordinates(MathHelper.floor_double(theEntity.posX), (int)theEntity.posY, MathHelper.floor_double(theEntity.posZ));
+        ChunkCoordinates start = PathJob.prepareStart(theEntity, worldObj);
         destination = new ChunkCoordinates(newX, newY, newZ);
         this.speed = speed;
 
@@ -145,6 +145,15 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
                 }
             }
         }
+    }
+
+    /**
+     * If null path or reached the end
+     */
+    @Override
+    public boolean noPath()
+    {
+        return future == null && super.noPath();
     }
 
     @Override
