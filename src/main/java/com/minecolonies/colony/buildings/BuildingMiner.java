@@ -34,7 +34,6 @@ public class BuildingMiner extends BuildingWorker {
 
 
 
-    public ChunkCoordinates getLocation;
 
     public ChunkCoordinates cobbleLocation;
 
@@ -148,7 +147,7 @@ public class BuildingMiner extends BuildingWorker {
         compound.setInteger(TAG_ACTIVE,active);
         compound.setInteger(TAG_CURRENT_LEVEL,currentLevel);
 
-        if( getLocation!=null && shaftStart !=null && cobbleLocation!=null)
+        if( shaftStart !=null && cobbleLocation!=null)
         {
             ChunkCoordUtils.writeToNBT(compound, TAG_SLOCATION, shaftStart);
             //ChunkCoordUtils.writeToNBT(compound, TAG_GET_LOCATION, getLocation);

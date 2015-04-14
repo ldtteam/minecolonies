@@ -6,6 +6,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.server.FMLServerHandler;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -13,7 +14,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeHooks;
 import org.apache.logging.log4j.LogManager;
@@ -53,6 +53,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     public List<ChunkCoordinates> localVein;
 
+    public ChunkCoordinates getLocation;
     private double baseSpeed = 1;
     private int tryThreeTimes = 3;
     private boolean hasDelayed = false;
@@ -81,11 +82,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     @Override
     public void startExecuting()
     {
-        /*if (!Configurations.builderInfiniteResources)
-        {
-            //requestMaterials();
-        }*/
-
         worker.setStatus(EntityCitizen.Status.WORKING);
         updateTask();
     }
@@ -139,9 +135,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 int z = miningBlock.posZ;
 
                 worker.swingItem();
-
-                FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
-
+                try
+                {
+                    FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
+                }
+                catch(Exception e)
+                {
+                    logger.info("Couldn't add effect");
+                }
             }
             delay--;
         }
@@ -375,7 +376,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 loc = new ChunkCoordinates(b.activeNode.getID().getX(), depth, b.activeNode.getID().getY());
             }
 
-            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, new ChunkCoordinates(loc.posX, loc.posY, loc.posZ)) && ChunkCoordUtils.isClose(new ChunkCoordinates(loc.posX,loc.posY,loc.posZ),worker))
+            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, new ChunkCoordinates(loc.posX-b.activeNode.getVectorX(), loc.posY, loc.posZ-b.activeNode.getVectorZ())))
             {
 
                 Block block;
@@ -867,9 +868,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         logger.info("Found ladder at x:" + x + " y: " + lastY + " z: " + z);
                         delay = 10;
 
-                        if(b.getLocation == null)
+                        if(getLocation == null)
                         {
-                            b.getLocation = new ChunkCoordinates(b.ladderLocation.posX,b.ladderLocation.posY,b.ladderLocation.posZ);
+                            getLocation = new ChunkCoordinates(b.ladderLocation.posX,b.ladderLocation.posY,b.ladderLocation.posZ);
                         }
                         if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, b.ladderLocation)) {
                             b.cobbleLocation = new ChunkCoordinates(x, lastY, z);
@@ -908,7 +909,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 //North
                             }
                             //world.setBlockToAir(ladderLocation.posX, ladderLocation.posY - 1, ladderLocation.posZ);
-                            b.getLocation = new ChunkCoordinates(b.ladderLocation.posX, b.ladderLocation.posY - 1, b.ladderLocation.posZ);
+                            getLocation = new ChunkCoordinates(b.ladderLocation.posX, b.ladderLocation.posY - 1, b.ladderLocation.posZ);
                             b.shaftStart = new ChunkCoordinates(b.ladderLocation.posX, b.ladderLocation.posY - 1, b.ladderLocation.posZ);
                             b.foundLadder = true;
                             hasAllTheTools();
@@ -935,15 +936,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return;
         }
 
-        if(b.getLocation == null)
+        if(getLocation == null)
         {
-            b.getLocation = new ChunkCoordinates(b.ladderLocation.posX,b.ladderLocation.posY-1,b.ladderLocation.posZ);
+            getLocation = new ChunkCoordinates(b.ladderLocation.posX,b.ladderLocation.posY-1,b.ladderLocation.posZ);
         }
 
-        int x = b.getLocation.posX;
-        int y = b.getLocation.posY;
-        int z = b.getLocation.posZ;
-        currentY = b.getLocation.posY;
+        int x = getLocation.posX;
+        int y = getLocation.posY;
+        int z = getLocation.posZ;
+        currentY = getLocation.posY;
 
 
             //Needs 39+25 Planks + 4 Torches + 14 fence 5
@@ -1113,7 +1114,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         x = x + vektorX;
                         z = z + vektorZ;
 
-                        b.getLocation.set(x, y, z);
+                        getLocation.set(x, y, z);
                         clear += 1;
                     }
                     else if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, b.ladderLocation))
@@ -1150,7 +1151,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             }
                             clear = 1;
                             b.startingLevelShaft++;
-                            b.getLocation.set(b.shaftStart.posX, b.ladderLocation.posY-1, b.shaftStart.posZ);
+                            getLocation.set(b.shaftStart.posX, b.ladderLocation.posY-1, b.shaftStart.posZ);
 
                             if (y <= b.getMaxY())
                             {
@@ -1190,7 +1191,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         clear = 1;
                         b.startingLevelShaft++;
                         b.markDirty();
-                       b.getLocation.set(b.shaftStart.posX, b.getLocation.posY-1, b.shaftStart.posZ);
+                       getLocation.set(b.shaftStart.posX, getLocation.posY-1, b.shaftStart.posZ);
                     }
             }
             else if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker,new ChunkCoordinates(x,y,z)))
@@ -1386,7 +1387,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 setBlockFromInventory(x, y - 1, z, Blocks.dirt);
                             }
 
-                            b.getLocation.set(x, y, z);
+                            getLocation.set(x, y, z);
                             clear += 1;
                         }
                     }
@@ -1504,9 +1505,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return false;
         }
 
-        if(b.activeNode!=null && job.getStage() == Stage.MINING_NODE && (block.isAir(world,x,y,z)
-                || !canWalkOn(x,y,z)
-                || block.isAir(world,x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())
+        if(b.activeNode!=null && job.getStage() == Stage.MINING_NODE && (
+                 block.isAir(world,x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())
                 || !canWalkOn(x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ()))) //-164 58 -225
         {
             b.levels.get(b.currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
@@ -1602,8 +1602,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         InventoryUtils.setStack(worker.getInventory(), item);
                     }
 
-                    if(block != Blocks.ladder) {
+                    try
+                    {
                         FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(x, y, z, block, world.getBlockMetadata(x, y, z));
+                    }
+                    catch(Exception e)
+                    {
+                        logger.info("Couldn't add effect");
                     }
                         world.setBlockToAir(x, y, z);
                     blocksMined+=1;
@@ -1616,7 +1621,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 {
                     InventoryUtils.setStack(worker.getInventory(), item);
                 }
-                FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(x, y, z, block, world.getBlockMetadata(x, y, z));
+                try
+                {
+                    FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(x, y, z, block, world.getBlockMetadata(x, y, z));
+                }
+                catch(Exception e)
+                {
+                    logger.info("Couldn't add effect");
+                }
                 world.setBlockToAir(x, y, z);
                 blocksMined+=1;
             }
