@@ -193,7 +193,6 @@ public class BuildingMiner extends BuildingWorker {
         currentLevel = compound.getInteger(TAG_CURRENT_LEVEL);
         ladderLocation = ChunkCoordUtils.readFromNBT(compound, TAG_LLOCATION); //206 59 157
         foundLadder = compound.getBoolean(TAG_LADDER);
-
         shaftStart = ChunkCoordUtils.readFromNBT(compound, TAG_SLOCATION);
         cobbleLocation = ChunkCoordUtils.readFromNBT(compound, TAG_CLOCATION);
 
@@ -205,6 +204,9 @@ public class BuildingMiner extends BuildingWorker {
             levels.add(level);
         }
 
-        logger.info("Finished loading Building");
+        activeNode = levels.get(currentLevel).getNodes().get(active);
+
+
+                logger.info("Finished loading Building");
     }
 }

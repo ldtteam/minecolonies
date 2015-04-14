@@ -69,31 +69,6 @@ public class ChunkCoordUtils
         return new ChunkCoordinates(x, y, z);
     }
 
-    public static boolean isClose(ChunkCoordinates x,EntityCitizen b)
-    {
-        int x1 = x.posX;
-        int y1 = x.posY;
-        int z1 = x.posZ;
-
-        int x2 = MathHelper.floor_double(b.getPosition().xCoord);
-        int y2 = MathHelper.floor_double(b.getPosition().yCoord);
-        int z2 = MathHelper.floor_double(b.getPosition().zCoord);
-
-        if(x.equals(b.getPosition()))
-        {
-            return true;
-        }
-
-       double a = Math.sqrt((
-               (((x2)-(x1))*((x2)-(x1))) +
-               (((y2)-(y1))*((y2)-(y1))) +
-               (((z2)-(z1))*((z2)-(z1)))
-        ));
-
-        return a < 2.2;
-
-    }
-
     public static TileEntity getTileEntity(World world, ChunkCoordinates coords)
     {
         return world.getTileEntity(coords.posX, coords.posY, coords.posZ);
