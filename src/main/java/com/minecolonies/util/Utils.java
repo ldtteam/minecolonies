@@ -69,10 +69,10 @@ public class Utils
         }
         else
         {
-            if(!worker.getNavigator().noPath())//within 2 blocks - can stop pathing //TODO may not need this check
-            {
-                worker.getNavigator().clearPathEntity();
-            }
+//            if(!worker.getNavigator().noPath())//within 2 blocks - can stop pathing //TODO may not need this check
+//            {
+//                worker.getNavigator().clearPathEntity();
+//            }
             return true;
         }
     }
