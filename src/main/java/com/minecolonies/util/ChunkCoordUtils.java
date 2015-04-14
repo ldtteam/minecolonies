@@ -69,14 +69,13 @@ public class ChunkCoordUtils
         return new ChunkCoordinates(x, y, z);
     }
 
-<<<<<<< HEAD
-=======
+
     public static boolean isClose(ChunkCoordinates x,EntityCitizen b)
     {
         return distanceSqrd(x, b.getPosition()) < 4.84;
     }
 
->>>>>>> origin/Miner
+
     public static TileEntity getTileEntity(World world, ChunkCoordinates coords)
     {
         return world.getTileEntity(coords.posX, coords.posY, coords.posZ);

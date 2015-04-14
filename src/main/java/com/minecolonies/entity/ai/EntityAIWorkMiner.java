@@ -303,7 +303,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
 
         //TODO Last: Use Wood and Coal
-        if(b.activeNode == null || b.activeNode.getStatus() == Node.Status.COMPLETED)
+        if(b.activeNode == null || b.activeNode.getStatus() == Node.Status.COMPLETED || b.activeNode.getStatus() == Node.Status.AVAILABLE)
         {
 
             int rand1 = (int)(Math.random()*3);
@@ -371,7 +371,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else if(b.activeNode.getStatus() == Node.Status.IN_PROGRESS)
         {
-            loc = new ChunkCoordinates(b.activeNode.getID().getX(), depth, b.activeNode.getID().getY());
+            if(loc == null)
+            {
+                loc = new ChunkCoordinates(b.activeNode.getID().getX(), depth, b.activeNode.getID().getY());
+            }
 
             if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, new ChunkCoordinates(loc.posX, loc.posY, loc.posZ)))
             {
@@ -644,8 +647,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
                 }
                job.setStage(Stage.WORKING);
+               blocksMined = 0;
             }
-        blocksMined = 0;
+
     }
 
     private void mineVein()
@@ -1504,7 +1508,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if(b.activeNode!=null && job.getStage() == Stage.MINING_NODE && (block.isAir(world,x,y,z)
                 || !canWalkOn(x,y,z)
                 || block.isAir(world,x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())
-                || !canWalkOn(x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())))
+                || !canWalkOn(x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ()))) //-164 58 -225
         {
             b.levels.get(b.currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
             b.activeNode.setStatus(Node.Status.COMPLETED);
@@ -1598,8 +1602,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     {
                         InventoryUtils.setStack(worker.getInventory(), item);
                     }
-                    FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(x, y, z,block, world.getBlockMetadata(x,y,z));
-                    world.setBlockToAir(x, y, z);
+
+                    if(!(block == Blocks.ladder)) {
+                        FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(x, y, z, block, world.getBlockMetadata(x, y, z));
+                    }
+                        world.setBlockToAir(x, y, z);
                     blocksMined+=1;
                 }
             }
@@ -1627,7 +1634,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
             if ((world.isAirBlock(x, y - 1, z) || !canWalkOn(x, y - 1, z)) && job.getStage() != Stage.MINING_VEIN)
             {
-                setBlockFromInventory(x, y-1, z, Blocks.cobblestone);
+                setBlockFromInventory(x, y - 1, z, Blocks.cobblestone);
             }
         }
         if (!hasAllTheTools())
