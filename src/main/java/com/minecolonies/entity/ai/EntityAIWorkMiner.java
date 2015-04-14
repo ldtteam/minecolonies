@@ -7,16 +7,15 @@ import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.block.Block;
-import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ForgeModContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
@@ -376,7 +375,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 loc = new ChunkCoordinates(b.activeNode.getID().getX(), depth, b.activeNode.getID().getY());
             }
 
-            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, new ChunkCoordinates(loc.posX, loc.posY, loc.posZ)))
+            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, new ChunkCoordinates(loc.posX, loc.posY, loc.posZ)) && ChunkCoordUtils.isClose(new ChunkCoordinates(loc.posX,loc.posY,loc.posZ),worker))
             {
 
                 Block block;
@@ -526,7 +525,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private void checkAbove(int x,int y,int z)
     {
-        Block blockAbove = world.getBlock(x,y,z);
+        Block blockAbove = world.getBlock(x, y, z);
         isValuable(x,y,z);
         if(blockAbove == Blocks.sand || blockAbove == Blocks.gravel || !canWalkOn(x,y,z))
         {
@@ -734,7 +733,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     Block block = world.getBlock(x1,y1,z1);
                     if (block == Blocks.lava || block == Blocks.flowing_lava || block == Blocks.water || block == Blocks.flowing_water)//Add Mod Liquids
                     {
-                        setBlockFromInventory(x, y-1, z, Blocks.dirt);
+                        setBlockFromInventory(x1, y1, z1, Blocks.dirt);
                     }
                 }
             }
@@ -1603,7 +1602,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         InventoryUtils.setStack(worker.getInventory(), item);
                     }
 
-                    if(!(block == Blocks.ladder)) {
+                    if(block != Blocks.ladder) {
                         FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(x, y, z, block, world.getBlockMetadata(x, y, z));
                     }
                         world.setBlockToAir(x, y, z);
