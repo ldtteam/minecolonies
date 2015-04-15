@@ -637,7 +637,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     }
     private boolean isALiquid(int x, int y, int z)
     {
-       return world.getBlock(x,y,z).getMaterial().isLiquid();
+       return !world.getBlock(x,y,z).getMaterial().isLiquid();
     }
 
     private void checkAbove(int x,int y,int z)
