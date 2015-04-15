@@ -148,6 +148,15 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
             else if (theEntity.isInWater())
             {
                 //  Prevent shortcuts when swimming
+                int curIndex = this.getPath().getCurrentPathIndex();
+                if (curIndex > 0 &&
+                        (curIndex + 1) < this.getPath().getCurrentPathLength() &&
+                        this.getPath().getPathPointFromIndex(curIndex - 1).yCoord != pEx.yCoord)
+                {
+                    //  Work around the initial 'spin back' when dropping into water
+                    oldIndex = curIndex + 1;
+                }
+
                 this.getPath().setCurrentPathIndex(oldIndex);
 
                 Vec3 vec3 = this.getPath().getPosition(this.theEntity);

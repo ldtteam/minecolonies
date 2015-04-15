@@ -25,6 +25,7 @@ public class PathJob implements Callable<PathEntity>
     protected final IBlockAccess world;
 
     //  Job rules/configuration
+    protected boolean allowSwimming = true;
     protected boolean allowJumpPointSearchTypeWalk = false;
 
     private static final float DESTINATION_SLACK_NONE     = 0;
@@ -33,7 +34,6 @@ public class PathJob implements Callable<PathEntity>
 
     protected final Queue<Node>        nodesOpen    = new PriorityQueue<Node>(500);
     protected final Map<Integer, Node> nodesVisited = new HashMap<Integer, Node>();
-    protected Node bestNode;
 
     //  Debug Output
     protected int totalNodesAdded   = 0;
@@ -121,7 +121,7 @@ public class PathJob implements Callable<PathEntity>
 
         ++totalNodesAdded;
 
-        bestNode = startNode;
+        Node bestNode = startNode;
         double bestNodeDestinationDistanceSqrd = Double.MAX_VALUE;
 
         int cutoff = 0;
@@ -148,6 +148,12 @@ public class PathJob implements Callable<PathEntity>
                 MineColonies.logger.info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f", currentNode.x, currentNode.y, currentNode.z, currentNode.cost, currentNode.score));
             }
 
+            if (isAtDestination(currentNode))
+            {
+                bestNode = currentNode;
+                break;
+            }
+
             //  If this is the closest node to our destination, treat it as our best node
             double currentNodeDestinationDistanceSqrd = ChunkCoordUtils.distanceSqrd(destination, currentNode.x, currentNode.y, currentNode.z);
             if (currentNodeDestinationDistanceSqrd < bestNodeDestinationDistanceSqrd)
@@ -171,10 +177,7 @@ public class PathJob implements Callable<PathEntity>
                     //  On a ladder, we can go 1 straight-up
                     if (dy >= 0 || dx != 0 || dz != 0)
                     {
-                        if (walk(currentNode, 0, 1, 0))
-                        {
-                            break;
-                        }
+                        walk(currentNode, 0, 1, 0);
                     }
                 }
 
@@ -183,17 +186,14 @@ public class PathJob implements Callable<PathEntity>
                 {
                     if (isLadder(currentNode.x, currentNode.y - 1, currentNode.z))
                     {
-                        if (walk(currentNode, 0, -1, 0))
-                        {
-                            break;
-                        }
+                        walk(currentNode, 0, -1, 0);
                     }
                 }
 
-                if ((dz <= 0) && walk(currentNode, 0, 0, -1))   break;  //  N
-                if ((dx >= 0) && walk(currentNode, 1, 0, 0))    break;  //  E
-                if ((dz >= 0) && walk(currentNode, 0, 0, 1))    break;  //  S
-                if ((dx <= 0) && walk(currentNode, -1, 0, 0))   break;  //  W
+                if (dz <= 0)    walk(currentNode, 0, 0, -1);    //  N
+                if (dx >= 0)    walk(currentNode, 1, 0, 0);     //  E
+                if (dz >= 0)    walk(currentNode, 0, 0, 1);     //  S
+                if (dx <= 0)    walk(currentNode, -1, 0, 0);    //  W
             }
 
             if (debugEnabled)
@@ -213,7 +213,7 @@ public class PathJob implements Callable<PathEntity>
             }
         }
 
-        PathEntity path = finalizePath();
+        PathEntity path = finalizePath(bestNode);
 
         if (debugEnabled)
         {
@@ -264,7 +264,7 @@ public class PathJob implements Callable<PathEntity>
         return new ChunkCoordinates(x, y, z);
     }
 
-    PathEntity finalizePath()
+    PathEntity finalizePath(Node bestNode)
     {
         int pathLength = 0;
         Node backtrace = bestNode;
@@ -490,11 +490,7 @@ public class PathJob implements Callable<PathEntity>
             node.counterAdded = ++totalNodesAdded;
         }
 
-        if (isAtDestination(node))
-        {
-            bestNode = node;
-            return true;
-        }
+        nodesOpen.offer(node);
 
         //  Jump Point Search-ish optimization:
         // If this node was a (heuristic-based) improvement on our parent,
@@ -502,15 +498,10 @@ public class PathJob implements Callable<PathEntity>
         if (allowJumpPointSearchTypeWalk &&
                 node.heuristic <= parent.heuristic)
         {
-            if (walk(node, dx, dy, dz))
-            {
-                return true;
-            }
+            walk(node, dx, dy, dz);
         }
 
-        nodesOpen.offer(node);
-
-        return false;
+        return true;
     }
 
     /**
@@ -522,7 +513,7 @@ public class PathJob implements Callable<PathEntity>
     protected int getGroundHeight(Node parent, int x, int y, int z)
     {
         boolean canDrop = parent != null && !parent.isLadder;
-        boolean canJump = parent != null && !parent.isLadder;
+        boolean canJump = parent != null && !parent.isLadder && !parent.isSwimming;
         boolean isSwimming = parent != null && parent.isSwimming;
 
         //  Check (y+1) first, as it's always needed, either for the upper body (level),
@@ -560,21 +551,35 @@ public class PathJob implements Callable<PathEntity>
 
         //  Do we have something to stand on in the target space?
         Block below = world.getBlock(x, y - 1, z);
-        if (!isPassable(below, x, y - 1, z))
+        if (isWalkableSurface(below, x, y - 1, z))
         {
-            if (!isWalkableSurface(below, x, y - 1, z))
-            {
-                if (isSwimming && below.getMaterial().isLiquid())
-                {
-                    return y;
-                }
-
-                return -1;
-            }
-
-            //  Level path, continue
+            //  Level path
             return y;
         }
+
+        if (below.getMaterial().isLiquid())
+        {
+            if (isSwimming)
+            {
+                //  Already swimming in something, or allowed to swim and this is water
+                return y;
+            }
+
+            if (allowSwimming && below.getMaterial() == Material.water)
+            {
+                //  This is water, and we are allowed to swim
+                return y;
+            }
+
+            //  Not allowed to swim or this isn't water, and we're on dry land
+            return -1;
+        }
+
+//        if (!isPassable(below, x, y - 1, z))
+//        {
+//            //  Can this happen anymore?
+//            return -1;
+//        }
 
         if (below.isLadder(world, x, y - 1, z, null))
         {
@@ -588,7 +593,8 @@ public class PathJob implements Callable<PathEntity>
         }
 
         //  How far of a drop?
-        if (!isPassable(x, y - 2, z))
+        below = world.getBlock(x, y - 2, z);
+        if (isWalkableSurface(below, x, y - 2, z))
         {
             return y - 1;
         }
@@ -604,21 +610,13 @@ public class PathJob implements Callable<PathEntity>
 
     protected boolean isPassable(Block block, int x, int y, int z)
     {
-        if (block == null)
-        {
-            return false;
-        }
-
         if (block.getMaterial() != Material.air)
         {
             if (!block.getBlocksMovement(world, x, y, z))
             {
-                if (block instanceof BlockDoor /*||
-                        block instanceof BlockTrapDoor*/)
-                {
-                    return true;
-                }
-                if (block instanceof BlockFenceGate)
+                if (block instanceof BlockDoor ||
+                        //  block instanceof BlockTrapDoor ||
+                        block instanceof BlockFenceGate)
                 {
                     return true;
                 }
