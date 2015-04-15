@@ -19,18 +19,17 @@ import java.util.concurrent.Callable;
 
 public class PathJob implements Callable<PathEntity>
 {
-    private static final float DESTINATION_SLACK_NONE = 0;
-    private static final float DESTINATION_SLACK_ADJACENT = 3.1F;    // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
-
     protected final ChunkCoordinates start, destination;
+    protected final int maxRange;
 
-    protected final EntityLiving owner;
     protected final IBlockAccess world;
 
     //  Job rules/configuration
     protected boolean allowJumpPointSearchTypeWalk = false;
 
-    protected float destinationSlack = DESTINATION_SLACK_NONE; //  0 = exact match
+    private static final float DESTINATION_SLACK_NONE     = 0;
+    private static final float DESTINATION_SLACK_ADJACENT = 3.1F;    // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
+    protected            float destinationSlack           = DESTINATION_SLACK_NONE; //  0 = exact match
 
     protected final Queue<Node>        nodesOpen    = new PriorityQueue<Node>(500);
     protected final Map<Integer, Node> nodesVisited = new HashMap<Integer, Node>();
@@ -41,6 +40,7 @@ public class PathJob implements Callable<PathEntity>
     protected int totalNodesVisited = 0;
 
     //  Debug Rendering
+    protected boolean   debugEnabled         = false;
     protected int       debugSleepMs         = 0;
     protected Set<Node> debugNodesVisited    = null;
     protected Set<Node> debugNodesNotVisited = null;
@@ -51,25 +51,26 @@ public class PathJob implements Callable<PathEntity>
     static public Set<Node> lastDebugNodesNotVisited;
     static public Set<Node> lastDebugNodesPath;
 
-    public PathJob(EntityLiving owner, World world, ChunkCoordinates start, ChunkCoordinates end)
+    public PathJob(World world, ChunkCoordinates start, ChunkCoordinates end, int range)
     {
-        this.start = new ChunkCoordinates(start);
-        this.destination = new ChunkCoordinates(end);
-
         int minX = Math.min(start.posX, end.posX);
         int minZ = Math.min(start.posZ, end.posZ);
         int maxX = Math.max(start.posX, end.posX);
         int maxZ = Math.max(start.posZ, end.posZ);
 
-        this.owner = owner;
         this.world = new ChunkCache(world, minX, 0, minZ, maxX, 256, maxZ, 20);
+
+        this.start = new ChunkCoordinates(start);
+        this.destination = new ChunkCoordinates(end);
+        this.maxRange = range;
 
         allowJumpPointSearchTypeWalk = false;
 
         if (Configurations.pathfindingDebugDraw)
         {
-            debugSleepMs         = 25;
-            debugNodesVisited    = new HashSet<Node>();
+            debugEnabled = true;
+            debugSleepMs = 0;
+            debugNodesVisited = new HashSet<Node>();
             debugNodesNotVisited = new HashSet<Node>();
             debugNodesPath       = new HashSet<Node>();
         }
@@ -78,9 +79,23 @@ public class PathJob implements Callable<PathEntity>
     @Override
     public PathEntity call()
     {
+        try
+        {
+            return search();
+        }
+        catch (Exception exc)
+        {
+            exc.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private PathEntity search()
+    {
         if (Configurations.pathfindingDebugVerbosity > 0)
         {
-            MineColonies.logger.info(String.format("Pathing from [%d,%d,%d] to [%d,%d,%d]", start.posX, start.posY, start.posZ, destination.posX, destination.posY, destination.posZ));
+            MineColonies.logger.info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]", start.posX, start.posY, start.posZ, destination.posX, destination.posY, destination.posZ));
         }
 
         //  Compute destination slack - if the destination point cannot be stood in
@@ -96,7 +111,7 @@ public class PathJob implements Callable<PathEntity>
         {
             startNode.isLadder = true;
         }
-        else if (owner.isInWater())
+        else if (world.getBlock(start.posX, start.posY - 1, start.posZ).getMaterial().isLiquid())
         {
             startNode.isSwimming = true;
         }
@@ -119,7 +134,7 @@ public class PathJob implements Callable<PathEntity>
 
             Node currentNode = nodesOpen.poll();
             currentNode.counterVisited = ++totalNodesVisited;
-            if (Configurations.pathfindingDebugDraw)
+            if (debugEnabled)
             {
                 debugNodesNotVisited.remove(currentNode);
                 debugNodesVisited.add(currentNode);
@@ -141,7 +156,7 @@ public class PathJob implements Callable<PathEntity>
                 bestNodeDestinationDistanceSqrd = currentNodeDestinationDistanceSqrd;
             }
 
-            //if (currentNode.score < 400)
+            if (currentNode.steps <= maxRange)
             {
                 int dx = 0, dy = 0, dz = 0;
                 if (currentNode.parent != null)
@@ -181,7 +196,7 @@ public class PathJob implements Callable<PathEntity>
                 if ((dx <= 0) && walk(currentNode, -1, 0, 0))   break;  //  W
             }
 
-            if (Configurations.pathfindingDebugDraw)
+            if (debugEnabled)
             {
                 synchronized (debugNodeMonitor)
                 {
@@ -200,7 +215,7 @@ public class PathJob implements Callable<PathEntity>
 
         PathEntity path = finalizePath();
 
-        if (Configurations.pathfindingDebugDraw)
+        if (debugEnabled)
         {
             synchronized (debugNodeMonitor)
             {
@@ -221,20 +236,16 @@ public class PathJob implements Callable<PathEntity>
 
         if (entity.isInWater())
         {
-            for (Block b = world.getBlock(x, y, z);
-                 b != null && b.getMaterial().isLiquid();
-                 b = world.getBlock(x, y, z))
+            while (world.getBlock(x, y, z).getMaterial().isLiquid())
             {
                 ++y;
             }
         }
-//        else if (!owner.onGround)
+//        else if (y > 0 && world.getBlock(x, y - 1, z).getMaterial() == Material.air)
 //        {
-//            for (Block j = world.getBlock(start.posX, start.posY - 1, start.posZ);
-//                 j != null && j.getMaterial() == Material.air;
-//                 j = world.getBlock(start.posX, start.posY - 1, start.posZ))
+//            while (y > 0 && world.getBlock(x, y - 1, z).getMaterial() == Material.air)
 //            {
-//                --start.posY;
+//                --y;
 //            }
 //        }
         else if (world.getBlock(x, y, z) instanceof BlockFence)
@@ -269,7 +280,7 @@ public class PathJob implements Callable<PathEntity>
         backtrace = bestNode;
         while (backtrace.parent != null)
         {
-            if (Configurations.pathfindingDebugDraw)
+            if (debugEnabled)
             {
                 debugNodesVisited.remove(backtrace);
                 debugNodesPath.add(backtrace);
@@ -280,6 +291,12 @@ public class PathJob implements Callable<PathEntity>
             int x = backtrace.x;
             int y = backtrace.y;
             int z = backtrace.z;
+
+            if (backtrace.isSwimming)
+            {
+                //  Not truly necessary but helps prevent them spinning in place at swimming nodes
+                y -= 1;
+            }
 
             PathPointExtended p = new PathPointExtended(x, y, z);
 
@@ -354,19 +371,14 @@ public class PathJob implements Callable<PathEntity>
 
     protected double computeHeuristic(int x, int y, int z)
     {
-        //  Method 2 - Minimum distance in steps
-        int dx = x - destination.posX;
-        int dy = y - destination.posY;
-        int dz = z - destination.posZ;
-
         //  This gives the best results; we ignore dy because (excepting ladders) dy translation
         // comes free with dx/dz movement.  Including Y component results in strange behavior
         // that prefers roundabout paths that bring it closer in the Y but are less optimal
-        dx = (dx * dx);
-        dy = 0; //(dy * dy);
-        dz = (dz * dz);
-        return (dx + dy + dz) / 2;
-        //return Math.sqrt(dx + dy + dz);
+        int dx = x - destination.posX;
+        int dz = z - destination.posZ;
+
+        //  Manhattan Distance with a 1/1000th tie-breaker
+        return (Math.abs(dx) + Math.abs(dz)) * 1.001D;
     }
 
     protected boolean isAtDestination(Node n)
@@ -379,11 +391,6 @@ public class PathJob implements Callable<PathEntity>
         }
 
         return ChunkCoordUtils.distanceSqrd(destination, n.x, n.y, n.z) <= destinationSlack;
-    }
-
-    protected double getScoreCutoff()
-    {
-        return 120D * 120D;
     }
 
     protected boolean walk(Node parent, int dx, int dy, int dz)
@@ -433,15 +440,15 @@ public class PathJob implements Callable<PathEntity>
             stepCost += 0.1D;
         }
 
+        boolean isSwimming = (node != null) ? node.isSwimming : world.getBlock(x, y - 1, z).getMaterial().isLiquid();
+        if (isSwimming)
+        {
+            stepCost *= 5;
+        }
+
         double heuristic = computeHeuristic(x, y, z);
         double cost = parent.cost + stepCost;
         double score = cost + heuristic;
-
-        if (score >= getScoreCutoff())
-        {
-            //  If going to this node makes it impossible to reach the destination
-            return false;
-        }
 
         if (node != null)
         {
@@ -457,6 +464,7 @@ public class PathJob implements Callable<PathEntity>
             }
 
             node.parent = parent;
+            node.steps = parent.steps + 1;
             node.cost = cost;
             node.heuristic = heuristic;
             node.score = score;
@@ -465,7 +473,7 @@ public class PathJob implements Callable<PathEntity>
         {
             node = new Node(parent, x, y, z, cost, heuristic, score);
             nodesVisited.put(nodeKey, node);
-            if (Configurations.pathfindingDebugDraw)
+            if (debugEnabled)
             {
                 debugNodesNotVisited.add(node);
             }
@@ -474,8 +482,7 @@ public class PathJob implements Callable<PathEntity>
             {
                 node.isLadder = true;
             }
-            else if (parent.isSwimming &&
-                    world.getBlock(x, y - 1, z).getMaterial().isLiquid())
+            else if (isSwimming)
             {
                 node.isSwimming = true;
             }

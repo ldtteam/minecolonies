@@ -75,7 +75,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         destination = new ChunkCoordinates(newX, newY, newZ);
         this.speed = speed;
 
-        future = Pathfinding.enqueue(new PathJob(theEntity, worldObj, start, destination));
+        future = Pathfinding.enqueue(new PathJob(worldObj, start, destination, (int)getPathSearchRange()));
 
         return true;
     }
@@ -105,6 +105,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
             future = null;
         }
 
+        int oldIndex = this.noPath() ? 0 : this.getPath().getCurrentPathIndex();
         super.onUpdateNavigation();
 
         //  Ladder Workaround
@@ -143,6 +144,27 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
 
                     this.theEntity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, newSpeed);
                 }
+            }
+            else if (theEntity.isInWater())
+            {
+                //  Prevent shortcuts when swimming
+                this.getPath().setCurrentPathIndex(oldIndex);
+
+                Vec3 vec3 = this.getPath().getPosition(this.theEntity);
+
+                if (vec3.squareDistanceTo(theEntity.posX, vec3.yCoord, theEntity.posZ) < 0.1 &&
+                        Math.abs(theEntity.posY - vec3.yCoord) < 0.5)
+                {
+                    this.getPath().setCurrentPathIndex(this.getPath().getCurrentPathIndex() + 1);
+                    if (this.noPath())
+                    {
+                        return;
+                    }
+
+                    vec3 = this.getPath().getPosition(this.theEntity);
+                }
+
+                this.theEntity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, speed);
             }
         }
     }

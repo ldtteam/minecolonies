@@ -8,9 +8,10 @@ public class Node implements Comparable<Node>
 
     public int counterAdded;
     public int counterVisited;
+    public int steps;
     public double cost;     //  A* g value
-    public double heuristic;
-    public double score;    //  A* f value (g + heuristic) value
+    public double heuristic;//  A* h value
+    public double score;    //  A* f value (g + h)
 
     public boolean closed = false;
     public boolean isLadder = false;
@@ -29,6 +30,7 @@ public class Node implements Comparable<Node>
         this.x = x;
         this.y = y;
         this.z = z;
+        this.steps = parent != null ? parent.steps + 1 : 0;
         this.cost = cost;
         this.heuristic = heuristic;
         this.score = score;
@@ -50,6 +52,10 @@ public class Node implements Comparable<Node>
         //  Comparing doubles and returning value as int; can't simply cast the result
         if (score < o.score) return -1;
         if (score > o.score) return 1;
+        if (heuristic < o.heuristic)
+             return -1;
+        if (heuristic > o.heuristic)
+            return 1;
 ////        if ((score - o.score) <= -1E-14) return -1;
 ////        if ((score - o.score) >= 1E-14) return 1;
 //        return 0;
