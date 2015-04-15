@@ -129,7 +129,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if (delay > 0)
         {
-            if(miningBlock != null)
+            if(miningBlock != null && (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.MINING_SHAFT || job.getStage() == Stage.MINING_VEIN))
             {
                 int x = miningBlock.posX;
                 int y = miningBlock.posY;
@@ -366,7 +366,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
             else if(rand1 != 1)
             {
-                randomNum = b.active;
+                randomNum = b.levels.get(b.currentLevel).getNodes().size();
 
                 if(b.levels.get(b.currentLevel).getNodes().size()<b.active)
                 {
@@ -429,7 +429,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         b.activeNode.setStatus(Node.Status.COMPLETED);
                         b.levels.get(b.currentLevel).getNodes().remove(b.active);
 
-                        b.levels.get(b.currentLevel).addNewNode(b.activeNode.getID().getX() + 5 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 5 * b.activeNode.getVectorZ(), b.activeNode.getVectorX(), b.activeNode.getVectorZ());
 
                         if (b.activeNode.getVectorX() == 0)
                         {
@@ -441,6 +440,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             b.levels.get(b.currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 2, unsignVector(b.activeNode.getVectorZ()), unsignVector(b.activeNode.getVectorX()));
                             b.levels.get(b.currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() - 2, -unsignVector(b.activeNode.getVectorZ()), -unsignVector(b.activeNode.getVectorX()));
                         }
+
+                        b.levels.get(b.currentLevel).addNewNode(b.activeNode.getID().getX() + 5 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 5 * b.activeNode.getVectorZ(), b.activeNode.getVectorX(), b.activeNode.getVectorZ());
+
                         logger.info("Finished Node: " + b.active);
 
                         b.markDirty();
@@ -475,7 +477,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 block = world.getBlock(loc.posX - uVX, loc.posY + 1, loc.posZ - uVZ);
                                 checkAbove(loc.posX - uVX, loc.posY + 2, loc.posZ - uVZ);
 
-                                if(!canWalkOn(loc.posX - 2*uVX, loc.posY + 1, loc.posZ - 2*uVZ))
+                                if(!isALiquid(loc.posX - 2 * uVX, loc.posY + 1, loc.posZ - 2 * uVZ))
                                 {
                                     setBlockFromInventory(loc.posX - 2*uVX, loc.posY + 1, loc.posZ - 2*uVZ, Blocks.cobblestone);
                                 }
@@ -486,7 +488,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             case 2:
                                 block = world.getBlock(loc.posX + uVX, loc.posY + 1, loc.posZ + uVZ);
                                 checkAbove(loc.posX + uVX, loc.posY + 2, loc.posZ + uVZ);
-                                if(!canWalkOn(loc.posX + 2*uVX, loc.posY + 1, loc.posZ + 2*uVZ))
+                                if(!isALiquid(loc.posX + 2 * uVX, loc.posY + 1, loc.posZ + 2 * uVZ))
                                 {
                                     setBlockFromInventory(loc.posX + 2*uVX, loc.posY + 1, loc.posZ + 2*uVZ,Blocks.cobblestone);
 
@@ -496,7 +498,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 break;
                             case 3:
                                 block = world.getBlock(loc.posX + uVX, loc.posY, loc.posZ + uVZ);
-                                if(!canWalkOn(loc.posX + 2*uVX, loc.posY , loc.posZ + 2*uVZ))
+                                if(!isALiquid(loc.posX + 2 * uVX, loc.posY, loc.posZ + 2 * uVZ))
                                 {
                                     setBlockFromInventory(loc.posX + 2*uVX, loc.posY , loc.posZ + 2*uVZ,Blocks.cobblestone);
 
@@ -511,7 +513,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 break;
                             case 5:
                                 block = world.getBlock(loc.posX - uVX, loc.posY, loc.posZ - uVZ);
-                                if(!canWalkOn(loc.posX - 2*uVX, loc.posY , loc.posZ - 2*uVZ))
+                                if(!isALiquid(loc.posX - 2 * uVX, loc.posY, loc.posZ - 2 * uVZ))
                                 {
                                     setBlockFromInventory(loc.posX - 2*uVX, loc.posY , loc.posZ - 2*uVZ, Blocks.cobblestone);
                                 }
@@ -521,7 +523,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             case 6:
                                 block = world.getBlock(loc.posX - uVX, loc.posY - 1, loc.posZ - uVZ);
                                 checkUnder(loc.posX + uVX, loc.posY - 2, loc.posZ + uVZ);
-                                if(!canWalkOn(loc.posX - 2*uVX, loc.posY-1 , loc.posZ - 2*uVZ))
+                                if(!isALiquid(loc.posX - 2 * uVX, loc.posY - 1, loc.posZ - 2 * uVZ))
                                 {
                                     setBlockFromInventory(loc.posX - 2*uVX, loc.posY-1 , loc.posZ - 2*uVZ, Blocks.cobblestone);
                                 }
@@ -537,7 +539,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             case 8:
                                 block = world.getBlock(loc.posX + uVX, loc.posY - 1, loc.posZ + uVZ);
                                 checkUnder(loc.posX , loc.posY - 2, loc.posZ );
-                                if(!canWalkOn(loc.posX + 2*uVX, loc.posY - 1, loc.posZ + 2*uVZ))
+                                if(!isALiquid(loc.posX + 2 * uVX, loc.posY - 1, loc.posZ + 2 * uVZ))
                                 {
                                     setBlockFromInventory(loc.posX + 2*uVX, loc.posY - 1, loc.posZ + 2*uVZ,Blocks.cobblestone);
 
@@ -632,6 +634,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         }
 
+    }
+    private boolean isALiquid(int x, int y, int z)
+    {
+       return world.getBlock(x,y,z).getMaterial().isLiquid();
     }
 
     private void checkAbove(int x,int y,int z)
@@ -1261,13 +1267,27 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         }
                         else if(inventoryContainsMany(Blocks.torch) >= 4)
                         {
-                            while (neededTorches > 0)
+
+
+                            while(neededTorches > 0)
                             {
                                 int slot = inventoryContains(Blocks.torch);
                                 int size = worker.getInventory().getStackInSlot(slot).stackSize;
-                                worker.getInventory().decrStackSize(slot, size);
-                                neededTorches -= size;
+
+                                if (size > 4)
+                                {
+                                    worker.getInventory().decrStackSize(slot, 4);
+                                    neededTorches -= 4;
+                                }
+                                else
+                                {
+                                    worker.getInventory().decrStackSize(slot, size);
+                                    neededTorches -=size;
+                                }
+
+
                             }
+
                         }
 
                         if (b.levels == null)
