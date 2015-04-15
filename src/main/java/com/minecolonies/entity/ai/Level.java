@@ -1,5 +1,6 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.colony.buildings.BuildingMiner;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
@@ -30,13 +31,38 @@ public class Level
 
     private Level(){}
 
-    public Level(int x, int depth, int z)
+    public Level(int x, int depth, int z,BuildingMiner b)
     {
         this.depth = depth;
         nodes = new ArrayList<Node>();
-        nodes.add(new Node(x-4,z,-1,0));
-        nodes.add(new Node(x,z+4,0,+1));
-        nodes.add(new Node(x+4,z,+1,0));
+
+        int ladderX = b.ladderLocation.posX;
+        int ladderZ = b.ladderLocation.posZ;
+
+        if(ladderX != x-4 && ladderZ != z)
+        {
+            nodes.add(new Node(x-4,z,-1,0));
+        }
+
+        if(ladderX != x && ladderZ != z+4)
+        {
+            nodes.add(new Node(x,z+4,0,+1));
+
+        }
+
+        if(ladderX != x+4 && ladderZ != z)
+        {
+            nodes.add(new Node(x+4,z,+1,0));
+
+        }
+
+        if(ladderX != x && ladderZ != z-4)
+        {
+            nodes.add(new Node(x,z-4,0,-1));
+
+        }
+
+
 
     }
 

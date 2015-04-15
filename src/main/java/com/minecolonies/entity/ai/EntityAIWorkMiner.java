@@ -6,18 +6,19 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.server.FMLServerHandler;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     }
 
     //TODO be able to change level
-    //FIXME Bugging while Mining Node(Going to close)
 
     private int delay = 0;                   //Must be saved here
     private String NEED_ITEM;
@@ -723,18 +723,19 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
     }
 
-    private void avoidCloseLiquid(int x, int y, int z)
+    private void avoidCloseLiquid(int centerX, int centerY, int centerZ)
     {
-        for (int x1 = x - 3; x1 <= x + 3; x1++)
+        for (int x = centerX - 3; x <= centerX + 3; x++)
         {
-            for (int z1 = z - 3; z1 <= z + 3; z1++)
+            for (int z = centerZ - 3; z <= centerZ + 3; z++)
             {
-                for (int y1 = y ; y1 <= y + 2; y1++)
+                for (int y = centerY ; y <= centerY + 2; y++)
                 {
-                    Block block = world.getBlock(x1,y1,z1);
-                    if (block == Blocks.lava || block == Blocks.flowing_lava || block == Blocks.water || block == Blocks.flowing_water)//Add Mod Liquids
+                    Block block = world.getBlock(x,y,z);
+
+                    if (block.getMaterial().isLiquid())
                     {
-                        setBlockFromInventory(x1, y1, z1, Blocks.dirt);
+                        setBlockFromInventory(x, y, z, Blocks.dirt);
                     }
                 }
             }
@@ -875,7 +876,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, b.ladderLocation)) {
                             b.cobbleLocation = new ChunkCoordinates(x, lastY, z);
 
-                            //TODO Cobble on x+1 x-1 z+1 or z-1 to the ladder
                             if (world.getBlock(b.ladderLocation.posX - 1, b.ladderLocation.posY, b.ladderLocation.posZ).equals(Blocks.cobblestone))//Parameters unused
                             {
                                 b.cobbleLocation = new ChunkCoordinates(x - 1, lastY, z);
@@ -925,7 +925,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private void createShaft(int vektorX, int vektorZ)
     {
-
         BuildingMiner b = (BuildingMiner)worker.getWorkBuilding();
         if (b == null) return;
         if(b.clearedShaft) {job.setStage(Stage.WORKING); return;}
@@ -947,7 +946,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         currentY = getLocation.posY;
 
 
-            //Needs 39+25 Planks + 4 Torches + 14 fence 5
+            //Needs 39+25 Planks + 4 Torches + 14 fence 5 to create floor-structure
             if (b.startingLevelShaft % 5 == 0 && b.startingLevelShaft != 0)
             {
                 if (inventoryContainsMany(b.floorBlock) >= 64 && inventoryContains(Items.coal)!=-1)
@@ -1132,8 +1131,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                             int slot = inventoryContains(Items.coal);
                             worker.getInventory().decrStackSize(slot, 1);
-                            //Save Node
-                            //(x-4, y+1, z) (x, y+1, Z+4) and (x+4, y+1, z) or (x,y+1,z-1) in case of rotation -> check ladder
 
                             if (b.levels == null)
                             {
@@ -1141,12 +1138,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             }
                             if (vektorX == 0)
                             {
-                                b.levels.add(new Level(b.shaftStart.posX, y + 5, b.shaftStart.posZ + 3));
+                                b.levels.add(new Level(b.shaftStart.posX, y + 5, b.shaftStart.posZ + 3,b));
 
                             }
                             else if (vektorZ == 0)
                             {
-                                b.levels.add(new Level(b.shaftStart.posX + 3, y + 5, b.shaftStart.posZ));
+                                b.levels.add(new Level(b.shaftStart.posX + 3, y + 5, b.shaftStart.posZ,b));
 
                             }
                             clear = 1;
@@ -1157,28 +1154,27 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             {
                                 b.clearedShaft = true;
                                 job.setStage(Stage.MINING_NODE);
-                                //If level = +/- long ago, build on y or -1
                             }
                         b.markDirty();
 
-                        }
+                    }
 
+            }
+            else
+            {
+                job.setStage(Stage.INSUFFICIENT_BLOCKS);
+
+                if (inventoryContainsMany(b.floorBlock) >= 64)
+                {
+                    needItem = Items.coal;
                 }
                 else
                 {
-                    job.setStage(Stage.INSUFFICIENT_BLOCKS);
-
-                    if(inventoryContainsMany(b.floorBlock)>= 64)
-                    {
-                        needItem= Items.coal;
-                    }
-                    else
-                    {
-                        needBlock = b.floorBlock;
-                    }
+                    needBlock = b.floorBlock;
                 }
-
             }
+        }
+        //Mining shaft
         else if(inventoryContains(Blocks.dirt)!=-1 && inventoryContains(Blocks.cobblestone)!=-1)
         {
             if (clear >= 50)
@@ -1551,13 +1547,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             holdPickAxe();
         }
         hasToMine = block;
-        ItemStack Tool = worker.getInventory().getHeldItem();
-        if (Tool == null || !hasAllTheTools())
+        ItemStack tool = worker.getInventory().getHeldItem();
+        if (tool == null || !hasAllTheTools())
         {
             job.setStage(Stage.INSUFFICIENT_TOOLS);
             return false;
         }
-        else if(!ForgeHooks.canToolHarvestBlock(block,0,Tool) && block != Blocks.air && block != Blocks.fence && block !=Blocks.planks && block != Blocks.ladder)
+        else if(!ForgeHooks.canToolHarvestBlock(block,0,tool) && block != Blocks.air && block != Blocks.fence && block !=Blocks.planks && block != Blocks.ladder)
         {
             job.setStage(Stage.NEED_HIGHER_TOOLS);
             hasToMine = block;
@@ -1579,8 +1575,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             miningBlock = null;
             hasDelayed = false;
 
-            Tool.getItem().onBlockDestroyed(Tool, world, block, x, y, z, worker);//Dangerous
-            if (Tool.stackSize < 1)//if Tool breaks
+            tool.getItem().onBlockDestroyed(tool, world, block, x, y, z, worker);//Dangerous
+            if (tool.stackSize < 1)//if Tool breaks
             {
                 worker.setCurrentItemOrArmor(0, null);
                 worker.getInventory().setInventorySlotContents(worker.getInventory().getHeldItemSlot(), null);
@@ -1596,7 +1592,23 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             {
                 if(!isValuable(x, y, z))
                 {
-                    List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, bk, 0);//0 is fortune level, it doesn't matter //TODO Add Fortune Level from Tool
+                    int fortune = 0;
+                    if(tool.isItemEnchanted())
+                    {
+                        NBTTagList t = tool.getEnchantmentTagList();
+
+                        for(int i=0;i<t.tagCount();i++)
+                        {
+                            short id = t.getCompoundTagAt(i).getShort("id");
+                            if(id == 35)
+                            {
+                                fortune = t.getCompoundTagAt(i).getShort("lvl");
+                            }
+                        }
+                        logger.info("Info");
+                    }
+
+                    List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, bk, fortune);
                     for (ItemStack item : items)
                     {
                         InventoryUtils.setStack(worker.getInventory(), item);
@@ -1616,7 +1628,23 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
             else
             {
-                List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, bk, 0);//0 is fortune level, it doesn't matter //TODO Add Fortune Level from Tool
+                int fortune = 0;
+                if(tool.isItemEnchanted())
+                {
+                    NBTTagList t = tool.getEnchantmentTagList();
+
+                    for(int i=0;i<t.tagCount();i++)
+                    {
+                        short id = t.getCompoundTagAt(0).getShort("id");
+                        if(id == 35)
+                        {
+                            fortune = t.getCompoundTagAt(0).getShort("lvl");
+                        }
+                    }
+                    logger.info("Info");
+                }
+
+                List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, bk, fortune);
                 for (ItemStack item : items)
                 {
                     InventoryUtils.setStack(worker.getInventory(), item);
