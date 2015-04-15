@@ -64,7 +64,7 @@ public class BuildingMiner extends BuildingWorker {
     private static final String TAG_CLOCATION = "cobblelocation";
     private static final String TAG_ACTIVE = "activeNodeint";
     private static final String TAG_CURRENT_LEVEL = "currentLevel";
-
+    private static final String TAG_SN = "StartingNode";
     private static final String TAG_LLOCATION = "ladderlocation";
     private static final String TAG_LADDER = "found_ladder";
 
@@ -141,11 +141,13 @@ public class BuildingMiner extends BuildingWorker {
         compound.setString(TAG_FENCE_BLOCK, GameRegistry.findUniqueIdentifierFor(fenceBlock).toString());
         compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.setBoolean(TAG_CLEARED, clearedShaft);
-
         compound.setInteger(TAG_VECTORX, vectorX);
         compound.setInteger(TAG_VECTORZ,vectorZ);
         compound.setInteger(TAG_ACTIVE,active);
-        compound.setInteger(TAG_CURRENT_LEVEL,currentLevel);
+        compound.setInteger(TAG_CURRENT_LEVEL, currentLevel);
+        compound.setBoolean(TAG_LADDER, foundLadder);
+        compound.setInteger(TAG_SN,startingLevelNode);
+
 
         if( shaftStart !=null && cobbleLocation!=null)
         {
@@ -155,7 +157,7 @@ public class BuildingMiner extends BuildingWorker {
 
 
         }
-        compound.setBoolean(TAG_LADDER, foundLadder);
+
 
         if(ladderLocation!= null)
         {
@@ -194,6 +196,8 @@ public class BuildingMiner extends BuildingWorker {
         foundLadder = compound.getBoolean(TAG_LADDER);
         shaftStart = ChunkCoordUtils.readFromNBT(compound, TAG_SLOCATION);
         cobbleLocation = ChunkCoordUtils.readFromNBT(compound, TAG_CLOCATION);
+        startingLevelNode =compound.getInteger(TAG_SN);
+
 
         NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
 
