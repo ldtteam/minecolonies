@@ -61,6 +61,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     protected Status status = Status.IDLE;
 
+    private PathNavigate newNavigator;
     private boolean useNewNavigation = false;
 
     private static final int DATA_TEXTURE         = 13;
@@ -82,10 +83,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         this.renderDistanceWeight = 2.0D;
 
+        this.newNavigator = new PathNavigate(this, world);
+
         useNewNavigation = true;
         if (useNewNavigation)
         {
-            ReflectionHelper.setPrivateValue(EntityLiving.class, this, new PathNavigate(this, world), new String[]{"navigator"});
+            ReflectionHelper.setPrivateValue(EntityLiving.class, this, this.newNavigator, new String[]{"navigator"});
         }
 
         this.getNavigator().setAvoidsWater(true);
