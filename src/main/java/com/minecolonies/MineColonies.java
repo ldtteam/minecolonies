@@ -82,6 +82,8 @@ public class MineColonies
         network.registerMessage(BuildRequestMessage.class,              BuildRequestMessage.class,              20, Side.SERVER);
         network.registerMessage(OpenInventoryMessage.class,             OpenInventoryMessage.class,             21, Side.SERVER);
         network.registerMessage(TownhallRenameMessage.class,            TownhallRenameMessage.class,            22, Side.SERVER);
+        network.registerMessage(MinerRequestMessage.class,              MinerRequestMessage.class,              23, Side.SERVER);
+
 
         proxy.registerTileEntities();
 

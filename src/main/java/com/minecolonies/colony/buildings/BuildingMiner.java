@@ -1,5 +1,8 @@
 package com.minecolonies.colony.buildings;
 
+import com.blockout.views.Window;
+import com.minecolonies.client.gui.WindowHutBuilder;
+import com.minecolonies.client.gui.WindowHutMiner;
 import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -8,8 +11,10 @@ import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.ai.Level;
 import com.minecolonies.entity.ai.Node;
+import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.registry.GameRegistry;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,9 +36,6 @@ public class BuildingMiner extends BuildingWorker {
     public Block fenceBlock = Blocks.fence;
 
     public int startingLevelShaft = 0;
-
-
-
 
     public ChunkCoordinates cobbleLocation;
 
@@ -71,7 +73,6 @@ public class BuildingMiner extends BuildingWorker {
     private static Logger logger = LogManager.getLogger("Miner");
 
 
-
     public BuildingMiner(Colony c, ChunkCoordinates l) {
         super(c, l);
     }
@@ -96,15 +97,58 @@ public class BuildingMiner extends BuildingWorker {
         return new JobMiner(citizen);
     }
 
-    public static class View extends BuildingWorker.View {
-        public View(ColonyView c, ChunkCoordinates l) {
+    public static class View extends BuildingWorker.View
+    {
+        public int[] levels;
+        public int current;
+        public View(ColonyView c, ChunkCoordinates l)
+        {
             super(c, l);
+
         }
 
-        public com.blockout.views.Window getWindow(int guiId) {
-            return new WindowHutWorkerPlaceholder<BuildingMiner.View>(this, "minerHut");
+        public Window getWindow(int guiId)
+        {
+            if (guiId == EnumGUI.MINER.getID())
+            {
+                return new WindowHutMiner(this);
+            }
+
+            return null;
         }
+            @Override
+            public void deserialize(ByteBuf buf)
+            {
+                super.deserialize(buf);
+                current = buf.readInt();
+                int size = buf.readInt();
+                levels = new int[size];
+
+                for(int i=0;i<size;i++)
+                {
+                   levels[i] =  buf.readInt();
+                }
+
+
+            }
     }
+
+        @Override
+        public void serializeToView(ByteBuf buf)
+        {
+            super.serializeToView(buf);
+            buf.writeInt(currentLevel);
+            buf.writeInt(levels.size());
+
+
+            for(int i=0;i<levels.size();i++)
+            {
+                buf.writeInt(levels.get(i).getNodes().size());
+            }
+
+
+
+        }
 
     public int getMaxX()
     {
@@ -212,4 +256,10 @@ public class BuildingMiner extends BuildingWorker {
 
                 logger.info("Finished loading Building");
     }
+
+    @Override
+    public int getGuiId(){ return EnumGUI.MINER.getID(); }
+
+
+
 }

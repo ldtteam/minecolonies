@@ -22,7 +22,7 @@ public class Level
     /**
      * The depth of the startinglevel stored either as an incremental integer or the y startinglevel, not sure yet
      */
-    private int depth;
+    public int depth;
 
     private List<Node> nodes = new ArrayList<Node>();
 
@@ -36,27 +36,27 @@ public class Level
         this.depth = depth;
         nodes = new ArrayList<Node>();
 
-        int ladderX = b.ladderLocation.posX;
-        int ladderZ = b.ladderLocation.posZ;
+        int ladderX = b.cobbleLocation.posX;
+        int ladderZ = b.cobbleLocation.posZ;
 
-        if(ladderX != x-4 && ladderZ != z)
+        if(ladderX != x-4 || ladderZ != z)
         {
             nodes.add(new Node(x-4,z,-1,0));
         }
 
-        if(ladderX != x && ladderZ != z+4)
+        if(ladderX != x || ladderZ != z+4)
         {
             nodes.add(new Node(x,z+4,0,+1));
 
         }
 
-        if(ladderX != x+4 && ladderZ != z)
+        if(ladderX != x+4 || ladderZ != z)
         {
             nodes.add(new Node(x+4,z,+1,0));
 
         }
 
-        if(ladderX != x && ladderZ != z-4)
+        if(ladderX != x || ladderZ != z-4)
         {
             nodes.add(new Node(x,z-4,0,-1));
 
