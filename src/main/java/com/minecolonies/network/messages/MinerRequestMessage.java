@@ -23,12 +23,6 @@ public class MinerRequestMessage implements IMessage, IMessageHandler<MinerReque
     private ChunkCoordinates buildingId;
     private int              mode;
 
-
-    public static final int SHAFT  = -10;
-    public static final int NODE = -20;
-
-
-
     public MinerRequestMessage(){}
 
     public MinerRequestMessage(Building.View building, int mode)
@@ -37,8 +31,6 @@ public class MinerRequestMessage implements IMessage, IMessageHandler<MinerReque
         this.buildingId = building.getID();
         this.mode = mode;
     }
-
-
 
     @Override
     public void toBytes(ByteBuf buf)
@@ -70,17 +62,11 @@ public class MinerRequestMessage implements IMessage, IMessageHandler<MinerReque
         {
             return null;
         }
-
-
-
             if(building instanceof BuildingMiner)
             {
 
                 ((BuildingMiner)building).currentLevel = message.mode;
             }
-
-
-
         return null;
     }
 }

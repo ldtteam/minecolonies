@@ -5,7 +5,10 @@ import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
+import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.ModClassLoader;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -46,8 +49,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         FILL_VEIN
     }
 
-    //TODO be able to change level
-
     private int delay = 0;                   //Must be saved here
     private String NEED_ITEM;
 
@@ -67,6 +68,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     ChunkCoordinates loc;
     private int clearNode=0;
     private int canMineNode=0;
+    private int currentLevel=-1;
 
     public EntityAIWorkMiner(JobMiner job)
     {
@@ -92,6 +94,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     {
         BuildingMiner b = (BuildingMiner)(worker.getWorkBuilding());
         if(b == null){return;}
+
+        if(currentLevel == -1)
+        {
+            currentLevel = b.currentLevel;
+        }
 
         if((b.ladderLocation == null ||  b.shaftStart == null) && job.getStage() != Stage.MINING_NODE)
         {
@@ -195,29 +202,30 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
                     break;
                 case INSUFFICIENT_TOOLS:
-                        if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
-                            {
+                    if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+                    {
+                        logger.info("Need tools");
+                        System.out.print("Insufficient Tools!");
+                        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedTools", needItem.getUnlocalizedName());
 
-                            logger.info("Need tools");
+                        delay = 30;
 
-                            delay = 30;
-
-                            if (needItem == null)
-                            {
+                        if (needItem == null)
+                        {
                             job.setStage(Stage.WORKING);
+                            return;
+                        }
+                        else
+                        {
+                            isInHut(needItem);
+                            if (hasAllTheTools())
+                            {
+                                needItem = null;
+                                job.setStage(Stage.WORKING);
                                 return;
                             }
-                            else
-                            {
-                                isInHut(needItem);
-                                if (hasAllTheTools())
-                                {
-                                    needItem = null;
-                                    job.setStage(Stage.WORKING);
-                                    return;
-                                }
-                            }
                         }
+                    }
 
                     break;
                 case INSUFFICIENT_BLOCKS:
@@ -226,20 +234,27 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             if (needBlock == null && needItem != null)
                             {
                                 logger.info("Need: " + needItem.getUnlocalizedName());
+                                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeed", needItem.getUnlocalizedName());
                             }
                             else if (needItem == null && needBlock != null)
                             {
                                 logger.info("Need: " + needBlock.getUnlocalizedName());
+                                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeed", needBlock.getUnlocalizedName());
+
                             }
                             else if (needItem == null)
                             {
                                 logger.info("Need nothing");
+
                                 job.setStage(Stage.WORKING);
                                 return;
                             }
                             else
                             {
                                 logger.info("Need: " + needBlock.getUnlocalizedName() + needItem.getUnlocalizedName());
+                                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeed", needItem.getUnlocalizedName());
+                                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeed", needBlock.getUnlocalizedName());
+
                             }
 
                             delay = 30;
@@ -294,8 +309,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 case NEED_HIGHER_TOOLS:
                     if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
                     {
-                            logger.info("Need better Tools");
-                            delay = 30;
+                        logger.info("Need better Tools");
+                        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedBetterTools");
+
+
+                        delay = 30;
 
                             if (hasAllTheTools())
                             {
@@ -306,7 +324,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
     }
-
 
     private int  unsignVector(int i)
     {
@@ -320,7 +337,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private void mineNode(BuildingMiner b)
     {
-        if(b.levels.size()<b.currentLevel+1)
+        if(b.levels.size()<currentLevel)
         {
             b.activeNode = null;
             job.setStage(Stage.MINING_SHAFT);
@@ -335,24 +352,24 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return;
         }
 
-        Level level = b.levels.get(b.currentLevel);
-        int depth = level.getDepth();
-
-        if(level.getNodes().size() == 0)
+        if(b.levels.get(currentLevel).getNodes().size() == 0)
         {
             b.currentLevel++;
+            currentLevel++;
             return;
         }
 
+        int depth = b.levels.get(currentLevel).getDepth();
+
         if(b.activeNode == null || b.activeNode.getStatus() == Node.Status.COMPLETED || b.activeNode.getStatus() == Node.Status.AVAILABLE)
         {
-
+            currentLevel = b.currentLevel;
             int rand1 = (int)(Math.random()*3);
             int randomNum;
 
-            if(b.levels.get(b.currentLevel).getNodes() == null)
+            if(b.levels.get(currentLevel).getNodes() == null)
             {
-                if(b.levels.size()<b.currentLevel+1)
+                if(b.levels.size()<currentLevel+1)
                 {
                     b.activeNode = null;
                     job.setStage(Stage.MINING_SHAFT);
@@ -360,41 +377,47 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 }
                 else
                 {
-                    b.currentLevel +=1;
+                    b.currentLevel++;
+                    currentLevel++;
                     return;
                 }
             }
             else if(rand1 != 1)
             {
-                randomNum = b.levels.get(b.currentLevel).getNodes().size();
+                randomNum = b.levels.get(currentLevel).getNodes().size();
 
-                if(b.levels.get(b.currentLevel).getNodes().size()<b.active)
+                if(b.levels.get(currentLevel).getNodes().size()<b.active)
                 {
                     return;
                 }
             }
             else
             {
-                 randomNum = (int) (Math.random() * b.levels.get(b.currentLevel).getNodes().size());
+                 randomNum = (int) (Math.random() * b.levels.get(currentLevel).getNodes().size());
             }
 
-            if(b.levels.get(b.currentLevel).getNodes().size() > randomNum)
+            if(b.levels.get(currentLevel).getNodes().size() > randomNum)
             {
-                Node node = b.levels.get(b.currentLevel).getNodes().get(randomNum);
+                Node node = b.levels.get(currentLevel).getNodes().get(randomNum);
 
-                if (node.getStatus() == Node.Status.AVAILABLE) {
-                    int x1 = b.shaftStart.posX + b.getMaxX();
-                    int x2 = b.shaftStart.posX - b.getMaxX();
-                    int z1 = b.shaftStart.posZ + b.getMaxZ();
-                    int z2 = b.shaftStart.posZ - b.getMaxZ();
+                if (node.getStatus() == Node.Status.AVAILABLE)
+                {
 
-                    boolean a1 = node.getID().getX() > x1;
-                    boolean a2 = node.getID().getY() > z1;
-                    boolean a3 = node.getID().getX() < x2;
-                    boolean a4 = node.getID().getY() < z2;
+                    int x = node.getID().getX();
+                    int y = b.levels.get(currentLevel).getDepth();
+                    int z = node.getID().getY();
+                    Block block = world.getBlock(x,y,z);
 
-                    if (a1 || a2 || a3 || a4) {
-                        b.levels.get(b.currentLevel).getNodes().remove(randomNum);
+                    if(b.activeNode!=null && job.getStage() == Stage.MINING_NODE && (block.isAir(world,x+node.getVectorX(),y,z+node.getVectorZ()) || !canWalkOn(x+node.getVectorX(),y,z+node.getVectorZ())))
+                    {
+                        logger.info("Removed Node because of Air Node: " + b.active + " x: " + x + " z: " + z + " vectorX: " + b.activeNode.getVectorX() + " vectorZ: " + b.activeNode.getVectorZ());
+                        b.levels.get(currentLevel).getNodes().remove(randomNum);
+                        return;
+                    }
+
+                    if (node.getID().getX() > b.shaftStart.posX + b.getMaxX() || node.getID().getY() > b.shaftStart.posZ + b.getMaxZ() || node.getID().getX() < b.shaftStart.posX - b.getMaxX() || node.getID().getY() < b.shaftStart.posZ - b.getMaxZ())
+                    {
+                        b.levels.get(currentLevel).getNodes().remove(randomNum);
                         return;
                     }
 
@@ -419,222 +442,216 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
             if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, new ChunkCoordinates(loc.posX-b.activeNode.getVectorX(), loc.posY, loc.posZ-b.activeNode.getVectorZ())))
             {
-
                 Block block;
-                    int uVX = 0;
-                    int uVZ = 0;
+                int uVX = 0;
+                int uVZ = 0;
 
-                    if (b.startingLevelNode == 5) {
-                        b.levels.get(b.currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
-                        b.activeNode.setStatus(Node.Status.COMPLETED);
-                        b.levels.get(b.currentLevel).getNodes().remove(b.active);
+                if (b.startingLevelNode == 5)
+                {
+                    b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
+                    b.activeNode.setStatus(Node.Status.COMPLETED);
+                    b.levels.get(currentLevel).getNodes().remove(b.active);
 
 
-                        if (b.activeNode.getVectorX() == 0)
-                        {
-                            b.levels.get(b.currentLevel).addNewNode(b.activeNode.getID().getX() + 2, b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ(), unsignVector(b.activeNode.getVectorZ()), unsignVector(b.activeNode.getVectorX()));
-                            b.levels.get(b.currentLevel).addNewNode(b.activeNode.getID().getX() - 2, b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ(), -unsignVector(b.activeNode.getVectorZ()), -unsignVector(b.activeNode.getVectorX()));
-                        }
-                        else
-                        {
-                            b.levels.get(b.currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 2, unsignVector(b.activeNode.getVectorZ()), unsignVector(b.activeNode.getVectorX()));
-                            b.levels.get(b.currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() - 2, -unsignVector(b.activeNode.getVectorZ()), -unsignVector(b.activeNode.getVectorX()));
-                        }
-
-                        b.levels.get(b.currentLevel).addNewNode(b.activeNode.getID().getX() + 5 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 5 * b.activeNode.getVectorZ(), b.activeNode.getVectorX(), b.activeNode.getVectorZ());
-
-                        logger.info("Finished Node: " + b.active);
-
-                        b.markDirty();
-
+                    if (b.activeNode.getVectorX() == 0)
+                    {
+                        b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 2, b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ(), unsignVector(b.activeNode.getVectorZ()), unsignVector(b.activeNode.getVectorX()));
+                        b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() - 2, b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ(), -unsignVector(b.activeNode.getVectorZ()), -unsignVector(b.activeNode.getVectorX()));
                     }
                     else
                     {
+                        b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 2, unsignVector(b.activeNode.getVectorZ()), unsignVector(b.activeNode.getVectorX()));
+                        b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() - 2, -unsignVector(b.activeNode.getVectorZ()), -unsignVector(b.activeNode.getVectorX()));
+                    }
 
+                    b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 5 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 5 * b.activeNode.getVectorZ(), b.activeNode.getVectorX(), b.activeNode.getVectorZ());
+                    logger.info("Finished Node: " + b.active);
 
+                    b.markDirty();
+                }
+                else
+                {
+                    if (b.activeNode.getVectorX() == 0)
+                    {
+                        uVX = 1;
+                    }
+                    else
+                    {
+                        uVZ = 1;
+                    }
 
-                        if (b.activeNode.getVectorX() == 0)
-                        {
-                            uVX = 1;
-                        }
-                        else
-                        {
-                            uVZ = 1;
-                        }
+                    switch (clearNode)
+                    {
+                        case 0:
+                            block = world.getBlock(loc.posX, loc.posY + 1, loc.posZ);
+                            checkAbove(loc.posX, loc.posY + 2, loc.posZ);
+                            if (doMining(block, loc.posX, loc.posY + 1, loc.posZ))
+                            {
+                                clearNode += 1;
+                            }
+                            break;
+                        case 1:
+                            block = world.getBlock(loc.posX - uVX, loc.posY + 1, loc.posZ - uVZ);
+                            checkAbove(loc.posX - uVX, loc.posY + 2, loc.posZ - uVZ);
+                            if (!isALiquid(loc.posX - 2 * uVX, loc.posY + 1, loc.posZ - 2 * uVZ))
+                            {
+                                setBlockFromInventory(loc.posX - 2 * uVX, loc.posY + 1, loc.posZ - 2 * uVZ, Blocks.cobblestone);
+                            }
+                            if (doMining(block, loc.posX - uVX, loc.posY + 1, loc.posZ - uVZ))
+                            {
+                                clearNode += 1;
+                            }
+                            break;
+                        case 2:
+                            block = world.getBlock(loc.posX + uVX, loc.posY + 1, loc.posZ + uVZ);
+                            checkAbove(loc.posX + uVX, loc.posY + 2, loc.posZ + uVZ);
+                            if (!isALiquid(loc.posX + 2 * uVX, loc.posY + 1, loc.posZ + 2 * uVZ))
+                            {
+                                setBlockFromInventory(loc.posX + 2 * uVX, loc.posY + 1, loc.posZ + 2 * uVZ, Blocks.cobblestone);
+                            }
+                            if (doMining(block, loc.posX + uVX, loc.posY + 1, loc.posZ + uVZ))
+                            {
+                                clearNode += 1;
+                            }
+                            break;
+                        case 3:
+                            block = world.getBlock(loc.posX + uVX, loc.posY, loc.posZ + uVZ);
+                            if (!isALiquid(loc.posX + 2 * uVX, loc.posY, loc.posZ + 2 * uVZ))
+                            {
+                                setBlockFromInventory(loc.posX + 2 * uVX, loc.posY, loc.posZ + 2 * uVZ, Blocks.cobblestone);
+                            }
+                            if (doMining(block, loc.posX + uVX, loc.posY, loc.posZ + uVZ))
+                            {
+                                clearNode += 1;
+                            }
+                            break;
+                        case 4:
+                            block = world.getBlock(loc.posX, loc.posY, loc.posZ);
+                            if (doMining(block, loc.posX, loc.posY, loc.posZ))
+                            {
+                                clearNode += 1;
+                            }
+                            break;
+                        case 5:
+                            block = world.getBlock(loc.posX - uVX, loc.posY, loc.posZ - uVZ);
+                            if (!isALiquid(loc.posX - 2 * uVX, loc.posY, loc.posZ - 2 * uVZ))
+                            {
+                                setBlockFromInventory(loc.posX - 2 * uVX, loc.posY, loc.posZ - 2 * uVZ, Blocks.cobblestone);
+                            }
+                            if (doMining(block, loc.posX - uVX, loc.posY, loc.posZ - uVZ))
+                            {
+                                clearNode += 1;
+                            }
+                            break;
+                        case 6:
+                            block = world.getBlock(loc.posX - uVX, loc.posY - 1, loc.posZ - uVZ);
+                            checkUnder(loc.posX + uVX, loc.posY - 2, loc.posZ + uVZ);
+                            if (!isALiquid(loc.posX - 2 * uVX, loc.posY - 1, loc.posZ - 2 * uVZ))
+                            {
+                                setBlockFromInventory(loc.posX - 2 * uVX, loc.posY - 1, loc.posZ - 2 * uVZ, Blocks.cobblestone);
+                            }
+                            if (doMining(block, loc.posX - uVX, loc.posY - 1, loc.posZ - uVZ))
+                            {
+                                clearNode += 1;
+                            }
+                            break;
+                        case 7:
+                            block = world.getBlock(loc.posX, loc.posY - 1, loc.posZ);
+                            checkUnder(loc.posX + uVX, loc.posY - 2, loc.posZ + uVZ);
+                            if (doMining(block, loc.posX, loc.posY - 1, loc.posZ))
+                            {
+                                clearNode += 1;
+                            }
+                            break;
+                        case 8:
+                            block = world.getBlock(loc.posX + uVX, loc.posY - 1, loc.posZ + uVZ);
+                            checkUnder(loc.posX, loc.posY - 2, loc.posZ);
+                            if (!isALiquid(loc.posX + 2 * uVX, loc.posY - 1, loc.posZ + 2 * uVZ))
+                            {
+                                setBlockFromInventory(loc.posX + 2 * uVX, loc.posY - 1, loc.posZ + 2 * uVZ, Blocks.cobblestone);
+                            }
+                            if (doMining(block, loc.posX + uVX, loc.posY - 1, loc.posZ + uVZ))
+                            {
+                                clearNode += 1;
+                            }
+                            break;
+                        case 9:
 
+                            if (b.startingLevelNode == 2)
+                            {
+                                int neededPlanks = 10;
+                                canMineNode -= 1;
 
-                        switch (clearNode)
-                        {
-                            case 0:
-                                block = world.getBlock(loc.posX, loc.posY + 1, loc.posZ);
-                                checkAbove(loc.posX, loc.posY + 2, loc.posZ);
-                                if(doMining(block, loc.posX, loc.posY + 1, loc.posZ))
+                                world.setBlock(loc.posX, loc.posY + 1, loc.posZ, Blocks.planks);
+                                world.setBlock(loc.posX - uVX, loc.posY + 1, loc.posZ - uVZ, Blocks.planks);
+                                world.setBlock(loc.posX + uVX, loc.posY + 1, loc.posZ + uVZ, Blocks.planks);
+                                world.setBlock(loc.posX + uVX, loc.posY, loc.posZ + uVZ, Blocks.fence);
+                                world.setBlock(loc.posX - uVX, loc.posY, loc.posZ - uVZ, Blocks.fence);
+                                world.setBlock(loc.posX - uVX, loc.posY - 1, loc.posZ - uVZ, Blocks.fence);
+                                world.setBlock(loc.posX + uVX, loc.posY - 1, loc.posZ + uVZ, Blocks.fence);
+
+                                int meta = 0;
+
+                                if (b.activeNode.getVectorZ() < 0)
                                 {
-                                    clearNode += 1;
+                                    meta = 3;
+                                } else if (b.activeNode.getVectorZ() > 0)
+                                {
+                                    meta = 4;
                                 }
-                                break;
-                            case 1:
-                                block = world.getBlock(loc.posX - uVX, loc.posY + 1, loc.posZ - uVZ);
-                                checkAbove(loc.posX - uVX, loc.posY + 2, loc.posZ - uVZ);
-
-                                if(!isALiquid(loc.posX - 2 * uVX, loc.posY + 1, loc.posZ - 2 * uVZ))
+                                else if (b.activeNode.getVectorX() < 0)
                                 {
-                                    setBlockFromInventory(loc.posX - 2*uVX, loc.posY + 1, loc.posZ - 2*uVZ, Blocks.cobblestone);
+                                    meta = 1;
+                                }
+                                else if (b.activeNode.getVectorX() > 0)
+                                {
+                                    meta = 2;
                                 }
 
-                                if(doMining(block, loc.posX - uVX, loc.posY + 1, loc.posZ - uVZ))
-                                {clearNode += 1;}
-                                break;
-                            case 2:
-                                block = world.getBlock(loc.posX + uVX, loc.posY + 1, loc.posZ + uVZ);
-                                checkAbove(loc.posX + uVX, loc.posY + 2, loc.posZ + uVZ);
-                                if(!isALiquid(loc.posX + 2 * uVX, loc.posY + 1, loc.posZ + 2 * uVZ))
+                                while (neededPlanks > 0)
                                 {
-                                    setBlockFromInventory(loc.posX + 2*uVX, loc.posY + 1, loc.posZ + 2*uVZ,Blocks.cobblestone);
+                                    int slot = inventoryContains(b.floorBlock);
+                                    int size = worker.getInventory().getStackInSlot(slot).stackSize;
 
-                                }
-                                if(doMining(block, loc.posX + uVX, loc.posY + 1, loc.posZ + uVZ))
-                                {clearNode += 1;}
-                                break;
-                            case 3:
-                                block = world.getBlock(loc.posX + uVX, loc.posY, loc.posZ + uVZ);
-                                if(!isALiquid(loc.posX + 2 * uVX, loc.posY, loc.posZ + 2 * uVZ))
-                                {
-                                    setBlockFromInventory(loc.posX + 2*uVX, loc.posY , loc.posZ + 2*uVZ,Blocks.cobblestone);
-
-                                }
-                                if(doMining(block, loc.posX + uVX, loc.posY, loc.posZ + uVZ))
-                                {clearNode += 1;}
-                                break;
-                            case 4:
-                                block = world.getBlock(loc.posX, loc.posY, loc.posZ);
-                                if(doMining(block, loc.posX, loc.posY, loc.posZ))
-                                {clearNode += 1;}
-                                break;
-                            case 5:
-                                block = world.getBlock(loc.posX - uVX, loc.posY, loc.posZ - uVZ);
-                                if(!isALiquid(loc.posX - 2 * uVX, loc.posY, loc.posZ - 2 * uVZ))
-                                {
-                                    setBlockFromInventory(loc.posX - 2*uVX, loc.posY , loc.posZ - 2*uVZ, Blocks.cobblestone);
-                                }
-                                if(doMining(block, loc.posX - uVX, loc.posY, loc.posZ - uVZ))
-                                {clearNode += 1;}
-                                break;
-                            case 6:
-                                block = world.getBlock(loc.posX - uVX, loc.posY - 1, loc.posZ - uVZ);
-                                checkUnder(loc.posX + uVX, loc.posY - 2, loc.posZ + uVZ);
-                                if(!isALiquid(loc.posX - 2 * uVX, loc.posY - 1, loc.posZ - 2 * uVZ))
-                                {
-                                    setBlockFromInventory(loc.posX - 2*uVX, loc.posY-1 , loc.posZ - 2*uVZ, Blocks.cobblestone);
-                                }
-                                if(doMining(block, loc.posX - uVX, loc.posY - 1, loc.posZ - uVZ))
-                                {clearNode += 1;}
-                                break;
-                            case 7:
-                                block = world.getBlock(loc.posX, loc.posY - 1, loc.posZ);
-                                checkUnder(loc.posX + uVX, loc.posY - 2, loc.posZ + uVZ);
-                                if(doMining(block, loc.posX, loc.posY - 1, loc.posZ))
-                                {clearNode += 1;}
-                                break;
-                            case 8:
-                                block = world.getBlock(loc.posX + uVX, loc.posY - 1, loc.posZ + uVZ);
-                                checkUnder(loc.posX , loc.posY - 2, loc.posZ );
-                                if(!isALiquid(loc.posX + 2 * uVX, loc.posY - 1, loc.posZ + 2 * uVZ))
-                                {
-                                    setBlockFromInventory(loc.posX + 2*uVX, loc.posY - 1, loc.posZ + 2*uVZ,Blocks.cobblestone);
-
-                                }
-                                if(doMining(block, loc.posX + uVX, loc.posY - 1, loc.posZ + uVZ))
-                                {clearNode += 1;}
-                                break;
-                            case 9:
-
-                                if (b.startingLevelNode == 2)
-                                {
-
-                                    int neededPlanks = 10;
-                                    int neededTorches = 1;
-
-
-                                    canMineNode-=1;
-
-                                    world.setBlock(loc.posX, loc.posY + 1, loc.posZ, Blocks.planks);
-                                    world.setBlock(loc.posX - uVX, loc.posY + 1, loc.posZ - uVZ, Blocks.planks);
-                                    world.setBlock(loc.posX + uVX, loc.posY + 1, loc.posZ + uVZ, Blocks.planks);
-                                    world.setBlock(loc.posX + uVX, loc.posY, loc.posZ + uVZ, Blocks.fence);
-                                    world.setBlock(loc.posX - uVX, loc.posY, loc.posZ - uVZ, Blocks.fence);
-                                    world.setBlock(loc.posX - uVX, loc.posY - 1, loc.posZ - uVZ, Blocks.fence);
-                                    world.setBlock(loc.posX + uVX, loc.posY - 1, loc.posZ + uVZ, Blocks.fence);
-
-                                    int meta = 0;
-
-                                    if (b.activeNode.getVectorZ() < 0)
+                                    if (size > neededPlanks)
                                     {
-                                        meta = 3;
+                                        worker.getInventory().decrStackSize(slot, 10);
+                                        neededPlanks = 0;
+
                                     }
-                                    else if (b.activeNode.getVectorZ() > 0)
+                                    else
                                     {
-                                        meta = 4;
+                                        worker.getInventory().decrStackSize(slot, size);
+                                        neededPlanks -= size;
                                     }
-                                    else if (b.activeNode.getVectorX() < 0)
-                                    {
-                                        meta = 1;
-                                    }
-                                    else if (b.activeNode.getVectorX() > 0)
-                                    {
-                                        meta = 2;
-                                    }
-
-                                    while (neededPlanks > 0)
-                                    {
-                                        int slot = inventoryContains(b.floorBlock);
-                                        int size = worker.getInventory().getStackInSlot(slot).stackSize;
-
-                                        if(size > neededPlanks)
-                                        {
-                                            worker.getInventory().decrStackSize(slot, 10);
-                                            neededPlanks = 0;
-
-                                        }
-                                        else
-                                        {
-                                            worker.getInventory().decrStackSize(slot, size);
-                                            neededPlanks -= size;
-                                        }
-                                    }
-
-                                    if(inventoryContainsMany(Items.coal)>0)
-                                    {
-                                        int slot = inventoryContains(Items.coal);
-                                        worker.getInventory().decrStackSize(slot, 1);
-                                    }
-                                    else if(inventoryContainsMany(Blocks.torch)>0)
-                                    {
-
-                                            int slot = inventoryContains(Blocks.torch);
-                                            int size = worker.getInventory().getStackInSlot(slot).stackSize;
-                                            worker.getInventory().decrStackSize(slot, 1);
-                                    }
-
-                                    world.setBlock(loc.posX - b.activeNode.getVectorX(), loc.posY + 1, loc.posZ - b.activeNode.getVectorZ(), Blocks.torch, meta, 0x3);
-
                                 }
-                                b.startingLevelNode += 1;
-                                loc.set(loc.posX + b.activeNode.getVectorX(), loc.posY, loc.posZ + b.activeNode.getVectorZ());
 
-                                clearNode = 0;
-                                b.markDirty();
-                                break;
+                                if (inventoryContainsMany(Items.coal) > 0)
+                                {
+                                    int slot = inventoryContains(Items.coal);
+                                    worker.getInventory().decrStackSize(slot, 1);
+                                }
+                                else if (inventoryContainsMany(Blocks.torch) > 0)
+                                {
+                                    int slot = inventoryContains(Blocks.torch);
+                                    worker.getInventory().decrStackSize(slot, 1);
+                                }
 
-                        }
+                                world.setBlock(loc.posX - b.activeNode.getVectorX(), loc.posY + 1, loc.posZ - b.activeNode.getVectorZ(), Blocks.torch, meta, 0x3);
 
+                            }
+                            b.startingLevelNode += 1;
+                            loc.set(loc.posX + b.activeNode.getVectorX(), loc.posY, loc.posZ + b.activeNode.getVectorZ());
 
+                            clearNode = 0;
+                            b.markDirty();
+                            break;
                     }
                 }
-
+            }
         }
-
     }
+
     private boolean isALiquid(int x, int y, int z)
     {
        return !world.getBlock(x,y,z).getMaterial().isLiquid();
@@ -648,7 +665,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
            setBlockFromInventory(x,y,z,Blocks.cobblestone);
         }
-
     }
 
     private void checkUnder(int x,int y,int z)
@@ -658,7 +674,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             setBlockFromInventory(x,y,z,Blocks.cobblestone);
         }
-
     }
 
     private boolean isStackTool(ItemStack stack)
@@ -701,7 +716,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
             }
         }
-
         return false;
     }
 
@@ -741,10 +755,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
                     return true;
                 }
-
             }
         }
-
         return false;
     }
 
@@ -774,7 +786,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                job.setStage(Stage.WORKING);
                blocksMined = 0;
             }
-
     }
 
     private void mineVein()
@@ -870,7 +881,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 }
             }
         }
-
     }
 
     private boolean hasAllTheTools()
@@ -1580,7 +1590,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         }
         worker.getInventory().decrStackSize(slot,1);
-
     }
 
     private int inventoryContains(Block block)
@@ -1677,7 +1686,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return count;
     }
 
-
     private boolean doMining(Block block, int x, int y, int z)
     {
         BuildingMiner b = (BuildingMiner)(worker.getWorkBuilding());
@@ -1691,24 +1699,22 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return false;
         }
 
-        if(b.activeNode!=null && job.getStage() == Stage.MINING_NODE && (
-                 block.isAir(world,x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ())
-                || !canWalkOn(x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ()))) //-164 58 -225
+        /*if(b.activeNode!=null && job.getStage() == Stage.MINING_NODE && (block.isAir(world,x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ()) || !canWalkOn(x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ()))) //-164 58 -225
         {
-            b.levels.get(b.currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
+            b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
             b.activeNode.setStatus(Node.Status.COMPLETED);
             logger.info("Finished because of Air Node: " + b.active + " x: " + x + " z: " + z + " vectorX: " + b.activeNode.getVectorX() + " vectorZ: " + b.activeNode.getVectorZ());
-            b.levels.get(b.currentLevel).getNodes().remove(b.active);
+            b.levels.get(currentLevel).getNodes().remove(b.active);
 
             return true;
-        }
+        }*/
 
         if(job.getStage() == Stage.MINING_NODE && b.shaftStart.posX == x && b.shaftStart.posZ == z)
         {
-            b.levels.get(b.currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
+            b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
             b.activeNode.setStatus(Node.Status.COMPLETED);
             logger.info("Finished because of Ladder Node: " + b.active);
-            b.levels.get(b.currentLevel).getNodes().remove(b.active);
+            b.levels.get(currentLevel).getNodes().remove(b.active);
             return true;
         }
 
@@ -1953,6 +1959,5 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     {
         this.baseSpeed = baseSpeed;
     }
-
 
 }

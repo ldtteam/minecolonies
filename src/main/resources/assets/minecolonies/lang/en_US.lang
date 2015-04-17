@@ -90,3 +90,7 @@ itemGroup.minecolonies=MineColonies
 entity.builder.messageBuildStart=Started building %s
 entity.builder.messageBuildComplete=Finished building %s
 entity.builder.messageNeedMaterial=I need %s (Amount: %d)
+
+entity.miner.messageNeedTools = Need tool %s!
+entity.miner.messageNeedBlockAndItem = I need %s!
+entity.miner.messageNeedBetterTools = I need better tools!

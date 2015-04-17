@@ -17,8 +17,6 @@ import java.util.*;
 
 public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
 {
-
-
     private ScrollingList levelList;
     private int[] levels;
     private BuildingMiner.View miner;
@@ -30,17 +28,13 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     BUTTON_NEXTPAGE = "nextPage",
     BUTTON_CURRENTLEVEL ="changeToLevel",
 
-
     VIEW_PAGES = "pages",
     PAGE_ACTIONS = "pageActions",
     PAGE_SETTINGS = "pageSettings";
 
     Button buttonPrevPage, buttonNextPage;
 
-
     private Map<String, String> tabsToPages = new HashMap<String, String>();
-
-
 
     public WindowHutMiner(BuildingMiner.View building)
     {
@@ -89,8 +83,9 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
                         rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel("Nodes: " + nONodes);
                     }
 
-
-                } catch (NullPointerException exc) {
+                }
+                catch (NullPointerException exc)
+                {
                 }
             }
         });
@@ -144,8 +139,6 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
 
     private void updateUsers()
     {
-
-
         if(miner.getColony().getBuilding(miner.getID()) != null)
         {
             levels = new int[miner.levels.length];

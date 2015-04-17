@@ -61,9 +61,6 @@ public class Level
             nodes.add(new Node(x,z-4,0,-1));
 
         }
-
-
-
     }
 
     public void writeToNBT(NBTTagCompound compound)

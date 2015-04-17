@@ -128,8 +128,6 @@ public class BuildingMiner extends BuildingWorker {
                 {
                    levels[i] =  buf.readInt();
                 }
-
-
             }
     }
 
@@ -140,14 +138,10 @@ public class BuildingMiner extends BuildingWorker {
             buf.writeInt(currentLevel);
             buf.writeInt(levels.size());
 
-
             for(int i=0;i<levels.size();i++)
             {
                 buf.writeInt(levels.get(i).getNodes().size());
             }
-
-
-
         }
 
     public int getMaxX()
@@ -198,10 +192,7 @@ public class BuildingMiner extends BuildingWorker {
             ChunkCoordUtils.writeToNBT(compound, TAG_SLOCATION, shaftStart);
             //ChunkCoordUtils.writeToNBT(compound, TAG_GET_LOCATION, getLocation);
             ChunkCoordUtils.writeToNBT(compound, TAG_CLOCATION, cobbleLocation);
-
-
         }
-
 
         if(ladderLocation!= null)
         {
@@ -241,8 +232,6 @@ public class BuildingMiner extends BuildingWorker {
         shaftStart = ChunkCoordUtils.readFromNBT(compound, TAG_SLOCATION);
         cobbleLocation = ChunkCoordUtils.readFromNBT(compound, TAG_CLOCATION);
         startingLevelNode =compound.getInteger(TAG_SN);
-
-
         NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
 
         for(int i = 0; i < levelTagList.tagCount(); i++)
@@ -252,9 +241,6 @@ public class BuildingMiner extends BuildingWorker {
         }
 
         activeNode = levels.get(currentLevel).getNodes().get(active);
-
-
-                logger.info("Finished loading Building");
     }
 
     @Override
