@@ -9,16 +9,14 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.entity.pathfinding.Node;
 import com.minecolonies.entity.pathfinding.PathJob;
+import com.minecolonies.entity.pathfinding.Pathfinding;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,9 +29,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import org.lwjgl.opengl.GL11;
-
-import java.util.ConcurrentModificationException;
-import java.util.Set;
 
 public class EventHandler
 {
@@ -364,61 +359,6 @@ public class EventHandler
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event)
     {
-        if (PathJob.lastDebugNodesNotVisited == null)
-        {
-            return;
-        }
-
-        Entity entity = Minecraft.getMinecraft().renderViewEntity;
-        double frame = event.partialTicks;
-        double dx = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * frame;
-        double dy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * frame;
-        double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
-
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-        GL11.glTranslated(-dx, -dy, -dz);
-
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-
-        Set<Node> debugNodesNotVisited;
-        Set<Node> debugNodesVisited;
-        Set<Node> debugNodesPath;
-
-        synchronized (PathJob.debugNodeMonitor)
-        {
-            debugNodesNotVisited = PathJob.lastDebugNodesNotVisited;
-            debugNodesVisited = PathJob.lastDebugNodesVisited;
-            debugNodesPath = PathJob.lastDebugNodesPath;
-        }
-
-        try
-        {
-            for (Node n : debugNodesNotVisited)
-            {
-                drawNode(n, (byte)255, (byte)0, (byte)0);
-            }
-
-            for (Node n : debugNodesVisited)
-            {
-                drawNode(n, (byte) 0, (byte) 0, (byte) 255);
-            }
-
-            if (debugNodesPath != null)
-            {
-                for (Node n : debugNodesPath)
-                {
-                    drawNode(n, (byte) 0, (byte) 255, (byte) 0);
-                }
-            }
-        }
-        catch (ConcurrentModificationException exc) {}
-
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
+        Pathfinding.debugDraw(event.partialTicks);
     }
 }
