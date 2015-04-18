@@ -5,6 +5,7 @@ import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
 /**
@@ -46,6 +47,27 @@ public class EntityAIGoHome extends EntityAIBase
 
             if (vec3 != null)
             {
+                if (vec3.yCoord < 0)
+                {
+                    vec3.yCoord = 0;
+                }
+
+                while (vec3.yCoord >= 1 && citizen.worldObj.isAirBlock(
+                        MathHelper.floor_double(vec3.xCoord),
+                        (int)vec3.yCoord - 1,
+                        MathHelper.floor_double(vec3.zCoord)))
+                {
+                    vec3.yCoord -= 1.0D;
+                }
+
+                while (!citizen.worldObj.isAirBlock(
+                         MathHelper.floor_double(vec3.xCoord),
+                        (int)vec3.yCoord,
+                        MathHelper.floor_double(vec3.zCoord)))
+                {
+                    vec3.yCoord += 1.0D;
+                }
+
                 citizen.getNavigator().tryMoveToXYZ(vec3.xCoord, vec3.yCoord, vec3.zCoord, 1.0D);
             }
         }
