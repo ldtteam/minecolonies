@@ -634,7 +634,8 @@ public class PathJob implements Callable<PathEntity>
 
     protected boolean isWalkableSurface(Block block, int x, int y, int z)
     {
-        return !block.getBlocksMovement(world, x, y, z) &&
+        return //!block.getBlocksMovement(world, x, y, z) &&
+                block.getMaterial().isSolid() &&
                 !(block instanceof BlockFence) &&
                 !(block instanceof BlockFenceGate);
     }
