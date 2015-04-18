@@ -17,7 +17,6 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
 {
     //  Parent class private members
     protected EntityLiving       theEntity;
-    protected World              worldObj;
     protected double             speed;
     protected IAttributeInstance pathSearchRange;
 
@@ -32,7 +31,6 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     {
         super(entity, world);
         this.theEntity = entity;
-        this.worldObj = world;
         this.pathSearchRange = entity.getEntityAttribute(SharedMonsterAttributes.followRange);
     }
 
@@ -72,11 +70,11 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
             future = null;
         }
 
-        ChunkCoordinates start = PathJob.prepareStart(theEntity, worldObj);
+        ChunkCoordinates start = PathJob.prepareStart(theEntity);
         destination = new ChunkCoordinates(newX, newY, newZ);
         this.speed = speed;
 
-        future = Pathfinding.enqueue(new PathJob(worldObj, start, destination, (int)getPathSearchRange()));
+        future = Pathfinding.enqueue(new PathJob(theEntity.worldObj, start, destination, (int)getPathSearchRange()));
 
         return true;
     }
