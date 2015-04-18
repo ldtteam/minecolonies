@@ -74,7 +74,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         destination = new ChunkCoordinates(newX, newY, newZ);
         this.speed = speed;
 
-        future = Pathfinding.enqueue(new PathJob(theEntity.worldObj, start, destination, (int)getPathSearchRange()));
+        future = Pathfinding.enqueue(new PathJobMoveToLocation(theEntity.worldObj, start, destination, (int)getPathSearchRange()));
 
         return true;
     }

@@ -2,7 +2,6 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
@@ -17,9 +16,9 @@ import net.minecraft.world.World;
 import java.util.*;
 import java.util.concurrent.Callable;
 
-public class PathJob implements Callable<PathEntity>
+public abstract class PathJob implements Callable<PathEntity>
 {
-    protected final ChunkCoordinates start, destination;
+    protected final ChunkCoordinates start;
     protected final int maxRange;
 
     protected final IBlockAccess world;
@@ -27,10 +26,6 @@ public class PathJob implements Callable<PathEntity>
     //  Job rules/configuration
     protected boolean allowSwimming                = true;
     protected boolean allowJumpPointSearchTypeWalk = false; //  May be faster, but can produce strange results
-
-    protected static final float DESTINATION_SLACK_NONE     = 0;
-    protected static final float DESTINATION_SLACK_ADJACENT = 3.1F;    // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
-    protected              float destinationSlack           = DESTINATION_SLACK_NONE; //  0 = exact match
 
     protected final Queue<Node>        nodesOpen    = new PriorityQueue<Node>(500);
     protected final Map<Integer, Node> nodesVisited = new HashMap<Integer, Node>();
@@ -72,7 +67,6 @@ public class PathJob implements Callable<PathEntity>
         this.world = new ChunkCache(world, minX, 0, minZ, maxX, 256, maxZ, range);
 
         this.start = new ChunkCoordinates(start);
-        this.destination = new ChunkCoordinates(end);
         this.maxRange = range;
 
         allowJumpPointSearchTypeWalk = false;
@@ -113,25 +107,6 @@ public class PathJob implements Callable<PathEntity>
      */
     protected PathEntity search()
     {
-        if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
-        {
-            if (destination != null)
-            {
-                MineColonies.logger.info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]", start.posX, start.posY, start.posZ, destination.posX, destination.posY, destination.posZ));
-            }
-            else
-            {
-                MineColonies.logger.info(String.format("Pathfinding from [%d,%d,%d] to no particular destination", start.posX, start.posY, start.posZ));
-            }
-        }
-
-        //  Compute destination slack - if the destination point cannot be stood in
-        if (destination != null &&
-                getGroundHeight(null, destination.posX, destination.posY, destination.posZ) != destination.posY)
-        {
-            destinationSlack = DESTINATION_SLACK_ADJACENT;
-        }
-
         Node startNode = new Node(start.posX, start.posY, start.posZ,
                 computeHeuristic(start.posX, start.posY, start.posZ));
 
@@ -443,18 +418,7 @@ public class PathJob implements Callable<PathEntity>
      * @param x,y,z Position to compute heuristic from
      * @return
      */
-    protected double computeHeuristic(int x, int y, int z)
-    {
-        //  This gives the best results; we ignore dy because (excepting ladders) dy translation
-        // comes free with dx/dz movement.  Including Y component results in strange behavior
-        // that prefers roundabout paths that bring it closer in the Y but are less optimal
-        int dx = x - destination.posX;
-        int dy = y - destination.posY;
-        int dz = z - destination.posZ;
-
-        //  Manhattan Distance with a 1/1000th tie-breaker
-        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 1.001D;
-    }
+    protected abstract double computeHeuristic(int x, int y, int z);
 
     /**
      * Return true if the given node is a viable final destination, and the path should generate to here
@@ -462,17 +426,7 @@ public class PathJob implements Callable<PathEntity>
      * @param n Node to test
      * @return true if the node is a viable destination
      */
-    protected boolean isAtDestination(Node n)
-    {
-        if (destinationSlack == DESTINATION_SLACK_NONE)
-        {
-            return n.x == destination.posX &&
-                    n.y == destination.posY &&
-                    n.z == destination.posZ;
-        }
-
-        return ChunkCoordUtils.distanceSqrd(destination, n.x, n.y, n.z) <= destinationSlack;
-    }
+    protected abstract boolean isAtDestination(Node n);
 
     /**
      * Compute a 'result score' for the Node; if no destination is determined, the node that had the highest
@@ -481,11 +435,7 @@ public class PathJob implements Callable<PathEntity>
      * @param n Node to test
      * @return score for the node
      */
-    protected double getNodeResultScore(Node n)
-    {
-        //  For Result Score higher is better - return negative distance so closer to 0 = better
-        return -ChunkCoordUtils.distanceSqrd(destination, n.x, n.y, n.z);
-    }
+    protected abstract double getNodeResultScore(Node n);
 
     /**
      * "Walk" from the parent in the direction specified by the delta, determining the new x,y,z position for such a
