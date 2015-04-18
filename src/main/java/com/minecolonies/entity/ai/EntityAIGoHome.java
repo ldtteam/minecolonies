@@ -28,7 +28,8 @@ public class EntityAIGoHome extends EntityAIBase
     public boolean shouldExecute()
     {
         return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP &&
-                !citizen.isAtHome();
+                !citizen.isAtHome() &&
+                citizen.getNavigator().noPath();
     }
 
     @Override
@@ -41,40 +42,7 @@ public class EntityAIGoHome extends EntityAIBase
             return;
         }
 
-        if (citizen.getDistanceSq((double)pos.posX, (double)pos.posY, (double)pos.posZ) > (40 * 40))
-        {
-            Vec3 vec3 = RandomPositionGenerator.findRandomTargetBlockTowards(citizen, 14, 3, Vec3.createVectorHelper((double) pos.posX + 0.5D, (double) pos.posY, (double) pos.posZ + 0.5D));
-
-            if (vec3 != null)
-            {
-                if (vec3.yCoord < 0)
-                {
-                    vec3.yCoord = 0;
-                }
-
-                while (vec3.yCoord >= 1 && citizen.worldObj.isAirBlock(
-                        MathHelper.floor_double(vec3.xCoord),
-                        (int)vec3.yCoord - 1,
-                        MathHelper.floor_double(vec3.zCoord)))
-                {
-                    vec3.yCoord -= 1.0D;
-                }
-
-                while (!citizen.worldObj.isAirBlock(
-                         MathHelper.floor_double(vec3.xCoord),
-                        (int)vec3.yCoord,
-                        MathHelper.floor_double(vec3.zCoord)))
-                {
-                    vec3.yCoord += 1.0D;
-                }
-
-                citizen.getNavigator().tryMoveToXYZ(vec3.xCoord, vec3.yCoord, vec3.zCoord, 1.0D);
-            }
-        }
-        else
-        {
-            citizen.getNavigator().tryMoveToXYZ((double)pos.posX + 0.5D, (double)pos.posY, (double)pos.posZ + 0.5D, 1.0D);
-        }
+        citizen.getNavigator().tryMoveToXYZ((double)pos.posX + 0.5D, (double)pos.posY, (double)pos.posZ + 0.5D, 1.0D);
     }
 
     @Override
