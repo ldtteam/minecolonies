@@ -32,6 +32,9 @@ com.minecolonies.gui.workerHuts.repair=Gebäude reparieren
 com.minecolonies.gui.workerHuts.buildType=Gebäudetyp:
 com.minecolonies.gui.workerHuts.information=Information
 com.minecolonies.gui.workerHuts.settings=Einstellungen
+com.minecolonies.gui.workerHuts.minerHut = Stollen
+com.minecolonies.gui.workerHuts.minerNode=Knoten
+com.minecolonies.gui.workerHuts.minerMineNode=Ebene abbauen
 
 com.minecolonies.gui.warehouse.toBlacksmith=An Schmied senden:
 com.minecolonies.gui.warehouse.toStonemason=An Steinmetz senden:
@@ -91,9 +94,9 @@ entity.builder.messageBuildStart=Hat angefangen an %s zu arbeiten
 entity.builder.messageBuildComplete=Hat seine an %s Arbeit abgeschlossen
 entity.builder.messageNeedMaterial=I brauche %s (Anzahl: %d)
 
-entity.miner.messageNeedTools = Brauche Werkzeug %s!
-entity.miner.messageNeed = Ich brauche %s!
-entity.miner.messageNeedBetterTools = Ich brauche bessere Werkzeuge!
+entity.miner.messageNeedTools=Brauche Werkzeug %s!
+entity.miner.messageNeed=Ich brauche %s!
+entity.miner.messageNeedBetterTools=Ich brauche bessere Werkzeuge!
 
 
 

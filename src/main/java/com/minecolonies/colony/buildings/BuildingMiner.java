@@ -239,8 +239,10 @@ public class BuildingMiner extends BuildingWorker {
             Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
             levels.add(level);
         }
-
-        activeNode = levels.get(currentLevel).getNodes().get(active);
+        if (currentLevel >= 0 && currentLevel < levels.size())
+        {
+            activeNode = levels.get(currentLevel).getNodes().get(active);
+        }
     }
 
     @Override

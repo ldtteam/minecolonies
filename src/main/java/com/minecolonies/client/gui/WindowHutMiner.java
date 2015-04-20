@@ -10,6 +10,7 @@ import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.network.messages.MinerRequestMessage;
+import com.minecolonies.util.LanguageHandler;
 
 import java.awt.*;
 import java.util.*;
@@ -80,7 +81,8 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
                     else
                     {
                         rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
-                        rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel("Nodes: " + nONodes);
+                        rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + nONodes);
+
                     }
 
                 }
@@ -146,6 +148,6 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
         }
     }
 
-    public String getBuildingName() { return "com.minecolonies.gui.workerHuts.buildersHut"; }
+    public String getBuildingName() { return "com.minecolonies.gui.workerHuts.minerHut"; }
 }
 

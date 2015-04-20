@@ -69,7 +69,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private int clearNode=0;
     private int canMineNode=0;
     private int currentLevel=-1;
-
+    
+    //Job class -> Needitem
     public EntityAIWorkMiner(JobMiner job)
     {
         super(job);
@@ -205,8 +206,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
                     {
                         logger.info("Need tools");
-                        System.out.print("Insufficient Tools!");
-                        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedTools", needItem.getUnlocalizedName());
 
                         delay = 30;
 
@@ -217,6 +216,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         }
                         else
                         {
+                            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedTools", needItem.getUnlocalizedName());
+
                             isInHut(needItem);
                             if (hasAllTheTools())
                             {
@@ -455,16 +456,31 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                     if (b.activeNode.getVectorX() == 0)
                     {
-                        b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 2, b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ(), unsignVector(b.activeNode.getVectorZ()), unsignVector(b.activeNode.getVectorX()));
-                        b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() - 2, b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ(), -unsignVector(b.activeNode.getVectorZ()), -unsignVector(b.activeNode.getVectorX()));
+                        if(!world.isAirBlock(b.activeNode.getID().getX() + 2,b.levels.get(currentLevel).getDepth(), b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ()))
+                        {
+                            b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 2, b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ(), unsignVector(b.activeNode.getVectorZ()), unsignVector(b.activeNode.getVectorX()));
+                        }
+                        if(!world.isAirBlock(b.activeNode.getID().getX() - 2,b.levels.get(currentLevel).getDepth(), b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ()))
+                        {
+                            b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() - 2, b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ(), -unsignVector(b.activeNode.getVectorZ()), -unsignVector(b.activeNode.getVectorX()));
+                        }
                     }
                     else
                     {
-                        b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 2, unsignVector(b.activeNode.getVectorZ()), unsignVector(b.activeNode.getVectorX()));
-                        b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() - 2, -unsignVector(b.activeNode.getVectorZ()), -unsignVector(b.activeNode.getVectorX()));
+                        if(!world.isAirBlock(b.activeNode.getID().getX() + 4,b.levels.get(currentLevel).getDepth(), b.activeNode.getID().getY() + 2 * b.activeNode.getVectorZ()))
+                        {
+                            b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 2, unsignVector(b.activeNode.getVectorZ()), unsignVector(b.activeNode.getVectorX()));
+                        }
+                        if(!world.isAirBlock(b.activeNode.getID().getX() + 4,b.levels.get(currentLevel).getDepth(), b.activeNode.getID().getY() -2 * b.activeNode.getVectorZ()))
+                        {
+                            b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() - 2, -unsignVector(b.activeNode.getVectorZ()), -unsignVector(b.activeNode.getVectorX()));
+                        }
                     }
 
-                    b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 5 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 5 * b.activeNode.getVectorZ(), b.activeNode.getVectorX(), b.activeNode.getVectorZ());
+                    if(!world.isAirBlock((b.activeNode.getID().getX() + 5 * b.activeNode.getVectorX()),b.levels.get(currentLevel).getDepth(),b.activeNode.getID().getY() + 5 * b.activeNode.getVectorZ()))
+                    {
+                        b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 5 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 5 * b.activeNode.getVectorZ(), b.activeNode.getVectorX(), b.activeNode.getVectorZ());
+                    }
                     logger.info("Finished Node: " + b.active);
 
                     b.markDirty();

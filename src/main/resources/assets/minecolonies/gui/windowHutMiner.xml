@@ -5,10 +5,10 @@
         </view>
 
         <view id="levelActions" size="100% 100%">
-            <list id="levels" size="140 150" pos="30 20">
+            <list id="levels" size="85% 80%" pos="30 20">
                 <box size="100% 30" linewidth="2">
                     <label id="lvl" size="100 12" pos="5 2" textalign="MiddleLeft" color="black"/>
-                    <button id="changeToLevel" size="100 12" pos="5 2" align="TopRight" label="Mine Level"/>
+                    <button id="changeToLevel" size="100 12" pos="5 2" align="TopRight" label="$(com.minecolonies.gui.workerHuts.minerMineNode)"/>
                     <label id="nONodes" size="50 12" pos="35 16" textalign="MiddleLeft" color="black"/>
                 </box>
             </list>
