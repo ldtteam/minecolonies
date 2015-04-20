@@ -35,6 +35,7 @@ com.minecolonies.gui.workerHuts.settings=Einstellungen
 com.minecolonies.gui.workerHuts.minerHut = Stollen
 com.minecolonies.gui.workerHuts.minerNode=Knoten
 com.minecolonies.gui.workerHuts.minerMineNode=Ebene abbauen
+com.minecolonies.gui.workerHuts.minerNodeList=Ebenen
 
 com.minecolonies.gui.warehouse.toBlacksmith=An Schmied senden:
 com.minecolonies.gui.warehouse.toStonemason=An Steinmetz senden:

@@ -69,7 +69,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private int clearNode=0;
     private int canMineNode=0;
     private int currentLevel=-1;
-    
+
     //Job class -> Needitem
     public EntityAIWorkMiner(JobMiner job)
     {
