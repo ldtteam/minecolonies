@@ -10,10 +10,7 @@ import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.ai.EntityAICitizenWander;
-import com.minecolonies.entity.ai.EntityAIGoHome;
-import com.minecolonies.entity.ai.EntityAISleep;
-import com.minecolonies.entity.ai.EntityAIWork;
+import com.minecolonies.entity.ai.*;
 import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
@@ -100,8 +97,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         initTasks();
     }
 
-    public boolean isWorker(){ return false; }
-
     @Override
     public void entityInit()
     {
@@ -118,7 +113,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     protected void initTasks()
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 0.6D));
+        this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 1.6D));
         this.tasks.addTask(2, new EntityAIGoHome(this));
         this.tasks.addTask(3, new EntityAISleep(this));
         this.tasks.addTask(4, new EntityAIOpenDoor(this, true));
@@ -355,6 +350,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         super.onDeath(par1DamageSource);
     }
+
+    public PathNavigate getNewNavigator() { return newNavigator; }
 
     public ResourceLocation getTexture()
     {

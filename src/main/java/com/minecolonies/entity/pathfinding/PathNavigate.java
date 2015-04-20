@@ -1,5 +1,6 @@
 package com.minecolonies.entity.pathfinding;
 
+import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -17,7 +18,6 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
 {
     //  Parent class private members
     protected EntityLiving       theEntity;
-    protected World              worldObj;
     protected double             speed;
     protected IAttributeInstance pathSearchRange;
 
@@ -32,7 +32,6 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     {
         super(entity, world);
         this.theEntity = entity;
-        this.worldObj = world;
         this.pathSearchRange = entity.getEntityAttribute(SharedMonsterAttributes.followRange);
     }
 
@@ -57,34 +56,42 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
 
         if (!noPath() &&
                 destination != null &&
-                destination.posX == newX &&
-                destination.posY == newY &&
-                destination.posZ == newZ)
+                ChunkCoordUtils.equals(destination, newX, newY, newZ))
         {
             return true;
         }
 
         clearPathEntity();
 
-        if (future != null)
-        {
-            future.cancel(true);
-            future = null;
-        }
-
-        ChunkCoordinates start = PathJob.prepareStart(theEntity, worldObj);
+        ChunkCoordinates start = PathJob.prepareStart(theEntity);
         destination = new ChunkCoordinates(newX, newY, newZ);
         this.speed = speed;
 
-        future = Pathfinding.enqueue(new PathJob(worldObj, start, destination, (int)getPathSearchRange()));
+        setPathJob(new PathJobMoveToLocation(theEntity.worldObj, start, destination, (int)getPathSearchRange()));
 
         return true;
+    }
+
+    public void tryMoveAwayFromXYZ(double x, double y, double z, double range, double speed)
+    {
+        clearPathEntity();
+
+        ChunkCoordinates start = PathJob.prepareStart(theEntity);
+        ChunkCoordinates avoid = new ChunkCoordinates(MathHelper.floor_double(x), (int)y, MathHelper.floor_double(z));
+        this.speed = speed;
+
+        setPathJob(new PathJobMoveAwayFromLocation(theEntity.worldObj, start, avoid, (int)range, (int)getPathSearchRange()));
     }
 
     @Override
     public boolean tryMoveToEntityLiving(Entity e, double speed)
     {
         return tryMoveToXYZ(e.posX, e.posY, e.posZ, speed);
+    }
+
+    public boolean tryMoveAwayFromEntityLiving(Entity e, double distance, double speed)
+    {
+        return tryMoveAwayFromXYZ(e.posX, e.posY, e.posZ, distance, speed);
     }
 
     @Override
@@ -100,6 +107,12 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
             try
             {
                 setPath(future.get(), speed);
+
+                PathPoint p = getPath().getFinalPathPoint();
+                if (p != null && destination == null)
+                {
+                    destination = new ChunkCoordinates(p.xCoord, p.yCoord, p.zCoord);
+                }
             }
             catch (Exception e) {}
 
@@ -217,5 +230,16 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         }
 
         return super.setPath(path, speed);
+    }
+
+    private void setPathJob(PathJob job)
+    {
+        if (future != null)
+        {
+            future.cancel(true);
+            future = null;
+        }
+
+        future = Pathfinding.enqueue(job);
     }
 }
