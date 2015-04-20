@@ -393,6 +393,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         {
                             b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 2, b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ(), unsignVector(b.activeNode.getVectorZ()), unsignVector(b.activeNode.getVectorX()));
                         }
+
                         if(!world.isAirBlock(b.activeNode.getID().getX() - 2,b.levels.get(currentLevel).getDepth(), b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ()))
                         {
                             b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() - 2, b.activeNode.getID().getY() + 4 * b.activeNode.getVectorZ(), -unsignVector(b.activeNode.getVectorZ()), -unsignVector(b.activeNode.getVectorX()));
@@ -400,11 +401,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
                     else
                     {
-                        if(!world.isAirBlock(b.activeNode.getID().getX() + 4,b.levels.get(currentLevel).getDepth(), b.activeNode.getID().getY() + 2 * b.activeNode.getVectorZ()))
+                        if(!world.isAirBlock(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(),b.levels.get(currentLevel).getDepth(), b.activeNode.getID().getY() + 2))
                         {
                             b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 2, unsignVector(b.activeNode.getVectorZ()), unsignVector(b.activeNode.getVectorX()));
                         }
-                        if(!world.isAirBlock(b.activeNode.getID().getX() + 4,b.levels.get(currentLevel).getDepth(), b.activeNode.getID().getY() -2 * b.activeNode.getVectorZ()))
+
+                        if(!world.isAirBlock(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(),b.levels.get(currentLevel).getDepth(), b.activeNode.getID().getY() - 2))
                         {
                             b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 4 * b.activeNode.getVectorX(), b.activeNode.getID().getY() - 2, -unsignVector(b.activeNode.getVectorZ()), -unsignVector(b.activeNode.getVectorX()));
                         }
