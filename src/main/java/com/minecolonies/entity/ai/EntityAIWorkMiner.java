@@ -201,7 +201,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                         job.addItemNeeded(new ItemStack(b.floorBlock));
 
                                     }
-                                    //TODO
+
                                 }
                             }
                             else
@@ -279,7 +279,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if (inventoryContainsMany(b.floorBlock)<= 10 || (inventoryContainsMany(Blocks.torch)<3 && inventoryContains(Items.coal)==-1))
         {
-            //TODO
             canMineNode = 0;
             job.addItemNeeded(new ItemStack(b.floorBlock));
 
@@ -385,7 +384,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
                     b.activeNode.setStatus(Node.Status.COMPLETED);
                     b.levels.get(currentLevel).getNodes().remove(b.active);
-
 
                     if (b.activeNode.getVectorX() == 0)
                     {
@@ -856,7 +854,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             job.addItemNeeded(new ItemStack(Items.iron_shovel));
             NEED_ITEM = "shovel";
-            //TODO
         }
         else if (!Pickaxe)
         {
@@ -1271,7 +1268,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
             else
             {
-                //TODO
                 if (inventoryContainsMany(b.floorBlock) >= 64)
                 {
                     job.addItemNeeded(new ItemStack(Items.coal));
@@ -1509,7 +1505,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     job.addItemNeeded(new ItemStack(Blocks.dirt));
 
                 }
-                //TODO
             }
     }
 
@@ -1526,7 +1521,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if(slot == -1)
         {
             job.addItemNeeded(new ItemStack(block));
-            //TODO
             return;
 
         }
@@ -1551,9 +1545,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(!(inventoryContainsMany(Items.coal)>0 && block == Blocks.torch))
         {
-            //TODO
             job.addItemNeeded(new ItemStack(block));
-
         }
         return -1;
 
@@ -1583,7 +1575,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if(!(inventoryContainsMany(Blocks.torch)>0 && item == Items.coal))
         {
             job.addItemNeeded(new ItemStack(item));
-            //TODO
         }
         return -1;
     }
@@ -1690,7 +1681,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else if(!ForgeHooks.canToolHarvestBlock(block,0,tool) && block != Blocks.air && block != Blocks.fence && block !=Blocks.planks && block != Blocks.ladder)
         {
-            //TODO
             hasToMine = block;
             return false;
         }
