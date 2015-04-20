@@ -190,7 +190,7 @@ public abstract class Job
      */
     public boolean hasItemsNeeded()
     {
-        return itemsNeeded.isEmpty();
+        return !itemsNeeded.isEmpty();
     }
 
     /**

@@ -8,7 +8,6 @@ import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.ModClassLoader;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -37,14 +36,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private static Logger logger = LogManager.getLogger("Miner");
     public enum Stage
     {
-        INSUFFICIENT_TOOLS,
-        INSUFFICIENT_BLOCKS,
         INVENTORY_FULL,
         SEARCHING_LADDER,
         MINING_VEIN,
         MINING_SHAFT,
         WORKING,
-        NEED_HIGHER_TOOLS,
         MINING_NODE,
         FILL_VEIN
     }
@@ -61,8 +57,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private int currentY=200;                //Can be saved here
     private int clear = 1;                   //Can be saved here for now
     private int blocksMined = 0;
-    private Block needBlock = Blocks.dirt;
-    private Item needItem;
     private Block hasToMine = Blocks.cobblestone;
     private ChunkCoordinates miningBlock;
     ChunkCoordinates loc;
@@ -93,6 +87,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     @Override
     public void updateTask()
     {
+
         BuildingMiner b = (BuildingMiner)(worker.getWorkBuilding());
         if(b == null){return;}
 
@@ -131,7 +126,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             {
                 b.clearedShaft = false;
                 job.setStage(Stage.MINING_SHAFT);
-                //If level = +/- long ago, build on y or -1
             }
         }
 
@@ -155,6 +149,31 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
             delay--;
         }
+        else if(job.hasItemsNeeded())
+        {
+            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation())) {
+                List<ItemStack> l = job.getItemsNeeded();
+
+                for (ItemStack e : l)
+                {
+                    if(isStackTool(e))
+                    {
+                        if(hasAllTheTools() || isInHut(e.getItem()))
+                        {
+                            job.removeItemNeeded(e);
+                            return;
+                        }
+                    }
+                    else if (isInHut(e.getItem()) || inventoryContains(e.getItem())!=-1)
+                    {
+                        job.removeItemNeeded(e);
+                        return;
+                    }
+                    LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedBlockAndItem", e.getDisplayName());
+                }
+            }
+            delay = 30;
+        }
         else
         {
             switch (job.getStage())
@@ -167,7 +186,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             if(canMineNode < 1)
                             {
                                 //12 fences == 29 planks + 1 Torch  -> 3 Nodes
-
                                 if (inventoryContainsMany(b.floorBlock) >= 30 && (inventoryContains(Items.coal) != -1 || inventoryContainsMany(Blocks.torch) >= 3))
                                 {
                                     canMineNode = 3;
@@ -176,14 +194,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 {
                                     if (inventoryContains(Items.coal) == -1 && inventoryContainsMany(Blocks.torch) < 3)
                                     {
-                                        needItem = Items.coal;
+                                        job.addItemNeeded(new ItemStack(Items.coal));
                                     }
                                     else
                                     {
-                                        needBlock = b.floorBlock;
-                                    }
-                                    job.setStage(Stage.INSUFFICIENT_BLOCKS);
+                                        job.addItemNeeded(new ItemStack(b.floorBlock));
 
+                                    }
+                                    //TODO
                                 }
                             }
                             else
@@ -200,77 +218,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     else
                     {
                         createShaft(b.vectorX, b.vectorZ);
-                    }
-                    break;
-                case INSUFFICIENT_TOOLS:
-                    if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
-                    {
-                        logger.info("Need tools");
-
-                        delay = 30;
-
-                        if (needItem == null)
-                        {
-                            job.setStage(Stage.WORKING);
-                            return;
-                        }
-                        else
-                        {
-                            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedTools", needItem.getUnlocalizedName());
-
-                            isInHut(needItem);
-                            if (hasAllTheTools())
-                            {
-                                needItem = null;
-                                job.setStage(Stage.WORKING);
-                                return;
-                            }
-                        }
-                    }
-
-                    break;
-                case INSUFFICIENT_BLOCKS:
-                    if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
-                    {
-                            if (needBlock == null && needItem != null)
-                            {
-                                logger.info("Need: " + needItem.getUnlocalizedName());
-                                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeed", needItem.getUnlocalizedName());
-                            }
-                            else if (needItem == null && needBlock != null)
-                            {
-                                logger.info("Need: " + needBlock.getUnlocalizedName());
-                                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeed", needBlock.getUnlocalizedName());
-
-                            }
-                            else if (needItem == null)
-                            {
-                                logger.info("Need nothing");
-
-                                job.setStage(Stage.WORKING);
-                                return;
-                            }
-                            else
-                            {
-                                logger.info("Need: " + needBlock.getUnlocalizedName() + needItem.getUnlocalizedName());
-                                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeed", needItem.getUnlocalizedName());
-                                LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeed", needBlock.getUnlocalizedName());
-
-                            }
-
-                            delay = 30;
-                            isInHut(needBlock);
-                            isInHut(needItem);
-
-                            boolean hasBlock = inventoryContains(needBlock) != -1;
-                            boolean hasItem = inventoryContains(needItem) != -1;
-
-                            if (hasBlock || hasItem) {
-                                needBlock = null;
-                                needItem = null;
-                                job.setStage(Stage.WORKING);
-                            }
-
                     }
                     break;
                 case INVENTORY_FULL:
@@ -307,21 +254,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
 
                     break;
-                case NEED_HIGHER_TOOLS:
-                    if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
-                    {
-                        logger.info("Need better Tools");
-                        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedBetterTools");
-
-
-                        delay = 30;
-
-                            if (hasAllTheTools())
-                            {
-                                job.setStage(Stage.WORKING);
-                            }
-                    }
-                    break;
             }
         }
     }
@@ -347,9 +279,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if (inventoryContainsMany(b.floorBlock)<= 10 || (inventoryContainsMany(Blocks.torch)<3 && inventoryContains(Items.coal)==-1))
         {
-            job.setStage(Stage.INSUFFICIENT_BLOCKS);
+            //TODO
             canMineNode = 0;
-            needBlock = b.floorBlock;
+            job.addItemNeeded(new ItemStack(b.floorBlock));
+
             return;
         }
 
@@ -438,7 +371,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             if(loc == null)
             {
-                loc = new ChunkCoordinates(b.activeNode.getID().getX(), depth, b.activeNode.getID().getY());
+                loc = new ChunkCoordinates(b.activeNode.getID().getX()+b.startingLevelNode*b.activeNode.getVectorX(), depth, b.activeNode.getID().getY()+b.startingLevelNode*b.activeNode.getVectorZ());
             }
 
             if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, new ChunkCoordinates(loc.posX-b.activeNode.getVectorX(), loc.posY, loc.posZ-b.activeNode.getVectorZ())))
@@ -701,8 +634,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     {
         if(worker.getWorkBuilding().getTileEntity()==null)
         {
-            job.setStage(Stage.INSUFFICIENT_BLOCKS);
-            needBlock = block;
             return false;
         }
 
@@ -716,7 +647,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     Block content = ((ItemBlock) stack.getItem()).field_150939_a;
                     if(content.equals(block))
                     {
-                        needBlock = null;
                         ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
 
                         if (returnStack == null)
@@ -744,8 +674,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(worker.getWorkBuilding().getTileEntity()==null)
         {
-            job.setStage(Stage.INSUFFICIENT_BLOCKS);
-            needItem = item;
             return false;
         }
 
@@ -760,7 +688,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 if(content.equals(item) || content.getToolClasses(null /* not used */).contains(NEED_ITEM))
                 {
                     ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
-                    needItem = null;
+
                     if (returnStack == null)
                     {
                         worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize);
@@ -924,15 +852,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(!Spade)
         {
-            needItem = Items.iron_shovel;
+            job.addItemNeeded(new ItemStack(Items.iron_shovel));
             NEED_ITEM = "shovel";
-            job.setStage(Stage.INSUFFICIENT_TOOLS);
+            //TODO
         }
         else if (!Pickaxe)
         {
-            needItem = Items.iron_pickaxe;
+            job.addItemNeeded(new ItemStack(Items.iron_pickaxe));
             NEED_ITEM = "pickaxe";
-            job.setStage(Stage.INSUFFICIENT_TOOLS);
         }
 
 
@@ -965,10 +892,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             canMine = ForgeHooks.canToolHarvestBlock(hasToMine, 0, worker.getHeldItem());
 
 
-        }
-        if(!canMine)
-        {
-            job.setStage(Stage.INSUFFICIENT_TOOLS);
         }
              return canMine;
     }
@@ -1346,15 +1269,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
             else
             {
-                job.setStage(Stage.INSUFFICIENT_BLOCKS);
-
+                //TODO
                 if (inventoryContainsMany(b.floorBlock) >= 64)
                 {
-                    needItem = Items.coal;
+                    job.addItemNeeded(new ItemStack(Items.coal));
                 }
                 else
                 {
-                    needBlock = b.floorBlock;
+                    job.addItemNeeded(new ItemStack(b.floorBlock));
                 }
             }
         }
@@ -1577,14 +1499,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             {
                 if(inventoryContains(Blocks.cobblestone)==-1)
                 {
-                    needBlock = Blocks.cobblestone;
+                    job.addItemNeeded(new ItemStack(Blocks.cobblestone));
+
                 }
                 else
                 {
-                    needBlock = Blocks.dirt;
-                }
+                    job.addItemNeeded(new ItemStack(Blocks.dirt));
 
-                job.setStage(Stage.INSUFFICIENT_BLOCKS);
+                }
+                //TODO
             }
     }
 
@@ -1600,8 +1523,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(slot == -1)
         {
-            needBlock = block;
-            job.setStage(Stage.INSUFFICIENT_BLOCKS);
+            job.addItemNeeded(new ItemStack(block));
+            //TODO
             return;
 
         }
@@ -1626,8 +1549,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(!(inventoryContainsMany(Items.coal)>0 && block == Blocks.torch))
         {
-            job.setStage(Stage.INSUFFICIENT_BLOCKS);
-            needBlock = block;
+            //TODO
+            job.addItemNeeded(new ItemStack(block));
+
         }
         return -1;
 
@@ -1656,8 +1580,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(!(inventoryContainsMany(Blocks.torch)>0 && item == Items.coal))
         {
-            job.setStage(Stage.INSUFFICIENT_BLOCKS);
-            needItem = item;
+            job.addItemNeeded(new ItemStack(item));
+            //TODO
         }
         return -1;
     }
@@ -1704,8 +1628,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private boolean doMining(Block block, int x, int y, int z)
     {
+
         BuildingMiner b = (BuildingMiner)(worker.getWorkBuilding());
-        if(b == null){return false;}
+        if(b == null || !hasAllTheTools()){return false;}
 
         ChunkCoordinates bk = new ChunkCoordinates(x,y,z);
 
@@ -1759,14 +1684,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         ItemStack tool = worker.getInventory().getHeldItem();
         if (tool == null || !hasAllTheTools())
         {
-            job.setStage(Stage.INSUFFICIENT_TOOLS);
             return false;
         }
         else if(!ForgeHooks.canToolHarvestBlock(block,0,tool) && block != Blocks.air && block != Blocks.fence && block !=Blocks.planks && block != Blocks.ladder)
         {
-            job.setStage(Stage.NEED_HIGHER_TOOLS);
+            //TODO
             hasToMine = block;
-
             return false;
         }
         else
@@ -1883,10 +1806,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 setBlockFromInventory(x, y - 1, z, Blocks.cobblestone);
             }
         }
-        if (!hasAllTheTools())
-        {
-            job.setStage(Stage.INSUFFICIENT_TOOLS);
-        }
+        hasAllTheTools();
 
         if(blocksMined == 256)
         {
