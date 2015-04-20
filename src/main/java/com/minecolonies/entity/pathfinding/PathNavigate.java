@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
@@ -203,5 +204,29 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     {
         destination = null;
         super.clearPathEntity();
+    }
+
+    @Override
+    public boolean setPath(PathEntity path, double speed)
+    {
+        int pathLength = path.getCurrentPathLength();
+        if (pathLength > 0 && !(path.getPathPointFromIndex(0) instanceof PathPointExtended))
+        {
+            //  Fix vanilla PathPoints to be PathPointExtended
+            PathPointExtended newPoints[] = new PathPointExtended[pathLength];
+
+            for (int i = 0; i < pathLength; ++i)
+            {
+                PathPoint point = path.getPathPointFromIndex(i);
+                newPoints[i] = new PathPointExtended(point.xCoord, point.yCoord, point.zCoord);
+            }
+
+            path = new PathEntity(newPoints);
+
+            PathPointExtended finalPoint = newPoints[pathLength - 1];
+            destination = new ChunkCoordinates(finalPoint.xCoord, finalPoint.yCoord, finalPoint.zCoord);
+        }
+
+        return super.setPath(path, speed);
     }
 }
