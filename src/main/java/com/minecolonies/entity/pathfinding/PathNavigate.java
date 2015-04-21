@@ -25,8 +25,9 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     protected boolean canSwim;
     protected boolean noSunPathfind;
 
-    protected ChunkCoordinates  destination;
+    protected ChunkCoordinates   destination;
     protected Future<PathEntity> future;
+    protected PathResult         pathResult;
 
     public PathNavigate(EntityLiving entity, World world)
     {
@@ -50,6 +51,12 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     @Override
     public boolean tryMoveToXYZ(double x, double y, double z, double speed)
     {
+        moveToXYZ(x, y, z, speed);
+        return true;
+    }
+
+    public PathResult moveToXYZ(double x, double y, double z, double speed)
+    {
         int newX = MathHelper.floor_double(x);
         int newY = (int)y;
         int newZ = MathHelper.floor_double(z);
@@ -58,31 +65,25 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
                 destination != null &&
                 ChunkCoordUtils.equals(destination, newX, newY, newZ))
         {
-            return true;
+            return pathResult;
         }
 
-        clearPathEntity();
-
         ChunkCoordinates start = PathJob.prepareStart(theEntity);
-        destination = new ChunkCoordinates(newX, newY, newZ);
-        this.speed = speed;
+        ChunkCoordinates dest = new ChunkCoordinates(newX, newY, newZ);
 
-        setPathJob(new PathJobMoveToLocation(theEntity.worldObj, start, destination, (int)getPathSearchRange()));
-
-        return true;
+        return setPathJob(
+                new PathJobMoveToLocation(theEntity.worldObj, start, dest, (int)getPathSearchRange()),
+                dest, speed);
     }
 
-    public boolean tryMoveAwayFromXYZ(double x, double y, double z, double range, double speed)
+    public PathResult moveAwayFromXYZ(double x, double y, double z, double range, double speed)
     {
-        clearPathEntity();
-
         ChunkCoordinates start = PathJob.prepareStart(theEntity);
         ChunkCoordinates avoid = new ChunkCoordinates(MathHelper.floor_double(x), (int)y, MathHelper.floor_double(z));
-        this.speed = speed;
 
-        setPathJob(new PathJobMoveAwayFromLocation(theEntity.worldObj, start, avoid, (int)range, (int)getPathSearchRange()));
-
-        return true;
+        return setPathJob(
+                new PathJobMoveAwayFromLocation(theEntity.worldObj, start, avoid, (int)range, (int)getPathSearchRange()),
+                null, speed);
     }
 
     @Override
@@ -91,9 +92,14 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         return tryMoveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
 
-    public boolean tryMoveAwayFromEntityLiving(Entity e, double distance, double speed)
+    public PathResult moveToEntityLiving(Entity e, double speed)
     {
-        return tryMoveAwayFromXYZ(e.posX, e.posY, e.posZ, distance, speed);
+        return moveToXYZ(e.posX, e.posY, e.posZ, speed);
+    }
+
+    public PathResult moveAwayFromEntityLiving(Entity e, double distance, double speed)
+    {
+        return moveAwayFromXYZ(e.posX, e.posY, e.posZ, distance, speed);
     }
 
     @Override
@@ -110,10 +116,14 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
             {
                 setPath(future.get(), speed);
 
+                pathResult.setPathLength(getPath().getCurrentPathLength());
+                pathResult.setStatus(PathResult.Status.IN_PROGRESS_FOLLOWING);
+
                 PathPoint p = getPath().getFinalPathPoint();
                 if (p != null && destination == null)
                 {
                     destination = new ChunkCoordinates(p.xCoord, p.yCoord, p.zCoord);
+                    pathResult.setPathReachesDestination(true);    //  PathJob with no destination, did reach it's destination
                 }
             }
             catch (Exception e) {}
@@ -192,6 +202,12 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
                 this.theEntity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, speed);
             }
         }
+
+        if (pathResult != null && noPath())
+        {
+            pathResult.setStatus(PathResult.Status.COMPLETE);
+            pathResult = null;
+        }
     }
 
     /**
@@ -206,6 +222,18 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     @Override
     public void clearPathEntity()
     {
+        if (future != null)
+        {
+            future.cancel(true);
+            future = null;
+        }
+
+        if (pathResult != null)
+        {
+            pathResult.setStatus(PathResult.Status.CANCELLED);
+            pathResult = null;
+        }
+
         destination = null;
         super.clearPathEntity();
     }
@@ -234,14 +262,15 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         return super.setPath(path, speed);
     }
 
-    private void setPathJob(PathJob job)
+    private PathResult setPathJob(PathJob job, ChunkCoordinates dest, double speed)
     {
-        if (future != null)
-        {
-            future.cancel(true);
-            future = null;
-        }
+        clearPathEntity();
+
+        this.destination = dest;
+        this.speed = speed;
 
         future = Pathfinding.enqueue(job);
+        pathResult = job.getResult();
+        return pathResult;
     }
 }
