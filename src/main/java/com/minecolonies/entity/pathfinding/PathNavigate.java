@@ -68,24 +68,22 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
             return pathResult;
         }
 
-        clearPathEntity();
-
         ChunkCoordinates start = PathJob.prepareStart(theEntity);
-        destination = new ChunkCoordinates(newX, newY, newZ);
-        this.speed = speed;
+        ChunkCoordinates dest = new ChunkCoordinates(newX, newY, newZ);
 
-        return setPathJob(new PathJobMoveToLocation(theEntity.worldObj, start, destination, (int)getPathSearchRange()));
+        return setPathJob(
+                new PathJobMoveToLocation(theEntity.worldObj, start, dest, (int)getPathSearchRange()),
+                dest, speed);
     }
 
     public PathResult moveAwayFromXYZ(double x, double y, double z, double range, double speed)
     {
-        clearPathEntity();
-
         ChunkCoordinates start = PathJob.prepareStart(theEntity);
         ChunkCoordinates avoid = new ChunkCoordinates(MathHelper.floor_double(x), (int)y, MathHelper.floor_double(z));
-        this.speed = speed;
 
-        return setPathJob(new PathJobMoveAwayFromLocation(theEntity.worldObj, start, avoid, (int)range, (int)getPathSearchRange()));
+        return setPathJob(
+                new PathJobMoveAwayFromLocation(theEntity.worldObj, start, avoid, (int)range, (int)getPathSearchRange()),
+                null, speed);
     }
 
     @Override
@@ -228,7 +226,10 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         {
             future.cancel(true);
             future = null;
+        }
 
+        if (pathResult != null)
+        {
             pathResult.setStatus(PathResult.Status.CANCELLED);
             pathResult = null;
         }
@@ -261,8 +262,13 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         return super.setPath(path, speed);
     }
 
-    private PathResult setPathJob(PathJob job)
+    private PathResult setPathJob(PathJob job, ChunkCoordinates dest, double speed)
     {
+        clearPathEntity();
+
+        this.destination = dest;
+        this.speed = speed;
+
         future = Pathfinding.enqueue(job);
         pathResult = job.getResult();
         return pathResult;
