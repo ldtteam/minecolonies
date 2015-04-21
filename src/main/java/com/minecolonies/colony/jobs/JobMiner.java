@@ -81,8 +81,7 @@ public class JobMiner extends Job
                 return;
             }
         }
-
-        itemsNeeded.add(stack);
+        addItemNeeded(stack);
     }
 
 }
