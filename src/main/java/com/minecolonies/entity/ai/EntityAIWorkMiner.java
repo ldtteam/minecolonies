@@ -28,7 +28,7 @@ import java.util.List;
  * Miner AI class
  * Created: December 20, 2014
  *
- * @author Colton, Raycoms
+ * @author Raycoms
  */
 
 public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
@@ -45,7 +45,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         FILL_VEIN
     }
 
-    private int delay = 0;                   //Must be saved here
+    private int delay = 0;
     private String NEED_ITEM;
 
     public List<ChunkCoordinates> localVein;
@@ -54,7 +54,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private double baseSpeed = 1;
     private int tryThreeTimes = 3;
     private boolean hasDelayed = false;
-    private int currentY=200;                //Can be saved here
+    private int currentY=200;
     private int clear = 1;                   //Can be saved here for now
     private int blocksMined = 0;
     private Block hasToMine = Blocks.cobblestone;
@@ -64,7 +64,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private int canMineNode=0;
     private int currentLevel=-1;
 
-    //Job class -> Needitem
+    //TODO Check for duplicates
     public EntityAIWorkMiner(JobMiner job)
     {
         super(job);
@@ -140,6 +140,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 worker.swingItem();
                 try
                 {
+                    //Crashes when called before minecraft Client fully initialized
                     FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
                 }
                 catch(Exception e)
@@ -852,12 +853,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(!Spade)
         {
-            job.addItemNeeded(new ItemStack(Items.iron_shovel));
+            job.addItemNeededIfNotAlready(new ItemStack(Items.iron_shovel));
             NEED_ITEM = "shovel";
         }
         else if (!Pickaxe)
         {
-            job.addItemNeeded(new ItemStack(Items.iron_pickaxe));
+            job.addItemNeededIfNotAlready(new ItemStack(Items.iron_pickaxe));
             NEED_ITEM = "pickaxe";
         }
 
@@ -1545,7 +1546,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(!(inventoryContainsMany(Items.coal)>0 && block == Blocks.torch))
         {
-            job.addItemNeeded(new ItemStack(block));
+            job.addItemNeededIfNotAlready(new ItemStack(block));
         }
         return -1;
 
@@ -1574,7 +1575,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(!(inventoryContainsMany(Blocks.torch)>0 && item == Items.coal))
         {
-            job.addItemNeeded(new ItemStack(item));
+            job.addItemNeededIfNotAlready(new ItemStack(item));
         }
         return -1;
     }
@@ -1632,7 +1633,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             job.setStage(Stage.INVENTORY_FULL);
             return false;
         }
-
         /*if(b.activeNode!=null && job.getStage() == Stage.MINING_NODE && (block.isAir(world,x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ()) || !canWalkOn(x+b.activeNode.getVectorX(),y,z+b.activeNode.getVectorZ()))) //-164 58 -225
         {
             b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
@@ -1739,6 +1739,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                     try
                     {
+                        //Crashes when called before minecraft Client fully initialized
                         FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(x, y, z, block, world.getBlockMetadata(x, y, z));
                     }
                     catch(Exception e)
@@ -1773,6 +1774,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 }
                 try
                 {
+                    //Crashes when called before minecraft Client fully initialized
                     FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(x, y, z, block, world.getBlockMetadata(x, y, z));
                 }
                 catch(Exception e)

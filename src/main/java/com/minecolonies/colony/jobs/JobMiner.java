@@ -5,6 +5,8 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.EntityAIWorkMiner;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
@@ -67,5 +69,20 @@ public class JobMiner extends Job
         return stage;
     }
 
+
+    public void addItemNeededIfNotAlready(ItemStack stack)
+    {
+        List<ItemStack> itemsNeeded = super.getItemsNeeded();
+
+        for(ItemStack neededItem : itemsNeeded)
+        {
+            if(stack.isItemEqual(neededItem))
+            {
+                return;
+            }
+        }
+
+        itemsNeeded.add(stack);
+    }
 
 }
