@@ -72,7 +72,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         return true;
     }
 
-    public void tryMoveAwayFromXYZ(double x, double y, double z, double range, double speed)
+    public boolean tryMoveAwayFromXYZ(double x, double y, double z, double range, double speed)
     {
         clearPathEntity();
 
@@ -81,6 +81,8 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         this.speed = speed;
 
         setPathJob(new PathJobMoveAwayFromLocation(theEntity.worldObj, start, avoid, (int)range, (int)getPathSearchRange()));
+
+        return true;
     }
 
     @Override
