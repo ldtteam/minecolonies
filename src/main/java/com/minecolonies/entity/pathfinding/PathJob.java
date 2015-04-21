@@ -2,7 +2,6 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
@@ -17,30 +16,31 @@ import net.minecraft.world.World;
 import java.util.*;
 import java.util.concurrent.Callable;
 
-public class PathJob implements Callable<PathEntity>
+public abstract class PathJob implements Callable<PathEntity>
 {
-    protected final ChunkCoordinates start, destination;
+    protected final ChunkCoordinates start;
     protected final int maxRange;
 
     protected final IBlockAccess world;
 
     //  Job rules/configuration
-    protected boolean allowSwimming = true;
-    protected boolean allowJumpPointSearchTypeWalk = false;
-
-    private static final float DESTINATION_SLACK_NONE     = 0;
-    private static final float DESTINATION_SLACK_ADJACENT = 3.1F;    // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
-    protected            float destinationSlack           = DESTINATION_SLACK_NONE; //  0 = exact match
+    protected boolean allowSwimming                = true;
+    protected boolean allowJumpPointSearchTypeWalk = false; //  May be faster, but can produce strange results
 
     protected final Queue<Node>        nodesOpen    = new PriorityQueue<Node>(500);
     protected final Map<Integer, Node> nodesVisited = new HashMap<Integer, Node>();
 
+    protected final PathResult         result       = new PathResult();
+
     //  Debug Output
-    protected int totalNodesAdded   = 0;
-    protected int totalNodesVisited = 0;
+    protected static final int DEBUG_VERBOSITY_NONE  = 0;
+    protected static final int DEBUG_VERBOSITY_BASIC = 1;
+    protected static final int DEBUG_VERBOSITY_FULL  = 2;
+    protected              int totalNodesAdded       = 0;
+    protected              int totalNodesVisited     = 0;
 
     //  Debug Rendering
-    protected boolean   debugEnabled         = false;
+    protected boolean   debugDrawEnabled     = false;
     protected int       debugSleepMs         = 0;
     protected Set<Node> debugNodesVisited    = null;
     protected Set<Node> debugNodesNotVisited = null;
@@ -51,6 +51,14 @@ public class PathJob implements Callable<PathEntity>
     static public Set<Node> lastDebugNodesNotVisited;
     static public Set<Node> lastDebugNodesPath;
 
+    /**
+     * PathJob constructor
+     *
+     * @param world the world within which to path
+     * @param start the start position from which to path from
+     * @param end the end position to path to
+     * @param range maximum path range
+     */
     public PathJob(World world, ChunkCoordinates start, ChunkCoordinates end, int range)
     {
         int minX = Math.min(start.posX, end.posX);
@@ -58,17 +66,16 @@ public class PathJob implements Callable<PathEntity>
         int maxX = Math.max(start.posX, end.posX);
         int maxZ = Math.max(start.posZ, end.posZ);
 
-        this.world = new ChunkCache(world, minX, 0, minZ, maxX, 256, maxZ, 20);
+        this.world = new ChunkCache(world, minX, 0, minZ, maxX, 256, maxZ, range);
 
         this.start = new ChunkCoordinates(start);
-        this.destination = new ChunkCoordinates(end);
         this.maxRange = range;
 
         allowJumpPointSearchTypeWalk = false;
 
         if (Configurations.pathfindingDebugDraw)
         {
-            debugEnabled = true;
+            debugDrawEnabled = true;
             debugSleepMs = 0;
             debugNodesVisited = new HashSet<Node>();
             debugNodesNotVisited = new HashSet<Node>();
@@ -76,8 +83,14 @@ public class PathJob implements Callable<PathEntity>
         }
     }
 
+    public PathResult getResult() { return result; }
+
+    /**
+     * Callable method for initiating asynchronous task
+     * @return path to follow or null
+     */
     @Override
-    public PathEntity call()
+    public final PathEntity call()
     {
         try
         {
@@ -91,19 +104,13 @@ public class PathJob implements Callable<PathEntity>
         return null;
     }
 
-    private PathEntity search()
+    /**
+     * Perform the search
+     *
+     * @return PathEntity of a path to the given location, a best-effort, or null
+     */
+    protected PathEntity search()
     {
-        if (Configurations.pathfindingDebugVerbosity > 0)
-        {
-            MineColonies.logger.info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]", start.posX, start.posY, start.posZ, destination.posX, destination.posY, destination.posZ));
-        }
-
-        //  Compute destination slack - if the destination point cannot be stood in
-        if (getGroundHeight(null, destination.posX, destination.posY, destination.posZ) != destination.posY)
-        {
-            destinationSlack = DESTINATION_SLACK_ADJACENT;
-        }
-
         Node startNode = new Node(start.posX, start.posY, start.posZ,
                 computeHeuristic(start.posX, start.posY, start.posZ));
 
@@ -122,9 +129,8 @@ public class PathJob implements Callable<PathEntity>
         ++totalNodesAdded;
 
         Node bestNode = startNode;
-        double bestNodeDestinationDistanceSqrd = Double.MAX_VALUE;
+        double bestNodeResultScore = getNodeResultScore(bestNode);
 
-        int cutoff = 0;
         while (!nodesOpen.isEmpty())
         {
             if (Thread.currentThread().isInterrupted())
@@ -134,7 +140,7 @@ public class PathJob implements Callable<PathEntity>
 
             Node currentNode = nodesOpen.poll();
             currentNode.counterVisited = ++totalNodesVisited;
-            if (debugEnabled)
+            if (debugDrawEnabled)
             {
                 debugNodesNotVisited.remove(currentNode);
                 debugNodesVisited.add(currentNode);
@@ -142,8 +148,7 @@ public class PathJob implements Callable<PathEntity>
 
             currentNode.closed = true;
 
-            //  TODO: is currentNode the end result?
-            if (Configurations.pathfindingDebugVerbosity == 2)
+            if (Configurations.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
             {
                 MineColonies.logger.info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f", currentNode.x, currentNode.y, currentNode.z, currentNode.cost, currentNode.score));
             }
@@ -151,15 +156,16 @@ public class PathJob implements Callable<PathEntity>
             if (isAtDestination(currentNode))
             {
                 bestNode = currentNode;
+                result.setPathReachesDestination(true);
                 break;
             }
 
             //  If this is the closest node to our destination, treat it as our best node
-            double currentNodeDestinationDistanceSqrd = ChunkCoordUtils.distanceSqrd(destination, currentNode.x, currentNode.y, currentNode.z);
-            if (currentNodeDestinationDistanceSqrd < bestNodeDestinationDistanceSqrd)
+            double nodeResultScore = getNodeResultScore(currentNode);
+            if (nodeResultScore > bestNodeResultScore)
             {
                 bestNode = currentNode;
-                bestNodeDestinationDistanceSqrd = currentNodeDestinationDistanceSqrd;
+                bestNodeResultScore = nodeResultScore;
             }
 
             if (currentNode.steps <= maxRange)
@@ -196,7 +202,7 @@ public class PathJob implements Callable<PathEntity>
                 if (dx <= 0)    walk(currentNode, -1, 0, 0);    //  W
             }
 
-            if (debugEnabled)
+            if (debugDrawEnabled && debugSleepMs != 0)
             {
                 synchronized (debugNodeMonitor)
                 {
@@ -215,7 +221,7 @@ public class PathJob implements Callable<PathEntity>
 
         PathEntity path = finalizePath(bestNode);
 
-        if (debugEnabled)
+        if (debugDrawEnabled)
         {
             synchronized (debugNodeMonitor)
             {
@@ -228,7 +234,16 @@ public class PathJob implements Callable<PathEntity>
         return path;
     }
 
-    public static ChunkCoordinates prepareStart(EntityLiving entity, World world)
+    /**
+     * Generates a good path starting location for the entity to path from, correcting for the following conditions:
+     * - Being in water: pathfinding in water occurs along the surface; adjusts position to surface
+     * - Being in a fence space: finds correct adjacent position which is not a fence space, to prevent starting path
+     *   from within the fence block
+     *
+     * @param entity Entity for the pathfinding operation
+     * @return ChunkCoordinates for starting location
+     */
+    public static ChunkCoordinates prepareStart(EntityLiving entity)
     {
         int x = MathHelper.floor_double(entity.posX);
         int y = (int)entity.posY;
@@ -236,7 +251,7 @@ public class PathJob implements Callable<PathEntity>
 
         if (entity.isInWater())
         {
-            while (world.getBlock(x, y, z).getMaterial().isLiquid())
+            while (entity.worldObj.getBlock(x, y, z).getMaterial().isLiquid())
             {
                 ++y;
             }
@@ -248,7 +263,7 @@ public class PathJob implements Callable<PathEntity>
 //                --y;
 //            }
 //        }
-        else if (world.getBlock(x, y, z) instanceof BlockFence)
+        else if (entity.worldObj.getBlock(x, y, z) instanceof BlockFence)
         {
             //  Push away from fence
             double dX = entity.posX - Math.floor(entity.posX);
@@ -264,35 +279,44 @@ public class PathJob implements Callable<PathEntity>
         return new ChunkCoordinates(x, y, z);
     }
 
-    PathEntity finalizePath(Node bestNode)
+    /**
+     * Generate the path to the target node
+     *
+     * @param targetNode
+     * @return
+     */
+    PathEntity finalizePath(Node targetNode)
     {
+        //  Compute length of path, since we need to allocate an array.  This is cheaper/faster than building a List
+        //  and converting it.  Yes, we have targetNode.steps, but I do not want to rely on that being accurate (I might
+        //  fudge that value later on for cutoff purposes
         int pathLength = 0;
-        Node backtrace = bestNode;
-        while (backtrace.parent != null)
+        Node node = targetNode;
+        while (node.parent != null)
         {
             ++pathLength;
-            backtrace = backtrace.parent;
+            node = node.parent;
         }
 
         PathPoint points[] = new PathPoint[pathLength];
 
         Node nextInPath = null;
-        backtrace = bestNode;
-        while (backtrace.parent != null)
+        node = targetNode;
+        while (node.parent != null)
         {
-            if (debugEnabled)
+            if (debugDrawEnabled)
             {
-                debugNodesVisited.remove(backtrace);
-                debugNodesPath.add(backtrace);
+                debugNodesVisited.remove(node);
+                debugNodesPath.add(node);
             }
 
             --pathLength;
 
-            int x = backtrace.x;
-            int y = backtrace.y;
-            int z = backtrace.z;
+            int x = node.x;
+            int y = node.y;
+            int z = node.z;
 
-            if (backtrace.isSwimming)
+            if (node.isSwimming)
             {
                 //  Not truly necessary but helps prevent them spinning in place at swimming nodes
                 y -= 1;
@@ -301,7 +325,7 @@ public class PathJob implements Callable<PathEntity>
             PathPointExtended p = new PathPointExtended(x, y, z);
 
             //  Climbing on a ladder?
-            if (nextInPath != null && backtrace.isLadder &&
+            if (nextInPath != null && node.isLadder &&
                     (nextInPath.x == x && nextInPath.z == z))
             {
                 p.isOnLadder = true;
@@ -311,19 +335,19 @@ public class PathJob implements Callable<PathEntity>
                     p.ladderFacing = world.getBlockMetadata(x, y, z);
                 }
             }
-            else if (backtrace.parent != null && backtrace.parent.isLadder &&
-                    (backtrace.parent.x == x && backtrace.parent.z == z))
+            else if (node.parent != null && node.parent.isLadder &&
+                    (node.parent.x == x && node.parent.z == z))
             {
                 p.isOnLadder = true;
             }
 
             points[pathLength] = p;
 
-            nextInPath = backtrace;
-            backtrace = backtrace.parent;
+            nextInPath = node;
+            node = node.parent;
         }
 
-        if (Configurations.pathfindingDebugVerbosity > 0)
+        if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
             MineColonies.logger.info("Path found:");
 
@@ -338,62 +362,96 @@ public class PathJob implements Callable<PathEntity>
         return new PathEntity(points);
     }
 
-    //  60 bit value encoding 26 bits each of (x,z) and 8 bits of y [the maximum reachable boundaries)
-    //  in form: yxz
-    //  Can probably can skip the addition, and only mask 15 bits worth (range of 32768 blocks)
-//    protected static long computeNodeKey(int x, int y, int z)
-//    {
-//        return ((((long)x + 30000000) & 0x3FFFFFF) << 26) |
-//                (((long)y & 0xFF) << 52) |
-//                (((long)z + 30000000) & 0x3FFFFFF);
-//    }
-
-    //  32 bit variant, encodes lowest 12 bits of x,z and all bits of y;
-    //  This creates unique keys for all blocks within a 4096x256x4096 cube, which is FAR more
-    //  than you should be pathfinding
+    /**
+     * Generate a pseudo-unique key for identifying a given node by it's coordinates
+     * Encodes the lowest 12 bits of x,z and all useful bits of y.
+     * This creates unique keys for all blocks within a 4096x256x4096 cube, which is FAR
+     * bigger volume than one should attempt to pathfind within
+     *
+     * @param x,y,z coordinates to generate key from
+     * @return key for node in map
+     */
     protected static int computeNodeKey(int x, int y, int z)
     {
         return ((x & 0xFFF) << 20) |
                 ((y & 0xFF) << 12) |
                 (z & 0xFFF);
+
+        //  64 bit variant: 60 bits, 26 bits each of (x,z) and 8 bits of y
+        //  Covers entire reachable boundaries of the world
+        //  can probably skip the addition
+//        return ((((long)x + 30000000) & 0x3FFFFFF) << 26) |
+//                (((long)y & 0xFF) << 52) |
+//                (((long)z + 30000000) & 0x3FFFFFF);
     }
 
-    protected double computeCost(int dx, int dy, int dz)
+    /**
+     * Compute the cost (immediate 'g' value) of moving from the parent space to the new space
+     *
+     * @param parent The parent node being moved from
+     * @param dx,dy,dz The delta from the parent to the new space; assumes dx,dy,dz in range of [-1..1]
+     * @return cost to move from the parent to the new position
+     */
+    protected double computeCost(Node parent, int dx, int dy, int dz, boolean isSwimming)
     {
-//        if (dy != 0 && dx == 0 && dz == 0)
-//        {
-//            //  Ladder up/down
-//            return 1.5D;
-//        }
+        double cost = 1D;
 
-        return 1D;
-    }
-
-    protected double computeHeuristic(int x, int y, int z)
-    {
-        //  This gives the best results; we ignore dy because (excepting ladders) dy translation
-        // comes free with dx/dz movement.  Including Y component results in strange behavior
-        // that prefers roundabout paths that bring it closer in the Y but are less optimal
-        int dx = x - destination.posX;
-        int dz = z - destination.posZ;
-
-        //  Manhattan Distance with a 1/1000th tie-breaker
-        return (Math.abs(dx) + Math.abs(dz)) * 1.001D;
-    }
-
-    protected boolean isAtDestination(Node n)
-    {
-        if (destinationSlack == DESTINATION_SLACK_NONE)
+        if (dy != 0 && (dy != 0 || dz != 0))
         {
-            return n.x == destination.posX &&
-                    n.y == destination.posY &&
-                    n.z == destination.posZ;
+            //  Tax the cost for jumping, dropping (warning: also taxes stairs)
+            cost *= 1.1D;
         }
 
-        return ChunkCoordUtils.distanceSqrd(destination, n.x, n.y, n.z) <= destinationSlack;
+        if (isSwimming)
+        {
+            cost *= 5D;
+        }
+
+        return cost;
     }
 
-    protected boolean walk(Node parent, int dx, int dy, int dz)
+    /**
+     * Compute the heuristic cost ('h' value) of a given position x,y,z
+     *
+     * Returning a value of 0 performs a breadth-first search
+     * Returning a value less than actual possible cost to goal guarantees shortest path, but at computational expense
+     * Returning a value exactly equal to the cost to the goal guarantees shortest path and least expense (but generally
+     *   only works when path is straight and unblocked)
+     * Returning a value greater than the actual cost to goal produces good, but not perfect paths, and is fast
+     * Returning a very high value (such that 'h' is very high relative to 'g') then only 'h' (the heuristic) matters,
+     *   as the search will be a very fast greedy best-first-search, ignoring cost weighting and distance
+     *
+     * @param x,y,z Position to compute heuristic from
+     * @return
+     */
+    protected abstract double computeHeuristic(int x, int y, int z);
+
+    /**
+     * Return true if the given node is a viable final destination, and the path should generate to here
+     *
+     * @param n Node to test
+     * @return true if the node is a viable destination
+     */
+    protected abstract boolean isAtDestination(Node n);
+
+    /**
+     * Compute a 'result score' for the Node; if no destination is determined, the node that had the highest
+     * 'result' score is used.
+     *
+     * @param n Node to test
+     * @return score for the node
+     */
+    protected abstract double getNodeResultScore(Node n);
+
+    /**
+     * "Walk" from the parent in the direction specified by the delta, determining the new x,y,z position for such a
+     * move and adding or updating a node, as appropriate
+     *
+     * @param parent Node being walked from
+     * @param dx,dy,dz Delta from parent, expected in range of [-1..1]
+     * @return true if a node was added or updated when attempting to move in the given direction
+     */
+    protected final boolean walk(Node parent, int dx, int dy, int dz)
     {
         int x = parent.x + dx;
         int y = parent.y + dy;
@@ -432,20 +490,11 @@ public class PathJob implements Callable<PathEntity>
             }
         }
 
-        //  Cost may have changed due to a jump up or drop
-        double stepCost = computeCost(dx, dy, dz);
-        if (y != parent.y && (dx != 0 || dz != 0))
-        {
-            //  Tax the cost for jumping or dropping (warning: also taxes stairs)
-            stepCost += 0.1D;
-        }
 
         boolean isSwimming = (node != null) ? node.isSwimming : world.getBlock(x, y - 1, z).getMaterial().isLiquid();
-        if (isSwimming)
-        {
-            stepCost *= 5;
-        }
 
+        //  Cost may have changed due to a jump up or drop
+        double stepCost = computeCost(parent, dx, dy, dz, isSwimming);
         double heuristic = computeHeuristic(x, y, z);
         double cost = parent.cost + stepCost;
         double score = cost + heuristic;
@@ -473,7 +522,7 @@ public class PathJob implements Callable<PathEntity>
         {
             node = new Node(parent, x, y, z, cost, heuristic, score);
             nodesVisited.put(nodeKey, node);
-            if (debugEnabled)
+            if (debugDrawEnabled)
             {
                 debugNodesNotVisited.add(node);
             }
@@ -581,7 +630,7 @@ public class PathJob implements Callable<PathEntity>
 //            return -1;
 //        }
 
-        if (below.isLadder(world, x, y - 1, z, null))
+        if (isLadder(below, x, y - 1, z))
         {
             return y;
         }
@@ -603,11 +652,13 @@ public class PathJob implements Callable<PathEntity>
         return -1;
     }
 
-    protected boolean isPassable(int x, int y, int z)
-    {
-        return isPassable(world.getBlock(x, y, z), x, y, z);
-    }
-
+    /**
+     * Is the space passable?
+     *
+     * @param block
+     * @param x,y,z
+     * @return true if the block does not block movement
+     */
     protected boolean isPassable(Block block, int x, int y, int z)
     {
         if (block.getMaterial() != Material.air)
@@ -632,6 +683,18 @@ public class PathJob implements Callable<PathEntity>
         return true;
     }
 
+    protected boolean isPassable(int x, int y, int z)
+    {
+        return isPassable(world.getBlock(x, y, z), x, y, z);
+    }
+
+    /**
+     * Is the block solid and can be stood upon?
+     *
+     * @param block Block to check
+     * @param x,y,z position of block
+     * @return
+     */
     protected boolean isWalkableSurface(Block block, int x, int y, int z)
     {
         return //!block.getBlocksMovement(world, x, y, z) &&
@@ -640,8 +703,19 @@ public class PathJob implements Callable<PathEntity>
                 !(block instanceof BlockFenceGate);
     }
 
+    /**
+     * Is the block a ladder?
+     * @param block
+     * @param x,y,z
+     * @return
+     */
+    protected boolean isLadder(Block block, int x, int y, int z)
+    {
+        return block.isLadder(world, x, y, z, null);
+    }
+
     protected boolean isLadder(int x, int y, int z)
     {
-        return world.getBlock(x, y, z).isLadder(world, x, y, z, null);
+        return isLadder(world.getBlock(x, y, z), x, y, z);
     }
 }

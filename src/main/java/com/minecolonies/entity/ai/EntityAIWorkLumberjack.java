@@ -426,7 +426,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             ChunkCoordinates pos = getAndRemoveClosestItem();
             ChunkCoordUtils.isWorkerAtSiteWithMove(worker, pos);
         }
-        else
+        else if(worker.getNavigator().getPath() != null)
         {
             int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
             if(currentIndex == previousIndex)
