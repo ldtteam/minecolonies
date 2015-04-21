@@ -116,6 +116,6 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
 
     protected void performMoveAway()
     {
-        theEntity.getNewNavigator().tryMoveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2, nearSpeed);
+        theEntity.getNewNavigator().moveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2, nearSpeed);
     }
 }

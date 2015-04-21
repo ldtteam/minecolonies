@@ -30,6 +30,8 @@ public abstract class PathJob implements Callable<PathEntity>
     protected final Queue<Node>        nodesOpen    = new PriorityQueue<Node>(500);
     protected final Map<Integer, Node> nodesVisited = new HashMap<Integer, Node>();
 
+    protected final PathResult         result       = new PathResult();
+
     //  Debug Output
     protected static final int DEBUG_VERBOSITY_NONE  = 0;
     protected static final int DEBUG_VERBOSITY_BASIC = 1;
@@ -80,6 +82,8 @@ public abstract class PathJob implements Callable<PathEntity>
             debugNodesPath       = new HashSet<Node>();
         }
     }
+
+    public PathResult getResult() { return result; }
 
     /**
      * Callable method for initiating asynchronous task
@@ -152,6 +156,7 @@ public abstract class PathJob implements Callable<PathEntity>
             if (isAtDestination(currentNode))
             {
                 bestNode = currentNode;
+                result.setPathReachesDestination(true);
                 break;
             }
 
@@ -283,7 +288,8 @@ public abstract class PathJob implements Callable<PathEntity>
     PathEntity finalizePath(Node targetNode)
     {
         //  Compute length of path, since we need to allocate an array.  This is cheaper/faster than building a List
-        //  and converting it.
+        //  and converting it.  Yes, we have targetNode.steps, but I do not want to rely on that being accurate (I might
+        //  fudge that value later on for cutoff purposes
         int pathLength = 0;
         Node node = targetNode;
         while (node.parent != null)
