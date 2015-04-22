@@ -33,6 +33,8 @@ import java.util.List;
 
 public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 {
+    private static final String RENDER_META_TORCH = "Torch";
+
     private static Logger logger = LogManager.getLogger("Miner");
     public enum Stage
     {
@@ -102,6 +104,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         BuildingMiner b = (BuildingMiner)(worker.getWorkBuilding());
         if(b == null){return;}
+
+        worker.setRenderMetadata(inventoryContains(Blocks.torch) != -1 ? RENDER_META_TORCH : "");
 
         if(currentLevel == -1)
         {
