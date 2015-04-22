@@ -98,6 +98,6 @@ entity.builder.messageNeedMaterial=I brauche %s (Anzahl: %d)
 entity.miner.messageNeedTools=Brauche Werkzeug %s!
 entity.miner.messageNeed=Ich brauche %s!
 entity.miner.messageNeedBetterTools=Ich brauche bessere Werkzeuge!
-
+entity.miner.messageMoreBlocks=Ich brauche mehr %s!
 
 

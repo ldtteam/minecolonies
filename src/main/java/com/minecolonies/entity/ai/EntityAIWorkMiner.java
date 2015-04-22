@@ -167,8 +167,21 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
                     else if (isInHut(e.getItem()) || inventoryContains(e.getItem())!=-1)
                     {
-                        job.removeItemNeeded(e);
-                        return;
+                        if(e.getItem().equals(new ItemStack(b.floorBlock).getItem()))
+                        {
+                            if((job.getStage() == Stage.MINING_SHAFT && inventoryContainsMany(e.getItem())>=64) || (job.getStage() == Stage.MINING_NODE && inventoryContainsMany(e.getItem())>=30))
+                            {
+                                job.removeItemNeeded(e);
+                                return;
+                            }
+                            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageMoreBlocks", e.getDisplayName());
+                            return;
+                        }
+                        else
+                        {
+                            job.removeItemNeeded(e);
+                            return;
+                        }
                     }
                     LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedBlockAndItem", e.getDisplayName());
                 }
@@ -374,7 +387,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 loc = new ChunkCoordinates(b.activeNode.getID().getX()+b.startingLevelNode*b.activeNode.getVectorX(), depth, b.activeNode.getID().getY()+b.startingLevelNode*b.activeNode.getVectorZ());
             }
 
-            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, new ChunkCoordinates(loc.posX-b.activeNode.getVectorX(), loc.posY, loc.posZ-b.activeNode.getVectorZ())))
+            if(Utils.isWorkerAtSiteWithMove(worker,loc.posX-b.activeNode.getVectorX(), loc.posY, loc.posZ-b.activeNode.getVectorZ()) || ChunkCoordUtils.isClose(new ChunkCoordinates(loc.posX-b.activeNode.getVectorX(), loc.posY, loc.posZ-b.activeNode.getVectorZ()),worker))
             {
                 Block block;
                 int uVX = 0;
@@ -1295,7 +1308,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                        getLocation.set(b.shaftStart.posX, getLocation.posY-1, b.shaftStart.posZ);
                     }
             }
-            else if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker,new ChunkCoordinates(x,y,z)))
+            else if(Utils.isWorkerAtSiteWithMove(worker,x,y,z))
                 {
                     worker.getLookHelper().setLookPosition(x, y, z, 90f, worker.getVerticalFaceSpeed());
 
