@@ -49,7 +49,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private String NEED_ITEM;
 
     public List<ChunkCoordinates> localVein;
-
+    public static List<Block> heCanMine = new ArrayList<Block>();
+    public static List<Block> heShouldStop = new ArrayList<Block>();
     public ChunkCoordinates getLocation;
     private double baseSpeed = 1;
     private int tryThreeTimes = 3;
@@ -68,6 +69,17 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     public EntityAIWorkMiner(JobMiner job)
     {
         super(job);
+        heCanMine.add(Blocks.air);
+        heCanMine.add(Blocks.fence);
+        heCanMine.add(Blocks.planks);
+        heCanMine.add(Blocks.ladder);
+        heCanMine.add(Blocks.torch);
+        heCanMine.add(Blocks.chest);
+        heCanMine.add(Blocks.mob_spawner);
+        
+        heShouldStop.add(Blocks.bookshelf);
+
+
 
     }
 
@@ -175,7 +187,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 return;
                             }
                             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageMoreBlocks", e.getDisplayName());
-                            return;
                         }
                         else
                         {
@@ -186,7 +197,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedBlockAndItem", e.getDisplayName());
                 }
             }
-            delay = 30;
+            delay = 50;
         }
         else
         {
@@ -387,7 +398,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 loc = new ChunkCoordinates(b.activeNode.getID().getX()+b.startingLevelNode*b.activeNode.getVectorX(), depth, b.activeNode.getID().getY()+b.startingLevelNode*b.activeNode.getVectorZ());
             }
 
-            if(Utils.isWorkerAtSiteWithMove(worker,loc.posX-b.activeNode.getVectorX(), loc.posY, loc.posZ-b.activeNode.getVectorZ()) || ChunkCoordUtils.isClose(new ChunkCoordinates(loc.posX-b.activeNode.getVectorX(), loc.posY, loc.posZ-b.activeNode.getVectorZ()),worker))
+            if(Utils.isWorkerAtSiteWithMove(worker,loc.posX-b.activeNode.getVectorX(), loc.posY-1, loc.posZ-b.activeNode.getVectorZ()))
             {
                 Block block;
                 int uVX = 0;
@@ -770,6 +781,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 localVein = new ArrayList<ChunkCoordinates>();
             }
 
+            //Can finish Mining vein in every distance at the moment
             ChunkCoordinates nextLoc = job.vein.get(0);
             localVein.add(nextLoc);
             Block block = ChunkCoordUtils.getBlock(world, nextLoc);
@@ -884,7 +896,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         boolean canMine =  false;
 
-        if(hasToMine == Blocks.air || hasToMine == Blocks.fence  || hasToMine == Blocks.planks || hasToMine == Blocks.ladder)
+        if(heCanMine.contains(hasToMine))
         {
             canMine = true;
         }
@@ -1329,7 +1341,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 return;
                             }
 
-                            logger.info("Mined at " + x + " " + y + " " + z);
                         }
                         if (clear < 50)
                         {
@@ -1692,7 +1703,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             return false;
         }
-        else if(!ForgeHooks.canToolHarvestBlock(block,0,tool) && block != Blocks.air && block != Blocks.fence && block !=Blocks.planks && block != Blocks.ladder)
+        else if(!ForgeHooks.canToolHarvestBlock(block,0,tool) && !heCanMine.contains(hasToMine))
         {
             hasToMine = block;
             return false;
@@ -1840,7 +1851,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             if (!job.vein.contains(ore))
                             {
                                 job.vein.add(ore);
-                                logger.info("Found close ore");
                             }
                         }
                     }
@@ -1850,7 +1860,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             if((job.veinId < job.vein.size()))
             {
                 ChunkCoordinates v = job.vein.get(job.veinId++);
-                logger.info("Check next ore");
 
                 findVein(v.posX, v.posY, v.posZ);
             }
