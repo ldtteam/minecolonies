@@ -340,7 +340,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
             else if(rand1 != 1)
             {
-                randomNum = b.levels.get(currentLevel).getNodes().size();
+                randomNum = b.levels.get(currentLevel).getNodes().size()-1;
 
                 if(b.levels.get(currentLevel).getNodes().size()<b.active)
                 {
@@ -1287,7 +1287,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         clear = 1;
                         b.startingLevelShaft++;
                         getLocation.set(b.shaftStart.posX, b.ladderLocation.posY - 1, b.shaftStart.posZ);
-                        
+
                         b.markDirty();
 
                     }
