@@ -342,7 +342,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             {
                 randomNum = b.levels.get(currentLevel).getNodes().size()-1;
 
-                if(b.levels.get(currentLevel).getNodes().size()<b.active)
+                if(b.levels.get(currentLevel).getNodes().size()<b.active) // Can be removed never called!
                 {
                     return;
                 }
@@ -438,6 +438,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         b.levels.get(currentLevel).addNewNode(b.activeNode.getID().getX() + 5 * b.activeNode.getVectorX(), b.activeNode.getID().getY() + 5 * b.activeNode.getVectorZ(), b.activeNode.getVectorX(), b.activeNode.getVectorZ());
                     }
                     logger.info("Finished Node: " + b.active);
+                    currentLevel = b.currentLevel;
 
                     b.markDirty();
                 }
