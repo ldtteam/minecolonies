@@ -25,6 +25,7 @@ import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
 
 /**
  * Performs builder work
@@ -633,6 +634,11 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
     private boolean placeBlock(int x, int y, int z, Block block, int metadata)
     {
+        //Move out of the way when placing blocks
+        if (MathHelper.floor_double(worker.posX) == x && MathHelper.abs_int(y - (int) worker.posY) <= 1 && MathHelper.floor_double(worker.posZ) == z && worker.getNavigator().noPath())
+        {
+            worker.getNavigator().moveAwayFromXYZ(x, y, z, 4.1, 1.0);
+        }
         if (block instanceof BlockDoor)
         {
             ItemDoor.placeDoorBlock(world, x, y, z, metadata, block);
