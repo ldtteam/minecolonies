@@ -351,7 +351,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.onDeath(par1DamageSource);
     }
 
-    public PathNavigate getNewNavigator() { return newNavigator; }
+    public PathNavigate getNavigator() { return newNavigator; }
 
     public ResourceLocation getTexture()
     {

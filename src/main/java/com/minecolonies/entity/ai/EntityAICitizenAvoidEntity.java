@@ -53,7 +53,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      */
     public boolean continueExecuting()
     {
-        return !theEntity.getNewNavigator().noPath();
+        return !theEntity.getNavigator().noPath();
     }
 
     /**
@@ -116,6 +116,6 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
 
     protected void performMoveAway()
     {
-        theEntity.getNewNavigator().moveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2, nearSpeed);
+        theEntity.getNavigator().moveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2, nearSpeed);
     }
 }
