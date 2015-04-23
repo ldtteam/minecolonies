@@ -52,7 +52,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     public List<ChunkCoordinates> localVein;
     public static List<Block> heCanMine = new ArrayList<Block>();
-    public static List<Block> heShouldStop = new ArrayList<Block>();
     public ChunkCoordinates getLocation;
     private double baseSpeed = 1;
     private int tryThreeTimes = 3;
@@ -78,11 +77,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         heCanMine.add(Blocks.torch);
         heCanMine.add(Blocks.chest);
         heCanMine.add(Blocks.mob_spawner);
-        
-        heShouldStop.add(Blocks.bookshelf);
-
-
-
     }
 
     @Override
@@ -1033,6 +1027,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private void createShaft(int vektorX, int vektorZ)
     {
+
+
         BuildingMiner b = (BuildingMiner)worker.getWorkBuilding();
         if (b == null) return;
         if(b.clearedShaft) {job.setStage(Stage.WORKING); return;}
@@ -1052,6 +1048,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         int y = getLocation.posY;
         int z = getLocation.posZ;
         currentY = getLocation.posY;
+
+        if (y <= b.getMaxY())
+        {
+            b.clearedShaft = true;
+            job.setStage(Stage.MINING_NODE);
+        }
 
 
             //Needs 39+25 Planks + 4 Torches + 14 fence 5 to create floor-structure
@@ -1285,12 +1287,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         clear = 1;
                         b.startingLevelShaft++;
                         getLocation.set(b.shaftStart.posX, b.ladderLocation.posY - 1, b.shaftStart.posZ);
-
-                        if (y <= b.getMaxY())
-                        {
-                            b.clearedShaft = true;
-                            job.setStage(Stage.MINING_NODE);
-                        }
+                        
                         b.markDirty();
 
                     }
@@ -1321,7 +1318,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         clear = 1;
                         b.startingLevelShaft++;
                         b.markDirty();
-                       getLocation.set(b.shaftStart.posX, getLocation.posY-1, b.shaftStart.posZ);
+
+
+                        getLocation.set(b.shaftStart.posX, getLocation.posY-1, b.shaftStart.posZ);
                     }
             }
             else if(Utils.isWorkerAtSiteWithMove(worker,x,y,z))

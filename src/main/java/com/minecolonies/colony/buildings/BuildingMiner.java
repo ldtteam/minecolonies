@@ -160,7 +160,7 @@ public class BuildingMiner extends BuildingWorker {
         }
         else if(this.getBuildingLevel() == 3)
         {
-            return 4;
+            return 5;
         }
 
         return 70;
