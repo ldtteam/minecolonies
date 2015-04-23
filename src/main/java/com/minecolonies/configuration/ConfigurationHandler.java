@@ -14,6 +14,7 @@ import static com.minecolonies.configuration.Configurations.*;
 public class ConfigurationHandler
 {
     private static final String CATEGORY_GAMEPLAY = "gameplay";
+    private static final String CATEGORY_PATHFINDING = "pathfinding";
     private static final String CATEGORY_NAMES    = "names";
 
     public static void init(File file)
@@ -34,6 +35,10 @@ public class ConfigurationHandler
             maxBlocksCheckedByBuilder = config.get(CATEGORY_GAMEPLAY, "maxBlocksCheckedByBuilder", maxBlocksCheckedByBuilder, "Limits the number of checked blocks per builder update").getInt();
 
             enableInDevelopmentFeatures = config.get(CATEGORY_GAMEPLAY, "development", enableInDevelopmentFeatures, "Don't hide in-development features which do not work and may break your game").getBoolean();
+
+            pathfindingDebugDraw = config.get(CATEGORY_PATHFINDING, "debugDraw", pathfindingDebugDraw, "Render pathfinding results for debugging purposes (SSP only)").getBoolean();
+            pathfindingDebugVerbosity = config.get(CATEGORY_PATHFINDING, "debugVerbosity", pathfindingDebugVerbosity, "Debug output verbosity of pathfinding (0=none, 1=results, 2=live work)").getInt();
+            pathfindingMaxThreadCount = config.get(CATEGORY_PATHFINDING, "maxThreads", pathfindingMaxThreadCount, "Maximum number of threads to use for pathfinding.").getInt();
 
             maleFirstNames = config.get(CATEGORY_NAMES, "maleFirstNames", maleFirstNames, "Male First Names").getStringList();
             femaleFirstNames = config.get(CATEGORY_NAMES, "femaleFirstNames", femaleFirstNames, "Female First Names").getStringList();

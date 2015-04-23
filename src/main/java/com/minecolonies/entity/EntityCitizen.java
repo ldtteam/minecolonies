@@ -10,15 +10,15 @@ import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.ai.EntityAIGoHome;
-import com.minecolonies.entity.ai.EntityAISleep;
-import com.minecolonies.entity.ai.EntityAIWork;
+import com.minecolonies.entity.ai.*;
+import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -32,10 +32,7 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -62,6 +59,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     protected Status status = Status.IDLE;
 
+    private PathNavigate newNavigator;
+    private boolean useNewNavigation = false;
+
     private static final int DATA_TEXTURE         = 13;
     private static final int DATA_LEVEL           = 14;
     private static final int DATA_IS_FEMALE       = 15;
@@ -81,14 +81,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         this.renderDistanceWeight = 2.0D;
 
+        this.newNavigator = new PathNavigate(this, world);
+
+        useNewNavigation = true;
+        if (useNewNavigation)
+        {
+            ReflectionHelper.setPrivateValue(EntityLiving.class, this, this.newNavigator, new String[]{"navigator"});
+        }
+
         this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setCanSwim(true);
         this.getNavigator().setEnterDoors(true);
         this.getNavigator().setBreakDoors(true);
+
         initTasks();
     }
-
-    public boolean isWorker(){ return false; }
 
     @Override
     public void entityInit()
@@ -106,13 +113,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     protected void initTasks()
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 0.6D));
+        this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 1.6D));
         this.tasks.addTask(2, new EntityAIGoHome(this));
         this.tasks.addTask(3, new EntityAISleep(this));
         this.tasks.addTask(4, new EntityAIOpenDoor(this, true));
         this.tasks.addTask(5, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
         this.tasks.addTask(6, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
-        this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
+        this.tasks.addTask(7, new EntityAICitizenWander(this, 0.6D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
 
         onJobChanged(getColonyJob());
@@ -158,7 +165,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (job != null)
         {
             job.addTasks(this.tasks);
-            ChunkCoordUtils.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
+            if (ticksExisted > 0)
+            {
+                ChunkCoordUtils.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
+            }
         }
     }
 
@@ -207,6 +217,24 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
 
         super.onLivingUpdate();
+    }
+
+    /**
+     * Entities treat being on ladders as not on ground; this breaks navigation logic
+     */
+    @Override
+    protected void updateFallState(double y, boolean onGround)
+    {
+        if (!onGround)
+        {
+            int px = MathHelper.floor_double(posX);
+            int py = (int)posY;
+            int pz = MathHelper.floor_double(posZ);
+
+            this.onGround = worldObj.getBlock(px, py, pz).isLadder(worldObj, px, py, pz, this);
+        }
+
+        super.updateFallState(y, this.onGround);
     }
 
     private void updateColonyClient()
@@ -323,6 +351,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.onDeath(par1DamageSource);
     }
 
+    public PathNavigate getNavigator() { return newNavigator; }
+
     public ResourceLocation getTexture()
     {
         return texture;
@@ -432,7 +462,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         ChunkCoordinates homePosition = getHomePosition();
         return homePosition != null &&
-                homePosition.getDistanceSquared((int)posX, (int)posY, (int)posZ) <= 16;
+                homePosition.getDistanceSquared(MathHelper.floor_double(posX), (int)posY, MathHelper.floor_double(posZ)) <= 16;
     }
 
     public BuildingWorker getWorkBuilding()

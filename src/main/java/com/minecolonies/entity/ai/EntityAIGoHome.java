@@ -5,6 +5,7 @@ import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
 /**
@@ -27,7 +28,8 @@ public class EntityAIGoHome extends EntityAIBase
     public boolean shouldExecute()
     {
         return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP &&
-                !citizen.isAtHome();
+                !citizen.isAtHome() &&
+                citizen.getNavigator().noPath();
     }
 
     @Override
@@ -40,19 +42,7 @@ public class EntityAIGoHome extends EntityAIBase
             return;
         }
 
-        if (citizen.getDistanceSq((double)pos.posX, (double)pos.posY, (double)pos.posZ) > (40 * 40))
-        {
-            Vec3 vec3 = RandomPositionGenerator.findRandomTargetBlockTowards(citizen, 14, 3, Vec3.createVectorHelper((double) pos.posX + 0.5D, (double) pos.posY, (double) pos.posZ + 0.5D));
-
-            if (vec3 != null)
-            {
-                citizen.getNavigator().tryMoveToXYZ(vec3.xCoord, vec3.yCoord, vec3.zCoord, 1.0D);
-            }
-        }
-        else
-        {
-            citizen.getNavigator().tryMoveToXYZ((double)pos.posX + 0.5D, (double)pos.posY, (double)pos.posZ + 0.5D, 1.0D);
-        }
+        citizen.getNavigator().tryMoveToXYZ((double)pos.posX + 0.5D, (double)pos.posY, (double)pos.posZ + 0.5D, 1.0D);
     }
 
     @Override
