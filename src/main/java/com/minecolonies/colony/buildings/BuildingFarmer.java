@@ -5,6 +5,7 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.JobFarmer;
 import com.minecolonies.colony.jobs.JobPlaceholder;
 import net.minecraft.util.ChunkCoordinates;
 
@@ -27,7 +28,7 @@ public class BuildingFarmer extends BuildingWorker
     @Override
     public Job createJob(CitizenData citizen)
     {
-        return new JobPlaceholder(citizen); //TODO Implement Later
+        return new JobFarmer(citizen); //TODO Implement Later
     }
 
     public static class View extends BuildingWorker.View
@@ -42,4 +43,11 @@ public class BuildingFarmer extends BuildingWorker
             return new WindowHutWorkerPlaceholder<BuildingFarmer.View>(this, "farmerHut");
         }
     }
+
+    public int getFarmRadius()
+    {
+        return getBuildingLevel()+3;
+    }
+
+
 }

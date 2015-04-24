@@ -1,7 +1,7 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.buildings.*;
 import com.minecolonies.colony.jobs.JobDeliveryman;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
@@ -91,7 +91,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
                 }
                 InventoryUtils.setStack(destinationTileEntity, new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
             }
-            targetCitizen.getJob().getItemsNeeded().remove(i);
+            targetCitizen.getJob().removeItemNeeded(itemstack);
             i--;
         }
 
