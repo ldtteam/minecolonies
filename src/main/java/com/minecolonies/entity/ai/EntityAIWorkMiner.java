@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Miner AI class
@@ -77,6 +78,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         heCanMine.add(Blocks.torch);
         heCanMine.add(Blocks.chest);
         heCanMine.add(Blocks.mob_spawner);
+        heCanMine.add(Blocks.grass);
     }
 
     @Override
@@ -162,8 +164,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else if(job.hasItemsNeeded())
         {
-            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation())) {
-                List<ItemStack> l = job.getItemsNeeded();
+            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+            {
+                List<ItemStack> l = new CopyOnWriteArrayList<ItemStack>();
+                l.addAll(job.getItemsNeeded());
+
 
                 for (ItemStack e : l)
                 {
@@ -193,9 +198,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         }
                     }
                     LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedBlockAndItem", e.getDisplayName());
+
                 }
+                delay = 50;
             }
-            delay = 50;
+
         }
         else
         {
@@ -320,7 +327,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if(b.activeNode == null || b.activeNode.getStatus() == Node.Status.COMPLETED || b.activeNode.getStatus() == Node.Status.AVAILABLE)
         {
             currentLevel = b.currentLevel;
-            int rand1 = (int)(Math.random()*3);
+            int rand1 = (int) Math.floor(Math.random()*4);
             int randomNum;
 
             if(b.levels.get(currentLevel).getNodes() == null)
@@ -338,18 +345,17 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     return;
                 }
             }
-            else if(rand1 != 1)
+            else if(rand1 == 1)
             {
-                randomNum = b.levels.get(currentLevel).getNodes().size()-1;
-
-                if(b.levels.get(currentLevel).getNodes().size()<b.active) // Can be removed never called!
-                {
-                    return;
-                }
+                randomNum = (int) Math.floor(Math.random()*b.levels.get(currentLevel).getNodes().size());
+            }
+            else if(rand1 == 2)
+            {
+                randomNum = (int) (Math.random() * 3);
             }
             else
             {
-                 randomNum = (int) (Math.random() * b.levels.get(currentLevel).getNodes().size());
+                randomNum = b.levels.get(currentLevel).getNodes().size()-1;
             }
 
             if(b.levels.get(currentLevel).getNodes().size() > randomNum)
@@ -875,16 +881,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         boolean Spade = hasSpade > -1 || hasSpadeInHand;
         boolean Pickaxe = hasPickAxeInHand || hasPickAxe > -1;
 
-        if(!Spade)
-        {
-            job.addItemNeededIfNotAlready(new ItemStack(Items.iron_shovel));
-            NEED_ITEM = "shovel";
-        }
-        else if (!Pickaxe)
-        {
-            job.addItemNeededIfNotAlready(new ItemStack(Items.iron_pickaxe));
-            NEED_ITEM = "pickaxe";
-        }
+
+            if (!Spade) {
+                job.addItemNeededIfNotAlready(new ItemStack(Items.iron_shovel));
+                NEED_ITEM = "shovel";
+            } else if (!Pickaxe) {
+                job.addItemNeededIfNotAlready(new ItemStack(Items.iron_pickaxe));
+                NEED_ITEM = "pickaxe";
+            }
+
 
 
         if(!Pickaxe || !Spade)
@@ -1654,6 +1659,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         BuildingMiner b = (BuildingMiner)(worker.getWorkBuilding());
         if(b == null || !hasAllTheTools()){return false;}
 
+        if(job.getStage() == Stage.MINING_NODE && b.activeNode == null)
+        {
+            return false;
+        }
+
         ChunkCoordinates bk = new ChunkCoordinates(x,y,z);
 
         if (InventoryUtils.getOpenSlot(worker.getInventory()) == -1)    //inventory has an open slot - this doesn't account for slots with non full stacks
@@ -1673,8 +1683,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(job.getStage() == Stage.MINING_NODE && b.shaftStart.posX == x && b.shaftStart.posZ == z)
         {
-            b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
             b.activeNode.setStatus(Node.Status.COMPLETED);
+            b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
             logger.info("Finished because of Ladder Node: " + b.active);
             b.levels.get(currentLevel).getNodes().remove(b.active);
             return true;
