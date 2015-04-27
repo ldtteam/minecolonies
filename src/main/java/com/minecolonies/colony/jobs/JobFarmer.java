@@ -34,7 +34,7 @@ public class JobFarmer extends Job
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
-        super.writeToNBT(compound);
+       super.writeToNBT(compound);
         compound.setString(TAG_STAGE, stage.name());
 
 

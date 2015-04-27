@@ -234,12 +234,14 @@ public class BuildingMiner extends BuildingWorker {
         startingLevelNode =compound.getInteger(TAG_SN);
         NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
 
+
         for(int i = 0; i < levelTagList.tagCount(); i++)
         {
             Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
             levels.add(level);
         }
-        if (currentLevel >= 0 && currentLevel < levels.size())
+
+        if (currentLevel >= 0 && currentLevel < levels.size() && active < levels.get(currentLevel).getNodes().size())
         {
             activeNode = levels.get(currentLevel).getNodes().get(active);
         }

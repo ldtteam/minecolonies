@@ -67,6 +67,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private int canMineNode=0;
     private int currentLevel=-1;
 
+    //TODO Wants torch, doesn't accept coal
+
     //TODO Check for duplicates
     public EntityAIWorkMiner(JobMiner job)
     {
@@ -231,14 +233,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                         job.addItemNeeded(new ItemStack(b.floorBlock));
 
                                     }
-
                                 }
                             }
                             else
                             {
                                 mineNode(b);
                             }
-
                         }
                         else
                         {
@@ -1842,8 +1842,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(blocksMined == 256)
         {
-            dumpInventory();
-
+            job.setStage(Stage.INVENTORY_FULL);
         }
 
         return true;

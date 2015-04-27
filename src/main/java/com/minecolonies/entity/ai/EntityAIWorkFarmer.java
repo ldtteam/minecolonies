@@ -1,10 +1,7 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingFarmer;
-import com.minecolonies.colony.buildings.BuildingMiner;
-import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobFarmer;
-import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
@@ -17,10 +14,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.MathHelper;
-import net.minecraftforge.common.ForgeHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,10 +46,16 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     private String NEED_ITEM;
     private double baseSpeed;
     private int delay=0;
-    int i = 0;
-    private boolean made_land = false;
-    public List<ChunkCoordinates> farmLand = new ArrayList<ChunkCoordinates>();
+    int harvestCounter = 0;
+
+    public List<ChunkCoordinates> farmAbleLand = new ArrayList<ChunkCoordinates>();
+    public List<ChunkCoordinates> plowedLand = new ArrayList<ChunkCoordinates>();
     public List<ChunkCoordinates> crops = new ArrayList<ChunkCoordinates>();
+    public ChunkCoordinates currentFarmLand;
+    //TODO Planting randomly depending on option in Hut, each level, one more crop type
+    //TODO Uses one seed to plant all crobs
+    //TODO Shouldn't want seeds as long as all space is occupied
+    //TODO Plow land if not plown anymore
 
 
     //TODO Check for duplicates
@@ -83,9 +83,25 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         BuildingFarmer b = (BuildingFarmer)(worker.getWorkBuilding());
         if(b == null){return;}
 
-
         if (delay > 0)
         {
+            if(job.getStage() == Stage.MAKING_LAND && currentFarmLand != null)
+            {
+                int x = currentFarmLand.posX;
+                int y = currentFarmLand.posY;
+                int z = currentFarmLand.posZ;
+
+                worker.swingItem();
+                try
+                {
+                    //Crashes when called before minecraft Client fully initialized
+                    FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
+                }
+                catch(Exception e)
+                {
+                    logger.info("Couldn't add effect");
+                }
+            }
             delay--;
         }
         else if(job.hasItemsNeeded())
@@ -95,17 +111,14 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 List<ItemStack> l = new CopyOnWriteArrayList<ItemStack>();
                 l.addAll(job.getItemsNeeded());
 
-
                 for (ItemStack e : l)
                 {
-
-                    if (isInHut(e.getItem()) || inventoryContains(e.getItem())!=-1)
+                    if (isInHut(e.getItem()) || hasAllTheTools() || inventoryContains(e.getItem())!=-1)
                     {
                             job.removeItemNeeded(e);
                             return;
                     }
                     LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedBlockAndItem", e.getDisplayName());
-
                 }
                 delay = 50;
             }
@@ -117,37 +130,40 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             {
                 case SEARCHING_LAND:
                     searchFarmableLand();
+                    break;
                 case MAKING_LAND:
                     make_land();
                     break;
                 case NEED_SEEDS:
-                    delay = 50;
-                    logger.info("Need Seeds");
-
-                    if(hasSeed())
+                    if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker,worker.getWorkBuilding().getLocation()))
                     {
-                        job.setStage(Stage.WORKING);
-                    }
+                        delay = 200;
+                        logger.info("Need Seeds");
 
+                        if (hasSeed() || hasSeedInHut())
+                        {
+                            job.setStage(Stage.WORKING);
+                        }
+                    }
                     break;
                 case WORKING:
-                    if(!hasSeed() && crops!=null)
+                    if(farmAbleLand.size() == 0 && plowedLand.size() == 0 && crops.size() == 0 )
+                    {
+                        job.setStage(Stage.SEARCHING_LAND);
+                    }
+                    else if(!hasSeed() && crops.size() < 10)
                     {
                         job.setStage(Stage.NEED_SEEDS);
                     }
-                    if(farmLand==null)
+                    else if(farmAbleLand.size() > 0)
                     {
                         job.setStage(Stage.MAKING_LAND);
                     }
-                    else if(made_land)
-                    {
-                        job.setStage(Stage.MAKING_LAND);
-                    }
-                    else if(hasSeed())
+                    else if(hasSeed() && plowedLand.size() > 0)
                     {
                         job.setStage(Stage.PLANTING);
                     }
-                    else if(crops!=null)
+                    else if(crops.size() > 0)
                     {
                         job.setStage(Stage.HARVESTING);
                     }
@@ -161,50 +177,206 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             }
         }
     }
+    private void searchFarmableLand()
+    {
+        BuildingFarmer b = (BuildingFarmer)(worker.getWorkBuilding());
+        if(b == null){return;}
+
+        int buildingX =  worker.getWorkBuilding().getLocation().posX;
+        int buildingY =  worker.getWorkBuilding().getLocation().posY;
+        int buildingZ =  worker.getWorkBuilding().getLocation().posZ;
+
+        for(int x=buildingX-b.getFarmRadius()-1;x<=buildingX+b.getFarmRadius()+1;x++)
+        {
+            for(int z=buildingZ-b.getFarmRadius()-1;z<=buildingZ+b.getFarmRadius()+1;z++)
+            {
+                Block block = world.getBlock(x,buildingY-1,z);
+                if(block == Blocks.dirt || block == Blocks.grass)
+                {
+
+                    if(world.isAirBlock(x,buildingY+1,z))
+                    {
+                        if(farmAbleLand.size() == 0 || !farmAbleLand.contains(new ChunkCoordinates(x,buildingY,z)))
+                        {
+                            farmAbleLand.add(new ChunkCoordinates(x, buildingY, z));
+                        }
+                    }
+
+                }
+                else if(block == Blocks.farmland)
+                {
+                    Block blockAbove = world.getBlock(x,buildingY,z);
+
+                    if(blockAbove == Blocks.wheat || blockAbove == Blocks.potatoes || blockAbove == Blocks.carrots || blockAbove == Blocks.melon_stem || blockAbove == Blocks.melon_block || blockAbove == Blocks.pumpkin || blockAbove == Blocks.pumpkin_stem)
+                    {
+                        if(crops.size() == 0 || !crops.contains(new ChunkCoordinates(x,buildingY,z)))
+                        {
+                             crops.add(new ChunkCoordinates(x, buildingY, z));
+                        }
+                    }
+                    else if(plowedLand.size() == 0 || !plowedLand.contains(new ChunkCoordinates(x,buildingY,z)))
+                    {
+                        plowedLand.add(new ChunkCoordinates(x, buildingY, z));
+
+                    }
+
+                }
+            }
+        }
+        job.setStage(Stage.WORKING);
+    }
+
 
     public void make_land()
     {
-
-
-        if(world.getBlock(farmLand.get(i).posX,farmLand.get(i).posY-1,farmLand.get(i).posZ)== Blocks.farmland)
+        if(farmAbleLand.size() > 0)
         {
-            world.setBlock(farmLand.get(i).posX,farmLand.get(i).posY-1,farmLand.get(i).posZ,Blocks.farmland);
-            delay = 50;
+            if (world.getBlock(farmAbleLand.get(0).posX, farmAbleLand.get(0).posY - 1, farmAbleLand.get(0).posZ) != Blocks.farmland)
+            {
+                delay = 20;
+                world.setBlock(farmAbleLand.get(0).posX, farmAbleLand.get(0).posY - 1, farmAbleLand.get(0).posZ, Blocks.farmland);
+                currentFarmLand = new ChunkCoordinates(farmAbleLand.get(0).posX, farmAbleLand.get(0).posY - 1, farmAbleLand.get(0).posZ);
+            }
+
+            if(plowedLand.size() == 0 || !plowedLand.contains(new ChunkCoordinates(farmAbleLand.get(0).posX, farmAbleLand.get(0).posY, farmAbleLand.get(0).posZ)))
+            {
+                plowedLand.add(new ChunkCoordinates(farmAbleLand.get(0).posX, farmAbleLand.get(0).posY, farmAbleLand.get(0).posZ));
+                farmAbleLand.remove(0);
+            }
         }
-        else if(i > farmLand.size())
+        else
         {
-            made_land = true;
+            if(plowedLand.size() == 0 && crops.size() == 0)
+            {
+                job.setStage(Stage.SEARCHING_LAND);
+            }
+            else
+            {
+                job.setStage(Stage.WORKING);
+            }
         }
-
-
-        i++;
     }
 
     private void planting()
     {
-        //Only able to plant wheat, pumpkin and melon
-        int slot = getFirstSeed();
-        ItemStack seed = worker.getInventory().getStackInSlot(slot);
-
-        for(ChunkCoordinates e: farmLand)
+        //Only able to plant wheat, pumpkin and melon, Potatoe and carrot
+        if(plowedLand.size() > 0)
         {
-            if(world.isAirBlock(e.posX,e.posY,e.posZ))
+            if (world.getBlock(plowedLand.get(0).posX, plowedLand.get(0).posY - 1, plowedLand.get(0).posZ) == Blocks.farmland)
             {
-                if (seed.getItem() == Items.wheat_seeds)
+
+
+                if(world.isAirBlock(plowedLand.get(0).posX, plowedLand.get(0).posY, plowedLand.get(0).posZ))
                 {
-                    world.setBlock(e.posX, e.posY, e.posZ, Blocks.wheat, 0, 0x3);
-                    crops.add(e);
+                    world.setBlock(plowedLand.get(0).posX, plowedLand.get(0).posY - 1, plowedLand.get(0).posZ, Blocks.farmland);
+                    delay = 20;
+                    currentFarmLand = new ChunkCoordinates(plowedLand.get(0).posX, plowedLand.get(0).posY - 1, plowedLand.get(0).posZ);
+
+                    int slot = getFirstSeed();
+                    ItemStack seed = worker.getInventory().getStackInSlot(slot);
+                    if(seed == null)
+                    {
+                        job.setStage(Stage.WORKING);
+                        return;
+                    }
+
+                    if (seed.getItem() == Items.wheat_seeds)
+                    {
+                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.wheat);
+                    }
+                    else if (seed.getItem() == Items.pumpkin_seeds)
+                    {
+                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.pumpkin_stem);
+                    }
+                    else if (seed.getItem() == Items.melon_seeds)
+                    {
+                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.melon_stem);
+                    }
+                    else if (seed.getItem() == Items.potato)
+                    {
+                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.potatoes);
+                    }
+                    else if (seed.getItem() == Items.carrot)
+                    {
+                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.carrots);
+                    }
+                    worker.getInventory().decrStackSize(slot, 1);
+                    delay = 10;
                 }
-                else if (seed.getItem() == Items.pumpkin_seeds)
+
+                if(crops.size() == 0 || !crops.contains(new ChunkCoordinates(plowedLand.get(0).posX, plowedLand.get(0).posY, plowedLand.get(0).posZ)))
                 {
-                    world.setBlock(e.posX, e.posY, e.posZ, Blocks.pumpkin_stem);
-                    crops.add(e);
+                    crops.add(new ChunkCoordinates(plowedLand.get(0).posX, plowedLand.get(0).posY, plowedLand.get(0).posZ));
+                    plowedLand.remove(0);
                 }
-                else if (seed.getItem() == Items.melon_seeds)
+            }
+            else
+            {
+                if(farmAbleLand.size() == 0 || !farmAbleLand.contains(new ChunkCoordinates(plowedLand.get(0).posX, plowedLand.get(0).posY, plowedLand.get(0).posZ)))
                 {
-                    world.setBlock(e.posX, e.posY, e.posZ, Blocks.melon_stem);
-                    crops.add(e);
+                    farmAbleLand.add(new ChunkCoordinates(plowedLand.get(0).posX, plowedLand.get(0).posY, plowedLand.get(0).posZ));
+                    plowedLand.remove(0);
                 }
+            }
+        }
+        else
+        {
+            if(plowedLand.size() == 0 && crops.size() == 0)
+            {
+                job.setStage(Stage.SEARCHING_LAND);
+            } else {
+                job.setStage(Stage.WORKING);
+            }
+        }
+    }
+
+    private void harvesting()
+    {
+        if(crops.size() > 0)
+        {
+            delay = 10;
+
+            Block block = ChunkCoordUtils.getBlock(world,crops.get(0));
+
+            if(block==Blocks.melon_block || block == Blocks.pumpkin || world.getBlockMetadata(crops.get(0).posX,crops.get(0).posY,crops.get(0).posZ) == 0x7)
+            {
+                if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker,crops.get(0)))
+                {
+                    List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, crops.get(0), 0);
+
+                    for (ItemStack item : items)
+                    {
+                        InventoryUtils.setStack(worker.getInventory(), item);
+                    }
+                    try
+                    {
+                        //Crashes when called before Minecraft Client fully initialized
+                        FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ, block, world.getBlockMetadata(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ));
+                    }
+                    catch (Exception exp)
+                    {
+                        logger.info("Couldn't add effect");
+
+                    }
+                    world.setBlockToAir(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ);
+                }
+            }
+
+            if(!plowedLand.contains(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ)))
+            {
+                plowedLand.add(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ));
+                crops.remove(0);
+            }
+        }
+        else
+        {
+            if(plowedLand.size() == 0 && crops.size() == 0)
+            {
+                job.setStage(Stage.SEARCHING_LAND);
+            }
+            else
+            {
+                job.setStage(Stage.WORKING);
             }
         }
     }
@@ -224,64 +396,12 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 }
             }
         }
-
         return -1;
-    }
-
-    private void harvesting()
-    {
-        for(ChunkCoordinates e: crops)
-        {
-           Block block =  world.getBlock(e.posX,e.posY,e.posZ);
-
-            if(block==Blocks.melon_block || block == Blocks.pumpkin || world.getBlockMetadata(e.posX,e.posY,e.posZ) == 0x7)
-            {
-                List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world,e , 0);
-
-                for (ItemStack item : items)
-                {
-                    InventoryUtils.setStack(worker.getInventory(), item);
-                }
-
-                try
-                {
-                    //Crashes when called before Minecraft Client fully initialized
-                    FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(e.posX, e.posY, e.posZ, block, world.getBlockMetadata(e.posX, e.posY, e.posZ));
-                }
-                catch(Exception exp)
-                {
-                    logger.info("Couldn't add effect");
-                }
-            }
-        }
-    }
-
-    private void searchFarmableLand()
-    {
-        BuildingFarmer b = (BuildingFarmer)(worker.getWorkBuilding());
-        if(b == null){return;}
-
-        int buildingX =  worker.getWorkBuilding().getLocation().posX;
-        int buildingY =  worker.getWorkBuilding().getLocation().posY;
-        int buildingZ =  worker.getWorkBuilding().getLocation().posZ;
-
-        for(int x=buildingX-b.getFarmRadius()-1;x<buildingX+b.getFarmRadius()+1;x++)
-        {
-            for(int z=buildingZ-b.getFarmRadius()-1;z<buildingZ+b.getFarmRadius()+1;z++)
-            {
-                Block block = world.getBlock(x,buildingY,z);
-                if(block == Blocks.dirt || block == Blocks.grass || block == Blocks.farmland)
-                {
-                    farmLand.add(new ChunkCoordinates(x,buildingY+1,z));
-                }
-            }
-        }
-
     }
 
     private boolean isSeed(Item item)
     {
-            return item.toString().contains("seed") || item.toString().contains("Seed");
+            return item.toString().contains("seed") || item.toString().contains("Seed") || item.toString().contains("potatoe") || item.toString().contains("carrot");
     }
 
     private boolean hasSeed()
@@ -300,7 +420,43 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 }
             }
 
+            job.setStage(Stage.NEED_SEEDS);
             return false;
+    }
+
+    private boolean hasSeedInHut()
+    {
+        if(worker.getWorkBuilding().getTileEntity()==null)
+        {
+            return false;
+        }
+
+        int size = worker.getWorkBuilding().getTileEntity().getSizeInventory();
+
+        for(int i = 0; i < size; i++)
+        {
+            ItemStack stack = worker.getWorkBuilding().getTileEntity().getStackInSlot(i);
+            if(stack != null)
+            {
+                Item content = stack.getItem();
+                if(isSeed(content))
+                {
+                    ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
+
+                    if (returnStack == null)
+                    {
+                        worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize);
+                    }
+                    else
+                    {
+                        worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+                    }
+
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 
@@ -360,7 +516,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             if(stack != null)
             {
                 Item content = stack.getItem();
-                if(content.equals(item) || content.getToolClasses(null /* not used */).contains(NEED_ITEM))
+                if(content.equals(item) || content.getToolClasses(null /* not used */).contains(NEED_ITEM) || content.getUnlocalizedName().contains(NEED_ITEM))
                 {
                     ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
 
@@ -419,16 +575,15 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         }
         else
         {
-            hasHoeInHand = worker.getHeldItem().getItem().getToolClasses(null /* not used */).contains("hoe");
+            hasHoeInHand = worker.getHeldItem().getItem().getUnlocalizedName().contains("hoe");
             hasSpadeInHand = worker.getHeldItem().getItem().getToolClasses(null /* not used */).contains("shovel");
         }
 
         int hasSpade = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "shovel");
-        int hasPickAxe = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "hoe");
-
+        int hasHoe = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "hoe"); //TODO not properly working
 
         boolean Spade = hasSpade > -1 || hasSpadeInHand;
-        boolean Hoe = hasHoeInHand || hasPickAxe > -1;
+        boolean Hoe = hasHoeInHand || hasHoe > -1;
 
 
             if (!Spade)
@@ -438,11 +593,11 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             }
             else if (!Hoe)
             {
-                job.addItemNeededIfNotAlready(new ItemStack(Items.iron_pickaxe));
+                job.addItemNeededIfNotAlready(new ItemStack(Items.iron_hoe));
                 NEED_ITEM = "hoe";
             }
 
-        return !Hoe || !Spade;
+        return Hoe && Spade;
     }
 
     void holdShovel()
@@ -502,9 +657,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 }
             }
         }
-
         return -1;
-
     }
 
     private int inventoryContains(Item item)//???
@@ -527,7 +680,6 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 }
             }
         }
-
         return -1;
     }
 
