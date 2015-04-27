@@ -188,7 +188,7 @@ public class InventoryUtils
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack item = inventory.getStackInSlot(i);
-            if ((item != null && item.getItem().getToolClasses(null /* unused */).contains(tool)) || (tool.contains("hoe") && item.getItem().getUnlocalizedName().contains("hoe"))) {
+            if ((item != null && item.getItem().getToolClasses(null /* unused */).contains(tool)) || (item != null && tool.contains("hoe") && item.getItem().getUnlocalizedName().contains("hoe"))) {
                 return i;
             }
         }
