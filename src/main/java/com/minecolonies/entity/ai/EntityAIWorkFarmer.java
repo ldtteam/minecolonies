@@ -38,7 +38,8 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         PLANTING,
         NEED_SEEDS,
         HARVESTING,
-        SEARCHING_LAND
+        SEARCHING_LAND,
+        FULL_INVENTORY
 
     }
     private static Logger logger = LogManager.getLogger("Farmer");
@@ -47,6 +48,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     private double baseSpeed;
     private int delay=0;
     int harvestCounter = 0;
+
 
     public List<ChunkCoordinates> farmAbleLand = new ArrayList<ChunkCoordinates>();
     public List<ChunkCoordinates> plowedLand = new ArrayList<ChunkCoordinates>();
@@ -128,6 +130,9 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         {
             switch (job.getStage())
             {
+                case FULL_INVENTORY:
+                    dumpInventory();
+                    break;
                 case SEARCHING_LAND:
                     searchFarmableLand();
                     break;
@@ -332,6 +337,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private void harvesting()
     {
+
         if(crops.size() > 0)
         {
             delay = 10;
@@ -359,6 +365,8 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
                     }
                     world.setBlockToAir(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ);
+                    harvestCounter++;
+
                 }
 
                 if (!plowedLand.contains(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ)))
@@ -366,6 +374,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                     plowedLand.add(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ));
                     crops.remove(0);
                 }
+
             }
         }
         else
@@ -378,6 +387,12 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             {
                 job.setStage(Stage.WORKING);
             }
+        }
+
+        if(harvestCounter == 15)
+        {
+            job.setStage(Stage.FULL_INVENTORY);
+            harvestCounter = 0;
         }
     }
 
