@@ -338,9 +338,9 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
             Block block = ChunkCoordUtils.getBlock(world,crops.get(0));
 
-            if(block==Blocks.melon_block || block == Blocks.pumpkin || world.getBlockMetadata(crops.get(0).posX,crops.get(0).posY,crops.get(0).posZ) == 0x7)
+            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker,crops.get(0)))
             {
-                if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker,crops.get(0)))
+                if (block == Blocks.melon_block || block == Blocks.pumpkin || world.getBlockMetadata(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ) == 0x7)
                 {
                     List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, crops.get(0), 0);
 
@@ -360,12 +360,12 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                     }
                     world.setBlockToAir(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ);
                 }
-            }
 
-            if(!plowedLand.contains(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ)))
-            {
-                plowedLand.add(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ));
-                crops.remove(0);
+                if (!plowedLand.contains(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ)))
+                {
+                    plowedLand.add(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ));
+                    crops.remove(0);
+                }
             }
         }
         else
@@ -580,7 +580,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         }
 
         int hasSpade = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "shovel");
-        int hasHoe = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "hoe"); //TODO not properly working
+        int hasHoe = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "hoe");
 
         boolean Spade = hasSpade > -1 || hasSpadeInHand;
         boolean Hoe = hasHoeInHand || hasHoe > -1;
