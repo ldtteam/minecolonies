@@ -17,7 +17,7 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingFarmer extends BuildingWorker
 {
-    public int wheat = 100,
+    public int wheat = 0,
             potato = 0,
             carrot = 0,
             melon = 0,
@@ -32,6 +32,30 @@ public class BuildingFarmer extends BuildingWorker
     public BuildingFarmer(Colony c, ChunkCoordinates l)
     {
         super(c, l);
+    }
+
+    public void set(char type, int mode)
+    {
+        if(type == 'W')
+        {
+            wheat = mode;
+        }
+        else if(type == 'C')
+        {
+            potato = mode;
+        }
+        else if(type == 'P')
+        {
+            carrot = mode;
+        }
+        else if(type == 'M')
+        {
+            melon = mode;
+        }
+        else if(type == 'U')
+        {
+            pumpkin = mode;
+        }
     }
 
     @Override
@@ -76,7 +100,7 @@ public class BuildingFarmer extends BuildingWorker
         farmerCompound.setInteger(POTATO_TAG,potato);
         farmerCompound.setInteger(CARROT_TAG,carrot);
         farmerCompound.setInteger(MELON_TAG,melon);
-        farmerCompound.setInteger(PUMPKIN_TAG,pumpkin);
+        farmerCompound.setInteger(PUMPKIN_TAG, pumpkin);
 
         compound.setTag("farmer", farmerCompound);
     }
@@ -115,8 +139,6 @@ public class BuildingFarmer extends BuildingWorker
             carrot = buf.readInt();
             melon = buf.readInt();
             pumpkin = buf.readInt();
-
-
         }
     }
 

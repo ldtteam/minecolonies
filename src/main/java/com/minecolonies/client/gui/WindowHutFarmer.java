@@ -3,9 +3,10 @@ package com.minecolonies.client.gui;
 import com.blockout.controls.Button;
 import com.blockout.controls.ButtonVanilla;
 import com.blockout.views.SwitchView;
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.network.messages.FarmerRequestMessage;
 
 public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 {
@@ -65,19 +66,16 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         if (button.getID().equals(BUTTON_WHEAT))
         {
             building.wheat++;
-
             removeOthers("wheat");
         }
         else if (button.getID().equals(BUTTON_POTATO))
         {
             building.potato++;
-
             removeOthers("potato");
         }
         else if (button.getID().equals(BUTTON_CARROT))
         {
             building.carrot++;
-
             removeOthers("carrot");
         }
         else if (button.getID().equals(BUTTON_MELON))
@@ -122,10 +120,13 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 
     public void removeOthers(String s)
     {
-
-
-        while(sum() > 100)
+        while(sum() != 100)
         {
+            if(sum() < 100)
+            {
+                building.wheat = building.wheat + 100-sum();
+            }
+
             int rand = (int)(Math.random()*5);
 
             if (building.potato != 0 && !s.equals("potato") && rand == 0)
@@ -149,6 +150,13 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
                 building.pumpkin--;
             }
         }
+
+        MineColonies.network.sendToServer(new FarmerRequestMessage(building,'W',building.wheat));
+        MineColonies.network.sendToServer(new FarmerRequestMessage(building,'P',building.potato));
+        MineColonies.network.sendToServer(new FarmerRequestMessage(building,'C',building.carrot));
+        MineColonies.network.sendToServer(new FarmerRequestMessage(building,'M',building.melon));
+        MineColonies.network.sendToServer(new FarmerRequestMessage(building,'U',building.pumpkin));
+
     }
 
 }

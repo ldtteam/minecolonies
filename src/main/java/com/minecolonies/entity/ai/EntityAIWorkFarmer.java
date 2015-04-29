@@ -55,8 +55,8 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     public List<ChunkCoordinates> crops = new ArrayList<ChunkCoordinates>();
     public ChunkCoordinates currentFarmLand;
     //TODO Planting randomly depending on option in Hut, each level, one more crop type
-    //TODO get % of hut!
-    
+    //TODO Adding Language Strings in files
+
     //TODO Check for duplicates
     public EntityAIWorkFarmer(JobFarmer job)
     {
