@@ -53,6 +53,8 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     public List<ChunkCoordinates> farmAbleLand = new ArrayList<ChunkCoordinates>();
     public List<ChunkCoordinates> plowedLand = new ArrayList<ChunkCoordinates>();
     public List<ChunkCoordinates> crops = new ArrayList<ChunkCoordinates>();
+    public List<ChunkCoordinates> crops2 = new ArrayList<ChunkCoordinates>();
+
     public ChunkCoordinates currentFarmLand;
     //TODO Planting randomly depending on option in Hut, each level, one more crop type
     //TODO Adding Language Strings in files
@@ -81,6 +83,12 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     {
         BuildingFarmer b = (BuildingFarmer)(worker.getWorkBuilding());
         if(b == null){return;}
+
+        if(crops.size() == 0 && crops2.size() != 0)
+        {
+            crops.addAll(crops2);
+            crops2.clear();
+        }
 
         if (delay > 0)
         {
@@ -153,7 +161,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                     {
                         job.setStage(Stage.SEARCHING_LAND);
                     }
-                    else if(!hasSeed() && crops.size() < 10)
+                    else if(!hasSeed() && crops.size()+crops2.size() < 10)
                     {
                         job.setStage(Stage.NEED_SEEDS);
                     }
@@ -334,7 +342,6 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private void harvesting()
     {
-
         if(crops.size() > 0)
         {
             delay = 10;
@@ -364,14 +371,18 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                     world.setBlockToAir(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ);
                     harvestCounter++;
 
-                }
+                    if (!plowedLand.contains(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ)))
+                    {
+                        plowedLand.add(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ));
+                        crops.remove(0);
+                    }
 
-                if (!plowedLand.contains(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ)))
+                }
+                else
                 {
-                    plowedLand.add(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ));
+                    crops2.add(crops.get(0));
                     crops.remove(0);
                 }
-
             }
         }
         else
