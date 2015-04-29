@@ -182,6 +182,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             return;
                         }
                     }
+                    else if(e.getItem().equals(new ItemStack(Blocks.torch).getItem()))
+                    {
+                        int slot = inventoryContains(Items.coal);
+                        if(slot!=-1)
+                        {
+                            worker.getInventory().decrStackSize(slot, 1);
+                            ItemStack stack = new ItemStack(e.getItem(), 4);
+                            InventoryUtils.addItemStackToInventory(worker.getInventory(),stack);
+                            job.removeItemNeeded(e);
+                            return;
+                        }
+                    }
                     else if (isInHut(e.getItem()) || inventoryContains(e.getItem())!=-1)
                     {
                         if(e.getItem().equals(new ItemStack(b.floorBlock).getItem()))
@@ -193,6 +205,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             }
                             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageMoreBlocks", e.getDisplayName());
                         }
+
                         else
                         {
                             job.removeItemNeeded(e);
@@ -307,11 +320,16 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return;
         }
 
-        if (inventoryContainsMany(b.floorBlock)<= 10 || (inventoryContainsMany(Blocks.torch)<3 && inventoryContains(Items.coal)==-1))
+        if (inventoryContainsMany(b.floorBlock)<= 10 )
         {
             canMineNode = 0;
             job.addItemNeeded(new ItemStack(b.floorBlock));
-
+            return;
+        }
+        else if(inventoryContainsMany(Blocks.torch)<3 && inventoryContains(Items.coal)==-1)
+        {
+            canMineNode = 0;
+            job.addItemNeeded(new ItemStack(Items.coal));
             return;
         }
 
@@ -1554,8 +1572,21 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(slot == -1)
         {
-            job.addItemNeeded(new ItemStack(block));
-            return;
+            if(block == Blocks.torch)
+            {
+                int slot2 = inventoryContains(Items.coal);
+                if (slot2 != -1)
+                {
+                    worker.getInventory().decrStackSize(slot, 1);
+                    ItemStack stack = new ItemStack(block, 4);
+                    InventoryUtils.addItemStackToInventory(worker.getInventory(), stack);
+                }
+            }
+            else {
+
+                job.addItemNeeded(new ItemStack(block));
+                return;
+            }
 
         }
         worker.getInventory().decrStackSize(slot,1);

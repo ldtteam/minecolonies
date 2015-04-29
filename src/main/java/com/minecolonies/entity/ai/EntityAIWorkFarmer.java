@@ -416,7 +416,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private boolean isSeed(Item item)
     {
-            return item.toString().contains("seed") || item.toString().contains("Seed") || item.toString().contains("potatoe") || item.toString().contains("carrot");
+            return item.toString().contains("Seed") || item.toString().contains("potatoe") || item.toString().contains("carrot");
     }
 
     private boolean hasSeed()
@@ -477,7 +477,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private boolean isStackTool(ItemStack stack)
     {
-        return stack != null && (stack.getItem().getToolClasses(null /* not used */).contains("pickaxe") || stack.getItem().getToolClasses(null /* not used */).contains("shovel"));
+        return stack != null && (stack.getItem().getUnlocalizedName().contains("hoe") || stack.getItem().getToolClasses(null /* not used */).contains("shovel"));
     }
 
     private boolean isInHut(Block block)

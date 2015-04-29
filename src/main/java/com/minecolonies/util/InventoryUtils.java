@@ -5,8 +5,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+
 public class InventoryUtils
 {
+    private static final String TOOL_HOE = "hoe";
     /**
      * Tries to put an item into Inventory
      *
@@ -188,7 +190,8 @@ public class InventoryUtils
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack item = inventory.getStackInSlot(i);
-            if (item != null && (item.getItem().getToolClasses(null /* unused */).contains(tool) || item.getItem().getUnlocalizedName().contains("hoe"))) {
+            if (item != null && (item.getItem().getToolClasses(null /* unused */).contains(tool) || tool.equals("hoe")))
+            {
                 return i;
             }
         }
