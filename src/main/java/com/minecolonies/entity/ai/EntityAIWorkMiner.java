@@ -193,6 +193,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             job.removeItemNeeded(e);
                             return;
                         }
+                        else if(isInHut(Items.coal))
+                        {
+                            return;
+                        }
                     }
                     else if (isInHut(e.getItem()) || inventoryContains(e.getItem())!=-1)
                     {

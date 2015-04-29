@@ -9,15 +9,11 @@ import com.minecolonies.util.LanguageHandler;
 
 public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 {
-    private static String BUTTON_BLACKSMITH_GOLD = "blacksmithGold",
-            BUTTON_BLACKSMITH_DIAMOND = "blacksmithDiamond",
-            BUTTON_STONEMASON_COBBLESTONE = "stonemasonCobblestone",
-            BUTTON_STONEMASON_SAND = "stonemasonSand",
-            BUTTON_STONEMASON_NETHERRACK = "stonemasonNetherrack",
-            BUTTON_STONEMASON_QUARTZ = "stonemasonQuartz",
-            BUTTON_GUARD_ARMOR = "guardArmor",
-            BUTTON_GUARD_WEAPON = "guardWeapon",
-            BUTTON_CITIZEN_CHESTS = "citizenChests",
+    private static String BUTTON_WHEAT = "wheat",
+            BUTTON_POTATO = "potato",
+            BUTTON_CARROT = "carrot",
+            BUTTON_MELON = "melon",
+            BUTTON_PUMPKIN = "pumpkin",
             BUTTON_PREVPAGE = "prevPage",
             BUTTON_NEXTPAGE = "nextPage",
             VIEW_PAGES = "pages";
@@ -52,15 +48,12 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
     {
         try
         {
-            findPaneOfTypeByID(BUTTON_BLACKSMITH_GOLD, ButtonVanilla.class).setLabel(getYesOrNo(building.blacksmithGold));
-            findPaneOfTypeByID(BUTTON_BLACKSMITH_DIAMOND, ButtonVanilla.class).setLabel(getYesOrNo(building.blacksmithDiamond));
-            findPaneOfTypeByID(BUTTON_STONEMASON_COBBLESTONE, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonStone));
-            findPaneOfTypeByID(BUTTON_STONEMASON_SAND, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonSand));
-            findPaneOfTypeByID(BUTTON_STONEMASON_NETHERRACK, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonNetherrack));
-            findPaneOfTypeByID(BUTTON_STONEMASON_QUARTZ, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonQuartz));
-            findPaneOfTypeByID(BUTTON_GUARD_ARMOR, ButtonVanilla.class).setLabel(getYesOrNo(building.guardArmor));
-            findPaneOfTypeByID(BUTTON_GUARD_WEAPON, ButtonVanilla.class).setLabel(getYesOrNo(building.guardWeapon));
-            findPaneOfTypeByID(BUTTON_CITIZEN_CHESTS, ButtonVanilla.class).setLabel(getYesOrNo(building.citizenVisit));
+            findPaneOfTypeByID(BUTTON_WHEAT, ButtonVanilla.class).setLabel(""+building.wheat);
+            findPaneOfTypeByID(BUTTON_POTATO, ButtonVanilla.class).setLabel(""+building.potato);
+            findPaneOfTypeByID(BUTTON_CARROT, ButtonVanilla.class).setLabel("" + building.carrot);
+            findPaneOfTypeByID(BUTTON_MELON, ButtonVanilla.class).setLabel(""+building.melon);
+            findPaneOfTypeByID(BUTTON_PUMPKIN, ButtonVanilla.class).setLabel(""+building.pumpkin);
+
         }
         catch (NullPointerException exc)
         {}
@@ -69,15 +62,34 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
     @Override
     public void onButtonClicked(Button button)
     {
-        if (button.getID().equals(BUTTON_BLACKSMITH_GOLD))              building.blacksmithGold = !building.blacksmithGold;
-        else if (button.getID().equals(BUTTON_BLACKSMITH_DIAMOND))      building.blacksmithDiamond = !building.blacksmithDiamond;
-        else if (button.getID().equals(BUTTON_STONEMASON_COBBLESTONE))  building.stonemasonStone = !building.stonemasonStone;
-        else if (button.getID().equals(BUTTON_STONEMASON_SAND))         building.stonemasonSand = !building.stonemasonSand;
-        else if (button.getID().equals(BUTTON_STONEMASON_NETHERRACK))   building.stonemasonNetherrack = !building.stonemasonNetherrack;
-        else if (button.getID().equals(BUTTON_STONEMASON_QUARTZ))       building.stonemasonQuartz = !building.stonemasonQuartz;
-        else if (button.getID().equals(BUTTON_GUARD_ARMOR))             building.guardArmor = !building.guardArmor;
-        else if (button.getID().equals(BUTTON_GUARD_WEAPON))            building.guardWeapon = !building.guardWeapon;
-        else if (button.getID().equals(BUTTON_CITIZEN_CHESTS))          building.citizenVisit = !building.citizenVisit;
+        if (button.getID().equals(BUTTON_WHEAT))
+        {
+            building.wheat++;
+
+            removeOthers("wheat");
+        }
+        else if (button.getID().equals(BUTTON_POTATO))
+        {
+            building.potato++;
+
+            removeOthers("potato");
+        }
+        else if (button.getID().equals(BUTTON_CARROT))
+        {
+            building.carrot++;
+
+            removeOthers("carrot");
+        }
+        else if (button.getID().equals(BUTTON_MELON))
+        {
+            building.melon++;
+            removeOthers("melon");
+        }
+        else if (button.getID().equals(BUTTON_PUMPKIN))
+        {
+            building.pumpkin++;
+            removeOthers("pumpkin");
+        }
         else
         {
             if (button.getID().equals(BUTTON_PREVPAGE))
@@ -103,9 +115,41 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         updateButtonLabels();
     }
 
-    private String getYesOrNo(boolean bool)
+    public int sum()
     {
-        return bool ? LanguageHandler.format("gui.yes") : LanguageHandler.format("gui.no");
+        return building.wheat + building.carrot + building.melon + building.potato + building.pumpkin;
     }
+
+    public void removeOthers(String s)
+    {
+
+
+        while(sum() > 100)
+        {
+            int rand = (int)(Math.random()*5);
+
+            if (building.potato != 0 && !s.equals("potato") && rand == 0)
+            {
+                building.potato--;
+            }
+            else if (building.wheat != 0 && !s.equals("wheat") && rand == 1)
+            {
+                building.wheat--;
+            }
+            else if (building.carrot != 0 && !s.equals("carrot") && rand == 2)
+            {
+                building.carrot--;
+            }
+            else if (building.melon != 0 && !s.equals("melon") && rand == 3)
+            {
+                building.melon--;
+            }
+            else if (building.pumpkin != 0 && !s.equals("pumpkin") && rand == 4)
+            {
+                building.pumpkin--;
+            }
+        }
+    }
+
 }
 

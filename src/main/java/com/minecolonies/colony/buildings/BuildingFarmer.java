@@ -17,15 +17,17 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingFarmer extends BuildingWorker
 {
-    public boolean blacksmithGold = false,
-            blacksmithDiamond = false,
-            stonemasonStone = false,
-            stonemasonSand = false,
-            stonemasonNetherrack = false,
-            stonemasonQuartz = false,
-            guardArmor = false,
-            guardWeapon = false,
-            citizenVisit = false;
+    public int wheat = 100,
+            potato = 0,
+            carrot = 0,
+            melon = 0,
+            pumpkin = 0;
+
+    public static final String WHEAT_TAG = "wheat",
+            POTATO_TAG = "potato",
+            CARROT_TAG = "carrot",
+            MELON_TAG = "melon",
+            PUMPKIN_TAG = "pumpkin";
 
     public BuildingFarmer(Colony c, ChunkCoordinates l)
     {
@@ -52,27 +54,14 @@ public class BuildingFarmer extends BuildingWorker
     {
         super.readFromNBT(compound);
 
-        NBTTagCompound deliveryCompound = compound.getCompoundTag("farmer");
+        NBTTagCompound farmerCompound = compound.getCompoundTag("farmer");
 
-        //  Blacksmith
-        NBTTagCompound blacksmithCompound = deliveryCompound.getCompoundTag("blacksmith");
-        blacksmithGold = blacksmithCompound.getBoolean("gold");
-        blacksmithDiamond = blacksmithCompound.getBoolean("diamond");
+        wheat = farmerCompound.getInteger(WHEAT_TAG);
+        potato = farmerCompound.getInteger(POTATO_TAG);
+        carrot = farmerCompound.getInteger(CARROT_TAG);
+        melon = farmerCompound.getInteger(MELON_TAG);
+        pumpkin = farmerCompound.getInteger(PUMPKIN_TAG);
 
-        //  Stonemason
-        NBTTagCompound stonemasonCompound = deliveryCompound.getCompoundTag("stonemason");
-        stonemasonStone = stonemasonCompound.getBoolean("stone");
-        stonemasonSand = stonemasonCompound.getBoolean("sand");
-        stonemasonNetherrack = stonemasonCompound.getBoolean("netherrack");
-        stonemasonQuartz = stonemasonCompound.getBoolean("quartz");
-
-        //  Guard
-        NBTTagCompound guardCompound = deliveryCompound.getCompoundTag("guard");
-        guardArmor = guardCompound.getBoolean("armor");
-        guardWeapon = guardCompound.getBoolean("weapon");
-
-        //  Misc
-        citizenVisit = deliveryCompound.getBoolean("citizen");
     }
 
     @Override
@@ -80,45 +69,26 @@ public class BuildingFarmer extends BuildingWorker
     {
         super.writeToNBT(compound);
 
-        NBTTagCompound deliveryCompound = new NBTTagCompound();
+        NBTTagCompound farmerCompound = new NBTTagCompound();
 
-        //  Blacksmith
-        NBTTagCompound blacksmithCompound = new NBTTagCompound();
-        blacksmithCompound.setBoolean("gold", blacksmithGold);
-        blacksmithCompound.setBoolean("diamond", blacksmithDiamond);
-        deliveryCompound.setTag("blacksmith", blacksmithCompound);
 
-        //  Stonemason
-        NBTTagCompound stonemasonCompound = new NBTTagCompound();
-        stonemasonCompound.setBoolean("stone", stonemasonStone);
-        stonemasonCompound.setBoolean("sand", stonemasonSand);
-        stonemasonCompound.setBoolean("netherrack", stonemasonNetherrack);
-        stonemasonCompound.setBoolean("quartz", stonemasonQuartz);
-        deliveryCompound.setTag("stonemason", stonemasonCompound);
+        farmerCompound.setInteger(WHEAT_TAG,wheat);
+        farmerCompound.setInteger(POTATO_TAG,potato);
+        farmerCompound.setInteger(CARROT_TAG,carrot);
+        farmerCompound.setInteger(MELON_TAG,melon);
+        farmerCompound.setInteger(PUMPKIN_TAG,pumpkin);
 
-        //  Guard
-        NBTTagCompound guardCompound = new NBTTagCompound();
-        guardCompound.setBoolean("armor", guardArmor);
-        guardCompound.setBoolean("weapon", guardWeapon);
-        deliveryCompound.setTag("guard", guardCompound);
-
-        //  Misc
-        deliveryCompound.setBoolean("citizen", citizenVisit);
-
-        compound.setTag("farmer", deliveryCompound);
+        compound.setTag("farmer", farmerCompound);
     }
 
     public static class View extends BuildingWorker.View
     {
-        public boolean blacksmithGold = false,
-                blacksmithDiamond = false,
-                stonemasonStone = false,
-                stonemasonSand = false,
-                stonemasonNetherrack = false,
-                stonemasonQuartz = false,
-                guardArmor = false,
-                guardWeapon = false,
-                citizenVisit = false;
+        public int wheat = 100,
+                potato = 0,
+                carrot = 0,
+                melon = 0,
+                pumpkin = 0;
+
 
         public View(ColonyView c, ChunkCoordinates l)
         {
@@ -140,22 +110,13 @@ public class BuildingFarmer extends BuildingWorker
         {
             super.deserialize(buf);
 
-            //  Blacksmith
-            blacksmithGold = buf.readBoolean();
-            blacksmithDiamond = buf.readBoolean();
+            wheat = buf.readInt();
+            potato = buf.readInt();
+            carrot = buf.readInt();
+            melon = buf.readInt();
+            pumpkin = buf.readInt();
 
-            //  Stonemason
-            stonemasonStone = buf.readBoolean();
-            stonemasonSand = buf.readBoolean();
-            stonemasonNetherrack = buf.readBoolean();
-            stonemasonQuartz = buf.readBoolean();
 
-            //  Guard
-            guardArmor = buf.readBoolean();
-            guardWeapon = buf.readBoolean();
-
-            //  Misc
-            citizenVisit = buf.readBoolean();
         }
     }
 
@@ -164,22 +125,11 @@ public class BuildingFarmer extends BuildingWorker
     {
         super.serializeToView(buf);
 
-        //  Blacksmith
-        buf.writeBoolean(blacksmithGold);
-        buf.writeBoolean(blacksmithDiamond);
-
-        //  Stonemason
-        buf.writeBoolean(stonemasonStone);
-        buf.writeBoolean(stonemasonSand);
-        buf.writeBoolean(stonemasonNetherrack);
-        buf.writeBoolean(stonemasonQuartz);
-
-        //  Guard
-        buf.writeBoolean(guardArmor);
-        buf.writeBoolean(guardWeapon);
-
-        //  Misc
-        buf.writeBoolean(citizenVisit);
+        buf.writeInt(wheat);
+        buf.writeInt(potato);
+        buf.writeInt(carrot);
+        buf.writeInt(melon);
+        buf.writeInt(pumpkin);
     }
 
 
