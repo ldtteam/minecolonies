@@ -164,7 +164,6 @@ public class Schematic
         if(!this.hasSchematic()) return false;
 
         int count = 0;
-
         do
         {
             count++;
@@ -179,12 +178,11 @@ public class Schematic
         return true;
     }
 
-    public boolean findNextBlockWorldNonAir()
+    public boolean findNextBlockToClear()
     {
         if(!this.hasSchematic()) return false;
 
         int count = 0;
-
         do
         {
             count++;
@@ -194,7 +192,7 @@ public class Schematic
             }
 
         }
-        //Also check if blocks below the hut are different from the schematic - may want to rename the method
+        //Check for air blocks and if blocks below the hut are different from the schematic
         while((worldBlockAir() || (y <= getOffset().posY && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
@@ -205,7 +203,6 @@ public class Schematic
         if(!this.hasSchematic()) return false;
 
         int count = 0;
-
         do
         {
             count++;
@@ -225,7 +222,6 @@ public class Schematic
         if(!this.hasSchematic()) return false;
 
         int count = 0;
-
         do
         {
             count++;
@@ -578,16 +574,6 @@ public class Schematic
         z = localPosition.posZ;
     }
 
-    public List<ItemStack> getMaterials()
-    {
-        return schematic.getBlockList();
-    }
-
-    public void useMaterial(ItemStack stack)
-    {
-        schematic.removeFromBlockList(stack);
-    }
-
     public boolean hasSchematic()
     {
         return schematic != null;
@@ -608,6 +594,7 @@ public class Schematic
         return schematic.getLength();
     }
 
+    @SuppressWarnings(value="unchecked")
     public List<Entity> getEntities()
     {
         return schematic.loadedEntityList;
