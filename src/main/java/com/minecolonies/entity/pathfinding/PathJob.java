@@ -249,9 +249,11 @@ public abstract class PathJob implements Callable<PathEntity>
         int y = (int)entity.posY;
         int z = MathHelper.floor_double(entity.posZ);
 
+        Block b = entity.worldObj.getBlock(x, y, z);
+
         if (entity.isInWater())
         {
-            while (entity.worldObj.getBlock(x, y, z).getMaterial().isLiquid())
+            while (b.getMaterial().isLiquid())
             {
                 ++y;
             }
@@ -263,7 +265,7 @@ public abstract class PathJob implements Callable<PathEntity>
 //                --y;
 //            }
 //        }
-        else if (entity.worldObj.getBlock(x, y, z) instanceof BlockFence)
+        else if (b instanceof BlockFence || b instanceof BlockWall)
         {
             //  Push away from fence
             double dX = entity.posX - Math.floor(entity.posX);
@@ -698,9 +700,10 @@ public abstract class PathJob implements Callable<PathEntity>
     protected boolean isWalkableSurface(Block block, int x, int y, int z)
     {
         return //!block.getBlocksMovement(world, x, y, z) &&
-                block.getMaterial().isSolid() &&
-                !(block instanceof BlockFence) &&
-                !(block instanceof BlockFenceGate);
+                        block.getMaterial().isSolid() &&
+                        !(block instanceof BlockFence) &&
+                        !(block instanceof BlockFenceGate) &&
+                        !(block instanceof BlockWall);
     }
 
     /**
