@@ -88,6 +88,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         {
             crops.addAll(crops2);
             crops2.clear();
+            job.setStage(Stage.NEED_SEEDS);
         }
 
         if (delay > 0)
@@ -152,7 +153,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
                         if (hasSeed() || hasSeedInHut())
                         {
-                            job.setStage(Stage.WORKING);
+                            job.setStage(Stage.PLANTING);
                         }
                     }
                     break;

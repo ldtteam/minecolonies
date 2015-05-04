@@ -67,7 +67,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private int canMineNode=0;
     private int currentLevel=-1;
 
-    //TODO Wants torch, doesn't accept coal
+    //TODO If can't find way remove node and start new one!
 
     //TODO Check for duplicates
     public EntityAIWorkMiner(JobMiner job)
@@ -424,6 +424,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 loc = new ChunkCoordinates(b.activeNode.getID().getX()+b.startingLevelNode*b.activeNode.getVectorX(), depth, b.activeNode.getID().getY()+b.startingLevelNode*b.activeNode.getVectorZ());
             }
 
+
+
+
             if(Utils.isWorkerAtSiteWithMove(worker,loc.posX-b.activeNode.getVectorX(), loc.posY-1, loc.posZ-b.activeNode.getVectorZ()))
             {
                 Block block;
@@ -648,6 +651,22 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             b.markDirty();
                             break;
                     }
+                }
+            }
+            else
+            {
+                Utils.isWorkerAtSiteWithMove(worker,loc.posX-b.activeNode.getVectorX(), loc.posY-1, loc.posZ-b.activeNode.getVectorZ());
+                boolean canReach = worker.getNewNavigator().moveToXYZ(loc.posX-b.activeNode.getVectorX(), loc.posY-1, loc.posZ-b.activeNode.getVectorZ(),1.0D).isUnableToReachDestination();
+
+                if(canReach)
+                {
+                    b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
+                    b.activeNode.setStatus(Node.Status.COMPLETED);
+                    b.levels.get(currentLevel).getNodes().remove(b.active);
+                    currentLevel = b.currentLevel;
+                    logger.info("Unreachable Node!");
+                    b.markDirty();
+
                 }
             }
         }
