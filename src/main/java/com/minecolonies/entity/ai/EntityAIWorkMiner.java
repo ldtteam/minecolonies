@@ -886,7 +886,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             for (int z = centerZ - 3; z <= centerZ + 3; z++)
             {
-                for (int y = centerY ; y <= centerY + 2; y++)
+                for (int y = centerY ; y <= centerY + 3; y++)
                 {
                     Block block = world.getBlock(x,y,z);
 
