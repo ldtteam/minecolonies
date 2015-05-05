@@ -3,6 +3,10 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.pathfinding.PathJobMoveToLocation;
+import com.minecolonies.entity.pathfinding.PathJobMoveWithinDistanceOfLocation;
+import com.minecolonies.entity.pathfinding.PathNavigate;
+import com.minecolonies.entity.pathfinding.PathResult;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
@@ -66,6 +70,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private int clearNode=0;
     private int canMineNode=0;
     private int currentLevel=-1;
+    private boolean triedAgain = false;
 
     //TODO If can't find way remove node and start new one!
 
@@ -182,7 +187,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             return;
                         }
                     }
-                    else if(e.getItem().equals(new ItemStack(Blocks.torch).getItem()))
+                    else if(e.getItem().equals(new ItemStack(Blocks.torch).getItem()) || e.getItem().equals(Items.coal))
                     {
                         int slot = inventoryContains(Items.coal);
                         if(slot!=-1)
@@ -193,8 +198,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             job.removeItemNeeded(e);
                             return;
                         }
-                        else if(isInHut(Items.coal))
+                        else if(isInHut(Items.coal) || isInHut(Blocks.torch))
                         {
+                            return;
+                        }
+                        else if(inventoryContains(Blocks.torch)!=-1)
+                        {
+                            job.removeItemNeeded(e);
                             return;
                         }
                     }
@@ -317,8 +327,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private void mineNode(BuildingMiner b)
     {
-        if(b.levels.size()<currentLevel)
+        if(b.levels.size()<=currentLevel)
         {
+            if(currentLevel != b.currentLevel)
+            {
+                currentLevel = b.currentLevel;
+            }
+
             b.activeNode = null;
             job.setStage(Stage.MINING_SHAFT);
             return;
@@ -339,6 +354,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(b.levels.get(currentLevel).getNodes().size() == 0)
         {
+            if(currentLevel+1 > b.levels.size())
+            {
+                b.currentLevel = 0;
+                currentLevel = 0;
+            }
+
             b.currentLevel++;
             currentLevel++;
             return;
@@ -424,11 +445,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 loc = new ChunkCoordinates(b.activeNode.getID().getX()+b.startingLevelNode*b.activeNode.getVectorX(), depth, b.activeNode.getID().getY()+b.startingLevelNode*b.activeNode.getVectorZ());
             }
 
-
-
-
             if(Utils.isWorkerAtSiteWithMove(worker,loc.posX-b.activeNode.getVectorX(), loc.posY-1, loc.posZ-b.activeNode.getVectorZ()))
             {
+                triedAgain = false;
+
                 Block block;
                 int uVX = 0;
                 int uVZ = 0;
@@ -653,19 +673,35 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
                 }
             }
-            else
+            else if(b.startingLevelNode == 0)
             {
-                Utils.isWorkerAtSiteWithMove(worker,loc.posX-b.activeNode.getVectorX(), loc.posY-1, loc.posZ-b.activeNode.getVectorZ());
-                boolean canReach = worker.getNewNavigator().moveToXYZ(loc.posX-b.activeNode.getVectorX(), loc.posY-1, loc.posZ-b.activeNode.getVectorZ(),1.0D).isUnableToReachDestination();
+                int x = loc.posX-b.activeNode.getVectorX();
+                int y = loc.posY-1;
+                int z = loc.posZ-b.activeNode.getVectorZ();
 
-                if(canReach)
+                PathResult result = worker.getNewNavigator().moveToXYZ(x, y, z, 1.0D);
+
+                if(!result.getPathReachesDestination() && result.isUnableToReachDestination())
                 {
-                    b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
-                    b.activeNode.setStatus(Node.Status.COMPLETED);
-                    b.levels.get(currentLevel).getNodes().remove(b.active);
-                    currentLevel = b.currentLevel;
-                    logger.info("Unreachable Node!");
-                    b.markDirty();
+                    logger.info(result.getStatus());
+                    logger.info(result.getPathLength());
+                    logger.info(result.getPathReachesDestination());
+                    logger.info(result.isUnableToReachDestination());
+
+                    if(triedAgain)
+                    {
+                        b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
+                        b.activeNode.setStatus(Node.Status.COMPLETED);
+                        b.levels.get(currentLevel).getNodes().remove(b.active);
+                        currentLevel = b.currentLevel;
+                        logger.info("Unreachable Node!");
+                        b.markDirty();
+                        triedAgain = false;
+                    }
+                    else
+                    {
+                        triedAgain = true;
+                    }
 
                 }
             }
@@ -1631,7 +1667,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
 
-        if(!(inventoryContainsMany(Items.coal)>0 && block == Blocks.torch))
+        if(!(inventoryContainsMany(Items.coal)>0) && block == Blocks.torch)
         {
             job.addItemNeededIfNotAlready(new ItemStack(block));
         }
@@ -1660,7 +1696,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
 
-        if(!(inventoryContainsMany(Blocks.torch)>0 && item == Items.coal))
+        if(!(inventoryContainsMany(Blocks.torch)>0) && item == Items.coal)
         {
             job.addItemNeededIfNotAlready(new ItemStack(item));
         }
