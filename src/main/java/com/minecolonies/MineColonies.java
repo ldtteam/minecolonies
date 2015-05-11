@@ -82,8 +82,8 @@ public class MineColonies
         network.registerMessage(BuildRequestMessage.class,              BuildRequestMessage.class,              20, Side.SERVER);
         network.registerMessage(OpenInventoryMessage.class,             OpenInventoryMessage.class,             21, Side.SERVER);
         network.registerMessage(TownhallRenameMessage.class,            TownhallRenameMessage.class,            22, Side.SERVER);
-        network.registerMessage(MinerRequestMessage.class,              MinerRequestMessage.class,              23, Side.SERVER);
-        network.registerMessage(FarmerRequestMessage.class,             FarmerRequestMessage.class,             24, Side.SERVER);
+        network.registerMessage(MinerSetLevelMessage.class,              MinerSetLevelMessage.class,              23, Side.SERVER);
+        network.registerMessage(FarmerCropTypeMessage.class,             FarmerCropTypeMessage.class,             24, Side.SERVER);
 
         proxy.registerTileEntities();
 

@@ -3,13 +3,10 @@ package com.minecolonies.entity.ai;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.util.Point;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Miner Node Data Structure
  *
- *  When a node is completed we should add the surrounding nodes to the startinglevel as AVAILABLE
+ *  When a node is completed we should add the surrounding nodes to level as AVAILABLE
  *      also note that we don't want node (0, -1) because there will be a ladder on the back
  *      wall of the initial node, and we cant put the connection through the ladder
  *
@@ -18,15 +15,10 @@ import java.util.List;
 public class Node
 {
     /**
-     * Each node has a unique id stored as a point.
-     * The point also doubles as the location of the node, ex: first point id = (0,0)
+     * Location of the node
      */
-    private Point id;
-    /**
-     * This is a list containing the id's of nodes that are adjacent to the current node
-     * and have a completed/built connection between them
-     */
-//    private List<Node> connections;
+    private int x, z;
+
     private Status status;
     private int vectorX;
     private int vectorZ;
@@ -46,22 +38,16 @@ public class Node
         COMPLETED
     }
 
-    private static final String TAG_ID_X = "idX";
-    private static final String TAG_ID_Y = "idY";
-//    private static final String TAG_CONNECTIONS = "Connections";
+    private static final String TAG_X = "idX";
+    private static final String TAG_Z = "idY";//TODO change to z, but will break saves
     private static final String TAG_STATUS = "Status";
     private static final String TAG_VECTOR_X = "vectorX";
     private static final String TAG_VECTOR_Z = "vectorZ";
 
-    public Node(int x, int y,int vectorX, int vectorZ)
+    public Node(int x, int z, int vectorX, int vectorZ)
     {
-        this(new Point(x, y), vectorX, vectorZ);
-    }
-
-    public Node(Point id, int vectorX, int vectorZ)
-    {
-        this.id = id;
-//        connections = new ArrayList<Node>();
+        this.x = x;
+        this.z = z;
         status = Status.AVAILABLE;
         this.vectorX = vectorX;
         this.vectorZ = vectorZ;
@@ -69,9 +55,8 @@ public class Node
 
     public void writeToNBT(NBTTagCompound compound)
     {
-        //NOTE: connections would be saved by ID
-        compound.setInteger(TAG_ID_X, id.getX());
-        compound.setInteger(TAG_ID_Y, id.getY());
+        compound.setInteger(TAG_X, x);
+        compound.setInteger(TAG_Z, z);
 
         compound.setString(TAG_STATUS, status.name());
 
@@ -81,31 +66,27 @@ public class Node
 
     public static Node createFromNBT(NBTTagCompound compound)
     {
-        Point id = new Point(compound.getInteger(TAG_ID_X), compound.getInteger(TAG_ID_Y));
+        int x = compound.getInteger(TAG_X);
+        int z = compound.getInteger(TAG_Z);
         Status status = Status.valueOf(compound.getString(TAG_STATUS));
         int vectorX = compound.getInteger(TAG_VECTOR_X);
         int vectorZ = compound.getInteger(TAG_VECTOR_Z);
 
-        Node node = new Node(id, vectorX, vectorZ);
+        Node node = new Node(x, z, vectorX, vectorZ);
         node.status = status;
 
         return node;
     }
 
-    public Point getID()
+    public int getX()
     {
-        return id;
+        return x;
     }
 
-//    public List<Node> getConnections()
-//    {
-//        return connections;
-//    }
-//
-//    public void addConnection(Node node)
-//    {
-//        connections.add(node);
-//    }
+    public int getZ()
+    {
+        return z;
+    }
 
     public Status getStatus()
     {
@@ -117,24 +98,13 @@ public class Node
         this.status = status;
     }
 
-
     public int getVectorZ()
     {
         return vectorZ;
     }
 
-    public void setVectorZ(int vectorZ)
-    {
-        this.vectorZ = vectorZ;
-    }
-
     public int getVectorX()
     {
         return vectorX;
-    }
-
-    public void setVectorX(int vectorX)
-    {
-        this.vectorZ = vectorX;
     }
 }

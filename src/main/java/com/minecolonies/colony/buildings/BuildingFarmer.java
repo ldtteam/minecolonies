@@ -2,14 +2,11 @@ package com.minecolonies.colony.buildings;
 
 import com.blockout.views.Window;
 import com.minecolonies.client.gui.WindowHutFarmer;
-import com.minecolonies.client.gui.WindowHutMiner;
-import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobFarmer;
-import com.minecolonies.colony.jobs.JobPlaceholder;
 import com.minecolonies.lib.EnumGUI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -85,7 +82,6 @@ public class BuildingFarmer extends BuildingWorker
         carrot = farmerCompound.getInteger(CARROT_TAG);
         melon = farmerCompound.getInteger(MELON_TAG);
         pumpkin = farmerCompound.getInteger(PUMPKIN_TAG);
-
     }
 
     @Override
@@ -94,7 +90,6 @@ public class BuildingFarmer extends BuildingWorker
         super.writeToNBT(compound);
 
         NBTTagCompound farmerCompound = new NBTTagCompound();
-
 
         farmerCompound.setInteger(WHEAT_TAG,wheat);
         farmerCompound.setInteger(POTATO_TAG,potato);
@@ -117,7 +112,6 @@ public class BuildingFarmer extends BuildingWorker
         public View(ColonyView c, ChunkCoordinates l)
         {
             super(c, l);
-
         }
 
         public Window getWindow(int guiId)
@@ -129,6 +123,7 @@ public class BuildingFarmer extends BuildingWorker
 
             return null;
         }
+
         @Override
         public void deserialize(ByteBuf buf)
         {
@@ -154,7 +149,6 @@ public class BuildingFarmer extends BuildingWorker
         buf.writeInt(pumpkin);
     }
 
-
     public int getFarmRadius()
     {
         return getBuildingLevel()+3;
@@ -162,5 +156,4 @@ public class BuildingFarmer extends BuildingWorker
 
     @Override
     public int getGuiId(){ return EnumGUI.FARMER.getID(); }
-
 }

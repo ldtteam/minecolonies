@@ -3,9 +3,7 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.EntityAIWorkMiner;
-import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
@@ -14,14 +12,10 @@ import java.util.List;
 
 public class JobMiner extends Job
 {
-
-    public List<ChunkCoordinates> vein;
+    public List<ChunkCoordinates> vein;//TODO do these need to be saved?
     public int veinId=0;
     private EntityAIWorkMiner.Stage stage = EntityAIWorkMiner.Stage.WORKING;
     private static final String TAG_STAGE = "Stage";
-
-
-
 
     public JobMiner(CitizenData entity)
     {
@@ -42,8 +36,6 @@ public class JobMiner extends Job
     {
         super.writeToNBT(compound);
         compound.setString(TAG_STAGE, stage.name());
-
-
     }
 
     @Override
@@ -51,8 +43,6 @@ public class JobMiner extends Job
     {
         super.readFromNBT(compound);
         stage = EntityAIWorkMiner.Stage.valueOf(compound.getString(TAG_STAGE));
-
-
     }
 
     @Override
@@ -60,15 +50,16 @@ public class JobMiner extends Job
     {
         tasks.addTask(3, new EntityAIWorkMiner(this));
     }
+
     public void setStage(EntityAIWorkMiner.Stage stage)
     {
         this.stage = stage;
     }
+
     public EntityAIWorkMiner.Stage getStage()
     {
         return stage;
     }
-
 
     public void addItemNeededIfNotAlready(ItemStack stack)
     {
@@ -83,5 +74,4 @@ public class JobMiner extends Job
         }
         addItemNeeded(stack);
     }
-
 }

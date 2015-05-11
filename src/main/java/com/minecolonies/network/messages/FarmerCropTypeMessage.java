@@ -3,7 +3,7 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingMiner;
+import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -12,23 +12,25 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.util.ChunkCoordinates;
 
 /**
- * Adds a entry to the builderRequired map
+ * Changes crop percentage
  * Created: May 26, 2014
  *
- * @author Colton
+ * @author Ray
  */
-public class MinerRequestMessage implements IMessage, IMessageHandler<MinerRequestMessage, IMessage>
+public class FarmerCropTypeMessage implements IMessage, IMessageHandler<FarmerCropTypeMessage, IMessage>
 {
     private int              colonyId;
     private ChunkCoordinates buildingId;
     private int              mode;
+    private char             type;
 
-    public MinerRequestMessage(){}
+    public FarmerCropTypeMessage(){}
 
-    public MinerRequestMessage(Building.View building, int mode)
+    public FarmerCropTypeMessage(Building.View building, char type, int mode)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
+        this.type = type;
         this.mode = mode;
     }
 
@@ -38,6 +40,7 @@ public class MinerRequestMessage implements IMessage, IMessageHandler<MinerReque
         buf.writeInt(colonyId);
         ChunkCoordUtils.writeToByteBuf(buf, buildingId);
         buf.writeInt(mode);
+        buf.writeChar(type);
     }
 
     @Override
@@ -46,27 +49,21 @@ public class MinerRequestMessage implements IMessage, IMessageHandler<MinerReque
         colonyId = buf.readInt();
         buildingId = ChunkCoordUtils.readFromByteBuf(buf);
         mode = buf.readInt();
+        type = buf.readChar();
     }
 
     @Override
-    public IMessage onMessage(MinerRequestMessage message, MessageContext ctx)
+    public IMessage onMessage(FarmerCropTypeMessage message, MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony == null)
+        if (colony != null)
         {
-            return null;
-        }
-
-        Building building = colony.getBuilding(message.buildingId);
-        if (building == null)
-        {
-            return null;
-        }
-            if(building instanceof BuildingMiner)
+            BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
+            if (building != null)
             {
-
-                ((BuildingMiner)building).currentLevel = message.mode;
+                building.set(message.type, message.mode);
             }
+        }
         return null;
     }
 }

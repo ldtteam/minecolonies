@@ -8,20 +8,16 @@ import com.blockout.views.SwitchView;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.messages.BuildRequestMessage;
-import com.minecolonies.network.messages.MinerRequestMessage;
+import com.minecolonies.network.messages.MinerSetLevelMessage;
 import com.minecolonies.util.LanguageHandler;
 
 import java.awt.*;
-import java.util.*;
-
 
 public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
 {
     private ScrollingList levelList;
     private int[] levels;
     private BuildingMiner.View miner;
-    private BuildingMiner buildingMiner;
 
     private static final String LIST_LEVELS = "levels",
     PAGE_LEVELS = "levelActions",
@@ -29,13 +25,9 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     BUTTON_NEXTPAGE = "nextPage",
     BUTTON_CURRENTLEVEL ="changeToLevel",
 
-    VIEW_PAGES = "pages",
-    PAGE_ACTIONS = "pageActions",
-    PAGE_SETTINGS = "pageSettings";
+    VIEW_PAGES = "pages";
 
     Button buttonPrevPage, buttonNextPage;
-
-    private Map<String, String> tabsToPages = new HashMap<String, String>();
 
     public WindowHutMiner(BuildingMiner.View building)
     {
@@ -70,8 +62,6 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
                 try {
                     int nONodes = levels[index];
 
-                    //String nONodes = "Nodes: " + level.getNodes().size();
-                    //nONodes = Character.toUpperCase(nONodes.charAt(0)) + nONodes.toLowerCase().substring(1);
                     if(index == miner.current)
                     {
                         rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.red.getRGB());
@@ -82,49 +72,43 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
                     {
                         rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
                         rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + nONodes);
-
                     }
-
                 }
                 catch (NullPointerException exc)
                 {
                 }
             }
         });
-
     }
 
     @Override
     public void onButtonClicked(Button button)
     {
-            if (button.getID().equals(BUTTON_PREVPAGE))
+        if (button.getID().equals(BUTTON_PREVPAGE))
+        {
+            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+            buttonPrevPage.setEnabled(false);
+            buttonNextPage.setEnabled(true);
+        }
+        else if (button.getID().equals(BUTTON_NEXTPAGE))
+        {
+            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+            buttonPrevPage.setEnabled(true);
+            buttonNextPage.setEnabled(false);
+        }
+        else if (button.getID().equals(BUTTON_CURRENTLEVEL))
+        {
+            int row = levelList.getListElementIndexByPane(button);
+            if (row >= 0 && row < levels.length)
             {
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                buttonPrevPage.setEnabled(false);
-                buttonNextPage.setEnabled(true);
+                miner.current = levels[row];
+                MineColonies.network.sendToServer(new MinerSetLevelMessage(miner,row));
             }
-            else if (button.getID().equals(BUTTON_NEXTPAGE))
-            {
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                buttonPrevPage.setEnabled(true);
-                buttonNextPage.setEnabled(false);
-            }
-            else if (button.getID().equals(BUTTON_CURRENTLEVEL))
-            {
-                int row = levelList.getListElementIndexByPane(button);
-                if (row >= 0 && row < levels.length)
-                {
-                    miner.current = levels[row];
-                    MineColonies.network.sendToServer(new MinerRequestMessage(miner,row));
-
-                }
-            }
-            else
-            {
-                super.onButtonClicked(button);
-            }
-
-            return;
+        }
+        else
+        {
+            super.onButtonClicked(button);
+        }
     }
 
     @Override
@@ -136,7 +120,6 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
             updateUsers();
             window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
         }
-
     }
 
     private void updateUsers()
@@ -148,6 +131,9 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
         }
     }
 
-    public String getBuildingName() { return "com.minecolonies.gui.workerHuts.minerHut"; }
+    public String getBuildingName()
+    {
+        return "com.minecolonies.gui.workerHuts.minerHut";
+    }
 }
 

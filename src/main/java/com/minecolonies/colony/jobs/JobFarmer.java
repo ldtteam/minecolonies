@@ -3,17 +3,14 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.EntityAIWorkFarmer;
-import com.minecolonies.entity.ai.EntityAIWorkMiner;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
 
 import java.util.List;
 
 public class JobFarmer extends Job
 {
-
     private EntityAIWorkFarmer.Stage stage = EntityAIWorkFarmer.Stage.WORKING;
     private static final String TAG_STAGE = "Stage";
 
@@ -34,10 +31,8 @@ public class JobFarmer extends Job
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
-       super.writeToNBT(compound);
+        super.writeToNBT(compound);
         compound.setString(TAG_STAGE, stage.name());
-
-
     }
 
     @Override
@@ -45,8 +40,6 @@ public class JobFarmer extends Job
     {
         super.readFromNBT(compound);
         stage = EntityAIWorkFarmer.Stage.valueOf(compound.getString(TAG_STAGE));
-
-
     }
 
     @Override
@@ -63,7 +56,6 @@ public class JobFarmer extends Job
         return stage;
     }
 
-
     public void addItemNeededIfNotAlready(ItemStack stack)
     {
         List<ItemStack> itemsNeeded = super.getItemsNeeded();
@@ -77,5 +69,4 @@ public class JobFarmer extends Job
         }
         addItemNeeded(stack);
     }
-
 }

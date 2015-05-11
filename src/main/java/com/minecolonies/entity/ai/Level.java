@@ -3,9 +3,7 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.Constants;
-import org.lwjgl.util.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +11,14 @@ import java.util.List;
 /**
  * Miner Level Data Structure
  *
- * A startinglevel contains all the nodes for one startinglevel of the mine
+ * A Level contains all the nodes for one level of the mine
  *
  * @author Colton
  */
 public class Level
 {
     /**
-     * The depth of the startinglevel stored either as an incremental integer or the y startinglevel, not sure yet
+     * The depth of the level stored as the y coordinate
      */
     public int depth;
 

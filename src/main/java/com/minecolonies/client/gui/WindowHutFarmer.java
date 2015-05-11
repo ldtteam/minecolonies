@@ -6,7 +6,7 @@ import com.blockout.views.SwitchView;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.messages.FarmerRequestMessage;
+import com.minecolonies.network.messages.FarmerCropTypeMessage;
 
 public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 {
@@ -151,11 +151,11 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
             }
         }
 
-        MineColonies.network.sendToServer(new FarmerRequestMessage(building,'W',building.wheat));
-        MineColonies.network.sendToServer(new FarmerRequestMessage(building,'P',building.potato));
-        MineColonies.network.sendToServer(new FarmerRequestMessage(building,'C',building.carrot));
-        MineColonies.network.sendToServer(new FarmerRequestMessage(building,'M',building.melon));
-        MineColonies.network.sendToServer(new FarmerRequestMessage(building,'U',building.pumpkin));
+        MineColonies.network.sendToServer(new FarmerCropTypeMessage(building,'W',building.wheat));
+        MineColonies.network.sendToServer(new FarmerCropTypeMessage(building,'P',building.potato));
+        MineColonies.network.sendToServer(new FarmerCropTypeMessage(building,'C',building.carrot));
+        MineColonies.network.sendToServer(new FarmerCropTypeMessage(building,'M',building.melon));
+        MineColonies.network.sendToServer(new FarmerCropTypeMessage(building,'U',building.pumpkin));
 
     }
 
