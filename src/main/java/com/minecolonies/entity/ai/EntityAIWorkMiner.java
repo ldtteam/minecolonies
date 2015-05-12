@@ -3,7 +3,6 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.pathfinding.PathResult;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
@@ -318,8 +317,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private void mineNode(BuildingMiner b)
     {
-        if(b.levels.size()<=currentLevel)
+        if(b.levels.size() <= currentLevel)
         {
+            if(b.clearedShaft)
+            {
+                currentLevel = b.currentLevel = b.levels.size()-1;
+                return;
+            }
+
             if(currentLevel != b.currentLevel)
             {
                 currentLevel = b.currentLevel;
@@ -345,14 +350,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(b.levels.get(currentLevel).getNodes().size() == 0)
         {
-            if(currentLevel+1 > b.levels.size())
+            b.currentLevel++;
+            currentLevel++;
+
+            if(currentLevel >= b.levels.size())
             {
                 b.currentLevel = 0;
                 currentLevel = 0;
             }
-
-            b.currentLevel++;
-            currentLevel++;
             return;
         }
 
@@ -623,6 +628,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                                 while (neededPlanks > 0)
                                 {
+                                    //TODO what happens if size is 0
                                     int slot = inventoryContains(b.floorBlock);
                                     int size = worker.getInventory().getStackInSlot(slot).stackSize;
 
@@ -660,35 +666,21 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
                 }
             }
-            else if(b.startingLevelNode == 0)
+            else if(b.startingLevelNode == 0 && worker.getNavigator().isUnableToReachDestination())
             {
-                int x = loc.posX-b.activeNode.getVectorX();
-                int y = loc.posY-1;
-                int z = loc.posZ-b.activeNode.getVectorZ();
-
-                PathResult result = worker.getNewNavigator().moveToXYZ(x, y, z, 1.0D);
-
-                if(!result.getPathReachesDestination() && result.isUnableToReachDestination())
+                if (triedAgain)
                 {
-                    logger.info(result.getStatus());
-                    logger.info(result.getPathLength());
-                    logger.info(result.getPathReachesDestination());
-                    logger.info(result.isUnableToReachDestination());
-
-                    if(triedAgain)
-                    {
-                        b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
-                        b.activeNode.setStatus(Node.Status.COMPLETED);
-                        b.levels.get(currentLevel).getNodes().remove(b.active);
-                        currentLevel = b.currentLevel;
-                        logger.info("Unreachable Node!");
-                        b.markDirty();
-                        triedAgain = false;
-                    }
-                    else
-                    {
-                        triedAgain = true;
-                    }
+                    b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
+                    b.activeNode.setStatus(Node.Status.COMPLETED);
+                    b.levels.get(currentLevel).getNodes().remove(b.active);
+                    currentLevel = b.currentLevel;
+                    logger.info("Unreachable Node!");
+                    b.markDirty();
+                    triedAgain = false;
+                }
+                else
+                {
+                    triedAgain = true;
                 }
             }
         }

@@ -78,7 +78,4 @@ public class PathResult
     }
 
     public boolean isComputing() { return status != Status.IN_PROGRESS_COMPUTING; }
-
-    public boolean isUnableToReachDestination() { return !isComputing() && !getPathReachesDestination(); }
-
 }

@@ -45,19 +45,16 @@ public class Level
         if(ladderX != x || ladderZ != z+4)
         {
             nodes.add(new Node(x,z+4,0,+1));
-
         }
 
         if(ladderX != x+4 || ladderZ != z)
         {
             nodes.add(new Node(x+4,z,+1,0));
-
         }
 
         if(ladderX != x || ladderZ != z-4)
         {
             nodes.add(new Node(x,z-4,0,-1));
-
         }
     }
 
