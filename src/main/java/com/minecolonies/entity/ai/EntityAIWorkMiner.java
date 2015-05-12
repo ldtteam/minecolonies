@@ -628,7 +628,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                                 while (neededPlanks > 0)
                                 {
-                                    //TODO what happens if size is 0
                                     int slot = inventoryContains(b.floorBlock);
                                     int size = worker.getInventory().getStackInSlot(slot).stackSize;
 
