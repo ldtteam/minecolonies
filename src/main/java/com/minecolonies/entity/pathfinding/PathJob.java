@@ -256,6 +256,7 @@ public abstract class PathJob implements Callable<PathEntity>
             while (b.getMaterial().isLiquid())
             {
                 ++y;
+                b = entity.worldObj.getBlock(x,y, z);
             }
         }
 //        else if (y > 0 && world.getBlock(x, y - 1, z).getMaterial() == Material.air)
