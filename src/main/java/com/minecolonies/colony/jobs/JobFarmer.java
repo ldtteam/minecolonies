@@ -2,34 +2,31 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.entity.ai.EntityAIWorkMiner;
+import com.minecolonies.entity.ai.EntityAIWorkFarmer;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
 
 import java.util.List;
 
-public class JobMiner extends Job
+public class JobFarmer extends Job
 {
-    public List<ChunkCoordinates> vein;//TODO do these need to be saved?
-    public int veinId=0;
-    private EntityAIWorkMiner.Stage stage = EntityAIWorkMiner.Stage.WORKING;
+    private EntityAIWorkFarmer.Stage stage = EntityAIWorkFarmer.Stage.WORKING;
     private static final String TAG_STAGE = "Stage";
 
-    public JobMiner(CitizenData entity)
+    public JobFarmer(CitizenData entity)
     {
         super(entity);
     }
 
     @Override
-    public String getName(){ return "com.minecolonies.job.Miner"; }
+    public String getName(){ return "com.minecolonies.job.Farmer"; }
 
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        return RenderBipedCitizen.Model.MINER;
-    }
+        return RenderBipedCitizen.Model.SETTLER;
+    } //TODO Farmer Model
 
     @Override
     public void writeToNBT(NBTTagCompound compound)
@@ -42,21 +39,19 @@ public class JobMiner extends Job
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        stage = EntityAIWorkMiner.Stage.valueOf(compound.getString(TAG_STAGE));
+        stage = EntityAIWorkFarmer.Stage.valueOf(compound.getString(TAG_STAGE));
     }
 
     @Override
     public void addTasks(EntityAITasks tasks)
     {
-        tasks.addTask(3, new EntityAIWorkMiner(this));
+        tasks.addTask(3, new EntityAIWorkFarmer(this));
     }
-
-    public void setStage(EntityAIWorkMiner.Stage stage)
+    public void setStage(EntityAIWorkFarmer.Stage stage)
     {
         this.stage = stage;
     }
-
-    public EntityAIWorkMiner.Stage getStage()
+    public EntityAIWorkFarmer.Stage getStage()
     {
         return stage;
     }

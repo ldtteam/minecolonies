@@ -159,9 +159,8 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
     public boolean hasAccessPermission(EntityPlayer player)//This is called every tick the GUI is open. Is that bad?
     {
-        if(building == null) return true;
+        return building == null || building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
 
-        return building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
 
     public ChunkCoordinates getPosition()

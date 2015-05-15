@@ -32,6 +32,7 @@ public abstract class Job
         addMapping("Deliveryman", JobDeliveryman.class);
         addMapping("Miner", JobMiner.class);
         addMapping("Lumberjack", JobLumberjack.class);
+        addMapping("Farmer", JobFarmer.class);
     }
 
     /**
@@ -190,7 +191,7 @@ public abstract class Job
      */
     public boolean hasItemsNeeded()
     {
-        return itemsNeeded.isEmpty();
+        return !itemsNeeded.isEmpty();
     }
 
     /**

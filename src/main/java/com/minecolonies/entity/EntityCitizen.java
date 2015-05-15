@@ -86,7 +86,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         useNewNavigation = true;
         if (useNewNavigation)
         {
-            ReflectionHelper.setPrivateValue(EntityLiving.class, this, this.newNavigator, new String[]{"navigator"});
+            ReflectionHelper.setPrivateValue(EntityLiving.class, this, this.newNavigator, "navigator");
         }
 
         this.getNavigator().setAvoidsWater(true);
@@ -684,7 +684,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      *
      * @author Colton
      */
-    public static enum Status
+    public enum Status
     {
         IDLE, SLEEPING, WORKING, GETTING_ITEMS, NEED_ASSISTANCE, PATHFINDING_ERROR
     }

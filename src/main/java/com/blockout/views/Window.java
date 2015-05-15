@@ -120,7 +120,7 @@ public class Window extends View
      */
     public void close()
     {
-        this.mc.displayGuiScreen((GuiScreen) null);
+        this.mc.displayGuiScreen(null);
         this.mc.setIngameFocus();
     }
 

@@ -46,7 +46,7 @@ public abstract class PathJob implements Callable<PathEntity>
     protected Set<Node> debugNodesNotVisited = null;
     protected Set<Node> debugNodesPath       = null;
 
-    static public Long debugNodeMonitor = new Long(1);
+    static public Long debugNodeMonitor = 1L;
     static public Set<Node> lastDebugNodesVisited;
     static public Set<Node> lastDebugNodesNotVisited;
     static public Set<Node> lastDebugNodesPath;
@@ -256,6 +256,7 @@ public abstract class PathJob implements Callable<PathEntity>
             while (b.getMaterial().isLiquid())
             {
                 ++y;
+                b = entity.worldObj.getBlock(x,y, z);
             }
         }
 //        else if (y > 0 && world.getBlock(x, y - 1, z).getMaterial() == Material.air)
@@ -667,14 +668,9 @@ public abstract class PathJob implements Callable<PathEntity>
         {
             if (!block.getBlocksMovement(world, x, y, z))
             {
-                if (block instanceof BlockDoor ||
+                return block instanceof BlockDoor ||
                         //  block instanceof BlockTrapDoor ||
-                        block instanceof BlockFenceGate)
-                {
-                    return true;
-                }
-
-                return false;
+                        block instanceof BlockFenceGate;
             }
             else if (block.getMaterial().isLiquid())
             {

@@ -100,7 +100,7 @@ public class Screen extends GuiScreen
     public void onGuiClosed()
     {
         window.onClosed();
-        window.clearFocus();
+        Window.clearFocus();
         Keyboard.enableRepeatEvents(false);
     }
 
