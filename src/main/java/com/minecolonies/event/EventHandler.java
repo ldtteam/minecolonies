@@ -8,7 +8,6 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.entity.pathfinding.Node;
-import com.minecolonies.entity.pathfinding.PathJob;
 import com.minecolonies.entity.pathfinding.Pathfinding;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;

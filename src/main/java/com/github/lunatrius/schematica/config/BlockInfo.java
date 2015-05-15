@@ -46,12 +46,8 @@ public class BlockInfo
 
     private static boolean addIgnoredBlock(Block block)
     {
-        if(block == null)
-        {
-            return false;
-        }
+        return block != null && BLOCK_LIST_IGNORE_BLOCK.add(block);
 
-        return BLOCK_LIST_IGNORE_BLOCK.add(block);
     }
 
     private static boolean addIgnoredBlock(String blockName)
@@ -144,12 +140,8 @@ public class BlockInfo
 
     private static boolean addIgnoredBlockMetadata(Block block)
     {
-        if(block == null)
-        {
-            return false;
-        }
+        return block != null && BLOCK_LIST_IGNORE_METADATA.add(block);
 
-        return BLOCK_LIST_IGNORE_METADATA.add(block);
     }
 
     private static boolean addIgnoredBlockMetadata(String blockName)

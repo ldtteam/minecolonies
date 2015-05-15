@@ -8,7 +8,7 @@ public class PathResult
         IN_PROGRESS_FOLLOWING,
         COMPLETE,
         CANCELLED
-    };
+    }
 
     protected volatile Status status = Status.IN_PROGRESS_COMPUTING;
     protected volatile boolean pathReachesDestination = false;

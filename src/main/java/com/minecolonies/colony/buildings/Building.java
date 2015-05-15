@@ -441,7 +441,7 @@ public abstract class Building
         }
         else
         {
-            MineColonies.logger.warn(String.format("Unknown Building type, missing View subclass, or missing constructor of proper format."));
+            MineColonies.logger.warn("Unknown Building type, missing View subclass, or missing constructor of proper format.");
         }
 
         return view;

@@ -126,7 +126,7 @@ public class PaneParams
         String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            try { return def.valueOf((Class<T>)(Object)def.getClass(), attr); }
+            try { return T.valueOf((Class<T>)(Object)def.getClass(), attr); }
             catch (IllegalArgumentException exc) {}
         }
         return def;

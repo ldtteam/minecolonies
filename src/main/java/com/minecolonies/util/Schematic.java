@@ -199,11 +199,8 @@ public class Schematic
     public boolean doesSchematicBlockEqualWorldBlock()
     {
         ChunkCoordinates pos = this.getBlockPosition();
-        if(pos.posY <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        {
-            return true;
-        }
-        return schematic.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematic.getBlockMetadata(x, y, z) == ChunkCoordUtils.getBlockMetadata(world, pos);
+
+        return pos.posY <= 0 || schematic.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematic.getBlockMetadata(x, y, z) == ChunkCoordUtils.getBlockMetadata(world, pos);
     }
 
     public static String saveSchematic(World world, ChunkCoordinates from, ChunkCoordinates to)
@@ -311,7 +308,9 @@ public class Schematic
         }
 
         AxisAlignedBB region = AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+        @SuppressWarnings("unchecked")
         List<EntityHanging> entityHangings = world.getEntitiesWithinAABB(EntityHanging.class, region);
+        @SuppressWarnings("unchecked")
         List<EntityMinecart> entityMinecarts = world.getEntitiesWithinAABB(EntityMinecart.class, region);
         NBTTagList entityList = new NBTTagList();
 
@@ -498,6 +497,7 @@ public class Schematic
         return schematic.getLength();
     }
 
+    @SuppressWarnings("unchecked")
     public List<Entity> getEntities()
     {
         return schematic.loadedEntityList;

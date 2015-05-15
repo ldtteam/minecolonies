@@ -1,7 +1,6 @@
 package com.minecolonies.entity.ai;
 
 import net.minecraft.nbt.NBTTagCompound;
-import org.lwjgl.util.Point;
 
 /**
  * Miner Node Data Structure
