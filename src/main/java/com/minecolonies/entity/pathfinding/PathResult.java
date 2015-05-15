@@ -8,7 +8,7 @@ public class PathResult
         IN_PROGRESS_FOLLOWING,
         COMPLETE,
         CANCELLED
-    };
+    }
 
     protected volatile Status status = Status.IN_PROGRESS_COMPUTING;
     protected volatile boolean pathReachesDestination = false;
@@ -37,7 +37,7 @@ public class PathResult
     /**
      * @return true if the path is still computing or being followed
      */
-    public boolean isInProgress() { return status == Status.IN_PROGRESS_COMPUTING || status == Status.IN_PROGRESS_FOLLOWING; }
+    public boolean isInProgress() { return isComputing() || status == Status.IN_PROGRESS_FOLLOWING; }
 
     /**
      * @return true if the path was cancelled before being computed or before the entity reached it's destination
@@ -76,4 +76,6 @@ public class PathResult
     {
         return pathLength > 0;
     }
+
+    public boolean isComputing() { return status == Status.IN_PROGRESS_COMPUTING; }
 }

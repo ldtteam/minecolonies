@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ScrollingList extends ScrollingView
 {
-    public static interface DataProvider
+    public interface DataProvider
     {
         /**
          * Override this to provide the number of rows

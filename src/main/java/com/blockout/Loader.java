@@ -92,8 +92,7 @@ public class Loader
         {
             try
             {
-                Pane pane = (Pane)constructor.newInstance(params);
-                return pane;
+                return constructor.newInstance(params);
             }
             catch (Exception exc)
             {

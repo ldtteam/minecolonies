@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class RenderBipedCitizen extends RenderBiped
 {
-    public static enum Model
+    public enum Model
     {
         SETTLER     ( "Settler",        3 ),
         CITIZEN     ( "Citizen",        3 ),
@@ -32,7 +32,7 @@ public class RenderBipedCitizen extends RenderBiped
 
         public final String textureBase;
         public final int numTextures;
-    };
+    }
 
     private static final ModelBiped defaultModelMale = new ModelBiped();
     private static final ModelBiped defaultModelFemale = new ModelEntityCitizenFemaleCitizen();

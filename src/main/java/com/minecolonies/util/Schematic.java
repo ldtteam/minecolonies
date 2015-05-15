@@ -163,131 +163,35 @@ public class Schematic
     {
         if(!this.hasSchematic()) return false;
 
-        int count = 0;
-        do
-        {
-            count++;
-            if(!incrementBlock())
-            {
-                return false;
-            }
-
-        }
-        while(doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
-
-        return true;
-    }
-
-    public boolean findNextBlockToClear()
-    {
-        if(!this.hasSchematic()) return false;
-
-        int count = 0;
-        do
-        {
-            count++;
-            if(!decrementBlock())
-            {
-                return false;
-            }
-
-        }
-        //Check for air blocks and if blocks below the hut are different from the schematic
-        while((worldBlockAir() || (y <= getOffset().posY && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
-
-        return true;
-    }
-
-    public boolean findNextBlockSolid()
-    {
-        if(!this.hasSchematic()) return false;
-
-        int count = 0;
-        do
-        {
-            count++;
-            if(!incrementBlock())
-            {
-                return false;
-            }
-
-        }
-        while(!schematic.getBlock(x, y, z).getMaterial().isSolid() && doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
-
-        return true;
-    }
-
-    public boolean findNextBlockNonSolid()
-    {
-        if(!this.hasSchematic()) return false;
-
-        int count = 0;
-        do
-        {
-            count++;
-            if(!incrementBlock())
-            {
-                return false;
-            }
-
-        }
-        while((schematic.getBlock(x, y, z).getMaterial().isSolid() || schematic.isAirBlock(x, y, z)) && doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
-
-        return true;
-    }
-
-    public boolean incrementBlock()
-    {
         if(x == -1)
         {
             y = z = 0;
         }
 
-        x++;
-        if(x == schematic.getWidth())
+        int count = 0;
+
+        do
         {
-            x = 0;
-            z++;
-            if(z == schematic.getLength())
+            count++;
+
+            x++;
+            if(x == schematic.getWidth())
             {
-                z = 0;
-                y++;
-                if(y == schematic.getHeight())
+                x = 0;
+                z++;
+                if(z == schematic.getLength())
                 {
-                    x = y = z = -1;
-                    return false;
+                    z = 0;
+                    y++;
+                    if(y == schematic.getHeight())
+                    {
+                        x = y = z = -1;
+                        return false;
+                    }
                 }
             }
         }
-
-        return true;
-    }
-
-    public boolean decrementBlock()
-    {
-        if(x == -1 && y == -1 && z == -1)
-        {
-            x = schematic.getWidth();
-            y = schematic.getHeight()-1;
-            z = schematic.getLength()-1;
-        }
-
-        x--;
-        if(x == -1)
-        {
-            x = schematic.getWidth()-1;
-            z--;
-            if(z == -1)
-            {
-                z = schematic.getLength()-1;
-                y--;
-                if(y == -1)
-                {
-                    x = y = z = -1;
-                    return false;
-                }
-            }
-        }
+        while(doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -295,21 +199,8 @@ public class Schematic
     public boolean doesSchematicBlockEqualWorldBlock()
     {
         ChunkCoordinates pos = this.getBlockPosition();
-        if(pos.posY <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        {
-            return true;
-        }
-        return schematic.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematic.getBlockMetadata(x, y, z) == ChunkCoordUtils.getBlockMetadata(world, pos);
-    }
 
-    public boolean worldBlockAir()
-    {
-        ChunkCoordinates pos = this.getBlockPosition();
-        if(pos.posY <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        {
-            return true;
-        }
-        return world.isAirBlock(pos.posX, pos.posY, pos.posZ);
+        return pos.posY <= 0 || schematic.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematic.getBlockMetadata(x, y, z) == ChunkCoordUtils.getBlockMetadata(world, pos);
     }
 
     public static String saveSchematic(World world, ChunkCoordinates from, ChunkCoordinates to)
@@ -417,7 +308,9 @@ public class Schematic
         }
 
         AxisAlignedBB region = AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+        @SuppressWarnings("unchecked")
         List<EntityHanging> entityHangings = world.getEntitiesWithinAABB(EntityHanging.class, region);
+        @SuppressWarnings("unchecked")
         List<EntityMinecart> entityMinecarts = world.getEntitiesWithinAABB(EntityMinecart.class, region);
         NBTTagList entityList = new NBTTagList();
 
@@ -534,7 +427,7 @@ public class Schematic
 
     public ChunkCoordinates getOffsetPosition()
     {
-        return ChunkCoordUtils.subtract(position, getOffset());
+        return ChunkCoordUtils.subtract(getOffset(), position);//I know this seems backwards, minecraft's fault
     }
 
     public ChunkCoordinates getBlockPosition()
@@ -574,6 +467,16 @@ public class Schematic
         z = localPosition.posZ;
     }
 
+    public List<ItemStack> getMaterials()
+    {
+        return schematic.getBlockList();
+    }
+
+    public void useMaterial(ItemStack stack)
+    {
+        schematic.removeFromBlockList(stack);
+    }
+
     public boolean hasSchematic()
     {
         return schematic != null;
@@ -594,17 +497,10 @@ public class Schematic
         return schematic.getLength();
     }
 
-    @SuppressWarnings(value="unchecked")
+    @SuppressWarnings("unchecked")
     public List<Entity> getEntities()
     {
         return schematic.loadedEntityList;
-    }
-
-    public void reset()
-    {
-        x = -1;
-        y = -1;
-        z = -1;
     }
 
     //TODO rendering

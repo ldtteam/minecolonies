@@ -13,8 +13,8 @@ public class TextField extends Pane
 {
     public interface Filter
     {
-        public String filter(String s);
-        public boolean isAllowedCharacter(char c);
+        String filter(String s);
+        boolean isAllowedCharacter(char c);
     }
 
     //  Attributes

@@ -273,4 +273,9 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         pathResult = job.getResult();
         return pathResult;
     }
+
+    public boolean isUnableToReachDestination()
+    {
+        return pathResult != null && !pathResult.isComputing() && !pathResult.getPathReachesDestination();
+    }
 }

@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface IPermissions
 {
-    public boolean hasPermission(EntityPlayer player, Permissions.Action action);
+    boolean hasPermission(EntityPlayer player, Permissions.Action action);
 
-    public Permissions.Rank getRank(UUID rank);
+    Permissions.Rank getRank(UUID rank);
 }

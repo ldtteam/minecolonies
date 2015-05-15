@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class PlacementData
 {
-    public static enum PlacementType
+    public enum PlacementType
     {
         BLOCK, PLAYER, PISTON
     }
