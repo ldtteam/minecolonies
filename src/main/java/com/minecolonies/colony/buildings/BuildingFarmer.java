@@ -14,7 +14,7 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingFarmer extends BuildingWorker
 {
-    public int wheat = 0,
+    public int wheat = 100,
             potato = 0,
             carrot = 0,
             melon = 0,
@@ -29,30 +29,6 @@ public class BuildingFarmer extends BuildingWorker
     public BuildingFarmer(Colony c, ChunkCoordinates l)
     {
         super(c, l);
-    }
-
-    public void set(char type, int mode)
-    {
-        if(type == 'W')
-        {
-            wheat = mode;
-        }
-        else if(type == 'C')
-        {
-            potato = mode;
-        }
-        else if(type == 'P')
-        {
-            carrot = mode;
-        }
-        else if(type == 'M')
-        {
-            melon = mode;
-        }
-        else if(type == 'U')
-        {
-            pumpkin = mode;
-        }
     }
 
     @Override
