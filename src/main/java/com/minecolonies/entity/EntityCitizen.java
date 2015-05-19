@@ -18,7 +18,6 @@ import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -35,6 +34,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +62,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private PathNavigate newNavigator;
     private boolean useNewNavigation = false;
 
+    private static Field navigatorField;
+
     private static final int DATA_TEXTURE         = 13;
     private static final int DATA_LEVEL           = 14;
     private static final int DATA_IS_FEMALE       = 15;
@@ -86,7 +88,28 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         useNewNavigation = true;
         if (useNewNavigation)
         {
-            ReflectionHelper.setPrivateValue(EntityLiving.class, this, this.newNavigator, "navigator");
+            if(navigatorField == null)
+            {
+                Field[] fields = EntityLiving.class.getDeclaredFields();
+                for (Field field : fields)
+                {
+                    if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
+                    {
+                        field.setAccessible(true);
+                        navigatorField = field;
+                        break;
+                    }
+                }
+            }
+            
+            try
+            {
+                navigatorField.set(this, this.newNavigator);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
 
         this.getNavigator().setAvoidsWater(true);
