@@ -31,30 +31,6 @@ public class BuildingFarmer extends BuildingWorker
         super(c, l);
     }
 
-    public void set(char type, int mode)
-    {
-        if(type == 'W')
-        {
-            wheat = mode;
-        }
-        else if(type == 'C')
-        {
-            potato = mode;
-        }
-        else if(type == 'P')
-        {
-            carrot = mode;
-        }
-        else if(type == 'M')
-        {
-            melon = mode;
-        }
-        else if(type == 'U')
-        {
-            pumpkin = mode;
-        }
-    }
-
     @Override
     public String getSchematicName(){ return "Farmer"; }
 

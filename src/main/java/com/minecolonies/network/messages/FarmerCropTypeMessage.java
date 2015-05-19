@@ -21,17 +21,21 @@ public class FarmerCropTypeMessage implements IMessage, IMessageHandler<FarmerCr
 {
     private int              colonyId;
     private ChunkCoordinates buildingId;
-    private int              mode;
-    private char             type;
+
+    private int wheat, potato, carrot, melon, pumpkin;
 
     public FarmerCropTypeMessage(){}
 
-    public FarmerCropTypeMessage(Building.View building, char type, int mode)
+    public FarmerCropTypeMessage(BuildingFarmer.View building)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-        this.type = type;
-        this.mode = mode;
+
+        this.wheat = building.wheat;
+        this.potato = building.potato;
+        this.carrot = building.carrot;
+        this.melon = building.melon;
+        this.pumpkin = building.pumpkin;
     }
 
     @Override
@@ -39,8 +43,12 @@ public class FarmerCropTypeMessage implements IMessage, IMessageHandler<FarmerCr
     {
         buf.writeInt(colonyId);
         ChunkCoordUtils.writeToByteBuf(buf, buildingId);
-        buf.writeInt(mode);
-        buf.writeChar(type);
+
+        buf.writeInt(wheat);
+        buf.writeInt(potato);
+        buf.writeInt(carrot);
+        buf.writeInt(melon);
+        buf.writeInt(pumpkin);
     }
 
     @Override
@@ -48,22 +56,38 @@ public class FarmerCropTypeMessage implements IMessage, IMessageHandler<FarmerCr
     {
         colonyId = buf.readInt();
         buildingId = ChunkCoordUtils.readFromByteBuf(buf);
-        mode = buf.readInt();
-        type = buf.readChar();
+
+        wheat = buf.readInt();
+        potato = buf.readInt();
+        carrot = buf.readInt();
+        melon = buf.readInt();
+        pumpkin = buf.readInt();
     }
 
     @Override
     public IMessage onMessage(FarmerCropTypeMessage message, MessageContext ctx)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony != null)
+        if(validatePacket())
         {
-            BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
-            if (building != null)
+            Colony colony = ColonyManager.getColony(message.colonyId);
+            if (colony != null)
             {
-                building.set(message.type, message.mode);
+                BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
+                if (building != null)
+                {
+                    building.wheat = wheat;
+                    building.potato = potato;
+                    building.carrot = carrot;
+                    building.melon = melon;
+                    building.pumpkin = pumpkin;
+                }
             }
         }
         return null;
+    }
+
+    private boolean validatePacket()
+    {
+        return wheat+potato+carrot+melon+pumpkin == 100;
     }
 }
