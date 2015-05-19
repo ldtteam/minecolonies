@@ -60,19 +60,17 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
             @Override
             public void updateElement(int index, Pane rowPane) {
                 try {
-                    int nONodes = levels[index];
-
                     if(index == miner.current)
                     {
-                        rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.red.getRGB());
-                        rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
-                        rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel("Nodes: " + nONodes);
+                        rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.RED.getRGB());
                     }
                     else
                     {
-                        rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
-                        rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + nONodes);
+                        rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.BLACK.getRGB());
                     }
+
+                    rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
+                    rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + levels[index]);
                 }
                 catch (NullPointerException exc)
                 {
@@ -99,9 +97,9 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
         else if (button.getID().equals(BUTTON_CURRENTLEVEL))
         {
             int row = levelList.getListElementIndexByPane(button);
-            if (row >= 0 && row < levels.length)
+            if (row != miner.current && row >= 0 && row < levels.length)
             {
-                miner.current = levels[row];
+                miner.current = row;
                 MineColonies.network.sendToServer(new MinerSetLevelMessage(miner,row));
             }
         }
