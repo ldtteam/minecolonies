@@ -65,28 +65,43 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
     {
         if (button.getID().equals(BUTTON_WHEAT))
         {
-            building.wheat++;
-            removeOthers("wheat");
+            if(building.wheat < 100)
+            {
+                building.wheat++;
+                removeOthers("wheat");
+            }
         }
         else if (button.getID().equals(BUTTON_POTATO))
         {
-            building.potato++;
-            removeOthers("potato");
+            if (building.potato < 100)
+            {
+                building.potato++;
+                removeOthers("potato");
+            }
         }
         else if (button.getID().equals(BUTTON_CARROT))
         {
-            building.carrot++;
-            removeOthers("carrot");
+            if(building.carrot < 100)
+            {
+                building.carrot++;
+                removeOthers("carrot");
+            }
         }
         else if (button.getID().equals(BUTTON_MELON))
         {
-            building.melon++;
-            removeOthers("melon");
+            if(building.melon < 100)
+            {
+                building.melon++;
+                removeOthers("melon");
+            }
         }
         else if (button.getID().equals(BUTTON_PUMPKIN))
         {
-            building.pumpkin++;
-            removeOthers("pumpkin");
+            if(building.pumpkin < 100)
+            {
+                building.pumpkin++;
+                removeOthers("pumpkin");
+            }
         }
         else
         {
@@ -120,12 +135,8 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 
     public void removeOthers(String s)
     {
-        while(sum() != 100)
+        while(sum() > 100)
         {
-            if(sum() < 100)
-            {
-                building.wheat = building.wheat + 100-sum();
-            }
 
             int rand = (int)(Math.random()*5);
 
@@ -151,13 +162,16 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
             }
         }
 
+        if(sum() < 100)
+        {
+            building.wheat = building.wheat + 100-sum();
+        }
+
         MineColonies.network.sendToServer(new FarmerCropTypeMessage(building,'W',building.wheat));
         MineColonies.network.sendToServer(new FarmerCropTypeMessage(building,'P',building.potato));
         MineColonies.network.sendToServer(new FarmerCropTypeMessage(building,'C',building.carrot));
         MineColonies.network.sendToServer(new FarmerCropTypeMessage(building,'M',building.melon));
         MineColonies.network.sendToServer(new FarmerCropTypeMessage(building,'U',building.pumpkin));
-
     }
-
 }
 

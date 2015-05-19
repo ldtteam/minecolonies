@@ -14,7 +14,7 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingFarmer extends BuildingWorker
 {
-    public int wheat = 0,
+    public int wheat = 100,
             potato = 0,
             carrot = 0,
             melon = 0,
