@@ -188,7 +188,6 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             job.getSchematic().reset();
             incrementBlock();
         }
-        MineColonies.logger.info(x + ", " + y + ", " + z);
         worker.swingItem();
     }
 
@@ -431,7 +430,6 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             }
 
             ItemStack material = new ItemStack(BlockInfo.getItemFromBlock(block), 1, metadata);
-            //System.out.println(material.getItem().getUnlocalizedName() + " : " + material.getItemDamage());
 
             int slotID = InventoryUtils.containsStack(worker.getInventory(), material);
             if (slotID == -1)//inventory doesn't contain item
