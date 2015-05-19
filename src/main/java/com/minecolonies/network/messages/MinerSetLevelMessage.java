@@ -15,15 +15,15 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
 {
     private int              colonyId;
     private ChunkCoordinates buildingId;
-    private int              mode;
+    private int level;
 
     public MinerSetLevelMessage(){}
 
-    public MinerSetLevelMessage(Building.View building, int mode)
+    public MinerSetLevelMessage(Building.View building, int level)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-        this.mode = mode;
+        this.level = level;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
     {
         buf.writeInt(colonyId);
         ChunkCoordUtils.writeToByteBuf(buf, buildingId);
-        buf.writeInt(mode);
+        buf.writeInt(level);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
     {
         colonyId = buf.readInt();
         buildingId = ChunkCoordUtils.readFromByteBuf(buf);
-        mode = buf.readInt();
+        level = buf.readInt();
     }
 
     @Override
@@ -51,7 +51,10 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
             BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
             if (building != null)
             {
-                building.currentLevel = message.mode;
+                if(message.level >= 0 && message.level < building.levels.size())
+                {
+                    building.currentLevel = message.level;
+                }
             }
         }
         return null;
