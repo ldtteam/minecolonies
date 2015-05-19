@@ -7,11 +7,13 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.event.ClientEventHandler;
 import com.minecolonies.network.GuiHandler;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy
 {
@@ -36,6 +38,8 @@ public class ClientProxy extends CommonProxy
     public void registerEvents()
     {
         super.registerEvents();
+
+        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 //        FMLCommonHandler.instance().bus().register(new KeyInputHandler());
 //        FMLCommonHandler.instance().bus().register(new TickHandler());
 //
