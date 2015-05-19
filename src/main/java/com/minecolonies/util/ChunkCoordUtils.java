@@ -117,14 +117,14 @@ public class ChunkCoordUtils
         return Utils.isPathingTo(citizen, pos.posX, pos.posZ);
     }
 
-    public static boolean isWorkerAtSite(EntityCitizen worker, ChunkCoordinates site)
-    {
-        return Utils.isWorkerAtSite(worker, site.posX, site.posY, site.posZ);
-    }
-
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, ChunkCoordinates site)
     {
         return Utils.isWorkerAtSiteWithMove(worker, site.posX, site.posY, site.posZ);
+    }
+
+    public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, ChunkCoordinates site, int range)
+    {
+        return Utils.isWorkerAtSiteWithMove(worker, site.posX, site.posY, site.posZ, range);
     }
 
     public static boolean tryMoveLivingToXYZ(EntityLiving living, ChunkCoordinates destination)
