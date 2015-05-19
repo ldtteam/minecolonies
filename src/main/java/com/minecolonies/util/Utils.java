@@ -51,17 +51,17 @@ public class Utils
 
     public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z)
     {
-        return isWorkerAtSite(worker, x, y, z, 4);
+        return isWorkerAtSite(worker, x, y, z, 2);
     }
 
     public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z, int range)
     {
-        return worker.getPosition().squareDistanceTo(x, y, z) < range;
+        return worker.getPosition().squareDistanceTo(x, y, z) < range*range;
     }
 
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, int x, int y, int z)
     {
-        return isWorkerAtSiteWithMove(worker, x, y, z, 4);
+        return isWorkerAtSiteWithMove(worker, x, y, z, 2);
     }
 
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, int x, int y, int z, int range)

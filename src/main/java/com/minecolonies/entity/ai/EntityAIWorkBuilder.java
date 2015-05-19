@@ -159,7 +159,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
     {
         if (worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS)
         {
-            if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition(), 9))//within 3 blocks
+            if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition(), 3))
             {
                 return;
             }
@@ -237,7 +237,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
         if (worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS)
         {
-            if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition(), 9))//within 3 blocks
+            if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition(), 3))
             {
                 return;
             }
@@ -314,7 +314,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
         if (worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS)
         {
-            if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition(), 9))//within 3 blocks
+            if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition(), 3))
             {
                 return;
             }
