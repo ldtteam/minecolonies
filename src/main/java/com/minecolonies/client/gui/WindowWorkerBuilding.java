@@ -8,6 +8,7 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.network.messages.OpenInventoryMessage;
+import com.minecolonies.network.messages.RecallCitizenMessage;
 import com.minecolonies.util.LanguageHandler;
 
 public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View> extends Window implements Button.Handler
@@ -96,7 +97,9 @@ public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View>
 //            }
         }
         else if (button.getID().equals(BUTTON_RECALL))
-        {}
+        {
+            MineColonies.network.sendToServer(new RecallCitizenMessage(building));
+        }
         else if (button.getID().equals(BUTTON_BUILD))
         {
             MineColonies.network.sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
