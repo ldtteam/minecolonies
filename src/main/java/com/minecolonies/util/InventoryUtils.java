@@ -114,7 +114,7 @@ public class InventoryUtils
 
     /**
      * @param takeAll Whether or not {@code receiving} will take the rest if possible
-     * @return true if itemstack in specified {@code slotID} is not null and if {@code receiving} received
+     * @return true if itemstack in specified {@code slotID} is not null and if {@code receivingInv} received
      * at least {@code amount} of itemstack
      */
     public static boolean takeStackInSlot(IInventory sendingInv, IInventory receivingInv, int slotID, int amount, boolean takeAll)

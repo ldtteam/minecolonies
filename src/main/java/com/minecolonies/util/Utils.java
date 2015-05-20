@@ -51,12 +51,22 @@ public class Utils
 
     public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z)
     {
-        return worker.getPosition().squareDistanceTo(x, y, z) < 4;
+        return isWorkerAtSite(worker, x, y, z, 2);
+    }
+
+    public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z, int range)
+    {
+        return worker.getPosition().squareDistanceTo(x, y, z) < range*range;
     }
 
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, int x, int y, int z)
     {
-        if(!isWorkerAtSite(worker, x, y, z))//Too far away
+        return isWorkerAtSiteWithMove(worker, x, y, z, 2);
+    }
+
+    public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, int x, int y, int z, int range)
+    {
+        if(!isWorkerAtSite(worker, x, y, z, range))//Too far away
         {
             if(worker.getNavigator().noPath())//Not moving
             {
@@ -69,10 +79,6 @@ public class Utils
         }
         else
         {
-//            if(!worker.getNavigator().noPath())//within 2 blocks - can stop pathing //TODO may not need this check
-//            {
-//                worker.getNavigator().clearPathEntity();
-//            }
             return true;
         }
     }
