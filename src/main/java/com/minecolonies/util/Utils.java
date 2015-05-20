@@ -297,4 +297,9 @@ public class Utils
     {
         return data ^ flag;
     }
+
+    public static void blockBreakSoundAndEffect(World world, int x, int y, int z, Block block, int metadata)
+    {
+        world.playAuxSFX(2001, x, y, z, Block.getIdFromBlock(block) + (metadata << 12));
+    }
 }

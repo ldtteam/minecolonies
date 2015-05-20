@@ -156,7 +156,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 try
                 {
                     //Crashes when called before minecraft Client fully initialized
-                    FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
+                    //FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
+                    //TODO hit particles
                 }
                 catch(Exception e)
                 {
@@ -1772,11 +1773,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 worker.getInventory().setInventorySlotContents(worker.getInventory().getHeldItemSlot(), null);
             }
 
-            world.playSoundEffect(
-                    (float) x + 0.5F,
-                    (float) y + 0.5F,
-                    (float) z + 0.5F,
-                    block.stepSound.getBreakSound(), (block.stepSound.getVolume() + 2.0F) / 8.0F, block.stepSound.getPitch() * 0.5F);
+            Utils.blockBreakSoundAndEffect(world, x, y, z, block, world.getBlockMetadata(x, y, z));
 
             if(job.vein == null)
             {
@@ -1803,16 +1800,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         InventoryUtils.setStack(worker.getInventory(), item);
                     }
 
-                    try
-                    {
-                        //Crashes when called before minecraft Client fully initialized
-                        FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(x, y, z, block, world.getBlockMetadata(x, y, z));
-                    }
-                    catch(Exception e)
-                    {
-                        logger.info("Couldn't add effect");
-                    }
-                        world.setBlockToAir(x, y, z);
+                    world.setBlockToAir(x, y, z);
                     blocksMined+=1;
                 }
             }
@@ -1838,15 +1826,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 {
                     InventoryUtils.setStack(worker.getInventory(), item);
                 }
-                try
-                {
-                    //Crashes when called before minecraft Client fully initialized
-                    FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(x, y, z, block, world.getBlockMetadata(x, y, z));
-                }
-                catch(Exception e)
-                {
-                    logger.info("Couldn't add effect");
-                }
+
                 world.setBlockToAir(x, y, z);
                 blocksMined+=1;
             }
