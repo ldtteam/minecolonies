@@ -44,7 +44,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     }
     private static Logger logger = LogManager.getLogger("Farmer");
 
-    private String NEED_ITEM;
+    private String NEED_ITEM = "";
     private double baseSpeed;
     private int delay=0;
     int harvestCounter = 0;
@@ -126,7 +126,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                             job.removeItemNeeded(e);
                             return;
                     }
-                    LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedBlockAndItem", e.getDisplayName());
+                    worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", e.getDisplayName());
                 }
                 delay = 50;
             }

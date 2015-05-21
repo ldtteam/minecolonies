@@ -24,7 +24,7 @@ public class ConfigurationHandler
         try
         {
             config.load();
-            workingRangeTownhall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownhall", workingRangeTownhall, "Townhall Working Range").getInt();
+            workingRangeTownhall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownhall", workingRangeTownhall, "Colony size (radius)").getInt();
             townhallPadding = config.get(CATEGORY_GAMEPLAY, "townhallPadding", townhallPadding, "Empty space between townhall boundaries").getInt();
             allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY, "allowInfiniteSupplyChests", allowInfiniteSupplyChests, "Allow infinite placing of Supply Chests?").getBoolean();
             citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY, "citizenRespawnInterval", citizenRespawnInterval, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX, "Citizen respawn interval in seconds");
@@ -33,6 +33,7 @@ public class ConfigurationHandler
             maxCitizens = config.get(CATEGORY_GAMEPLAY, "maxCitizens", maxCitizens, "Maximum number of citizens").getInt();
             alwaysRenderNameTag = config.get(CATEGORY_GAMEPLAY, "alwaysRenderNameTag", alwaysRenderNameTag, "Always render Citizen's name tag?").getBoolean();
             maxBlocksCheckedByBuilder = config.get(CATEGORY_GAMEPLAY, "maxBlocksCheckedByBuilder", maxBlocksCheckedByBuilder, "Limits the number of checked blocks per builder update").getInt();
+            chatFrequency = config.get(CATEGORY_GAMEPLAY, "chatFrequency", chatFrequency, "Chat Frequency (seconds)").getInt();
 
             enableInDevelopmentFeatures = config.get(CATEGORY_GAMEPLAY, "development", enableInDevelopmentFeatures, "Don't hide in-development features which do not work and may break your game").getBoolean();
 
