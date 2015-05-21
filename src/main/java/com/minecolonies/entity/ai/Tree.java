@@ -6,6 +6,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -39,7 +40,6 @@ public class Tree
 
             checkTree(world, getTopLog(world, log.posX, log.posY, log.posZ));
         }
-        //isTree = false
     }
 
     public void findLogs(World world)
@@ -115,7 +115,56 @@ public class Tree
                 }
             }
         }
-        //isTree = false
+    }
+
+    /**
+     * For use in PathJobFindTree
+     *
+     * @param world the world
+     * @param x log x coordinate
+     * @param y log y coordinate
+     * @param z log z coordinate
+     * @return true if the log is part of a tree
+     */
+    public static boolean checkTree(IBlockAccess world, int x, int y, int z)
+    {
+        //Get base log, should already be base log
+        while(world.getBlock(x, y-1, z).isWood(world, x, y, z))
+        {
+            y--;
+        }
+
+        //Make sure tree is on solid ground
+        if(!world.getBlock(x, y-1, z).getMaterial().isSolid())
+        {
+            return false;
+        }
+
+        //Get top log
+        while(world.getBlock(x, y+1, z).isWood(world, x, y, z))
+        {
+            y++;
+        }
+
+        int leafCount = 0;
+        for(int dx = -1; dx <= 1; dx++)
+        {
+            for(int dz = -1; z <= 1; dz++)
+            {
+                for(int dy = -1; dy <= 1; dy++)
+                {
+                    if(world.getBlock(x + dx, y + dy, z + dz).getMaterial().equals(Material.leaves))
+                    {
+                        leafCount++;
+                        if(leafCount >= NUMBER_OF_LEAVES)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private ChunkCoordinates getBaseLog(World world, int x, int y, int z)

@@ -471,25 +471,22 @@ public abstract class PathJob implements Callable<PathEntity>
         }
 
         //  Can we traverse into this node?  Fix the y up
-        if (parent != null)
+        int newY = getGroundHeight(parent, x, y, z);
+        if (newY < 0)
         {
-            int newY = getGroundHeight(parent, x, y, z);
-            if (newY < 0)
-            {
-                return false;
-            }
+            return false;
+        }
 
-            if (y != newY)
+        if (y != newY)
+        {
+            //  Has this node been visited?
+            y = newY;
+            nodeKey = computeNodeKey(x, y, z);
+            node = nodesVisited.get(nodeKey);
+            if (node != null && node.closed)
             {
-                //  Has this node been visited?
-                y = newY;
-                nodeKey = computeNodeKey(x, y, z);
-                node = nodesVisited.get(nodeKey);
-                if (node != null && node.closed)
-                {
-                    //  Early out on previously visited and closed nodes
-                    return false;
-                }
+                //  Early out on previously visited and closed nodes
+                return false;
             }
         }
 

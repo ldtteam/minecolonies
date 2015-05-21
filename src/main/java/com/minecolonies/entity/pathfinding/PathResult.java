@@ -1,5 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 public class PathResult
 {
     enum Status
@@ -13,6 +15,8 @@ public class PathResult
     protected volatile Status status = Status.IN_PROGRESS_COMPUTING;
     protected volatile boolean pathReachesDestination = false;
     protected volatile int pathLength = 0;
+
+    protected NBTTagCompound data;
 
     public PathResult() {}
 
@@ -78,4 +82,14 @@ public class PathResult
     }
 
     public boolean isComputing() { return status == Status.IN_PROGRESS_COMPUTING; }
+
+    public boolean hasData()
+    {
+        return data != null;
+    }
+
+    public NBTTagCompound getData()
+    {
+        return data;
+    }
 }
