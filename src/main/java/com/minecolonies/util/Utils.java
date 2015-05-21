@@ -17,6 +17,25 @@ public class Utils
 {
     public static ChunkCoordinates scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
     {
+        return scanForBlockNearPoint(world, block, x, y, z, radiusX, radiusY, radiusZ, 1);
+    }
+
+    /**
+     * Find the closest block near the points
+     *
+     * @param world the world
+     * @param block Block to test for
+     * @param x Origin
+     * @param y Origin
+     * @param z Origin
+     * @param radiusX x search distance
+     * @param radiusY y search distance
+     * @param radiusZ z search distance
+     * @param height check if blocks above the found block are air or block
+     * @return the coordinates of the found block
+     */
+    public static ChunkCoordinates scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ, int height)
+    {
         ChunkCoordinates closestCoords = null;
         double minDistance = Double.MAX_VALUE;
 
@@ -26,7 +45,7 @@ public class Utils
             {
                 for(int k = z - radiusZ; k <= z + radiusZ; k++)
                 {
-                    if(world.getBlock(i, j, k) == block)
+                    if(world.getBlock(i, j, k) == block && checkAbove(world, block, i, j, k, height))
                     {
                         ChunkCoordinates tempCoords = new ChunkCoordinates(i, j, k);
 
@@ -41,6 +60,19 @@ public class Utils
             }
         }
         return closestCoords;
+    }
+
+    private static boolean checkAbove(World world, Block block, int x, int y, int z, int height)
+    {
+        for(int dy = 0; dy < height-1; dy++)
+        {
+            Block testBlock = world.getBlock(x, y + dy, z);
+            if(testBlock != block || testBlock != Blocks.air)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static boolean isPathingTo(EntityCitizen citizen, int x, int z)
