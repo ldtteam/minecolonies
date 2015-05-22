@@ -82,14 +82,4 @@ public class PathResult
     }
 
     public boolean isComputing() { return status == Status.IN_PROGRESS_COMPUTING; }
-
-    public boolean hasData()
-    {
-        return data != null;
-    }
-
-    public NBTTagCompound getData()
-    {
-        return data;
-    }
 }

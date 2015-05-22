@@ -15,6 +15,11 @@ import net.minecraft.world.World;
  */
 public class PathJobFindTree extends PathJob
 {
+    public static class TreePathResult extends PathResult
+    {
+        ChunkCoordinates    treeLocation;
+    }
+
     /**
      * PathJob constructor
      *
@@ -25,8 +30,11 @@ public class PathJobFindTree extends PathJob
      */
     public PathJobFindTree(World world, ChunkCoordinates start, ChunkCoordinates end, int range)
     {
-        super(world, start, end, range);
+        super(world, start, end, range, new TreePathResult());
     }
+
+    @Override
+    public TreePathResult getResult() { return (TreePathResult)super.getResult(); }
 
     @Override
     protected double computeHeuristic(int x, int y, int z)
@@ -53,9 +61,7 @@ public class PathJobFindTree extends PathJob
     {
         if(Tree.checkTree(world, x, y, z))
         {
-            result.data = new NBTTagCompound();
-            ChunkCoordUtils.writeToNBT(result.data, "tree", new ChunkCoordinates(x, y, z));
-
+            getResult().treeLocation = new ChunkCoordinates(x, y, z);
             return true;
         }
 
