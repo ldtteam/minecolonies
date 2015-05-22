@@ -53,7 +53,7 @@ public class LanguageHandler
         sendPlayerMessage(player, format(key, args));
     }
 
-    private static void sendPlayersMessage(List<EntityPlayer> players, String message)
+    public static void sendPlayersMessage(List<EntityPlayer> players, String message)
     {
         if(players == null || players.isEmpty()) return;
         for(EntityPlayer player : players)

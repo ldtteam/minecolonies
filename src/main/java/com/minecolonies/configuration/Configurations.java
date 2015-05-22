@@ -15,6 +15,7 @@ public class Configurations
     public static int       maxCitizens                     = 4;//TODO remove config value and set maxCitizens based on the colony buildings/levels
     public static boolean   alwaysRenderNameTag             = true;
     public static int       maxBlocksCheckedByBuilder       = 1000;//TODO change count to agreed upon value, possibly remove if we think this shouldn't be a problem
+    public static int       chatFrequency                   = 30;
 
     public static boolean   enableInDevelopmentFeatures = false;
 

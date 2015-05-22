@@ -61,6 +61,12 @@ tile.blockHutStonemason.name=Quarry
 tile.blockHutTownhall.name=Town Hall
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
 
+com.minecolonies.job.Builder=Builder
+com.minecolonies.job.Deliveryman=Deliveryman
+com.minecolonies.job.Farmer=Farmer
+com.minecolonies.job.Lumberjack=Lumberjack
+com.minecolonies.job.Miner=Miner
+
 tile.blockHutTownhall.messageMaxSize=Colony has reached max size
 tile.blockHutTownhall.messageColonistDead=A colonist has died!
 tile.blockHutTownhall.messagePlacedAlready=You have placed a Town Hall already

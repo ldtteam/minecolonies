@@ -35,8 +35,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static net.minecraftforge.common.util.Constants.NBT;
 
@@ -58,6 +57,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     String renderMetadata;
 
     protected Status status = Status.IDLE;
+
+    private Map<String, Integer> statusMessages = new HashMap<String, Integer>();
 
     private PathNavigate newNavigator;
     private boolean useNewNavigation = false;
@@ -195,7 +196,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
     }
 
-    public void setTexture()
+    private void setTexture()
     {
         if (!worldObj.isRemote)
         {
@@ -208,19 +209,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         textureBase += model.textureBase;
         textureBase += isFemale ? "Female" : "Male";
 
-        int moddedTextureId = (getTextureID() % model.numTextures) + 1;
-        texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + getRenderMetadata() + ".png");
+        int moddedTextureId = (textureId % model.numTextures) + 1;
+        texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
     }
 
     public void setRenderMetadata(String metadata)
     {
         renderMetadata = metadata;
         dataWatcher.updateObject(DATA_RENDER_METADATA, renderMetadata);
-    }
-
-    public String getRenderMetadata()
-    {
-        return renderMetadata;
     }
 
     @Override
@@ -236,6 +232,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         else
         {
             pickupItems();
+            cleanupChatMessages();
             updateColonyServer();
         }
 
@@ -332,6 +329,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
     }
 
+    private void cleanupChatMessages()
+    {
+        if(statusMessages.size() > 0 && ticksExisted % 20 == 0)//Only check if there are messages and once a second
+        {
+            Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
+            while(it.hasNext())
+            {
+                if(ticksExisted - it.next().getValue() > 20*Configurations.chatFrequency)
+                {
+                    it.remove();
+                }
+            }
+        }
+    }
+
     @Override
     public EntityAgeable createChild(EntityAgeable var1)
     {
@@ -374,16 +386,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.onDeath(par1DamageSource);
     }
 
+    @Override
     public PathNavigate getNavigator() { return newNavigator; }
 
     public ResourceLocation getTexture()
     {
         return texture;
-    }
-
-    public int getTextureID()
-    {
-        return textureId;
     }
 
     public RenderBipedCitizen.Model getModelID()
@@ -710,5 +718,22 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public enum Status
     {
         IDLE, SLEEPING, WORKING, GETTING_ITEMS, NEED_ASSISTANCE, PATHFINDING_ERROR
+    }
+
+    public void sendChat(String msg)
+    {
+        if(msg == null || msg.length() == 0 || statusMessages.containsKey(msg))
+        {
+            return;
+        }
+
+        statusMessages.put(msg, ticksExisted);
+
+        LanguageHandler.sendPlayersMessage(Utils.getPlayersFromUUID(worldObj, getColony().getPermissions().getMessagePlayers()), LanguageHandler.format(this.getColonyJob().getName()) + " " + this.getCustomNameTag() + ": " + msg);
+    }
+
+    public void sendLocalizedChat(String key, Object... args)
+    {
+        sendChat(LanguageHandler.format(key, args));
     }
 }

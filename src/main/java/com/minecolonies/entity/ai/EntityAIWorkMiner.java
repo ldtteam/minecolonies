@@ -213,7 +213,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 job.removeItemNeeded(e);
                                 return;
                             }
-                            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageMoreBlocks", e.getDisplayName());
+                            worker.sendLocalizedChat("entity.miner.messageMoreBlocks", e.getDisplayName());
                         }
                         else
                         {
@@ -221,7 +221,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             return;
                         }
                     }
-                    LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.miner.messageNeedBlockAndItem", e.getDisplayName());
+                    worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", e.getDisplayName());
                 }
                 delay = 50;
             }
