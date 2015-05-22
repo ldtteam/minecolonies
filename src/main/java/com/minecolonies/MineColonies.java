@@ -61,8 +61,6 @@ public class MineColonies
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-//        packetPipeline.initialize();
-
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Constants.MOD_NAME);
@@ -82,9 +80,10 @@ public class MineColonies
         network.registerMessage(BuildRequestMessage.class,              BuildRequestMessage.class,              20, Side.SERVER);
         network.registerMessage(OpenInventoryMessage.class,             OpenInventoryMessage.class,             21, Side.SERVER);
         network.registerMessage(TownhallRenameMessage.class,            TownhallRenameMessage.class,            22, Side.SERVER);
-        network.registerMessage(MinerSetLevelMessage.class,              MinerSetLevelMessage.class,              23, Side.SERVER);
-        network.registerMessage(FarmerCropTypeMessage.class,             FarmerCropTypeMessage.class,             24, Side.SERVER);
-
+        network.registerMessage(MinerSetLevelMessage.class,             MinerSetLevelMessage.class,             23, Side.SERVER);
+        network.registerMessage(FarmerCropTypeMessage.class,            FarmerCropTypeMessage.class,            24, Side.SERVER);
+        network.registerMessage(RecallCitizenMessage.class,             RecallCitizenMessage.class,             25, Side.SERVER);
+        
         proxy.registerTileEntities();
 
         RecipeHandler.init();
