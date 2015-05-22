@@ -30,7 +30,7 @@ public abstract class PathJob implements Callable<PathEntity>
     protected final Queue<Node>        nodesOpen    = new PriorityQueue<Node>(500);
     protected final Map<Integer, Node> nodesVisited = new HashMap<Integer, Node>();
 
-    protected final PathResult         result       = new PathResult();
+    protected final PathResult         result;
 
     //  Debug Output
     protected static final int DEBUG_VERBOSITY_NONE  = 0;
@@ -61,6 +61,11 @@ public abstract class PathJob implements Callable<PathEntity>
      */
     public PathJob(World world, ChunkCoordinates start, ChunkCoordinates end, int range)
     {
+        this(world, start, end, range, new PathResult());
+    }
+
+    public PathJob(World world, ChunkCoordinates start, ChunkCoordinates end, int range, PathResult result)
+    {
         int minX = Math.min(start.posX, end.posX);
         int minZ = Math.min(start.posZ, end.posZ);
         int maxX = Math.max(start.posX, end.posX);
@@ -70,6 +75,8 @@ public abstract class PathJob implements Callable<PathEntity>
 
         this.start = new ChunkCoordinates(start);
         this.maxRange = range;
+
+        this.result = result;
 
         allowJumpPointSearchTypeWalk = false;
 
