@@ -399,7 +399,7 @@ public abstract class PathJob implements Callable<PathEntity>
     {
         double cost = 1D;
 
-        if (dy != 0 && (dy != 0 || dz != 0))
+        if (dy != 0 && (dx != 0 || dz != 0))
         {
             //  Tax the cost for jumping, dropping (warning: also taxes stairs)
             cost *= 1.1D;
