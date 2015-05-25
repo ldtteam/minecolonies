@@ -4,6 +4,7 @@ public class Configurations
 {
     public static int       workingRangeTownhall        = 100;
     public static int       townhallPadding             = 20;
+    public static boolean   supplyChests                = true;
     public static boolean   allowInfiniteSupplyChests   = false;
     public static int       citizenRespawnInterval      = 30;
 
