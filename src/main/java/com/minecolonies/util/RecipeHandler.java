@@ -31,7 +31,7 @@ public final class RecipeHandler
         }
         else
         {
-            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.boat);
+            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutTownhall, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.boat);
         }
     }
 }
