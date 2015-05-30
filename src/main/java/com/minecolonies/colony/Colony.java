@@ -630,11 +630,7 @@ public class Colony implements IColony
             return;
         }
 
-        ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
-        if(spawnPoint == null)
-        {
-            spawnPoint = Utils.scanForBlockNearPoint(world, Blocks.snow_layer, xCoord, yCoord, zCoord, 1, 0, 1);
-        }
+        ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, xCoord, yCoord, zCoord, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer);
 
         if(spawnPoint != null)
         {
