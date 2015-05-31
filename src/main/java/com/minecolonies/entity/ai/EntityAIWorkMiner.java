@@ -370,7 +370,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             int rand1 = (int) Math.floor(Math.random()*4);
             int randomNum;
 
-            if(b.levels.get(currentLevel).getNodes() == null)
+            if(b.levels.get(currentLevel) == null || b.levels.get(currentLevel).getNodes() == null)
             {
                 if(b.levels.size()<currentLevel+1)
                 {
