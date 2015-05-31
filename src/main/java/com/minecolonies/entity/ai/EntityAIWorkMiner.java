@@ -366,14 +366,28 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if(b.activeNode == null || b.activeNode.getStatus() == Node.Status.COMPLETED || b.activeNode.getStatus() == Node.Status.AVAILABLE)
         {
+            if(b.levels.get(currentLevel).getNodes().size() == 0)
+            {
+                b.currentLevel++;
+                currentLevel++;
+
+                if(currentLevel >= b.levels.size())
+                {
+                    b.currentLevel = 0;
+                    currentLevel = 0;
+                }
+                return;
+            }
+
             currentLevel = b.currentLevel;
             int rand1 = (int) Math.floor(Math.random()*4);
             int randomNum;
 
-            if(b.levels.get(currentLevel) == null || b.levels.get(currentLevel).getNodes() == null)
+            if(b.levels.get(currentLevel).getNodes() == null)
             {
                 if(b.levels.size()<currentLevel+1)
                 {
+                    b.currentLevel = currentLevel = b.levels.size()-1;
                     b.activeNode = null;
                     job.setStage(Stage.MINING_SHAFT);
                     return;
