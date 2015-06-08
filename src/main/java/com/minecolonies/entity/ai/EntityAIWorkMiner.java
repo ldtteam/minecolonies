@@ -81,6 +81,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         heCanMine.add(Blocks.chest);
         heCanMine.add(Blocks.mob_spawner);
         heCanMine.add(Blocks.grass);
+        heCanMine.add(Blocks.tallgrass);
+        heCanMine.add(Blocks.cactus);
+        
     }
 
     @Override
@@ -367,6 +370,19 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if(b.activeNode == null || b.activeNode.getStatus() == Node.Status.COMPLETED || b.activeNode.getStatus() == Node.Status.AVAILABLE)
         {
             currentLevel = b.currentLevel;
+            if(b.levels.get(currentLevel).getNodes().size() == 0)
+            {
+                b.currentLevel++;
+                currentLevel++;
+
+                if(currentLevel >= b.levels.size())
+                {
+                    b.currentLevel = 0;
+                    currentLevel = 0;
+                }
+                return;
+            }
+
             int rand1 = (int) Math.floor(Math.random()*4);
             int randomNum;
 
@@ -374,6 +390,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             {
                 if(b.levels.size()<currentLevel+1)
                 {
+                    b.currentLevel = currentLevel = b.levels.size()-1;
                     b.activeNode = null;
                     job.setStage(Stage.MINING_SHAFT);
                     return;
