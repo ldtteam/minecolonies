@@ -833,13 +833,6 @@ public class Colony implements IColony
         return activeCitizens;
     }
 
-    /**
-     * Is the Citizen ID an actual Citizen in the Colony?
-     * @param c ID of the Citizen
-     * @return true if a Citizen of the given ID exists in the Colony
-     */
-    public boolean isCitizen(UUID c) { return citizens.containsKey(c); }
-
     public void removeCitizen(CitizenData citizen)
     {
         //  Remove the Citizen
@@ -869,19 +862,6 @@ public class Colony implements IColony
     public CitizenData getCitizen(int citizenId)
     {
         return citizens.get(citizenId);
-    }
-
-    /**
-     * Get citizen's entity by ID
-     *
-     * @param citizenId ID of the Citizen
-     * @return EntityCitizen of the CitizenData associated with the ID, or null if the citizen was not found or it has
-     * no currently loaded EntityCitizen
-     */
-    public EntityCitizen getCitizenEntity(UUID citizenId)
-    {
-        CitizenData citizen = citizens.get(citizenId);
-        return (citizen != null) ? citizen.getCitizenEntity() : null;
     }
 
     /**

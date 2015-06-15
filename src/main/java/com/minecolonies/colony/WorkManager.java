@@ -57,7 +57,7 @@ public class WorkManager
 
     public void removeWorkOrder(WorkOrder order)
     {
-        workOrders.remove(order);
+        workOrders.remove(order.getID());
 //        claimedOrders.remove(order);
 //        unclaimedOrders.remove(order);
     }
