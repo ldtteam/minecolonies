@@ -16,8 +16,6 @@ public class PathResult
     protected volatile boolean pathReachesDestination = false;
     protected volatile int pathLength = 0;
 
-    protected NBTTagCompound data;
-
     public PathResult() {}
 
     /**

@@ -128,6 +128,12 @@ public class Tree
      */
     public static boolean checkTree(IBlockAccess world, int x, int y, int z)
     {
+        //Is the first block a log?
+        if(!world.getBlock(x, y, z).isWood(world, x, y, z))
+        {
+            return false;
+        }
+
         //Get base log, should already be base log
         while(world.getBlock(x, y-1, z).isWood(world, x, y, z))
         {
@@ -149,7 +155,7 @@ public class Tree
         int leafCount = 0;
         for(int dx = -1; dx <= 1; dx++)
         {
-            for(int dz = -1; z <= 1; dz++)
+            for(int dz = -1; dz <= 1; dz++)
             {
                 for(int dy = -1; dy <= 1; dy++)
                 {

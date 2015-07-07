@@ -35,7 +35,7 @@ public class CitizenData
     private boolean isDirty;
 
     //  Citizen
-    public EntityCitizen entity;
+    private EntityCitizen entity;
 
     //  Placeholder skills
     private int level;

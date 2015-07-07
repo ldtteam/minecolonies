@@ -17,20 +17,24 @@ public class PathJobFindTree extends PathJob
 {
     public static class TreePathResult extends PathResult
     {
-        ChunkCoordinates    treeLocation;
+        public ChunkCoordinates    treeLocation;
     }
+
+    ChunkCoordinates hutLocation;
 
     /**
      * PathJob constructor
      *
      * @param world the world within which to path
      * @param start the start position from which to path from
-     * @param end   the end position to path to
+     * @param home   the position of the workers hut
      * @param range maximum path range
      */
-    public PathJobFindTree(World world, ChunkCoordinates start, ChunkCoordinates end, int range)
+    public PathJobFindTree(World world, ChunkCoordinates start, ChunkCoordinates home, int range)
     {
-        super(world, start, end, range, new TreePathResult());
+        super(world, start, start, range, new TreePathResult());
+
+        hutLocation = home;
     }
 
     @Override
@@ -39,12 +43,22 @@ public class PathJobFindTree extends PathJob
     @Override
     protected double computeHeuristic(int x, int y, int z)
     {
-        return 0;
+        int dx = x - hutLocation.posX;
+        int dy = y - hutLocation.posY;
+        int dz = z - hutLocation.posZ;
+
+        //  Manhattan Distance with a 1/1000th tie-breaker - halved
+        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.501D ;
     }
 
     @Override
     protected boolean isAtDestination(Node n)
     {
+        if(n.parent == null)
+        {
+            return false;
+        }
+
         if (n.x != n.parent.x)
         {
             int dx = n.x > n.parent.x ? 1 : -1;
