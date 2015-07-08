@@ -262,5 +262,4 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
             bipedRightArm.rotateAngleZ = MathHelper.sin((float) (onGround * Math.PI)) * -0.4F;
         }
     }
-
 }

@@ -2,10 +2,10 @@ package com.minecolonies.client.model;
 
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
 
 public class ModelEntityBuilderFemale extends ModelBiped
 {
+    ModelRenderer hatBase;
     ModelRenderer hatBottomMiddle;
     ModelRenderer hatBack;
     ModelRenderer hatFront;
@@ -26,12 +26,12 @@ public class ModelEntityBuilderFemale extends ModelBiped
         textureWidth = 128;
         textureHeight = 64;
 
-        bipedHeadwear = new ModelRenderer(this, 57, 19);//hatBase
-        bipedHeadwear.addBox(-4F, -9.7F, -4F, 8, 2, 7);
-        bipedHeadwear.setRotationPoint(0F, 0F, 0F);
-        bipedHeadwear.setTextureSize(128, 64);
-        bipedHeadwear.mirror = true;
-        setRotation(bipedHeadwear, -0.1396263F, 0F, 0F);
+        hatBase = new ModelRenderer(this, 57, 19);
+        hatBase.addBox(-4F, -9.7F, -4F, 8, 2, 7);
+        hatBase.setRotationPoint(0F, 0F, 0F);
+        hatBase.setTextureSize(128, 64);
+        hatBase.mirror = true;
+        setRotation(hatBase, -0.1396263F, 0F, 0F);
 
         hatBottomMiddle = new ModelRenderer(this, 57, 8);
         hatBottomMiddle.addBox(-3F, -10F, -5F, 6, 2, 9);
@@ -165,24 +165,20 @@ public class ModelEntityBuilderFemale extends ModelBiped
         bipedBody.addChild(hammerHandle);
         hammerHandle.addChild(hammerHead);
 
-
-        bipedHeadwear.addChild(hatBottomMiddle);
+        bipedHead.addChild(hatBase);
+        hatBase.addChild(hatBottomMiddle);
         hatBottomMiddle.addChild(hatBack);
         hatBottomMiddle.addChild(hatFront);
         hatBottomMiddle.addChild(hatTopMiddle);
 
-        bipedHeadwear.addChild(hatBrimBase);
+        hatBase.addChild(hatBrimBase);
         hatBrimBase.addChild(hatBrimFront);
         hatBrimFront.addChild(hatBrimFrontTip);
 
         bipedHead.addChild(ponytailBase);
         ponytailBase.addChild(ponytailTail);
-    }
 
-    @Override
-    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity)//used for animations
-    {
-        super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
+        bipedHeadwear.isHidden = true;
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z)
@@ -191,5 +187,4 @@ public class ModelEntityBuilderFemale extends ModelBiped
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
     }
-
 }

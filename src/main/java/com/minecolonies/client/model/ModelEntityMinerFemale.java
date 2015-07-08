@@ -2,7 +2,6 @@ package com.minecolonies.client.model;
 
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
 
 public class ModelEntityMinerFemale extends ModelBiped
 {
@@ -13,6 +12,7 @@ public class ModelEntityMinerFemale extends ModelBiped
     ModelRenderer goggleRightLens;
     ModelRenderer goggleLeftLens;
     ModelRenderer chest;
+    ModelRenderer helmetBase;
     ModelRenderer helmetLight;
     ModelRenderer helmetFront;
     ModelRenderer helmetTop;
@@ -116,12 +116,12 @@ public class ModelEntityMinerFemale extends ModelBiped
         goggleLeftLens.mirror = true;
         setRotation(goggleLeftLens, 0F, 0F, 0F);
 
-        bipedHeadwear = new ModelRenderer(this, 32, 49);
-        bipedHeadwear.addBox(-4.5F, -7.5F, -5.5F, 9, 2, 9);
-        bipedHeadwear.setRotationPoint(0F, 0F, 0F);
-        bipedHeadwear.setTextureSize(128, 64);
-        bipedHeadwear.mirror = true;
-        setRotation(bipedHeadwear, -0.122173F, 0F, 0F);
+        helmetBase = new ModelRenderer(this, 32, 49);
+        helmetBase.addBox(-4.5F, -7.5F, -5.5F, 9, 2, 9);
+        helmetBase.setRotationPoint(0F, 0F, 0F);
+        helmetBase.setTextureSize(128, 64);
+        helmetBase.mirror = true;
+        setRotation(helmetBase, -0.122173F, 0F, 0F);
 
         helmetFront = new ModelRenderer(this, 1, 43);
         helmetFront.addBox(-3F, -8.5F, -5.5F, 6, 1, 9);
@@ -217,11 +217,14 @@ public class ModelEntityMinerFemale extends ModelBiped
         bipedHead.addChild(ponytailBase);
         ponytailBase.addChild(ponytailTail);
 
-        bipedHeadwear.addChild(helmetFront);
+        bipedHead.addChild(helmetBase);
+        helmetBase.addChild(helmetFront);
         helmetFront.addChild(helmetLight);
 
-        bipedHeadwear.addChild(helmetMiddle);
+        helmetBase.addChild(helmetMiddle);
         helmetMiddle.addChild(helmetTop);
+
+        bipedHeadwear.isHidden = true;
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z)
@@ -230,11 +233,4 @@ public class ModelEntityMinerFemale extends ModelBiped
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
     }
-
-    @Override
-    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity)
-    {
-        super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
-    }
-
 }
