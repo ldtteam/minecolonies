@@ -644,6 +644,10 @@ public class SchematicWorld extends World
             }
         }
 
+        int tempZ = zOffset;
+        zOffset = xOffset;
+        xOffset = this.length - 1 - tempZ;
+
         short tmp = this.width;
         this.width = this.length;
         this.length = tmp;

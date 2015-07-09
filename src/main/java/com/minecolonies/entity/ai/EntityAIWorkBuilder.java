@@ -646,6 +646,15 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
         ChunkCoordinates pos = workOrder.getBuildingId();
         String name = "classic/" + workOrder.getUpgradeName();//TODO actually do styles
+        Building building = worker.getColony().getBuilding(pos);
+
+        if(building == null)
+        {
+            MineColonies.logger.warn("Building does not exist - removing build request");
+            worker.getColony().getWorkManager().removeWorkOrder(workOrder);
+            return;
+        }
+
 
         job.setSchematic(Schematic.loadSchematic(world, name));
 
@@ -654,6 +663,12 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             MineColonies.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name));
             worker.getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
+        }
+
+        System.out.println("Building rotation: " + building.getRotation());
+        for(int i = 0; i < building.getRotation(); i++)
+        {
+            job.getSchematic().rotate();
         }
 
         job.getSchematic().setPosition(pos);

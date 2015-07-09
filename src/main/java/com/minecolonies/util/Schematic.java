@@ -469,11 +469,6 @@ public class Schematic
         }
     }
 
-    public void setOrientation(ForgeDirection orientation)
-    {
-        //TODO schematic.rotate();
-    }
-
     public void rotate()
     {
         schematic.rotate();

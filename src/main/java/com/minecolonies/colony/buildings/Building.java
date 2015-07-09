@@ -28,6 +28,8 @@ public abstract class Building
     private final ChunkCoordinates location;
     private final Colony           colony;
 
+    private int rotation = 0;
+
     private TileEntityColonyBuilding tileEntity;
 
     //  Attributes
@@ -46,6 +48,7 @@ public abstract class Building
     //    private final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
     private final static String TAG_LOCATION       = "location";  //  Location is unique (within a Colony) and so can double as the Id
     private final static String TAG_BUILDING_LEVEL = "level";
+    private final static String TAG_ROTATION       = "rotation";
 
     /**
      * Add a given Building mapping
@@ -217,6 +220,8 @@ public abstract class Building
     public void readFromNBT(NBTTagCompound compound)
     {
         buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
+
+        rotation = compound.getInteger(TAG_ROTATION);
     }
 
     /**
@@ -239,6 +244,8 @@ public abstract class Building
         }
 
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
+
+        compound.setInteger(TAG_ROTATION, rotation);
     }
 
     public Colony getColony() { return colony; }
@@ -338,6 +345,16 @@ public abstract class Building
     public void openGui(EntityPlayer player)
     {
         player.openGui(MineColonies.instance, getGuiId(), getColony().getWorld(), location.posX, location.posY, location.posZ);
+    }
+
+    public void setRotation(int rotation)
+    {
+        this.rotation = rotation;
+    }
+
+    public int getRotation()
+    {
+        return rotation;
     }
 
     /**
