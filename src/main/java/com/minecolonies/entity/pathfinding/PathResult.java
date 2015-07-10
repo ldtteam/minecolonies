@@ -1,7 +1,5 @@
 package com.minecolonies.entity.pathfinding;
 
-import net.minecraft.nbt.NBTTagCompound;
-
 public class PathResult
 {
     enum Status
