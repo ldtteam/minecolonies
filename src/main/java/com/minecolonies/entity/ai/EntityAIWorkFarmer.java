@@ -50,6 +50,10 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     int harvestCounter = 0;
 
 
+    private static final String TOOL_TYPE_HOE = "hoe";
+    private static final String TOOL_TYPE_SHOVEL = "shovel";
+    private static final String RENDER_META_SEEDS = "Seeds";
+
     public List<ChunkCoordinates> farmAbleLand = new ArrayList<ChunkCoordinates>();
     public List<ChunkCoordinates> plowedLand = new ArrayList<ChunkCoordinates>();
     public List<ChunkCoordinates> crops = new ArrayList<ChunkCoordinates>();
@@ -82,7 +86,9 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     public void updateTask()
     {
         BuildingFarmer b = (BuildingFarmer)(worker.getWorkBuilding());
-        if(b == null){return;}
+        if(b == null) return;
+
+        worker.setRenderMetadata(hasSeed() ? RENDER_META_SEEDS : "");
 
         if(crops.size() == 0 && crops2.size() != 0)
         {
@@ -479,7 +485,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private boolean isStackTool(ItemStack stack)
     {
-        return stack != null && (stack.getItem().getUnlocalizedName().contains("hoe") || stack.getItem().getToolClasses(null /* not used */).contains("shovel"));
+        return stack != null && (stack.getItem().getUnlocalizedName().contains(TOOL_TYPE_HOE) || stack.getItem().getToolClasses(null /* not used */).contains(TOOL_TYPE_SHOVEL));
     }
 
     private boolean isInHut(Block block)
@@ -590,12 +596,12 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         }
         else
         {
-            hasHoeInHand = worker.getHeldItem().getItem().getUnlocalizedName().contains("hoe");
-            hasSpadeInHand = worker.getHeldItem().getItem().getToolClasses(null /* not used */).contains("shovel");
+            hasHoeInHand = worker.getHeldItem().getItem().getUnlocalizedName().contains(TOOL_TYPE_HOE);
+            hasSpadeInHand = worker.getHeldItem().getItem().getToolClasses(null /* not used */).contains(TOOL_TYPE_SHOVEL);
         }
 
-        int hasSpade = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "shovel");
-        int hasHoe = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "hoe");
+        int hasSpade = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), TOOL_TYPE_SHOVEL);
+        int hasHoe = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), TOOL_TYPE_HOE);
 
         boolean Spade = hasSpade > -1 || hasSpadeInHand;
         boolean Hoe = hasHoeInHand || hasHoe > -1;
@@ -603,12 +609,12 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         if (!Spade)
         {
             job.addItemNeededIfNotAlready(new ItemStack(Items.iron_shovel));
-            NEED_ITEM = "shovel";
+            NEED_ITEM = TOOL_TYPE_SHOVEL;
         }
         else if (!Hoe)
         {
             job.addItemNeededIfNotAlready(new ItemStack(Items.iron_hoe));
-            NEED_ITEM = "hoe";
+            NEED_ITEM = TOOL_TYPE_HOE;
         }
 
         return Hoe && Spade;
@@ -616,12 +622,12 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     void holdShovel()
     {
-        worker.setHeldItem(InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "shovel"));
+        worker.setHeldItem(InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), TOOL_TYPE_SHOVEL));
     }
 
     void holdHoe()
     {
-        worker.setHeldItem(InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "hoe"));
+        worker.setHeldItem(InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), TOOL_TYPE_HOE));
     }
 
     @Override

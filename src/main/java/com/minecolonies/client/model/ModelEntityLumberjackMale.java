@@ -199,5 +199,4 @@ public class ModelEntityLumberjackMale extends ModelBiped
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
     }
-
 }

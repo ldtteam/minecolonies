@@ -25,8 +25,8 @@ public class JobFarmer extends Job
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        return RenderBipedCitizen.Model.SETTLER;
-    } //TODO Farmer Model
+        return RenderBipedCitizen.Model.FARMER;
+    }
 
     @Override
     public void writeToNBT(NBTTagCompound compound)
