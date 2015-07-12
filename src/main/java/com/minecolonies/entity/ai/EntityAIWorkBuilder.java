@@ -26,6 +26,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 
+import java.io.File;
+
 /**
  * Performs builder work
  * Created: May 25, 2014
@@ -645,7 +647,6 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
         }
 
         ChunkCoordinates pos = workOrder.getBuildingId();
-        String name = "classic/" + workOrder.getUpgradeName();//TODO actually do styles
         Building building = worker.getColony().getBuilding(pos);
 
         if(building == null)
@@ -655,6 +656,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             return;
         }
 
+        String name = building.getStyle() + File.separatorChar + workOrder.getUpgradeName();
 
         job.setSchematic(Schematic.loadSchematic(world, name));
 

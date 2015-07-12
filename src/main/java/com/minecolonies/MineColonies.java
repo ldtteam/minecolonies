@@ -71,6 +71,7 @@ public class MineColonies
         network.registerMessage(ColonyViewBuildingViewMessage.class,    ColonyViewBuildingViewMessage.class,    4,  Side.CLIENT);
         network.registerMessage(ColonyViewRemoveBuildingMessage.class,  ColonyViewRemoveBuildingMessage.class,  5,  Side.CLIENT);
         network.registerMessage(PermissionsMessage.View.class,          PermissionsMessage.View.class,          6,  Side.CLIENT);
+        network.registerMessage(ColonyStylesMessage.class,              ColonyStylesMessage.class,              7,  Side.CLIENT);
         //  Permission Request messages
         network.registerMessage(PermissionsMessage.Permission.class,    PermissionsMessage.Permission.class,    10, Side.SERVER);
         network.registerMessage(PermissionsMessage.AddPlayer.class,     PermissionsMessage.AddPlayer.class,     11, Side.SERVER);

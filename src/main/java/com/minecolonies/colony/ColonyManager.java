@@ -40,8 +40,14 @@ public class ColonyManager
 
     private final static String TAG_COLONIES = "colonies";
 
+    private static Map<String, Set<String>> hutStyleMap = new HashMap<String, Set<String>>();//Hut,Styles
+
     public static void init()
     {
+        if(MineColonies.isServer())//TODO: maybe move to its own proxy method
+        {
+            loadHutStyleMap();
+        }
     }
 
     /**
@@ -702,6 +708,58 @@ public class ColonyManager
         }
 
         return null;
+    }
+
+    private static void loadHutStyleMap()
+    {
+        File baseDirectory = new File(ColonyManager.class.getResource("/assets/minecolonies/schematics/").getFile());
+
+        if(baseDirectory.exists() && baseDirectory.isDirectory())
+        {
+            for (File style : baseDirectory.listFiles())
+            {
+                if(style.isDirectory())
+                {
+                    for (String hut : style.list())
+                    {
+                        if(hut.endsWith("1.schematic"))
+                        {
+                            String hutname = hut.substring(0, hut.length() - 11);
+
+                            if (!hutStyleMap.containsKey(hutname))
+                            {
+                                hutStyleMap.put(hutname, new HashSet<String>());
+                            }
+                            hutStyleMap.get(hutname).add(style.getName());
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            MineColonies.logger.error("Schematic directory not found!");
+        }
+    }
+
+    public static Set<String> getHuts()
+    {
+        return hutStyleMap.keySet();
+    }
+
+    public static Set<String> getStylesForHut(String hut)
+    {
+        return hutStyleMap.get(hut);
+    }
+
+    /**
+     * For use on client side by the ColonyStylesMessage
+     *
+     * @param stylesMap new hutStyleMap
+     */
+    public static void setStyles(Map<String, Set<String>> stylesMap)
+    {
+        hutStyleMap = stylesMap;
     }
 
     public static class ColonyManagerWorldAccess implements IWorldAccess

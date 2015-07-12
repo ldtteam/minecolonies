@@ -28,12 +28,12 @@ public abstract class Building
     private final ChunkCoordinates location;
     private final Colony           colony;
 
-    private int rotation = 0;
-
     private TileEntityColonyBuilding tileEntity;
 
     //  Attributes
     private int buildingLevel = 0;
+    private int rotation = 0;
+    private String style = "classic";
 
     //  State
     private boolean isDirty = false;
@@ -49,6 +49,7 @@ public abstract class Building
     private final static String TAG_LOCATION       = "location";  //  Location is unique (within a Colony) and so can double as the Id
     private final static String TAG_BUILDING_LEVEL = "level";
     private final static String TAG_ROTATION       = "rotation";
+    private final static String TAG_STYLE          = "style";
 
     /**
      * Add a given Building mapping
@@ -222,6 +223,12 @@ public abstract class Building
         buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
 
         rotation = compound.getInteger(TAG_ROTATION);
+        style = compound.getString(TAG_STYLE);
+        if(style.equals(""))
+        {
+            MineColonies.logger.warn("Loaded empty style, setting to classic");
+            style = "classic";
+        }
     }
 
     /**
@@ -246,6 +253,7 @@ public abstract class Building
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
 
         compound.setInteger(TAG_ROTATION, rotation);
+        compound.setString(TAG_STYLE, style);
     }
 
     public Colony getColony() { return colony; }
@@ -355,6 +363,16 @@ public abstract class Building
     public int getRotation()
     {
         return rotation;
+    }
+
+    public void setStyle(String style)
+    {
+        this.style = style;
+    }
+
+    public String getStyle()
+    {
+        return style;
     }
 
     /**

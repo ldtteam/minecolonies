@@ -1,8 +1,12 @@
 package com.minecolonies.event;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.network.messages.ColonyStylesMessage;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.entity.player.EntityPlayerMP;
 
 public class FMLEventHandler
 {
@@ -22,5 +26,14 @@ public class FMLEventHandler
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
         ColonyManager.onWorldTick(event);
+    }
+
+    @SubscribeEvent
+    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        if(event.player instanceof EntityPlayerMP)
+        {
+            MineColonies.network.sendTo(new ColonyStylesMessage(), (EntityPlayerMP) event.player);
+        }
     }
 }
