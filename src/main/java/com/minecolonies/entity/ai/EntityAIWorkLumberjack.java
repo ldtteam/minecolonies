@@ -531,7 +531,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
     private boolean isStackAxe(ItemStack stack)
     {
-        return stack != null && stack.getItem().getToolClasses(null /* not used */).contains(TOOL_TYPE_AXE);
+        return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_AXE);
     }
 
     private boolean isStackSapling(ItemStack stack)
