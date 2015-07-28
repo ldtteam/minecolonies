@@ -729,7 +729,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private boolean isStackTool(ItemStack stack)
     {
-        return stack != null && (stack.getItem().getToolClasses(null /* not used */).contains("pickaxe") || stack.getItem().getToolClasses(null /* not used */).contains("shovel"));
+        return stack != null && (stack.getItem().getToolClasses(stack).contains("pickaxe") || stack.getItem().getToolClasses(stack).contains("shovel"));
     }
 
     private boolean isInHut(BuildingMiner b, Block block)
@@ -787,7 +787,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             if(stack != null)
             {
                 Item content = stack.getItem();
-                if(content.equals(item) || content.getToolClasses(null /* not used */).contains(NEED_ITEM))
+                if(content.equals(item) || content.getToolClasses(stack).contains(NEED_ITEM))
                 {
                     ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
 
@@ -936,8 +936,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else
         {
-            hasPickAxeInHand = worker.getHeldItem().getItem().getToolClasses(null /* not used */).contains("pickaxe");
-            hasSpadeInHand = worker.getHeldItem().getItem().getToolClasses(null /* not used */).contains("shovel");
+            hasPickAxeInHand = worker.getHeldItem().getItem().getToolClasses(worker.getHeldItem()).contains("pickaxe");
+            hasSpadeInHand = worker.getHeldItem().getItem().getToolClasses(worker.getHeldItem()).contains("shovel");
         }
 
         int hasSpade = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "shovel");
