@@ -1,6 +1,7 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.jobs.JobLumberjack;
+import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
@@ -15,7 +16,8 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 {
@@ -31,18 +33,8 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     private static final String TOOL_TYPE_AXE = "axe";
     private static final String RENDER_META_LOGS = "Logs";
 
-    private static final int SEARCH_RANGE = 20;
-    private static final int SEARCH_INTERVAL = 10;
-    private static final int SEARCH_STEPS = 2*SEARCH_RANGE / SEARCH_INTERVAL;
-    private static final int SEARCH_INTERVAL_Y = 4;
-
-    private static final int CLUSTER_TREE_DISTANCE_SQUARED = 9;//square distance
-
     private static final int MAX_LOG_BREAK_TIME = 30;
-
-    private int searchX = 0;
-    private int searchZ = 0;
-    private int searchY = -SEARCH_INTERVAL_Y;
+    private static final int SEARCH_RANGE = 50;
 
     private int chopTicks = 0;
     private int stillTicks = 0;
@@ -53,9 +45,9 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
     private int logBreakTime = Integer.MAX_VALUE;
 
-    private List<Tree> trees = new ArrayList<Tree>();
-    private List<List<Tree>> clusters = new ArrayList<List<Tree>>();
     private List<ChunkCoordinates> items;
+
+    private PathJobFindTree.TreePathResult pathResult;
 
     public EntityAIWorkLumberjack(JobLumberjack job)
     {
@@ -101,15 +93,14 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             break;
         case SEARCHING:
-            if(clusters.isEmpty())
+            if(job.tree == null)
             {
-                findTrees();
+                findTree();
             }
             else
             {
                 job.setStage(Stage.CHOPPING);
             }
-
             break;
         case CHOPPING:
             if (!hasAxeWithEquip())
@@ -118,25 +109,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             }
             else if (job.tree == null)
             {
-                if(clusters.size() > 0)
-                {
-                    if(clusters.get(0).size() > 0)
-                    {
-                        job.tree = clusters.get(0).remove(0);
-                    }
-                    else
-                    {
-                        clusters.remove(0);
-                    }
-                }
-                else if (trees.size() > 0)
-                {
-                    createTreeClusters();
-                }
-                else
-                {
-                    job.setStage(Stage.SEARCHING);
-                }
+                job.setStage(Stage.SEARCHING);
             }
             else
             {
@@ -149,7 +122,6 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                 }
 
                 chopTree();
-
             }
             break;
         //Entities now pick up nearby items
@@ -195,65 +167,25 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation());//Go Home
     }
 
-    //Splits search area into intervals
-    private void findTrees()
+    private void findTree()
     {
-        int posX = worker.getWorkBuilding().getLocation().posX - SEARCH_RANGE + searchX*SEARCH_INTERVAL;
-        int y = worker.getWorkBuilding().getLocation().posY + 2 + searchY;
-        int posZ = worker.getWorkBuilding().getLocation().posZ - SEARCH_RANGE + searchZ*SEARCH_INTERVAL;
-
-        for (int x = posX; x < posX + SEARCH_INTERVAL; x++)
+        if(pathResult == null)
         {
-            for (int z = posZ; z < posZ + SEARCH_INTERVAL; z++)
-            {
-                Block block = world.getBlock(x, y, z);
-                if (block.isWood(world, x, y, z))//Parameters unused
-                {
-                    Tree t = new Tree(world, new ChunkCoordinates(x, y, z));
-                    if (t.isTree())
-                    {
-                        if (!trees.contains(t))
-                        {
-                            if(isTreeAdjacent(t))
-                            {
-                                t.addBaseLog();
-                            }
-                            else
-                            {
-                                t.findLogs(world);
-                            }
-                            trees.add(t);
-                        }
-                    }
-                }
-            }
+            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE, 1.0D);
         }
-
-        searchX++;
-        if(searchX == SEARCH_STEPS)
+        else if(pathResult.getPathReachesDestination())
         {
-            searchX = 0;
-            searchZ++;
-            if(searchZ == SEARCH_STEPS)
+            if(pathResult.treeLocation != null)
             {
-                searchZ = 0;
-                if(searchY == SEARCH_INTERVAL_Y)
-                {
-                    searchY = -SEARCH_INTERVAL_Y;
-                    System.out.println("Trees: " + trees.size());
-
-                    //TODO is trees.size() == 0 idle, gather, plant, or broaden search
-                    if (trees.size() == 0)
-                    {
-                        //Doesn't work quite how I want it to
-                        job.setStage(Stage.GATHERING);
-                        return;
-                    }
-                    job.setStage(Stage.CHOPPING);
-                    return;
-                }
-                searchY += SEARCH_INTERVAL_Y;
+                job.tree = new Tree(world, pathResult.treeLocation);
+                job.tree.findLogs(world);
             }
+            pathResult = null;
+        }
+        else if(pathResult.isCancelled())
+        {
+            job.setStage(Stage.GATHERING);
+            pathResult = null;
         }
     }
 
@@ -330,6 +262,10 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                         worker.swingItem();
 
                         stillTicks = 0;
+                    }
+                    else if(stillTicks > 60)//If the worker gets too stuck he moves around a bit
+                    {
+                        worker.getNavigator().moveAwayFromXYZ(worker.posX, worker.posY, worker.posZ, 3.0, 1.0);
                     }
                 }
             }
@@ -569,67 +505,6 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                     }
                     break;
                 }
-            }
-        }
-        return false;
-    }
-
-    private void createTreeClusters()
-    {
-        while (!trees.isEmpty())
-        {
-            //create a new cluster
-            List<Tree> cluster = new ArrayList<Tree>();
-            //cluster queue
-            Queue<Tree> clusterQueue = new LinkedList<Tree>();
-            cluster.add(trees.remove(0));
-            clusterQueue.add(cluster.get(0));
-            clusters.add(cluster);
-
-            if (trees.isEmpty()) break;
-
-            //  Gather more trees into the Cluster
-            while(!clusterQueue.isEmpty())
-            {
-                Tree tree = clusterQueue.poll();
-
-                Iterator<Tree> it = trees.iterator();
-                while (it.hasNext())
-                {
-                    Tree other = it.next();
-
-                    if (tree.squareDistance(other) < CLUSTER_TREE_DISTANCE_SQUARED)
-                    {
-                        clusterQueue.add(other);
-                        cluster.add(other);
-                        it.remove();
-                    }
-                }
-            }
-            System.out.println("Cluster size: " + cluster.size());
-        }
-        System.out.println("Total Clusters: " + clusters.size());
-
-        //Sort clusters by size
-        Collections.sort(clusters, new Comparator<List<Tree>>()
-        {
-            @Override
-            public int compare(List<Tree> cluster1, List<Tree> cluster2)
-            {
-                return cluster1.size() - cluster2.size();
-            }
-            //Maybe we should sort equal clusters based on distance to previous cluster
-        });
-    }
-
-    private boolean isTreeAdjacent(Tree tree)
-    {
-        for(Tree t : trees)
-        {
-            //right next to will be 1, corner should be 2, next closest will be 4, so 2.5 to be safe
-            if(t.getLocation().getDistanceSquaredToChunkCoordinates(tree.getLocation()) <= 2.5f)
-            {
-                return true;
             }
         }
         return false;

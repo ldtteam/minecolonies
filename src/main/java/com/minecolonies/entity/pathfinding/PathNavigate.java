@@ -1,5 +1,6 @@
 package com.minecolonies.entity.pathfinding;
 
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -12,6 +13,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import javax.swing.tree.TreePath;
 import java.util.concurrent.Future;
 
 public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
@@ -84,6 +86,12 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         return setPathJob(
                 new PathJobMoveAwayFromLocation(theEntity.worldObj, start, avoid, (int)range, (int)getPathSearchRange()),
                 null, speed);
+    }
+
+    public PathJobFindTree.TreePathResult moveToTree(int range, double speed)
+    {
+        ChunkCoordinates start = PathJob.prepareStart(theEntity);
+        return (PathJobFindTree.TreePathResult) setPathJob(new PathJobFindTree(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range), null, speed);
     }
 
     @Override
