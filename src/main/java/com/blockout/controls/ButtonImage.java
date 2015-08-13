@@ -15,6 +15,7 @@ public class ButtonImage extends Button
     protected ResourceLocation imageDisabled;
 
     protected int       imageOffsetX = 0, imageOffsetY = 0, imageWidth = 0, imageHeight = 0;
+    protected int       mapWidth = 256, mapHeight = 256;
     protected int       highlightOffsetX = 0, highlightOffsetY = 0, highlightWidth = 0, highlightHeight = 0;
     protected int       disabledOffsetX = 0, disabledOffsetY = 0, disabledWidth = 0, disabledHeight = 0;
     protected float     textScale         = 1.0f;
@@ -52,6 +53,13 @@ public class ButtonImage extends Button
         {
             imageWidth = size.x;
             imageHeight = size.y;
+        }
+
+        size = params.getSizePairAttribute("mapsize", null, null);
+        if (size != null)
+        {
+            mapWidth = size.x;
+            mapHeight = size.y;
         }
 
         path = params.getStringAttribute("highlight", null);
@@ -227,7 +235,8 @@ public class ButtonImage extends Button
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        drawTexturedModalRect(x, y, offsetX, offsetY, w, h);
+        //Draw
+        func_146110_a(x, y, offsetX, offsetY, w, h, mapWidth, mapHeight);
 
         //  Label, if any
         if (label != null)

@@ -20,13 +20,13 @@
 
     <xs:simpleType name="sizePair">
         <xs:restriction base="xs:string">
-            <xs:pattern value="([-+]?\d+)(%|px)? +([-+]?\d+)(%|px)?"/>
+            <xs:pattern value="([-+]?\d+)(%|px)?( +([-+]?\d+)(%|px)?)?"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="fixedSizePair">
-        <xs:restriction>
-            <xs:pattern value="\d+ +\d+"/>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d+( +\d+)?"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -188,6 +188,7 @@
                 <xs:attribute name="source"          type="xs:string" use="required"/>
                 <xs:attribute name="imageoffset"     type="fixedSizePair"/>
                 <xs:attribute name="imagesize"       type="fixedSizePair"/>
+                <xs:attribute name="mapsize"         type="fixedSizePair"/>
                 <xs:attribute name="highlight"       type="xs:string"/>
                 <xs:attribute name="highlightoffset" type="fixedSizePair"/>
                 <xs:attribute name="highlightsize"   type="fixedSizePair"/>
@@ -214,6 +215,7 @@
                 <xs:attribute name="source"      type="xs:string"/>
                 <xs:attribute name="imageoffset" type="fixedSizePair"/>
                 <xs:attribute name="imagesize"   type="fixedSizePair"/>
+                <xs:attribute name="mapsize"   type="fixedSizePair"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

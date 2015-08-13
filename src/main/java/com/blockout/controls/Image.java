@@ -12,6 +12,7 @@ public class Image extends Pane
     protected int imageOffsetY = 0;
     protected int imageWidth = 0;
     protected int imageHeight = 0;
+    protected int mapWidth = 256, mapHeight = 256;
 
     public Image() { super(); }
     public Image(PaneParams params)
@@ -35,6 +36,13 @@ public class Image extends Pane
         {
             imageWidth = size.x;
             imageHeight = size.y;
+        }
+
+        size = params.getSizePairAttribute("mapsize", null, null);
+        if (size != null)
+        {
+            mapWidth = size.x;
+            mapHeight = size.y;
         }
     }
 
@@ -67,9 +75,12 @@ public class Image extends Pane
     {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(image);
-        drawTexturedModalRect(x, y,
+
+        //Draw
+        func_146110_a(x, y,
                 imageOffsetX, imageOffsetY,
                 imageWidth != 0 ? imageWidth : getWidth(),
-                imageHeight != 0 ? imageHeight : getHeight());
+                imageHeight != 0 ? imageHeight : getHeight(),
+                mapWidth, mapHeight);
     }
 }
