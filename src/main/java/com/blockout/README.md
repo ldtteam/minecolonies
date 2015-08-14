@@ -214,7 +214,6 @@ A clickable image which functions like a Button
 * `source="{path}"`               **Required** Resource Location path to the texture png to use
 * `imageoffset="{x y}"`           Offset of image in source texture to top left of image
 * `imagesize="{width height}"`    Size of image in source texture
-* `mapsize="{width height}"`      Size of texture map or individual image (Default: 256x256)
 * `highlight="{path}"`            Path to texture png to use for mouse-over highlight render effect, if desired
 * `highlightoffset="{x y}"`       Offset of image in highlight texture to top left of image
 * `highlightsize="{width height}"` Size of highlight image in source texture
@@ -268,7 +267,6 @@ A basic image.
 * `source="{path}"`               **Required** Resource Location path to the texture png to use
 * `imageoffset="{x y}"`           Offset of image in source texture to top left of image
 * `imagesize="{width height}"`    Size of image in source texture
-* `mapsize="{width height}"`      Size of texture map or individual image (Default: 256x256)
 
 ***
 #### Item Icon / Stack <itemicon>

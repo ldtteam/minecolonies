@@ -2,8 +2,15 @@ package com.blockout.controls;
 
 import com.blockout.Pane;
 import com.blockout.PaneParams;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.io.IOException;
+import java.util.Iterator;
 
 public class Image extends Pane
 {
@@ -37,13 +44,6 @@ public class Image extends Pane
             imageWidth = size.x;
             imageHeight = size.y;
         }
-
-        size = params.getSizePairAttribute("mapsize", null, null);
-        if (size != null)
-        {
-            mapWidth = size.x;
-            mapHeight = size.y;
-        }
     }
 
     public void setImage(String source)
@@ -68,6 +68,27 @@ public class Image extends Pane
         imageOffsetY = offsetY;
         imageWidth = w;
         imageHeight = h;
+
+        //Get file dimension
+        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix(".png");
+        if (it.hasNext())
+        {
+            ImageReader reader = it.next();
+            try (ImageInputStream stream = ImageIO.createImageInputStream(Minecraft.getMinecraft().getResourceManager().getResource(loc).getInputStream()))
+            {
+                reader.setInput(stream);
+                mapWidth = reader.getWidth(reader.getMinIndex());
+                mapHeight = reader.getHeight(reader.getMinIndex());
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                reader.dispose();
+            }
+        }
     }
 
     @Override
