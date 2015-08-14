@@ -111,7 +111,7 @@ public class EventHandler
      * @param z      The z coordinate of the block
      * @return false to cancel the event
      */
-    private boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, int x, int y, int z)//TODO use permissions
+    public static boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, int x, int y, int z)//TODO use permissions
     {
         //  Check if this Hut Block can be placed
         if (block instanceof BlockHutTownHall)

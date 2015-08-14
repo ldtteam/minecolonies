@@ -40,14 +40,11 @@ public class ColonyManager
 
     private final static String TAG_COLONIES = "colonies";
 
-    private static Map<String, Set<String>> hutStyleMap = new HashMap<String, Set<String>>();//Hut,Styles
+    private static Map<String, List<String>> hutStyleMap = new HashMap<>();//Hut,Styles
 
     public static void init()
     {
-        if(MineColonies.isServer())//TODO: maybe move to its own proxy method
-        {
-            loadHutStyleMap();
-        }
+        loadHutStyleMap();
     }
 
     /**
@@ -728,7 +725,7 @@ public class ColonyManager
 
                             if (!hutStyleMap.containsKey(hutname))
                             {
-                                hutStyleMap.put(hutname, new HashSet<String>());
+                                hutStyleMap.put(hutname, new ArrayList<String>());
                             }
                             hutStyleMap.get(hutname).add(style.getName());
                         }
@@ -747,7 +744,7 @@ public class ColonyManager
         return hutStyleMap.keySet();
     }
 
-    public static Set<String> getStylesForHut(String hut)
+    public static List<String> getStylesForHut(String hut)
     {
         return hutStyleMap.get(hut);
     }
@@ -757,7 +754,7 @@ public class ColonyManager
      *
      * @param stylesMap new hutStyleMap
      */
-    public static void setStyles(Map<String, Set<String>> stylesMap)
+    public static void setStyles(Map<String, List<String>> stylesMap)
     {
         hutStyleMap = stylesMap;
     }

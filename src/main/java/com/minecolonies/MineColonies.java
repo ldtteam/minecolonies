@@ -84,6 +84,7 @@ public class MineColonies
         network.registerMessage(MinerSetLevelMessage.class,             MinerSetLevelMessage.class,             23, Side.SERVER);
         network.registerMessage(FarmerCropTypeMessage.class,            FarmerCropTypeMessage.class,            24, Side.SERVER);
         network.registerMessage(RecallCitizenMessage.class,             RecallCitizenMessage.class,             25, Side.SERVER);
+        network.registerMessage(BuildToolPlaceMessage.class,            BuildToolPlaceMessage.class,            26, Side.SERVER);
         
         proxy.registerTileEntities();
 
