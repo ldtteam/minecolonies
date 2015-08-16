@@ -237,7 +237,7 @@ public class ButtonImage extends Button
 
         //Get file dimension
         int mapWidth = 256, mapHeight = 256;
-        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix(".png");
+        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
         if (it.hasNext()) {
             ImageReader reader = it.next();
             try (ImageInputStream stream = ImageIO.createImageInputStream(Minecraft.getMinecraft().getResourceManager().getResource(bind).getInputStream())) {

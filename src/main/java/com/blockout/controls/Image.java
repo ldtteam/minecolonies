@@ -70,7 +70,7 @@ public class Image extends Pane
         imageHeight = h;
 
         //Get file dimension
-        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix(".png");
+        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
         if (it.hasNext())
         {
             ImageReader reader = it.next();
