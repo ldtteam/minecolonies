@@ -29,6 +29,9 @@ configFile.withReader {
 group = "com.minecolonies"
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.minecolonies_build}"
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 minecraft {
 
     version = config.forge_version + "-" + config.minecraft_version
