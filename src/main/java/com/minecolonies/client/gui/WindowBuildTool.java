@@ -2,15 +2,25 @@ package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
 import com.blockout.views.Window;
+import com.github.lunatrius.schematica.Settings;
+import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Schematic;
+import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraftforge.common.MinecraftForge;
+import org.lwjgl.util.vector.Vector3f;
+import scala.collection.parallel.ParIterableLike;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,9 +63,19 @@ public class WindowBuildTool extends Window implements Button.Handler
     {
         super(Constants.MOD_ID + ":gui/windowBuildTool.xml");
 
-        posX = x;
-        posY = y;
-        posZ = z;
+        if(MineColonies.proxy.getActiveSchematic() != null)
+        {
+            posX = (int) Settings.instance.offset.x + MineColonies.proxy.getActiveSchematic().getOffsetX();
+            posY = (int) Settings.instance.offset.y + MineColonies.proxy.getActiveSchematic().getOffsetY();
+            posZ = (int) Settings.instance.offset.z + MineColonies.proxy.getActiveSchematic().getOffsetZ();
+            rotation = Settings.instance.rotation;
+        }
+        else
+        {
+            posX = x;
+            posY = y;
+            posZ = z;
+        }
     }
 
     @Override
@@ -100,12 +120,17 @@ public class WindowBuildTool extends Window implements Button.Handler
 
             //TODO do stuff with decoration button
         }
+
+        //Render stuff
+        if(MineColonies.proxy.getActiveSchematic() == null)
+        {
+            changeSchematic();
+        }
     }
 
     @Override
     public void onClosed()
     {
-
     }
 
     @Override
@@ -133,11 +158,15 @@ public class WindowBuildTool extends Window implements Button.Handler
             findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).setLabel(huts.get(hutDecIndex));
             styleIndex = 0;
             findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(ColonyManager.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
+
+            changeSchematic();
             break;
         case BUTTON_STYLE_ID:
             List<String> styles = ColonyManager.getStylesForHut(huts.get(hutDecIndex));
             styleIndex = (styleIndex + 1) % styles.size();
             findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(styles.get(styleIndex));
+
+            changeSchematic();
             break;
         case BUTTON_DECORATION_ID:
             //TODO
@@ -145,41 +174,81 @@ public class WindowBuildTool extends Window implements Button.Handler
 
         case BUTTON_CONFIRM:
             MineColonies.network.sendToServer(new BuildToolPlaceMessage(huts.get(hutDecIndex), ColonyManager.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex), posX, posY, posZ, rotation));
+            MineColonies.proxy.setActiveSchematic(null);
             close();
             break;
         case BUTTON_CANCEL:
+            MineColonies.proxy.setActiveSchematic(null);
             close();
             break;
 
         //TODO: account for player facing direction
         case BUTTON_LEFT:
             posX--;
+            updatePosition();
             break;
         case BUTTON_RIGHT:
             posX++;
+            updatePosition();
             break;
         case BUTTON_FORWARD:
             posZ--;
+            updatePosition();
             break;
         case BUTTON_BACK:
             posZ++;
+            updatePosition();
             break;
         case BUTTON_UP:
             posY++;
+            updatePosition();
             break;
         case BUTTON_DOWN:
             posY--;
+            updatePosition();
             break;
 
         case BUTTON_ROTATE_LEFT:
             rotation = (rotation+3) % 4;
+            MineColonies.proxy.getActiveSchematic().rotate();
+            MineColonies.proxy.getActiveSchematic().rotate();
+            MineColonies.proxy.getActiveSchematic().rotate();
+            updatePosition();
+            Settings.instance.rotation = rotation;
             break;
         case BUTTON_ROTATE_RIGHT:
             rotation = (rotation+1) % 4;
+            MineColonies.proxy.getActiveSchematic().rotate();
+            updatePosition();
+            Settings.instance.rotation = rotation;
             break;
 
         default:
             MineColonies.logger.warn("WindowBuildTool: Unhandled Button ID: " + button.getID());
         }
+    }
+
+    private void changeSchematic()
+    {
+        if(MineColonies.proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isClient())
+        {
+            String hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
+            String style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+
+            SchematicWorld schematic = Schematic.loadSchematic(Minecraft.getMinecraft().theWorld, style + '/' + hut + '1').getWorldForRender();
+            MineColonies.proxy.setActiveSchematic(schematic);
+
+            Settings.instance.renderBlocks = new RenderBlocks(schematic);
+            Settings.instance.createRendererSchematicChunk();
+
+            updatePosition();
+
+            schematic.setRendering(true);
+        }
+    }
+
+    private void updatePosition()
+    {
+        Settings.instance.moveTo(posX, posY, posZ);
     }
 }

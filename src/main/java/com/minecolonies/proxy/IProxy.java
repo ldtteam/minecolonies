@@ -1,5 +1,6 @@
 package com.minecolonies.proxy;
 
+import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.minecolonies.colony.CitizenData;
 
 public interface IProxy
@@ -19,4 +20,9 @@ public interface IProxy
     void registerTileEntityRendering();
 
     void showCitizenWindow(CitizenData.View citizen);
+
+    //Schematica
+    void setActiveSchematic(SchematicWorld world);
+
+    SchematicWorld getActiveSchematic();
 }

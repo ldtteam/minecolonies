@@ -1,5 +1,6 @@
 package com.minecolonies.proxy;
 
+import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.EntityCitizen;
@@ -95,6 +96,18 @@ public class CommonProxy implements IProxy
 
     @Override
     public void showCitizenWindow(CitizenData.View citizen) {}
+
+    //Schematica
+    @Override
+    public void setActiveSchematic(SchematicWorld world)
+    {
+    }
+
+    @Override
+    public SchematicWorld getActiveSchematic()
+    {
+        return null;
+    }
 
     /**
      * Used for entity IDs, starts at 0 & increments for each call

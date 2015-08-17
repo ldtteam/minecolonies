@@ -47,7 +47,7 @@ public class EmptySaveHandler implements ISaveHandler
     {}
 
     /**
-     * returns null if no saveHandler is relevent (eg. SMP)
+     * returns null if no saveHandler is relevant (eg. SMP)
      */
     public IPlayerFileData getSaveHandler()
     {

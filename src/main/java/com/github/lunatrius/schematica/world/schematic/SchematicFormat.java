@@ -15,7 +15,7 @@ import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicFormat
 {
-    public static final Map<String, SchematicFormat> FORMATS      = new HashMap<String, SchematicFormat>();
+    public static final Map<String, SchematicFormat> FORMATS      = new HashMap<>();
     public static final String                       MATERIALS    = "Materials";
     public static final String                       FORMAT_ALPHA = "Alpha";
     public static String FORMAT_DEFAULT;
@@ -88,16 +88,11 @@ public abstract class SchematicFormat
 
             FORMATS.get(FORMAT_DEFAULT).writeToNBT(tagCompound, world);
 
-            DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
-            try
+            try (DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file))))
             {
-                Method method = ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[]{
-                        "func_150298_a", "a"}, String.class, NBTBase.class, DataOutput.class);
+                Method method = ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[] {
+                        "func_150298_a", "a" }, String.class, NBTBase.class, DataOutput.class);
                 method.invoke(null, "Schematic", tagCompound, dataOutputStream);
-            }
-            finally
-            {
-                dataOutputStream.close();
             }
 
             return true;

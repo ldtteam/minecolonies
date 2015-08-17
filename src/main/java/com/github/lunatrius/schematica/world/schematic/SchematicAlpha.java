@@ -64,7 +64,7 @@ public class SchematicAlpha extends SchematicFormat
         byte[][][] metadata = new byte[width][height][length];
 
         Short id = null;
-        Map<Short, Short> oldToNew = new HashMap<Short, Short>();
+        Map<Short, Short> oldToNew = new HashMap<>();
         if(tagCompound.hasKey(MAPPING_SCHEMATICA))
         {
             NBTTagCompound mapping = tagCompound.getCompoundTag(MAPPING_SCHEMATICA);
@@ -93,7 +93,7 @@ public class SchematicAlpha extends SchematicFormat
             }
         }
 
-        List<TileEntity> tileEntities = new ArrayList<TileEntity>();
+        List<TileEntity> tileEntities = new ArrayList<>();
         NBTTagList tileEntitiesList = tagCompound.getTagList(TILE_ENTITIES, Constants.NBT.TAG_COMPOUND);
 
         for(int i = 0; i < tileEntitiesList.tagCount(); i++)

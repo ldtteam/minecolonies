@@ -614,6 +614,11 @@ public class Schematic
         z = -1;
     }
 
+    public SchematicWorld getWorldForRender()
+    {
+        return schematic;
+    }
+
     //TODO rendering
 //    public void refreshSchematic() {
 //        for (RendererSchematicChunk renderer : this.sortedRendererSchematicChunk) {

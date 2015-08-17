@@ -55,8 +55,8 @@ public class SchematicWorld extends World
     private ItemStack   icon;
     private short[][][] blocks;
     private byte[][][]  metadata;
-    private final List<TileEntity> tileEntities = new ArrayList<TileEntity>();
-    private final List<ItemStack>  blockList    = new ArrayList<ItemStack>();
+    private final List<TileEntity> tileEntities = new ArrayList<>();
+    private final List<ItemStack>  blockList    = new ArrayList<>();
     private short width;
     private short length;
     private short height;
