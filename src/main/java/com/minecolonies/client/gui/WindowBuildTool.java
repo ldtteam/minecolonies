@@ -10,18 +10,12 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
-import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.common.MinecraftForge;
-import org.lwjgl.util.vector.Vector3f;
-import scala.collection.parallel.ParIterableLike;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
