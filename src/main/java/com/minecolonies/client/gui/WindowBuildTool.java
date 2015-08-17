@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.util.vector.Vector3f;
 import scala.collection.parallel.ParIterableLike;
@@ -85,7 +86,7 @@ public class WindowBuildTool extends Window implements Button.Handler
         {
             findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
 
-            InventoryPlayer inventory = Minecraft.getMinecraft().thePlayer.inventory;
+            InventoryPlayer inventory = this.mc.thePlayer.inventory;
             for (String hut : ColonyManager.getHuts())
             {
                 if (inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut).getItem(null, 0, 0, 0)))//Hope someone doesn't override this because the block isnt in the world
@@ -181,23 +182,11 @@ public class WindowBuildTool extends Window implements Button.Handler
             MineColonies.proxy.setActiveSchematic(null);
             close();
             break;
-
-        //TODO: account for player facing direction
         case BUTTON_LEFT:
-            posX--;
-            updatePosition();
-            break;
         case BUTTON_RIGHT:
-            posX++;
-            updatePosition();
-            break;
         case BUTTON_FORWARD:
-            posZ--;
-            updatePosition();
-            break;
         case BUTTON_BACK:
-            posZ++;
-            updatePosition();
+            moveArrow(button.getID());
             break;
         case BUTTON_UP:
             posY++;
@@ -228,6 +217,85 @@ public class WindowBuildTool extends Window implements Button.Handler
         }
     }
 
+    private void moveArrow(String id)
+    {
+        int facing = MathHelper.floor_double((double) (this.mc.thePlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+
+        switch(id)
+        {
+        case BUTTON_LEFT:
+            switch (facing)
+            {
+            case 0:
+                posX++;
+                break;
+            case 1:
+                posZ++;
+                break;
+            case 2:
+                posX--;
+                break;
+            case 3:
+                posZ--;
+                break;
+            }
+            break;
+        case BUTTON_RIGHT:
+            switch (facing)
+            {
+            case 0:
+                posX--;
+                break;
+            case 1:
+                posZ--;
+                break;
+            case 2:
+                posX++;
+                break;
+            case 3:
+                posZ++;
+                break;
+            }
+            break;
+        case BUTTON_FORWARD:
+            switch (facing)
+            {
+            case 0:
+                posZ++;
+                break;
+            case 1:
+                posX--;
+                break;
+            case 2:
+                posZ--;
+                break;
+            case 3:
+                posX++;
+                break;
+            }
+            break;
+        case BUTTON_BACK:
+            switch (facing)
+            {
+            case 0:
+                posZ--;
+                break;
+            case 1:
+                posX++;
+                break;
+            case 2:
+                posZ++;
+                break;
+            case 3:
+                posX--;
+                break;
+            }
+            break;
+        }
+
+        updatePosition();
+    }
+
     private void changeSchematic()
     {
         if(MineColonies.proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isClient())
@@ -235,7 +303,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             String hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
             String style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
-            SchematicWorld schematic = Schematic.loadSchematic(Minecraft.getMinecraft().theWorld, style + '/' + hut + '1').getWorldForRender();
+            SchematicWorld schematic = Schematic.loadSchematic(this.mc.theWorld, style + '/' + hut + '1').getWorldForRender();
             MineColonies.proxy.setActiveSchematic(schematic);
 
             Settings.instance.renderBlocks = new RenderBlocks(schematic);
