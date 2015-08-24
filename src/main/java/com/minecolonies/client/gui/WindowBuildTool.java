@@ -64,6 +64,8 @@ public class WindowBuildTool extends Window implements Button.Handler
             posY = (int) Settings.instance.offset.y + MineColonies.proxy.getActiveSchematic().getOffsetY();
             posZ = (int) Settings.instance.offset.z + MineColonies.proxy.getActiveSchematic().getOffsetZ();
             rotation = Settings.instance.rotation;
+
+            //TODO change button text for correct hut and style
         }
         else
         {
@@ -83,7 +85,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             InventoryPlayer inventory = this.mc.thePlayer.inventory;
             for (String hut : ColonyManager.getHuts())
             {
-                if (inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut).getItem(null, 0, 0, 0)))//Hope someone doesn't override this because the block isnt in the world
+                if (inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut).getItem(null, 0, 0, 0)) && ColonyManager.getStylesForHut(hut) != null)
                 {
                     huts.add(hut);
                 }
@@ -99,6 +101,12 @@ public class WindowBuildTool extends Window implements Button.Handler
                 Button style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
                 style.setVisible(true);
                 style.setLabel(ColonyManager.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
+
+                //Render stuff
+                if(MineColonies.proxy.getActiveSchematic() == null)
+                {
+                    changeSchematic();
+                }
             }
             else
             {
@@ -114,12 +122,6 @@ public class WindowBuildTool extends Window implements Button.Handler
             type.setEnabled(false);//TODO disabled for now
 
             //TODO do stuff with decoration button
-        }
-
-        //Render stuff
-        if(MineColonies.proxy.getActiveSchematic() == null)
-        {
-            changeSchematic();
         }
     }
 
