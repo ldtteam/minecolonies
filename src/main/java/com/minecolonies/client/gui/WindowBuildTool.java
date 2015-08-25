@@ -64,8 +64,6 @@ public class WindowBuildTool extends Window implements Button.Handler
             posY = (int) Settings.instance.offset.y + MineColonies.proxy.getActiveSchematic().getOffsetY();
             posZ = (int) Settings.instance.offset.z + MineColonies.proxy.getActiveSchematic().getOffsetZ();
             rotation = Settings.instance.rotation;
-
-            //TODO change button text for correct hut and style
         }
         else
         {
@@ -83,6 +81,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
 
             InventoryPlayer inventory = this.mc.thePlayer.inventory;
+
             for (String hut : ColonyManager.getHuts())
             {
                 if (inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut).getItem(null, 0, 0, 0)) && ColonyManager.getStylesForHut(hut) != null)
@@ -93,6 +92,12 @@ public class WindowBuildTool extends Window implements Button.Handler
 
             if(huts.size() > 0)
             {
+                if(MineColonies.proxy.getActiveSchematic() != null)
+                {
+                    hutDecIndex = Math.max(0, huts.indexOf(Settings.instance.hut));
+                    styleIndex = Math.max(0, ColonyManager.getStylesForHut(huts.get(hutDecIndex)).indexOf(Settings.instance.style));
+                }
+
                 Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
                 //TODO Localize
                 hut.setLabel(huts.get(hutDecIndex));
@@ -113,6 +118,8 @@ public class WindowBuildTool extends Window implements Button.Handler
                 Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
                 hut.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.nohut"));
                 hut.setEnabled(false);
+
+                MineColonies.proxy.setActiveSchematic(null);
             }
         }
         else
@@ -128,6 +135,13 @@ public class WindowBuildTool extends Window implements Button.Handler
     @Override
     public void onClosed()
     {
+        if(MineColonies.proxy.getActiveSchematic() != null)
+        {
+            Settings.instance.rotation = rotation;
+
+            Settings.instance.hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
+            Settings.instance.style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+        }
     }
 
     @Override
@@ -199,13 +213,11 @@ public class WindowBuildTool extends Window implements Button.Handler
             MineColonies.proxy.getActiveSchematic().rotate();
             MineColonies.proxy.getActiveSchematic().rotate();
             updatePosition();
-            Settings.instance.rotation = rotation;
             break;
         case BUTTON_ROTATE_RIGHT:
             rotation = (rotation+1) % 4;
             MineColonies.proxy.getActiveSchematic().rotate();
             updatePosition();
-            Settings.instance.rotation = rotation;
             break;
 
         default:

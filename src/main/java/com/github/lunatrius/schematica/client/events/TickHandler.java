@@ -18,8 +18,6 @@ import java.lang.reflect.Field;
 public class TickHandler {
 	private final Minecraft minecraft = Minecraft.getMinecraft();
 
-	private int ticks = -1;
-
 	private final Field sortedWorldRenderers;
 
 	public TickHandler() {
@@ -28,11 +26,13 @@ public class TickHandler {
 
 	@SubscribeEvent
 	public void clientConnect(FMLNetworkEvent.ClientConnectedToServerEvent event) {
+		MineColonies.proxy.setActiveSchematic(null);
 		Settings.instance.isPendingReset = true;
 	}
 
 	@SubscribeEvent
 	public void clientDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
+		MineColonies.proxy.setActiveSchematic(null);
 		Settings.instance.isPendingReset = true;
 	}
 

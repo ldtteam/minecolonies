@@ -27,6 +27,9 @@ public class Settings {
 	public ForgeDirection orientation = ForgeDirection.UNKNOWN;
 	public Vector3f offset = new Vector3f();
     public int rotation = 0;
+    public String hut = "";
+    public String style = "";
+
 	public boolean isRenderingGuide = false;
 	public int chatLines = 0;
 	public boolean isSaveEnabled = true;
