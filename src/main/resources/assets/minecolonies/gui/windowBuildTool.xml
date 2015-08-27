@@ -2,24 +2,24 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
 
-    <buttonimage id="confirm" source="minecolonies:textures/gui/confirm.png" size="32" pos="-20 -20"/>
-    <buttonimage id="cancel" source="minecolonies:textures/gui/cancel.png" size="32" pos="20 -20"/>
+    <buttonimage id="confirm" source="minecolonies:textures/gui/confirm.png" size="32" pos="90 100"/>
+    <buttonimage id="cancel" source="minecolonies:textures/gui/cancel.png" size="32" pos="130 100"/>
 
-    <buttonimage id="up" source="minecolonies:textures/gui/plus.png" size="32" pos="60 -20"/>
-    <buttonimage id="down" source="minecolonies:textures/gui/minus.png" size="32" pos="100 -20"/>
+    <buttonimage id="up" source="minecolonies:textures/gui/plus.png" size="32" pos="170 100"/>
+    <buttonimage id="down" source="minecolonies:textures/gui/minus.png" size="32" pos="210 100"/>
 
-    <buttonimage id="rotateLeft" source="minecolonies:textures/gui/rotateLeft.png" size="32" pos="140 -20"/>
-    <buttonimage id="rotateRight" source="minecolonies:textures/gui/rotateRight.png" size="32" pos="180 -20"/>
+    <buttonimage id="rotateLeft" source="minecolonies:textures/gui/rotateLeft.png" size="32" pos="250 100"/>
+    <buttonimage id="rotateRight" source="minecolonies:textures/gui/rotateRight.png" size="32" pos="290 100"/>
 
-    <buttonimage id="left" source="minecolonies:textures/gui/left.png" size="32" pos="20 20"/>
-    <buttonimage id="right" source="minecolonies:textures/gui/right.png" size="32" pos="60 20"/>
-    <buttonimage id="forward" source="minecolonies:textures/gui/up.png" size="32" pos="100 20"/>
-    <buttonimage id="back" source="minecolonies:textures/gui/down.png" size="32" pos="140 20"/>
+    <buttonimage id="left" source="minecolonies:textures/gui/left.png" size="32" pos="130 140"/>
+    <buttonimage id="right" source="minecolonies:textures/gui/right.png" size="32" pos="170 140"/>
+    <buttonimage id="forward" source="minecolonies:textures/gui/up.png" size="32" pos="210 140"/>
+    <buttonimage id="back" source="minecolonies:textures/gui/down.png" size="32" pos="250 140"/>
 
-    <button id="hut" size="100 12" pos="60 60"/>
-    <button id="style" size="100 12" pos="60 80" visible="false"/>
+    <button id="hut" size="100 12" pos="110 180"/>
+    <button id="style" size="100 12" pos="110 200" visible="false"/>
 
-    <button id="buildingType" label="$(com.minecolonies.gui.buildtool.hut)" size="100 12" pos="180 60"/>
+    <button id="buildingType" label="$(com.minecolonies.gui.buildtool.hut)" size="100 12" pos="210 180"/>
 
-    <button id="decoration" label="$(com.minecolonies.gui.buildtool.nodecoration)" size="100 12" pos="60 60" visible="false"/>
+    <button id="decoration" label="$(com.minecolonies.gui.buildtool.nodecoration)" size="100 12" pos="110 180" visible="false"/>
 </window>
