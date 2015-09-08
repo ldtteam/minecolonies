@@ -4,6 +4,7 @@ import com.github.lunatrius.schematica.client.events.TickHandler;
 import com.github.lunatrius.schematica.client.renderer.RendererSchematicGlobal;
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
+import com.minecolonies.client.gui.WindowBuildTool;
 import com.minecolonies.client.gui.WindowCitizen;
 import com.minecolonies.client.render.EmptyTileEntitySpecialRenderer;
 import com.minecolonies.client.render.RenderBipedCitizen;
@@ -76,6 +77,12 @@ public class ClientProxy extends CommonProxy
         {
             MineColonies.network.sendToServer(new OpenInventoryMessage(citizen));
         }
+    }
+
+    @Override
+    public void openBuildToolWindow(int x, int y, int z)
+    {
+        GuiHandler.showGuiWindow(new WindowBuildTool(x, y, z));
     }
 
     //Schematica

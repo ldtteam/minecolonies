@@ -20,6 +20,7 @@ public interface IProxy
     void registerTileEntityRendering();
 
     void showCitizenWindow(CitizenData.View citizen);
+    void openBuildToolWindow(int x, int y, int z);
 
     //Schematica
     void setActiveSchematic(SchematicWorld world);

@@ -474,6 +474,14 @@ public class Schematic
         schematic.rotate();
     }
 
+    public void rotate(int times)
+    {
+        for(int i = 0; i < times; i++)
+        {
+            rotate();
+        }
+    }
+
     private static ResourceLocation getResourceLocation(String name)
     {
         return new ResourceLocation("minecolonies:schematics/" + name + ".schematic");

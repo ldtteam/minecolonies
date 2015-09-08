@@ -668,11 +668,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             return;
         }
 
-        System.out.println("Building rotation: " + building.getRotation());
-        for(int i = 0; i < building.getRotation(); i++)
-        {
-            job.getSchematic().rotate();
-        }
+        job.getSchematic().rotate(building.getRotation());
 
         job.getSchematic().setPosition(pos);
     }

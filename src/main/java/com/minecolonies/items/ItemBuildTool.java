@@ -1,7 +1,6 @@
 package com.minecolonies.items;
 
-import com.minecolonies.client.gui.WindowBuildTool;
-import com.minecolonies.network.GuiHandler;
+import com.minecolonies.MineColonies;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -23,6 +22,11 @@ public class ItemBuildTool extends ItemMinecolonies
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int face, float par8, float par9, float par10)
     {
+        if(!world.isRemote)
+        {
+            return false;
+        }
+
         switch(face)
         {
         case 0:
@@ -44,7 +48,8 @@ public class ItemBuildTool extends ItemMinecolonies
             x++;
             break;
         }
-        GuiHandler.showGuiWindow(new WindowBuildTool(x, y, z));
+
+        MineColonies.proxy.openBuildToolWindow(x, y, z);
         return false;
     }
 }

@@ -12,6 +12,7 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.world.World;
 
 /**
@@ -70,9 +71,8 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         World world = player.worldObj;
 
-        if(player.inventory.hasItem(block.getItem(null, 0, 0, 0)) && EventHandler.onBlockHutPlaced(world, player, block, message.x, message.y, message.z))
+        if(player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, message.x, message.y, message.z))
         {
-            player.inventory.getItemStack();
             world.setBlock(message.x, message.y, message.z, block);
             block.onBlockPlacedBy(world, message.x, message.y, message.z, player, null);
 

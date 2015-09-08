@@ -93,9 +93,11 @@ public class CommonProxy implements IProxy
     @Override
     public void registerKeybindings(){}
 
-
     @Override
     public void showCitizenWindow(CitizenData.View citizen) {}
+
+    @Override
+    public void openBuildToolWindow(int x, int y, int z) {}
 
     //Schematica
     @Override
