@@ -657,7 +657,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             return;
         }
 
-        String name = building.getStyle() + File.separatorChar + workOrder.getUpgradeName();
+        String name = building.getStyle() + '/' + workOrder.getUpgradeName();
 
         job.setSchematic(Schematic.loadSchematic(world, name));
 
