@@ -49,6 +49,11 @@ com.minecolonies.gui.citizen.skills.wisdom=Wisdom: %d
 com.minecolonies.gui.citizen.skills.intelligence=Intelligence: %d
 com.minecolonies.gui.citizen.skills.charisma=Charisma: %d
 
+com.minecolonies.gui.buildtool.nohut=No Huts
+com.minecolonies.gui.buildtool.nodecoration=No Decorations
+com.minecolonies.gui.buildtool.hut=Huts
+com.minecolonies.gui.buildtool.decoration=Decorations
+
 tile.blockHutCitizen.name=Citizen's Hut
 tile.blockHutBaker.name=Bakery
 tile.blockHutBlacksmith.name=Forge

@@ -55,8 +55,8 @@ public class SchematicWorld extends World
     private ItemStack   icon;
     private short[][][] blocks;
     private byte[][][]  metadata;
-    private final List<TileEntity> tileEntities = new ArrayList<TileEntity>();
-    private final List<ItemStack>  blockList    = new ArrayList<ItemStack>();
+    private final List<TileEntity> tileEntities = new ArrayList<>();
+    private final List<ItemStack>  blockList    = new ArrayList<>();
     private short width;
     private short length;
     private short height;
@@ -643,6 +643,10 @@ public class SchematicWorld extends World
                 skullTileEntity.func_145903_a((skullTileEntity.func_145906_b() + 12) & 15);
             }
         }
+
+        int tempZ = zOffset;
+        zOffset = xOffset;
+        xOffset = this.length - 1 - tempZ;
 
         short tmp = this.width;
         this.width = this.length;

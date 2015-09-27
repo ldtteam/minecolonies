@@ -5,9 +5,11 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.lib.Constants;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,15 +24,18 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.*;
 import java.util.*;
 
 public class ColonyManager
 {
-    private static Map<Integer, Colony>       colonies        = new HashMap<Integer, Colony>();
-    private static Map<Integer, List<Colony>> coloniesByWorld = new HashMap<Integer, List<Colony>>();
+    private static Map<Integer, Colony>       colonies        = new HashMap<>();
+    private static Map<Integer, List<Colony>> coloniesByWorld = new HashMap<>();
     private static int                        topColonyId     = 0;
 
-    private static Map<Integer, ColonyView>   colonyViews     = new HashMap<Integer, ColonyView>();
+    private static Map<Integer, ColonyView>   colonyViews     = new HashMap<>();
 
     private static int numWorldsLoaded;    //  Used to trigger loading/unloading colonies
     private static boolean saveNeeded;
@@ -40,8 +45,11 @@ public class ColonyManager
 
     private final static String TAG_COLONIES = "colonies";
 
+    private static Map<String, List<String>> hutStyleMap = new HashMap<>();//Hut,Styles
+
     public static void init()
     {
+        loadHutStyleMap();
     }
 
     /**
@@ -702,6 +710,75 @@ public class ColonyManager
         }
 
         return null;
+    }
+
+    private static void loadHutStyleMap()
+    {
+        try
+        {
+            URI uri = ColonyManager.class.getResource("/assets/minecolonies/schematics/").toURI();
+            System.out.println(uri.toString());
+
+            Path basePath;
+            if (uri.getScheme().equals("jar"))
+            {
+                FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+                basePath = fileSystem.getPath("/assets/minecolonies/schematics/");
+            }
+            else
+            {
+                basePath = Paths.get(uri);
+            }
+
+            Iterator<Path> it = Files.walk(basePath).iterator();
+            while (it.hasNext())
+            {
+                Path path = it.next();
+
+                if(path.toString().endsWith("1.schematic"))
+                {
+                    String hutpath = path.getFileName().toString();
+                    String hut = hutpath.substring(0, hutpath.length() - 11);
+                    String style = path.getParent().getFileName().toString();
+
+                    if(Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut) == null)
+                    {
+                        MineColonies.logger.warn(String.format("Malformed schematic name: %s/%s ignoring file", style, hut));
+                        continue;
+                    }
+
+                    if(!hutStyleMap.containsKey(hut))
+                    {
+                        hutStyleMap.put(hut, new ArrayList<String>());
+                    }
+                    hutStyleMap.get(hut).add(style);
+                }
+            }
+        }
+        catch(IOException | URISyntaxException e)
+        {
+            MineColonies.logger.error("Error loading Schematic directory. Things will break!");
+        }
+    }
+
+    public static Set<String> getHuts()
+    {
+        return hutStyleMap.keySet();
+    }
+
+    public static List<String> getStylesForHut(String hut)
+    {
+        return hutStyleMap.get(hut);
+    }
+
+    /**
+     * For use on client side by the ColonyStylesMessage
+     *
+     * @param stylesMap new hutStyleMap
+     */
+    public static void setStyles(Map<String, List<String>> stylesMap)
+    {
+        hutStyleMap = stylesMap;
     }
 
     public static class ColonyManagerWorldAccess implements IWorldAccess

@@ -1,6 +1,10 @@
 package com.minecolonies.proxy;
 
+import com.github.lunatrius.schematica.client.events.TickHandler;
+import com.github.lunatrius.schematica.client.renderer.RendererSchematicGlobal;
+import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
+import com.minecolonies.client.gui.WindowBuildTool;
 import com.minecolonies.client.gui.WindowCitizen;
 import com.minecolonies.client.render.EmptyTileEntitySpecialRenderer;
 import com.minecolonies.client.render.RenderBipedCitizen;
@@ -13,11 +17,14 @@ import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy
 {
-    //private RendererSchematicGlobal rendererSchematicGlobal;
+    private RendererSchematicGlobal rendererSchematicGlobal;
+    private SchematicWorld schematicWorld = null;
 
     @Override
     public boolean isClient()
@@ -40,11 +47,11 @@ public class ClientProxy extends CommonProxy
         super.registerEvents();
 
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-//        FMLCommonHandler.instance().bus().register(new KeyInputHandler());
-//        FMLCommonHandler.instance().bus().register(new TickHandler());
-//
-//        this.rendererSchematicGlobal = new RendererSchematicGlobal();
-//        MinecraftForge.EVENT_BUS.register(this.rendererSchematicGlobal);
+
+        //Schematica
+        FMLCommonHandler.instance().bus().register(new TickHandler());
+        this.rendererSchematicGlobal = new RendererSchematicGlobal();
+        MinecraftForge.EVENT_BUS.register(this.rendererSchematicGlobal);
     }
 
     @Override
@@ -70,5 +77,22 @@ public class ClientProxy extends CommonProxy
         {
             MineColonies.network.sendToServer(new OpenInventoryMessage(citizen));
         }
+    }
+
+    @Override
+    public void openBuildToolWindow(int x, int y, int z)
+    {
+        GuiHandler.showGuiWindow(new WindowBuildTool(x, y, z));
+    }
+
+    //Schematica
+    @Override
+    public void setActiveSchematic(SchematicWorld world) {
+        this.schematicWorld = world;
+    }
+
+    @Override
+    public SchematicWorld getActiveSchematic() {
+        return this.schematicWorld;
     }
 }

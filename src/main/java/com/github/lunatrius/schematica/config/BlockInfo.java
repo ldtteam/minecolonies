@@ -16,11 +16,11 @@ import static com.github.lunatrius.schematica.config.PlacementData.PlacementType
 
 public class BlockInfo
 {
-    public static final List<Block>               BLOCK_LIST_IGNORE_BLOCK    = new ArrayList<Block>();
-    public static final List<Block>               BLOCK_LIST_IGNORE_METADATA = new ArrayList<Block>();
-    public static final Map<Block, Item>          BLOCK_ITEM_MAP             = new HashMap<Block, Item>();
-    public static final Map<Class, PlacementData> CLASS_PLACEMENT_MAP        = new HashMap<Class, PlacementData>();
-    public static final Map<Item, PlacementData>  ITEM_PLACEMENT_MAP         = new HashMap<Item, PlacementData>();
+    public static final List<Block>               BLOCK_LIST_IGNORE_BLOCK    = new ArrayList<>();
+    public static final List<Block>               BLOCK_LIST_IGNORE_METADATA = new ArrayList<>();
+    public static final Map<Block, Item>          BLOCK_ITEM_MAP             = new HashMap<>();
+    public static final Map<Class, PlacementData> CLASS_PLACEMENT_MAP        = new HashMap<>();
+    public static final Map<Item, PlacementData>  ITEM_PLACEMENT_MAP         = new HashMap<>();
 
     private static final String MINECRAFT = "minecraft";
 

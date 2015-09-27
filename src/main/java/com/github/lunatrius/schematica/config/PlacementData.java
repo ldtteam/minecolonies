@@ -23,7 +23,7 @@ public class PlacementData
     public       int                          maskMetaInHand     = -1;
     public       int                          bitShiftMetaInHand = 0;
     public       int                          maskMeta           = 0xF;
-    public final Map<ForgeDirection, Integer> mapping            = new HashMap<ForgeDirection, Integer>();
+    public final Map<ForgeDirection, Integer> mapping            = new HashMap<>();
 
     public PlacementData(PlacementType type, int... metadata)
     {
@@ -90,7 +90,7 @@ public class PlacementData
 
     public ForgeDirection[] getValidDirections(ForgeDirection[] solidSides, int metadata)
     {
-        List<ForgeDirection> list = new ArrayList<ForgeDirection>();
+        List<ForgeDirection> list = new ArrayList<>();
 
         for(ForgeDirection direction : solidSides)
         {

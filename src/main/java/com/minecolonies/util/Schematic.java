@@ -469,14 +469,17 @@ public class Schematic
         }
     }
 
-    public void setOrientation(ForgeDirection orientation)
-    {
-        //TODO schematic.rotate();
-    }
-
     public void rotate()
     {
         schematic.rotate();
+    }
+
+    public void rotate(int times)
+    {
+        for(int i = 0; i < times; i++)
+        {
+            rotate();
+        }
     }
 
     private static ResourceLocation getResourceLocation(String name)
@@ -617,6 +620,11 @@ public class Schematic
         x = -1;
         y = -1;
         z = -1;
+    }
+
+    public SchematicWorld getWorldForRender()
+    {
+        return schematic;
     }
 
     //TODO rendering

@@ -26,6 +26,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 
+import java.io.File;
+
 /**
  * Performs builder work
  * Created: May 25, 2014
@@ -87,6 +89,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             else
             {
                 MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)", worker.getColony().getID(), worker.getCitizenData().getId(), job.getWorkOrderId()));
+                return;
             }
 
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", job.getSchematic().getName());
@@ -645,7 +648,16 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
         }
 
         ChunkCoordinates pos = workOrder.getBuildingId();
-        String name = "classic/" + workOrder.getUpgradeName();//TODO actually do styles
+        Building building = worker.getColony().getBuilding(pos);
+
+        if(building == null)
+        {
+            MineColonies.logger.warn("Building does not exist - removing build request");
+            worker.getColony().getWorkManager().removeWorkOrder(workOrder);
+            return;
+        }
+
+        String name = building.getStyle() + '/' + workOrder.getUpgradeName();
 
         job.setSchematic(Schematic.loadSchematic(world, name));
 
@@ -655,6 +667,8 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             worker.getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
         }
+
+        job.getSchematic().rotate(building.getRotation());
 
         job.getSchematic().setPosition(pos);
     }

@@ -71,6 +71,7 @@ public class MineColonies
         network.registerMessage(ColonyViewBuildingViewMessage.class,    ColonyViewBuildingViewMessage.class,    4,  Side.CLIENT);
         network.registerMessage(ColonyViewRemoveBuildingMessage.class,  ColonyViewRemoveBuildingMessage.class,  5,  Side.CLIENT);
         network.registerMessage(PermissionsMessage.View.class,          PermissionsMessage.View.class,          6,  Side.CLIENT);
+        network.registerMessage(ColonyStylesMessage.class,              ColonyStylesMessage.class,              7,  Side.CLIENT);
         //  Permission Request messages
         network.registerMessage(PermissionsMessage.Permission.class,    PermissionsMessage.Permission.class,    10, Side.SERVER);
         network.registerMessage(PermissionsMessage.AddPlayer.class,     PermissionsMessage.AddPlayer.class,     11, Side.SERVER);
@@ -83,6 +84,7 @@ public class MineColonies
         network.registerMessage(MinerSetLevelMessage.class,             MinerSetLevelMessage.class,             23, Side.SERVER);
         network.registerMessage(FarmerCropTypeMessage.class,            FarmerCropTypeMessage.class,            24, Side.SERVER);
         network.registerMessage(RecallCitizenMessage.class,             RecallCitizenMessage.class,             25, Side.SERVER);
+        network.registerMessage(BuildToolPlaceMessage.class,            BuildToolPlaceMessage.class,            26, Side.SERVER);
         
         proxy.registerTileEntities();
 
