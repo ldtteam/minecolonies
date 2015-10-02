@@ -1872,7 +1872,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         hasAllTheTools();
 
-        if(blocksMined == 256)
+        if(blocksMined == 150)
         {
             job.setStage(Stage.INVENTORY_FULL);
         }
