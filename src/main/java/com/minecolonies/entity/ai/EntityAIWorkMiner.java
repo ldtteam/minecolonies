@@ -1149,12 +1149,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         if (vectorX == 0)
                         {
                             x += 1;
-                            z -= 7;
+                            z -= 7*vectorZ;
                         }
                         else if (vectorZ == 0)
                         {
                             z += 1;
-                            x -= 7;
+                            x -= 7*vectorX;
                         }
                         world.setBlock(x, y + 3, z, b.floorBlock);
                         break;
@@ -1171,12 +1171,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         if (vectorX == 0)
                         {
                             x += 1;
-                            z -= 7;
+                            z -= 7*vectorZ;
                         }
                         else if (vectorZ == 0)
                         {
                             z += 1;
-                            x -= 7;
+                            x -= 7*vectorX;
                         }
                         world.setBlock(x, y + 3, z, b.floorBlock);
                         break;
@@ -1201,12 +1201,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         if (vectorX == 0)
                         {
                             x += 1;
-                            z -= 7;
+                            z -= 7*vectorZ;
                         }
                         else if (vectorZ == 0)
                         {
                             z += 1;
-                            x -= 7;
+                            x -= 7*vectorX;
                         }
                     case 23:
                     case 24:
@@ -1220,12 +1220,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         if (vectorX == 0)
                         {
                             x = x - 4;
-                            z -= 7;
+                            z -= 7*vectorZ;
                         }
                         else if (vectorZ == 0)
                         {
                             z = z - 4;
-                            x -= 7;
+                            x -= 7*vectorX;
                         }
                         world.setBlock(x, y + 3, z, b.floorBlock);
                         break;
@@ -1242,12 +1242,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         if (vectorX == 0)
                         {
                             x -= 1;
-                            z -= 7;
+                            z -= 7*vectorZ;
                         }
                         else if (vectorZ == 0)
                         {
                             z -= 1;
-                            x -= 7;
+                            x -= 7*vectorX;
                         }
                         world.setBlock(x, y + 3, z, b.floorBlock);
                         break;
@@ -1272,12 +1272,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         if (vectorX == 0)
                         {
                             x -= 1;
-                            z -= 7;
+                            z -= 7*vectorZ;
                         }
                         else if (vectorZ == 0)
                         {
                             z -= 1;
-                            x -= 7;
+                            x -= 7*vectorX;
                         }
                     case 44:
                     case 45:
@@ -1338,12 +1338,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
                     if (vectorX == 0)
                     {
-                        b.levels.add(new Level(b.shaftStart.posX, y + 5, b.shaftStart.posZ + 3, b));
+                        b.levels.add(new Level(b.shaftStart.posX, y + 5, b.shaftStart.posZ + 3*vectorZ, b));
 
                     }
                     else if (vectorZ == 0)
                     {
-                        b.levels.add(new Level(b.shaftStart.posX + 3, y + 5, b.shaftStart.posZ, b));
+                        b.levels.add(new Level(b.shaftStart.posX + 3*vectorX, y + 5, b.shaftStart.posZ, b));
 
                     }
                     clear = 1;
@@ -1433,24 +1433,24 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             if (vectorX == 0)
                             {
                                 x += 1;
-                                z -= 7;
+                                z -= 7*vectorZ;
                             }
                             else if (vectorZ == 0)
                             {
                                 z += 1;
-                                x -= 7;
+                                x -= 7*vectorX;
                             }
                             break;
                         case 21:
                             if (vectorX == 0)
                             {
                                 x += 1;
-                                z -= 7;
+                                z -= 7*vectorZ;
                             }
                             else if (vectorZ == 0)
                             {
                                 z += 1;
-                                x -= 7;
+                                x -= 7*vectorX;
                             }
                         case 22:
                         case 23:
@@ -1497,12 +1497,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             if (vectorX == 0)
                             {
                                 x = x - 4;
-                                z -= 7;
+                                z -= 7*vectorZ;
                             }
                             else if (vectorZ == 0)
                             {
                                 z = z - 4;
-                                x -= 7;
+                                x -= 7*vectorX;
                             }
                             break;
                         case 35:
@@ -1511,12 +1511,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 if (vectorX == 0)
                                 {
                                     x -= 1;
-                                    z -= 7;
+                                    z -= 7*vectorZ;
                                 }
                                 else if (vectorZ == 0)
                                 {
                                     z -= 1;
-                                    x -= 7;
+                                    x -= 7*vectorX;
                                 }
                             }
                             break;
@@ -1526,12 +1526,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 if (vectorX == 0)
                                 {
                                     x -= 1;
-                                    z -= 7;
+                                    z -= 7*vectorZ;
                                 }
                                 else if (vectorZ == 0)
                                 {
                                     z -= 1;
-                                    x -= 7;
+                                    x -= 7*vectorX;
                                 }
                             }
                         case 43:
