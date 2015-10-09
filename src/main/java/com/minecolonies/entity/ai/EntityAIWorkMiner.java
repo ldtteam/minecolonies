@@ -549,13 +549,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                 clearNode += mineCarefully(loc.posX + uVX, loc.posY + 1, loc.posZ + uVZ,uVX,uVZ,true,false,true,b);
                                 break;
                             case 3:
-                                clearNode += mineCarefully(loc.posX + uVX, loc.posY, loc.posZ + uVZ, uVX, uVZ, true, false, true, b);
+                                clearNode += mineCarefully(loc.posX + uVX, loc.posY, loc.posZ + uVZ, uVX, uVZ, false, false, true, b);
                                 break;
                             case 4:
-                                clearNode += mineCarefully(loc.posX, loc.posY, loc.posZ, 0, 0, true, false, false, b);
+                                clearNode += mineCarefully(loc.posX, loc.posY, loc.posZ, 0, 0, false, false, false, b);
                                 break;
                             case 5:
-                                clearNode += mineCarefully(loc.posX - uVX, loc.posY, loc.posZ - uVZ, -uVX, -uVZ, true, false, true, b);
+                                clearNode += mineCarefully(loc.posX - uVX, loc.posY, loc.posZ - uVZ, -uVX, -uVZ, false, false, true, b);
                                 break;
                             case 6:
                                 clearNode += mineCarefully(loc.posX - uVX, loc.posY-1, loc.posZ - uVZ, -uVX, -uVZ, false, true, true, b);
@@ -648,23 +648,23 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private int mineCarefully(int x, int y, int z,int uVX, int uVZ,boolean above, boolean side, boolean under,BuildingMiner b)
     {
-        Block block = world.getBlock(loc.posX, loc.posY, loc.posZ);
+        Block block = world.getBlock(x, y, z);
 
         if(above)
         {
-            checkAbove(loc.posX, loc.posY + 1, loc.posZ);
+            checkAbove(x, y+1, z);
         }
         if(under)
         {
-            checkUnder(loc.posX, loc.posY - 1, loc.posZ);
+            checkUnder(x, y-1, z);
         }
 
-        if(side && isALiquid(loc.posX + uVX, loc.posY, loc.posZ + uVZ))
+        if(side && isALiquid(x + uVX, y, z + uVZ))
         {
-            setBlockFromInventory(loc.posX + uVX, loc.posY, loc.posZ + uVZ, Blocks.cobblestone);
+            setBlockFromInventory(x + uVX, y, z + uVZ, Blocks.cobblestone);
         }
 
-        if(doMining(b, block, loc.posX, loc.posY, loc.posZ))
+        if(doMining(b, block, x, y, z))
         {
             return 1;
         }
