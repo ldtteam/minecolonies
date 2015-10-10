@@ -1335,7 +1335,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     getLocation.set(b.shaftStart.posX, getLocation.posY - 1, b.shaftStart.posZ);
                 }
             }
-            else if (Utils.isWorkerAtSiteWithMove(worker, x, y, z))
+            else if (Utils.isWorkerAtSiteWithMove(worker, x, y, z,3))
             {
                 worker.getLookHelper().setLookPosition(x, y, z, 90f, worker.getVerticalFaceSpeed());
                 hasToMine = world.getBlock(x, y, z);
@@ -1519,7 +1519,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             setBlockFromInventory(x, y , z, block);
         }
     }
-
 
     private void setBlockFromInventory(int x, int y, int z, Block block)
     {
