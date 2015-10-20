@@ -2,6 +2,7 @@ package com.minecolonies;
 
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.Schematics;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
@@ -98,7 +99,7 @@ public class MineColonies
 
         proxy.registerTileEntityRendering();
 
-        ColonyManager.init();
+        Schematics.init();
     }
 
     @Mod.EventHandler

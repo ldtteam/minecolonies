@@ -6,6 +6,7 @@ import com.github.lunatrius.schematica.Settings;
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.Schematics;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
@@ -82,9 +83,9 @@ public class WindowBuildTool extends Window implements Button.Handler
 
             InventoryPlayer inventory = this.mc.thePlayer.inventory;
 
-            for (String hut : ColonyManager.getHuts())
+            for (String hut : Schematics.getHuts())
             {
-                if (inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut).getItem(null, 0, 0, 0)) && ColonyManager.getStylesForHut(hut) != null)
+                if (inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut).getItem(null, 0, 0, 0)) && Schematics.getStylesForHut(hut) != null)
                 {
                     huts.add(hut);
                 }
@@ -95,7 +96,7 @@ public class WindowBuildTool extends Window implements Button.Handler
                 if(MineColonies.proxy.getActiveSchematic() != null)
                 {
                     hutDecIndex = Math.max(0, huts.indexOf(Settings.instance.hut));
-                    styleIndex = Math.max(0, ColonyManager.getStylesForHut(huts.get(hutDecIndex)).indexOf(Settings.instance.style));
+                    styleIndex = Math.max(0, Schematics.getStylesForHut(huts.get(hutDecIndex)).indexOf(Settings.instance.style));
                 }
 
                 Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
@@ -105,7 +106,7 @@ public class WindowBuildTool extends Window implements Button.Handler
 
                 Button style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
                 style.setVisible(true);
-                style.setLabel(ColonyManager.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
+                style.setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
 
                 //Render stuff
                 if(MineColonies.proxy.getActiveSchematic() == null)
@@ -168,12 +169,12 @@ public class WindowBuildTool extends Window implements Button.Handler
             hutDecIndex = (hutDecIndex + 1) % huts.size();
             findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).setLabel(huts.get(hutDecIndex));
             styleIndex = 0;
-            findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(ColonyManager.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
+            findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
 
             changeSchematic();
             break;
         case BUTTON_STYLE_ID:
-            List<String> styles = ColonyManager.getStylesForHut(huts.get(hutDecIndex));
+            List<String> styles = Schematics.getStylesForHut(huts.get(hutDecIndex));
             styleIndex = (styleIndex + 1) % styles.size();
             findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(styles.get(styleIndex));
 
@@ -184,7 +185,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             break;
 
         case BUTTON_CONFIRM:
-            MineColonies.network.sendToServer(new BuildToolPlaceMessage(huts.get(hutDecIndex), ColonyManager.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex), posX, posY, posZ, rotation));
+            MineColonies.network.sendToServer(new BuildToolPlaceMessage(huts.get(hutDecIndex), Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex), posX, posY, posZ, rotation));
             MineColonies.proxy.setActiveSchematic(null);
             close();
             break;

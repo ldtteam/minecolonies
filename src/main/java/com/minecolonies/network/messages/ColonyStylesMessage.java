@@ -1,6 +1,7 @@
 package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.Schematics;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -17,12 +18,12 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public void toBytes(ByteBuf buf)
     {
-        Set<String> huts = ColonyManager.getHuts();
+        Set<String> huts = Schematics.getHuts();
 
         buf.writeInt(huts.size());
         for(String hut : huts)
         {
-            List<String> styles = ColonyManager.getStylesForHut(hut);
+            List<String> styles = Schematics.getStylesForHut(hut);
 
             buf.writeInt(styles.size());
             for(String style : styles)
@@ -56,7 +57,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public IMessage onMessage(ColonyStylesMessage message, MessageContext ctx)
     {
-        ColonyManager.setStyles(message.hutStyleMap);
+        Schematics.setStyles(message.hutStyleMap);
         return null;
     }
 }
