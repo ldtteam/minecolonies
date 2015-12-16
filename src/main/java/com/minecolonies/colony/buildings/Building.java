@@ -6,6 +6,7 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
@@ -27,6 +28,8 @@ public abstract class Building
 {
     private final ChunkCoordinates location;
     private final Colony           colony;
+
+    private MaterialStore materialStore;
 
     private TileEntityColonyBuilding tileEntity;
 
@@ -124,6 +127,8 @@ public abstract class Building
     {
         location = new ChunkCoordinates(l);
         colony = c;
+
+        materialStore = new MaterialStore(MaterialStore.Type.CHEST, c.getMaterialSystem());
     }
 
     /**
@@ -229,6 +234,8 @@ public abstract class Building
             MineColonies.logger.warn("Loaded empty style, setting to classic");
             style = "classic";
         }
+
+        materialStore.readFromNBT(compound);
     }
 
     /**
@@ -254,6 +261,8 @@ public abstract class Building
 
         compound.setInteger(TAG_ROTATION, rotation);
         compound.setString(TAG_STYLE, style);
+
+        materialStore.writeToNBT(compound);
     }
 
     public Colony getColony() { return colony; }
@@ -306,7 +315,11 @@ public abstract class Building
         colony.markBuildingsDirty();
     }
 
-    public void onDestroyed() {}
+    public void onDestroyed()
+    {
+       materialStore.destroy();
+    }
+
     public final void destroy()
     {
         onDestroyed();
@@ -373,6 +386,11 @@ public abstract class Building
     public String getStyle()
     {
         return style;
+    }
+
+    public MaterialStore getMaterialStore()
+    {
+        return materialStore;
     }
 
     /**

@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingTownHall;
+import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
@@ -61,6 +62,8 @@ public class Colony implements IColony
 
     //  Workload and Jobs
     private final WorkManager workManager = new WorkManager(this);
+
+    private final MaterialSystem materialSystem = new MaterialSystem();
 
     private final static String TAG_ID           = "id";
     private final static String TAG_NAME         = "name";
@@ -909,6 +912,11 @@ public class Colony implements IColony
         }
 
         return deliverymanRequired;
+    }
+
+    public MaterialSystem getMaterialSystem()
+    {
+        return materialSystem;
     }
 
     //public int getAutoHostile()

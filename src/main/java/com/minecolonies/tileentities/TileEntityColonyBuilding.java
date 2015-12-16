@@ -6,6 +6,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
@@ -166,5 +167,57 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public ChunkCoordinates getPosition()
     {
         return new ChunkCoordinates(xCoord, yCoord, zCoord);
+    }
+
+    //-----------------------------Material Handling--------------------------------
+
+    /**
+     * Makes sure ItemStacks inside of the inventory aren't affected by changes to the returned stack.
+     */
+    @Override
+    public ItemStack getStackInSlot(int index)
+    {
+        return super.getStackInSlot(index).copy();
+    }
+
+    @Override
+    public ItemStack decrStackSize(int index, int quantity)
+    {
+        ItemStack removed = super.decrStackSize(index, quantity);
+
+        removeStackFromMaterialStore(removed);
+
+        return removed;
+    }
+
+    @Override
+    public ItemStack getStackInSlotOnClosing(int index)
+    {
+        ItemStack removed = super.getStackInSlotOnClosing(index);
+
+        removeStackFromMaterialStore(removed);
+
+        return removed;
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack)
+    {
+        ItemStack previous = getStackInSlot(index);
+        removeStackFromMaterialStore(previous);
+
+        super.setInventorySlotContents(index, stack);
+
+        addStackToMaterialStore(stack);
+    }
+
+    private void addStackToMaterialStore(ItemStack stack)
+    {
+        building.getMaterialStore().addMaterial(stack.getItem(), stack.stackSize);
+    }
+
+    private void removeStackFromMaterialStore(ItemStack stack)
+    {
+        building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
     }
 }

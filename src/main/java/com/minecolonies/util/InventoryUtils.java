@@ -150,21 +150,13 @@ public class InventoryUtils
         return false;
     }
 
-    public static ItemStack[] getAllItemStacks(IInventory inventory)
-    {
-        ItemStack[] itemStack = new ItemStack[inventory.getSizeInventory()];
-        for(int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            itemStack[i] = inventory.getStackInSlot(i);
-        }
-        return itemStack;
-    }
-
     public static int getAmountOfStacks(IInventory inventory)
     {
         int count = 0;
-        for(ItemStack is : getAllItemStacks(inventory))
+        for(int i = 0; i < inventory.getSizeInventory(); i++)
         {
+            ItemStack is = inventory.getStackInSlot(i);
+
             if(is != null)
             {
                 count++;

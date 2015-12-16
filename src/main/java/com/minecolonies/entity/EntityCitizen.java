@@ -300,6 +300,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             Colony c = ColonyManager.getColony(colonyId);
 
+            inventory.createMaterialStore(c.getMaterialSystem());
+
             if (c == null)
             {
                 MineColonies.logger.warn(String.format("EntityCitizen '%s' unable to find Colony #%d", getUniqueID(), colonyId));
@@ -602,10 +604,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     protected void dropEquipment(boolean par1, int par2)
     {
-        for (int i = 0; i < getLastActiveItems().length; i++) setCurrentItemOrArmor(i, null);
+        for (int i = 0; i < getLastActiveItems().length; i++) setCurrentItemOrArmor(i, null);//TODO what is this for?
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            ItemStack itemstack = inventory.getStackInSlot(i);
+            ItemStack itemstack = inventory.getStackInSlotOnClosing(i);
             if (itemstack != null && itemstack.stackSize > 0)
             {
                 entityDropItem(itemstack);
