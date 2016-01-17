@@ -102,21 +102,21 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     @Override
     public void updateTask()
     {
-        BuildingMiner b = (BuildingMiner)(worker.getWorkBuilding());
-        if(b == null){return;}
+        BuildingMiner ownBuilding = (BuildingMiner)(worker.getWorkBuilding());
+        if(ownBuilding == null){return;}
 
         worker.setRenderMetadata(inventoryContains(Blocks.torch) != -1 ? RENDER_META_TORCH : "");
 
         if(currentLevel == -1)
         {
-            currentLevel = b.currentLevel;
+            currentLevel = ownBuilding.currentLevel;
         }
 
-        if((b.ladderLocation == null ||  b.shaftStart == null) && job.getStage() != Stage.MINING_NODE)
+        if((ownBuilding.ladderLocation == null ||  ownBuilding.shaftStart == null) && job.getStage() != Stage.MINING_NODE)
         {
             if (tryThreeTimes < 1)
             {
-                b.foundLadder = false;
+                ownBuilding.foundLadder = false;
                 job.setStage(Stage.SEARCHING_LADDER);
             }
             else
@@ -125,11 +125,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 return;
             }
         }
-        else if((b.ladderLocation.equals(new ChunkCoordinates(0, 0, 0)) ||  b.shaftStart.equals(new ChunkCoordinates(0,0,0))) && job.getStage() != Stage.MINING_NODE)
+        else if((ownBuilding.ladderLocation.equals(new ChunkCoordinates(0, 0, 0)) ||  ownBuilding.shaftStart.equals(new ChunkCoordinates(0,0,0))) && job.getStage() != Stage.MINING_NODE)
         {
             if (tryThreeTimes < 1)
             {
-                b.foundLadder = false;
+                ownBuilding.foundLadder = false;
                 job.setStage(Stage.SEARCHING_LADDER);
             }
             else
@@ -138,11 +138,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 return;
             }
         }
-        else if(b.ladderLocation!=null && (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.WORKING))
+        else if(ownBuilding.ladderLocation!=null && (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.WORKING))
         {
-            if (b.ladderLocation.posY - 1 > b.getMaxY())
+            if (ownBuilding.ladderLocation.posY - 1 > ownBuilding.getMaxY())
             {
-                b.clearedShaft = false;
+                ownBuilding.clearedShaft = false;
                 job.setStage(Stage.MINING_SHAFT);
             }
         }
@@ -171,7 +171,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else if(job.hasItemsNeeded())
         {
-            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, b.getLocation()))
+            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, ownBuilding.getLocation()))
             {
                 List<ItemStack> l = new CopyOnWriteArrayList<ItemStack>();
                 l.addAll(job.getItemsNeeded());
@@ -180,7 +180,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 {
                     if(isStackTool(e))
                     {
-                        if(hasAllTheTools() || isInHut(b, e.getItem()))
+                        if(hasAllTheTools() || isInHut(ownBuilding, e.getItem()))
                         {
                             job.removeItemNeeded(e);
                             return;
@@ -197,7 +197,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             job.removeItemNeeded(e);
                             return;
                         }
-                        else if(isInHut(b, Items.coal) || isInHut(b, Blocks.torch))
+                        else if(isInHut(ownBuilding, Items.coal) || isInHut(ownBuilding, Blocks.torch))
                         {
                             return;
                         }
@@ -207,9 +207,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                             return;
                         }
                     }
-                    else if (isInHut(b, e.getItem()) || inventoryContains(e.getItem())!=-1)
+                    else if (isInHut(ownBuilding, e.getItem()) || inventoryContains(e.getItem())!=-1)
                     {
-                        if(e.getItem().equals(new ItemStack(b.floorBlock).getItem()))
+                        if(e.getItem().equals(new ItemStack(ownBuilding.floorBlock).getItem()))
                         {
                             if((job.getStage() == Stage.MINING_SHAFT && inventoryContainsMany(e.getItem())>=64) || (job.getStage() == Stage.MINING_NODE && inventoryContainsMany(e.getItem())>=30))
                             {
@@ -233,14 +233,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             switch (job.getStage())
             {
                 case MINING_NODE:
-                    if(b.levels!=null)
+                    if(ownBuilding.levels!=null)
                     {
-                        if(b.startingLevelNode == 5)
+                        if(ownBuilding.startingLevelNode == 5)
                         {
                             if(canMineNode < 1)
                             {
                                 //12 fences == 29 planks + 1 Torch  -> 3 Nodes
-                                if (inventoryContainsMany(b.floorBlock) >= 30 && (inventoryContains(Items.coal) != -1 || inventoryContainsMany(Blocks.torch) >= 3))
+                                if (inventoryContainsMany(ownBuilding.floorBlock) >= 30 && (inventoryContains(Items.coal) != -1 || inventoryContainsMany(Blocks.torch) >= 3))
                                 {
                                     canMineNode = 3;
                                 }
@@ -252,50 +252,50 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                     }
                                     else
                                     {
-                                        job.addItemNeeded(new ItemStack(b.floorBlock));
+                                        job.addItemNeeded(new ItemStack(ownBuilding.floorBlock));
                                     }
                                 }
                             }
                             else
                             {
-                                mineNode(b);
+                                mineNode(ownBuilding);
                             }
                         }
                         else
                         {
-                            mineNode(b);
+                            mineNode(ownBuilding);
                         }
                     }
                     else
                     {
-                        createShaft(b, b.vectorX, b.vectorZ);
+                        createShaft(ownBuilding, ownBuilding.vectorX, ownBuilding.vectorZ);
                     }
                     break;
                 case INVENTORY_FULL:
-                    dumpInventory(b);
+                    dumpInventory(ownBuilding);
                     break;
                 case SEARCHING_LADDER:
-                    findLadder(b);
+                    findLadder(ownBuilding);
                     break;
                 case MINING_VEIN:
-                    mineVein(b);
+                    mineVein(ownBuilding);
                     break;
                 case FILL_VEIN:
                     fillVein();
                     break;
                 case MINING_SHAFT:
-                    createShaft(b, b.vectorX, b.vectorZ);
+                    createShaft(ownBuilding, ownBuilding.vectorX, ownBuilding.vectorZ);
                     break;
                 case WORKING:
-                    if (!b.foundLadder)
+                    if (!ownBuilding.foundLadder)
                     {
                         job.setStage(Stage.SEARCHING_LADDER);
                     }
-                    else if(b.activeNode != null)
+                    else if(ownBuilding.activeNode != null)
                     {
                         job.setStage(Stage.MINING_NODE);
                     }
-                    else if (!b.clearedShaft)
+                    else if (!ownBuilding.clearedShaft)
                     {
                         job.setStage(Stage.MINING_SHAFT);
                     }

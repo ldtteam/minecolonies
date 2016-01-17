@@ -65,6 +65,7 @@ public class JobMiner extends Job
     {
         List<ItemStack> itemsNeeded = super.getItemsNeeded();
 
+        //check if stack is already in itemsNeeded
         for(ItemStack neededItem : itemsNeeded)
         {
             if(stack.isItemEqual(neededItem))

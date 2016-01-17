@@ -22,7 +22,7 @@ public class Level
      */
     public int depth;
 
-    private List<Node> nodes = new ArrayList<Node>();
+    private List<Node> nodes = new ArrayList<>();
 
     private static final String TAG_DEPTH = "Depth";
     private static final String TAG_NODES = "Nodes";
@@ -32,7 +32,7 @@ public class Level
     public Level(int x, int depth, int z,BuildingMiner b)
     {
         this.depth = depth;
-        nodes = new ArrayList<Node>();
+        nodes = new ArrayList<>();
 
         int ladderX = b.cobbleLocation.posX;
         int ladderZ = b.cobbleLocation.posZ;

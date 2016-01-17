@@ -25,7 +25,7 @@ import java.util.List;
 
 public class BuildingMiner extends BuildingWorker
 {
-    public List<Level> levels = new ArrayList<Level>();     //Stores the levels of the miners mine. This could be a map<depth,level>
+    public List<Level> levels = new ArrayList<>();     //Stores the levels of the miners mine. This could be a map<depth,level>
     public Node activeNode;
 
     public Block floorBlock = Blocks.planks;
