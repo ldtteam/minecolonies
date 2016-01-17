@@ -21,8 +21,7 @@ import net.minecraftforge.common.ForgeHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -50,8 +49,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     }
 
 
-
-    public static List<Block> heCanMine = new ArrayList<Block>();
+    /**
+     * Add blocks to this list to exclude mine checks.
+     * They can be mined for free. (be cautions with this)
+     */
+    public static Set<Block> canBeMined = new HashSet<>(Arrays.asList(
+            Blocks.air,Blocks.fence,Blocks.planks,Blocks.ladder,
+            Blocks.torch,Blocks.chest,Blocks.mob_spawner,Blocks.grass,
+            Blocks.tallgrass,Blocks.cactus,Blocks.log,Blocks.log2
+    ));
 
     private int delay = 0;
     private String NEED_ITEM;
@@ -75,22 +81,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private PathResult cachedPathResult;
 
 
-
-    //TODO Check for duplicates
     public EntityAIWorkMiner(JobMiner job)
     {
         super(job);
-        heCanMine.add(Blocks.air);
-        heCanMine.add(Blocks.fence);
-        heCanMine.add(Blocks.planks);
-        heCanMine.add(Blocks.ladder);
-        heCanMine.add(Blocks.torch);
-        heCanMine.add(Blocks.chest);
-        heCanMine.add(Blocks.mob_spawner);
-        heCanMine.add(Blocks.grass);
-        heCanMine.add(Blocks.tallgrass);
-        heCanMine.add(Blocks.cactus);
-        heCanMine.add(Blocks.log);heCanMine.add(Blocks.log2);
     }
 
     @Override
@@ -928,7 +921,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         boolean canMine =  false;
 
-        if(heCanMine.contains(hasToMine))
+        if(canBeMined.contains(hasToMine))
         {
             canMine = true;
         }
@@ -1746,7 +1739,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             return false;
         }
-        else if(!ForgeHooks.canToolHarvestBlock(block,0,tool) && !heCanMine.contains(hasToMine))
+        else if(!ForgeHooks.canToolHarvestBlock(block,0,tool) && !canBeMined.contains(hasToMine))
         {
             hasToMine = block;
             return false;
