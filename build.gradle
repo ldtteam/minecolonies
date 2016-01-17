@@ -81,7 +81,14 @@ task incrementBuildNumber() {
 jar {
     appendix = 'universal'
 }
+/*
+
+Error: > No signature of method: groovy.util.ConfigObject.plus() is applicable for argument types: (java.lang.String) values: [.gradle]
+Possible solutions: plus(java.util.Collection), plus(java.util.Map), values(), put(java.lang.Object, java.lang.Object), minus(java.util.Map), use([Ljava.lang.Object;)
+
+Commenting out signing
 
 if(new File(config.signing + ".gradle").exists()) {
     apply from: config.signing + ".gradle";
 }
+*/
