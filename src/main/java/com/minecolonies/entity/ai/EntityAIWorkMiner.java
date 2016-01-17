@@ -4,6 +4,7 @@ import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.pathfinding.PathResult;
+import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
@@ -931,6 +932,16 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             canMine = true;
         }
+
+
+        String tool = hasToMine.getHarvestTool(0);
+        int level = getMiningLevel(worker.getHeldItem(),tool);
+        int required = hasToMine.getHarvestLevel(0);
+
+        if(level > required){
+            holdEfficientPickaxe(hasToMine);
+        }
+
         if(!canMine)
         {
             canMine = ForgeHooks.canToolHarvestBlock(hasToMine, 0, worker.getHeldItem());
@@ -943,11 +954,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
             else
             {
-                holdPickAxe();
+                if(!holdEfficientPickaxe(hasToMine)){
+                    return false;
+                }
             }
             canMine = ForgeHooks.canToolHarvestBlock(hasToMine, 0, worker.getHeldItem());
         }
         return canMine;
+    }
+
+    int getMiningLevel(ItemStack stack, String tool){
+        if (stack == null || tool == null) return -1;
+        return stack.getItem().getHarvestLevel(stack, tool);
     }
 
     void holdShovel()
@@ -955,9 +973,37 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         worker.setHeldItem(InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "shovel"));
     }
 
-    void holdPickAxe()
+    int getMostEfficientTool(Block target){
+        String tool = target.getHarvestTool(0);
+        int required = target.getHarvestLevel(0);
+        int bestSlot = -1;
+        int bestlevel = Integer.MAX_VALUE;
+        InventoryCitizen inventory = worker.getInventory();
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            ItemStack item = inventory.getStackInSlot(i);
+            if (item != null && (item.getItem().getToolClasses(item).contains("pickaxe")))
+            {
+                int level = getMiningLevel(item,tool);
+                if(level >= required && level < bestlevel)
+                {
+                    bestSlot = i;
+                    bestlevel = level;
+                }
+            }
+        }
+        return bestSlot;
+    }
+
+    boolean holdEfficientPickaxe(Block target)
     {
-        worker.setHeldItem(InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), "pickaxe"));
+        int bestSlot = getMostEfficientTool(target);
+        if(bestSlot >= 0)
+        {
+            worker.setHeldItem(bestSlot);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -1692,7 +1738,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else
         {
-            holdPickAxe();
+            holdEfficientPickaxe(block);
         }
         hasToMine = block;
         ItemStack tool = worker.getInventory().getHeldItem();
