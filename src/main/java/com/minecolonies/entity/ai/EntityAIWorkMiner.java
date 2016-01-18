@@ -138,7 +138,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         worker.setRenderMetadata(renderMetaData);
     }
 
-
+    void initCurrentLevel(BuildingMiner ownBuilding){
+        if(currentLevel == -1) {
+            currentLevel = ownBuilding.currentLevel;
+        }
+    }
 
     @Override
     public void updateTask() {
@@ -147,14 +151,16 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         renderChestBelt();
 
-        if(currentLevel == -1)
-        {
-            currentLevel = ownBuilding.currentLevel;
-        }
+        //TODO: Hack until currentLevel gets accessed over getter
+        initCurrentLevel(ownBuilding);
+
 
         if(job.getStage() != Stage.MINING_NODE && !isLadderFound(ownBuilding)) {
             if (checkThreeTimes()) {
-                //Not found after three updateTask calls
+                /*
+                Not found after three updateTask calls
+                Ladder is obstructed!
+                */
                 ownBuilding.foundLadder = false;
                 job.setStage(Stage.SEARCHING_LADDER);
             }
