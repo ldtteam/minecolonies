@@ -125,13 +125,27 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return tryThreeTimes <= 0;
     }
 
+    private String getRenderMetaTorch(){
+        if(inventoryContains(Blocks.torch) != -1){
+            return RENDER_META_TORCH;
+        }
+        return "";
+    }
+
+    private void renderChestBelt(){
+        String renderMetaData = getRenderMetaTorch();
+        //TODO: Have pickaxe etc. displayed?
+        worker.setRenderMetadata(renderMetaData);
+    }
+
+
+
     @Override
-    public void updateTask()
-    {
-        BuildingMiner ownBuilding = (BuildingMiner)(worker.getWorkBuilding());
+    public void updateTask() {
+        BuildingMiner ownBuilding = (BuildingMiner) worker.getWorkBuilding();
         if(ownBuilding == null){return;}
 
-        worker.setRenderMetadata(inventoryContains(Blocks.torch) != -1 ? RENDER_META_TORCH : "");
+        renderChestBelt();
 
         if(currentLevel == -1)
         {
