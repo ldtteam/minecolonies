@@ -118,6 +118,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 && ownBuilding.shaftStart != null;
     }
 
+    public boolean checkThreeTimes(){
+        if(tryThreeTimes > 0){
+            tryThreeTimes--;
+        }
+        return tryThreeTimes <= 0;
+    }
+
     @Override
     public void updateTask()
     {
@@ -131,23 +138,16 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             currentLevel = ownBuilding.currentLevel;
         }
 
-        if(job.getStage() != Stage.MINING_NODE && !isLadderFound(ownBuilding))
-        {
-            if (tryThreeTimes < 1)
-            {
+        if(job.getStage() != Stage.MINING_NODE && !isLadderFound(ownBuilding)) {
+            if (checkThreeTimes()) {
+                //Not found after three updateTask calls
                 ownBuilding.foundLadder = false;
                 job.setStage(Stage.SEARCHING_LADDER);
             }
-            else
-            {
-                tryThreeTimes--;
-                return;
-            }
+            return;
         }
-        else if(ownBuilding.ladderLocation!=null && (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.WORKING))
-        {
-            if (ownBuilding.ladderLocation.posY - 1 > ownBuilding.getMaxY())
-            {
+        if (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.WORKING) {
+            if (ownBuilding.ladderLocation.posY > ownBuilding.getMaxY()) {
                 ownBuilding.clearedShaft = false;
                 job.setStage(Stage.MINING_SHAFT);
             }
