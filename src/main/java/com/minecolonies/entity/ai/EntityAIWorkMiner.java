@@ -162,6 +162,27 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return true;
     }
 
+    private void checkIfMineshaftIsAtBottomLimit(){
+        BuildingMiner ownBuilding = getOwnBuilding();
+        if (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.WORKING) {
+            if (ownBuilding.ladderLocation.posY > ownBuilding.getMaxY()) {
+                ownBuilding.clearedShaft = false;
+                job.setStage(Stage.MINING_SHAFT);
+            }
+        }
+    }
+
+    private boolean isMiningAtTheMoment(){
+        if (delay > 0) {
+            if(job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.MINING_SHAFT || job.getStage() == Stage.MINING_VEIN) {
+                worker.hitBlockWithToolInHand(miningBlock);
+            }
+            delay--;
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void updateTask() {
         BuildingMiner ownBuilding = getOwnBuilding();
@@ -173,25 +194,19 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         initCurrentLevel(ownBuilding);
 
         //Check if mineshaft ladder exists
+        //TODO: check if MINING_NODE is really necessary
         if(job.getStage() != Stage.MINING_NODE && ladderNotFound()) {
             return;
         }
 
-        if (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.WORKING) {
-            if (ownBuilding.ladderLocation.posY > ownBuilding.getMaxY()) {
-                ownBuilding.clearedShaft = false;
-                job.setStage(Stage.MINING_SHAFT);
-            }
+        checkIfMineshaftIsAtBottomLimit();
+
+        if (isMiningAtTheMoment()) {
+            //Mining animation while delay is decreasing.
+            return;
         }
 
-        if (delay > 0) {
-            if(job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.MINING_SHAFT || job.getStage() == Stage.MINING_VEIN) {
-                worker.hitBlockWithToolInHand(miningBlock);
-            }
-            delay--;
-        }
-        else if(job.hasItemsNeeded())
-        {
+        if(job.hasItemsNeeded()) {
             if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, ownBuilding.getLocation()))
             {
                 List<ItemStack> l = new CopyOnWriteArrayList<>();
