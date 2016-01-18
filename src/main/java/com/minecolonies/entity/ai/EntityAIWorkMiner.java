@@ -8,6 +8,7 @@ import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -152,25 +153,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
 
-        if (delay > 0)
-        {
-            if(miningBlock != null && (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.MINING_SHAFT || job.getStage() == Stage.MINING_VEIN))
-            {
-                int x = miningBlock.posX;
-                int y = miningBlock.posY;
-                int z = miningBlock.posZ;
-
-                worker.swingItem();
-                try
-                {
-                    //Crashes when called before minecraft Client fully initialized
-                    //FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
-                    //TODO hit particles
-                }
-                catch(Exception e)
-                {
-                    logger.info("Couldn't add effect");
-                }
+        if (delay > 0) {
+            if(job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.MINING_SHAFT || job.getStage() == Stage.MINING_VEIN) {
+                worker.hitBlockWithToolInHand(miningBlock);
             }
             delay--;
         }

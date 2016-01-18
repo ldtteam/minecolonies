@@ -18,6 +18,7 @@ import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -707,6 +708,22 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         inventory.setHeldItem(slot);
         setCurrentItemOrArmor(0, inventory.getStackInSlot(slot));
+    }
+
+    public void hitBlockWithToolInHand(int x, int y, int z){
+        this.swingItem();
+        try {
+            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
+        }
+        catch(Exception e) {
+            //Ignored, happens when minecraft is not fully initialized
+            //TODO: Check the exception type and remove blanco catch
+        }
+    }
+
+    public void hitBlockWithToolInHand(ChunkCoordinates block){
+        if(block == null) return;
+        hitBlockWithToolInHand(block.posX,block.posY,block.posZ);
     }
 
     /**

@@ -97,24 +97,9 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             job.setStage(Stage.NEED_SEEDS);
         }
 
-        if (delay > 0)
-        {
-            if(job.getStage() == Stage.MAKING_LAND && currentFarmLand != null)
-            {
-                int x = currentFarmLand.posX;
-                int y = currentFarmLand.posY;
-                int z = currentFarmLand.posZ;
-
-                worker.swingItem();
-                try
-                {
-                    //Crashes when called before minecraft Client fully initialized
-                    FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
-                }
-                catch(Exception e)
-                {
-                    logger.info("Couldn't add effect");
-                }
+        if (delay > 0) {
+            if(job.getStage() == Stage.MAKING_LAND) {
+                worker.hitBlockWithToolInHand(currentFarmLand);
             }
             delay--;
         }
