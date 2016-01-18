@@ -99,6 +99,24 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         updateTask();
     }
 
+    public boolean isLadderFound(BuildingMiner ownBuilding){
+        if(new ChunkCoordinates(0, 0, 0).equals(ownBuilding.ladderLocation)
+                || new ChunkCoordinates(0, 0, 0).equals(ownBuilding.shaftStart)){
+            /*
+            Removed obsolete path, should never happen.
+            Because it could be a transition case, tests are needed to detect, if it ever happens.
+            If it happens, fail catastrophically to detect it immediately.
+            Switched equals to dodge null check and still have it above the return.
+            TODO: Remove by next release if error never happens!
+            */
+            logger.error("Wrong path in Miner code, should never happen. Please report bug!");
+            throw new IllegalStateException("MineColonies Miner ladder/shaft coordinates are centered. " +
+                    "This should never happen, please report the bug with a full forge log!");
+        }
+        return ownBuilding.ladderLocation != null
+                && ownBuilding.shaftStart != null;
+    }
+
     @Override
     public void updateTask()
     {
@@ -112,20 +130,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             currentLevel = ownBuilding.currentLevel;
         }
 
-        if((ownBuilding.ladderLocation == null ||  ownBuilding.shaftStart == null) && job.getStage() != Stage.MINING_NODE)
-        {
-            if (tryThreeTimes < 1)
-            {
-                ownBuilding.foundLadder = false;
-                job.setStage(Stage.SEARCHING_LADDER);
-            }
-            else
-            {
-                tryThreeTimes--;
-                return;
-            }
-        }
-        else if((ownBuilding.ladderLocation.equals(new ChunkCoordinates(0, 0, 0)) ||  ownBuilding.shaftStart.equals(new ChunkCoordinates(0,0,0))) && job.getStage() != Stage.MINING_NODE)
+        if(job.getStage() != Stage.MINING_NODE && !isLadderFound(ownBuilding))
         {
             if (tryThreeTimes < 1)
             {
@@ -173,7 +178,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, ownBuilding.getLocation()))
             {
-                List<ItemStack> l = new CopyOnWriteArrayList<ItemStack>();
+                List<ItemStack> l = new CopyOnWriteArrayList<>();
                 l.addAll(job.getItemsNeeded());
 
                 for (ItemStack e : l)

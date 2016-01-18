@@ -141,11 +141,23 @@ public class BuildingMiner extends BuildingWorker
         }
     }
 
+    /*
+    Do we need MaxX and MaxZ, should the miner stop at some fixed point?
+    TODO: Rework with better model
+    */
+
     public int getMaxX()
     {
         return this.getBuildingLevel() * 30 + 20;
     }
 
+    /*
+    TODO: Rename to something like getDepthLimit.
+    getMaxY is misleading with buildHeight because
+    Max implies greatest number. Something with depth
+    (for going down) and Limit (instead of Max)
+    for a direction neutral purpose would be better.
+    */
     public int getMaxY()
     {
         if (this.getBuildingLevel() == 1)
