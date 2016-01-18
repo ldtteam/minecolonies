@@ -8,7 +8,6 @@ import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
-import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -100,7 +99,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         updateTask();
     }
 
-    public boolean isLadderFound(BuildingMiner ownBuilding){
+    public boolean isLadderInitialized(BuildingMiner ownBuilding){
         if(new ChunkCoordinates(0, 0, 0).equals(ownBuilding.ladderLocation)
                 || new ChunkCoordinates(0, 0, 0).equals(ownBuilding.shaftStart)){
             /*
@@ -114,11 +113,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             throw new IllegalStateException("MineColonies Miner ladder/shaft coordinates are centered. " +
                     "This should never happen, please report the bug with a full forge log!");
         }
-        return ownBuilding.ladderLocation != null
-                && ownBuilding.shaftStart != null;
+        return ownBuilding.ladderLocation == null
+                && ownBuilding.shaftStart == null;
     }
 
-    public boolean checkThreeTimes(){
+    private boolean checkThreeTimes(){
         if(tryThreeTimes > 0){
             tryThreeTimes--;
         }
@@ -138,15 +137,34 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         worker.setRenderMetadata(renderMetaData);
     }
 
-    void initCurrentLevel(BuildingMiner ownBuilding){
+    private void initCurrentLevel(BuildingMiner ownBuilding){
         if(currentLevel == -1) {
             currentLevel = ownBuilding.currentLevel;
         }
     }
 
+    private BuildingMiner getOwnBuilding(){
+        return (BuildingMiner) worker.getWorkBuilding();
+    }
+
+    private boolean ladderNotFound(){
+        if(isLadderInitialized(getOwnBuilding())){
+            if (checkThreeTimes()) {
+                /*
+                Not found after three updateTask calls
+                Ladder is obstructed!
+                */
+                getOwnBuilding().foundLadder = false;
+                job.setStage(Stage.SEARCHING_LADDER);
+            }
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public void updateTask() {
-        BuildingMiner ownBuilding = (BuildingMiner) worker.getWorkBuilding();
+        BuildingMiner ownBuilding = getOwnBuilding();
         if(ownBuilding == null){return;}
 
         renderChestBelt();
@@ -154,18 +172,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         //TODO: Hack until currentLevel gets accessed over getter
         initCurrentLevel(ownBuilding);
 
-
-        if(job.getStage() != Stage.MINING_NODE && !isLadderFound(ownBuilding)) {
-            if (checkThreeTimes()) {
-                /*
-                Not found after three updateTask calls
-                Ladder is obstructed!
-                */
-                ownBuilding.foundLadder = false;
-                job.setStage(Stage.SEARCHING_LADDER);
-            }
+        //Check if mineshaft ladder exists
+        if(job.getStage() != Stage.MINING_NODE && ladderNotFound()) {
             return;
         }
+
         if (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.WORKING) {
             if (ownBuilding.ladderLocation.posY > ownBuilding.getMaxY()) {
                 ownBuilding.clearedShaft = false;
