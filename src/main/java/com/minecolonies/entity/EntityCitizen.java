@@ -679,6 +679,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return count;
     }
 
+    public boolean hasitemInInventory(Block block){
+        return hasitemInInventory(getItemFromBlock(block));
+    }
+
+    public boolean hasitemInInventory(Item item){
+        return getItemCountinInventory(item)>0;
+    }
+
     public void setInventorySize(int newSize, boolean dropLeftovers)
     {
         if (!worldObj.isRemote)
