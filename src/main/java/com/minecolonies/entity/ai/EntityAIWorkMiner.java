@@ -183,48 +183,40 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return false;
     }
 
+    private void noNameYet(BuildingMiner ownBuilding){
+        if(ownBuilding.levels!=null) {
+            if(ownBuilding.startingLevelNode == 5) {
+                if(canMineNode <= 0) {
+                    //12 fences == 29 planks + 1 Torch  -> 3 Nodes
+                    if (inventoryContainsMany(ownBuilding.floorBlock) >= 30 &&
+                            (inventoryContains(Items.coal) != -1 || inventoryContainsMany(Blocks.torch) >= 3)) {
+                        canMineNode = 3;
+                    } else {
+                        if (inventoryContains(Items.coal) == -1 && inventoryContainsMany(Blocks.torch) < 3) {
+                            job.addItemNeeded(new ItemStack(Items.coal));
+                        } else {
+                            job.addItemNeeded(new ItemStack(ownBuilding.floorBlock));
+                        }
+                    }
+                }
+                else
+                {
+                    mineNode(ownBuilding);
+                }
+            } else {
+                mineNode(ownBuilding);
+            }
+        } else {
+            createShaft(ownBuilding, ownBuilding.vectorX, ownBuilding.vectorZ);
+        }
+    }
+
     private void restoreWorkingCondition(){
         BuildingMiner ownBuilding = getOwnBuilding();
         switch (job.getStage())
         {
             case MINING_NODE:
-                if(ownBuilding.levels!=null)
-                {
-                    if(ownBuilding.startingLevelNode == 5)
-                    {
-                        if(canMineNode < 1)
-                        {
-                            //12 fences == 29 planks + 1 Torch  -> 3 Nodes
-                            if (inventoryContainsMany(ownBuilding.floorBlock) >= 30 && (inventoryContains(Items.coal) != -1 || inventoryContainsMany(Blocks.torch) >= 3))
-                            {
-                                canMineNode = 3;
-                            }
-                            else
-                            {
-                                if (inventoryContains(Items.coal) == -1 && inventoryContainsMany(Blocks.torch) < 3)
-                                {
-                                    job.addItemNeeded(new ItemStack(Items.coal));
-                                }
-                                else
-                                {
-                                    job.addItemNeeded(new ItemStack(ownBuilding.floorBlock));
-                                }
-                            }
-                        }
-                        else
-                        {
-                            mineNode(ownBuilding);
-                        }
-                    }
-                    else
-                    {
-                        mineNode(ownBuilding);
-                    }
-                }
-                else
-                {
-                    createShaft(ownBuilding, ownBuilding.vectorX, ownBuilding.vectorZ);
-                }
+                noNameYet(ownBuilding);
                 break;
             case INVENTORY_FULL:
                 dumpInventory(ownBuilding);
@@ -1650,6 +1642,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         return -1;
     }
+
+
 
     private int inventoryContains(Item item)
     {

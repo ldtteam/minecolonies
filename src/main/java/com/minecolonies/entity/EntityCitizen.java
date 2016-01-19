@@ -19,6 +19,8 @@ import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -29,6 +31,8 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -630,6 +634,35 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public InventoryCitizen getInventory()
     {
         return inventory;
+    }
+
+    private List<ItemStack> filterInventory(Block block){
+        //TODO: Check if this conversion is always safe
+        //But seems like ItemStack does it right...
+        return filterInventory(new ItemStack(block).getItem());
+    }
+
+    private List<ItemStack> filterInventory(Item targetItem){
+        InventoryCitizen inventory = getInventory();
+        ArrayList<ItemStack> filtered = new ArrayList<>();
+        if(targetItem == null){
+            return filtered;
+        }
+        //Check every inventory slot
+        for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+            ItemStack stack = inventory.getStackInSlot(slot);
+            if(stack == null){
+                continue;
+            }
+            Item currentItem = stack.getItem();
+            if(currentItem == null){
+                continue;
+            }
+            if(currentItem == targetItem){
+                filtered.add(stack);
+            }
+        }
+        return filtered;
     }
 
     public void setInventorySize(int newSize, boolean dropLeftovers)
