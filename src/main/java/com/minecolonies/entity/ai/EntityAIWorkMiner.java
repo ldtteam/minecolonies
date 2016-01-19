@@ -157,9 +157,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 getOwnBuilding().foundLadder = false;
                 job.setStage(Stage.SEARCHING_LADDER);
             }
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     private void checkIfMineshaftIsAtBottomLimit(){
