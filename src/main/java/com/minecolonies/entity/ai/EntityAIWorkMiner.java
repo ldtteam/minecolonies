@@ -183,6 +183,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return false;
     }
 
+    /*
+    TODO: Not done, some things are weird...
+     */
     private void tryContinueMining(BuildingMiner ownBuilding){
         if(ownBuilding.levels!=null) {
             if(ownBuilding.startingLevelNode == 5) {
@@ -205,8 +208,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
 
                 }
-                else
-                {
+                else {
                     mineNode(ownBuilding);
                 }
             } else {
@@ -240,20 +242,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 createShaft(ownBuilding, ownBuilding.vectorX, ownBuilding.vectorZ);
                 break;
             case WORKING:
-                if (!ownBuilding.foundLadder)
-                {
+                if (!ownBuilding.foundLadder) {
                     job.setStage(Stage.SEARCHING_LADDER);
-                }
-                else if(ownBuilding.activeNode != null)
-                {
+                } else if(ownBuilding.activeNode != null) {
                     job.setStage(Stage.MINING_NODE);
-                }
-                else if (!ownBuilding.clearedShaft)
-                {
+                } else if (!ownBuilding.clearedShaft) {
                     job.setStage(Stage.MINING_SHAFT);
-                }
-                else
-                {
+                } else {
                     job.setStage(Stage.MINING_NODE);
                 }
                 break;
@@ -270,8 +265,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         //TODO: Hack until currentLevel gets accessed over getter
         initCurrentLevel(ownBuilding);
 
-        //Check if mineshaft ladder exists
-        //TODO: check if MINING_NODE is really necessary
+        /*
+        Check if mineshaft ladder exists
+        TODO: check if MINING_NODE is really necessary
+        */
         if(job.getStage() != Stage.MINING_NODE && ladderNotFound()) {
             return;
         }
@@ -290,58 +287,45 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
 
         if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, ownBuilding.getLocation())) {
-            List<ItemStack> l = new CopyOnWriteArrayList<>();
-            l.addAll(job.getItemsNeeded());
+            //Why use CopyOnWriteArrayList when you only iterate over it once?
+            List<ItemStack> itemsNeeded = new CopyOnWriteArrayList<>();
+            itemsNeeded.addAll(job.getItemsNeeded());
+            //This seems much more reasonable
+            itemsNeeded = new ArrayList<>(job.getItemsNeeded());
 
-            for (ItemStack e : l)
-            {
-                if(isStackTool(e))
-                {
-                    if(hasAllTheTools() || isInHut(ownBuilding, e.getItem()))
-                    {
-                        job.removeItemNeeded(e);
+            for (ItemStack neededItem : itemsNeeded) {
+                if(isMinerTool(neededItem)) {
+                    if(hasAllTheTools() || isInHut(ownBuilding, neededItem.getItem())) {
+                        job.removeItemNeeded(neededItem);
                         return;
                     }
-                }
-                else if(e.getItem().equals(new ItemStack(Blocks.torch).getItem()) || e.getItem().equals(Items.coal))
-                {
+                } else if(neededItem.getItem().equals(new ItemStack(Blocks.torch).getItem()) || neededItem.getItem().equals(Items.coal)) {
                     int slot = inventoryContains(Items.coal);
-                    if(slot!=-1)
-                    {
+                    if(slot!=-1) {
                         worker.getInventory().decrStackSize(slot, 1);
-                        ItemStack stack = new ItemStack(e.getItem(), 4);
+                        ItemStack stack = new ItemStack(neededItem.getItem(), 4);
                         InventoryUtils.addItemStackToInventory(worker.getInventory(),stack);
-                        job.removeItemNeeded(e);
+                        job.removeItemNeeded(neededItem);
+                        return;
+                    } else if(isInHut(ownBuilding, Items.coal) || isInHut(ownBuilding, Blocks.torch)) {
+                        return;
+                    } else if(inventoryContains(Blocks.torch)!=-1) {
+                        job.removeItemNeeded(neededItem);
                         return;
                     }
-                    else if(isInHut(ownBuilding, Items.coal) || isInHut(ownBuilding, Blocks.torch))
-                    {
-                        return;
-                    }
-                    else if(inventoryContains(Blocks.torch)!=-1)
-                    {
-                        job.removeItemNeeded(e);
-                        return;
-                    }
-                }
-                else if (isInHut(ownBuilding, e.getItem()) || inventoryContains(e.getItem())!=-1)
-                {
-                    if(e.getItem().equals(new ItemStack(ownBuilding.floorBlock).getItem()))
-                    {
-                        if((job.getStage() == Stage.MINING_SHAFT && inventoryContainsMany(e.getItem())>=64) || (job.getStage() == Stage.MINING_NODE && inventoryContainsMany(e.getItem())>=30))
-                        {
-                            job.removeItemNeeded(e);
+                } else if (isInHut(ownBuilding, neededItem.getItem()) || inventoryContains(neededItem.getItem())!=-1) {
+                    if(neededItem.getItem().equals(new ItemStack(ownBuilding.floorBlock).getItem())) {
+                        if((job.getStage() == Stage.MINING_SHAFT && inventoryContainsMany(neededItem.getItem())>=64) || (job.getStage() == Stage.MINING_NODE && inventoryContainsMany(neededItem.getItem())>=30)) {
+                            job.removeItemNeeded(neededItem);
                             return;
                         }
-                        worker.sendLocalizedChat("entity.miner.messageMoreBlocks", e.getDisplayName());
-                    }
-                    else
-                    {
-                        job.removeItemNeeded(e);
+                        worker.sendLocalizedChat("entity.miner.messageMoreBlocks", neededItem.getDisplayName());
+                    } else {
+                        job.removeItemNeeded(neededItem);
                         return;
                     }
                 }
-                worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", e.getDisplayName());
+                worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", neededItem.getDisplayName());
             }
             delay = 50;
         }
@@ -729,9 +713,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         ifNotAirSetBlock(x,y,z,Blocks.cobblestone);
     }
 
-    private boolean isStackTool(ItemStack stack)
-    {
-        return stack != null && (stack.getItem().getToolClasses(stack).contains("pickaxe") || stack.getItem().getToolClasses(stack).contains("shovel"));
+    private boolean isMinerTool(ItemStack stack) {
+        if (stack == null) {
+            return false;
+        }
+        return     stack.getItem().getToolClasses(stack).contains("pickaxe")
+                || stack.getItem().getToolClasses(stack).contains("shovel");
     }
 
     private boolean isInHut(BuildingMiner b, Block block)
@@ -815,7 +802,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             for (int i = 0; i < worker.getInventory().getSizeInventory(); i++)
             {
                 ItemStack stack = worker.getInventory().getStackInSlot(i);
-                if (stack != null && !isStackTool(stack))
+                if (stack != null && !isMinerTool(stack))
                 {
                     if (b.getTileEntity() != null)
                     {
