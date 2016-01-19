@@ -20,7 +20,6 @@ import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -32,7 +31,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -637,9 +635,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     private List<ItemStack> filterInventory(Block block){
-        //TODO: Check if this conversion is always safe
-        //But seems like ItemStack does it right...
-        return filterInventory(new ItemStack(block).getItem());
+        return filterInventory(getItemFromBlock(block));
+    }
+
+    //TODO: Check if this conversion is always safe
+    //But seems like ItemStack does it right...
+    private Item getItemFromBlock(Block block){
+        return new ItemStack(block).getItem();
     }
 
     private List<ItemStack> filterInventory(Item targetItem){
@@ -663,6 +665,18 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
         }
         return filtered;
+    }
+
+    public int getItemCountinInventory(Block block){
+        return getItemCountinInventory(getItemFromBlock(block));
+    }
+
+    public int getItemCountinInventory(Item targetitem){
+        int count = 0;
+        for(ItemStack is : filterInventory(targetitem)){
+            count += is.stackSize;
+        }
+        return count;
     }
 
     public void setInventorySize(int newSize, boolean dropLeftovers)

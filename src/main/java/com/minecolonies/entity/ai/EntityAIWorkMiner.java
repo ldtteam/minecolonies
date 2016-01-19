@@ -1673,44 +1673,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return -1;
     }
 
-    private int inventoryContainsMany(Block block)
-    {
-        int count = 0;
-
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = worker.getInventory().getStackInSlot(slot);
-
-            if (stack != null && stack.getItem() instanceof ItemBlock)
-            {
-                Block content = ((ItemBlock) stack.getItem()).field_150939_a;
-                if(content.equals(block))
-                {
-                    count += stack.stackSize;
-                }
-            }
-        }
-        return count;
+    /**
+     * TODO: Replace by worker.getItemCountinInventory(block)
+     */
+    private int inventoryContainsMany(Block block) {
+        return worker.getItemCountinInventory(block);
     }
 
-    private int inventoryContainsMany(Item item)
-    {
-        int count = 0;
-
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = worker.getInventory().getStackInSlot(slot);
-
-            if (stack != null && stack.getItem() instanceof ItemBlock)
-            {
-                Item content =  stack.getItem();
-                if(content.equals(item))
-                {
-                    count += stack.stackSize;
-                }
-            }
-        }
-        return count;
+    /**
+     * TODO: Replace by worker.getItemCountinInventory(item)
+     */
+    private int inventoryContainsMany(Item item) {
+        return worker.getItemCountinInventory(item);
     }
 
     private boolean doMining(BuildingMiner b, Block block, int x, int y, int z)
