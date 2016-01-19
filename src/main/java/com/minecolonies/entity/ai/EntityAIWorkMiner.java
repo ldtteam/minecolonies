@@ -183,21 +183,27 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return false;
     }
 
-    private void noNameYet(BuildingMiner ownBuilding){
+    private void tryContinueMining(BuildingMiner ownBuilding){
         if(ownBuilding.levels!=null) {
             if(ownBuilding.startingLevelNode == 5) {
                 if(canMineNode <= 0) {
-                    //12 fences == 29 planks + 1 Torch  -> 3 Nodes
-                    if (inventoryContainsMany(ownBuilding.floorBlock) >= 30 &&
-                            (inventoryContains(Items.coal) != -1 || inventoryContainsMany(Blocks.torch) >= 3)) {
+                    /*
+                    12 fences == 29 planks + 1 Torch  -> 3 Nodes
+                    TODO: Calculation definitely wrong :o
+                    */
+                    if(worker.getItemCountinInventory(ownBuilding.floorBlock) >= 30
+                            && worker.hasitemInInventory(Items.coal)
+                            || worker.getItemCountinInventory(Blocks.torch) >= 3){
                         canMineNode = 3;
                     } else {
-                        if (inventoryContains(Items.coal) == -1 && inventoryContainsMany(Blocks.torch) < 3) {
+                        if(worker.hasitemInInventory(Items.coal)
+                                && worker.getItemCountinInventory(Blocks.torch) < 3){
                             job.addItemNeeded(new ItemStack(Items.coal));
-                        } else {
+                        }else{
                             job.addItemNeeded(new ItemStack(ownBuilding.floorBlock));
                         }
                     }
+
                 }
                 else
                 {
@@ -216,7 +222,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         switch (job.getStage())
         {
             case MINING_NODE:
-                noNameYet(ownBuilding);
+                tryContinueMining(ownBuilding);
                 break;
             case INVENTORY_FULL:
                 dumpInventory(ownBuilding);
