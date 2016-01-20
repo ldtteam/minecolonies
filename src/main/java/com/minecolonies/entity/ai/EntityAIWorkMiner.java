@@ -396,13 +396,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return;
         }
 
-        if (inventoryContainsMany(b.floorBlock)<= 10 )
+        if (worker.getItemCountInInventory(b.floorBlock)<= 10 )
         {
             canMineNode = 0;
             job.addItemNeeded(new ItemStack(b.floorBlock));
             return;
         }
-        else if(inventoryContainsMany(Blocks.torch)<3 && !worker.hasitemInInventory(Items.coal))
+        else if(worker.getItemCountInInventory(Blocks.torch)<3 && !worker.hasitemInInventory(Items.coal))
         {
             canMineNode = 0;
             job.addItemNeeded(new ItemStack(Items.coal));
@@ -666,12 +666,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                         }
                                     }
 
-                                    if (inventoryContainsMany(Blocks.torch) > 0)
+                                    if (worker.getItemCountInInventory(Blocks.torch) > 0)
                                     {
                                         int slot = worker.findFirstSlotInInventoryWith(Blocks.torch);
                                         worker.getInventory().decrStackSize(slot, 1);
                                     }
-                                    else if (inventoryContainsMany(Items.coal) > 0)
+                                    else if (worker.getItemCountInInventory(Items.coal) > 0)
                                     {
                                         int slot = worker.findFirstSlotInInventoryWith(Items.coal);
                                         worker.getInventory().decrStackSize(slot, 1);
@@ -1397,7 +1397,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
             else
             {
-                if (inventoryContainsMany(b.floorBlock) >= 64)
+                if (worker.getItemCountInInventory(b.floorBlock) >= 64)
                 {
                     job.addItemNeeded(new ItemStack(Items.coal));
                 }
@@ -1634,20 +1634,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
         worker.getInventory().decrStackSize(slot,1);
-    }
-
-    /**
-     * TODO: Replace by worker.getItemCountInInventory(block)
-     */
-    private int inventoryContainsMany(Block block) {
-        return worker.getItemCountInInventory(block);
-    }
-
-    /**
-     * TODO: Replace by worker.getItemCountInInventory(item)
-     */
-    private int inventoryContainsMany(Item item) {
-        return worker.getItemCountInInventory(item);
     }
 
     private boolean doMining(BuildingMiner b, Block block, int x, int y, int z)
