@@ -158,7 +158,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }
     }
 
-    private boolean isMiningAtTheMoment() {
+    private boolean waitingForSomething() {
         if (delay > 0) {
             if (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.MINING_SHAFT || job.getStage() == Stage.MINING_VEIN) {
                 worker.hitBlockWithToolInHand(miningBlock);
@@ -290,7 +290,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         return numFloorNeeded;
     }
 
-    private void restoreWorkingConditions() {
+    private void askForNeededItems() {
 
         BuildingMiner ownBuilding = getOwnBuilding();
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, ownBuilding.getLocation())) {
@@ -341,13 +341,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         checkIfMineshaftIsAtBottomLimit();
 
         //Mining animation while delay is decreasing.
-        if (isMiningAtTheMoment()) {
+        if (waitingForSomething()) {
             return;
         }
 
         //Do we miss one needed item?
         if (job.isMissingNeededItem()) {
-            restoreWorkingConditions();
+            askForNeededItems();
             return;
         }
 
@@ -907,8 +907,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     if (b.foundLadder) {
                         job.setStage(Stage.MINING_SHAFT);
                         return;
-                    } else if (world.getBlock(x, y, z).equals(Blocks.ladder))//Parameters unused
-                    {
+                    } else if (world.getBlock(x, y, z).equals(Blocks.ladder)) {//Parameters unused
                         int lastY = getLastLadder(x, y, z);
                         b.ladderLocation = new ChunkCoordinates(x, lastY, z);
                         logger.info("Found ladder at x:" + x + " y: " + lastY + " z: " + z);
@@ -1530,8 +1529,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     private int getLastLadder(int x, int y, int z) {
-        if (world.getBlock(x, y, z).isLadder(world, x, y, z, null))//Parameters unused
-        {
+        if (world.getBlock(x, y, z).isLadder(world, x, y, z, null)) {
             return getLastLadder(x, y - 1, z);
         } else {
             return y + 1;

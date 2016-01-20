@@ -62,7 +62,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     protected Status status = Status.IDLE;
 
-    private Map<String, Integer> statusMessages = new HashMap<String, Integer>();
+    private Map<String, Integer> statusMessages = new HashMap<>();
 
     private PathNavigate newNavigator;
     private boolean useNewNavigation = false;
