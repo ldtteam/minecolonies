@@ -667,38 +667,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
     private boolean isInHut(BuildingMiner b, Block block) {
         return isInHut(b, InventoryUtils.getItemFromBlock(block));
-        /*
-        if(b.getTileEntity()==null) {
-            return false;
-        }
-
-        int size = b.getTileEntity().getSizeInventory();
-
-        for(int i = 0; i < size; i++)
-        {
-            ItemStack stack = b.getTileEntity().getStackInSlot(i);
-            if(stack != null && stack.getItem() instanceof ItemBlock)
-            {
-                Block content = ((ItemBlock) stack.getItem()).field_150939_a;
-                if (content.equals(block))
-                {
-                    ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
-
-                    if (returnStack == null)
-                    {
-                        b.getTileEntity().decrStackSize(i, stack.stackSize);
-                    }
-                    else
-                    {
-                        b.getTileEntity().decrStackSize(i, stack.stackSize - returnStack.stackSize);
-                    }
-
-                    return true;
-                }
-            }
-        }
-        return false;
-        */
     }
 
     private boolean isInHut(BuildingMiner b, Item item) {
