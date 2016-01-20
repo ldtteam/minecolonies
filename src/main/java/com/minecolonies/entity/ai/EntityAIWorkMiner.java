@@ -96,26 +96,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     }
 
     @Override
-    public void startExecuting()
-    {
+    public void startExecuting() {
         worker.setStatus(EntityCitizen.Status.WORKING);
         updateTask();
     }
 
     public boolean isLadderInitialized(BuildingMiner ownBuilding){
-        if(new ChunkCoordinates(0, 0, 0).equals(ownBuilding.ladderLocation)
-                || new ChunkCoordinates(0, 0, 0).equals(ownBuilding.shaftStart)){
-            /*
-            Removed obsolete path, should never happen.
-            Because it could be a transition case, tests are needed to detect, if it ever happens.
-            If it happens, fail catastrophically to detect it immediately.
-            Switched equals to dodge null check and still have it above the return.
-            TODO: Remove by next release if error never happens!
-            */
-            logger.error("Wrong path in Miner code, should never happen. Please report bug!");
-            throw new IllegalStateException("MineColonies Miner ladder/shaft coordinates are centered. " +
-                    "This should never happen, please report the bug with a full forge log!");
-        }
         return ownBuilding.ladderLocation == null
                 && ownBuilding.shaftStart == null;
     }
@@ -197,13 +183,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     12 fences == 29 planks + 1 Torch  -> 3 Nodes
                     TODO: Calculation definitely wrong :o
                     */
-                    if(worker.getItemCountinInventory(ownBuilding.floorBlock) >= 30
+                    if(worker.getItemCountInInventory(ownBuilding.floorBlock) >= 30
                             && worker.hasitemInInventory(Items.coal)
-                            || worker.getItemCountinInventory(Blocks.torch) >= 3){
+                            || worker.getItemCountInInventory(Blocks.torch) >= 3){
                         canMineNode = 3;
                     } else {
                         if(worker.hasitemInInventory(Items.coal)
-                                && worker.getItemCountinInventory(Blocks.torch) < 3){
+                                && worker.getItemCountInInventory(Blocks.torch) < 3){
                             job.addItemNeeded(new ItemStack(Items.coal));
                         }else{
                             job.addItemNeeded(new ItemStack(ownBuilding.floorBlock));
@@ -224,6 +210,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private void workAgain(){
         BuildingMiner ownBuilding = getOwnBuilding();
+        logger.info(job.getStage());
         switch (job.getStage())
         {
             case MINING_NODE:
@@ -283,7 +270,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if (isInHut(ownBuilding, neededItem.getItem()) || inventoryContains(neededItem.getItem())!=-1) {
             //TODO: Move item compare to lib
             if(ownBuilding.isFloorBlock(neededItem.getItem())) {
-                if(worker.getItemCountinInventory(ownBuilding.floorBlock)>=getNumFloorNeeded()){
+                if(worker.getItemCountInInventory(ownBuilding.floorBlock)>=getNumFloorNeeded()){
                     return false;
                 }
                 worker.sendLocalizedChat("entity.miner.messageMoreBlocks", neededItem.getDisplayName());
@@ -310,6 +297,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     }
 
     private void restoreWorkingConditions(){
+
         BuildingMiner ownBuilding = getOwnBuilding();
         if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, ownBuilding.getLocation())) {
             List<ItemStack> itemsNeeded = new ArrayList<>(job.getItemsNeeded());
@@ -362,6 +350,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if (isMiningAtTheMoment()) {
             return;
         }
+
+        logger.info(job.isMissingNeededItem());
 
         //Do we miss one needed item?
         if(job.isMissingNeededItem()){
@@ -763,10 +753,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 || stack.getItem().getToolClasses(stack).contains("shovel");
     }
 
-    private boolean isInHut(BuildingMiner b, Block block)
-    {
-        if(b.getTileEntity()==null)
-        {
+    private boolean isInHut(BuildingMiner b, Block block) {
+        return isInHut(b,InventoryUtils.getItemFromBlock(block));
+        /*
+        if(b.getTileEntity()==null) {
             return false;
         }
 
@@ -796,18 +786,16 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
         return false;
+        */
     }
 
-    private boolean isInHut(BuildingMiner b, Item item)
-    {
-        if(isInHut(b, Blocks.torch) && item == Items.coal)
-        {
-            return true;
-        }
+    private boolean isInHut(BuildingMiner b, Item item) {
 
-        if(b.getTileEntity()==null)
-        {
+        if(b.getTileEntity()==null) {
             return false;
+        }
+        if(item == Items.coal && isInHut(b, Blocks.torch)) {
+            return true;
         }
 
         int size = b.getTileEntity().getSizeInventory();
@@ -1041,14 +1029,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         int bestSlot = -1;
         int bestlevel = Integer.MAX_VALUE;
         InventoryCitizen inventory = worker.getInventory();
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack item = inventory.getStackInSlot(i);
-            if (item != null && (item.getItem().getToolClasses(item).contains("pickaxe")))
-            {
+            if (item != null && (item.getItem().getToolClasses(item).contains("pickaxe"))) {
                 int level = getMiningLevel(item,tool);
-                if(level >= required && level < bestlevel)
-                {
+                if(level >= required && level < bestlevel) {
                     bestSlot = i;
                     bestlevel = level;
                 }
@@ -1057,11 +1042,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return bestSlot;
     }
 
-    boolean holdEfficientPickaxe(Block target)
-    {
+    boolean holdEfficientPickaxe(Block target) {
         int bestSlot = getMostEfficientTool(target);
-        if(bestSlot >= 0)
-        {
+        if(bestSlot >= 0) {
             worker.setHeldItem(bestSlot);
             return true;
         }
@@ -1709,17 +1692,17 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     }
 
     /**
-     * TODO: Replace by worker.getItemCountinInventory(block)
+     * TODO: Replace by worker.getItemCountInInventory(block)
      */
     private int inventoryContainsMany(Block block) {
-        return worker.getItemCountinInventory(block);
+        return worker.getItemCountInInventory(block);
     }
 
     /**
-     * TODO: Replace by worker.getItemCountinInventory(item)
+     * TODO: Replace by worker.getItemCountInInventory(item)
      */
     private int inventoryContainsMany(Item item) {
-        return worker.getItemCountinInventory(item);
+        return worker.getItemCountInInventory(item);
     }
 
     private boolean doMining(BuildingMiner b, Block block, int x, int y, int z)

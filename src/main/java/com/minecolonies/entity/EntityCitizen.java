@@ -635,52 +635,27 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     private List<ItemStack> filterInventory(Block block){
-        return filterInventory(InventoryUtils.getItemFromBlock(block));
+        return InventoryUtils.filterInventory(getInventory(), block);
     }
-
-    //TODO: Move logic to InventoryUtils and make inventory calls oneliners
 
     private List<ItemStack> filterInventory(Item targetItem){
-        InventoryCitizen inventory = getInventory();
-        ArrayList<ItemStack> filtered = new ArrayList<>();
-        if(targetItem == null){
-            return filtered;
-        }
-        //Check every inventory slot
-        for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
-            ItemStack stack = inventory.getStackInSlot(slot);
-            if(stack == null){
-                continue;
-            }
-            Item currentItem = stack.getItem();
-            if(currentItem == null){
-                continue;
-            }
-            if(currentItem == targetItem){
-                filtered.add(stack);
-            }
-        }
-        return filtered;
+        return InventoryUtils.filterInventory(getInventory(),targetItem);
     }
 
-    public int getItemCountinInventory(Block block){
-        return getItemCountinInventory(InventoryUtils.getItemFromBlock(block));
+    public int getItemCountInInventory(Block block){
+        return InventoryUtils.getItemCountInInventory(getInventory(), block);
     }
 
-    public int getItemCountinInventory(Item targetitem){
-        int count = 0;
-        for(ItemStack is : filterInventory(targetitem)){
-            count += is.stackSize;
-        }
-        return count;
+    public int getItemCountInInventory(Item targetitem){
+        return InventoryUtils.getItemCountInInventory(getInventory(),targetitem);
     }
 
     public boolean hasitemInInventory(Block block){
-        return hasitemInInventory(InventoryUtils.getItemFromBlock(block));
+        return InventoryUtils.hasitemInInventory(getInventory(),block);
     }
 
     public boolean hasitemInInventory(Item item){
-        return getItemCountinInventory(item)>0;
+        return InventoryUtils.hasitemInInventory(getInventory(), item);
     }
 
     public void setInventorySize(int newSize, boolean dropLeftovers)
