@@ -12,7 +12,6 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
@@ -21,17 +20,13 @@ import net.minecraftforge.common.ForgeHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Miner AI class
  * Created: December 20, 2014
  *
- * @author Raycoms
+ * @author Raycoms, Kostronor
  */
 
 public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
@@ -55,11 +50,16 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     /**
      * Add blocks to this list to exclude mine checks.
      * They can be mined for free. (be cautions with this)
+     *
+     * Reasoning:
+     *  - Blocks.monster_egg:
+     *      Forge handling of this is a bit bogus, will later be removed.
      */
     public static Set<Block> canBeMined = new HashSet<>(Arrays.asList(
             Blocks.air,Blocks.fence,Blocks.planks,Blocks.ladder,
             Blocks.torch,Blocks.chest,Blocks.mob_spawner,Blocks.grass,
-            Blocks.tallgrass,Blocks.cactus,Blocks.log,Blocks.log2
+            Blocks.tallgrass,Blocks.cactus,Blocks.log,Blocks.log2,
+            Blocks.monster_egg
     ));
 
     private int delay = 0;
@@ -1636,12 +1636,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         worker.getInventory().decrStackSize(slot,1);
     }
 
-    private boolean doMining(BuildingMiner b, Block block, int x, int y, int z)
-    {
-        if(!hasAllTheTools()){return false;}
+    private boolean doMining(BuildingMiner b, Block block, int x, int y, int z) {
+        if(!hasAllTheTools()){
+            return false;
+        }
 
-        if(job.getStage() == Stage.MINING_NODE && b.activeNode == null)
-        {
+        if(job.getStage() == Stage.MINING_NODE && b.activeNode == null) {
             return false;
         }
 
