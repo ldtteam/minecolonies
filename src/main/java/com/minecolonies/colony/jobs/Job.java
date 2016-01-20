@@ -189,7 +189,7 @@ public abstract class Job
      *
      * @return true if the Job has no needed items
      */
-    public boolean hasItemsNeeded()
+    public boolean isMissingNeededItem()
     {
         return !itemsNeeded.isEmpty();
     }

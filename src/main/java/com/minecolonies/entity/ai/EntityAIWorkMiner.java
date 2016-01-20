@@ -219,7 +219,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
     }
 
-    private void restoreWorkingCondition(){
+    private void workAgain(){
         BuildingMiner ownBuilding = getOwnBuilding();
         switch (job.getStage())
         {
@@ -255,37 +255,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
     }
 
-    @Override
-    public void updateTask() {
-        BuildingMiner ownBuilding = getOwnBuilding();
-        if(ownBuilding == null){return;}
-
-        renderChestBelt();
-
-        //TODO: Hack until currentLevel gets accessed over getter
-        initCurrentLevel(ownBuilding);
-
-        /*
-        Check if mineshaft ladder exists
-        TODO: check if MINING_NODE is really necessary
-        */
-        if(job.getStage() != Stage.MINING_NODE && ladderNotFound()) {
-            return;
-        }
-
-        checkIfMineshaftIsAtBottomLimit();
-
-        //Mining animation while delay is decreasing.
-        if (isMiningAtTheMoment()) {
-            return;
-        }
-
-        //Simple exists needed item
-        if(!job.hasItemsNeeded()){
-            restoreWorkingCondition();
-            return;
-        }
-
+    private void restoreWorkingConditions(){
         if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, ownBuilding.getLocation())) {
             //Why use CopyOnWriteArrayList when you only iterate over it once?
             List<ItemStack> itemsNeeded = new CopyOnWriteArrayList<>();
@@ -329,6 +299,40 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
             delay = 50;
         }
+    }
+
+    @Override
+    public void updateTask() {
+        BuildingMiner ownBuilding = getOwnBuilding();
+        if(ownBuilding == null){return;}
+
+        renderChestBelt();
+
+        //TODO: Hack until currentLevel gets accessed over getter
+        initCurrentLevel(ownBuilding);
+
+        /*
+        Check if mineshaft ladder exists
+        TODO: check if MINING_NODE is really necessary
+        */
+        if(job.getStage() != Stage.MINING_NODE && ladderNotFound()) {
+            return;
+        }
+
+        checkIfMineshaftIsAtBottomLimit();
+
+        //Mining animation while delay is decreasing.
+        if (isMiningAtTheMoment()) {
+            return;
+        }
+
+        //Simple exists needed item
+        if(job.isMissingNeededItem()){
+            restoreWorkingConditions();
+            return;
+        }
+
+        workAgain();
 
     }
 

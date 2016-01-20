@@ -5,8 +5,6 @@ import com.minecolonies.colony.jobs.JobFarmer;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
-import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -103,7 +101,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             }
             delay--;
         }
-        else if(job.hasItemsNeeded())
+        else if(job.isMissingNeededItem())
         {
             if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
             {
