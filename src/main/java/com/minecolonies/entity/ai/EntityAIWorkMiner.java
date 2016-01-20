@@ -255,48 +255,76 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
     }
 
+    private boolean isItemNeeded(ItemStack neededItem){
+        BuildingMiner ownBuilding = getOwnBuilding();
+        if(isMinerTool(neededItem)) {
+            return hasAllTheTools() || isInHut(ownBuilding, neededItem.getItem());
+        }
+        if(neededItem.getItem().equals(new ItemStack(Blocks.torch).getItem()) || neededItem.getItem().equals(Items.coal)) {
+            if(worker.hasitemInInventory(Blocks.torch)){
+                return false;
+            }
+            //TODO: Move Inventory handling to worker
+            int slot = inventoryContains(Items.coal);
+            if(slot!=-1) {
+                worker.getInventory().decrStackSize(slot, 1);
+                ItemStack stack = new ItemStack(neededItem.getItem(), 4);
+                InventoryUtils.addItemStackToInventory(worker.getInventory(),stack);
+                job.removeItemNeeded(neededItem);
+                return false;
+            } else if(isInHut(ownBuilding, Items.coal) || isInHut(ownBuilding, Blocks.torch)) {
+                return false;
+            }
+            return true;
+        }
+        if (isInHut(ownBuilding, neededItem.getItem()) || inventoryContains(neededItem.getItem())!=-1) {
+            //TODO: Move item compare to lib
+            if(ownBuilding.isFloorBlock(neededItem.getItem())) {
+                if(worker.getItemCountinInventory(ownBuilding.floorBlock)>=getNumFloorNeeded()){
+                    return false;
+                }
+                worker.sendLocalizedChat("entity.miner.messageMoreBlocks", neededItem.getDisplayName());
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private int getNumFloorNeeded(){
+        int numFloorNeeded;
+        switch (job.getStage()){
+            case MINING_SHAFT:
+                numFloorNeeded = 64;
+                break;
+            case MINING_NODE:
+                numFloorNeeded = 30;
+                break;
+            default:
+                numFloorNeeded = 0;
+        }
+        return numFloorNeeded;
+    }
+
     private void restoreWorkingConditions(){
         BuildingMiner ownBuilding = getOwnBuilding();
         if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, ownBuilding.getLocation())) {
             //Why use CopyOnWriteArrayList when you only iterate over it once?
+            //TODO: fix this
             List<ItemStack> itemsNeeded = new CopyOnWriteArrayList<>();
             itemsNeeded.addAll(job.getItemsNeeded());
             //This seems much more reasonable
             itemsNeeded = new ArrayList<>(job.getItemsNeeded());
 
+            //TODO: Perhaps only one needed Item per update? should be enough...
             for (ItemStack neededItem : itemsNeeded) {
-                if(isMinerTool(neededItem)) {
-                    if(hasAllTheTools() || isInHut(ownBuilding, neededItem.getItem())) {
-                        job.removeItemNeeded(neededItem);
-                        return;
-                    }
-                } else if(neededItem.getItem().equals(new ItemStack(Blocks.torch).getItem()) || neededItem.getItem().equals(Items.coal)) {
-                    int slot = inventoryContains(Items.coal);
-                    if(slot!=-1) {
-                        worker.getInventory().decrStackSize(slot, 1);
-                        ItemStack stack = new ItemStack(neededItem.getItem(), 4);
-                        InventoryUtils.addItemStackToInventory(worker.getInventory(),stack);
-                        job.removeItemNeeded(neededItem);
-                        return;
-                    } else if(isInHut(ownBuilding, Items.coal) || isInHut(ownBuilding, Blocks.torch)) {
-                        return;
-                    } else if(inventoryContains(Blocks.torch)!=-1) {
-                        job.removeItemNeeded(neededItem);
-                        return;
-                    }
-                } else if (isInHut(ownBuilding, neededItem.getItem()) || inventoryContains(neededItem.getItem())!=-1) {
-                    if(neededItem.getItem().equals(new ItemStack(ownBuilding.floorBlock).getItem())) {
-                        if((job.getStage() == Stage.MINING_SHAFT && inventoryContainsMany(neededItem.getItem())>=64) || (job.getStage() == Stage.MINING_NODE && inventoryContainsMany(neededItem.getItem())>=30)) {
-                            job.removeItemNeeded(neededItem);
-                            return;
-                        }
-                        worker.sendLocalizedChat("entity.miner.messageMoreBlocks", neededItem.getDisplayName());
-                    } else {
-                        job.removeItemNeeded(neededItem);
-                        return;
-                    }
+                if(isItemNeeded(neededItem)) {
+                    //TODO: More sophisticated, wait until asking again etc.
+                    worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", neededItem.getDisplayName());
+                    return;
+                }else{
+                    job.removeItemNeeded(neededItem);
                 }
-                worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", neededItem.getDisplayName());
             }
             delay = 50;
         }

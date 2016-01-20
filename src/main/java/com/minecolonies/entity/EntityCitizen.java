@@ -635,14 +635,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     private List<ItemStack> filterInventory(Block block){
-        return filterInventory(getItemFromBlock(block));
+        return filterInventory(InventoryUtils.getItemFromBlock(block));
     }
 
-    //TODO: Check if this conversion is always safe
-    //But seems like ItemStack does it right...
-    private Item getItemFromBlock(Block block){
-        return new ItemStack(block).getItem();
-    }
+    //TODO: Move logic to InventoryUtils and make inventory calls oneliners
 
     private List<ItemStack> filterInventory(Item targetItem){
         InventoryCitizen inventory = getInventory();
@@ -668,7 +664,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     public int getItemCountinInventory(Block block){
-        return getItemCountinInventory(getItemFromBlock(block));
+        return getItemCountinInventory(InventoryUtils.getItemFromBlock(block));
     }
 
     public int getItemCountinInventory(Item targetitem){
@@ -680,7 +676,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     public boolean hasitemInInventory(Block block){
-        return hasitemInInventory(getItemFromBlock(block));
+        return hasitemInInventory(InventoryUtils.getItemFromBlock(block));
     }
 
     public boolean hasitemInInventory(Item item){

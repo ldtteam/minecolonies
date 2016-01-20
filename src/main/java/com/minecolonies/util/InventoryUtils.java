@@ -1,14 +1,29 @@
 package com.minecolonies.util;
 
+import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 
-public class InventoryUtils
-{
+public class InventoryUtils {
+
     private static final String TOOL_HOE = "hoe";
+
+
+
+    //TODO: Check if this conversion is always safe
+    //But seems like ItemStack does it right...
+    /**
+     * Converts a Block to its Item so it can be compared.
+     * @param block the block to convert
+     * @return an item from the registry
+     */
+    public static Item getItemFromBlock(Block block){
+        return new ItemStack(block).getItem();
+    }
+
     /**
      * Tries to put an item into Inventory
      *

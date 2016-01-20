@@ -11,10 +11,12 @@ import com.minecolonies.entity.ai.Level;
 import com.minecolonies.entity.ai.Node;
 import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.InventoryUtils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
@@ -67,6 +69,14 @@ public class BuildingMiner extends BuildingWorker
     public BuildingMiner(Colony c, ChunkCoordinates l)
     {
         super(c, l);
+    }
+
+    public boolean isFloorBlock(Block block){
+        return floorBlock == block;
+    }
+
+    public boolean isFloorBlock(Item item){
+        return InventoryUtils.getItemFromBlock(floorBlock)==item;
     }
 
     @Override
