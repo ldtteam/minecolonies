@@ -21,8 +21,11 @@ import net.minecraftforge.common.ForgeHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Miner AI class
@@ -309,12 +312,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private void restoreWorkingConditions(){
         BuildingMiner ownBuilding = getOwnBuilding();
         if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, ownBuilding.getLocation())) {
-            //Why use CopyOnWriteArrayList when you only iterate over it once?
-            //TODO: fix this
-            List<ItemStack> itemsNeeded = new CopyOnWriteArrayList<>();
-            itemsNeeded.addAll(job.getItemsNeeded());
-            //This seems much more reasonable
-            itemsNeeded = new ArrayList<>(job.getItemsNeeded());
+            List<ItemStack> itemsNeeded = new ArrayList<>(job.getItemsNeeded());
 
             //TODO: Perhaps only one needed Item per update? should be enough...
             for (ItemStack neededItem : itemsNeeded) {
