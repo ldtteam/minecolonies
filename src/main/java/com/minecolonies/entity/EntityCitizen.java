@@ -29,6 +29,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInvBasic;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -634,12 +635,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return inventory;
     }
 
-    private List<ItemStack> filterInventory(Block block){
-        return InventoryUtils.filterInventory(getInventory(), block);
+    public int findFirstSlotInInventoryWith(Item targetItem){
+        return InventoryUtils.findFirstSlotInInventoryWith(getInventory(), targetItem);
     }
 
-    private List<ItemStack> filterInventory(Item targetItem){
-        return InventoryUtils.filterInventory(getInventory(),targetItem);
+    public int findFirstSlotInInventoryWith(Block block){
+        return InventoryUtils.findFirstSlotInInventoryWith(getInventory(), block);
     }
 
     public int getItemCountInInventory(Block block){

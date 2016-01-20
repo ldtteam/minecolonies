@@ -114,7 +114,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     }
 
     private String getRenderMetaTorch(){
-        if(inventoryContains(Blocks.torch) != -1){
+        if(worker.hasitemInInventory(Blocks.torch)){
             return RENDER_META_TORCH;
         }
         return "";
@@ -255,7 +255,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 return false;
             }
             //TODO: Move Inventory handling to worker
-            int slot = inventoryContains(Items.coal);
+            int slot = worker.findFirstSlotInInventoryWith(Items.coal);
             if(slot!=-1) {
                 worker.getInventory().decrStackSize(slot, 1);
                 ItemStack stack = new ItemStack(neededItem.getItem(), 4);
@@ -267,7 +267,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
             return true;
         }
-        if (isInHut(ownBuilding, neededItem.getItem()) || inventoryContains(neededItem.getItem())!=-1) {
+        if (isInHut(ownBuilding, neededItem.getItem()) || worker.hasitemInInventory(neededItem.getItem())) {
             //TODO: Move item compare to lib
             if(ownBuilding.isFloorBlock(neededItem.getItem())) {
                 if(worker.getItemCountInInventory(ownBuilding.floorBlock)>=getNumFloorNeeded()){
@@ -402,7 +402,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             job.addItemNeeded(new ItemStack(b.floorBlock));
             return;
         }
-        else if(inventoryContainsMany(Blocks.torch)<3 && inventoryContains(Items.coal)==-1)
+        else if(inventoryContainsMany(Blocks.torch)<3 && !worker.hasitemInInventory(Items.coal))
         {
             canMineNode = 0;
             job.addItemNeeded(new ItemStack(Items.coal));
@@ -651,7 +651,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                                     while (neededPlanks > 0)
                                     {
-                                        int slot = inventoryContains(b.floorBlock);
+                                        int slot = worker.findFirstSlotInInventoryWith(b.floorBlock);
                                         int size = worker.getInventory().getStackInSlot(slot).stackSize;
 
                                         if (size > neededPlanks)
@@ -668,12 +668,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                                     if (inventoryContainsMany(Blocks.torch) > 0)
                                     {
-                                        int slot = inventoryContains(Blocks.torch);
+                                        int slot = worker.findFirstSlotInInventoryWith(Blocks.torch);
                                         worker.getInventory().decrStackSize(slot, 1);
                                     }
                                     else if (inventoryContainsMany(Items.coal) > 0)
                                     {
-                                        int slot = inventoryContains(Items.coal);
+                                        int slot = worker.findFirstSlotInInventoryWith(Items.coal);
                                         worker.getInventory().decrStackSize(slot, 1);
                                     }
 
@@ -794,6 +794,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if(b.getTileEntity()==null) {
             return false;
         }
+
         if(item == Items.coal && isInHut(b, Blocks.torch)) {
             return true;
         }
@@ -1174,12 +1175,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         //Needs 39+25 Planks + 4 Torches + 14 fence 5 to create floor-structure
         if (b.startingLevelShaft % 5 == 0 && b.startingLevelShaft != 0)
         {
-            if (inventoryContainsMany(b.floorBlock) >= 64 && (inventoryContains(Items.coal) != -1 || inventoryContainsMany(Blocks.torch) >= 4))
-            {
-                if (clear < 50)
-                {
-                    switch (clear)
-                    {
+            if ((worker.getItemCountInInventory(b.floorBlock) >= 64)
+                    && (worker.hasitemInInventory(Items.coal) || worker.getItemCountInInventory(Blocks.torch) >= 4)) {
+                if (clear < 50) {
+                    switch (clear) {
                     case 1:
 
                         break;
@@ -1345,22 +1344,21 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 {
                     while (neededPlanks > 0)
                     {
-                        int slot = inventoryContains(b.floorBlock);
+                        int slot = worker.findFirstSlotInInventoryWith(b.floorBlock);
                         int size = worker.getInventory().getStackInSlot(slot).stackSize;
+                        //TODO: Will decrement to much if stacksize > neededPlanks
                         worker.getInventory().decrStackSize(slot, size);
                         neededPlanks -= size;
                     }
 
-                    if (inventoryContains(Items.coal) != -1)
-                    {
-                        int slot = inventoryContains(Items.coal);
+                    if (worker.hasitemInInventory(Items.coal)) {
+                        int slot = worker.findFirstSlotInInventoryWith(Items.coal);
                         worker.getInventory().decrStackSize(slot, 1);
                     }
-                    else if (inventoryContainsMany(Blocks.torch) >= 4)
-                    {
+                    else if (worker.getItemCountInInventory(Blocks.torch) >= 4) {
                         while (neededTorches > 0)
                         {
-                            int slot = inventoryContains(Blocks.torch);
+                            int slot = worker.findFirstSlotInInventoryWith(Blocks.torch);
                             int size = worker.getInventory().getStackInSlot(slot).stackSize;
 
                             if (size > 4)
@@ -1410,7 +1408,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
         //Mining shaft
-        else if (inventoryContains(Blocks.dirt) != -1 && inventoryContains(Blocks.cobblestone) != -1)
+        else if (worker.hasitemInInventory(Blocks.dirt) && worker.hasitemInInventory(Blocks.cobblestone))
         {
             if (clear >= 50)
             {
@@ -1586,7 +1584,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else
         {
-            if (inventoryContains(Blocks.cobblestone) == -1)
+            if (!worker.hasitemInInventory(Blocks.cobblestone))
             {
                 job.addItemNeeded(new ItemStack(Blocks.cobblestone));
             }
@@ -1614,13 +1612,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private void setBlockFromInventory(int x, int y, int z, Block block)
     {
         world.setBlock(x, y, z, block);
-        int slot = inventoryContains(block);
+        int slot = worker.findFirstSlotInInventoryWith(block);
 
         if(slot == -1)
         {
             if(block == Blocks.torch)
             {
-                int slot2 = inventoryContains(Items.coal);
+                int slot2 = worker.findFirstSlotInInventoryWith(Items.coal);
                 if (slot2 != -1)
                 {
                     worker.getInventory().decrStackSize(slot, 1);
@@ -1636,59 +1634,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
         worker.getInventory().decrStackSize(slot,1);
-    }
-
-    private int inventoryContains(Block block)
-    {
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = worker.getInventory().getStackInSlot(slot);
-
-            if (stack != null && stack.getItem() instanceof ItemBlock)
-            {
-                Block content = ((ItemBlock) stack.getItem()).field_150939_a;
-                if(content.equals(block))
-                {
-                    return slot;
-                }
-            }
-        }
-
-        if(!(inventoryContainsMany(Items.coal)>0) && block == Blocks.torch)
-        {
-            job.addItemNeededIfNotAlready(new ItemStack(block));
-        }
-        return -1;
-    }
-
-
-
-    private int inventoryContains(Item item)
-    {
-        if(item == null)
-        {
-            return -1;
-        }
-
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = worker.getInventory().getStackInSlot(slot);
-
-            if (stack != null && stack.getItem() != null)
-            {
-                Item content = stack.getItem();
-                if(content.equals(item))
-                {
-                    return slot;
-                }
-            }
-        }
-
-        if(!(inventoryContainsMany(Blocks.torch)>0) && item == Items.coal)
-        {
-            job.addItemNeededIfNotAlready(new ItemStack(item));
-        }
-        return -1;
     }
 
     /**

@@ -13,6 +13,8 @@ import java.util.List;
 public class InventoryUtils {
 
     private static final String TOOL_HOE = "hoe";
+    private static final String TOOL_SHOVEL = "shovel";
+    private static final String TOOL_PICKAXE = "pickaxe";
 
     public static List<ItemStack> filterInventory(IInventory inventory, Item targetItem){
         ArrayList<ItemStack> filtered = new ArrayList<>();
@@ -22,14 +24,7 @@ public class InventoryUtils {
         //Check every inventory slot
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
             ItemStack stack = inventory.getStackInSlot(slot);
-            if(stack == null){
-                continue;
-            }
-            Item currentItem = stack.getItem();
-            if(currentItem == null){
-                continue;
-            }
-            if(currentItem == targetItem){
+            if(compareItems(stack,targetItem)){
                 filtered.add(stack);
             }
         }
@@ -38,6 +33,25 @@ public class InventoryUtils {
 
     public static List<ItemStack> filterInventory(IInventory inventory, Block block){
         return filterInventory(inventory, getItemFromBlock(block));
+    }
+
+    private static boolean compareItems(ItemStack itemStack, Item targetItem) {
+        return itemStack != null && itemStack.getItem() == targetItem;
+    }
+
+    public static int findFirstSlotInInventoryWith(IInventory inventory, Block block){
+        return findFirstSlotInInventoryWith(inventory,getItemFromBlock(block));
+    }
+
+    public static int findFirstSlotInInventoryWith(IInventory inventory, Item targetItem){
+        for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+            if(compareItems(inventory.getStackInSlot(slot),targetItem)){
+                return slot;
+            }
+        }
+        return -1;
+        //TODO: Later harden contract to remove compare on slot := -1
+        //throw new IllegalStateException("Item "+targetItem.getUnlocalizedName() + " not found in Inventory!");
     }
 
     public static int getItemCountInInventory(IInventory inventory, Item targetitem){
