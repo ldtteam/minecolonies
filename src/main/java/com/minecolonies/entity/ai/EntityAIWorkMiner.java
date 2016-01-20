@@ -137,9 +137,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         worker.setRenderMetadata(renderMetaData);
     }
 
-    private void initCurrentLevel(BuildingMiner ownBuilding){
+    private void initCurrentLevel(){
         if(currentLevel == -1) {
-            currentLevel = ownBuilding.currentLevel;
+            currentLevel = getOwnBuilding().currentLevel;
         }
     }
 
@@ -256,6 +256,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     }
 
     private void restoreWorkingConditions(){
+        BuildingMiner ownBuilding = getOwnBuilding();
         if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, ownBuilding.getLocation())) {
             //Why use CopyOnWriteArrayList when you only iterate over it once?
             List<ItemStack> itemsNeeded = new CopyOnWriteArrayList<>();
@@ -301,24 +302,34 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
     }
 
+    private boolean ownBuildingIsNotThere(){
+        return null == getOwnBuilding();
+    }
+
     @Override
     public void updateTask() {
-        BuildingMiner ownBuilding = getOwnBuilding();
-        if(ownBuilding == null){return;}
 
+        //Something fatally wrong? Wait for init...
+        if(ownBuildingIsNotThere()){
+            return;
+        }
+
+        //Update torch in chestbelt etc.
         renderChestBelt();
 
         //TODO: Hack until currentLevel gets accessed over getter
-        initCurrentLevel(ownBuilding);
+        initCurrentLevel();
 
         /*
         Check if mineshaft ladder exists
         TODO: check if MINING_NODE is really necessary
+        TODO: check if we have to rebuild some levels
         */
         if(job.getStage() != Stage.MINING_NODE && ladderNotFound()) {
             return;
         }
 
+        //Check for mineshaft or node mining
         checkIfMineshaftIsAtBottomLimit();
 
         //Mining animation while delay is decreasing.
@@ -326,12 +337,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return;
         }
 
-        //Simple exists needed item
+        //Do we miss one needed item?
         if(job.isMissingNeededItem()){
             restoreWorkingConditions();
             return;
         }
 
+        //All okay, work!
         workAgain();
 
     }
