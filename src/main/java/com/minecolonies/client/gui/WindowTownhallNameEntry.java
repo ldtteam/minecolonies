@@ -5,7 +5,6 @@ import com.blockout.controls.TextField;
 import com.blockout.views.Window;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.lib.EnumGUI;
 
 public class WindowTownhallNameEntry extends Window implements Button.Handler
 {
@@ -49,7 +48,7 @@ public class WindowTownhallNameEntry extends Window implements Button.Handler
 
         if (colony.getTownhall() != null)
         {
-            colony.getTownhall().openGui(EnumGUI.TOWNHALL);
+            colony.getTownhall().openGui();
         }
     }
 }
