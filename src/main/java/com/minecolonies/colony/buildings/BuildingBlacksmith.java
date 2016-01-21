@@ -37,7 +37,7 @@ public class BuildingBlacksmith extends BuildingWorker
             super(c, l);
         }
 
-        public com.blockout.views.Window getWindow(int guiId)
+        public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<BuildingWorker.View>(this, "blacksmithHut");
         }

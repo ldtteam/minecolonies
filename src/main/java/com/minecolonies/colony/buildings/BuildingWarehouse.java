@@ -1,13 +1,11 @@
 package com.minecolonies.colony.buildings;
 
-import com.blockout.views.Window;
 import com.minecolonies.client.gui.WindowHutWarehouse;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobDeliveryman;
-import com.minecolonies.lib.EnumGUI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
@@ -40,9 +38,6 @@ public class BuildingWarehouse extends BuildingWorker
 
     @Override
     public Job createJob(CitizenData citizen){ return new JobDeliveryman(citizen); }
-
-    @Override
-    public int getGuiId(){ return EnumGUI.WAREHOUSE.getID(); }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)
@@ -125,14 +120,9 @@ public class BuildingWarehouse extends BuildingWorker
             super(c, l);
         }
 
-        public Window getWindow(int guiId)
+        public com.blockout.views.Window getWindow()
         {
-            if (guiId == EnumGUI.WAREHOUSE.getID())
-            {
-                return new WindowHutWarehouse(this);
-            }
-
-            return null;
+            return new WindowHutWarehouse(this);
         }
 
         @Override

@@ -37,7 +37,7 @@ public class BuildingBaker extends BuildingWorker
             super(c, l);
         }
 
-        public com.blockout.views.Window getWindow(int guiId)
+        public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<BuildingBaker.View>(this, "bakerHut");
         }

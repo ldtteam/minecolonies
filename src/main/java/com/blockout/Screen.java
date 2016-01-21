@@ -94,6 +94,11 @@ public class Screen extends GuiScreen
     public void updateScreen()
     {
         window.onUpdate();
+
+        if (!mc.thePlayer.isEntityAlive() || mc.thePlayer.isDead)
+        {
+            mc.thePlayer.closeScreen();
+        }
     }
 
     @Override
