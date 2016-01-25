@@ -48,7 +48,7 @@ public class BuildingMiner extends BuildingWorker
     public ChunkCoordinates ladderLocation;
     public boolean foundLadder = false;
 
-    private static final String TAG_FLOOR_BLOCK = "floorBlock";//TODO is this something that needs to be saved?
+    private static final String TAG_FLOOR_BLOCK = "floorBlock";//TODO: is this something that needs to be saved?
     private static final String TAG_FENCE_BLOCK = "fenceBlock";
     private static final String TAG_STARTING_LEVEL = "startingLevelShaft";
     private static final String TAG_LEVELS = "levels";

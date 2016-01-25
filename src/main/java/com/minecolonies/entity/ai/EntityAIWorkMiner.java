@@ -33,6 +33,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     //TODO ChunkCoordinates are call by reference!
     private static final String RENDER_META_TORCH = "Torch";
     private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
+    private static final int RANGE_CHECK_AROUND_BUILDING_LADDER = 3;
     /**
      * Add blocks to this list to exclude mine checks.
      * They can be mined for free. (be cautions with this)
@@ -219,6 +220,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     public EntityAIWorkMiner(JobMiner job) {
         super(job);
     }
+
 
     @Override
     public boolean shouldExecute() {
@@ -457,6 +459,17 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             delay += 20;
         }
     }
+    
+    public void walkToLadder() {
+        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().ladderLocation
+                , RANGE_CHECK_AROUND_BUILDING_LADDER)) {
+            logger.info("Checking the mine now!");
+            job.setStage(Stage.CHECK_MINESHAFT);
+        } else {
+            logger.info("Walking to ladder");
+            delay += 20;
+        }
+    }
 
     /**
      * Dump the miners inventory into his building chest.
@@ -495,16 +508,82 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
      * Checks if this ItemStack can be used as a Pickaxe.
      */
     private boolean isPickaxe(ItemStack itemStack) {
-        return getMiningLevel(itemStack,"pickaxe") >= 0;
+        return getMiningLevel(itemStack, "pickaxe") >= 0;
     }
 
     /**
      * Checks if this ItemStack can be used as a Shovel.
      */
     private boolean isShovel(ItemStack itemStack) {
-        return getMiningLevel(itemStack,"shovel") >= 0;
+        return getMiningLevel(itemStack, "shovel") >= 0;
     }
 
+    private void lookForLadder() {
+        BuildingMiner buildingMiner = getOwnBuilding();
+        int posX = buildingMiner.getLocation().posX;
+        int posY = buildingMiner.getLocation().posY + 2;
+        int posZ = buildingMiner.getLocation().posZ;
+        for (int y = posY - 10; y < posY; y++) {
+            for (int x = posX - 10; x < posX + 10; x++) {
+                for (int z = posZ - 10; z < posZ + 10; z++) {
+
+                    if (buildingMiner.foundLadder && buildingMiner.ladderLocation != null) {
+                        if (world.getBlock(buildingMiner.ladderLocation.posX,
+                                buildingMiner.ladderLocation.posY,
+                                buildingMiner.ladderLocation.posZ) == Blocks.ladder) {
+                            job.setStage(Stage.LADDER_FOUND);
+                            return;
+                        }else{
+                            buildingMiner.foundLadder = false;
+                            buildingMiner.ladderLocation = null;
+                        }
+                    }
+                    if (world.getBlock(x, y, z).equals(Blocks.ladder)) {
+                        int firstLadderY = getFirstLadder(x, y, z);
+                        buildingMiner.ladderLocation = new ChunkCoordinates(x, firstLadderY, z);
+                        logger.info("Found topmost ladder at x:" + x + " y: " + firstLadderY + " z: " + z);
+                        delay += 10;
+                        validateLadderOrientation();
+                    }
+                }
+            }
+        }
+    }
+
+    private void validateLadderOrientation() {
+        BuildingMiner buildingMiner = getOwnBuilding();
+        int x = buildingMiner.ladderLocation.posX;
+        int y = buildingMiner.ladderLocation.posY;
+        int z = buildingMiner.ladderLocation.posZ;
+
+        //TODO: for 1.8 change to getBlockState
+        int ladderOrientation = world.getBlockMetadata(x, y, z);
+        //http://minecraft.gamepedia.com/Ladder
+
+        if (ladderOrientation == 4) {
+            //West
+            buildingMiner.vectorX = 1;
+            buildingMiner.vectorZ = 0;
+        } else if (ladderOrientation == 5) {
+            //East
+            buildingMiner.vectorX = -1;
+            buildingMiner.vectorZ = 0;
+        } else if (ladderOrientation == 3) {
+            //South
+            buildingMiner.vectorZ = 1;
+            buildingMiner.vectorX = 0;
+        } else if (ladderOrientation == 2) {
+            //North
+            buildingMiner.vectorZ = -1;
+            buildingMiner.vectorX = 0;
+        }else {
+            logger.info("Ladder not really working... trying fallback!");
+            throw new IllegalStateException("Ladder metadata was " + ladderOrientation);
+        }
+        buildingMiner.cobbleLocation = new ChunkCoordinates(x - buildingMiner.vectorX, y, z - buildingMiner.vectorZ);
+        buildingMiner.shaftStart = new ChunkCoordinates(x, getLastLadder(x,y,z)-1, z);
+        buildingMiner.foundLadder = true;
+    }
 
     @Override
     public void updateTask() {
@@ -531,20 +610,38 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         if (job.getStage() == Stage.PREPARING) {
             if (worker.isInventoryFull()) {
                 job.setStage(Stage.INVENTORY_FULL);
+                return;
             }
+            if(!getOwnBuilding().foundLadder){
+                job.setStage(Stage.SEARCHING_LADDER);
+                return;
+            }
+            job.setStage(Stage.START_MINING);
         }
 
         //Miner is at building and dumps Inventory
         if (job.getStage() == Stage.INVENTORY_FULL) {
-            if(dumpOneMoreSlot()){
-                delay = 10;
-            }else{
+            if (dumpOneMoreSlot()) {
+                delay += 10;
+            } else {
                 job.setStage(Stage.PREPARING);
             }
+            return;
         }
 
+        //Miner starts walking to the mine
+        if (job.getStage() == Stage.SEARCHING_LADDER) {
+            lookForLadder();
+            return;
+        }
+
+        if(job.getStage() == Stage.LADDER_FOUND) {
+            walkToLadder();
+            return;
+        }
+        
         logger.info("Stopping here, old code ahead...");
-        delay+=100;
+        delay += 100;
         return;
         /*
         //Something fatally wrong? Wait for init...
@@ -1149,65 +1246,65 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         super.resetTask();
     }
 
-    private void findLadder(BuildingMiner b) {
-        int posX = b.getLocation().posX;
-        int posY = b.getLocation().posY + 2;
-        int posZ = b.getLocation().posZ;
+    private void findLadder(BuildingMiner buildingMiner) {
+        int posX = buildingMiner.getLocation().posX;
+        int posY = buildingMiner.getLocation().posY + 2;
+        int posZ = buildingMiner.getLocation().posZ;
 
         for (int x = posX - 10; x < posX + 10; x++) {
             for (int z = posZ - 10; z < posZ + 10; z++) {
                 for (int y = posY - 10; y < posY; y++) {
-                    if (b.foundLadder) {
+                    if (buildingMiner.foundLadder) {
                         job.setStage(Stage.MINING_SHAFT);
                         return;
                     } else if (world.getBlock(x, y, z).equals(Blocks.ladder)) {//Parameters unused
                         int lastY = getLastLadder(x, y, z);
-                        b.ladderLocation = new ChunkCoordinates(x, lastY, z);
+                        buildingMiner.ladderLocation = new ChunkCoordinates(x, lastY, z);
                         logger.info("Found ladder at x:" + x + " y: " + lastY + " z: " + z);
                         delay = 10;
 
                         if (getLocation == null) {
-                            getLocation = new ChunkCoordinates(b.ladderLocation.posX, b.ladderLocation.posY, b.ladderLocation.posZ);
+                            getLocation = new ChunkCoordinates(buildingMiner.ladderLocation.posX, buildingMiner.ladderLocation.posY, buildingMiner.ladderLocation.posZ);
                         }
-                        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, b.ladderLocation)) {
-                            b.cobbleLocation = new ChunkCoordinates(x, lastY, z);
+                        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, buildingMiner.ladderLocation)) {
+                            buildingMiner.cobbleLocation = new ChunkCoordinates(x, lastY, z);
 
-                            if (world.getBlock(b.ladderLocation.posX - 1, b.ladderLocation.posY, b.ladderLocation.posZ).equals(Blocks.cobblestone))//Parameters unused
+                            if (world.getBlock(buildingMiner.ladderLocation.posX - 1, buildingMiner.ladderLocation.posY, buildingMiner.ladderLocation.posZ).equals(Blocks.cobblestone))//Parameters unused
                             {
-                                b.cobbleLocation = new ChunkCoordinates(x - 1, lastY, z);
-                                b.vectorX = 1;
-                                b.vectorZ = 0;
+                                buildingMiner.cobbleLocation = new ChunkCoordinates(x - 1, lastY, z);
+                                buildingMiner.vectorX = 1;
+                                buildingMiner.vectorZ = 0;
                                 logger.info("Found cobble - West");
                                 //West
-                            } else if (world.getBlock(b.ladderLocation.posX + 1, b.ladderLocation.posY, b.ladderLocation.posZ).equals(Blocks.cobblestone))//Parameters unused
+                            } else if (world.getBlock(buildingMiner.ladderLocation.posX + 1, buildingMiner.ladderLocation.posY, buildingMiner.ladderLocation.posZ).equals(Blocks.cobblestone))//Parameters unused
                             {
-                                b.cobbleLocation = new ChunkCoordinates(x + 1, lastY, z);
-                                b.vectorX = -1;
-                                b.vectorZ = 0;
+                                buildingMiner.cobbleLocation = new ChunkCoordinates(x + 1, lastY, z);
+                                buildingMiner.vectorX = -1;
+                                buildingMiner.vectorZ = 0;
                                 logger.info("Found cobble - East");
                                 //East
-                            } else if (world.getBlock(b.ladderLocation.posX, b.ladderLocation.posY, b.ladderLocation.posZ - 1).equals(Blocks.cobblestone))//Parameters unused
+                            } else if (world.getBlock(buildingMiner.ladderLocation.posX, buildingMiner.ladderLocation.posY, buildingMiner.ladderLocation.posZ - 1).equals(Blocks.cobblestone))//Parameters unused
                             {
-                                b.cobbleLocation = new ChunkCoordinates(x, lastY, z - 1);
-                                b.vectorZ = 1;
-                                b.vectorX = 0;
+                                buildingMiner.cobbleLocation = new ChunkCoordinates(x, lastY, z - 1);
+                                buildingMiner.vectorZ = 1;
+                                buildingMiner.vectorX = 0;
                                 logger.info("Found cobble - South");
                                 //South
-                            } else if (world.getBlock(b.ladderLocation.posX, b.ladderLocation.posY, b.ladderLocation.posZ + 1).equals(Blocks.cobblestone))//Parameters unused
+                            } else if (world.getBlock(buildingMiner.ladderLocation.posX, buildingMiner.ladderLocation.posY, buildingMiner.ladderLocation.posZ + 1).equals(Blocks.cobblestone))//Parameters unused
                             {
-                                b.cobbleLocation = new ChunkCoordinates(x, lastY, z + 1);
-                                b.vectorZ = -1;
-                                b.vectorX = 0;
+                                buildingMiner.cobbleLocation = new ChunkCoordinates(x, lastY, z + 1);
+                                buildingMiner.vectorZ = -1;
+                                buildingMiner.vectorX = 0;
                                 logger.info("Found cobble - North");
                                 //North
                             }
                             //world.setBlockToAir(ladderLocation.posX, ladderLocation.posY - 1, ladderLocation.posZ);
-                            getLocation = new ChunkCoordinates(b.ladderLocation.posX, b.ladderLocation.posY - 1, b.ladderLocation.posZ);
-                            b.shaftStart = new ChunkCoordinates(b.ladderLocation.posX, b.ladderLocation.posY - 1, b.ladderLocation.posZ);
-                            b.foundLadder = true;
+                            getLocation = new ChunkCoordinates(buildingMiner.ladderLocation.posX, buildingMiner.ladderLocation.posY - 1, buildingMiner.ladderLocation.posZ);
+                            buildingMiner.shaftStart = new ChunkCoordinates(buildingMiner.ladderLocation.posX, buildingMiner.ladderLocation.posY - 1, buildingMiner.ladderLocation.posZ);
+                            buildingMiner.foundLadder = true;
                             hasAllTheTools();
                             job.setStage(Stage.START_WORKING);
-                            b.markDirty();
+                            buildingMiner.markDirty();
                         }
                     }
                 }
@@ -1788,6 +1885,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }
     }
 
+    private int getFirstLadder(int x, int y, int z) {
+        if (world.getBlock(x, y, z).isLadder(world, x, y, z, null)) {
+            return getFirstLadder(x, y + 1, z);
+        } else {
+            return y - 1;
+        }
+    }
+
     private boolean canWalkOn(int x, int y, int z) {
         Block block = world.getBlock(x, y, z);
         return block.getMaterial().isSolid() && !block.equals(Blocks.web) && !world.isAirBlock(x, y, z);
@@ -1817,6 +1922,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         MINING_SHAFT,
         START_WORKING,
         MINING_NODE,
-        PREPARING, FILL_VEIN
+        PREPARING, START_MINING, LADDER_FOUND, CHECK_MINESHAFT, FILL_VEIN
     }
 }
