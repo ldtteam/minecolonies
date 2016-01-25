@@ -23,8 +23,10 @@ import net.minecraftforge.common.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuildingMiner extends BuildingWorker
-{
+public class BuildingMiner extends BuildingWorker {
+    /**
+     * A list of all shaft levels that are cleared
+     */
     public List<Level> levels = new ArrayList<>();     //Stores the levels of the miners mine. This could be a map<depth,level>
     public Node activeNode;
 
@@ -33,8 +35,14 @@ public class BuildingMiner extends BuildingWorker
 
     public int startingLevelShaft = 0;
 
+    /**
+     * The location of the topmost cobblestone the ladder starts at
+     */
     public ChunkCoordinates cobbleLocation;
 
+    /**
+     * True if shaft is at bottom limit
+     */
     public boolean clearedShaft = false;
 
     public int startingLevelNode = 0; //Save in hut
@@ -42,10 +50,22 @@ public class BuildingMiner extends BuildingWorker
     public int currentLevel = 0;
     public ChunkCoordinates shaftStart;
 
+    /**
+     * Ladder orientation in x
+     */
     public int vectorX = 1;
+    /**
+     * Ladder orientation in y
+     */
     public int vectorZ = 1;
 
+    /**
+     * The location of the topmost ladder in the shaft
+     */
     public ChunkCoordinates ladderLocation;
+    /**
+     * True if a ladder is found
+     */
     public boolean foundLadder = false;
 
     private static final String TAG_FLOOR_BLOCK = "floorBlock";//TODO: is this something that needs to be saved?

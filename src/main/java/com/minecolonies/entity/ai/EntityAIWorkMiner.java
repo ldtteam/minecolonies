@@ -34,6 +34,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     private static final String RENDER_META_TORCH = "Torch";
     private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
     private static final int RANGE_CHECK_AROUND_BUILDING_LADDER = 3;
+    private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 4;
     /**
      * Add blocks to this list to exclude mine checks.
      * They can be mined for free. (be cautions with this)
@@ -50,12 +51,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     ));
     private static Logger logger = LogManager.getLogger("Miner");
     public List<ChunkCoordinates> localVein;
-    public ChunkCoordinates getLocation;
+    public ChunkCoordinates currentWorkingLocation;
     int neededPlanks = 64;
     int neededTorches = 4;
+    /**
+     * The time in ticks until the next action is made
+     */
     private int delay = 0;
     private String NEED_ITEM;
     private int tryThreeTimes = 3;
+    /**
+     * If we have waited one delay
+     */
     private boolean hasDelayed = false;
     private int currentY = 200;
     private int clear = 1;                   //Can be saved here for now
@@ -299,8 +306,19 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
     private boolean waitingForSomething() {
         if (delay > 0) {
-            if (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.MINING_SHAFT || job.getStage() == Stage.MINING_VEIN) {
+            if (job.getStage() == Stage.MINING_NODE
+                    || job.getStage() == Stage.MINING_VEIN) {
+
                 worker.hitBlockWithToolInHand(miningBlock);
+            }
+            if (job.getStage() == Stage.MINING_SHAFT) {
+                if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, currentWorkingLocation
+                        , RANGE_CHECK_AROUND_MINING_BLOCK)) {
+                    worker.hitBlockWithToolInHand(miningBlock);
+                } else {
+                    //Don't decrease delay as we are just walking...
+                    return true;
+                }
             }
             delay--;
             return true;
@@ -533,7 +551,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                                 buildingMiner.ladderLocation.posZ) == Blocks.ladder) {
                             job.setStage(Stage.LADDER_FOUND);
                             return;
-                        }else{
+                        } else {
                             buildingMiner.foundLadder = false;
                             buildingMiner.ladderLocation = null;
                         }
@@ -576,13 +594,131 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             //North
             buildingMiner.vectorZ = -1;
             buildingMiner.vectorX = 0;
-        }else {
+        } else {
             logger.info("Ladder not really working... trying fallback!");
             throw new IllegalStateException("Ladder metadata was " + ladderOrientation);
         }
         buildingMiner.cobbleLocation = new ChunkCoordinates(x - buildingMiner.vectorX, y, z - buildingMiner.vectorZ);
-        buildingMiner.shaftStart = new ChunkCoordinates(x, getLastLadder(x,y,z)-1, z);
+        buildingMiner.shaftStart = new ChunkCoordinates(x, getLastLadder(x, y, z) - 1, z);
         buildingMiner.foundLadder = true;
+    }
+
+    private void doShaftMining() {
+
+        logger.info("Start Shaft Mining with ladder location " + getOwnBuilding().ladderLocation);
+
+        currentWorkingLocation = getNextBlockInShaftToMine();
+        logger.info("Found Block to mine " + currentWorkingLocation);
+        if (currentWorkingLocation == null) {
+            //TODO: Do something to advance ladder...
+            logger.info("Finished with one layer!");
+            return;
+        }
+
+        Block curBlock = world.getBlock(currentWorkingLocation.posX,
+                currentWorkingLocation.posY, currentWorkingLocation.posZ);
+        if (!holdEfficientTool(curBlock)) {
+            //We are missing a tool to harvest this block...
+            logger.info("We are missing a tool!");
+            return;
+        }
+
+        ItemStack tool = worker.getHeldItem();
+
+        if (curBlock.getHarvestLevel(0)
+                < getMiningLevel(tool, curBlock.getHarvestTool(0))) {
+            //We have to high of a tool...
+            //TODO: request lower tier tools
+        }
+
+        if (!ForgeHooks.canToolHarvestBlock(curBlock, 0, tool)) {
+            logger.info("ForgeHook not in sync with EfficientTool...");
+        }
+        if (!hasDelayed) {
+            delay += getBlockMiningDelay(curBlock, currentWorkingLocation);
+            hasDelayed = true;
+            return;
+        }
+
+        mineBlock(tool, currentWorkingLocation);
+        hasDelayed = false;
+    }
+
+    /**
+     * Will simulate mining a block with particles ItemDrop etc.
+     */
+    public void mineBlock(ItemStack tool, ChunkCoordinates chunkCoordinates) {
+
+        Block curBlock = world.getBlock(chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ);
+        //Dangerous TODO: validate that
+        //Seems like dispatching the event manually is a bad idea? any clues?
+        tool.getItem().onBlockDestroyed(tool, world, curBlock,
+                chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ, worker);
+        //if Tool breaks
+        if (tool.stackSize < 1) {
+            worker.setCurrentItemOrArmor(0, null);
+            worker.getInventory().setInventorySlotContents(worker.getInventory().getHeldItemSlot(), null);
+        }
+
+        Utils.blockBreakSoundAndEffect(world,
+                chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ,
+                curBlock, world.getBlockMetadata(
+                        chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ
+                ));
+
+        int fortune = 0;
+        if (tool.isItemEnchanted()) {
+            NBTTagList t = tool.getEnchantmentTagList();
+
+            for (int i = 0; i < t.tagCount(); i++) {
+                short id = t.getCompoundTagAt(i).getShort("id");
+                if (id == 35) {
+                    fortune = t.getCompoundTagAt(i).getShort("lvl");
+                }
+            }
+        }
+
+        List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, chunkCoordinates, fortune);
+        for (ItemStack item : items) {
+            InventoryUtils.setStack(worker.getInventory(), item);
+        }
+
+        world.setBlockToAir(chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ);
+        blocksMined += 1;
+    }
+
+    /**
+     * Calculates the next non-air block to mine.
+     * Will take the nearest block it finds.
+     */
+    private ChunkCoordinates getNextBlockInShaftToMine() {
+
+        ChunkCoordinates ladderPos = getOwnBuilding().ladderLocation;
+        int lastLadder = getLastLadder(ladderPos) -1;
+        if (currentWorkingLocation == null) {
+            currentWorkingLocation = new ChunkCoordinates(
+                    ladderPos.posX, lastLadder, ladderPos.posZ);
+        }
+        ChunkCoordinates nextBlockToMine = null;
+        double bestDistance = Double.MAX_VALUE;
+
+        int xOffset = 3 * getOwnBuilding().vectorX;
+        int zOffset = 3 * getOwnBuilding().vectorZ;
+
+        //7x7 shaft find nearest block
+        for (int x = -3 + xOffset; x <= 3 + xOffset; x++) {
+            for (int z = -3 + zOffset; z <= 3 + zOffset; z++) {
+                ChunkCoordinates curBlock = new ChunkCoordinates(ladderPos.posX + x,
+                        lastLadder, ladderPos.posZ + z);
+                double distance = curBlock.getDistanceSquaredToChunkCoordinates(currentWorkingLocation);
+                if (distance < bestDistance
+                        && !world.isAirBlock(curBlock.posX, curBlock.posY, curBlock.posZ)) {
+                    nextBlockToMine = curBlock;
+                    bestDistance = distance;
+                }
+            }
+        }
+        return nextBlockToMine;
     }
 
     @Override
@@ -612,11 +748,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 job.setStage(Stage.INVENTORY_FULL);
                 return;
             }
-            if(!getOwnBuilding().foundLadder){
+            if (!getOwnBuilding().foundLadder) {
                 job.setStage(Stage.SEARCHING_LADDER);
                 return;
             }
-            job.setStage(Stage.START_MINING);
+            job.setStage(Stage.CHECK_MINESHAFT);
         }
 
         //Miner is at building and dumps Inventory
@@ -629,18 +765,38 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             return;
         }
 
-        //Miner starts walking to the mine
+        //Looking for the ladder to walk to
         if (job.getStage() == Stage.SEARCHING_LADDER) {
             lookForLadder();
             return;
         }
 
-        if(job.getStage() == Stage.LADDER_FOUND) {
+        //Walking to the ladder to check out the mine
+        if (job.getStage() == Stage.LADDER_FOUND) {
             walkToLadder();
             return;
         }
+
+        //Standing on top of the ladder, checking out mine
+        if (job.getStage() == Stage.CHECK_MINESHAFT) {
+            //TODO: check if mineshaft needs repairing!
+
+            //Check if we reached the mineshaft depth limit
+            if (getLastLadder(getOwnBuilding().ladderLocation) < getOwnBuilding().getMaxY()) {
+                job.setStage(Stage.MINING_NODE);
+                getOwnBuilding().clearedShaft = true;
+            }
+            job.setStage(Stage.MINING_SHAFT);
+            getOwnBuilding().clearedShaft = false;
+            return;
+        }
+
+        if (job.getStage() == Stage.MINING_SHAFT) {
+            doShaftMining();
+            return;
+        }
         
-        logger.info("Stopping here, old code ahead...");
+        logger.info("[" + job.getStage() + "] Stopping here, old code ahead...");
         delay += 100;
         return;
         /*
@@ -682,6 +838,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         workAgain();
         */
     }
+
 
     private int unsignVector(int i) {
         if (i == 0) {
@@ -1175,7 +1332,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         int required = hasToMine.getHarvestLevel(0);
 
         if (level > required) {
-            holdEfficientPickaxe(hasToMine);
+            holdEfficientTool(hasToMine);
         }
 
         if (!canMine) {
@@ -1185,7 +1342,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             if (hasPickAxeInHand) {
                 holdShovel();
             } else {
-                if (!holdEfficientPickaxe(hasToMine)) {
+                if (!holdEfficientTool(hasToMine)) {
                     return false;
                 }
             }
@@ -1196,7 +1353,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
     int getMiningLevel(ItemStack stack, String tool) {
         if (tool == null) {
-            return stack == null ? 1 : 0; //empty hand is best on blocks who don't care
+            return stack == null ? 0 : 1; //empty hand is best on blocks who don't care (0 better 1)
         }
         if (stack == null) {
             return -1;
@@ -1212,22 +1369,22 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         String tool = target.getHarvestTool(0);
         int required = target.getHarvestLevel(0);
         int bestSlot = -1;
-        int bestlevel = Integer.MAX_VALUE;
+        int bestLevel = Integer.MAX_VALUE;
         InventoryCitizen inventory = worker.getInventory();
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack item = inventory.getStackInSlot(i);
-            if (item != null && (item.getItem().getToolClasses(item).contains("pickaxe"))) {
-                int level = getMiningLevel(item, tool);
-                if (level >= required && level < bestlevel) {
-                    bestSlot = i;
-                    bestlevel = level;
-                }
+            int level = getMiningLevel(item, tool);
+            if (level >= required && level < bestLevel) {
+                bestSlot = i;
+                bestLevel = level;
             }
+
         }
         return bestSlot;
     }
 
-    boolean holdEfficientPickaxe(Block target) {
+
+    boolean holdEfficientTool(Block target) {
         int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0) {
             worker.setHeldItem(bestSlot);
@@ -1263,8 +1420,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                         logger.info("Found ladder at x:" + x + " y: " + lastY + " z: " + z);
                         delay = 10;
 
-                        if (getLocation == null) {
-                            getLocation = new ChunkCoordinates(buildingMiner.ladderLocation.posX, buildingMiner.ladderLocation.posY, buildingMiner.ladderLocation.posZ);
+                        if (currentWorkingLocation == null) {
+                            currentWorkingLocation = new ChunkCoordinates(buildingMiner.ladderLocation.posX, buildingMiner.ladderLocation.posY, buildingMiner.ladderLocation.posZ);
                         }
                         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, buildingMiner.ladderLocation)) {
                             buildingMiner.cobbleLocation = new ChunkCoordinates(x, lastY, z);
@@ -1299,7 +1456,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                                 //North
                             }
                             //world.setBlockToAir(ladderLocation.posX, ladderLocation.posY - 1, ladderLocation.posZ);
-                            getLocation = new ChunkCoordinates(buildingMiner.ladderLocation.posX, buildingMiner.ladderLocation.posY - 1, buildingMiner.ladderLocation.posZ);
+                            currentWorkingLocation = new ChunkCoordinates(buildingMiner.ladderLocation.posX, buildingMiner.ladderLocation.posY - 1, buildingMiner.ladderLocation.posZ);
                             buildingMiner.shaftStart = new ChunkCoordinates(buildingMiner.ladderLocation.posX, buildingMiner.ladderLocation.posY - 1, buildingMiner.ladderLocation.posZ);
                             buildingMiner.foundLadder = true;
                             hasAllTheTools();
@@ -1323,14 +1480,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             return;
         }
 
-        if (getLocation == null) {
-            getLocation = new ChunkCoordinates(b.ladderLocation.posX, b.ladderLocation.posY - 1, b.ladderLocation.posZ);
+        if (currentWorkingLocation == null) {
+            currentWorkingLocation = new ChunkCoordinates(b.ladderLocation.posX, b.ladderLocation.posY - 1, b.ladderLocation.posZ);
         }
 
-        int x = getLocation.posX;
-        int y = getLocation.posY;
-        int z = getLocation.posZ;
-        currentY = getLocation.posY;
+        int x = currentWorkingLocation.posX;
+        int y = currentWorkingLocation.posY;
+        int z = currentWorkingLocation.posZ;
+        currentY = currentWorkingLocation.posY;
 
         if (y <= b.getMaxY()) {
             b.clearedShaft = true;
@@ -1483,7 +1640,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     x = x + vectorX;
                     z = z + vectorZ;
 
-                    getLocation.set(x, y, z);
+                    currentWorkingLocation.set(x, y, z);
                     clear += 1;
                 } else if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, b.ladderLocation)) {
                     while (neededPlanks > 0) {
@@ -1524,7 +1681,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     }
                     clear = 1;
                     b.startingLevelShaft++;
-                    getLocation.set(b.shaftStart.posX, b.ladderLocation.posY - 1, b.shaftStart.posZ);
+                    currentWorkingLocation.set(b.shaftStart.posX, b.ladderLocation.posY - 1, b.shaftStart.posZ);
 
                     b.markDirty();
                 }
@@ -1547,7 +1704,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     b.startingLevelShaft++;
                     b.markDirty();
 
-                    getLocation.set(b.shaftStart.posX, getLocation.posY - 1, b.shaftStart.posZ);
+                    currentWorkingLocation.set(b.shaftStart.posX, currentWorkingLocation.posY - 1, b.shaftStart.posZ);
                 }
             } else if (Utils.isWorkerAtSiteWithMove(worker, x, y, z, 3)) {
                 worker.getLookHelper().setLookPosition(x, y, z, 90f, worker.getVerticalFaceSpeed());
@@ -1666,7 +1823,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
                         ifNotAirSetBlock(x, y - 1, z, Blocks.dirt);
 
-                        getLocation.set(x, y, z);
+                        currentWorkingLocation.set(x, y, z);
                         clear += 1;
                     }
                 }
@@ -1680,8 +1837,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }
     }
 
-    private int getDelay(Block block, int x, int y, int z) {
-        return (int) (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0) * block.getBlockHardness(world, x, y, z));
+    private int getBlockMiningDelay(Block block, ChunkCoordinates chunkCoordinates) {
+        return getBlockMiningDelay(block, chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ);
+    }
+
+    private int getBlockMiningDelay(Block block, int x, int y, int z) {
+        return (int) (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0)
+                * block.getBlockHardness(world, x, y, z));
     }
 
     private void ifNotAirSetBlock(int x, int y, int z, Block block) {
@@ -1759,7 +1921,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         if (block == Blocks.dirt || block == Blocks.gravel || block == Blocks.sand || block == Blocks.clay || block == Blocks.grass) {
             holdShovel();
         } else {
-            holdEfficientPickaxe(block);
+            holdEfficientTool(block);
         }
         hasToMine = block;
         ItemStack tool = worker.getInventory().getHeldItem();
@@ -1773,7 +1935,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
             if (!hasDelayed) {
                 miningBlock = new ChunkCoordinates(x, y, z);
-                delay = getDelay(block, x, y, z);
+                delay = getBlockMiningDelay(block, x, y, z);
                 hasDelayed = true;
                 return false;
             }
@@ -1877,12 +2039,22 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }
     }
 
+    private int getLastLadder(ChunkCoordinates chunkCoordinates) {
+        return getLastLadder(chunkCoordinates.posX,
+                chunkCoordinates.posY, chunkCoordinates.posZ);
+    }
+
     private int getLastLadder(int x, int y, int z) {
         if (world.getBlock(x, y, z).isLadder(world, x, y, z, null)) {
             return getLastLadder(x, y - 1, z);
         } else {
             return y + 1;
         }
+    }
+
+    private int getFirstLadder(ChunkCoordinates chunkCoordinates) {
+        return getFirstLadder(chunkCoordinates.posX,
+                chunkCoordinates.posY, chunkCoordinates.posZ);
     }
 
     private int getFirstLadder(int x, int y, int z) {
