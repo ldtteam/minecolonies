@@ -37,7 +37,7 @@ public class BuildingStonemason extends BuildingWorker
             super(c, l);
         }
 
-        public com.blockout.views.Window getWindow(int guiId)
+        public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<BuildingStonemason.View>(this, "stonemasonHut");
         }

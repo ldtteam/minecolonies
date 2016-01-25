@@ -1,6 +1,5 @@
 package com.minecolonies.colony.buildings;
 
-import com.blockout.views.Window;
 import com.minecolonies.client.gui.WindowHutMiner;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -9,7 +8,6 @@ import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.ai.Level;
 import com.minecolonies.entity.ai.Node;
-import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -113,14 +111,9 @@ public class BuildingMiner extends BuildingWorker
             super(c, l);
         }
 
-        public Window getWindow(int guiId)
+        public com.blockout.views.Window getWindow()
         {
-            if (guiId == EnumGUI.MINER.getID())
-            {
-                return new WindowHutMiner(this);
-            }
-
-            return null;
+            return new WindowHutMiner(this);
         }
 
         @Override
@@ -272,11 +265,5 @@ public class BuildingMiner extends BuildingWorker
         {
             activeNode = levels.get(currentLevel).getNodes().get(active);
         }
-    }
-
-    @Override
-    public int getGuiId()
-    {
-        return EnumGUI.MINER.getID();
     }
 }

@@ -7,14 +7,12 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
-import com.minecolonies.lib.EnumGUI;
+import com.minecolonies.network.GuiHandler;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
@@ -315,8 +313,6 @@ public abstract class Building
 
     public void removeCitizen(CitizenData citizen) {}
 
-    public int getGuiId() { return 0; }
-
     public void onServerTick(TickEvent.ServerTickEvent event) {}
     public void onWorldTick(TickEvent.WorldTickEvent event) {}
 
@@ -348,11 +344,6 @@ public abstract class Building
         {
             requestWorkOrder(buildingLevel);
         }
-    }
-
-    public void openGui(EntityPlayer player)
-    {
-        player.openGui(MineColonies.instance, getGuiId(), getColony().getWorld(), location.posX, location.posY, location.posZ);
     }
 
     public void setRotation(int rotation)
@@ -402,13 +393,16 @@ public abstract class Building
 
         public boolean isBuildingMaxLevel() { return buildingLevel >= buildingMaxLevel; }
 
-        public void openGui(EnumGUI gui)
+        public void openGui()
         {
-            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            player.openGui(MineColonies.instance, gui.getID(), player.worldObj, location.posX, location.posY, location.posZ);
+            com.blockout.views.Window window = getWindow();
+            if (window != null)
+            {
+                GuiHandler.showGuiWindow(window);
+            }
         }
 
-        public com.blockout.views.Window getWindow(int guiId)
+        public com.blockout.views.Window getWindow()
         {
             return null;
         }

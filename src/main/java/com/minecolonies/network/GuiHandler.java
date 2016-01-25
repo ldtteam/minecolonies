@@ -30,18 +30,6 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getClientGuiElement(int guiId, EntityPlayer player, World world, int x, int y, int z)
     {
-        Building.View building = ColonyManager.getBuildingView(world, x, y, z);
-        if (building == null)
-        {
-            return null;
-        }
-
-        Window window = building.getWindow(guiId);
-        if (window != null)
-        {
-            return window.getScreen();
-        }
-
         return null;
     }
 
