@@ -33,6 +33,9 @@ public class BuildingMiner extends BuildingWorker {
     public Block floorBlock = Blocks.planks;
     public Block fenceBlock = Blocks.fence;
 
+    /**
+     * Here we can detect multiples of 5
+     */
     public int startingLevelShaft = 0;
 
     /**

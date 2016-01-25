@@ -34,7 +34,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     private static final String RENDER_META_TORCH = "Torch";
     private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
     private static final int RANGE_CHECK_AROUND_BUILDING_LADDER = 3;
-    private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 4;
+    private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 3;
     /**
      * Add blocks to this list to exclude mine checks.
      * They can be mined for free. (be cautions with this)
@@ -314,7 +314,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             if (job.getStage() == Stage.MINING_SHAFT) {
                 if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, currentWorkingLocation
                         , RANGE_CHECK_AROUND_MINING_BLOCK)) {
-                    worker.hitBlockWithToolInHand(miningBlock);
+                    worker.hitBlockWithToolInHand(currentWorkingLocation);
                 } else {
                     //Don't decrease delay as we are just walking...
                     return true;
@@ -612,6 +612,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         if (currentWorkingLocation == null) {
             //TODO: Do something to advance ladder...
             logger.info("Finished with one layer!");
+            advanceLadder();
             return;
         }
 
@@ -642,6 +643,28 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
         mineBlock(tool, currentWorkingLocation);
         hasDelayed = false;
+    }
+
+    private void advanceLadder() {
+        if(!worker.hasitemInInventory(Blocks.ladder)){
+            logger.info("Ladders are missing!");
+            return;
+        }
+        int metadata = world.getBlockMetadata(
+                getOwnBuilding().ladderLocation.posX,
+                getOwnBuilding().ladderLocation.posY,
+                getOwnBuilding().ladderLocation.posZ
+        );
+        setBlockFromInventory(
+                getOwnBuilding().ladderLocation.posX,
+                getLastLadder(getOwnBuilding().ladderLocation)-1,
+                getOwnBuilding().ladderLocation.posZ,
+                Blocks.ladder,metadata
+        );
+        getOwnBuilding().startingLevelShaft++;
+        if(getOwnBuilding().startingLevelShaft >= 5){
+            logger.info("We have to build a new level!");
+        }
     }
 
     /**
@@ -1871,6 +1894,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             }
         }
         worker.getInventory().decrStackSize(slot, 1);
+    }
+
+    private void setBlockFromInventory(int x, int y, int z, Block block, int metadata) {
+        int slot = worker.findFirstSlotInInventoryWith(block);
+        if (slot != -1) {
+            worker.getInventory().decrStackSize(slot, 1);
+            world.setBlock(x, y, z, block, metadata,3); //Flag 1+2 is needed for updates
+        }
     }
 
     private boolean doMining(BuildingMiner b, Block block, int x, int y, int z) {
