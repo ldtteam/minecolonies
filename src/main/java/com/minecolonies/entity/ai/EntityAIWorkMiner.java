@@ -476,9 +476,26 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
             if (cachedPathResult != null && !cachedPathResult.isComputing()) {
                 if (!cachedPathResult.getPathReachesDestination()) {
-                    buildingMiner.levels.get(currentLevel).getNodes().get(buildingMiner.active).setStatus(Node.Status.COMPLETED);
+
+                    //TODO: Big hairy ball of if's because of nullpointer
+                    Level level = buildingMiner.levels.get(currentLevel);
+                    if(level != null){
+                        List<Node> nodes = level.getNodes();
+                        if(nodes != null){
+                            Node node = nodes.get(buildingMiner.active);
+                            if(node != null) {
+                                node.setStatus(Node.Status.COMPLETED);
+                            }else{
+                                logger.info("Current level active node is null...");
+                            }
+                            nodes.remove(buildingMiner.active);
+                        }else {
+                            logger.info("Current level nodelist is null...");
+                        }
+                    }else{
+                        logger.info("Current level is null...");
+                    }
                     buildingMiner.activeNode.setStatus(Node.Status.COMPLETED);
-                    buildingMiner.levels.get(currentLevel).getNodes().remove(buildingMiner.active);
                     currentLevel = buildingMiner.currentLevel;
                     logger.info("Unreachable Node!");
                     buildingMiner.markDirty();
