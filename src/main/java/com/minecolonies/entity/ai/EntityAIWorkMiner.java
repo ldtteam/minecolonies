@@ -760,7 +760,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     private void fillVein() {
-        if (localVein.size() == 0) {
+
+        if (localVein == null || localVein.size() == 0) {
             localVein = null;
             job.setStage(Stage.WORKING);
         } else {
