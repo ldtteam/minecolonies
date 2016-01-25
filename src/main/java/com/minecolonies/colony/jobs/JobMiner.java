@@ -14,7 +14,7 @@ public class JobMiner extends Job
 {
     public List<ChunkCoordinates> vein;//TODO do these need to be saved?
     public int veinId=0;
-    private EntityAIWorkMiner.Stage stage = EntityAIWorkMiner.Stage.WORKING;
+    private EntityAIWorkMiner.Stage stage = EntityAIWorkMiner.Stage.START_WORKING;
     private static final String TAG_STAGE = "Stage";
 
     public JobMiner(CitizenData entity)

@@ -32,24 +32,11 @@ import java.util.*;
 public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     //TODO ChunkCoordinates are call by reference!
     private static final String RENDER_META_TORCH = "Torch";
-
-    private static Logger logger = LogManager.getLogger("Miner");
-
-    public enum Stage {
-        INVENTORY_FULL,
-        SEARCHING_LADDER,
-        MINING_VEIN,
-        MINING_SHAFT,
-        WORKING,
-        MINING_NODE,
-        FILL_VEIN
-    }
-
-
+    private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
     /**
      * Add blocks to this list to exclude mine checks.
      * They can be mined for free. (be cautions with this)
-     * <p>
+     * <p/>
      * Reasoning:
      * - Blocks.monster_egg:
      * Forge handling of this is a bit bogus, will later be removed.
@@ -60,7 +47,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             Blocks.tallgrass, Blocks.cactus, Blocks.log, Blocks.log2,
             Blocks.monster_egg
     ));
-
+    private static Logger logger = LogManager.getLogger("Miner");
+    public List<ChunkCoordinates> localVein;
+    public ChunkCoordinates getLocation;
+    int neededPlanks = 64;
+    int neededTorches = 4;
     private int delay = 0;
     private String NEED_ITEM;
     private int tryThreeTimes = 3;
@@ -69,11 +60,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     private int clear = 1;                   //Can be saved here for now
     private int blocksMined = 0;
     private Block hasToMine = Blocks.cobblestone;
-    int neededPlanks = 64;
-    int neededTorches = 4;
-
-    public List<ChunkCoordinates> localVein;
-    public ChunkCoordinates getLocation;
     private ChunkCoordinates miningBlock;
     private ChunkCoordinates loc;
 
@@ -83,6 +69,153 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     private PathResult cachedPathResult;
 
 
+    /*
+    Some logging of tool hardness
+ Checking tile.stone
+ Testing tile.stone on tile.tallgrass
+ Requires 'null' of level -1 and diff is -1
+ Testing tile.stone on tile.dirt
+ Requires 'shovel' of level 0 and diff is -1
+ Testing tile.stone on tile.stone
+ Requires 'pickaxe' of level 0 and diff is -1
+ Testing tile.stone on tile.oreIron
+ Requires 'pickaxe' of level 1 and diff is -1
+ Testing tile.stone on tile.oreDiamond
+ Requires 'pickaxe' of level 2 and diff is -1
+ Testing tile.stone on tile.obsidian
+ Requires 'pickaxe' of level 3 and diff is -1
+ Testing tile.stone on tile.bedrock
+ Requires 'null' of level -1 and diff is -1
+
+ Checking item.hoeWood
+ Testing item.hoeWood on tile.tallgrass
+ Requires 'null' of level -1 and diff is -1
+ Testing item.hoeWood on tile.dirt
+ Requires 'shovel' of level 0 and diff is -1
+ Testing item.hoeWood on tile.stone
+ Requires 'pickaxe' of level 0 and diff is -1
+ Testing item.hoeWood on tile.oreIron
+ Requires 'pickaxe' of level 1 and diff is -1
+ Testing item.hoeWood on tile.oreDiamond
+ Requires 'pickaxe' of level 2 and diff is -1
+ Testing item.hoeWood on tile.obsidian
+ Requires 'pickaxe' of level 3 and diff is -1
+ Testing item.hoeWood on tile.bedrock
+ Requires 'null' of level -1 and diff is -1
+
+ Checking item.hatchetWood
+ Testing item.hatchetWood on tile.tallgrass
+ Requires 'null' of level -1 and diff is -1
+ Testing item.hatchetWood on tile.dirt
+ Requires 'shovel' of level 0 and diff is -1
+ Testing item.hatchetWood on tile.stone
+ Requires 'pickaxe' of level 0 and diff is -1
+ Testing item.hatchetWood on tile.oreIron
+ Requires 'pickaxe' of level 1 and diff is -1
+ Testing item.hatchetWood on tile.oreDiamond
+ Requires 'pickaxe' of level 2 and diff is -1
+ Testing item.hatchetWood on tile.obsidian
+ Requires 'pickaxe' of level 3 and diff is -1
+ Testing item.hatchetWood on tile.bedrock
+ Requires 'null' of level -1 and diff is -1
+
+ Checking item.shovelWood
+ Testing item.shovelWood on tile.tallgrass
+ Requires 'null' of level -1 and diff is -1
+ Testing item.shovelWood on tile.dirt
+ Requires 'shovel' of level 0 and diff is 0
+ Testing item.shovelWood on tile.stone
+ Requires 'pickaxe' of level 0 and diff is -1
+ Testing item.shovelWood on tile.oreIron
+ Requires 'pickaxe' of level 1 and diff is -1
+ Testing item.shovelWood on tile.oreDiamond
+ Requires 'pickaxe' of level 2 and diff is -1
+ Testing item.shovelWood on tile.obsidian
+ Requires 'pickaxe' of level 3 and diff is -1
+ Testing item.shovelWood on tile.bedrock
+ Requires 'null' of level -1 and diff is -1
+
+ Checking item.shovelDiamond
+ Testing item.shovelDiamond on tile.tallgrass
+ Requires 'null' of level -1 and diff is -1
+ Testing item.shovelDiamond on tile.dirt
+ Requires 'shovel' of level 0 and diff is 3
+ Testing item.shovelDiamond on tile.stone
+ Requires 'pickaxe' of level 0 and diff is -1
+ Testing item.shovelDiamond on tile.oreIron
+ Requires 'pickaxe' of level 1 and diff is -1
+ Testing item.shovelDiamond on tile.oreDiamond
+ Requires 'pickaxe' of level 2 and diff is -1
+ Testing item.shovelDiamond on tile.obsidian
+ Requires 'pickaxe' of level 3 and diff is -1
+ Testing item.shovelDiamond on tile.bedrock
+ Requires 'null' of level -1 and diff is -1
+
+ Checking item.pickaxeWood
+ Testing item.pickaxeWood on tile.tallgrass
+ Requires 'null' of level -1 and diff is -1
+ Testing item.pickaxeWood on tile.dirt
+ Requires 'shovel' of level 0 and diff is -1
+ Testing item.pickaxeWood on tile.stone
+ Requires 'pickaxe' of level 0 and diff is 0
+ Testing item.pickaxeWood on tile.oreIron
+ Requires 'pickaxe' of level 1 and diff is 0
+ Testing item.pickaxeWood on tile.oreDiamond
+ Requires 'pickaxe' of level 2 and diff is 0
+ Testing item.pickaxeWood on tile.obsidian
+ Requires 'pickaxe' of level 3 and diff is 0
+ Testing item.pickaxeWood on tile.bedrock
+ Requires 'null' of level -1 and diff is -1
+
+ Checking item.pickaxeStone
+ Testing item.pickaxeStone on tile.tallgrass
+ Requires 'null' of level -1 and diff is -1
+ Testing item.pickaxeStone on tile.dirt
+ Requires 'shovel' of level 0 and diff is -1
+ Testing item.pickaxeStone on tile.stone
+ Requires 'pickaxe' of level 0 and diff is 1
+ Testing item.pickaxeStone on tile.oreIron
+ Requires 'pickaxe' of level 1 and diff is 1
+ Testing item.pickaxeStone on tile.oreDiamond
+ Requires 'pickaxe' of level 2 and diff is 1
+ Testing item.pickaxeStone on tile.obsidian
+ Requires 'pickaxe' of level 3 and diff is 1
+ Testing item.pickaxeStone on tile.bedrock
+ Requires 'null' of level -1 and diff is -1
+
+ Checking item.pickaxeIron
+ Testing item.pickaxeIron on tile.tallgrass
+ Requires 'null' of level -1 and diff is -1
+ Testing item.pickaxeIron on tile.dirt
+ Requires 'shovel' of level 0 and diff is -1
+ Testing item.pickaxeIron on tile.stone
+ Requires 'pickaxe' of level 0 and diff is 2
+ Testing item.pickaxeIron on tile.oreIron
+ Requires 'pickaxe' of level 1 and diff is 2
+ Testing item.pickaxeIron on tile.oreDiamond
+ Requires 'pickaxe' of level 2 and diff is 2
+ Testing item.pickaxeIron on tile.obsidian
+ Requires 'pickaxe' of level 3 and diff is 2
+ Testing item.pickaxeIron on tile.bedrock
+ Requires 'null' of level -1 and diff is -1
+
+ Checking item.pickaxeDiamond
+ Testing item.pickaxeDiamond on tile.tallgrass
+ Requires 'null' of level -1 and diff is -1
+ Testing item.pickaxeDiamond on tile.dirt
+ Requires 'shovel' of level 0 and diff is -1
+ Testing item.pickaxeDiamond on tile.stone
+ Requires 'pickaxe' of level 0 and diff is 3
+ Testing item.pickaxeDiamond on tile.oreIron
+ Requires 'pickaxe' of level 1 and diff is 3
+ Testing item.pickaxeDiamond on tile.oreDiamond
+ Requires 'pickaxe' of level 2 and diff is 3
+ Testing item.pickaxeDiamond on tile.obsidian
+ Requires 'pickaxe' of level 3 and diff is 3
+ Testing item.pickaxeDiamond on tile.bedrock
+ Requires 'null' of level -1 and diff is -1
+    */
+    
     public EntityAIWorkMiner(JobMiner job) {
         super(job);
     }
@@ -129,6 +262,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }
     }
 
+    private int getCurrentLevel() {
+        return getOwnBuilding().currentLevel;
+    }
+
     private BuildingMiner getOwnBuilding() {
         return (BuildingMiner) worker.getWorkBuilding();
     }
@@ -150,7 +287,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
     private void checkIfMineshaftIsAtBottomLimit() {
         BuildingMiner ownBuilding = getOwnBuilding();
-        if (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.WORKING) {
+        if (job.getStage() == Stage.MINING_NODE || job.getStage() == Stage.START_WORKING) {
             if (ownBuilding.ladderLocation.posY > ownBuilding.getMaxY()) {
                 ownBuilding.clearedShaft = false;
                 job.setStage(Stage.MINING_SHAFT);
@@ -225,7 +362,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             case MINING_SHAFT:
                 createShaft(ownBuilding, ownBuilding.vectorX, ownBuilding.vectorZ);
                 break;
-            case WORKING:
+            case START_WORKING:
                 if (!ownBuilding.foundLadder) {
                     job.setStage(Stage.SEARCHING_LADDER);
                 } else if (ownBuilding.activeNode != null) {
@@ -310,15 +447,108 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }
     }
 
-    private boolean ownBuildingIsNotThere() {
-        return null == getOwnBuilding();
+    public void walkToBuilding() {
+        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
+                , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
+            logger.info("Work can start!");
+            job.setStage(Stage.PREPARING);
+        } else {
+            logger.info("Walking to building");
+            delay += 20;
+        }
     }
+
+    /**
+     * Dump the miners inventory into his building chest.
+     * Only useful tools are kept!
+     * Only dumps one block at a time!
+     */
+    private boolean dumpOneMoreSlot() {
+        //Iterate over worker inventory
+        for (int i = 0; i < worker.getInventory().getSizeInventory(); i++) {
+            ItemStack stack = worker.getInventory().getStackInSlot(i);
+            //Check if it is a useful tool
+            if (stack != null && !isMiningTool(stack)) {
+                if (getOwnBuilding().getTileEntity() != null) {
+                    //Put it in Building chest
+                    ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
+                    if (returnStack == null) {
+                        worker.getInventory().decrStackSize(i, stack.stackSize);
+                    } else {
+                        worker.getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if this tool is useful for the miner.
+     */
+    private boolean isMiningTool(ItemStack itemStack) {
+        return isPickaxe(itemStack) || isShovel(itemStack);
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Pickaxe.
+     */
+    private boolean isPickaxe(ItemStack itemStack) {
+        return getMiningLevel(itemStack,"pickaxe") >= 0;
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Shovel.
+     */
+    private boolean isShovel(ItemStack itemStack) {
+        return getMiningLevel(itemStack,"shovel") >= 0;
+    }
+
 
     @Override
     public void updateTask() {
-
         //Something fatally wrong? Wait for init...
-        if (ownBuildingIsNotThere()) {
+        if (null == getOwnBuilding()) {
+            return;
+        }
+
+        //Update torch in chestbelt etc.
+        renderChestBelt();
+
+        //Mining animation while delay is decreasing.
+        if (waitingForSomething()) {
+            return;
+        }
+
+        //Miner wants to work but is not at building
+        if (job.getStage() == Stage.START_WORKING) {
+            walkToBuilding();
+            return;
+        }
+
+        //Miner is at building and prepares for work
+        if (job.getStage() == Stage.PREPARING) {
+            if (worker.isInventoryFull()) {
+                job.setStage(Stage.INVENTORY_FULL);
+            }
+        }
+
+        //Miner is at building and dumps Inventory
+        if (job.getStage() == Stage.INVENTORY_FULL) {
+            if(dumpOneMoreSlot()){
+                delay = 10;
+            }else{
+                job.setStage(Stage.PREPARING);
+            }
+        }
+
+        logger.info("Stopping here, old code ahead...");
+        delay+=100;
+        return;
+        /*
+        //Something fatally wrong? Wait for init...
+        if (null == getOwnBuilding()) {
             return;
         }
 
@@ -328,11 +558,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         //TODO: Hack until currentLevel gets accessed over getter
         initCurrentLevel();
 
-        /*
-        Check if mineshaft ladder exists
-        TODO: check if MINING_NODE is really necessary
-        TODO: check if we have to rebuild some levels
-        */
+        //
+        //Check if mineshaft ladder exists
+        //TODO: check if MINING_NODE is really necessary
+        //TODO: check if we have to rebuild some levels
+        //
         if (job.getStage() != Stage.MINING_NODE && ladderNotFound()) {
             return;
         }
@@ -353,7 +583,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
         //All okay, work!
         workAgain();
-
+        */
     }
 
     private int unsignVector(int i) {
@@ -479,20 +709,20 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
                     //TODO: Big hairy ball of if's because of nullpointer
                     Level level = buildingMiner.levels.get(currentLevel);
-                    if(level != null){
+                    if (level != null) {
                         List<Node> nodes = level.getNodes();
-                        if(nodes != null){
+                        if (nodes != null) {
                             Node node = nodes.get(buildingMiner.active);
-                            if(node != null) {
+                            if (node != null) {
                                 node.setStatus(Node.Status.COMPLETED);
-                            }else{
+                            } else {
                                 logger.info("Current level active node is null...");
                             }
                             nodes.remove(buildingMiner.active);
-                        }else {
+                        } else {
                             logger.info("Current level nodelist is null...");
                         }
-                    }else{
+                    } else {
                         logger.info("Current level is null...");
                     }
                     buildingMiner.activeNode.setStatus(Node.Status.COMPLETED);
@@ -732,14 +962,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     }
                 }
             }
-            job.setStage(Stage.WORKING);
+            job.setStage(Stage.START_WORKING);
             blocksMined = 0;
         }
     }
 
     private void mineVein(BuildingMiner b) {
         if (job.vein == null) {
-            job.setStage(Stage.WORKING);
+            job.setStage(Stage.START_WORKING);
             return;
         }
 
@@ -780,7 +1010,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
         if (localVein == null || localVein.size() == 0) {
             localVein = null;
-            job.setStage(Stage.WORKING);
+            job.setStage(Stage.START_WORKING);
         } else {
             ChunkCoordinates nextLoc = localVein.get(0);
             int x = nextLoc.posX;
@@ -868,7 +1098,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     int getMiningLevel(ItemStack stack, String tool) {
-        if (stack == null || tool == null) return -1;
+        if (tool == null) {
+            return stack == null ? 1 : 0; //empty hand is best on blocks who don't care
+        }
+        if (stack == null) {
+            return -1;
+        }
         return stack.getItem().getHarvestLevel(stack, tool);
     }
 
@@ -971,7 +1206,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                             b.shaftStart = new ChunkCoordinates(b.ladderLocation.posX, b.ladderLocation.posY - 1, b.ladderLocation.posZ);
                             b.foundLadder = true;
                             hasAllTheTools();
-                            job.setStage(Stage.WORKING);
+                            job.setStage(Stage.START_WORKING);
                             b.markDirty();
                         }
                     }
@@ -982,7 +1217,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
     private void createShaft(BuildingMiner b, int vectorX, int vectorZ) {
         if (b.clearedShaft) {
-            job.setStage(Stage.WORKING);
+            job.setStage(Stage.START_WORKING);
             return;
         }
 
@@ -1352,7 +1587,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         return (int) (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0) * block.getBlockHardness(world, x, y, z));
     }
 
-
     private void ifNotAirSetBlock(int x, int y, int z, Block block) {
         if (!canWalkOn(x, y, z)) {
             setBlockFromInventory(x, y, z, block);
@@ -1574,5 +1808,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }
 
         return findOre.contains("ore") || findOre.contains("Ore");
+    }
+
+    public enum Stage {
+        INVENTORY_FULL,
+        SEARCHING_LADDER,
+        MINING_VEIN,
+        MINING_SHAFT,
+        START_WORKING,
+        MINING_NODE,
+        PREPARING, FILL_VEIN
     }
 }

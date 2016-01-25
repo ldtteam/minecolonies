@@ -29,7 +29,7 @@ public class Level
 
     private Level(){}
 
-    public Level(int x, int depth, int z,BuildingMiner b)
+    public Level(int x, int depth, int z, BuildingMiner b)
     {
         this.depth = depth;
         nodes = new ArrayList<>();

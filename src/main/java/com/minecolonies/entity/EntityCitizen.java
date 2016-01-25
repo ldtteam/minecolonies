@@ -575,6 +575,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return this.ticksExisted + 7 * this.getEntityId();
     }
 
+    public boolean isInventoryFull() {
+        return InventoryUtils.getOpenSlot(getInventory()) == -1;
+    }
+
     public enum DesiredActivity
     {
         SLEEP,
