@@ -16,7 +16,7 @@ import java.util.*;
 public abstract class Job
 {
     private final CitizenData citizen;
-    private List<ItemStack> itemsNeeded = new ArrayList<ItemStack>();
+    private List<ItemStack> itemsNeeded = new ArrayList<>();
 
     //  Job and View Class Mapping
     private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<String, Class<? extends Job>>();
@@ -202,6 +202,11 @@ public abstract class Job
     public List<ItemStack> getItemsNeeded()
     {
         return Collections.unmodifiableList(itemsNeeded);
+    }
+
+    public void clearItemsNeeded()
+    {
+        itemsNeeded = new ArrayList<>();
     }
 
     /**

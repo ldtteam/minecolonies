@@ -31,6 +31,17 @@ public class InventoryUtils {
         return filtered;
     }
 
+    public static List<ItemStack> getInventoryAsList(IInventory inventory){
+        ArrayList<ItemStack> filtered = new ArrayList<>();
+        for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+            ItemStack stack = inventory.getStackInSlot(slot);
+            if(stack != null) {
+                filtered.add(inventory.getStackInSlot(slot));
+            }
+        }
+        return filtered;
+    }
+
     public static List<ItemStack> filterInventory(IInventory inventory, Block block){
         return filterInventory(inventory, getItemFromBlock(block));
     }
