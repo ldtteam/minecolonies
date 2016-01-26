@@ -35,7 +35,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     private static final String RENDER_META_TORCH = "Torch";
     private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
     private static final int RANGE_CHECK_AROUND_BUILDING_LADDER = 3;
-    private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 3;
+    private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 2;
     /**
      * Add blocks to this list to exclude mine checks.
      * They can be mined for free. (be cautions with this)
@@ -52,7 +52,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     ));
     private static Logger logger = LogManager.getLogger("Miner");
     public List<ChunkCoordinates> localVein;
+    //The current block to mine
     public ChunkCoordinates currentWorkingLocation;
+    //the last safe location now being air
+    private ChunkCoordinates currentStandingPosition;
     int neededPlanks = 64;
     int neededTorches = 4;
     /**
@@ -84,6 +87,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     private int needsPickaxeLevel = -1;
     private String speechdelaystring = "";
     private int speechrepeat = 1;
+
 
 
     /*
@@ -321,7 +325,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 worker.hitBlockWithToolInHand(miningBlock);
             }
             if (job.getStage() == Stage.MINING_SHAFT) {
-                if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, currentWorkingLocation
+                if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, currentStandingPosition
                         , RANGE_CHECK_AROUND_MINING_BLOCK)) {
                     worker.hitBlockWithToolInHand(currentWorkingLocation);
                 } else {
@@ -617,11 +621,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     private void requestTool(Block curblock) {
-        if (curblock.getHarvestTool(0) == "shovel") {
+        if (Objects.equals(curblock.getHarvestTool(0), "shovel")) {
             job.setStage(Stage.PREPARING);
             needsShovel = true;
         }
-        if (curblock.getHarvestTool(0) == "pickaxe") {
+        if (Objects.equals(curblock.getHarvestTool(0), "pickaxe")) {
             job.setStage(Stage.PREPARING);
             needsPickaxe = true;
             needsPickaxeLevel = curblock.getHarvestLevel(0);
@@ -787,6 +791,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             currentWorkingLocation = new ChunkCoordinates(
                     ladderPos.posX, lastLadder, ladderPos.posZ);
         }
+        currentStandingPosition = currentWorkingLocation;
         ChunkCoordinates nextBlockToMine = null;
         double bestDistance = Double.MAX_VALUE;
 
@@ -794,7 +799,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         int zOffset = 3 * getOwnBuilding().vectorZ;
 
         //7x7 shaft find nearest block
-        for (int x = -3 + xOffset; x <= 3 + xOffset; x++) {
+        //Beware from positive to negative! to draw the miner to a wall to go down
+        for (int x = 3 + xOffset; x >= -3 + xOffset; x--) {
             for (int z = -3 + zOffset; z <= 3 + zOffset; z++) {
                 if (x == 0 && 0 == z) {
                     continue;
@@ -989,7 +995,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
     private boolean buildNextBlockInShaft() {
         ChunkCoordinates ladderPos = getOwnBuilding().ladderLocation;
-        int lastLadder = getLastLadder(ladderPos) + 2;
+        int lastLadder = getLastLadder(ladderPos) + 1;
 
         int xOffset = 3 * getOwnBuilding().vectorX;
         int zOffset = 3 * getOwnBuilding().vectorZ;
@@ -1027,8 +1033,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                         lastLadder+1, ladderPos.posZ + z);
                 int normalizedX = x - xOffset;
                 int normalizedZ = z - zOffset;
-                if (Math.abs(normalizedX) == 2
-                        || Math.abs(normalizedZ) == 2) {
+                if ((Math.abs(normalizedX) == 2 && Math.abs(normalizedZ) < 3)
+                        || (Math.abs(normalizedZ) == 2 && Math.abs(normalizedX) < 3)) {
                     if (world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ) != Blocks.fence) {
                         if (missesItemsInInventory(new ItemStack(Blocks.fence))) {
                             return true;
@@ -1071,6 +1077,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
             if (buildNextBlockInShaft()) {
                 delay += 10;
+                return;
             }
             getOwnBuilding().startingLevelShaft = 0;
             job.setStage(Stage.START_WORKING);
@@ -2468,7 +2475,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         String findOre = block.toString();
 
         if (job.vein == null && (findOre.contains("ore") || findOre.contains("Ore"))) {
-            job.vein = new ArrayList<ChunkCoordinates>();
+            job.vein = new ArrayList<>();
             job.vein.add(new ChunkCoordinates(x, y, z));
             logger.info("Found ore");
             findVein(x, y, z);

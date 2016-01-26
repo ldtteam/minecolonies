@@ -180,6 +180,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.updateObject(DATA_MODEL, modelId.name());
         setRenderMetadata("");
 
+
+
         //  AI Tasks
         Object currentTasks[] = this.tasks.taskEntries.toArray();
         for (Object task : currentTasks)
@@ -221,6 +223,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         renderMetadata = metadata;
         dataWatcher.updateObject(DATA_RENDER_METADATA, renderMetadata);
+        //Display some debug info always available while testing
+        //TODO: remove this when in Beta!
+        //Will help track down some hard to find bugs (Pathfinding etc.)
+        if(this.getColonyJob() != null) {
+            setCustomNameTag(citizenData.getName() + " ("+getStatus()+")" +this.getColonyJob().getNameTagDescription());
+        }
     }
 
     @Override

@@ -263,4 +263,13 @@ public abstract class Job
      * @param tasks EntityAITasks list to add tasks to
      */
     public void addTasks(EntityAITasks tasks) {}
+
+    /**
+     * This method can be used to display the current status.
+     * That a citizen is having.
+     * @return Small string to display info in name tag
+     */
+    public String getNameTagDescription() {
+        return "";
+    }
 }
