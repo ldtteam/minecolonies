@@ -79,6 +79,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
     private List<ItemStack>itemsNeeded = new ArrayList<>();
     private int speechdelay = 0;
+    private boolean needsShovel = false;
+    private boolean needsPickaxe = false;
+    private int needsPickaxeLevel = -1;
 
 
     /*
@@ -471,7 +474,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }
     }
 
-    public void walkToBuilding() {
+    private void walkToBuilding() {
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
                 , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
             logger.info("Work can start!");
@@ -482,7 +485,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }
     }
     
-    public void walkToLadder() {
+    private void walkToLadder() {
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().ladderLocation
                 , RANGE_CHECK_AROUND_BUILDING_LADDER)) {
             logger.info("Checking the mine now!");
@@ -607,6 +610,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         buildingMiner.foundLadder = true;
     }
 
+    private void requestTool(Block curblock){
+        if(curblock.getHarvestTool(0) == "shovel"){
+            job.setStage(Stage.PREPARING);
+            needsShovel = true;
+        }
+        if(curblock.getHarvestTool(0) == "pickaxe"){
+            job.setStage(Stage.PREPARING);
+            needsPickaxe = true;
+            needsPickaxeLevel = curblock.getHarvestLevel(0);
+        }
+    }
+
     private void doShaftMining() {
 
         logger.info("Start Shaft Mining with ladder location " + getOwnBuilding().ladderLocation);
@@ -624,6 +639,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 currentWorkingLocation.posY, currentWorkingLocation.posZ);
         if (!holdEfficientTool(curBlock)) {
             //We are missing a tool to harvest this block...
+
+
             logger.info("We are missing a tool!");
             return;
         }
@@ -688,13 +705,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         );
         setBlockFromInventory(
                 getOwnBuilding().cobbleLocation.posX,
-                getLastLadder(getOwnBuilding().ladderLocation)-2,
+                getLastLadder(getOwnBuilding().ladderLocation)-1,
                 getOwnBuilding().cobbleLocation.posZ,
                 Blocks.cobblestone
         );
         setBlockFromInventory(
                 getOwnBuilding().ladderLocation.posX,
-                getLastLadder(getOwnBuilding().ladderLocation)-2,
+                getLastLadder(getOwnBuilding().ladderLocation)-1,
                 getOwnBuilding().ladderLocation.posZ,
                 Blocks.ladder,metadata
         );
@@ -707,7 +724,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     /**
      * Will simulate mining a block with particles ItemDrop etc.
      */
-    public void mineBlock(ItemStack tool, ChunkCoordinates chunkCoordinates) {
+    private void mineBlock(ItemStack tool, ChunkCoordinates chunkCoordinates) {
 
         Block curBlock = world.getBlock(chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ);
         //Dangerous TODO: validate that
@@ -786,13 +803,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
     private void syncNeededItemsWithInventory(){
         job.clearItemsNeeded();
-        for(ItemStack is : itemsNeeded){
-            job.addItemNeeded(is);
-        }
-        for(ItemStack is : InventoryUtils.getInventoryAsList(worker.getInventory())){
-            job.removeItemNeeded(is);
-        }
-        itemsCurrentlyNeeded = job.getItemsNeeded();
+        itemsNeeded.forEach(job::addItemNeeded);
+        InventoryUtils.getInventoryAsList(worker.getInventory()).forEach(job::removeItemNeeded);
+        itemsCurrentlyNeeded = new ArrayList<>(job.getItemsNeeded());
     }
 
     private void lookForNeededItems() {
@@ -800,6 +813,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         if(itemsCurrentlyNeeded.isEmpty()){
             itemsNeeded.clear();
             job.clearItemsNeeded();
+            speechdelay = 0;
             return;
         }
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
@@ -808,6 +822,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             ItemStack first = itemsCurrentlyNeeded.get(0);
             //Takes one Stack from the hut if existent
             if(isInHut(first)){
+                speechdelay = 0;
                 return;
             }
             if(speechdelay > 0){
@@ -847,6 +862,107 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         return false;
     }
 
+    private boolean isShovelInHut(){
+        BuildingMiner buildingMiner = getOwnBuilding();
+        if (buildingMiner.getTileEntity() == null) {
+            return false;
+        }
+        int size = buildingMiner.getTileEntity().getSizeInventory();
+        for (int i = 0; i < size; i++) {
+            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
+            if (stack != null && isShovel(stack)) {
+                takeItemStackFromChest(buildingMiner.getTileEntity(),stack,i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isPickaxeInHut(int minlevel){
+        BuildingMiner buildingMiner = getOwnBuilding();
+        if (buildingMiner.getTileEntity() == null) {
+            return false;
+        }
+        int size = buildingMiner.getTileEntity().getSizeInventory();
+        for (int i = 0; i < size; i++) {
+            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
+            int level  = getMiningLevel(stack, "pickaxe");
+            if (stack != null && checkIfPickaxeQualifies(minlevel,level)) {
+                takeItemStackFromChest(buildingMiner.getTileEntity(),stack,i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkIfPickaxeQualifies(int minlevel, int level){
+        if(minlevel < 0){
+            return true;
+        }
+        if(minlevel == 0){
+            if(level >= 0 && level <= 1){
+                return true;
+            }
+        }else if( level >= minlevel){
+            return true;
+        }
+        return false;
+    }
+
+    private void checkForPickaxe(int minlevel) {
+        //Check for a pickaxe
+        for(ItemStack is : InventoryUtils.getInventoryAsList(worker.getInventory())) {
+            int level  = getMiningLevel(is, "pickaxe");
+            if(checkIfPickaxeQualifies(minlevel,level)){
+                needsPickaxe = false;
+                speechdelay = 0;
+                return;
+            }
+        }
+        delay += 20;
+        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
+                , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
+            if(isPickaxeInHut(minlevel)){
+                speechdelay = 0;
+                return;
+            }
+            if(speechdelay > 0){
+                speechdelay--;
+                return;
+            }
+            worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", "Pickaxe at least level "+minlevel);
+            speechdelay += 300;
+        }
+
+    }
+
+    private void checkForShovel() {
+        //Check for a shovel
+        needsShovel = InventoryUtils.getInventoryAsList(worker.getInventory())
+                .stream().anyMatch(this::isShovel);
+
+        if(!needsShovel){
+            speechdelay = 0;
+            return;
+        }
+        delay += 20;
+        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
+                , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
+            if(isShovelInHut()){
+                speechdelay = 0;
+                return;
+            }
+            if(speechdelay > 0){
+                speechdelay--;
+                return;
+            }
+            worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", "Shovel");
+            speechdelay += 300;
+
+        }
+
+    }
+
     @Override
     public void updateTask() {
         //Something fatally wrong? Wait for init...
@@ -880,6 +996,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 delay += 10;
                 return;
             }
+            //We need tools
+            if(needsShovel){
+                checkForShovel();
+                delay += 10;
+                return;
+            }
+            if(needsPickaxe){
+                checkForPickaxe(needsPickaxeLevel);
+                delay += 10;
+                return;
+            }
+
             job.setStage(Stage.CHECK_MINESHAFT);
         }
 
@@ -1514,7 +1642,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 bestSlot = i;
                 bestLevel = level;
             }
-
         }
         return bestSlot;
     }
