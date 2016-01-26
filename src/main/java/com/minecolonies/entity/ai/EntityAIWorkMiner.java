@@ -82,6 +82,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     private boolean needsShovel = false;
     private boolean needsPickaxe = false;
     private int needsPickaxeLevel = -1;
+    private String speechdelaystring = "";
 
 
     /*
@@ -639,8 +640,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 currentWorkingLocation.posY, currentWorkingLocation.posZ);
         if (!holdEfficientTool(curBlock)) {
             //We are missing a tool to harvest this block...
-
-
+            requestTool(curBlock);
             logger.info("We are missing a tool!");
             return;
         }
@@ -813,7 +813,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         if(itemsCurrentlyNeeded.isEmpty()){
             itemsNeeded.clear();
             job.clearItemsNeeded();
-            speechdelay = 0;
             return;
         }
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
@@ -822,15 +821,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             ItemStack first = itemsCurrentlyNeeded.get(0);
             //Takes one Stack from the hut if existent
             if(isInHut(first)){
-                speechdelay = 0;
                 return;
             }
-            if(speechdelay > 0){
-                speechdelay--;
-                return;
-            }
-            worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", first.getDisplayName());
-            speechdelay += 300;
+            requestWithoutSpam(first.getDisplayName());
         }
     }
 
@@ -909,13 +902,32 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         return false;
     }
 
+    private void requestWithoutSpam(String chat){
+        talkWithoutSpam("entity.miner.messageNeedBlockAndItem",chat);
+    }
+
+    private void talkWithoutSpam(String key, String chat){
+        String curstring = key + chat;
+        if(Objects.equals(speechdelaystring, curstring)){
+            if(delay > 0){
+                delay--;
+                return;
+            }
+        }
+        worker.sendLocalizedChat(key,chat);
+        speechdelaystring = key+chat;
+        speechdelay = 300;
+        if(delay < 20) {
+            delay = 20;
+        }
+    }
+
     private void checkForPickaxe(int minlevel) {
         //Check for a pickaxe
         for(ItemStack is : InventoryUtils.getInventoryAsList(worker.getInventory())) {
             int level  = getMiningLevel(is, "pickaxe");
             if(checkIfPickaxeQualifies(minlevel,level)){
                 needsPickaxe = false;
-                speechdelay = 0;
                 return;
             }
         }
@@ -923,15 +935,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
                 , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
             if(isPickaxeInHut(minlevel)){
-                speechdelay = 0;
                 return;
             }
-            if(speechdelay > 0){
-                speechdelay--;
-                return;
-            }
-            worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", "Pickaxe at least level "+minlevel);
-            speechdelay += 300;
+            requestWithoutSpam("Pickaxe at least level "+minlevel);
         }
 
     }
@@ -942,22 +948,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 .stream().anyMatch(this::isShovel);
 
         if(!needsShovel){
-            speechdelay = 0;
             return;
         }
         delay += 20;
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
                 , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
             if(isShovelInHut()){
-                speechdelay = 0;
                 return;
             }
-            if(speechdelay > 0){
-                speechdelay--;
-                return;
-            }
-            worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", "Shovel");
-            speechdelay += 300;
+            requestWithoutSpam("Shovel");
 
         }
 
