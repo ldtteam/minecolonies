@@ -757,6 +757,25 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         return false;
     }
 
+    private int getFortuneOf(ItemStack tool){
+        if(tool == null){
+            return 0;
+        }
+        //calculate fortune enchantment
+        int fortune = 0;
+        if (tool.isItemEnchanted()) {
+            NBTTagList t = tool.getEnchantmentTagList();
+
+            for (int i = 0; i < t.tagCount(); i++) {
+                short id = t.getCompoundTagAt(i).getShort("id");
+                if (id == 35) {
+                    fortune = t.getCompoundTagAt(i).getShort("lvl");
+                }
+            }
+        }
+        return fortune;
+    }
+
     /**
      * Will simulate mining a block with particles ItemDrop etc.
      * Attention:
@@ -780,25 +799,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
 
         //calculate fortune enchantment
-        int fortune = 0;
-        if (tool.isItemEnchanted()) {
-            NBTTagList t = tool.getEnchantmentTagList();
-
-            for (int i = 0; i < t.tagCount(); i++) {
-                short id = t.getCompoundTagAt(i).getShort("id");
-                if (id == 35) {
-                    fortune = t.getCompoundTagAt(i).getShort("lvl");
-                }
-            }
-        }
+        int fortune = getFortuneOf(tool);
 
         //Dangerous TODO: validate that
         //Seems like dispatching the event manually is a bad idea? any clues?
-        tool.getItem().onBlockDestroyed(tool, world, curBlock,
-                blockToMine.posX, blockToMine.posY, blockToMine.posZ, worker);
+        if(tool != null) {
+            //Reduce durability if not using hand
+            tool.getItem().onBlockDestroyed(tool, world, curBlock,
+                    blockToMine.posX, blockToMine.posY, blockToMine.posZ, worker);
+        }
 
         //if Tool breaks
-        if (tool.stackSize < 1) {
+        if (tool != null && tool.stackSize < 1) {
             worker.setCurrentItemOrArmor(0, null);
             worker.getInventory().setInventorySlotContents(worker.getInventory().getHeldItemSlot(), null);
         }
@@ -2331,6 +2343,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     private int getBlockMiningDelay(Block block, int x, int y, int z) {
+        if(worker.getHeldItem() == null){
+            return (int) block.getBlockHardness(world, x, y, z);
+        }
         return (int) (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0)
                 * block.getBlockHardness(world, x, y, z));
     }
