@@ -31,7 +31,7 @@ import java.util.*;
  */
 
 public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
-    //TODO ChunkCoordinates are call by reference!
+
     private static final String RENDER_META_TORCH = "Torch";
     private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
     private static final int RANGE_CHECK_AROUND_BUILDING_LADDER = 3;

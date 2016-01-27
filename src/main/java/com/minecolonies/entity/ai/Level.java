@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
  *
  * A Level contains all the nodes for one level of the mine
  *
- * @author Colton
+ * @author Colton, Kostronor
  */
 public class Level
 {
@@ -34,28 +35,52 @@ public class Level
         this.depth = depth;
         nodes = new ArrayList<>();
 
-        int ladderX = b.cobbleLocation.posX;
-        int ladderZ = b.cobbleLocation.posZ;
+        int cobbleX = b.cobbleLocation.posX;
+        int cobbleZ = b.cobbleLocation.posZ;
 
-        if(ladderX != x-4 || ladderZ != z)
+        if(cobbleX != x-4 || cobbleZ != z)
         {
             nodes.add(new Node(x-4,z,-1,0));
         }
 
-        if(ladderX != x || ladderZ != z+4)
+        if(cobbleX != x || cobbleZ != z+4)
         {
             nodes.add(new Node(x,z+4,0,+1));
         }
 
-        if(ladderX != x+4 || ladderZ != z)
+        if(cobbleX != x+4 || cobbleZ != z)
         {
             nodes.add(new Node(x+4,z,+1,0));
         }
 
-        if(ladderX != x || ladderZ != z-4)
+        if(cobbleX != x || cobbleZ != z-4)
         {
             nodes.add(new Node(x,z-4,0,-1));
         }
+    }
+
+    public Level(BuildingMiner buildingMiner, int depth){
+        this.depth = depth;
+        //TODO: Store in HashMap for faster access
+        nodes = new ArrayList<>();
+
+        int cobbleX = buildingMiner.cobbleLocation.posX;
+        int cobbleZ = buildingMiner.cobbleLocation.posZ;
+
+        //check for orientation
+        ChunkCoordinates cobbleCenter = new ChunkCoordinates(
+                cobbleX - (buildingMiner.vectorX*3),
+                depth,
+                cobbleZ - (buildingMiner.vectorZ*3)
+        );
+        ChunkCoordinates ladderCenter = new ChunkCoordinates(
+                cobbleX + (buildingMiner.vectorX*4),
+                depth,
+                cobbleZ + (buildingMiner.vectorZ*4)
+        );
+        //TODO: let them know they are ladder and cobble (they are handled different)
+        addNewNode(cobbleCenter.posX,cobbleCenter.posZ,buildingMiner.vectorX,buildingMiner.vectorZ);
+        addNewNode(ladderCenter.posX,ladderCenter.posZ,buildingMiner.vectorX,buildingMiner.vectorZ);
     }
 
     public void writeToNBT(NBTTagCompound compound)
