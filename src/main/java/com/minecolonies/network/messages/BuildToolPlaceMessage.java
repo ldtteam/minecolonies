@@ -76,6 +76,8 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
             world.setBlock(message.x, message.y, message.z, block);
             block.onBlockPlacedBy(world, message.x, message.y, message.z, player, null);
 
+            player.inventory.consumeInventoryItem(Item.getItemFromBlock(block));
+
             Building building = ColonyManager.getBuilding(world, message.x, message.y, message.z);
 
             if(building != null)
