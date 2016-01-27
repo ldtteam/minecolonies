@@ -1084,7 +1084,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             for (int z = -5 + zOffset; z <= 5 + zOffset; z++) {
                 for (int y = 5; y >= -7; y--) {
                     if ((x == 0 && 0 == z)
-                            || y <= 1) {
+                            || lastLadder+y <= 1) {
                         continue;
                     }
                     ChunkCoordinates curBlock = new ChunkCoordinates(ladderPos.posX + x,
