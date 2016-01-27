@@ -1,12 +1,10 @@
 package com.minecolonies;
 
 import com.minecolonies.blocks.ModBlocks;
-import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.GuiHandler;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.proxy.IProxy;
 import com.minecolonies.util.RecipeHandler;
@@ -62,8 +60,6 @@ public class MineColonies
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
-
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Constants.MOD_NAME);
         //  ColonyView messages
         network.registerMessage(ColonyViewMessage.class,                ColonyViewMessage.class,                1,  Side.CLIENT);

@@ -12,13 +12,11 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.event.ClientEventHandler;
-import com.minecolonies.network.GuiHandler;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy
@@ -71,7 +69,8 @@ public class ClientProxy extends CommonProxy
     {
         if (Configurations.enableInDevelopmentFeatures)
         {
-            GuiHandler.showGuiWindow(new WindowCitizen(citizen));
+            WindowCitizen window = new WindowCitizen(citizen);
+            window.show();
         }
         else
         {
@@ -82,7 +81,8 @@ public class ClientProxy extends CommonProxy
     @Override
     public void openBuildToolWindow(int x, int y, int z)
     {
-        GuiHandler.showGuiWindow(new WindowBuildTool(x, y, z));
+        WindowBuildTool window = new WindowBuildTool(x, y, z);
+        window.show();
     }
 
     //Schematica
