@@ -820,11 +820,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 curBlock, world.getBlockMetadata(
                         blockToMine.posX, blockToMine.posY, blockToMine.posZ
                 ));
-
-
-        List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, blockToMine, fortune);
-        for (ItemStack item : items) {
-            InventoryUtils.setStack(worker.getInventory(), item);
+        //Don't drop bedrock but we want to mine bedrock in some cases...
+        if(curBlock != Blocks.bedrock) {
+            List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, blockToMine, fortune);
+            for (ItemStack item : items) {
+                InventoryUtils.setStack(worker.getInventory(), item);
+            }
         }
 
         world.setBlockToAir(blockToMine.posX, blockToMine.posY, blockToMine.posZ);
@@ -1082,7 +1083,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         for (int x = -5 + xOffset; x <= 5 + xOffset; x++) {
             for (int z = -5 + zOffset; z <= 5 + zOffset; z++) {
                 for (int y = 5; y >= -7; y--) {
-                    if (x == 0 && 0 == z) {
+                    if ((x == 0 && 0 == z)
+                            || y <= 1) {
                         continue;
                     }
                     ChunkCoordinates curBlock = new ChunkCoordinates(ladderPos.posX + x,
@@ -1092,7 +1094,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     if (Math.abs(normalizedX) > 3
                             || Math.abs(normalizedZ) > 3) {
                         if (world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ) != Blocks.cobblestone) {
-                            if (!mineBlock(curBlock, worker.getHomePosition())) {
+                            if (!mineBlock(curBlock, getOwnBuilding().getLocation())) {
                                 delay = 1;
                                 return true;
                             }
