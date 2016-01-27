@@ -672,7 +672,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
 
     private void advanceLadder() {
-
+        
         if (getOwnBuilding().startingLevelShaft >= 5) {
             job.setStage(Stage.BUILD_SHAFT);
             logger.info("We have to build a new level!");
@@ -715,6 +715,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         //set ladder
         setBlockFromInventory(nextLadder, Blocks.ladder, metadata);
         getOwnBuilding().startingLevelShaft++;
+        job.setStage(Stage.CHECK_MINESHAFT);
     }
 
     /**
@@ -743,7 +744,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             //TODO: request lower tier tools
         }
 
-        if (!ForgeHooks.canToolHarvestBlock(curBlock, 0, tool)) {
+        if (!ForgeHooks.canToolHarvestBlock(curBlock, 0, tool)
+                && curBlock != Blocks.bedrock) {
             logger.info("ForgeHook not in sync with EfficientTool...");
         }
         currentWorkingLocation = blockToMine;
@@ -1284,6 +1286,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             if (getLastLadder(getOwnBuilding().ladderLocation) < getOwnBuilding().getMaxY()) {
                 job.setStage(Stage.MINING_NODE);
                 getOwnBuilding().clearedShaft = true;
+                return;
             }
             job.setStage(Stage.MINING_SHAFT);
             getOwnBuilding().clearedShaft = false;
@@ -1291,6 +1294,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }
 
         if (job.getStage() == Stage.MINING_SHAFT) {
+
             doShaftMining();
             return;
         }
