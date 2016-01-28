@@ -99,7 +99,9 @@ public class Utils
 
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, int x, int y, int z)
     {
-        return isWorkerAtSiteWithMove(worker, x, y, z, 2);
+        //Default range of 3 works better
+        //Range of 2 get some workers stuck
+        return isWorkerAtSiteWithMove(worker, x, y, z, 3);
     }
 
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, int x, int y, int z, int range)
