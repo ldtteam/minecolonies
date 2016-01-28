@@ -643,8 +643,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
         currentWorkingLocation = getNextBlockInShaftToMine();
         if (currentWorkingLocation == null) {
-            //TODO: Do something to advance ladder...
-            logger.info("Finished with one layer!");
             advanceLadder();
             return;
         }
@@ -686,13 +684,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }
 
         if (missesItemsInInventory(
-                new ItemStack(Blocks.cobblestone),
+                new ItemStack(Blocks.cobblestone, 2),
                 new ItemStack(Blocks.ladder)
         )) {
             return;
         }
 
-        ChunkCoordinates safestand = new ChunkCoordinates(
+        ChunkCoordinates safeStand = new ChunkCoordinates(
                 getOwnBuilding().ladderLocation.posX,
                 getLastLadder(getOwnBuilding().ladderLocation),
                 getOwnBuilding().ladderLocation.posZ
@@ -707,15 +705,51 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 getLastLadder(getOwnBuilding().ladderLocation) - 1,
                 getOwnBuilding().cobbleLocation.posZ
         );
+        ChunkCoordinates safeCobble = new ChunkCoordinates(
+                getOwnBuilding().ladderLocation.posX,
+                getLastLadder(getOwnBuilding().ladderLocation) - 2,
+                getOwnBuilding().ladderLocation.posZ
+        );
 
-        if (!mineBlock(nextCobble, safestand)
-                || !mineBlock(nextLadder, safestand)) {
+        int xOffset = 3 * getOwnBuilding().vectorX;
+        int zOffset = 3 * getOwnBuilding().vectorZ;
+        //Check for safe floor
+        for (int x = -3 + xOffset; x <= 3 + xOffset; x++) {
+            for (int z = -3 + zOffset; z <= 3 + zOffset; z++) {
+                if (x == 0 && 0 == z) {
+                    continue;
+                }
+                ChunkCoordinates curBlock = new ChunkCoordinates(safeCobble.posX + x,
+                        safeCobble.posY, safeCobble.posZ + z);
+                if (!getBlock(curBlock).getMaterial().blocksMovement()) {
+                    
+                    if (!mineBlock(curBlock, safeStand)) {
+                        delay = 0;
+                        return;
+                    }
+                    if (missesItemsInInventory(new ItemStack(Blocks.cobblestone))) {
+                        return;
+                    }
+                    //Less obvious ;)
+                    setBlockFromInventory(curBlock, Blocks.cobblestone);
+                    world.setBlock(curBlock.posX,curBlock.posY,curBlock.posZ, Blocks.stone);
+                    return;
+                }
+
+
+            }
+        }
+
+
+        if (!mineBlock(nextCobble, safeStand)
+                || !mineBlock(nextLadder, safeStand)) {
             //waiting until blocks are mined
             return;
         }
 
+
         //Get ladder orientation
-        int metadata = getBlockMetadata(safestand);
+        int metadata = getBlockMetadata(safeStand);
         //set cobblestone
         setBlockFromInventory(nextCobble, Blocks.cobblestone);
         //set ladder
@@ -750,9 +784,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             //TODO: request lower tier tools
         }
 
-        if (!ForgeHooks.canToolHarvestBlock(curBlock, 0, tool)
+        if (tool != null && !ForgeHooks.canToolHarvestBlock(curBlock, 0, tool)
                 && curBlock != Blocks.bedrock) {
-            logger.info("ForgeHook not in sync with EfficientTool for "+curBlock+" and "+tool);
+            logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool);
         }
         currentWorkingLocation = blockToMine;
         currentStandingPosition = safeStand;
@@ -765,8 +799,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         return false;
     }
 
-    private int getFortuneOf(ItemStack tool){
-        if(tool == null){
+    private int getFortuneOf(ItemStack tool) {
+        if (tool == null) {
             return 0;
         }
         //calculate fortune enchantment
@@ -811,7 +845,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
         //Dangerous TODO: validate that
         //Seems like dispatching the event manually is a bad idea? any clues?
-        if(tool != null) {
+        if (tool != null) {
             //Reduce durability if not using hand
             tool.getItem().onBlockDestroyed(tool, world, curBlock,
                     blockToMine.posX, blockToMine.posY, blockToMine.posZ, worker);
@@ -829,7 +863,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                         blockToMine.posX, blockToMine.posY, blockToMine.posZ
                 ));
         //Don't drop bedrock but we want to mine bedrock in some cases...
-        if(curBlock != Blocks.bedrock) {
+        if (curBlock != Blocks.bedrock) {
             List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, blockToMine, fortune);
             for (ItemStack item : items) {
                 InventoryUtils.setStack(worker.getInventory(), item);
@@ -854,7 +888,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     ladderPos.posX, lastLadder + 1, ladderPos.posZ);
         }
         Block block = getBlock(currentWorkingLocation);
-        if(block != null && block != Blocks.air && block != Blocks.ladder){
+        if (block != null && block != Blocks.air && block != Blocks.ladder) {
             return currentWorkingLocation;
         }
         currentStandingPosition = currentWorkingLocation;
@@ -874,7 +908,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 ChunkCoordinates curBlock = new ChunkCoordinates(ladderPos.posX + x,
                         lastLadder, ladderPos.posZ + z);
                 double distance = curBlock.getDistanceSquaredToChunkCoordinates(ladderPos)
-                        + Math.pow(curBlock.getDistanceSquaredToChunkCoordinates(currentWorkingLocation),2);
+                        + Math.pow(curBlock.getDistanceSquaredToChunkCoordinates(currentWorkingLocation), 2);
                 if (distance < bestDistance
                         && !world.isAirBlock(curBlock.posX, curBlock.posY, curBlock.posZ)) {
                     nextBlockToMine = curBlock;
@@ -1092,7 +1126,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             for (int z = -5 + zOffset; z <= 5 + zOffset; z++) {
                 for (int y = 5; y >= -7; y--) {
                     if ((x == 0 && 0 == z)
-                            || lastLadder+y <= 1) {
+                            || lastLadder + y <= 1) {
                         continue;
                     }
                     ChunkCoordinates curBlock = new ChunkCoordinates(ladderPos.posX + x,
@@ -1192,9 +1226,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             }
         }
 
-        Level currentLevel = new Level(getOwnBuilding(),lastLadder);
+        Level currentLevel = new Level(getOwnBuilding(), lastLadder);
         getOwnBuilding().addLevel(currentLevel);
-        logger.info("Added new Level "+currentLevel.getDepth());
+        logger.info("Added new Level " + currentLevel.getDepth());
         return false;
     }
 
@@ -2360,7 +2394,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     private int getBlockMiningDelay(Block block, int x, int y, int z) {
-        if(worker.getHeldItem() == null){
+        if (worker.getHeldItem() == null) {
             return (int) block.getBlockHardness(world, x, y, z);
         }
         return (int) (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0)
