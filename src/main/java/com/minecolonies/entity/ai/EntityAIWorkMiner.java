@@ -36,6 +36,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
     private static final int RANGE_CHECK_AROUND_BUILDING_LADDER = 3;
     private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 2;
+    private static final int NODE_DISTANCE = 7;
     /**
      * Add blocks to this list to exclude mine checks.
      * They can be mined for free. (be cautions with this)
@@ -94,6 +95,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     private int needsPickaxeLevel = -1;
     private String speechdelaystring = "";
     private int speechrepeat = 1;
+    private Node workingNode = null;
 
 
 
@@ -350,7 +352,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     TODO: Not done, some things are weird...
      */
     private void tryContinueMining(BuildingMiner ownBuilding) {
-        if (ownBuilding.levels != null) {
+        if (ownBuilding.getLevels() != null) {
             if (ownBuilding.startingLevelNode == 5) {
                 if (canMineNode <= 0) {
                     /*
@@ -722,7 +724,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 ChunkCoordinates curBlock = new ChunkCoordinates(safeCobble.posX + x,
                         safeCobble.posY, safeCobble.posZ + z);
                 if (!getBlock(curBlock).getMaterial().blocksMovement()) {
-                    
+
                     if (!mineBlock(curBlock, safeStand)) {
                         delay = 0;
                         return;
@@ -732,7 +734,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     }
                     //Less obvious ;)
                     setBlockFromInventory(curBlock, Blocks.cobblestone);
-                    world.setBlock(curBlock.posX,curBlock.posY,curBlock.posZ, Blocks.stone);
+                    world.setBlock(curBlock.posX, curBlock.posY, curBlock.posZ, Blocks.stone);
                     return;
                 }
 
@@ -1228,6 +1230,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
         Level currentLevel = new Level(getOwnBuilding(), lastLadder);
         getOwnBuilding().addLevel(currentLevel);
+        getOwnBuilding().currentLevel = getOwnBuilding().getLevels().size();
         logger.info("Added new Level " + currentLevel.getDepth());
         return false;
     }
@@ -1241,8 +1244,119 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             getOwnBuilding().startingLevelShaft = 0;
             job.setStage(Stage.START_WORKING);
         }
+    }
+
+    private void doNodeMining() {
+        Level currentLevel = getOwnBuilding().getCurrentLevel();
+        if(currentLevel == null){
+            logger.warn("Current Level not set, resetting...");
+            getOwnBuilding().currentLevel = getOwnBuilding().getLevels().size()-1;
+            return;
+        }
+
+        mineAtLevel(currentLevel);
+    }
+
+    private void mineAtLevel(Level currentLevel) {
+        if(workingNode == null){
+            logger.info("No working node, searching for one:");
+            workingNode = findNodeOnLevel(currentLevel);
+            return;
+        }
 
     }
+
+    private NodeStatus getNodeStatusForDirection(Node node, int direction){
+        if(direction == 1){
+            return node.getDirectionPosX();
+        }else if(direction == 2){
+            return node.getDirectionNegX();
+        } else if(direction == 3){
+            return node.getDirectionPosZ();
+        } else if(direction == 4){
+            return node.getDirectionNegZ();
+        }
+        //Cannot happen, so send something that blocks mining
+        return NodeStatus.LADDER;
+    }
+
+    private boolean isNodeInDirectionOfOtherNode(Node start, int direction, Node check){
+        return start.getX()+getXDistance(direction) == check.getX()
+                && start.getZ()+getZDistance(direction) == check.getZ();
+    }
+
+    private int getXDistance(int direction){
+        if(direction == 1){
+            return NODE_DISTANCE;
+        }else if(direction == 2){
+            return -NODE_DISTANCE;
+        }
+        return 0;
+    }
+
+    private int getZDistance(int direction){
+        if(direction == 3){
+            return NODE_DISTANCE;
+        }else if(direction == 4){
+            return -NODE_DISTANCE;
+        }
+        return 0;
+    }
+
+    private Node createNewNodeInDirectionFromNode(Node start, int direction) {
+        int x = start.getX()+getXDistance(direction);
+        int z = start.getZ()+getZDistance(direction);
+        return new Node(x,z);
+    }
+
+    private Node findNodeOnLevel(Level currentLevel) {
+        Node currentNode = currentLevel.getLadderNode();
+        LinkedList<Node> visited = new LinkedList<>();
+        while (currentNode != null){
+            logger.info("Walking to "+currentNode);
+            visited.add(currentNode);
+            if(currentNode.getStatus() == NodeStatus.AVAILABLE
+                    || currentNode.getStatus() == NodeStatus.IN_PROGRESS){
+                logger.info("Node was mineable");
+                return currentNode;
+            }
+
+            List<Integer> directions = Arrays.asList(1,2,3,4);
+            Collections.shuffle(directions);
+            for(Integer dir : directions){
+                logger.info("\tTesting direction "+dir);
+                NodeStatus status = getNodeStatusForDirection(currentNode,dir);
+                if(status == NodeStatus.AVAILABLE || status == NodeStatus.IN_PROGRESS){
+                    logger.info("\tDirection "+dir + " was mineable");
+                    return currentNode;
+                }
+                if(status == NodeStatus.COMPLETED){
+                    logger.info("\tDirection "+dir + " was complete");
+                    final Node finalCurrentNode = currentNode;
+                    Optional<Node> first = new ArrayList<>(currentLevel.getNodes()).parallelStream()
+                            .filter(check -> isNodeInDirectionOfOtherNode(finalCurrentNode, dir, check))
+                            .findFirst();
+                    if(first.isPresent()){
+                        if(visited.contains(first.get())){
+                            continue;//Stop endless loops
+                        }
+                        currentNode = first.get();
+                        break; //Out of direction for loop
+                    }
+
+                    Node newnode = createNewNodeInDirectionFromNode(currentNode,dir);
+                    currentLevel.addNode(newnode);
+                    logger.info("\tCreated new node "+newnode);
+                    return newnode;
+                }
+            }
+
+        }
+
+        return null;
+    }
+
+
 
     @Override
     public void updateTask() {
@@ -1348,6 +1462,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             doShaftBuilding();
             return;
         }
+
+        if (job.getStage() == Stage.MINING_NODE) {
+            doNodeMining();
+            return;
+        }
         
         logger.info("[" + job.getStage() + "] Stopping here, old code ahead...");
         delay += 100;
@@ -1392,7 +1511,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         */
     }
 
-
     private int unsignVector(int i) {
         if (i == 0) {
             return 0;
@@ -1402,9 +1520,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     private void mineNode(BuildingMiner buildingMiner) {
-        if (buildingMiner.levels.size() <= currentLevel) {
+        if (buildingMiner.getLevels().size() <= currentLevel) {
             if (buildingMiner.clearedShaft) {
-                currentLevel = buildingMiner.currentLevel = buildingMiner.levels.size() - 1;
+                currentLevel = buildingMiner.currentLevel = buildingMiner.getLevels().size() - 1;
                 return;
             }
 
@@ -1427,26 +1545,26 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             return;
         }
 
-        if (buildingMiner.levels.get(currentLevel).getNodes().size() == 0) {
+        if (buildingMiner.getLevels().get(currentLevel).getNodes().size() == 0) {
             buildingMiner.currentLevel++;
             currentLevel++;
 
-            if (currentLevel >= buildingMiner.levels.size()) {
+            if (currentLevel >= buildingMiner.getLevels().size()) {
                 buildingMiner.currentLevel = 0;
                 currentLevel = 0;
             }
             return;
         }
 
-        int depth = buildingMiner.levels.get(currentLevel).getDepth();
+        int depth = buildingMiner.getLevels().get(currentLevel).getDepth();
 
-        if (buildingMiner.activeNode == null || buildingMiner.activeNode.getStatus() == Node.Status.COMPLETED || buildingMiner.activeNode.getStatus() == Node.Status.AVAILABLE) {
+        if (buildingMiner.activeNode == null || buildingMiner.activeNode.getStatus() == NodeStatus.COMPLETED || buildingMiner.activeNode.getStatus() == NodeStatus.AVAILABLE) {
             currentLevel = buildingMiner.currentLevel;
-            if (buildingMiner.levels.get(currentLevel).getNodes().size() == 0) {
+            if (buildingMiner.getLevels().get(currentLevel).getNodes().size() == 0) {
                 buildingMiner.currentLevel++;
                 currentLevel++;
 
-                if (currentLevel >= buildingMiner.levels.size()) {
+                if (currentLevel >= buildingMiner.getLevels().size()) {
                     buildingMiner.currentLevel = 0;
                     currentLevel = 0;
                 }
@@ -1456,9 +1574,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             int rand1 = (int) Math.floor(Math.random() * 4);
             int randomNum;
 
-            if (buildingMiner.levels.get(currentLevel).getNodes() == null) {
-                if (buildingMiner.levels.size() < currentLevel + 1) {
-                    buildingMiner.currentLevel = currentLevel = buildingMiner.levels.size() - 1;
+            if (buildingMiner.getLevels().get(currentLevel).getNodes() == null) {
+                if (buildingMiner.getLevels().size() < currentLevel + 1) {
+                    buildingMiner.currentLevel = currentLevel = buildingMiner.getLevels().size() - 1;
                     buildingMiner.activeNode = null;
                     job.setStage(Stage.MINING_SHAFT);
                     return;
@@ -1468,30 +1586,30 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     return;
                 }
             } else if (rand1 == 1) {
-                randomNum = (int) Math.floor(Math.random() * buildingMiner.levels.get(currentLevel).getNodes().size());
+                randomNum = (int) Math.floor(Math.random() * buildingMiner.getLevels().get(currentLevel).getNodes().size());
             } else if (rand1 == 2) {
                 randomNum = (int) (Math.random() * 3);
             } else {
-                randomNum = buildingMiner.levels.get(currentLevel).getNodes().size() - 1;
+                randomNum = buildingMiner.getLevels().get(currentLevel).getNodes().size() - 1;
             }
 
-            if (buildingMiner.levels.get(currentLevel).getNodes().size() > randomNum) {
-                Node node = buildingMiner.levels.get(currentLevel).getNodes().get(randomNum);
+            if (buildingMiner.getLevels().get(currentLevel).getNodes().size() > randomNum) {
+                Node node = buildingMiner.getLevels().get(currentLevel).getNodes().get(randomNum);
 
-                if (node.getStatus() == Node.Status.AVAILABLE) {
+                if (node.getStatus() == NodeStatus.AVAILABLE) {
                     int x = node.getX();
-                    int y = buildingMiner.levels.get(currentLevel).getDepth();
+                    int y = buildingMiner.getLevels().get(currentLevel).getDepth();
                     int z = node.getZ();
                     Block block = world.getBlock(x, y, z);
 
                     if (buildingMiner.activeNode != null && job.getStage() == Stage.MINING_NODE && (block.isAir(world, x + node.getVectorX(), y, z + node.getVectorZ()) || !canWalkOn(x + node.getVectorX(), y, z + node.getVectorZ()))) {
                         logger.info("Removed Node because of Air Node: " + buildingMiner.active + " x: " + x + " z: " + z + " vectorX: " + buildingMiner.activeNode.getVectorX() + " vectorZ: " + buildingMiner.activeNode.getVectorZ());
-                        buildingMiner.levels.get(currentLevel).getNodes().remove(randomNum);
+                        buildingMiner.getLevels().get(currentLevel).getNodes().remove(randomNum);
                         return;
                     }
 
                     if (node.getX() > buildingMiner.shaftStart.posX + buildingMiner.getMaxX() || node.getZ() > buildingMiner.shaftStart.posZ + buildingMiner.getMaxZ() || node.getX() < buildingMiner.shaftStart.posX - buildingMiner.getMaxX() || node.getZ() < buildingMiner.shaftStart.posZ - buildingMiner.getMaxZ()) {
-                        buildingMiner.levels.get(currentLevel).getNodes().remove(randomNum);
+                        buildingMiner.getLevels().get(currentLevel).getNodes().remove(randomNum);
                         return;
                     }
 
@@ -1500,13 +1618,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     loc = new ChunkCoordinates(node.getX(), depth, node.getZ());
                     buildingMiner.activeNode = node;
                     buildingMiner.active = randomNum;
-                    buildingMiner.activeNode.setStatus(Node.Status.IN_PROGRESS);
+                    buildingMiner.activeNode.setStatus(NodeStatus.IN_PROGRESS);
                     clearNode = 0;
                     buildingMiner.startingLevelNode = 0;
                     buildingMiner.markDirty();
                 }
             }
-        } else if (buildingMiner.activeNode.getStatus() == Node.Status.IN_PROGRESS) {
+        } else if (buildingMiner.activeNode.getStatus() == NodeStatus.IN_PROGRESS) {
             if (loc == null) {
                 loc = new ChunkCoordinates(buildingMiner.activeNode.getX() + buildingMiner.startingLevelNode * buildingMiner.activeNode.getVectorX(), depth, buildingMiner.activeNode.getZ() + buildingMiner.startingLevelNode * buildingMiner.activeNode.getVectorZ());
             }
@@ -1515,13 +1633,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 if (!cachedPathResult.getPathReachesDestination()) {
 
                     //TODO: Big hairy ball of if's because of nullpointer
-                    Level level = buildingMiner.levels.get(currentLevel);
+                    Level level = buildingMiner.getLevels().get(currentLevel);
                     if (level != null) {
                         List<Node> nodes = level.getNodes();
                         if (nodes != null) {
                             Node node = nodes.get(buildingMiner.active);
                             if (node != null) {
-                                node.setStatus(Node.Status.COMPLETED);
+                                node.setStatus(NodeStatus.COMPLETED);
                             } else {
                                 logger.info("Current level active node is null...");
                             }
@@ -1532,7 +1650,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     } else {
                         logger.info("Current level is null...");
                     }
-                    buildingMiner.activeNode.setStatus(Node.Status.COMPLETED);
+                    buildingMiner.activeNode.setStatus(NodeStatus.COMPLETED);
                     currentLevel = buildingMiner.currentLevel;
                     logger.info("Unreachable Node!");
                     buildingMiner.markDirty();
@@ -1546,30 +1664,30 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     int uVZ = 0;
 
                     if (buildingMiner.startingLevelNode == 5) {
-                        buildingMiner.levels.get(currentLevel).getNodes().get(buildingMiner.active).setStatus(Node.Status.COMPLETED);
-                        buildingMiner.activeNode.setStatus(Node.Status.COMPLETED);
-                        buildingMiner.levels.get(currentLevel).getNodes().remove(buildingMiner.active);
+                        buildingMiner.getLevels().get(currentLevel).getNodes().get(buildingMiner.active).setStatus(NodeStatus.COMPLETED);
+                        buildingMiner.activeNode.setStatus(NodeStatus.COMPLETED);
+                        buildingMiner.getLevels().get(currentLevel).getNodes().remove(buildingMiner.active);
 
                         if (buildingMiner.activeNode.getVectorX() == 0) {
-                            if (!world.isAirBlock(buildingMiner.activeNode.getX() + 2, buildingMiner.levels.get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ())) {
-                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 2, buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ());
+                            if (!world.isAirBlock(buildingMiner.activeNode.getX() + 2, buildingMiner.getLevels().get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ())) {
+                                buildingMiner.getLevels().get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 2, buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ());
                             }
 
-                            if (!world.isAirBlock(buildingMiner.activeNode.getX() - 2, buildingMiner.levels.get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ())) {
-                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() - 2, buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ());
+                            if (!world.isAirBlock(buildingMiner.activeNode.getX() - 2, buildingMiner.getLevels().get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ())) {
+                                buildingMiner.getLevels().get(currentLevel).addNewNode(buildingMiner.activeNode.getX() - 2, buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ());
                             }
                         } else {
-                            if (!world.isAirBlock(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.levels.get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 2)) {
-                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() + 2);
+                            if (!world.isAirBlock(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.getLevels().get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 2)) {
+                                buildingMiner.getLevels().get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() + 2);
                             }
 
-                            if (!world.isAirBlock(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.levels.get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() - 2)) {
-                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() - 2);
+                            if (!world.isAirBlock(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.getLevels().get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() - 2)) {
+                                buildingMiner.getLevels().get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() - 2);
                             }
                         }
 
-                        if (!world.isAirBlock((buildingMiner.activeNode.getX() + 5 * buildingMiner.activeNode.getVectorX()), buildingMiner.levels.get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 5 * buildingMiner.activeNode.getVectorZ())) {
-                            buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 5 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() + 5 * buildingMiner.activeNode.getVectorZ());
+                        if (!world.isAirBlock((buildingMiner.activeNode.getX() + 5 * buildingMiner.activeNode.getVectorX()), buildingMiner.getLevels().get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 5 * buildingMiner.activeNode.getVectorZ())) {
+                            buildingMiner.getLevels().get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 5 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() + 5 * buildingMiner.activeNode.getVectorZ());
                         }
                         logger.info("Finished Node: " + buildingMiner.active);
                         currentLevel = buildingMiner.currentLevel;
@@ -2221,8 +2339,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                         }
                     }
 
-                    if (b.levels == null) {
-                        b.levels = new ArrayList<>();
+                    if (b.getLevels() == null) {
+                        //b.levels = new ArrayList<>();
                     }
                     if (vectorX == 0) {
                         //b.levels.add(new Level(b.shaftStart.posX, y + 5, b.shaftStart.posZ + 3 * vectorZ, b));
@@ -2476,10 +2594,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         }*/
 
         if (job.getStage() == Stage.MINING_NODE && b.shaftStart.posX == x && b.shaftStart.posZ == z) {
-            b.activeNode.setStatus(Node.Status.COMPLETED);
-            b.levels.get(currentLevel).getNodes().get(b.active).setStatus(Node.Status.COMPLETED);
+            b.activeNode.setStatus(NodeStatus.COMPLETED);
+            b.getLevels().get(currentLevel).getNodes().get(b.active).setStatus(NodeStatus.COMPLETED);
             logger.info("Finished because of Ladder Node: " + b.active);
-            b.levels.get(currentLevel).getNodes().remove(b.active);
+            b.getLevels().get(currentLevel).getNodes().remove(b.active);
             return true;
         }
 

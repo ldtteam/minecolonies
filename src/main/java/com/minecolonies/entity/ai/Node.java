@@ -23,32 +23,32 @@ public class Node {
      * Location of the node
      */
     private int x, z;
-    private Status status;
-    private Status directionPosX; //+X
-    private Status directionNegX; //-X
-    private Status directionPosZ; //+Z
-    private Status directionNegZ; //-Z
+    private NodeStatus status;
+    private NodeStatus directionPosX; //+X
+    private NodeStatus directionNegX; //-X
+    private NodeStatus directionPosZ; //+Z
+    private NodeStatus directionNegZ; //-Z
 
     public Node(int x, int z) {
         this.x = x;
         this.z = z;
-        status = Status.AVAILABLE;
-        directionPosX = Status.AVAILABLE;
-        directionNegX = Status.AVAILABLE;
-        directionPosZ = Status.AVAILABLE;
-        directionNegZ = Status.AVAILABLE;
+        status = NodeStatus.AVAILABLE;
+        directionPosX = NodeStatus.AVAILABLE;
+        directionNegX = NodeStatus.AVAILABLE;
+        directionPosZ = NodeStatus.AVAILABLE;
+        directionNegZ = NodeStatus.AVAILABLE;
     }
 
     public static Node createFromNBT(NBTTagCompound compound) {
         int x = compound.getInteger(TAG_X);
         int z = compound.getInteger(TAG_Z);
 
-        Status status = Status.valueOf(compound.getString(TAG_STATUS));
-
-        Status directionPosX = Status.valueOf(compound.getString(TAG_STATUS_POSITIVE_X));
-        Status directionNegX = Status.valueOf(compound.getString(TAG_STATUS_NEGATIVE_X));
-        Status directionPosZ = Status.valueOf(compound.getString(TAG_STATUS_POSITIVE_Z));
-        Status directionNegZ = Status.valueOf(compound.getString(TAG_STATUS_NEGATIVE_Z));
+        NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
+        
+        NodeStatus directionPosX = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_X));
+        NodeStatus directionNegX = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_X));
+        NodeStatus directionPosZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_Z));
+        NodeStatus directionNegZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_Z));
 
         Node node = new Node(x, z);
         node.setStatus(status);
@@ -60,35 +60,35 @@ public class Node {
         return node;
     }
 
-    public Status getDirectionPosX() {
+    public NodeStatus getDirectionPosX() {
         return directionPosX;
     }
 
-    public void setDirectionPosX(Status directionPosX) {
+    public void setDirectionPosX(NodeStatus directionPosX) {
         this.directionPosX = directionPosX;
     }
 
-    public Status getDirectionNegX() {
+    public NodeStatus getDirectionNegX() {
         return directionNegX;
     }
 
-    public void setDirectionNegX(Status directionNegX) {
+    public void setDirectionNegX(NodeStatus directionNegX) {
         this.directionNegX = directionNegX;
     }
 
-    public Status getDirectionPosZ() {
+    public NodeStatus getDirectionPosZ() {
         return directionPosZ;
     }
 
-    public void setDirectionPosZ(Status directionPosZ) {
+    public void setDirectionPosZ(NodeStatus directionPosZ) {
         this.directionPosZ = directionPosZ;
     }
 
-    public Status getDirectionNegZ() {
+    public NodeStatus getDirectionNegZ() {
         return directionNegZ;
     }
 
-    public void setDirectionNegZ(Status directionNegZ) {
+    public void setDirectionNegZ(NodeStatus directionNegZ) {
         this.directionNegZ = directionNegZ;
     }
 
@@ -112,11 +112,11 @@ public class Node {
         return z;
     }
 
-    public Status getStatus() {
+    public NodeStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(NodeStatus status) {
         this.status = status;
     }
 
@@ -142,18 +142,4 @@ public class Node {
         return sb.toString();
     }
 
-    /**
-     * Sets the status of the node
-     * AVAILABLE means it can be mined
-     * IN_PROGRESS means it is currently being mined
-     * COMPLETED means it has been mined and all torches/wood structure has been placed
-     * <p>
-     * this doesn't have to be final, more stages can be added or this doesn't have to be used
-     */
-    enum Status {
-        AVAILABLE,
-        IN_PROGRESS,
-        COMPLETED,
-        LADDER
-    }
 }

@@ -24,10 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BuildingMiner extends BuildingWorker {
-    /**
-     * A list of all shaft levels that are cleared
-     */
-    public List<Level> levels = new ArrayList<>();     //Stores the levels of the miners mine. This could be a map<depth,level>
+    private List<Level> levels = new ArrayList<>();     //Stores the levels of the miners mine. This could be a map<depth,level>
     public Node activeNode;
 
     public Block floorBlock = Blocks.planks;
@@ -125,7 +122,21 @@ public class BuildingMiner extends BuildingWorker {
     }
 
     public void addLevel(Level currentLevel) {
-        levels.add(currentLevel);
+        getLevels().add(currentLevel);
+    }
+
+    /**
+     * A list of all shaft levels that are cleared
+     */
+    public List<Level> getLevels() {
+        return levels;
+    }
+
+    public Level getCurrentLevel() {
+        if(currentLevel >= 0 && currentLevel < levels.size()){
+            return levels.get(currentLevel);
+        }
+        return null;
     }
 
     public static class View extends BuildingWorker.View
@@ -163,9 +174,9 @@ public class BuildingMiner extends BuildingWorker {
     {
         super.serializeToView(buf);
         buf.writeInt(currentLevel);
-        buf.writeInt(levels.size());
+        buf.writeInt(getLevels().size());
 
-        for (Level level : levels)
+        for (Level level : getLevels())
         {
             buf.writeInt(level.getNodes().size());
         }
@@ -240,7 +251,7 @@ public class BuildingMiner extends BuildingWorker {
         }
 
         NBTTagList levelTagList = new NBTTagList();
-        for (Level level : levels)
+        for (Level level : getLevels())
         {
             NBTTagCompound levelCompound = new NBTTagCompound();
             level.writeToNBT(levelCompound);
@@ -285,12 +296,12 @@ public class BuildingMiner extends BuildingWorker {
         for (int i = 0; i < levelTagList.tagCount(); i++)
         {
             Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
-            levels.add(level);
+            getLevels().add(level);
         }
 
-        if (currentLevel >= 0 && currentLevel < levels.size() && active < levels.get(currentLevel).getNodes().size())
+        if (currentLevel >= 0 && currentLevel < getLevels().size() && active < getLevels().get(currentLevel).getNodes().size())
         {
-            activeNode = levels.get(currentLevel).getNodes().get(active);
+            activeNode = getLevels().get(currentLevel).getNodes().get(active);
         }
     }
 }
