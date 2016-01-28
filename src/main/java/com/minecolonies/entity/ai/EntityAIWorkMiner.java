@@ -50,6 +50,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             Blocks.tallgrass, Blocks.cactus, Blocks.log, Blocks.log2,
             Blocks.monster_egg
     ));
+
+    /*
+    Blocks that will be ignored while building shaft/node walls and are certainly safe.
+     */
+    public static Set<Block> notReplacedInSecuringMine = new HashSet<>(Arrays.asList(
+            Blocks.cobblestone, Blocks.stone, Blocks.dirt
+    ));
     private static Logger logger = LogManager.getLogger("Miner");
     public List<ChunkCoordinates> localVein;
     //The current block to mine
@@ -675,7 +682,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         
         if (getOwnBuilding().startingLevelShaft >= 5) {
             job.setStage(Stage.BUILD_SHAFT);
-            logger.info("We have to build a new level!");
             return;
         }
 
@@ -746,7 +752,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
         if (!ForgeHooks.canToolHarvestBlock(curBlock, 0, tool)
                 && curBlock != Blocks.bedrock) {
-            logger.info("ForgeHook not in sync with EfficientTool...");
+            logger.info("ForgeHook not in sync with EfficientTool for "+curBlock+" and "+tool);
         }
         currentWorkingLocation = blockToMine;
         currentStandingPosition = safeStand;
@@ -1095,7 +1101,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     int normalizedZ = z - zOffset;
                     if (Math.abs(normalizedX) > 3
                             || Math.abs(normalizedZ) > 3) {
-                        if (world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ) != Blocks.cobblestone) {
+                        if (!notReplacedInSecuringMine.contains(
+                                world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ))) {
                             if (!mineBlock(curBlock, getOwnBuilding().getLocation())) {
                                 delay = 1;
                                 return true;
@@ -1184,6 +1191,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 }
             }
         }
+
+        Level currentLevel = new Level(getOwnBuilding(),lastLadder);
+        getOwnBuilding().addLevel(currentLevel);
+        logger.info("Added new Level "+currentLevel.getDepth());
         return false;
     }
 
@@ -1507,24 +1518,24 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
                         if (buildingMiner.activeNode.getVectorX() == 0) {
                             if (!world.isAirBlock(buildingMiner.activeNode.getX() + 2, buildingMiner.levels.get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ())) {
-                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 2, buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ(), unsignVector(buildingMiner.activeNode.getVectorZ()), unsignVector(buildingMiner.activeNode.getVectorX()));
+                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 2, buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ());
                             }
 
                             if (!world.isAirBlock(buildingMiner.activeNode.getX() - 2, buildingMiner.levels.get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ())) {
-                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() - 2, buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ(), -unsignVector(buildingMiner.activeNode.getVectorZ()), -unsignVector(buildingMiner.activeNode.getVectorX()));
+                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() - 2, buildingMiner.activeNode.getZ() + 4 * buildingMiner.activeNode.getVectorZ());
                             }
                         } else {
                             if (!world.isAirBlock(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.levels.get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 2)) {
-                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() + 2, unsignVector(buildingMiner.activeNode.getVectorZ()), unsignVector(buildingMiner.activeNode.getVectorX()));
+                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() + 2);
                             }
 
                             if (!world.isAirBlock(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.levels.get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() - 2)) {
-                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() - 2, -unsignVector(buildingMiner.activeNode.getVectorZ()), -unsignVector(buildingMiner.activeNode.getVectorX()));
+                                buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 4 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() - 2);
                             }
                         }
 
                         if (!world.isAirBlock((buildingMiner.activeNode.getX() + 5 * buildingMiner.activeNode.getVectorX()), buildingMiner.levels.get(currentLevel).getDepth(), buildingMiner.activeNode.getZ() + 5 * buildingMiner.activeNode.getVectorZ())) {
-                            buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 5 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() + 5 * buildingMiner.activeNode.getVectorZ(), buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getVectorZ());
+                            buildingMiner.levels.get(currentLevel).addNewNode(buildingMiner.activeNode.getX() + 5 * buildingMiner.activeNode.getVectorX(), buildingMiner.activeNode.getZ() + 5 * buildingMiner.activeNode.getVectorZ());
                         }
                         logger.info("Finished Node: " + buildingMiner.active);
                         currentLevel = buildingMiner.currentLevel;
@@ -2180,10 +2191,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                         b.levels = new ArrayList<>();
                     }
                     if (vectorX == 0) {
-                        b.levels.add(new Level(b.shaftStart.posX, y + 5, b.shaftStart.posZ + 3 * vectorZ, b));
+                        //b.levels.add(new Level(b.shaftStart.posX, y + 5, b.shaftStart.posZ + 3 * vectorZ, b));
 
                     } else if (vectorZ == 0) {
-                        b.levels.add(new Level(b.shaftStart.posX + 3 * vectorX, y + 5, b.shaftStart.posZ, b));
+                        //b.levels.add(new Level(b.shaftStart.posX + 3 * vectorX, y + 5, b.shaftStart.posZ, b));
 
                     }
                     clear = 1;

@@ -124,6 +124,10 @@ public class BuildingMiner extends BuildingWorker {
         return new JobMiner(citizen);
     }
 
+    public void addLevel(Level currentLevel) {
+        levels.add(currentLevel);
+    }
+
     public static class View extends BuildingWorker.View
     {
         public int[] levels;

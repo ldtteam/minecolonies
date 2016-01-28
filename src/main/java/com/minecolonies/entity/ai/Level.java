@@ -21,7 +21,7 @@ public class Level
     /**
      * The depth of the level stored as the y coordinate
      */
-    public int depth;
+    private int depth;
 
     private List<Node> nodes = new ArrayList<>();
 
@@ -30,7 +30,7 @@ public class Level
 
     private Level(){}
 
-    public Level(int x, int depth, int z, BuildingMiner b)
+   /* public Level(int x, int depth, int z, BuildingMiner b)
     {
         this.depth = depth;
         nodes = new ArrayList<>();
@@ -57,6 +57,15 @@ public class Level
         {
             nodes.add(new Node(x,z-4,0,-1));
         }
+    }*/
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Level{");
+        sb.append("depth=").append(depth);
+        sb.append(", nodes=").append(nodes);
+        sb.append('}');
+        return sb.toString();
     }
 
     public Level(BuildingMiner buildingMiner, int depth){
@@ -79,8 +88,24 @@ public class Level
                 cobbleZ + (buildingMiner.vectorZ*4)
         );
         //TODO: let them know they are ladder and cobble (they are handled different)
-        addNewNode(cobbleCenter.posX,cobbleCenter.posZ,buildingMiner.vectorX,buildingMiner.vectorZ);
-        addNewNode(ladderCenter.posX,ladderCenter.posZ,buildingMiner.vectorX,buildingMiner.vectorZ);
+        Node cobbleNode = new Node(cobbleCenter.posX,cobbleCenter.posZ);
+        Node ladderNode = new Node(ladderCenter.posX,ladderCenter.posZ);
+        ladderNode.setStatus(Node.Status.COMPLETED);
+        if(buildingMiner.vectorX > 0){
+            ladderNode.setDirectionNegX(Node.Status.LADDER);
+            cobbleNode.setDirectionPosX(Node.Status.LADDER);
+        }else if (buildingMiner.vectorX < 0){
+            ladderNode.setDirectionPosX(Node.Status.LADDER);
+            cobbleNode.setDirectionNegX(Node.Status.LADDER);
+        }else if(buildingMiner.vectorZ > 0){
+            ladderNode.setDirectionNegZ(Node.Status.LADDER);
+            cobbleNode.setDirectionPosZ(Node.Status.LADDER);
+        }else if (buildingMiner.vectorZ < 0){
+            ladderNode.setDirectionPosZ(Node.Status.LADDER);
+            cobbleNode.setDirectionNegZ(Node.Status.LADDER);
+        }
+        nodes.add(cobbleNode);
+        nodes.add(ladderNode);
     }
 
     public void writeToNBT(NBTTagCompound compound)
@@ -121,8 +146,8 @@ public class Level
         return depth;
     }
 
-    public void addNewNode(int x, int z,int vektorX, int vektorY)
+    public void addNewNode(int x, int z)
     {
-        nodes.add(new Node(x,z,vektorX,vektorY));
+        nodes.add(new Node(x,z));
     }
 }
