@@ -1364,6 +1364,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             }
         }
         logger.info("Done with node \n"+minenode);
+        workingNode = null;
     }
 
     private boolean mineSideOfNode(Node minenode, int directon, ChunkCoordinates standingPosition){
