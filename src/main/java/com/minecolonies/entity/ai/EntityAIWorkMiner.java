@@ -1359,7 +1359,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
         List<Integer> directions = Arrays.asList(1, 2, 3, 4);
         for (Integer dir : directions) {
-            if(mineSideOfNode(minenode,directon,standingPosition)){
+            if(!mineSideOfNode(minenode,dir,standingPosition)){
                 return;
             }
         }
