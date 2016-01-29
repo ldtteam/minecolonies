@@ -1231,6 +1231,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         Level currentLevel = new Level(getOwnBuilding(), lastLadder);
         getOwnBuilding().addLevel(currentLevel);
         getOwnBuilding().currentLevel = getOwnBuilding().getLevels().size();
+        //Send out update to client
+        getOwnBuilding().markDirty();
         logger.info("Added new Level " + currentLevel.getDepth());
         return false;
     }
