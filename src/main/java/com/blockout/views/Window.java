@@ -4,6 +4,8 @@ import com.blockout.Loader;
 import com.blockout.PaneParams;
 import com.blockout.Screen;
 import com.blockout.View;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
@@ -114,6 +116,17 @@ public class Window extends View
      * @return <tt>true</tt> if the game should be paused when the Window is displayed
      */
     public boolean doesWindowPauseGame() { return windowPausesGame; }
+
+    /**
+     * Open the window
+     */
+    public void open()
+    {
+        if(FMLCommonHandler.instance().getSide().equals(Side.CLIENT))
+        {
+            FMLCommonHandler.instance().showGuiScreen(getScreen());
+        }
+    }
 
     /**
      * Close the Window

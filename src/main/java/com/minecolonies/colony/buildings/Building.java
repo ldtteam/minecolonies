@@ -7,7 +7,6 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
-import com.minecolonies.network.GuiHandler;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -398,7 +397,7 @@ public abstract class Building
             com.blockout.views.Window window = getWindow();
             if (window != null)
             {
-                GuiHandler.showGuiWindow(window);
+                window.open();
             }
         }
 

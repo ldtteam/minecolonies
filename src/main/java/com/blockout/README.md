@@ -20,9 +20,7 @@ Simply drop com.blockout into the source of the mod to start using it.
 ### Code
 To display a Window, instantiate a Window (or subclass), then call:
 
-    FMLCommonHandler.instance().showGuiScreen(yourWindow.getScreen());
-
-Alternatively, in an `IGuiHandler.getClientGuiElement()` implementation, return `yourWindow.getScreen()`
+    yourWindow.open();
 
 The Window constructor takes a Resource Location path to the Layout file to use for the Window.
 

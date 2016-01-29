@@ -232,7 +232,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
     private void structureStep()
     {
-        if (job.getSchematic().doesSchematicBlockEqualWorldBlock() || !job.getSchematic().getBlock().getMaterial().isSolid())
+        if (job.getSchematic().doesSchematicBlockEqualWorldBlock() || (!job.getSchematic().getBlock().getMaterial().isSolid() && job.getSchematic().getBlock() != Blocks.air))
         {
             findNextBlockSolid();
             return;//findNextBlock count was reached and we can ignore this block
@@ -309,7 +309,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
     private void decorationStep()
     {
-        if (job.getSchematic().doesSchematicBlockEqualWorldBlock() || job.getSchematic().getBlock().getMaterial().isSolid())
+        if (job.getSchematic().doesSchematicBlockEqualWorldBlock() || job.getSchematic().getBlock().getMaterial().isSolid() || job.getSchematic().getBlock() == Blocks.air)
         {
             findNextBlockNonSolid();
             return;//findNextBlock count was reached and we can ignore this block
@@ -355,31 +355,19 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
                 return;
         }
 
-        if (block == Blocks.air)
-        {
-            worker.setCurrentItemOrArmor(0, null);
+        Item item = Item.getItemFromBlock(block);
+        worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1, metadata) : null);
 
-            if (!world.setBlockToAir(x, y, z))
-            {
-                MineColonies.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
-                //TODO handle - for now, just skipping
-            }
+        if (placeBlock(x, y, z, block, metadata))
+        {
+            setTileEntity(x, y, z);
         }
         else
         {
-            Item item = Item.getItemFromBlock(block);
-            worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1, metadata) : null);
-
-            if (placeBlock(x, y, z, block, metadata))
-            {
-                setTileEntity(x, y, z);
-            }
-            else
-            {
-                MineColonies.logger.error(String.format("Block place failure %s at %d, %d, %d", block.getUnlocalizedName(), x, y, z));
-                //TODO handle - for now, just skipping
-            }
+            MineColonies.logger.error(String.format("Block place failure %s at %d, %d, %d", block.getUnlocalizedName(), x, y, z));
+            //TODO handle - for now, just skipping
         }
+
         findNextBlockNonSolid();
         worker.swingItem();
     }
