@@ -716,8 +716,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         int xOffset = 3 * getOwnBuilding().vectorX;
         int zOffset = 3 * getOwnBuilding().vectorZ;
         //Check for safe floor
-        for (int x = -3 + xOffset; x <= 3 + xOffset; x++) {
-            for (int z = -3 + zOffset; z <= 3 + zOffset; z++) {
+        for (int x = -4 + xOffset; x <= 4 + xOffset; x++) {
+            for (int z = -4 + zOffset; z <= 4 + zOffset; z++) {
                 if (x == 0 && 0 == z) {
                     continue;
                 }
