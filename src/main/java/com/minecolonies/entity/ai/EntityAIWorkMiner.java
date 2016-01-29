@@ -718,7 +718,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         //Check for safe floor
         for (int x = -4 + xOffset; x <= 4 + xOffset; x++) {
             for (int z = -4 + zOffset; z <= 4 + zOffset; z++) {
-                
+
                 ChunkCoordinates curBlock = new ChunkCoordinates(safeCobble.posX + x,
                         safeCobble.posY, safeCobble.posZ + z);
                 if (!getBlock(curBlock).getMaterial().blocksMovement()) {
@@ -1363,6 +1363,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         Node currentNode = currentLevel.getLadderNode();
         LinkedList<Node> visited = new LinkedList<>();
         while (currentNode != null){
+            if(visited.contains(currentNode)){
+                logger.info("Found dead end, retrying...");
+                return null;
+            }
+
             logger.info("Walking to "+currentNode);
             visited.add(currentNode);
             if(currentNode.getStatus() == NodeStatus.AVAILABLE
@@ -1399,8 +1404,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     return newnode;
                 }
             }
-            logger.info("Found dead end, retrying...");
-            currentNode = null;
         }
 
         return null;
