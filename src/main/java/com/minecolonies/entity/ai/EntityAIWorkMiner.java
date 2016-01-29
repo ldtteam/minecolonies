@@ -1266,6 +1266,48 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             return;
         }
 
+        int foundDirection = 0;
+        Node foundNode = null;
+        List<Integer> directions = Arrays.asList(1,2,3,4);
+
+        for(Integer dir : directions){
+            Optional<Node> node = tryFindNodeInDirectionofNode(currentLevel, workingNode, dir);
+            if(node.isPresent()){
+                foundDirection = dir;
+                foundNode = node.get();
+                break;
+            }
+        }
+        if(foundNode == null || foundDirection <= 0){
+            logger.info("Found no adjacent nodes, aborting...");
+            workingNode = null;
+            return;
+        }
+        int xoffset = getXDistance(foundDirection)/2;
+        int zoffset = getZDistance(foundDirection)/2;
+        if(xoffset > 0){
+            xoffset += 1;
+        }else {
+            xoffset -= 1;
+        }
+        if(zoffset > 0){
+            zoffset += 1;
+        }else {
+            zoffset -= 1;
+        }
+        ChunkCoordinates standingPosition = new ChunkCoordinates(
+                workingNode.getX()+xoffset,
+                currentLevel.getDepth(),
+                workingNode.getZ()+zoffset);
+        delay += 10;
+        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, standingPosition
+                , RANGE_CHECK_AROUND_MINING_BLOCK)) {
+            mineNodeFromStand(workingNode,foundNode,standingPosition,foundDirection);
+        }
+    }
+
+    private void mineNodeFromStand(Node minenode, Node standnode, ChunkCoordinates currentStandingPosition, int directon){
+
     }
 
     private NodeStatus getNodeStatusForDirection(Node node, int direction){
@@ -1305,6 +1347,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         return 0;
     }
 
+    private Optional<Node> tryFindNodeInDirectionofNode(Level curlevel, Node start, int direction){
+        final Node finalCurrentNode = start;
+        Optional<Node> first = new ArrayList<>(curlevel.getNodes()).parallelStream()
+                .filter(check -> isNodeInDirectionOfOtherNode(finalCurrentNode, direction, check))
+                .findFirst();
+        return first;
+    }
+
     private Node createNewNodeInDirectionFromNode(Node start, int direction) {
         int x = start.getX()+getXDistance(direction);
         int z = start.getZ()+getZDistance(direction);
@@ -1334,14 +1384,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 }
                 if(status == NodeStatus.COMPLETED){
                     logger.info("\tDirection "+dir + " was complete");
-                    final Node finalCurrentNode = currentNode;
-                    Optional<Node> first = new ArrayList<>(currentLevel.getNodes()).parallelStream()
-                            .filter(check -> isNodeInDirectionOfOtherNode(finalCurrentNode, dir, check))
-                            .findFirst();
+                    Optional<Node> first = tryFindNodeInDirectionofNode(currentLevel,currentNode,dir);
                     if(first.isPresent()){
                         if(visited.contains(first.get())){
                             continue;//Stop endless loops
                         }
+                        //IDE sais unused but is indeed used for next while loop
+                        //TODO: investigate
                         currentNode = first.get();
                         break; //Out of direction for loop
                     }
@@ -1352,7 +1401,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     return newnode;
                 }
             }
-
+            logger.info("Found dead end, retrying...");
+            currentNode = null;
         }
 
         return null;
