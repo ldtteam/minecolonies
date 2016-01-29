@@ -1369,12 +1369,39 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 }
             }
         }
+        if(getNodeStatusForDirection(minenode,directon) == NodeStatus.IN_PROGRESS){
+            logger.info("Mined out node entry");
+            setNodeStatusForDirection(minenode,directon, NodeStatus.COMPLETED);
+            logger.info("Completed entry for: \n"+minenode);
+        }
 
-        setNodeStatusForDirection(minenode,directon, NodeStatus.COMPLETED);
+        if(minenode.getStatus() == NodeStatus.AVAILABLE){
+            minenode.setStatus(NodeStatus.IN_PROGRESS);
+        }
+
+        //Mine middle
+        //TODO: make it look nicer!
+        for (int y = 1; y <= 4; y++) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
+                            currentStandingPosition.posY+y, minenode.getZ() + z);
+                    if(!mineBlock(curBlock,currentStandingPosition)){
+                        return;
+                    }
+                }
+            }
+        }
+
+        if(minenode.getStatus() == NodeStatus.IN_PROGRESS){
+            logger.info("Mined out node entry");
+            minenode.setStatus(NodeStatus.COMPLETED);
+            logger.info("Completed entry for: \n"+minenode);
+        }
 
     }
 
-    private NodeStatus setNodeStatusForDirection(Node node, int direction, NodeStatus status) {
+    private void setNodeStatusForDirection(Node node, int direction, NodeStatus status) {
         if (direction == 1) {
             node.setDirectionPosX(status);
         } else if (direction == 2) {
