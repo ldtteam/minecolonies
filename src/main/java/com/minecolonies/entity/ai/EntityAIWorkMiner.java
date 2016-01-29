@@ -1310,18 +1310,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
 
-    private void mineNodeFromStand(Node minenode, Node standnode, ChunkCoordinates currentStandingPosition, int directon) {
+    private void mineNodeFromStand(Node minenode, Node standnode, ChunkCoordinates standingPosition, int directon) {
 
         //Check for safe Node
         for (int x = -NODE_DISTANCE / 2; x <= NODE_DISTANCE / 2; x++) {
             for (int z = -NODE_DISTANCE / 2; z <= NODE_DISTANCE / 2; z++) {
                 for (int y = 0; y <= 5; y++) {
                     ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
-                            currentStandingPosition.posY+y, minenode.getZ() + z);
+                            standingPosition.posY+y, minenode.getZ() + z);
                     if(Math.abs(x) >= 2 && Math.abs(z) >= 2
                             || getBlock(curBlock) != Blocks.air
                             || y < 1 || y > 4){
-                        if (!secureBlock(curBlock, currentStandingPosition)) {
+                        if (!secureBlock(curBlock, standingPosition)) {
                             return;
                         }
                     }
@@ -1329,6 +1329,44 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             }
         }
 
+        if(!mineSideOfNode(minenode,directon,standingPosition)){
+            return;
+        }
+
+        if(minenode.getStatus() == NodeStatus.AVAILABLE){
+            minenode.setStatus(NodeStatus.IN_PROGRESS);
+        }
+
+        //Mine middle
+        //TODO: make it look nicer!
+        for (int y = 1; y <= 4; y++) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
+                            standingPosition.posY+y, minenode.getZ() + z);
+                    if(!mineBlock(curBlock,standingPosition)){
+                        return;
+                    }
+                }
+            }
+        }
+
+        if(minenode.getStatus() == NodeStatus.IN_PROGRESS){
+            logger.info("Mined out node middle!");
+            minenode.setStatus(NodeStatus.COMPLETED);
+            logger.info("Completed middle for: \n"+minenode);
+        }
+
+        List<Integer> directions = Arrays.asList(1, 2, 3, 4);
+        for (Integer dir : directions) {
+            if(mineSideOfNode(minenode,directon,standingPosition)){
+                return;
+            }
+        }
+        logger.info("Done with node \n"+minenode);
+    }
+
+    private boolean mineSideOfNode(Node minenode, int directon, ChunkCoordinates standingPosition){
         if(getNodeStatusForDirection(minenode,directon) == NodeStatus.AVAILABLE){
             setNodeStatusForDirection(minenode,directon, NodeStatus.IN_PROGRESS);
         }
@@ -1362,43 +1400,19 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             for (int x = negx; x <= posx; x++) {
                 for (int z = negz; z <= posz; z++) {
                     ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
-                            currentStandingPosition.posY+y, minenode.getZ() + z);
-                    if(!mineBlock(curBlock,currentStandingPosition)){
-                        return;
+                            standingPosition.posY+y, minenode.getZ() + z);
+                    if(!mineBlock(curBlock,standingPosition)){
+                        return false;
                     }
                 }
             }
         }
         if(getNodeStatusForDirection(minenode,directon) == NodeStatus.IN_PROGRESS){
-            logger.info("Mined out node entry");
+            logger.info("Mined out node entry!");
             setNodeStatusForDirection(minenode,directon, NodeStatus.COMPLETED);
             logger.info("Completed entry for: \n"+minenode);
         }
-
-        if(minenode.getStatus() == NodeStatus.AVAILABLE){
-            minenode.setStatus(NodeStatus.IN_PROGRESS);
-        }
-
-        //Mine middle
-        //TODO: make it look nicer!
-        for (int y = 1; y <= 4; y++) {
-            for (int x = -1; x <= 1; x++) {
-                for (int z = -1; z <= 1; z++) {
-                    ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
-                            currentStandingPosition.posY+y, minenode.getZ() + z);
-                    if(!mineBlock(curBlock,currentStandingPosition)){
-                        return;
-                    }
-                }
-            }
-        }
-
-        if(minenode.getStatus() == NodeStatus.IN_PROGRESS){
-            logger.info("Mined out node entry");
-            minenode.setStatus(NodeStatus.COMPLETED);
-            logger.info("Completed entry for: \n"+minenode);
-        }
-
+        return true;
     }
 
     private void setNodeStatusForDirection(Node node, int direction, NodeStatus status) {
