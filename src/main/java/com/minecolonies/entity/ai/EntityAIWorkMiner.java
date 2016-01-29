@@ -245,7 +245,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
  Testing item.pickaxeDiamond on tile.bedrock
  Requires 'null' of level -1 and diff is -1
     */
-    
+
     public EntityAIWorkMiner(JobMiner job) {
         super(job);
     }
@@ -499,7 +499,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             delay += 20;
         }
     }
-    
+
     private void walkToLadder() {
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().ladderLocation
                 , RANGE_CHECK_AROUND_BUILDING_LADDER)) {
@@ -679,7 +679,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
 
     private void advanceLadder() {
-        
+
         if (getOwnBuilding().startingLevelShaft >= 5) {
             job.setStage(Stage.BUILD_SHAFT);
             return;
@@ -718,25 +718,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         //Check for safe floor
         for (int x = -4 + xOffset; x <= 4 + xOffset; x++) {
             for (int z = -4 + zOffset; z <= 4 + zOffset; z++) {
-
                 ChunkCoordinates curBlock = new ChunkCoordinates(safeCobble.posX + x,
                         safeCobble.posY, safeCobble.posZ + z);
-                if (!getBlock(curBlock).getMaterial().blocksMovement()) {
-
-                    if (!mineBlock(curBlock, safeStand)) {
-                        delay = 0;
-                        return;
-                    }
-                    if (missesItemsInInventory(new ItemStack(Blocks.cobblestone))) {
-                        return;
-                    }
-                    //Less obvious ;)
-                    setBlockFromInventory(curBlock, Blocks.cobblestone);
-                    world.setBlock(curBlock.posX, curBlock.posY, curBlock.posZ, Blocks.stone);
+                if (!secureBlock(curBlock, currentStandingPosition)) {
                     return;
                 }
-
-
             }
         }
 
@@ -1248,9 +1234,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
     private void doNodeMining() {
         Level currentLevel = getOwnBuilding().getCurrentLevel();
-        if(currentLevel == null){
+        if (currentLevel == null) {
             logger.warn("Current Level not set, resetting...");
-            getOwnBuilding().currentLevel = getOwnBuilding().getLevels().size()-1;
+            getOwnBuilding().currentLevel = getOwnBuilding().getLevels().size() - 1;
             return;
         }
 
@@ -1258,7 +1244,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     private void mineAtLevel(Level currentLevel) {
-        if(workingNode == null){
+        if (workingNode == null) {
             logger.info("No working node, searching for one:");
             workingNode = findNodeOnLevel(currentLevel);
             return;
@@ -1266,86 +1252,191 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
         int foundDirection = 0;
         Node foundNode = null;
-        List<Integer> directions = Arrays.asList(1,2,3,4);
+        List<Integer> directions = Arrays.asList(1, 2, 3, 4);
 
-        for(Integer dir : directions){
+        for (Integer dir : directions) {
             Optional<Node> node = tryFindNodeInDirectionofNode(currentLevel, workingNode, dir);
-            if(node.isPresent()){
+            if (node.isPresent()) {
                 foundDirection = dir;
                 foundNode = node.get();
                 break;
             }
         }
-        if(foundNode == null || foundDirection <= 0){
+        if (foundNode == null || foundDirection <= 0) {
             logger.info("Found no adjacent nodes, aborting...");
             workingNode = null;
             return;
         }
-        int xoffset = getXDistance(foundDirection)/2;
-        int zoffset = getZDistance(foundDirection)/2;
-        if(xoffset > 0){
+        int xoffset = getXDistance(foundDirection) / 2;
+        int zoffset = getZDistance(foundDirection) / 2;
+        if (xoffset > 0) {
             xoffset += 1;
-        }else {
+        } else {
             xoffset -= 1;
         }
-        if(zoffset > 0){
+        if (zoffset > 0) {
             zoffset += 1;
-        }else {
+        } else {
             zoffset -= 1;
         }
         ChunkCoordinates standingPosition = new ChunkCoordinates(
-                workingNode.getX()+xoffset,
+                workingNode.getX() + xoffset,
                 currentLevel.getDepth(),
-                workingNode.getZ()+zoffset);
+                workingNode.getZ() + zoffset);
         delay += 10;
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, standingPosition
                 , RANGE_CHECK_AROUND_MINING_BLOCK)) {
-            mineNodeFromStand(workingNode,foundNode,standingPosition,foundDirection);
+            mineNodeFromStand(workingNode, foundNode, standingPosition, foundDirection);
         }
     }
 
-    private void mineNodeFromStand(Node minenode, Node standnode, ChunkCoordinates currentStandingPosition, int directon){
+    private boolean secureBlock(ChunkCoordinates curBlock, ChunkCoordinates safeStand) {
+        if (!getBlock(curBlock).getMaterial().blocksMovement()) {
+
+            if (!mineBlock(curBlock, safeStand)) {
+                delay = 0;
+                return false;
+            }
+            if (missesItemsInInventory(new ItemStack(Blocks.cobblestone))) {
+                return false;
+            }
+
+            setBlockFromInventory(curBlock, Blocks.cobblestone);
+            //To set it to clean stone... would be cheating
+            //world.setBlock(curBlock.posX, curBlock.posY, curBlock.posZ, Blocks.stone);
+            return false;
+        }
+        return true;
+    }
+
+
+    private void mineNodeFromStand(Node minenode, Node standnode, ChunkCoordinates currentStandingPosition, int directon) {
+
+        //Check for safe Node
+        for (int x = -NODE_DISTANCE / 2; x <= NODE_DISTANCE / 2; x++) {
+            for (int z = -NODE_DISTANCE / 2; z <= NODE_DISTANCE / 2; z++) {
+                for (int y = 0; y <= 5; y++) {
+                    ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
+                            currentStandingPosition.posY+y, minenode.getZ() + z);
+                    if(Math.abs(x) >= 2 && Math.abs(z) >= 2
+                            || getBlock(curBlock) != Blocks.air
+                            || y < 1 || y > 4){
+                        if (!secureBlock(curBlock, currentStandingPosition)) {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        if(getNodeStatusForDirection(minenode,directon) == NodeStatus.AVAILABLE){
+            setNodeStatusForDirection(minenode,directon, NodeStatus.IN_PROGRESS);
+        }
+
+        int xoffset = getXDistance(directon) / 2;
+        int zoffset = getZDistance(directon) / 2;
+        int posx = 1;
+        int negx = -1;
+        int posz = 1;
+        int negz = -1;
+        if(xoffset > 0){
+            posx = xoffset;
+            negx = 0;
+        }
+        if(xoffset < 0){
+            negx = xoffset;
+            posx = 0;
+        }
+        if(zoffset > 0){
+            posz = zoffset;
+            negz = 0;
+        }
+        if(xoffset < 0){
+            negz = zoffset;
+            posz = 0;
+        }
+
+        //Mine side
+        //TODO: make it look nicer!
+        for (int y = 1; y <= 4; y++) {
+            for (int x = negx; x <= posx; x++) {
+                for (int z = negz; z <= posz; z++) {
+                    ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
+                            currentStandingPosition.posY+y, minenode.getZ() + z);
+                    if(!mineBlock(curBlock,currentStandingPosition)){
+                        return;
+                    }
+                }
+            }
+        }
+
+        setNodeStatusForDirection(minenode,directon, NodeStatus.COMPLETED);
 
     }
 
-    private NodeStatus getNodeStatusForDirection(Node node, int direction){
-        if(direction == 1){
+    private NodeStatus setNodeStatusForDirection(Node node, int direction, NodeStatus status) {
+        if (direction == 1) {
+            node.setDirectionPosX(status);
+        } else if (direction == 2) {
+            node.setDirectionNegX(status);
+        } else if (direction == 3) {
+            node.setDirectionPosZ(status);
+        } else if (direction == 4) {
+            node.setDirectionNegZ(status);
+        }
+    }
+
+    private NodeStatus getNodeStatusForDirection(Node node, int direction) {
+        if (direction == 1) {
             return node.getDirectionPosX();
-        }else if(direction == 2){
+        } else if (direction == 2) {
             return node.getDirectionNegX();
-        } else if(direction == 3){
+        } else if (direction == 3) {
             return node.getDirectionPosZ();
-        } else if(direction == 4){
+        } else if (direction == 4) {
             return node.getDirectionNegZ();
         }
         //Cannot happen, so send something that blocks mining
         return NodeStatus.LADDER;
     }
 
-    private boolean isNodeInDirectionOfOtherNode(Node start, int direction, Node check){
-        return start.getX()+getXDistance(direction) == check.getX()
-                && start.getZ()+getZDistance(direction) == check.getZ();
+    private int invertDirection(int direction){
+        if (direction == 1) {
+            return 2;
+        } else if (direction == 2) {
+            return 1;
+        } else if (direction == 3) {
+            return 4;
+        } else if (direction == 4) {
+            return 3;
+        }
+        return 0;
     }
 
-    private int getXDistance(int direction){
-        if(direction == 1){
+    private boolean isNodeInDirectionOfOtherNode(Node start, int direction, Node check) {
+        return start.getX() + getXDistance(direction) == check.getX()
+                && start.getZ() + getZDistance(direction) == check.getZ();
+    }
+
+    private int getXDistance(int direction) {
+        if (direction == 1) {
             return NODE_DISTANCE;
-        }else if(direction == 2){
+        } else if (direction == 2) {
             return -NODE_DISTANCE;
         }
         return 0;
     }
 
-    private int getZDistance(int direction){
-        if(direction == 3){
+    private int getZDistance(int direction) {
+        if (direction == 3) {
             return NODE_DISTANCE;
-        }else if(direction == 4){
+        } else if (direction == 4) {
             return -NODE_DISTANCE;
         }
         return 0;
     }
 
-    private Optional<Node> tryFindNodeInDirectionofNode(Level curlevel, Node start, int direction){
+    private Optional<Node> tryFindNodeInDirectionofNode(Level curlevel, Node start, int direction) {
         final Node finalCurrentNode = start;
         Optional<Node> first = new ArrayList<>(curlevel.getNodes()).parallelStream()
                 .filter(check -> isNodeInDirectionOfOtherNode(finalCurrentNode, direction, check))
@@ -1354,42 +1445,42 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     private Node createNewNodeInDirectionFromNode(Node start, int direction) {
-        int x = start.getX()+getXDistance(direction);
-        int z = start.getZ()+getZDistance(direction);
-        return new Node(x,z);
+        int x = start.getX() + getXDistance(direction);
+        int z = start.getZ() + getZDistance(direction);
+        return new Node(x, z);
     }
 
     private Node findNodeOnLevel(Level currentLevel) {
         Node currentNode = currentLevel.getLadderNode();
         LinkedList<Node> visited = new LinkedList<>();
-        while (currentNode != null){
-            if(visited.contains(currentNode)){
+        while (currentNode != null) {
+            if (visited.contains(currentNode)) {
                 logger.info("Found dead end, retrying...");
                 return null;
             }
 
-            logger.info("Walking to "+currentNode);
+            logger.info("Walking to " + currentNode);
             visited.add(currentNode);
-            if(currentNode.getStatus() == NodeStatus.AVAILABLE
-                    || currentNode.getStatus() == NodeStatus.IN_PROGRESS){
+            if (currentNode.getStatus() == NodeStatus.AVAILABLE
+                    || currentNode.getStatus() == NodeStatus.IN_PROGRESS) {
                 logger.info("Node was mineable");
                 return currentNode;
             }
 
-            List<Integer> directions = Arrays.asList(1,2,3,4);
+            List<Integer> directions = Arrays.asList(1, 2, 3, 4);
             Collections.shuffle(directions);
-            for(Integer dir : directions){
-                logger.info("\tTesting direction "+dir);
-                NodeStatus status = getNodeStatusForDirection(currentNode,dir);
-                if(status == NodeStatus.AVAILABLE || status == NodeStatus.IN_PROGRESS){
-                    logger.info("\tDirection "+dir + " was mineable");
+            for (Integer dir : directions) {
+                logger.info("\tTesting direction " + dir);
+                NodeStatus status = getNodeStatusForDirection(currentNode, dir);
+                if (status == NodeStatus.AVAILABLE || status == NodeStatus.IN_PROGRESS) {
+                    logger.info("\tDirection " + dir + " was mineable");
                     return currentNode;
                 }
-                if(status == NodeStatus.COMPLETED){
-                    logger.info("\tDirection "+dir + " was complete");
-                    Optional<Node> first = tryFindNodeInDirectionofNode(currentLevel,currentNode,dir);
-                    if(first.isPresent()){
-                        if(visited.contains(first.get())){
+                if (status == NodeStatus.COMPLETED) {
+                    logger.info("\tDirection " + dir + " was complete");
+                    Optional<Node> first = tryFindNodeInDirectionofNode(currentLevel, currentNode, dir);
+                    if (first.isPresent()) {
+                        if (visited.contains(first.get())) {
                             continue;//Stop endless loops
                         }
                         //IDE sais unused but is indeed used for next while loop
@@ -1398,9 +1489,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                         break; //Out of direction for loop
                     }
 
-                    Node newnode = createNewNodeInDirectionFromNode(currentNode,dir);
+                    Node newnode = createNewNodeInDirectionFromNode(currentNode, dir);
                     currentLevel.addNode(newnode);
-                    logger.info("\tCreated new node "+newnode);
+                    logger.info("\tCreated new node " + newnode);
                     return newnode;
                 }
             }
@@ -1408,7 +1499,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
         return null;
     }
-
 
 
     @Override
@@ -1520,7 +1610,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             doNodeMining();
             return;
         }
-        
+
         logger.info("[" + job.getStage() + "] Stopping here, old code ahead...");
         delay += 100;
         return;
