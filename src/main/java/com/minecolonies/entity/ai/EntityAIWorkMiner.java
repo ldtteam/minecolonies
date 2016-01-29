@@ -718,9 +718,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         //Check for safe floor
         for (int x = -4 + xOffset; x <= 4 + xOffset; x++) {
             for (int z = -4 + zOffset; z <= 4 + zOffset; z++) {
-                if (x == 0 && 0 == z) {
-                    continue;
-                }
+                
                 ChunkCoordinates curBlock = new ChunkCoordinates(safeCobble.posX + x,
                         safeCobble.posY, safeCobble.posZ + z);
                 if (!getBlock(curBlock).getMaterial().blocksMovement()) {
