@@ -328,13 +328,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
     private boolean waitingForSomething() {
         if (delay > 0) {
-            if (job.getStage() == Stage.MINING_NODE
-                    || job.getStage() == Stage.MINING_VEIN) {
-
-                worker.hitBlockWithToolInHand(miningBlock);
-            }
-            if (job.getStage() == Stage.MINING_SHAFT) {
-                if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, currentStandingPosition
+            if (job.getStage() == Stage.MINING_SHAFT
+                    || job.getStage() == Stage.MINING_NODE) {
+                if (worker.isWorkerAtSiteWithMove(currentStandingPosition
                         , RANGE_CHECK_AROUND_MINING_BLOCK)) {
                     worker.hitBlockWithToolInHand(currentWorkingLocation);
                 } else {
@@ -490,7 +486,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     private void walkToBuilding() {
-        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation()
                 , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
             logger.info("Work can start!");
             job.setStage(Stage.PREPARING);
@@ -501,7 +497,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     private void walkToLadder() {
-        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().ladderLocation
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().ladderLocation
                 , RANGE_CHECK_AROUND_BUILDING_LADDER)) {
             logger.info("Checking the mine now!");
             job.setStage(Stage.CHECK_MINESHAFT);
@@ -517,7 +513,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
      * Only dumps one block at a time!
      */
     private boolean dumpOneMoreSlot() {
-        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation()
                 , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
             //Iterate over worker inventory
             for (int i = 0; i < worker.getInventory().getSizeInventory(); i++) {
@@ -938,7 +934,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             job.clearItemsNeeded();
             return;
         }
-        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation()
                 , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
             delay += 10;
             ItemStack first = itemsCurrentlyNeeded.get(0);
@@ -1070,7 +1066,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             }
         }
         delay += 20;
-        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation()
                 , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
             if (isPickaxeInHut(minlevel)) {
                 return;
@@ -1089,7 +1085,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             return;
         }
         delay += 20;
-        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation()
                 , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
             if (isShovelInHut()) {
                 return;
@@ -1222,7 +1218,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     }
 
     private void doShaftBuilding() {
-        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, getOwnBuilding().getLocation()
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation()
                 , RANGE_CHECK_AROUND_BUILDING_CHEST)) {
             if (buildNextBlockInShaft()) {
                 return;
@@ -1284,11 +1280,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                 currentLevel.getDepth(),
                 workingNode.getZ() + zoffset);
         delay += 10;
+        currentStandingPosition = standingPosition;
         if (workingNode.getStatus() == NodeStatus.IN_PROGRESS
                 || workingNode.getStatus() == NodeStatus.COMPLETED
-                || ChunkCoordUtils.isWorkerAtSiteWithMove(worker, standingPosition
+                || worker.isWorkerAtSiteWithMove(standingPosition
                 , RANGE_CHECK_AROUND_MINING_BLOCK)) {
-            currentStandingPosition = standingPosition;
             mineNodeFromStand(workingNode, foundNode, standingPosition, foundDirection);
         }
     }
@@ -1394,9 +1390,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
         //Build middle
         //TODO: make it look nicer!
-        for (int y = 1; y <= 4; y++) {
-            for (int x = -2; x <= 2; x++) {
-                for (int z = -2; z <= 2; z++) {
+        for (int y = 4; y >= 2; y--) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
                     ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
                             standingPosition.posY + y, minenode.getZ() + z);
 
@@ -1412,7 +1408,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
                     //torches at sides
                     if (((Math.abs(x) == 1 && Math.abs(z) == 0)
                             || (Math.abs(x) == 0 && Math.abs(z) == 1))
-                            && y == 3) {
+                            && y == 3
+                            && getBlock(new ChunkCoordinates(minenode.getX(),
+                            standingPosition.posY + y, minenode.getZ())) == Blocks.planks) {
                         material = Blocks.torch;
                     }
                     if (material == null || getBlock(curBlock) == material) {

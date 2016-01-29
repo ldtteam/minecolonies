@@ -26,8 +26,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 
-import java.io.File;
-
 /**
  * Performs builder work
  * Created: May 25, 2014
@@ -162,7 +160,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
     {
         if (worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS)
         {
-            if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition(), 3))
+            if (!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
             {
                 return;
             }
@@ -240,7 +238,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
         if (worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS)
         {
-            if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition(), 3))
+            if (!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
             {
                 return;
             }
@@ -317,7 +315,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
         if (worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS)
         {
-            if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getSchematic().getPosition(), 3))
+            if (!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
             {
                 return;
             }
