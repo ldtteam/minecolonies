@@ -44,7 +44,7 @@ public class Node {
         int z = compound.getInteger(TAG_Z);
 
         NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
-        
+
         NodeStatus directionPosX = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_X));
         NodeStatus directionNegX = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_X));
         NodeStatus directionPosZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_Z));
