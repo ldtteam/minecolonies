@@ -144,7 +144,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
             dumpInventory();
             break;
         default:
-            System.out.println("Invalid stage in EntityAIWorkLumberjack");
+            //System.out.println("Invalid stage in EntityAIWorkLumberjack");
         }
     }
 
@@ -240,7 +240,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                     Block block = world.getBlock(x, y, z);
                     if(worker.getOffsetTicks() % 20 == 0)//Less spam
                     {
-                        System.out.println(String.format("Block: %s  x:%d y:%d z:%d", block.getUnlocalizedName(), x, y, z));
+                        //System.out.println(String.format("Block: %s  x:%d y:%d z:%d", block.getUnlocalizedName(), x, y, z));
                     }
                     if(block.isLeaves(world, x, y, z))//Parameters not used
                     {
@@ -371,7 +371,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                 if(stillTicks > 20)//Stuck
                 {
                     worker.getNavigator().clearPathEntity();//Skip this item
-                    System.out.println("Lumberjack skipped item (couldn't reach)");
+                    //System.out.println("Lumberjack skipped item (couldn't reach)");
                 }
             }
             else
