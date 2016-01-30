@@ -19,6 +19,8 @@ import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
@@ -649,10 +651,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc {
         setCurrentItemOrArmor(0, inventory.getStackInSlot(slot));
     }
 
+    /**
+     * Caused by: java.lang.RuntimeException: Attempted to load class bsx for invalid side SERVER
+     * not entirely sure jet...
+     * @param x
+     * @param y
+     * @param z
+     */
     public void hitBlockWithToolInHand(int x, int y, int z) {
         this.swingItem();
         try {
-            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
+                //FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
         } catch (Exception e) {
             //Ignored, happens when minecraft is not fully initialized
             //TODO: Check the exception type and remove blanco catch
