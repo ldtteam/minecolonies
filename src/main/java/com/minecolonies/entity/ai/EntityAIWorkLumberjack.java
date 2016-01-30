@@ -164,7 +164,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     {
         //TODO request by tool type
         //job.addItemNeeded();
-        ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation());//Go Home
+        worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(),4);//Go Home
     }
 
     private void findTree()
@@ -198,7 +198,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         }
 
         ChunkCoordinates location = job.tree.getLocation();
-        if (!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, location))
+        if (!worker.isWorkerAtSiteWithMove(location,3))
         {
             int distance = (int) ChunkCoordUtils.distanceSqrd(location, worker.getPosition());
             if(previousDistance == distance)//Stuck, probably on leaves
@@ -360,7 +360,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         if(worker.getNavigator().noPath())
         {
             ChunkCoordinates pos = getAndRemoveClosestItem();
-            ChunkCoordUtils.isWorkerAtSiteWithMove(worker, pos);
+            worker.isWorkerAtSiteWithMove(pos,3);
         }
         else if(worker.getNavigator().getPath() != null)
         {
@@ -402,7 +402,7 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
 
     private void dumpInventory()
     {
-        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+        if (worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(),4))
         {
             int saplingStacks = 0;
             for (int i = 0; i < getInventory().getSizeInventory(); i++)
