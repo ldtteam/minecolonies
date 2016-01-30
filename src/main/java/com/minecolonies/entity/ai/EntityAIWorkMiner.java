@@ -1534,8 +1534,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
         if (worker.getHeldItem() == null) {
             return (int) block.getBlockHardness(world, x, y, z);
         }
-        return (int) (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0)
-                * block.getBlockHardness(world, x, y, z));
+        return (int) (50 * block.getBlockHardness(world, x, y, z) /
+                (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0)));
     }
 
     private void setBlockFromInventory(ChunkCoordinates location, Block block) {
