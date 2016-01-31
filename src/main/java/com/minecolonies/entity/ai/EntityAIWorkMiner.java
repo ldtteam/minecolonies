@@ -35,6 +35,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     private static final int RANGE_CHECK_AROUND_BUILDING_LADDER = 3;
     private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 2;
     private static final int NODE_DISTANCE = 7;
+
     /**
      * Add blocks to this list to exclude mine checks.
      * They can be mined for free. (be cautions with this)
@@ -43,7 +44,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
      * - Blocks.monster_egg:
      * Forge handling of this is a bit bogus, will later be removed.
      */
-    public static Set<Block> canBeMined = new HashSet<>(Arrays.asList(
+    private static final Set<Block> canBeMined = new HashSet<>(Arrays.asList(
             Blocks.air, Blocks.fence, Blocks.planks, Blocks.ladder,
             Blocks.torch, Blocks.chest, Blocks.mob_spawner, Blocks.grass,
             Blocks.tallgrass, Blocks.cactus, Blocks.log, Blocks.log2,
@@ -53,7 +54,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
-    public static Set<Block> notReplacedInSecuringMine = new HashSet<>(Arrays.asList(
+    private static final Set<Block> notReplacedInSecuringMine = new HashSet<>(Arrays.asList(
             Blocks.cobblestone, Blocks.stone, Blocks.dirt
     ));
     private static Logger logger = LogManager.getLogger("Miner");
