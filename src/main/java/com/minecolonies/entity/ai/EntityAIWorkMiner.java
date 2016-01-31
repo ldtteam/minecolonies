@@ -1267,6 +1267,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
 
     @Override
     public void updateTask() {
+
+
         //Something fatally wrong? Wait for init...
         if (null == getOwnBuilding()) {
             return;

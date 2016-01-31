@@ -15,6 +15,54 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "1.2"
+}
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+apply plugin: 'pmd'
+
+sonarqube {
+    properties{
+        property "sonar.host.url", "http://home.kk-sc.de:9000"
+        property "sonar.jdbc.url", "jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance"
+        property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
+        property "sonar.jdbc.username", System.getenv()['SONARDBUS']
+        property "sonar.jdbc.password", System.getenv()['SONARDBPW']
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.projectName", "Minecolonies"
+        property "sonar.login", System.getenv()['SONARUSER']
+        property "sonar.password", System.getenv()['SONARPW']
+    }
+}
+
+checkstyle {
+    ignoreFailures = true
+    showViolations = false
+}
+
+findbugs {
+    ignoreFailures = true
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = true
+        html.enabled = false
+    }
+}
+
+pmd {
+    ignoreFailures = true
+}
+
+tasks.withType(Pmd) {
+    reports {
+        xml.enabled = true
+        html.enabled = false
+    }
+}
+
 apply plugin: 'forge'
 
 ext.configFile = file "build.properties"
@@ -80,4 +128,11 @@ task incrementBuildNumber() {
 
 jar {
     appendix = 'universal'
+}
+
+apply plugin: 'idea'
+idea {
+    module {
+        inheritOutputDirs = true
+    }
 }
