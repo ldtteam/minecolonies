@@ -25,10 +25,6 @@ apply plugin: 'pmd'
 sonarqube {
     properties{
         property "sonar.host.url", "http://home.kk-sc.de:9000"
-        property "sonar.jdbc.url", "jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance"
-        property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
-        property "sonar.jdbc.username", System.getenv()['SONARDBUS']
-        property "sonar.jdbc.password", System.getenv()['SONARDBPW']
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectName", "Minecolonies"
         property "sonar.login", System.getenv()['SONARUSER']
