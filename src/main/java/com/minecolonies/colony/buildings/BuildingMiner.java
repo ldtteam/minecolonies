@@ -125,15 +125,8 @@ public class BuildingMiner extends BuildingWorker {
             buf.writeInt(level.getNodes().size());
         }
     }
-
-    /*
-    TODO: Rename to something like getDepthLimit.
-    getMaxY is misleading with buildHeight because
-    Max implies greatest number. Something with depth
-    (for going down) and Limit (instead of Max)
-    for a direction neutral purpose would be better.
-    */
-    public int getMaxY() {
+    
+    public int getDepthLimit() {
         if (this.getBuildingLevel() == 1) {
             return 50;
         } else if (this.getBuildingLevel() == 2) {

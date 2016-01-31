@@ -1352,7 +1352,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner> {
             //TODO: check if mineshaft needs repairing!
 
             //Check if we reached the mineshaft depth limit
-            if (getLastLadder(getOwnBuilding().ladderLocation) < getOwnBuilding().getMaxY()) {
+            if (getLastLadder(getOwnBuilding().ladderLocation) < getOwnBuilding().getDepthLimit()) {
                 job.setStage(Stage.MINING_NODE);
                 getOwnBuilding().clearedShaft = true;
                 return;
