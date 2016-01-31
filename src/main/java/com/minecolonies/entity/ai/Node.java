@@ -11,10 +11,11 @@ import net.minecraft.nbt.NBTTagCompound;
  *
  * @author Colton, Kostronor
  */
-public class Node {
-    private static final String TAG_X = "idX";
-    private static final String TAG_Z = "idZ";//TODO change to z, but will break saves
-    private static final String TAG_STATUS = "Status";
+public class Node
+{
+    private static final String TAG_X                 = "idX";
+    private static final String TAG_Z                 = "idZ";//TODO change to z, but will break saves
+    private static final String TAG_STATUS            = "Status";
     private static final String TAG_STATUS_POSITIVE_X = "positiveX";
     private static final String TAG_STATUS_NEGATIVE_X = "negativeX";
     private static final String TAG_STATUS_POSITIVE_Z = "positiveZ";
@@ -29,7 +30,8 @@ public class Node {
     private NodeStatus directionPosZ; //+Z
     private NodeStatus directionNegZ; //-Z
 
-    public Node(int x, int z) {
+    public Node(int x, int z)
+    {
         this.x = x;
         this.z = z;
         status = NodeStatus.AVAILABLE;
@@ -39,7 +41,8 @@ public class Node {
         directionNegZ = NodeStatus.AVAILABLE;
     }
 
-    public static Node createFromNBT(NBTTagCompound compound) {
+    public static Node createFromNBT(NBTTagCompound compound)
+    {
         int x = compound.getInteger(TAG_X);
         int z = compound.getInteger(TAG_Z);
 
@@ -60,39 +63,48 @@ public class Node {
         return node;
     }
 
-    public NodeStatus getDirectionPosX() {
+    public NodeStatus getDirectionPosX()
+    {
         return directionPosX;
     }
 
-    public void setDirectionPosX(NodeStatus directionPosX) {
+    public void setDirectionPosX(NodeStatus directionPosX)
+    {
         this.directionPosX = directionPosX;
     }
 
-    public NodeStatus getDirectionNegX() {
+    public NodeStatus getDirectionNegX()
+    {
         return directionNegX;
     }
 
-    public void setDirectionNegX(NodeStatus directionNegX) {
+    public void setDirectionNegX(NodeStatus directionNegX)
+    {
         this.directionNegX = directionNegX;
     }
 
-    public NodeStatus getDirectionPosZ() {
+    public NodeStatus getDirectionPosZ()
+    {
         return directionPosZ;
     }
 
-    public void setDirectionPosZ(NodeStatus directionPosZ) {
+    public void setDirectionPosZ(NodeStatus directionPosZ)
+    {
         this.directionPosZ = directionPosZ;
     }
 
-    public NodeStatus getDirectionNegZ() {
+    public NodeStatus getDirectionNegZ()
+    {
         return directionNegZ;
     }
 
-    public void setDirectionNegZ(NodeStatus directionNegZ) {
+    public void setDirectionNegZ(NodeStatus directionNegZ)
+    {
         this.directionNegZ = directionNegZ;
     }
 
-    public void writeToNBT(NBTTagCompound compound) {
+    public void writeToNBT(NBTTagCompound compound)
+    {
         compound.setInteger(TAG_X, x);
         compound.setInteger(TAG_Z, z);
 
@@ -104,32 +116,39 @@ public class Node {
         compound.setString(TAG_STATUS_NEGATIVE_Z, directionNegZ.name());
     }
 
-    public int getX() {
+    public int getX()
+    {
         return x;
     }
 
-    public int getZ() {
+    public int getZ()
+    {
         return z;
     }
 
-    public NodeStatus getStatus() {
+    public NodeStatus getStatus()
+    {
         return status;
     }
 
-    public void setStatus(NodeStatus status) {
+    public void setStatus(NodeStatus status)
+    {
         this.status = status;
     }
 
-    public int getVectorX() {
+    public int getVectorX()
+    {
         return 0;
     }
 
-    public int getVectorZ() {
+    public int getVectorZ()
+    {
         return 0;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         final StringBuilder sb = new StringBuilder("Node{");
         sb.append("x=").append(x);
         sb.append(", z=").append(z);

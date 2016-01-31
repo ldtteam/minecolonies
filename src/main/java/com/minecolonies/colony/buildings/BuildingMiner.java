@@ -21,28 +21,29 @@ import net.minecraftforge.common.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuildingMiner extends BuildingWorker {
-    private static final String TAG_FLOOR_BLOCK = "floorBlock";//TODO: is this something that needs to be saved?
-    private static final String TAG_FENCE_BLOCK = "fenceBlock";
+public class BuildingMiner extends BuildingWorker
+{
+    private static final String TAG_FLOOR_BLOCK    = "floorBlock";//TODO: is this something that needs to be saved?
+    private static final String TAG_FENCE_BLOCK    = "fenceBlock";
     private static final String TAG_STARTING_LEVEL = "startingLevelShaft";
-    private static final String TAG_LEVELS = "levels";
-    private static final String TAG_CLEARED = "clearedShaft";
-    private static final String TAG_SLOCATION = "shaftLocation";
-    private static final String TAG_VECTORX = "vectorx";
-    private static final String TAG_VECTORZ = "vectorz";
-    private static final String TAG_CLOCATION = "cobblelocation";
-    private static final String TAG_ACTIVE = "activeNodeint";
-    private static final String TAG_CURRENT_LEVEL = "currentLevel";
-    private static final String TAG_SN = "StartingNode";
-    private static final String TAG_LLOCATION = "ladderlocation";
-    private static final String TAG_LADDER = "found_ladder";
+    private static final String TAG_LEVELS         = "levels";
+    private static final String TAG_CLEARED        = "clearedShaft";
+    private static final String TAG_SLOCATION      = "shaftLocation";
+    private static final String TAG_VECTORX        = "vectorx";
+    private static final String TAG_VECTORZ        = "vectorz";
+    private static final String TAG_CLOCATION      = "cobblelocation";
+    private static final String TAG_ACTIVE         = "activeNodeint";
+    private static final String TAG_CURRENT_LEVEL  = "currentLevel";
+    private static final String TAG_SN             = "StartingNode";
+    private static final String TAG_LLOCATION      = "ladderlocation";
+    private static final String TAG_LADDER         = "found_ladder";
     public Node activeNode;
-    public Block floorBlock = Blocks.planks;
-    public Block fenceBlock = Blocks.fence;
+    public Block floorBlock         = Blocks.planks;
+    public Block fenceBlock         = Blocks.fence;
     /**
      * Here we can detect multiples of 5
      */
-    public int startingLevelShaft = 0;
+    public int   startingLevelShaft = 0;
     /**
      * The location of the topmost cobblestone the ladder starts at
      */
@@ -50,10 +51,10 @@ public class BuildingMiner extends BuildingWorker {
     /**
      * True if shaft is at bottom limit
      */
-    public boolean clearedShaft = false;
-    public int startingLevelNode = 0; //Save in hut
-    public int active = 0;
-    public int currentLevel = 0;
+    public boolean clearedShaft      = false;
+    public int     startingLevelNode = 0; //Save in hut
+    public int     active            = 0;
+    public int     currentLevel      = 0;
     public ChunkCoordinates shaftStart;
     /**
      * Ladder orientation in x
@@ -70,68 +71,85 @@ public class BuildingMiner extends BuildingWorker {
     /**
      * True if a ladder is found
      */
-    public boolean foundLadder = false;
-    private List<Level> levels = new ArrayList<>();     //Stores the levels of the miners mine. This could be a map<depth,level>
+    public  boolean     foundLadder = false;
+    private List<Level> levels      = new ArrayList<>();     //Stores the levels of the miners mine. This could be a map<depth,level>
 
-    public BuildingMiner(Colony c, ChunkCoordinates l) {
+    public BuildingMiner(Colony c, ChunkCoordinates l)
+    {
         super(c, l);
     }
 
     @Override
-    public String getSchematicName() {
+    public String getSchematicName()
+    {
         return "Miner";
     }
 
     @Override
-    public int getMaxBuildingLevel() {
+    public int getMaxBuildingLevel()
+    {
         return 3;
     }
 
     @Override
-    public String getJobName() {
+    public String getJobName()
+    {
         return "Miner";
     }
 
     @Override
-    public Job createJob(CitizenData citizen) {
+    public Job createJob(CitizenData citizen)
+    {
         return new JobMiner(citizen);
     }
 
-    public void addLevel(Level currentLevel) {
+    public void addLevel(Level currentLevel)
+    {
         getLevels().add(currentLevel);
     }
 
     /**
      * A list of all shaft levels that are cleared
      */
-    public List<Level> getLevels() {
+    public List<Level> getLevels()
+    {
         return levels;
     }
 
-    public Level getCurrentLevel() {
-        if (currentLevel >= 0 && currentLevel < levels.size()) {
+    public Level getCurrentLevel()
+    {
+        if(currentLevel >= 0 && currentLevel < levels.size())
+        {
             return levels.get(currentLevel);
         }
         return null;
     }
 
     @Override
-    public void serializeToView(ByteBuf buf) {
+    public void serializeToView(ByteBuf buf)
+    {
         super.serializeToView(buf);
         buf.writeInt(currentLevel);
         buf.writeInt(getLevels().size());
 
-        for (Level level : getLevels()) {
+        for(Level level : getLevels())
+        {
             buf.writeInt(level.getNodes().size());
         }
     }
-    
-    public int getDepthLimit() {
-        if (this.getBuildingLevel() == 1) {
+
+    public int getDepthLimit()
+    {
+        if(this.getBuildingLevel() == 1)
+        {
             return 50;
-        } else if (this.getBuildingLevel() == 2) {
+        }
+        else if(this.getBuildingLevel() == 2)
+        {
             return 30;
-        } else if (this.getBuildingLevel() == 3) {
+        }
+        else if(this.getBuildingLevel() == 3)
+        {
             return 5;
         }
 
@@ -139,7 +157,8 @@ public class BuildingMiner extends BuildingWorker {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound) {
+    public void writeToNBT(NBTTagCompound compound)
+    {
         super.writeToNBT(compound);
 
         compound.setString(TAG_FLOOR_BLOCK, GameRegistry.findUniqueIdentifierFor(floorBlock).toString());
@@ -154,17 +173,20 @@ public class BuildingMiner extends BuildingWorker {
         compound.setBoolean(TAG_LADDER, foundLadder);
         compound.setInteger(TAG_SN, startingLevelNode);
 
-        if (shaftStart != null && cobbleLocation != null) {
+        if(shaftStart != null && cobbleLocation != null)
+        {
             ChunkCoordUtils.writeToNBT(compound, TAG_SLOCATION, shaftStart);
             ChunkCoordUtils.writeToNBT(compound, TAG_CLOCATION, cobbleLocation);
         }
 
-        if (ladderLocation != null) {
+        if(ladderLocation != null)
+        {
             ChunkCoordUtils.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
         }
 
         NBTTagList levelTagList = new NBTTagList();
-        for (Level level : getLevels()) {
+        for(Level level : getLevels())
+        {
             NBTTagCompound levelCompound = new NBTTagCompound();
             level.writeToNBT(levelCompound);
             levelTagList.appendTag(levelCompound);
@@ -173,13 +195,16 @@ public class BuildingMiner extends BuildingWorker {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
+    public void readFromNBT(NBTTagCompound compound)
+    {
         super.readFromNBT(compound);
 
-        if (compound.hasKey(TAG_FLOOR_BLOCK)) {
+        if(compound.hasKey(TAG_FLOOR_BLOCK))
+        {
             floorBlock = Block.getBlockFromName(compound.getString(TAG_FLOOR_BLOCK));
         }
-        if (compound.hasKey(TAG_FENCE_BLOCK)) {
+        if(compound.hasKey(TAG_FENCE_BLOCK))
+        {
             fenceBlock = Block.getBlockFromName(compound.getString(TAG_FENCE_BLOCK));
         }
 
@@ -202,36 +227,43 @@ public class BuildingMiner extends BuildingWorker {
         startingLevelNode = compound.getInteger(TAG_SN);
 
         NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < levelTagList.tagCount(); i++) {
+        for(int i = 0; i < levelTagList.tagCount(); i++)
+        {
             Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
             getLevels().add(level);
         }
 
-        if (currentLevel >= 0 && currentLevel < getLevels().size() && active < getLevels().get(currentLevel).getNodes().size()) {
+        if(currentLevel >= 0 && currentLevel < getLevels().size() && active < getLevels().get(currentLevel).getNodes().size())
+        {
             activeNode = getLevels().get(currentLevel).getNodes().get(active);
         }
     }
 
-    public static class View extends BuildingWorker.View {
+    public static class View extends BuildingWorker.View
+    {
         public int[] levels;
-        public int current;
+        public int   current;
 
-        public View(ColonyView c, ChunkCoordinates l) {
+        public View(ColonyView c, ChunkCoordinates l)
+        {
             super(c, l);
         }
 
-        public com.blockout.views.Window getWindow() {
+        public com.blockout.views.Window getWindow()
+        {
             return new WindowHutMiner(this);
         }
 
         @Override
-        public void deserialize(ByteBuf buf) {
+        public void deserialize(ByteBuf buf)
+        {
             super.deserialize(buf);
             current = buf.readInt();
             int size = buf.readInt();
             levels = new int[size];
 
-            for (int i = 0; i < size; i++) {
+            for(int i = 0; i < size; i++)
+            {
                 levels[i] = buf.readInt();
             }
         }

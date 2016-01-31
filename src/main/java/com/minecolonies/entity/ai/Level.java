@@ -16,22 +16,25 @@ import java.util.List;
  *
  * @author Colton, Kostronor
  */
-public class Level {
-    private static final String TAG_DEPTH = "Depth";
-    private static final String TAG_NODES = "Nodes";
+public class Level
+{
+    private static final String TAG_DEPTH   = "Depth";
+    private static final String TAG_NODES   = "Nodes";
     private static final String TAG_LADDERX = "LadderX";
     private static final String TAG_LADDERZ = "LadderZ";
     /**
      * The depth of the level stored as the y coordinate
      */
     private int depth;
-    private List<Node> nodes = new ArrayList<>();
-    private Node ladderNode = null;
+    private List<Node> nodes      = new ArrayList<>();
+    private Node       ladderNode = null;
 
-    private Level() {
+    private Level()
+    {
     }
 
-    public Level(BuildingMiner buildingMiner, int depth) {
+    public Level(BuildingMiner buildingMiner, int depth)
+    {
         this.depth = depth;
         //TODO: Store in HashMap for faster access
         nodes = new ArrayList<>();
@@ -40,16 +43,8 @@ public class Level {
         int cobbleZ = buildingMiner.cobbleLocation.posZ;
 
         //check for orientation
-        ChunkCoordinates cobbleCenter = new ChunkCoordinates(
-                cobbleX - (buildingMiner.vectorX * 3),
-                depth,
-                cobbleZ - (buildingMiner.vectorZ * 3)
-        );
-        ChunkCoordinates ladderCenter = new ChunkCoordinates(
-                cobbleX + (buildingMiner.vectorX * 4),
-                depth,
-                cobbleZ + (buildingMiner.vectorZ * 4)
-        );
+        ChunkCoordinates cobbleCenter = new ChunkCoordinates(cobbleX - (buildingMiner.vectorX * 3), depth, cobbleZ - (buildingMiner.vectorZ * 3));
+        ChunkCoordinates ladderCenter = new ChunkCoordinates(cobbleX + (buildingMiner.vectorX * 4), depth, cobbleZ + (buildingMiner.vectorZ * 4));
         //TODO: let them know they are ladder and cobble (they are handled different)
         Node cobbleNode = new Node(cobbleCenter.posX, cobbleCenter.posZ);
         ladderNode = new Node(ladderCenter.posX, ladderCenter.posZ);
@@ -58,16 +53,23 @@ public class Level {
         ladderNode.setDirectionPosX(NodeStatus.COMPLETED);
         ladderNode.setDirectionNegZ(NodeStatus.COMPLETED);
         ladderNode.setDirectionPosZ(NodeStatus.COMPLETED);
-        if (buildingMiner.vectorX > 0) {
+        if(buildingMiner.vectorX > 0)
+        {
             ladderNode.setDirectionNegX(NodeStatus.LADDER);
             cobbleNode.setDirectionPosX(NodeStatus.LADDER);
-        } else if (buildingMiner.vectorX < 0) {
+        }
+        else if(buildingMiner.vectorX < 0)
+        {
             ladderNode.setDirectionPosX(NodeStatus.LADDER);
             cobbleNode.setDirectionNegX(NodeStatus.LADDER);
-        } else if (buildingMiner.vectorZ > 0) {
+        }
+        else if(buildingMiner.vectorZ > 0)
+        {
             ladderNode.setDirectionNegZ(NodeStatus.LADDER);
             cobbleNode.setDirectionPosZ(NodeStatus.LADDER);
-        } else if (buildingMiner.vectorZ < 0) {
+        }
+        else if(buildingMiner.vectorZ < 0)
+        {
             ladderNode.setDirectionPosZ(NodeStatus.LADDER);
             cobbleNode.setDirectionNegZ(NodeStatus.LADDER);
         }
@@ -75,28 +77,29 @@ public class Level {
         nodes.add(ladderNode);
     }
 
-    public static Level createFromNBT(NBTTagCompound compound) {
+    public static Level createFromNBT(NBTTagCompound compound)
+    {
         Level level = new Level();
 
         level.depth = compound.getInteger(TAG_DEPTH);
 
         NBTTagList nodeTagList = compound.getTagList(TAG_NODES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < nodeTagList.tagCount(); i++) {
+        for(int i = 0; i < nodeTagList.tagCount(); i++)
+        {
             Node node = Node.createFromNBT(nodeTagList.getCompoundTagAt(i));
             level.nodes.add(node);
         }
         int ladderx = compound.getInteger(TAG_LADDERX);
         int ladderz = compound.getInteger(TAG_LADDERZ);
 
-        level.ladderNode = level.nodes.stream().filter(
-                node -> node.getX() == ladderx && node.getZ() == ladderz
-        ).findFirst().get();
+        level.ladderNode = level.nodes.stream().filter(node -> node.getX() == ladderx && node.getZ() == ladderz).findFirst().get();
 
         return level;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         final StringBuilder sb = new StringBuilder("Level{");
         sb.append("depth=").append(depth);
         sb.append(", nodes=").append(nodes);
@@ -104,11 +107,13 @@ public class Level {
         return sb.toString();
     }
 
-    public void writeToNBT(NBTTagCompound compound) {
+    public void writeToNBT(NBTTagCompound compound)
+    {
         compound.setInteger(TAG_DEPTH, depth);
 
         NBTTagList nodeTagList = new NBTTagList();
-        for (Node node : nodes) {
+        for(Node node : nodes)
+        {
             NBTTagCompound nodeCompound = new NBTTagCompound();
             node.writeToNBT(nodeCompound);
             nodeTagList.appendTag(nodeCompound);
@@ -119,23 +124,28 @@ public class Level {
         compound.setInteger(TAG_LADDERZ, ladderNode.getZ());
     }
 
-    public List<Node> getNodes() {
+    public List<Node> getNodes()
+    {
         return nodes;
     }
 
-    public int getDepth() {
+    public int getDepth()
+    {
         return depth;
     }
 
-    public void addNewNode(int x, int z) {
+    public void addNewNode(int x, int z)
+    {
         nodes.add(new Node(x, z));
     }
 
-    public Node getLadderNode() {
+    public Node getLadderNode()
+    {
         return ladderNode;
     }
 
-    public void addNode(Node newnode) {
+    public void addNode(Node newnode)
+    {
         nodes.add(newnode);
     }
 }

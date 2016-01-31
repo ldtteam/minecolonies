@@ -29,43 +29,27 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 {
-    public enum Stage
-    {
-        WORKING,
-        MAKING_LAND,
-        PLANTING,
-        NEED_SEEDS,
-        HARVESTING,
-        SEARCHING_LAND,
-        FULL_INVENTORY
-
-    }
+    private static final String TOOL_TYPE_HOE     = "hoe";
+    private static final String TOOL_TYPE_SHOVEL  = "shovel";
+    private static final String RENDER_META_SEEDS = "Seeds";
     private static Logger logger = LogManager.getLogger("Farmer");
-
+    public List<ChunkCoordinates> farmAbleLand = new ArrayList<ChunkCoordinates>();
+    public List<ChunkCoordinates> plowedLand   = new ArrayList<ChunkCoordinates>();
+    public List<ChunkCoordinates> crops        = new ArrayList<ChunkCoordinates>();
+    public List<ChunkCoordinates> crops2       = new ArrayList<ChunkCoordinates>();
+    public ChunkCoordinates currentFarmLand;
+    int harvestCounter = 0;
     private String NEED_ITEM = "";
     private double baseSpeed;
-    private int delay=0;
-    int harvestCounter = 0;
-
-
-    private static final String TOOL_TYPE_HOE = "hoe";
-    private static final String TOOL_TYPE_SHOVEL = "shovel";
-    private static final String RENDER_META_SEEDS = "Seeds";
-
-    public List<ChunkCoordinates> farmAbleLand = new ArrayList<ChunkCoordinates>();
-    public List<ChunkCoordinates> plowedLand = new ArrayList<ChunkCoordinates>();
-    public List<ChunkCoordinates> crops = new ArrayList<ChunkCoordinates>();
-    public List<ChunkCoordinates> crops2 = new ArrayList<ChunkCoordinates>();
-
-    public ChunkCoordinates currentFarmLand;
-    //TODO Planting randomly depending on option in Hut, each level, one more crop type
-    //TODO Adding Language Strings in files
+    private int delay = 0;
 
     //TODO Check for duplicates
     public EntityAIWorkFarmer(JobFarmer job)
     {
         super(job);
     }
+    //TODO Planting randomly depending on option in Hut, each level, one more crop type
+    //TODO Adding Language Strings in files
 
     @Override
     public boolean shouldExecute()
@@ -83,7 +67,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     @Override
     public void updateTask()
     {
-        BuildingFarmer b = (BuildingFarmer)(worker.getWorkBuilding());
+        BuildingFarmer b = (BuildingFarmer) (worker.getWorkBuilding());
         if(b == null) return;
 
         worker.setRenderMetadata(hasSeed() ? RENDER_META_SEEDS : "");
@@ -95,8 +79,10 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             job.setStage(Stage.NEED_SEEDS);
         }
 
-        if (delay > 0) {
-            if(job.getStage() == Stage.MAKING_LAND) {
+        if(delay > 0)
+        {
+            if(job.getStage() == Stage.MAKING_LAND)
+            {
                 worker.hitBlockWithToolInHand(currentFarmLand);
             }
             delay--;
@@ -108,21 +94,21 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 List<ItemStack> l = new CopyOnWriteArrayList<ItemStack>();
                 l.addAll(job.getItemsNeeded());
 
-                for (ItemStack e : l)
+                for(ItemStack e : l)
                 {
-                    if (isInHut(e.getItem()) || hasAllTheTools() || inventoryContains(e.getItem())!=-1)
+                    if(isInHut(e.getItem()) || hasAllTheTools() || inventoryContains(e.getItem()) != -1)
                     {
-                            job.removeItemNeeded(e);
-                            return;
+                        job.removeItemNeeded(e);
+                        return;
                     }
                     worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", e.getDisplayName());
                 }
                 delay = 50;
             }
         }
-        else if (hasAllTheTools())
+        else if(hasAllTheTools())
         {
-            switch (job.getStage())
+            switch(job.getStage())
             {
                 case FULL_INVENTORY:
                     dumpInventory();
@@ -134,23 +120,23 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                     make_land();
                     break;
                 case NEED_SEEDS:
-                    if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker,worker.getWorkBuilding().getLocation()))
+                    if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
                     {
                         delay = 200;
                         logger.info("Need Seeds");
 
-                        if (hasSeed() || hasSeedInHut())
+                        if(hasSeed() || hasSeedInHut())
                         {
                             job.setStage(Stage.PLANTING);
                         }
                     }
                     break;
                 case WORKING:
-                    if(farmAbleLand.size() == 0 && plowedLand.size() == 0 && crops.size() == 0 )
+                    if(farmAbleLand.size() == 0 && plowedLand.size() == 0 && crops.size() == 0)
                     {
                         job.setStage(Stage.SEARCHING_LAND);
                     }
-                    else if(!hasSeed() && crops.size()+crops2.size() < 10)
+                    else if(!hasSeed() && crops.size() + crops2.size() < 10)
                     {
                         job.setStage(Stage.NEED_SEEDS);
                     }
@@ -176,26 +162,27 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             }
         }
     }
+
     private void searchFarmableLand()
     {
-        BuildingFarmer b = (BuildingFarmer)(worker.getWorkBuilding());
+        BuildingFarmer b = (BuildingFarmer) (worker.getWorkBuilding());
         if(b == null){return;}
 
-        int buildingX =  worker.getWorkBuilding().getLocation().posX;
-        int buildingY =  worker.getWorkBuilding().getLocation().posY;
-        int buildingZ =  worker.getWorkBuilding().getLocation().posZ;
+        int buildingX = worker.getWorkBuilding().getLocation().posX;
+        int buildingY = worker.getWorkBuilding().getLocation().posY;
+        int buildingZ = worker.getWorkBuilding().getLocation().posZ;
 
-        for(int x=buildingX-b.getFarmRadius()-1;x<=buildingX+b.getFarmRadius()+1;x++)
+        for(int x = buildingX - b.getFarmRadius() - 1; x <= buildingX + b.getFarmRadius() + 1; x++)
         {
-            for(int z=buildingZ-b.getFarmRadius()-1;z<=buildingZ+b.getFarmRadius()+1;z++)
+            for(int z = buildingZ - b.getFarmRadius() - 1; z <= buildingZ + b.getFarmRadius() + 1; z++)
             {
-                Block block = world.getBlock(x,buildingY-1,z);
+                Block block = world.getBlock(x, buildingY - 1, z);
                 if(block == Blocks.dirt || block == Blocks.grass)
                 {
 
-                    if(world.isAirBlock(x,buildingY+1,z))
+                    if(world.isAirBlock(x, buildingY + 1, z))
                     {
-                        if(farmAbleLand.size() == 0 || !farmAbleLand.contains(new ChunkCoordinates(x,buildingY,z)))
+                        if(farmAbleLand.size() == 0 || !farmAbleLand.contains(new ChunkCoordinates(x, buildingY, z)))
                         {
                             farmAbleLand.add(new ChunkCoordinates(x, buildingY, z));
                         }
@@ -204,16 +191,16 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 }
                 else if(block == Blocks.farmland)
                 {
-                    Block blockAbove = world.getBlock(x,buildingY,z);
+                    Block blockAbove = world.getBlock(x, buildingY, z);
 
                     if(blockAbove == Blocks.wheat || blockAbove == Blocks.potatoes || blockAbove == Blocks.carrots || blockAbove == Blocks.melon_stem || blockAbove == Blocks.melon_block || blockAbove == Blocks.pumpkin || blockAbove == Blocks.pumpkin_stem)
                     {
-                        if(crops.size() == 0 || !crops.contains(new ChunkCoordinates(x,buildingY,z)))
+                        if(crops.size() == 0 || !crops.contains(new ChunkCoordinates(x, buildingY, z)))
                         {
-                             crops.add(new ChunkCoordinates(x, buildingY, z));
+                            crops.add(new ChunkCoordinates(x, buildingY, z));
                         }
                     }
-                    else if(plowedLand.size() == 0 || !plowedLand.contains(new ChunkCoordinates(x,buildingY,z)))
+                    else if(plowedLand.size() == 0 || !plowedLand.contains(new ChunkCoordinates(x, buildingY, z)))
                     {
                         plowedLand.add(new ChunkCoordinates(x, buildingY, z));
                     }
@@ -227,7 +214,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     {
         if(farmAbleLand.size() > 0)
         {
-            if (world.getBlock(farmAbleLand.get(0).posX, farmAbleLand.get(0).posY - 1, farmAbleLand.get(0).posZ) != Blocks.farmland)
+            if(world.getBlock(farmAbleLand.get(0).posX, farmAbleLand.get(0).posY - 1, farmAbleLand.get(0).posZ) != Blocks.farmland)
             {
                 delay = 20;
                 world.setBlock(farmAbleLand.get(0).posX, farmAbleLand.get(0).posY - 1, farmAbleLand.get(0).posZ, Blocks.farmland);
@@ -258,7 +245,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         //Only able to plant wheat, pumpkin and melon, Potatoe and carrot
         if(plowedLand.size() > 0)
         {
-            if (world.getBlock(plowedLand.get(0).posX, plowedLand.get(0).posY - 1, plowedLand.get(0).posZ) == Blocks.farmland)
+            if(world.getBlock(plowedLand.get(0).posX, plowedLand.get(0).posY - 1, plowedLand.get(0).posZ) == Blocks.farmland)
             {
                 if(world.isAirBlock(plowedLand.get(0).posX, plowedLand.get(0).posY, plowedLand.get(0).posZ))
                 {
@@ -274,23 +261,23 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                         return;
                     }
 
-                    if (seed.getItem() == Items.wheat_seeds)
+                    if(seed.getItem() == Items.wheat_seeds)
                     {
                         ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.wheat);
                     }
-                    else if (seed.getItem() == Items.pumpkin_seeds)
+                    else if(seed.getItem() == Items.pumpkin_seeds)
                     {
                         ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.pumpkin_stem);
                     }
-                    else if (seed.getItem() == Items.melon_seeds)
+                    else if(seed.getItem() == Items.melon_seeds)
                     {
                         ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.melon_stem);
                     }
-                    else if (seed.getItem() == Items.potato)
+                    else if(seed.getItem() == Items.potato)
                     {
                         ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.potatoes);
                     }
-                    else if (seed.getItem() == Items.carrot)
+                    else if(seed.getItem() == Items.carrot)
                     {
                         ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.carrots);
                     }
@@ -332,15 +319,15 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         {
             delay = 10;
 
-            Block block = ChunkCoordUtils.getBlock(world,crops.get(0));
+            Block block = ChunkCoordUtils.getBlock(world, crops.get(0));
 
-            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker,crops.get(0)))
+            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, crops.get(0)))
             {
-                if (block == Blocks.melon_block || block == Blocks.pumpkin || world.getBlockMetadata(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ) == 0x7)
+                if(block == Blocks.melon_block || block == Blocks.pumpkin || world.getBlockMetadata(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ) == 0x7)
                 {
                     List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, crops.get(0), 0);
 
-                    for (ItemStack item : items)
+                    for(ItemStack item : items)
                     {
                         InventoryUtils.setStack(worker.getInventory(), item);
                     }
@@ -349,14 +336,14 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                         //Crashes when called before Minecraft Client fully initialized
                         FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ, block, world.getBlockMetadata(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ));
                     }
-                    catch (Exception exp)
+                    catch(Exception exp)
                     {
                         logger.info("Couldn't add effect");
                     }
                     world.setBlockToAir(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ);
                     harvestCounter++;
 
-                    if (!plowedLand.contains(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ)))
+                    if(!plowedLand.contains(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ)))
                     {
                         plowedLand.add(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ));
                         crops.remove(0);
@@ -390,11 +377,11 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private int getFirstSeed()
     {
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
+        for(int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
         {
             ItemStack stack = worker.getInventory().getStackInSlot(slot);
 
-            if (stack != null && stack.getItem() != null)
+            if(stack != null && stack.getItem() != null)
             {
                 Item content = stack.getItem();
                 if(isSeed(content))
@@ -408,16 +395,16 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private boolean isSeed(Item item)
     {
-            return item.toString().contains("Seed") || item.toString().contains("potatoe") || item.toString().contains("carrot");
+        return item.toString().contains("Seed") || item.toString().contains("potatoe") || item.toString().contains("carrot");
     }
 
     private boolean hasSeed()
     {
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
+        for(int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
         {
             ItemStack stack = worker.getInventory().getStackInSlot(slot);
 
-            if (stack != null && stack.getItem() != null)
+            if(stack != null && stack.getItem() != null)
             {
                 Item content = stack.getItem();
                 if(isSeed(content))
@@ -433,7 +420,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private boolean hasSeedInHut()
     {
-        if(worker.getWorkBuilding().getTileEntity()==null)
+        if(worker.getWorkBuilding().getTileEntity() == null)
         {
             return false;
         }
@@ -450,7 +437,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 {
                     ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
 
-                    if (returnStack == null)
+                    if(returnStack == null)
                     {
                         worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize);
                     }
@@ -473,7 +460,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private boolean isInHut(Block block)
     {
-        if(worker.getWorkBuilding().getTileEntity()==null)
+        if(worker.getWorkBuilding().getTileEntity() == null)
         {
             return false;
         }
@@ -485,22 +472,22 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             ItemStack stack = worker.getWorkBuilding().getTileEntity().getStackInSlot(i);
             if(stack != null && stack.getItem() instanceof ItemBlock)
             {
-                    Block content = ((ItemBlock) stack.getItem()).field_150939_a;
-                    if(content.equals(block))
+                Block content = ((ItemBlock) stack.getItem()).field_150939_a;
+                if(content.equals(block))
+                {
+                    ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
+
+                    if(returnStack == null)
                     {
-                        ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
-
-                        if (returnStack == null)
-                        {
-                            worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize);
-                        }
-                        else
-                        {
-                            worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize - returnStack.stackSize);
-                        }
-
-                        return true;
+                        worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize);
                     }
+                    else
+                    {
+                        worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+                    }
+
+                    return true;
+                }
             }
         }
         return false;
@@ -508,7 +495,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private boolean isInHut(Item item)
     {
-        if(worker.getWorkBuilding().getTileEntity()==null)
+        if(worker.getWorkBuilding().getTileEntity() == null)
         {
             return false;
         }
@@ -525,7 +512,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 {
                     ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
 
-                    if (returnStack == null)
+                    if(returnStack == null)
                     {
                         worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize);
                     }
@@ -542,17 +529,17 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private void dumpInventory()
     {
-        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+        if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
         {
-            for (int i = 0; i < worker.getInventory().getSizeInventory(); i++)
+            for(int i = 0; i < worker.getInventory().getSizeInventory(); i++)
             {
                 ItemStack stack = worker.getInventory().getStackInSlot(i);
-                if (stack != null && !isStackTool(stack))
+                if(stack != null && !isStackTool(stack))
                 {
-                    if (worker.getWorkBuilding().getTileEntity() != null)
+                    if(worker.getWorkBuilding().getTileEntity() != null)
                     {
                         ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(), stack);
-                        if (returnStack == null)
+                        if(returnStack == null)
                         {
                             worker.getInventory().decrStackSize(i, stack.stackSize);
                         }
@@ -572,7 +559,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         boolean hasHoeInHand;
         boolean hasSpadeInHand;
 
-        if (worker.getHeldItem() == null)
+        if(worker.getHeldItem() == null)
         {
             hasHoeInHand = false;
             hasSpadeInHand = false;
@@ -589,12 +576,12 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         boolean Spade = hasSpade > -1 || hasSpadeInHand;
         boolean Hoe = hasHoeInHand || hasHoe > -1;
 
-        if (!Spade)
+        if(!Spade)
         {
             job.addItemNeededIfNotAlready(new ItemStack(Items.iron_shovel));
             NEED_ITEM = TOOL_TYPE_SHOVEL;
         }
-        else if (!Hoe)
+        else if(!Hoe)
         {
             job.addItemNeededIfNotAlready(new ItemStack(Items.iron_hoe));
             NEED_ITEM = TOOL_TYPE_HOE;
@@ -625,9 +612,9 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         super.resetTask();
     }
 
-    private int getDelay(Block block,int x, int y, int z)
+    private int getDelay(Block block, int x, int y, int z)
     {
-        return (int)(baseSpeed * worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0) * block.getBlockHardness(world,x,y,z));
+        return (int) (baseSpeed * worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0) * block.getBlockHardness(world, x, y, z));
     }
 
     private void setBlockFromInventory(int x, int y, int z, Block block)//TODO Plant seed
@@ -640,16 +627,16 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             job.addItemNeeded(new ItemStack(block));
             return;
         }
-        worker.getInventory().decrStackSize(slot,1);
+        worker.getInventory().decrStackSize(slot, 1);
     }
 
     private int inventoryContains(Block block)//???
     {
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
+        for(int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
         {
             ItemStack stack = worker.getInventory().getStackInSlot(slot);
 
-            if (stack != null && stack.getItem() instanceof ItemBlock)
+            if(stack != null && stack.getItem() instanceof ItemBlock)
             {
                 Block content = ((ItemBlock) stack.getItem()).field_150939_a;
                 if(content.equals(block))
@@ -668,11 +655,11 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             return -1;
         }
 
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
+        for(int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
         {
             ItemStack stack = worker.getInventory().getStackInSlot(slot);
 
-            if (stack != null && stack.getItem() != null)
+            if(stack != null && stack.getItem() != null)
             {
                 Item content = stack.getItem();
                 if(content.equals(item))
@@ -688,11 +675,11 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     {
         int count = 0;
 
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
+        for(int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
         {
             ItemStack stack = worker.getInventory().getStackInSlot(slot);
 
-            if (stack != null && stack.getItem() instanceof ItemBlock)
+            if(stack != null && stack.getItem() instanceof ItemBlock)
             {
                 Block content = ((ItemBlock) stack.getItem()).field_150939_a;
                 if(content.equals(block))
@@ -708,13 +695,13 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     {
         int count = 0;
 
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
+        for(int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
         {
             ItemStack stack = worker.getInventory().getStackInSlot(slot);
 
-            if (stack != null && stack.getItem() instanceof ItemBlock)
+            if(stack != null && stack.getItem() instanceof ItemBlock)
             {
-                Item content =  stack.getItem();
+                Item content = stack.getItem();
                 if(content.equals(item))
                 {
                     count += stack.stackSize;
@@ -732,5 +719,17 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     public void setBaseSpeed(double baseSpeed)
     {
         this.baseSpeed = baseSpeed;
+    }
+
+    public enum Stage
+    {
+        WORKING,
+        MAKING_LAND,
+        PLANTING,
+        NEED_SEEDS,
+        HARVESTING,
+        SEARCHING_LAND,
+        FULL_INVENTORY
+
     }
 }
