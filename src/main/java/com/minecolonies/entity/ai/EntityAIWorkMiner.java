@@ -86,7 +86,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private int speechdelay = 0;
     private boolean needsShovel = false;
     private boolean needsPickaxe = false;
-    private int needsPickaxeLevel = - 1;
+    private int needsPickaxeLevel = -1;
     private String speechdelaystring = "";
     private int speechrepeat = 1;
     private Node workingNode = null;
@@ -196,7 +196,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             {
                 ItemStack stack = worker.getInventory().getStackInSlot(i);
                 //Check if it is a useful tool
-                if (stack != null && ! isMiningTool(stack))
+                if (stack != null && !isMiningTool(stack))
                 {
                     if (getOwnBuilding().getTileEntity() != null)
                     {
@@ -304,7 +304,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         else if (ladderOrientation == 5)
         {
             //East
-            buildingMiner.vectorX = - 1;
+            buildingMiner.vectorX = -1;
             buildingMiner.vectorZ = 0;
         }
         else if (ladderOrientation == 3)
@@ -316,7 +316,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         else if (ladderOrientation == 2)
         {
             //North
-            buildingMiner.vectorZ = - 1;
+            buildingMiner.vectorZ = -1;
             buildingMiner.vectorX = 0;
         }
         else
@@ -418,14 +418,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         int xOffset = 3 * getOwnBuilding().vectorX;
         int zOffset = 3 * getOwnBuilding().vectorZ;
         //Check for safe floor
-        for (int x = - 4 + xOffset; x <= 4 + xOffset; x++)
+        for (int x = -4 + xOffset; x <= 4 + xOffset; x++)
         {
-            for (int z = - 4 + zOffset; z <= 4 + zOffset; z++)
+            for (int z = -4 + zOffset; z <= 4 + zOffset; z++)
             {
                 ChunkCoordinates curBlock = new ChunkCoordinates(safeCobble.posX + x,
                                                                  safeCobble.posY,
                                                                  safeCobble.posZ + z);
-                if (! secureBlock(curBlock, currentStandingPosition))
+                if (!secureBlock(curBlock, currentStandingPosition))
                 {
                     return;
                 }
@@ -433,7 +433,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
 
 
-        if (! mineBlock(nextCobble, safeStand) || ! mineBlock(nextLadder, safeStand))
+        if (!mineBlock(nextCobble, safeStand) || !mineBlock(nextLadder, safeStand))
         {
             //waiting until blocks are mined
             return;
@@ -461,7 +461,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         Block curBlock = world.getBlock(blockToMine.posX, blockToMine.posY, blockToMine.posZ);
 
-        if (! holdEfficientTool(curBlock))
+        if (!holdEfficientTool(curBlock))
         {
             //We are missing a tool to harvest this block...
             requestTool(curBlock);
@@ -477,13 +477,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             //TODO: request lower tier tools
         }
 
-        if (tool != null && ! ForgeHooks.canToolHarvestBlock(curBlock, 0, tool) && curBlock != Blocks.bedrock)
+        if (tool != null && !ForgeHooks.canToolHarvestBlock(curBlock, 0, tool) && curBlock != Blocks.bedrock)
         {
             logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool);
         }
         currentWorkingLocation = blockToMine;
         currentStandingPosition = safeStand;
-        if (! hasDelayed)
+        if (!hasDelayed)
         {
             delay += getBlockMiningDelay(curBlock, blockToMine);
             hasDelayed = true;
@@ -613,9 +613,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         //7x7 shaft find nearest block
         //Beware from positive to negative! to draw the miner to a wall to go down
-        for (int x = 3 + xOffset; x >= - 3 + xOffset; x--)
+        for (int x = 3 + xOffset; x >= -3 + xOffset; x--)
         {
-            for (int z = - 3 + zOffset; z <= 3 + zOffset; z++)
+            for (int z = -3 + zOffset; z <= 3 + zOffset; z++)
             {
                 if (x == 0 && 0 == z)
                 {
@@ -625,8 +625,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 double
                         distance =
                         curBlock.getDistanceSquaredToChunkCoordinates(ladderPos)
-                                + Math.pow(curBlock.getDistanceSquaredToChunkCoordinates(currentWorkingLocation), 2);
-                if (distance < bestDistance && ! world.isAirBlock(curBlock.posX, curBlock.posY, curBlock.posZ))
+                        + Math.pow(curBlock.getDistanceSquaredToChunkCoordinates(currentWorkingLocation), 2);
+                if (distance < bestDistance && !world.isAirBlock(curBlock.posX, curBlock.posY, curBlock.posZ))
                 {
                     nextBlockToMine = curBlock;
                     bestDistance = distance;
@@ -637,9 +637,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         bestDistance = Double.MAX_VALUE;
         if (nextBlockToMine != null)
         {
-            for (int x = 1; x >= - 1; x--)
+            for (int x = 1; x >= -1; x--)
             {
-                for (int z = - 1; z <= 1; z++)
+                for (int z = -1; z <= 1; z++)
                 {
                     if (x == 0 && 0 == z)
                     {
@@ -861,7 +861,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         //Check for a shovel
         needsShovel = InventoryUtils.getInventoryAsList(worker.getInventory()).stream().noneMatch(this::isShovel);
 
-        if (! needsShovel)
+        if (!needsShovel)
         {
             return;
         }
@@ -887,11 +887,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         //TODO: Really ugly building code, change to schematics
 
         //make area around it safe
-        for (int x = - 5 + xOffset; x <= 5 + xOffset; x++)
+        for (int x = -5 + xOffset; x <= 5 + xOffset; x++)
         {
-            for (int z = - 5 + zOffset; z <= 5 + zOffset; z++)
+            for (int z = -5 + zOffset; z <= 5 + zOffset; z++)
             {
-                for (int y = 5; y >= - 7; y--)
+                for (int y = 5; y >= -7; y--)
                 {
                     if ((x == 0 && 0 == z) || lastLadder + y <= 1)
                     {
@@ -904,11 +904,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     int normalizedZ = z - zOffset;
                     if (Math.abs(normalizedX) > 3 || Math.abs(normalizedZ) > 3)
                     {
-                        if (! notReplacedInSecuringMine.contains(world.getBlock(curBlock.posX,
-                                                                                curBlock.posY,
-                                                                                curBlock.posZ)))
+                        if (!notReplacedInSecuringMine.contains(world.getBlock(curBlock.posX,
+                                                                               curBlock.posY,
+                                                                               curBlock.posZ)))
                         {
-                            if (! mineBlock(curBlock, getOwnBuilding().getLocation()))
+                            if (!mineBlock(curBlock, getOwnBuilding().getLocation()))
                             {
                                 delay = 1;
                                 return true;
@@ -927,9 +927,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
 
         //Build the planks
-        for (int x = - 3 + xOffset; x <= 3 + xOffset; x++)
+        for (int x = -3 + xOffset; x <= 3 + xOffset; x++)
         {
-            for (int z = - 3 + zOffset; z <= 3 + zOffset; z++)
+            for (int z = -3 + zOffset; z <= 3 + zOffset; z++)
             {
                 if (x == 0 && 0 == z)
                 {
@@ -955,9 +955,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
         //Build fence
-        for (int x = - 3 + xOffset; x <= 3 + xOffset; x++)
+        for (int x = -3 + xOffset; x <= 3 + xOffset; x++)
         {
-            for (int z = - 3 + zOffset; z <= 3 + zOffset; z++)
+            for (int z = -3 + zOffset; z <= 3 + zOffset; z++)
             {
                 if (x == 0 && 0 == z)
                 {
@@ -969,7 +969,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 int normalizedX = x - xOffset;
                 int normalizedZ = z - zOffset;
                 if ((Math.abs(normalizedX) == 2 && Math.abs(normalizedZ) < 3) || (Math.abs(normalizedZ) == 2
-                                                                                          && Math.abs(normalizedX) < 3))
+                                                                                  && Math.abs(normalizedX) < 3))
                 {
                     if (world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ) != Blocks.fence)
                     {
@@ -986,9 +986,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
         //Build torches
-        for (int x = - 3 + xOffset; x <= 3 + xOffset; x++)
+        for (int x = -3 + xOffset; x <= 3 + xOffset; x++)
         {
-            for (int z = - 3 + zOffset; z <= 3 + zOffset; z++)
+            for (int z = -3 + zOffset; z <= 3 + zOffset; z++)
             {
                 if (x == 0 && 0 == z)
                 {
@@ -1068,7 +1068,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             Optional<Node> node = tryFindNodeInDirectionOfNode(currentLevel, workingNode, dir);
             if (node.isPresent() && getNodeStatusForDirection(node.get(), invertDirection(dir))
-                    == Node.NodeStatus.COMPLETED)
+                                    == Node.NodeStatus.COMPLETED)
             {
                 foundDirection = dir;
                 foundNode = node.get();
@@ -1104,8 +1104,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         delay += 10;
         currentStandingPosition = standingPosition;
         if (workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS
-                || workingNode.getStatus() == Node.NodeStatus.COMPLETED
-                || worker.isWorkerAtSiteWithMove(standingPosition, RANGE_CHECK_AROUND_MINING_BLOCK))
+            || workingNode.getStatus() == Node.NodeStatus.COMPLETED
+            || worker.isWorkerAtSiteWithMove(standingPosition, RANGE_CHECK_AROUND_MINING_BLOCK))
         {
             mineNodeFromStand(workingNode, foundNode, standingPosition, foundDirection);
         }
@@ -1113,10 +1113,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private boolean secureBlock(ChunkCoordinates curBlock, ChunkCoordinates safeStand)
     {
-        if (! getBlock(curBlock).getMaterial().blocksMovement() && getBlock(curBlock) != Blocks.torch)
+        if (!getBlock(curBlock).getMaterial().blocksMovement() && getBlock(curBlock) != Blocks.torch)
         {
 
-            if (! mineBlock(curBlock, safeStand))
+            if (!mineBlock(curBlock, safeStand))
             {
                 delay = 0;
                 return false;
@@ -1139,18 +1139,21 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     {
 
         //Check for safe Node
-        for (int x = - NODE_DISTANCE / 2; x <= NODE_DISTANCE / 2; x++)
+        for (int x = -NODE_DISTANCE / 2; x <= NODE_DISTANCE / 2; x++)
         {
-            for (int z = - NODE_DISTANCE / 2; z <= NODE_DISTANCE / 2; z++)
+            for (int z = -NODE_DISTANCE / 2; z <= NODE_DISTANCE / 2; z++)
             {
                 for (int y = 0; y <= 5; y++)
                 {
                     ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
                                                                      standingPosition.posY + y,
                                                                      minenode.getZ() + z);
-                    if (Math.abs(x) >= 2 && Math.abs(z) >= 2 || getBlock(curBlock) != Blocks.air || y < 1 || y > 4)
+                    if (((Math.abs(x) >= 2) && (Math.abs(z) >= 2))
+                        || (getBlock(curBlock) != Blocks.air)
+                        || (y < 1)
+                        || (y > 4))
                     {
-                        if (! secureBlock(curBlock, standingPosition))
+                        if (!secureBlock(curBlock, standingPosition))
                         {
                             return;
                         }
@@ -1159,7 +1162,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
 
-        if (! mineSideOfNode(minenode, direction, standingPosition))
+        if (!mineSideOfNode(minenode, direction, standingPosition))
         {
             return;
         }
@@ -1199,9 +1202,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             //TODO: make it look nicer!
             for (int y = 1; y <= 4; y++)
             {
-                for (int x = - 1; x <= 1; x++)
+                for (int x = -1; x <= 1; x++)
                 {
-                    for (int z = - 1; z <= 1; z++)
+                    for (int z = -1; z <= 1; z++)
                     {
                         ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
                                                                          standingPosition.posY + y,
@@ -1211,7 +1214,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         {
                             continue;
                         }
-                        if (! mineBlock(curBlock, newStandingPosition))
+                        if (!mineBlock(curBlock, newStandingPosition))
                         {
                             return;
                         }
@@ -1227,7 +1230,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                                                          standingPosition.posY,
                                                                          minenode.getZ() + getZDistance(dir) / 3);
             currentStandingPosition = sideStandingPosition;
-            if (! mineSideOfNode(minenode, dir, sideStandingPosition))
+            if (!mineSideOfNode(minenode, dir, sideStandingPosition))
             {
                 return;
             }
@@ -1237,9 +1240,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         //TODO: make it look nicer!
         for (int y = 4; y >= 2; y--)
         {
-            for (int x = - 1; x <= 1; x++)
+            for (int x = -1; x <= 1; x++)
             {
-                for (int z = - 1; z <= 1; z++)
+                for (int z = -1; z <= 1; z++)
                 {
                     ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
                                                                      standingPosition.posY + y,
@@ -1258,10 +1261,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
                     //torches at sides
                     if (((Math.abs(x) == 1 && Math.abs(z) == 0) || (Math.abs(x) == 0 && Math.abs(z) == 1))
-                            && y == 3
-                            && getBlock(new ChunkCoordinates(minenode.getX(),
-                                                             standingPosition.posY + y,
-                                                             minenode.getZ())) == Blocks.planks)
+                        && y == 3
+                        && getBlock(new ChunkCoordinates(minenode.getX(), standingPosition.posY + y, minenode.getZ()))
+                           == Blocks.planks)
                     {
                         material = Blocks.torch;
                     }
@@ -1307,9 +1309,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         int xoffset = getXDistance(directon) / 2;
         int zoffset = getZDistance(directon) / 2;
         int posx = 1;
-        int negx = - 1;
+        int negx = -1;
         int posz = 1;
-        int negz = - 1;
+        int negz = -1;
         if (xoffset > 0)
         {
             posx = xoffset;
@@ -1318,7 +1320,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if (xoffset < 0)
         {
             negx = xoffset;
-            posx = - 2;
+            posx = -2;
         }
         if (zoffset > 0)
         {
@@ -1328,7 +1330,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if (zoffset < 0)
         {
             negz = zoffset;
-            posz = - 2;
+            posz = -2;
         }
 
         //Mine side
@@ -1342,7 +1344,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
                                                                      standingPosition.posY + y,
                                                                      minenode.getZ() + z);
-                    if (! mineBlock(curBlock, standingPosition))
+                    if (!mineBlock(curBlock, standingPosition))
                     {
                         return false;
                     }
@@ -1435,7 +1437,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else if (direction == 2)
         {
-            return - NODE_DISTANCE;
+            return -NODE_DISTANCE;
         }
         return 0;
     }
@@ -1448,7 +1450,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else if (direction == 4)
         {
-            return - NODE_DISTANCE;
+            return -NODE_DISTANCE;
         }
         return 0;
     }
@@ -1518,7 +1520,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             //logger.info("Walking to " + currentNode);
             visited.add(currentNode);
             if (currentNode.getStatus() == Node.NodeStatus.AVAILABLE
-                    || currentNode.getStatus() == Node.NodeStatus.IN_PROGRESS)
+                || currentNode.getStatus() == Node.NodeStatus.IN_PROGRESS)
             {
                 //logger.info("Node was mineable");
                 return currentNode;
@@ -1545,7 +1547,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         {
                             continue;//Stop endless loops
                         }
-                        if(getNodeStatusForDirection(first.get(), invertDirection(dir)) == Node.NodeStatus.WALL){
+                        if (getNodeStatusForDirection(first.get(), invertDirection(dir)) == Node.NodeStatus.WALL)
+                        {
                             continue; //We got to a wall, not useful
                         }
                         currentNode = first.get();
@@ -1594,13 +1597,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         //Miner is at building and prepares for work
         if (job.getStage() == Stage.PREPARING)
         {
-            if (! getOwnBuilding().foundLadder)
+            if (!getOwnBuilding().foundLadder)
             {
                 job.setStage(Stage.SEARCHING_LADDER);
                 return;
             }
             //We need Items as it seems
-            if (! itemsCurrentlyNeeded.isEmpty())
+            if (!itemsCurrentlyNeeded.isEmpty())
             {
                 lookForNeededItems();
                 delay += 10;
@@ -1754,7 +1757,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         if (stack == null)
         {
-            return - 1;
+            return -1;
         }
         return stack.getItem().getHarvestLevel(stack, tool);
     }
@@ -1774,7 +1777,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     {
         String tool = target.getHarvestTool(0);
         int required = target.getHarvestLevel(0);
-        int bestSlot = - 1;
+        int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         InventoryCitizen inventory = worker.getInventory();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
@@ -1828,7 +1831,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private void setBlockFromInventory(ChunkCoordinates location, Block block, int metadata)
     {
         int slot = worker.findFirstSlotInInventoryWith(block);
-        if (slot != - 1)
+        if (slot != -1)
         {
             worker.getInventory().decrStackSize(slot, 1);
             //Flag 1+2 is needed for updates
