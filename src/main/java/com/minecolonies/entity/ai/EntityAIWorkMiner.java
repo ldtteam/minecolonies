@@ -1247,6 +1247,179 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         //Build middle
         //TODO: make it look nicer!
+
+
+        if (minenode.getStatus() == Node.NodeStatus.IN_PROGRESS)
+        {
+            //logger.info("Mined out node middle!");
+            minenode.setStatus(Node.NodeStatus.COMPLETED);
+            //logger.info("Completed middle for: \n" + minenode);
+        }
+
+        //logger.info("Done with node \n" + minenode);
+        workingNode = null;
+    }
+
+    private boolean buildNodeSupportStructure(Node minenode, ChunkCoordinates standingPosition){
+        if(minenode.getStyle() == Node.NodeType.CROSSROAD){
+            return buildNodeCrossroadStructure(minenode,standingPosition);
+        }
+        if(minenode.getStyle() == Node.NodeType.BEND){
+            return buildNodeBendStructure(minenode,standingPosition);
+        }
+        if(minenode.getStyle() == Node.NodeType.TUNNEL){
+            return buildNodeTunnelStructure(minenode,standingPosition);
+        }
+        return true;
+    }
+
+    private boolean buildNodeTunnelStructure(final Node minenode, final ChunkCoordinates standingPosition)
+    {
+        int direction = 1;
+        if(minenode.getDirectionPosX() == Node.NodeStatus.WALL){
+            direction = 3;
+        }
+
+        for (int y = 4; y >= 1; y--)
+        {
+            for (int x = -2; x <= 2; x++)
+            {
+                for (int z = -2; z <= 2; z++)
+                {
+                    ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
+                                                                     standingPosition.posY + y,
+                                                                     minenode.getZ() + z);
+
+                    Block material = null;
+                    //Side pillars
+                    if (x == Math.abs(getXDistance(direction)/NODE_DISTANCE)
+                        && z == Math.abs(getZDistance(direction)/NODE_DISTANCE)
+                        && y < 4)
+                    {
+                        material = Blocks.fence;
+                    }
+                    //Planks topping
+                    if ((x == 0 || x == Math.abs(getXDistance(direction)/NODE_DISTANCE) )
+                        && (z == 0 || z == Math.abs(getZDistance(direction)/NODE_DISTANCE))
+                        && y == 4)
+                    {
+                        material = Blocks.planks;
+                    }
+                    //torches at sides
+                    if (((Math.abs(x) == 1 && Math.abs(z) == 0) || (Math.abs(x) == 0 && Math.abs(z) == 1))
+                        && y == 3
+                        && getBlock(new ChunkCoordinates(minenode.getX(), standingPosition.posY + y, minenode.getZ()))
+                           == Blocks.planks
+                        && getBlock(curBlock)!= Blocks.planks)
+                    {
+                        material = Blocks.torch;
+                    }
+                    if (material == null || getBlock(curBlock) == material)
+                    {
+                        continue;
+                    }
+
+                    if (missesItemsInInventory(new ItemStack(material)))
+                    {
+                        return false;
+                    }
+
+                    setBlockFromInventory(curBlock, material);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean buildNodeBendStructure(final Node minenode, final ChunkCoordinates standingPosition)
+    {
+        int directionx = 1;
+        if(minenode.getDirectionPosX() == Node.NodeStatus.WALL){
+            directionx = 2;
+        }
+        int directionz = 3;
+        if(minenode.getDirectionPosZ() == Node.NodeStatus.WALL){
+            directionz = 4;
+        }
+
+        for (int y = 4; y >= 1; y--)
+        {
+            for (int x = -3; x <= 3; x++)
+            {
+                for (int z = -3; z <= 3; z++)
+                {
+                    ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
+                                                                     standingPosition.posY + y,
+                                                                     minenode.getZ() + z);
+
+                    Block material = null;
+                    //Side pillars for x
+                    if (x == (getXDistance(directionx) * 2) / NODE_DISTANCE
+                        && Math.abs(z) == 1
+                        && y < 4)
+                    {
+                        material = Blocks.fence;
+                    }
+                    //Side pillars for z
+                    if (z == (getZDistance(directionz) * 2) / NODE_DISTANCE
+                        && Math.abs(x) == 1
+                        && y < 4)
+                    {
+                        material = Blocks.fence;
+                    }
+
+                    //Planks topping for x
+                    if (x == (getXDistance(directionx) * 2) / NODE_DISTANCE
+                        && Math.abs(z) <= 1
+                        && y == 4)
+                    {
+                        material = Blocks.planks;
+                    }
+                    //Planks topping for z
+                    if (z == (getZDistance(directionz) * 2) / NODE_DISTANCE
+                        && Math.abs(x) <= 1
+                        && y == 4)
+                    {
+                        material = Blocks.planks;
+                    }
+
+                    //torches at sides
+                    if ((x+1 == (getXDistance(directionx) * 2) / NODE_DISTANCE
+                         || x-1 == (getXDistance(directionx) * 2) / NODE_DISTANCE)
+                        && z == 0
+                        && y == 4)
+                    {
+                        material = Blocks.torch;
+                    }
+                    //torches at sides
+                    if ((z+1 == (getZDistance(directionz) * 2) / NODE_DISTANCE
+                         || z-1 == (getZDistance(directionz) * 2) / NODE_DISTANCE)
+                        && x == 0
+                        && y == 4)
+                    {
+                        material = Blocks.torch;
+                    }
+
+                    if (material == null || getBlock(curBlock) == material)
+                    {
+                        continue;
+                    }
+
+                    if (missesItemsInInventory(new ItemStack(material)))
+                    {
+                        return false;
+                    }
+
+                    setBlockFromInventory(curBlock, material);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean buildNodeCrossroadStructure(Node minenode, ChunkCoordinates standingPosition){
         for (int y = 4; y >= 2; y--)
         {
             for (int x = -1; x <= 1; x++)
@@ -1283,24 +1456,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                     if (missesItemsInInventory(new ItemStack(material)))
                     {
-                        return;
+                        return false;
                     }
 
                     setBlockFromInventory(curBlock, material);
-                    return;
+                    return false;
                 }
             }
         }
-
-        if (minenode.getStatus() == Node.NodeStatus.IN_PROGRESS)
-        {
-            //logger.info("Mined out node middle!");
-            minenode.setStatus(Node.NodeStatus.COMPLETED);
-            //logger.info("Completed middle for: \n" + minenode);
-        }
-
-        //logger.info("Done with node \n" + minenode);
-        workingNode = null;
+        return true;
     }
 
     private boolean mineSideOfNode(Node minenode, int directon, ChunkCoordinates standingPosition)
