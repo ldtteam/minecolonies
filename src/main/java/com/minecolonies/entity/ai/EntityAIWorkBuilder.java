@@ -53,40 +53,35 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             loadSchematic();
 
             WorkOrderBuild wo = job.getWorkOrder();
-            if(wo != null)
-            {
-                Building building = job.getColony().getBuilding(wo.getBuildingId());
-                if(building != null)
-                {
-                    //Don't go through the CLEAR stage for repairs and upgrades
-                    if(building.getBuildingLevel() > 0)
-                    {
-                        job.stage = JobBuilder.Stage.REQUEST_MATERIALS;
-
-                        if(!job.hasSchematic() || !incrementBlock())
-                        {
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        job.stage = JobBuilder.Stage.CLEAR;
-                        if(!job.hasSchematic() || !job.getSchematic().decrementBlock())
-                        {
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)", worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
-                }
-            }
-            else
+            if(wo == null)
             {
                 MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)", worker.getColony().getID(), worker.getCitizenData().getId(), job.getWorkOrderId()));
                 return;
             }
+            Building building = job.getColony().getBuilding(wo.getBuildingId());
+            if(building == null)
+            {
+                MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)", worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
+            }
+            //Don't go through the CLEAR stage for repairs and upgrades
+            if(building.getBuildingLevel() > 0)
+            {
+                job.stage = JobBuilder.Stage.REQUEST_MATERIALS;
+
+                if(!job.hasSchematic() || !incrementBlock())
+                {
+                    return;
+                }
+            }
+            else
+            {
+                job.stage = JobBuilder.Stage.CLEAR;
+                if(!job.hasSchematic() || !job.getSchematic().decrementBlock())
+                {
+                    return;
+                }
+            }
+
 
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", job.getSchematic().getName());
         }
