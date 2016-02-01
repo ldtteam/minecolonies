@@ -8,6 +8,7 @@ import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockOre;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
@@ -1111,9 +1112,16 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
     }
 
+    private boolean isOre(Block block){
+        //TODO make this more sophisticated
+        return block instanceof BlockOre;
+    }
+
     private boolean secureBlock(ChunkCoordinates curBlock, ChunkCoordinates safeStand)
     {
-        if (!getBlock(curBlock).getMaterial().blocksMovement() && getBlock(curBlock) != Blocks.torch)
+        if ((!getBlock(curBlock).getMaterial().blocksMovement()
+            && getBlock(curBlock) != Blocks.torch)
+            || isOre(getBlock(curBlock)))
         {
 
             if (!mineBlock(curBlock, safeStand))
