@@ -165,6 +165,11 @@ public class Node
         this.style = style;
     }
 
+    public NodeType getStyle()
+    {
+        return style;
+    }
+
     /**
      * Sets the status of the node
      * AVAILABLE means it can be mined
@@ -177,7 +182,7 @@ public class Node
         AVAILABLE,
         IN_PROGRESS,
         COMPLETED,
-        LADDER
+        WALL, LADDER
     }
 
     /**
