@@ -1247,7 +1247,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         //Build middle
         //TODO: make it look nicer!
-
+        if(!buildNodeSupportStructure(minenode,standingPosition)){
+            return;
+        }
 
         if (minenode.getStatus() == Node.NodeStatus.IN_PROGRESS)
         {
@@ -1646,7 +1648,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         node.setStyle(getRandomNodeType());
         if (node.getStyle() == Node.NodeType.TUNNEL)
         {
-            int otherDirection = Math.max(direction, invertDirection(direction)) - 1;
+            int otherDirection = Math.max(direction, invertDirection(direction)) == 2 ? 4 : 2;
             setNodeStatusForDirection(node, otherDirection, Node.NodeStatus.WALL);
             setNodeStatusForDirection(node, invertDirection(otherDirection), Node.NodeStatus.WALL);
         }
