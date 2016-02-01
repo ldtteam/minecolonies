@@ -17,7 +17,6 @@ import java.util.Random;
 
 /**
  * Extra data for Citizens
- *
  */
 public class CitizenData
 {
@@ -51,20 +50,20 @@ public class CitizenData
     private static final String TAG_HOME_BUILDING = "homeBuilding";
     private static final String TAG_WORK_BUILDING = "workBuilding";
 
-    private static final String TAG_SKILLS         = "skills";
-    private static final String TAG_SKILL_STRENGTH = "strength";
-    private static final String TAG_SKILL_STAMINA  = "stamina";
-    private static final String TAG_SKILL_WISDOM   = "wisdom";
+    private static final String TAG_SKILLS             = "skills";
+    private static final String TAG_SKILL_STRENGTH     = "strength";
+    private static final String TAG_SKILL_STAMINA      = "stamina";
+    private static final String TAG_SKILL_WISDOM       = "wisdom";
     private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
-    private static final String TAG_SKILL_CHARISMA = "charisma";
+    private static final String TAG_SKILL_CHARISMA     = "charisma";
 
-    private static final String TAG_JOB            = "job";
+    private static final String TAG_JOB = "job";
 
     /**
      * Create a CitizenData given an ID
      * Used as a super-constructor or during loading
      *
-     * @param id ID of the Citizen
+     * @param id     ID of the Citizen
      * @param colony Colony the Citizen belongs to
      */
     public CitizenData(int id, Colony colony)
@@ -107,36 +106,44 @@ public class CitizenData
         return citizen;
     }
 
-    public int getId() { return id; }
-    public Colony getColony() { return colony; }
-    public String getName() { return name; }
-    public boolean isFemale() { return isFemale; }
-    public int getTextureId() { return textureId; }
-    public int getLevel() { return level; }
+    public int getId(){ return id; }
 
-    public boolean isDirty() { return isDirty; }
+    public Colony getColony(){ return colony; }
+
+    public String getName(){ return name; }
+
+    public boolean isFemale(){ return isFemale; }
+
+    public int getTextureId(){ return textureId; }
+
+    public int getLevel(){ return level; }
+
+    public boolean isDirty(){ return isDirty; }
+
     public void markDirty()
     {
         isDirty = true;
         colony.markCitizensDirty();
     }
-    public void clearDirty() { isDirty = false; }
 
-    public BuildingHome getHomeBuilding() { return homeBuilding; }
+    public void clearDirty(){ isDirty = false; }
+
+    public BuildingHome getHomeBuilding(){ return homeBuilding; }
+
     public void setHomeBuilding(BuildingHome building)
     {
-        if (homeBuilding != null && building != null && homeBuilding != building)
+        if(homeBuilding != null && building != null && homeBuilding != building)
         {
             throw new IllegalStateException("CitizenData.setHomeBuilding() - already assigned a home building when setting a new home building");
         }
-        else if (homeBuilding != building)
+        else if(homeBuilding != building)
         {
             homeBuilding = building;
             markDirty();
         }
     }
 
-    public BuildingWorker getWorkBuilding() { return workBuilding; }
+    public BuildingWorker getWorkBuilding(){ return workBuilding; }
 
     public <BUILDING extends BuildingWorker> BUILDING getWorkBuilding(Class<BUILDING> type)
     {
@@ -144,34 +151,33 @@ public class CitizenData
         {
             return type.cast(workBuilding);
         }
-        catch (ClassCastException exc)
+        catch(ClassCastException exc)
         {
+            return null;
         }
-
-        return null;
     }
 
     public void setWorkBuilding(BuildingWorker building)
     {
-        if (workBuilding != null && building != null && workBuilding != building)
+        if(workBuilding != null && building != null && workBuilding != building)
         {
             throw new IllegalStateException("CitizenData.setWorkBuilding() - already assigned a work building when setting a new work building");
         }
-        else if (workBuilding != building)
+        else if(workBuilding != building)
         {
             workBuilding = building;
 
-            if (workBuilding != null)
+            if(workBuilding != null)
             {
                 //  We have a place to work, do we have the assigned Job?
-                if (job == null)
+                if(job == null)
                 {
                     //  No job, create one!
                     setJob(workBuilding.createJob(this));
                     colony.getWorkManager().clearWorkForCitizen(this);
                 }
             }
-            else if (job != null)
+            else if(job != null)
             {
                 //  No place of employment, get rid of our job
                 setJob(null);
@@ -190,23 +196,25 @@ public class CitizenData
      */
     public void onRemoveBuilding(Building building)
     {
-        if (getHomeBuilding() == building)
+        if(getHomeBuilding() == building)
         {
             setHomeBuilding(null);
         }
 
-        if (getWorkBuilding() == building)
+        if(getWorkBuilding() == building)
         {
             setWorkBuilding(null);
         }
     }
 
-    public EntityCitizen getCitizenEntity() { return entity; /*(entity != null) ? entity.get() : null;*/ }
+    public EntityCitizen getCitizenEntity(){ return entity; /*(entity != null) ? entity.get() : null;*/ }
+
     public void setCitizenEntity(EntityCitizen citizen)
     {
         entity = citizen;
         markDirty();
     }
+
     public void clearCitizenEntity()
     {
         entity = null;
@@ -214,17 +222,17 @@ public class CitizenData
 
 
     public Job getJob(){ return job; }
+
     public <JOB extends Job> JOB getJob(Class<JOB> type)
     {
         try
         {
             return type.cast(job);
         }
-        catch (ClassCastException exc)
+        catch(ClassCastException exc)
         {
+            return null;
         }
-
-        return null;
     }
 
     public void setJob(Job j)
@@ -232,7 +240,7 @@ public class CitizenData
         job = j;
 
         EntityCitizen entity = getCitizenEntity();
-        if (entity != null)
+        if(entity != null)
         {
             entity.onJobChanged(job);
         }
@@ -258,7 +266,7 @@ public class CitizenData
         nbtTagSkillsCompound.setInteger(TAG_SKILL_CHARISMA, charisma);
         compound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
 
-        if (job != null)
+        if(job != null)
         {
             NBTTagCompound jobCompound = new NBTTagCompound();
             job.writeToNBT(jobCompound);
@@ -282,7 +290,7 @@ public class CitizenData
         intelligence = nbtTagSkillsCompound.getInteger("intelligence");
         charisma = nbtTagSkillsCompound.getInteger("charisma");
 
-        if (compound.hasKey("job"))
+        if(compound.hasKey("job"))
         {
             setJob(Job.createFromNBT(this, compound.getCompoundTag("job")));
         }
@@ -320,10 +328,10 @@ public class CitizenData
      */
     public static class View
     {
-        private final int id;
-        private int       entityId;
-        private String    name;
-        private boolean   isFemale;
+        private final int     id;
+        private       int     entityId;
+        private       String  name;
+        private       boolean isFemale;
 
         //  Placeholder skills
         private int level;
@@ -386,13 +394,13 @@ public class CitizenData
         buf.writeInt(entity != null ? entity.getEntityId() : -1);
 
         buf.writeBoolean(homeBuilding != null);
-        if (homeBuilding != null)
+        if(homeBuilding != null)
         {
             ChunkCoordUtils.writeToByteBuf(buf, homeBuilding.getID());
         }
 
         buf.writeBoolean(workBuilding != null);
-        if (workBuilding != null)
+        if(workBuilding != null)
         {
             ChunkCoordUtils.writeToByteBuf(buf, workBuilding.getID());
         }
@@ -424,7 +432,7 @@ public class CitizenData
         {
             view.deserialize(buf);
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             MineColonies.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author", view.getID()), ex);
             view = null;
