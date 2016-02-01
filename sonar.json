@@ -1,0 +1,4 @@
+{
+  "sonarHost": "http://home.kk-sc.de:9000/",
+  "sonarProjectKey": "com.minecolonies:MINEKOS-JAR-DF:Development_Branch"
+}
