@@ -492,12 +492,12 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
                 for(int i = 0; i < worker.getInventory().getSizeInventory(); i++)
                 {
                     ItemStack invItem = worker.getInventory().getStackInSlot(i);
-                    if(true)//TODO change to isRequired material using chris' system
-                    {
-                        leftOvers = invItem;
-                        slotID = i;
-                        break;
-                    }
+                    //Keeping the TODO but removing the if
+                    //TODO change to isRequired material using chris' system
+                    leftOvers = invItem;
+                    slotID = i;
+                    break;
+
                 }
                 worker.getInventory().setInventorySlotContents(slotID, stack);
             }
