@@ -1247,7 +1247,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         //Build middle
         //TODO: make it look nicer!
-        if(!buildNodeSupportStructure(minenode,standingPosition)){
+        if (!buildNodeSupportStructure(minenode, standingPosition))
+        {
             return;
         }
 
@@ -1262,24 +1263,32 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         workingNode = null;
     }
 
-    private boolean buildNodeSupportStructure(Node minenode, ChunkCoordinates standingPosition){
-        if(minenode.getStyle() == Node.NodeType.CROSSROAD){
-            return buildNodeCrossroadStructure(minenode,standingPosition);
+    private boolean buildNodeSupportStructure(Node minenode, ChunkCoordinates standingPosition)
+    {
+        logger.info("Build support for: " + minenode);
+        if (minenode.getStyle() == Node.NodeType.CROSSROAD)
+        {
+            return buildNodeCrossroadStructure(minenode, standingPosition);
         }
-        if(minenode.getStyle() == Node.NodeType.BEND){
-            return buildNodeBendStructure(minenode,standingPosition);
+        if (minenode.getStyle() == Node.NodeType.BEND)
+        {
+            return buildNodeBendStructure(minenode, standingPosition);
         }
-        if(minenode.getStyle() == Node.NodeType.TUNNEL){
-            return buildNodeTunnelStructure(minenode,standingPosition);
+        if (minenode.getStyle() == Node.NodeType.TUNNEL)
+        {
+            return buildNodeTunnelStructure(minenode, standingPosition);
         }
-        return true;
+        logger.info("None of the above: " + minenode);
+        return false;
     }
 
     private boolean buildNodeTunnelStructure(final Node minenode, final ChunkCoordinates standingPosition)
     {
-        int direction = 1;
-        if(minenode.getDirectionPosX() == Node.NodeStatus.WALL){
-            direction = 3;
+        logger.info("Build node support for: " + minenode);
+        int direction = 3;
+        if (minenode.getDirectionPosX() == Node.NodeStatus.WALL)
+        {
+            direction = 1;
         }
 
         for (int y = 4; y >= 1; y--)
@@ -1294,31 +1303,35 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                     Block material = null;
                     //Side pillars
-                    if (x == Math.abs(getXDistance(direction)/NODE_DISTANCE)
-                        && z == Math.abs(getZDistance(direction)/NODE_DISTANCE)
+                    if (Math.abs(x) == Math.abs(getXDistance(direction) / NODE_DISTANCE)
+                        && Math.abs(z) == Math.abs(getZDistance(direction) / NODE_DISTANCE)
                         && y < 4)
                     {
                         material = Blocks.fence;
                     }
                     //Planks topping
-                    if ((x == 0 || x == Math.abs(getXDistance(direction)/NODE_DISTANCE) )
-                        && (z == 0 || z == Math.abs(getZDistance(direction)/NODE_DISTANCE))
+                    if ((x == 0 || Math.abs(x) == Math.abs(getXDistance(direction) / NODE_DISTANCE))
+                        && (z == 0 || Math.abs(z) == Math.abs(getZDistance(direction) / NODE_DISTANCE))
                         && y == 4)
                     {
                         material = Blocks.planks;
                     }
                     //torches at sides
-                    if (((Math.abs(x) == 1 && Math.abs(z) == 0) || (Math.abs(x) == 0 && Math.abs(z) == 1))
-                        && y == 3
+                    if (((Math.abs(x) == 1 && Math.abs(z) == 0 && direction == 3)
+                         || (Math.abs(x) == 0 && Math.abs(z) == 1 && direction == 1))
+                        && y == 4
                         && getBlock(new ChunkCoordinates(minenode.getX(), standingPosition.posY + y, minenode.getZ()))
                            == Blocks.planks
-                        && getBlock(curBlock)!= Blocks.planks)
+                        && getBlock(curBlock) != Blocks.planks)
                     {
                         material = Blocks.torch;
                     }
                     if (material == null || getBlock(curBlock) == material)
                     {
-                        continue;
+                        if (material == null || getBlock(curBlock) == material)
+                        {
+                            continue;
+                        }
                     }
 
                     if (missesItemsInInventory(new ItemStack(material)))
@@ -1336,12 +1349,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private boolean buildNodeBendStructure(final Node minenode, final ChunkCoordinates standingPosition)
     {
+        logger.info("Build bend support for: " + minenode);
         int directionx = 1;
-        if(minenode.getDirectionPosX() == Node.NodeStatus.WALL){
+        if (minenode.getDirectionPosX() == Node.NodeStatus.WALL)
+        {
             directionx = 2;
         }
         int directionz = 3;
-        if(minenode.getDirectionPosZ() == Node.NodeStatus.WALL){
+        if (minenode.getDirectionPosZ() == Node.NodeStatus.WALL)
+        {
             directionz = 4;
         }
 
@@ -1387,18 +1403,26 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     }
 
                     //torches at sides
-                    if ((x+1 == (getXDistance(directionx) * 2) / NODE_DISTANCE
-                         || x-1 == (getXDistance(directionx) * 2) / NODE_DISTANCE)
+                    if ((x == (getXDistance(directionx)) / NODE_DISTANCE)
                         && z == 0
-                        && y == 4)
+                        && y == 4
+                        && getBlock(new ChunkCoordinates(
+                            minenode.getX() + (getXDistance(directionx) * 2) / NODE_DISTANCE,
+                            standingPosition.posY + y,
+                            minenode.getZ()))
+                           == Blocks.planks)
                     {
                         material = Blocks.torch;
                     }
                     //torches at sides
-                    if ((z+1 == (getZDistance(directionz) * 2) / NODE_DISTANCE
-                         || z-1 == (getZDistance(directionz) * 2) / NODE_DISTANCE)
+                    if ((z == (getZDistance(directionz)) / NODE_DISTANCE)
                         && x == 0
-                        && y == 4)
+                        && y == 4
+                        && getBlock(new ChunkCoordinates(
+                            minenode.getX(),
+                            standingPosition.posY + y,
+                            minenode.getZ() + (getZDistance(directionz) * 2) / NODE_DISTANCE))
+                           == Blocks.planks)
                     {
                         material = Blocks.torch;
                     }
@@ -1407,6 +1431,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     {
                         continue;
                     }
+
+                    logger.info("Wanting to place "+material+" at "+curBlock);
 
                     if (missesItemsInInventory(new ItemStack(material)))
                     {
@@ -1421,7 +1447,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return true;
     }
 
-    private boolean buildNodeCrossroadStructure(Node minenode, ChunkCoordinates standingPosition){
+    private boolean buildNodeCrossroadStructure(Node minenode, ChunkCoordinates standingPosition)
+    {
+        logger.info("Build crossroad support for: " + minenode);
         for (int y = 4; y >= 2; y--)
         {
             for (int x = -1; x <= 1; x++)
@@ -1472,7 +1500,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private boolean mineSideOfNode(Node minenode, int directon, ChunkCoordinates standingPosition)
     {
         if (getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.LADDER
-                || getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.WALL)
+            || getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.WALL)
         {
             return true;
         }
@@ -1654,8 +1682,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         if (node.getStyle() == Node.NodeType.BEND)
         {
-            setNodeStatusForDirection(node, invertDirection(direction), Node.NodeStatus.WALL);
-            int otherDirection = Math.max(direction, invertDirection(direction)) - 1;
+            setNodeStatusForDirection(node, direction, Node.NodeStatus.WALL);
+            int otherDirection = Math.max(direction, invertDirection(direction)) == 2 ? 4 : 2;
             //Make Bend go to random side
             if (Math.random() > 0.5)
             {
@@ -1670,6 +1698,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private Node.NodeType getRandomNodeType()
     {
         int roll = new Random().nextInt(100);
+        logger.info("Random roll got " + roll);
         if (roll > 50)
         {
             return Node.NodeType.TUNNEL;
