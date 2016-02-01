@@ -12,7 +12,6 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.util.LanguageHandler;
@@ -278,7 +277,8 @@ public class WindowTownhall extends Window implements Button.Handler
         }
         else if (button.getID().equals(BUTTON_RENAME))
         {
-            townhall.openGui(EnumGUI.TOWNHALL_RENAME);
+            WindowTownhallNameEntry window = new WindowTownhallNameEntry(townhall.getColony());
+            window.show();
         }
     }
 }

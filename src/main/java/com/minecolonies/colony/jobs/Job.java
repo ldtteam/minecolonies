@@ -16,7 +16,7 @@ import java.util.*;
 public abstract class Job
 {
     private final CitizenData citizen;
-    private List<ItemStack> itemsNeeded = new ArrayList<ItemStack>();
+    private List<ItemStack> itemsNeeded = new ArrayList<>();
 
     //  Job and View Class Mapping
     private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<String, Class<? extends Job>>();
@@ -189,7 +189,7 @@ public abstract class Job
      *
      * @return true if the Job has no needed items
      */
-    public boolean hasItemsNeeded()
+    public boolean isMissingNeededItem()
     {
         return !itemsNeeded.isEmpty();
     }
@@ -202,6 +202,11 @@ public abstract class Job
     public List<ItemStack> getItemsNeeded()
     {
         return Collections.unmodifiableList(itemsNeeded);
+    }
+
+    public void clearItemsNeeded()
+    {
+        itemsNeeded = new ArrayList<>();
     }
 
     /**
@@ -258,4 +263,13 @@ public abstract class Job
      * @param tasks EntityAITasks list to add tasks to
      */
     public void addTasks(EntityAITasks tasks) {}
+
+    /**
+     * This method can be used to display the current status.
+     * That a citizen is having.
+     * @return Small string to display info in name tag
+     */
+    public String getNameTagDescription() {
+        return "";
+    }
 }

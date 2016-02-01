@@ -1,13 +1,11 @@
 package com.minecolonies.colony.buildings;
 
-import com.blockout.views.Window;
 import com.minecolonies.client.gui.WindowHutFarmer;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobFarmer;
-import com.minecolonies.lib.EnumGUI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
@@ -90,14 +88,9 @@ public class BuildingFarmer extends BuildingWorker
             super(c, l);
         }
 
-        public Window getWindow(int guiId)
+        public com.blockout.views.Window getWindow()
         {
-            if (guiId == EnumGUI.FARMER.getID())
-            {
-                return new WindowHutFarmer(this);
-            }
-
-            return null;
+            return new WindowHutFarmer(this);
         }
 
         @Override
@@ -129,7 +122,4 @@ public class BuildingFarmer extends BuildingWorker
     {
         return getBuildingLevel()+3;
     }
-
-    @Override
-    public int getGuiId(){ return EnumGUI.FARMER.getID(); }
 }

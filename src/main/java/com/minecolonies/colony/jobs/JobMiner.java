@@ -12,10 +12,10 @@ import java.util.List;
 
 public class JobMiner extends Job
 {
+    private static final String                  TAG_STAGE = "Stage";
     public List<ChunkCoordinates> vein;//TODO do these need to be saved?
-    public int veinId=0;
-    private EntityAIWorkMiner.Stage stage = EntityAIWorkMiner.Stage.WORKING;
-    private static final String TAG_STAGE = "Stage";
+    public               int                     veinId    = 0;
+    private              EntityAIWorkMiner.Stage stage     = EntityAIWorkMiner.Stage.START_WORKING;
 
     public JobMiner(CitizenData entity)
     {
@@ -38,6 +38,18 @@ public class JobMiner extends Job
         compound.setString(TAG_STAGE, stage.name());
     }
 
+    /**
+     * This method can be used to display the current status.
+     * That a citizen is having.
+     *
+     * @return Small string to display info in name tag
+     */
+    @Override
+    public String getNameTagDescription()
+    {
+        return " [" + getStage() + "]";
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -51,14 +63,14 @@ public class JobMiner extends Job
         tasks.addTask(3, new EntityAIWorkMiner(this));
     }
 
-    public void setStage(EntityAIWorkMiner.Stage stage)
-    {
-        this.stage = stage;
-    }
-
     public EntityAIWorkMiner.Stage getStage()
     {
         return stage;
+    }
+
+    public void setStage(EntityAIWorkMiner.Stage stage)
+    {
+        this.stage = stage;
     }
 
     public void addItemNeededIfNotAlready(ItemStack stack)

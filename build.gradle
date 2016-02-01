@@ -15,6 +15,49 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "1.2"
+}
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+apply plugin: 'pmd'
+
+sonarqube {
+    properties{
+        property "sonar.host.url", "http://home.kk-sc.de:9000"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.projectName", "Minecolonies"
+        property "sonar.branch", System.getenv()['bamboo_repository_branch_name']
+    }
+}
+
+checkstyle {
+    ignoreFailures = true
+    showViolations = false
+}
+
+findbugs {
+    ignoreFailures = true
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = true
+        html.enabled = false
+    }
+}
+
+pmd {
+    ignoreFailures = true
+}
+
+tasks.withType(Pmd) {
+    reports {
+        xml.enabled = true
+        html.enabled = false
+    }
+}
+
 apply plugin: 'forge'
 
 ext.configFile = file "build.properties"
@@ -29,8 +72,8 @@ configFile.withReader {
 group = "com.minecolonies"
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.minecolonies_build}"
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 minecraft {
 
@@ -81,14 +124,10 @@ task incrementBuildNumber() {
 jar {
     appendix = 'universal'
 }
-/*
 
-Error: > No signature of method: groovy.util.ConfigObject.plus() is applicable for argument types: (java.lang.String) values: [.gradle]
-Possible solutions: plus(java.util.Collection), plus(java.util.Map), values(), put(java.lang.Object, java.lang.Object), minus(java.util.Map), use([Ljava.lang.Object;)
-
-Commenting out signing
-
-if(new File(config.signing + ".gradle").exists()) {
-    apply from: config.signing + ".gradle";
+apply plugin: 'idea'
+idea {
+    module {
+        inheritOutputDirs = true
+    }
 }
-*/

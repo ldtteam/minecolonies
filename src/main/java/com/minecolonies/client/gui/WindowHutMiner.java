@@ -15,19 +15,13 @@ import java.awt.*;
 
 public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
 {
-    private ScrollingList levelList;
-    private int[] levels;
-    private BuildingMiner.View miner;
-
-    private static final String LIST_LEVELS = "levels",
-    PAGE_LEVELS = "levelActions",
-    BUTTON_PREVPAGE = "prevPage",
-    BUTTON_NEXTPAGE = "nextPage",
-    BUTTON_CURRENTLEVEL ="changeToLevel",
+    private static final String LIST_LEVELS = "levels", PAGE_LEVELS = "levelActions", BUTTON_PREVPAGE = "prevPage", BUTTON_NEXTPAGE = "nextPage", BUTTON_CURRENTLEVEL = "changeToLevel",
 
     VIEW_PAGES = "pages";
-
     Button buttonPrevPage, buttonNextPage;
+    private ScrollingList      levelList;
+    private int[]              levels;
+    private BuildingMiner.View miner;
 
     public WindowHutMiner(BuildingMiner.View building)
     {
@@ -47,19 +41,23 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
             buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
             buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
         }
-        catch (NullPointerException exc) {}
+        catch(NullPointerException exc){}
 
 
         levelList = findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class);
-        levelList.setDataProvider(new ScrollingList.DataProvider() {
+        levelList.setDataProvider(new ScrollingList.DataProvider()
+        {
             @Override
-            public int getElementCount() {
+            public int getElementCount()
+            {
                 return levels.length;
             }
 
             @Override
-            public void updateElement(int index, Pane rowPane) {
-                try {
+            public void updateElement(int index, Pane rowPane)
+            {
+                try
+                {
                     if(index == miner.current)
                     {
                         rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.RED.getRGB());
@@ -72,7 +70,7 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
                     rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
                     rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + levels[index]);
                 }
-                catch (NullPointerException exc)
+                catch(NullPointerException exc)
                 {
                 }
             }
@@ -82,25 +80,25 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     @Override
     public void onButtonClicked(Button button)
     {
-        if (button.getID().equals(BUTTON_PREVPAGE))
+        if(button.getID().equals(BUTTON_PREVPAGE))
         {
             findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
             buttonPrevPage.setEnabled(false);
             buttonNextPage.setEnabled(true);
         }
-        else if (button.getID().equals(BUTTON_NEXTPAGE))
+        else if(button.getID().equals(BUTTON_NEXTPAGE))
         {
             findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
             buttonPrevPage.setEnabled(true);
             buttonNextPage.setEnabled(false);
         }
-        else if (button.getID().equals(BUTTON_CURRENTLEVEL))
+        else if(button.getID().equals(BUTTON_CURRENTLEVEL))
         {
             int row = levelList.getListElementIndexByPane(button);
-            if (row != miner.current && row >= 0 && row < levels.length)
+            if(row != miner.current && row >= 0 && row < levels.length)
             {
                 miner.current = row;
-                MineColonies.network.sendToServer(new MinerSetLevelMessage(miner,row));
+                MineColonies.network.sendToServer(new MinerSetLevelMessage(miner, row));
             }
         }
         else
@@ -113,7 +111,7 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     public void onUpdate()
     {
         String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
-        if (currentPage.equals(PAGE_LEVELS))
+        if(currentPage.equals(PAGE_LEVELS))
         {
             updateUsers();
             window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();

@@ -901,7 +901,7 @@ public class Colony implements IColony
             if (citizen.getWorkBuilding() != null &&
                     citizen.getJob() != null)
             {
-                if (!citizen.getJob().hasItemsNeeded())
+                if (!citizen.getJob().isMissingNeededItem())
                 {
                     deliverymanRequired.add(citizen.getWorkBuilding().getLocation());
                 }
