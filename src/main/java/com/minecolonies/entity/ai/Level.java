@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -10,65 +11,70 @@ import java.util.List;
 
 /**
  * Miner Level Data Structure
- *
+ * <p>
  * A Level contains all the nodes for one level of the mine
  *
- * @author Colton
+ * @author Colton, Kostronor
  */
 public class Level
 {
+    private static final String TAG_DEPTH   = "Depth";
+    private static final String TAG_NODES   = "Nodes";
+    private static final String TAG_LADDERX = "LadderX";
+    private static final String TAG_LADDERZ = "LadderZ";
     /**
      * The depth of the level stored as the y coordinate
      */
-    public int depth;
+    private int depth;
+    private List<Node> nodes      = new ArrayList<>();
+    private Node       ladderNode = null;
 
-    private List<Node> nodes = new ArrayList<Node>();
-
-    private static final String TAG_DEPTH = "Depth";
-    private static final String TAG_NODES = "Nodes";
-
-    private Level(){}
-
-    public Level(int x, int depth, int z,BuildingMiner b)
+    private Level()
     {
-        this.depth = depth;
-        nodes = new ArrayList<Node>();
-
-        int ladderX = b.cobbleLocation.posX;
-        int ladderZ = b.cobbleLocation.posZ;
-
-        if(ladderX != x-4 || ladderZ != z)
-        {
-            nodes.add(new Node(x-4,z,-1,0));
-        }
-
-        if(ladderX != x || ladderZ != z+4)
-        {
-            nodes.add(new Node(x,z+4,0,+1));
-        }
-
-        if(ladderX != x+4 || ladderZ != z)
-        {
-            nodes.add(new Node(x+4,z,+1,0));
-        }
-
-        if(ladderX != x || ladderZ != z-4)
-        {
-            nodes.add(new Node(x,z-4,0,-1));
-        }
     }
 
-    public void writeToNBT(NBTTagCompound compound)
+    public Level(BuildingMiner buildingMiner, int depth)
     {
-        compound.setInteger(TAG_DEPTH, depth);
+        this.depth = depth;
+        //TODO: Store in HashMap for faster access
+        nodes = new ArrayList<>();
 
-        NBTTagList nodeTagList = new NBTTagList();
-        for (Node node : nodes) {
-            NBTTagCompound nodeCompound = new NBTTagCompound();
-            node.writeToNBT(nodeCompound);
-            nodeTagList.appendTag(nodeCompound);
+        int cobbleX = buildingMiner.cobbleLocation.posX;
+        int cobbleZ = buildingMiner.cobbleLocation.posZ;
+
+        //check for orientation
+        ChunkCoordinates cobbleCenter = new ChunkCoordinates(cobbleX - (buildingMiner.vectorX * 3), depth, cobbleZ - (buildingMiner.vectorZ * 3));
+        ChunkCoordinates ladderCenter = new ChunkCoordinates(cobbleX + (buildingMiner.vectorX * 4), depth, cobbleZ + (buildingMiner.vectorZ * 4));
+        //TODO: let them know they are ladder and cobble (they are handled different)
+        Node cobbleNode = new Node(cobbleCenter.posX, cobbleCenter.posZ);
+        ladderNode = new Node(ladderCenter.posX, ladderCenter.posZ);
+        ladderNode.setStatus(NodeStatus.COMPLETED);
+        ladderNode.setDirectionNegX(NodeStatus.COMPLETED);
+        ladderNode.setDirectionPosX(NodeStatus.COMPLETED);
+        ladderNode.setDirectionNegZ(NodeStatus.COMPLETED);
+        ladderNode.setDirectionPosZ(NodeStatus.COMPLETED);
+        if(buildingMiner.vectorX > 0)
+        {
+            ladderNode.setDirectionNegX(NodeStatus.LADDER);
+            cobbleNode.setDirectionPosX(NodeStatus.LADDER);
         }
-        compound.setTag(TAG_NODES, nodeTagList);
+        else if(buildingMiner.vectorX < 0)
+        {
+            ladderNode.setDirectionPosX(NodeStatus.LADDER);
+            cobbleNode.setDirectionNegX(NodeStatus.LADDER);
+        }
+        else if(buildingMiner.vectorZ > 0)
+        {
+            ladderNode.setDirectionNegZ(NodeStatus.LADDER);
+            cobbleNode.setDirectionPosZ(NodeStatus.LADDER);
+        }
+        else if(buildingMiner.vectorZ < 0)
+        {
+            ladderNode.setDirectionPosZ(NodeStatus.LADDER);
+            cobbleNode.setDirectionNegZ(NodeStatus.LADDER);
+        }
+        nodes.add(cobbleNode);
+        nodes.add(ladderNode);
     }
 
     public static Level createFromNBT(NBTTagCompound compound)
@@ -83,11 +89,43 @@ public class Level
             Node node = Node.createFromNBT(nodeTagList.getCompoundTagAt(i));
             level.nodes.add(node);
         }
+        int ladderx = compound.getInteger(TAG_LADDERX);
+        int ladderz = compound.getInteger(TAG_LADDERZ);
+
+        level.ladderNode = level.nodes.stream().filter(node -> node.getX() == ladderx && node.getZ() == ladderz).findFirst().get();
 
         return level;
     }
 
-    public List<Node> getNodes() {
+    @Override
+    public String toString()
+    {
+        final StringBuilder sb = new StringBuilder("Level{");
+        sb.append("depth=").append(depth);
+        sb.append(", nodes=").append(nodes);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        compound.setInteger(TAG_DEPTH, depth);
+
+        NBTTagList nodeTagList = new NBTTagList();
+        for(Node node : nodes)
+        {
+            NBTTagCompound nodeCompound = new NBTTagCompound();
+            node.writeToNBT(nodeCompound);
+            nodeTagList.appendTag(nodeCompound);
+        }
+        compound.setTag(TAG_NODES, nodeTagList);
+
+        compound.setInteger(TAG_LADDERX, ladderNode.getX());
+        compound.setInteger(TAG_LADDERZ, ladderNode.getZ());
+    }
+
+    public List<Node> getNodes()
+    {
         return nodes;
     }
 
@@ -96,8 +134,18 @@ public class Level
         return depth;
     }
 
-    public void addNewNode(int x, int z,int vektorX, int vektorY)
+    public void addNewNode(int x, int z)
     {
-        nodes.add(new Node(x,z,vektorX,vektorY));
+        nodes.add(new Node(x, z));
+    }
+
+    public Node getLadderNode()
+    {
+        return ladderNode;
+    }
+
+    public void addNode(Node newnode)
+    {
+        nodes.add(newnode);
     }
 }

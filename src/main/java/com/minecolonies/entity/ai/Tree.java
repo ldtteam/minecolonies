@@ -44,11 +44,11 @@ public class Tree
 
     public void findLogs(World world)
     {
-        System.out.println("Starting findLogs recursive search.");
+        //System.out.println("Starting findLogs recursive search.");
         long startTime = System.nanoTime();
 
         addAndSearch(world, location);
-        System.out.println("Search time taken(ms): " + (System.nanoTime()-startTime)/1000000D);
+        //System.out.println("Search time taken(ms): " + (System.nanoTime()-startTime)/1000000D);
 
         Collections.sort(woodBlocks, new Comparator<ChunkCoordinates>()
         {
@@ -58,7 +58,7 @@ public class Tree
                 return (int) (c1.getDistanceSquaredToChunkCoordinates(location) - c2.getDistanceSquaredToChunkCoordinates(location));
             }
         });
-        System.out.println("Time including sort(ms): " + (System.nanoTime()-startTime)/1000000D);
+        //System.out.println("Time including sort(ms): " + (System.nanoTime()-startTime)/1000000D);
     }
 
     public void addBaseLog()
