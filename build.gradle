@@ -27,8 +27,6 @@ sonarqube {
         property "sonar.host.url", "http://home.kk-sc.de:9000"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectName", "Minecolonies"
-        property "sonar.login", System.getenv()['SONARUSER']
-        property "sonar.password", System.getenv()['SONARPW']
         property "sonar.branch", System.getenv()['bamboo_repository_branch_name']
     }
 }

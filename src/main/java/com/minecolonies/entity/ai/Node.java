@@ -15,6 +15,7 @@ public class Node
 {
     private static final String TAG_X                 = "idX";
     private static final String TAG_Z                 = "idZ";//TODO change to z, but will break saves
+    private static final String TAG_STYLE             = "Style";
     private static final String TAG_STATUS            = "Status";
     private static final String TAG_STATUS_POSITIVE_X = "positiveX";
     private static final String TAG_STATUS_NEGATIVE_X = "negativeX";
@@ -24,6 +25,7 @@ public class Node
      * Location of the node
      */
     private int x, z;
+    private NodeType   style;
     private NodeStatus status;
     private NodeStatus directionPosX; //+X
     private NodeStatus directionNegX; //-X
@@ -34,6 +36,7 @@ public class Node
     {
         this.x = x;
         this.z = z;
+        style = NodeType.CROSSROAD;
         status = NodeStatus.AVAILABLE;
         directionPosX = NodeStatus.AVAILABLE;
         directionNegX = NodeStatus.AVAILABLE;
@@ -46,6 +49,8 @@ public class Node
         int x = compound.getInteger(TAG_X);
         int z = compound.getInteger(TAG_Z);
 
+        NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
+
         NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
         NodeStatus directionPosX = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_X));
@@ -54,6 +59,7 @@ public class Node
         NodeStatus directionNegZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_Z));
 
         Node node = new Node(x, z);
+        node.setStyle(style);
         node.setStatus(status);
         node.setDirectionPosX(directionPosX);
         node.setDirectionNegX(directionNegX);
@@ -108,6 +114,8 @@ public class Node
         compound.setInteger(TAG_X, x);
         compound.setInteger(TAG_Z, z);
 
+        compound.setString(TAG_STYLE, style.name());
+
         compound.setString(TAG_STATUS, status.name());
 
         compound.setString(TAG_STATUS_POSITIVE_X, directionPosX.name());
@@ -136,22 +144,13 @@ public class Node
         this.status = status;
     }
 
-    public int getVectorX()
-    {
-        return 0;
-    }
-
-    public int getVectorZ()
-    {
-        return 0;
-    }
-
     @Override
     public String toString()
     {
         final StringBuilder sb = new StringBuilder("Node{");
         sb.append("x=").append(x);
         sb.append(", z=").append(z);
+        sb.append(", style=").append(style);
         sb.append(", status=").append(status);
         sb.append(", directionPosX=").append(directionPosX);
         sb.append(", directionNegX=").append(directionNegX);
@@ -161,4 +160,34 @@ public class Node
         return sb.toString();
     }
 
+    public void setStyle(NodeType style)
+    {
+        this.style = style;
+    }
+
+    /**
+     * Sets the status of the node
+     * AVAILABLE means it can be mined
+     * IN_PROGRESS means it is currently being mined
+     * COMPLETED means it has been mined and all torches/wood structure has been placed
+     * LADDER means this side has the ladder and must not be mined
+     */
+    enum NodeStatus
+    {
+        AVAILABLE,
+        IN_PROGRESS,
+        COMPLETED,
+        LADDER
+    }
+
+    /**
+     * Sets the node style used
+     */
+    enum NodeType
+    {
+        SHAFT, LADDER_BACK,
+        TUNNEL,
+        CROSSROAD,
+        BEND
+    }
 }

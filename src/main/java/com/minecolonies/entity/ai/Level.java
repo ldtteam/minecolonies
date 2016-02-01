@@ -47,31 +47,33 @@ public class Level
         ChunkCoordinates ladderCenter = new ChunkCoordinates(cobbleX + (buildingMiner.vectorX * 4), depth, cobbleZ + (buildingMiner.vectorZ * 4));
         //TODO: let them know they are ladder and cobble (they are handled different)
         Node cobbleNode = new Node(cobbleCenter.posX, cobbleCenter.posZ);
+        cobbleNode.setStyle(Node.NodeType.LADDER_BACK);
         ladderNode = new Node(ladderCenter.posX, ladderCenter.posZ);
-        ladderNode.setStatus(NodeStatus.COMPLETED);
-        ladderNode.setDirectionNegX(NodeStatus.COMPLETED);
-        ladderNode.setDirectionPosX(NodeStatus.COMPLETED);
-        ladderNode.setDirectionNegZ(NodeStatus.COMPLETED);
-        ladderNode.setDirectionPosZ(NodeStatus.COMPLETED);
+        ladderNode.setStyle(Node.NodeType.SHAFT);
+        ladderNode.setStatus(Node.NodeStatus.COMPLETED);
+        ladderNode.setDirectionNegX(Node.NodeStatus.COMPLETED);
+        ladderNode.setDirectionPosX(Node.NodeStatus.COMPLETED);
+        ladderNode.setDirectionNegZ(Node.NodeStatus.COMPLETED);
+        ladderNode.setDirectionPosZ(Node.NodeStatus.COMPLETED);
         if(buildingMiner.vectorX > 0)
         {
-            ladderNode.setDirectionNegX(NodeStatus.LADDER);
-            cobbleNode.setDirectionPosX(NodeStatus.LADDER);
+            ladderNode.setDirectionNegX(Node.NodeStatus.LADDER);
+            cobbleNode.setDirectionPosX(Node.NodeStatus.LADDER);
         }
         else if(buildingMiner.vectorX < 0)
         {
-            ladderNode.setDirectionPosX(NodeStatus.LADDER);
-            cobbleNode.setDirectionNegX(NodeStatus.LADDER);
+            ladderNode.setDirectionPosX(Node.NodeStatus.LADDER);
+            cobbleNode.setDirectionNegX(Node.NodeStatus.LADDER);
         }
         else if(buildingMiner.vectorZ > 0)
         {
-            ladderNode.setDirectionNegZ(NodeStatus.LADDER);
-            cobbleNode.setDirectionPosZ(NodeStatus.LADDER);
+            ladderNode.setDirectionNegZ(Node.NodeStatus.LADDER);
+            cobbleNode.setDirectionPosZ(Node.NodeStatus.LADDER);
         }
         else if(buildingMiner.vectorZ < 0)
         {
-            ladderNode.setDirectionPosZ(NodeStatus.LADDER);
-            cobbleNode.setDirectionNegZ(NodeStatus.LADDER);
+            ladderNode.setDirectionPosZ(Node.NodeStatus.LADDER);
+            cobbleNode.setDirectionNegZ(Node.NodeStatus.LADDER);
         }
         nodes.add(cobbleNode);
         nodes.add(ladderNode);
@@ -103,6 +105,7 @@ public class Level
         final StringBuilder sb = new StringBuilder("Level{");
         sb.append("depth=").append(depth);
         sb.append(", nodes=").append(nodes);
+        sb.append(", ladderNode=").append(ladderNode);
         sb.append('}');
         return sb.toString();
     }
@@ -132,11 +135,6 @@ public class Level
     public int getDepth()
     {
         return depth;
-    }
-
-    public void addNewNode(int x, int z)
-    {
-        nodes.add(new Node(x, z));
     }
 
     public Node getLadderNode()
