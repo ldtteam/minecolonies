@@ -27,11 +27,7 @@ public class EntityAICitizenWander extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if(citizen.getAge() >= 100)
-        {
-            return false;
-        }
-        if(citizen.getRNG().nextInt(120) != 0)
+        if(isToOld() || checkForRandom())
         {
             return false;
         }
@@ -41,26 +37,43 @@ public class EntityAICitizenWander extends EntityAIBase
             return false;
         }
 
-        if(vec3.yCoord < 0)
-        {
-            vec3.yCoord = 0;
-        }
-
-        while(vec3.yCoord >= 1 && citizen.worldObj.isAirBlock(MathHelper.floor_double(vec3.xCoord), (int) vec3.yCoord - 1, MathHelper.floor_double(vec3.zCoord)))
-        {
-            vec3.yCoord -= 1.0D;
-        }
-
-        while(!citizen.worldObj.isAirBlock(MathHelper.floor_double(vec3.xCoord), (int) vec3.yCoord, MathHelper.floor_double(vec3.zCoord)))
-        {
-            vec3.yCoord += 1.0D;
-        }
+        vec3.yCoord = getValidHeight(vec3);
 
         this.xPosition = vec3.xCoord;
         this.yPosition = vec3.yCoord;
         this.zPosition = vec3.zCoord;
 
         return true;
+    }
+
+    private double getValidHeight(Vec3 position)
+    {
+        double returnHeight = position.yCoord;
+        if(position.yCoord < 0)
+        {
+            returnHeight= 0;
+        }
+
+        while(returnHeight >= 1 && citizen.worldObj.isAirBlock(MathHelper.floor_double(position.xCoord), (int) returnHeight - 1, MathHelper.floor_double(position.zCoord)))
+        {
+            returnHeight -= 1.0D;
+        }
+
+        while(!citizen.worldObj.isAirBlock(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord)))
+        {
+            returnHeight += 1.0D;
+        }
+        return returnHeight;
+    }
+
+    private boolean isToOld()
+    {
+        return citizen.getAge() >= 100;
+    }
+
+    private boolean checkForRandom()
+    {
+        return citizen.getRNG().nextInt(120) != 0;
     }
 
     /**

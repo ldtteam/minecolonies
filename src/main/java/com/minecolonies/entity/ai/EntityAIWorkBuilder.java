@@ -106,6 +106,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             return;
         }
 
+        //TODO: break this up to make it more readable
         switch(job.stage)
         {
             case CLEAR:
@@ -178,6 +179,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
             if(!world.setBlockToAir(x, y, z))
             {
+                //TODO: create own logger in class
                 MineColonies.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
                 //TODO handle - for now, just skipping
             }
