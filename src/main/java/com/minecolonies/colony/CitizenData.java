@@ -86,7 +86,9 @@ public class CitizenData
 
         isFemale = rand.nextBoolean();   //  Gender before name
         name = generateName(rand);
-        textureId = Math.abs(entity.worldObj.rand.nextInt());
+
+        textureId = entity.worldObj.rand.nextInt(Integer.MAX_VALUE);
+
 
         strength = rand.nextInt(10) + 1;
         stamina = rand.nextInt(10) + 1;
