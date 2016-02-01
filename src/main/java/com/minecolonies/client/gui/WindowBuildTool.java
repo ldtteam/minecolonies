@@ -5,7 +5,6 @@ import com.blockout.views.Window;
 import com.github.lunatrius.schematica.Settings;
 import com.github.lunatrius.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
@@ -185,7 +184,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             break;
 
         case BUTTON_CONFIRM:
-            MineColonies.network.sendToServer(new BuildToolPlaceMessage(huts.get(hutDecIndex), Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex), posX, posY, posZ, rotation));
+            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(huts.get(hutDecIndex), Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex), posX, posY, posZ, rotation));
             MineColonies.proxy.setActiveSchematic(null);
             close();
             break;

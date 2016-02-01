@@ -221,16 +221,16 @@ public class WindowTownhall extends Window implements Button.Handler
         }
         else if (button.getID().equals(BUTTON_BUILD))
         {
-            MineColonies.network.sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.BUILD));
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.BUILD));
         }
         else if (button.getID().equals(BUTTON_REPAIR))
         {
-            MineColonies.network.sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.REPAIR));
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.REPAIR));
         }
         else if (button.getID().equals(BUTTON_ADDPLAYER))
         {
             TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
-            MineColonies.network.sendToServer(new PermissionsMessage.AddPlayer(townhall.getColony(), input.getText()));
+            MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townhall.getColony(), input.getText()));
             input.setText("");
         }
         else if (button.getID().equals(BUTTON_REMOVEPLAYER))
@@ -241,7 +241,7 @@ public class WindowTownhall extends Window implements Button.Handler
                 Permissions.Player user = users.get(row);
                 if (user.rank != Permissions.Rank.OWNER)
                 {
-                    MineColonies.network.sendToServer(new PermissionsMessage.RemovePlayer(townhall.getColony(), user.id));
+                    MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townhall.getColony(), user.id));
                 }
             }
         }
@@ -265,7 +265,7 @@ public class WindowTownhall extends Window implements Button.Handler
 
                 if (newRank != user.rank)
                 {
-                    MineColonies.network.sendToServer(new PermissionsMessage.SetPlayerRank(townhall.getColony(), user.id, newRank));
+                    MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townhall.getColony(), user.id, newRank));
                 }
             }
         }

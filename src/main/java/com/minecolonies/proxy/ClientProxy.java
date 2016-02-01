@@ -74,7 +74,7 @@ public class ClientProxy extends CommonProxy
         }
         else
         {
-            MineColonies.network.sendToServer(new OpenInventoryMessage(citizen));
+            MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen));
         }
     }
 

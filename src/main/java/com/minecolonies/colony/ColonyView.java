@@ -75,7 +75,7 @@ public class ColonyView implements IColony
     public void setName(String name)
     {
         this.name = name;
-        MineColonies.network.sendToServer(new TownhallRenameMessage(this, name));
+        MineColonies.getNetwork().sendToServer(new TownhallRenameMessage(this, name));
     }
 
     /**
@@ -122,20 +122,20 @@ public class ColonyView implements IColony
     public void setPermission(Permissions.Rank rank, Permissions.Action action) {
         if(permissions.setPermission(rank, action))
         {
-            MineColonies.network.sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.SET_PERMISSION, rank, action));
+            MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.SET_PERMISSION, rank, action));
         }
     }
 
     public void removePermission(Permissions.Rank rank, Permissions.Action action) {
         if(permissions.removePermission(rank, action))
         {
-            MineColonies.network.sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.REMOVE_PERMISSION, rank, action));
+            MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.REMOVE_PERMISSION, rank, action));
         }
     }
 
     public void togglePermission(Permissions.Rank rank, Permissions.Action action) {
         permissions.togglePermission(rank, action);
-        MineColonies.network.sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
+        MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
     }
 
 //    public void addPlayer(String player, Permissions.Rank rank)

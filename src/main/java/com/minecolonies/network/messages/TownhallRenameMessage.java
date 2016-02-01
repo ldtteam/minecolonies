@@ -47,7 +47,7 @@ public class TownhallRenameMessage implements IMessage, IMessageHandler<Townhall
         if (colony != null)
         {
             colony.setName(message.name);
-            MineColonies.network.sendToAll(message);
+            MineColonies.getNetwork().sendToAll(message);
         }
 
         return null;

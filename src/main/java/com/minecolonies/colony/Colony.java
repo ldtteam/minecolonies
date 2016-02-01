@@ -530,7 +530,7 @@ public class Colony implements IColony
                     boolean isNewSubscriber = !oldSubscribers.contains(player);
                     if (isDirty || isNewSubscriber)
                     {
-                        MineColonies.network.sendTo(new ColonyViewMessage(this, isNewSubscriber), player);
+                        MineColonies.getNetwork().sendTo(new ColonyViewMessage(this, isNewSubscriber), player);
                     }
                 }
             }
@@ -543,7 +543,7 @@ public class Colony implements IColony
                     if (permissions.isDirty() || !oldSubscribers.contains(player))
                     {
                         Permissions.Rank rank = getPermissions().getRank(player);
-                        MineColonies.network.sendTo(new PermissionsMessage.View(this, rank), player);
+                        MineColonies.getNetwork().sendTo(new PermissionsMessage.View(this, rank), player);
                     }
                 }
             }
@@ -561,7 +561,7 @@ public class Colony implements IColony
                         {
                             if (citizen.isDirty() || !oldSubscribers.contains(player))
                             {
-                                MineColonies.network.sendTo(msg, player);
+                                MineColonies.getNetwork().sendTo(msg, player);
                             }
                         }
                     }
@@ -581,7 +581,7 @@ public class Colony implements IColony
                         {
                             if (building.isDirty() || !oldSubscribers.contains(player))
                             {
-                                MineColonies.network.sendTo(msg, player);
+                                MineColonies.getNetwork().sendTo(msg, player);
                             }
                         }
                     }
@@ -761,7 +761,7 @@ public class Colony implements IColony
             ColonyViewRemoveBuildingMessage msg = new ColonyViewRemoveBuildingMessage(this, building.getID());
             for (EntityPlayerMP player : subscribers)
             {
-                MineColonies.network.sendTo(msg, player);
+                MineColonies.getNetwork().sendTo(msg, player);
             }
 
             MineColonies.logger.info(String.format("Colony %d - removed Building %s of type %s",
@@ -849,7 +849,7 @@ public class Colony implements IColony
         ColonyViewRemoveCitizenMessage msg = new ColonyViewRemoveCitizenMessage(this, citizen.getId());
         for (EntityPlayerMP player : subscribers)
         {
-            MineColonies.network.sendTo(msg, player);
+            MineColonies.getNetwork().sendTo(msg, player);
         }
     }
 

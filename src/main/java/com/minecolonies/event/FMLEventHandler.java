@@ -33,7 +33,7 @@ public class FMLEventHandler
     {
         if(event.player instanceof EntityPlayerMP)
         {
-            MineColonies.network.sendTo(new ColonyStylesMessage(), (EntityPlayerMP) event.player);
+            MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), (EntityPlayerMP) event.player);
         }
     }
 }
