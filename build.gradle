@@ -18,9 +18,6 @@ buildscript {
 plugins {
     id "org.sonarqube" version "1.2"
 }
-apply plugin: 'checkstyle'
-apply plugin: 'findbugs'
-apply plugin: 'pmd'
 
 sonarqube {
     properties{
@@ -28,33 +25,6 @@ sonarqube {
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectName", "Minecolonies"
         property "sonar.branch", System.getenv()['bamboo_repository_branch_name']
-    }
-}
-
-checkstyle {
-    ignoreFailures = true
-    showViolations = false
-}
-
-findbugs {
-    ignoreFailures = true
-}
-
-tasks.withType(FindBugs) {
-    reports {
-        xml.enabled = true
-        html.enabled = false
-    }
-}
-
-pmd {
-    ignoreFailures = true
-}
-
-tasks.withType(Pmd) {
-    reports {
-        xml.enabled = true
-        html.enabled = false
     }
 }
 

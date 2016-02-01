@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Created by chris on 10/19/15.
@@ -30,9 +31,9 @@ public class Schematics
         {
             URI uri = ColonyManager.class.getResource("/assets/minecolonies/schematics/").toURI();
             System.out.println(uri.toString());
-
             Path basePath;
-            if (uri.getScheme().equals("jar"))
+
+            if(uri.getScheme().equals("jar"))
             {
                 try(FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap()))
                 {
@@ -43,26 +44,33 @@ public class Schematics
             {
                 basePath = Paths.get(uri);
             }
+            try(Stream<Path> walk = Files.walk(basePath))
+            {
 
-            Iterator<Path> it =Files.walk(basePath).iterator();
+                Iterator<Path> it = walk.iterator();
 
-            while (it.hasNext()) {
-                Path path = it.next();
+                while(it.hasNext())
+                {
+                    Path path = it.next();
 
-                if (path.toString().endsWith("1.schematic")) {
-                    String hutpath = path.getFileName().toString();
-                    String hut = hutpath.substring(0, hutpath.length() - 11);
-                    String style = path.getParent().getFileName().toString();
+                    if(path.toString().endsWith("1.schematic"))
+                    {
+                        String hutpath = path.getFileName().toString();
+                        String hut = hutpath.substring(0, hutpath.length() - 11);
+                        String style = path.getParent().getFileName().toString();
 
-                    if (Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut) == null) {
-                        MineColonies.logger.warn(String.format("Malformed schematic name: %s/%s ignoring file", style, hut));
-                        continue;
+                        if(Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut) == null)
+                        {
+                            MineColonies.logger.warn(String.format("Malformed schematic name: %s/%s ignoring file", style, hut));
+                            continue;
+                        }
+
+                        if(!hutStyleMap.containsKey(hut))
+                        {
+                            hutStyleMap.put(hut, new ArrayList<String>());
+                        }
+                        hutStyleMap.get(hut).add(style);
                     }
-
-                    if (!hutStyleMap.containsKey(hut)) {
-                        hutStyleMap.put(hut, new ArrayList<String>());
-                    }
-                    hutStyleMap.get(hut).add(style);
                 }
             }
 
