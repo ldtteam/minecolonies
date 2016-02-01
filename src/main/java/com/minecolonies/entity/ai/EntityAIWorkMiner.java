@@ -1055,18 +1055,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     {
         if (workingNode == null)
         {
-            //logger.info("No working node, searching for one:");
             workingNode = findNodeOnLevel(currentLevel);
             return;
         }
 
+        //Looking for a node to stand on while mining workingNode
         int foundDirection = 0;
         Node foundNode = null;
         List<Integer> directions = Arrays.asList(1, 2, 3, 4);
 
         for (Integer dir : directions)
         {
-            Optional<Node> node = tryFindNodeInDirectionofNode(currentLevel, workingNode, dir);
+            Optional<Node> node = tryFindNodeInDirectionOfNode(currentLevel, workingNode, dir);
             if (node.isPresent() && getNodeStatusForDirection(node.get(), invertDirection(dir))
                     == Node.NodeStatus.COMPLETED)
             {
@@ -1077,7 +1077,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         if (foundNode == null || foundDirection <= 0)
         {
-            //logger.info("Found no adjacent nodes, aborting...");
             workingNode = null;
             return;
         }
@@ -1454,7 +1453,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return 0;
     }
 
-    private Optional<Node> tryFindNodeInDirectionofNode(Level curlevel, Node start, int direction)
+    private Optional<Node> tryFindNodeInDirectionOfNode(Level curlevel, Node start, int direction)
     {
         final Node finalCurrentNode = start;
         return new ArrayList<>(curlevel.getNodes()).parallelStream().filter(check -> isNodeInDirectionOfOtherNode(
@@ -1480,11 +1479,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             setNodeStatusForDirection(node, invertDirection(direction), Node.NodeStatus.WALL);
             int otherDirection = Math.max(direction, invertDirection(direction)) - 1;
             //Make Bend go to random side
-            if(Math.random() > 0.5){
+            if (Math.random() > 0.5)
+            {
                 otherDirection = invertDirection(otherDirection);
             }
             setNodeStatusForDirection(node, otherDirection, Node.NodeStatus.WALL);
         }
+        //No need to do anything for CROSSROAD
         return node;
     }
 
@@ -1537,7 +1538,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 if (status == Node.NodeStatus.COMPLETED)
                 {
                     //logger.info("\tDirection " + dir + " was complete");
-                    Optional<Node> first = tryFindNodeInDirectionofNode(currentLevel, currentNode, dir);
+                    Optional<Node> first = tryFindNodeInDirectionOfNode(currentLevel, currentNode, dir);
                     if (first.isPresent())
                     {
                         if (visited.contains(first.get()))
@@ -1845,36 +1846,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return world.getBlock(loc.posX, loc.posY, loc.posZ);
     }
 
-    private void findVein(int x, int y, int z)
-    {
-        job.setStage(Stage.MINING_VEIN);
-
-        for (int x1 = x - 1; x1 <= x + 1; x1++)
-        {
-            for (int z1 = z - 1; z1 <= z + 1; z1++)
-            {
-                for (int y1 = y - 1; y1 <= y + 1; y1++)
-                {
-                    if (isValuable(x1, y1, z1))
-                    {
-                        ChunkCoordinates ore = new ChunkCoordinates(x1, y1, z1);
-                        if (! job.vein.contains(ore))
-                        {
-                            job.vein.add(ore);
-                        }
-                    }
-                }
-            }
-        }
-
-        if ((job.veinId < job.vein.size()))
-        {
-            ChunkCoordinates v = job.vein.get(job.veinId++);
-
-            findVein(v.posX, v.posY, v.posZ);
-        }
-    }
-
     private int getLastLadder(ChunkCoordinates chunkCoordinates)
     {
         return getLastLadder(chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ);
@@ -1907,25 +1878,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             return y - 1;
         }
-    }
-
-    private boolean isValuable(int x, int y, int z)
-    {
-        Block block = world.getBlock(x, y, z);
-        String findOre = block.toString();
-
-        if (job.vein == null && (findOre.contains("ore") || findOre.contains("Ore")))
-        {
-            job.vein = new ArrayList<>();
-            job.vein.add(new ChunkCoordinates(x, y, z));
-            logger.info("Found ore");
-            findVein(x, y, z);
-            logger.info("finished finding ores: " + job.vein.size());
-
-            job.setStage(Stage.MINING_VEIN);
-        }
-
-        return findOre.contains("ore") || findOre.contains("Ore");
     }
 
     public enum Stage
