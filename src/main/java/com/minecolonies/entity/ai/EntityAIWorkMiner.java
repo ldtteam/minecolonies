@@ -1112,7 +1112,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
     }
 
-    private boolean isOre(Block block){
+    private boolean isOre(Block block)
+    {
         //TODO make this more sophisticated
         return block instanceof BlockOre;
     }
@@ -1120,7 +1121,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private boolean secureBlock(ChunkCoordinates curBlock, ChunkCoordinates safeStand)
     {
         if ((!getBlock(curBlock).getMaterial().blocksMovement()
-            && getBlock(curBlock) != Blocks.torch)
+             && getBlock(curBlock) != Blocks.torch)
             || isOre(getBlock(curBlock)))
         {
 
@@ -1207,7 +1208,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if (minenode.getStatus() != Node.NodeStatus.COMPLETED)
         {
             //Mine middle
-            //TODO: make it look nicer!
             for (int y = 1; y <= 4; y++)
             {
                 for (int x = -1; x <= 1; x++)
@@ -1217,8 +1217,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
                                                                          standingPosition.posY + y,
                                                                          minenode.getZ() + z);
-                        if (getBlock(curBlock) == Blocks.torch || getBlock(curBlock) == Blocks.planks || getBlock(
-                                curBlock) == Blocks.fence)
+                        if (getBlock(curBlock) == Blocks.torch
+                            || getBlock(curBlock) == Blocks.planks
+                            || getBlock(curBlock) == Blocks.fence)
                         {
                             continue;
                         }
@@ -1304,7 +1305,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private boolean mineSideOfNode(Node minenode, int directon, ChunkCoordinates standingPosition)
     {
-        if (getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.LADDER)
+        if (getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.LADDER
+                || getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.WALL)
         {
             return true;
         }
