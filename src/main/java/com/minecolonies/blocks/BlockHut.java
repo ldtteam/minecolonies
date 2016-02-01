@@ -31,7 +31,10 @@ public abstract class BlockHut extends Block implements ITileEntityProvider
         super(Material.wood);
         setBlockName(getName());
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        setResistance(1000f);
+        //Blast resistance for creepers etc. makes them explosion proof
+        setResistance(6000000000f);
+        //Hardness of 10 takes a long time to mine to not loose progress
+        setHardness(10f);
         GameRegistry.registerBlock(this, getName());
     }
 
