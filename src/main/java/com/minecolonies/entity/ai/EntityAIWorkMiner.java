@@ -1016,7 +1016,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         for(Integer dir : directions)
         {
             Optional<Node> node = tryFindNodeInDirectionofNode(currentLevel, workingNode, dir);
-            if(node.isPresent() && getNodeStatusForDirection(node.get(), invertDirection(dir)) == NodeStatus.COMPLETED)
+            if(node.isPresent() && getNodeStatusForDirection(node.get(), invertDirection(dir)) == Node.NodeStatus.COMPLETED)
             {
                 foundDirection = dir;
                 foundNode = node.get();
@@ -1050,7 +1050,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         ChunkCoordinates standingPosition = new ChunkCoordinates(workingNode.getX() + xoffset, currentLevel.getDepth(), workingNode.getZ() + zoffset);
         delay += 10;
         currentStandingPosition = standingPosition;
-        if(workingNode.getStatus() == NodeStatus.IN_PROGRESS || workingNode.getStatus() == NodeStatus.COMPLETED || worker.isWorkerAtSiteWithMove(standingPosition, RANGE_CHECK_AROUND_MINING_BLOCK))
+        if(workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS || workingNode.getStatus() == Node.NodeStatus.COMPLETED || worker.isWorkerAtSiteWithMove(standingPosition, RANGE_CHECK_AROUND_MINING_BLOCK))
         {
             mineNodeFromStand(workingNode, foundNode, standingPosition, foundDirection);
         }
@@ -1107,9 +1107,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return;
         }
 
-        if(minenode.getStatus() == NodeStatus.AVAILABLE)
+        if(minenode.getStatus() == Node.NodeStatus.AVAILABLE)
         {
-            minenode.setStatus(NodeStatus.IN_PROGRESS);
+            minenode.setStatus(Node.NodeStatus.IN_PROGRESS);
         }
 
         int xoffset = getXDistance(direction) / 2;
@@ -1134,7 +1134,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         currentStandingPosition = newStandingPosition;
 
 
-        if(minenode.getStatus() != NodeStatus.COMPLETED)
+        if(minenode.getStatus() != Node.NodeStatus.COMPLETED)
         {
             //Mine middle
             //TODO: make it look nicer!
@@ -1211,10 +1211,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             }
         }
 
-        if(minenode.getStatus() == NodeStatus.IN_PROGRESS)
+        if(minenode.getStatus() == Node.NodeStatus.IN_PROGRESS)
         {
             //logger.info("Mined out node middle!");
-            minenode.setStatus(NodeStatus.COMPLETED);
+            minenode.setStatus(Node.NodeStatus.COMPLETED);
             //logger.info("Completed middle for: \n" + minenode);
         }
 
@@ -1224,14 +1224,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private boolean mineSideOfNode(Node minenode, int directon, ChunkCoordinates standingPosition)
     {
-        if(getNodeStatusForDirection(minenode, directon) == NodeStatus.LADDER)
+        if(getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.LADDER)
         {
             return true;
         }
 
-        if(getNodeStatusForDirection(minenode, directon) == NodeStatus.AVAILABLE)
+        if(getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.AVAILABLE)
         {
-            setNodeStatusForDirection(minenode, directon, NodeStatus.IN_PROGRESS);
+            setNodeStatusForDirection(minenode, directon, Node.NodeStatus.IN_PROGRESS);
         }
 
         int xoffset = getXDistance(directon) / 2;
@@ -1277,16 +1277,16 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 }
             }
         }
-        if(getNodeStatusForDirection(minenode, directon) == NodeStatus.IN_PROGRESS)
+        if(getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.IN_PROGRESS)
         {
             //logger.info("Mined out node entry!");
-            setNodeStatusForDirection(minenode, directon, NodeStatus.COMPLETED);
+            setNodeStatusForDirection(minenode, directon, Node.NodeStatus.COMPLETED);
             //logger.info("Completed entry for: \n" + minenode);
         }
         return true;
     }
 
-    private void setNodeStatusForDirection(Node node, int direction, NodeStatus status)
+    private void setNodeStatusForDirection(Node node, int direction, Node.NodeStatus status)
     {
         if(direction == 1)
         {
@@ -1306,7 +1306,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
     }
 
-    private NodeStatus getNodeStatusForDirection(Node node, int direction)
+    private Node.NodeStatus getNodeStatusForDirection(Node node, int direction)
     {
         if(direction == 1)
         {
@@ -1325,7 +1325,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return node.getDirectionNegZ();
         }
         //Cannot happen, so send something that blocks mining
-        return NodeStatus.LADDER;
+        return Node.NodeStatus.LADDER;
     }
 
     private int invertDirection(int direction)
@@ -1408,7 +1408,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
             //logger.info("Walking to " + currentNode);
             visited.add(currentNode);
-            if(currentNode.getStatus() == NodeStatus.AVAILABLE || currentNode.getStatus() == NodeStatus.IN_PROGRESS)
+            if(currentNode.getStatus() == Node.NodeStatus.AVAILABLE || currentNode.getStatus() == Node.NodeStatus.IN_PROGRESS)
             {
                 //logger.info("Node was mineable");
                 return currentNode;
@@ -1419,13 +1419,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             for(Integer dir : directions)
             {
                 //logger.info("\tTesting direction " + dir);
-                NodeStatus status = getNodeStatusForDirection(currentNode, dir);
-                if(status == NodeStatus.AVAILABLE || status == NodeStatus.IN_PROGRESS)
+                Node.NodeStatus status = getNodeStatusForDirection(currentNode, dir);
+                if(status == Node.NodeStatus.AVAILABLE || status == Node.NodeStatus.IN_PROGRESS)
                 {
                     //logger.info("\tDirection " + dir + " was mineable");
                     return currentNode;
                 }
-                if(status == NodeStatus.COMPLETED)
+                if(status == Node.NodeStatus.COMPLETED)
                 {
                     //logger.info("\tDirection " + dir + " was complete");
                     Optional<Node> first = tryFindNodeInDirectionofNode(currentLevel, currentNode, dir);
