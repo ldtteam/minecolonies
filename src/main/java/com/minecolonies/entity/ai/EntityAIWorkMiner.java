@@ -81,6 +81,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return "";
     }
 
+    @Override
     protected void updateRenderMetaData()
     {
         String renderMetaData = getRenderMetaTorch();
@@ -92,28 +93,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     protected BuildingMiner getOwnBuilding()
     {
         return (BuildingMiner) worker.getWorkBuilding();
-    }
-
-    private boolean waitingForSomething()
-    {
-        if (delay > 0)
-        {
-            if (job.getStage() == Stage.MINING_SHAFT || job.getStage() == Stage.MINING_NODE)
-            {
-                if (worker.isWorkerAtSiteWithMove(currentStandingPosition, RANGE_CHECK_AROUND_MINING_BLOCK))
-                {
-                    worker.hitBlockWithToolInHand(currentWorkingLocation);
-                }
-                else
-                {
-                    //Don't decrease delay as we are just walking...
-                    return true;
-                }
-            }
-            delay--;
-            return true;
-        }
-        return false;
     }
 
     private boolean walkToBuilding()

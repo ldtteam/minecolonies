@@ -74,6 +74,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         return "";
     }
 
+    @Override
     protected void updateRenderMetaData()
     {
         String renderMetaData = getRenderMetaSeeds();
