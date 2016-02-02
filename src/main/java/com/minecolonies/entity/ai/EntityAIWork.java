@@ -1,5 +1,8 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingMiner;
+import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Utils;
@@ -73,6 +76,18 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
 
     @Override
     public void updateTask(){
+        //Something fatally wrong? Wait for re-init...
+        if (null == getOwnBuilding())
+        {
+            //TODO: perhaps destroy this task? will see...
+            return;
+        }
+
+        //Update torch, seeds etc. in chestbelt etc.
+        renderChestBelt();
+
+        
+
         if(this.errorState == ErrorState.NEEDS_ITEM)
         {
             //TODO: request item
@@ -82,9 +97,24 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     }
 
     /**
-     * This method will be overridden by AI implementations
+     * This method will be overridden by AI implementations.
+     * It will server as a tick function.
      */
     protected abstract void workOnTask();
+
+    /**
+     * Here the AI can check if the chestBelt has to be re rendered and do it.
+     */
+    protected void renderChestBelt(){}
+
+    /**
+     * Can be overridden in implementations to return the exact building type.
+     * @return the building associated with this AI's worker.
+     */
+    protected BuildingWorker getOwnBuilding()
+    {
+        return worker.getWorkBuilding();
+    }
 
     private enum ErrorState
     {

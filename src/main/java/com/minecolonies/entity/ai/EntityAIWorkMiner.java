@@ -81,14 +81,15 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return "";
     }
 
-    private void renderChestBelt()
+    protected void renderChestBelt()
     {
         String renderMetaData = getRenderMetaTorch();
         //TODO: Have pickaxe etc. displayed?
         worker.setRenderMetadata(renderMetaData);
     }
 
-    private BuildingMiner getOwnBuilding()
+    @Override
+    protected BuildingMiner getOwnBuilding()
     {
         return (BuildingMiner) worker.getWorkBuilding();
     }
@@ -1729,14 +1730,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     @Override
     public void workOnTask()
     {
-        //Something fatally wrong? Wait for init...
-        if (null == getOwnBuilding())
-        {
-            return;
-        }
 
-        //Update torch in chestbelt etc.
-        renderChestBelt();
+
 
         //Mining animation while delay is decreasing.
         if (waitingForSomething())

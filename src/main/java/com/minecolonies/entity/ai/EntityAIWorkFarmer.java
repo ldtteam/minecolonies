@@ -49,7 +49,8 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     //TODO Planting randomly depending on option in Hut, each level, one more crop type
     //TODO Adding Language Strings in files
 
-    private BuildingFarmer getOwnBuilding()
+    @Override
+    protected BuildingFarmer getOwnBuilding()
     {
         return (BuildingFarmer) (worker.getWorkBuilding());
     }
