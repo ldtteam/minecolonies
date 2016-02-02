@@ -66,7 +66,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     private void checkForSeeds()
     {
         //TODO: check what this does, add comments
-        if (crops.size() == 0 && crops2.size() != 0)
+        if (crops.isEmpty() && !crops2.isEmpty())
         {
             crops.addAll(crops2);
             crops2.clear();
@@ -155,7 +155,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 }
                 break;
             case WORKING:
-                if (farmAbleLand.size() == 0 && plowedLand.size() == 0 && crops.size() == 0)
+                if (farmAbleLand.isEmpty() && plowedLand.isEmpty() && crops.isEmpty())
                 {
                     job.setStage(Stage.SEARCHING_LAND);
                 }
@@ -163,15 +163,15 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 {
                     job.setStage(Stage.NEED_SEEDS);
                 }
-                else if (farmAbleLand.size() > 0)
+                else if (!farmAbleLand.isEmpty())
                 {
                     job.setStage(Stage.MAKING_LAND);
                 }
-                else if (hasSeed() && plowedLand.size() > 0)
+                else if (hasSeed() && !plowedLand.isEmpty())
                 {
                     job.setStage(Stage.PLANTING);
                 }
-                else if (crops.size() > 0)
+                else if (!crops.isEmpty())
                 {
                     job.setStage(Stage.HARVESTING);
                 }
@@ -189,7 +189,10 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     public void updateTask()
     {
         BuildingFarmer buildingFarmer = getOwnBuilding();
-        if (buildingFarmer == null){ return; }
+        if (buildingFarmer == null)
+        {
+            return;
+        }
 
         renderChestBelt();
         checkForSeeds();
