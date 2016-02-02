@@ -90,8 +90,22 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     private void renderChestBelt()
     {
         String renderMetaData = getRenderMetaTorch();
-        //TODO: Have pickaxe etc. displayed?
+        //TODO: Merge this into worker
         worker.setRenderMetadata(renderMetaData);
+    }
+
+    private boolean waitingForSomething()
+    {
+        if (delay > 0)
+        {
+            if(job.getStage() == Stage.MAKING_LAND)
+            {
+                worker.hitBlockWithToolInHand(currentFarmLand);
+            }
+            delay--;
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -103,15 +117,12 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         renderChestBelt();
         checkForSeeds();
 
-        if(delay > 0)
+        if(waitingForSomething())
         {
-            if(job.getStage() == Stage.MAKING_LAND)
-            {
-                worker.hitBlockWithToolInHand(currentFarmLand);
-            }
-            delay--;
+            return;
         }
-        else if(job.isMissingNeededItem())
+        
+        if(job.isMissingNeededItem())
         {
             if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
             {
@@ -129,8 +140,9 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 }
                 delay = 50;
             }
+            return;
         }
-        else if(hasAllTheTools())
+        if(hasAllTheTools())
         {
             switch(job.getStage())
             {
