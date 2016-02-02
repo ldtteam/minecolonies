@@ -31,23 +31,22 @@ import java.util.*;
 public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 {
 
+    public static final String PICKAXE = "pickaxe";
+    public static final String SHOVEL = "shovel";
     private static final String RENDER_META_TORCH = "Torch";
     private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
     private static final int RANGE_CHECK_AROUND_BUILDING_LADDER = 3;
     private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 2;
     private static final int NODE_DISTANCE = 7;
-
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
     private static final Set<Block> notReplacedInSecuringMine = new HashSet<>(Arrays.asList(Blocks.cobblestone,
                                                                                             Blocks.stone,
                                                                                             Blocks.dirt));
-    public static final String PICKAXE = "pickaxe";
-    public static final String SHOVEL = "shovel";
     private static Logger logger = LogManager.getLogger("Miner");
     //The current block to mine
-    public ChunkCoordinates currentWorkingLocation;
+    private ChunkCoordinates currentWorkingLocation;
     //the last safe location now being air
     private ChunkCoordinates currentStandingPosition;
     /**
@@ -156,34 +155,35 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
      */
     private boolean dumpOneMoreSlot()
     {
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
+        if (!worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
         {
-            //Iterate over worker inventory
-            for (int i = 0; i < worker.getInventory().getSizeInventory(); i++)
-            {
-                ItemStack stack = worker.getInventory().getStackInSlot(i);
-                //Check if it is a useful tool
-                if (stack != null && !isMiningTool(stack))
-                {
-                    if (getOwnBuilding().getTileEntity() != null)
-                    {
-                        //Put it in Building chest
-                        ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
-                        if (returnStack == null)
-                        {
-                            worker.getInventory().decrStackSize(i, stack.stackSize);
-                        }
-                        else
-                        {
-                            worker.getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
-                        }
-                    }
-                    return true;
-                }
-            }
-            return false;
+            return true;
         }
-        return true;
+        for (int i = 0; i < worker.getInventory().getSizeInventory(); i++)
+        {
+            ItemStack stack = worker.getInventory().getStackInSlot(i);
+            //Check if it is a useful tool.
+            if (stack == null || isMiningTool(stack))
+            {
+                continue;
+            }
+            //Do nothing when building is broken.
+            if (getOwnBuilding().getTileEntity() == null)
+            {
+                return true;
+            }
+            ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
+            if (returnStack == null)
+            {
+                worker.getInventory().decrStackSize(i, stack.stackSize);
+            }
+            else
+            {
+                worker.getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
