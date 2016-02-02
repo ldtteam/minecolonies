@@ -160,9 +160,14 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      *
      * @param stand where to walk to
      */
-    protected void walkToBlock(ChunkCoordinates stand)
+    protected boolean walkToBlock(ChunkCoordinates stand)
     {
-        workOnBlock(null, stand, 1);
+        if(!Utils.isWorkerAtSite(worker,stand.posX,stand.posY,stand.posZ,DEFAULT_RANGE_FOR_DELAY))
+        {
+            workOnBlock(null, stand, 1);
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -116,16 +116,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return false;
     }
 
-    private void walkToBuilding()
+    private boolean walkToBuilding()
     {
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
-        {
-            job.setStage(Stage.PREPARING);
-        }
-        else
-        {
-            delay += 20;
-        }
+        return walkToBlock(getOwnBuilding().getLocation());
     }
 
     private void walkToLadder()
@@ -1735,7 +1728,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         //Miner wants to work but is not at building
         if (job.getStage() == Stage.START_WORKING)
         {
-            walkToBuilding();
+            if(walkToBuilding()){
+                return;
+            }
+            //Miner is at building
+            job.setStage(Stage.PREPARING);
             return;
         }
 
