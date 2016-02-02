@@ -58,8 +58,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
      */
     private boolean hasDelayed = false;
 
-    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
-    private List<ItemStack> itemsNeeded = new ArrayList<>();
     private int speechDelay = 0;
     private boolean needsShovel = false;
     private boolean needsPickaxe = false;
