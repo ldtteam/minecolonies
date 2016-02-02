@@ -240,15 +240,17 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             {
                 for (int z = posZ - 10; z < posZ + 10; z++)
                 {
-                    tryFindLadderAt(x,y,z);
+                    tryFindLadderAt(x, y, z);
                 }
             }
         }
     }
 
-    private void tryFindLadderAt(int x, int y, int z){
+    private void tryFindLadderAt(int x, int y, int z)
+    {
         BuildingMiner buildingMiner = getOwnBuilding();
-        if(buildingMiner.foundLadder){
+        if (buildingMiner.foundLadder)
+        {
             return;
         }
         if (world.getBlock(x, y, z).equals(Blocks.ladder))
@@ -1252,6 +1254,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             return buildNodeTunnelStructure(minenode, standingPosition);
         }
+        if (minenode.getStyle() == Node.NodeType.LADDER_BACK)
+        {
+            return true; //already done
+        }
         logger.info("None of the above: " + minenode);
         return false;
     }
@@ -1473,8 +1479,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private boolean mineSideOfNode(Node minenode, int directon, ChunkCoordinates standingPosition)
     {
-        if (getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.LADDER
-            || getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.WALL)
+        if (getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.LADDER)
         {
             return true;
         }
@@ -1528,7 +1533,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     {
                         continue;
                     }
-                    if (!mineBlock(curBlock, standingPosition))
+                    if (getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.WALL)
+                    {
+                        secureBlock(curBlock, standingPosition);
+                    }
+                    else if (!mineBlock(curBlock, standingPosition))
                     {
                         return false;
                     }
