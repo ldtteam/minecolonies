@@ -367,7 +367,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private void advanceLadder()
     {
-
         if (getOwnBuilding().startingLevelShaft >= 5)
         {
             job.setStage(Stage.BUILD_SHAFT);
@@ -879,25 +878,23 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                                                      ladderPos.posZ + z);
                     int normalizedX = x - xOffset;
                     int normalizedZ = z - zOffset;
-                    if (Math.abs(normalizedX) > 3 || Math.abs(normalizedZ) > 3)
+                    if ((Math.abs(normalizedX) > 3 || Math.abs(normalizedZ) > 3)
+                        && !notReplacedInSecuringMine.contains(
+                            world.getBlock(curBlock.posX,
+                                           curBlock.posY,
+                                           curBlock.posZ)))
                     {
-                        if (!notReplacedInSecuringMine.contains(world.getBlock(curBlock.posX,
-                                                                               curBlock.posY,
-                                                                               curBlock.posZ)))
+                        if (!mineBlock(curBlock, getOwnBuilding().getLocation()))
                         {
-                            if (!mineBlock(curBlock, getOwnBuilding().getLocation()))
-                            {
-                                delay = 1;
-                                return true;
-                            }
-                            if (missesItemsInInventory(new ItemStack(Blocks.cobblestone)))
-                            {
-                                return true;
-                            }
-                            setBlockFromInventory(curBlock, Blocks.cobblestone);
+                            delay = 1;
                             return true;
                         }
-
+                        if (missesItemsInInventory(new ItemStack(Blocks.cobblestone)))
+                        {
+                            return true;
+                        }
+                        setBlockFromInventory(curBlock, Blocks.cobblestone);
+                        return true;
                     }
                 }
             }
@@ -915,19 +912,19 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 ChunkCoordinates curBlock = new ChunkCoordinates(ladderPos.posX + x, lastLadder, ladderPos.posZ + z);
                 int normalizedX = x - xOffset;
                 int normalizedZ = z - zOffset;
-                if (Math.abs(normalizedX) >= 2 || Math.abs(normalizedZ) >= 2)
+                if ((Math.abs(normalizedX) >= 2 || Math.abs(normalizedZ) >= 2)
+                    && world.getBlock(curBlock.posX,
+                                      curBlock.posY,
+                                      curBlock.posZ)
+                       != Blocks.planks)
                 {
-                    if (world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ) != Blocks.planks)
+                    delay += 10;
+                    if (missesItemsInInventory(new ItemStack(Blocks.planks)))
                     {
-                        delay += 10;
-                        if (missesItemsInInventory(new ItemStack(Blocks.planks)))
-                        {
-                            return true;
-                        }
-                        setBlockFromInventory(curBlock, Blocks.planks);
                         return true;
                     }
-
+                    setBlockFromInventory(curBlock, Blocks.planks);
+                    return true;
                 }
             }
         }
@@ -945,20 +942,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                                                  ladderPos.posZ + z);
                 int normalizedX = x - xOffset;
                 int normalizedZ = z - zOffset;
-                if ((Math.abs(normalizedX) == 2 && Math.abs(normalizedZ) < 3) || (Math.abs(normalizedZ) == 2
-                                                                                  && Math.abs(normalizedX) < 3))
+                if (((Math.abs(normalizedX) == 2 && Math.abs(normalizedZ) < 3)
+                     || (Math.abs(normalizedZ) == 2
+                         && Math.abs(normalizedX) < 3))
+                    && world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ) != Blocks.fence)
                 {
-                    if (world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ) != Blocks.fence)
+                    delay += 10;
+                    if (missesItemsInInventory(new ItemStack(Blocks.fence)))
                     {
-                        delay += 10;
-                        if (missesItemsInInventory(new ItemStack(Blocks.fence)))
-                        {
-                            return true;
-                        }
-                        setBlockFromInventory(curBlock, Blocks.fence);
                         return true;
                     }
-
+                    setBlockFromInventory(curBlock, Blocks.fence);
+                    return true;
                 }
             }
         }
@@ -976,19 +971,19 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                                                  ladderPos.posZ + z);
                 int normalizedX = x - xOffset;
                 int normalizedZ = z - zOffset;
-                if (Math.abs(normalizedX) == 2 && Math.abs(normalizedZ) == 2)
+                if (Math.abs(normalizedX) == 2 && Math.abs(normalizedZ) == 2
+                    && world.getBlock(curBlock.posX,
+                                      curBlock.posY,
+                                      curBlock.posZ)
+                       != Blocks.torch)
                 {
-                    if (world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ) != Blocks.torch)
+                    delay += 10;
+                    if (missesItemsInInventory(new ItemStack(Blocks.torch)))
                     {
-                        delay += 10;
-                        if (missesItemsInInventory(new ItemStack(Blocks.torch)))
-                        {
-                            return true;
-                        }
-                        setBlockFromInventory(curBlock, Blocks.torch);
                         return true;
                     }
-
+                    setBlockFromInventory(curBlock, Blocks.torch);
+                    return true;
                 }
             }
         }
@@ -1083,7 +1078,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             || workingNode.getStatus() == Node.NodeStatus.COMPLETED
             || worker.isWorkerAtSiteWithMove(standingPosition, RANGE_CHECK_AROUND_MINING_BLOCK))
         {
-            mineNodeFromStand(workingNode, foundNode, standingPosition, foundDirection);
+            mineNodeFromStand(workingNode, standingPosition, foundDirection);
         }
     }
 
@@ -1112,14 +1107,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
             setBlockFromInventory(curBlock, Blocks.cobblestone);
             //To set it to clean stone... would be cheating
-            //world.setBlock(curBlock.posX, curBlock.posY, curBlock.posZ, Blocks.stone);
             return false;
         }
         return true;
     }
 
 
-    private void mineNodeFromStand(Node minenode, Node standnode, ChunkCoordinates standingPosition, int direction)
+    private void mineNodeFromStand(Node minenode, ChunkCoordinates standingPosition, int direction)
     {
 
         //Check for safe Node
