@@ -442,7 +442,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             //We are missing a tool to harvest this block...
             requestTool(curBlock);
-            //logger.info("We are missing a tool!");
             return true;
         }
 
@@ -456,7 +455,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if (tool != null && !ForgeHooks.canToolHarvestBlock(curBlock, 0, tool) && curBlock != Blocks.bedrock)
         {
-            logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool);
+            logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool + "\n"
+                        + "Please report to MineColonies with this text to add support!");
         }
         currentWorkingLocation = blockToMine;
         currentStandingPosition = safeStand;
@@ -998,7 +998,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         getOwnBuilding().currentLevel = getOwnBuilding().getLevels().size();
         //Send out update to client
         getOwnBuilding().markDirty();
-        //logger.info("Added new Level " + currentLevel.getDepth());
         return false;
     }
 
@@ -1230,18 +1229,14 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         if (minenode.getStatus() == Node.NodeStatus.IN_PROGRESS)
         {
-            //logger.info("Mined out node middle!");
             minenode.setStatus(Node.NodeStatus.COMPLETED);
-            //logger.info("Completed middle for: \n" + minenode);
         }
 
-        //logger.info("Done with node \n" + minenode);
         workingNode = null;
     }
 
     private boolean buildNodeSupportStructure(Node minenode, ChunkCoordinates standingPosition)
     {
-        logger.info("Build support for: " + minenode);
         if (minenode.getStyle() == Node.NodeType.CROSSROAD)
         {
             return buildNodeCrossroadStructure(minenode, standingPosition);
@@ -1264,7 +1259,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private boolean buildNodeTunnelStructure(final Node minenode, final ChunkCoordinates standingPosition)
     {
-        logger.info("Build node support for: " + minenode);
         int direction = 3;
         if (minenode.getDirectionPosX() == Node.NodeStatus.WALL)
         {
@@ -1329,7 +1323,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private boolean buildNodeBendStructure(final Node minenode, final ChunkCoordinates standingPosition)
     {
-        logger.info("Build bend support for: " + minenode);
         int directionx = 1;
         if (minenode.getDirectionPosX() == Node.NodeStatus.WALL)
         {
@@ -1412,8 +1405,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         continue;
                     }
 
-                    logger.info("Wanting to place " + material + " at " + curBlock);
-
                     if (missesItemsInInventory(new ItemStack(material)))
                     {
                         return false;
@@ -1429,7 +1420,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private boolean buildNodeCrossroadStructure(Node minenode, ChunkCoordinates standingPosition)
     {
-        logger.info("Build crossroad support for: " + minenode);
         for (int y = 4; y >= 2; y--)
         {
             for (int x = -1; x <= 1; x++)
@@ -1685,7 +1675,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private Node.NodeType getRandomNodeType()
     {
         int roll = new Random().nextInt(100);
-        logger.info("Random roll got " + roll);
         if (roll > 50)
         {
             return Node.NodeType.TUNNEL;
@@ -1705,16 +1694,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             if (visited.contains(currentNode))
             {
-                //logger.info("Found dead end, retrying...");
                 return null;
             }
 
-            //logger.info("Walking to " + currentNode);
             visited.add(currentNode);
             if (currentNode.getStatus() == Node.NodeStatus.AVAILABLE
                 || currentNode.getStatus() == Node.NodeStatus.IN_PROGRESS)
             {
-                //logger.info("Node was mineable");
                 return currentNode;
             }
 
@@ -1722,16 +1708,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             Collections.shuffle(directions);
             for (Integer dir : directions)
             {
-                //logger.info("\tTesting direction " + dir);
                 Node.NodeStatus status = getNodeStatusForDirection(currentNode, dir);
                 if (status == Node.NodeStatus.AVAILABLE || status == Node.NodeStatus.IN_PROGRESS)
                 {
-                    //logger.info("\tDirection " + dir + " was mineable");
                     return currentNode;
                 }
                 if (status == Node.NodeStatus.COMPLETED)
                 {
-                    //logger.info("\tDirection " + dir + " was complete");
                     Optional<Node> first = tryFindNodeInDirectionOfNode(currentLevel, currentNode, dir);
                     if (first.isPresent())
                     {
@@ -1749,7 +1732,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
                     Node newnode = createNewNodeInDirectionFromNode(currentNode, dir);
                     currentLevel.addNode(newnode);
-                    //logger.info("\tCreated new node " + newnode);
                     return newnode;
                 }
             }
@@ -1762,8 +1744,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     @Override
     public void updateTask()
     {
-
-
         //Something fatally wrong? Wait for init...
         if (null == getOwnBuilding())
         {
