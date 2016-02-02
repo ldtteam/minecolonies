@@ -10,7 +10,6 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import org.apache.logging.log4j.LogManager;
@@ -73,7 +72,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         }
     }
 
-    private String getRenderMetaTorch()
+    private String getRenderMetaSeeds()
     {
         if (hasSeed())
         {
@@ -84,7 +83,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private void renderChestBelt()
     {
-        String renderMetaData = getRenderMetaTorch();
+        String renderMetaData = getRenderMetaSeeds();
         //TODO: Merge this into worker
         worker.setRenderMetadata(renderMetaData);
     }
