@@ -43,6 +43,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private static final Set<Block> notReplacedInSecuringMine = new HashSet<>(Arrays.asList(Blocks.cobblestone,
                                                                                             Blocks.stone,
                                                                                             Blocks.dirt));
+    public static final String PICKAXE = "pickaxe";
+    public static final String SHOVEL = "shovel";
     private static Logger logger = LogManager.getLogger("Miner");
     //The current block to mine
     public ChunkCoordinates currentWorkingLocation;
@@ -127,12 +129,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     {
         if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
         {
-            //logger.info("Work can start!");
             job.setStage(Stage.PREPARING);
         }
         else
         {
-            //logger.info("Walking to building");
             delay += 20;
         }
     }
@@ -141,12 +141,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     {
         if (worker.isWorkerAtSiteWithMove(getOwnBuilding().ladderLocation, RANGE_CHECK_AROUND_BUILDING_LADDER))
         {
-            //logger.info("Checking the mine now!");
             job.setStage(Stage.CHECK_MINESHAFT);
         }
         else
         {
-            //logger.info("Walking to ladder");
             delay += 20;
         }
     }
@@ -201,7 +199,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
      */
     private boolean isPickaxe(ItemStack itemStack)
     {
-        return getMiningLevel(itemStack, "pickaxe") >= 0;
+        return getMiningLevel(itemStack, PICKAXE) >= 0;
     }
 
     /**
@@ -209,7 +207,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
      */
     private boolean isShovel(ItemStack itemStack)
     {
-        return getMiningLevel(itemStack, "shovel") >= 0;
+        return getMiningLevel(itemStack, SHOVEL) >= 0;
     }
 
     private void lookForLadder()
@@ -300,12 +298,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private void requestTool(Block curblock)
     {
-        if (Objects.equals(curblock.getHarvestTool(0), "shovel"))
+        if (Objects.equals(curblock.getHarvestTool(0), SHOVEL))
         {
             job.setStage(Stage.PREPARING);
             needsShovel = true;
         }
-        if (Objects.equals(curblock.getHarvestTool(0), "pickaxe"))
+        if (Objects.equals(curblock.getHarvestTool(0), PICKAXE))
         {
             job.setStage(Stage.PREPARING);
             needsPickaxe = true;
@@ -727,7 +725,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         for (int i = 0; i < size; i++)
         {
             ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
-            int level = getMiningLevel(stack, "pickaxe");
+            int level = getMiningLevel(stack, PICKAXE);
             if (stack != null && checkIfPickaxeQualifies(minlevel, level))
             {
                 takeItemStackFromChest(buildingMiner.getTileEntity(), stack, i);
@@ -795,7 +793,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         boolean twoPickaxes = false;
         for (ItemStack is : InventoryUtils.getInventoryAsList(worker.getInventory()))
         {
-            int level = getMiningLevel(is, "pickaxe");
+            int level = getMiningLevel(is, PICKAXE);
             //Lower tools preferred
             if (checkIfPickaxeQualifies(minlevel, level))
             {
