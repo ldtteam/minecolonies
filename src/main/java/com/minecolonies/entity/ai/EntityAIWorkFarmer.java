@@ -133,6 +133,61 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         return false;
     }
 
+    private void startWorking(){
+        switch(job.getStage())
+        {
+            case FULL_INVENTORY:
+                dumpInventory();
+                break;
+            case SEARCHING_LAND:
+                searchFarmableLand();
+                break;
+            case MAKING_LAND:
+                make_land();
+                break;
+            case NEED_SEEDS:
+                if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+                {
+                    delay = 200;
+                    logger.info("Need Seeds");
+
+                    if(hasSeed() || hasSeedInHut())
+                    {
+                        job.setStage(Stage.PLANTING);
+                    }
+                }
+                break;
+            case WORKING:
+                if(farmAbleLand.size() == 0 && plowedLand.size() == 0 && crops.size() == 0)
+                {
+                    job.setStage(Stage.SEARCHING_LAND);
+                }
+                else if(!hasSeed() && crops.size() + crops2.size() < 10)
+                {
+                    job.setStage(Stage.NEED_SEEDS);
+                }
+                else if(farmAbleLand.size() > 0)
+                {
+                    job.setStage(Stage.MAKING_LAND);
+                }
+                else if(hasSeed() && plowedLand.size() > 0)
+                {
+                    job.setStage(Stage.PLANTING);
+                }
+                else if(crops.size() > 0)
+                {
+                    job.setStage(Stage.HARVESTING);
+                }
+                break;
+            case PLANTING:
+                planting();
+                break;
+            case HARVESTING:
+                harvesting();
+                break;
+        }
+    }
+
     @Override
     public void updateTask()
     {
@@ -150,62 +205,12 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         if(itemsAreMissing()){
             return;
         }
-        
-        if(hasAllTheTools())
-        {
-            switch(job.getStage())
-            {
-                case FULL_INVENTORY:
-                    dumpInventory();
-                    break;
-                case SEARCHING_LAND:
-                    searchFarmableLand();
-                    break;
-                case MAKING_LAND:
-                    make_land();
-                    break;
-                case NEED_SEEDS:
-                    if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
-                    {
-                        delay = 200;
-                        logger.info("Need Seeds");
 
-                        if(hasSeed() || hasSeedInHut())
-                        {
-                            job.setStage(Stage.PLANTING);
-                        }
-                    }
-                    break;
-                case WORKING:
-                    if(farmAbleLand.size() == 0 && plowedLand.size() == 0 && crops.size() == 0)
-                    {
-                        job.setStage(Stage.SEARCHING_LAND);
-                    }
-                    else if(!hasSeed() && crops.size() + crops2.size() < 10)
-                    {
-                        job.setStage(Stage.NEED_SEEDS);
-                    }
-                    else if(farmAbleLand.size() > 0)
-                    {
-                        job.setStage(Stage.MAKING_LAND);
-                    }
-                    else if(hasSeed() && plowedLand.size() > 0)
-                    {
-                        job.setStage(Stage.PLANTING);
-                    }
-                    else if(crops.size() > 0)
-                    {
-                        job.setStage(Stage.HARVESTING);
-                    }
-                    break;
-                case PLANTING:
-                    planting();
-                    break;
-                case HARVESTING:
-                    harvesting();
-                    break;
-            }
+        if (!hasAllTheTools())
+        {
+            return;
         }
+        startWorking();
     }
 
     private void searchFarmableLand()
