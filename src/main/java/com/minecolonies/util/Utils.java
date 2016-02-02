@@ -355,4 +355,23 @@ public class Utils
     public static Logger generateLoggerForClass(Class clazz){
         return LogManager.getLogger(Constants.MOD_ID+"::"+clazz.getSimpleName());
     }
+
+    /**
+     * Calculate the mining level an item has as a tool of certain type.
+     * @param stack the stack to test
+     * @param tool the tool category
+     * @return integer value for mining level >= 0 is okay
+     */
+    public static int getMiningLevel(ItemStack stack, String tool)
+    {
+        if (tool == null)
+        {
+            return stack == null ? 0 : 1; //empty hand is best on blocks who don't care (0 better 1)
+        }
+        if (stack == null)
+        {
+            return -1;
+        }
+        return stack.getItem().getHarvestLevel(stack, tool);
+    }
 }

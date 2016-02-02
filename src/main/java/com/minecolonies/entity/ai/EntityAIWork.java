@@ -198,6 +198,11 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         }
     }
 
+    protected int getMiningLevel(ItemStack stack, String tool)
+    {
+        return Utils.getMiningLevel(stack,tool);
+    }
+
     /**
      * This method will be overridden by AI implementations.
      * It will serve as a tick function.

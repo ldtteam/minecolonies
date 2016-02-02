@@ -1724,19 +1724,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         delay += 100;
     }
 
-    int getMiningLevel(ItemStack stack, String tool)
-    {
-        if (tool == null)
-        {
-            return stack == null ? 0 : 1; //empty hand is best on blocks who don't care (0 better 1)
-        }
-        if (stack == null)
-        {
-            return -1;
-        }
-        return stack.getItem().getHarvestLevel(stack, tool);
-    }
-
     boolean holdEfficientTool(Block target)
     {
         int bestSlot = getMostEfficientTool(target);
