@@ -1731,8 +1731,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     public void workOnTask()
     {
 
-
-
         //Mining animation while delay is decreasing.
         if (waitingForSomething())
         {
