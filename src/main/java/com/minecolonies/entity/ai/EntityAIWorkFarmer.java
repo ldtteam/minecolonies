@@ -108,6 +108,31 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         return false;
     }
 
+    private boolean itemsAreMissing()
+    {
+        if(job.isMissingNeededItem())
+        {
+            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+            {
+                List<ItemStack> l = new CopyOnWriteArrayList<>();
+                l.addAll(job.getItemsNeeded());
+
+                for(ItemStack e : l)
+                {
+                    if(isInHut(e.getItem()) || hasAllTheTools() || inventoryContains(e.getItem()) != -1)
+                    {
+                        job.removeItemNeeded(e);
+                        return true;
+                    }
+                    worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", e.getDisplayName());
+                }
+                delay = 50;
+            }
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void updateTask()
     {
@@ -121,27 +146,11 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         {
             return;
         }
-        
-        if(job.isMissingNeededItem())
-        {
-            if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
-            {
-                List<ItemStack> l = new CopyOnWriteArrayList<>();
-                l.addAll(job.getItemsNeeded());
 
-                for(ItemStack e : l)
-                {
-                    if(isInHut(e.getItem()) || hasAllTheTools() || inventoryContains(e.getItem()) != -1)
-                    {
-                        job.removeItemNeeded(e);
-                        return;
-                    }
-                    worker.sendLocalizedChat("entity.miner.messageNeedBlockAndItem", e.getDisplayName());
-                }
-                delay = 50;
-            }
+        if(itemsAreMissing()){
             return;
         }
+        
         if(hasAllTheTools())
         {
             switch(job.getStage())
