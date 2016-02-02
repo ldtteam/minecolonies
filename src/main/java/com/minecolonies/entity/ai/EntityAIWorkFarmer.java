@@ -74,7 +74,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         return "";
     }
 
-    private void renderChestBelt()
+    protected void renderChestBelt()
     {
         String renderMetaData = getRenderMetaSeeds();
         //TODO: Merge this into worker

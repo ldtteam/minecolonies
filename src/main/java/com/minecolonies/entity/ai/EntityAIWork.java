@@ -139,6 +139,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
             delay--;
             return true;
         }
+        clearWorkTarget();
         return false;
     }
 
@@ -155,12 +156,24 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         this.currentWorkingLocation = target;
         this.currentStandingLocation = stand;
         this.delay = timeout;
+        this.errorState = ErrorState.WAITING;
+    }
+
+    /**
+     * Remove the current working block and it's delay.
+     */
+    protected void clearWorkTarget(){
+        this.currentStandingLocation = null;
+        this.currentWorkingLocation = null;
+        this.delay = 0;
+        this.errorState = ErrorState.NONE;
     }
 
     private enum ErrorState
     {
         NONE,
-        NEEDS_ITEM
+        NEEDS_ITEM,
+        WAITING,
     }
 
 }
