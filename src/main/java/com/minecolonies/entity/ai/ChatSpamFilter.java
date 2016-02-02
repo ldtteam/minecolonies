@@ -26,7 +26,7 @@ public class ChatSpamFilter
     }
 
     /**
-     * Request an Item without spammen the chat.
+     * Request an Item without spamming the chat.
      * @param chat the Item Name
      */
     public void requestWithoutSpam(String chat)

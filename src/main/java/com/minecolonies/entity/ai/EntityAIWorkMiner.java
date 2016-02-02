@@ -57,12 +57,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
      */
     private boolean hasDelayed = false;
 
-    private int speechDelay = 0;
     private boolean needsShovel = false;
     private boolean needsPickaxe = false;
     private int needsPickaxeLevel = -1;
-    private String speechDelayString = "";
-    private int speechRepeat = 1;
     private Node workingNode = null;
 
 

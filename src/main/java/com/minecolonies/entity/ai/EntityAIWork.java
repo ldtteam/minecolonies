@@ -1,6 +1,5 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
@@ -16,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
 
@@ -53,10 +51,6 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     private boolean needsShovel = false;
     private boolean needsPickaxe = false;
     private int needsPickaxeLevel = -1;
-
-    private int speechDelay = 0;
-    private String speechDelayString = "";
-    private int speechRepeat = 1;
 
     private ChatSpamFilter chatSpamFilter;
 
@@ -146,11 +140,18 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         }
     }
 
+    /**
+     * Request an Item without spamming the chat.
+     * @param chat the Item Name
+     */
     protected void requestWithoutSpam(String chat){
         chatSpamFilter.requestWithoutSpam(chat);
     }
 
-    protected void syncNeededItemsWithInventory()
+    /**
+     * Updates the itemsCurrentlyNeeded with current values.
+     */
+    private void syncNeededItemsWithInventory()
     {
         job.clearItemsNeeded();
         itemsNeeded.forEach(job::addItemNeeded);
