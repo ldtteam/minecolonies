@@ -81,7 +81,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return "";
     }
 
-    protected void renderChestBelt()
+    protected void updateRenderMetaData()
     {
         String renderMetaData = getRenderMetaTorch();
         //TODO: Have pickaxe etc. displayed?

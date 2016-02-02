@@ -74,7 +74,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         return "";
     }
 
-    protected void renderChestBelt()
+    protected void updateRenderMetaData()
     {
         String renderMetaData = getRenderMetaSeeds();
         //TODO: Merge this into worker
@@ -185,7 +185,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             return;
         }
 
-        renderChestBelt();
+        updateRenderMetaData();
 
         //TODO: check what this does, add comments
         //Seems to transition crop locations somewhere???

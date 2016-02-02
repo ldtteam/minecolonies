@@ -90,7 +90,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         }
 
         //Update torch, seeds etc. in chestbelt etc.
-        renderChestBelt();
+        updateRenderMetaData();
 
         //Wait for delay if it exists
         if (waitingForSomething())
@@ -108,14 +108,14 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
 
     /**
      * This method will be overridden by AI implementations.
-     * It will server as a tick function.
+     * It will serve as a tick function.
      */
     protected abstract void workOnTask();
 
     /**
      * Here the AI can check if the chestBelt has to be re rendered and do it.
      */
-    protected void renderChestBelt(){}
+    protected void updateRenderMetaData(){}
 
     /**
      * Can be overridden in implementations to return the exact building type.
