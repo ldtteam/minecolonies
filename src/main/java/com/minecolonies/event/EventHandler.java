@@ -138,7 +138,8 @@ public class EventHandler
                     else if (!colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
                     {
                         //  No permission to place hut in colony
-                        LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission");
+                        LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission",
+                                                                   colony.getName());
                         return false;
                     }
                 }
