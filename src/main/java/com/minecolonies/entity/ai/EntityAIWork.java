@@ -45,6 +45,8 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
 
     }
 
+
+
     @Override
     public boolean shouldExecute()
     {

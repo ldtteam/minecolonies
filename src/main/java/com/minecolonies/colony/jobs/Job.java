@@ -51,22 +51,19 @@ public abstract class Job
         {
             throw new IllegalArgumentException("Duplicate type '" + name + "' when adding Job class mapping");
         }
-        else
+        try
         {
-            try
+            if (jobClass.getDeclaredConstructor(CitizenData.class) != null)
             {
-                if (jobClass.getDeclaredConstructor(CitizenData.class) != null)
-                {
-                    nameToClassMap.put(name, jobClass);
-                    classToNameMap.put(jobClass, name);
-                }
+                nameToClassMap.put(name, jobClass);
+                classToNameMap.put(jobClass, name);
             }
-            catch (NoSuchMethodException exception)
-            {
-                throw new IllegalArgumentException("Missing constructor for type '"
-                                                   + name
-                                                   + "' when adding Job class mapping");
-            }
+        }
+        catch (NoSuchMethodException exception)
+        {
+            throw new IllegalArgumentException("Missing constructor for type '"
+                                               + name
+                                               + "' when adding Job class mapping");
         }
     }
 
