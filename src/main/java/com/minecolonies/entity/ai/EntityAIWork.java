@@ -1,10 +1,14 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.Utils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +17,7 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
 
 public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
 {
+    private static Logger logger = Utils.generateLoggerForClass(EntityAIWork.class);
     protected final JOB job;
     protected final EntityCitizen worker;
     protected final World world;
@@ -39,6 +44,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         this.world = this.worker.worldObj;
         this.itemsNeeded = new ArrayList<>();
         this.itemsCurrentlyNeeded = new ArrayList<>();
+
     }
 
     @Override
@@ -52,4 +58,12 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     {
         worker.setStatus(IDLE);
     }
+
+    @Override
+    public void startExecuting(){
+        worker.setStatus(EntityCitizen.Status.WORKING);
+    }
+
+    @Override
+    public void updateTask(){}
 }

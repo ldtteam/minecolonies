@@ -1,6 +1,7 @@
 package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.lib.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -10,6 +11,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -347,5 +350,9 @@ public class Utils
     public static void blockBreakSoundAndEffect(World world, int x, int y, int z, Block block, int metadata)
     {
         world.playAuxSFX(2001, x, y, z, Block.getIdFromBlock(block) + (metadata << 12));
+    }
+
+    public static Logger generateLoggerForClass(Class clazz){
+        return LogManager.getLogger(Constants.MOD_ID+"::"+clazz.getSimpleName());
     }
 }
