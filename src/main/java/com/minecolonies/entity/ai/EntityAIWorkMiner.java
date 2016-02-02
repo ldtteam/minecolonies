@@ -59,25 +59,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
     private List<ItemStack> itemsNeeded = new ArrayList<>();
-    private int speechdelay = 0;
+    private int speechDelay = 0;
     private boolean needsShovel = false;
     private boolean needsPickaxe = false;
     private int needsPickaxeLevel = -1;
-    private String speechdelaystring = "";
-    private int speechrepeat = 1;
+    private String speechDelayString = "";
+    private int speechRepeat = 1;
     private Node workingNode = null;
 
 
     public EntityAIWorkMiner(JobMiner job)
     {
         super(job);
-    }
-
-
-    @Override
-    public boolean shouldExecute()
-    {
-        return super.shouldExecute();
     }
 
     @Override
@@ -772,24 +765,24 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private void talkWithoutSpam(String key, String chat)
     {
         String curstring = key + chat;
-        if (Objects.equals(speechdelaystring, curstring))
+        if (Objects.equals(speechDelayString, curstring))
         {
-            if (speechdelay > 0)
+            if (speechDelay > 0)
             {
-                speechdelay--;
+                speechDelay--;
                 return;
             }
-            speechrepeat++;
+            speechRepeat++;
         }
         else
         {
-            speechdelay = 0;
-            speechrepeat = 1;
+            speechDelay = 0;
+            speechRepeat = 1;
         }
         worker.sendLocalizedChat(key, chat);
-        speechdelaystring = key + chat;
+        speechDelayString = key + chat;
 
-        speechdelay = (int) Math.pow(30, speechrepeat);
+        speechDelay = (int) Math.pow(30, speechRepeat);
         if (delay < 20)
         {
             delay = 20;
