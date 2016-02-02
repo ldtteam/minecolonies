@@ -33,10 +33,10 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     private static final String TOOL_TYPE_SHOVEL  = "shovel";
     private static final String RENDER_META_SEEDS = "Seeds";
     private static Logger logger = LogManager.getLogger("Farmer");
-    public List<ChunkCoordinates> farmAbleLand = new ArrayList<ChunkCoordinates>();
-    public List<ChunkCoordinates> plowedLand   = new ArrayList<ChunkCoordinates>();
-    public List<ChunkCoordinates> crops        = new ArrayList<ChunkCoordinates>();
-    public List<ChunkCoordinates> crops2       = new ArrayList<ChunkCoordinates>();
+    public List<ChunkCoordinates> farmAbleLand = new ArrayList<>();
+    public List<ChunkCoordinates> plowedLand   = new ArrayList<>();
+    public List<ChunkCoordinates> crops        = new ArrayList<>();
+    public List<ChunkCoordinates> crops2       = new ArrayList<>();
     public ChunkCoordinates currentFarmLand;
     int harvestCounter = 0;
     private String NEED_ITEM = "";
@@ -64,20 +64,44 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         updateTask();
     }
 
-    @Override
-    public void updateTask()
-    {
-        BuildingFarmer b = (BuildingFarmer) (worker.getWorkBuilding());
-        if(b == null) return;
+    private BuildingFarmer getOwnBuilding(){
+        return (BuildingFarmer) (worker.getWorkBuilding());
+    }
 
-        worker.setRenderMetadata(hasSeed() ? RENDER_META_SEEDS : "");
-
+    private void checkForSeeds(){
+        //TODO: check what this does, add comments
         if(crops.size() == 0 && crops2.size() != 0)
         {
             crops.addAll(crops2);
             crops2.clear();
             job.setStage(Stage.NEED_SEEDS);
         }
+    }
+
+    private String getRenderMetaTorch()
+    {
+        if (hasSeed())
+        {
+            return RENDER_META_SEEDS;
+        }
+        return "";
+    }
+
+    private void renderChestBelt()
+    {
+        String renderMetaData = getRenderMetaTorch();
+        //TODO: Have pickaxe etc. displayed?
+        worker.setRenderMetadata(renderMetaData);
+    }
+
+    @Override
+    public void updateTask()
+    {
+        BuildingFarmer buildingFarmer = getOwnBuilding();
+        if(buildingFarmer == null) return;
+
+        renderChestBelt();
+        checkForSeeds();
 
         if(delay > 0)
         {
@@ -91,7 +115,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         {
             if(ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
             {
-                List<ItemStack> l = new CopyOnWriteArrayList<ItemStack>();
+                List<ItemStack> l = new CopyOnWriteArrayList<>();
                 l.addAll(job.getItemsNeeded());
 
                 for(ItemStack e : l)
