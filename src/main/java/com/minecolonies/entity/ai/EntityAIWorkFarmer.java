@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Miner AI class
+ * Farmer AI class
  * Created: December 20, 2014
  *
- * @author Raycoms
+ * @author Raycoms, Kostronor
  */
 
 public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
@@ -63,9 +63,8 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         return (BuildingFarmer) (worker.getWorkBuilding());
     }
 
-    private void checkForSeeds()
+    private void checkForCrops()
     {
-        //TODO: check what this does, add comments
         if (crops.isEmpty() && !crops2.isEmpty())
         {
             crops.addAll(crops2);
@@ -195,13 +194,19 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         }
 
         renderChestBelt();
-        checkForSeeds();
+
+        //TODO: check what this does, add comments
+        //Seems to transition crop locations somewhere???
+        checkForCrops();
 
         if (waitingForSomething())
         {
             return;
         }
 
+
+
+        //Old Code since here
         if (itemsAreMissing())
         {
             return;
@@ -557,42 +562,6 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                 stack).contains(TOOL_TYPE_SHOVEL));
     }
 
-    private boolean isInHut(Block block)
-    {
-        if (worker.getWorkBuilding().getTileEntity() == null)
-        {
-            return false;
-        }
-
-        int size = worker.getWorkBuilding().getTileEntity().getSizeInventory();
-
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = worker.getWorkBuilding().getTileEntity().getStackInSlot(i);
-            if (stack != null && stack.getItem() instanceof ItemBlock)
-            {
-                Block content = ((ItemBlock) stack.getItem()).field_150939_a;
-                if (content.equals(block))
-                {
-                    ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
-
-                    if (returnStack == null)
-                    {
-                        worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize);
-                    }
-                    else
-                    {
-                        worker.getWorkBuilding().getTileEntity().decrStackSize(i,
-                                                                               stack.stackSize - returnStack.stackSize);
-                    }
-
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     private boolean isInHut(Item item)
     {
         if (worker.getWorkBuilding().getTileEntity() == null)
@@ -695,16 +664,6 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         return Hoe && Spade;
     }
 
-    void holdShovel()
-    {
-        worker.setHeldItem(InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), TOOL_TYPE_SHOVEL));
-    }
-
-    void holdHoe()
-    {
-        worker.setHeldItem(InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), TOOL_TYPE_HOE));
-    }
-
     @Override
     public boolean continueExecuting()
     {
@@ -715,44 +674,6 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     public void resetTask()
     {
         super.resetTask();
-    }
-
-    private int getDelay(Block block, int x, int y, int z)
-    {
-        return (int) (baseSpeed
-                      * worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0)
-                      * block.getBlockHardness(world, x, y, z));
-    }
-
-    private void setBlockFromInventory(int x, int y, int z, Block block)//TODO Plant seed
-    {
-        world.setBlock(x, y, z, block);
-        int slot = inventoryContains(block);
-
-        if (slot == -1)
-        {
-            job.addItemNeeded(new ItemStack(block));
-            return;
-        }
-        worker.getInventory().decrStackSize(slot, 1);
-    }
-
-    private int inventoryContains(Block block)//???
-    {
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = worker.getInventory().getStackInSlot(slot);
-
-            if (stack != null && stack.getItem() instanceof ItemBlock)
-            {
-                Block content = ((ItemBlock) stack.getItem()).field_150939_a;
-                if (content.equals(block))
-                {
-                    return slot;
-                }
-            }
-        }
-        return -1;
     }
 
     private int inventoryContains(Item item)//???
@@ -776,56 +697,6 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             }
         }
         return -1;
-    }
-
-    private int inventoryContainsMany(Block block)
-    {
-        int count = 0;
-
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = worker.getInventory().getStackInSlot(slot);
-
-            if (stack != null && stack.getItem() instanceof ItemBlock)
-            {
-                Block content = ((ItemBlock) stack.getItem()).field_150939_a;
-                if (content.equals(block))
-                {
-                    count += stack.stackSize;
-                }
-            }
-        }
-        return count;
-    }
-
-    private int inventoryContainsMany(Item item)
-    {
-        int count = 0;
-
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = worker.getInventory().getStackInSlot(slot);
-
-            if (stack != null && stack.getItem() instanceof ItemBlock)
-            {
-                Item content = stack.getItem();
-                if (content.equals(item))
-                {
-                    count += stack.stackSize;
-                }
-            }
-        }
-        return count;
-    }
-
-    public double getBaseSpeed()
-    {
-        return baseSpeed;
-    }
-
-    public void setBaseSpeed(double baseSpeed)
-    {
-        this.baseSpeed = baseSpeed;
     }
 
     public enum Stage
