@@ -601,73 +601,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return nextBlockToMine;
     }
 
-    private void syncNeededItemsWithInventory()
-    {
-        job.clearItemsNeeded();
-        itemsNeeded.forEach(job::addItemNeeded);
-        InventoryUtils.getInventoryAsList(worker.getInventory()).forEach(job::removeItemNeeded);
-        itemsCurrentlyNeeded = new ArrayList<>(job.getItemsNeeded());
-    }
-
-    private void lookForNeededItems()
-    {
-        syncNeededItemsWithInventory();
-        if (itemsCurrentlyNeeded.isEmpty())
-        {
-            itemsNeeded.clear();
-            job.clearItemsNeeded();
-            return;
-        }
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
-        {
-            delay += 10;
-            ItemStack first = itemsCurrentlyNeeded.get(0);
-            //Takes one Stack from the hut if existent
-            if (isInHut(first))
-            {
-                return;
-            }
-            requestWithoutSpam(first.getDisplayName());
-        }
-    }
-
-    private void takeItemStackFromChest(IInventory chest, ItemStack stack, int slot)
-    {
-        ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
-        if (returnStack == null)
-        {
-            chest.decrStackSize(slot, stack.stackSize);
-        }
-        else
-        {
-            chest.decrStackSize(slot, stack.stackSize - returnStack.stackSize);
-        }
-    }
-
-    private boolean isInHut(ItemStack is)
-    {
-        BuildingMiner buildingMiner = getOwnBuilding();
-        if (buildingMiner.getTileEntity() == null)
-        {
-            return false;
-        }
-        int size = buildingMiner.getTileEntity().getSizeInventory();
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
-            if (stack != null)
-            {
-                Item content = stack.getItem();
-                if (content == is.getItem())
-                {
-                    takeItemStackFromChest(buildingMiner.getTileEntity(), stack, i);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     private boolean isShovelInHut()
     {
         BuildingMiner buildingMiner = getOwnBuilding();
@@ -729,37 +662,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return false;
     }
 
-    private void requestWithoutSpam(String chat)
-    {
-        talkWithoutSpam("entity.miner.messageNeedBlockAndItem", chat);
-    }
-
-    private void talkWithoutSpam(String key, String chat)
-    {
-        String curstring = key + chat;
-        if (Objects.equals(speechDelayString, curstring))
-        {
-            if (speechDelay > 0)
-            {
-                speechDelay--;
-                return;
-            }
-            speechRepeat++;
-        }
-        else
-        {
-            speechDelay = 0;
-            speechRepeat = 1;
-        }
-        worker.sendLocalizedChat(key, chat);
-        speechDelayString = key + chat;
-
-        speechDelay = (int) Math.pow(30, speechRepeat);
-        if (delay < 20)
-        {
-            delay = 20;
-        }
-    }
 
     private void checkForPickaxe(int minlevel)
     {

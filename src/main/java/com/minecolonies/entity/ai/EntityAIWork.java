@@ -1,10 +1,14 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -12,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
 
@@ -31,7 +36,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      * <p>
      * Will be cleared on restart, be aware!
      */
-    protected List<ItemStack> itemsCurrentlyNeeded;
+    protected List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -39,11 +44,21 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      * <p>
      * Will be cleared on restart, be aware!
      */
-    protected List<ItemStack> itemsNeeded;
-    private ErrorState errorState;
-    private ChunkCoordinates currentWorkingLocation;
-    private int delay;
-    private ChunkCoordinates currentStandingLocation;
+    protected List<ItemStack> itemsNeeded = new ArrayList<>();
+    private ErrorState errorState = ErrorState.NONE;
+    private ChunkCoordinates currentWorkingLocation = null;
+    private int delay = 0;
+    private ChunkCoordinates currentStandingLocation = null;
+
+    private boolean needsShovel = false;
+    private boolean needsPickaxe = false;
+    private int needsPickaxeLevel = -1;
+
+    private int speechDelay = 0;
+    private String speechDelayString = "";
+    private int speechRepeat = 1;
+
+    private ChatSpamFilter chatSpamFilter;
 
     public EntityAIWork(JOB job)
     {
@@ -51,12 +66,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         this.job = job;
         this.worker = this.job.getCitizen().getCitizenEntity();
         this.world = this.worker.worldObj;
-        this.itemsNeeded = new ArrayList<>();
-        this.itemsCurrentlyNeeded = new ArrayList<>();
-        this.errorState = ErrorState.NONE;
-        currentWorkingLocation = null;
-        currentStandingLocation = null;
-        delay = 0;
+        this.chatSpamFilter = new ChatSpamFilter(worker);
     }
 
 
@@ -98,12 +108,93 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
             return;
         }
 
+        //We need Items as it seems
+        if (!itemsCurrentlyNeeded.isEmpty())
+        {
+            lookForNeededItems();
+            delay = 10;
+            return;
+        }
+
         if (this.errorState == ErrorState.NEEDS_ITEM)
         {
             //TODO: request item
             return;
         }
         workOnTask();
+    }
+
+    protected void lookForNeededItems()
+    {
+        syncNeededItemsWithInventory();
+        if (itemsCurrentlyNeeded.isEmpty())
+        {
+            itemsNeeded.clear();
+            job.clearItemsNeeded();
+            return;
+        }
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
+        {
+            delay += 10;
+            ItemStack first = itemsCurrentlyNeeded.get(0);
+            //Takes one Stack from the hut if existent
+            if (isInHut(first))
+            {
+                return;
+            }
+            requestWithoutSpam(first.getDisplayName());
+        }
+    }
+
+    protected void requestWithoutSpam(String chat){
+        chatSpamFilter.requestWithoutSpam(chat);
+    }
+
+    protected void syncNeededItemsWithInventory()
+    {
+        job.clearItemsNeeded();
+        itemsNeeded.forEach(job::addItemNeeded);
+        InventoryUtils.getInventoryAsList(worker.getInventory()).forEach(job::removeItemNeeded);
+        itemsCurrentlyNeeded = new ArrayList<>(job.getItemsNeeded());
+    }
+
+
+
+    protected boolean isInHut(ItemStack is)
+    {
+        final BuildingWorker buildingMiner = getOwnBuilding();
+        if (buildingMiner.getTileEntity() == null)
+        {
+            return false;
+        }
+        int size = buildingMiner.getTileEntity().getSizeInventory();
+        for (int i = 0; i < size; i++)
+        {
+            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
+            if (stack != null)
+            {
+                Item content = stack.getItem();
+                if (content == is.getItem())
+                {
+                    takeItemStackFromChest(buildingMiner.getTileEntity(), stack, i);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected void takeItemStackFromChest(IInventory chest, ItemStack stack, int slot)
+    {
+        ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
+        if (returnStack == null)
+        {
+            chest.decrStackSize(slot, stack.stackSize);
+        }
+        else
+        {
+            chest.decrStackSize(slot, stack.stackSize - returnStack.stackSize);
+        }
     }
 
     /**
@@ -131,7 +222,8 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     {
         if (delay > 0)
         {
-            if (!worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
+            if (currentStandingLocation != null &&
+                !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
             {
                 //Don't decrease delay as we are just walking...
                 return true;
