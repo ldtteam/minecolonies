@@ -25,14 +25,20 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      * the players inventory and their hut combined.
      * So look here for what is currently still needed
      * to fulfill the workers needs.
+     *
+     * Will be cleared on restart, be aware!
      */
     protected List<ItemStack> itemsCurrentlyNeeded;
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
      * look at @see #itemsCurrentlyNeeded for things the miner needs.
+     *
+     * Will be cleared on restart, be aware!
      */
     protected List<ItemStack> itemsNeeded;
+    private ErrorState errorState;
+
 
     public EntityAIWork(JOB job)
     {
@@ -42,7 +48,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         this.world = this.worker.worldObj;
         this.itemsNeeded = new ArrayList<>();
         this.itemsCurrentlyNeeded = new ArrayList<>();
-
+        this.errorState = ErrorState.NONE;
     }
 
 
@@ -66,5 +72,23 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     }
 
     @Override
-    public void updateTask(){}
+    public void updateTask(){
+        if(this.errorState == ErrorState.NEEDS_ITEM)
+        {
+            //TODO: request item
+            return;
+        }
+        workOnTask();
+    }
+
+    /**
+     * This method will be overridden by AI implementations
+     */
+    protected abstract void workOnTask();
+
+    private enum ErrorState
+    {
+        NONE, NEEDS_ITEM
+    }
+
 }

@@ -210,6 +210,15 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         startWorking();
     }
 
+    /**
+     * This method will be overridden by AI implementations
+     */
+    @Override
+    protected void workOnTask()
+    {
+        //TODO: rework the farmer to use workOnTask eventually
+    }
+
     private void searchFarmableLand()
     {
         BuildingFarmer b = (BuildingFarmer) (worker.getWorkBuilding());

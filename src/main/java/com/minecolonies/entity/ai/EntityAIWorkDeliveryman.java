@@ -99,6 +99,15 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
         resetTask();
     }
 
+    /**
+     * This method will be overridden by AI implementations
+     */
+    @Override
+    protected void workOnTask()
+    {
+        //TODO: rework the deliveryman to use workOnTask eventually
+    }
+
     @Override
     public boolean continueExecuting()
     {

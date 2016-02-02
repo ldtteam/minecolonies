@@ -126,6 +126,15 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
         }
     }
 
+    /**
+     * This method will be overridden by AI implementations
+     */
+    @Override
+    protected void workOnTask()
+    {
+        //TODO: rework the lumberjack to use workOnTask eventually
+    }
+
     @Override
     public boolean continueExecuting()
     {

@@ -137,6 +137,15 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
         }
     }
 
+    /**
+     * This method will be overridden by AI implementations
+     */
+    @Override
+    protected void workOnTask()
+    {
+        //TODO: rework the builder to use workOnTask eventually
+    }
+
     @Override
     public boolean continueExecuting()
     {
