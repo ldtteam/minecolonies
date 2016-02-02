@@ -1548,6 +1548,12 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     ChunkCoordinates curBlock = new ChunkCoordinates(minenode.getX() + x,
                                                                      standingPosition.posY + y,
                                                                      minenode.getZ() + z);
+                    if (getBlock(curBlock) == Blocks.torch
+                        || getBlock(curBlock) == Blocks.planks
+                        || getBlock(curBlock) == Blocks.fence)
+                    {
+                        continue;
+                    }
                     if (!mineBlock(curBlock, standingPosition))
                     {
                         return false;
@@ -1557,9 +1563,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         if (getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.IN_PROGRESS)
         {
-            //logger.info("Mined out node entry!");
             setNodeStatusForDirection(minenode, directon, Node.NodeStatus.COMPLETED);
-            //logger.info("Completed entry for: \n" + minenode);
         }
         return true;
     }
