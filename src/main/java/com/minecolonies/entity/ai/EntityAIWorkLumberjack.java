@@ -40,14 +40,9 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
     }
 
     @Override
-    public boolean shouldExecute()
-    {
-        return super.shouldExecute();
-    }
-
-    @Override
     public void startExecuting()
     {
+        //TODO: rework with new AI framework
         if(!hasAxeWithEquip())
         {
             requestAxe();
