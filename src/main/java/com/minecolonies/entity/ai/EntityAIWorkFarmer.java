@@ -33,13 +33,13 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     private static final String TOOL_TYPE_SHOVEL = "shovel";
     private static final String RENDER_META_SEEDS = "Seeds";
     private static Logger logger = LogManager.getLogger("Farmer");
-    public List<ChunkCoordinates> farmAbleLand = new ArrayList<>();
-    public List<ChunkCoordinates> plowedLand = new ArrayList<>();
-    public List<ChunkCoordinates> crops = new ArrayList<>();
-    public List<ChunkCoordinates> crops2 = new ArrayList<>();
-    public ChunkCoordinates currentFarmLand;
-    int harvestCounter = 0;
-    private String NEED_ITEM = "";
+    private List<ChunkCoordinates> farmAbleLand = new ArrayList<>();
+    private List<ChunkCoordinates> plowedLand = new ArrayList<>();
+    private List<ChunkCoordinates> crops = new ArrayList<>();
+    private List<ChunkCoordinates> crops2 = new ArrayList<>();
+    private ChunkCoordinates currentFarmLand;
+    private int harvestCounter = 0;
+    private String needItem = "";
     private double baseSpeed;
     private int delay = 0;
 
@@ -50,12 +50,6 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     }
     //TODO Planting randomly depending on option in Hut, each level, one more crop type
     //TODO Adding Language Strings in files
-
-    @Override
-    public boolean shouldExecute()
-    {
-        return super.shouldExecute();
-    }
 
     @Override
     public void startExecuting()
@@ -612,8 +606,8 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             {
                 Item content = stack.getItem();
                 if (content.equals(item)
-                    || content.getToolClasses(stack).contains(NEED_ITEM)
-                    || stack.getUnlocalizedName().contains(NEED_ITEM))
+                    || content.getToolClasses(stack).contains(needItem)
+                    || stack.getUnlocalizedName().contains(needItem))
                 {
                     ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
 
@@ -687,12 +681,12 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         if (!Spade)
         {
             job.addItemNeededIfNotAlready(new ItemStack(Items.iron_shovel));
-            NEED_ITEM = TOOL_TYPE_SHOVEL;
+            needItem = TOOL_TYPE_SHOVEL;
         }
         else if (!Hoe)
         {
             job.addItemNeededIfNotAlready(new ItemStack(Items.iron_hoe));
-            NEED_ITEM = TOOL_TYPE_HOE;
+            needItem = TOOL_TYPE_HOE;
         }
 
         return Hoe && Spade;
