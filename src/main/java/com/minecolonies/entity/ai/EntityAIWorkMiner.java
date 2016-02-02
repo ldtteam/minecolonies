@@ -213,6 +213,24 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private void lookForLadder()
     {
         BuildingMiner buildingMiner = getOwnBuilding();
+
+        //Check for already found ladder
+        if (buildingMiner.foundLadder && buildingMiner.ladderLocation != null)
+        {
+            if (world.getBlock(buildingMiner.ladderLocation.posX,
+                               buildingMiner.ladderLocation.posY,
+                               buildingMiner.ladderLocation.posZ) == Blocks.ladder)
+            {
+                job.setStage(Stage.LADDER_FOUND);
+                return;
+            }
+            else
+            {
+                buildingMiner.foundLadder = false;
+                buildingMiner.ladderLocation = null;
+            }
+        }
+
         int posX = buildingMiner.getLocation().posX;
         int posY = buildingMiner.getLocation().posY + 2;
         int posZ = buildingMiner.getLocation().posZ;
@@ -222,32 +240,23 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             {
                 for (int z = posZ - 10; z < posZ + 10; z++)
                 {
-
-                    if (buildingMiner.foundLadder && buildingMiner.ladderLocation != null)
-                    {
-                        if (world.getBlock(buildingMiner.ladderLocation.posX,
-                                           buildingMiner.ladderLocation.posY,
-                                           buildingMiner.ladderLocation.posZ) == Blocks.ladder)
-                        {
-                            job.setStage(Stage.LADDER_FOUND);
-                            return;
-                        }
-                        else
-                        {
-                            buildingMiner.foundLadder = false;
-                            buildingMiner.ladderLocation = null;
-                        }
-                    }
-                    if (world.getBlock(x, y, z).equals(Blocks.ladder))
-                    {
-                        int firstLadderY = getFirstLadder(x, y, z);
-                        buildingMiner.ladderLocation = new ChunkCoordinates(x, firstLadderY, z);
-                        //logger.info("Found topmost ladder at x:" + x + " y: " + firstLadderY + " z: " + z);
-                        delay += 10;
-                        validateLadderOrientation();
-                    }
+                    tryFindLadderAt(x,y,z);
                 }
             }
+        }
+    }
+
+    private void tryFindLadderAt(int x, int y, int z){
+        BuildingMiner buildingMiner = getOwnBuilding();
+        if(buildingMiner.foundLadder){
+            return;
+        }
+        if (world.getBlock(x, y, z).equals(Blocks.ladder))
+        {
+            int firstLadderY = getFirstLadder(x, y, z);
+            buildingMiner.ladderLocation = new ChunkCoordinates(x, firstLadderY, z);
+            delay += 10;
+            validateLadderOrientation();
         }
     }
 
@@ -288,7 +297,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         else
         {
-            //logger.info("Ladder not really working... trying fallback!");
             throw new IllegalStateException("Ladder metadata was " + ladderOrientation);
         }
         buildingMiner.cobbleLocation = new ChunkCoordinates(x - buildingMiner.vectorX, y, z - buildingMiner.vectorZ);
@@ -1398,7 +1406,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         continue;
                     }
 
-                    logger.info("Wanting to place "+material+" at "+curBlock);
+                    logger.info("Wanting to place " + material + " at " + curBlock);
 
                     if (missesItemsInInventory(new ItemStack(material)))
                     {
