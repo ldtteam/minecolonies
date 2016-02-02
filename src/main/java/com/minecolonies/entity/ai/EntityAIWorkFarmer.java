@@ -269,7 +269,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     public void make_land()
     {
-        if (farmAbleLand.size() > 0)
+        if (!farmAbleLand.isEmpty())
         {
             if (world.getBlock(farmAbleLand.get(0).posX, farmAbleLand.get(0).posY - 1, farmAbleLand.get(0).posZ)
                 != Blocks.farmland)
@@ -284,7 +284,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                                                        farmAbleLand.get(0).posZ);
             }
 
-            if (plowedLand.size() == 0 || !plowedLand.contains(new ChunkCoordinates(farmAbleLand.get(0).posX,
+            if (plowedLand.isEmpty() || !plowedLand.contains(new ChunkCoordinates(farmAbleLand.get(0).posX,
                                                                                     farmAbleLand.get(0).posY,
                                                                                     farmAbleLand.get(0).posZ)))
             {
@@ -310,7 +310,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     private void planting()
     {
         //Only able to plant wheat, pumpkin and melon, Potatoe and carrot
-        if (plowedLand.size() > 0)
+        if (!plowedLand.isEmpty())
         {
             if (world.getBlock(plowedLand.get(0).posX, plowedLand.get(0).posY - 1, plowedLand.get(0).posZ)
                 == Blocks.farmland)
@@ -370,7 +370,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             }
             else
             {
-                if (farmAbleLand.size() == 0 || !farmAbleLand.contains(new ChunkCoordinates(plowedLand.get(0).posX,
+                if (farmAbleLand.isEmpty() || !farmAbleLand.contains(new ChunkCoordinates(plowedLand.get(0).posX,
                                                                                             plowedLand.get(0).posY,
                                                                                             plowedLand.get(0).posZ)))
                 {
@@ -383,7 +383,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         }
         else
         {
-            if (plowedLand.size() == 0 && crops.size() == 0)
+            if (plowedLand.isEmpty() && crops.isEmpty())
             {
                 job.setStage(Stage.SEARCHING_LAND);
             }
@@ -396,7 +396,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
 
     private void harvesting()
     {
-        if (crops.size() > 0)
+        if (!crops.isEmpty())
         {
             delay = 10;
 
@@ -454,7 +454,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         }
         else
         {
-            if (plowedLand.size() == 0 && crops.size() == 0)
+            if (plowedLand.isEmpty() && crops.isEmpty())
             {
                 job.setStage(Stage.SEARCHING_LAND);
             }
