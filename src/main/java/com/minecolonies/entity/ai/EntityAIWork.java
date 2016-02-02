@@ -92,6 +92,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         //Update torch, seeds etc. in chestbelt etc.
         renderChestBelt();
 
+        //Wait for delay if it exists
         if (waitingForSomething())
         {
             return;
@@ -144,6 +145,27 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     }
 
     /**
+     * Remove the current working block and it's delay.
+     */
+    protected void clearWorkTarget()
+    {
+        this.currentStandingLocation = null;
+        this.currentWorkingLocation = null;
+        this.delay = 0;
+        this.errorState = ErrorState.NONE;
+    }
+
+    /**
+     * Sets the block the AI is currently walking to.
+     *
+     * @param stand where to walk to
+     */
+    protected void walkToBlock(ChunkCoordinates stand)
+    {
+        workOnBlock(null, stand, 1);
+    }
+
+    /**
      * Sets the block the AI is currently working on.
      * This block will receive animation hits on delay.
      *
@@ -157,16 +179,6 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         this.currentStandingLocation = stand;
         this.delay = timeout;
         this.errorState = ErrorState.WAITING;
-    }
-
-    /**
-     * Remove the current working block and it's delay.
-     */
-    protected void clearWorkTarget(){
-        this.currentStandingLocation = null;
-        this.currentWorkingLocation = null;
-        this.delay = 0;
-        this.errorState = ErrorState.NONE;
     }
 
     private enum ErrorState

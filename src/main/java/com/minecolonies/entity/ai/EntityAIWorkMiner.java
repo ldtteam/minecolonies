@@ -453,7 +453,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         currentStandingPosition = safeStand;
         if (!hasDelayed)
         {
-            delay += getBlockMiningDelay(curBlock, blockToMine);
+            delay = getBlockMiningDelay(curBlock, blockToMine);
+            workOnBlock(currentWorkingLocation,currentStandingPosition,delay);
             hasDelayed = true;
             return true;
         }
@@ -1730,12 +1731,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     @Override
     public void workOnTask()
     {
-
-        //Mining animation while delay is decreasing.
-        if (waitingForSomething())
-        {
-            return;
-        }
 
         //Miner wants to work but is not at building
         if (job.getStage() == Stage.START_WORKING)
