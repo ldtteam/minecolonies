@@ -1,13 +1,11 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
@@ -62,6 +60,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     @Override
     public void startExecuting(){
         worker.setStatus(EntityCitizen.Status.WORKING);
+        logger.info("Starting AI job "+job.getName());
     }
 
     @Override

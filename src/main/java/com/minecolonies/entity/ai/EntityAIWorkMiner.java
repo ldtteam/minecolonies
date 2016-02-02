@@ -72,12 +72,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         super(job);
     }
 
-    @Override
-    public void startExecuting()
-    {
-        worker.setStatus(EntityCitizen.Status.WORKING);
-        updateTask();
-    }
 
     private String getRenderMetaTorch()
     {
