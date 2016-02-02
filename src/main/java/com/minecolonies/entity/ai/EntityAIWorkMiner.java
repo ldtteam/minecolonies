@@ -10,7 +10,6 @@ import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -38,28 +37,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 2;
     private static final int NODE_DISTANCE = 7;
 
-    /**
-     * Add blocks to this list to exclude mine checks.
-     * They can be mined for free. (be cautions with this)
-     * <p>
-     * Reasoning:
-     * - Blocks.monster_egg:
-     * Forge handling of this is a bit bogus, will later be removed.
-     */
-    private static final Set<Block> canBeMined = new HashSet<>(Arrays.asList(Blocks.air,
-                                                                             Blocks.fence,
-                                                                             Blocks.planks,
-                                                                             Blocks.ladder,
-                                                                             Blocks.torch,
-                                                                             Blocks.chest,
-                                                                             Blocks.mob_spawner,
-                                                                             Blocks.grass,
-                                                                             Blocks.tallgrass,
-                                                                             Blocks.cactus,
-                                                                             Blocks.log,
-                                                                             Blocks.log2,
-                                                                             Blocks.monster_egg));
-
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
@@ -75,12 +52,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
      * The time in ticks until the next action is made
      */
     private int delay = 0;
-    private String NEED_ITEM;
     /**
      * If we have waited one delay
      */
     private boolean hasDelayed = false;
-    private Block hasToMine = Blocks.cobblestone;
 
     private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
     private List<ItemStack> itemsNeeded = new ArrayList<>();
@@ -1911,51 +1886,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         logger.info("[" + job.getStage() + "] Stopping here, old code ahead...");
         delay += 100;
-    }
-
-    private boolean isInHut(BuildingMiner b, Block block)
-    {
-        return isInHut(b, InventoryUtils.getItemFromBlock(block));
-    }
-
-    private boolean isInHut(BuildingMiner b, Item item)
-    {
-
-        if (b.getTileEntity() == null)
-        {
-            return false;
-        }
-
-        if (item == Items.coal && isInHut(b, Blocks.torch))
-        {
-            return true;
-        }
-
-        int size = b.getTileEntity().getSizeInventory();
-
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = b.getTileEntity().getStackInSlot(i);
-            if (stack != null)
-            {
-                Item content = stack.getItem();
-                if (content.equals(item) || content.getToolClasses(stack).contains(NEED_ITEM))
-                {
-                    ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
-
-                    if (returnStack == null)
-                    {
-                        b.getTileEntity().decrStackSize(i, stack.stackSize);
-                    }
-                    else
-                    {
-                        b.getTileEntity().decrStackSize(i, stack.stackSize - returnStack.stackSize);
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     int getMiningLevel(ItemStack stack, String tool)
