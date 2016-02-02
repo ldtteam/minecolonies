@@ -68,6 +68,7 @@ public class ColonyView implements IColony
     }
     //    public World getWorld() { return world != null ? world.get() : null; }
 
+    @Override
     public String getName() {
         return name;
     }
