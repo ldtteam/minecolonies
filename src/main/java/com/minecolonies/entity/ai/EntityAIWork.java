@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.InventoryFunctions;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -171,26 +172,22 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     protected boolean isInHut(ItemStack is)
     {
         final BuildingWorker buildingMiner = getOwnBuilding();
-        if (buildingMiner.getTileEntity() == null)
-        {
-            return false;
-        }
-        int size = buildingMiner.getTileEntity().getSizeInventory();
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
-            if (stack != null)
-            {
-                Item content = stack.getItem();
-                if (content == is.getItem())
-                {
-                    takeItemStackFromChest(i);
-                    return true;
-                }
-            }
-        }
-        return false;
+        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(),
+                                                        (slot,stack) -> {
+                                         if (stack != null)
+                                         {
+                                             Item content = stack.getItem();
+                                             if (content == is.getItem())
+                                             {
+                                                 takeItemStackFromChest(slot);
+                                                 return true;
+                                             }
+                                         }
+                                         return false;
+                                     }
+                                                       );
     }
+
 
     /**
      * Looks for a shovel to use.
@@ -202,21 +199,16 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     protected boolean isShovelInHut()
     {
         BuildingWorker buildingMiner = getOwnBuilding();
-        if (buildingMiner.getTileEntity() == null)
-        {
-            return false;
-        }
-        int size = buildingMiner.getTileEntity().getSizeInventory();
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
+        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(),
+                                                        (slot,stack) -> {
             if (stack != null && isShovel(stack))
             {
-                takeItemStackFromChest(i);
+                takeItemStackFromChest(slot);
                 return true;
             }
-        }
-        return false;
+            return false;
+        });
+
     }
 
     /**
@@ -230,23 +222,17 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     protected boolean isPickaxeInHut(int minlevel)
     {
         BuildingWorker buildingMiner = getOwnBuilding();
-        if (buildingMiner.getTileEntity() == null)
-        {
-            return false;
-        }
-        IInventory chest = buildingMiner.getTileEntity();
-        int size = chest.getSizeInventory();
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = chest.getStackInSlot(i);
+        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(),
+                                                        (slot,stack) -> {
             int level = Utils.getMiningLevel(stack, PICKAXE);
             if (stack != null && Utils.checkIfPickaxeQualifies(minlevel, level))
             {
-                takeItemStackFromChest(i);
+                takeItemStackFromChest(slot);
                 return true;
             }
-        }
+
         return false;
+        });
     }
 
     /**
