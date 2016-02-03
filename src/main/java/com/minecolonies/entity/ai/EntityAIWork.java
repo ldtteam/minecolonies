@@ -6,6 +6,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
@@ -159,7 +160,14 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     }
 
 
-
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     * @param is the type of item requested (amount is ignored)
+     * @return true if a stack of that type was found
+     */
     protected boolean isInHut(ItemStack is)
     {
         final BuildingWorker buildingMiner = getOwnBuilding();
@@ -184,6 +192,13 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         return false;
     }
 
+    /**
+     * Looks for a shovel to use.
+     * The shovel will be taken from the chest.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the shovel.
+     * @return true if a shovel was found
+     */
     protected boolean isShovelInHut()
     {
         BuildingWorker buildingMiner = getOwnBuilding();
@@ -204,6 +219,14 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         return false;
     }
 
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     * The pickaxe will be taken from the chest.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the pickaxe.
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
+     */
     protected boolean isPickaxeInHut(int minlevel)
     {
         BuildingWorker buildingMiner = getOwnBuilding();
@@ -211,11 +234,12 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         {
             return false;
         }
-        int size = buildingMiner.getTileEntity().getSizeInventory();
+        IInventory chest = buildingMiner.getTileEntity();
+        int size = chest.getSizeInventory();
         for (int i = 0; i < size; i++)
         {
-            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
-            int level = getMiningLevel(stack, PICKAXE);
+            ItemStack stack = chest.getStackInSlot(i);
+            int level = Utils.getMiningLevel(stack, PICKAXE);
             if (stack != null && Utils.checkIfPickaxeQualifies(minlevel, level))
             {
                 takeItemStackFromChest(i);
@@ -233,11 +257,6 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     protected void takeItemStackFromChest(int slot)
     {
         InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(),worker.getInventory(),slot);
-    }
-
-    protected int getMiningLevel(ItemStack stack, String tool)
-    {
-        return Utils.getMiningLevel(stack,tool);
     }
 
     /**
@@ -274,7 +293,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      */
     protected boolean isPickaxe(ItemStack itemStack)
     {
-        return getMiningLevel(itemStack, PICKAXE) >= 0;
+        return Utils.getMiningLevel(itemStack, PICKAXE) >= 0;
     }
 
     /**
@@ -282,7 +301,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      */
     protected boolean isShovel(ItemStack itemStack)
     {
-        return getMiningLevel(itemStack, SHOVEL) >= 0;
+        return Utils.getMiningLevel(itemStack, SHOVEL) >= 0;
     }
 
     public static final String PICKAXE = "pickaxe";

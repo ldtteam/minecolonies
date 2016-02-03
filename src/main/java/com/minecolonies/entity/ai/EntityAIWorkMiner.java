@@ -381,7 +381,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
         ItemStack tool = worker.getHeldItem();
 
-        if (curBlock.getHarvestLevel(0) < getMiningLevel(tool, curBlock.getHarvestTool(0)))
+        if (curBlock.getHarvestLevel(0) < Utils.getMiningLevel(tool, curBlock.getHarvestTool(0)))
         {
             //We have to high of a tool...
             //TODO: request lower tier tools
@@ -581,7 +581,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         boolean twoPickaxes = false;
         for (ItemStack is : InventoryUtils.getInventoryAsList(worker.getInventory()))
         {
-            int level = getMiningLevel(is, PICKAXE);
+            int level = Utils.getMiningLevel(is, PICKAXE);
             //Lower tools preferred
             if (Utils.checkIfPickaxeQualifies(minlevel, level))
             {
@@ -1660,7 +1660,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack item = inventory.getStackInSlot(i);
-            int level = getMiningLevel(item, tool);
+            int level = Utils.getMiningLevel(item, tool);
             if (level >= required && level < bestLevel)
             {
                 bestSlot = i;
