@@ -611,7 +611,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
             if (stack != null && isShovel(stack))
             {
-                takeItemStackFromChest(buildingMiner.getTileEntity(), stack, i);
+                takeItemStackFromChest(buildingMiner.getTileEntity(), i);
                 return true;
             }
         }
@@ -632,7 +632,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             int level = getMiningLevel(stack, PICKAXE);
             if (stack != null && checkIfPickaxeQualifies(minlevel, level))
             {
-                takeItemStackFromChest(buildingMiner.getTileEntity(), stack, i);
+                takeItemStackFromChest(buildingMiner.getTileEntity(), i);
                 return true;
             }
         }

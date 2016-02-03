@@ -195,6 +195,10 @@ public class InventoryUtils {
         return -1;
     }
 
+    public static boolean takeStackInSlot(IInventory sendingInv, IInventory receivingInv, int slotID){
+        return takeStackInSlot(sendingInv, receivingInv, slotID, 1, true);
+    }
+
     public static boolean takeStackInSlot(IInventory sendingInv, IInventory receivingInv, int slotID, int amount)
     {
         return takeStackInSlot(sendingInv, receivingInv, slotID, amount, false);

@@ -177,7 +177,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
                 Item content = stack.getItem();
                 if (content == is.getItem())
                 {
-                    takeItemStackFromChest(buildingMiner.getTileEntity(), stack, i);
+                    takeItemStackFromChest(buildingMiner.getTileEntity(), i);
                     return true;
                 }
             }
@@ -185,17 +185,9 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         return false;
     }
 
-    protected void takeItemStackFromChest(IInventory chest, ItemStack stack, int slot)
+    protected void takeItemStackFromChest(IInventory chest, int slot)
     {
-        ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
-        if (returnStack == null)
-        {
-            chest.decrStackSize(slot, stack.stackSize);
-        }
-        else
-        {
-            chest.decrStackSize(slot, stack.stackSize - returnStack.stackSize);
-        }
+        InventoryUtils.takeStackInSlot(chest,worker.getInventory(),slot);
     }
 
     protected int getMiningLevel(ItemStack stack, String tool)
