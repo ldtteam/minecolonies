@@ -216,6 +216,33 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         return worker.getWorkBuilding();
     }
 
+    /**
+     * Checks if this tool is useful for the miner.
+     */
+    protected boolean isMiningTool(ItemStack itemStack)
+    {
+        return isPickaxe(itemStack) || isShovel(itemStack);
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Pickaxe.
+     */
+    protected boolean isPickaxe(ItemStack itemStack)
+    {
+        return getMiningLevel(itemStack, PICKAXE) >= 0;
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Shovel.
+     */
+    protected boolean isShovel(ItemStack itemStack)
+    {
+        return getMiningLevel(itemStack, SHOVEL) >= 0;
+    }
+
+    public static final String PICKAXE = "pickaxe";
+    public static final String SHOVEL = "shovel";
+
     private boolean waitingForSomething()
     {
         if (delay > 0)

@@ -147,30 +147,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return false;
     }
 
-    /**
-     * Checks if this tool is useful for the miner.
-     */
-    private boolean isMiningTool(ItemStack itemStack)
-    {
-        return isPickaxe(itemStack) || isShovel(itemStack);
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Pickaxe.
-     */
-    private boolean isPickaxe(ItemStack itemStack)
-    {
-        return getMiningLevel(itemStack, PICKAXE) >= 0;
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Shovel.
-     */
-    private boolean isShovel(ItemStack itemStack)
-    {
-        return getMiningLevel(itemStack, SHOVEL) >= 0;
-    }
-
     private void lookForLadder()
     {
         BuildingMiner buildingMiner = getOwnBuilding();
