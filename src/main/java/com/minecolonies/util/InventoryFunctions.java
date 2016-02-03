@@ -3,8 +3,7 @@ package com.minecolonies.util;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.function.*;
 
 /**
  * Java8 functional interfaces for {@link net.minecraft.inventory.IInventory}
@@ -17,14 +16,33 @@ public class InventoryFunctions
 
     /**
      * Search for a stack in an Inventory matching the predicate.
+     * @param inventory the inventory to search in
+     * @param tester the function to use for testing slots
+     * @param action the function to use if a slot matches
+     * @return true if it found a stack
+     */
+    public static boolean matchFirstInInventory(IInventory inventory, Predicate<ItemStack> tester,
+                                                Consumer<Integer> action)
+    {
+        return matchFirstInInventory(inventory, inv -> slot -> stack -> {
+            if(tester.test(stack)){
+                action.accept(slot);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    /**
+     * Search for a stack in an Inventory matching the predicate.
      * (IInventory, Integer) -> Boolean
      * @param inventory the inventory to search in
      * @param tester the function to use for testing slots
      * @return true if it found a stack
      */
-    public static boolean matchFirstInInventory(IInventory inventory, BiFunction<Integer,ItemStack, Boolean> tester)
+    public static boolean matchFirstInInventory(IInventory inventory, BiPredicate<Integer,ItemStack> tester)
     {
-        return matchFirstInInventory(inventory, inv -> slot -> stack -> tester.apply(slot,stack));
+        return matchFirstInInventory(inventory, inv -> slot -> stack -> tester.test(slot,stack));
     }
 
     /**
@@ -36,8 +54,7 @@ public class InventoryFunctions
     private static boolean matchFirstInInventory(IInventory inventory,
                                                 Function<IInventory,
                                                         Function<Integer,
-                                                                Function<ItemStack,
-                                                                        Boolean>>> tester)
+                                                                Predicate<ItemStack>>> tester)
     {
         return matchInInventory(inventory,tester,true);
     }
@@ -53,8 +70,7 @@ public class InventoryFunctions
     private static boolean matchInInventory(IInventory inventory,
                                            Function<IInventory,
                                                    Function<Integer,
-                                                           Function<ItemStack,
-                                                                   Boolean>>> tester,
+                                                           Predicate<ItemStack>>> tester,
                                            boolean stopAfterFirst)
     {
         if (inventory == null)
@@ -67,7 +83,7 @@ public class InventoryFunctions
         {
             ItemStack stack = inventory.getStackInSlot(slot);
             //Unchain the function and apply it
-            if (tester.apply(inventory).apply(slot).apply(stack))
+            if (tester.apply(inventory).apply(slot).test(stack))
             {
                 foundOne = true;
                 if (stopAfterFirst)

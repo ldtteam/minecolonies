@@ -7,7 +7,6 @@ import com.minecolonies.util.InventoryFunctions;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -169,34 +168,15 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
-    protected boolean isInHut(ItemStack is)
+    protected boolean isInHut(final ItemStack is)
     {
         final BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(),
-                                                        (slot, stack) -> {
-                                                            if (stack != null)
-                                                            {
-                                                                Item content = stack.getItem();
-                                                                if (content == is.getItem())
-                                                                {
-                                                                    takeItemStackFromChest(slot);
-                                                                    return true;
-                                                                }
-                                                            }
-                                                            return false;
-                                                        }
-                                                       );
-    }
-
-    /**
-     * Takes whatever is in that slot of the workers chest and puts it in his inventory.
-     * If the inventory is full, only the fitting part will be moved.
-     *
-     * @param slot the slot in the buildings inventory
-     */
-    protected void takeItemStackFromChest(int slot)
-    {
-        InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        is::isItemEqual,
+                        this::takeItemStackFromChest
+                                      );
     }
 
     /**
@@ -260,6 +240,17 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     }
 
     /**
+     * Takes whatever is in that slot of the workers chest and puts it in his inventory.
+     * If the inventory is full, only the fitting part will be moved.
+     *
+     * @param slot the slot in the buildings inventory
+     */
+    protected void takeItemStackFromChest(int slot)
+    {
+        InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
+    }
+
+    /**
      * Looks for a shovel to use.
      * The shovel will be taken from the chest.
      * Make sure that the worker stands next the chest to not break immersion.
@@ -270,24 +261,12 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     protected boolean isShovelInHut()
     {
         BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(),
-                                                        (slot, stack) -> {
-                                                            if (stack != null && isShovel(stack))
-                                                            {
-                                                                takeItemStackFromChest(slot);
-                                                                return true;
-                                                            }
-                                                            return false;
-                                                        });
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        this::isShovel,
+                        this::takeItemStackFromChest);
 
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Shovel.
-     */
-    protected boolean isShovel(ItemStack itemStack)
-    {
-        return Utils.getMiningLevel(itemStack, SHOVEL) >= 0;
     }
 
     /**
@@ -302,18 +281,15 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     protected boolean isPickaxeInHut(int minlevel)
     {
         BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(),
-                                                        (slot, stack) -> {
-                                                            int level = Utils.getMiningLevel(stack, PICKAXE);
-                                                            if (stack != null && Utils.checkIfPickaxeQualifies(minlevel,
-                                                                                                               level))
-                                                            {
-                                                                takeItemStackFromChest(slot);
-                                                                return true;
-                                                            }
-
-                                                            return false;
-                                                        });
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        stack -> Utils.checkIfPickaxeQualifies(
+                                minlevel,
+                                Utils.getMiningLevel(
+                                        stack,
+                                        PICKAXE)),
+                        this::takeItemStackFromChest);
     }
 
     /**
@@ -322,6 +298,14 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     protected boolean isMiningTool(ItemStack itemStack)
     {
         return isPickaxe(itemStack) || isShovel(itemStack);
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Shovel.
+     */
+    protected boolean isShovel(ItemStack itemStack)
+    {
+        return Utils.getMiningLevel(itemStack, SHOVEL) >= 0;
     }
 
     /**
