@@ -216,38 +216,13 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         {
             ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
             int level = getMiningLevel(stack, PICKAXE);
-            if (stack != null && checkIfPickaxeQualifies(minlevel, level))
+            if (stack != null && Utils.checkIfPickaxeQualifies(minlevel, level))
             {
                 takeItemStackFromChest(i);
                 return true;
             }
         }
         return false;
-    }
-
-    /**
-     * Checks if a pickaxe can be used for that mining level.
-     * Be aware, it will return false for mining stone
-     * with an expensive pickaxe. So check for that if you
-     * need it the other way around.
-     * @param minlevel the level needs to have
-     * @param level the level it has
-     * @return if the pickaxe qualifies
-     */
-    protected boolean checkIfPickaxeQualifies(int minlevel, int level)
-    {
-        //Minecraft handles this as "everything is allowed"
-        if (minlevel < 0)
-        {
-            return true;
-        }
-        if (minlevel == 0)
-        {
-            //Code to not overuse on high level pickaxes
-            return level >= 0 && level <= 1;
-
-        }
-        return level >= minlevel;
     }
 
     /**

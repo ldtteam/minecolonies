@@ -9,8 +9,6 @@ import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
@@ -585,7 +583,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             int level = getMiningLevel(is, PICKAXE);
             //Lower tools preferred
-            if (checkIfPickaxeQualifies(minlevel, level))
+            if (Utils.checkIfPickaxeQualifies(minlevel, level))
             {
                 needsPickaxe = false;
                 return;
