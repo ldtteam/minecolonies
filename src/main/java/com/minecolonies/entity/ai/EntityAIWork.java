@@ -7,7 +7,6 @@ import com.minecolonies.util.InventoryFunctions;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
@@ -21,6 +20,8 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
 
 public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
 {
+    public static final String PICKAXE = "pickaxe";
+    public static final String SHOVEL = "shovel";
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
     private static Logger logger = Utils.generateLoggerForClass(EntityAIWork.class);
     protected final JOB job;
@@ -48,11 +49,9 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     private ChunkCoordinates currentWorkingLocation = null;
     private int delay = 0;
     private ChunkCoordinates currentStandingLocation = null;
-
     private boolean needsShovel = false;
     private boolean needsPickaxe = false;
     private int needsPickaxeLevel = -1;
-
     private ChatSpamFilter chatSpamFilter;
 
     public EntityAIWork(JOB job)
@@ -63,7 +62,6 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         this.world = this.worker.worldObj;
         this.chatSpamFilter = new ChatSpamFilter(worker);
     }
-
 
     @Override
     public boolean shouldExecute()
@@ -143,9 +141,11 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
 
     /**
      * Request an Item without spamming the chat.
+     *
      * @param chat the Item Name
      */
-    protected void requestWithoutSpam(String chat){
+    protected void requestWithoutSpam(String chat)
+    {
         chatSpamFilter.requestWithoutSpam(chat);
     }
 
@@ -160,12 +160,12 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         itemsCurrentlyNeeded = new ArrayList<>(job.getItemsNeeded());
     }
 
-
     /**
      * Finds the first @see ItemStack the type of {@code is}.
      * It will be taken from the chest and placed in the workers inventory.
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
+     *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
@@ -173,76 +173,30 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     {
         final BuildingWorker buildingMiner = getOwnBuilding();
         return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(),
-                                                        (slot,stack) -> {
-                                         if (stack != null)
-                                         {
-                                             Item content = stack.getItem();
-                                             if (content == is.getItem())
-                                             {
-                                                 takeItemStackFromChest(slot);
-                                                 return true;
-                                             }
-                                         }
-                                         return false;
-                                     }
+                                                        (slot, stack) -> {
+                                                            if (stack != null)
+                                                            {
+                                                                Item content = stack.getItem();
+                                                                if (content == is.getItem())
+                                                                {
+                                                                    takeItemStackFromChest(slot);
+                                                                    return true;
+                                                                }
+                                                            }
+                                                            return false;
+                                                        }
                                                        );
-    }
-
-
-    /**
-     * Looks for a shovel to use.
-     * The shovel will be taken from the chest.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the shovel.
-     * @return true if a shovel was found
-     */
-    protected boolean isShovelInHut()
-    {
-        BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(),
-                                                        (slot,stack) -> {
-            if (stack != null && isShovel(stack))
-            {
-                takeItemStackFromChest(slot);
-                return true;
-            }
-            return false;
-        });
-
-    }
-
-    /**
-     * Looks for a pickaxe to mine a block of {@code minLevel}.
-     * The pickaxe will be taken from the chest.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the pickaxe.
-     * @param minlevel the needed pickaxe level
-     * @return true if a pickaxe was found
-     */
-    protected boolean isPickaxeInHut(int minlevel)
-    {
-        BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(),
-                                                        (slot,stack) -> {
-            int level = Utils.getMiningLevel(stack, PICKAXE);
-            if (stack != null && Utils.checkIfPickaxeQualifies(minlevel, level))
-            {
-                takeItemStackFromChest(slot);
-                return true;
-            }
-
-        return false;
-        });
     }
 
     /**
      * Takes whatever is in that slot of the workers chest and puts it in his inventory.
      * If the inventory is full, only the fitting part will be moved.
+     *
      * @param slot the slot in the buildings inventory
      */
     protected void takeItemStackFromChest(int slot)
     {
-        InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(),worker.getInventory(),slot);
+        InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
     }
 
     /**
@@ -267,40 +221,14 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     }
 
     /**
-     * Checks if this tool is useful for the miner.
-     */
-    protected boolean isMiningTool(ItemStack itemStack)
-    {
-        return isPickaxe(itemStack) || isShovel(itemStack);
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Pickaxe.
-     */
-    protected boolean isPickaxe(ItemStack itemStack)
-    {
-        return Utils.getMiningLevel(itemStack, PICKAXE) >= 0;
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Shovel.
-     */
-    protected boolean isShovel(ItemStack itemStack)
-    {
-        return Utils.getMiningLevel(itemStack, SHOVEL) >= 0;
-    }
-
-    public static final String PICKAXE = "pickaxe";
-    public static final String SHOVEL = "shovel";
-
-    /**
      * This method will return true if the AI is waiting for something.
      * In that case, don't execute any more AI code, until it returns false.
      * Call this exactly once per tick to get the delay right.
      * The worker will move and animate correctly while he waits.
+     *
+     * @return true if we have to wait for something
      * @see #currentStandingLocation @see #currentWorkingLocation
      * @see #DEFAULT_RANGE_FOR_DELAY @see #delay
-     * @return true if we have to wait for something
      */
     private boolean waitingForSomething()
     {
@@ -332,13 +260,86 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     }
 
     /**
+     * Looks for a shovel to use.
+     * The shovel will be taken from the chest.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the shovel.
+     *
+     * @return true if a shovel was found
+     */
+    protected boolean isShovelInHut()
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(),
+                                                        (slot, stack) -> {
+                                                            if (stack != null && isShovel(stack))
+                                                            {
+                                                                takeItemStackFromChest(slot);
+                                                                return true;
+                                                            }
+                                                            return false;
+                                                        });
+
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Shovel.
+     */
+    protected boolean isShovel(ItemStack itemStack)
+    {
+        return Utils.getMiningLevel(itemStack, SHOVEL) >= 0;
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     * The pickaxe will be taken from the chest.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the pickaxe.
+     *
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
+     */
+    protected boolean isPickaxeInHut(int minlevel)
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(),
+                                                        (slot, stack) -> {
+                                                            int level = Utils.getMiningLevel(stack, PICKAXE);
+                                                            if (stack != null && Utils.checkIfPickaxeQualifies(minlevel,
+                                                                                                               level))
+                                                            {
+                                                                takeItemStackFromChest(slot);
+                                                                return true;
+                                                            }
+
+                                                            return false;
+                                                        });
+    }
+
+    /**
+     * Checks if this tool is useful for the miner.
+     */
+    protected boolean isMiningTool(ItemStack itemStack)
+    {
+        return isPickaxe(itemStack) || isShovel(itemStack);
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Pickaxe.
+     */
+    protected boolean isPickaxe(ItemStack itemStack)
+    {
+        return Utils.getMiningLevel(itemStack, PICKAXE) >= 0;
+    }
+
+    /**
      * Sets the block the AI is currently walking to.
      *
      * @param stand where to walk to
      */
     protected boolean walkToBlock(ChunkCoordinates stand)
     {
-        if(!Utils.isWorkerAtSite(worker,stand.posX,stand.posY,stand.posZ,DEFAULT_RANGE_FOR_DELAY))
+        if (!Utils.isWorkerAtSite(worker, stand.posX, stand.posY, stand.posZ, DEFAULT_RANGE_FOR_DELAY))
         {
             workOnBlock(null, stand, 1);
             return true;
