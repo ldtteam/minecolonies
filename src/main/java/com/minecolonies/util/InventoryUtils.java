@@ -209,9 +209,10 @@ public class InventoryUtils {
      * @return true if itemstack in specified {@code slotID} is not null and if {@code receivingInv} received
      * at least {@code amount} of itemstack
      */
-    public static boolean takeStackInSlot(IInventory sendingInv, IInventory receivingInv, int slotID, int amount, boolean takeAll)
+    public static boolean takeStackInSlot(IInventory sendingInv, IInventory receivingInv,
+                                          int slotID, int amount, boolean takeAll)
     {
-        if(receivingInv != null && slotID >= 0 && amount >= 0)
+        if(receivingInv != null && sendingInv != null && slotID >= 0 && amount >= 0)
         {
             ItemStack stack = sendingInv.decrStackSize(slotID, amount); // gets itemstack in slot, and decreases stacksize
             if(stack != null) // stack is null if no itemstack was in slot

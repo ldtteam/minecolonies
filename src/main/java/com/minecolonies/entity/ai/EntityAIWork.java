@@ -185,6 +185,13 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         return false;
     }
 
+    /**
+     * Takes whatever is in that slot of the workers chest and puts it in his inventory.
+     * If the inventory is full, only the fitting part will be moved.
+     * TODO: change to implicitly use the workers chest.
+     * @param chest
+     * @param slot
+     */
     protected void takeItemStackFromChest(IInventory chest, int slot)
     {
         InventoryUtils.takeStackInSlot(chest,worker.getInventory(),slot);
@@ -243,6 +250,15 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     public static final String PICKAXE = "pickaxe";
     public static final String SHOVEL = "shovel";
 
+    /**
+     * This method will return true if the AI is waiting for something.
+     * In that case, don't execute any more AI code, until it returns false.
+     * Call this exactly once per tick to get the delay right.
+     * The worker will move and animate correctly while he waits.
+     * @see #currentStandingLocation @see #currentWorkingLocation
+     * @see #DEFAULT_RANGE_FOR_DELAY @see #delay
+     * @return true if we have to wait for something
+     */
     private boolean waitingForSomething()
     {
         if (delay > 0)
@@ -303,6 +319,12 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         this.errorState = ErrorState.WAITING;
     }
 
+    /**
+     * A displayable status showing why execution is not passed to the AI code.
+     * TODO: We have to find a better name than ErrorState as the states
+     * are no errors per se but are things to be resolved before
+     * AI execution can be resumed.
+     */
     private enum ErrorState
     {
         NONE,
