@@ -322,8 +322,8 @@ public class CitizenData
 
 
     /**
-     * The Building View is the client-side representation of a Building.
-     * Views contain the Building's data that is relevant to a Client, in a more client-friendly form
+     * The CitizenData View is the client-side representation of a CitizenData.
+     * Views contain the CitizenData's data that is relevant to a Client, in a more client-friendly form
      * Mutable operations on a View result in a message to the server to perform the operation
      */
     public static class View
