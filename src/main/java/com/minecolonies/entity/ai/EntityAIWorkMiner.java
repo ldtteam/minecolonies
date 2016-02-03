@@ -574,66 +574,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return nextBlockToMine;
     }
 
-    private boolean isShovelInHut()
-    {
-        BuildingMiner buildingMiner = getOwnBuilding();
-        if (buildingMiner.getTileEntity() == null)
-        {
-            return false;
-        }
-        int size = buildingMiner.getTileEntity().getSizeInventory();
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
-            if (stack != null && isShovel(stack))
-            {
-                takeItemStackFromChest(buildingMiner.getTileEntity(), i);
-                return true;
-            }
-        }
-        return false;
-    }
 
-    private boolean isPickaxeInHut(int minlevel)
-    {
-        BuildingMiner buildingMiner = getOwnBuilding();
-        if (buildingMiner.getTileEntity() == null)
-        {
-            return false;
-        }
-        int size = buildingMiner.getTileEntity().getSizeInventory();
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
-            int level = getMiningLevel(stack, PICKAXE);
-            if (stack != null && checkIfPickaxeQualifies(minlevel, level))
-            {
-                takeItemStackFromChest(buildingMiner.getTileEntity(), i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean checkIfPickaxeQualifies(int minlevel, int level)
-    {
-        if (minlevel < 0)
-        {
-            return true;
-        }
-        if (minlevel == 0)
-        {
-            if (level >= 0 && level <= 1)
-            {
-                return true;
-            }
-        }
-        else if (level >= minlevel)
-        {
-            return true;
-        }
-        return false;
-    }
 
 
     private void checkForPickaxe(int minlevel)

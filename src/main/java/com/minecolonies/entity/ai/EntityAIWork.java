@@ -6,7 +6,6 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
@@ -177,7 +176,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
                 Item content = stack.getItem();
                 if (content == is.getItem())
                 {
-                    takeItemStackFromChest(buildingMiner.getTileEntity(), i);
+                    takeItemStackFromChest(i);
                     return true;
                 }
             }
@@ -185,16 +184,80 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         return false;
     }
 
+    protected boolean isShovelInHut()
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        if (buildingMiner.getTileEntity() == null)
+        {
+            return false;
+        }
+        int size = buildingMiner.getTileEntity().getSizeInventory();
+        for (int i = 0; i < size; i++)
+        {
+            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
+            if (stack != null && isShovel(stack))
+            {
+                takeItemStackFromChest(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean isPickaxeInHut(int minlevel)
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        if (buildingMiner.getTileEntity() == null)
+        {
+            return false;
+        }
+        int size = buildingMiner.getTileEntity().getSizeInventory();
+        for (int i = 0; i < size; i++)
+        {
+            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
+            int level = getMiningLevel(stack, PICKAXE);
+            if (stack != null && checkIfPickaxeQualifies(minlevel, level))
+            {
+                takeItemStackFromChest(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a pickaxe can be used for that mining level.
+     * Be aware, it will return false for mining stone
+     * with an expensive pickaxe. So check for that if you
+     * need it the other way around.
+     * @param minlevel the level needs to have
+     * @param level the level it has
+     * @return if the pickaxe qualifies
+     */
+    protected boolean checkIfPickaxeQualifies(int minlevel, int level)
+    {
+        //Minecraft handles this as "everything is allowed"
+        if (minlevel < 0)
+        {
+            return true;
+        }
+        if (minlevel == 0)
+        {
+            //Code to not overuse on high level pickaxes
+            return level >= 0 && level <= 1;
+
+        }
+        return level >= minlevel;
+    }
+
     /**
      * Takes whatever is in that slot of the workers chest and puts it in his inventory.
      * If the inventory is full, only the fitting part will be moved.
-     * TODO: change to implicitly use the workers chest.
-     * @param chest
-     * @param slot
+     * @param slot the slot in the buildings inventory
      */
-    protected void takeItemStackFromChest(IInventory chest, int slot)
+    protected void takeItemStackFromChest(int slot)
     {
-        InventoryUtils.takeStackInSlot(chest,worker.getInventory(),slot);
+        InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(),worker.getInventory(),slot);
     }
 
     protected int getMiningLevel(ItemStack stack, String tool)
