@@ -22,6 +22,8 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
 {
     public static final String PICKAXE = "pickaxe";
     public static final String SHOVEL = "shovel";
+    public static final String AXE = "axe";
+    public static final String HOE = "hoe";
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
     private static Logger logger = Utils.generateLoggerForClass(EntityAIWork.class);
     protected final JOB job;
@@ -49,11 +51,11 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     private ChunkCoordinates currentWorkingLocation = null;
     private int delay = 0;
     private ChunkCoordinates currentStandingLocation = null;
-    private boolean needsShovel = false;
-    private boolean needsAxe = false;
-    private boolean needsHoe = false;
-    private boolean needsPickaxe = false;
-    private int needsPickaxeLevel = -1;
+    protected boolean needsShovel = false;
+    protected boolean needsAxe = false;
+    protected boolean needsHoe = false;
+    protected boolean needsPickaxe = false;
+    protected int needsPickaxeLevel = -1;
     private ChatSpamFilter chatSpamFilter;
 
     public EntityAIWork(JOB job)
@@ -388,42 +390,69 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
                         this::takeItemStackFromChest);
     }
 
-    protected final void checkForShovel()
+    /**
+     * Ensures that we have a shovel available.
+     * Will set {@code needsShovel} accordingly.
+     *
+     * @return true if we have a shovel
+     */
+    protected final boolean checkForShovel()
     {
-        //Check for a shovel
-        needsShovel = InventoryUtils.getInventoryAsList(worker.getInventory()).stream().noneMatch(Utils::isShovel);
+        return needsShovel = checkForTool(SHOVEL);
+    }
 
-        if (!needsShovel)
+    /**
+     * Ensures that we have an axe available.
+     * Will set {@code needsAxe} accordingly.
+     *
+     * @return true if we have an axe
+     */
+    protected final boolean checkForAxe()
+    {
+        return needsAxe = checkForTool(AXE);
+    }
+
+    /**
+     * Ensures that we have a hoe available.
+     * Will set {@code needsHoe} accordingly.
+     *
+     * @return true if we have a hoe
+     */
+    protected final boolean checkForHoe()
+    {
+        return needsHoe = checkForTool(HOE);
+    }
+
+    private boolean checkForTool(String tool)
+    {
+        boolean needsTool = InventoryFunctions
+                .matchFirstInInventory(
+                        worker.getInventory(),
+                        stack -> Utils.isTool(stack, tool),
+                        InventoryFunctions::doNothing);
+        if (!needsTool)
         {
-            return;
+            return true;
         }
         delay += 20;
         if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
         {
-            if (isShovelInHut())
+            if (isToolInHut(tool))
             {
-                return;
+                return true;
             }
-            requestWithoutSpam("Shovel");
+            requestWithoutSpam(tool);
         }
-
+        return true;
     }
 
-    /**
-     * Looks for a shovel to use.
-     * The shovel will be taken from the chest.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the shovel.
-     *
-     * @return true if a shovel was found
-     */
-    protected final boolean isShovelInHut()
+    private boolean isToolInHut(String tool)
     {
         BuildingWorker buildingMiner = getOwnBuilding();
         return InventoryFunctions
                 .matchFirstInInventory(
                         buildingMiner.getTileEntity(),
-                        Utils::isShovel,
+                        stack -> Utils.isTool(stack, tool),
                         this::takeItemStackFromChest);
 
     }

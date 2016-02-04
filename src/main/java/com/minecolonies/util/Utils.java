@@ -424,7 +424,15 @@ public class Utils
      */
     public static boolean isShovel(ItemStack itemStack)
     {
-        return getMiningLevel(itemStack, EntityAIWork.SHOVEL) >= 0;
+        return isTool(itemStack, EntityAIWork.SHOVEL);
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Tool of type.
+     */
+    public static boolean isTool(ItemStack itemStack, String toolType)
+    {
+        return getMiningLevel(itemStack, toolType) >= 0;
     }
 
     /**
@@ -432,6 +440,6 @@ public class Utils
      */
     public static boolean isPickaxe(ItemStack itemStack)
     {
-        return getMiningLevel(itemStack, EntityAIWork.PICKAXE) >= 0;
+        return isTool(itemStack, EntityAIWork.PICKAXE);
     }
 }

@@ -28,8 +28,6 @@ import java.util.*;
 public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 {
 
-    public static final String PICKAXE = "pickaxe";
-    public static final String SHOVEL = "shovel";
     private static final String RENDER_META_TORCH = "Torch";
     private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
     private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 2;
@@ -53,10 +51,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
      * If we have waited one delay
      */
     private boolean hasDelayed = false;
-
-    private boolean needsShovel = false;
-    private boolean needsPickaxe = false;
-    private int needsPickaxeLevel = -1;
     private Node workingNode = null;
 
 
