@@ -2,8 +2,8 @@ package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
 import com.blockout.views.Window;
-import com.github.lunatrius.schematica.Settings;
-import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.minecolonies.schematica.Settings;
+import com.minecolonies.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.lib.Constants;

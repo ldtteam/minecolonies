@@ -1,4 +1,4 @@
-package com.github.lunatrius.schematica.config;
+package com.minecolonies.schematica.config;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameData;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.lunatrius.schematica.config.PlacementData.PlacementType;
+import static com.minecolonies.schematica.config.PlacementData.PlacementType;
 
 public class BlockInfo
 {

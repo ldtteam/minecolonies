@@ -1,6 +1,6 @@
 package com.minecolonies.proxy;
 
-import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.minecolonies.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.EntityCitizen;

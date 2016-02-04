@@ -1,6 +1,6 @@
-package com.github.lunatrius.schematica.client.renderer;
+package com.minecolonies.schematica.client.renderer;
 
-import com.github.lunatrius.schematica.Settings;
+import com.minecolonies.schematica.Settings;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.Comparator;

@@ -1,8 +1,8 @@
-package com.github.lunatrius.schematica.client.renderer;
+package com.minecolonies.schematica.client.renderer;
 
-import com.github.lunatrius.schematica.Settings;
-import com.github.lunatrius.schematica.config.Config;
-import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.minecolonies.schematica.Settings;
+import com.minecolonies.schematica.config.Config;
+import com.minecolonies.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;

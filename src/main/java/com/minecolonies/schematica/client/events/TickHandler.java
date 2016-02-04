@@ -1,8 +1,8 @@
-package com.github.lunatrius.schematica.client.events;
+package com.minecolonies.schematica.client.events;
 
-import com.github.lunatrius.schematica.Settings;
-import com.github.lunatrius.schematica.client.renderer.RendererSchematicChunk;
-import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.minecolonies.schematica.Settings;
+import com.minecolonies.schematica.client.renderer.RendererSchematicChunk;
+import com.minecolonies.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;

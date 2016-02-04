@@ -1,4 +1,4 @@
-package com.github.lunatrius.schematica.world.schematic;
+package com.minecolonies.schematica.world.schematic;
 
 public class UnsupportedFormatException extends Exception
 {

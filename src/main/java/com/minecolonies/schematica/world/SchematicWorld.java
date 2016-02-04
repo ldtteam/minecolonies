@@ -1,7 +1,7 @@
-package com.github.lunatrius.schematica.world;
+package com.minecolonies.schematica.world;
 
-import com.github.lunatrius.schematica.config.BlockInfo;
-import com.github.lunatrius.schematica.world.storage.EmptySaveHandler;
+import com.minecolonies.schematica.config.BlockInfo;
+import com.minecolonies.schematica.world.storage.EmptySaveHandler;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;

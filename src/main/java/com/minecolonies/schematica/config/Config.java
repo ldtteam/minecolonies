@@ -1,4 +1,4 @@
-package com.github.lunatrius.schematica.config;
+package com.minecolonies.schematica.config;
 
 public class Config {
 

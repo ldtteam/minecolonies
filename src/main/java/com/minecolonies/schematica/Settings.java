@@ -1,7 +1,7 @@
-package com.github.lunatrius.schematica;
+package com.minecolonies.schematica;
 
-import com.github.lunatrius.schematica.client.renderer.RendererSchematicChunk;
-import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.minecolonies.schematica.client.renderer.RendererSchematicChunk;
+import com.minecolonies.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;

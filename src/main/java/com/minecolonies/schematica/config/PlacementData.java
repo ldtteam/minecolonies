@@ -1,4 +1,4 @@
-package com.github.lunatrius.schematica.config;
+package com.minecolonies.schematica.config;
 
 import net.minecraftforge.common.util.ForgeDirection;
 

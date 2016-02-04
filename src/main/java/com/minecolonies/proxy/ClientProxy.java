@@ -1,8 +1,8 @@
 package com.minecolonies.proxy;
 
-import com.github.lunatrius.schematica.client.events.TickHandler;
-import com.github.lunatrius.schematica.client.renderer.RendererSchematicGlobal;
-import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.minecolonies.schematica.client.events.TickHandler;
+import com.minecolonies.schematica.client.renderer.RendererSchematicGlobal;
+import com.minecolonies.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.gui.WindowBuildTool;
 import com.minecolonies.client.gui.WindowCitizen;

@@ -1,6 +1,6 @@
-package com.github.lunatrius.schematica.world.schematic;
+package com.minecolonies.schematica.world.schematic;
 
-import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.minecolonies.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.nbt.CompressedStreamTools;
