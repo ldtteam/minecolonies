@@ -253,48 +253,6 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
     }
 
-    /**
-     * Looks for a shovel to use.
-     * The shovel will be taken from the chest.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the shovel.
-     *
-     * @return true if a shovel was found
-     */
-    protected final boolean isShovelInHut()
-    {
-        BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        Utils::isShovel,
-                        this::takeItemStackFromChest);
-
-    }
-
-    /**
-     * Looks for a pickaxe to mine a block of {@code minLevel}.
-     * The pickaxe will be taken from the chest.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the pickaxe.
-     *
-     * @param minlevel the needed pickaxe level
-     * @return true if a pickaxe was found
-     */
-    protected final boolean isPickaxeInHut(int minlevel)
-    {
-        BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        stack -> Utils.checkIfPickaxeQualifies(
-                                minlevel,
-                                Utils.getMiningLevel(
-                                        stack,
-                                        PICKAXE)),
-                        this::takeItemStackFromChest);
-    }
-
     protected boolean neededForWorker(ItemStack stack)
     {
         return false;
@@ -376,6 +334,98 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         this.currentStandingLocation = stand;
         this.delay = timeout;
         this.errorState = ErrorState.WAITING;
+    }
+
+    /**
+     * Ensures that we have a pickaxe available.
+     * Will set {@code needsPickaxe} accordingly.
+     *
+     * @param minlevel the minimum pickaxe level needed.
+     * @return true if we have a pickaxe
+     */
+    protected final boolean checkForPickaxe(int minlevel)
+    {
+        //Check for a pickaxe
+        needsPickaxe = InventoryFunctions
+                .matchFirstInInventory(
+                        worker.getInventory(),
+                        stack -> Utils.checkIfPickaxeQualifies(
+                                minlevel, Utils.getMiningLevel(stack, PICKAXE)),
+                        InventoryFunctions::doNothing);
+
+        delay += 20;
+        if (needsPickaxe && walkToBuilding())
+        {
+            if (isPickaxeInHut(minlevel))
+            {
+                return true;
+            }
+            requestWithoutSpam("Pickaxe at least level " + minlevel);
+        }
+        return needsPickaxe;
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     * The pickaxe will be taken from the chest.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the pickaxe.
+     *
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
+     */
+    private boolean isPickaxeInHut(int minlevel)
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        stack -> Utils.checkIfPickaxeQualifies(
+                                minlevel,
+                                Utils.getMiningLevel(
+                                        stack,
+                                        PICKAXE)),
+                        this::takeItemStackFromChest);
+    }
+
+    protected final void checkForShovel()
+    {
+        //Check for a shovel
+        needsShovel = InventoryUtils.getInventoryAsList(worker.getInventory()).stream().noneMatch(Utils::isShovel);
+
+        if (!needsShovel)
+        {
+            return;
+        }
+        delay += 20;
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
+        {
+            if (isShovelInHut())
+            {
+                return;
+            }
+            requestWithoutSpam("Shovel");
+        }
+
+    }
+
+    /**
+     * Looks for a shovel to use.
+     * The shovel will be taken from the chest.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the shovel.
+     *
+     * @return true if a shovel was found
+     */
+    protected final boolean isShovelInHut()
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        Utils::isShovel,
+                        this::takeItemStackFromChest);
+
     }
 
     /**

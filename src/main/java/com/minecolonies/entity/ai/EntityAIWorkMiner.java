@@ -527,64 +527,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return nextBlockToMine;
     }
 
-
-    private void checkForPickaxe(int minlevel)
-    {
-        //Check for a pickaxe
-        boolean twoPickaxes = false;
-        for (ItemStack is : InventoryUtils.getInventoryAsList(worker.getInventory()))
-        {
-            int level = Utils.getMiningLevel(is, PICKAXE);
-            //Lower tools preferred
-            if (Utils.checkIfPickaxeQualifies(minlevel, level))
-            {
-                needsPickaxe = false;
-                return;
-            }
-            //When we have two Pickaxes, ignore efficiency
-            if (level >= minlevel)
-            {
-                if (twoPickaxes)
-                {
-                    needsPickaxe = false;
-                    return;
-                }
-                twoPickaxes = true;
-            }
-        }
-        delay += 20;
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
-        {
-            if (isPickaxeInHut(minlevel))
-            {
-                return;
-            }
-            requestWithoutSpam("Pickaxe at least level " + minlevel);
-        }
-
-    }
-
-    private void checkForShovel()
-    {
-        //Check for a shovel
-        needsShovel = InventoryUtils.getInventoryAsList(worker.getInventory()).stream().noneMatch(Utils::isShovel);
-
-        if (!needsShovel)
-        {
-            return;
-        }
-        delay += 20;
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
-        {
-            if (isShovelInHut())
-            {
-                return;
-            }
-            requestWithoutSpam("Shovel");
-        }
-
-    }
-
     private boolean buildNextBlockInShaft()
     {
         ChunkCoordinates ladderPos = getOwnBuilding().ladderLocation;

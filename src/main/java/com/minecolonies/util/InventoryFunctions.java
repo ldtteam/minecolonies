@@ -14,6 +14,8 @@ import java.util.function.*;
 public class InventoryFunctions
 {
 
+    public static void doNothing(Object... o) { }
+
     /**
      * Search for a stack in an Inventory matching the predicate.
      * @param inventory the inventory to search in
