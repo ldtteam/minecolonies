@@ -115,7 +115,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         worker.setStatus(EntityCitizen.Status.WORKING);
         logger.info("Starting AI job " + job.getName());
     }
-
+    
     @Override
     public void updateTask()
     {
@@ -151,6 +151,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         workOnTask();
     }
 
+    /**
+     * Utility method to search for items currently needed.
+     * Poll this until all items are there.
+     */
     protected final void lookForNeededItems()
     {
         syncNeededItemsWithInventory();
@@ -286,6 +290,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
     }
 
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
     protected boolean neededForWorker(ItemStack stack)
     {
         return false;
@@ -333,6 +344,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
                                });
     }
 
+    /**
+     * Walk the worker to it's building chest.
+     * Please return immediately if this returns true.
+     * @return false if the worker is at his building
+     */
     protected final boolean walkToBuilding()
     {
         return walkToBlock(getOwnBuilding().getLocation());
