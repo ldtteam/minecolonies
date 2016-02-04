@@ -1,6 +1,7 @@
 package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.ai.EntityAIWork;
 import com.minecolonies.lib.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -408,5 +409,29 @@ public class Utils
 
         }
         return level >= minlevel;
+    }
+
+    /**
+     * Checks if this tool is useful for the miner.
+     */
+    public static boolean isMiningTool(ItemStack itemStack)
+    {
+        return isPickaxe(itemStack) || isShovel(itemStack);
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Shovel.
+     */
+    public static boolean isShovel(ItemStack itemStack)
+    {
+        return getMiningLevel(itemStack, EntityAIWork.SHOVEL) >= 0;
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Pickaxe.
+     */
+    public static boolean isPickaxe(ItemStack itemStack)
+    {
+        return getMiningLevel(itemStack, EntityAIWork.PICKAXE) >= 0;
     }
 }

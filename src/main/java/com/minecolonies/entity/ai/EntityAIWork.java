@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
 
@@ -264,7 +265,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         return InventoryFunctions
                 .matchFirstInInventory(
                         buildingMiner.getTileEntity(),
-                        this::isShovel,
+                        Utils::isShovel,
                         this::takeItemStackFromChest);
 
     }
@@ -292,28 +293,56 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
                         this::takeItemStackFromChest);
     }
 
-    /**
-     * Checks if this tool is useful for the miner.
-     */
-    protected boolean isMiningTool(ItemStack itemStack)
+    protected boolean neededForWorker(ItemStack stack)
     {
-        return isPickaxe(itemStack) || isShovel(itemStack);
+        return false;
     }
 
     /**
-     * Checks if this ItemStack can be used as a Shovel.
+     * Dump the workers inventory into his building chest.
+     * Only useful tools are kept!
+     * Only dumps one block at a time!
      */
-    protected boolean isShovel(ItemStack itemStack)
+    protected final boolean dumpOneMoreSlot()
     {
-        return Utils.getMiningLevel(itemStack, SHOVEL) >= 0;
+        return dumpOneMoreSlot(this::neededForWorker);
     }
 
     /**
-     * Checks if this ItemStack can be used as a Pickaxe.
+     * Dumps one inventory slot into the building chest.
+     *
+     * @param keepIt used to test it that stack should be kept
+     * @return true if is has to dump more.
      */
-    protected boolean isPickaxe(ItemStack itemStack)
+    private final boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
     {
-        return Utils.getMiningLevel(itemStack, PICKAXE) >= 0;
+        return !walkToBuilding()
+               || InventoryFunctions
+                       .matchFirstInInventory(
+                               worker.getInventory(),
+                               (i, stack) -> {
+                                   if (stack == null || keepIt.test(stack))
+                                   {
+                                       return false;
+                                   }
+                                   ItemStack returnStack = InventoryUtils.setStack(
+                                           getOwnBuilding().getTileEntity(), stack);
+                                   if (returnStack == null)
+                                   {
+                                       worker.getInventory().decrStackSize(
+                                               i, stack.stackSize);
+                                       return true;
+                                   }
+                                   worker.getInventory().decrStackSize(
+                                           i, stack.stackSize - returnStack.stackSize);
+                                   //Check that we are not inserting into a full inventory.
+                                   return stack.stackSize != returnStack.stackSize;
+                               });
+    }
+
+    protected boolean walkToBuilding()
+    {
+        return walkToBlock(getOwnBuilding().getLocation());
     }
 
     /**

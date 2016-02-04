@@ -88,52 +88,16 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return (BuildingMiner) worker.getWorkBuilding();
     }
 
-    private boolean walkToBuilding()
-    {
-        return walkToBlock(getOwnBuilding().getLocation());
-    }
 
     private boolean walkToLadder()
     {
         return walkToBlock(getOwnBuilding().ladderLocation);
     }
 
-    /**
-     * Dump the miners inventory into his building chest.
-     * Only useful tools are kept!
-     * Only dumps one block at a time!
-     */
-    private boolean dumpOneMoreSlot()
+    @Override
+    protected boolean neededForWorker(ItemStack stack)
     {
-        if (!worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
-        {
-            return true;
-        }
-        for (int i = 0; i < worker.getInventory().getSizeInventory(); i++)
-        {
-            ItemStack stack = worker.getInventory().getStackInSlot(i);
-            //Check if it is a useful tool.
-            if (stack == null || isMiningTool(stack))
-            {
-                continue;
-            }
-            //Do nothing when building is broken.
-            if (getOwnBuilding().getTileEntity() == null)
-            {
-                return true;
-            }
-            ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
-            if (returnStack == null)
-            {
-                worker.getInventory().decrStackSize(i, stack.stackSize);
-            }
-            else
-            {
-                worker.getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
-            }
-            return true;
-        }
-        return false;
+        return Utils.isMiningTool(stack);
     }
 
     private void lookForLadder()
@@ -603,7 +567,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     private void checkForShovel()
     {
         //Check for a shovel
-        needsShovel = InventoryUtils.getInventoryAsList(worker.getInventory()).stream().noneMatch(this::isShovel);
+        needsShovel = InventoryUtils.getInventoryAsList(worker.getInventory()).stream().noneMatch(Utils::isShovel);
 
         if (!needsShovel)
         {
