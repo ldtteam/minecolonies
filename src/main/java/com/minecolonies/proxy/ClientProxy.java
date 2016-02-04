@@ -70,7 +70,7 @@ public class ClientProxy extends CommonProxy
         if (Configurations.enableInDevelopmentFeatures)
         {
             WindowCitizen window = new WindowCitizen(citizen);
-            window.show();
+            window.open();
         }
         else
         {
@@ -82,7 +82,7 @@ public class ClientProxy extends CommonProxy
     public void openBuildToolWindow(int x, int y, int z)
     {
         WindowBuildTool window = new WindowBuildTool(x, y, z);
-        window.show();
+        window.open();
     }
 
     //Schematica

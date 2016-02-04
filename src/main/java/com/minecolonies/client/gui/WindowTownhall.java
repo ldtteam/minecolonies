@@ -278,7 +278,7 @@ public class WindowTownhall extends Window implements Button.Handler
         else if (button.getID().equals(BUTTON_RENAME))
         {
             WindowTownhallNameEntry window = new WindowTownhallNameEntry(townhall.getColony());
-            window.show();
+            window.open();
         }
     }
 }
