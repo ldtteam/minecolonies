@@ -91,6 +91,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * yields zero, the two tasks may run concurrently, if not - they must run exclusively from each other.
      * @param mutexBits the bits to flag this with.
      */
+    @Override
     public final void setMutexBits(int mutexBits)
     {
         super.setMutexBits(mutexBits);
@@ -428,7 +429,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      */
     protected final boolean checkForShovel()
     {
-        return needsShovel = checkForTool(SHOVEL);
+        needsShovel = checkForTool(SHOVEL);
+        return needsShovel;
     }
 
     private boolean checkForTool(String tool)
@@ -442,7 +444,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         {
             return true;
         }
-        delay += 20;
+        delay += DELAY_RECHECK;
         if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
         {
             if (isToolInHut(tool))
@@ -473,7 +475,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      */
     protected final boolean checkForAxe()
     {
-        return needsAxe = checkForTool(AXE);
+        needsAxe = checkForTool(AXE);
+        return needsAxe;
     }
 
     /**
@@ -484,7 +487,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      */
     protected final boolean checkForHoe()
     {
-        return needsHoe = checkForTool(HOE);
+        needsHoe = checkForTool(HOE);
+        return needsHoe;
     }
 
     /**
