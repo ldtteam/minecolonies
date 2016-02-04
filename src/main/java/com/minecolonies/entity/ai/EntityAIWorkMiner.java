@@ -32,7 +32,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
     public static final String SHOVEL = "shovel";
     private static final String RENDER_META_TORCH = "Torch";
     private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
-    private static final int RANGE_CHECK_AROUND_BUILDING_LADDER = 3;
     private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 2;
     private static final int NODE_DISTANCE = 7;
     /*
@@ -66,6 +65,13 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         super(job);
     }
 
+    @Override
+    protected void updateRenderMetaData()
+    {
+        String renderMetaData = getRenderMetaTorch();
+        //TODO: Have pickaxe etc. displayed?
+        worker.setRenderMetadata(renderMetaData);
+    }
 
     private String getRenderMetaTorch()
     {
@@ -74,14 +80,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return RENDER_META_TORCH;
         }
         return "";
-    }
-
-    @Override
-    protected void updateRenderMetaData()
-    {
-        String renderMetaData = getRenderMetaTorch();
-        //TODO: Have pickaxe etc. displayed?
-        worker.setRenderMetadata(renderMetaData);
     }
 
     @Override
@@ -95,16 +93,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return walkToBlock(getOwnBuilding().getLocation());
     }
 
-    private void walkToLadder()
+    private boolean walkToLadder()
     {
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().ladderLocation, RANGE_CHECK_AROUND_BUILDING_LADDER))
-        {
-            job.setStage(Stage.CHECK_MINESHAFT);
-        }
-        else
-        {
-            delay += 20;
-        }
+        return walkToBlock(getOwnBuilding().ladderLocation);
     }
 
     /**
@@ -397,7 +388,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         if (!hasDelayed)
         {
             delay = getBlockMiningDelay(curBlock, blockToMine);
-            workOnBlock(currentWorkingLocation,currentStandingPosition,delay);
+            workOnBlock(currentWorkingLocation, currentStandingPosition, delay);
             hasDelayed = true;
             return true;
         }
@@ -571,8 +562,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
         return nextBlockToMine;
     }
-
-
 
 
     private void checkForPickaxe(int minlevel)
@@ -1521,7 +1510,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         //Miner wants to work but is not at building
         if (job.getStage() == Stage.START_WORKING)
         {
-            if(walkToBuilding()){
+            if (walkToBuilding())
+            {
                 return;
             }
             //Miner is at building
@@ -1595,8 +1585,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         //Walking to the ladder to check out the mine
         if (job.getStage() == Stage.LADDER_FOUND)
         {
-            walkToLadder();
-            return;
+            if (walkToLadder())
+            {
+                return;
+            }
+            job.setStage(Stage.CHECK_MINESHAFT);
         }
 
         //Standing on top of the ladder, checking out mine
