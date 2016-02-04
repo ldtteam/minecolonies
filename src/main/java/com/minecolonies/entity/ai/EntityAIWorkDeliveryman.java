@@ -17,7 +17,7 @@ import static com.minecolonies.entity.EntityCitizen.Status.WORKING;
  *
  * @author MrIbby
  */
-public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
+public class EntityAIWorkDeliveryman extends AbstractEntityAIWork<JobDeliveryman>
 {
     public EntityAIWorkDeliveryman(JobDeliveryman deliveryman)
     {

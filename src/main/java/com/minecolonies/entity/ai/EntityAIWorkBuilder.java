@@ -32,7 +32,7 @@ import net.minecraft.util.MathHelper;
  *
  * @author Colton
  */
-public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
+public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 {
     public EntityAIWorkBuilder(JobBuilder job)
     {

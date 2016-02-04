@@ -25,7 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Raycoms, Kostronor
  */
 
-public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
+public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 {
     private static final String TOOL_TYPE_HOE = "hoe";
     private static final String TOOL_TYPE_SHOVEL = "shovel";

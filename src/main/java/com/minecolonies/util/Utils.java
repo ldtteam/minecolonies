@@ -1,7 +1,7 @@
 package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.ai.EntityAIWork;
+import com.minecolonies.entity.ai.AbstractEntityAIWork;
 import com.minecolonies.lib.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -424,7 +424,7 @@ public class Utils
      */
     public static boolean isShovel(ItemStack itemStack)
     {
-        return isTool(itemStack, EntityAIWork.SHOVEL);
+        return isTool(itemStack, AbstractEntityAIWork.SHOVEL);
     }
 
     /**
@@ -440,6 +440,6 @@ public class Utils
      */
     public static boolean isPickaxe(ItemStack itemStack)
     {
-        return isTool(itemStack, EntityAIWork.PICKAXE);
+        return isTool(itemStack, AbstractEntityAIWork.PICKAXE);
     }
 }

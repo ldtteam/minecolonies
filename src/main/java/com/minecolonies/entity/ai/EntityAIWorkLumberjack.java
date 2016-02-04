@@ -19,7 +19,7 @@ import net.minecraft.util.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
+public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 {
     private static final String TOOL_TYPE_AXE    = "axe";
     private static final String RENDER_META_LOGS = "Logs";

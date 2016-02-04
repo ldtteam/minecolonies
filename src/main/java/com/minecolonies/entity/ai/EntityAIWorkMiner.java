@@ -25,7 +25,7 @@ import java.util.*;
  * @author Raycoms, Kostronor
  */
 
-public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
+public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 {
 
     private static final String RENDER_META_TORCH = "Torch";

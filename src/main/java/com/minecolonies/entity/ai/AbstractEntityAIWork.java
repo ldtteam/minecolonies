@@ -18,15 +18,27 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
 
-public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
+/**
+ * This is the base class of all worker AIs.
+ * Every AI implements this class with it's job type.
+ * There are some utilities within the class:
+ * - The AI will clear a full inventory at the building chest.
+ * - The AI will animate mining a block (with delay)
+ * - The AI will request items and tools automatically
+ * (and collect them from the building chest)
+ *
+ * @param <J> the job type this AI has to do.
+ */
+public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
 {
     public static final String PICKAXE = "pickaxe";
     public static final String SHOVEL = "shovel";
     public static final String AXE = "axe";
     public static final String HOE = "hoe";
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
-    private static Logger logger = Utils.generateLoggerForClass(EntityAIWork.class);
-    protected final JOB job;
+    private static final Logger logger = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
+    private static final int DELAY_RECHECK = 10;
+    protected final J job;
     protected final EntityCitizen worker;
     protected final World world;
     /**
@@ -47,24 +59,41 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      * Will be cleared on restart, be aware!
      */
     protected List<ItemStack> itemsNeeded = new ArrayList<>();
-    private ErrorState errorState = ErrorState.NONE;
-    private ChunkCoordinates currentWorkingLocation = null;
-    private int delay = 0;
-    private ChunkCoordinates currentStandingLocation = null;
     protected boolean needsShovel = false;
     protected boolean needsAxe = false;
     protected boolean needsHoe = false;
     protected boolean needsPickaxe = false;
     protected int needsPickaxeLevel = -1;
+    private ErrorState errorState = ErrorState.NONE;
+    private ChunkCoordinates currentWorkingLocation = null;
+    private int delay = 0;
+    private ChunkCoordinates currentStandingLocation = null;
     private ChatSpamFilter chatSpamFilter;
+    private static final int MUTEX_MASK = 3;
 
-    public EntityAIWork(JOB job)
+    /**
+     * Creates the abstract part of the AI.
+     * Always use this constructor!
+     * @param job the job to fulfill
+     */
+    public AbstractEntityAIWork(J job)
     {
-        setMutexBits(3);
+        setMutexBits(MUTEX_MASK);
         this.job = job;
         this.worker = this.job.getCitizen().getCitizenEntity();
         this.world = this.worker.worldObj;
         this.chatSpamFilter = new ChatSpamFilter(worker);
+    }
+
+    /**
+     * Made final to preserve behaviour:
+     * Sets a bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it
+     * yields zero, the two tasks may run concurrently, if not - they must run exclusively from each other.
+     * @param mutexBits the bits to flag this with.
+     */
+    public final void setMutexBits(int mutexBits)
+    {
+        super.setMutexBits(mutexBits);
     }
 
     @Override
@@ -109,7 +138,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         if (!itemsCurrentlyNeeded.isEmpty())
         {
             lookForNeededItems();
-            delay = 10;
+            delay = DELAY_RECHECK;
             return;
         }
 
@@ -132,7 +161,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         }
         if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
         {
-            delay += 10;
+            delay += DELAY_RECHECK;
             ItemStack first = itemsCurrentlyNeeded.get(0);
             //Takes one Stack from the hut if existent
             if (isInHut(first))
@@ -193,7 +222,8 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     /**
      * Here the AI can check if the chestBelt has to be re rendered and do it.
      */
-    protected void updateRenderMetaData(){}
+    protected void updateRenderMetaData()
+    {}
 
     /**
      * Can be overridden in implementations to return the exact building type.
@@ -355,7 +385,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
                                 minlevel, Utils.getMiningLevel(stack, PICKAXE)),
                         InventoryFunctions::doNothing);
 
-        delay += 20;
+        delay += DELAY_RECHECK;
         if (needsPickaxe && walkToBuilding())
         {
             if (isPickaxeInHut(minlevel))
@@ -401,28 +431,6 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         return needsShovel = checkForTool(SHOVEL);
     }
 
-    /**
-     * Ensures that we have an axe available.
-     * Will set {@code needsAxe} accordingly.
-     *
-     * @return true if we have an axe
-     */
-    protected final boolean checkForAxe()
-    {
-        return needsAxe = checkForTool(AXE);
-    }
-
-    /**
-     * Ensures that we have a hoe available.
-     * Will set {@code needsHoe} accordingly.
-     *
-     * @return true if we have a hoe
-     */
-    protected final boolean checkForHoe()
-    {
-        return needsHoe = checkForTool(HOE);
-    }
-
     private boolean checkForTool(String tool)
     {
         boolean needsTool = InventoryFunctions
@@ -455,6 +463,28 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
                         stack -> Utils.isTool(stack, tool),
                         this::takeItemStackFromChest);
 
+    }
+
+    /**
+     * Ensures that we have an axe available.
+     * Will set {@code needsAxe} accordingly.
+     *
+     * @return true if we have an axe
+     */
+    protected final boolean checkForAxe()
+    {
+        return needsAxe = checkForTool(AXE);
+    }
+
+    /**
+     * Ensures that we have a hoe available.
+     * Will set {@code needsHoe} accordingly.
+     *
+     * @return true if we have a hoe
+     */
+    protected final boolean checkForHoe()
+    {
+        return needsHoe = checkForTool(HOE);
     }
 
     /**
