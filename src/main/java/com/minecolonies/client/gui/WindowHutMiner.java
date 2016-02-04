@@ -98,7 +98,7 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
             if(row != miner.current && row >= 0 && row < levels.length)
             {
                 miner.current = row;
-                MineColonies.network.sendToServer(new MinerSetLevelMessage(miner, row));
+                MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
             }
         }
         else

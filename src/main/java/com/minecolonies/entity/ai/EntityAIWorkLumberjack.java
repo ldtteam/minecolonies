@@ -189,7 +189,10 @@ public class EntityAIWorkLumberjack extends EntityAIWork<JobLumberjack>
                 stillTicks++;
                 if(stillTicks >= 10)
                 {
-                    Vec3 treeDirection = Vec3Utils.vec3Floor(worker.getPosition()).subtract(Vec3.createVectorHelper(location.posX, location.posY + 2, location.posZ)).normalize();
+                    Vec3 treeDirection = Vec3Utils
+                            .vec3Floor(worker.getPosition())
+                            .subtract(Vec3.createVectorHelper(location.posX, location.posY + 2, location.posZ))
+                            .normalize();
 
                     int x = MathHelper.floor_double(worker.posX);
                     int y = MathHelper.floor_double(worker.posY) + 1;

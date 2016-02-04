@@ -227,6 +227,12 @@ public class Tree
         return false;
     }
 
+    @Override
+    public int hashCode()
+    {
+        return location.hashCode();
+    }
+
     public void writeToNBT(NBTTagCompound compound)
     {
         if(!isTree)

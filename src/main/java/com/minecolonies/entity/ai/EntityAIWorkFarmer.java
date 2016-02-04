@@ -338,7 +338,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
                     }
                     catch(Exception exp)
                     {
-                        logger.info("Couldn't add effect");
+                        logger.info("Couldn't add effect",exp);
                     }
                     world.setBlockToAir(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ);
                     harvestCounter++;

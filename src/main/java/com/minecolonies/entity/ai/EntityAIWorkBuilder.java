@@ -53,40 +53,35 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             loadSchematic();
 
             WorkOrderBuild wo = job.getWorkOrder();
-            if(wo != null)
-            {
-                Building building = job.getColony().getBuilding(wo.getBuildingId());
-                if(building != null)
-                {
-                    //Don't go through the CLEAR stage for repairs and upgrades
-                    if(building.getBuildingLevel() > 0)
-                    {
-                        job.stage = JobBuilder.Stage.REQUEST_MATERIALS;
-
-                        if(!job.hasSchematic() || !incrementBlock())
-                        {
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        job.stage = JobBuilder.Stage.CLEAR;
-                        if(!job.hasSchematic() || !job.getSchematic().decrementBlock())
-                        {
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)", worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
-                }
-            }
-            else
+            if(wo == null)
             {
                 MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)", worker.getColony().getID(), worker.getCitizenData().getId(), job.getWorkOrderId()));
                 return;
             }
+            Building building = job.getColony().getBuilding(wo.getBuildingId());
+            if(building == null)
+            {
+                MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)", worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
+            }
+            //Don't go through the CLEAR stage for repairs and upgrades
+            if(building.getBuildingLevel() > 0)
+            {
+                job.stage = JobBuilder.Stage.REQUEST_MATERIALS;
+
+                if(!job.hasSchematic() || !incrementBlock())
+                {
+                    return;
+                }
+            }
+            else
+            {
+                job.stage = JobBuilder.Stage.CLEAR;
+                if(!job.hasSchematic() || !job.getSchematic().decrementBlock())
+                {
+                    return;
+                }
+            }
+
 
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", job.getSchematic().getName());
         }
@@ -111,6 +106,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             return;
         }
 
+        //TODO: break this up to make it more readable
         switch(job.stage)
         {
             case CLEAR:
@@ -183,6 +179,7 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
 
             if(!world.setBlockToAir(x, y, z))
             {
+                //TODO: create own logger in class
                 MineColonies.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
                 //TODO handle - for now, just skipping
             }
@@ -492,12 +489,12 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
                 for(int i = 0; i < worker.getInventory().getSizeInventory(); i++)
                 {
                     ItemStack invItem = worker.getInventory().getStackInSlot(i);
-                    if(true)//TODO change to isRequired material using chris' system
-                    {
-                        leftOvers = invItem;
-                        slotID = i;
-                        break;
-                    }
+                    //Keeping the TODO but removing the if
+                    //TODO change to isRequired material using chris' system
+                    leftOvers = invItem;
+                    slotID = i;
+                    break;
+
                 }
                 worker.getInventory().setInventorySlotContents(slotID, stack);
             }

@@ -167,7 +167,7 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
             building.wheat = building.wheat + 100-sum();
         }
 
-        MineColonies.network.sendToServer(new FarmerCropTypeMessage(building));
+        MineColonies.getNetwork().sendToServer(new FarmerCropTypeMessage(building));
     }
 }
 
