@@ -50,6 +50,8 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     private int delay = 0;
     private ChunkCoordinates currentStandingLocation = null;
     private boolean needsShovel = false;
+    private boolean needsAxe = false;
+    private boolean needsHoe = false;
     private boolean needsPickaxe = false;
     private int needsPickaxeLevel = -1;
     private ChatSpamFilter chatSpamFilter;
@@ -117,7 +119,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
         workOnTask();
     }
 
-    protected void lookForNeededItems()
+    protected final void lookForNeededItems()
     {
         syncNeededItemsWithInventory();
         if (itemsCurrentlyNeeded.isEmpty())
@@ -144,7 +146,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      *
      * @param chat the Item Name
      */
-    protected void requestWithoutSpam(String chat)
+    protected final void requestWithoutSpam(String chat)
     {
         chatSpamFilter.requestWithoutSpam(chat);
     }
@@ -169,7 +171,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
-    protected boolean isInHut(final ItemStack is)
+    protected final boolean isInHut(final ItemStack is)
     {
         final BuildingWorker buildingMiner = getOwnBuilding();
         return InventoryFunctions
@@ -232,7 +234,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
     /**
      * Remove the current working block and it's delay.
      */
-    protected void clearWorkTarget()
+    protected final void clearWorkTarget()
     {
         this.currentStandingLocation = null;
         this.currentWorkingLocation = null;
@@ -246,7 +248,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      *
      * @param slot the slot in the buildings inventory
      */
-    protected void takeItemStackFromChest(int slot)
+    protected final void takeItemStackFromChest(int slot)
     {
         InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
     }
@@ -259,7 +261,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      *
      * @return true if a shovel was found
      */
-    protected boolean isShovelInHut()
+    protected final boolean isShovelInHut()
     {
         BuildingWorker buildingMiner = getOwnBuilding();
         return InventoryFunctions
@@ -279,7 +281,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      * @param minlevel the needed pickaxe level
      * @return true if a pickaxe was found
      */
-    protected boolean isPickaxeInHut(int minlevel)
+    protected final boolean isPickaxeInHut(int minlevel)
     {
         BuildingWorker buildingMiner = getOwnBuilding();
         return InventoryFunctions
@@ -314,7 +316,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      * @param keepIt used to test it that stack should be kept
      * @return true if is has to dump more.
      */
-    private final boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
+    private boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
     {
         return !walkToBuilding()
                || InventoryFunctions
@@ -340,7 +342,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
                                });
     }
 
-    protected boolean walkToBuilding()
+    protected final boolean walkToBuilding()
     {
         return walkToBlock(getOwnBuilding().getLocation());
     }
@@ -350,7 +352,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      *
      * @param stand where to walk to
      */
-    protected boolean walkToBlock(ChunkCoordinates stand)
+    protected final boolean walkToBlock(ChunkCoordinates stand)
     {
         if (!Utils.isWorkerAtSite(worker, stand.posX, stand.posY, stand.posZ, DEFAULT_RANGE_FOR_DELAY))
         {
@@ -368,7 +370,7 @@ public abstract class EntityAIWork<JOB extends Job> extends EntityAIBase
      * @param stand   the block the worker will walk to
      * @param timeout the time in ticks to hit the block
      */
-    protected void workOnBlock(ChunkCoordinates target, ChunkCoordinates stand, int timeout)
+    protected final void workOnBlock(ChunkCoordinates target, ChunkCoordinates stand, int timeout)
     {
         this.currentWorkingLocation = target;
         this.currentStandingLocation = stand;
