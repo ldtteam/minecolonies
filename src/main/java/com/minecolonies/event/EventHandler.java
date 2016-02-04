@@ -116,13 +116,6 @@ public class EventHandler
         //  Check if this Hut Block can be placed
         if (block instanceof BlockHutTownHall)
         {
-            if (!ColonyManager.getIColoniesByOwner(world, player).isEmpty())
-            {
-                //  Players are currently only allowed a single colony
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
-                return false;
-            }
-
             IColony colony = ColonyManager.getClosestIColony(world, x, y, z);
             if (colony != null)
             {
@@ -142,6 +135,10 @@ public class EventHandler
                                                                    colony.getName());
                         return false;
                     }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 else if (colony.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
                 {
@@ -149,6 +146,13 @@ public class EventHandler
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
                     return false;
                 }
+            }
+
+            if (!ColonyManager.getIColoniesByOwner(world, player).isEmpty())
+            {
+                //  Players are currently only allowed a single colony
+                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
+                return false;
             }
         }
         else //  Not a Townhall
