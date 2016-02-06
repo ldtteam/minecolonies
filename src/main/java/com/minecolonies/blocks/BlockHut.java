@@ -20,12 +20,20 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+/**
+ * Abstract class for all minecolonies blocks.
+ * The method {@link com.minecolonies.blocks.BlockHut#getName()} is abstract
+ */
 public abstract class BlockHut extends Block implements ITileEntityProvider
 {
     protected int workingRange;//TODO unused
 
     private IIcon[] icons = new IIcon[6];// 0 = top, 1 = bot, 2-5 = sides;
 
+    /**
+     * Constructor for a block using the minecolonies mod.
+     * Registers the block, sets the creative tab, as well as the resistance and the hardness
+     */
     public BlockHut()
     {
         super(Material.wood);
@@ -38,6 +46,11 @@ public abstract class BlockHut extends Block implements ITileEntityProvider
         GameRegistry.registerBlock(this, getName());
     }
 
+    /**
+     * Method to return the name of the block
+     *
+     * @return  Name of the block
+     */
     public abstract String getName();
 
     @Override
