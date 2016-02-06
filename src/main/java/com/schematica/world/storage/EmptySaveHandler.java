@@ -1,4 +1,4 @@
-package com.minecolonies.schematica.world.storage;
+package com.schematica.world.storage;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.MinecraftException;

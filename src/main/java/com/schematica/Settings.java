@@ -1,7 +1,7 @@
-package com.minecolonies.schematica;
+package com.schematica;
 
-import com.minecolonies.schematica.client.renderer.RendererSchematicChunk;
-import com.minecolonies.schematica.world.SchematicWorld;
+import com.schematica.client.renderer.RendererSchematicChunk;
+import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;

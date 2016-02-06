@@ -1,4 +1,4 @@
-package com.minecolonies.schematica.config;
+package com.schematica.config;
 
 public class Config {
 

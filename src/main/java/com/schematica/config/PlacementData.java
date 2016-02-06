@@ -1,4 +1,4 @@
-package com.minecolonies.schematica.config;
+package com.schematica.config;
 
 import net.minecraftforge.common.util.ForgeDirection;
 

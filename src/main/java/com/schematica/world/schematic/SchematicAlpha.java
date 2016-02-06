@@ -1,6 +1,6 @@
-package com.minecolonies.schematica.world.schematic;
+package com.schematica.world.schematic;
 
-import com.minecolonies.schematica.world.SchematicWorld;
+import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import cpw.mods.fml.common.registry.GameData;

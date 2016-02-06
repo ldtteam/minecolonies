@@ -1,7 +1,7 @@
-package com.minecolonies.schematica.world;
+package com.schematica.world;
 
-import com.minecolonies.schematica.config.BlockInfo;
-import com.minecolonies.schematica.world.storage.EmptySaveHandler;
+import com.schematica.config.BlockInfo;
+import com.schematica.world.storage.EmptySaveHandler;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;

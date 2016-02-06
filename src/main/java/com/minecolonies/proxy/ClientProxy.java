@@ -1,8 +1,8 @@
 package com.minecolonies.proxy;
 
-import com.minecolonies.schematica.client.events.TickHandler;
-import com.minecolonies.schematica.client.renderer.RendererSchematicGlobal;
-import com.minecolonies.schematica.world.SchematicWorld;
+import com.schematica.client.events.TickHandler;
+import com.schematica.client.renderer.RendererSchematicGlobal;
+import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.gui.WindowBuildTool;
 import com.minecolonies.client.gui.WindowCitizen;

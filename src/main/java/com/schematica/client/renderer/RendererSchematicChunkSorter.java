@@ -1,6 +1,6 @@
-package com.minecolonies.schematica.client.renderer;
+package com.schematica.client.renderer;
 
-import com.minecolonies.schematica.Settings;
+import com.schematica.Settings;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.Comparator;

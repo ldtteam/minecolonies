@@ -1,4 +1,4 @@
-package com.minecolonies.schematica.world.schematic;
+package com.schematica.world.schematic;
 
 public class UnsupportedFormatException extends Exception
 {

@@ -1,7 +1,7 @@
-package com.minecolonies.schematica.client.renderer;
+package com.schematica.client.renderer;
 
-import com.minecolonies.schematica.Settings;
-import com.minecolonies.schematica.world.SchematicWorld;
+import com.schematica.Settings;
+import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;

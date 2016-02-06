@@ -1,6 +1,6 @@
-package com.minecolonies.schematica.client.renderer;
+package com.schematica.client.renderer;
 
-import com.minecolonies.schematica.config.Config;
+import com.schematica.config.Config;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Vector3f;
 

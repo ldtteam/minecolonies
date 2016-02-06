@@ -1,4 +1,4 @@
-package com.minecolonies.schematica.config;
+package com.schematica.config;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameData;
@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.minecolonies.schematica.config.PlacementData.PlacementType;
 
 public class BlockInfo
 {
@@ -265,34 +263,34 @@ public class BlockInfo
         /**
          * minecraft
          */
-        addPlacementMapping(BlockButton.class, new PlacementData(PlacementType.BLOCK, -1, -1, 3, 4, 1, 2).setMaskMeta(0x7));
-        addPlacementMapping(BlockChest.class, new PlacementData(PlacementType.PLAYER, -1, -1, 3, 2, 5, 4));
-        addPlacementMapping(BlockDispenser.class, new PlacementData(PlacementType.PISTON, 0, 1, 2, 3, 4, 5).setMaskMeta(0x7));
-        addPlacementMapping(BlockEnderChest.class, new PlacementData(PlacementType.PLAYER, -1, -1, 3, 2, 5, 4));
-        addPlacementMapping(BlockFurnace.class, new PlacementData(PlacementType.PLAYER, -1, -1, 3, 2, 5, 4));
-        addPlacementMapping(BlockHopper.class, new PlacementData(PlacementType.BLOCK, 0, 1, 2, 3, 4, 5).setMaskMeta(0x7));
-        addPlacementMapping(BlockLog.class, new PlacementData(PlacementType.BLOCK, 0, 0, 8, 8, 4, 4).setMaskMeta(0xC));
-        addPlacementMapping(BlockPistonBase.class, new PlacementData(PlacementType.PISTON, 0, 1, 2, 3, 4, 5).setMaskMeta(0x7));
-        addPlacementMapping(BlockPumpkin.class, new PlacementData(PlacementType.PLAYER, -1, -1, 0, 2, 3, 1).setMaskMeta(0xF));
-        addPlacementMapping(BlockStairs.class, new PlacementData(PlacementType.PLAYER, -1, -1, 3, 2, 1, 0).setOffset(0x4, 0.0f, 1.0f).setMaskMeta(0x3));
-        addPlacementMapping(BlockTorch.class, new PlacementData(PlacementType.BLOCK, 5, -1, 3, 4, 1, 2).setMaskMeta(0xF));
+        addPlacementMapping(BlockButton.class, new PlacementData(PlacementData.PlacementType.BLOCK, -1, -1, 3, 4, 1, 2).setMaskMeta(0x7));
+        addPlacementMapping(BlockChest.class, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 3, 2, 5, 4));
+        addPlacementMapping(BlockDispenser.class, new PlacementData(PlacementData.PlacementType.PISTON, 0, 1, 2, 3, 4, 5).setMaskMeta(0x7));
+        addPlacementMapping(BlockEnderChest.class, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 3, 2, 5, 4));
+        addPlacementMapping(BlockFurnace.class, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 3, 2, 5, 4));
+        addPlacementMapping(BlockHopper.class, new PlacementData(PlacementData.PlacementType.BLOCK, 0, 1, 2, 3, 4, 5).setMaskMeta(0x7));
+        addPlacementMapping(BlockLog.class, new PlacementData(PlacementData.PlacementType.BLOCK, 0, 0, 8, 8, 4, 4).setMaskMeta(0xC));
+        addPlacementMapping(BlockPistonBase.class, new PlacementData(PlacementData.PlacementType.PISTON, 0, 1, 2, 3, 4, 5).setMaskMeta(0x7));
+        addPlacementMapping(BlockPumpkin.class, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 0, 2, 3, 1).setMaskMeta(0xF));
+        addPlacementMapping(BlockStairs.class, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 3, 2, 1, 0).setOffset(0x4, 0.0f, 1.0f).setMaskMeta(0x3));
+        addPlacementMapping(BlockTorch.class, new PlacementData(PlacementData.PlacementType.BLOCK, 5, -1, 3, 4, 1, 2).setMaskMeta(0xF));
 
-        addPlacementMapping(Blocks.dirt, new PlacementData(PlacementType.BLOCK).setMaskMetaInHand(0xF));
-        addPlacementMapping(Blocks.planks, new PlacementData(PlacementType.BLOCK).setMaskMetaInHand(0xF));
-        addPlacementMapping(Blocks.sandstone, new PlacementData(PlacementType.BLOCK).setMaskMetaInHand(0xF));
-        addPlacementMapping(Blocks.wool, new PlacementData(PlacementType.BLOCK).setMaskMetaInHand(0xF));
-        addPlacementMapping(Blocks.stone_slab, new PlacementData(PlacementType.BLOCK).setOffset(0x8, 0.0f, 1.0f).setMaskMeta(0x7).setMaskMetaInHand(0x7));
-        addPlacementMapping(Blocks.stained_glass, new PlacementData(PlacementType.BLOCK).setMaskMetaInHand(0xF));
-        addPlacementMapping(Blocks.trapdoor, new PlacementData(PlacementType.BLOCK, -1, -1, 1, 0, 3, 2).setOffset(0x8, 0.0f, 1.0f).setMaskMeta(0x3));
-        addPlacementMapping(Blocks.monster_egg, new PlacementData(PlacementType.BLOCK).setMaskMetaInHand(0xF));
-        addPlacementMapping(Blocks.stonebrick, new PlacementData(PlacementType.BLOCK).setMaskMetaInHand(0xF));
-        addPlacementMapping(Blocks.quartz_block, new PlacementData(PlacementType.BLOCK).setMaskMetaInHand(0xF));
-        addPlacementMapping(Blocks.fence_gate, new PlacementData(PlacementType.PLAYER, -1, -1, 2, 0, 1, 3).setMaskMeta(0x3));
-        addPlacementMapping(Blocks.wooden_slab, new PlacementData(PlacementType.BLOCK).setOffset(0x8, 0.0f, 1.0f).setMaskMeta(0x7).setMaskMetaInHand(0x7));
-        addPlacementMapping(Blocks.anvil, new PlacementData(PlacementType.PLAYER, -1, -1, 1, 3, 0, 2).setMaskMeta(0x3).setMaskMetaInHand(0xC).setBitShiftMetaInHand(2));
-        addPlacementMapping(Blocks.stained_hardened_clay, new PlacementData(PlacementType.BLOCK).setMaskMetaInHand(0xF));
-        addPlacementMapping(Blocks.stained_glass_pane, new PlacementData(PlacementType.BLOCK).setMaskMetaInHand(0xF));
-        addPlacementMapping(Items.repeater, new PlacementData(PlacementType.PLAYER, -1, -1, 0, 2, 3, 1).setMaskMeta(0x3));
+        addPlacementMapping(Blocks.dirt, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
+        addPlacementMapping(Blocks.planks, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
+        addPlacementMapping(Blocks.sandstone, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
+        addPlacementMapping(Blocks.wool, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
+        addPlacementMapping(Blocks.stone_slab, new PlacementData(PlacementData.PlacementType.BLOCK).setOffset(0x8, 0.0f, 1.0f).setMaskMeta(0x7).setMaskMetaInHand(0x7));
+        addPlacementMapping(Blocks.stained_glass, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
+        addPlacementMapping(Blocks.trapdoor, new PlacementData(PlacementData.PlacementType.BLOCK, -1, -1, 1, 0, 3, 2).setOffset(0x8, 0.0f, 1.0f).setMaskMeta(0x3));
+        addPlacementMapping(Blocks.monster_egg, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
+        addPlacementMapping(Blocks.stonebrick, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
+        addPlacementMapping(Blocks.quartz_block, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
+        addPlacementMapping(Blocks.fence_gate, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 2, 0, 1, 3).setMaskMeta(0x3));
+        addPlacementMapping(Blocks.wooden_slab, new PlacementData(PlacementData.PlacementType.BLOCK).setOffset(0x8, 0.0f, 1.0f).setMaskMeta(0x7).setMaskMetaInHand(0x7));
+        addPlacementMapping(Blocks.anvil, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 1, 3, 0, 2).setMaskMeta(0x3).setMaskMetaInHand(0xC).setBitShiftMetaInHand(2));
+        addPlacementMapping(Blocks.stained_hardened_clay, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
+        addPlacementMapping(Blocks.stained_glass_pane, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
+        addPlacementMapping(Items.repeater, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 0, 2, 3, 1).setMaskMeta(0x3));
     }
 
     public static PlacementData addPlacementMapping(Class clazz, PlacementData data)

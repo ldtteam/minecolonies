@@ -1,8 +1,8 @@
-package com.minecolonies.schematica.client.renderer;
+package com.schematica.client.renderer;
 
-import com.minecolonies.schematica.Settings;
-import com.minecolonies.schematica.config.Config;
-import com.minecolonies.schematica.world.SchematicWorld;
+import com.schematica.Settings;
+import com.schematica.config.Config;
+import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
