@@ -1,6 +1,6 @@
 package com.minecolonies.proxy;
 
-import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.schematica.world.SchematicWorld;
 import com.minecolonies.colony.CitizenData;
 
 public interface IProxy

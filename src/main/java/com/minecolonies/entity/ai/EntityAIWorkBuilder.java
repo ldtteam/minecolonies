@@ -1,6 +1,6 @@
 package com.minecolonies.entity.ai;
 
-import com.github.lunatrius.schematica.config.BlockInfo;
+import com.schematica.config.BlockInfo;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.colony.buildings.Building;

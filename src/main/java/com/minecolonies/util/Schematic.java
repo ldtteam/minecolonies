@@ -1,7 +1,7 @@
 package com.minecolonies.util;
 
-import com.github.lunatrius.schematica.world.SchematicWorld;
-import com.github.lunatrius.schematica.world.schematic.SchematicFormat;
+import com.schematica.world.SchematicWorld;
+import com.schematica.world.schematic.SchematicFormat;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;

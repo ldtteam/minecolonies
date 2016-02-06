@@ -1,4 +1,4 @@
-package com.github.lunatrius.schematica.world.schematic;
+package com.schematica.world.schematic;
 
 public class UnsupportedFormatException extends Exception
 {
