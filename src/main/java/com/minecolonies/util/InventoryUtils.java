@@ -1,12 +1,102 @@
 package com.minecolonies.util;
 
+import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class InventoryUtils
-{
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class InventoryUtils {
+
+    private static final String TOOL_HOE = "hoe";
+    private static final String TOOL_SHOVEL = "shovel";
+    private static final String TOOL_PICKAXE = "pickaxe";
+
+    public static List<ItemStack> filterInventory(IInventory inventory, Item targetItem){
+        ArrayList<ItemStack> filtered = new ArrayList<>();
+        if(targetItem == null){
+            return filtered;
+        }
+        //Check every inventory slot
+        for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+            ItemStack stack = inventory.getStackInSlot(slot);
+            if(compareItems(stack,targetItem)){
+                filtered.add(stack);
+            }
+        }
+        return filtered;
+    }
+
+    public static List<ItemStack> getInventoryAsList(IInventory inventory){
+        ArrayList<ItemStack> filtered = new ArrayList<>();
+        for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+            ItemStack stack = inventory.getStackInSlot(slot);
+            if(stack != null) {
+                filtered.add(inventory.getStackInSlot(slot));
+            }
+        }
+        return filtered;
+    }
+
+    public static List<ItemStack> filterInventory(IInventory inventory, Block block){
+        return filterInventory(inventory, getItemFromBlock(block));
+    }
+
+    private static boolean compareItems(ItemStack itemStack, Item targetItem) {
+        return itemStack != null && itemStack.getItem() == targetItem;
+    }
+
+    public static int findFirstSlotInInventoryWith(IInventory inventory, Block block){
+        return findFirstSlotInInventoryWith(inventory,getItemFromBlock(block));
+    }
+
+    public static int findFirstSlotInInventoryWith(IInventory inventory, Item targetItem){
+        for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+            if(compareItems(inventory.getStackInSlot(slot),targetItem)){
+                return slot;
+            }
+        }
+        return -1;
+        //TODO: Later harden contract to remove compare on slot := -1
+        //throw new IllegalStateException("Item "+targetItem.getUnlocalizedName() + " not found in Inventory!");
+    }
+
+    public static int getItemCountInInventory(IInventory inventory, Item targetitem){
+        int count = 0;
+        for(ItemStack is : filterInventory(inventory, targetitem)){
+            count += is.stackSize;
+        }
+        return count;
+    }
+
+    public static int getItemCountInInventory(IInventory inventory, Block block){
+        return getItemCountInInventory(inventory, getItemFromBlock(block));
+    }
+
+    public static boolean hasitemInInventory(IInventory inventory, Item item){
+        return getItemCountInInventory(inventory, item)>0;
+    }
+
+    public static boolean hasitemInInventory(IInventory inventory, Block block){
+        return hasitemInInventory(inventory, getItemFromBlock(block));
+    }
+
+
+    //TODO: Check if this conversion is always safe
+    //But seems like ItemStack does it right...
+    /**
+     * Converts a Block to its Item so it can be compared.
+     * @param block the block to convert
+     * @return an item from the registry
+     */
+    public static Item getItemFromBlock(Block block){
+        return new ItemStack(block).getItem();
+    }
+
     /**
      * Tries to put an item into Inventory
      *
@@ -112,7 +202,7 @@ public class InventoryUtils
 
     /**
      * @param takeAll Whether or not {@code receiving} will take the rest if possible
-     * @return true if itemstack in specified {@code slotID} is not null and if {@code receiving} received
+     * @return true if itemstack in specified {@code slotID} is not null and if {@code receivingInv} received
      * at least {@code amount} of itemstack
      */
     public static boolean takeStackInSlot(IInventory sendingInv, IInventory receivingInv, int slotID, int amount, boolean takeAll)
@@ -188,7 +278,8 @@ public class InventoryUtils
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack item = inventory.getStackInSlot(i);
-            if (item != null && item.getItem().getToolClasses(null /* unused */).contains(tool)) {
+            if (item != null && (item.getItem().getToolClasses(item).contains(tool) || (tool.equals("hoe") && item.getUnlocalizedName().contains("hoe"))))
+            {
                 return i;
             }
         }

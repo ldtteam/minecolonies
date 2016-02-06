@@ -21,7 +21,7 @@ public class PermissionsMessage
     public static class View implements IMessage, IMessageHandler<View, IMessage>
     {
         private int     colonyID;
-        private ByteBuf data = Unpooled.buffer();
+        private ByteBuf data;
 
         public View()
         {
@@ -30,6 +30,7 @@ public class PermissionsMessage
         public View(Colony colony, Permissions.Rank viewerRank)
         {
             this.colonyID = colony.getID();
+            this.data = Unpooled.buffer();
             colony.getPermissions().serializeViewNetworkData(this.data, viewerRank);
         }
 
@@ -44,7 +45,7 @@ public class PermissionsMessage
         public void fromBytes(ByteBuf buf)
         {
             colonyID = buf.readInt();
-            buf.readBytes(data, buf.readableBytes());
+            data = buf;
         }
 
         @Override
@@ -102,7 +103,7 @@ public class PermissionsMessage
         public IMessage onMessage(Permission message, MessageContext ctx)
         {
 
-            Colony colony = ColonyManager.getColonyById(message.colonyID);
+            Colony colony = ColonyManager.getColony(message.colonyID);
 
             if (colony == null)
             {
@@ -159,7 +160,7 @@ public class PermissionsMessage
         public IMessage onMessage(AddPlayer message, MessageContext ctx)
         {
 
-            Colony colony = ColonyManager.getColonyById(message.colonyID);
+            Colony colony = ColonyManager.getColony(message.colonyID);
 
             if (colony != null)
             {
@@ -208,7 +209,7 @@ public class PermissionsMessage
         public IMessage onMessage(SetPlayerRank message, MessageContext ctx)
         {
 
-            Colony colony = ColonyManager.getColonyById(message.colonyID);
+            Colony colony = ColonyManager.getColony(message.colonyID);
 
             if (colony != null)
             {
@@ -253,7 +254,7 @@ public class PermissionsMessage
         public IMessage onMessage(RemovePlayer message, MessageContext ctx)
         {
 
-            Colony colony = ColonyManager.getColonyById(message.colonyID);
+            Colony colony = ColonyManager.getColony(message.colonyID);
 
             if (colony != null)
             {

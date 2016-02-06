@@ -12,13 +12,11 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.lang.ref.WeakReference;
-
 public class TileEntityColonyBuilding extends TileEntityChest
 {
-    private int                     colonyId = 0;
-    private WeakReference<Colony>   colony;
-    private WeakReference<Building> building;
+    private int      colonyId = 0;
+    private Colony   colony;
+    private Building building;
 
     private final static String TAG_COLONY = "colony";
 
@@ -27,29 +25,60 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Override
     public void updateEntity()
     {
-        if (worldObj.isRemote) return;
+        super.updateEntity();
 
-        if (colony == null && colonyId != 0)
+        if (!worldObj.isRemote)
         {
-            colony = new WeakReference<Colony>(ColonyManager.getColonyById(colonyId));
+            if (colonyId == 0)
+            {
+                throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId", worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord));
+            }
+        }
+    }
+
+    private void updateColonyReferences()
+    {
+        if (colony == null)
+        {
+            if (colonyId != 0)
+            {
+                colony = ColonyManager.getColony(colonyId);
+            }
+            else
+            {
+                throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
+                        worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord));
+            }
+//            else if (worldObj != null)
+//            {
+//                throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
+//                        worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord));
+//
+//                colony = ColonyManager.getColony(worldObj, xCoord, yCoord, zCoord);
+//
+//                if (colony != null)
+//                {
+//                    colonyId = colony.getID();
+//                }
+//            }
         }
 
         if (building == null && colony != null)
         {
-            Colony c = colony.get();
-            Building b = null;
-
-            if (c != null)
+            building = colony.getBuilding(getPosition());
+            if (building != null)
             {
-                b = c.getBuilding(getPosition());
+                building.setTileEntity(this);
             }
+        }
+    }
 
-            building = new WeakReference<Building>(b);
-
-            if (b != null)
-            {
-                b.setTileEntity(this);
-            }
+    @Override
+    public void onChunkUnload()
+    {
+        if (building != null)
+        {
+            building.setTileEntity(null);
         }
     }
 
@@ -57,13 +86,25 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
+        if (!compound.hasKey(TAG_COLONY))
+        {
+            throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] missing COLONY tag.",
+                    worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord));
+        }
         colonyId = compound.getInteger(TAG_COLONY);
+        updateColonyReferences();
     }
 
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
+        if (colonyId == 0)
+        {
+            throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId; %s colony reference.",
+                    worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord,
+                    colony == null ? "NO" : "valid"));
+        }
         compound.setInteger(TAG_COLONY, colonyId);
     }
 
@@ -89,32 +130,37 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     public int getColonyId() { return colonyId; }
-    public Colony getColony() { return colony != null ? colony.get() : null; }
-    public void setColony(Colony colony)
+    public Colony getColony()
     {
-        this.colony = new WeakReference<Colony>(colony);
-        colonyId = colony.getID();
+        if (colony == null) updateColonyReferences();
+        return colony;
+    }
+    public void setColony(Colony c)
+    {
+        colony = c;
+        colonyId = c.getID();
+        markDirty();
     }
 
-    public Building getBuilding() { return building != null ? building.get() : null; }
+    public Building getBuilding()
+    {
+        if (building == null) updateColonyReferences();
+        return building;
+    }
     public void setBuilding(Building b)
     {
-        building = new WeakReference<Building>(b);
+        building = b;
     }
     public Building.View getBuildingView()
     {
-        ColonyView colony = ColonyManager.getColonyView(colonyId);
-        return colony != null ? colony.getBuilding(getPosition()) : null;
+        ColonyView c = ColonyManager.getColonyView(colonyId);
+        return c!= null ? c.getBuilding(getPosition()) : null;
     }
 
     public boolean hasAccessPermission(EntityPlayer player)//This is called every tick the GUI is open. Is that bad?
     {
-        if(building == null) return true;
+        return building == null || building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
 
-        Building b = building.get();
-        if (b == null) return true;
-
-        return b.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
 
     public ChunkCoordinates getPosition()

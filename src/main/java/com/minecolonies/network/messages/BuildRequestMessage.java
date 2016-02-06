@@ -55,7 +55,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     @Override
     public IMessage onMessage(BuildRequestMessage message, MessageContext ctx)
     {
-        Colony colony = ColonyManager.getColonyById(message.colonyId);
+        Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony == null)
         {
             return null;

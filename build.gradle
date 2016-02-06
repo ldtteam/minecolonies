@@ -15,6 +15,19 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "1.2"
+}
+
+sonarqube {
+    properties{
+        property "sonar.host.url", "http://home.kk-sc.de:9000"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.projectName", "Minecolonies"
+        property "sonar.branch", System.getenv()['bamboo_repository_branch_name']
+    }
+}
+
 apply plugin: 'forge'
 
 ext.configFile = file "build.properties"
@@ -29,9 +42,12 @@ configFile.withReader {
 group = "com.minecolonies"
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.minecolonies_build}"
 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
 minecraft {
 
-    version = config.minecraft_version + "-" + config.forge_version
+    version = config.forge_version + "-" + config.minecraft_version
     runDir = "run"
     replace "@VERSION@", project.version
     replaceIn "lib/Constants.java"
@@ -79,6 +95,9 @@ jar {
     appendix = 'universal'
 }
 
-if(new File(config.signing + ".gradle").exists()) {
-    apply from: config.signing + ".gradle";
+apply plugin: 'idea'
+idea {
+    module {
+        inheritOutputDirs = true
+    }
 }

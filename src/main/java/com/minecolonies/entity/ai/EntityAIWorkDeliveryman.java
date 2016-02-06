@@ -52,19 +52,19 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
 
         //  TODO - Actually know the Building, not the ID of it
         BuildingWorker destinationBuilding = worker.getColony().getBuilding(job.getDestination(), BuildingWorker.class);
-        if (destinationBuilding == null)
+        if(destinationBuilding == null)
         {
             return;
         }
 
         CitizenData targetCitizen = destinationBuilding.getWorker();
-        if (targetCitizen == null || targetCitizen.getJob() == null)
+        if(targetCitizen == null || targetCitizen.getJob() == null)
         {
             return;
         }
 
         TileEntityColonyBuilding destinationTileEntity = destinationBuilding.getTileEntity();
-        if (destinationTileEntity == null)
+        if(destinationTileEntity == null)
         {
             //  The recipient or their building's TE aren't loaded currently.  Maybe do something else?
             return;
@@ -91,7 +91,7 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
                 }
                 InventoryUtils.setStack(destinationTileEntity, new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
             }
-            targetCitizen.getJob().getItemsNeeded().remove(i);
+            targetCitizen.getJob().removeItemNeeded(itemstack);
             i--;
         }
 

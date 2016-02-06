@@ -31,12 +31,12 @@ public class ScrollingView extends View
         container = createScrollingContainer();
         container.setPosition(0, 0);
         container.setSize(getInteriorWidth() - scrollbarWidth, getInteriorHeight());
-        addChild(container);
+        container.putInside(this);
 
         scrollbar = new Scrollbar(container);
         scrollbar.setPosition(getInteriorWidth() - scrollbarWidth, 0);
         scrollbar.setSize(scrollbarWidth, getInteriorHeight());
-        addChild(scrollbar);
+        scrollbar.putInside(this);
     }
 
     protected ScrollingContainer createScrollingContainer()

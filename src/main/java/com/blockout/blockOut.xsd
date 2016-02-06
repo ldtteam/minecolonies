@@ -20,13 +20,13 @@
 
     <xs:simpleType name="sizePair">
         <xs:restriction base="xs:string">
-            <xs:pattern value="([-+]?\d+)(%|px)? +([-+]?\d+)(%|px)?"/>
+            <xs:pattern value="([-+]?\d+)(%|px)?( +([-+]?\d+)(%|px)?)?"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="fixedSizePair">
-        <xs:restriction>
-            <xs:pattern value="\d+ +\d+"/>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d+( +\d+)?"/>
         </xs:restriction>
     </xs:simpleType>
 

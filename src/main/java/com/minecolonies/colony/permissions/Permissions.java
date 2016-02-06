@@ -19,19 +19,19 @@ import java.util.*;
  *
  * @author Colton
  */
-public class Permissions {
-
+public class Permissions implements IPermissions
+{
     public enum Rank
     {
-        OWNER(0),
-        OFFICER(1),
-        FRIEND(2),
-        NEUTRAL(3),
-        HOSTILE(4);
+        OWNER   (true),
+        OFFICER (true),
+        FRIEND  (true),
+        NEUTRAL (false),
+        HOSTILE (false);
 
-        private final int rank; //  Lower is better
-        Rank(int r) { rank = r; }
-        public int getValue() { return rank; }
+        Rank(boolean isSubscriber) { this.isSubscriber = isSubscriber; }
+
+        public final boolean isSubscriber;
     }
 
     public enum Action {
@@ -278,12 +278,8 @@ public class Permissions {
         {
             GameProfile gameprofile = MinecraftServer.getServer().func_152358_ax().func_152652_a(id);
 
-            if (gameprofile == null)
-            {
-                return false;
-            }
+            return gameprofile != null && addPlayer(gameprofile, rank);
 
-            return addPlayer(gameprofile, rank);
         }
 
         return true;
@@ -293,12 +289,8 @@ public class Permissions {
     {
         GameProfile gameprofile = MinecraftServer.getServer().func_152358_ax().func_152655_a(player);
 
-        if (gameprofile == null)
-        {
-            return false;
-        }
+        return gameprofile != null && addPlayer(gameprofile, rank);
 
-        return addPlayer(gameprofile, rank);
     }
 
     public boolean addPlayer(GameProfile gameprofile, Rank rank)
@@ -334,13 +326,14 @@ public class Permissions {
         return null;
     }
 
-    public Set<Player> getSubscribers()
+    public boolean isSubscriber(EntityPlayer player)
     {
-        Set<Rank> ranks = new HashSet<Rank>();
-        ranks.add(Rank.OWNER);
-        ranks.add(Rank.OFFICER);
-        ranks.add(Rank.FRIEND);
-        return getPlayersByRank(ranks);
+        return isSubscriber(player.getGameProfile().getId());
+    }
+
+    public boolean isSubscriber(UUID player)
+    {
+        return getRank(player).isSubscriber;
     }
 
     boolean isDirty = false;
@@ -360,7 +353,7 @@ public class Permissions {
         isDirty = false;
     }
 
-    public static class View
+    public static class View implements IPermissions
     {
         private Rank userRank = Rank.NEUTRAL;
         private Map<UUID, Player> players = new HashMap<UUID, Player>();
@@ -406,7 +399,7 @@ public class Permissions {
 
         public Rank getRank(EntityPlayer player)
         {
-            return getRank(player.getGameProfile().getId());
+            return getRank(player.getUniqueID());
         }
 
         public Rank getRank(UUID id)
@@ -461,6 +454,7 @@ public class Permissions {
             userRank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
 
             //  Owners
+            players.clear();
             int numOwners = buf.readInt();
             for (int i = 0; i < numOwners; ++i)
             {
@@ -472,6 +466,7 @@ public class Permissions {
             }
 
             //Permissions
+            permissions.clear();
             int numPermissions = buf.readInt();
             for (int i = 0; i < numPermissions; ++i)
             {
@@ -502,5 +497,49 @@ public class Permissions {
             ByteBufUtils.writeUTF8String(buf, entry.getKey().name());
             buf.writeInt(entry.getValue());
         }
+    }
+
+    private static class RankPair
+    {
+        RankPair(Rank p, Rank d) { promote = p; demote = d; }
+
+        Rank promote;
+        Rank demote;
+    }
+
+    private static Map<Rank, RankPair> promotionRanks = new HashMap<Rank, RankPair>();
+
+    private static void setPromotionRanks(Rank r, Rank p, Rank d)
+    {
+        promotionRanks.put(r, new RankPair(p, d));
+    }
+
+    static
+    {
+        //setPromotionRanks(Rank.OWNER,   Rank.OWNER,     Rank.OWNER);
+        setPromotionRanks(Rank.OFFICER, Rank.OFFICER,   Rank.FRIEND);
+        setPromotionRanks(Rank.FRIEND,  Rank.OFFICER,   Rank.NEUTRAL);
+        setPromotionRanks(Rank.NEUTRAL, Rank.FRIEND,    Rank.HOSTILE);
+        setPromotionRanks(Rank.HOSTILE, Rank.NEUTRAL,   Rank.HOSTILE);
+    }
+
+    public static Rank getPromotionRank(Rank rank)
+    {
+        if (promotionRanks.containsKey(rank))
+        {
+            return promotionRanks.get(rank).promote;
+        }
+
+        return rank;
+    }
+
+    public static Rank getDemotionRank(Rank rank)
+    {
+        if (promotionRanks.containsKey(rank))
+        {
+            return promotionRanks.get(rank).demote;
+        }
+
+        return rank;
     }
 }

@@ -6,10 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class WorkManager
 {
@@ -22,7 +19,7 @@ public class WorkManager
 
     private final static String TAG_WORK_ORDERS = "workOrders";
 
-    private final static int WORK_ORDER_CLEANUP_INCREMENT = 1 * 20;   //  Once a second
+    private final static int WORK_ORDER_FULFILL_INCREMENT = 1 * 20;   //  Once a second
 
     public WorkManager(Colony c)
     {
@@ -60,7 +57,7 @@ public class WorkManager
 
     public void removeWorkOrder(WorkOrder order)
     {
-        workOrders.remove(order);
+        workOrders.remove(order.getID());
 //        claimedOrders.remove(order);
 //        unclaimedOrders.remove(order);
     }
@@ -200,7 +197,17 @@ public class WorkManager
     {
         if (event.phase == TickEvent.Phase.END)
         {
-            if ((event.world.getWorldTime() % WORK_ORDER_CLEANUP_INCREMENT) == 0)
+            Iterator<WorkOrder> iter = workOrders.values().iterator();
+            while (iter.hasNext())
+            {
+                WorkOrder o = iter.next();
+                if (!o.isValid(colony))
+                {
+                    iter.remove();
+                }
+            }
+
+            if ((event.world.getWorldTime() % WORK_ORDER_FULFILL_INCREMENT) == 0)
             {
                 for (WorkOrder o : workOrders.values())
                 {

@@ -4,6 +4,7 @@ public class Configurations
 {
     public static int       workingRangeTownhall        = 100;
     public static int       townhallPadding             = 20;
+    public static boolean   supplyChests                = true;
     public static boolean   allowInfiniteSupplyChests   = false;
     public static int       citizenRespawnInterval      = 30;
 
@@ -15,6 +16,13 @@ public class Configurations
     public static int       maxCitizens                     = 4;//TODO remove config value and set maxCitizens based on the colony buildings/levels
     public static boolean   alwaysRenderNameTag             = true;
     public static int       maxBlocksCheckedByBuilder       = 1000;//TODO change count to agreed upon value, possibly remove if we think this shouldn't be a problem
+    public static int       chatFrequency                   = 30;
+
+    public static boolean   enableInDevelopmentFeatures = false;
+
+    public static boolean   pathfindingDebugDraw = false;
+    public static int       pathfindingDebugVerbosity = 0;
+    public static int       pathfindingMaxThreadCount = 2;
 
     public static String[] maleFirstNames = new String[] {
             "Jim", "John", "James", "Robert", "Thomas", "Michael", "William", "David", "Richard", "Charles", "Joseph", "Christopher", "Paul", "Mark", "George", "Steven", "Peter", "Henrik", "Rory" };

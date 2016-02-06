@@ -15,7 +15,21 @@ import java.util.*;
 
 public class Utils
 {
-    public static ChunkCoordinates scanForBlockNearPoint(World world, Block block, int x, int y, int z, int radiusX, int radiusY, int radiusZ)
+    /**
+     * Find the closest block near the points
+     *
+     * @param world the world
+     * @param blocks Blocks to test for
+     * @param x Origin
+     * @param y Origin
+     * @param z Origin
+     * @param radiusX x search distance
+     * @param radiusY y search distance
+     * @param radiusZ z search distance
+     * @param height check if blocks above the found block are air or block
+     * @return the coordinates of the found block
+     */
+    public static ChunkCoordinates scanForBlockNearPoint(World world, int x, int y, int z, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
     {
         ChunkCoordinates closestCoords = null;
         double minDistance = Double.MAX_VALUE;
@@ -26,7 +40,7 @@ public class Utils
             {
                 for(int k = z - radiusZ; k <= z + radiusZ; k++)
                 {
-                    if(world.getBlock(i, j, k) == block)
+                    if(checkHeight(world, blocks, i, j, k, height))
                     {
                         ChunkCoordinates tempCoords = new ChunkCoordinates(i, j, k);
 
@@ -43,6 +57,30 @@ public class Utils
         return closestCoords;
     }
 
+    private static boolean checkHeight(World world, Block[] blocks, int x, int y, int z, int height)
+    {
+        for(int dy = 0; dy < height; dy++)
+        {
+            if(!arrayContains(blocks, world.getBlock(x, y + dy, z)))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean arrayContains(Object[] array, Object key)
+    {
+        for(Object o : array)
+        {
+            if(key.equals(o))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean isPathingTo(EntityCitizen citizen, int x, int z)
     {
         PathPoint pathpoint = citizen.getNavigator().getPath().getFinalPathPoint();
@@ -51,12 +89,24 @@ public class Utils
 
     public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z)
     {
-        return worker.getPosition().squareDistanceTo(x, y, z) < 4;
+        return isWorkerAtSite(worker, x, y, z, 2);
+    }
+
+    public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z, int range)
+    {
+        return worker.getPosition().squareDistanceTo(x, y, z) < range*range;
     }
 
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, int x, int y, int z)
     {
-        if(!isWorkerAtSite(worker, x, y, z))//Too far away
+        //Default range of 3 works better
+        //Range of 2 get some workers stuck
+        return isWorkerAtSiteWithMove(worker, x, y, z, 3);
+    }
+
+    public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, int x, int y, int z, int range)
+    {
+        if(!isWorkerAtSite(worker, x, y, z, range))//Too far away
         {
             if(worker.getNavigator().noPath())//Not moving
             {
@@ -69,10 +119,6 @@ public class Utils
         }
         else
         {
-            if(!worker.getNavigator().noPath())//within 2 blocks - can stop pathing //TODO may not need this check
-            {
-                worker.getNavigator().clearPathEntity();
-            }
             return true;
         }
     }
@@ -296,5 +342,10 @@ public class Utils
     public static int toggleFlag(int data, int flag)
     {
         return data ^ flag;
+    }
+
+    public static void blockBreakSoundAndEffect(World world, int x, int y, int z, Block block, int metadata)
+    {
+        world.playAuxSFX(2001, x, y, z, Block.getIdFromBlock(block) + (metadata << 12));
     }
 }

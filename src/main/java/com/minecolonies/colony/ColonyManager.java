@@ -4,40 +4,46 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.lib.Constants;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.*;
 import java.util.*;
 
-public class ColonyManager {
-    private static Map<Integer, Colony>       colonies        = new HashMap<Integer, Colony>();
-    private static Map<Integer, List<Colony>> coloniesByWorld = new HashMap<Integer, List<Colony>>();
+public class ColonyManager
+{
+    private static Map<Integer, Colony>       colonies        = new HashMap<>();
+    private static Map<Integer, List<Colony>> coloniesByWorld = new HashMap<>();
     private static int                        topColonyId     = 0;
 
-    private static Map<Integer, ColonyView>   colonyViews     = new HashMap<Integer, ColonyView>();
+    private static Map<Integer, ColonyView>   colonyViews     = new HashMap<>();
 
     private static int numWorldsLoaded;    //  Used to trigger loading/unloading colonies
+    private static boolean saveNeeded;
 
     private final static String FILENAME_MINECOLONIES_PATH = "minecolonies";
     private final static String FILENAME_MINECOLONIES = "colonies.dat";
 
     private final static String TAG_COLONIES = "colonies";
-
-    public static void init()
-    {
-    }
 
     /**
      * Create a new Colony in the given world and at that location
@@ -59,6 +65,11 @@ public class ColonyManager {
         }
 
         coloniesByWorld.get(colony.getDimensionId()).add(colony);
+
+        markDirty();
+
+        MineColonies.logger.info(String.format("New Colony %d", colony.getID()));
+
         return colony;
     }
 
@@ -68,7 +79,7 @@ public class ColonyManager {
      * @param id UUID of colony
      * @return
      */
-    public static Colony getColonyById(int id) { return colonies.get(id); }
+    public static Colony getColony(int id) { return colonies.get(id); }
 
     /**
      * Get Colony that contains a given ChunkCoordinates
@@ -77,13 +88,13 @@ public class ColonyManager {
      * @param coord
      * @return
      */
-    public static Colony getColonyByCoord(World w, ChunkCoordinates coord)
+    public static Colony getColony(World w, ChunkCoordinates coord)
     {
-        return getColonyByCoord(w, coord.posX, coord.posY, coord.posZ);
+        return getColony(w, coord.posX, coord.posY, coord.posZ);
     }
 
 
-    public static Colony getColonyByCoord(World w, int x, int y, int z)
+    public static Colony getColony(World w, int x, int y, int z)
     {
         List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.dimensionId);
         if (coloniesInWorld == null) return null;
@@ -168,7 +179,7 @@ public class ColonyManager {
     public static Building getBuilding(World w, int x, int y, int z)
     {
         ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
-        Colony colony = getColonyByCoord(w, coords);
+        Colony colony = getColony(w, coords);
         if (colony != null)
         {
             Building building = colony.getBuilding(coords);
@@ -274,13 +285,18 @@ public class ColonyManager {
         return closestColony;
     }
 
-    public static List<ColonyView> getColonyViewsOwnedByPlayer(EntityPlayer player)
+    public static List<ColonyView> getColonyViewsByOwner(EntityPlayer player)
+    {
+        return getColonyViewsByOwner(player.getGameProfile().getId());
+    }
+
+    public static List<ColonyView> getColonyViewsByOwner(UUID owner)
     {
         List<ColonyView> results = new ArrayList<ColonyView>();
 
         for (ColonyView c : colonyViews.values())
         {
-            Permissions.Player p = c.getPlayers().get(player.getGameProfile().getId());
+            Permissions.Player p = c.getPlayers().get(owner);
             if (p != null && p.rank.equals(Permissions.Rank.OWNER))
             {
                 results.add(c);
@@ -288,6 +304,37 @@ public class ColonyManager {
         }
 
         return results;
+    }
+
+    //  IColony Side-neutral
+    public static IColony getIColony(World world, int id)
+    {
+        return world.isRemote ? getColonyView(id) : getColony(id);
+    }
+
+    public static IColony getIColony(World w, int x, int y, int z)
+    {
+        return w.isRemote ? getColonyView(w, x, y, z) : getColony(w, x, y, z);
+    }
+
+    public static IColony getIColony(World w, ChunkCoordinates coord)
+    {
+        return getIColony(w, coord.posX, coord.posY, coord.posZ);
+    }
+
+    public static IColony getClosestIColony(World w, int x, int y, int z)
+    {
+        return w.isRemote ? getClosestColonyView(w, x, y, z) : getClosestColony(w, x, y, z);
+    }
+
+    public static List<? extends IColony> getIColoniesByOwner(World w, EntityPlayer owner)
+    {
+        return getIColoniesByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
+    }
+
+    public static List<? extends IColony> getIColoniesByOwner(World w, UUID owner)
+    {
+        return w.isRemote ? getColonyViewsByOwner(owner) : getColoniesByOwner(owner);
     }
 
     public static double getMinimumDistanceBetweenTownHalls()
@@ -308,6 +355,11 @@ public class ColonyManager {
         for (Colony c : colonies.values())
         {
             c.onServerTick(event);
+        }
+
+        if (saveNeeded)
+        {
+            saveColonies();
         }
     }
 
@@ -364,6 +416,8 @@ public class ColonyManager {
 
             topColonyId = Math.max(topColonyId, colony.getID());
         }
+
+        MineColonies.logger.info(String.format("Loaded %d colonies", colonies.size()));
     }
 
     /**
@@ -387,11 +441,9 @@ public class ColonyManager {
     /**
      * Get save location for Minecolonies data, from the world/save directory
      *
-     * @param world
      * @return
      */
-    private static File getSaveLocation(
-            World world)
+    private static File getSaveLocation()
     {
         File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
@@ -454,6 +506,25 @@ public class ColonyManager {
     }
 
     /**
+     * Save all the Colonies
+     */
+    private static void saveColonies()
+    {
+        NBTTagCompound compound = new NBTTagCompound();
+        writeToNBT(compound);
+
+        File file = getSaveLocation();
+        saveNBTToPath(file, compound);
+
+        saveNeeded = false;
+    }
+
+    public static void markDirty()
+    {
+        saveNeeded = true;
+    }
+
+    /**
      * When a world is loaded, Colonies in that world need to grab the reference to the World
      * Additionally, when loading the first world, load all colonies.
      *
@@ -465,7 +536,7 @@ public class ColonyManager {
         {
             if (numWorldsLoaded == 0)
             {
-                File file = getSaveLocation(world);
+                File file = getSaveLocation();
                 NBTTagCompound data = loadNBTFromPath(file);
                 if (data != null)
                 {
@@ -482,6 +553,8 @@ public class ColonyManager {
                     c.onWorldLoad(world);
                 }
             }
+
+            world.addWorldAccess(new ColonyManagerWorldAccess());
         }
         else
         {
@@ -497,11 +570,7 @@ public class ColonyManager {
         if (!world.isRemote &&
             world.provider.dimensionId == 0)    //  For now, save when 0 saves...
         {
-            NBTTagCompound compound = new NBTTagCompound();
-            writeToNBT(compound);
-
-            File file = getSaveLocation(world);
-            saveNBTToPath(file, compound);
+            saveColonies();
         }
     }
 
@@ -634,5 +703,43 @@ public class ColonyManager {
         }
 
         return null;
+    }
+
+    public static class ColonyManagerWorldAccess implements IWorldAccess
+    {
+        @Override public void markBlockForUpdate(int p_147586_1_, int p_147586_2_, int p_147586_3_) {}
+        @Override public void markBlockForRenderUpdate(int p_147588_1_, int p_147588_2_, int p_147588_3_) {}
+        @Override public void markBlockRangeForRenderUpdate(int p_147585_1_, int p_147585_2_, int p_147585_3_, int p_147585_4_, int p_147585_5_, int p_147585_6_) {}
+        @Override public void playSound(String p_72704_1_, double p_72704_2_, double p_72704_4_, double p_72704_6_, float p_72704_8_, float p_72704_9_) {}
+        @Override public void playSoundToNearExcept(EntityPlayer p_85102_1_, String p_85102_2_, double p_85102_3_, double p_85102_5_, double p_85102_7_, float p_85102_9_, float p_85102_10_) {}
+        @Override public void spawnParticle(String p_72708_1_, double p_72708_2_, double p_72708_4_, double p_72708_6_, double p_72708_8_, double p_72708_10_, double p_72708_12_) {}
+
+        @Override
+        public void onEntityCreate(Entity entity)
+        {
+            if (entity instanceof EntityCitizen)
+            {
+                ((EntityCitizen) entity).updateColonyServer();
+            }
+        }
+
+        @Override
+        public void onEntityDestroy(Entity entity)
+        {
+            if (entity instanceof EntityCitizen)
+            {
+                CitizenData citizen = ((EntityCitizen) entity).getCitizenData();
+                if (citizen != null)
+                {
+                    citizen.setCitizenEntity(null);
+                }
+            }
+        }
+
+        @Override public void playRecord(String p_72702_1_, int p_72702_2_, int p_72702_3_, int p_72702_4_) {}
+        @Override public void broadcastSound(int p_82746_1_, int p_82746_2_, int p_82746_3_, int p_82746_4_, int p_82746_5_) {}
+        @Override public void playAuxSFX(EntityPlayer p_72706_1_, int p_72706_2_, int p_72706_3_, int p_72706_4_, int p_72706_5_, int p_72706_6_) {}
+        @Override public void destroyBlockPartially(int p_147587_1_, int p_147587_2_, int p_147587_3_, int p_147587_4_, int p_147587_5_) {}
+        @Override public void onStaticEntitiesChanged() {}
     }
 }

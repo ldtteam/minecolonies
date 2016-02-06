@@ -4,7 +4,6 @@ import com.minecolonies.client.gui.WindowHomeBuilding;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.lib.EnumGUI;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,7 +34,11 @@ public class BuildingHome extends BuildingHut
     public int getMaxInhabitants(){ return 2; }
 
     @Override
-    public int getGuiId() { return EnumGUI.CITIZEN.getID(); }
+    public void setBuildingLevel(int level)
+    {
+        super.setBuildingLevel(level);
+        getColony().calculateMaxCitizens();
+    }
 
     @Override
     public void onDestroyed()
@@ -152,14 +155,9 @@ public class BuildingHome extends BuildingHut
 
         public List<Integer> getResidents() { return Collections.unmodifiableList(residents); }
 
-        public com.blockout.views.Window getWindow(int guiId)
+        public com.blockout.views.Window getWindow()
         {
-            if (guiId == EnumGUI.CITIZEN.getID())
-            {
-                return new WindowHomeBuilding(this);
-            }
-
-            return null;
+            return new WindowHomeBuilding(this);
         }
 
         @Override

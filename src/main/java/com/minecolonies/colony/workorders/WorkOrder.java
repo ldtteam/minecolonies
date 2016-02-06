@@ -189,6 +189,14 @@ public abstract class WorkOrder
     }
 
     /**
+     * Is this WorkOrder still valid?  If not, it will be deleted.
+     *
+     * @param colony The colony that owns the Work Order
+     * @return True if the WorkOrder is still valid, or False if it should be deleted
+     */
+    public boolean isValid(Colony colony) { return true; }
+
+    /**
      * Attempt to fulfill the Work Order.
      *
      * Override this with an implementation for the Work Order to find a Citizen to perform the job

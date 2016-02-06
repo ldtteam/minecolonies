@@ -17,7 +17,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
 {
     private int              colonyId;
     private ChunkCoordinates buildingId;
-    private ByteBuf          buildingData = Unpooled.buffer();
+    private ByteBuf          buildingData;
 
     public ColonyViewBuildingViewMessage(){}
 
@@ -25,6 +25,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
+        this.buildingData = Unpooled.buffer();
         building.serializeToView(this.buildingData);
     }
 
@@ -41,7 +42,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     {
         colonyId = buf.readInt();
         buildingId = ChunkCoordUtils.readFromByteBuf(buf);
-        buf.readBytes(buildingData, buf.readableBytes());
+        buildingData = buf;
     }
 
     @Override

@@ -55,10 +55,17 @@ public class Screen extends GuiScreen
     @Override
     protected void mouseClicked(int mx, int my, int code)
     {
-        if (code == 0)
+        try
         {
-            //  Adjust coordinate to origin of window
-            window.click(mx - x, my - y);
+            if (code == 0)
+            {
+                //  Adjust coordinate to origin of window
+                window.click(mx - x, my - y);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -87,13 +94,18 @@ public class Screen extends GuiScreen
     public void updateScreen()
     {
         window.onUpdate();
+
+        if (!mc.thePlayer.isEntityAlive() || mc.thePlayer.isDead)
+        {
+            mc.thePlayer.closeScreen();
+        }
     }
 
     @Override
     public void onGuiClosed()
     {
         window.onClosed();
-        window.clearFocus();
+        Window.clearFocus();
         Keyboard.enableRepeatEvents(false);
     }
 

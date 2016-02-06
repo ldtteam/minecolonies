@@ -4,20 +4,18 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.*;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
-import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,10 +25,12 @@ public abstract class Building
     private final ChunkCoordinates location;
     private final Colony           colony;
 
-    private WeakReference<TileEntityColonyBuilding> tileEntity;
+    private TileEntityColonyBuilding tileEntity;
 
     //  Attributes
     private int buildingLevel = 0;
+    private int rotation = 0;
+    private String style = "classic";
 
     //  State
     private boolean isDirty = false;
@@ -45,6 +45,8 @@ public abstract class Building
     //    private final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
     private final static String TAG_LOCATION       = "location";  //  Location is unique (within a Colony) and so can double as the Id
     private final static String TAG_BUILDING_LEVEL = "level";
+    private final static String TAG_ROTATION       = "rotation";
+    private final static String TAG_STYLE          = "style";
 
     /**
      * Add a given Building mapping
@@ -216,6 +218,14 @@ public abstract class Building
     public void readFromNBT(NBTTagCompound compound)
     {
         buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
+
+        rotation = compound.getInteger(TAG_ROTATION);
+        style = compound.getString(TAG_STYLE);
+        if(style.equals(""))
+        {
+            MineColonies.logger.warn("Loaded empty style, setting to classic");
+            style = "classic";
+        }
     }
 
     /**
@@ -238,21 +248,51 @@ public abstract class Building
         }
 
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
+
+        compound.setInteger(TAG_ROTATION, rotation);
+        compound.setString(TAG_STYLE, style);
     }
 
     public Colony getColony() { return colony; }
     public ChunkCoordinates getID() { return location; }    //  Location doubles as ID
     public ChunkCoordinates getLocation() { return location; }
     public int getBuildingLevel() { return buildingLevel; }
-    public void setBuildingLevel(int level) { buildingLevel = level; markDirty(); }
+    public void setBuildingLevel(int level)
+    {
+        buildingLevel = level;
+        markDirty();
+        ColonyManager.markDirty();
+    }
 
     public abstract String getSchematicName();
     public abstract int getMaxBuildingLevel();
 
-    public void setTileEntity(TileEntityColonyBuilding te) { tileEntity = new WeakReference<TileEntityColonyBuilding>(te); }
+    public void setTileEntity(TileEntityColonyBuilding te)
+    {
+        tileEntity = te;
+    }
+
     public TileEntityColonyBuilding getTileEntity()
     {
-        return (tileEntity != null) ? tileEntity.get() : null;
+        if (tileEntity == null)
+        {
+            //  Lazy evaluation
+            if (colony.getWorld().blockExists(location.posX, location.posY, location.posZ))
+            {
+                TileEntity te = getColony().getWorld().getTileEntity(location.posX, location.posY, location.posZ);
+                if (te instanceof TileEntityColonyBuilding)
+                {
+                    tileEntity = (TileEntityColonyBuilding)te;
+                    if (tileEntity.getBuilding() == null)
+                    {
+                        tileEntity.setColony(colony);
+                        tileEntity.setBuilding(this);
+                    }
+                }
+            }
+        }
+
+        return tileEntity;
     }
 
     public final boolean isDirty() { return isDirty; }
@@ -272,8 +312,6 @@ public abstract class Building
 
     public void removeCitizen(CitizenData citizen) {}
 
-    public int getGuiId() { return 0; }
-
     public void onServerTick(TickEvent.ServerTickEvent event) {}
     public void onWorldTick(TickEvent.WorldTickEvent event) {}
 
@@ -284,15 +322,11 @@ public abstract class Building
         {
             if (o.getBuildingId().equals(getID()))
             {
-                found = true;
-                break;
+                return;
             }
         }
 
-        if (!found)
-        {
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
-        }
+        colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
     }
 
     public void requestUpgrade()
@@ -311,9 +345,24 @@ public abstract class Building
         }
     }
 
-    public void openGui(EntityPlayer player)
+    public void setRotation(int rotation)
     {
-        player.openGui(MineColonies.instance, getGuiId(), getColony().getWorld(), location.posX, location.posY, location.posZ);
+        this.rotation = rotation;
+    }
+
+    public int getRotation()
+    {
+        return rotation;
+    }
+
+    public void setStyle(String style)
+    {
+        this.style = style;
+    }
+
+    public String getStyle()
+    {
+        return style;
     }
 
     /**
@@ -343,13 +392,16 @@ public abstract class Building
 
         public boolean isBuildingMaxLevel() { return buildingLevel >= buildingMaxLevel; }
 
-        public void openGui(EnumGUI gui)
+        public void openGui()
         {
-            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            player.openGui(MineColonies.instance, gui.getID(), player.worldObj, location.posX, location.posY, location.posZ);
+            com.blockout.views.Window window = getWindow();
+            if (window != null)
+            {
+                window.open();
+            }
         }
 
-        public com.blockout.views.Window getWindow(int guiId)
+        public com.blockout.views.Window getWindow()
         {
             return null;
         }
@@ -417,7 +469,7 @@ public abstract class Building
         }
         else
         {
-            MineColonies.logger.warn(String.format("Unknown Building type, missing View subclass, or missing constructor of proper format."));
+            MineColonies.logger.warn("Unknown Building type, missing View subclass, or missing constructor of proper format.");
         }
 
         return view;

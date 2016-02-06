@@ -2,6 +2,7 @@ package com.minecolonies.colony;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -23,7 +24,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.*;
 
-public class Colony
+public class Colony implements IColony
 {
     private final int id;
 
@@ -246,6 +247,7 @@ public class Colony
     public void markCitizensDirty() { isCitizensDirty = true; }
     public void markBuildingsDirty() { isBuildingsDirty = true; }
 
+    @Override
     public Permissions getPermissions()
     {
         return permissions;
@@ -387,7 +389,7 @@ public class Colony
                 {
                     if (citizen.getCitizenEntity() == null)
                     {
-                        MineColonies.logger.warn(String.format("Citizen '%d' has gone AWOL, respawning them!", citizen.getId()));
+                        MineColonies.logger.warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
                         spawnCitizen(citizen);
                     }
                 }
@@ -465,7 +467,7 @@ public class Colony
             if (o instanceof EntityPlayerMP)
             {
                 EntityPlayerMP player = (EntityPlayerMP)o;
-                if (permissions.getSubscribers().contains(player.getGameProfile().getId()))//TODO: adapt to new permissions
+                if (permissions.isSubscriber(player))
                 {
                     subscribers.add(player);
                 }
@@ -528,7 +530,7 @@ public class Colony
                     boolean isNewSubscriber = !oldSubscribers.contains(player);
                     if (isDirty || isNewSubscriber)
                     {
-                        MineColonies.network.sendTo(new ColonyViewMessage(this, isNewSubscriber), player);
+                        MineColonies.getNetwork().sendTo(new ColonyViewMessage(this, isNewSubscriber), player);
                     }
                 }
             }
@@ -541,7 +543,7 @@ public class Colony
                     if (permissions.isDirty() || !oldSubscribers.contains(player))
                     {
                         Permissions.Rank rank = getPermissions().getRank(player);
-                        MineColonies.network.sendTo(new PermissionsMessage.View(this, rank), player);
+                        MineColonies.getNetwork().sendTo(new PermissionsMessage.View(this, rank), player);
                     }
                 }
             }
@@ -559,7 +561,7 @@ public class Colony
                         {
                             if (citizen.isDirty() || !oldSubscribers.contains(player))
                             {
-                                MineColonies.network.sendTo(msg, player);
+                                MineColonies.getNetwork().sendTo(msg, player);
                             }
                         }
                     }
@@ -579,7 +581,7 @@ public class Colony
                         {
                             if (building.isDirty() || !oldSubscribers.contains(player))
                             {
-                                MineColonies.network.sendTo(msg, player);
+                                MineColonies.getNetwork().sendTo(msg, player);
                             }
                         }
                     }
@@ -628,11 +630,7 @@ public class Colony
             return;
         }
 
-        ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, Blocks.air, xCoord, yCoord, zCoord, 1, 0, 1);
-        if(spawnPoint == null)
-        {
-            spawnPoint = Utils.scanForBlockNearPoint(world, Blocks.snow_layer, xCoord, yCoord, zCoord, 1, 0, 1);
-        }
+        ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, xCoord, yCoord, zCoord, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer);
 
         if(spawnPoint != null)
         {
@@ -675,6 +673,9 @@ public class Colony
     {
         return townhall;
     }
+
+    @Override
+    public boolean hasTownhall() { return townhall != null; }
 
     /**
      * Get building in Colony by ID
@@ -727,7 +728,24 @@ public class Colony
         {
             addBuilding(building);
             tileEntity.setBuilding(building);
+
+            MineColonies.logger.info(String.format("Colony %d - new Building for %s at %s",
+                    getID(),
+                    tileEntity.getBlockType().getClass(),
+                    tileEntity.getPosition()));
         }
+        else
+        {
+            MineColonies.logger.error(String.format("Colony %d unable to create Building for %s at %s",
+                    getID(),
+                    tileEntity.getBlockType().getClass(),
+                    tileEntity.getPosition()));
+        }
+
+        calculateMaxCitizens();
+
+        ColonyManager.markDirty();
+
         return building;
     }
 
@@ -743,8 +761,13 @@ public class Colony
             ColonyViewRemoveBuildingMessage msg = new ColonyViewRemoveBuildingMessage(this, building.getID());
             for (EntityPlayerMP player : subscribers)
             {
-                MineColonies.network.sendTo(msg, player);
+                MineColonies.getNetwork().sendTo(msg, player);
             }
+
+            MineColonies.logger.info(String.format("Colony %d - removed Building %s of type %s",
+                    getID(),
+                    building.getID(),
+                    building.getSchematicName()));
         }
 
         if (building == townhall)
@@ -757,6 +780,10 @@ public class Colony
         {
             citizen.onRemoveBuilding(building);
         }
+
+        calculateMaxCitizens();
+
+        ColonyManager.markDirty();
     }
 
     /*
@@ -767,6 +794,26 @@ public class Colony
 
     public int getMaxCitizens() { return maxCitizens; }
     //public void setMaxCitizens();
+
+    public void calculateMaxCitizens()
+    {
+        int newMaxCitizens = Configurations.maxCitizens;
+
+        for (Building b : buildings.values())
+        {
+            if (b instanceof BuildingHome &&
+                    b.getBuildingLevel() > 0)
+            {
+                newMaxCitizens += ((BuildingHome) b).getMaxInhabitants();
+            }
+        }
+
+        if (maxCitizens != newMaxCitizens)
+        {
+            maxCitizens = newMaxCitizens;
+            markDirty();
+        }
+    }
 
     public Map<Integer, CitizenData> getCitizens() { return Collections.unmodifiableMap(citizens); }
 
@@ -786,13 +833,6 @@ public class Colony
         return activeCitizens;
     }
 
-    /**
-     * Is the Citizen ID an actual Citizen in the Colony?
-     * @param c ID of the Citizen
-     * @return true if a Citizen of the given ID exists in the Colony
-     */
-    public boolean isCitizen(UUID c) { return citizens.containsKey(c); }
-
     public void removeCitizen(CitizenData citizen)
     {
         //  Remove the Citizen
@@ -809,7 +849,7 @@ public class Colony
         ColonyViewRemoveCitizenMessage msg = new ColonyViewRemoveCitizenMessage(this, citizen.getId());
         for (EntityPlayerMP player : subscribers)
         {
-            MineColonies.network.sendTo(msg, player);
+            MineColonies.getNetwork().sendTo(msg, player);
         }
     }
 
@@ -822,19 +862,6 @@ public class Colony
     public CitizenData getCitizen(int citizenId)
     {
         return citizens.get(citizenId);
-    }
-
-    /**
-     * Get citizen's entity by ID
-     *
-     * @param citizenId ID of the Citizen
-     * @return EntityCitizen of the CitizenData associated with the ID, or null if the citizen was not found or it has
-     * no currently loaded EntityCitizen
-     */
-    public EntityCitizen getCitizenEntity(UUID citizenId)
-    {
-        CitizenData citizen = citizens.get(citizenId);
-        return (citizen != null) ? citizen.getCitizenEntity() : null;
     }
 
     /**
@@ -874,7 +901,7 @@ public class Colony
             if (citizen.getWorkBuilding() != null &&
                     citizen.getJob() != null)
             {
-                if (!citizen.getJob().hasItemsNeeded())
+                if (!citizen.getJob().isMissingNeededItem())
                 {
                     deliverymanRequired.add(citizen.getWorkBuilding().getLocation());
                 }

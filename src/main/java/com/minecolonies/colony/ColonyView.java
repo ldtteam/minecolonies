@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class ColonyView
+public class ColonyView implements IColony
 {
     //  General Attributes
     private final int        id;
@@ -38,7 +38,7 @@ public class ColonyView
 
     //  Citizenry
     private Map<Integer, CitizenData.View> citizens = new HashMap<Integer, CitizenData.View>();
-    private int                            maxCitizens = Configurations.maxCitizens;
+    private int                            maxCitizens = 0;
 
     /**
      * Base constructor for a colony.
@@ -75,7 +75,7 @@ public class ColonyView
     public void setName(String name)
     {
         this.name = name;
-        MineColonies.network.sendToServer(new TownhallRenameMessage(this, name));
+        MineColonies.getNetwork().sendToServer(new TownhallRenameMessage(this, name));
     }
 
     /**
@@ -85,6 +85,9 @@ public class ColonyView
     public BuildingTownHall.View getTownhall() {
         return townhall;
     }
+
+    @Override
+    public boolean hasTownhall() { return townhall != null; }
 
     /**
      * Get a Building.View for a given building (by coordinate-id) using raw x,y,z
@@ -108,6 +111,9 @@ public class ColonyView
         return buildings.get(buildingId);
     }
 
+    @Override
+    public Permissions.View getPermissions() { return permissions; }
+
     public Map<UUID, Permissions.Player> getPlayers()
     {
         return permissions.getPlayers();
@@ -116,20 +122,20 @@ public class ColonyView
     public void setPermission(Permissions.Rank rank, Permissions.Action action) {
         if(permissions.setPermission(rank, action))
         {
-            MineColonies.network.sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.SET_PERMISSION, rank, action));
+            MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.SET_PERMISSION, rank, action));
         }
     }
 
     public void removePermission(Permissions.Rank rank, Permissions.Action action) {
         if(permissions.removePermission(rank, action))
         {
-            MineColonies.network.sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.REMOVE_PERMISSION, rank, action));
+            MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.REMOVE_PERMISSION, rank, action));
         }
     }
 
     public void togglePermission(Permissions.Rank rank, Permissions.Action action) {
         permissions.togglePermission(rank, action);
-        MineColonies.network.sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
+        MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
     }
 
 //    public void addPlayer(String player, Permissions.Rank rank)
@@ -160,10 +166,10 @@ public class ColonyView
      * @param w
      */
     public void onWorldLoad(World w) {
-        //        if (w.provider.dimensionId == dimensionId)
-        //        {
-        //            world = new WeakReference<World>(w);
-        //        }
+//        if (w.provider.dimensionId == dimensionId)
+//        {
+//            world = new WeakReference<World>(w);
+//        }
     }
 
     /**

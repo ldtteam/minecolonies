@@ -1,11 +1,10 @@
 package com.minecolonies.util;
 
-import com.github.lunatrius.schematica.world.SchematicWorld;
-import com.github.lunatrius.schematica.world.schematic.SchematicFormat;
+import com.schematica.world.SchematicWorld;
+import com.schematica.world.schematic.SchematicFormat;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.lib.IColony;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
@@ -27,7 +26,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,11 +57,6 @@ public class Schematic
         world = worldObj;
         schematic = schematicWorld;
         this.name = name;
-    }
-
-    public static Schematic loadSchematic(World worldObj, IColony hut, int level)
-    {
-        return loadSchematic(worldObj, getNameFromHut(hut, level));
     }
 
     public static Schematic loadSchematic(World worldObj, String name)
@@ -169,35 +162,131 @@ public class Schematic
     {
         if(!this.hasSchematic()) return false;
 
+        int count = 0;
+        do
+        {
+            count++;
+            if(!incrementBlock())
+            {
+                return false;
+            }
+
+        }
+        while(doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+
+        return true;
+    }
+
+    public boolean findNextBlockToClear()
+    {
+        if(!this.hasSchematic()) return false;
+
+        int count = 0;
+        do
+        {
+            count++;
+            if(!decrementBlock())
+            {
+                return false;
+            }
+
+        }
+        //Check for air blocks and if blocks below the hut are different from the schematic
+        while((worldBlockAir() || (y <= getOffset().posY && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
+
+        return true;
+    }
+
+    public boolean findNextBlockSolid()
+    {
+        if(!this.hasSchematic()) return false;
+
+        int count = 0;
+        do
+        {
+            count++;
+            if(!incrementBlock())
+            {
+                return false;
+            }
+
+        }
+        while((doesSchematicBlockEqualWorldBlock() || (!schematic.getBlock(x, y, z).getMaterial().isSolid() &&  !schematic.isAirBlock(x, y, z))) && count < Configurations.maxBlocksCheckedByBuilder);
+
+        return true;
+    }
+
+    public boolean findNextBlockNonSolid()
+    {
+        if(!this.hasSchematic()) return false;
+
+        int count = 0;
+        do
+        {
+            count++;
+            if(!incrementBlock())
+            {
+                return false;
+            }
+
+        }
+        while((doesSchematicBlockEqualWorldBlock() || (schematic.getBlock(x, y, z).getMaterial().isSolid() || schematic.isAirBlock(x, y, z))) && count < Configurations.maxBlocksCheckedByBuilder);
+
+        return true;
+    }
+
+    public boolean incrementBlock()
+    {
         if(x == -1)
         {
             y = z = 0;
         }
 
-        int count = 0;
-
-        do
+        x++;
+        if(x == schematic.getWidth())
         {
-            count++;
-
-            x++;
-            if(x == schematic.getWidth())
+            x = 0;
+            z++;
+            if(z == schematic.getLength())
             {
-                x = 0;
-                z++;
-                if(z == schematic.getLength())
+                z = 0;
+                y++;
+                if(y == schematic.getHeight())
                 {
-                    z = 0;
-                    y++;
-                    if(y == schematic.getHeight())
-                    {
-                        x = y = z = -1;
-                        return false;
-                    }
+                    x = y = z = -1;
+                    return false;
                 }
             }
         }
-        while(doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+
+        return true;
+    }
+
+    public boolean decrementBlock()
+    {
+        if(x == -1 && y == -1 && z == -1)
+        {
+            x = schematic.getWidth();
+            y = schematic.getHeight()-1;
+            z = schematic.getLength()-1;
+        }
+
+        x--;
+        if(x == -1)
+        {
+            x = schematic.getWidth()-1;
+            z--;
+            if(z == -1)
+            {
+                z = schematic.getLength()-1;
+                y--;
+                if(y == -1)
+                {
+                    x = y = z = -1;
+                    return false;
+                }
+            }
+        }
 
         return true;
     }
@@ -210,6 +299,16 @@ public class Schematic
             return true;
         }
         return schematic.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematic.getBlockMetadata(x, y, z) == ChunkCoordUtils.getBlockMetadata(world, pos);
+    }
+
+    public boolean worldBlockAir()
+    {
+        ChunkCoordinates pos = this.getBlockPosition();
+        if(pos.posY <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
+        {
+            return true;
+        }
+        return world.isAirBlock(pos.posX, pos.posY, pos.posZ);
     }
 
     public static String saveSchematic(World world, ChunkCoordinates from, ChunkCoordinates to)
@@ -317,7 +416,9 @@ public class Schematic
         }
 
         AxisAlignedBB region = AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+        @SuppressWarnings("unchecked")
         List<EntityHanging> entityHangings = world.getEntitiesWithinAABB(EntityHanging.class, region);
+        @SuppressWarnings("unchecked")
         List<EntityMinecart> entityMinecarts = world.getEntitiesWithinAABB(EntityMinecart.class, region);
         NBTTagList entityList = new NBTTagList();
 
@@ -367,14 +468,17 @@ public class Schematic
         }
     }
 
-    public void setOrientation(ForgeDirection orientation)
-    {
-        //TODO schematic.rotate();
-    }
-
     public void rotate()
     {
         schematic.rotate();
+    }
+
+    public void rotate(int times)
+    {
+        for(int i = 0; i < times; i++)
+        {
+            rotate();
+        }
     }
 
     private static ResourceLocation getResourceLocation(String name)
@@ -409,11 +513,6 @@ public class Schematic
         return null;
     }
 
-    public static String getNameFromHut(IColony hut, int level)
-    {
-        return hut.getName() + level;
-    }
-
     public Block getBlock()
     {
         if(!this.hasSchematic() || x == -1) return null;
@@ -439,7 +538,7 @@ public class Schematic
 
     public ChunkCoordinates getOffsetPosition()
     {
-        return ChunkCoordUtils.subtract(getOffset(), position);//I know this seems backwards, minecraft's fault
+        return ChunkCoordUtils.subtract(position, getOffset());
     }
 
     public ChunkCoordinates getBlockPosition()
@@ -509,9 +608,22 @@ public class Schematic
         return schematic.getLength();
     }
 
+    @SuppressWarnings("unchecked")
     public List<Entity> getEntities()
     {
         return schematic.loadedEntityList;
+    }
+
+    public void reset()
+    {
+        x = -1;
+        y = -1;
+        z = -1;
+    }
+
+    public SchematicWorld getWorldForRender()
+    {
+        return schematic;
     }
 
     //TODO rendering

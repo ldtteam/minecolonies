@@ -170,10 +170,4 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
             bipedRightArm.rotateAngleZ = MathHelper.sin((float) (onGround * Math.PI)) * -0.4F;
         }
     }
-
-    public ModelRenderer toolArm()
-    {
-        return bipedRightArm;
-    }
-
 }

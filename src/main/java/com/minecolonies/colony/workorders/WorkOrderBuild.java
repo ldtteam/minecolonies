@@ -11,10 +11,12 @@ import net.minecraft.util.ChunkCoordinates;
 public class WorkOrderBuild extends WorkOrder
 {
     protected ChunkCoordinates buildingId;
+    protected int              upgradeLevel;
     protected String           upgradeName;
 
-    private static final String TAG_BUILDING     = "building";
-    private static final String TAG_UPGRADE_NAME = "upgrade";
+    private static final String TAG_BUILDING      = "building";
+    private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
+    private static final String TAG_UPGRADE_NAME  = "upgrade";
 
     public WorkOrderBuild()
     {
@@ -25,12 +27,18 @@ public class WorkOrderBuild extends WorkOrder
     {
         super();
         this.buildingId = building.getID();
+        this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
     }
 
     public ChunkCoordinates getBuildingId()
     {
         return buildingId;
+    }
+
+    public int getUpgradeLevel()
+    {
+        return upgradeLevel;
     }
 
     public String getUpgradeName()
@@ -43,6 +51,7 @@ public class WorkOrderBuild extends WorkOrder
     {
         super.writeToNBT(compound);
         ChunkCoordUtils.writeToNBT(compound, TAG_BUILDING, buildingId);
+        compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
         compound.setString(TAG_UPGRADE_NAME, upgradeName);
     }
 
@@ -51,7 +60,14 @@ public class WorkOrderBuild extends WorkOrder
     {
         super.readFromNBT(compound);
         buildingId = ChunkCoordUtils.readFromNBT(compound, TAG_BUILDING);
+        upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
+    }
+
+    @Override
+    public boolean isValid(Colony colony)
+    {
+        return colony.getBuilding(buildingId) != null;
     }
 
     @Override
@@ -60,7 +76,18 @@ public class WorkOrderBuild extends WorkOrder
         for (CitizenData citizen : colony.getCitizens().values())
         {
             JobBuilder job = citizen.getJob(JobBuilder.class);
-            if (job != null && !job.hasWorkOrder())
+            if (job == null || job.hasWorkOrder())
+            {
+                continue;
+            }
+
+            //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
+            //  - The Builder's Work Building is built
+            //  - OR the WorkOrder is for the Builder's Work Building
+            //  - OR the WorkOrder is for the Townhall
+            if (citizen.getWorkBuilding().getBuildingLevel() > 0 ||
+                    citizen.getWorkBuilding().getID().equals(buildingId) ||
+                    (colony.hasTownhall() && colony.getTownhall().getID().equals(buildingId)))
             {
                 job.setWorkOrder(this);
                 setClaimedBy(citizen);

@@ -12,15 +12,11 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.lib.EnumGUI;
 import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.util.LanguageHandler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class WindowTownhall extends Window implements Button.Handler
 {
@@ -38,6 +34,10 @@ public class WindowTownhall extends Window implements Button.Handler
             BUTTON_ADDPLAYER = "addPlayer",
             INPUT_ADDPLAYER_NAME = "addPlayerName",
 
+            BUTTON_REMOVEPLAYER = "removePlayer",
+            BUTTON_PROMOTE = "promote",
+            BUTTON_DEMOTE = "demote",
+
             VIEW_PAGES = "pages",
             PAGE_INFO = "pageInfo",
             PAGE_ACTIONS = "pageActions",
@@ -54,6 +54,8 @@ public class WindowTownhall extends Window implements Button.Handler
 
     private Map<String, String> tabsToPages = new HashMap<String, String>();
     private Button lastTabButton;
+    private ScrollingList citizenList;
+    private ScrollingList userList;
 
     public WindowTownhall(BuildingTownHall.View townhall)
     {
@@ -74,6 +76,13 @@ public class WindowTownhall extends Window implements Button.Handler
     {
         users.clear();
         users.addAll(townhall.getColony().getPlayers().values());
+        Collections.sort(users, new Comparator<Permissions.Player>(){
+            @Override
+            public int compare(Permissions.Player o1, Permissions.Player o2)
+            {
+                return o1.rank.compareTo(o2.rank);
+            }
+        });
     }
 
     private void updateCitizens()
@@ -122,55 +131,55 @@ public class WindowTownhall extends Window implements Button.Handler
                 button.disable();
             }
 
-            findPaneOfTypeByID(LIST_USERS, ScrollingList.class).setDataProvider(
-                    new ScrollingList.DataProvider()
-            {
-                @Override
-                public int getElementCount()
-                {
-                    return users.size();
-                }
-
-                @Override
-                public void updateElement(int index, Pane rowPane)
-                {
-                    try
+            userList = findPaneOfTypeByID(LIST_USERS, ScrollingList.class);
+            userList.setDataProvider(new ScrollingList.DataProvider()
                     {
-                        Permissions.Player player = users.get(index);
+                        @Override
+                        public int getElementCount()
+                        {
+                            return users.size();
+                        }
 
-                        String rank = player.rank.name();
-                        rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
+                        @Override
+                        public void updateElement(int index, Pane rowPane)
+                        {
+                            try
+                            {
+                                Permissions.Player player = users.get(index);
 
-                        rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.name);
-                        rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
-                    }
-                    catch (NullPointerException exc) {}
-                }
-            });
+                                String rank = player.rank.name();
+                                rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
+
+                                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.name);
+                                rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
+                            }
+                            catch (NullPointerException exc){}
+                        }
+                    });
 
 
-            findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class).setDataProvider(
-                    new ScrollingList.DataProvider()
-            {
-                @Override
-                public int getElementCount()
-                {
-                    return citizens.size();
-                }
-
-                @Override
-                public void updateElement(int index, Pane rowPane)
-                {
-                    try
+            citizenList = findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class);
+            citizenList.setDataProvider(new ScrollingList.DataProvider()
                     {
-                        CitizenData.View citizen = citizens.get(index);
+                        @Override
+                        public int getElementCount()
+                        {
+                            return citizens.size();
+                        }
 
-                        rowPane.findPaneOfTypeByID("name", Label.class).setLabel(citizen.getName());
-                        //rowPane.findPaneOfTypeByID("job", Label.class).setLabel("" /* Not working yet */);
-                    }
-                    catch (NullPointerException exc) {}
-                }
-            });
+                        @Override
+                        public void updateElement(int index, Pane rowPane)
+                        {
+                            try
+                            {
+                                CitizenData.View citizen = citizens.get(index);
+
+                                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(citizen.getName());
+                                //rowPane.findPaneOfTypeByID("job", Label.class).setLabel("" /* Not working yet */);
+                            }
+                            catch (NullPointerException exc){}
+                        }
+                    });
         }
         catch (NullPointerException exc)
         {
@@ -212,17 +221,53 @@ public class WindowTownhall extends Window implements Button.Handler
         }
         else if (button.getID().equals(BUTTON_BUILD))
         {
-            MineColonies.network.sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.BUILD));
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.BUILD));
         }
         else if (button.getID().equals(BUTTON_REPAIR))
         {
-            MineColonies.network.sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.REPAIR));
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.REPAIR));
         }
         else if (button.getID().equals(BUTTON_ADDPLAYER))
         {
             TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
-            MineColonies.network.sendToServer(new PermissionsMessage.AddPlayer(townhall.getColony(), input.getText()));
+            MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townhall.getColony(), input.getText()));
             input.setText("");
+        }
+        else if (button.getID().equals(BUTTON_REMOVEPLAYER))
+        {
+            int row = userList.getListElementIndexByPane(button);
+            if (row >= 0 && row < users.size())
+            {
+                Permissions.Player user = users.get(row);
+                if (user.rank != Permissions.Rank.OWNER)
+                {
+                    MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townhall.getColony(), user.id));
+                }
+            }
+        }
+        else if (button.getID().equals(BUTTON_PROMOTE) ||
+                button.getID().equals(BUTTON_DEMOTE))
+        {
+            int row = userList.getListElementIndexByPane(button);
+            if (row >= 0 && row < users.size())
+            {
+                Permissions.Player user = users.get(row);
+                Permissions.Rank newRank = user.rank;
+
+                if (button.getID().equals(BUTTON_PROMOTE))
+                {
+                    newRank = Permissions.getPromotionRank(user.rank);
+                }
+                else
+                {
+                    newRank = Permissions.getDemotionRank(user.rank);
+                }
+
+                if (newRank != user.rank)
+                {
+                    MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townhall.getColony(), user.id, newRank));
+                }
+            }
         }
         else if (button.getID().equals(BUTTON_RECALL))
         {
@@ -232,7 +277,8 @@ public class WindowTownhall extends Window implements Button.Handler
         }
         else if (button.getID().equals(BUTTON_RENAME))
         {
-            townhall.openGui(EnumGUI.TOWNHALL_RENAME);
+            WindowTownhallNameEntry window = new WindowTownhallNameEntry(townhall.getColony());
+            window.open();
         }
     }
 }

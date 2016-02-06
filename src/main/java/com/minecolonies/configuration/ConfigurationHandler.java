@@ -14,6 +14,7 @@ import static com.minecolonies.configuration.Configurations.*;
 public class ConfigurationHandler
 {
     private static final String CATEGORY_GAMEPLAY = "gameplay";
+    private static final String CATEGORY_PATHFINDING = "pathfinding";
     private static final String CATEGORY_NAMES    = "names";
 
     public static void init(File file)
@@ -23,8 +24,9 @@ public class ConfigurationHandler
         try
         {
             config.load();
-            workingRangeTownhall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownhall", workingRangeTownhall, "Townhall Working Range").getInt();
+            workingRangeTownhall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownhall", workingRangeTownhall, "Colony size (radius)").getInt();
             townhallPadding = config.get(CATEGORY_GAMEPLAY, "townhallPadding", townhallPadding, "Empty space between townhall boundaries").getInt();
+            supplyChests = config.get(CATEGORY_GAMEPLAY, "supplyChests", supplyChests, "Allow crafting of a Supply Chest").getBoolean();
             allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY, "allowInfiniteSupplyChests", allowInfiniteSupplyChests, "Allow infinite placing of Supply Chests?").getBoolean();
             citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY, "citizenRespawnInterval", citizenRespawnInterval, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX, "Citizen respawn interval in seconds");
             builderInfiniteResources = config.get(CATEGORY_GAMEPLAY, "builderInfiniteResources", builderInfiniteResources, "Does Builder have infinite resources?").getBoolean();
@@ -32,6 +34,13 @@ public class ConfigurationHandler
             maxCitizens = config.get(CATEGORY_GAMEPLAY, "maxCitizens", maxCitizens, "Maximum number of citizens").getInt();
             alwaysRenderNameTag = config.get(CATEGORY_GAMEPLAY, "alwaysRenderNameTag", alwaysRenderNameTag, "Always render Citizen's name tag?").getBoolean();
             maxBlocksCheckedByBuilder = config.get(CATEGORY_GAMEPLAY, "maxBlocksCheckedByBuilder", maxBlocksCheckedByBuilder, "Limits the number of checked blocks per builder update").getInt();
+            chatFrequency = config.get(CATEGORY_GAMEPLAY, "chatFrequency", chatFrequency, "Chat Frequency (seconds)").getInt();
+
+            enableInDevelopmentFeatures = config.get(CATEGORY_GAMEPLAY, "development", enableInDevelopmentFeatures, "Don't hide in-development features which do not work and may break your game").getBoolean();
+
+            pathfindingDebugDraw = config.get(CATEGORY_PATHFINDING, "debugDraw", pathfindingDebugDraw, "Render pathfinding results for debugging purposes (SSP only)").getBoolean();
+            pathfindingDebugVerbosity = config.get(CATEGORY_PATHFINDING, "debugVerbosity", pathfindingDebugVerbosity, "Debug output verbosity of pathfinding (0=none, 1=results, 2=live work)").getInt();
+            pathfindingMaxThreadCount = config.get(CATEGORY_PATHFINDING, "maxThreads", pathfindingMaxThreadCount, "Maximum number of threads to use for pathfinding.").getInt();
 
             maleFirstNames = config.get(CATEGORY_NAMES, "maleFirstNames", maleFirstNames, "Male First Names").getStringList();
             femaleFirstNames = config.get(CATEGORY_NAMES, "femaleFirstNames", femaleFirstNames, "Female First Names").getStringList();

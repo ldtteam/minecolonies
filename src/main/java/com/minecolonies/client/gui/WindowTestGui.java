@@ -68,7 +68,7 @@ public class WindowTestGui extends Window implements Button.Handler
     {
         if (button.getID().equals(INVENTORY_BUTTON_ID))
         {
-            MineColonies.network.sendToServer(new OpenInventoryMessage(citizen));
+            MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen));
         }
     }
 }

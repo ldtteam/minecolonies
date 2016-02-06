@@ -2,10 +2,18 @@ package com.blockout.controls;
 
 import com.blockout.Alignment;
 import com.blockout.PaneParams;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.ImageInputStream;
+import java.io.IOException;
+import java.util.Iterator;
 
 public class ButtonImage extends Button
 {
@@ -227,7 +235,23 @@ public class ButtonImage extends Button
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        drawTexturedModalRect(x, y, offsetX, offsetY, w, h);
+        //Get file dimension
+        int mapWidth = 256, mapHeight = 256;
+        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
+        if (it.hasNext()) {
+            ImageReader reader = it.next();
+            try (ImageInputStream stream = ImageIO.createImageInputStream(Minecraft.getMinecraft().getResourceManager().getResource(bind).getInputStream())) {
+                reader.setInput(stream);
+                mapWidth = reader.getWidth(reader.getMinIndex());
+                mapHeight = reader.getHeight(reader.getMinIndex());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                reader.dispose();
+            }
+        }
+        //Draw
+        func_146110_a(x, y, offsetX, offsetY, w, h, mapWidth, mapHeight);
 
         //  Label, if any
         if (label != null)

@@ -197,10 +197,4 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
         bipedLeftArm.rotateAngleX -= MathHelper.sin(f2 * 0.067F) * 0.05F;
 
     }
-
-    public ModelRenderer toolArm()
-    {
-        return bipedRightArm;
-    }
-
 }
