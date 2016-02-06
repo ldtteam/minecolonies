@@ -56,6 +56,8 @@ public class MineColonies
 
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
 
+        ModBlocks.init();
+
         ModItems.init();
 
         proxy.registerKeybindings();//Schematica
