@@ -56,6 +56,12 @@ public abstract class BlockHut extends Block implements ITileEntityProvider
     @Override
     public void registerBlockIcons(IIconRegister iconRegister)
     {
+        /*
+        Registers all icons for a block.
+        Saves in icon array.
+        Icons are called with [minecolonies:block[Top/sideChest]]
+        Bottom is same as top
+         */
         icons[0] = iconRegister.registerIcon(Constants.MOD_ID + ":" + getName() + "Top");
         icons[1] = icons[0];
         for(int i = 2; i <= 5; i++)
@@ -70,6 +76,8 @@ public abstract class BlockHut extends Block implements ITileEntityProvider
         return icons[side];
     }
 
+    //Todo, does (colony.getTownhall() != null) really have to be a null pointer, or can we return, and inform the player
+    //Todo, (colony == null) checks if the colony is made already. Seems like there is no check for > 1 colony
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
@@ -86,20 +94,27 @@ public abstract class BlockHut extends Block implements ITileEntityProvider
 
             if(this instanceof BlockHutTownHall)
             {
+                /*
+                True if you try to place a BlockHutTownHall, and there is no colony at your location yet.
+                Creates a new colony
+                 */
                 if (colony == null)
                 {
-                    String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
                     colony = ColonyManager.createColony(world, hut.getPosition());
+                    String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
                     colony.setName(colonyName);
                     colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
                 }
+                /*
+                Placing a townhall where a colony is already.
+                 */
                 else if (colony.getTownhall() != null)
                 {
                     throw new NullPointerException("TownHall placed in colony with an existing townhall");
                 }
             }
 
-            if (colony == null)
+            if (colony == null) //there is no colony, and you attempted to place a non-townhall block.
             {
                 throw new NullPointerException("No colony to place block");
             }

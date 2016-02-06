@@ -15,9 +15,4 @@ public final class ModBlocks
             blockHutBlacksmith = new BlockHutBlacksmith(),
             blockHutStonemason = new BlockHutStonemason(),
             blockHutFarmer = new BlockHutFarmer();
-
-    public static void init()
-    {
-        //TODO remove later when checked safe
-    }
 }
