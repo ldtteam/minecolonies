@@ -37,23 +37,21 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 {
 
     private static final String RENDER_META_TORCH = "Torch";
-    private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 2;
     private static final int NODE_DISTANCE = 7;
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
-    private static final Set<Block> notReplacedInSecuringMine = new HashSet<>(Arrays.asList(Blocks.cobblestone,
-                                                                                            Blocks.stone,
-                                                                                            Blocks.dirt));
+    private static final Set<Block> notReplacedInSecuringMine =
+            new HashSet<>(Arrays.asList(
+                    Blocks.cobblestone,
+                    Blocks.stone,
+                    Blocks.dirt
+                                       ));
     private static Logger logger = LogManager.getLogger("Miner");
     //The current block to mine
     private ChunkCoordinates currentWorkingLocation;
     //the last safe location now being air
     private ChunkCoordinates currentStandingPosition;
-    /**
-     * The time in ticks until the next action is made
-     */
-    private int delay = 0;
     /**
      * If we have waited one delay
      */
@@ -148,7 +146,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         {
             int firstLadderY = getFirstLadder(x, y, z);
             buildingMiner.ladderLocation = new ChunkCoordinates(x, firstLadderY, z);
-            delay += 10;
             validateLadderOrientation();
         }
     }
@@ -352,8 +349,8 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         currentStandingPosition = safeStand;
         if (!hasDelayed)
         {
-            delay = getBlockMiningDelay(curBlock, blockToMine);
-            workOnBlock(currentWorkingLocation, currentStandingPosition, delay);
+            workOnBlock(currentWorkingLocation, currentStandingPosition,
+                        getBlockMiningDelay(curBlock, blockToMine));
             hasDelayed = true;
             return true;
         }
@@ -561,7 +558,8 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                     {
                         if (!mineBlock(curBlock, getOwnBuilding().getLocation()))
                         {
-                            delay = 1;
+                            //make securing go fast as to not confuse the player
+                            setDelay(1);
                             return true;
                         }
                         if (missesItemsInInventory(new ItemStack(Blocks.cobblestone)))
@@ -593,7 +591,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                                       curBlock.posZ)
                        != Blocks.planks)
                 {
-                    delay += 10;
+                    setDelay(10);
                     if (missesItemsInInventory(new ItemStack(Blocks.planks)))
                     {
                         return true;
@@ -622,7 +620,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                          && Math.abs(normalizedX) < 3))
                     && world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ) != Blocks.fence)
                 {
-                    delay += 10;
+                    setDelay(10);
                     if (missesItemsInInventory(new ItemStack(Blocks.fence)))
                     {
                         return true;
@@ -652,7 +650,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                                       curBlock.posZ)
                        != Blocks.torch)
                 {
-                    delay += 10;
+                    setDelay(10);
                     if (missesItemsInInventory(new ItemStack(Blocks.torch)))
                     {
                         return true;
@@ -704,7 +702,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             workingNode = findNodeOnLevel(currentLevel);
             return;
         }
-
         //Looking for a node to stand on while mining workingNode
         int foundDirection = 0;
         Node foundNode = null;
@@ -747,11 +744,10 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         ChunkCoordinates standingPosition = new ChunkCoordinates(workingNode.getX() + xoffset,
                                                                  currentLevel.getDepth(),
                                                                  workingNode.getZ() + zoffset);
-        delay += 10;
         currentStandingPosition = standingPosition;
         if (workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS
             || workingNode.getStatus() == Node.NodeStatus.COMPLETED
-            || worker.isWorkerAtSiteWithMove(standingPosition, RANGE_CHECK_AROUND_MINING_BLOCK))
+            || !walkToBlock(standingPosition))
         {
             mineNodeFromStand(workingNode, standingPosition, foundDirection);
         }
@@ -772,7 +768,8 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
             if (!mineBlock(curBlock, safeStand))
             {
-                delay = 0;
+                //make securing go fast to not confuse the player
+                setDelay(1);
                 return false;
             }
             if (missesItemsInInventory(new ItemStack(Blocks.cobblestone)))
@@ -1492,7 +1489,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         }
 
         logger.info("[" + job.getStage() + "] Stopping here, old code ahead...");
-        delay += 100;
+        setDelay(100);
     }
 
     @Override

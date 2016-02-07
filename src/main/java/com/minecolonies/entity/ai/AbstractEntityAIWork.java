@@ -69,6 +69,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     protected int needsPickaxeLevel = -1;
     private ErrorState errorState = ErrorState.NONE;
     private ChunkCoordinates currentWorkingLocation = null;
+    /**
+     * The time in ticks until the next action is made
+     */
     private int delay = 0;
     private ChunkCoordinates currentStandingLocation = null;
     private ChatSpamFilter chatSpamFilter;
@@ -133,12 +136,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         //Update torch, seeds etc. in chestbelt etc.
         updateRenderMetaData();
 
+
         //Wait for delay if it exists
         if (waitingForSomething())
         {
-            this.errorState = ErrorState.WAITING;
             return;
         }
+
 
         //We need Items as it seems
         if (!itemsCurrentlyNeeded.isEmpty())
@@ -175,7 +179,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
             }
             //We do not need to dump more, use inv check below to resolve condition
         }
-
         //Check for full inventory
         if (worker.isInventoryFull())
         {
@@ -235,10 +238,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     protected final boolean isInHut(final ItemStack is)
     {
         final BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions
+        return is != null &&
+               InventoryFunctions
                 .matchFirstInInventory(
                         buildingMiner.getTileEntity(),
-                        is::isItemEqual,
+                        (stack) -> stack != null && is.isItemEqual(stack),
                         this::takeItemStackFromChest
                                       );
     }
@@ -291,7 +295,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         this.currentStandingLocation = null;
         this.currentWorkingLocation = null;
         this.delay = 0;
-        this.errorState = ErrorState.NONE;
     }
 
     /**
@@ -346,28 +349,26 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      */
     private boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
     {
-        return !walkToBuilding()
-               || InventoryFunctions
-                       .matchFirstInInventory(
-                               worker.getInventory(),
-                               (i, stack) -> {
-                                   if (stack == null || keepIt.test(stack))
-                                   {
-                                       return false;
-                                   }
-                                   ItemStack returnStack = InventoryUtils.setStack(
-                                           getOwnBuilding().getTileEntity(), stack);
-                                   if (returnStack == null)
-                                   {
-                                       worker.getInventory().decrStackSize(
-                                               i, stack.stackSize);
-                                       return true;
-                                   }
-                                   worker.getInventory().decrStackSize(
-                                           i, stack.stackSize - returnStack.stackSize);
-                                   //Check that we are not inserting into a full inventory.
-                                   return stack.stackSize != returnStack.stackSize;
-                               });
+
+        return walkToBuilding()
+               || InventoryFunctions.matchFirstInInventory(
+                worker.getInventory(), (i, stack) -> {
+                    if (stack == null || keepIt.test(stack)){ return false; }
+                    ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
+                    if (returnStack == null)
+                    {
+                        worker.getInventory().decrStackSize(i, stack.stackSize);
+                        return true;
+                    }
+                    worker.getInventory().decrStackSize(
+                            i,
+                            stack.stackSize
+                            - returnStack.stackSize);
+                    //Check that we are not inserting
+                    // into a
+                    // full inventory.
+                    return stack.stackSize != returnStack.stackSize;
+                });
     }
 
     /**
@@ -409,7 +410,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         this.currentWorkingLocation = target;
         this.currentStandingLocation = stand;
         this.delay = timeout;
-        this.errorState = ErrorState.WAITING;
+    }
+
+    protected final void setDelay(int timeout)
+    {
+        this.delay = timeout;
     }
 
     /**
@@ -585,7 +590,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     {
         NONE,
         NEEDS_ITEM,
-        WAITING,
         NEEDS_SHOVEL,
         NEEDS_PICKAXE,
         INVENTORY_FULL,
