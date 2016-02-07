@@ -3,9 +3,11 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.InventoryFunctions;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
+import net.minecraft.block.Block;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
@@ -38,6 +40,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
     private static final Logger logger = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
     private static final int DELAY_RECHECK = 10;
+    private static final int MUTEX_MASK = 3;
     protected final J job;
     protected final EntityCitizen worker;
     protected final World world;
@@ -69,11 +72,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     private int delay = 0;
     private ChunkCoordinates currentStandingLocation = null;
     private ChatSpamFilter chatSpamFilter;
-    private static final int MUTEX_MASK = 3;
 
     /**
      * Creates the abstract part of the AI.
      * Always use this constructor!
+     *
      * @param job the job to fulfill
      */
     public AbstractEntityAIWork(J job)
@@ -89,6 +92,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Made final to preserve behaviour:
      * Sets a bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it
      * yields zero, the two tasks may run concurrently, if not - they must run exclusively from each other.
+     *
      * @param mutexBits the bits to flag this with.
      */
     @Override
@@ -115,7 +119,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         worker.setStatus(EntityCitizen.Status.WORKING);
         logger.info("Starting AI job " + job.getName());
     }
-    
+
     @Override
     public void updateTask()
     {
@@ -132,22 +136,53 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         //Wait for delay if it exists
         if (waitingForSomething())
         {
+            this.errorState = ErrorState.WAITING;
             return;
         }
 
         //We need Items as it seems
         if (!itemsCurrentlyNeeded.isEmpty())
         {
+            this.errorState = ErrorState.NEEDS_ITEM;
             lookForNeededItems();
             delay = DELAY_RECHECK;
             return;
         }
 
-        if (this.errorState == ErrorState.NEEDS_ITEM)
+        //We need tools
+        if (needsShovel)
         {
-            //TODO: request item
+            this.errorState = ErrorState.NEEDS_SHOVEL;
+            checkForShovel();
+            delay += 10;
             return;
         }
+        if (needsPickaxe)
+        {
+            this.errorState = ErrorState.NEEDS_PICKAXE;
+            checkForPickaxe(needsPickaxeLevel);
+            delay += 10;
+            return;
+        }
+
+        //Inventory is full, walk to building and dump inventory
+        if (this.errorState == ErrorState.INVENTORY_FULL)
+        {
+            if (dumpOneMoreSlot())
+            {
+                delay += 10;
+                return;
+            }
+            //We do not need to dump more, use inv check below to resolve condition
+        }
+
+        //Check for full inventory
+        if (worker.isInventoryFull())
+        {
+            this.errorState = ErrorState.INVENTORY_FULL;
+            return;
+        }
+        this.errorState = ErrorState.NONE;
         workOnTask();
     }
 
@@ -175,16 +210,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
             }
             requestWithoutSpam(first.getDisplayName());
         }
-    }
-
-    /**
-     * Request an Item without spamming the chat.
-     *
-     * @param chat the Item Name
-     */
-    protected final void requestWithoutSpam(String chat)
-    {
-        chatSpamFilter.requestWithoutSpam(chat);
     }
 
     /**
@@ -229,16 +254,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      */
     protected void updateRenderMetaData()
     {}
-
-    /**
-     * Can be overridden in implementations to return the exact building type.
-     *
-     * @return the building associated with this AI's worker.
-     */
-    protected BuildingWorker getOwnBuilding()
-    {
-        return worker.getWorkBuilding();
-    }
 
     /**
      * This method will return true if the AI is waiting for something.
@@ -291,9 +306,20 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     }
 
     /**
+     * Can be overridden in implementations to return the exact building type.
+     *
+     * @return the building associated with this AI's worker.
+     */
+    protected BuildingWorker getOwnBuilding()
+    {
+        return worker.getWorkBuilding();
+    }
+
+    /**
      * Override this method if you want to keep some items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.
      * But you can use this method to hold some stacks back.
+     *
      * @param stack the stack to decide on
      * @return true if the stack should remain in inventory
      */
@@ -347,6 +373,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     /**
      * Walk the worker to it's building chest.
      * Please return immediately if this returns true.
+     *
      * @return false if the worker is at his building
      */
     protected final boolean walkToBuilding()
@@ -449,38 +476,35 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         return needsShovel;
     }
 
-    private boolean checkForTool(String tool)
+    protected final boolean holdEfficientTool(Block target)
     {
-        boolean needsTool = InventoryFunctions
-                .matchFirstInInventory(
-                        worker.getInventory(),
-                        stack -> Utils.isTool(stack, tool),
-                        InventoryFunctions::doNothing);
-        if (!needsTool)
+        int bestSlot = getMostEfficientTool(target);
+        if (bestSlot >= 0)
         {
+            worker.setHeldItem(bestSlot);
             return true;
         }
-        delay += DELAY_RECHECK;
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
-        {
-            if (isToolInHut(tool))
-            {
-                return true;
-            }
-            requestWithoutSpam(tool);
-        }
-        return true;
+        return false;
     }
 
-    private boolean isToolInHut(String tool)
+    protected final int getMostEfficientTool(Block target)
     {
-        BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        stack -> Utils.isTool(stack, tool),
-                        this::takeItemStackFromChest);
-
+        String tool = target.getHarvestTool(0);
+        int required = target.getHarvestLevel(0);
+        int bestSlot = -1;
+        int bestLevel = Integer.MAX_VALUE;
+        InventoryCitizen inventory = worker.getInventory();
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            ItemStack item = inventory.getStackInSlot(i);
+            int level = Utils.getMiningLevel(item, tool);
+            if (level >= required && level < bestLevel)
+            {
+                bestSlot = i;
+                bestLevel = level;
+            }
+        }
+        return bestSlot;
     }
 
     /**
@@ -493,6 +517,50 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     {
         needsAxe = checkForTool(AXE);
         return needsAxe;
+    }
+
+    private boolean checkForTool(String tool)
+    {
+        boolean needsTool = InventoryFunctions
+                .matchFirstInInventory(
+                        worker.getInventory(),
+                        stack -> Utils.isTool(stack, tool),
+                        InventoryFunctions::doNothing);
+        if (!needsTool)
+        {
+            return false;
+        }
+        delay += DELAY_RECHECK;
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
+        {
+            if (isToolInHut(tool))
+            {
+                return false;
+            }
+            requestWithoutSpam(tool);
+        }
+        return true;
+    }
+
+    /**
+     * Request an Item without spamming the chat.
+     *
+     * @param chat the Item Name
+     */
+    protected final void requestWithoutSpam(String chat)
+    {
+        chatSpamFilter.requestWithoutSpam(chat);
+    }
+
+    private boolean isToolInHut(String tool)
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        stack -> Utils.isTool(stack, tool),
+                        this::takeItemStackFromChest);
+
     }
 
     /**
@@ -518,6 +586,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         NONE,
         NEEDS_ITEM,
         WAITING,
+        NEEDS_SHOVEL,
+        NEEDS_PICKAXE,
+        INVENTORY_FULL,
     }
 
 }

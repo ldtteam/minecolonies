@@ -2,7 +2,6 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
-import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
@@ -16,7 +15,16 @@ import net.minecraftforge.common.ForgeHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Miner AI class
@@ -29,7 +37,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 {
 
     private static final String RENDER_META_TORCH = "Torch";
-    private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
     private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 2;
     private static final int NODE_DISTANCE = 7;
     /*
@@ -666,7 +673,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
     private void doShaftBuilding()
     {
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
+        if (walkToBuilding())
         {
             if (buildNextBlockInShaft())
             {
@@ -1427,52 +1434,8 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                 job.setStage(Stage.SEARCHING_LADDER);
                 return;
             }
-            //We need Items as it seems
-            if (!itemsCurrentlyNeeded.isEmpty())
-            {
-                lookForNeededItems();
-                delay += 10;
-                return;
-            }
-            //We need tools
-            if (needsShovel)
-            {
-                checkForShovel();
-                delay += 10;
-                return;
-            }
-            if (needsPickaxe)
-            {
-                checkForPickaxe(needsPickaxeLevel);
-                delay += 10;
-                return;
-            }
 
             job.setStage(Stage.CHECK_MINESHAFT);
-        }
-
-        //Miner is at building and dumps Inventory
-        if (job.getStage() == Stage.INVENTORY_FULL)
-        {
-
-
-            if (dumpOneMoreSlot())
-            {
-                delay += 10;
-            }
-            else
-            {
-                job.setStage(Stage.PREPARING);
-            }
-
-            return;
-        }
-
-        //Check for full inventory
-        if (worker.isInventoryFull())
-        {
-            job.setStage(Stage.INVENTORY_FULL);
-            return;
         }
 
         //Looking for the ladder to walk to
@@ -1530,37 +1493,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
         logger.info("[" + job.getStage() + "] Stopping here, old code ahead...");
         delay += 100;
-    }
-
-    boolean holdEfficientTool(Block target)
-    {
-        int bestSlot = getMostEfficientTool(target);
-        if (bestSlot >= 0)
-        {
-            worker.setHeldItem(bestSlot);
-            return true;
-        }
-        return false;
-    }
-
-    int getMostEfficientTool(Block target)
-    {
-        String tool = target.getHarvestTool(0);
-        int required = target.getHarvestLevel(0);
-        int bestSlot = -1;
-        int bestLevel = Integer.MAX_VALUE;
-        InventoryCitizen inventory = worker.getInventory();
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            ItemStack item = inventory.getStackInSlot(i);
-            int level = Utils.getMiningLevel(item, tool);
-            if (level >= required && level < bestLevel)
-            {
-                bestSlot = i;
-                bestLevel = level;
-            }
-        }
-        return bestSlot;
     }
 
     @Override
