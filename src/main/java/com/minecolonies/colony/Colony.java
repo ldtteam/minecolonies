@@ -234,6 +234,7 @@ public class Colony implements IColony
         return world;
     }
 
+    @Override
     public String getName() { return name; }
     public void setName(String n)
     {

@@ -2,7 +2,6 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.jobs.JobFarmer;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -26,7 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Raycoms, Kostronor
  */
 
-public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
+public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 {
     private static final String TOOL_TYPE_HOE = "hoe";
     private static final String TOOL_TYPE_SHOVEL = "shovel";
@@ -51,13 +50,7 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
     //TODO Adding Language Strings in files
 
     @Override
-    public void startExecuting()
-    {
-        worker.setStatus(EntityCitizen.Status.WORKING);
-        updateTask();
-    }
-
-    private BuildingFarmer getOwnBuilding()
+    protected BuildingFarmer getOwnBuilding()
     {
         return (BuildingFarmer) (worker.getWorkBuilding());
     }
@@ -81,7 +74,8 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
         return "";
     }
 
-    private void renderChestBelt()
+    @Override
+    protected void updateRenderMetaData()
     {
         String renderMetaData = getRenderMetaSeeds();
         //TODO: Merge this into worker
@@ -180,7 +174,54 @@ public class EntityAIWorkFarmer extends EntityAIWork<JobFarmer>
             case HARVESTING:
                 harvesting();
                 break;
+<<<<<<< HEAD
+=======
         }
+    }
+
+    @Override
+    public void updateTask()
+    {
+        BuildingFarmer buildingFarmer = getOwnBuilding();
+        if (buildingFarmer == null)
+        {
+            return;
+        }
+
+        updateRenderMetaData();
+
+        //TODO: check what this does, add comments
+        //Seems to transition crop locations somewhere???
+        checkForCrops();
+
+        if (waitingForSomething())
+        {
+            return;
+        }
+
+
+
+        //Old Code since here
+        if (itemsAreMissing())
+        {
+            return;
+>>>>>>> MINECOL-21-needed-items-refactor
+        }
+
+        if (!hasAllTheTools())
+        {
+            return;
+        }
+        startWorking();
+    }
+
+    /**
+     * This method will be overridden by AI implementations
+     */
+    @Override
+    protected void workOnTask()
+    {
+        //TODO: rework the farmer to use workOnTask eventually
     }
 
     @Override

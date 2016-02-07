@@ -194,7 +194,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         Object currentTasks[] = this.tasks.taskEntries.toArray();
         for(Object task : currentTasks)
         {
-            if(((EntityAITasks.EntityAITaskEntry) task).action instanceof EntityAIWork)
+            if(((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIWork)
             {
                 this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry) task).action);
             }

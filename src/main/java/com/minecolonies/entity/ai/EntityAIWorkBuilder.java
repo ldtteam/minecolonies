@@ -1,6 +1,6 @@
 package com.minecolonies.entity.ai;
 
-import com.github.lunatrius.schematica.config.BlockInfo;
+import com.schematica.config.BlockInfo;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.colony.buildings.Building;
@@ -32,7 +32,7 @@ import net.minecraft.util.MathHelper;
  *
  * @author Colton
  */
-public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
+public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 {
     public EntityAIWorkBuilder(JobBuilder job)
     {
@@ -135,6 +135,15 @@ public class EntityAIWorkBuilder extends EntityAIWork<JobBuilder>
             default:
                 System.out.println("Case not implemented: " + job.stage.toString());
         }
+    }
+
+    /**
+     * This method will be overridden by AI implementations
+     */
+    @Override
+    protected void workOnTask()
+    {
+        //TODO: rework the builder to use workOnTask eventually
     }
 
     @Override

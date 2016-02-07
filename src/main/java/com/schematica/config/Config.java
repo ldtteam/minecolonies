@@ -1,4 +1,4 @@
-package com.github.lunatrius.schematica.config;
+package com.schematica.config;
 
 public class Config {
 
