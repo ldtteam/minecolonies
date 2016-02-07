@@ -174,8 +174,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
             case HARVESTING:
                 harvesting();
                 break;
-<<<<<<< HEAD
-=======
         }
     }
 
@@ -205,7 +203,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         if (itemsAreMissing())
         {
             return;
->>>>>>> MINECOL-21-needed-items-refactor
         }
 
         if (!hasAllTheTools())
@@ -222,41 +219,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
     protected void workOnTask()
     {
         //TODO: rework the farmer to use workOnTask eventually
-    }
-
-    @Override
-    public void updateTask()
-    {
-        BuildingFarmer buildingFarmer = getOwnBuilding();
-        if (buildingFarmer == null)
-        {
-            return;
-        }
-
-        renderChestBelt();
-
-        //TODO: check what this does, add comments
-        //Seems to transition crop locations somewhere???
-        checkForCrops();
-
-        if (waitingForSomething())
-        {
-            return;
-        }
-
-
-
-        //Old Code since here
-        if (itemsAreMissing())
-        {
-            return;
-        }
-
-        if (!hasAllTheTools())
-        {
-            return;
-        }
-        startWorking();
     }
 
     private void searchFarmableLand()
