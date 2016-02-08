@@ -41,19 +41,24 @@ public abstract class Building
     private static Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<Class<?>, Class<?>>();
     private static Map<Integer, Class<?>>  classNameHashToClassMap      = new HashMap<Integer, Class<?>>();
 
-    private final static String TAG_TYPE           = "type";
+    private final static String TAG_BUILDING_TYPE = "type";
     //    private final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
     private final static String TAG_LOCATION       = "location";  //  Location is unique (within a Colony) and so can double as the Id
     private final static String TAG_BUILDING_LEVEL = "level";
     private final static String TAG_ROTATION       = "rotation";
     private final static String TAG_STYLE          = "style";
 
+    public abstract String getSchematicName();
+    public abstract int getMaxBuildingLevel();
+
     /**
-     * Add a given Building mapping
+     * Add build to a mapping.
+     * <code>buildingClass</code> needs to extend {@link com.minecolonies.colony.buildings.Building}
+     * <code>parentBlock</code> needs to extend {@link com.minecolonies.blocks.BlockHut}
      *
-     * @param name name of object
-     * @param buildingClass subclass of Building
-     * @param parentBlock subclass of Block
+     * @param name              name of building.
+     * @param buildingClass     subclass of Building, located in {@link com.minecolonies.colony.buildings}
+     * @param parentBlock       subclass of Block, located in {@link com.minecolonies.blocks}
      */
     private static void addMapping(String name, Class<? extends Building> buildingClass, Class<? extends BlockHut> parentBlock)
     {
@@ -65,6 +70,9 @@ public abstract class Building
         {
             try
             {
+                /*
+                If a constructor exist for the building, put the building in the lists.
+                 */
                 if (buildingClass.getDeclaredConstructor(Colony.class, ChunkCoordinates.class) != null)
                 {
                     nameToClassMap.put(name, buildingClass);
@@ -88,6 +96,12 @@ public abstract class Building
         }
     }
 
+    /**
+     * Checks if a block matches the current object.
+     *
+     * @param block     Block you want to know whether it matches this class or not
+     * @return          True if the block matches this class, otherwise false
+     */
     public boolean isMatchingBlock(Block block)
     {
         Class<?> c = blockClassToBuildingClassMap.get(block.getClass());
@@ -114,21 +128,23 @@ public abstract class Building
     /**
      * Constructor for a Building.
      *
-     * @param c Colony the building belongs to
-     * @param l Location of the building (it's Hut Block)
+     * @param colony            Colony the building belongs to
+     * @param chunkCoordinates  Location of the building (it's Hut Block)
      */
-    protected Building(Colony c, ChunkCoordinates l)
+    protected Building(Colony colony, ChunkCoordinates chunkCoordinates)
     {
-        location = new ChunkCoordinates(l);
-        colony = c;
+        location = new ChunkCoordinates(chunkCoordinates);
+        this.colony = colony;
     }
+
 
     /**
      * Create and load a Building given it's saved NBTTagCompound
+     * Calls {@link #readFromNBT(net.minecraft.nbt.NBTTagCompound)}
      *
      * @param colony   The owning colony
      * @param compound The saved data
-     * @return
+     * @return {@link com.minecolonies.colony.buildings.Building} created from the compound.
      */
     public static Building createFromNBT(Colony colony, NBTTagCompound compound)
     {
@@ -137,14 +153,14 @@ public abstract class Building
 
         try
         {
-            oclass = nameToClassMap.get(compound.getString(TAG_TYPE));
+            oclass = nameToClassMap.get(compound.getString(TAG_BUILDING_TYPE));
 
             if (oclass != null)
             {
                 //UUID id = UUID.fromString(compound.getString("id"));
-                ChunkCoordinates loc = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
+                ChunkCoordinates chunkCoordinates = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
                 Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, ChunkCoordinates.class);
-                building = (Building)constructor.newInstance(colony, loc);
+                building = (Building)constructor.newInstance(colony, chunkCoordinates);
             }
         }
         catch (Exception exception)
@@ -160,30 +176,29 @@ public abstract class Building
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
+                MineColonies.logger.error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
                 building = null;
             }
         }
         else
         {
-            MineColonies.logger.warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            MineColonies.logger.warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_BUILDING_TYPE)));
         }
 
         return building;
     }
-
 
     /**
      * Create a Building given it's TileEntity
      *
      * @param colony    The owning colony
      * @param parent    The Tile Entity the building belongs to.
-     * @return
+     * @return {@link com.minecolonies.colony.buildings.Building} instance, without NBTTags applied.
      */
     public static Building create(Colony colony, TileEntityColonyBuilding parent)
     {
         Building building = null;
-        Class<?> oclass = null;
+        Class<?> oclass;
 
         try
         {
@@ -211,9 +226,10 @@ public abstract class Building
     }
 
     /**
-     * Load data from NBT compound
+     * Load data from NBT compound.
+     * Writes to {@link #buildingLevel}, {@link #rotation} and {@link #style}
      *
-     * @param compound
+     * @param compound      {@link net.minecraft.nbt.NBTTagCompound} to read data from
      */
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -230,8 +246,9 @@ public abstract class Building
 
     /**
      * Save data to NBT compound
+     * Writes the {@link #buildingLevel}, {@link #rotation}, {@link #style}, {@link #location}, and {@link #getClass()} value
      *
-     * @param compound
+     * @param compound      {@link net.minecraft.nbt.NBTTagCompound} to write data to
      */
     public void writeToNBT(NBTTagCompound compound)
     {
@@ -243,7 +260,7 @@ public abstract class Building
         }
         else
         {
-            compound.setString(TAG_TYPE, s);
+            compound.setString(TAG_BUILDING_TYPE, s);
             ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, location);
         }
 
@@ -252,20 +269,17 @@ public abstract class Building
         compound.setInteger(TAG_ROTATION, rotation);
         compound.setString(TAG_STYLE, style);
     }
-
     public Colony getColony() { return colony; }
     public ChunkCoordinates getID() { return location; }    //  Location doubles as ID
     public ChunkCoordinates getLocation() { return location; }
     public int getBuildingLevel() { return buildingLevel; }
+
     public void setBuildingLevel(int level)
     {
         buildingLevel = level;
         markDirty();
         ColonyManager.markDirty();
     }
-
-    public abstract String getSchematicName();
-    public abstract int getMaxBuildingLevel();
 
     public void setTileEntity(TileEntityColonyBuilding te)
     {
@@ -285,8 +299,8 @@ public abstract class Building
                     tileEntity = (TileEntityColonyBuilding)te;
                     if (tileEntity.getBuilding() == null)
                     {
-                        tileEntity.setColony(colony);
-                        tileEntity.setBuilding(this);
+                        tileEntity.setColony(colony); // <<<< is this required? isnt it set when it was first created?
+                        tileEntity.setBuilding(this); // <<<< is this required? isnt it set when it was first created?
                     }
                 }
             }
@@ -303,13 +317,25 @@ public abstract class Building
         colony.markBuildingsDirty();
     }
 
+    /**
+     * Method to do things when a block is destroyed.
+     */
     public void onDestroyed() {}
+
+    /**
+     * Destroys the block.
+     * Calls {@link #onDestroyed()}
+     */
     public final void destroy()
     {
         onDestroyed();
         colony.removeBuilding(this);
     }
 
+    /**
+     * Method to remove a citizen.
+     * @param citizen Citizen to be removed
+     */
     public void removeCitizen(CitizenData citizen) {}
 
     public void onServerTick(TickEvent.ServerTickEvent event) {}
@@ -318,7 +344,7 @@ public abstract class Building
     private void requestWorkOrder(int level)
     {
         boolean found = false;
-        for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class)) // <<< why isnt this a map? if you have to loop and get check the ID
         {
             if (o.getBuildingId().equals(getID()))
             {
@@ -413,6 +439,14 @@ public abstract class Building
         }
     }
 
+    /**
+     * Serializes to view.
+     * Sends 3 integers.
+     *      1) hashcode of the name of the class
+     *      2) building level
+     *      3) max building level
+     * @param buf   ByteBuf to write to
+     */
     public void serializeToView(ByteBuf buf)
     {
         buf.writeInt(this.getClass().getName().hashCode());
@@ -423,9 +457,10 @@ public abstract class Building
     /**
      * Create a Building View given it's saved NBTTagCompound
      *
-     * @param colony The owning colony
-     * @param buf    The network data
-     * @return
+     * @param       colony The owning colony
+     * @param       id     Chunk coordinate of the block a view is created for.
+     * @param       buf    The network data
+     * @return      {@link com.minecolonies.colony.buildings.Building.View} created from reading the buf
      */
     public static View createBuildingView(ColonyView colony, ChunkCoordinates id, ByteBuf buf)
     {

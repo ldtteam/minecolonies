@@ -10,8 +10,14 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
+/*
+Class is not used yet
+ */
 public class BuildingFarmer extends BuildingWorker
 {
+    /*
+    Unused
+     */
     public int wheat = 100,
             potato = 0,
             carrot = 0,

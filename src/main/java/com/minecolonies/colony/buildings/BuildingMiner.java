@@ -37,6 +37,7 @@ public class BuildingMiner extends BuildingWorker
     private static final String TAG_SN             = "StartingNode";
     private static final String TAG_LLOCATION      = "ladderlocation";
     private static final String TAG_LADDER         = "found_ladder";
+
     public Node activeNode;
     public Block floorBlock         = Blocks.planks;
     public Block fenceBlock         = Blocks.fence;
