@@ -68,7 +68,12 @@ public class InventoryCitizen extends InventoryBasic
     @Override
     public ItemStack getStackInSlot(int index)
     {
-        return super.getStackInSlot(index).copy();
+        ItemStack stack = super.getStackInSlot(index);
+        if(stack == null)
+        {
+            return null;
+        }
+        return stack.copy();
     }
 
     @Override
