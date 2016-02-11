@@ -794,12 +794,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             worldObj.setBlockToAir(x, y, z);
 
             ItemStack tool = this.getInventory().getHeldItem();
-            tool.getItem().onBlockDestroyed(tool, worldObj, block, x, y, z, this);
+            tool.damageItem(1, this);
             if(tool.stackSize < 1)//if tool breaks
             {
                 this.setCurrentItemOrArmor(0, null);
                 getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
-                //TODO Tool break particles
             }
         }
         else
