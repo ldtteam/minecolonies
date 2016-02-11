@@ -5,6 +5,8 @@ import net.minecraft.world.World;
 
 public interface IColony
 {
+    String getName();
+
     IPermissions getPermissions();
 
     boolean isCoordInColony(World w, int x, int y, int z);
