@@ -5,11 +5,9 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.lib.Constants;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,9 +22,6 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.*;
 import java.util.*;
 
 public class ColonyManager

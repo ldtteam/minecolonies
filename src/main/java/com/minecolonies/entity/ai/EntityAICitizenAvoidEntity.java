@@ -14,7 +14,9 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     {
         /**
          * Return whether the specified entity is applicable to this filter.
+         * TODO: what is this filter filtering for??? improve docs
          */
+        @Override
         public boolean isEntityApplicable(Entity target)
         {
             return target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target);
@@ -42,6 +44,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * Returns whether the EntityAIBase should begin execution.
      */
+    @Override
     public boolean shouldExecute()
     {
         closestLivingEntity = getClosestToAvoid();
@@ -51,6 +54,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
+    @Override
     public boolean continueExecuting()
     {
         return !theEntity.getNavigator().noPath();
@@ -59,6 +63,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * Execute a one shot task or start executing a continuous task
      */
+    @Override
     public void startExecuting()
     {
         performMoveAway();
@@ -67,6 +72,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * Resets the task
      */
+    @Override
     public void resetTask()
     {
         closestLivingEntity = null;
@@ -75,6 +81,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * Updates the task
      */
+    @Override
     public void updateTask()
     {
         Entity newClosest = getClosestToAvoid();

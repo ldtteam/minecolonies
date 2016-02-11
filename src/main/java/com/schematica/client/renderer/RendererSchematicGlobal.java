@@ -1,7 +1,7 @@
-package com.github.lunatrius.schematica.client.renderer;
+package com.schematica.client.renderer;
 
-import com.github.lunatrius.schematica.Settings;
-import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.schematica.Settings;
+import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;

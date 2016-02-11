@@ -1,7 +1,7 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.buildings.*;
+import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.JobDeliveryman;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
@@ -17,7 +17,7 @@ import static com.minecolonies.entity.EntityCitizen.Status.WORKING;
  *
  * @author MrIbby
  */
-public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
+public class EntityAIWorkDeliveryman extends AbstractEntityAIWork<JobDeliveryman>
 {
     public EntityAIWorkDeliveryman(JobDeliveryman deliveryman)
     {
@@ -52,19 +52,19 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
 
         //  TODO - Actually know the Building, not the ID of it
         BuildingWorker destinationBuilding = worker.getColony().getBuilding(job.getDestination(), BuildingWorker.class);
-        if (destinationBuilding == null)
+        if(destinationBuilding == null)
         {
             return;
         }
 
         CitizenData targetCitizen = destinationBuilding.getWorker();
-        if (targetCitizen == null || targetCitizen.getJob() == null)
+        if(targetCitizen == null || targetCitizen.getJob() == null)
         {
             return;
         }
 
         TileEntityColonyBuilding destinationTileEntity = destinationBuilding.getTileEntity();
-        if (destinationTileEntity == null)
+        if(destinationTileEntity == null)
         {
             //  The recipient or their building's TE aren't loaded currently.  Maybe do something else?
             return;
@@ -97,6 +97,15 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
 
         job.setDestination(null);
         resetTask();
+    }
+
+    /**
+     * This method will be overridden by AI implementations
+     */
+    @Override
+    protected void workOnTask()
+    {
+        //TODO: rework the deliveryman to use workOnTask eventually
     }
 
     @Override

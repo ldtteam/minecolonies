@@ -54,15 +54,15 @@ public class WindowHomeBuilding extends Window implements Button.Handler
     {
         if (button.getID().equals(BUTTON_INVENTORY))
         {
-            MineColonies.network.sendToServer(new OpenInventoryMessage(building));
+            MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
         }
         else if (button.getID().equals(BUTTON_BUILD))
         {
-            MineColonies.network.sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
         }
         else if (button.getID().equals(BUTTON_REPAIR))
         {
-            MineColonies.network.sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
         }
     }
 }

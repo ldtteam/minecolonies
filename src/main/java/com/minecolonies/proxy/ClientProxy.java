@@ -1,8 +1,8 @@
 package com.minecolonies.proxy;
 
-import com.github.lunatrius.schematica.client.events.TickHandler;
-import com.github.lunatrius.schematica.client.renderer.RendererSchematicGlobal;
-import com.github.lunatrius.schematica.world.SchematicWorld;
+import com.schematica.client.events.TickHandler;
+import com.schematica.client.renderer.RendererSchematicGlobal;
+import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.gui.WindowBuildTool;
 import com.minecolonies.client.gui.WindowCitizen;
@@ -12,13 +12,11 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.event.ClientEventHandler;
-import com.minecolonies.network.GuiHandler;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy
@@ -71,18 +69,20 @@ public class ClientProxy extends CommonProxy
     {
         if (Configurations.enableInDevelopmentFeatures)
         {
-            GuiHandler.showGuiWindow(new WindowCitizen(citizen));
+            WindowCitizen window = new WindowCitizen(citizen);
+            window.open();
         }
         else
         {
-            MineColonies.network.sendToServer(new OpenInventoryMessage(citizen));
+            MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen));
         }
     }
 
     @Override
     public void openBuildToolWindow(int x, int y, int z)
     {
-        GuiHandler.showGuiWindow(new WindowBuildTool(x, y, z));
+        WindowBuildTool window = new WindowBuildTool(x, y, z);
+        window.open();
     }
 
     //Schematica

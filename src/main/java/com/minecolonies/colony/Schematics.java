@@ -9,20 +9,24 @@ import net.minecraft.block.Block;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Created by chris on 10/19/15.
  */
 public class Schematics
 {
+    private static Map<String, List<String>> hutStyleMap = new HashMap<>();//Hut,Styles
+
     public static void init()
     {
         loadHutStyleMap();
     }
-
-    private static Map<String, List<String>> hutStyleMap = new HashMap<>();//Hut,Styles
 
     private static void loadHutStyleMap()
     {
@@ -30,44 +34,51 @@ public class Schematics
         {
             URI uri = ColonyManager.class.getResource("/assets/minecolonies/schematics/").toURI();
             System.out.println(uri.toString());
-
             Path basePath;
+
             if (uri.getScheme().equals("jar"))
             {
-                FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
-                basePath = fileSystem.getPath("/assets/minecolonies/schematics/");
+                basePath = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap()).getPath(
+                        "/assets/minecolonies/schematics/");
             }
             else
             {
                 basePath = Paths.get(uri);
             }
-
-            Iterator<Path> it = Files.walk(basePath).iterator();
-            while (it.hasNext())
+            try (Stream<Path> walk = Files.walk(basePath))
             {
-                Path path = it.next();
 
-                if(path.toString().endsWith("1.schematic"))
+                Iterator<Path> it = walk.iterator();
+
+                while (it.hasNext())
                 {
-                    String hutpath = path.getFileName().toString();
-                    String hut = hutpath.substring(0, hutpath.length() - 11);
-                    String style = path.getParent().getFileName().toString();
+                    Path path = it.next();
 
-                    if(Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut) == null)
+                    if (path.toString().endsWith("1.schematic"))
                     {
-                        MineColonies.logger.warn(String.format("Malformed schematic name: %s/%s ignoring file", style, hut));
-                        continue;
-                    }
+                        String hutpath = path.getFileName().toString();
+                        String hut = hutpath.substring(0, hutpath.length() - 11);
+                        String style = path.getParent().getFileName().toString();
 
-                    if(!hutStyleMap.containsKey(hut))
-                    {
-                        hutStyleMap.put(hut, new ArrayList<String>());
+                        if (Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut) == null)
+                        {
+                            MineColonies.logger.warn(String.format("Malformed schematic name: %s/%s ignoring file",
+                                                                   style,
+                                                                   hut));
+                            continue;
+                        }
+
+                        if (!hutStyleMap.containsKey(hut))
+                        {
+                            hutStyleMap.put(hut, new ArrayList<String>());
+                        }
+                        hutStyleMap.get(hut).add(style);
                     }
-                    hutStyleMap.get(hut).add(style);
                 }
             }
+
         }
-        catch(IOException | URISyntaxException e)
+        catch (IOException | URISyntaxException e)
         {
             MineColonies.logger.error("Error loading Schematic directory. Things will break!");
         }

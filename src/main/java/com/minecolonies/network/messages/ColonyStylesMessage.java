@@ -1,6 +1,5 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.Schematics;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
