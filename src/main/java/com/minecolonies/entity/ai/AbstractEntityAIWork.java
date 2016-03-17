@@ -37,6 +37,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     public static final String SHOVEL = "shovel";
     public static final String AXE = "axe";
     public static final String HOE = "hoe";
+    public static final String Rod = "rod";
+
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
     private static final Logger logger = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
     private static final int DELAY_RECHECK = 10;
@@ -66,6 +68,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     protected boolean needsAxe = false;
     protected boolean needsHoe = false;
     protected boolean needsPickaxe = false;
+    protected boolean needsRod = false;
+
     protected int needsPickaxeLevel = -1;
     private ErrorState errorState = ErrorState.NONE;
     private ChunkCoordinates currentWorkingLocation = null;

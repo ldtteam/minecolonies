@@ -466,6 +466,11 @@ public class Utils
         return isTool(itemStack, AbstractEntityAIWork.SHOVEL);
     }
 
+    public static boolean isFishingTool(ItemStack itemStack)
+    {
+        return isTool(itemStack, AbstractEntityAIWork.Rod);
+    }
+
     /**
      * Checks if this ItemStack can be used as a Tool of type.
      */

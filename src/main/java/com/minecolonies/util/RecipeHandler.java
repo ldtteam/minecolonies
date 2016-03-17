@@ -22,6 +22,7 @@ public final class RecipeHandler
         if (Configurations.enableInDevelopmentFeatures)
         {
             GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.wheat);
+            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutFisherman, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.fishing_rod);
             GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutWarehouse, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Blocks.chest);
             GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBlacksmith, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.iron_ingot);
             GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutStonemason, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Blocks.stonebrick);
