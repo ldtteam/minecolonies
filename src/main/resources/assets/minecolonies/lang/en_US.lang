@@ -61,6 +61,7 @@ tile.blockHutBuilder.name=Builder's Hut
 tile.blockHutWarehouse.name=Warehouse
 tile.blockHutFarmer.name=Farm
 tile.blockHutLumberjack.name=Sawmill
+tile.blockHutFisherman.name=Fisherman's Hut
 tile.blockHutMiner.name=Mine
 tile.blockHutStonemason.name=Quarry
 tile.blockHutTownhall.name=Town Hall
