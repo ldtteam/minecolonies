@@ -468,7 +468,7 @@ public class Utils
 
     public static boolean isFishingTool(ItemStack itemStack)
     {
-        return isTool(itemStack, AbstractEntityAIWork.Rod);
+        return isTool(itemStack, AbstractEntityAIWork.ROD);
     }
 
     /**

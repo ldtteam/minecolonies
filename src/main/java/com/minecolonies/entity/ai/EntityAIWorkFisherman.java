@@ -7,6 +7,8 @@ import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import org.apache.logging.log4j.LogManager;
@@ -36,13 +38,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     @Override
     protected void updateRenderMetaData()
     {
-        String renderMetaData = getRenderMetaTorch();
-        //TODO: Have pickaxe etc. displayed?
-        worker.setRenderMetadata(renderMetaData);
+        String renderMetaData = getRenderMetaFish();
+        //TODO: Have rod displayed as well?
+        //worker.setRenderMetadata(renderMetaData);
     }
 
-    //TODO Render data Rod/Fish
-    private String getRenderMetaTorch()
+    //TODO Render model ROD/Fish
+    private String getRenderMetaFish()
     {
         /*if (worker.hasitemInInventory(Blocks.torch))
         {
@@ -57,7 +59,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return (BuildingFisherman) worker.getWorkBuilding();
     }
 
-    //TODO walk to Water
     private boolean walkToWater()
     {
         return walkToBlock(getOwnBuilding().waterLocation);
@@ -69,8 +70,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return Utils.isFishingTool(stack);
     }
 
-    //TODO Look for water
-    private void lookForLadder()
+    private void lookForWater()
     {
         BuildingFisherman buildingFisherman = getOwnBuilding();
 
@@ -79,7 +79,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             if (world.getBlock(buildingFisherman.waterLocation.posX,
                     buildingFisherman.waterLocation.posY,
-                    buildingFisherman.waterLocation.posZ) == Blocks.ladder)
+                    buildingFisherman.waterLocation.posZ) == Blocks.water)
             {
                 job.setStage(Stage.WATER_FOUND);
                 return;
@@ -116,21 +116,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (world.getBlock(x, y, z).equals(Blocks.water))
         {
             //TODO Eventually search for bigger water pond
+            buildingfisherman.foundWater=true;
             buildingfisherman.waterLocation = new ChunkCoordinates(x, y, z);
         }
     }
 
-    //TODO Fishing Tool
-    private void requestTool(Block curblock)
+    //TODO Fishing Tool works?
+    private void requestTool(Item item)
     {
-        if (Objects.equals(curblock.getHarvestTool(0), Rod))
-        {
             job.setStage(Stage.PREPARING);
             needsRod = true;
-        }
     }
 
-    //TODO Missing Rod
     private boolean missesItemsInInventory(ItemStack... items)
     {
         boolean allClear = true;
@@ -160,6 +157,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     public void doFishing()
     {
+        //TODO We really do have our Rod?
+        //TODO Go to the water
         //TODO Actually fish!
     }
 
@@ -183,18 +182,26 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //Fisherman is at building and prepares for work
         if (job.getStage() == Stage.PREPARING)
         {
-            if (!getOwnBuilding().foundWater)
+            if(worker.hasitemInInventory(Items.fishing_rod))
             {
-                job.setStage(Stage.SEARCHING_WATER);
-                return;
+                if (!getOwnBuilding().foundWater)
+                {
+                    job.setStage(Stage.SEARCHING_WATER);
+                    return;
+                }
+                job.setStage(Stage.CHECK_WATER);
             }
-           job.setStage(Stage.CHECK_WATER);
+            else
+            {
+                missesItemsInInventory(new ItemStack(Items.fishing_rod,1));
+            }
+
         }
 
         //Looking for the ladder to walk to
         if (job.getStage() == Stage.SEARCHING_WATER)
         {
-            lookForLadder();
+            lookForWater();
             return;
         }
 
@@ -218,7 +225,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
         if (job.getStage() == Stage.START_FISHING)
         {
-
             doFishing();
             return;
         }

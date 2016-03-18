@@ -37,7 +37,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     public static final String SHOVEL = "shovel";
     public static final String AXE = "axe";
     public static final String HOE = "hoe";
-    public static final String Rod = "rod";
+    public static final String ROD = "rod";
 
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
     private static final Logger logger = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
@@ -169,6 +169,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         {
             this.errorState = ErrorState.NEEDS_PICKAXE;
             checkForPickaxe(needsPickaxeLevel);
+            delay += 10;
+            return;
+        }
+        if (needsRod)
+        {
+            this.errorState = ErrorState.NEEDS_ROD;
+            checkForRod();
             delay += 10;
             return;
         }
@@ -485,6 +492,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         return needsShovel;
     }
 
+    protected final boolean checkForRod()
+    {
+        needsShovel = checkForTool(ROD);
+        return needsRod;
+    }
+
     protected final boolean holdEfficientTool(Block target)
     {
         int bestSlot = getMostEfficientTool(target);
@@ -596,6 +609,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         NEEDS_ITEM,
         NEEDS_SHOVEL,
         NEEDS_PICKAXE,
+        NEEDS_ROD,
         INVENTORY_FULL,
     }
 

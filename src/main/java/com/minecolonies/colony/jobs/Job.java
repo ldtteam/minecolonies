@@ -29,6 +29,8 @@ public abstract class Job
         addMapping("Miner", JobMiner.class);
         addMapping("Lumberjack", JobLumberjack.class);
         addMapping("Farmer", JobFarmer.class);
+        addMapping("Fisherman", JobFisherman.class);
+
     }
 
     private final CitizenData citizen;
