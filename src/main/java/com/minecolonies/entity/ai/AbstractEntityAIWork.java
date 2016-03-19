@@ -9,6 +9,7 @@ import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -16,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 
 import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
@@ -39,6 +41,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     public static final String HOE = "hoe";
     public static final String ROD = "rod";
 
+    protected static Random itemRand = new Random();
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
     private static final Logger logger = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
     private static final int DELAY_RECHECK = 10;
@@ -46,6 +49,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     protected final J job;
     protected final EntityCitizen worker;
     protected final World world;
+
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
