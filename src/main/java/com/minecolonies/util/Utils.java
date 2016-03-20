@@ -483,7 +483,4 @@ public class Utils
     {
         return isTool(itemStack, AbstractEntityAIWork.PICKAXE);
     }
-
-
-
 }
