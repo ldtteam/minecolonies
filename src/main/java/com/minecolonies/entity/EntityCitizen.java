@@ -624,7 +624,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public EntityItem entityDropItem(ItemStack itemstack)
     {
-        return entityDropItem(itemstack, getEyeHeight() - 0.3F);
+        return entityDropItem(itemstack, 0.0F);
     }
 
     @Override
@@ -636,7 +636,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             ItemStack itemstack = inventory.getStackInSlot(i);
             if(itemstack != null && itemstack.stackSize > 0)
             {
-                entityDropItem(itemstack, 0.0F);
+                entityDropItem(itemstack);
             }
         }
     }
