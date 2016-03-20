@@ -403,6 +403,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
             colony.removeCitizen(getCitizenData());
         }
+
         super.onDeath(par1DamageSource);
     }
 
@@ -636,7 +637,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             ItemStack itemstack = inventory.getStackInSlot(i);
             if(itemstack != null && itemstack.stackSize > 0)
             {
-                entityDropItem(itemstack, 0.0F);
+                entityDropItem(itemstack);
             }
         }
     }
@@ -728,7 +729,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         for(EntityItem item : list)
         {
-            if(item != null && !item.isDead && canPickUpLoot())
+            if(item != null && !item.isDead)
             {
                 tryPickupEntityItem(item);
             }

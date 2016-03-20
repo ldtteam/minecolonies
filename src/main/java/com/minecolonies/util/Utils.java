@@ -36,6 +36,8 @@ public class Utils
      */
     public static ChunkCoordinates scanForBlockNearPoint(World world, int x, int y, int z, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
     {
+
+
         ChunkCoordinates closestCoords = null;
         double minDistance = Double.MAX_VALUE;
 
@@ -481,4 +483,7 @@ public class Utils
     {
         return isTool(itemStack, AbstractEntityAIWork.PICKAXE);
     }
+
+
+
 }
