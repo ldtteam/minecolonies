@@ -15,7 +15,6 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.geom.Point2D;
 import java.util.*;
 
 public class Utils
@@ -36,8 +35,6 @@ public class Utils
      */
     public static ChunkCoordinates scanForBlockNearPoint(World world, int x, int y, int z, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
     {
-
-
         ChunkCoordinates closestCoords = null;
         double minDistance = Double.MAX_VALUE;
 
