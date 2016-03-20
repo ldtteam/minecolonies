@@ -342,7 +342,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             {
                 //  This Citizen already has a different Entity registered to it
                 MineColonies.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')", getUniqueID(), colonyId, citizenId, existingCitizen.getUniqueID()));
-                setDead();
+                if(!existingCitizen.getUniqueID().equals(this.getUniqueID()))
+                {
+                    setDead();
+                }
+                else
+                {
+                    data.setCitizenEntity(this);
+                }
                 return;
             }
 
