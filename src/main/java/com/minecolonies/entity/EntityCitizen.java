@@ -13,6 +13,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.*;
 import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
+import com.minecolonies.items.MineColoniesEntityFishHook;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
@@ -66,6 +67,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private Map<String, Integer> statusMessages = new HashMap<>();
     private PathNavigate newNavigator;
     private boolean useNewNavigation = false;
+    public MineColoniesEntityFishHook fishEntity;
+    public boolean caughtFish=false;
+    //Skills, may be added more later
+    public int intelligence;
+    public int speed;
+    public int strength;
+    public int stamina;
+    public int diligence;
+
+
 
     public EntityCitizen(World world)
     {
@@ -75,6 +86,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
+
+        intelligence = (int)(Math.random()*10);
+        speed = (int)(Math.random()*10);
+        strength = (int)(Math.random()*10);
+        stamina = (int)(Math.random()*10);
+        diligence = (int)(Math.random()*10);
+
 
         this.renderDistanceWeight = 2.0D;
 

@@ -1,32 +1,43 @@
 package com.minecolonies.items;
 
-        import com.minecolonies.entity.EntityCitizen;
-        import cpw.mods.fml.relauncher.Side;
-        import cpw.mods.fml.relauncher.SideOnly;
-        import net.minecraft.block.Block;
-        import net.minecraft.block.material.Material;
-        import net.minecraft.enchantment.EnchantmentHelper;
-        import net.minecraft.entity.Entity;
-        import net.minecraft.entity.item.EntityItem;
-        import net.minecraft.entity.item.EntityXPOrb;
-        import net.minecraft.entity.projectile.EntityFishHook;
-        import net.minecraft.init.Items;
-        import net.minecraft.item.ItemStack;
-        import net.minecraft.nbt.NBTTagCompound;
-        import net.minecraft.util.*;
-        import net.minecraft.world.World;
-        import net.minecraft.world.WorldServer;
+import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.ai.EntityAIWorkFisherman;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Arrays;
+import java.util.List;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemFishFood;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.WeightedRandomFishable;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
-        import java.util.List;
-
-public class MineColoniesEntityFishHook extends EntityFishHook
+public class MineColoniesEntityFishHook extends Entity
 {
+    public static final List field_146039_d = Arrays.asList(new WeightedRandomFishable[] {(new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F), new WeightedRandomFishable(new ItemStack(Items.leather), 10), new WeightedRandomFishable(new ItemStack(Items.bone), 10), new WeightedRandomFishable(new ItemStack(Items.potionitem), 10), new WeightedRandomFishable(new ItemStack(Items.string), 5), (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F), new WeightedRandomFishable(new ItemStack(Items.bowl), 10), new WeightedRandomFishable(new ItemStack(Items.stick), 5), new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1), new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10), new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10)});
+    public static final List field_146041_e = Arrays.asList(new WeightedRandomFishable[] {new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1), new WeightedRandomFishable(new ItemStack(Items.name_tag), 1), new WeightedRandomFishable(new ItemStack(Items.saddle), 1), (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(0.25F).func_150707_a(), (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).func_150709_a(0.25F).func_150707_a(), (new WeightedRandomFishable(new ItemStack(Items.book), 1)).func_150707_a()});
+    public static final List field_146036_f = Arrays.asList(new WeightedRandomFishable[] {new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13)});
     private int field_146037_g;
     private int field_146048_h;
     private int field_146050_i;
     private Block field_146046_j;
     private boolean field_146051_au;
-
+    public int field_146044_a;
     public EntityCitizen citizen;
     private int field_146049_av;
     private int field_146047_aw;
@@ -34,7 +45,7 @@ public class MineColoniesEntityFishHook extends EntityFishHook
     private int field_146040_ay;
     private int field_146038_az;
     private float field_146054_aA;
-
+    public Entity field_146043_c;
     private int field_146055_aB;
     private double field_146056_aC;
     private double field_146057_aD;
@@ -66,6 +77,7 @@ public class MineColoniesEntityFishHook extends EntityFishHook
         this.setPosition(p_i1765_2_, p_i1765_4_, p_i1765_6_);
         this.ignoreFrustumCheck = true;
         this.citizen = p_i1765_8_;
+        p_i1765_8_.fishEntity = this;
     }
 
     public MineColoniesEntityFishHook(World p_i1766_1_, EntityCitizen p_i1766_2_)
@@ -76,6 +88,7 @@ public class MineColoniesEntityFishHook extends EntityFishHook
         this.field_146050_i = -1;
         this.ignoreFrustumCheck = true;
         this.citizen = p_i1766_2_;
+        this.citizen.fishEntity = this;
         this.setSize(0.25F, 0.25F);
         this.setLocationAndAngles(p_i1766_2_.posX, p_i1766_2_.posY + 1.62D - (double)p_i1766_2_.yOffset, p_i1766_2_.posZ, p_i1766_2_.rotationYaw, p_i1766_2_.rotationPitch);
         this.posX -= (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * 0.16F);
@@ -159,7 +172,9 @@ public class MineColoniesEntityFishHook extends EntityFishHook
      */
     public void onUpdate()
     {
-       // super.onUpdate();
+        //On update if fish is pulling down calculate a "skill factor" from the fisherman (may include intelligence and speed)
+        //So with a certain possibility the fisher will catch or miss.
+        super.onUpdate();
 
         if (this.field_146055_aB > 0)
         {
@@ -187,6 +202,7 @@ public class MineColoniesEntityFishHook extends EntityFishHook
                 if (this.citizen.isDead || !this.citizen.isEntityAlive() || itemstack == null || itemstack.getItem() != Items.fishing_rod || this.getDistanceSqToEntity(this.citizen) > 1024.0D)
                 {
                     this.setDead();
+                    this.citizen.fishEntity = null;
                     return;
                 }
 
@@ -302,6 +318,7 @@ public class MineColoniesEntityFishHook extends EntityFishHook
 
                 for (this.rotationPitch = (float)(Math.atan2(this.motionY, (double)f5) * 180.0D / Math.PI); this.rotationPitch - this.prevRotationPitch < -180.0F; this.prevRotationPitch -= 360.0F)
                 {
+                    ;
                 }
 
                 while (this.rotationPitch - this.prevRotationPitch >= 180.0F)
@@ -389,6 +406,9 @@ public class MineColoniesEntityFishHook extends EntityFishHook
                                 worldserver.func_147487_a("bubble", this.posX, (double)(f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
                                 worldserver.func_147487_a("wake", this.posX, (double)(f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
                                 this.field_146045_ax = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
+                                System.out.println("Fish bites here");
+                                citizen.caughtFish=true;
+
                             }
                             else
                             {
@@ -409,6 +429,7 @@ public class MineColoniesEntityFishHook extends EntityFishHook
                                 float f4 = f2 * 0.04F;
                                 worldserver.func_147487_a("wake", d11, d5, d6, 0, (double)f4, 0.01D, (double)(-f3), 1.0D);
                                 worldserver.func_147487_a("wake", d11, d5, d6, 0, (double)(-f4), 0.01D, (double)f3, 1.0D);
+
                             }
                         }
                         else if (this.field_146040_ay > 0)
@@ -437,6 +458,7 @@ public class MineColoniesEntityFishHook extends EntityFishHook
                                 d5 = (double)((float)MathHelper.floor_double(this.boundingBox.minY) + 1.0F);
                                 d6 = this.posZ + (double)(MathHelper.cos(f7) * f2 * 0.1F);
                                 worldserver.func_147487_a("splash", d11, d5, d6, 2 + this.rand.nextInt(2), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
+
                             }
 
                             if (this.field_146040_ay <= 0)
@@ -551,6 +573,7 @@ public class MineColoniesEntityFishHook extends EntityFishHook
             }
 
             this.setDead();
+            this.citizen.fishEntity = null;
             return b0;
         }
     }
@@ -560,8 +583,34 @@ public class MineColoniesEntityFishHook extends EntityFishHook
         float f = this.worldObj.rand.nextFloat();
         int i = EnchantmentHelper.func_151386_g(this.citizen);
         int j = EnchantmentHelper.func_151387_h(this.citizen);
+        if (true)
+        {
+            return net.minecraftforge.common.FishingHooks.getRandomFishable(this.rand, f, i, j);
+        }
 
-        return net.minecraftforge.common.FishingHooks.getRandomFishable(this.rand, f, i, j);
+        float f1 = 0.1F - (float)i * 0.025F - (float)j * 0.01F;
+        float f2 = 0.05F + (float)i * 0.01F - (float)j * 0.01F;
+        f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
+        f2 = MathHelper.clamp_float(f2, 0.0F, 1.0F);
+
+        if (f < f1)
+        {
+            return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, field_146039_d)).func_150708_a(this.rand);
+        }
+        else
+        {
+            f -= f1;
+
+            if (f < f2)
+            {
+                return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, field_146041_e)).func_150708_a(this.rand);
+            }
+            else
+            {
+                float f3 = f - f2;
+                return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, field_146036_f)).func_150708_a(this.rand);
+            }
+        }
     }
 
     /**
@@ -570,5 +619,10 @@ public class MineColoniesEntityFishHook extends EntityFishHook
     public void setDead()
     {
         super.setDead();
+
+        if (this.citizen != null)
+        {
+            this.citizen.fishEntity = null;
+        }
     }
 }
