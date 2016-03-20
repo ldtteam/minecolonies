@@ -26,6 +26,7 @@ import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInvBasic;
@@ -76,7 +77,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public int stamina;
     public int diligence;
 
-
+    //The current experience level the player is on.
+    public int experienceLevel;
+    //The total amount of experience the player has. This also includes the amount of experience within their Experience Bar.
+    public int experienceTotal;
+    //The current amount of experience the player has within their Experience Bar.
+    public float experience;
+    //Something with ticks which I didn't understand yet!
+    private int field_82249_h;
 
     public EntityCitizen(World world)
     {
@@ -358,9 +366,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             EntityCitizen existingCitizen = data.getCitizenEntity();
             if(existingCitizen != null && existingCitizen != this)
             {
-                //  This Citizen already has a different Entity registered to it
+                // This Citizen already has a different Entity registered to it
                 MineColonies.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')", getUniqueID(), colonyId, citizenId, existingCitizen.getUniqueID()));
-                setDead();
+                if(!existingCitizen.getUniqueID().equals(this.getUniqueID()))
+                {
+                    setDead();
+                }
+                else
+                {
+                    data.setCitizenEntity(this);
+                }
                 return;
             }
 
@@ -416,6 +431,31 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onDeath(DamageSource par1DamageSource)
     {
+
+        int i;
+
+        if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
+        {
+            i = this.getExperiencePoints(this.attackingPlayer);
+
+            while (i > 0)
+            {
+                int j = EntityXPOrb.getXPSplit(i);
+                i -= j;
+                this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, j));
+            }
+        }
+
+        this.setDead();
+
+        for (i = 0; i < 20; ++i)
+        {
+            double d2 = this.rand.nextGaussian() * 0.02D;
+            double d0 = this.rand.nextGaussian() * 0.02D;
+            double d1 = this.rand.nextGaussian() * 0.02D;
+            this.worldObj.spawnParticle("explode", this.posX + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, this.posY + (double)(this.rand.nextFloat() * this.height), this.posZ + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, d2, d0, d1);
+        }
+
         if(colony != null)
         {
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
@@ -660,16 +700,75 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     @Override
-    protected int getExperiencePoints(EntityPlayer par1EntityPlayer)
-    {
-        return 0;
-    }
-
-    @Override
     public void onInventoryChanged(InventoryBasic inventoryBasic)
     {
         //TODO use in future for lumberjack rendering logs, etc
         setCurrentItemOrArmor(0, inventory.getHeldItem());
+    }
+
+    //Add experience points to citizen.
+    public void addExperience(int p_71023_1_)
+    {
+        int j = Integer.MAX_VALUE - this.experienceTotal;
+
+        if (p_71023_1_ > j)
+        {
+            p_71023_1_ = j;
+        }
+
+        this.experience += (float)p_71023_1_ / (float)this.xpBarCap();
+
+        for (this.experienceTotal += p_71023_1_; this.experience >= 1.0F; this.experience /= (float)this.xpBarCap())
+        {
+            this.experience = (this.experience - 1.0F) * (float)this.xpBarCap();
+            this.addExperienceLevel(1);
+        }
+    }
+
+    //Add experience levels to this citizen.
+    public void addExperienceLevel(int nOLevels)
+    {
+        this.experienceLevel += nOLevels;
+
+        if (this.experienceLevel < 0)
+        {
+            this.experienceLevel = 0;
+            this.experience = 0.0F;
+            this.experienceTotal = 0;
+        }
+
+        if (nOLevels > 0 && this.experienceLevel % 5 == 0 && (float)this.field_82249_h < (float)this.ticksExisted - 100.0F)
+        {
+            float f = this.experienceLevel > 30 ? 1.0F : (float)this.experienceLevel / 30.0F;
+            this.worldObj.playSoundAtEntity(this, "random.levelup", f * 0.75F, 1.0F);
+            this.field_82249_h = this.ticksExisted;
+        }
+    }
+
+    /**
+     * This method returns the cap amount of experience that the experience bar can hold. With each level, the
+     * experience cap on the citizen's experience bar is raised by 10.
+     */
+    public int xpBarCap()
+    {
+        return this.experienceLevel >= 30 ? 62 + (this.experienceLevel - 30) * 7 : (this.experienceLevel >= 15 ? 17 + (this.experienceLevel - 15) * 3 : 17);
+    }
+
+    /**
+     * Get the experience points the entity currently has.
+     */
+    @Override
+    protected int getExperiencePoints(EntityPlayer p_70693_1_)
+    {
+        if (this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
+        {
+            return 0;
+        }
+        else
+        {
+            int i = this.experienceLevel * 7;
+            return i > 100 ? 100 : i;
+        }
     }
 
     public InventoryCitizen getInventory()
@@ -705,6 +804,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public boolean hasitemInInventory(Item item)
     {
         return InventoryUtils.hasitemInInventory(getInventory(), item);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public List<EntityXPOrb> getXPOrbsOnGrid() {
+        AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(posX, posY, posZ, posX + 2, posY + 2, posZ + 2);
+        return worldObj.getEntitiesWithinAABB(EntityXPOrb.class, bb);
     }
 
     public void setInventorySize(int newSize, boolean dropLeftovers)

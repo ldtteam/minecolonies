@@ -5,6 +5,7 @@ import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.items.MineColoniesEntityFishHook;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -181,9 +182,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
 
 
+        for (EntityXPOrb orb : worker.getXPOrbsOnGrid())
+        {
+            worker.addExperience(orb.getXpValue());
+            orb.setDead();
+        }
+
         if(worker.caughtFish)
         {
             worker.setCanPickUpLoot(true);
+            worker.captureDrops = true;
+
             int i = worker.fishEntity.func_146034_e();
             worker.getInventory().getHeldItem().damageItem(i, worker);
             worker.swingItem();
@@ -199,12 +208,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
 
         }
-
-        //Throw Rod
-        //Wait time
-        //Get Rod/Fish/Stuff
-
-
 
         if(worker.fishEntity==null)
         {
