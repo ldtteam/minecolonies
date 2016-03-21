@@ -2,7 +2,6 @@ package com.minecolonies.client.model;
 
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
 
 public class ModelEntityLumberjackFemale extends ModelBiped
 {

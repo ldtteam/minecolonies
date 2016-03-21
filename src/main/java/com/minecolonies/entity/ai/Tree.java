@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
@@ -140,8 +141,8 @@ public class Tree
             y--;
         }
 
-        //Make sure tree is on solid ground
-        if(!world.getBlock(x, y-1, z).getMaterial().isSolid())
+        //Make sure tree is on solid ground and tree is not build above cobblestone
+        if(!world.getBlock(x, y-1, z).getMaterial().isSolid() || world.getBlock(x, y-1, z) == Blocks.cobblestone)
         {
             return false;
         }

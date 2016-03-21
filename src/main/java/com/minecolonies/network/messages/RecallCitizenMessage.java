@@ -5,11 +5,14 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.World;
 
 /**
  * Recalls the citizen to the hut
@@ -57,7 +60,10 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
                 EntityCitizen citizen = building.getWorkerEntity();
                 if(citizen != null)
                 {
-                    citizen.setLocationAndAngles(loc.posX, loc.posY + 1, loc.posZ, citizen.rotationYaw, citizen.rotationPitch);//May need a different spot if this isn't safe
+                    World world = colony.getWorld();
+                    ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, loc.posX, loc.posY+1, loc.posZ, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer, Blocks.tallgrass, Blocks.red_flower, Blocks.yellow_flower);
+
+                    citizen.setLocationAndAngles(spawnPoint.posX+0.5, spawnPoint.posY, spawnPoint.posZ+0.5, citizen.rotationYaw, citizen.rotationPitch);
                 }
             }
         }

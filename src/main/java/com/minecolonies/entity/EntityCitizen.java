@@ -194,7 +194,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         Object currentTasks[] = this.tasks.taskEntries.toArray();
         for(Object task : currentTasks)
         {
-            if(((EntityAITasks.EntityAITaskEntry) task).action instanceof EntityAIWork)
+            if(((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIWork)
             {
                 this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry) task).action);
             }
@@ -403,7 +403,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
             colony.removeCitizen(getCitizenData());
         }
-
         super.onDeath(par1DamageSource);
     }
 
@@ -625,7 +624,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public EntityItem entityDropItem(ItemStack itemstack)
     {
-        return entityDropItem(itemstack, getEyeHeight() - 0.3F);
+        return entityDropItem(itemstack, 0.0F);
     }
 
     @Override
@@ -729,7 +728,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         for(EntityItem item : list)
         {
-            if(item != null && !item.isDead)
+            if(item != null && !item.isDead && canPickUpLoot())
             {
                 tryPickupEntityItem(item);
             }

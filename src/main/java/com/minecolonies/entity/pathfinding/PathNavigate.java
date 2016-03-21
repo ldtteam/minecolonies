@@ -13,7 +13,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import javax.swing.tree.TreePath;
 import java.util.concurrent.Future;
 
 public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
