@@ -1,6 +1,8 @@
 package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.ai.AbstractEntityAIWork;
+import com.minecolonies.lib.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -10,6 +12,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -347,5 +351,95 @@ public class Utils
     public static void blockBreakSoundAndEffect(World world, int x, int y, int z, Block block, int metadata)
     {
         world.playAuxSFX(2001, x, y, z, Block.getIdFromBlock(block) + (metadata << 12));
+    }
+
+    public static Logger generateLoggerForClass(Class clazz){
+        return LogManager.getLogger(Constants.MOD_ID+"::"+clazz.getSimpleName());
+    }
+
+    /**
+     * Calculate the mining level an item has as a tool of certain type.
+     * @param stack the stack to test
+     * @param tool the tool category
+     * @return integer value for mining level >= 0 is okay
+     */
+    public static int getMiningLevel(ItemStack stack, String tool)
+    {
+        if (tool == null)
+        {
+            return stack == null ? 0 : 1; //empty hand is best on blocks who don't care (0 better 1)
+        }
+        if (stack == null)
+        {
+            return -1;
+        }
+        return stack.getItem().getHarvestLevel(stack, tool);
+    }
+    /**
+     * Checks if a pickaxe can be used for that mining level.
+     * @param minlevel the level needs to have
+     * @param level the level it has
+     * @return if the pickaxe qualifies
+     */
+    public static boolean checkIfPickaxeQualifies(int minlevel, int level){
+        return checkIfPickaxeQualifies(minlevel,level,false);
+    }
+
+    /**
+     * Checks if a pickaxe can be used for that mining level.
+     * Be aware, it will return false for mining stone
+     * with an expensive pickaxe. So set {@code beEfficient} to false
+     * for that if you need it the other way around.
+     * @param minlevel the level needs to have
+     * @param level the level it has
+     * @param beEfficient if he should stop using diamond picks on stone
+     * @return if the pickaxe qualifies
+     */
+    public static boolean checkIfPickaxeQualifies(int minlevel, int level, boolean beEfficient)
+    {
+        //Minecraft handles this as "everything is allowed"
+        if (minlevel < 0)
+        {
+            return true;
+        }
+        if (beEfficient && minlevel == 0)
+        {
+            //Code to not overuse on high level pickaxes
+            return level >= 0 && level <= 1;
+
+        }
+        return level >= minlevel;
+    }
+
+    /**
+     * Checks if this tool is useful for the miner.
+     */
+    public static boolean isMiningTool(ItemStack itemStack)
+    {
+        return isPickaxe(itemStack) || isShovel(itemStack);
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Shovel.
+     */
+    public static boolean isShovel(ItemStack itemStack)
+    {
+        return isTool(itemStack, AbstractEntityAIWork.SHOVEL);
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Tool of type.
+     */
+    public static boolean isTool(ItemStack itemStack, String toolType)
+    {
+        return getMiningLevel(itemStack, toolType) >= 0;
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Pickaxe.
+     */
+    public static boolean isPickaxe(ItemStack itemStack)
+    {
+        return isTool(itemStack, AbstractEntityAIWork.PICKAXE);
     }
 }

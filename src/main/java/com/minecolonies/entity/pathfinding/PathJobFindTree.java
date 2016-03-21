@@ -1,9 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.entity.ai.Tree;
-import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
