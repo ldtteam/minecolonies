@@ -8,16 +8,24 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
+import org.apache.commons.codec.language.bm.Lang;
+import scala.tools.nsc.backend.icode.TypeKinds;
 
 public class WindowCitizen extends Window implements Button.Handler
 {
     private static String INVENTORY_BUTTON_ID = "inventory";
+    private static String CITIZIN_RESOURCE_SUFFIX = ":gui/windowCitizen.xml";
+    private static String STRENGTH = "strength";
+    private static String STAMINA = "stamina";
+    private static String WISDOM = "wisdom";
+    private static String INTELLIGENCE= "intelligence";
+    private static String CHARISMA = "charisma";
 
     private CitizenData.View citizen;
 
     public WindowCitizen(CitizenData.View citizen)
     {
-        super(Constants.MOD_ID + ":gui/windowCitizen.xml");
+        super(Constants.MOD_ID + CITIZIN_RESOURCE_SUFFIX);
         this.citizen = citizen;
     }
 
@@ -25,13 +33,15 @@ public class WindowCitizen extends Window implements Button.Handler
     {
         try
         {
-            findPaneOfTypeByID("strength", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength));
-            findPaneOfTypeByID("stamina", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina));
-            findPaneOfTypeByID("wisdom", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom));
-            findPaneOfTypeByID("intelligence", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
-            findPaneOfTypeByID("charisma", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
+            findPaneOfTypeByID(STRENGTH, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength));
+            findPaneOfTypeByID(STAMINA, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina));
+            findPaneOfTypeByID(WISDOM, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom));
+            findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
+            findPaneOfTypeByID(CHARISMA, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
         }
-        catch (NullPointerException exc) {}
+        catch (NullPointerException exc) {
+            MineColonies.logger.error("findPane error, report to mod authors");
+        }
     }
 
     @Override
