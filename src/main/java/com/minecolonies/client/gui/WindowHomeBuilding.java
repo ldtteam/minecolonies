@@ -20,41 +20,59 @@ public class WindowHomeBuilding extends Window implements Button.Handler {
 
     private BuildingHome.View building;
 
-    public WindowHomeBuilding(BuildingHome.View building) {
+    public WindowHomeBuilding(BuildingHome.View building)
+    {
         super(Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
         this.building = building;
     }
 
     @Override
-    public void onOpened() {
-        try {
+    public void onOpened()
+    {
+        try
+        {
             findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
                     LanguageHandler.getString("com.minecolonies.gui.workerHuts.homeHut"));
-        } catch (NullPointerException e){
+        } catch (NullPointerException e)
+        {
             MineColonies.logger.error("findPane error, report to mod authors");
         }
-        if (building.getBuildingLevel() == 0) {
-            try {
+        /*
+        If level == 0, set build button, and disable repair button
+         */
+        if (building.getBuildingLevel() == 0)
+        {
+            try
+            {
                 findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
                         LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
-            } catch (NullPointerException e) {
+            } catch (NullPointerException e)
+            {
                 MineColonies.logger.error("findPane error, report to mod authors");
             }
             findPaneByID(BUTTON_REPAIR).disable();
-        } else if (building.isBuildingMaxLevel()) {
+        } else if (building.isBuildingMaxLevel())
+            /*
+            Else if level == max, disable build button
+             */
+        {
             Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-            try {
+            try
+            {
                 button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
                 button.disable();
-            } catch (NullPointerException e){
+            } catch (NullPointerException e)
+            {
                 MineColonies.logger.error("findPane error, report to mod authors");
             }
         }
     }
 
     @Override
-    public void onButtonClicked(Button button) {
-        switch (button.getID()) {
+    public void onButtonClicked(Button button)
+    {
+        switch (button.getID())
+        {
             case BUTTON_INVENTORY:
                 MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
                 break;

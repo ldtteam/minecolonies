@@ -15,12 +15,21 @@ import java.awt.*;
 
 public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
 {
-    private static final String LIST_LEVELS = "levels", PAGE_LEVELS = "levelActions", BUTTON_PREVPAGE = "prevPage",
-            BUTTON_NEXTPAGE = "nextPage", BUTTON_CURRENTLEVEL = "changeToLevel", VIEW_PAGES = "pages";
-    Button buttonPrevPage, buttonNextPage;
-    private ScrollingList      levelList;
-    private int[]              levels;
+    private static final String LIST_LEVELS = "levels";
+    private static final String PAGE_LEVELS = "levelActions";
+    private static final String BUTTON_PREVPAGE = "prevPage";
+    private static final String BUTTON_NEXTPAGE = "nextPage";
+    private static final String BUTTON_CURRENTLEVEL = "changeToLevel";
+
+    private static final String VIEW_PAGES = "pages";
+
+    private Button buttonPrevPage;
+    private Button buttonNextPage;
+
+    private int[] levels;
+    private ScrollingList levelList;
     private BuildingMiner.View miner;
+
     private static final String HUT_MINER_RESOURCE_SUFFIX = ":gui/windowHutMiner.xml";
 
     public WindowHutMiner(BuildingMiner.View building)
@@ -39,7 +48,8 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
         {
             findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
         }
-        catch(NullPointerException exc){
+        catch(NullPointerException exc)
+        {
             MineColonies.logger.error("findPane error, report to mod authors");
         }
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
@@ -83,8 +93,10 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     @Override
     public void onButtonClicked(Button button)
     {
-        try {
-            switch (button.getID()) {
+        try
+        {
+            switch (button.getID())
+            {
                 case BUTTON_PREVPAGE:
                     findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
                     buttonPrevPage.setEnabled(false);
@@ -106,7 +118,8 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
                     super.onButtonClicked(button);
                     break;
             }
-        } catch (NullPointerException e){
+        } catch (NullPointerException e)
+        {
             MineColonies.logger.error("findPane error, report to mod authors");
         }
     }
@@ -114,13 +127,15 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     @Override
     public void onUpdate()
     {
-        try {
+        try
+        {
             String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
             if (currentPage.equals(PAGE_LEVELS)) {
                 updateUsers();
                 window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
             }
-        } catch (NullPointerException e){
+        } catch (NullPointerException e)
+        {
             MineColonies.logger.error("findPane error, report to mod authors");
         }
     }

@@ -39,7 +39,8 @@ public class WindowCitizen extends Window implements Button.Handler
             findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
             findPaneOfTypeByID(CHARISMA, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
         }
-        catch (NullPointerException exc) {
+        catch (NullPointerException exc)
+        {
             MineColonies.logger.error("findPane error, report to mod authors");
         }
     }

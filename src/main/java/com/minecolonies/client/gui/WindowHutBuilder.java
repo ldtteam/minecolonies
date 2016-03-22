@@ -12,5 +12,8 @@ public class WindowHutBuilder extends WindowWorkerBuilding<BuildingBuilder.View>
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
     }
 
-    public String getBuildingName() { return "com.minecolonies.gui.workerHuts.buildersHut"; }
+    public String getBuildingName()
+    {
+        return "com.minecolonies.gui.workerHuts.buildersHut";
+    }
 }

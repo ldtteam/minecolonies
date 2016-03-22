@@ -29,7 +29,10 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         super(building, Constants.MOD_ID + HUT_FARMER_RESOURCE_SUFFIX);
     }
 
-    public String getBuildingName() { return "com.minecolonies.gui.workerHuts.farmer"; }
+    public String getBuildingName()
+    {
+        return "com.minecolonies.gui.workerHuts.farmer";
+    }
 
     @Override
     public void onOpened()
@@ -110,9 +113,11 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         {
             if (button.getID().equals(BUTTON_PREVPAGE))
             {
-                try {
+                try
+                {
                     findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                } catch (NullPointerException e){
+                } catch (NullPointerException e)
+                {
                     MineColonies.logger.error("findPane error, report to mod authors");
                 }
                 buttonPrevPage.setEnabled(false);
@@ -120,9 +125,11 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
             }
             else if (button.getID().equals(BUTTON_NEXTPAGE))
             {
-                try {
+                try
+                {
                     findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                } catch (NullPointerException e) {
+                } catch (NullPointerException e)
+                {
                     MineColonies.logger.error("findPane error, report to mod authors");
                 }
                 buttonPrevPage.setEnabled(true);

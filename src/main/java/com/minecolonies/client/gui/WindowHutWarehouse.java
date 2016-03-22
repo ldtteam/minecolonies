@@ -23,8 +23,10 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
     private static final String BUTTON_NEXTPAGE = "nextPage";
 
     private static final String VIEW_PAGES = "pages";
-    private static final String PAGE_ACTIONS = "pageActions";
-    private static final String PAGE_SETTINGS = "pageSettings";
+
+    /* Unused for now */
+    //private static final String PAGE_ACTIONS = "pageActions";
+    //private static final String PAGE_SETTINGS = "pageSettings";
 
     private static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/windowHutWarehouse.xml";
 
@@ -35,7 +37,10 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
     }
 
-    public String getBuildingName() { return "com.minecolonies.gui.workerHuts.warehouse"; }
+    public String getBuildingName()
+    {
+        return "com.minecolonies.gui.workerHuts.warehouse";
+    }
 
     @Override
     public void onOpened()
@@ -68,7 +73,8 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
             findPaneOfTypeByID(BUTTON_GUARD_WEAPON, ButtonVanilla.class).setLabel(getYesOrNo(building.guardWeapon));
             findPaneOfTypeByID(BUTTON_CITIZEN_CHESTS, ButtonVanilla.class).setLabel(getYesOrNo(building.citizenVisit));
         }
-        catch (NullPointerException exc) {
+        catch (NullPointerException exc)
+        {
             MineColonies.logger.error("findPane error, report to mod authors");
         }
     }
@@ -76,7 +82,8 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
     @Override
     public void onButtonClicked(Button button)
     {
-        switch (button.getID()) {
+        switch (button.getID())
+        {
             case BUTTON_BLACKSMITH_GOLD:
                 building.blacksmithGold = !building.blacksmithGold;
                 break;
@@ -105,8 +112,10 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
                 building.citizenVisit = !building.citizenVisit;
                 break;
             default:
-                try {
-                    switch (button.getID()) {
+                try
+                {
+                    switch (button.getID())
+                    {
                         case BUTTON_PREVPAGE:
                             findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
                             buttonPrevPage.setEnabled(false);
@@ -122,7 +131,8 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
                             break;
                     }
                     return;
-                } catch (NullPointerException e) {
+                } catch (NullPointerException e)
+                {
                     MineColonies.logger.error("findPane error, report to mod authors");
                 }
                 break;
