@@ -23,7 +23,7 @@ import java.util.List;
 
 public class BuildingMiner extends BuildingWorker
 {
-    private static final String TAG_FLOOR_BLOCK    = "floorBlock";//TODO: is this something that needs to be saved?
+    private static final String TAG_FLOOR_BLOCK    = "floorBlock";//TODO: is this something that needs to be saved? id say yea mw
     private static final String TAG_FENCE_BLOCK    = "fenceBlock";
     private static final String TAG_STARTING_LEVEL = "startingLevelShaft";
     private static final String TAG_LEVELS         = "levels";
@@ -38,9 +38,10 @@ public class BuildingMiner extends BuildingWorker
     private static final String TAG_LLOCATION      = "ladderlocation";
     private static final String TAG_LADDER         = "found_ladder";
 
-    public Node activeNode;
     public Block floorBlock         = Blocks.planks;
     public Block fenceBlock         = Blocks.fence;
+
+    public Node activeNode;
     /**
      * Here we can detect multiples of 5
      */

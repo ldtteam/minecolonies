@@ -265,27 +265,71 @@ public abstract class Building
         }
 
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
-
         compound.setInteger(TAG_ROTATION, rotation);
         compound.setString(TAG_STYLE, style);
-    }
-    public Colony getColony() { return colony; }
-    public ChunkCoordinates getID() { return location; }    //  Location doubles as ID
-    public ChunkCoordinates getLocation() { return location; }
-    public int getBuildingLevel() { return buildingLevel; }
 
-    public void setBuildingLevel(int level)
+    }
+
+    /**
+     * Returns the colony of the building
+     * @return  {@link com.minecolonies.colony.Colony} of the current object
+     */
+    public Colony getColony()
+    {
+        return colony;
+    }
+
+    /**
+     * Returns the {@link ChunkCoordinates} of the current object, also used as ID
+     * @return {@link ChunkCoordinates} of the current object
+     */
+    public ChunkCoordinates getID()
+    {
+        return location; //  Location doubles as ID
+    }
+
+    /**
+     * Returns the {@link ChunkCoordinates} of the current object, also used as ID
+     * @return {@link ChunkCoordinates} of the current object
+     */
+    public ChunkCoordinates getLocation()
+    {
+        return location;
+    }
+
+    /**
+     * Returns the level of the current object
+     * @return  Level of the current object
+     */
+    public int getBuildingLevel()
+    {
+        return buildingLevel;
+    }
+
+    /**
+     * Sets the current level of the building
+     * @param level     Level of the building
+     */
+    public void setBuildingLevel(int level)     //TODO Since this is public, dont we want to do some security checks? mw
     {
         buildingLevel = level;
         markDirty();
         ColonyManager.markDirty();
     }
 
+    /**
+     * Sets the tile entity field to  {@param te}
+     * @param te    {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
+     */
     public void setTileEntity(TileEntityColonyBuilding te)
     {
         tileEntity = te;
     }
 
+    /**
+     * Returns the tile entity that belongs to the colony building
+     * @return      {@link TileEntityColonyBuilding} object of the building
+     */
     public TileEntityColonyBuilding getTileEntity()
     {
         if (tileEntity == null)
@@ -299,8 +343,8 @@ public abstract class Building
                     tileEntity = (TileEntityColonyBuilding)te;
                     if (tileEntity.getBuilding() == null)
                     {
-                        tileEntity.setColony(colony); // <<<< is this required? isnt it set when it was first created?
-                        tileEntity.setBuilding(this); // <<<< is this required? isnt it set when it was first created?
+                        tileEntity.setColony(colony); //todo  <<<< is this required? isnt it set when it was first created? // agree not usefull mw
+                        tileEntity.setBuilding(this); //todo  <<<< is this required? isnt it set when it was first created? // agree not usefull mw
                     }
                 }
             }
@@ -309,8 +353,26 @@ public abstract class Building
         return tileEntity;
     }
 
-    public final boolean isDirty() { return isDirty; }
-    public final void clearDirty() { isDirty = false; }
+    /**
+     * Returns whether the instance is dirty or not.
+     * @return  true if dirty, false if not.
+     */
+    public final boolean isDirty()
+    {
+        return isDirty;
+    }
+
+    /**
+     * Sets {@link #isDirty} to false, meaning that the instance is up to date
+     */
+    public final void clearDirty()
+    {
+        isDirty = false;
+    }
+
+    /**
+     * Marks the instance and the building dirty
+     */
     public final void markDirty()
     {
         isDirty = true;
@@ -338,12 +400,24 @@ public abstract class Building
      */
     public void removeCitizen(CitizenData citizen) {}
 
+    /**
+     * On tick of the server
+     * @param event {@link cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent}
+     */
     public void onServerTick(TickEvent.ServerTickEvent event) {}
+
+    /**
+     * On tick of the world
+     * @param event {@link cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent}
+     */
     public void onWorldTick(TickEvent.WorldTickEvent event) {}
 
+    /**
+     * Adds work orders to the {@link Colony#workManager}
+     * @param level     Desired level
+     */
     private void requestWorkOrder(int level)
     {
-        boolean found = false;
         for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class)) // <<< why isnt this a map? if you have to loop and get check the ID
         {
             if (o.getBuildingId().equals(getID()))
@@ -355,6 +429,9 @@ public abstract class Building
         colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
     }
 
+    /**
+     * Requests an upgrade for the current building
+     */
     public void requestUpgrade()
     {
         if (buildingLevel < getMaxBuildingLevel())
@@ -363,6 +440,9 @@ public abstract class Building
         }
     }
 
+    /**
+     * Requests a repair for the current building
+     */
     public void requestRepair()
     {
         if (buildingLevel > 0)
@@ -371,21 +451,39 @@ public abstract class Building
         }
     }
 
+    //todo 0 north, 1 east .. ?
+    /**
+     * Sets the rotation of the current building
+     * @param rotation  integer value of the rotation
+     */
     public void setRotation(int rotation)
     {
         this.rotation = rotation;
     }
 
+    /**
+     * Returns the rotation of the current building
+     * @return  integer value of the rotation
+     */
     public int getRotation()
     {
         return rotation;
     }
 
+    //todo possible values?
+    /**
+     * Sets the style of the building
+     * @param style     String value of the style
+     */
     public void setStyle(String style)
     {
         this.style = style;
     }
 
+    /**
+     * Returns the style of the current building
+     * @return String representation of the current building-style
+     */
     public String getStyle()
     {
         return style;
@@ -410,13 +508,35 @@ public abstract class Building
             location = new ChunkCoordinates(l);
         }
 
-        public ChunkCoordinates getID() { return location; }    //  Location doubles as ID
-        public ChunkCoordinates getLocation() { return location; }
-        public ColonyView getColony() { return colony; }
-        public int getBuildingLevel() { return buildingLevel; }
-        public int getBuildingMaxLevel() { return buildingMaxLevel; }
+        public ChunkCoordinates getID()
+        {
+            return location; //  Location doubles as ID
+        }
 
-        public boolean isBuildingMaxLevel() { return buildingLevel >= buildingMaxLevel; }
+        public ChunkCoordinates getLocation()
+        {
+            return location;
+        }
+
+        public ColonyView getColony()
+        {
+            return colony;
+        }
+
+        public int getBuildingLevel()
+        {
+            return buildingLevel;
+        }
+
+        public int getBuildingMaxLevel()
+        {
+            return buildingMaxLevel;
+        }
+
+        public boolean isBuildingMaxLevel()
+        {
+            return buildingLevel >= buildingMaxLevel;
+        }
 
         public void openGui()
         {

@@ -10,19 +10,23 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingBaker extends BuildingWorker
 {
+
+    private static final String BAKER = "Baker";
+    private static final String BAKER_HUT_NAME = "bakerHut";
+
     public BuildingBaker(Colony c, ChunkCoordinates l)
     {
         super(c, l);
     }
 
     @Override
-    public String getSchematicName(){ return "Baker"; }
+    public String getSchematicName(){ return BAKER; }
 
     @Override
     public int getMaxBuildingLevel(){ return 3; }
 
     @Override
-    public String getJobName() { return "Baker"; }
+    public String getJobName() { return BAKER; }
 
     @Override
     public Job createJob(CitizenData citizen)
@@ -39,7 +43,7 @@ public class BuildingBaker extends BuildingWorker
 
         public com.blockout.views.Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<BuildingBaker.View>(this, "bakerHut");
+            return new WindowHutWorkerPlaceholder<>(this, BAKER_HUT_NAME);
         }
     }
 }

@@ -10,19 +10,21 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingBuilder extends BuildingWorker
 {
+    private static final String BUILDER = "Builder";
+    
     public BuildingBuilder(Colony c, ChunkCoordinates l)
     {
         super(c, l);
     }
 
     @Override
-    public String getSchematicName(){ return "Builder"; }
+    public String getSchematicName(){ return BUILDER; }
 
     @Override
     public int getMaxBuildingLevel(){ return 2; }
 
     @Override
-    public String getJobName(){ return "Builder"; }
+    public String getJobName(){ return BUILDER; }
 
     @Override
     public Job createJob(CitizenData citizen)

@@ -12,9 +12,11 @@ import net.minecraft.util.ChunkCoordinates;
 
 public abstract class BuildingWorker extends BuildingHut
 {
+    private static final String TAG_WORKER = "worker";
+
     private CitizenData worker;
 
-    private static final String TAG_WORKER = "worker";
+    public abstract Job createJob(CitizenData citizen);
 
     public BuildingWorker(Colony c, ChunkCoordinates l)
     {
@@ -33,13 +35,28 @@ public abstract class BuildingWorker extends BuildingHut
         super.onDestroyed();
     }
 
-    public abstract String getJobName(); //TODO remove this?
+    /**
+     * Returns the worker of the current building
+     * @return  {@link CitizenData} of the current building
+     */
+    public CitizenData getWorker()
+    {
+        return worker;
+    }
 
-    public abstract Job createJob(CitizenData citizen);
+    /**
+     * Returns whether or not the building has a worker
+     * @return true if building has worker, otherwise false.
+     */
+    public boolean hasWorker()
+    {
+        return worker != null;
+    }
 
-    public CitizenData getWorker() { return worker; }
-    public boolean hasWorker() { return worker != null; }
-
+    /**
+     * Returns the {@link net.minecraft.entity.Entity} of the worker
+     * @return  {@link net.minecraft.entity.Entity} of the worker
+     */
     public EntityCitizen getWorkerEntity()
     {
         return (worker != null) ? worker.getCitizenEntity() : null;
@@ -72,6 +89,10 @@ public abstract class BuildingWorker extends BuildingHut
         }
     }
 
+    /**
+     * Set the worker of the current building
+     * @param citizen   {@link CitizenData} of the worker
+     */
     public void setWorker(CitizenData citizen)
     {
         if (worker == citizen)
@@ -105,11 +126,11 @@ public abstract class BuildingWorker extends BuildingHut
         }
     }
 
-    public boolean isWorker(EntityCitizen citizen)
-    {
-        return isWorker(citizen.getCitizenData());
-    }
-
+    /**
+     * Returns if the {@link CitizenData} is the same as {@link #worker}
+     * @param citizen {@link CitizenData} you want to compare
+     * @return  true if same citizen, otherwise false
+     */
     public boolean isWorker(CitizenData citizen)
     {
         return citizen == worker;

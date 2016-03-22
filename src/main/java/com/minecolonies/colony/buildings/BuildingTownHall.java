@@ -7,13 +7,15 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingTownHall extends BuildingHut
 {
+    private static final String TOWNHALL = "Townhall";
+
     public BuildingTownHall(Colony c, ChunkCoordinates l)
     {
         super(c, l);
     }
 
     @Override
-    public String getSchematicName(){ return "Townhall"; }
+    public String getSchematicName(){ return TOWNHALL; }
 
     @Override
     public int getMaxBuildingLevel(){ return 4; }

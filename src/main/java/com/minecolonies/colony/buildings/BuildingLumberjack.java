@@ -10,19 +10,22 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingLumberjack extends BuildingWorker
 {
+    private static final String LUMBERJACK = "Lumberjack";
+    private static final String LUMBERJACK_HUT_NAME = "lumberjackHut";
+
     public BuildingLumberjack(Colony c, ChunkCoordinates l)
     {
         super(c, l);
     }
 
     @Override
-    public String getSchematicName(){ return "Lumberjack"; }
+    public String getSchematicName(){ return LUMBERJACK; }
 
     @Override
     public int getMaxBuildingLevel(){ return 3; }
 
     @Override
-    public String getJobName(){ return "Lumberjack"; }
+    public String getJobName(){ return LUMBERJACK; }
 
     @Override
     public Job createJob(CitizenData citizen)
@@ -39,7 +42,7 @@ public class BuildingLumberjack extends BuildingWorker
 
         public com.blockout.views.Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<BuildingLumberjack.View>(this, "lumberjackHut");
+            return new WindowHutWorkerPlaceholder<BuildingLumberjack.View>(this, LUMBERJACK_HUT_NAME);
         }
     }
 }
