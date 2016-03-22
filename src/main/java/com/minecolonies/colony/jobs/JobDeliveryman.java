@@ -64,16 +64,28 @@ public class JobDeliveryman extends Job
         tasks.addTask(3, new EntityAIWorkDeliveryman(this));
     }
 
+    /**
+     * Returns whether or not the job has a destination
+     * @return  true if has destination, otherwise false
+     */
     public boolean hasDestination()
     {
         return destination != null;
     }
 
+    /**
+     * Returns the {@link ChunkCoordinates} of the destination
+     * @return  {@link ChunkCoordinates} of the destination
+     */
     public ChunkCoordinates getDestination()
     {
         return destination;
     }
 
+    /**
+     * Sets the destination of the job
+     * @param destination {@link ChunkCoordinates} of the destination
+     */
     public void setDestination(ChunkCoordinates destination)
     {
         this.destination = destination;

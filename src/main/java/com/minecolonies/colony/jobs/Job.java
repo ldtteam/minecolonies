@@ -17,18 +17,26 @@ public abstract class Job
 {
     private static final String TAG_TYPE = "type";
     private static final String TAG_ITEMS_NEEDED = "itemsNeeded";
+
+    private static final String MAPPING_PLACEHOLDER = "Placeholder";
+    private static final String MAPPING_BUILDER = "Builder";
+    private static final String MAPPING_DELIVERY = "Deliveryman";
+    private static final String MAPPING_MINER = "Miner";
+    private static final String MAPPING_LUMBERJACK = "Lumberjack";
+    private static final String MAPPING_FARMER = "Farmer";
+
     //  Job and View Class Mapping
     private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<>();
     private static Map<Class<? extends Job>, String> classToNameMap = new HashMap<>();
 
     static
     {
-        addMapping("Placeholder", JobPlaceholder.class);
-        addMapping("Builder", JobBuilder.class);
-        addMapping("Deliveryman", JobDeliveryman.class);
-        addMapping("Miner", JobMiner.class);
-        addMapping("Lumberjack", JobLumberjack.class);
-        addMapping("Farmer", JobFarmer.class);
+        addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
+        addMapping(MAPPING_BUILDER, JobBuilder.class);
+        addMapping(MAPPING_DELIVERY, JobDeliveryman.class);
+        addMapping(MAPPING_MINER, JobMiner.class);
+        addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
+        addMapping(MAPPING_FARMER, JobFarmer.class);
     }
 
     private final CitizenData citizen;
@@ -144,7 +152,7 @@ public abstract class Job
     /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *
-     * @return
+     * @return Model of the citizen
      */
     public RenderBipedCitizen.Model getModel()
     {
@@ -161,7 +169,7 @@ public abstract class Job
     /**
      * Get the Colony that this Job is associated with (shortcut for getCitizen().getColony())
      *
-     * @return
+     * @return  {@link Colony} of the citizen
      */
     public Colony getColony(){ return citizen.getColony(); }
 

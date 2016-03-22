@@ -164,11 +164,19 @@ public class JobBuilder extends Job
         return schematic;
     }
 
+    /**
+     * Set the schematic of builder's job
+     * @param schematic {@link Schematic} object
+     */
     public void setSchematic(Schematic schematic)
     {
         this.schematic = schematic;
     }
 
+    /**
+     * Returns the work interval of the worker //unfinished
+     * @return  work interval
+     */
     public int getWorkInterval()
     {
         return 1;//Constants.BUILDERWORKINTERFALL - this.getLevel();//TODO
@@ -184,6 +192,9 @@ public class JobBuilder extends Job
         setSchematic(null);
     }
 
+    /**
+     * Stages of a building
+     */
     public enum Stage
     {
         CLEAR,

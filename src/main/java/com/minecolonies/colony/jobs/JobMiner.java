@@ -13,8 +13,6 @@ import java.util.List;
 public class JobMiner extends Job
 {
     private static final String                  TAG_STAGE = "Stage";
-    public List<ChunkCoordinates> vein;//TODO do these need to be saved?
-    public               int                     veinId    = 0;
     private              EntityAIWorkMiner.Stage stage     = EntityAIWorkMiner.Stage.START_WORKING;
 
     public JobMiner(CitizenData entity)
@@ -63,16 +61,28 @@ public class JobMiner extends Job
         tasks.addTask(3, new EntityAIWorkMiner(this));
     }
 
+    /**
+    * Returns the stage of the worker
+    * @return  {@link com.minecolonies.entity.ai.EntityAIWorkMiner.Stage}
+    */
     public EntityAIWorkMiner.Stage getStage()
     {
         return stage;
     }
 
+    /**
+     * Sets the stage of the worker
+     * @param stage     {@link com.minecolonies.entity.ai.EntityAIWorkMiner.Stage} to set
+     */
     public void setStage(EntityAIWorkMiner.Stage stage)
     {
         this.stage = stage;
     }
 
+    /**
+     * Adds items if job requires items not in inventory
+     * @param stack Stack to check if it is a required item
+     */
     public void addItemNeededIfNotAlready(ItemStack stack)
     {
         List<ItemStack> itemsNeeded = super.getItemsNeeded();
