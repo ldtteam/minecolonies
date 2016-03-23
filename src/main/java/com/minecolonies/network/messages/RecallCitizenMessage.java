@@ -10,12 +10,9 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
-
-import java.awt.geom.Point2D;
 
 /**
  * Recalls the citizen to the hut
@@ -64,14 +61,9 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
                 if(citizen != null)
                 {
                     World world = colony.getWorld();
-                    ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, loc.posX, loc.posY+1, loc.posZ, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer);
+                    ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, loc.posX, loc.posY+1, loc.posZ, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer, Blocks.tallgrass, Blocks.red_flower, Blocks.yellow_flower);
 
-                    //Search a close Block next to the spawnPoint to teleport in between these two blocks
-                    Point2D.Double point = Utils.getClearSpace(world, spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
-
-                    double x = point.getX();
-                    double z = point.getY();
-                    citizen.setLocationAndAngles(x, spawnPoint.posY, z, citizen.rotationYaw, citizen.rotationPitch);
+                    citizen.setLocationAndAngles(spawnPoint.posX+0.5, spawnPoint.posY, spawnPoint.posZ+0.5, citizen.rotationYaw, citizen.rotationPitch);
                 }
             }
         }

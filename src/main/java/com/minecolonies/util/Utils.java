@@ -15,7 +15,6 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.geom.Point2D;
 import java.util.*;
 
 public class Utils
@@ -60,44 +59,6 @@ public class Utils
             }
         }
         return closestCoords;
-    }
-
-    /*Searches an empty block next to a point and returns the x,z coordinates
-      Does only work if there is horizontal space bigger than 1
-     */
-    public static Point2D.Double getClearSpace(World world, int SpawnX, int SpawnY, int SpawnZ)
-    {
-        Block block = world.getBlock(SpawnX+1,SpawnY,SpawnZ);
-        double x = SpawnX;
-        double z = SpawnZ;
-        if(block == Blocks.air)
-        {
-            x = x+0.5;
-        }
-        else
-        {
-            block = world.getBlock(SpawnX - 1, SpawnY, SpawnZ);
-            if (block == Blocks.air)
-            {
-                x = x - 0.5;
-            }
-        }
-
-        block = world.getBlock(SpawnX,SpawnY,SpawnZ+1);
-        if(block == Blocks.air)
-        {
-            z = z+0.5;
-        }
-        else
-        {
-            block = world.getBlock(SpawnX,SpawnY,SpawnZ-1);
-            if(block == Blocks.air)
-            {
-                z = z-0.5;
-            }
-        }
-
-        return new Point2D.Double(x,z);
     }
 
     private static boolean checkHeight(World world, Block[] blocks, int x, int y, int z, int height)
