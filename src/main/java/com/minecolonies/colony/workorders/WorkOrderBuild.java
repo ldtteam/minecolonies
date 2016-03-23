@@ -11,8 +11,8 @@ import net.minecraft.util.ChunkCoordinates;
 public class WorkOrderBuild extends WorkOrder
 {
     protected ChunkCoordinates buildingId;
-    protected int              upgradeLevel;
-    protected String           upgradeName;
+    private int              upgradeLevel;
+    private String           upgradeName;
 
     private static final String TAG_BUILDING      = "building";
     private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
@@ -31,16 +31,28 @@ public class WorkOrderBuild extends WorkOrder
         this.upgradeName = building.getSchematicName() + level;
     }
 
+    /**
+     * Returns the ID of the building (aka ChunkCoordinates)
+     * @return      ID of the building
+     */
     public ChunkCoordinates getBuildingId()
     {
         return buildingId;
     }
 
+    /**
+     * Returns the level up level of the building
+     * @return  Level after upgrade
+     */
     public int getUpgradeLevel()
     {
         return upgradeLevel;
     }
 
+    /**
+     * Returns the name after upgrade
+     * @return  Name after yograde
+     */
     public String getUpgradeName()
     {
         return upgradeName;

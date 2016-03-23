@@ -12,7 +12,7 @@ import java.util.Map;
 public abstract class WorkOrder
 {
     protected int id;
-    protected int claimedBy;
+    private int claimedBy;
 
     //  Job and View Class Mapping
     private static Map<String, Class<? extends WorkOrder>> nameToClassMap = new HashMap<String, Class<? extends WorkOrder>>();
@@ -97,9 +97,9 @@ public abstract class WorkOrder
 
     /**
      * Set the Work Order as claimed by the given Citizen
-     * @param citizen
+     * @param citizen   {@link CitizenData}
      */
-    public void setClaimedBy(CitizenData citizen)
+    void setClaimedBy(CitizenData citizen)
     {
         claimedBy = (citizen != null) ? citizen.getId() : 0;
     }
@@ -114,8 +114,8 @@ public abstract class WorkOrder
 
     /**
      * Create a Work Order from a saved NBTTagCompound
-     * @param compound the compound that contains the data for the Work Order
-     * @return
+     * @param compound      the compound that contains the data for the Work Order
+     * @return              {@link WorkOrder} from the NBT
      */
     public static WorkOrder createFromNBT(NBTTagCompound compound)
     {
@@ -159,7 +159,7 @@ public abstract class WorkOrder
 
     /**
      * Save the Work Order to an NBTTagCompound
-     * @param compound
+     * @param compound  NBT tag compount
      */
     public void writeToNBT(NBTTagCompound compound)
     {
@@ -180,7 +180,7 @@ public abstract class WorkOrder
 
     /**
      * Read the WorkOrder data from the NBTTagCompound
-     * @param compound
+     * @param compound  NBT Tag compound
      */
     public void readFromNBT(NBTTagCompound compound)
     {
