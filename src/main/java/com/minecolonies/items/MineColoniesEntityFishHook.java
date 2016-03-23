@@ -29,6 +29,7 @@ import net.minecraft.world.WorldServer;
 
 public class MineColoniesEntityFishHook extends Entity
 {
+    public static final int ttl=720;
     public static final List field_146039_d = Arrays.asList(new WeightedRandomFishable[] {(new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F), new WeightedRandomFishable(new ItemStack(Items.leather), 10), new WeightedRandomFishable(new ItemStack(Items.bone), 10), new WeightedRandomFishable(new ItemStack(Items.potionitem), 10), new WeightedRandomFishable(new ItemStack(Items.string), 5), (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F), new WeightedRandomFishable(new ItemStack(Items.bowl), 10), new WeightedRandomFishable(new ItemStack(Items.stick), 5), new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1), new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10), new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10)});
     public static final List field_146041_e = Arrays.asList(new WeightedRandomFishable[] {new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1), new WeightedRandomFishable(new ItemStack(Items.name_tag), 1), new WeightedRandomFishable(new ItemStack(Items.saddle), 1), (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(0.25F).func_150707_a(), (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).func_150709_a(0.25F).func_150707_a(), (new WeightedRandomFishable(new ItemStack(Items.book), 1)).func_150707_a()});
     public static final List field_146036_f = Arrays.asList(new WeightedRandomFishable[] {new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13)});
@@ -59,6 +60,7 @@ public class MineColoniesEntityFishHook extends Entity
     @SideOnly(Side.CLIENT)
     private double field_146053_aJ;
     private static final String __OBFID = "CL_00001663";
+    public long creationTime;
 
     public MineColoniesEntityFishHook(World p_i1764_1_)
     {
@@ -68,6 +70,7 @@ public class MineColoniesEntityFishHook extends Entity
         this.field_146050_i = -1;
         this.setSize(0.25F, 0.25F);
         this.ignoreFrustumCheck = true;
+        this.creationTime = System.nanoTime();
     }
 
     @SideOnly(Side.CLIENT)
@@ -78,6 +81,7 @@ public class MineColoniesEntityFishHook extends Entity
         this.ignoreFrustumCheck = true;
         this.citizen = p_i1765_8_;
         p_i1765_8_.fishEntity = this;
+        this.creationTime = System.nanoTime();
     }
 
     public MineColoniesEntityFishHook(World p_i1766_1_, EntityCitizen p_i1766_2_)
@@ -101,6 +105,7 @@ public class MineColoniesEntityFishHook extends Entity
         this.motionZ = (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI) * f);
         this.motionY = (double)(-MathHelper.sin(this.rotationPitch / 180.0F * (float)Math.PI) * f);
         this.func_146035_c(this.motionX, this.motionY, this.motionZ, 1.5F, 1.0F);
+        this.creationTime = System.nanoTime();
     }
 
     protected void entityInit() {}
@@ -126,6 +131,11 @@ public class MineColoniesEntityFishHook extends Entity
         this.field_146049_av = 0;
     }
 
+    //Returns time to life of the entity
+    public int getTtl()
+    {
+        return ttl;
+    }
     /**
      * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
      * length * 64 * renderDistanceWeight Args: distance

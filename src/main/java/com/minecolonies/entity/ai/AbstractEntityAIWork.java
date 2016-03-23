@@ -498,7 +498,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
 
     protected final boolean checkForRod()
     {
-        needsShovel = checkForTool(ROD);
+        needsRod = checkForTool(ROD);
         return needsRod;
     }
 

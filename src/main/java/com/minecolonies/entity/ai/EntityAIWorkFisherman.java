@@ -2,7 +2,9 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.colony.jobs.JobFisherman;
+import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.items.MineColoniesEntityFishHook;
+import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityXPOrb;
@@ -26,10 +28,10 @@ import org.apache.logging.log4j.Logger;
 public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 {
 
+    private static final String TOOL_TYPE_ROD= "rod";
     private static final String RENDER_META_FISH = "fish";
     public boolean returnedRod=true;
-    public int fishingLevel=0;
-    public int fishingXP=0;
+    public int fishesCaught=0;
 
     private static Logger logger = LogManager.getLogger("Fisherman");
 
@@ -97,7 +99,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         int posX = buildingFisherman.getLocation().posX;
         int posY = buildingFisherman.getLocation().posY;
         int posZ = buildingFisherman.getLocation().posZ;
-        for (int y = posY; posY-10>y; y--)
+        for (int y = posY; y>posY-10; y--)
         {
             for (int x = posX - 10; x < posX + 10; x++)
             {
@@ -162,11 +164,27 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return true;
     }
 
+    private void equipRod()
+    {
+        worker.setHeldItem(getRodSlot());
+    }
+
+    private int getRodSlot()
+    {
+        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
+    }
+
+    private InventoryCitizen getInventory()
+    {
+        return worker.getInventory();
+    }
+
+
     public void doFishing()
     {
-        double x = Math.random()*500;
-
-
+        //TODO Skills can't be 0!
+        double chance = (Math.random()*500)/(worker.intelligence+1);
+        boolean foundCloseWater = false;
         //We really do have our Rod in our inventory?
         if(!worker.hasitemInInventory(Items.fishing_rod))
         {
@@ -174,13 +192,29 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return;
         }
 
-        //I am at the water?
         //Check if there is water really close to me!
-        if(!worker.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
+        for(int x = (int)worker.posX-2;x<(int)worker.posX+2;x++)
         {
-            //TODO worker.getInventory().setHeldItem(worker.getInventory().getSlotFromItem(Items.fishing_rod));
+            for(int z = (int)worker.posX-2;z<(int)worker.posX+2;z++)
+            {
+                if(world.getBlock(x,(int)worker.posY-1,z).equals(Blocks.water))
+                {
+                    foundCloseWater=true;
+                }
+            }
         }
 
+        if(!foundCloseWater)
+        {
+            job.setStage(Stage.WATER_FOUND);
+            return;
+        }
+
+        //Check if Rod is held item if not put it as held item
+        if(!worker.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
+        {
+            equipRod();
+        }
 
         for (EntityXPOrb orb : worker.getXPOrbsOnGrid())
         {
@@ -204,59 +238,76 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
             System.out.println("Caught a fish, yeah!");
             worker.caughtFish = false;
+
+            if(++fishesCaught > 10)
+            {
+                fishesCaught=0;
+                job.setStage(Stage.INVENTORY_FULL);
+            }
             return;
-
-
         }
 
         if(worker.fishEntity==null)
         {
-            if (!(x < 2))
+            //Only sometimes the fisherman gets to throw its Rod (depends on intelligence)
+            if (!(chance < 2))
             {
                 return;
             }
 
-
-            world.playSoundAtEntity(worker, "random.bow", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
-
-            if (!world.isRemote && this.worker!=null)
+            if (!world.isRemote)
             {
+                world.playSoundAtEntity(worker, "random.bow", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
                 MineColoniesEntityFishHook hook = new MineColoniesEntityFishHook(world,worker);
                 worker.fishEntity = hook;
                 world.spawnEntityInWorld(hook);
             }
-
-            //Check if hook landed in water
 
             worker.swingItem();
             returnedRod=false;
         }
         else
         {
-            if (worker.fishEntity.isInWater() && worker.fishEntity !=null)
+            //Check if hook landed on ground or in water, in some cases the hook bugs -> remove it after 2 minutes
+            if (!worker.fishEntity.isInWater() && (worker.fishEntity.onGround || (System.nanoTime() - worker.fishEntity.creationTime)/1000000000 > worker.fishEntity.getTtl()))
             {
                 int i = worker.fishEntity.func_146034_e();
                 worker.getInventory().getHeldItem().damageItem(i, worker);
                 worker.swingItem();
+                worker.fishEntity.setDead();
+                worker.fishEntity = null;
                 //Reposition to water!
-                job.setStage(Stage.CHECK_WATER);
+                job.setStage(Stage.WATER_FOUND);
             }
         }
-
     }
 
-    //Called by MineColoniesEntityFishHook when the Fisherman has caught a fish
-    public void caughtFish()
+    private void dumpInventory()
     {
-        fishingXP = fishingXP + worker.intelligence*worker.speed;
-
-        if((int)(fishingXP/100) > fishingLevel)
+        if(worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), 4))
         {
-            fishingLevel = fishingXP/100;
+            int saplingStacks = 0;
+            for(int i = 0; i < getInventory().getSizeInventory(); i++)
+            {
+                ItemStack stack = getInventory().getStackInSlot(i);
+                if(stack != null && !isStackRod(stack)) {
+                    ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(), stack);//TODO tile entity null
+                    if (returnStack == null) {
+                        getInventory().decrStackSize(i, stack.stackSize);
+                    } else {
+                        getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+                    }
+                }
+            }
+            job.setStage(Stage.PREPARING);
         }
     }
 
-    //TODO!!!
+    private boolean isStackRod(ItemStack stack)
+    {
+        return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_ROD);
+    }
+
     @Override
     public void workOnTask()
     {
@@ -286,9 +337,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             }
             else
             {
-                missesItemsInInventory(new ItemStack(Items.fishing_rod,1));
+                requestTool(new ItemFishingRod());
             }
-
+            return;
         }
 
         //Looking for the ladder to walk to
@@ -311,6 +362,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //Standing on top of the ladder, checking out mine
         if (job.getStage() == Stage.CHECK_WATER)
         {
+            worker.setAngles(90f,worker.rotationPitch);
+
+            worker.getLookHelper();
+
             //TODO Walk up and down the water a bit and choose a spot
             job.setStage(Stage.START_FISHING);
             return;
@@ -322,6 +377,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return;
         }
 
+        if(job.getStage() == Stage.INVENTORY_FULL)
+        {
+            dumpInventory();
+        }
         setDelay(100);
     }
 

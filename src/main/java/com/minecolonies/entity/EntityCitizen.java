@@ -95,11 +95,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
 
-        intelligence = (int)(Math.random()*10);
-        speed = (int)(Math.random()*10);
-        strength = (int)(Math.random()*10);
-        stamina = (int)(Math.random()*10);
-        diligence = (int)(Math.random()*10);
+        intelligence = (int)(Math.random()*10)+1;
+        speed = (int)(Math.random()*10)+1;
+        strength = (int)(Math.random()*10)+1;
+        stamina = (int)(Math.random()*10)+1;
+        diligence = (int)(Math.random()*10+1);
 
 
         this.renderDistanceWeight = 2.0D;
