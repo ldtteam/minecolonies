@@ -348,6 +348,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 }
                 else
                 {
+                    MineColonies.logger.warn(String.format("Reloaded citizen '%s'", getUniqueID()));
                     data.setCitizenEntity(this);
                 }
                 return;
