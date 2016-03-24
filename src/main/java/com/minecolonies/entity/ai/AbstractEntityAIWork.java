@@ -10,6 +10,8 @@ import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.projectile.EntityFishHook;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -179,7 +181,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         if (needsRod)
         {
             this.errorState = ErrorState.NEEDS_ROD;
-            checkForRod();
+            needsRod = checkForRod();
             delay += 10;
             return;
         }
@@ -496,10 +498,32 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         return needsShovel;
     }
 
+    /**
+     * Ensures that we have a rod available in the inventory or chest
+     *
+     * @return true if we have a shovel
+     */
     protected final boolean checkForRod()
     {
-        needsRod = checkForTool(ROD);
-        return needsRod;
+        boolean needsTool = !InventoryFunctions
+                .matchFirstInInventory(
+                        worker.getInventory(),
+                        stack -> (stack!=null && stack.getItem().equals(Items.fishing_rod)),
+                        InventoryFunctions::doNothing);
+        if (!needsTool)
+        {
+            return false;
+        }
+        delay += DELAY_RECHECK;
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
+        {
+            if (isRodInHut(new ItemStack(Items.fishing_rod)))
+            {
+                return false;
+            }
+            requestWithoutSpam(ROD);
+        }
+        return true;
     }
 
     protected final boolean holdEfficientTool(Block target)
@@ -585,6 +609,22 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
                 .matchFirstInInventory(
                         buildingMiner.getTileEntity(),
                         stack -> Utils.isTool(stack, tool),
+                        this::takeItemStackFromChest);
+
+    }
+
+    /** Checks if the rod is in the hut
+     *
+     * @param is is the searched item
+     * @returns true if he found a rod
+     */
+    private boolean isRodInHut(ItemStack is)
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        stack -> stack!= null && is.isItemEqual(stack),
                         this::takeItemStackFromChest);
 
     }

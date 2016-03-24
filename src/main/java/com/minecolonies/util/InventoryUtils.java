@@ -47,7 +47,7 @@ public class InventoryUtils {
     }
 
     private static boolean compareItems(ItemStack itemStack, Item targetItem) {
-        return itemStack != null && itemStack.getItem() == targetItem || (targetItem.getUnlocalizedName()!=null && targetItem.getUnlocalizedName().equals("fishingRod") && targetItem.getUnlocalizedName().equals(itemStack.getUnlocalizedName()));
+        return itemStack != null && itemStack.getItem() == targetItem;
     }
 
     public static int findFirstSlotInInventoryWith(IInventory inventory, Block block){
@@ -283,6 +283,7 @@ public class InventoryUtils {
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack item = inventory.getStackInSlot(i);
+            //TODO BlazeRod? Other rods?
             if (item != null && (item.getItem().getToolClasses(item).contains(tool) || (tool.equals("hoe") && item.getUnlocalizedName().contains("hoe")) || (tool.equals("rod") && item.getUnlocalizedName().contains("rod"))))
             {
                 return i;

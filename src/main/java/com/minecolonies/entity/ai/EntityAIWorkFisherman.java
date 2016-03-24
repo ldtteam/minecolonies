@@ -76,6 +76,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return Utils.isFishingTool(stack);
     }
 
+    //TODO Create list with all previous water locations, let him find all water locations connected to land, then let him randomly work from the list
     private void lookForWater()
     {
         BuildingFisherman buildingFisherman = getOwnBuilding();
@@ -271,9 +272,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             //Check if hook landed on ground or in water, in some cases the hook bugs -> remove it after 2 minutes
             if (!worker.fishEntity.isInWater() && (worker.fishEntity.onGround || (System.nanoTime() - worker.fishEntity.creationTime)/1000000000 > worker.fishEntity.getTtl()))
             {
+                worker.swingItem();
+
                 int i = worker.fishEntity.func_146034_e();
                 worker.getInventory().getHeldItem().damageItem(i, worker);
-                worker.swingItem();
+
+                if(worker.getInventory().getHeldItem().stackSize < 1)//if tool breaks
+                {
+                    worker.setCurrentItemOrArmor(0, null);
+                    getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
+                }
+
                 worker.fishEntity.setDead();
                 worker.fishEntity = null;
                 //Reposition to water!
@@ -305,7 +314,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private boolean isStackRod(ItemStack stack)
     {
-        return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_ROD);
+        return stack != null && stack.getItem().equals(Items.fishing_rod);
     }
 
     @Override
@@ -337,7 +346,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             }
             else
             {
-                requestTool(new ItemFishingRod());
+                requestTool(Items.fishing_rod);
             }
             return;
         }
