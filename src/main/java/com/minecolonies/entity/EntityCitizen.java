@@ -15,10 +15,12 @@ import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.items.MineColoniesEntityFishHook;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
@@ -891,31 +893,64 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     /**
-     * Caused by: java.lang.RuntimeException: Attempted to load class bsx for invalid side SERVER
-     * not entirely sure jet...
+     * Swing entity arm, create sound and particle effects. if breakBlock is true then it will break the block (different sound and particles),
+     * and damage the tool in the citizens hand.
      *
      * @param x
      * @param y
      * @param z
      */
-    public void hitBlockWithToolInHand(int x, int y, int z)
+    private void hitBlockWithToolInHand(int x, int y, int z, boolean breakBlock)
     {
         this.swingItem();
-        try
+
+        Block block = worldObj.getBlock(x, y, z);
+        if(breakBlock)
         {
-            //FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
+            if(!worldObj.isRemote)
+            {
+                MineColonies.getNetwork().sendToAllAround(
+                        new BlockParticleEffectMessage(x, y, z, block, worldObj.getBlockMetadata(x, y, z), BlockParticleEffectMessage.BREAK_BLOCK),
+                        new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, x, y, z, 16.0D));
+            }
+            worldObj.playSoundEffect((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
+            worldObj.setBlockToAir(x, y, z);
+
+            ItemStack tool = this.getInventory().getHeldItem();
+            tool.damageItem(1, this);
+            if(tool.stackSize < 1)//if tool breaks
+            {
+                this.setCurrentItemOrArmor(0, null);
+                getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
+            }
         }
-        catch(Exception e)
+        else
         {
-            //Ignored, happens when minecraft is not fully initialized
-            //TODO: Check the exception type and remove blanco catch
+            if(!worldObj.isRemote)//TODO might remove this
+            {
+                MineColonies.getNetwork().sendToAllAround(
+                        new BlockParticleEffectMessage(x, y, z, block, worldObj.getBlockMetadata(x, y, z), 1),//TODO correct side
+                        new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, x, y, z, 16.0D));
+            }
+            worldObj.playSoundEffect((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F, block.stepSound.getStepResourcePath(), (block.stepSound.getVolume() + 1.0F) / 8.0F, block.stepSound.getPitch() * 0.5F);
         }
     }
 
     public void hitBlockWithToolInHand(ChunkCoordinates block)
     {
         if(block == null) return;
-        hitBlockWithToolInHand(block.posX, block.posY, block.posZ);
+        hitBlockWithToolInHand(block.posX, block.posY, block.posZ, false);
+    }
+
+    public void hitBlockWithToolInHand(int x, int y, int z)
+    {
+        hitBlockWithToolInHand(x, y, z, false);
+    }
+
+    public void breakBlockWithToolInHand(ChunkCoordinates block)
+    {
+        if(block == null) return;
+        hitBlockWithToolInHand(block.posX, block.posY, block.posZ, true);
     }
 
     public void sendChat(String msg)
