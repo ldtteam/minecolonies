@@ -296,7 +296,13 @@ public class CitizenData
      */
     public Job getJob(){ return job; }
 
-    
+
+    /**
+     *  //todo document
+     * @param type
+     * @param <JOB>
+     * @return
+     */
     public <JOB extends Job> JOB getJob(Class<JOB> type)
     {
         try
@@ -309,9 +315,13 @@ public class CitizenData
         }
     }
 
-    public void setJob(Job j)
+    /**
+     * Sets the job of this citizen
+     * @param job   Job of the citizen
+     */
+    public void setJob(Job job)
     {
-        job = j;
+        this.job = job;
 
         EntityCitizen entity = getCitizenEntity();
         if(entity != null)
@@ -322,6 +332,10 @@ public class CitizenData
         markDirty();
     }
 
+    /**
+     * Writes the citiizen data to an NBT-compound
+     * @param compound  NBT-Tag compound
+     */
     public void writeToNBT(NBTTagCompound compound)
     {
         compound.setInteger(TAG_ID, id);
@@ -348,6 +362,10 @@ public class CitizenData
         }
     }
 
+    /**
+     * Reads data from NBT-tag compound
+     * @param compound  NBT-Tag compound
+     */
     public void readFromNBT(NBTTagCompound compound)
     {
         name = compound.getString(TAG_NAME);
@@ -370,6 +388,11 @@ public class CitizenData
         }
     }
 
+    /**
+     * Generates a random name from a set of names
+     * @param rand  Random object
+     * @return      Name of the citizen
+     */
     private String generateName(Random rand)
     {
         String firstName;
@@ -459,6 +482,10 @@ public class CitizenData
         }
     }
 
+    /**
+     * Writes the citizen data to a byte buf.
+     * @param buf   Buffer to write to
+     */
     public void serializeViewNetworkData(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
@@ -496,7 +523,7 @@ public class CitizenData
      *
      * @param id  The citizen's id
      * @param buf The network data
-     * @return
+     * @return      View object of the citizen
      */
     public static View createCitizenDataView(int id, ByteBuf buf)
     {
