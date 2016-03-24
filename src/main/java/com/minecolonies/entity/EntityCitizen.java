@@ -916,13 +916,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             worldObj.playSoundEffect((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
             worldObj.setBlockToAir(x, y, z);
 
-            ItemStack tool = this.getInventory().getHeldItem();
-            tool.damageItem(1, this);
-            if(tool.stackSize < 1)//if tool breaks
-            {
-                this.setCurrentItemOrArmor(0, null);
-                getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
-            }
+            damageItemInHand(1);
         }
         else
         {
@@ -951,6 +945,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if(block == null) return;
         hitBlockWithToolInHand(block.posX, block.posY, block.posZ, true);
+    }
+
+    public void damageItemInHand(int damage)
+    {
+        getInventory().getHeldItem().damageItem(damage, this);
+
+        if(this.getInventory().getHeldItem().stackSize < 1)//if tool breaks
+        {
+            this.setCurrentItemOrArmor(0, null);
+            getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
+        }
     }
 
     public void sendChat(String msg)

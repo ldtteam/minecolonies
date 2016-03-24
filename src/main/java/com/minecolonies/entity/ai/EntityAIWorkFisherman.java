@@ -275,14 +275,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 worker.swingItem();
 
                 int i = worker.fishEntity.func_146034_e();
-                worker.getInventory().getHeldItem().damageItem(i, worker);
-
-                if(worker.getInventory().getHeldItem().stackSize < 1)//if tool breaks
-                {
-                    worker.setCurrentItemOrArmor(0, null);
-                    getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
-                }
-
+                worker.damageItemInHand(i);
                 worker.fishEntity.setDead();
                 worker.fishEntity = null;
                 //Reposition to water!
