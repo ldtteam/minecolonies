@@ -242,10 +242,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                         }
                         //break leaves
                         world.setBlockToAir(x, y, z);
-                        world.playSoundEffect((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
-
-                        //TODO particles
-                        worker.swingItem();
+                        worker.hitBlockWithToolInHand(x, y, z);//TODO should this damage tool? if so change to breakBlockWithToolInHand
 
                         stillTicks = 0;
                     }
@@ -276,19 +273,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                     InventoryUtils.setStack(getInventory(), item);
                 }
                 //break block
-                world.playSoundEffect((float) log.posX + 0.5F, (float) log.posY + 0.5F, (float) log.posZ + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
-                //TODO particles
-                //Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(log.posX, log.posY, log.posZ, block, ChunkCoordUtils.getBlockMetadata(world, log));
-                ChunkCoordUtils.setBlock(world, log, Blocks.air);
-                //Damage axe
-                ItemStack axe = worker.getInventory().getHeldItem();
-                axe.getItem().onBlockDestroyed(axe, world, block, log.posX, log.posY, log.posZ, worker);
-                if(axe.stackSize < 1)//if axe breaks
-                {
-                    worker.setCurrentItemOrArmor(0, null);
-                    getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
-                    //TODO particles
-                }
+                worker.breakBlockWithToolInHand(log);
             }
 
             //tree is gone
@@ -314,9 +299,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 }
                 worker.getLookHelper().setLookPosition(log.posX, log.posY, log.posZ, 10f, worker.getVerticalFaceSpeed());//TODO doesn't work right
             }
-            worker.swingItem();
-            world.playSoundEffect((float) log.posX + 0.5F, (float) log.posY + 0.5F, (float) log.posZ + 0.5F, block.stepSound.getStepResourcePath(), (block.stepSound.getVolume() + 1.0F) / 8.0F, block.stepSound.getPitch() * 0.5F);
-            //TODO particles
+            worker.hitBlockWithToolInHand(log);
         }
         chopTicks++;
     }

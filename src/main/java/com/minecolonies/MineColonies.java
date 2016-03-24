@@ -8,6 +8,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.proxy.IProxy;
 import com.minecolonies.util.RecipeHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
@@ -88,6 +89,8 @@ public class MineColonies
         getNetwork().registerMessage(FarmerCropTypeMessage.class,            FarmerCropTypeMessage.class,            24, Side.SERVER);
         getNetwork().registerMessage(RecallCitizenMessage.class,             RecallCitizenMessage.class,             25, Side.SERVER);
         getNetwork().registerMessage(BuildToolPlaceMessage.class,            BuildToolPlaceMessage.class,            26, Side.SERVER);
+        //Client side only
+        getNetwork().registerMessage(BlockParticleEffectMessage.class,       BlockParticleEffectMessage.class,       50, Side.CLIENT);
         
         proxy.registerTileEntities();
 
@@ -111,11 +114,11 @@ public class MineColonies
 
     public static boolean isClient()
     {
-        return proxy.isClient();
+        return proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isClient();
     }
 
     public static boolean isServer()
     {
-        return !proxy.isClient();
+        return !proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isServer();
     }
 }
