@@ -74,7 +74,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
     private String getRenderMetaTorch()
     {
-        if (worker.hasitemInInventory(Blocks.torch))
+        if (worker.hasItemInInventory(Blocks.torch))
         {
             return RENDER_META_TORCH;
         }

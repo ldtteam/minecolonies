@@ -73,18 +73,18 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public MineColoniesEntityFishHook fishEntity;
     public boolean caughtFish=false;
     //Skills, may be added more later
-    public int intelligence;
-    public int speed;
-    public int strength;
-    public int stamina;
-    public int diligence;
+    private int intelligence;
+    private int speed;
+    private int strength;
+    private int stamina;
+    private int diligence;
 
     //The current experience level the player is on.
-    public int experienceLevel;
+    private int experienceLevel;
     //The total amount of experience the player has. This also includes the amount of experience within their Experience Bar.
-    public int experienceTotal;
+    private int experienceTotal;
     //The current amount of experience the player has within their Experience Bar.
-    public float experience;
+    private float experience;
     //Something with ticks which I didn't understand yet!
     private int field_82249_h;
 
@@ -163,7 +163,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.addObject(DATA_RENDER_METADATA, "");
     }
 
-    protected void initTasks()
+    private void initTasks()
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 1.6D));
@@ -178,7 +178,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         onJobChanged(getColonyJob());
     }
 
-    public Job getColonyJob()
+    private Job getColonyJob()
     {
         return citizenData != null ? citizenData.getJob() : null;
     }
@@ -433,7 +433,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onDeath(DamageSource par1DamageSource)
     {
-
         int i;
 
         if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
@@ -455,7 +454,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             double d2 = this.rand.nextGaussian() * 0.02D;
             double d0 = this.rand.nextGaussian() * 0.02D;
             double d1 = this.rand.nextGaussian() * 0.02D;
-            this.worldObj.spawnParticle("explode", this.posX + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, this.posY + (double)(this.rand.nextFloat() * this.height), this.posZ + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, d2, d0, d1);
+            this.worldObj.spawnParticle("explode", this.posX + (this.rand.nextDouble() * this.width * 2.0F) - (double)this.width, this.posY + (this.rand.nextDouble() * this.height), this.posZ + (this.rand.nextDouble() * this.width * 2.0F) - (double)this.width, d2, d0, d1);
         }
 
         if(colony != null)
@@ -503,7 +502,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return citizenData;
     }
 
-    public CitizenData.View getCitizenDataView()
+    private CitizenData.View getCitizenDataView()
     {
         if(colonyId != 0 && citizenId != 0)
         {
@@ -560,7 +559,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         onJobChanged(getColonyJob());
     }
 
-    public BuildingHome getHomeBuilding()
+    private BuildingHome getHomeBuilding()
     {
         return (citizenData != null) ? citizenData.getHomeBuilding() : null;
     }
@@ -718,17 +717,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             p_71023_1_ = j;
         }
 
-        this.experience += (float)p_71023_1_ / (float)this.xpBarCap();
+        this.experience += p_71023_1_ / this.xpBarCap();
 
-        for (this.experienceTotal += p_71023_1_; this.experience >= 1.0F; this.experience /= (float)this.xpBarCap())
+        for (this.experienceTotal += p_71023_1_; this.experience >= 1.0F; this.experience /= this.xpBarCap())
         {
-            this.experience = (this.experience - 1.0F) * (float)this.xpBarCap();
+            this.experience = (this.experience - 1.0F) * this.xpBarCap();
             this.addExperienceLevel(1);
         }
     }
 
     //Add experience levels to this citizen.
-    public void addExperienceLevel(int nOLevels)
+    private void addExperienceLevel(int nOLevels)
     {
         this.experienceLevel += nOLevels;
 
@@ -739,10 +738,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             this.experienceTotal = 0;
         }
 
-        if (nOLevels > 0 && this.experienceLevel % 5 == 0 && (float)this.field_82249_h < (float)this.ticksExisted - 100.0F)
+        if (nOLevels > 0 && this.experienceLevel % 5 == 0 && this.field_82249_h < this.ticksExisted - 100.0F)
         {
-            float f = this.experienceLevel > 30 ? 1.0F : (float)this.experienceLevel / 30.0F;
-            this.worldObj.playSoundAtEntity(this, "random.levelup", f * 0.75F, 1.0F);
+            double f = this.experienceLevel > 30 ? 1.0F : this.experienceLevel / 30.0F;
+            this.worldObj.playSoundAtEntity(this, "random.levelup", (float)f * 0.75F, 1.0F);
             this.field_82249_h = this.ticksExisted;
         }
     }
@@ -751,7 +750,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      * This method returns the cap amount of experience that the experience bar can hold. With each level, the
      * experience cap on the citizen's experience bar is raised by 10.
      */
-    public int xpBarCap()
+    private int xpBarCap()
     {
         return this.experienceLevel >= 30 ? 62 + (this.experienceLevel - 30) * 7 : (this.experienceLevel >= 15 ? 17 + (this.experienceLevel - 15) * 3 : 17);
     }
@@ -798,12 +797,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return InventoryUtils.getItemCountInInventory(getInventory(), targetitem);
     }
 
-    public boolean hasitemInInventory(Block block)
+    public boolean hasItemInInventory(Block block)
     {
         return InventoryUtils.hasitemInInventory(getInventory(), block);
     }
 
-    public boolean hasitemInInventory(Item item)
+    public boolean hasItemInInventory(Item item)
     {
         return InventoryUtils.hasitemInInventory(getInventory(), item);
     }
@@ -820,7 +819,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if(!worldObj.isRemote)
         {
             InventoryCitizen newInventory = new InventoryCitizen(inventory.getInventoryName(), inventory.hasCustomInventoryName(), newSize);
-            ArrayList<ItemStack> leftovers = new ArrayList<ItemStack>();
+            ArrayList<ItemStack> leftOvers = new ArrayList<ItemStack>();
             for(int i = 0; i < inventory.getSizeInventory(); i++)
             {
                 ItemStack itemstack = inventory.getStackInSlot(i);
@@ -830,14 +829,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 }
                 else
                 {
-                    if(itemstack != null) leftovers.add(itemstack);
+                    if(itemstack != null) leftOvers.add(itemstack);
                 }
             }
             inventory = newInventory;
             inventory.addIInvBasic(this);
             if(dropLeftovers)
             {
-                for(ItemStack leftover : leftovers)
+                for(ItemStack leftover : leftOvers)
                 {
                     if(leftover.stackSize > 0)
                     {
@@ -861,7 +860,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
     }
 
-    public void tryPickupEntityItem(EntityItem entityItem)
+    private void tryPickupEntityItem(EntityItem entityItem)
     {
         if(!this.worldObj.isRemote)
         {
@@ -896,9 +895,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      * Swing entity arm, create sound and particle effects. if breakBlock is true then it will break the block (different sound and particles),
      * and damage the tool in the citizens hand.
      *
-     * @param x
-     * @param y
-     * @param z
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param z z coordinate
      */
     private void hitBlockWithToolInHand(int x, int y, int z, boolean breakBlock)
     {
@@ -991,5 +990,25 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public enum Status
     {
         IDLE, SLEEPING, WORKING, GETTING_ITEMS, NEED_ASSISTANCE, PATHFINDING_ERROR
+    }
+
+    public int getIntelligence() {
+        return intelligence;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public int getStamina() {
+        return stamina;
+    }
+
+    public int getDiligence() {
+        return diligence;
     }
 }

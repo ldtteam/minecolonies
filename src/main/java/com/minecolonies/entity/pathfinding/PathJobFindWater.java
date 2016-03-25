@@ -1,30 +1,29 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.minecolonies.entity.ai.Tree;
 import com.minecolonies.entity.ai.Water;
-import net.minecraft.block.Block;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
-
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 /**
- * Find and return a path to the nearest tree
- * Created: May 21, 2015
+ * Find and return a path to the nearest water
+ * Created: March 25, 2016
  *
  * @author Raycoms
  */
 
-//TODO Check if we already where at water (Save locations in fisherman class - call pathfinder with locationsList) - Max CAP of locations
 public class PathJobFindWater extends PathJob
 {
+    private static final int MIN_DISTANCE = 10;
+
     public static class WaterPathResult extends PathResult
     {
         public ChunkCoordinates ponds;
     }
 
-    ChunkCoordinates hutLocation;
-    ArrayList<ChunkCoordinates> ponds = new ArrayList<>();
+    private ChunkCoordinates hutLocation;
+    private ArrayList<ChunkCoordinates> ponds = new ArrayList<>();
 
     /**
      * PathJob constructor
@@ -35,7 +34,7 @@ public class PathJobFindWater extends PathJob
      * @param range maximum path range
      * @param ponds already visited fishing places
      */
-    public PathJobFindWater(World world, ChunkCoordinates start, ChunkCoordinates home, int range, ArrayList<ChunkCoordinates> ponds)
+    PathJobFindWater(World world, ChunkCoordinates start, ChunkCoordinates home, int range, ArrayList<ChunkCoordinates> ponds)
     {
         super(world, start, start, range, new WaterPathResult());
         this.ponds.addAll(ponds);
@@ -51,17 +50,29 @@ public class PathJobFindWater extends PathJob
         return 0;
     }
 
+    //Overrides the Superclass in order to find only ponds of water with follow the wished conditions
     @Override
     protected boolean isAtDestination(Node n)
     {
         ChunkCoordinates newPond = new ChunkCoordinates(n.x,n.y,n.z);
+        ChunkCoordinates landBlock = findLandBlockBesidesWater(n);
 
         if(n.parent == null || ponds.contains(newPond))
         {
             return false;
         }
 
-        if(!ponds.stream().allMatch(pond -> squareDistance(pond,newPond) > 10))
+        if(pondsAreNear(ponds,newPond))
+        {
+            return false;
+        }
+
+        if(landBlock == null)
+        {
+            return false;
+        }
+
+        if(!world.isAirBlock(n.x,n.y+1,n.z))
         {
             return false;
         }
@@ -76,11 +87,36 @@ public class PathJobFindWater extends PathJob
             int dz = n.z > n.parent.z ? 1 : -1;
             return isWater(n.x, n.y, n.z + dz) || isWater(n.x - 1, n.y, n.z) || isWater(n.x + 1, n.y, n.z);
         }
+
     }
 
+    private ChunkCoordinates findLandBlockBesidesWater(Node n)
+    {
+        for(int x = -1; x <= 1; x++)
+        {
+            for(int z = -1; z <= 1; z++) {
+                if (world.getBlock(n.x + x, n.y, n.z + z).getMaterial().isSolid())
+                {
+                    return new ChunkCoordinates(n.x + x, n.y, n.z + z);
+                }
+            }
+        }
+        return null;
+    }
     private float squareDistance(ChunkCoordinates currentPond, ChunkCoordinates nextPond)
     {
         return currentPond.getDistanceSquaredToChunkCoordinates(nextPond);
+    }
+
+    private Predicate<ChunkCoordinates> generateDistanceFrom(int range, ChunkCoordinates newpond)
+    {
+        return pond -> squareDistance(pond, newpond) > range;
+    }
+
+    private boolean pondsAreNear(ArrayList<ChunkCoordinates> ponds, ChunkCoordinates newPond)
+    {
+        Predicate<ChunkCoordinates> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
+        return !ponds.stream().anyMatch(compare);
     }
 
     private boolean isWater(int x, int y, int z)

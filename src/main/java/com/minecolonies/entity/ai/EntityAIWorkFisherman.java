@@ -2,7 +2,6 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.colony.jobs.JobFisherman;
-import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.items.MineColoniesEntityFishHook;
@@ -12,12 +11,12 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Collections;
 
 
 /**
@@ -32,8 +31,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private static final String TOOL_TYPE_ROD= "rod";
     private static final String RENDER_META_FISH = "fish";
-    public boolean returnedRod=true;
-    public int fishesCaught=0;
+    private int fishesCaught=0;
     private PathJobFindWater.WaterPathResult pathResult;
     private static final int SEARCH_RANGE       = 50;
 
@@ -56,7 +54,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private String getRenderMetaFish()
     {
 
-        /*if (worker.hasitemInInventory(Blocks.torch))
+        /*if (worker.hasItemInInventory(Blocks.torch))
         {
             return RENDER_META_FISH;
         }*/
@@ -114,13 +112,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
     }
 
-    //TODO Create list with all previous water locations, let him find all water locations connected to land, then let him randomly work from the list
     //TODO For future use
     private void findWater()
     {
         if(pathResult == null)
         {
-            //TODO add list with saved water
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D,job.ponds);
         }
         else if(pathResult.getPathReachesDestination())
@@ -159,7 +155,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
     }
 
-    private void requestTool(Item item)
+    private void requestTool()
     {
             job.setStage(Stage.PREPARING);
             needsRod = true;
@@ -184,10 +180,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return false;
         }
         itemsNeeded.clear();
-        for (ItemStack stack : items)
-        {
-            itemsNeeded.add(stack);
-        }
+        Collections.addAll(itemsNeeded, items);
         job.setStage(Stage.PREPARING);
         return true;
     }
@@ -208,13 +201,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
 
-    public void doFishing()
+    private void doFishing()
     {
         //TODO Skills can't be 0!
-        double chance = (Math.random()*500)/(worker.intelligence+1);
+        double chance = (Math.random()*500)/(worker.getIntelligence()+1);
         boolean foundCloseWater = false;
         //We really do have our Rod in our inventory?
-        if(!worker.hasitemInInventory(Items.fishing_rod))
+        if(!worker.hasItemInInventory(Items.fishing_rod))
         {
             job.setStage(Stage.PREPARING);
             return;
@@ -292,7 +285,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             }
 
             worker.swingItem();
-            returnedRod=false;
         }
         else
         {
@@ -354,7 +346,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //Fisherman is at building and prepares for work
         if (job.getStage() == Stage.PREPARING)
         {
-            if(worker.hasitemInInventory(Items.fishing_rod))
+            if(worker.hasItemInInventory(Items.fishing_rod))
             {
                 if (!getOwnBuilding().foundWater)
                 {
@@ -365,7 +357,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             }
             else
             {
-                requestTool(Items.fishing_rod);
+                requestTool();
             }
             return;
         }
@@ -422,16 +414,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     public void resetTask()
     {
         super.resetTask();
-    }
-
-    private int getBlockMetadata(ChunkCoordinates loc)
-    {
-        return world.getBlockMetadata(loc.posX, loc.posY, loc.posZ);
-    }
-
-    private Block getBlock(ChunkCoordinates loc)
-    {
-        return world.getBlock(loc.posX, loc.posY, loc.posZ);
     }
 
     public enum Stage
