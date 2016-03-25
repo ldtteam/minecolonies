@@ -61,14 +61,6 @@ public class PathJobFindWater extends PathJob
             return false;
         }
 
-        for(ChunkCoordinates pond: ponds)
-        {
-            if(!(squareDistance(pond,newPond) > 10))
-            {
-                return false;
-            }
-        }
-
         if(!ponds.stream().allMatch(pond -> squareDistance(pond,newPond) > 10))
         {
             return false;
@@ -86,7 +78,7 @@ public class PathJobFindWater extends PathJob
         }
     }
 
-    public float squareDistance(ChunkCoordinates currentPond, ChunkCoordinates nextPond)
+    private float squareDistance(ChunkCoordinates currentPond, ChunkCoordinates nextPond)
     {
         return currentPond.getDistanceSquaredToChunkCoordinates(nextPond);
     }
