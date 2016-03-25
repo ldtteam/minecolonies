@@ -324,7 +324,7 @@ public class Colony implements IColony
     /**
      * @see {@link #getDistanceSquared(int, int, int)}
      *
-     * @param coord     Chunk coordiate to get squared position
+     * @param coord     Chunk coordinate to get squared position
      * @return          Squared position from center
      */
     public float getDistanceSquared(ChunkCoordinates coord)
@@ -333,7 +333,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Returns the sqaured (x, z) distance to the center
+     * Returns the squared (x, z) distance to the center
      *
      * @param posX      x-coordinate
      * @param posY      y-coordinate

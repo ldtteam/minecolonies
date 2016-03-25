@@ -107,10 +107,13 @@ public class WindowBuildTool extends Window implements Button.Handler
     public void onOpened()
     {
         boolean inHutMode = true; //TODO is this not redundant? see no usage
-        if(inHutMode) {
-            try {
+        if(inHutMode)
+        {
+            try
+            {
                 findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
-            } catch (NullPointerException e) {
+            } catch (NullPointerException e)
+            {
                 MineColonies.logger.error("findPane error, report to mod authors");
             }
 
@@ -123,40 +126,50 @@ public class WindowBuildTool extends Window implements Button.Handler
                     Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, 0, 0, 0))
                     && Schematics.getStylesForHut(hut) != null).collect(Collectors.toList()));
 
-            if (huts.size() > 0) {
-                if (MineColonies.proxy.getActiveSchematic() != null) {
+            if (huts.size() > 0)
+            {
+                if (MineColonies.proxy.getActiveSchematic() != null)
+                {
                     hutDecIndex = Math.max(0, huts.indexOf(Settings.instance.hut));
                     styleIndex = Math.max(0, Schematics.getStylesForHut(huts.get(hutDecIndex)).indexOf(Settings.instance.style));
                 }
 
                 Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
 
-                if (hut != null) {
+                if (hut != null)
+                {
                     hut.setLabel(huts.get(hutDecIndex));
                     hut.setEnabled(true);
-                } else {
+                } else
+                {
                     MineColonies.logger.error("The hut was null, should not happen, report to mod authors");
                 }
 
                 Button style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
 
-                if (style != null) {
+                if (style != null)
+                {
                     style.setVisible(true);
                     style.setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
-                } else {
+                } else
+                {
                     MineColonies.logger.error("The style was null, should not happen, report to mod authors");
                 }
 
                 //Render stuff
-                if (MineColonies.proxy.getActiveSchematic() == null) {
+                if (MineColonies.proxy.getActiveSchematic() == null)
+                {
                     changeSchematic();
                 }
-            } else {
+            } else
+            {
                 Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
-                if (hut != null) {
+                if (hut != null)
+                {
                     hut.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.nullHut"));
                     hut.setEnabled(false);
-                } else {
+                } else
+                {
                     MineColonies.logger.error(LanguageHandler.format("The hut was null, should not happen, report to mod authors"));
                 }
 

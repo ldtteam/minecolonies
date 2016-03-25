@@ -235,8 +235,7 @@ public class CitizenData
      */
     public BuildingWorker getWorkBuilding(){ return workBuilding; }
 
-    //UNUSED
-    /*
+    //TODO: inspect if we can use this to make worker buildings nicer
     public <BUILDING extends BuildingWorker> BUILDING getWorkBuilding(Class<BUILDING> type)
     {
         try
@@ -247,7 +246,7 @@ public class CitizenData
         {
             return null;
         }
-    } */
+    }
 
     /**
      * Sets the work building of a citizen
@@ -585,7 +584,7 @@ public class CitizenData
      *
      * @param id  The citizen's id
      * @param buf The network data
-     * @return    View object of the citizen
+     * @return      View object of the citizen
      */
     public static View createCitizenDataView(int id, ByteBuf buf)
     {

@@ -4,7 +4,7 @@ import com.minecolonies.configuration.Configurations;
 
 public class BlockHutTownHall extends BlockHut
 {
-    public BlockHutTownHall()
+    protected BlockHutTownHall()
     {
         super();
         this.workingRange = Configurations.workingRangeTownhall;

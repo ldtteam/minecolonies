@@ -2,7 +2,7 @@ package com.minecolonies.blocks;
 
 public class BlockHutBlacksmith extends BlockHut
 {
-    public BlockHutBlacksmith()
+    protected BlockHutBlacksmith()
     {
         super();
     }
