@@ -7,7 +7,6 @@ import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.items.MineColoniesEntityFishHook;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
-import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -15,12 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.util.Collections;
 
-
 /**
- * Miner AI class
+ * Fisherman AI class
  * Created: March 17, 2016
  *
  * @author Raycoms
@@ -30,13 +27,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 {
 
     private static final String TOOL_TYPE_ROD= "rod";
-    private static final String RENDER_META_FISH = "fish";
+    //private static final String RENDER_META_FISH = "fish"; TODO Add
     private int fishesCaught=0;
     private PathJobFindWater.WaterPathResult pathResult;
     private static final int SEARCH_RANGE       = 50;
 
     private static Logger logger = LogManager.getLogger("Fisherman");
 
+    //Assign job to fisherman
     public EntityAIWorkFisherman(JobFisherman job)
     {
         super(job);
@@ -86,7 +84,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             if (world.getBlock(buildingFisherman.waterLocation.posX,
                     buildingFisherman.waterLocation.posY,
-                    buildingFisherman.waterLocation.posZ) == Blocks.water)
+                    buildingFisherman.waterLocation.posZ).equals(Blocks.water))
             {
                 job.setStage(Stage.WATER_FOUND);
                 return;
@@ -243,24 +241,23 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             orb.setDead();
         }
 
-        if(worker.caughtFish)
+        if(worker.isCaughtFish())
         {
             worker.setCanPickUpLoot(true);
             worker.captureDrops = true;
 
-            int i = worker.fishEntity.func_146034_e();
+            int i = worker.getFishEntity().func_146034_e();
             worker.getInventory().getHeldItem().damageItem(i, worker);
             worker.swingItem();
-            if (worker.fishEntity != null)
+            if (worker.getFishEntity() != null)
             {
-                worker.fishEntity.setDead();
-                worker.fishEntity = null;
+                worker.getFishEntity().setDead();
+                worker.setFishEntity(null);
             }
 
-            System.out.println("Caught a fish, yeah!");
-            worker.caughtFish = false;
-
-            if(++fishesCaught > 10)
+            worker.setCaughtFish(false);
+            fishesCaught++;
+            if(fishesCaught > 10)
             {
                 fishesCaught=0;
                 job.setStage(Stage.INVENTORY_FULL);
@@ -268,10 +265,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return;
         }
 
-        if(worker.fishEntity==null)
+        if(worker.getFishEntity()==null)
         {
             //Only sometimes the fisherman gets to throw its Rod (depends on intelligence)
-            if (!(chance < 2))
+            if (chance >= 2)
             {
                 return;
             }
@@ -280,7 +277,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             {
                 world.playSoundAtEntity(worker, "random.bow", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
                 MineColoniesEntityFishHook hook = new MineColoniesEntityFishHook(world,worker);
-                worker.fishEntity = hook;
+                worker.setFishEntity(hook);
                 world.spawnEntityInWorld(hook);
             }
 
@@ -289,13 +286,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         else
         {
             //Check if hook landed on ground or in water, in some cases the hook bugs -> remove it after 2 minutes
-            if (!worker.fishEntity.isInWater() && (worker.fishEntity.onGround || (System.nanoTime() - worker.fishEntity.creationTime)/1000000000 > worker.fishEntity.getTtl()))
+            if (!worker.getFishEntity().isInWater() && (worker.getFishEntity().onGround || (System.nanoTime() - worker.getFishEntity().getCreationTime())/1000000000 > worker.getFishEntity().getTtl()))
             {
                 worker.swingItem();
-                int i = worker.fishEntity.func_146034_e();
+                int i = worker.getFishEntity().func_146034_e();
                 worker.damageItemInHand(i);
-                worker.fishEntity.setDead();
-                worker.fishEntity = null;
+                worker.getFishEntity().setDead();
+                worker.setFishEntity(null);
                 //Reposition to water!
                 job.setStage(Stage.WATER_FOUND);
             }
@@ -306,7 +303,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         if(worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), 4))
         {
-            int saplingStacks = 0;
             for(int i = 0; i < getInventory().getSizeInventory(); i++)
             {
                 ItemStack stack = getInventory().getStackInSlot(i);

@@ -39,7 +39,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -56,9 +55,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int DATA_RENDER_METADATA = 19;
     private static Field navigatorField;
     protected Status status = Status.IDLE;
-    boolean isFemale;
-    RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
-    String renderMetadata;
+    private boolean isFemale;
+    private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
+    private String renderMetadata;
     private ResourceLocation texture;
     private InventoryCitizen inventory;
     private int              colonyId;
@@ -69,9 +68,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private int         textureId;
     private Map<String, Integer> statusMessages = new HashMap<>();
     private PathNavigate newNavigator;
-    private boolean useNewNavigation = false;
-    public MineColoniesEntityFishHook fishEntity;
-    public boolean caughtFish=false;
+    //Connects the fishingHook with the citizen
+    private MineColoniesEntityFishHook fishEntity;
+    //Will be set true when the citizen caught a fish (to reset the fisherman)
+    private boolean caughtFish=false;
     //Skills, may be added more later
     private int intelligence;
     private int speed;
@@ -81,13 +81,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     //The current experience level the player is on.
     private int experienceLevel;
-    //The total amount of experience the player has. This also includes the amount of experience within their Experience Bar.
+    /*The total amount of experience the player has.
+    This also includes the amount of experience within their Experience Bar.*/
     private int experienceTotal;
     //The current amount of experience the player has within their Experience Bar.
-    private float experience;
+    private double experience;
     //Something with ticks which I didn't understand yet!
-    private int field_82249_h;
+    private int nOTicks;
 
+    //Creates a citizen entity
     public EntityCitizen(World world)
     {
         super(world);
@@ -108,7 +110,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         this.newNavigator = new PathNavigate(this, world);
 
-        useNewNavigation = true;
+        boolean useNewNavigation = true;
         if(useNewNavigation)
         {
             if(navigatorField == null)
@@ -277,7 +279,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onLivingUpdate()
     {
-        if(worldObj.isRemote) updateColonyClient();
+        if(worldObj.isRemote){ updateColonyClient();}
         else
         {
             pickupItems();
@@ -582,7 +584,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public boolean isAtHome()
     {
         ChunkCoordinates homePosition = getHomePosition();
-        return homePosition != null && homePosition.getDistanceSquared(MathHelper.floor_double(posX), (int) posY, MathHelper.floor_double(posZ)) <= 16;
+        return homePosition != null && homePosition.getDistanceSquared((int)Math.floor(posX), (int) posY, (int)Math.floor(posZ)) <= 16;
     }
 
     public BuildingWorker getWorkBuilding()
@@ -689,7 +691,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     protected void dropEquipment(boolean par1, int par2)
     {
-        for(int i = 0; i < getLastActiveItems().length; i++) setCurrentItemOrArmor(i, null);
+        for(int i = 0; i < getLastActiveItems().length; i++){ setCurrentItemOrArmor(i, null);}
         for(int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack itemstack = inventory.getStackInSlot(i);
@@ -708,20 +710,20 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     //Add experience points to citizen.
-    public void addExperience(int p_71023_1_)
+    public void addExperience(int xp)
     {
         int j = Integer.MAX_VALUE - this.experienceTotal;
-
-        if (p_71023_1_ > j)
+        int localXp = xp;
+        if (localXp > j)
         {
-            p_71023_1_ = j;
+            localXp = j;
         }
 
-        this.experience += p_71023_1_ / this.xpBarCap();
+        this.experience += localXp / this.xpBarCap();
 
-        for (this.experienceTotal += p_71023_1_; this.experience >= 1.0F; this.experience /= this.xpBarCap())
+        for (this.experienceTotal += localXp; this.experience >= 1.0F; this.experience /= this.xpBarCap())
         {
-            this.experience = (this.experience - 1.0F) * this.xpBarCap();
+            this.experience = (this.experience - 1.0) * this.xpBarCap();
             this.addExperienceLevel(1);
         }
     }
@@ -734,15 +736,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (this.experienceLevel < 0)
         {
             this.experienceLevel = 0;
-            this.experience = 0.0F;
+            this.experience = 0.0;
             this.experienceTotal = 0;
         }
 
-        if (nOLevels > 0 && this.experienceLevel % 5 == 0 && this.field_82249_h < this.ticksExisted - 100.0F)
+        if (nOLevels > 0 && this.experienceLevel % 5 == 0 && this.nOTicks < this.ticksExisted - 100.0)
         {
-            double f = this.experienceLevel > 30 ? 1.0F : this.experienceLevel / 30.0F;
+            double f = this.experienceLevel > 30 ? 1.0 : this.experienceLevel / 30.0;
             this.worldObj.playSoundAtEntity(this, "random.levelup", (float)f * 0.75F, 1.0F);
-            this.field_82249_h = this.ticksExisted;
+            this.nOTicks = this.ticksExisted;
         }
     }
 
@@ -752,14 +754,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     private int xpBarCap()
     {
-        return this.experienceLevel >= 30 ? 62 + (this.experienceLevel - 30) * 7 : (this.experienceLevel >= 15 ? 17 + (this.experienceLevel - 15) * 3 : 17);
+        return (this.experienceLevel >= 30 ? 62 + (this.experienceLevel - 30) * 7 : (this.experienceLevel >= 15 ? 17 + (this.experienceLevel - 15) * 3 : 17));
     }
 
     /**
      * Get the experience points the entity currently has.
      */
-    @Override
-    protected int getExperiencePoints(EntityPlayer p_70693_1_)
+    protected int getExperiencePoints()
     {
         if (this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
         {
@@ -849,15 +850,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     private void pickupItems()
     {
-        @SuppressWarnings("unchecked") List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, boundingBox.expand(2.0F, 0.0F, 2.0F));//TODO change range
+        @SuppressWarnings("unchecked") List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, boundingBox.expand(2.0, 0.0, 2.0));//TODO change range
 
-        for(EntityItem item : list)
-        {
-            if(item != null && !item.isDead && canPickUpLoot())
-            {
-                tryPickupEntityItem(item);
-            }
-        }
+        list.stream().filter(item -> item != null && !item.isDead && canPickUpLoot()).forEach(this::tryPickupEntityItem);
     }
 
     private void tryPickupEntityItem(EntityItem entityItem)
@@ -872,7 +867,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             ItemStack itemStack = entityItem.getEntityItem();
             int i = itemStack.stackSize;
 
-            if((i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventory(), itemStack)))
+            if(i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventory(), itemStack))
             {
                 this.worldObj.playSoundAtEntity(this, "random.pop", 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
                 this.onItemPickup(this, i);
@@ -1010,5 +1005,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public int getDiligence() {
         return diligence;
+    }
+
+    public MineColoniesEntityFishHook getFishEntity() {
+        return fishEntity;
+    }
+
+    public void setFishEntity(MineColoniesEntityFishHook fishEntity) {
+        this.fishEntity = fishEntity;
+    }
+
+    public boolean isCaughtFish() {
+        return caughtFish;
+    }
+
+    public void setCaughtFish(boolean caughtFish) {
+        this.caughtFish = caughtFish;
     }
 }

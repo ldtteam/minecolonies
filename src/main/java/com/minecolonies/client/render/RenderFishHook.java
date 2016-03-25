@@ -73,7 +73,7 @@ public class RenderFishHook extends Render
 
             if(this.renderManager.options.thirdPersonView > 0)
             {
-                double f11 = (entityFishHook.citizen.prevRenderYawOffset + (entityFishHook.citizen.renderYawOffset - entityFishHook.citizen.prevRenderYawOffset) * par9) * Math.PI / 180.0F;
+                double f11 = (entityFishHook.citizen.prevRenderYawOffset + (entityFishHook.citizen.renderYawOffset - entityFishHook.citizen.prevRenderYawOffset) * par9) * Math.PI / 180.0;
                 double d7 = Math.sin(f11);
                 double d8 = Math.cos(f11);
 
@@ -85,9 +85,9 @@ public class RenderFishHook extends Render
             double d9 = entityFishHook.prevPosX + (entityFishHook.posX - entityFishHook.prevPosX) * par9;
             double d10 = entityFishHook.prevPosY + (entityFishHook.posY - entityFishHook.prevPosY) * par9 + 0.25;
             double d11 = entityFishHook.prevPosZ + (entityFishHook.posZ - entityFishHook.prevPosZ) * par9;
-            double d12 = ((d3 - d9));
-            double d13 = ((d4 - d10));
-            double d14 = ((d5 - d11));
+            double d12 = d3 - d9;
+            double d13 = d4 - d10;
+            double d14 = d5 - d11;
             GL11.glDisable(GL11.GL_TEXTURE_2D);
             GL11.glDisable(GL11.GL_LIGHTING);
             tessellator.startDrawing(3);
@@ -106,7 +106,7 @@ public class RenderFishHook extends Render
         }
     }
 
-    private ResourceLocation getTexture(MineColoniesEntityFishHook entityFishHook)
+    private ResourceLocation getTexture()
     {
         return texture;
     }
@@ -114,7 +114,7 @@ public class RenderFishHook extends Render
     @Override
     protected ResourceLocation getEntityTexture(Entity entity)
     {
-        return this.getTexture((MineColoniesEntityFishHook)entity);
+        return this.getTexture();
     }
 
     @Override

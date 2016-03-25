@@ -58,7 +58,8 @@ public class MineColoniesEntityFishHook extends Entity
     private double field_146052_aI;
     @SideOnly(Side.CLIENT)
     private double field_146053_aJ;
-    public long creationTime;
+    //Time at which the entity has been created
+    private long creationTime;
 
     public MineColoniesEntityFishHook(World p_i1764_1_)
     {
@@ -72,13 +73,13 @@ public class MineColoniesEntityFishHook extends Entity
     }
 
     @SideOnly(Side.CLIENT)
-    public MineColoniesEntityFishHook(World p_i1765_1_, double p_i1765_2_, double p_i1765_4_, double p_i1765_6_, EntityCitizen p_i1765_8_)
+    public MineColoniesEntityFishHook(World p_i1765_1_, double p_i1765_2_, double p_i1765_4_, double p_i1765_6_, EntityCitizen citizen)
     {
         this(p_i1765_1_);
         this.setPosition(p_i1765_2_, p_i1765_4_, p_i1765_6_);
         this.ignoreFrustumCheck = true;
-        this.citizen = p_i1765_8_;
-        p_i1765_8_.fishEntity = this;
+        this.citizen = citizen;
+        citizen.setFishEntity(this);
         this.creationTime = System.nanoTime();
     }
 
@@ -90,7 +91,7 @@ public class MineColoniesEntityFishHook extends Entity
         this.field_146050_i = -1;
         this.ignoreFrustumCheck = true;
         this.citizen = p_i1766_2_;
-        this.citizen.fishEntity = this;
+        this.citizen.setFishEntity(this);
         this.setSize(0.25F, 0.25F);
         this.setLocationAndAngles(p_i1766_2_.posX, p_i1766_2_.posY + 1.62 - (double)p_i1766_2_.yOffset, p_i1766_2_.posZ, p_i1766_2_.rotationYaw, p_i1766_2_.rotationPitch);
         this.posX -= Math.cos(this.rotationYaw / 180.0 * Math.PI) * 0.16;
@@ -138,6 +139,7 @@ public class MineColoniesEntityFishHook extends Entity
      * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
      * length * 64 * renderDistanceWeight Args: distance
      */
+    @Override
     @SideOnly(Side.CLIENT)
     public boolean isInRangeToRenderDist(double p_70112_1_)
     {
@@ -167,6 +169,7 @@ public class MineColoniesEntityFishHook extends Entity
     /**
      * Sets the velocity to the args. Args: x, y, z
      */
+    @Override
     @SideOnly(Side.CLIENT)
     public void setVelocity(double p_70016_1_, double p_70016_3_, double p_70016_5_)
     {
@@ -178,6 +181,7 @@ public class MineColoniesEntityFishHook extends Entity
     /**
      * Called to update the entity's position/logic.
      */
+    @Override
     public void onUpdate()
     {
         //On update if fish is pulling down calculate a "skill factor" from the fisherman (may include intelligence and speed)
@@ -207,10 +211,10 @@ public class MineColoniesEntityFishHook extends Entity
 
                 ItemStack itemstack = this.citizen.getHeldItem();
 
-                if (this.citizen.isDead || !this.citizen.isEntityAlive() || itemstack == null || itemstack.getItem() != Items.fishing_rod || this.getDistanceSqToEntity(this.citizen) > 1024.0D)
+                if (this.citizen.isDead || !this.citizen.isEntityAlive() || itemstack == null || !itemstack.getItem().equals(Items.fishing_rod) || this.getDistanceSqToEntity(this.citizen) > 1024.0D)
                 {
                     this.setDead();
-                    this.citizen.fishEntity = null;
+                    this.citizen.setFishEntity(null);
                     return;
                 }
 
@@ -282,8 +286,8 @@ public class MineColoniesEntityFishHook extends Entity
                 if (entity1.canBeCollidedWith() && (entity1 != this.citizen || this.field_146047_aw >= 5))
                 {
                     double f = 0.3;
-                    AxisAlignedBB axisalignedbb = entity1.boundingBox.expand(f, f, f);
-                    MovingObjectPosition movingObjectPosition1 = axisalignedbb.calculateIntercept(vec31, vec3);
+                    AxisAlignedBB axisAlignedBB = entity1.boundingBox.expand(f, f, f);
+                    MovingObjectPosition movingObjectPosition1 = axisAlignedBB.calculateIntercept(vec31, vec3);
 
                     if (movingObjectPosition1 != null)
                     {
@@ -363,9 +367,9 @@ public class MineColoniesEntityFishHook extends Entity
                 {
                     double d3 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (j + 0) / b0 - 0.125 + 0.125;
                     double d4 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (j + 1) / b0 - 0.125 + 0.125;
-                    AxisAlignedBB axIsAlignedBB1 = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d3, this.boundingBox.minZ, this.boundingBox.maxX, d4, this.boundingBox.maxZ);
+                    AxisAlignedBB axisAlignedBB1 = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d3, this.boundingBox.minZ, this.boundingBox.maxX, d4, this.boundingBox.maxZ);
 
-                    if (this.worldObj.isAABBInMaterial(axIsAlignedBB1, Material.water))
+                    if (this.worldObj.isAABBInMaterial(axisAlignedBB1, Material.water))
                     {
                         d10 += 1.0 / b0;
                     }
@@ -418,8 +422,7 @@ public class MineColoniesEntityFishHook extends Entity
                                 worldserver.func_147487_a("wake", this.posX, (f1 + 1.0), this.posZ, (int)(1.0 + this.width * 20.0), (double)this.width, 0.0, (double)this.width, 0.20000000298023224);
                                 this.field_146045_ax = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
                                 System.out.println("Fish bites here");
-                                citizen.caughtFish=true;
-
+                                citizen.setCaughtFish(true);
                             }
                             else
                             {
@@ -511,6 +514,7 @@ public class MineColoniesEntityFishHook extends Entity
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
+    @Override
     public void writeEntityToNBT(NBTTagCompound p_70014_1_)
     {
         p_70014_1_.setShort("xTile", (short)this.field_146037_g);
@@ -524,6 +528,7 @@ public class MineColoniesEntityFishHook extends Entity
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
+    @Override
     public void readEntityFromNBT(NBTTagCompound p_70037_1_)
     {
         this.field_146037_g = p_70037_1_.getShort("xTile");
@@ -534,6 +539,7 @@ public class MineColoniesEntityFishHook extends Entity
         this.field_146051_au = p_70037_1_.getByte("inGround") == 1;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public float getShadowSize()
     {
@@ -584,7 +590,7 @@ public class MineColoniesEntityFishHook extends Entity
             }
 
             this.setDead();
-            this.citizen.fishEntity = null;
+            this.citizen.setFishEntity(null);
             return b0;
         }
     }
@@ -621,13 +627,19 @@ public class MineColoniesEntityFishHook extends Entity
     /**
      * Will get destroyed next tick.
      */
+    @Override
     public void setDead()
     {
         super.setDead();
 
         if (this.citizen != null)
         {
-            this.citizen.fishEntity = null;
+            this.citizen.setFishEntity(null);
         }
+    }
+
+    public long getCreationTime()
+    {
+        return creationTime;
     }
 }
