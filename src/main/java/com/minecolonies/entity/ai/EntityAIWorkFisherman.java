@@ -80,12 +80,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return Utils.isFishingTool(stack);
     }
 
-    //TODO Create list with all previous water locations, let him find all water locations connected to land, then let him randomly work from the list
     private void lookForWater()
     {
         BuildingFisherman buildingFisherman = getOwnBuilding();
 
-        //Check for already found ladder
         if (buildingFisherman.foundWater && buildingFisherman.waterLocation != null)
         {
             if (world.getBlock(buildingFisherman.waterLocation.posX,
@@ -116,13 +114,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
     }
 
+    //TODO Create list with all previous water locations, let him find all water locations connected to land, then let him randomly work from the list
     //TODO For future use
-    private void findTree()
+    private void findWater()
     {
         if(pathResult == null)
         {
-            //TODO at list with saved water
-            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D);
+            //TODO add list with saved water
+            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D,job.ponds);
         }
         else if(pathResult.getPathReachesDestination())
         {

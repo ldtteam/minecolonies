@@ -9,6 +9,8 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,12 +19,12 @@ import java.util.List;
 
 public class JobFisherman extends Job
 {
-    private static final String                  TAG_STAGE = "Stage";
+    private static final String TAG_STAGE = "Stage";
     private static final String TAG_WATER = "Water";
 
-    private              EntityAIWorkFisherman.Stage stage     = EntityAIWorkFisherman.Stage.START_WORKING;
+    private EntityAIWorkFisherman.Stage stage     = EntityAIWorkFisherman.Stage.START_WORKING;
     public Water water;
-
+    public ArrayList<ChunkCoordinates> ponds = new ArrayList<>();
     public JobFisherman(CitizenData entity)
     {
         super(entity);

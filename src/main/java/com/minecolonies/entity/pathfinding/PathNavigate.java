@@ -13,6 +13,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.concurrent.Future;
 
 public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
@@ -93,10 +94,10 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         return (PathJobFindTree.TreePathResult) setPathJob(new PathJobFindTree(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range), null, speed);
     }
 
-    public PathJobFindWater.WaterPathResult moveToWater(int range, double speed)
+    public PathJobFindWater.WaterPathResult moveToWater(int range, double speed, ArrayList<ChunkCoordinates> ponds)
     {
         ChunkCoordinates start = PathJob.prepareStart(theEntity);
-        return (PathJobFindWater.WaterPathResult) setPathJob(new PathJobFindWater(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range), null, speed);
+        return (PathJobFindWater.WaterPathResult) setPathJob(new PathJobFindWater(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range, ponds), null, speed);
     }
 
     @Override
