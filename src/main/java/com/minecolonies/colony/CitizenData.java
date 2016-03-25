@@ -38,7 +38,7 @@ public class CitizenData
 
     //  Placeholder skills
     private int level;
-    public  int strength, stamina, wisdom, intelligence, charisma;
+    private int strength, stamina, wisdom, intelligence, charisma;
 
     private static final String TAG_ID      = "id";
     private static final String TAG_NAME    = "name";
@@ -75,7 +75,7 @@ public class CitizenData
     /**
      * Create a CitizenData given a CitizenEntity
      *
-     * @param entity
+     * @param entity   Entity to initialize from
      */
     public void initializeFromEntity(EntityCitizen entity)
     {
@@ -98,6 +98,12 @@ public class CitizenData
         markDirty();
     }
 
+    /**
+     * Creates CitizenData from tag compound
+     * @param compound  NBT compound to build from
+     * @param colony    Colony of the citizen
+     * @return          CitizenData
+     */
     public static CitizenData createFromNBT(NBTTagCompound compound, Colony colony)
     {
         int id = compound.getInteger(TAG_ID);
@@ -106,30 +112,73 @@ public class CitizenData
         return citizen;
     }
 
+
+    /**
+     * Returns the id of the citizen
+     * @return id of the citizen
+     */
     public int getId(){ return id; }
 
+    /**
+     * Returns the colony of the citizen
+     * @return colony of the citizen
+     */
     public Colony getColony(){ return colony; }
 
+    /**
+     * Returns the name of the citizen
+     * @return name of the c
+     */
     public String getName(){ return name; }
 
+    /**
+     * Returns true if citizen is female, false for male
+     * @return  true for female, false for male
+     */
     public boolean isFemale(){ return isFemale; }
 
+    /**
+     * Returns the texture id for the citizen
+     * @return texture ID
+     */
     public int getTextureId(){ return textureId; }
 
+    /**
+     * Returns the level of the citizen
+     * @return level of the citizen
+     */
     public int getLevel(){ return level; }
 
+    /**
+     * Returns whether or not the instance is dirty
+     * @return  true when dirty, otherwise false
+     */
     public boolean isDirty(){ return isDirty; }
 
+    /**
+     * Marks the instance dirty
+     */
     public void markDirty()
     {
         isDirty = true;
         colony.markCitizensDirty();
     }
 
+    /**
+     * Markt the instance not dirty
+     */
     public void clearDirty(){ isDirty = false; }
 
+    /**
+     * Returns the home building of the citizen
+     * @return  home building
+     */
     public BuildingHome getHomeBuilding(){ return homeBuilding; }
 
+    /**
+     * Sets the home of the citizen
+     * @param building home building
+     */
     public void setHomeBuilding(BuildingHome building)
     {
         if(homeBuilding != null && building != null && homeBuilding != building)
@@ -143,8 +192,14 @@ public class CitizenData
         }
     }
 
+    /**
+     * Returns the work building of a citizen
+     * @return home building of a citizen
+     */
     public BuildingWorker getWorkBuilding(){ return workBuilding; }
 
+    //UNUSED
+    /*
     public <BUILDING extends BuildingWorker> BUILDING getWorkBuilding(Class<BUILDING> type)
     {
         try
@@ -155,8 +210,12 @@ public class CitizenData
         {
             return null;
         }
-    }
+    } */
 
+    /**
+     * Sets the work building of a citizen
+     * @param building  work building
+     */
     public void setWorkBuilding(BuildingWorker building)
     {
         if(workBuilding != null && building != null && workBuilding != building)
@@ -192,7 +251,7 @@ public class CitizenData
      * When a building is destroyed, inform the citizen so it can do any cleanup of associations that the building's
      * own Building.onDestroyed did not do.
      *
-     * @param building
+     * @param building building that is destroyed
      */
     public void onRemoveBuilding(Building building)
     {
@@ -207,22 +266,43 @@ public class CitizenData
         }
     }
 
+    /**
+     * return the entity instance of the citizen data
+     * @return {@link EntityCitizen} of the citizen data
+     */
     public EntityCitizen getCitizenEntity(){ return entity; /*(entity != null) ? entity.get() : null;*/ }
 
+    /**
+     * Sets the entity of the citizen data
+     * @param citizen {@link EntityCitizen} instance of the citizen data
+     */
     public void setCitizenEntity(EntityCitizen citizen)
     {
         entity = citizen;
         markDirty();
     }
 
+    /**
+     * Sets {@link EntityCitizen} to null for the instance
+     */
     public void clearCitizenEntity()
     {
         entity = null;
     }
 
-
+    /**
+     * Returns the job of the citizen
+     * @return  Job of the citizen
+     */
     public Job getJob(){ return job; }
 
+
+    /**
+     *  //todo document
+     * @param type
+     * @param <JOB>
+     * @return
+     */
     public <JOB extends Job> JOB getJob(Class<JOB> type)
     {
         try
@@ -235,9 +315,13 @@ public class CitizenData
         }
     }
 
-    public void setJob(Job j)
+    /**
+     * Sets the job of this citizen
+     * @param job   Job of the citizen
+     */
+    public void setJob(Job job)
     {
-        job = j;
+        this.job = job;
 
         EntityCitizen entity = getCitizenEntity();
         if(entity != null)
@@ -248,6 +332,10 @@ public class CitizenData
         markDirty();
     }
 
+    /**
+     * Writes the citiizen data to an NBT-compound
+     * @param compound  NBT-Tag compound
+     */
     public void writeToNBT(NBTTagCompound compound)
     {
         compound.setInteger(TAG_ID, id);
@@ -274,6 +362,10 @@ public class CitizenData
         }
     }
 
+    /**
+     * Reads data from NBT-tag compound
+     * @param compound  NBT-Tag compound
+     */
     public void readFromNBT(NBTTagCompound compound)
     {
         name = compound.getString(TAG_NAME);
@@ -296,6 +388,11 @@ public class CitizenData
         }
     }
 
+    /**
+     * Generates a random name from a set of names
+     * @param rand  Random object
+     * @return      Name of the citizen
+     */
     private String generateName(Random rand)
     {
         String firstName;
@@ -385,6 +482,10 @@ public class CitizenData
         }
     }
 
+    /**
+     * Writes the citizen data to a byte buf.
+     * @param buf   Buffer to write to
+     */
     public void serializeViewNetworkData(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
@@ -422,7 +523,7 @@ public class CitizenData
      *
      * @param id  The citizen's id
      * @param buf The network data
-     * @return
+     * @return      View object of the citizen
      */
     public static View createCitizenDataView(int id, ByteBuf buf)
     {

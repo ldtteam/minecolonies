@@ -219,11 +219,19 @@ public class Colony implements IColony
         //compound.setInteger(TAG_AUTO_HOSTILE, autoHostile);
     }
 
+    /**
+     * Returns the ID of the colony
+     * @return      Colony ID
+     */
     public int getID()
     {
         return id;
     }
 
+    /**
+     * Returns the dimension ID
+     * @return  Dimension ID
+     */
     public int getDimensionId()
     {
         return dimensionId;
