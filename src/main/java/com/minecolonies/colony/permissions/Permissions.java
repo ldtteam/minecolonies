@@ -219,6 +219,7 @@ public class Permissions implements IPermissions
 
     /**
      * Returns a set of UUID's that have permission to send (and receive) messages
+     *
      * @return Set of UUID's allowed to send and receive messages
      */
     public Set<UUID> getMessagePlayers()
@@ -265,6 +266,7 @@ public class Permissions implements IPermissions
 
     /**
      * Returns the map of permissions and ranks
+     *
      * @return  map of permissions
      */
     public Map<Rank, Integer> getPermissions() {
@@ -273,6 +275,7 @@ public class Permissions implements IPermissions
 
     /**
      * Returns the rank of a player
+     *
      * @param player    player to check rank
      * @return Rank of te player
      */
@@ -282,6 +285,7 @@ public class Permissions implements IPermissions
     }
     /**
      * Returns the rank belonging to the UUID
+     *
      * @param id    UUID that you want to check rank of
      * @return      Rank of the UUID
      */
@@ -310,6 +314,7 @@ public class Permissions implements IPermissions
 
     /**
      * Checks if a rank can perform an action
+     *
      * @param rank      Rank you want to check
      * @param action    Action you want to perform
      * @return  true if rank has permission for action, otherwise false
@@ -320,6 +325,7 @@ public class Permissions implements IPermissions
 
     /**
      * Sets the rank for a specific action
+     *
      * @param rank      Desired rank
      * @param action    Action that should have desiredrank
      */
@@ -334,6 +340,7 @@ public class Permissions implements IPermissions
 
     /**
      * Remove permission for a specific rank
+     *
      * @param rank      Rank to remove permission
      * @param action    Action to remove from rank
      */
@@ -348,6 +355,7 @@ public class Permissions implements IPermissions
 
     /**
      * Toggle permission for a specific rank
+     *
      * @param rank      Rank to toggle permission
      * @param action    Action to toggle permission
      */
@@ -358,6 +366,7 @@ public class Permissions implements IPermissions
 
     /**
      * Sets the player's rank to a given rank
+     *
      * @param id        UUID of the player of the new rank
      * @param rank      Desired rank
      * @return          True if successful, otherwise false
@@ -384,6 +393,7 @@ public class Permissions implements IPermissions
 
     /**
      * Add a player to the rankings
+     *
      * @param player    String playername of the player to add
      * @param rank      Rank desired starting rank
      * @return          True if successful, otherwise false
@@ -398,6 +408,7 @@ public class Permissions implements IPermissions
 
     /**
      * Adds a player to the rankings
+     *
      * @param gameprofile       GameProfile of the player
      * @param rank              Desired rank
      * @return                  True if succesful, otherwise false.
@@ -414,6 +425,7 @@ public class Permissions implements IPermissions
 
     /**
      * Remove a player from the permissions.
+     *
      * @param id    UUID of the player
      * @return      True if succesfull, otherwise false.
      */
@@ -430,6 +442,7 @@ public class Permissions implements IPermissions
 
     /**
      * Returns the owner of this permission instance.
+     *
      * @return    UUID of the owner
      */
     public UUID getOwner()
@@ -446,6 +459,7 @@ public class Permissions implements IPermissions
 
     /**
      * Checks if a user is a subscriber
+     *
      * @param player    {@link EntityPlayer} to check for subscription.
      * @return          True is subscriber, otherwise false.
      */
@@ -456,6 +470,7 @@ public class Permissions implements IPermissions
 
     /**
      * See {@link #isSubscriber(EntityPlayer)}
+     *
      * @param player    {@link UUID} of the player
      * @return          True if subscriber, otherwise false.
      */
@@ -474,6 +489,7 @@ public class Permissions implements IPermissions
 
     /**
      * Returns if the instance is dirty
+     *
      * @return      True if dirty, otherise false.
      */
     public boolean isDirty()
@@ -491,6 +507,7 @@ public class Permissions implements IPermissions
 
     /**
      * Serializes network data
+     *
      * @param buf           {@link ByteBuf} to write to
      * @param viewerRank    Rank of the viewer
      */
@@ -519,6 +536,7 @@ public class Permissions implements IPermissions
     {
         /**
          * Links promotion and demotion
+         *
          * @param p     Promoting rank
          * @param d     Demoting rank
          */
@@ -533,6 +551,7 @@ public class Permissions implements IPermissions
 
     /**
      * Stores the list of promotion/demotion ranks
+     *
      * @param r     Rank to set pro- and demotion of
      * @param p     Promotion rank
      * @param d     Demotion rank
@@ -554,6 +573,7 @@ public class Permissions implements IPermissions
     /**
      * Returns the promotion rank of a specific rank
      * E.G.: Neutral will return Friend
+     *
      * @param rank      Rank to check promotion of
      * @return          {@link Rank} after promotion
      */
@@ -570,6 +590,7 @@ public class Permissions implements IPermissions
     /**
      * Returns the demotion rank of a specific rank
      * E.G.: Neutral will return Hostile
+     *
      * @param rank      Rank to check demotion of
      * @return          {@link Rank} after demotion
      */
@@ -583,7 +604,6 @@ public class Permissions implements IPermissions
         return rank;
     }
 
-    //todo document
     public static class View implements IPermissions
     {
         private Rank userRank = Rank.NEUTRAL;

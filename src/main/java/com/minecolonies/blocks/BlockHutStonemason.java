@@ -2,7 +2,7 @@ package com.minecolonies.blocks;
 
 public class BlockHutStonemason extends BlockHut
 {
-    protected BlockHutStonemason()
+    public BlockHutStonemason()
     {
         super();
     }

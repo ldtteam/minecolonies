@@ -15,10 +15,16 @@ public class BuildingTownHall extends BuildingHut
     }
 
     @Override
-    public String getSchematicName(){ return TOWNHALL; }
+    public String getSchematicName()
+    {
+        return TOWNHALL;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 4; }
+    public int getMaxBuildingLevel()
+    {
+        return 4;
+    }
 
     public static class View extends BuildingHut.View
     {

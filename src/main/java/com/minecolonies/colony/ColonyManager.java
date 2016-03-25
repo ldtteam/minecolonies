@@ -43,13 +43,11 @@ public class ColonyManager
     /**
      * Create a new Colony in the given world and at that location
      *
-     * @param w
-     * @param coord
-     * @return
+     * @param w         World of the colony
+     * @param coord     Coordinate of the center of the colony
+     * @return          The created colony
      */
-    public static Colony createColony(
-            World w,
-            ChunkCoordinates coord)
+    public static Colony createColony(World w, ChunkCoordinates coord)
     {
         Colony colony = new Colony(++topColonyId, w, coord);
         colonies.put(colony.getID(), colony);
@@ -71,24 +69,32 @@ public class ColonyManager
     /**
      * Get Colony by UUID
      *
-     * @param id UUID of colony
-     * @return
+     * @param id    ID of colony
+     * @return      Colony with given ID
      */
     public static Colony getColony(int id) { return colonies.get(id); }
 
     /**
      * Get Colony that contains a given ChunkCoordinates
      *
-     * @param w
-     * @param coord
-     * @return
+     * @param w         World
+     * @param coord     Coordinate of a place in the colony to get
+     * @return          Colony at the given location
      */
     public static Colony getColony(World w, ChunkCoordinates coord)
     {
         return getColony(w, coord.posX, coord.posY, coord.posZ);
     }
 
-
+    /**
+     * Get colony that contains a given coordinate
+     *
+     * @param w     World
+     * @param x     x-coordinate
+     * @param y     y-coordiante
+     * @param z     z-coordinate
+     * @return      Colony at the given location
+     */
     public static Colony getColony(World w, int x, int y, int z)
     {
         List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.dimensionId);
@@ -105,9 +111,9 @@ public class ColonyManager
     /**
      * Get closest colony by ChunkCoordinate
      *
-     * @param w
-     * @param coord
-     * @return
+     * @param w         World
+     * @param coord     coordinates to get closes colony by
+     * @return          Colony closest to coordinates
      */
     public static Colony getClosestColony(World w, ChunkCoordinates coord)
     {
@@ -117,11 +123,11 @@ public class ColonyManager
     /**
      * Get closest colony by x,y,z
      *
-     * @param w
-     * @param x
-     * @param y
-     * @param z
-     * @return
+     * @param w     World
+     * @param x     x-coordinate
+     * @param y     y-coordinate
+     * @param z     z-coordinate
+     * @return      Colony closest to coordinates
      */
     public static Colony getClosestColony(World w, int x, int y, int z)
     {
@@ -147,9 +153,14 @@ public class ColonyManager
         return closestColony;
     }
 
+    /**
+     * Returns a list of colonies that has the given owner
+     * @param owner     UUID of the owner
+     * @return          List of colonies that belong to given owner UUID
+     */
     public static List<Colony> getColoniesByOwner(UUID owner)
     {
-        List<Colony> results = new ArrayList<Colony>();
+        List<Colony> results = new ArrayList<>();
 
         for (Colony c : colonies.values())
         {
@@ -165,11 +176,11 @@ public class ColonyManager
     /**
      * Get a Building by a World and coordinates
      *
-     * @param w
-     * @param x
-     * @param y
-     * @param z
-     * @return
+     * @param w     World
+     * @param x     x-coordinate
+     * @param y     y-coordinate
+     * @param z     z-coordinate
+     * @return      Building at the given location
      */
     public static Building getBuilding(World w, int x, int y, int z)
     {

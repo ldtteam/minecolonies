@@ -20,13 +20,22 @@ public class BuildingStonemason extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName(){ return STONEMASON; }
+    public String getSchematicName()
+    {
+        return STONEMASON;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 1; }
+    public int getMaxBuildingLevel()
+    {
+        return 1;
+    }
 
     @Override
-    public String getJobName(){ return STONEMASON; }
+    public String getJobName()
+    {
+        return STONEMASON;
+    }
 
     @Override
     public Job createJob(CitizenData citizen)

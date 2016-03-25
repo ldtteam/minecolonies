@@ -166,6 +166,7 @@ public class JobBuilder extends Job
 
     /**
      * Set the schematic of builder's job
+     *
      * @param schematic {@link Schematic} object
      */
     public void setSchematic(Schematic schematic)

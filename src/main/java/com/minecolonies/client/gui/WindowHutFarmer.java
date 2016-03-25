@@ -22,13 +22,15 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 
     private static String HUT_FARMER_RESOURCE_SUFFIX = ":gui/windowHutFarmer.xml";
 
-    private Button buttonPrevPage, buttonNextPage;
+    private Button buttonPrevPage;
+    private Button buttonNextPage;
 
     public WindowHutFarmer(BuildingFarmer.View building)
     {
         super(building, Constants.MOD_ID + HUT_FARMER_RESOURCE_SUFFIX);
     }
 
+    @Override
     public String getBuildingName()
     {
         return "com.minecolonies.gui.workerHuts.farmer";
@@ -51,6 +53,9 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
     }
 
+    /**
+     * Updates the labels on the buttons
+     */
     private void updateButtonLabels()
     {
         try
@@ -63,7 +68,9 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 
         }
         catch (NullPointerException exc)
-        {            MineColonies.logger.error("findPane error, report to mod authors");}
+        {
+            MineColonies.logger.error("findPane error, report to mod authors");
+        }
     }
 
     @Override
@@ -146,16 +153,31 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         updateButtonLabels();
     }
 
+    /**
+     * Returns the sum of all materials at the hut
+     *
+     * @return      The sum of wheat, carrots, melons, potatoes and pumpkins.
+     */
     public int sum()
     {
         return building.wheat + building.carrot + building.melon + building.potato + building.pumpkin;
     }
 
+    /**
+     * Remove one of the materials, described by s
+     * Possible inputs are:
+     *      - potato
+     *      - wheat
+     *      - carrot
+     *      - melon
+     *      - pumpkin
+     *
+     * @param s     String presentation of the material to remove
+     */
     public void removeOthers(String s)
     {
         while(sum() > 100)
         {
-
             int rand = (int)(Math.random()*5);
 
             if (building.potato != 0 && !s.equals("potato") && rand == 0)
@@ -182,7 +204,7 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 
         if(sum() < 100)
         {
-            building.wheat = building.wheat + 100-sum();
+            building.wheat = building.wheat + 100 - sum();
         }
 
         MineColonies.getNetwork().sendToServer(new FarmerCropTypeMessage(building));

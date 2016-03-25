@@ -65,15 +65,16 @@ public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View>
                 findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
                         LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
                 findPaneByID(BUTTON_REPAIR).disable();
-            }
-            else if (building.isBuildingMaxLevel())
+            } else if (building.isBuildingMaxLevel())
             {
                 Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
                 button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
                 button.disable();
             }
         }
-        catch (NullPointerException exc) {}
+        catch (NullPointerException exc) {
+            System.out.println("Opening error, shouldnt happen");
+        }
     }
 
     @Override
@@ -95,16 +96,13 @@ public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View>
 //                //TODO: fire worker
 //                guiButton.displayString = LanguageHandler.format("com.minecolonies.gui.workerHuts.hire");
 //            }
-        }
-        else if (button.getID().equals(BUTTON_RECALL))
+        } else if (button.getID().equals(BUTTON_RECALL))
         {
             MineColonies.getNetwork().sendToServer(new RecallCitizenMessage(building));
-        }
-        else if (button.getID().equals(BUTTON_BUILD))
+        } else if (button.getID().equals(BUTTON_BUILD))
         {
             MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
-        }
-        else if (button.getID().equals(BUTTON_REPAIR))
+        } else if (button.getID().equals(BUTTON_REPAIR))
         {
             MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
         }

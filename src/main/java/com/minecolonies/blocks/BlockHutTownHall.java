@@ -4,7 +4,7 @@ import com.minecolonies.configuration.Configurations;
 
 public class BlockHutTownHall extends BlockHut
 {
-    protected BlockHutTownHall()
+    public BlockHutTownHall()
     {
         super();
         this.workingRange = Configurations.workingRangeTownhall;
@@ -13,6 +13,6 @@ public class BlockHutTownHall extends BlockHut
     @Override
     public String getName()
     {
-        return "blockHutTownhall";
+        return "blockHutTownHall";
     }
 }

@@ -63,6 +63,7 @@ public class JobMiner extends Job
 
     /**
     * Returns the stage of the worker
+     *
     * @return  {@link com.minecolonies.entity.ai.EntityAIWorkMiner.Stage}
     */
     public EntityAIWorkMiner.Stage getStage()
@@ -72,6 +73,7 @@ public class JobMiner extends Job
 
     /**
      * Sets the stage of the worker
+     *
      * @param stage     {@link com.minecolonies.entity.ai.EntityAIWorkMiner.Stage} to set
      */
     public void setStage(EntityAIWorkMiner.Stage stage)
@@ -81,6 +83,7 @@ public class JobMiner extends Job
 
     /**
      * Adds items if job requires items not in inventory
+     *
      * @param stack Stack to check if it is a required item
      */
     public void addItemNeededIfNotAlready(ItemStack stack)

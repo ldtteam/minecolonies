@@ -130,7 +130,8 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
         try
         {
             String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
-            if (currentPage.equals(PAGE_LEVELS)) {
+            if (currentPage.equals(PAGE_LEVELS))
+            {
                 updateUsers();
                 window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
             }
@@ -140,15 +141,19 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
         }
     }
 
+    /**
+     *
+     */
     private void updateUsers()
     {
         if(miner.getColony().getBuilding(miner.getID()) != null)
         {
-            levels = new int[miner.levels.length];
+            levels = new int[miner.levels.length]; // TODO why double assignment?
             levels = miner.levels;
         }
     }
 
+    @Override
     public String getBuildingName()
     {
         return "com.minecolonies.gui.workerHuts.minerHut";

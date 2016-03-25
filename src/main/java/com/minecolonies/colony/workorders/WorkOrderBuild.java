@@ -33,6 +33,7 @@ public class WorkOrderBuild extends WorkOrder
 
     /**
      * Returns the ID of the building (aka ChunkCoordinates)
+     *
      * @return      ID of the building
      */
     public ChunkCoordinates getBuildingId()
@@ -42,6 +43,7 @@ public class WorkOrderBuild extends WorkOrder
 
     /**
      * Returns the level up level of the building
+     *
      * @return  Level after upgrade
      */
     public int getUpgradeLevel()
@@ -51,6 +53,7 @@ public class WorkOrderBuild extends WorkOrder
 
     /**
      * Returns the name after upgrade
+     *
      * @return  Name after yograde
      */
     public String getUpgradeName()

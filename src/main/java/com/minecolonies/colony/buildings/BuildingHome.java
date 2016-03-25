@@ -26,13 +26,22 @@ public class BuildingHome extends BuildingHut
     }
 
     @Override
-    public String getSchematicName(){ return CITIZEN; }
+    public String getSchematicName()
+    {
+        return CITIZEN;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 4; }
+    public int getMaxBuildingLevel()
+    {
+        return 4;
+    }
 
     @Override
-    public int getMaxInhabitants(){ return 2; }
+    public int getMaxInhabitants()
+    {
+        return 2;
+    }
 
     @Override
     public void setBuildingLevel(int level)
@@ -44,13 +53,9 @@ public class BuildingHome extends BuildingHut
     @Override
     public void onDestroyed()
     {
-        for (CitizenData citizen : residents)
-        {
-            if (citizen != null)
-            {
-                citizen.setHomeBuilding(null);
-            }
-        }
+        residents.stream().filter(citizen -> citizen != null).forEach(citizen -> {
+            citizen.setHomeBuilding(null);
+        });
 
         super.onDestroyed();
     }
@@ -70,6 +75,10 @@ public class BuildingHome extends BuildingHut
         }
     }
 
+    /**
+     * Looks for a homeless citizen to add to the current building.
+     * Calls {@link #addResident(CitizenData)}
+     */
     public void addHomelessCitizens()
     {
         for (CitizenData citizen : getColony().getCitizens().values())
@@ -86,6 +95,11 @@ public class BuildingHome extends BuildingHut
         }
     }
 
+    /**
+     * Adds the citizen to the building
+     *
+     * @param citizen       Citizen to add
+     */
     private void addResident(CitizenData citizen)
     {
         residents.add(citizen);
@@ -104,6 +118,12 @@ public class BuildingHome extends BuildingHut
         }
     }
 
+    /**
+     * Returns whether the citizen has this as home or not
+     *
+     * @param citizen       Citizen to check
+     * @return              True if citizen lives here, otherwise false
+     */
     public boolean hasResident(CitizenData citizen)
     {
         return residents.contains(citizen);

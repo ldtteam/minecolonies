@@ -108,9 +108,6 @@ public abstract class Building
         return getClass().equals(c);
     }
 
-    /**
-     * Set up mappings of name->Building and TileEntity->Building
-     */
     static
     {
         addMapping("Baker",         BuildingBaker.class,         BlockHutBaker.class);
@@ -142,9 +139,9 @@ public abstract class Building
      * Create and load a Building given it's saved NBTTagCompound
      * Calls {@link #readFromNBT(net.minecraft.nbt.NBTTagCompound)}
      *
-     * @param colony   The owning colony
-     * @param compound The saved data
-     * @return {@link com.minecolonies.colony.buildings.Building} created from the compound.
+     * @param colony    The owning colony
+     * @param compound  The saved data
+     * @return          {@link com.minecolonies.colony.buildings.Building} created from the compound.
      */
     public static Building createFromNBT(Colony colony, NBTTagCompound compound)
     {
@@ -193,7 +190,7 @@ public abstract class Building
      *
      * @param colony    The owning colony
      * @param parent    The Tile Entity the building belongs to.
-     * @return {@link com.minecolonies.colony.buildings.Building} instance, without NBTTags applied.
+     * @return          {@link com.minecolonies.colony.buildings.Building} instance, without NBTTags applied.
      */
     public static Building create(Colony colony, TileEntityColonyBuilding parent)
     {
@@ -272,7 +269,8 @@ public abstract class Building
 
     /**
      * Returns the colony of the building
-     * @return  {@link com.minecolonies.colony.Colony} of the current object
+     *
+     * @return          {@link com.minecolonies.colony.Colony} of the current object
      */
     public Colony getColony()
     {
@@ -281,7 +279,8 @@ public abstract class Building
 
     /**
      * Returns the {@link ChunkCoordinates} of the current object, also used as ID
-     * @return {@link ChunkCoordinates} of the current object
+     *
+     * @return          {@link ChunkCoordinates} of the current object
      */
     public ChunkCoordinates getID()
     {
@@ -290,7 +289,8 @@ public abstract class Building
 
     /**
      * Returns the {@link ChunkCoordinates} of the current object, also used as ID
-     * @return {@link ChunkCoordinates} of the current object
+     *
+     * @return          {@link ChunkCoordinates} of the current object
      */
     public ChunkCoordinates getLocation()
     {
@@ -299,7 +299,8 @@ public abstract class Building
 
     /**
      * Returns the level of the current object
-     * @return  Level of the current object
+     *
+     * @return          Level of the current object
      */
     public int getBuildingLevel()
     {
@@ -308,6 +309,7 @@ public abstract class Building
 
     /**
      * Sets the current level of the building
+     *
      * @param level     Level of the building
      */
     public void setBuildingLevel(int level)     //TODO Since this is public, dont we want to do some security checks? mw
@@ -319,6 +321,7 @@ public abstract class Building
 
     /**
      * Sets the tile entity field to  {@param te}
+     *
      * @param te    {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
      */
     public void setTileEntity(TileEntityColonyBuilding te)
@@ -328,6 +331,7 @@ public abstract class Building
 
     /**
      * Returns the tile entity that belongs to the colony building
+     *
      * @return      {@link TileEntityColonyBuilding} object of the building
      */
     public TileEntityColonyBuilding getTileEntity()
@@ -355,7 +359,8 @@ public abstract class Building
 
     /**
      * Returns whether the instance is dirty or not.
-     * @return  true if dirty, false if not.
+     *
+     * @return          true if dirty, false if not.
      */
     public final boolean isDirty()
     {
@@ -396,25 +401,29 @@ public abstract class Building
 
     /**
      * Method to remove a citizen.
-     * @param citizen Citizen to be removed
+     *
+     * @param citizen       Citizen to be removed
      */
     public void removeCitizen(CitizenData citizen) {}
 
     /**
      * On tick of the server
-     * @param event {@link cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent}
+     *
+     * @param event         {@link cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
     public void onServerTick(TickEvent.ServerTickEvent event) {}
 
     /**
      * On tick of the world
-     * @param event {@link cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent}
+     *
+     * @param event         {@link cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
     public void onWorldTick(TickEvent.WorldTickEvent event) {}
 
     /**
      * Adds work orders to the {@link Colony#workManager}
-     * @param level     Desired level
+     *
+     * @param level         Desired level
      */
     private void requestWorkOrder(int level)
     {
@@ -454,7 +463,8 @@ public abstract class Building
     //todo 0 north, 1 east .. ?
     /**
      * Sets the rotation of the current building
-     * @param rotation  integer value of the rotation
+     *
+     * @param rotation      integer value of the rotation
      */
     public void setRotation(int rotation)
     {
@@ -463,7 +473,8 @@ public abstract class Building
 
     /**
      * Returns the rotation of the current building
-     * @return  integer value of the rotation
+     *
+     * @return              integer value of the rotation
      */
     public int getRotation()
     {
@@ -473,7 +484,8 @@ public abstract class Building
     //todo possible values?
     /**
      * Sets the style of the building
-     * @param style     String value of the style
+     *
+     * @param style         String value of the style
      */
     public void setStyle(String style)
     {
@@ -482,7 +494,8 @@ public abstract class Building
 
     /**
      * Returns the style of the current building
-     * @return String representation of the current building-style
+     *
+     * @return              String representation of the current building-style
      */
     public String getStyle()
     {
@@ -565,6 +578,7 @@ public abstract class Building
      *      1) hashcode of the name of the class
      *      2) building level
      *      3) max building level
+     *
      * @param buf   ByteBuf to write to
      */
     public void serializeToView(ByteBuf buf)

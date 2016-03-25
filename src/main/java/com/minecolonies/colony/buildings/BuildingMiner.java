@@ -105,6 +105,11 @@ public class BuildingMiner extends BuildingWorker
         return new JobMiner(citizen);
     }
 
+    /**
+     * Adds a level to the levels list
+     *
+     * @param currentLevel      {@link Level}to add
+     */
     public void addLevel(Level currentLevel)
     {
         getLevels().add(currentLevel);
@@ -118,6 +123,11 @@ public class BuildingMiner extends BuildingWorker
         return levels;
     }
 
+    /**
+     * Returns the current level
+     *
+     * @return              Current level
+     */
     public Level getCurrentLevel()
     {
         if(currentLevel >= 0 && currentLevel < levels.size())
@@ -140,6 +150,15 @@ public class BuildingMiner extends BuildingWorker
         }
     }
 
+    /**
+     * Returns the depth limit
+     * Limitted by building level
+     *      - Level 1: 50
+     *      - Level 2: 30
+     *      - Level 3: 5
+     *
+     * @return              Depth limit
+     */
     public int getDepthLimit()
     {
         if(this.getBuildingLevel() == 1)

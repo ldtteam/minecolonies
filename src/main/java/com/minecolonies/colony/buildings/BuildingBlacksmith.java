@@ -19,13 +19,22 @@ public class BuildingBlacksmith extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName(){ return BLACKSMITH; }
+    public String getSchematicName()
+    {
+        return BLACKSMITH;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 3; }
+    public int getMaxBuildingLevel()
+    {
+        return 3;
+    }
 
     @Override
-    public String getJobName(){ return BLACKSMITH; }
+    public String getJobName()
+    {
+        return BLACKSMITH;
+    }
 
     @Override
     public Job createJob(CitizenData citizen)

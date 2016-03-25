@@ -29,6 +29,9 @@ public abstract class Job
     private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<>();
     private static Map<Class<? extends Job>, String> classToNameMap = new HashMap<>();
 
+    private final CitizenData citizen;
+    private List<ItemStack> itemsNeeded = new ArrayList<>();
+
     static
     {
         addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
@@ -38,9 +41,6 @@ public abstract class Job
         addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
         addMapping(MAPPING_FARMER, JobFarmer.class);
     }
-
-    private final CitizenData citizen;
-    private List<ItemStack> itemsNeeded = new ArrayList<>();
 
     public Job(CitizenData entity)
     {
@@ -80,7 +80,7 @@ public abstract class Job
      *
      * @param citizen  The citizen that owns the Job
      * @param compound The NBTTagCompound containing the saved Job data
-     * @return new Job created from the data, or null
+     * @return          new Job created from the data, or null
      */
     public static Job createFromNBT(CitizenData citizen, NBTTagCompound compound)
     {

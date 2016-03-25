@@ -46,16 +46,28 @@ public class BuildingWarehouse extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName(){ return WAREHOUSE; }
+    public String getSchematicName()
+    {
+        return WAREHOUSE;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 4; }
+    public int getMaxBuildingLevel()
+    {
+        return 4;
+    }
 
     @Override
-    public String getJobName(){ return DELIVERYMAN; }
+    public String getJobName()
+    {
+        return DELIVERYMAN;
+    }
 
     @Override
-    public Job createJob(CitizenData citizen){ return new JobDeliveryman(citizen); }
+    public Job createJob(CitizenData citizen)
+    {
+        return new JobDeliveryman(citizen);
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)

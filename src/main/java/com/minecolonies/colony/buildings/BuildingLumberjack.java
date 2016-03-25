@@ -19,13 +19,22 @@ public class BuildingLumberjack extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName(){ return LUMBERJACK; }
+    public String getSchematicName()
+    {
+        return LUMBERJACK;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 3; }
+    public int getMaxBuildingLevel()
+    {
+        return 3;
+    }
 
     @Override
-    public String getJobName(){ return LUMBERJACK; }
+    public String getJobName()
+    {
+        return LUMBERJACK;
+    }
 
     @Override
     public Job createJob(CitizenData citizen)

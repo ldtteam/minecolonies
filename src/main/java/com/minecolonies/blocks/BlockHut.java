@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 /**
  * Abstract class for all minecolonies blocks.
  * The method {@link com.minecolonies.blocks.BlockHut#getName()} is abstract
+ * All BlockHut[something] should extend this class
  */
 public abstract class BlockHut extends Block implements ITileEntityProvider
 {
@@ -50,7 +51,7 @@ public abstract class BlockHut extends Block implements ITileEntityProvider
     /**
      * Method to return the name of the block
      *
-     * @return  Name of the block.
+     * @return          Name of the block.
      */
     public abstract String getName();
 

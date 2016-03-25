@@ -125,6 +125,11 @@ public class BuildingFarmer extends BuildingWorker
         buf.writeInt(pumpkin);
     }
 
+    /**
+     * Returns the farm radius of the building
+     *
+     * @return Farm radius
+     */
     public int getFarmRadius()
     {
         return getBuildingLevel()+3;
