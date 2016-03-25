@@ -306,7 +306,7 @@ public class WindowBuildTool extends Window implements Button.Handler
 
     private void changeSchematic()
     {
-        if(MineColonies.proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isClient())
+        if(MineColonies.isClient())
         {
             String hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
             String style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
