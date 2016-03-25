@@ -92,17 +92,17 @@ public class MineColoniesEntityFishHook extends Entity
         this.citizen = p_i1766_2_;
         this.citizen.fishEntity = this;
         this.setSize(0.25F, 0.25F);
-        this.setLocationAndAngles(p_i1766_2_.posX, p_i1766_2_.posY + 1.62D - (double)p_i1766_2_.yOffset, p_i1766_2_.posZ, p_i1766_2_.rotationYaw, p_i1766_2_.rotationPitch);
-        this.posX -= Math.cos(this.rotationYaw / 180.0F * Math.PI) * 0.16F;
-        this.posY -= 0.10000000149011612D;
-        this.posZ -= Math.sin(this.rotationYaw / 180.0F * Math.PI) * 0.16F;
+        this.setLocationAndAngles(p_i1766_2_.posX, p_i1766_2_.posY + 1.62 - (double)p_i1766_2_.yOffset, p_i1766_2_.posZ, p_i1766_2_.rotationYaw, p_i1766_2_.rotationPitch);
+        this.posX -= Math.cos(this.rotationYaw / 180.0 * Math.PI) * 0.16;
+        this.posY -= 0.10000000149011612;
+        this.posZ -= Math.sin(this.rotationYaw / 180.0 * Math.PI) * 0.16;
         this.setPosition(this.posX, this.posY, this.posZ);
         this.yOffset = 0.0F;
-        double f = 0.4F;
-        this.motionX = -Math.sin(this.rotationYaw / 180.0F * Math.PI) * Math.cos(this.rotationPitch / 180.0F * Math.PI) * f;
-        this.motionZ = Math.cos(this.rotationYaw / 180.0F * Math.PI) * Math.cos(this.rotationPitch / 180.0F * Math.PI) * f;
-        this.motionY = -Math.sin(this.rotationPitch / 180.0F * Math.PI) * f;
-        this.func_146035_c(this.motionX, this.motionY, this.motionZ, 1.5F, 1.0F);
+        double f = 0.4;
+        this.motionX = -Math.sin(this.rotationYaw / 180.0 * Math.PI) * Math.cos(this.rotationPitch / 180.0 * Math.PI) * f;
+        this.motionZ = Math.cos(this.rotationYaw / 180.0 * Math.PI) * Math.cos(this.rotationPitch / 180.0 * Math.PI) * f;
+        this.motionY = -Math.sin(this.rotationPitch / 180.0 * Math.PI) * f;
+        this.func_146035_c(this.motionX, this.motionY, this.motionZ, 1.5, 1.0);
         this.creationTime = System.nanoTime();
     }
 
@@ -114,9 +114,9 @@ public class MineColoniesEntityFishHook extends Entity
         p_146035_1_ /= f2;
         p_146035_3_ /= f2;
         p_146035_5_ /= f2;
-        p_146035_1_ += this.rand.nextGaussian() * 0.007499999832361937D * p_146035_8_;
-        p_146035_3_ += this.rand.nextGaussian() * 0.007499999832361937D * p_146035_8_;
-        p_146035_5_ += this.rand.nextGaussian() * 0.007499999832361937D * p_146035_8_;
+        p_146035_1_ += this.rand.nextGaussian() * 0.007499999832361937 * p_146035_8_;
+        p_146035_3_ += this.rand.nextGaussian() * 0.007499999832361937 * p_146035_8_;
+        p_146035_5_ += this.rand.nextGaussian() * 0.007499999832361937 * p_146035_8_;
         p_146035_1_ *= p_146035_7_;
         p_146035_3_ *= p_146035_7_;
         p_146035_5_ *= p_146035_7_;
@@ -124,8 +124,8 @@ public class MineColoniesEntityFishHook extends Entity
         this.motionY = p_146035_3_;
         this.motionZ = p_146035_5_;
         double f3 = Math.sqrt(p_146035_1_ * p_146035_1_ + p_146035_5_ * p_146035_5_);
-        this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(p_146035_1_, p_146035_5_) * 180.0D / Math.PI);
-        this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(p_146035_3_, f3) * 180.0D / Math.PI);
+        this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(p_146035_1_, p_146035_5_) * 180.0 / Math.PI);
+        this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(p_146035_3_, f3) * 180.0 / Math.PI);
         this.field_146049_av = 0;
     }
 
@@ -141,8 +141,8 @@ public class MineColoniesEntityFishHook extends Entity
     @SideOnly(Side.CLIENT)
     public boolean isInRangeToRenderDist(double p_70112_1_)
     {
-        double d1 = this.boundingBox.getAverageEdgeLength() * 4.0D;
-        d1 *= 64.0D;
+        double d1 = this.boundingBox.getAverageEdgeLength() * 4.0;
+        d1 *= 64.0;
         return p_70112_1_ < d1 * d1;
     }
 
@@ -248,9 +248,9 @@ public class MineColoniesEntityFishHook extends Entity
                 }
 
                 this.field_146051_au = false;
-                this.motionX *= (this.rand.nextDouble() * 0.2F);
-                this.motionY *= (this.rand.nextDouble() * 0.2F);
-                this.motionZ *= (this.rand.nextDouble() * 0.2F);
+                this.motionX *= (this.rand.nextDouble() * 0.2);
+                this.motionY *= (this.rand.nextDouble() * 0.2);
+                this.motionZ *= (this.rand.nextDouble() * 0.2);
                 this.field_146049_av = 0;
                 this.field_146047_aw = 0;
             }
@@ -271,8 +271,8 @@ public class MineColoniesEntityFishHook extends Entity
             }
 
             Entity entity = null;
-            List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0D, 1.0D, 1.0D));
-            double d0 = 0.0D;
+            List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0, 1.0, 1.0));
+            double d0 = 0.0;
             double d2;
 
             for (Object aList : list)
@@ -281,7 +281,7 @@ public class MineColoniesEntityFishHook extends Entity
 
                 if (entity1.canBeCollidedWith() && (entity1 != this.citizen || this.field_146047_aw >= 5))
                 {
-                    double f = 0.3F;
+                    double f = 0.3;
                     AxisAlignedBB axisalignedbb = entity1.boundingBox.expand(f, f, f);
                     MovingObjectPosition movingObjectPosition1 = axisalignedbb.calculateIntercept(vec31, vec3);
 
@@ -289,7 +289,7 @@ public class MineColoniesEntityFishHook extends Entity
                     {
                         d2 = vec31.distanceTo(movingObjectPosition1.hitVec);
 
-                        if (d2 < d0 || d0 == 0.0D)
+                        if (d2 < d0 || d0 == 0.0)
 
                         {
                             entity = entity1;
@@ -324,27 +324,27 @@ public class MineColoniesEntityFishHook extends Entity
                 this.moveEntity(this.motionX, this.motionY, this.motionZ);
                 double f5 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
                 //MOTIONY really?
-                this.rotationYaw = (float)(Math.atan2(this.motionY, this.motionZ) * 180.0D / Math.PI);
+                this.rotationYaw = (float)(Math.atan2(this.motionY, this.motionZ) * 180.0 / Math.PI);
 
-                this.rotationPitch = (float)(Math.atan2(this.motionY, f5) * 180.0D / Math.PI);
-                while (this.rotationPitch - this.prevRotationPitch < -180.0F)
+                this.rotationPitch = (float)(Math.atan2(this.motionY, f5) * 180.0 / Math.PI);
+                while (this.rotationPitch - this.prevRotationPitch < -180.0)
                 {
-                    this.prevRotationPitch -= 360.0F;
+                    this.prevRotationPitch -= 360.0;
                 }
 
-                while (this.rotationPitch - this.prevRotationPitch >= 180.0F)
+                while (this.rotationPitch - this.prevRotationPitch >= 180.0)
                 {
-                    this.prevRotationPitch += 360.0F;
+                    this.prevRotationPitch += 360.0;
                 }
 
-                while (this.rotationYaw - this.prevRotationYaw < -180.0F)
+                while (this.rotationYaw - this.prevRotationYaw < -180.0)
                 {
-                    this.prevRotationYaw -= 360.0F;
+                    this.prevRotationYaw -= 360.0;
                 }
 
-                while (this.rotationYaw - this.prevRotationYaw >= 180.0F)
+                while (this.rotationYaw - this.prevRotationYaw >= 180.0)
                 {
-                    this.prevRotationYaw += 360.0F;
+                    this.prevRotationYaw += 360.0;
                 }
 
                 this.rotationPitch = this.prevRotationPitch + (this.rotationPitch - this.prevRotationPitch) * 0.2F;
@@ -353,35 +353,35 @@ public class MineColoniesEntityFishHook extends Entity
 
                 if (this.onGround || this.isCollidedHorizontally)
                 {
-                    f6 = 0.5F;
+                    f6 = 0.5;
                 }
 
                 byte b0 = 5;
-                double d10 = 0.0D;
+                double d10 = 0.0;
 
                 for (int j = 0; j < b0; ++j)
                 {
-                    double d3 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (double)(j + 0) / (double)b0 - 0.125D + 0.125D;
-                    double d4 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (double)(j + 1) / (double)b0 - 0.125D + 0.125D;
+                    double d3 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (j + 0) / b0 - 0.125 + 0.125;
+                    double d4 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (j + 1) / b0 - 0.125 + 0.125;
                     AxisAlignedBB axIsAlignedBB1 = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d3, this.boundingBox.minZ, this.boundingBox.maxX, d4, this.boundingBox.maxZ);
 
                     if (this.worldObj.isAABBInMaterial(axIsAlignedBB1, Material.water))
                     {
-                        d10 += 1.0D / (double)b0;
+                        d10 += 1.0 / b0;
                     }
                 }
 
-                if (!this.worldObj.isRemote && d10 > 0.0D)
+                if (!this.worldObj.isRemote && d10 > 0.0)
                 {
                     WorldServer worldserver = (WorldServer)this.worldObj;
                     int k = 1;
 
-                    if (this.rand.nextDouble() < 0.25F && this.worldObj.canLightningStrikeAt(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ)))
+                    if (this.rand.nextDouble() < 0.25 && this.worldObj.canLightningStrikeAt(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ)))
                     {
                         k = 2;
                     }
 
-                    if (this.rand.nextDouble() < 0.5F && !this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ)))
+                    if (this.rand.nextDouble() < 0.5 && !this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ)))
                     {
                         --k;
                     }
@@ -414,8 +414,8 @@ public class MineColoniesEntityFishHook extends Entity
                                 this.motionY -= 0.20000000298023224D;
                                 this.playSound("random.splash", 0.25F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
                                 f1 = Math.floor(this.boundingBox.minY);
-                                worldserver.func_147487_a("bubble", this.posX, (f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
-                                worldserver.func_147487_a("wake", this.posX, (f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
+                                worldserver.func_147487_a("bubble", this.posX, (f1 + 1.0), this.posZ, (int)(1.0 + this.width * 20.0), (double)this.width, 0.0, (double)this.width, 0.20000000298023224);
+                                worldserver.func_147487_a("wake", this.posX, (f1 + 1.0), this.posZ, (int)(1.0 + this.width * 20.0), (double)this.width, 0.0, (double)this.width, 0.20000000298023224);
                                 this.field_146045_ax = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
                                 System.out.println("Fish bites here");
                                 citizen.caughtFish=true;
@@ -423,52 +423,52 @@ public class MineColoniesEntityFishHook extends Entity
                             }
                             else
                             {
-                                this.field_146054_aA = this.field_146054_aA + this.rand.nextGaussian() * 4.0D;
-                                f1 = this.field_146054_aA * 0.017453292F;
+                                this.field_146054_aA = this.field_146054_aA + this.rand.nextGaussian() * 4.0;
+                                f1 = this.field_146054_aA * 0.017453292;
                                 f7 = Math.sin(f1);
                                 f2 = Math.cos(f1);
-                                d11 = this.posX + (f7 * this.field_146038_az * 0.1F);
-                                d5 = Math.floor(this.boundingBox.minY) + 1.0F;
-                                d6 = this.posZ + (f2 * this.field_146038_az * 0.1F);
+                                d11 = this.posX + (f7 * this.field_146038_az * 0.1);
+                                d5 = Math.floor(this.boundingBox.minY) + 1.0;
+                                d6 = this.posZ + (f2 * this.field_146038_az * 0.1);
 
-                                if (this.rand.nextDouble() < 0.15F)
+                                if (this.rand.nextDouble() < 0.15)
                                 {
-                                    worldserver.func_147487_a("bubble", d11, d5 - 0.10000000149011612D, d6, 1, f7, 0.1D, f2, 0.0D);
+                                    worldserver.func_147487_a("bubble", d11, d5 - 0.10000000149011612, d6, 1, f7, 0.1D, f2, 0.0);
                                 }
 
-                                double f3 = f7 * 0.04F;
-                                double f4 = f2 * 0.04F;
-                                worldserver.func_147487_a("wake", d11, d5, d6, 0, f4, 0.01D, (-f3), 1.0D);
-                                worldserver.func_147487_a("wake", d11, d5, d6, 0, (-f4), 0.01D, f3, 1.0D);
+                                double f3 = f7 * 0.04;
+                                double f4 = f2 * 0.04;
+                                worldserver.func_147487_a("wake", d11, d5, d6, 0, f4, 0.01, (-f3), 1.0);
+                                worldserver.func_147487_a("wake", d11, d5, d6, 0, (-f4), 0.01, f3, 1.0);
 
                             }
                         }
                         else if (this.field_146040_ay > 0)
                         {
                             this.field_146040_ay -= k;
-                            f1 = 0.15F;
+                            f1 = 0.15;
 
                             if (this.field_146040_ay < 20)
                             {
-                                f1 = f1 + (double)(20 - this.field_146040_ay) * 0.05D;
+                                f1 = f1 + (double)(20 - this.field_146040_ay) * 0.05;
                             }
                             else if (this.field_146040_ay < 40)
                             {
-                                f1 = f1 + (double)(40 - this.field_146040_ay) * 0.02D;
+                                f1 = f1 + (double)(40 - this.field_146040_ay) * 0.02;
                             }
                             else if (this.field_146040_ay < 60)
                             {
-                                f1 = f1 + (double)(60 - this.field_146040_ay) * 0.01D;
+                                f1 = f1 + (double)(60 - this.field_146040_ay) * 0.01;
                             }
 
                             if (this.rand.nextDouble() < f1)
                             {
                                 f7 = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292F;
                                 f2 = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
-                                d11 = this.posX + (Math.sin(f7) * f2 * 0.1F);
-                                d5 = Math.floor(this.boundingBox.minY) + 1.0F;
-                                d6 = this.posZ + (Math.cos(f7) * f2 * 0.1F);
-                                worldserver.func_147487_a("splash", d11, d5, d6, 2 + this.rand.nextInt(2), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
+                                d11 = this.posX + (Math.sin(f7) * f2 * 0.1);
+                                d5 = Math.floor(this.boundingBox.minY) + 1.0;
+                                d6 = this.posZ + (Math.cos(f7) * f2 * 0.1);
+                                worldserver.func_147487_a("splash", d11, d5, d6, 2 + this.rand.nextInt(2), 0.10000000149011612, 0.0, 0.10000000149011612, 0.0);
 
                             }
 
@@ -487,17 +487,17 @@ public class MineColoniesEntityFishHook extends Entity
 
                     if (this.field_146045_ax > 0)
                     {
-                        this.motionY -= (this.rand.nextDouble() * this.rand.nextDouble() * this.rand.nextDouble()) * 0.2D;
+                        this.motionY -= (this.rand.nextDouble() * this.rand.nextDouble() * this.rand.nextDouble()) * 0.2;
                     }
                 }
 
-                d2 = d10 * 2.0D - 1.0D;
-                this.motionY += 0.03999999910593033D * d2;
+                d2 = d10 * 2.0D - 1.0;
+                this.motionY += 0.03999999910593033 * d2;
 
-                if (d10 > 0.0D)
+                if (d10 > 0.0)
                 {
-                    f6 = f6 * 0.9D;
-                    this.motionY *= 0.8D;
+                    f6 = f6 * 0.9;
+                    this.motionY *= 0.8;
                 }
 
                 this.motionX *= f6;
@@ -556,9 +556,9 @@ public class MineColoniesEntityFishHook extends Entity
                 double d2 = this.citizen.posY - this.posY;
                 double d4 = this.citizen.posZ - this.posZ;
                 double d6 = (double)MathHelper.sqrt_double(d0 * d0 + d2 * d2 + d4 * d4);
-                double d8 = 0.1D;
+                double d8 = 0.1;
                 this.field_146043_c.motionX += d0 * d8;
-                this.field_146043_c.motionY += d2 * d8 + (double)MathHelper.sqrt_double(d6) * 0.08D;
+                this.field_146043_c.motionY += d2 * d8 + (double)MathHelper.sqrt_double(d6) * 0.08;
                 this.field_146043_c.motionZ += d4 * d8;
                 b0 = 3;
             }
@@ -569,12 +569,12 @@ public class MineColoniesEntityFishHook extends Entity
                 double d3 = this.citizen.posY - this.posY;
                 double d5 = this.citizen.posZ - this.posZ;
                 double d7 = (double)MathHelper.sqrt_double(d1 * d1 + d3 * d3 + d5 * d5);
-                double d9 = 0.1D;
+                double d9 = 0.1;
                 entityitem.motionX = d1 * d9;
-                entityitem.motionY = d3 * d9 + (double)MathHelper.sqrt_double(d7) * 0.08D;
+                entityitem.motionY = d3 * d9 + (double)MathHelper.sqrt_double(d7) * 0.08;
                 entityitem.motionZ = d5 * d9;
                 this.worldObj.spawnEntityInWorld(entityitem);
-                this.citizen.worldObj.spawnEntityInWorld(new EntityXPOrb(this.citizen.worldObj, this.citizen.posX, this.citizen.posY + 0.5D, this.citizen.posZ + 0.5D, this.rand.nextInt(6) + 1));
+                this.citizen.worldObj.spawnEntityInWorld(new EntityXPOrb(this.citizen.worldObj, this.citizen.posX, this.citizen.posY + 0.D, this.citizen.posZ + 0.5, this.rand.nextInt(6) + 1));
                 b0 = 1;
             }
 
@@ -594,8 +594,8 @@ public class MineColoniesEntityFishHook extends Entity
         double f = this.worldObj.rand.nextDouble();
         int i = EnchantmentHelper.func_151386_g(this.citizen);
         int j = EnchantmentHelper.func_151387_h(this.citizen);
-        double f1 = 0.1F - i * 0.025F - j * 0.01F;
-        double f2 = 0.05F + i * 0.01F - j * 0.01F;
+        double f1 = 0.1 - i * 0.025 - j * 0.01;
+        double f2 = 0.05 + i * 0.01 - j * 0.01;
         f1 = MathHelper.clamp_float((float)f1, 0.0F, 1.0F);
         f2 = MathHelper.clamp_float((float)f2, 0.0F, 1.0F);
 
