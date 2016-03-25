@@ -121,14 +121,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         if(pathResult == null)
         {
+            //TODO at list with saved water
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D);
         }
         else if(pathResult.getPathReachesDestination())
         {
-            if(pathResult.waterLocation != null)
+            if(pathResult.ponds != null)
             {
-                job.water = new Water(world, pathResult.waterLocation);
-                job.water.findWater(world);
+                job.water = new Water(world, pathResult.ponds);
             }
             pathResult = null;
         }

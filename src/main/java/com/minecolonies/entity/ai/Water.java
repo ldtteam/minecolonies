@@ -45,49 +45,12 @@ public class Water
         }
     }
 
-    public void findWater(World world)
-    {
-        //System.out.println("Starting findLogs recursive search.");
-        long startTime = System.nanoTime();
-
-        addAndSearch(world, location);
-        //System.out.println("Search time taken(ms): " + (System.nanoTime()-startTime)/1000000D);
-
-        //Sorts the waterBlocks list depending on the distance to location
-        Collections.sort(waterBlocks, new Comparator<ChunkCoordinates>() {
-            @Override
-            public int compare(ChunkCoordinates c1, ChunkCoordinates c2) {
-                return (int) (c1.getDistanceSquaredToChunkCoordinates(location) - c2.getDistanceSquaredToChunkCoordinates(location));
-            }
-        });
-        //System.out.println("Time including sort(ms): " + (System.nanoTime()-startTime)/1000000D);
-    }
-
-    private void addAndSearch(World world, ChunkCoordinates log)
-    {
-        waterBlocks.add(log);
-        for(int y = -1; y <= 1; y++)
-        {
-            for(int x = -1; x <= 1; x++)
-            {
-                for(int z = -1; z <= 1; z++)
-                {
-                    ChunkCoordinates temp = ChunkCoordUtils.add(log, x, y, z);
-                    if(ChunkCoordUtils.getBlock(world, temp).isWood(null,0,0,0) && !waterBlocks.contains(temp))//TODO reorder if more optimal
-                    {
-                        addAndSearch(world, temp);
-                    }
-                }
-            }
-        }
-    }
-
     public boolean isWater()
     {
         return isWater;
     }
 
-    //TODO checks if it is really water
+    //TODO checks if it is really water and there are at least 20 logs connected to the water block
     private void checkWater(World world, ChunkCoordinates topWater)
     {
         if(!world.getBlock(location.posX, location.posY-1, location.posZ).getMaterial().isLiquid())
@@ -115,7 +78,7 @@ public class Water
         }
     }
 
-    //TODO checks if it is really water
+    //TODO checks if it is really water and there are at least 20 logs connected to the water block
     /**
      * For use in PathJobFindTree
      *
@@ -127,31 +90,19 @@ public class Water
      */
     public static boolean checkWater(IBlockAccess world, int x, int y, int z)
     {
-        //Is the first block a log?
+        //TODO Is the first block a water?
         if(!world.getBlock(x, y, z).isWood(world, x, y, z))
         {
             return false;
         }
 
-        //Get base log, should already be base log
+        //TODO Get water connected to land (Should be already)
         while(world.getBlock(x, y-1, z).isWood(world, x, y, z))
         {
             y--;
         }
 
-        //Make sure tree is on solid ground and tree is not build above cobblestone
-        if(!world.getBlock(x, y-1, z).getMaterial().isSolid() || world.getBlock(x, y-1, z) == Blocks.cobblestone)
-        {
-            return false;
-        }
-
-        //Get top log
-        while(world.getBlock(x, y+1, z).isWood(world, x, y, z))
-        {
-            y++;
-        }
-
-        int leafCount = 0;
+        int waterCount = 0;
         for(int dx = -1; dx <= 1; dx++)
         {
             for(int dz = -1; dz <= 1; dz++)
@@ -160,8 +111,8 @@ public class Water
                 {
                     if(world.getBlock(x + dx, y + dy, z + dz).getMaterial().equals(Material.leaves))
                     {
-                        leafCount++;
-                        if(leafCount >= NUMBER_OF_CONNECTED_WATER)
+                        waterCount++;
+                        if(waterCount >= NUMBER_OF_CONNECTED_WATER)
                         {
                             return true;
                         }
@@ -172,30 +123,11 @@ public class Water
         return false;
     }
 
-    public ChunkCoordinates pollNextWater()
-    {
-        return waterBlocks.poll();
-    }
-
-    public ChunkCoordinates peekNextWater()
-    {
-        return waterBlocks.peek();
-    }
-
-    public boolean hasLakes()
-    {
-        return waterBlocks.size() > 0;
-    }
-
     public ChunkCoordinates getLocation()
     {
         return location;
     }
 
-    public float squareDistance(Water other)
-    {
-        return this.getLocation().getDistanceSquaredToChunkCoordinates(other.getLocation());
-    }
 
     @Override
     public boolean equals(Object o)

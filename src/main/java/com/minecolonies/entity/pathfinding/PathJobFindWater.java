@@ -10,8 +10,10 @@ import net.minecraft.world.World;
  * Find and return a path to the nearest tree
  * Created: May 21, 2015
  *
- * @author Colton
+ * @author Raycoms
  */
+
+//TODO Check if we already where at water (Save locations in fisherman class - call pathfinder with locationsList) - Max CAP of locations
 public class PathJobFindWater extends PathJob
 {
     public static class WaterPathResult extends PathResult
