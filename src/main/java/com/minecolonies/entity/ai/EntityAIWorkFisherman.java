@@ -2,6 +2,8 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.colony.jobs.JobFisherman;
+import com.minecolonies.entity.pathfinding.PathJobFindTree;
+import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.items.MineColoniesEntityFishHook;
 import com.minecolonies.util.InventoryUtils;
@@ -32,6 +34,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private static final String RENDER_META_FISH = "fish";
     public boolean returnedRod=true;
     public int fishesCaught=0;
+    private PathJobFindWater.WaterPathResult pathResult;
+    private static final int SEARCH_RANGE       = 50;
 
     private static Logger logger = LogManager.getLogger("Fisherman");
 
@@ -111,6 +115,30 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             }
         }
     }
+
+    //TODO For future use
+    private void findTree()
+    {
+        if(pathResult == null)
+        {
+            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D);
+        }
+        else if(pathResult.getPathReachesDestination())
+        {
+            if(pathResult.waterLocation != null)
+            {
+                job.water = new Water(world, pathResult.waterLocation);
+                job.water.findWater(world);
+            }
+            pathResult = null;
+        }
+        else if(pathResult.isCancelled())
+        {
+            job.setStage(Stage.PREPARING);
+            pathResult = null;
+        }
+    }
+
 
     private void tryFindWaterAt(int x, int y, int z)
     {
@@ -273,7 +301,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             if (!worker.fishEntity.isInWater() && (worker.fishEntity.onGround || (System.nanoTime() - worker.fishEntity.creationTime)/1000000000 > worker.fishEntity.getTtl()))
             {
                 worker.swingItem();
-
                 int i = worker.fishEntity.func_146034_e();
                 worker.damageItemInHand(i);
                 worker.fishEntity.setDead();

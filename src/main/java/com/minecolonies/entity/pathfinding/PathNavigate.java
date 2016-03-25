@@ -93,6 +93,12 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         return (PathJobFindTree.TreePathResult) setPathJob(new PathJobFindTree(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range), null, speed);
     }
 
+    public PathJobFindWater.WaterPathResult moveToWater(int range, double speed)
+    {
+        ChunkCoordinates start = PathJob.prepareStart(theEntity);
+        return (PathJobFindWater.WaterPathResult) setPathJob(new PathJobFindWater(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range), null, speed);
+    }
+
     @Override
     public boolean tryMoveToEntityLiving(Entity e, double speed)
     {

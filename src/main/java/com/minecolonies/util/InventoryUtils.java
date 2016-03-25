@@ -283,8 +283,8 @@ public class InventoryUtils {
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack item = inventory.getStackInSlot(i);
-            //TODO BlazeRod? Other rods?
-            if (item != null && (item.getItem().getToolClasses(item).contains(tool) || (tool.equals("hoe") && item.getUnlocalizedName().contains("hoe")) || (tool.equals("rod") && item.getUnlocalizedName().contains("rod"))))
+            //Only classic fishingRod recognized as a fishingTool
+            if (item != null && (item.getItem().getToolClasses(item).contains(tool) || (tool.equals("hoe") && item.getUnlocalizedName().contains("hoe")) || (tool.equals("rod") && item.getUnlocalizedName().contains("fishingRod"))))
             {
                 return i;
             }
