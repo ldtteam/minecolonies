@@ -68,22 +68,22 @@ public class Configurations
     };
 
     public static String[] lastNames =                       new String[]
-            {
-            "Smith", 
-            "Johnson",
-            "Jones",
-            "Williams",
-            "Brown",
-            "Miller",
-            "Wilson",
-            "Taylor",
-            "Jackson",
-            "White",
-            "Harris",
-            "Robinson",
-            "Clark",
-            "Wallgreen",
-            "Allen",
-            "Mardle"
+    {
+        "Smith",
+        "Johnson",
+        "Jones",
+        "Williams",
+        "Brown",
+        "Miller",
+        "Wilson",
+        "Taylor",
+        "Jackson",
+        "White",
+        "Harris",
+        "Robinson",
+        "Clark",
+        "Wallgreen",
+        "Allen",
+        "Mardle"
     };
 }
