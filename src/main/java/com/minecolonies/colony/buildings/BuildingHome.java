@@ -17,8 +17,8 @@ public class BuildingHome extends BuildingHut
 {
     private List<CitizenData> residents = new ArrayList<CitizenData>();
 
-    private static final String TAG_RESIDENTS = "residents";
-    private static final String CITIZEN = "Citizen";
+    private static final String TAG_RESIDENTS   = "residents";
+    private static final String CITIZEN         = "Citizen";
 
     public BuildingHome(Colony c, ChunkCoordinates l)
     {

@@ -12,13 +12,11 @@ import net.minecraft.util.ChunkCoordinates;
 
 public abstract class BuildingWorker extends BuildingHut
 {
-    private static final String TAG_WORKER = "worker";
+    private static final    String      TAG_WORKER = "worker";
+    private                 CitizenData worker;
 
-    private CitizenData worker;
-
-    public abstract String getJobName();
-
-    public abstract Job createJob(CitizenData citizen);
+    public abstract         String      getJobName();
+    public abstract         Job         createJob(CitizenData citizen);
 
     public BuildingWorker(Colony c, ChunkCoordinates l)
     {

@@ -16,20 +16,20 @@ Class is not used yet
 public class BuildingFarmer extends BuildingWorker
 {
 
-    public int wheat = 100;
-    public int potato = 0;
-    public int carrot = 0;
-    public int melon = 0;
-    public int pumpkin = 0;
+    public                  int     wheat    = 100;
+    public                  int     potato   = 0;
+    public                  int     carrot   = 0;
+    public                  int     melon    = 0;
+    public                  int     pumpkin  = 0;
 
-    public static final String WHEAT_TAG = "wheat";
-    public static final String POTATO_TAG = "potato";
-    public static final String CARROT_TAG = "carrot";
-    public static final String MELON_TAG = "melon";
-    public static final String PUMPKIN_TAG = "pumpkin";
+    public  static final    String  WHEAT_TAG    = "wheat";
+    public  static final    String  POTATO_TAG   = "potato";
+    public  static final    String  CARROT_TAG   = "carrot";
+    public  static final    String  MELON_TAG    = "melon";
+    public  static final    String  PUMPKIN_TAG  = "pumpkin";
 
-    private static final String FARMER = "Farmer";
-    private static final String TAG_FARMER = "farmer";
+    private static final    String  FARMER      = "Farmer";
+    private static final    String  TAG_FARMER  = "farmer";
 
     public BuildingFarmer(Colony c, ChunkCoordinates l)
     {

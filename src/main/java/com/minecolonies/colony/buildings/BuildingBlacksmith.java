@@ -10,7 +10,7 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingBlacksmith extends BuildingWorker
 {
-    private static final String BLACKSMITH = "Blacksmith";
+    private static final String BLACKSMITH          = "Blacksmith";
     private static final String BLACKSMITH_HUT_NAME = "blacksmithHut";
 
     public BuildingBlacksmith(Colony c, ChunkCoordinates l)

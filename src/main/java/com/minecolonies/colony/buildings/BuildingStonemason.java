@@ -11,7 +11,7 @@ import net.minecraft.util.ChunkCoordinates;
 public class BuildingStonemason extends BuildingWorker
 {
 
-    private static final String STONEMASON = "Stonemason";
+    private static final String STONEMASON          = "Stonemason";
     private static final String STONEMASON_HUT_NAME = "stonemasonHut";
 
     public BuildingStonemason(Colony c, ChunkCoordinates l)

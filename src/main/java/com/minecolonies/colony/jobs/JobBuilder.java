@@ -13,19 +13,19 @@ import net.minecraft.util.ChunkCoordinates;
 public class JobBuilder extends Job
 {
     //TODO save some of this in building
-    protected int              workOrderId;
-    protected Schematic        schematic;
-    protected String           schematicName;
-    protected ChunkCoordinates schematicPos;
-    protected ChunkCoordinates schematicProgress;
-    public    Stage stage;
+    protected               int                 workOrderId;
+    protected               Schematic           schematic;
+    protected               String              schematicName;
+    protected               ChunkCoordinates    schematicPos;
+    protected               ChunkCoordinates    schematicProgress;
+    public                  Stage               stage;
 
-    private static final String TAG_WORK_ORDER = "workorder";
-    private static final String TAG_SCHEMATIC  = "schematic";
-    private static final String TAG_NAME       = "name";
-    private static final String TAG_POSITION   = "position";
-    private static final String TAG_PROGRESS   = "progress";
-    private static final String TAG_STAGE      = "stage";
+    private static final    String              TAG_WORK_ORDER = "workorder";
+    private static final    String              TAG_SCHEMATIC  = "schematic";
+    private static final    String              TAG_NAME       = "name";
+    private static final    String              TAG_POSITION   = "position";
+    private static final    String              TAG_PROGRESS   = "progress";
+    private static final    String              TAG_STAGE      = "stage";
 
     public JobBuilder(CitizenData entity)
     {

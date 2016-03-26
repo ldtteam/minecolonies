@@ -26,19 +26,18 @@ import java.util.*;
 
 public class ColonyManager
 {
-    private static Map<Integer, Colony>       colonies        = new HashMap<>();
-    private static Map<Integer, List<Colony>> coloniesByWorld = new HashMap<>();
-    private static int                        topColonyId     = 0;
+    private static          Map<Integer, Colony>       colonies                     = new HashMap<>();
+    private static          Map<Integer, List<Colony>> coloniesByWorld              = new HashMap<>();
+    private static          int                        topColonyId                  = 0;
 
-    private static Map<Integer, ColonyView>   colonyViews     = new HashMap<>();
+    private static          Map<Integer, ColonyView>   colonyViews                  = new HashMap<>();
 
-    private static int numWorldsLoaded;    //  Used to trigger loading/unloading colonies
-    private static boolean saveNeeded;
+    private static          int                         numWorldsLoaded;    //  Used to trigger loading/unloading colonies
+    private static          boolean                     saveNeeded;
 
-    private final static String FILENAME_MINECOLONIES_PATH = "minecolonies";
-    private final static String FILENAME_MINECOLONIES = "colonies.dat";
-
-    private final static String TAG_COLONIES = "colonies";
+    private static final    String                      FILENAME_MINECOLONIES_PATH  = "minecolonies";
+    private static final    String                      FILENAME_MINECOLONIES       = "colonies.dat";
+    private static final    String                      TAG_COLONIES                = "colonies";
 
     /**
      * Create a new Colony in the given world and at that location

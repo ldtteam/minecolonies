@@ -10,7 +10,7 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingLumberjack extends BuildingWorker
 {
-    private static final String LUMBERJACK = "Lumberjack";
+    private static final String LUMBERJACK          = "Lumberjack";
     private static final String LUMBERJACK_HUT_NAME = "lumberjackHut";
 
     public BuildingLumberjack(Colony c, ChunkCoordinates l)

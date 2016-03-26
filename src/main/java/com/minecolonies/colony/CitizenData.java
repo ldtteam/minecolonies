@@ -21,43 +21,47 @@ import java.util.Random;
 public class CitizenData
 {
     //  Attributes
-    private final int     id;
-    private       String  name;
-    private       boolean isFemale;
-    private       int     textureId;
+    private final           int             id;
+    private                 String          name;
+    private                 boolean         isFemale;
+    private                 int             textureId;
 
-    private Colony         colony;
-    private BuildingHome   homeBuilding;
-    private BuildingWorker workBuilding;
-    private Job            job;
+    private                 Colony          colony;
+    private                 BuildingHome    homeBuilding;
+    private                 BuildingWorker  workBuilding;
+    private                 Job             job;
 
-    private boolean isDirty;
+    private                 boolean         isDirty;
 
     //  Citizen
-    private EntityCitizen entity;
+    private                 EntityCitizen   entity;
 
     //  Placeholder skills
-    private int level;
-    private int strength, stamina, wisdom, intelligence, charisma;
+    private                 int             level;
+    private                 int             strength;
+    private                 int             stamina;
+    private                 int             wisdom;
+    private                 int             intelligence;
+    private                 int             charisma;
 
-    private static final String TAG_ID      = "id";
-    private static final String TAG_NAME    = "name";
-    private static final String TAG_FEMALE  = "female";
-    private static final String TAG_TEXTURE = "texture";
-    private static final String TAG_LEVEL   = "level";
+    private static final    String          TAG_ID                  = "id";
+    private static final    String          TAG_NAME                = "name";
+    private static final    String          TAG_FEMALE              = "female";
+    private static final    String          TAG_TEXTURE             = "texture";
+    private static final    String          TAG_LEVEL               = "level";
 
-    private static final String TAG_ENTITY_ID     = "entity";
-    private static final String TAG_HOME_BUILDING = "homeBuilding";
-    private static final String TAG_WORK_BUILDING = "workBuilding";
+    private static final    String          TAG_ENTITY_ID           = "entity";
+    private static final    String          TAG_HOME_BUILDING       = "homeBuilding";
+    private static final    String          TAG_WORK_BUILDING       = "workBuilding";
 
-    private static final String TAG_SKILLS             = "skills";
-    private static final String TAG_SKILL_STRENGTH     = "strength";
-    private static final String TAG_SKILL_STAMINA      = "stamina";
-    private static final String TAG_SKILL_WISDOM       = "wisdom";
-    private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
-    private static final String TAG_SKILL_CHARISMA     = "charisma";
+    private static final    String          TAG_SKILLS              = "skills";
+    private static final    String          TAG_SKILL_STRENGTH      = "strength";
+    private static final    String          TAG_SKILL_STAMINA       = "stamina";
+    private static final    String          TAG_SKILL_WISDOM        = "wisdom";
+    private static final    String          TAG_SKILL_INTELLIGENCE  = "intelligence";
+    private static final    String          TAG_SKILL_CHARISMA      = "charisma";
 
-    private static final String TAG_JOB = "job";
+    private static final    String          TAG_JOB                 = "job";
 
     /**
      * Create a CitizenData given an ID
@@ -582,8 +586,8 @@ public class CitizenData
     /**
      * Create a CitizenData View given it's saved NBTTagCompound
      *
-     * @param id  The citizen's id
-     * @param buf The network data
+     * @param id    The citizen's id
+     * @param buf   The network data
      * @return      View object of the citizen
      */
     public static View createCitizenDataView(int id, ByteBuf buf)

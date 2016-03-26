@@ -26,51 +26,51 @@ import java.util.*;
 
 public class Colony implements IColony
 {
-    private final int id;
+    private         final   int                             id;
 
     //  Runtime Data
-    private World world = null;
+    private                 World                           world                           = null;
 
     //  Updates and Subscriptions
-    private Set<EntityPlayerMP> subscribers      = new HashSet<EntityPlayerMP>();
-    private boolean             isDirty          = false;   //  TODO - Move to using bits, and more of them for targetted update packets
-    private boolean             isCitizensDirty  = false;
-    private boolean             isBuildingsDirty = false;
+    private                 Set<EntityPlayerMP>             subscribers                     = new HashSet<EntityPlayerMP>();
+    private                 boolean                         isDirty                         = false;
+    private                 boolean                         isCitizensDirty                 = false;
+    private                 boolean                         isBuildingsDirty                = false;
 
     //  General Attributes
-    private String name = "ERROR(Wasn't placed by player)";
-    private final int              dimensionId;
-    private       ChunkCoordinates center;
+    private                 String                          name                            = "ERROR(Wasn't placed by player)";
+    private         final   int                             dimensionId;
+    private                 ChunkCoordinates                center;
 
     //  Administration/permissions
-    private Permissions permissions = new Permissions();
+    private                 Permissions                     permissions                     = new Permissions();
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private BuildingTownHall townhall;
-    private Map<ChunkCoordinates, Building> buildings = new HashMap<ChunkCoordinates, Building>();
+    private                 BuildingTownHall                townhall;
+    private                 Map<ChunkCoordinates, Building> buildings                       = new HashMap<>();
 
     //  Citizenry
-    private Map<Integer, CitizenData> citizens     = new HashMap<Integer, CitizenData>();
-    private int                       topCitizenId = 0;
-    private int                       maxCitizens  = Configurations.maxCitizens;
+    private                 Map<Integer, CitizenData>       citizens                        = new HashMap<Integer, CitizenData>();
+    private                 int                             topCitizenId                    = 0;
+    private                 int                             maxCitizens                     = Configurations.maxCitizens;
 
 
     //  Settings
-    private final static int CITIZEN_CLEANUP_TICK_INCREMENT = /*60*/ 5 * 20;   //  Once a minute
+    private static  final   int                             CITIZEN_CLEANUP_TICK_INCREMENT  = /*60*/ 5 * 20;   //  Once a minute
 
     //  Workload and Jobs
-    private final WorkManager workManager = new WorkManager(this);
+    private         final   WorkManager                     workManager                     = new WorkManager(this);
 
-    private final static String TAG_ID           = "id";
-    private final static String TAG_NAME         = "name";
-    private final static String TAG_DIMENSION    = "dimension";
-    private final static String TAG_CENTER       = "center";
-    private final static String TAG_MAX_CITIZENS = "maxCitizens";
-    private final static String TAG_BUILDINGS    = "buildings";
-    private final static String TAG_CITIZENS     = "citizens";
-    private final static String TAG_WORK         = "work";
-    private final static String TAG_AUTO_HOSTILE = "autoHostile";
+    private static  final   String                          TAG_ID                          = "id";
+    private static  final   String                          TAG_NAME                        = "name";
+    private static  final   String                          TAG_DIMENSION                   = "dimension";
+    private static  final   String                          TAG_CENTER                      = "center";
+    private static  final   String                          TAG_MAX_CITIZENS                = "maxCitizens";
+    private static  final   String                          TAG_BUILDINGS                   = "buildings";
+    private static  final   String                          TAG_CITIZENS                    = "citizens";
+    private static  final   String                          TAG_WORK                        = "work";
+    private static  final   String                          TAG_AUTO_HOSTILE                = "autoHostile";
 
     /**
      * Constructor for a newly created Colony.
@@ -304,16 +304,7 @@ public class Colony implements IColony
         return isCoordInColony(w, coord.posX, coord.posY, coord.posZ);
     }
 
-    /**
-     * Determine if a given chunk coordinate is considered to be within the colony's bounds
-     * Calls {@link #isCoordInColony(World, int, int, int)}
-     *
-     * @param w         World to check
-     * @param x         x-coordinate
-     * @param y         y-coordinate
-     * @param z         z-coordinate
-     * @return          True if inside colony, otherwise false
-     */
+    @Override
     public boolean isCoordInColony(World w, int x, int y, int z)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
@@ -332,14 +323,7 @@ public class Colony implements IColony
         return getDistanceSquared(coord.posX, coord.posY, coord.posZ);
     }
 
-    /**
-     * Returns the squared (x, z) distance to the center
-     *
-     * @param posX      x-coordinate
-     * @param posY      y-coordinate
-     * @param posZ      z-coordinate
-     * @return          Squared distance to the center in (x, z) direction
-     */
+    @Override
     public float getDistanceSquared(int posX, int posY, int posZ) //todo why do we pass in y, if we dont use it
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y

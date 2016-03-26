@@ -9,11 +9,11 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class JobLumberjack extends Job
 {
-    private EntityAIWorkLumberjack.Stage stage = EntityAIWorkLumberjack.Stage.IDLE;
-    public Tree tree;
+    private                 EntityAIWorkLumberjack.Stage    stage       = EntityAIWorkLumberjack.Stage.IDLE;
+    public                  Tree                            tree;
 
-    private static final String TAG_STAGE = "Stage";
-    private static final String TAG_TREE = "Tree";
+    private static final    String                          TAG_STAGE   = "Stage";
+    private static final    String                          TAG_TREE    = "Tree";
 
     public JobLumberjack(CitizenData entity)
     {

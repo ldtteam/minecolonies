@@ -25,7 +25,7 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
         this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
         this.colonyBuffer = Unpooled.buffer();
-        ColonyView.serializeNetworkData(colony, isNewSubscription, colonyBuffer);
+        ColonyView.serializeNetworkData(colony, colonyBuffer, isNewSubscription);
     }
 
     @Override

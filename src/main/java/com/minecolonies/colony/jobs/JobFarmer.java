@@ -11,9 +11,9 @@ import java.util.List;
 
 public class JobFarmer extends Job
 {
-    private static final String TAG_STAGE = "Stage";
+    private static final    String                      TAG_STAGE   = "Stage";
 
-    private EntityAIWorkFarmer.Stage stage = EntityAIWorkFarmer.Stage.WORKING;
+    private                 EntityAIWorkFarmer.Stage    stage       = EntityAIWorkFarmer.Stage.WORKING;
 
     public JobFarmer(CitizenData entity)
     {

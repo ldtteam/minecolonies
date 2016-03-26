@@ -15,22 +15,21 @@ import java.util.*;
 
 public abstract class Job
 {
-    private static final String TAG_TYPE = "type";
-    private static final String TAG_ITEMS_NEEDED = "itemsNeeded";
+    private static final    String                              TAG_TYPE            = "type";
+    private static final    String                              TAG_ITEMS_NEEDED    = "itemsNeeded";
 
-    private static final String MAPPING_PLACEHOLDER = "Placeholder";
-    private static final String MAPPING_BUILDER = "Builder";
-    private static final String MAPPING_DELIVERY = "Deliveryman";
-    private static final String MAPPING_MINER = "Miner";
-    private static final String MAPPING_LUMBERJACK = "Lumberjack";
-    private static final String MAPPING_FARMER = "Farmer";
+    private static final    String                              MAPPING_PLACEHOLDER = "Placeholder";
+    private static final    String                              MAPPING_BUILDER     = "Builder";
+    private static final    String                              MAPPING_DELIVERY    = "Deliveryman";
+    private static final    String                              MAPPING_MINER       = "Miner";
+    private static final    String                              MAPPING_LUMBERJACK  = "Lumberjack";
+    private static final    String                              MAPPING_FARMER      = "Farmer";
 
     //  Job and View Class Mapping
-    private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<>();
-    private static Map<Class<? extends Job>, String> classToNameMap = new HashMap<>();
-
-    private final CitizenData citizen;
-    private List<ItemStack> itemsNeeded = new ArrayList<>();
+    private static          Map<String, Class<? extends Job>>   nameToClassMap      = new HashMap<>();
+    private static          Map<Class<? extends Job>, String>   classToNameMap      = new HashMap<>();
+    private         final   CitizenData                         citizen;
+    private                 List<ItemStack>                     itemsNeeded         = new ArrayList<>();
 
     static
     {
