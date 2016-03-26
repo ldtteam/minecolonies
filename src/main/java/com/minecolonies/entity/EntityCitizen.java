@@ -13,7 +13,6 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.*;
 import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
-import com.minecolonies.items.MineColoniesEntityFishHook;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -69,7 +68,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private Map<String, Integer> statusMessages = new HashMap<>();
     private PathNavigate newNavigator;
     //Connects the fishingHook with the citizen
-    private MineColoniesEntityFishHook fishEntity;
+    private EntityFishHook fishEntity;
     //Will be set true when the citizen caught a fish (to reset the fisherman)
     private boolean caughtFish=false;
     //Skills, may be added more later
@@ -121,8 +120,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         try {
             navigatorField.set(this, this.newNavigator);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace(); //TODO: use a logger
         }
 
         this.getNavigator().setAvoidsWater(true);
@@ -859,7 +858,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
             if(i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventory(), itemStack))
             {
-                this.worldObj.playSoundAtEntity(this, "random.pop", 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                this.worldObj.playSoundAtEntity(this, "random.pop", 0.2f,
+                                                (float) (((this.rand.nextDouble() - this.rand.nextDouble()) * 0.7D + 1.0D) * 2.0D));
                 this.onItemPickup(this, i);
 
                 if(itemStack.stackSize <= 0)
@@ -897,7 +897,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                         new BlockParticleEffectMessage(x, y, z, block, worldObj.getBlockMetadata(x, y, z), BlockParticleEffectMessage.BREAK_BLOCK),
                         new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, x, y, z, 16.0D));
             }
-            worldObj.playSoundEffect((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
+            worldObj.playSoundEffect((float)(x + 0.5D), (float)(y + 0.5D), (float)(z + 0.5D), block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
             worldObj.setBlockToAir(x, y, z);
 
             damageItemInHand(1);
@@ -910,7 +910,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                         new BlockParticleEffectMessage(x, y, z, block, worldObj.getBlockMetadata(x, y, z), 1),//TODO correct side
                         new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, x, y, z, 16.0D));
             }
-            worldObj.playSoundEffect((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F, block.stepSound.getStepResourcePath(), (block.stepSound.getVolume() + 1.0F) / 8.0F, block.stepSound.getPitch() * 0.5F);
+            worldObj.playSoundEffect((float)(x + 0.5D), (float)(y + 0.5D), (float)(z + 0.5D), block.stepSound.getStepResourcePath(),
+
+                                     (float) ((block.stepSound.getVolume() + 1.0D) / 8.0D),
+                                     (float) (block.stepSound.getPitch() * 0.5D));
         }
     }
 
@@ -997,11 +1000,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return diligence;
     }
 
-    public MineColoniesEntityFishHook getFishEntity() {
+    public EntityFishHook getFishEntity() {
         return fishEntity;
     }
 
-    public void setFishEntity(MineColoniesEntityFishHook fishEntity) {
+    public void setFishEntity(EntityFishHook fishEntity) {
         this.fishEntity = fishEntity;
     }
 

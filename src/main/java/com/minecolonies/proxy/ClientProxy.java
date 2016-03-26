@@ -1,7 +1,7 @@
 package com.minecolonies.proxy;
 
 import com.minecolonies.client.render.RenderFishHook;
-import com.minecolonies.items.MineColoniesEntityFishHook;
+import com.minecolonies.entity.EntityFishHook;
 import com.schematica.client.events.TickHandler;
 import com.schematica.client.renderer.RendererSchematicGlobal;
 import com.schematica.world.SchematicWorld;
@@ -58,7 +58,7 @@ public class ClientProxy extends CommonProxy
     public void registerEntityRendering()
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, new RenderBipedCitizen());
-        RenderingRegistry.registerEntityRenderingHandler(MineColoniesEntityFishHook.class, new RenderFishHook());
+        RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, new RenderFishHook());
 
     }
 

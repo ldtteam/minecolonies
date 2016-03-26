@@ -9,7 +9,7 @@ package com.minecolonies.client.render;
  * http://www.gnu.org/licenses/gpl.html
  ******************************************************************************/
 
-        import com.minecolonies.items.MineColoniesEntityFishHook;
+        import com.minecolonies.entity.EntityFishHook;
         import net.minecraft.client.renderer.Tessellator;
         import net.minecraft.client.renderer.entity.Render;
         import net.minecraft.entity.Entity;
@@ -28,7 +28,7 @@ public class RenderFishHook extends Render
 {
     private static final ResourceLocation texture = new ResourceLocation("textures/particle/particles.png");
 
-    private void doRenderFishHook(MineColoniesEntityFishHook entityFishHook, double par2, double par4, double par6, float par9)
+    private void doRenderFishHook(EntityFishHook entityFishHook, double par2, double par4, double par6, float par9)
     {
         GL11.glPushMatrix();
         GL11.glTranslatef((float)par2,(float)par4,(float)par6);
@@ -45,7 +45,7 @@ public class RenderFishHook extends Render
         double f6 = 1.0;
         double f7 = 0.5;
         double f8 = 0.5;
-        GL11.glRotatef(180.0F - this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef((float) (180.0D - this.renderManager.playerViewY), 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
         tessellator.startDrawingQuads();
         tessellator.setNormal(0.0F, 1.0F, 0.0F);
@@ -62,10 +62,10 @@ public class RenderFishHook extends Render
             double f9 = entityFishHook.citizen.getSwingProgress(par9);
             double f10 = Math.sin(Math.sqrt(f9) * Math.PI);
             Vec3 vec3 = Vec3.createVectorHelper(-0.5, 0.03, 0.8);
-            vec3.rotateAroundX(-(entityFishHook.citizen.prevRotationPitch + (entityFishHook.citizen.rotationPitch - entityFishHook.citizen.prevRotationPitch) * par9) * (float)Math.PI / 180.0F);
-            vec3.rotateAroundY(-(entityFishHook.citizen.prevRotationYaw + (entityFishHook.citizen.rotationYaw - entityFishHook.citizen.prevRotationYaw) * par9) * (float)Math.PI / 180.0F);
-            vec3.rotateAroundY((float)f10 * 0.5F);
-            vec3.rotateAroundX((float)-f10 * 0.7F);
+            vec3.rotateAroundX((float) (-(entityFishHook.citizen.prevRotationPitch + (entityFishHook.citizen.rotationPitch - entityFishHook.citizen.prevRotationPitch) * par9) * Math.PI / 180.0D));
+            vec3.rotateAroundY((float) (-(entityFishHook.citizen.prevRotationYaw + (entityFishHook.citizen.rotationYaw - entityFishHook.citizen.prevRotationYaw) * par9) * Math.PI / 180.0D));
+            vec3.rotateAroundY((float) (f10 * 0.5D));
+            vec3.rotateAroundX((float) (-f10 * 0.7D));
             double d3 = entityFishHook.citizen.prevPosX + (entityFishHook.citizen.posX - entityFishHook.citizen.prevPosX) * par9 + vec3.xCoord;
             double d4 = entityFishHook.citizen.prevPosY + (entityFishHook.citizen.posY - entityFishHook.citizen.prevPosY) * par9 + vec3.yCoord;
             double d5 = entityFishHook.citizen.prevPosZ + (entityFishHook.citizen.posZ - entityFishHook.citizen.prevPosZ) * par9 + vec3.zCoord;
@@ -73,7 +73,7 @@ public class RenderFishHook extends Render
 
             if(this.renderManager.options.thirdPersonView > 0)
             {
-                double f11 = (entityFishHook.citizen.prevRenderYawOffset + (entityFishHook.citizen.renderYawOffset - entityFishHook.citizen.prevRenderYawOffset) * par9) * Math.PI / 180.0;
+                double f11 = ((double)entityFishHook.citizen.prevRenderYawOffset + ((double)entityFishHook.citizen.renderYawOffset - (double)entityFishHook.citizen.prevRenderYawOffset) * (double)par9) * Math.PI / 180.0D;
                 double d7 = Math.sin(f11);
                 double d8 = Math.cos(f11);
 
@@ -120,6 +120,6 @@ public class RenderFishHook extends Render
     @Override
     public void doRender(Entity entity, double par2, double par4, double par6, float par8, float par9)
     {
-        this.doRenderFishHook((MineColoniesEntityFishHook)entity, par2, par4, par6, par9);
+        this.doRenderFishHook((EntityFishHook)entity, par2, par4, par6, par9);
     }
 }

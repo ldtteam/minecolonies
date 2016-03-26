@@ -1,6 +1,6 @@
 package com.minecolonies.proxy;
 
-import com.minecolonies.items.MineColoniesEntityFishHook;
+import com.minecolonies.entity.EntityFishHook;
 import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
@@ -75,7 +75,7 @@ public class CommonProxy implements IProxy
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
         EntityRegistry.registerModEntity(EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
-        EntityRegistry.registerModEntity(MineColoniesEntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
+        EntityRegistry.registerModEntity(EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
 
 
     }

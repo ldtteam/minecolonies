@@ -4,17 +4,14 @@ import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.inventory.InventoryCitizen;
-import com.minecolonies.items.MineColoniesEntityFishHook;
+import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.IIcon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.Collections;
@@ -278,8 +275,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
             if (!world.isRemote)
             {
-                world.playSoundAtEntity(worker, "random.bow", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
-                MineColoniesEntityFishHook hook = new MineColoniesEntityFishHook(world,worker);
+                world.playSoundAtEntity(worker, "random.bow", 0.5f,
+                                        (float) (0.4D / (itemRand.nextDouble() * 0.4D + 0.8D)));
+                EntityFishHook hook = new EntityFishHook(world, worker);
                 worker.setFishEntity(hook);
                 world.spawnEntityInWorld(hook);
             }

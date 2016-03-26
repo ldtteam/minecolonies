@@ -1,6 +1,5 @@
-package com.minecolonies.items;
+package com.minecolonies.entity;
 
-import com.minecolonies.entity.EntityCitizen;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Arrays;
@@ -26,7 +25,7 @@ import net.minecraft.util.WeightedRandomFishable;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-public class MineColoniesEntityFishHook extends Entity
+public class EntityFishHook extends Entity
 {
     private static final int ttl=720;
     private static final List possibleDrops_1 = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F), new WeightedRandomFishable(new ItemStack(Items.leather), 10), new WeightedRandomFishable(new ItemStack(Items.bone), 10), new WeightedRandomFishable(new ItemStack(Items.potionitem), 10), new WeightedRandomFishable(new ItemStack(Items.string), 5), (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F), new WeightedRandomFishable(new ItemStack(Items.bowl), 10), new WeightedRandomFishable(new ItemStack(Items.stick), 5), new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1), new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10), new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
@@ -61,7 +60,7 @@ public class MineColoniesEntityFishHook extends Entity
     //Time at which the entity has been created
     private long creationTime;
 
-    public MineColoniesEntityFishHook(World p_i1764_1_)
+    public EntityFishHook(World p_i1764_1_)
     {
         super(p_i1764_1_);
         this.field_146037_g = -1;
@@ -73,7 +72,7 @@ public class MineColoniesEntityFishHook extends Entity
     }
 
     @SideOnly(Side.CLIENT)
-    public MineColoniesEntityFishHook(World p_i1765_1_, double p_i1765_2_, double p_i1765_4_, double p_i1765_6_, EntityCitizen citizen)
+    public EntityFishHook(World p_i1765_1_, double p_i1765_2_, double p_i1765_4_, double p_i1765_6_, EntityCitizen citizen)
     {
         this(p_i1765_1_);
         this.setPosition(p_i1765_2_, p_i1765_4_, p_i1765_6_);
@@ -83,7 +82,7 @@ public class MineColoniesEntityFishHook extends Entity
         this.creationTime = System.nanoTime();
     }
 
-    public MineColoniesEntityFishHook(World p_i1766_1_, EntityCitizen p_i1766_2_)
+    public EntityFishHook(World p_i1766_1_, EntityCitizen p_i1766_2_)
     {
         super(p_i1766_1_);
         this.field_146037_g = -1;
@@ -293,7 +292,7 @@ public class MineColoniesEntityFishHook extends Entity
                     {
                         d2 = vec31.distanceTo(movingObjectPosition1.hitVec);
 
-                        if (d2 < d0 || d0 == 0.0)
+                        if (d2 < d0 || Math.abs(d0) <= 0.001)
 
                         {
                             entity = entity1;
@@ -331,28 +330,30 @@ public class MineColoniesEntityFishHook extends Entity
                 this.rotationYaw = (float)(Math.atan2(this.motionY, this.motionZ) * 180.0 / Math.PI);
 
                 this.rotationPitch = (float)(Math.atan2(this.motionY, f5) * 180.0 / Math.PI);
-                while (this.rotationPitch - this.prevRotationPitch < -180.0)
+                while ((double)this.rotationPitch - (double)this.prevRotationPitch < -180.0)
                 {
                     this.prevRotationPitch -= 360.0;
                 }
 
-                while (this.rotationPitch - this.prevRotationPitch >= 180.0)
+                while ((double)this.rotationPitch - (double)this.prevRotationPitch >= 180.0)
                 {
                     this.prevRotationPitch += 360.0;
                 }
 
-                while (this.rotationYaw - this.prevRotationYaw < -180.0)
+                while ((double)this.rotationYaw - (double)this.prevRotationYaw < -180.0)
                 {
                     this.prevRotationYaw -= 360.0;
                 }
 
-                while (this.rotationYaw - this.prevRotationYaw >= 180.0)
+                while ((double)this.rotationYaw - (double)this.prevRotationYaw >= 180.0)
                 {
                     this.prevRotationYaw += 360.0;
                 }
 
-                this.rotationPitch = this.prevRotationPitch + (this.rotationPitch - this.prevRotationPitch) * 0.2F;
-                this.rotationYaw = this.prevRotationYaw + (this.rotationYaw - this.prevRotationYaw) * 0.2F;
+                this.rotationPitch =
+                        (float) ((double)this.prevRotationPitch + ((double)this.rotationPitch - (double)this.prevRotationPitch) * 0.2D);
+                this.rotationYaw =
+                        (float) ((double)this.prevRotationYaw + ((double)this.rotationYaw - (double)this.prevRotationYaw) * 0.2D);
                 double f6 = 0.92F;
 
                 if (this.onGround || this.isCollidedHorizontally)
@@ -365,7 +366,7 @@ public class MineColoniesEntityFishHook extends Entity
 
                 for (int j = 0; j < b0; ++j)
                 {
-                    double d3 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (j + 0) / b0 - 0.125 + 0.125;
+                    double d3 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * j / b0 - 0.125 + 0.125;
                     double d4 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (j + 1) / b0 - 0.125 + 0.125;
                     AxisAlignedBB axisAlignedBB1 = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d3, this.boundingBox.minZ, this.boundingBox.maxX, d4, this.boundingBox.maxZ);
 
@@ -416,7 +417,8 @@ public class MineColoniesEntityFishHook extends Entity
                             if (this.field_146038_az <= 0)
                             {
                                 this.motionY -= 0.20000000298023224D;
-                                this.playSound("random.splash", 0.25F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
+                                this.playSound("random.splash", 0.25F,
+                                               (float) (1.0D + (this.rand.nextDouble() - this.rand.nextDouble()) * 0.4D));
                                 f1 = Math.floor(this.boundingBox.minY);
                                 worldserver.func_147487_a("bubble", this.posX, (f1 + 1.0), this.posZ, (int)(1.0 + this.width * 20.0), (double)this.width, 0.0, (double)this.width, 0.20000000298023224);
                                 worldserver.func_147487_a("wake", this.posX, (f1 + 1.0), this.posZ, (int)(1.0 + this.width * 20.0), (double)this.width, 0.0, (double)this.width, 0.20000000298023224);
@@ -466,7 +468,7 @@ public class MineColoniesEntityFishHook extends Entity
 
                             if (this.rand.nextDouble() < f1)
                             {
-                                f7 = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292F;
+                                f7 = (double)MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292D;
                                 f2 = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
                                 d11 = this.posX + (Math.sin(f7) * f2 * 0.1);
                                 d5 = Math.floor(this.boundingBox.minY) + 1.0;

@@ -23,6 +23,9 @@ public class Water
         isWater = true;
     }
 
+    //TODO: What if that is an illegal pond of water?
+    // I would suggest making the constructor private
+    // and have some factory method check for water and return one if valid
     Water(World world, ChunkCoordinates water)
     {
         Block block = ChunkCoordUtils.getBlock(world, water);
@@ -130,6 +133,15 @@ public class Water
     public int hashCode()
     {
         return location.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(!(obj instanceof Water)){
+            return false;
+        }
+        Water wobj = (Water)obj;
+        return location.equals(wobj.getLocation());
     }
 
     public void writeToNBT(NBTTagCompound compound)
