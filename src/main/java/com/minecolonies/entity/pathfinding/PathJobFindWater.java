@@ -54,29 +54,20 @@ public class PathJobFindWater extends PathJob
     @Override
     protected boolean isAtDestination(Node n)
     {
-        ChunkCoordinates newPond = new ChunkCoordinates(n.x,n.y,n.z);
-        ChunkCoordinates landBlock = findLandBlockBesidesWater(n);
+        //ChunkCoordinates landBlock = findLandBlockBesidesWater(n);
 
-        if(n.parent == null || ponds.contains(newPond))
+        if(n.parent == null)
         {
             return false;
         }
 
-        if(pondsAreNear(ponds,newPond))
+        /*if(landBlock == null) Probably not necessary
         {
             return false;
-        }
+        }*/
 
-        if(landBlock == null)
-        {
-            return false;
-        }
-
-        if(!world.isAirBlock(n.x,n.y+1,n.z))
-        {
-            return false;
-        }
-
+        //TODO Use parent to know the direction where we come from (We don't have to check the parent field)
+        //Then check all 3 surrounding fields for water -> In order to navigate to the water
         if (n.x != n.parent.x)
         {
             int dx = n.x > n.parent.x ? 1 : -1;
@@ -87,8 +78,26 @@ public class PathJobFindWater extends PathJob
             int dz = n.z > n.parent.z ? 1 : -1;
             return isWater(n.x, n.y, n.z + dz) || isWater(n.x - 1, n.y, n.z) || isWater(n.x + 1, n.y, n.z);
         }
-
     }
+
+    private boolean isWater(int x, int y, int z)
+    {
+        ChunkCoordinates newPond = new ChunkCoordinates(x,y,z);
+
+        if(ponds.contains(newPond) || pondsAreNear(ponds,newPond))
+        {
+            return false;
+        }
+
+        if(Water.checkWater(world, x, y, z))
+        {
+            getResult().ponds = new ChunkCoordinates(x, y, z);
+            return true;
+        }
+
+        return false;
+    }
+
 
     private ChunkCoordinates findLandBlockBesidesWater(Node n)
     {
@@ -119,16 +128,6 @@ public class PathJobFindWater extends PathJob
         return !ponds.stream().anyMatch(compare);
     }
 
-    private boolean isWater(int x, int y, int z)
-    {
-        if(Water.checkWater(world, x, y, z))
-        {
-            getResult().ponds = new ChunkCoordinates(x, y, z);
-            return true;
-        }
-
-        return false;
-    }
 
     @Override
     protected double getNodeResultScore(Node n)

@@ -2,6 +2,7 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
@@ -27,7 +28,6 @@ public class Water
         Block block = ChunkCoordUtils.getBlock(world, water);
         if(block.equals(Blocks.water))
         {
-            //TODO First check if block is connected to land if not search closest land
             checkWater(world, water);
         }
     }
@@ -44,7 +44,7 @@ public class Water
      */
     private void checkWater(World world, ChunkCoordinates water)
     {
-        if(!world.getBlock(location.posX, location.posY-1, location.posZ).getMaterial().isLiquid())
+        if(!world.isAirBlock(location.posX, location.posY+1, location.posZ))
         {
             return;
         }
@@ -67,52 +67,57 @@ public class Water
                 }
             }
         }
-
-        //TODO Is connected to land?
     }
 
     /**
-     * For use in PathJobFindTree
+     * For use in PathJobFindWater
      *
      * @param world the world
      * @param x log x coordinate
      * @param y log y coordinate
      * @param z log z coordinate
-     * @return true if the log is part of a tree
+     * @return true if the water is part of a river, sea ...
      */
     public static boolean checkWater(IBlockAccess world, int x, int y, int z)
     {
-        if(!world.getBlock(x, y, z).equals(Blocks.water))
+        if(!world.getBlock(x, y, z).equals(Blocks.water) || !world.isAirBlock(x,y+1,z))
         {
             return false;
         }
 
-        //TODO Get water connected to land (Should be already)
-        while(world.getBlock(x, y-1, z).isWood(world, x, y, z))
-        {
-            y--;
-        }
-
-        int waterCount = 0;
+        ChunkCoordinates nextWaterBlock = null;
+        int vectorX=0;
+        int vectorZ=0;
+        EntityPlayer mp;
+        //TODO Check if there are at least 20 other waters connected to the water block
+        //TODO Check in all 4 directions
         for(int dx = -1; dx <= 1; dx++)
         {
             for(int dz = -1; dz <= 1; dz++)
             {
-                for(int dy = -1; dy <= 1; dy++)
+                if (world.getBlock(x + dx, y, z + dz).equals(Blocks.water))
                 {
-                    if(world.getBlock(x + dx, y + dy, z + dz).equals(Blocks.water))
-                    {
-                        waterCount++;
-                        if(waterCount >= NUMBER_OF_CONNECTED_WATER)
-                        {
-                            return true;
-                        }
-                    }
+                    nextWaterBlock = new ChunkCoordinates(x + dx, y, z + dz);
+                    vectorX = dx;
+                    vectorZ = dz;
+                    break;
                 }
             }
         }
-        //TODO checks if it is really water and there are at least 20 logs connected to the water block
 
+        //TODO use vectors to calculate 6 blocks to front(isWater) and 3 blocks to each side of the middle block(isWater)
+        //to confirm if the size is sufficient to count as a pond
+        if(nextWaterBlock == null)
+        {
+            return false;
+        }
+
+
+
+        for(int dx = x; dx <= x+6; dx++)
+        {
+            world.getBlock(dx,y,z).equals(Blocks.water);
+        }
         return false;
     }
 

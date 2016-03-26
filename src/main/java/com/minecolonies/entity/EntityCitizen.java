@@ -99,42 +99,30 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
 
-        intelligence = (int)(Math.random()*10)+1;
-        speed = (int)(Math.random()*10)+1;
-        strength = (int)(Math.random()*10)+1;
-        stamina = (int)(Math.random()*10)+1;
-        diligence = (int)(Math.random()*10+1);
-
+        intelligence = (int) (Math.random() * 9) + 1;
+        speed = (int) (Math.random() * 9) + 1;
+        strength = (int) (Math.random() * 9) + 1;
+        stamina = (int) (Math.random() * 9) + 1;
+        diligence = (int) (Math.random() * 9 + 1);
 
         this.renderDistanceWeight = 2.0D;
-
         this.newNavigator = new PathNavigate(this, world);
 
-        boolean useNewNavigation = true;
-        if(useNewNavigation)
-        {
-            if(navigatorField == null)
-            {
-                Field[] fields = EntityLiving.class.getDeclaredFields();
-                for(Field field : fields)
-                {
-                    if(field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
-                    {
-                        field.setAccessible(true);
-                        navigatorField = field;
-                        break;
-                    }
+        if (navigatorField == null) {
+            Field[] fields = EntityLiving.class.getDeclaredFields();
+            for (Field field : fields) {
+                if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class)) {
+                    field.setAccessible(true);
+                    navigatorField = field;
+                    break;
                 }
             }
+        }
 
-            try
-            {
-                navigatorField.set(this, this.newNavigator);
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
+        try {
+            navigatorField.set(this, this.newNavigator);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         this.getNavigator().setAvoidsWater(true);
@@ -607,6 +595,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
     }
 
+    //TODO Write and Read fishing entity from and to Nbt
     @Override
     public void writeEntityToNBT(NBTTagCompound compound)
     {
@@ -631,8 +620,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
         }
         compound.setTag("Inventory", inventoryList);
-
         compound.setInteger("HeldItemSlot", inventory.getHeldItemSlot());
+        fishEntity.writeEntityToNBT(compound);
     }
 
     @Override
@@ -655,6 +644,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
 
         inventory.setHeldItem(compound.getInteger("HeldItemSlot"));
+        fishEntity.readEntityFromNBT(compound);
     }
 
     public int getOffsetTicks()

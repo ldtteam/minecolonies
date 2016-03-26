@@ -7,11 +7,14 @@ import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.items.MineColoniesEntityFishHook;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IIcon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.Collections;
@@ -291,9 +294,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 worker.swingItem();
                 int i = worker.getFishEntity().func_146034_e();
                 worker.damageItemInHand(i);
-                worker.getFishEntity().setDead();
-                worker.setFishEntity(null);
-                //Reposition to water!
+
+                //May be null if the itemInHand has been destroyed
+                if(worker.getFishEntity()!=null)
+                {
+                    worker.getFishEntity().setDead();
+                    worker.setFishEntity(null);
+                }
+
                 job.setStage(Stage.WATER_FOUND);
             }
         }
@@ -378,11 +386,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //Standing on top of the ladder, checking out mine
         if (job.getStage() == Stage.CHECK_WATER)
         {
+            //TODO After the executed a full rotation choose a new fishing spot!
             worker.setAngles(90f,worker.rotationPitch);
 
             worker.getLookHelper();
 
-            //TODO Walk up and down the water a bit and choose a spot
             job.setStage(Stage.START_FISHING);
             return;
         }
@@ -399,6 +407,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
         setDelay(100);
     }
+
+
 
     @Override
     public boolean continueExecuting()
