@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 public class PathJobFindWater extends PathJob
 {
     private static final int MIN_DISTANCE = 10;
+    private static final int MAX_RANGE = 80;
 
     public static class WaterPathResult extends PathResult
     {
@@ -64,15 +65,20 @@ public class PathJobFindWater extends PathJob
             return false;
         }
 
+        if(squareDistance(hutLocation,new ChunkCoordinates(n.x,n.y,n.z))>MAX_RANGE)
+        {
+            return false;
+        }
+
         if (n.x != n.parent.x)
         {
             int dx = n.x > n.parent.x ? 1 : -1;
-            return isWater(n.x + dx, n.y, n.z) || isWater(n.x, n.y, n.z - 1) || isWater(n.x, n.y, n.z + 1);
+            return isWater(n.x + dx, n.y-1, n.z) || isWater(n.x, n.y-1, n.z - 1) || isWater(n.x, n.y-1, n.z + 1);
         }
         else//z
         {
             int dz = n.z > n.parent.z ? 1 : -1;
-            return isWater(n.x, n.y, n.z + dz) || isWater(n.x - 1, n.y, n.z) || isWater(n.x + 1, n.y, n.z);
+            return isWater(n.x, n.y-1, n.z + dz) || isWater(n.x - 1, n.y-1, n.z) || isWater(n.x + 1, n.y-1, n.z);
         }
     }
 

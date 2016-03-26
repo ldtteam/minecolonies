@@ -533,6 +533,11 @@ public class EntityFishHook extends Entity
     @Override
     public void readEntityFromNBT(NBTTagCompound p_70037_1_)
     {
+        if(!citizen.getFishEntity().equals(this))
+        {
+            this.setDead();
+        }
+
         this.field_146037_g = p_70037_1_.getShort("xTile");
         this.field_146048_h = p_70037_1_.getShort("yTile");
         this.field_146050_i = p_70037_1_.getShort("zTile");

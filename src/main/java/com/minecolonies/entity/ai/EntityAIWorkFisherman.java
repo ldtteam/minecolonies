@@ -68,7 +68,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private boolean walkToWater()
     {
-        return walkToBlock(getOwnBuilding().waterLocation);
+        if(job.water == null || job.water.getLocation() == null)
+        {
+            return false;
+        }
+        return walkToBlock(job.water.getLocation());
     }
 
     @Override
@@ -77,41 +81,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return Utils.isFishingTool(stack);
     }
 
-    private void lookForWater()
-    {
-        BuildingFisherman buildingFisherman = getOwnBuilding();
-
-        if (buildingFisherman.foundWater && buildingFisherman.waterLocation != null)
-        {
-            if (world.getBlock(buildingFisherman.waterLocation.posX,
-                    buildingFisherman.waterLocation.posY,
-                    buildingFisherman.waterLocation.posZ).equals(Blocks.water))
-            {
-                job.setStage(Stage.WATER_FOUND);
-                return;
-            }
-            else
-            {
-                buildingFisherman.foundWater = false;
-                buildingFisherman.waterLocation = null;
-            }
-        }
-        int posX = buildingFisherman.getLocation().posX;
-        int posY = buildingFisherman.getLocation().posY;
-        int posZ = buildingFisherman.getLocation().posZ;
-        for (int y = posY; y>posY-10; y--)
-        {
-            for (int x = posX - 10; x < posX + 10; x++)
-            {
-                for (int z = posZ - 10; z < posZ + 10; z++)
-                {
-                    tryFindWaterAt(x, y, z);
-                }
-            }
-        }
-    }
-
-    //TODO For future use
     private void findWater()
     {
         //If 20 ponds are already stored, take a random stored location
@@ -132,6 +101,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 job.water = new Water(world, pathResult.ponds);
             }
             pathResult = null;
+            job.setStage(Stage.CHECK_WATER);
         }
         else if(pathResult.isCancelled())
         {
@@ -139,27 +109,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             pathResult = null;
         }
 
-    }
-
-
-    private void tryFindWaterAt(int x, int y, int z)
-    {
-        BuildingFisherman buildingfisherman = getOwnBuilding();
-        if (buildingfisherman.foundWater)
-        {
-            return;
-        }
-        if (world.getBlock(x, y, z).equals(Blocks.water))
-        {
-            //Check if there is a block covering our water
-            if(!world.getBlock(x,y+1,z).equals(Blocks.air) && !world.getBlock(x,y+2,z).equals(Blocks.air) && !world.getBlock(x,y+3,z).equals(Blocks.air))
-            {
-                return;
-            }
-
-            buildingfisherman.foundWater=true;
-            buildingfisherman.waterLocation = new ChunkCoordinates(x, y, z);
-        }
     }
 
     private void requestTool()
@@ -221,9 +170,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
 
         //Check if there is water really close to me!
-        for(int x = (int)worker.posX-2;x<(int)worker.posX+2;x++)
+        for(int x = (int)worker.posX-3;x<(int)worker.posX+3;x++)
         {
-            for(int z = (int)worker.posX-2;z<(int)worker.posX+2;z++)
+            for(int z = (int)worker.posZ-3;z<(int)worker.posZ+3;z++)
             {
                 if(world.getBlock(x,(int)worker.posY-1,z).equals(Blocks.water))
                 {
@@ -359,12 +308,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             if(worker.hasItemInInventory(Items.fishing_rod))
             {
-                if (!getOwnBuilding().foundWater)
+                if (job.water==null)
                 {
                     job.setStage(Stage.SEARCHING_WATER);
                     return;
                 }
-                job.setStage(Stage.CHECK_WATER);
+                job.setStage(Stage.WATER_FOUND);
             }
             else
             {
@@ -383,6 +332,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //Walking to the water to check out the mine
         if (job.getStage() == Stage.WATER_FOUND)
         {
+            if(job.water==null)
+            {
+                job.setStage(Stage.SEARCHING_WATER);
+            }
             if (walkToWater())
             {
                 return;
@@ -395,6 +348,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             //TODO After the executed a full rotation choose a new fishing spot!
             worker.setAngles(90f,worker.rotationPitch);
+            //TODO Try not to throw the fishhook too wide
 
             worker.getLookHelper();
 
@@ -439,6 +393,5 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         SEARCHING_WATER,
         START_FISHING,
         PREPARING,
-        LADDER_WATER,
     }
 }
