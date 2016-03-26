@@ -31,7 +31,10 @@ public class Water
         Block block = ChunkCoordUtils.getBlock(world, water);
         if(block.equals(Blocks.water))
         {
-            checkWater(world, water);
+            if(checkWater(world, water))
+            {
+                isWater = true;
+            }
         }
     }
 
@@ -45,31 +48,20 @@ public class Water
      * @param world The world the player is in
      * @param water The coordinate to check
      */
-    private void checkWater(World world, ChunkCoordinates water)
+    private boolean checkWater(World world, ChunkCoordinates water)
     {
-        if(!world.isAirBlock(location.posX, location.posY+1, location.posZ))
+        int x = water.posX;
+        int y = water.posY;
+        int z = water.posZ;
+
+        if(!world.getBlock(x, y, z).equals(Blocks.water) || !world.isAirBlock(x, y + 1, z))
         {
-            return;
+            return false;
         }
-        int waterCount = 0;
-        for(int x = -1; x <= 1; x++)
-        {
-            for(int z = -1; z <= 1; z++)
-            {
-                for(int y = -1; y <= 1; y++)
-                {
-                    if(world.getBlock(water.posX + x, water.posY + y, water.posZ + z).equals(Blocks.water))
-                    {
-                        waterCount++;
-                        if(waterCount >= NUMBER_OF_CONNECTED_WATER)
-                        {
-                            isWater = true;
-                            return;
-                        }
-                    }
-                }
-            }
-        }
+
+        //If not one direction contains a pool with length at least 6 and width 7
+        return !(!checkWaterPoolInDirectionX(world, x, y, z, 1) && !checkWaterPoolInDirectionX(world, x, y, z, -1) &&
+                !checkWaterPoolInDirectionZ(world, x, y, z, 1) && !checkWaterPoolInDirectionZ(world, x, y, z, -1));
     }
 
     /**
@@ -83,45 +75,43 @@ public class Water
      */
     public static boolean checkWater(IBlockAccess world, int x, int y, int z)
     {
-        if(!world.getBlock(x, y, z).equals(Blocks.water) || !world.isAirBlock(x,y+1,z))
+        if(!world.getBlock(x, y, z).equals(Blocks.water) || !world.isAirBlock(x, y + 1, z))
         {
             return false;
         }
 
-        ChunkCoordinates nextWaterBlock = null;
-        int vectorX=0;
-        int vectorZ=0;
-        EntityPlayer mp;
-        //TODO Check if there are at least 20 other waters connected to the water block
-        //TODO Check in all 4 directions
-        for(int dx = -1; dx <= 1; dx++)
+        //If not one direction contains a pool with length at least 6 and width 7
+        return !(!checkWaterPoolInDirectionX(world, x, y, z, 1) && !checkWaterPoolInDirectionX(world, x, y, z, -1) &&
+                !checkWaterPoolInDirectionZ(world, x, y, z, 1) && !checkWaterPoolInDirectionZ(world, x, y, z, -1));
+
+    }
+
+    private static boolean checkWaterPoolInDirectionX(IBlockAccess world, int x, int y, int z, int vector)
+    {
+        //Check 6 blocks in direction +/- x
+        for (int dx = x + 6 * vector; dx <= x + 6 * vector; dx++)
         {
-            for(int dz = -1; dz <= 1; dz++)
+            if (!world.getBlock(dx, y, z).equals(Blocks.water))
             {
-                if (world.getBlock(x + dx, y, z + dz).equals(Blocks.water))
-                {
-                    nextWaterBlock = new ChunkCoordinates(x + dx, y, z + dz);
-                    vectorX = dx;
-                    vectorZ = dz;
-                    break;
-                }
+                return false;
             }
         }
+        //Takes the middle x block and searches 3 water blocks to both sides
+        return checkWaterPoolInDirectionZ(world,x + 3 * vector, y, z, 1) && checkWaterPoolInDirectionZ(world,x + 3 * vector, y, z, -1);
+    }
 
-        //TODO use vectors to calculate 6 blocks to front(isWater) and 3 blocks to each side of the middle block(isWater)
-        //to confirm if the size is sufficient to count as a pond
-        if(nextWaterBlock == null)
+    private static boolean checkWaterPoolInDirectionZ(IBlockAccess world, int x, int y, int z, int vector)
+    {
+        //Check 6 blocks in direction +/- z
+        for (int dz = z + 6 * vector; dz <= z + 6 * vector; dz++)
         {
-            return false;
+            if (!world.getBlock(x, y, dz).equals(Blocks.water))
+            {
+                return false;
+            }
         }
-
-
-
-        for(int dx = x; dx <= x+6; dx++)
-        {
-            world.getBlock(dx,y,z).equals(Blocks.water);
-        }
-        return false;
+        //Takes the middle z block and searches 3 water blocks to both sides
+        return checkWaterPoolInDirectionX(world,x, y, z + 3 * vector, 1) && checkWaterPoolInDirectionX(world,x, y, z + 3 * vector, -1);
     }
 
     public ChunkCoordinates getLocation()

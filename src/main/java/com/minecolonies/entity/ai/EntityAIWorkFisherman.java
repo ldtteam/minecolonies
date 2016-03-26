@@ -15,6 +15,7 @@ import net.minecraft.util.ChunkCoordinates;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.Collections;
+import java.util.Random;
 
 /**
  * Fisherman AI class
@@ -25,7 +26,7 @@ import java.util.Collections;
 
 public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 {
-
+    private static final int MAX_PONDS = 20;
     private static final String TOOL_TYPE_ROD= "rod";
     //private static final String RENDER_META_FISH = "fish"; TODO Add
     private int fishesCaught=0;
@@ -113,7 +114,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     //TODO For future use
     private void findWater()
     {
-        if(pathResult == null)
+        //If 20 ponds are already stored, take a random stored location
+        if(job.ponds.size()>=MAX_PONDS)
+        {
+            getOwnBuilding().waterLocation = job.ponds.get(new Random().nextInt(20));
+            return;
+        }
+
+        if(pathResult == null || (!pathResult.isComputing() && !pathResult.getPathReachesDestination()))
         {
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D,job.ponds);
         }
@@ -130,6 +138,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             job.setStage(Stage.PREPARING);
             pathResult = null;
         }
+
     }
 
 
@@ -147,7 +156,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             {
                 return;
             }
-            //TODO Eventually search for bigger water pond
+
             buildingfisherman.foundWater=true;
             buildingfisherman.waterLocation = new ChunkCoordinates(x, y, z);
         }
@@ -201,7 +210,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private void doFishing()
     {
-        //TODO Skills can't be 0!
+        //+1 since earlier some citizens got intelligence 0
         double chance = (Math.random()*500)/(worker.getIntelligence()+1);
         boolean foundCloseWater = false;
         //We really do have our Rod in our inventory?
@@ -364,14 +373,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return;
         }
 
-        //Looking for the ladder to walk to
+        //Looking for the water to walk to
         if (job.getStage() == Stage.SEARCHING_WATER)
         {
-            lookForWater();
+            findWater();
             return;
         }
 
-        //Walking to the ladder to check out the mine
+        //Walking to the water to check out the mine
         if (job.getStage() == Stage.WATER_FOUND)
         {
             if (walkToWater())
@@ -381,7 +390,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             job.setStage(Stage.CHECK_WATER);
         }
 
-        //Standing on top of the ladder, checking out mine
+        //Standing at the water, checking out pond
         if (job.getStage() == Stage.CHECK_WATER)
         {
             //TODO After the executed a full rotation choose a new fishing spot!

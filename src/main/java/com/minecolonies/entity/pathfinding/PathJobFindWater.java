@@ -47,27 +47,23 @@ public class PathJobFindWater extends PathJob
     @Override
     protected double computeHeuristic(int x, int y, int z)
     {
-        return 0;
+        int dx = x - hutLocation.posX;
+        int dy = y - hutLocation.posY;
+        int dz = z - hutLocation.posZ;
+
+        //  Manhattan Distance with a 1/1000th tie-breaker - halved
+        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.501D ;
     }
 
     //Overrides the Superclass in order to find only ponds of water with follow the wished conditions
     @Override
     protected boolean isAtDestination(Node n)
     {
-        //ChunkCoordinates landBlock = findLandBlockBesidesWater(n);
-
         if(n.parent == null)
         {
             return false;
         }
 
-        /*if(landBlock == null) Probably not necessary
-        {
-            return false;
-        }*/
-
-        //TODO Use parent to know the direction where we come from (We don't have to check the parent field)
-        //Then check all 3 surrounding fields for water -> In order to navigate to the water
         if (n.x != n.parent.x)
         {
             int dx = n.x > n.parent.x ? 1 : -1;
@@ -124,6 +120,10 @@ public class PathJobFindWater extends PathJob
 
     private boolean pondsAreNear(ArrayList<ChunkCoordinates> ponds, ChunkCoordinates newPond)
     {
+        if(ponds.isEmpty())
+        {
+            return false;
+        }
         Predicate<ChunkCoordinates> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
         return !ponds.stream().anyMatch(compare);
     }

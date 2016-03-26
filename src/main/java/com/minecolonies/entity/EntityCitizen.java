@@ -38,8 +38,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import scala.util.*;
+
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.Random;
 
 import static net.minecraftforge.common.util.Constants.NBT;
 
@@ -52,6 +55,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int DATA_CITIZEN_ID      = 17;  //  Because Entity UniqueIDs are not identical between client and server
     private static final int DATA_MODEL           = 18;
     private static final int DATA_RENDER_METADATA = 19;
+    private static final int LEVEL_CAP = 10;
     private static Field navigatorField;
     protected Status status = Status.IDLE;
     private boolean isFemale;
@@ -97,12 +101,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
+        Random random = new Random();
 
-        intelligence = (int) (Math.random() * 9) + 1;
-        speed = (int) (Math.random() * 9) + 1;
-        strength = (int) (Math.random() * 9) + 1;
-        stamina = (int) (Math.random() * 9) + 1;
-        diligence = (int) (Math.random() * 9 + 1);
+        intelligence = random.nextInt(LEVEL_CAP-1) + 1;
+        speed        = random.nextInt(LEVEL_CAP-1) + 1;
+        strength     = random.nextInt(LEVEL_CAP-1) + 1;
+        stamina      = random.nextInt(LEVEL_CAP-1) + 1;
+        diligence    = random.nextInt(LEVEL_CAP-1) + 1;
 
         this.renderDistanceWeight = 2.0D;
         this.newNavigator = new PathNavigate(this, world);
@@ -594,7 +599,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
     }
 
-    //TODO Write and Read fishing entity from and to Nbt
     @Override
     public void writeEntityToNBT(NBTTagCompound compound)
     {
@@ -620,7 +624,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         compound.setTag("Inventory", inventoryList);
         compound.setInteger("HeldItemSlot", inventory.getHeldItemSlot());
-        fishEntity.writeEntityToNBT(compound);
     }
 
     @Override
@@ -641,9 +644,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             ItemStack itemstack = ItemStack.loadItemStackFromNBT(tag);
             inventory.setInventorySlotContents(slot, itemstack);
         }
-
         inventory.setHeldItem(compound.getInteger("HeldItemSlot"));
-        fishEntity.readEntityFromNBT(compound);
     }
 
     public int getOffsetTicks()
