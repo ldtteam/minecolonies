@@ -32,7 +32,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private int fishesCaught=0;
     private PathJobFindWater.WaterPathResult pathResult;
     private static final int SEARCH_RANGE       = 50;
-    private int FishingSkill = worker.getIntelligence()*worker.getSpeed()*worker.getExperienceLevel();
+    private int FishingSkill = worker.getIntelligence()*worker.getSpeed()*(worker.getExperienceLevel()+1);
     private static Logger logger = LogManager.getLogger("Fisherman");
 
     //Assign job to fisherman
