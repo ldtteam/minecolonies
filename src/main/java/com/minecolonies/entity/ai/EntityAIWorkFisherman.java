@@ -11,10 +11,8 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -28,7 +26,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 {
     private static final int MAX_PONDS = 20;
     private static final int FISHING_DELAY = 500;
+    private static final int CHANCE = 2;
+    private static final int MIN_DISTANCE_TO_WATER = 3;
     private static final int MAX_FISHES_IN_INV = 10;
+    private static final int DELAY = 100;
+    private static final double ROTATION_ANGLE = 90D;
     private static final String TOOL_TYPE_ROD= "rod";
     private static final String RENDER_META_FISH = "fish"; //TODO Add
     private int fishesCaught=0;
@@ -54,7 +56,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     //TODO Render model ROD/Fish
     private String getRenderMetaFish()
     {
-        if (worker.hasItemInInventory(Blocks.torch))
+        if (worker.hasItemInInventory(Items.fish))
         {
             return RENDER_META_FISH;
         }
@@ -83,7 +85,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //If 20 ponds are already stored, take a random stored location
         if(job.ponds.size()>=MAX_PONDS)
         {
-            job.water = new Water(world,job.ponds.get(new Random().nextInt(20)));
+            job.water = new Water(world,job.ponds.get(new Random().nextInt(MAX_PONDS)));
             return;
         }
 
@@ -145,9 +147,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
         //Check if there is water really close to me!
         boolean foundCloseWater = false;
-        for(int x = (int)worker.posX-3;x<(int)worker.posX+3;x++)
+        for(int x = (int)worker.posX-MIN_DISTANCE_TO_WATER;x<(int)worker.posX+MIN_DISTANCE_TO_WATER;x++)
         {
-            for(int z = (int)worker.posZ-3;z<(int)worker.posZ+3;z++)
+            for(int z = (int)worker.posZ-MIN_DISTANCE_TO_WATER;z<(int)worker.posZ+MIN_DISTANCE_TO_WATER;z++)
             {
                 if(world.getBlock(x,(int)worker.posY-1,z).equals(Blocks.water))
                 {
@@ -197,7 +199,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
             worker.setCaughtFish(false);
             fishesCaught++;
-            if(fishesCaught > 10)
+            if(fishesCaught > MAX_FISHES_IN_INV)
             {
                 fishesCaught=0;
                 job.setStage(Stage.INVENTORY_FULL);
@@ -208,15 +210,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if(worker.getFishEntity()==null)
         {
             //Only sometimes the fisherman gets to throw its Rod (depends on intelligence)
-            if (chance >= 2)
+            if (chance >= CHANCE)
             {
                 return;
             }
 
             if (!world.isRemote)
             {
-                world.playSoundAtEntity(worker, "random.bow", 0.5f,
-                                        (float) (0.4D / (itemRand.nextDouble() * 0.4D + 0.8D)));
+                world.playSoundAtEntity(worker, "random.bow", 0.5F, (float) (0.4D / (itemRand.nextDouble() * 0.4D + 0.8D)));
                 EntityFishHook hook = new EntityFishHook(world, worker);
                 worker.setFishEntity(hook);
                 world.spawnEntityInWorld(hook);
@@ -233,7 +234,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 int i = worker.getFishEntity().func_146034_e();
                 worker.damageItemInHand(i);
 
-                //May be null if the itemInHand has been destroyed
+                //May already be null if the itemInHand has been destroyed
                 if(worker.getFishEntity()!=null)
                 {
                     worker.getFishEntity().setDead();
@@ -330,7 +331,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (job.getStage() == Stage.CHECK_WATER)
         {
             //TODO After the executed a full rotation choose a new fishing spot!
-            worker.setAngles(90f,worker.rotationPitch);
+            worker.setAngles((float)ROTATION_ANGLE,worker.rotationPitch);
             //TODO Different angle to throw the hook not that far
             worker.getLookHelper();
 
@@ -348,7 +349,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             dumpInventory();
         }
-        setDelay(100);
+        setDelay(DELAY);
     }
 
     public enum Stage
