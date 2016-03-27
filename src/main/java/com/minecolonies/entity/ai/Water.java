@@ -2,7 +2,6 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
@@ -13,14 +12,13 @@ import net.minecraft.world.World;
 public class Water
 {
     private static final String TAG_LOCATION = "Location";
-    private static final int NUMBER_OF_CONNECTED_WATER = 20;
 
     private ChunkCoordinates location;
-    private boolean isWater = false;
+    private boolean water = false;
 
     private Water()
     {
-        isWater = true;
+        water = true;
     }
 
     //TODO: What if that is an illegal pond of water?
@@ -29,19 +27,16 @@ public class Water
     Water(World world, ChunkCoordinates water)
     {
         Block block = ChunkCoordUtils.getBlock(world, water);
-        if(block.equals(Blocks.water))
+        if(block.equals(Blocks.water) && checkWater(world, water))
         {
-            if(checkWater(world, water))
-            {
-                isWater = true;
-                location = water;
-            }
+            this.water = true;
+            location = water;
         }
     }
 
     public boolean isWater()
     {
-        return isWater;
+        return water;
     }
 
     /** Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough ( > 20)
@@ -85,7 +80,7 @@ public class Water
 
         //If not one direction contains a pool with length at least 6 and width 7
         return checkWaterPoolInDirectionXThenZ(world, x, y, z, 1) || checkWaterPoolInDirectionXThenZ(world, x, y, z, -1) ||
-                checkWaterPoolInDirectionXThenZ(world, x, y, z, 1) || checkWaterPoolInDirectionXThenZ(world, x, y, z, -1);
+                checkWaterPoolInDirectionZThenX(world, x, y, z, 1) || checkWaterPoolInDirectionZThenX(world, x, y, z, -1);
     }
 
     private static boolean checkWaterPoolInDirectionXThenZ(IBlockAccess world, int x, int y, int z, int vector)
@@ -164,7 +159,7 @@ public class Water
 
     public void writeToNBT(NBTTagCompound compound)
     {
-        if(!isWater)
+        if(!water)
         {
             return;
         }

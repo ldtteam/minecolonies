@@ -27,8 +27,10 @@ import java.util.Random;
 public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 {
     private static final int MAX_PONDS = 20;
+    private static final int FISHING_DELAY = 500;
+    private static final int MAX_FISHES_IN_INV = 10;
     private static final String TOOL_TYPE_ROD= "rod";
-    //private static final String RENDER_META_FISH = "fish"; TODO Add
+    private static final String RENDER_META_FISH = "fish"; //TODO Add
     private int fishesCaught=0;
     private PathJobFindWater.WaterPathResult pathResult;
     private static final int SEARCH_RANGE       = 50;
@@ -52,11 +54,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     //TODO Render model ROD/Fish
     private String getRenderMetaFish()
     {
-
-        /*if (worker.hasItemInInventory(Blocks.torch))
+        if (worker.hasItemInInventory(Blocks.torch))
         {
             return RENDER_META_FISH;
-        }*/
+        }
         return "";
     }
 
@@ -68,11 +69,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private boolean walkToWater()
     {
-        if(job.water == null || job.water.getLocation() == null)
-        {
-            return false;
-        }
-        return walkToBlock(job.water.getLocation());
+        return !(job.water == null || job.water.getLocation() == null) && walkToBlock(job.water.getLocation());
     }
 
     @Override
@@ -118,30 +115,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             needsRod = true;
     }
 
-    private boolean missesItemsInInventory(ItemStack... items)
-    {
-        boolean allClear = true;
-        for (ItemStack stack : items)
-        {
-            int countOfItem = worker.getItemCountInInventory(stack.getItem());
-            if (countOfItem < stack.stackSize)
-            {
-                int itemsLeft = stack.stackSize - countOfItem;
-                ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
-                itemsCurrentlyNeeded.add(requiredStack);
-                allClear = false;
-            }
-        }
-        if (allClear)
-        {
-            return false;
-        }
-        itemsNeeded.clear();
-        Collections.addAll(itemsNeeded, items);
-        job.setStage(Stage.PREPARING);
-        return true;
-    }
-
     private void equipRod()
     {
         worker.setHeldItem(getRodSlot());
@@ -161,8 +134,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private void doFishing()
     {
         //+1 since the level may be 0
-        double chance = (Math.random()*500)/(FishingSkill+1);
-        boolean foundCloseWater = false;
+        double chance = (Math.random()*FISHING_DELAY)/(FishingSkill+1);
+
         //We really do have our Rod in our inventory?
         if(!worker.hasItemInInventory(Items.fishing_rod))
         {
@@ -171,6 +144,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
 
         //Check if there is water really close to me!
+        boolean foundCloseWater = false;
         for(int x = (int)worker.posX-3;x<(int)worker.posX+3;x++)
         {
             for(int z = (int)worker.posZ-3;z<(int)worker.posZ+3;z++)
@@ -182,6 +156,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             }
         }
 
+        //If there is no close water, try to move closer
         if(!foundCloseWater)
         {
             job.setStage(Stage.WATER_FOUND);
@@ -189,7 +164,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
 
         //Check if Rod is held item if not put it as held item
-        if(!worker.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
+        if(worker.getHeldItem()==null || !worker.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
         {
             equipRod();
         }
@@ -204,6 +179,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             if(worker.getFishEntity()==null)
             {
+                worker.setCaughtFish(false);
                 return;
             }
 
@@ -211,7 +187,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             worker.captureDrops = true;
 
             int i = worker.getFishEntity().func_146034_e();
-            worker.getInventory().getHeldItem().damageItem(i, worker);
+            worker.damageItemInHand(i);
             worker.swingItem();
             if (worker.getFishEntity() != null)
             {
@@ -373,20 +349,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             dumpInventory();
         }
         setDelay(100);
-    }
-
-
-
-    @Override
-    public boolean continueExecuting()
-    {
-        return super.continueExecuting();
-    }
-
-    @Override
-    public void resetTask()
-    {
-        super.resetTask();
     }
 
     public enum Stage

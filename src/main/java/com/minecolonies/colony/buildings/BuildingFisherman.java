@@ -33,7 +33,7 @@ public class BuildingFisherman extends BuildingWorker
     @Override
     public String getSchematicName()
     {
-        return "Lumberjack";
+        return "Fisherman";
     }
 
     @Override
