@@ -423,7 +423,6 @@ public class EntityFishHook extends Entity
                                 worldserver.func_147487_a("bubble", this.posX, (f1 + 1.0), this.posZ, (int)(1.0 + this.width * 20.0), (double)this.width, 0.0, (double)this.width, 0.20000000298023224);
                                 worldserver.func_147487_a("wake", this.posX, (f1 + 1.0), this.posZ, (int)(1.0 + this.width * 20.0), (double)this.width, 0.0, (double)this.width, 0.20000000298023224);
                                 this.field_146045_ax = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
-                                System.out.println("Fish bites here");
                                 citizen.setCaughtFish(true);
                             }
                             else
@@ -537,13 +536,15 @@ public class EntityFishHook extends Entity
         {
             this.setDead();
         }
-
-        this.field_146037_g = p_70037_1_.getShort("xTile");
-        this.field_146048_h = p_70037_1_.getShort("yTile");
-        this.field_146050_i = p_70037_1_.getShort("zTile");
-        this.field_146046_j = Block.getBlockById(p_70037_1_.getByte("inTile") & 255);
-        this.field_146044_a = p_70037_1_.getByte("shake") & 255;
-        this.field_146051_au = p_70037_1_.getByte("inGround") == 1;
+        else
+        {
+            this.field_146037_g = p_70037_1_.getShort("xTile");
+            this.field_146048_h = p_70037_1_.getShort("yTile");
+            this.field_146050_i = p_70037_1_.getShort("zTile");
+            this.field_146046_j = Block.getBlockById(p_70037_1_.getByte("inTile") & 255);
+            this.field_146044_a = p_70037_1_.getByte("shake") & 255;
+            this.field_146051_au = p_70037_1_.getByte("inGround") == 1;
+        }
     }
 
     @Override

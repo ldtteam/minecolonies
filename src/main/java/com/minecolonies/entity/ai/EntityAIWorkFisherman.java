@@ -32,7 +32,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private int fishesCaught=0;
     private PathJobFindWater.WaterPathResult pathResult;
     private static final int SEARCH_RANGE       = 50;
-
+    private int FishingSkill = worker.getIntelligence()*worker.getSpeed()*worker.getExperienceLevel();
     private static Logger logger = LogManager.getLogger("Fisherman");
 
     //Assign job to fisherman
@@ -86,7 +86,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //If 20 ponds are already stored, take a random stored location
         if(job.ponds.size()>=MAX_PONDS)
         {
-            getOwnBuilding().waterLocation = job.ponds.get(new Random().nextInt(20));
+            job.water = new Water(world,job.ponds.get(new Random().nextInt(20)));
             return;
         }
 
@@ -99,6 +99,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             if(pathResult.ponds != null)
             {
                 job.water = new Water(world, pathResult.ponds);
+                job.ponds.add(pathResult.ponds);
             }
             pathResult = null;
             job.setStage(Stage.CHECK_WATER);
@@ -159,8 +160,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private void doFishing()
     {
-        //+1 since earlier some citizens got intelligence 0
-        double chance = (Math.random()*500)/(worker.getIntelligence()+1);
+        //+1 since the level may be 0
+        double chance = (Math.random()*500)/(FishingSkill+1);
         boolean foundCloseWater = false;
         //We really do have our Rod in our inventory?
         if(!worker.hasItemInInventory(Items.fishing_rod))
@@ -201,6 +202,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
         if(worker.isCaughtFish())
         {
+            if(worker.getFishEntity()==null)
+            {
+                return;
+            }
+
             worker.setCanPickUpLoot(true);
             worker.captureDrops = true;
 
@@ -335,6 +341,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             if(job.water==null)
             {
                 job.setStage(Stage.SEARCHING_WATER);
+                return;
             }
             if (walkToWater())
             {
@@ -348,8 +355,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             //TODO After the executed a full rotation choose a new fishing spot!
             worker.setAngles(90f,worker.rotationPitch);
-            //TODO Try not to throw the fishhook too wide
-
+            //TODO Different angle to throw the hook not that far
             worker.getLookHelper();
 
             job.setStage(Stage.START_FISHING);

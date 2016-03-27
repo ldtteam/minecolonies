@@ -82,12 +82,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private int stamina;
     private int diligence;
 
-    //The current experience level the player is on.
-    private int experienceLevel;
-    /*The total amount of experience the player has.
+    //The current experience level the citizen is on.
+    private int experienceLevel=1;
+    /*The total amount of experience the citizen has.
     This also includes the amount of experience within their Experience Bar.*/
     private int experienceTotal;
-    //The current amount of experience the player has within their Experience Bar.
+    //The current amount of experience the citizen has within their Experience Bar.
     private double experience;
     //Something with ticks which I didn't understand yet!
     private int nOTicks;
@@ -604,7 +604,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         super.writeEntityToNBT(compound);
         compound.setInteger("status", status.ordinal());
-
+        compound.setDouble("xp",experience);
+        compound.setInteger("xpLevel",experienceLevel);
+        compound.setInteger("xpTotal",experienceTotal);
         if(colony != null && citizenData != null)
         {
             compound.setInteger("colony", colony.getID());
@@ -632,7 +634,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.readEntityFromNBT(compound);
 
         status = Status.values()[compound.getInteger("status")];
-
+        experience = compound.getDouble("xp");
+        experienceLevel = compound.getInteger("xpLevel");
+        experienceTotal = compound.getInteger("xpTotal");
         colonyId = compound.getInteger("colony");
         citizenId = compound.getInteger("citizen");
 
@@ -1016,4 +1020,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void setCaughtFish(boolean caughtFish) {
         this.caughtFish = caughtFish;
     }
+
+    public int getExperienceLevel() {return experienceLevel; }
 }
