@@ -37,7 +37,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private static final int MIN_DISTANCE_TO_WATER = 3;
     private static final int MAX_FISHES_IN_INV = 10;
     private static final int DELAY = 100;
-    private static final float ROTATION_ANGLE = 90f;
+    /**
+     * TODO: fix this with ttl
+     */
+    private static final int NANO_TIME_DIVIDER = 1000 * 1000 * 1000;
+    private static final float ROTATION_ANGLE = 90F;
     private static final String TOOL_TYPE_ROD = "rod";
     /**
      * TODO: add actual rendering of the fish
@@ -52,7 +56,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private int fishingSkill = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
 
-    //Assign job to fisherman
+    /**
+     * Constructor for the Fisherman.
+     *
+     * @param job a fisherman job to use.
+     */
     public EntityAIWorkFisherman(JobFisherman job)
     {
         super(job);
@@ -212,8 +220,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private void doFishing()
     {
-        //+1 since the level may be 0
-        double chance = (Math.random() * FISHING_DELAY) / (fishingSkill + 1);
 
         //We really do have our Rod in our inventory?
         if (!worker.hasItemInInventory(Items.fishing_rod))
@@ -287,7 +293,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (worker.getFishEntity() == null)
         {
             //Only sometimes the fisherman gets to throw its Rod (depends on intelligence)
-            if (chance >= CHANCE)
+            if (testRandomChance())
             {
                 return;
             }
@@ -310,7 +316,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             //Check if hook landed on ground or in water, in some cases the hook bugs -> remove it after 2 minutes
             if (!worker.getFishEntity().isInWater() && (worker.getFishEntity().onGround
                                                         || (System.nanoTime() - worker.getFishEntity()
-                                                                                      .getCreationTime()) / 1000000000
+                                                                                      .getCreationTime())
+                                                           / NANO_TIME_DIVIDER
                                                            > worker.getFishEntity().getTtl()))
             {
                 worker.swingItem();
@@ -327,6 +334,21 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 job.setStage(Stage.WATER_FOUND);
             }
         }
+    }
+
+    /**
+     * Checks how lucky the fisherman is.
+     * <p>
+     * This check depends on his fishing skill.
+     * Which in turn depends on intelligence.
+     *
+     * @return true if he has to wait
+     */
+    private boolean testRandomChance()
+    {
+        //+1 since the level may be 0
+        double chance = (Math.random() * FISHING_DELAY) / (fishingSkill + 1);
+        return chance >= CHANCE;
     }
 
     private void equipRod()
