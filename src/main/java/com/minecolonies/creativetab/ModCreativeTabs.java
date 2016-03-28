@@ -12,7 +12,7 @@ public class ModCreativeTabs
         @Override
         public Item getTabIconItem()
         {
-            return Item.getItemFromBlock(ModBlocks.blockHutTownhall);
+            return Item.getItemFromBlock(ModBlocks.blockHutTownHall);
         }
     };
 }

@@ -11,9 +11,9 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class JobDeliveryman extends Job
 {
-    private ChunkCoordinates destination;
+    private                 ChunkCoordinates    destination;
 
-    private static final String TAG_DESTINATION = "destination";
+    private static final    String              TAG_DESTINATION = "destination";
 
     public JobDeliveryman(CitizenData entity)
     {

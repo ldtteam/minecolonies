@@ -323,6 +323,18 @@ public class Utils
         return number * number;
     }
 
+    /**
+     * Checks if the flag is set in the data
+     * E.G.
+     *      - Flag: 000101
+     *      - Data: 100101
+     *      - All Flags are set in data, so returns true.
+     *          Some more flags are set, but not take into account
+     *
+     * @param data  Data to check flag in
+     * @param flag  Flag to check whether it is set or not
+     * @return      True if flag is set, otherwise false.
+     */
     public static boolean testFlag(int data, int flag)
     {
         return (data & flag) == flag;

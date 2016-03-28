@@ -13,6 +13,6 @@ public class BlockHutTownHall extends BlockHut
     @Override
     public String getName()
     {
-        return "blockHutTownhall";
+        return "blockHutTownHall";
     }
 }

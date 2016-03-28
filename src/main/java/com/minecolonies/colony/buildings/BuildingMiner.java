@@ -23,29 +23,29 @@ import java.util.List;
 
 public class BuildingMiner extends BuildingWorker
 {
-    private static final String TAG_FLOOR_BLOCK    = "floorBlock";//TODO: is this something that needs to be saved? id say yea mw
-    private static final String TAG_FENCE_BLOCK    = "fenceBlock";
-    private static final String TAG_STARTING_LEVEL = "startingLevelShaft";
-    private static final String TAG_LEVELS         = "levels";
-    private static final String TAG_CLEARED        = "clearedShaft";
-    private static final String TAG_SLOCATION      = "shaftLocation";
-    private static final String TAG_VECTORX        = "vectorx";
-    private static final String TAG_VECTORZ        = "vectorz";
-    private static final String TAG_CLOCATION      = "cobblelocation";
-    private static final String TAG_ACTIVE         = "activeNodeint";
-    private static final String TAG_CURRENT_LEVEL  = "currentLevel";
-    private static final String TAG_SN             = "StartingNode";
-    private static final String TAG_LLOCATION      = "ladderlocation";
-    private static final String TAG_LADDER         = "found_ladder";
+    private static final String TAG_FLOOR_BLOCK     = "floorBlock";//TODO: is this something that needs to be saved? id say yea mw
+    private static final String TAG_FENCE_BLOCK     = "fenceBlock";
+    private static final String TAG_STARTING_LEVEL  = "startingLevelShaft";
+    private static final String TAG_LEVELS          = "levels";
+    private static final String TAG_CLEARED         = "clearedShaft";
+    private static final String TAG_SLOCATION       = "shaftLocation";
+    private static final String TAG_VECTORX         = "vectorx";
+    private static final String TAG_VECTORZ         = "vectorz";
+    private static final String TAG_CLOCATION       = "cobblelocation";
+    private static final String TAG_ACTIVE          = "activeNodeint";
+    private static final String TAG_CURRENT_LEVEL   = "currentLevel";
+    private static final String TAG_SN              = "StartingNode";
+    private static final String TAG_LLOCATION       = "ladderlocation";
+    private static final String TAG_LADDER          = "found_ladder";
 
-    public Block floorBlock         = Blocks.planks;
-    public Block fenceBlock         = Blocks.fence;
+    public Block            floorBlock              = Blocks.planks;
+    public Block            fenceBlock              = Blocks.fence;
 
-    public Node activeNode;
+    public Node             activeNode;
     /**
      * Here we can detect multiples of 5
      */
-    public int   startingLevelShaft = 0;
+    public int              startingLevelShaft      = 0;
     /**
      * The location of the topmost cobblestone the ladder starts at
      */
@@ -53,19 +53,19 @@ public class BuildingMiner extends BuildingWorker
     /**
      * True if shaft is at bottom limit
      */
-    public boolean clearedShaft      = false;
-    public int     startingLevelNode = 0; //Save in hut
-    public int     active            = 0;
-    public int     currentLevel      = 0;
+    public boolean          clearedShaft            = false;
+    public int              startingLevelNode       = 0; //Save in hut
+    public int              active                  = 0;
+    public int              currentLevel            = 0;
     public ChunkCoordinates shaftStart;
     /**
      * Ladder orientation in x
      */
-    public int vectorX = 1;
+    public int              vectorX                 = 1;
     /**
      * Ladder orientation in y
      */
-    public int vectorZ = 1;
+    public int              vectorZ                 = 1;
     /**
      * The location of the topmost ladder in the shaft
      */
@@ -73,8 +73,8 @@ public class BuildingMiner extends BuildingWorker
     /**
      * True if a ladder is found
      */
-    public  boolean     foundLadder = false;
-    private List<Level> levels      = new ArrayList<>();     //Stores the levels of the miners mine. This could be a map<depth,level>
+    public  boolean         foundLadder             = false;
+    private List<Level>     levels                  = new ArrayList<>();     //Stores the levels of the miners mine. This could be a map<depth,level>
 
     public BuildingMiner(Colony c, ChunkCoordinates l)
     {
@@ -105,6 +105,11 @@ public class BuildingMiner extends BuildingWorker
         return new JobMiner(citizen);
     }
 
+    /**
+     * Adds a level to the levels list
+     *
+     * @param currentLevel      {@link Level}to add
+     */
     public void addLevel(Level currentLevel)
     {
         getLevels().add(currentLevel);
@@ -118,6 +123,11 @@ public class BuildingMiner extends BuildingWorker
         return levels;
     }
 
+    /**
+     * Returns the current level
+     *
+     * @return              Current level
+     */
     public Level getCurrentLevel()
     {
         if(currentLevel >= 0 && currentLevel < levels.size())
@@ -140,6 +150,15 @@ public class BuildingMiner extends BuildingWorker
         }
     }
 
+    /**
+     * Returns the depth limit
+     * Limitted by building level
+     *      - Level 1: 50
+     *      - Level 2: 30
+     *      - Level 3: 5
+     *
+     * @return              Depth limit
+     */
     public int getDepthLimit()
     {
         if(this.getBuildingLevel() == 1)

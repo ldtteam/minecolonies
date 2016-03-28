@@ -18,13 +18,22 @@ public class BuildingBuilder extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName(){ return BUILDER; }
+    public String getSchematicName()
+    {
+        return BUILDER;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 2; }
+    public int getMaxBuildingLevel()
+    {
+        return 2;
+    }
 
     @Override
-    public String getJobName(){ return BUILDER; }
+    public String getJobName()
+    {
+        return BUILDER;
+    }
 
     @Override
     public Job createJob(CitizenData citizen)

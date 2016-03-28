@@ -13,10 +13,19 @@ import static com.minecolonies.configuration.Configurations.*;
  */
 public class ConfigurationHandler
 {
-    private static final String CATEGORY_GAMEPLAY = "gameplay";
-    private static final String CATEGORY_PATHFINDING = "pathfinding";
-    private static final String CATEGORY_NAMES    = "names";
+    private static final String CATEGORY_GAMEPLAY       = "gameplay";
+    private static final String CATEGORY_PATHFINDING    = "pathfinding";
+    private static final String CATEGORY_NAMES          = "names";
 
+    private static final String FORMAT_RANGE            = "%s (range: %s ~ %s, default: %s)";
+
+    /**
+     * Initializes the configuration.
+     * Reads all options from the file, and sets those parameters, and saves those in {@link Configurations}
+     * Saves file after reading
+     *
+     * @param file      File to read input from
+     */
     public static void init(File file)
     {
         Configuration config = new Configuration(file);
@@ -52,8 +61,18 @@ public class ConfigurationHandler
         }
     }
 
-    private static final String FORMAT_RANGE = "%s (range: %s ~ %s, default: %s)";
-
+    /**
+     * Returns the value in the config for <code>key</code>
+     *
+     * @param config        {@link Configuration} object
+     * @param category      Category of the value to read
+     * @param key           Key of the value to read
+     * @param defaultValue  Default value for the value to read
+     * @param min           Minimum accepted value
+     * @param max           Maximum accepted vakue
+     * @param comment       Comment in config file
+     * @return              Value in the configuration file
+     */
     private static int getClampedInt(Configuration config, String category, String key, int defaultValue, int min, int max, String comment)
     {
         return config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt();

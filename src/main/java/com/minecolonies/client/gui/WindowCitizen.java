@@ -29,6 +29,7 @@ public class WindowCitizen extends Window implements Button.Handler
         this.citizen = citizen;
     }
 
+    @Override
     public void onOpened()
     {
         try

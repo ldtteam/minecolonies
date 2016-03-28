@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 
 public final class ModBlocks
 {
-    public static final Block blockHutTownhall = new BlockHutTownHall();
+    public static final Block blockHutTownHall = new BlockHutTownHall();
     public static final Block blockHutCitizen = new BlockHutCitizen();
     public static final Block blockHutMiner = new BlockHutMiner();
     public static final Block blockHutLumberjack = new BlockHutLumberjack();

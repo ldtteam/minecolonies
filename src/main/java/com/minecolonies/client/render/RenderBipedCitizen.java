@@ -55,6 +55,9 @@ public class RenderBipedCitizen extends RenderBiped
         idToFemaleModelMap.put(Model.FARMER,        new ModelEntityFarmerFemale());
     }
 
+    /**
+     * Renders model, see {@link RenderBiped}
+     */
     public RenderBipedCitizen()
     {
         super(defaultModelMale, 0.5f);

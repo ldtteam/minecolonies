@@ -37,6 +37,7 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
     }
 
+    @Override
     public String getBuildingName()
     {
         return "com.minecolonies.gui.workerHuts.warehouse";
@@ -59,6 +60,9 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
     }
 
+    /**
+     * Update the labels on the buttons
+     */
     private void updateButtonLabels()
     {
         try
@@ -141,6 +145,12 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
         updateButtonLabels();
     }
 
+    /**
+     * Returns specific string depending on the boolean value
+     *
+     * @param bool      Boolean value to check
+     * @return          String depending on boolean value
+     */
     private String getYesOrNo(boolean bool)
     {
         return bool ? LanguageHandler.format("gui.yes") : LanguageHandler.format("gui.no");

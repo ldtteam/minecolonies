@@ -23,17 +23,25 @@ public class Schematics
 {
     private static Map<String, List<String>> hutStyleMap = new HashMap<>();//Hut,Styles
 
+    /**
+     * Calls {@link #loadHutStyleMap()}
+     */
     public static void init()
     {
         loadHutStyleMap();
     }
 
+    /**
+     * Loads all styles saved in ["/assets/minecolonies/schematics/"]
+     * Puts these in {@link #hutStyleMap}, with key being the name of the hut (E.G. Lumberjack)
+     *  and the value is a list of styles
+     */
     private static void loadHutStyleMap()
     {
         try
         {
             URI uri = ColonyManager.class.getResource("/assets/minecolonies/schematics/").toURI();
-            System.out.println(uri.toString());
+            System.out.println(uri.toString());     //todo why do we print this
             Path basePath;
 
             if (uri.getScheme().equals("jar"))
@@ -70,7 +78,7 @@ public class Schematics
 
                         if (!hutStyleMap.containsKey(hut))
                         {
-                            hutStyleMap.put(hut, new ArrayList<String>());
+                            hutStyleMap.put(hut, new ArrayList<>());
                         }
                         hutStyleMap.get(hut).add(style);
                     }
@@ -84,11 +92,23 @@ public class Schematics
         }
     }
 
+    /**
+     * Returns a set of huts.
+     * This is the key set of {@link #hutStyleMap}
+     *
+     * @return  Set of huts with a schematic
+     */
     public static Set<String> getHuts()
     {
         return hutStyleMap.keySet();
     }
 
+    /**
+     * Returns a lst of styles for one specific hut
+     *
+     * @param hut       Hut to get styles for
+     * @return          List of styles
+     */
     public static List<String> getStylesForHut(String hut)
     {
         return hutStyleMap.get(hut);
@@ -97,7 +117,7 @@ public class Schematics
     /**
      * For use on client side by the ColonyStylesMessage
      *
-     * @param stylesMap new hutStyleMap
+     * @param stylesMap     new hutStyleMap
      */
     @SideOnly(Side.CLIENT)
     public static void setStyles(Map<String, List<String>> stylesMap)

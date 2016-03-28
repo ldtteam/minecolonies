@@ -11,9 +11,9 @@ import java.util.List;
 
 public class JobFarmer extends Job
 {
-    private static final String TAG_STAGE = "Stage";
+    private static final    String                      TAG_STAGE   = "Stage";
 
-    private EntityAIWorkFarmer.Stage stage = EntityAIWorkFarmer.Stage.WORKING;
+    private                 EntityAIWorkFarmer.Stage    stage       = EntityAIWorkFarmer.Stage.WORKING;
 
     public JobFarmer(CitizenData entity)
     {
@@ -51,6 +51,7 @@ public class JobFarmer extends Job
 
     /**
      * Sets the stage of the worker
+     *
      * @param stage     {@link com.minecolonies.entity.ai.EntityAIWorkFarmer.Stage} to set
      */
     public void setStage(EntityAIWorkFarmer.Stage stage)
@@ -60,6 +61,7 @@ public class JobFarmer extends Job
 
     /**
      * Returns the stage of the worker
+     *
      * @return  {@link com.minecolonies.entity.ai.EntityAIWorkFarmer.Stage}
      */
     public EntityAIWorkFarmer.Stage getStage()
@@ -69,6 +71,7 @@ public class JobFarmer extends Job
 
     /**
      * Adds items if job requires items not in inventory
+     *
      * @param stack Stack to check if it is a required item
      */
     public void addItemNeededIfNotAlready(ItemStack stack)

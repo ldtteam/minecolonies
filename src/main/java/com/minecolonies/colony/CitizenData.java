@@ -21,43 +21,47 @@ import java.util.Random;
 public class CitizenData
 {
     //  Attributes
-    private final int     id;
-    private       String  name;
-    private       boolean isFemale;
-    private       int     textureId;
+    private final           int             id;
+    private                 String          name;
+    private                 boolean         isFemale;
+    private                 int             textureId;
 
-    private Colony         colony;
-    private BuildingHome   homeBuilding;
-    private BuildingWorker workBuilding;
-    private Job            job;
+    private                 Colony          colony;
+    private                 BuildingHome    homeBuilding;
+    private                 BuildingWorker  workBuilding;
+    private                 Job             job;
 
-    private boolean isDirty;
+    private                 boolean         isDirty;
 
     //  Citizen
-    private EntityCitizen entity;
+    private                 EntityCitizen   entity;
 
     //  Placeholder skills
-    private int level;
-    private int strength, stamina, wisdom, intelligence, charisma;
+    private                 int             level;
+    private                 int             strength;
+    private                 int             stamina;
+    private                 int             wisdom;
+    private                 int             intelligence;
+    private                 int             charisma;
 
-    private static final String TAG_ID      = "id";
-    private static final String TAG_NAME    = "name";
-    private static final String TAG_FEMALE  = "female";
-    private static final String TAG_TEXTURE = "texture";
-    private static final String TAG_LEVEL   = "level";
+    private static final    String          TAG_ID                  = "id";
+    private static final    String          TAG_NAME                = "name";
+    private static final    String          TAG_FEMALE              = "female";
+    private static final    String          TAG_TEXTURE             = "texture";
+    private static final    String          TAG_LEVEL               = "level";
 
-    private static final String TAG_ENTITY_ID     = "entity";
-    private static final String TAG_HOME_BUILDING = "homeBuilding";
-    private static final String TAG_WORK_BUILDING = "workBuilding";
+    private static final    String          TAG_ENTITY_ID           = "entity";
+    private static final    String          TAG_HOME_BUILDING       = "homeBuilding";
+    private static final    String          TAG_WORK_BUILDING       = "workBuilding";
 
-    private static final String TAG_SKILLS             = "skills";
-    private static final String TAG_SKILL_STRENGTH     = "strength";
-    private static final String TAG_SKILL_STAMINA      = "stamina";
-    private static final String TAG_SKILL_WISDOM       = "wisdom";
-    private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
-    private static final String TAG_SKILL_CHARISMA     = "charisma";
+    private static final    String          TAG_SKILLS              = "skills";
+    private static final    String          TAG_SKILL_STRENGTH      = "strength";
+    private static final    String          TAG_SKILL_STAMINA       = "stamina";
+    private static final    String          TAG_SKILL_WISDOM        = "wisdom";
+    private static final    String          TAG_SKILL_INTELLIGENCE  = "intelligence";
+    private static final    String          TAG_SKILL_CHARISMA      = "charisma";
 
-    private static final String TAG_JOB = "job";
+    private static final    String          TAG_JOB                 = "job";
 
     /**
      * Create a CitizenData given an ID
@@ -100,6 +104,7 @@ public class CitizenData
 
     /**
      * Creates CitizenData from tag compound
+     *
      * @param compound  NBT compound to build from
      * @param colony    Colony of the citizen
      * @return          CitizenData
@@ -115,45 +120,73 @@ public class CitizenData
 
     /**
      * Returns the id of the citizen
+     *
      * @return id of the citizen
      */
-    public int getId(){ return id; }
+    public int getId()
+    {
+        return id;
+    }
 
     /**
      * Returns the colony of the citizen
+     *
      * @return colony of the citizen
      */
-    public Colony getColony(){ return colony; }
+    public Colony getColony()
+    {
+        return colony;
+    }
 
     /**
      * Returns the name of the citizen
-     * @return name of the c
+     *
+     * @return name of the citizen
      */
-    public String getName(){ return name; }
+    public String getName()
+    {
+        return name;
+    }
 
     /**
      * Returns true if citizen is female, false for male
+     *
      * @return  true for female, false for male
      */
-    public boolean isFemale(){ return isFemale; }
+    public boolean isFemale()
+    {
+        return isFemale;
+    }
 
     /**
      * Returns the texture id for the citizen
+     *
      * @return texture ID
      */
-    public int getTextureId(){ return textureId; }
+    public int getTextureId()
+    {
+        return textureId;
+    }
 
     /**
      * Returns the level of the citizen
+     *
      * @return level of the citizen
      */
-    public int getLevel(){ return level; }
+    public int getLevel()
+    {
+        return level;
+    }
 
     /**
      * Returns whether or not the instance is dirty
+     *
      * @return  true when dirty, otherwise false
      */
-    public boolean isDirty(){ return isDirty; }
+    public boolean isDirty()
+    {
+        return isDirty;
+    }
 
     /**
      * Marks the instance dirty
@@ -167,16 +200,24 @@ public class CitizenData
     /**
      * Markt the instance not dirty
      */
-    public void clearDirty(){ isDirty = false; }
+    public void clearDirty()
+    {
+        isDirty = false;
+    }
 
     /**
      * Returns the home building of the citizen
+     *
      * @return  home building
      */
-    public BuildingHome getHomeBuilding(){ return homeBuilding; }
+    public BuildingHome getHomeBuilding()
+    {
+        return homeBuilding;
+    }
 
     /**
      * Sets the home of the citizen
+     *
      * @param building home building
      */
     public void setHomeBuilding(BuildingHome building)
@@ -184,8 +225,7 @@ public class CitizenData
         if(homeBuilding != null && building != null && homeBuilding != building)
         {
             throw new IllegalStateException("CitizenData.setHomeBuilding() - already assigned a home building when setting a new home building");
-        }
-        else if(homeBuilding != building)
+        } else if(homeBuilding != building)
         {
             homeBuilding = building;
             markDirty();
@@ -194,12 +234,12 @@ public class CitizenData
 
     /**
      * Returns the work building of a citizen
+     *
      * @return home building of a citizen
      */
     public BuildingWorker getWorkBuilding(){ return workBuilding; }
 
-    //UNUSED
-    /*
+    //TODO: inspect if we can use this to make worker buildings nicer
     public <BUILDING extends BuildingWorker> BUILDING getWorkBuilding(Class<BUILDING> type)
     {
         try
@@ -210,10 +250,11 @@ public class CitizenData
         {
             return null;
         }
-    } */
+    }
 
     /**
      * Sets the work building of a citizen
+     *
      * @param building  work building
      */
     public void setWorkBuilding(BuildingWorker building)
@@ -221,8 +262,7 @@ public class CitizenData
         if(workBuilding != null && building != null && workBuilding != building)
         {
             throw new IllegalStateException("CitizenData.setWorkBuilding() - already assigned a work building when setting a new work building");
-        }
-        else if(workBuilding != building)
+        } else if(workBuilding != building)
         {
             workBuilding = building;
 
@@ -235,8 +275,7 @@ public class CitizenData
                     setJob(workBuilding.createJob(this));
                     colony.getWorkManager().clearWorkForCitizen(this);
                 }
-            }
-            else if(job != null)
+            } else if(job != null)
             {
                 //  No place of employment, get rid of our job
                 setJob(null);
@@ -268,12 +307,17 @@ public class CitizenData
 
     /**
      * return the entity instance of the citizen data
+     *
      * @return {@link EntityCitizen} of the citizen data
      */
-    public EntityCitizen getCitizenEntity(){ return entity; /*(entity != null) ? entity.get() : null;*/ }
+    public EntityCitizen getCitizenEntity()
+    {
+        return entity; /*(entity != null) ? entity.get() : null;*/
+    }
 
     /**
      * Sets the entity of the citizen data
+     *
      * @param citizen {@link EntityCitizen} instance of the citizen data
      */
     public void setCitizenEntity(EntityCitizen citizen)
@@ -292,9 +336,13 @@ public class CitizenData
 
     /**
      * Returns the job of the citizen
+     *
      * @return  Job of the citizen
      */
-    public Job getJob(){ return job; }
+    public Job getJob()
+    {
+        return job;
+    }
 
 
     /**
@@ -317,6 +365,7 @@ public class CitizenData
 
     /**
      * Sets the job of this citizen
+     *
      * @param job   Job of the citizen
      */
     public void setJob(Job job)
@@ -334,6 +383,7 @@ public class CitizenData
 
     /**
      * Writes the citiizen data to an NBT-compound
+     *
      * @param compound  NBT-Tag compound
      */
     public void writeToNBT(NBTTagCompound compound)
@@ -364,6 +414,7 @@ public class CitizenData
 
     /**
      * Reads data from NBT-tag compound
+     *
      * @param compound  NBT-Tag compound
      */
     public void readFromNBT(NBTTagCompound compound)
@@ -390,6 +441,7 @@ public class CitizenData
 
     /**
      * Generates a random name from a set of names
+     *
      * @param rand  Random object
      * @return      Name of the citizen
      */
@@ -407,11 +459,24 @@ public class CitizenData
         return String.format("%s %s. %s", firstName, getRandomLetter(rand), getRandomElement(rand, Configurations.lastNames));
     }
 
+    /**
+     * Returns a random element in a list
+     *
+     * @param rand      Random object
+     * @param array     Array to select from
+     * @return          Random element from array
+     */
     private String getRandomElement(Random rand, String[] array)
     {
         return array[rand.nextInt(array.length)];
     }
 
+    /**
+     * Returns a random capital letter from the alphabet
+     *
+     * @param rand      Random object
+     * @return          Random capital letter
+     */
     private char getRandomLetter(Random rand)
     {
         return (char) (rand.nextInt(26) + 'A');
@@ -521,8 +586,8 @@ public class CitizenData
     /**
      * Create a CitizenData View given it's saved NBTTagCompound
      *
-     * @param id  The citizen's id
-     * @param buf The network data
+     * @param id    The citizen's id
+     * @param buf   The network data
      * @return      View object of the citizen
      */
     public static View createCitizenDataView(int id, ByteBuf buf)

@@ -23,22 +23,22 @@ import java.util.UUID;
 public class ColonyView implements IColony
 {
     //  General Attributes
-    private final int        id;
-    private String           name = "Unknown";
-    private int              dimensionId;
-    private ChunkCoordinates center;
+    private final   int                                     id;
+    private         String                                  name            = "Unknown";
+    private         int                                     dimensionId;
+    private         ChunkCoordinates                        center;
 
     //  Administration/permissions
-    private Permissions.View permissions = new Permissions.View();
+    private         Permissions.View                        permissions     = new Permissions.View();
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private BuildingTownHall.View                townhall;
-    private Map<ChunkCoordinates, Building.View> buildings = new HashMap<ChunkCoordinates, Building.View>();
+    private         BuildingTownHall.View                   townhall;
+    private         Map<ChunkCoordinates, Building.View>    buildings       = new HashMap<ChunkCoordinates, Building.View>();
 
     //  Citizenry
-    private Map<Integer, CitizenData.View> citizens = new HashMap<Integer, CitizenData.View>();
-    private int                            maxCitizens = 0;
+    private         Map<Integer, CitizenData.View>          citizens        = new HashMap<Integer, CitizenData.View>();
+    private         int                                     maxCitizens     = 0;
 
     /**
      * Base constructor for a colony.
@@ -53,26 +53,36 @@ public class ColonyView implements IColony
     /**
      * Create a ColonyView given a UUID and NBTTagCompound
      *
-     * @param id
-     * @return
+     * @param id    Id of the colony view
+     * @return      the new colony view
      */
     public static ColonyView createFromNetwork(int id)
     {
         return new ColonyView(id);
     }
 
+    /**
+     * Returns the ID of the view
+     *
+     * @return      ID of the view
+     */
     public int getID() { return id; }
 
+    /**
+     * Returns the dimension ID of the view
+     *
+     * @return      dimension ID of the view
+     */
     public int getDimensionId() {
         return dimensionId;
     }
     //    public World getWorld() { return world != null ? world.get() : null; }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
+    /**
+     * Sets the name of the view
+     *
+     * @param name  Name of the view
+     */
     public void setName(String name)
     {
         this.name = name;
@@ -80,21 +90,21 @@ public class ColonyView implements IColony
     }
 
     /**
-     * Get the Townhall View for this ColonyView
-     * @return BuildingTownHall.View of the colony
+     * Get the Town hall View for this ColonyView
+     *
+     * @return      {@link com.minecolonies.colony.buildings.BuildingTownHall.View} of the colony
      */
     public BuildingTownHall.View getTownhall() {
         return townhall;
     }
 
-    @Override
-    public boolean hasTownhall() { return townhall != null; }
-
     /**
      * Get a Building.View for a given building (by coordinate-id) using raw x,y,z
      *
-     * @param x,y,z Coordinates/ID of the Building
-     * @return Building.View of a Building for the given Coordinates/ID, or null
+     * @param x     x-coordinate
+     * @param y     y-coordinate
+     * @param z     z-coordinate
+     * @return      {@link com.minecolonies.colony.buildings.Building.View} of a Building for the given Coordinates/ID, or null
      */
     public Building.View getBuilding(int x, int y, int z)
     {
@@ -104,22 +114,31 @@ public class ColonyView implements IColony
     /**
      * Get a Building.View for a given building (by coordinate-id) using ChunkCoordinates
      *
-     * @param buildingId Coordinates/ID of the Building
-     * @return Building.View of a Building for the given Coordinates/ID, or null
+     * @param buildingId        Coordinates/ID of the Building
+     * @return                  {@link com.minecolonies.colony.buildings.Building.View} of a Building for the given Coordinates/ID, or null
      */
     public Building.View getBuilding(ChunkCoordinates buildingId)
     {
         return buildings.get(buildingId);
     }
 
-    @Override
-    public Permissions.View getPermissions() { return permissions; }
-
+    /**
+     * Returns a map of players in the colony
+     * Key is the UUID, value is {@link com.minecolonies.colony.permissions.Permissions.Player}
+     *
+     * @return  Map of UUID's and {@link com.minecolonies.colony.permissions.Permissions.Player}
+     */
     public Map<UUID, Permissions.Player> getPlayers()
     {
         return permissions.getPlayers();
     }
 
+    /**
+     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server
+     *
+     * @param rank          Rank to get the permission
+     * @param action        Permission to get
+     */
     public void setPermission(Permissions.Rank rank, Permissions.Action action) {
         if(permissions.setPermission(rank, action))
         {
@@ -127,6 +146,12 @@ public class ColonyView implements IColony
         }
     }
 
+    /**
+     * removes a specific permission to a rank. If the permission was set, it sends a message to the server
+     *
+     * @param rank
+     * @param action
+     */
     public void removePermission(Permissions.Rank rank, Permissions.Action action) {
         if(permissions.removePermission(rank, action))
         {
@@ -134,21 +159,25 @@ public class ColonyView implements IColony
         }
     }
 
+    /**
+     *
+     * Toggles a specific permission to a rank. Sends a message to the server
+     *
+     * @param rank
+     * @param action
+     */
     public void togglePermission(Permissions.Rank rank, Permissions.Action action) {
         permissions.togglePermission(rank, action);
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
     }
 
 //    public void addPlayer(String player, Permissions.Rank rank)
-//    {
-//        MineColonies.network.sendToServer(new PermissionsMessage.AddPlayer(id, player));
-//    }
-//
-//    public void removePlayer(UUID player)
-//    {
-//        MineColonies.network.sendToServer(new PermissionsMessage.RemovePlayer(id, player));
-//    }
 
+    /**
+     * Returns the maximum amount of citizen in the colony
+     *
+     * @return  maximum amount of citizens
+     */
     public int getMaxCitizens() {
         return maxCitizens;
     }
@@ -164,7 +193,7 @@ public class ColonyView implements IColony
     /**
      * When the ColonyView's world is loaded, associate with it
      *
-     * @param w
+     * @param w     World that is loading
      */
     public void onWorldLoad(World w) {
 //        if (w.provider.dimensionId == dimensionId)
@@ -176,10 +205,10 @@ public class ColonyView implements IColony
     /**
      * Populate an NBT compound for a network packet representing a ColonyView
      *
-     * @param colony
-     * @param buf
+     * @param colony        Colony to write data bout
+     * @param buf           {@link ByteBuf} to write data in
      */
-    static public void serializeNetworkData(Colony colony, boolean isNewSubscription, ByteBuf buf)
+    static public void serializeNetworkData(Colony colony, ByteBuf buf, boolean isNewSubScription)
     {
         //  General Attributes
         ByteBufUtils.writeUTF8String(buf, colony.getName());
@@ -196,8 +225,8 @@ public class ColonyView implements IColony
     /**
      * Populate a ColonyView from the network data
      *
-     * @param buf
-     * @param isNewSubscription
+     * @param buf                   {@link ByteBuf} to read from
+     * @param isNewSubscription     Whether this is a new subscription of not
      */
     public IMessage handleColonyViewMessage(ByteBuf buf, boolean isNewSubscription)
     {
@@ -230,7 +259,12 @@ public class ColonyView implements IColony
         return null;
     }
 
-    public IMessage handlePermissionsViewMessage(ByteBuf buf)
+    /**
+     * //TODO document
+     * @param buf
+     * @return
+     */
+    public IMessage handlePermissionsViewMessage(ByteBuf buf)   //TODO why do we have return type IMessage, while we always return null
     {
         permissions.deserialize(buf);
         return null;
@@ -240,10 +274,11 @@ public class ColonyView implements IColony
      * Update a ColonyView's citizens given a network data ColonyView update packet
      * This uses a full-replacement - citizens do not get updated and are instead overwritten
      *
-     * @param buf
-     * @return
+     * @param id        ID of the citizen
+     * @param buf       Network data
+     * @return          //todo document
      */
-    public IMessage handleColonyViewCitizensMessage(int id, ByteBuf buf)
+    public IMessage handleColonyViewCitizensMessage(int id, ByteBuf buf) //TODO why do we have return type IMessage, while we always return null
     {
         CitizenData.View citizen = CitizenData.createCitizenDataView(id, buf);
         if (citizen != null)
@@ -257,9 +292,9 @@ public class ColonyView implements IColony
     /**
      * Remove a citizen from the ColonyView
      *
-     * @return
+     * @return          //todo document
      */
-    public IMessage handleColonyViewRemoveCitizenMessage(int citizen)
+    public IMessage handleColonyViewRemoveCitizenMessage(int citizen) //TODO why do we have return type IMessage, while we always return null
     {
         citizens.remove(citizen);
         return null;
@@ -268,9 +303,9 @@ public class ColonyView implements IColony
     /**
      * Remove a building from the ColonyView
      *
-     * @return
+     * @return          //todo document
      */
-    public IMessage handleColonyViewRemoveBuildingMessage(ChunkCoordinates buildingId)
+    public IMessage handleColonyViewRemoveBuildingMessage(ChunkCoordinates buildingId) //TODO why do we have return type IMessage, while we always return null
     {
         Building.View building = buildings.remove(buildingId);
         if (townhall == building)
@@ -285,9 +320,9 @@ public class ColonyView implements IColony
      * This uses a full-replacement - buildings do not get updated and are instead overwritten
      *
      * @param buf
-     * @return
+     * @return          //todo document
      */
-    public IMessage handleColonyBuildingViewMessage(ChunkCoordinates buildingId, ByteBuf buf)
+    public IMessage handleColonyBuildingViewMessage(ChunkCoordinates buildingId, ByteBuf buf) //TODO why do we have return type IMessage, while we always return null
     {
         Building.View building = Building.createBuildingView(this, buildingId, buf);
         if (building != null)
@@ -304,27 +339,55 @@ public class ColonyView implements IColony
     }
 
     /**
-     * Determine if a given chunk coordinate is considered to be within the colony's bounds
+     * @see  {@link #isCoordInColony(World, int, int, int)}
      *
-     * @param coord
-     * @return
+     * @param w         World to check
+     * @param coord     ChunkCoordinates to check
+     * @return          True if inside colony, otherwise false
      */
     public boolean isCoordInColony(World w, ChunkCoordinates coord) {
         return isCoordInColony(w, coord.posX, coord.posY, coord.posZ);
     }
 
+    @Override
     public boolean isCoordInColony(World w, int x, int y, int z) {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.provider.dimensionId == dimensionId &&
                 center.getDistanceSquared(x, center.posY, z) <= Utils.square(Configurations.workingRangeTownhall);
     }
 
+    /**
+     * @see {@link #getDistanceSquared(int, int, int)}
+     *
+     * @param coord     Chunk coordinate to get squared position
+     * @return          Squared position from center
+     */
     public float getDistanceSquared(ChunkCoordinates coord) {
         return getDistanceSquared(coord.posX, coord.posY, coord.posZ);
     }
 
+    @Override
     public float getDistanceSquared(int posX, int posY, int posZ) {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return center.getDistanceSquared(posX, center.posY, posZ);
     }
+
+    //    }
+//        MineColonies.network.sendToServer(new PermissionsMessage.RemovePlayer(id, player));
+//    {
+//    public void removePlayer(UUID player)
+//
+//    }
+//        MineColonies.network.sendToServer(new PermissionsMessage.AddPlayer(id, player));
+//    {
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public boolean hasTownhall() { return townhall != null; }
+
+    @Override
+    public Permissions.View getPermissions() { return permissions; }
 }

@@ -62,6 +62,7 @@ public abstract class WorkOrder
 
     /**
      * Get the ID of the Work Order
+     *
      * @return ID of the work order
      */
     public int getID() { return id; }
@@ -69,6 +70,7 @@ public abstract class WorkOrder
 
     /**
      * Is the Work Order claimed?
+     *
      * @return true if the Work Order has been claimed
      */
     public boolean isClaimed()
@@ -78,6 +80,7 @@ public abstract class WorkOrder
 
     /**
      * Is the Work Order claimed by the given citizen?
+     *
      * @param citizen The citizen to check
      * @return true if the Work Order is claimed by this Citizen
      */
@@ -88,6 +91,7 @@ public abstract class WorkOrder
 
     /**
      * Get the ID of the Citizen that the Work Order is claimed by
+     *
      * @return ID of citizen the Work Order has been claimed by, or null
      */
     public int getClaimedBy()
@@ -97,6 +101,7 @@ public abstract class WorkOrder
 
     /**
      * Set the Work Order as claimed by the given Citizen
+     *
      * @param citizen   {@link CitizenData}
      */
     void setClaimedBy(CitizenData citizen)
@@ -114,6 +119,7 @@ public abstract class WorkOrder
 
     /**
      * Create a Work Order from a saved NBTTagCompound
+     *
      * @param compound      the compound that contains the data for the Work Order
      * @return              {@link WorkOrder} from the NBT
      */
@@ -159,6 +165,7 @@ public abstract class WorkOrder
 
     /**
      * Save the Work Order to an NBTTagCompound
+     *
      * @param compound  NBT tag compount
      */
     public void writeToNBT(NBTTagCompound compound)
@@ -180,6 +187,7 @@ public abstract class WorkOrder
 
     /**
      * Read the WorkOrder data from the NBTTagCompound
+     *
      * @param compound  NBT Tag compound
      */
     public void readFromNBT(NBTTagCompound compound)
@@ -198,7 +206,6 @@ public abstract class WorkOrder
 
     /**
      * Attempt to fulfill the Work Order.
-     *
      * Override this with an implementation for the Work Order to find a Citizen to perform the job
      *
      * @param colony The colony that owns the Work Order

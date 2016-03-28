@@ -11,8 +11,8 @@ import net.minecraft.util.ChunkCoordinates;
 public class BuildingBaker extends BuildingWorker
 {
 
-    private static final String BAKER = "Baker";
-    private static final String BAKER_HUT_NAME = "bakerHut";
+    private static final String BAKER           = "Baker";
+    private static final String BAKER_HUT_NAME  = "bakerHut";
 
     public BuildingBaker(Colony c, ChunkCoordinates l)
     {
@@ -20,13 +20,22 @@ public class BuildingBaker extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName(){ return BAKER; }
+    public String getSchematicName()
+    {
+        return BAKER;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 3; }
+    public int getMaxBuildingLevel()
+    {
+        return 3;
+    }
 
     @Override
-    public String getJobName() { return BAKER; }
+    public String getJobName()
+    {
+        return BAKER;
+    }
 
     @Override
     public Job createJob(CitizenData citizen)

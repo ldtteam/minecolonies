@@ -85,13 +85,7 @@ public class WindowTownhall extends Window implements Button.Handler
     {
         users.clear();
         users.addAll(townhall.getColony().getPlayers().values());
-        Collections.sort(users, new Comparator<Permissions.Player>(){ //todo can use lambda, what is mc req java version
-            @Override
-            public int compare(Permissions.Player o1, Permissions.Player o2)
-            {
-                return o1.rank.compareTo(o2.rank);
-            }
-        });
+        Collections.sort(users, (o1, o2) -> o1.rank.compareTo(o2.rank));
     }
 
     private void updateCitizens()
