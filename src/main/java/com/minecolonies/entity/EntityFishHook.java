@@ -208,7 +208,7 @@ public class EntityFishHook extends Entity
                     return;
                 }
 
-                ItemStack itemstack = this.citizen.getHeldItem();
+                ItemStack itemstack = this.citizen.getInventory().getHeldItem();
 
                 if (this.citizen.isDead || !this.citizen.isEntityAlive() || itemstack == null || !itemstack.getItem().equals(Items.fishing_rod) || this.getDistanceSqToEntity(this.citizen) > 1024.0D)
                 {

@@ -155,7 +155,15 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (job.getStage() == Stage.CHECK_WATER)
         {
             //TODO After the executed a full rotation choose a new fishing spot!
-            worker.setAngles((float) ROTATION_ANGLE, worker.rotationPitch);
+            int x = (int)(Math.random()*3);
+            if(x==1)
+            {
+                worker.setAngles(worker.rotationYaw, 400);
+            }
+            else
+            {
+                worker.setAngles(ROTATION_ANGLE, worker.rotationPitch);
+            }
             //TODO Different angle to throw the hook not that far
             worker.getLookHelper();
 
