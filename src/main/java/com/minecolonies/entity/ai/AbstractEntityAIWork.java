@@ -9,9 +9,7 @@ import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -42,12 +40,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     public static final String AXE = "axe";
     public static final String HOE = "hoe";
     public static final String ROD = "rod";
-
-    protected static Random itemRand = new Random();
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
     private static final Logger logger = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
     private static final int DELAY_RECHECK = 10;
     private static final int MUTEX_MASK = 3;
+    protected static Random itemRand = new Random();
     protected final J job;
     protected final EntityCitizen worker;
     protected final World world;
@@ -197,13 +194,22 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
             //We do not need to dump more, use inv check below to resolve condition
         }
         //Check for full inventory
-        if (worker.isInventoryFull())
+        if (worker.isInventoryFull() || wantInventoryDumped())
         {
             this.errorState = ErrorState.INVENTORY_FULL;
             return;
         }
         this.errorState = ErrorState.NONE;
         workOnTask();
+    }
+
+    /**
+     * Has to be overridden by classes to specify when to dump inventory.
+     * Always dump on inventory full.
+     * @return true if inventory needs to be dumped now
+     */
+    protected boolean wantInventoryDumped(){
+        return false;
     }
 
     /**
@@ -257,11 +263,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         final BuildingWorker buildingMiner = getOwnBuilding();
         return is != null &&
                InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        (stack) -> stack != null && is.isItemEqual(stack),
-                        this::takeItemStackFromChest
-                                      );
+                       .matchFirstInInventory(
+                               buildingMiner.getTileEntity(),
+                               (stack) -> stack != null && is.isItemEqual(stack),
+                               this::takeItemStackFromChest
+                                             );
     }
 
     /**
@@ -508,7 +514,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         boolean needsTool = !InventoryFunctions
                 .matchFirstInInventory(
                         worker.getInventory(),
-                        stack -> (stack!=null && stack.getItem().equals(Items.fishing_rod)),
+                        stack -> (stack != null && stack.getItem().equals(Items.fishing_rod)),
                         InventoryFunctions::doNothing);
         if (!needsTool)
         {
@@ -613,7 +619,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
 
     }
 
-    /** Checks if the rod is in the hut
+    /**
+     * Checks if the rod is in the hut
      *
      * @param is is the searched item
      * @returns true if he found a rod
@@ -624,7 +631,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         return InventoryFunctions
                 .matchFirstInInventory(
                         buildingMiner.getTileEntity(),
-                        stack -> stack!= null && is.isItemEqual(stack),
+                        stack -> stack != null && is.isItemEqual(stack),
                         this::takeItemStackFromChest);
 
     }

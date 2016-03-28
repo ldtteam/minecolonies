@@ -67,6 +67,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     @Override
+    protected boolean wantInventoryDumped()
+    {
+        if (fishesCaught > MAX_FISHES_IN_INV)
+        {
+            fishesCaught = 0;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     protected void updateRenderMetaData()
     {
         String renderMetaData = getRenderMetaFish();
@@ -92,7 +103,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     @Override
     protected boolean neededForWorker(ItemStack stack)
     {
-        return Utils.isFishingTool(stack);
+        return isStackRod(stack);
     }
 
     @Override
@@ -175,11 +186,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             doFishing();
             return;
-        }
-
-        if (job.getStage() == Stage.INVENTORY_FULL)
-        {
-            dumpInventory();
         }
         setDelay(DELAY);
     }
@@ -290,11 +296,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
             worker.setCaughtFish(false);
             fishesCaught++;
-            if (fishesCaught > MAX_FISHES_IN_INV)
-            {
-                fishesCaught = 0;
-                job.setStage(Stage.INVENTORY_FULL);
-            }
             return;
         }
 
@@ -374,31 +375,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return worker.getInventory();
     }
 
-    private void dumpInventory()
-    {
-        if (worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), 4))
-        {
-            for (int i = 0; i < getInventory().getSizeInventory(); i++)
-            {
-                ItemStack stack = getInventory().getStackInSlot(i);
-                if (stack != null && !isStackRod(stack))
-                {
-                    ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(),
-                                                                    stack);//TODO tile entity null
-                    if (returnStack == null)
-                    {
-                        getInventory().decrStackSize(i, stack.stackSize);
-                    }
-                    else
-                    {
-                        getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
-                    }
-                }
-            }
-            job.setStage(Stage.PREPARING);
-        }
-    }
-
     private boolean isStackRod(ItemStack stack)
     {
         return stack != null && stack.getItem().equals(Items.fishing_rod);
@@ -409,7 +385,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         IDLE,
         START_WORKING,
         CHECK_WATER,
-        INVENTORY_FULL,
         WATER_FOUND,
         SEARCHING_WATER,
         START_FISHING,
