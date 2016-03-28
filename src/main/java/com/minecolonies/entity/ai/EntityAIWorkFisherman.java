@@ -2,6 +2,7 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.colony.jobs.JobFisherman;
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.inventory.InventoryCitizen;
@@ -171,14 +172,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             //TODO After the executed a full rotation choose a new fishing spot!
             int x = (int) (Math.random() * 3);
+
+            //TODO: animation stuff on client only
             if (x == 1)
             {
-                worker.setAngles(worker.rotationYaw, 400);
+                setAngles(worker, worker.rotationYaw, 400);
             }
             else
             {
-                worker.setAngles(ROTATION_ANGLE, worker.rotationPitch);
+                setAngles(worker, ROTATION_ANGLE, worker.rotationPitch);
             }
+
             //TODO Different angle to throw the hook not that far
             worker.getLookHelper();
 
@@ -192,6 +196,35 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return;
         }
         setDelay(DELAY);
+    }
+
+    /**
+     * shitty fix for a shitty method on client side only.
+     * TODO: fix this for real....
+     *
+     * @param worker
+     * @param a
+     * @param b
+     */
+    public void setAngles(EntityCitizen worker, float a, float b)
+    {
+        float f2 = worker.rotationPitch;
+        float f3 = worker.rotationYaw;
+        worker.rotationYaw = (float) ((double) worker.rotationYaw + (double) a * 0.15D);
+        worker.rotationPitch = (float) ((double) worker.rotationPitch - (double) b * 0.15D);
+
+        if (worker.rotationPitch < -90.0F)
+        {
+            worker.rotationPitch = -90.0F;
+        }
+
+        if (worker.rotationPitch > 90.0F)
+        {
+            worker.rotationPitch = 90.0F;
+        }
+
+        worker.prevRotationPitch += worker.rotationPitch - f2;
+        worker.prevRotationYaw += worker.rotationYaw - f3;
     }
 
     private boolean walkToWater()
