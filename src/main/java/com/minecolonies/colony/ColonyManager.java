@@ -53,7 +53,7 @@ public class ColonyManager
 
         if (!coloniesByWorld.containsKey(colony.getDimensionId()))
         {
-            coloniesByWorld.put(colony.getDimensionId(), new ArrayList<Colony>());
+            coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
         }
 
         coloniesByWorld.get(colony.getDimensionId()).add(colony);
@@ -328,7 +328,7 @@ public class ColonyManager
      */
     public static List<ColonyView> getColonyViewsByOwner(UUID owner)
     {
-        List<ColonyView> results = new ArrayList<ColonyView>();
+        List<ColonyView> results = new ArrayList<>();
 
         for (ColonyView c : colonyViews.values())
         {
@@ -480,9 +480,7 @@ public class ColonyManager
     public static void onWorldTick(
             TickEvent.WorldTickEvent event)
     {
-        colonies.values().stream().filter(c -> c.getDimensionId() == event.world.provider.dimensionId).forEach(c -> {
-            c.onWorldTick(event);
-        });
+        colonies.values().stream().filter(c -> c.getDimensionId() == event.world.provider.dimensionId).forEach(c -> c.onWorldTick(event));
     }
 
     /**
@@ -500,7 +498,7 @@ public class ColonyManager
 
             if (!coloniesByWorld.containsKey(colony.getDimensionId()))
             {
-                coloniesByWorld.put(colony.getDimensionId(), new ArrayList<Colony>());
+                coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
             }
             coloniesByWorld.get(colony.getDimensionId()).add(colony);
 

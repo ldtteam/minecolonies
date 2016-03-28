@@ -34,10 +34,10 @@ public class ColonyView implements IColony
 
     //  Buildings
     private         BuildingTownHall.View                   townhall;
-    private         Map<ChunkCoordinates, Building.View>    buildings       = new HashMap<ChunkCoordinates, Building.View>();
+    private         Map<ChunkCoordinates, Building.View>    buildings       = new HashMap<>();
 
     //  Citizenry
-    private         Map<Integer, CitizenData.View>          citizens        = new HashMap<Integer, CitizenData.View>();
+    private         Map<Integer, CitizenData.View>          citizens        = new HashMap<>();
     private         int                                     maxCitizens     = 0;
 
     /**

@@ -323,7 +323,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 
     private void searchForItems()
     {
-        items = new ArrayList<ChunkCoordinates>();
+        items = new ArrayList<>();
 
         @SuppressWarnings("unchecked") List<EntityItem> list = world.getEntitiesWithinAABB(EntityItem.class, worker.boundingBox.expand(15.0F, 3.0F, 15.0F));
 

@@ -32,7 +32,7 @@ public class Colony implements IColony
     private                 World                           world                           = null;
 
     //  Updates and Subscriptions
-    private                 Set<EntityPlayerMP>             subscribers                     = new HashSet<EntityPlayerMP>();
+    private                 Set<EntityPlayerMP>             subscribers                     = new HashSet<>();
     private                 boolean                         isDirty                         = false;
     private                 boolean                         isCitizensDirty                 = false;
     private                 boolean                         isBuildingsDirty                = false;
@@ -51,7 +51,7 @@ public class Colony implements IColony
     private                 Map<ChunkCoordinates, Building> buildings                       = new HashMap<>();
 
     //  Citizenry
-    private                 Map<Integer, CitizenData>       citizens                        = new HashMap<Integer, CitizenData>();
+    private                 Map<Integer, CitizenData>       citizens                        = new HashMap<>();
     private                 int                             topCitizenId                    = 0;
     private                 int                             maxCitizens                     = Configurations.maxCitizens;
 
@@ -438,14 +438,10 @@ public class Colony implements IColony
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
 
-                for (CitizenData citizen : citizens.values())
-                {
-                    if (citizen.getCitizenEntity() == null)
-                    {
-                        MineColonies.logger.warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
-                        spawnCitizen(citizen);
-                    }
-                }
+                citizens.values().stream().filter(citizen -> citizen.getCitizenEntity() == null).forEach(citizen -> {
+                    MineColonies.logger.warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
+                    spawnCitizen(citizen);
+                });
             }
         }
 
@@ -512,17 +508,12 @@ public class Colony implements IColony
         subscribers = new HashSet<>();
 
         //  Add owners
-        for (Object o : MinecraftServer.getServer().getConfigurationManager().playerEntityList)
-        {
-            if (o instanceof EntityPlayerMP)
-            {
-                EntityPlayerMP player = (EntityPlayerMP)o;
-                if (permissions.isSubscriber(player))
-                {
-                    subscribers.add(player);
-                }
+        MinecraftServer.getServer().getConfigurationManager().playerEntityList.stream().filter(o -> o instanceof EntityPlayerMP).forEach(o -> {
+            EntityPlayerMP player = (EntityPlayerMP) o;
+            if (permissions.isSubscriber(player)) {
+                subscribers.add(player);
             }
-        }
+        });
 
         //  Add nearby players
         if (world != null)
@@ -603,9 +594,7 @@ public class Colony implements IColony
                     {
                         ColonyViewCitizenViewMessage msg = new ColonyViewCitizenViewMessage(this, citizen);
 
-                        subscribers.stream().filter(player -> citizen.isDirty() || !oldSubscribers.contains(player)).forEach(player -> {
-                            MineColonies.getNetwork().sendTo(msg, player);
-                        });
+                        subscribers.stream().filter(player -> citizen.isDirty() || !oldSubscribers.contains(player)).forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
                     }
                 }
             }
@@ -619,9 +608,7 @@ public class Colony implements IColony
                     {
                         ColonyViewBuildingViewMessage msg = new ColonyViewBuildingViewMessage(building);
 
-                        subscribers.stream().filter(player -> building.isDirty() || !oldSubscribers.contains(player)).forEach(player -> {
-                            MineColonies.getNetwork().sendTo(msg, player);
-                        });
+                        subscribers.stream().filter(player -> building.isDirty() || !oldSubscribers.contains(player)).forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
                     }
                 }
             }
@@ -898,7 +885,7 @@ public class Colony implements IColony
 
     public List<EntityCitizen> getActiveCitizenEntities()
     {
-        List<EntityCitizen> activeCitizens = new ArrayList<EntityCitizen>();
+        List<EntityCitizen> activeCitizens = new ArrayList<>();
 
         for (CitizenData citizen : citizens.values())
         {
@@ -978,7 +965,7 @@ public class Colony implements IColony
 
     public List<ChunkCoordinates> getDeliverymanRequired()
     {
-        List<ChunkCoordinates> deliverymanRequired = new ArrayList<ChunkCoordinates>();
+        List<ChunkCoordinates> deliverymanRequired = new ArrayList<>();
 
         for (CitizenData citizen : citizens.values())
         {

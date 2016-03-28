@@ -46,7 +46,7 @@ public class Schematics
 
             if (uri.getScheme().equals("jar"))
             {
-                basePath = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap()).getPath(
+                basePath = FileSystems.newFileSystem(uri, Collections.emptyMap()).getPath(
                         "/assets/minecolonies/schematics/");
             }
             else

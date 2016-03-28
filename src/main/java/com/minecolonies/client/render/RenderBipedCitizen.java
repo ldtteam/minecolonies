@@ -37,8 +37,8 @@ public class RenderBipedCitizen extends RenderBiped
 
     private static final ModelBiped defaultModelMale = new ModelBiped();
     private static final ModelBiped defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
-    private static final Map<Model, ModelBiped> idToMaleModelMap = new HashMap<Model, ModelBiped>();
-    private static final Map<Model, ModelBiped> idToFemaleModelMap = new HashMap<Model, ModelBiped>();
+    private static final Map<Model, ModelBiped> idToMaleModelMap = new HashMap<>();
+    private static final Map<Model, ModelBiped> idToFemaleModelMap = new HashMap<>();
 
     static
     {

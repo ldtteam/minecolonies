@@ -58,10 +58,10 @@ public class WindowTownhall extends Window implements Button.Handler
     private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownhall.xml";
 
     private BuildingTownHall.View townhall;
-    private List<Permissions.Player> users = new ArrayList<Permissions.Player>();
-    private List<CitizenData.View>   citizens = new ArrayList<CitizenData.View>();
+    private List<Permissions.Player> users = new ArrayList<>();
+    private List<CitizenData.View>   citizens = new ArrayList<>();
 
-    private Map<String, String> tabsToPages = new HashMap<String, String>();
+    private Map<String, String> tabsToPages = new HashMap<>();
     private Button lastTabButton;
     private ScrollingList citizenList;
     private ScrollingList userList;
@@ -259,7 +259,7 @@ public class WindowTownhall extends Window implements Button.Handler
             if (row >= 0 && row < users.size())
             {
                 Permissions.Player user = users.get(row);
-                Permissions.Rank newRank = user.rank;
+                Permissions.Rank newRank;
 
                 if (button.getID().equals(BUTTON_PROMOTE))
                 {

@@ -222,7 +222,7 @@ public class Utils
      */
     public static List<EntityPlayer> getPlayersFromUUID(World world, Collection<UUID> ids)
     {
-        List<EntityPlayer> players = new ArrayList<EntityPlayer>();
+        List<EntityPlayer> players = new ArrayList<>();
 
         for(Object o : world.playerEntities)
         {
@@ -255,7 +255,7 @@ public class Utils
      */
     public static List<Entity> getEntitiesFromUUID(World world, Collection<UUID> ids)
     {
-        List<Entity> entities = new ArrayList<Entity>();
+        List<Entity> entities = new ArrayList<>();
 
         for(Object o : world.loadedEntityList)
         {
@@ -288,7 +288,7 @@ public class Utils
      */
     public static List<Entity> getEntitiesFromID(World world, List<Integer> ids)
     {
-        List<Entity> entities = new ArrayList<Entity>();
+        List<Entity> entities = new ArrayList<>();
 
         for(int id : ids)
         {

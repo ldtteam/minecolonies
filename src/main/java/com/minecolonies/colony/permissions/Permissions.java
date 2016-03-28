@@ -224,7 +224,7 @@ public class Permissions implements IPermissions
      */
     public Set<UUID> getMessagePlayers()
     {
-        Set<UUID> messagePlayers = new HashSet<UUID>();
+        Set<UUID> messagePlayers = new HashSet<>();
         for (Player player : players.values())
         {
             if (hasPermission(player.rank, Action.SEND_MESSAGES))
@@ -607,8 +607,8 @@ public class Permissions implements IPermissions
     public static class View implements IPermissions
     {
         private Rank userRank = Rank.NEUTRAL;
-        private Map<UUID, Player> players = new HashMap<UUID, Player>();
-        private Map<Rank, Integer> permissions = new HashMap<Rank, Integer>();
+        private Map<UUID, Player> players = new HashMap<>();
+        private Map<Rank, Integer> permissions = new HashMap<>();
 
         public View() {}
 
@@ -620,7 +620,7 @@ public class Permissions implements IPermissions
 
         public Set<Player> getPlayersByRank(Rank rank)
         {
-            Set<Player> players = new HashSet<Player>();
+            Set<Player> players = new HashSet<>();
             for (Player player : this.players.values())
             {
                 if (player.rank == rank)
@@ -633,7 +633,7 @@ public class Permissions implements IPermissions
 
         public Set<Player> getPlayersByRank(Set<Rank> ranks)
         {
-            Set<Player> players = new HashSet<Player>();
+            Set<Player> players = new HashSet<>();
             for (Player player : this.players.values())
             {
                 if (ranks.contains(player.rank))

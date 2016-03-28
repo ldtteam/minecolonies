@@ -15,8 +15,8 @@ public abstract class WorkOrder
     private int claimedBy;
 
     //  Job and View Class Mapping
-    private static Map<String, Class<? extends WorkOrder>> nameToClassMap = new HashMap<String, Class<? extends WorkOrder>>();
-    private static Map<Class<? extends WorkOrder>, String> classToNameMap = new HashMap<Class<? extends WorkOrder>, String>();
+    private static Map<String, Class<? extends WorkOrder>> nameToClassMap = new HashMap<>();
+    private static Map<Class<? extends WorkOrder>, String> classToNameMap = new HashMap<>();
 
     private static final String TAG_TYPE = "type";
     private static final String TAG_ID   = "id";

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class BuildingHome extends BuildingHut
 {
-    private List<CitizenData> residents = new ArrayList<CitizenData>();
+    private List<CitizenData> residents = new ArrayList<>();
 
     private static final String TAG_RESIDENTS   = "residents";
     private static final String CITIZEN         = "Citizen";
@@ -53,9 +53,7 @@ public class BuildingHome extends BuildingHut
     @Override
     public void onDestroyed()
     {
-        residents.stream().filter(citizen -> citizen != null).forEach(citizen -> {
-            citizen.setHomeBuilding(null);
-        });
+        residents.stream().filter(citizen -> citizen != null).forEach(citizen -> citizen.setHomeBuilding(null));
 
         super.onDestroyed();
     }
@@ -167,7 +165,7 @@ public class BuildingHome extends BuildingHut
 
     public static class View extends BuildingHut.View
     {
-        private List<Integer> residents = new ArrayList<Integer>();
+        private List<Integer> residents = new ArrayList<>();
 
         public View(ColonyView c, ChunkCoordinates l)
         {
