@@ -17,27 +17,39 @@ import java.util.Random;
 
 /**
  * Fisherman AI class
- * Created: March 17, 2016
+ *
+ * A fisherman has some ponds where
+ * he randomly selects one and fishes there.
+ *
+ * To keep it immersive he chooses his place at random around the pond.
  *
  * @author Raycoms
  */
-
 public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 {
+    /**
+     * The maximum number of ponds to remember at one time.
+     */
     private static final int MAX_PONDS = 20;
     private static final int FISHING_DELAY = 500;
     private static final int CHANCE = 2;
     private static final int MIN_DISTANCE_TO_WATER = 3;
     private static final int MAX_FISHES_IN_INV = 10;
     private static final int DELAY = 100;
-    private static final double ROTATION_ANGLE = 90D;
+    private static final float ROTATION_ANGLE = 90f;
     private static final String TOOL_TYPE_ROD= "rod";
-    private static final String RENDER_META_FISH = "fish"; //TODO Add
+    /**
+     * TODO: add actual rendering of the fish
+     */
+    private static final String RENDER_META_FISH = "fish";
     private int fishesCaught=0;
     private PathJobFindWater.WaterPathResult pathResult;
     private static final int SEARCH_RANGE       = 50;
-    private int FishingSkill = worker.getIntelligence()*worker.getSpeed()*(worker.getExperienceLevel()+1);
-    private static Logger logger = LogManager.getLogger("Fisherman");
+    /**
+     * TODO: don't just assign it one time at class initialization.
+     */
+    private int fishingSkill = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
+    private static final Logger logger = LogManager.getLogger("Fisherman");
 
     //Assign job to fisherman
     public EntityAIWorkFisherman(JobFisherman job)
@@ -50,7 +62,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         String renderMetaData = getRenderMetaFish();
         //TODO: Have rod displayed as well?
-        //worker.setRenderMetadata(renderMetaData);
     }
 
     //TODO Render model ROD/Fish
@@ -91,7 +102,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
         if(pathResult == null || (!pathResult.isComputing() && !pathResult.getPathReachesDestination()))
         {
-            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D,job.ponds);
+            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.ponds);
         }
         else if(pathResult.getPathReachesDestination())
         {
@@ -136,7 +147,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private void doFishing()
     {
         //+1 since the level may be 0
-        double chance = (Math.random()*FISHING_DELAY)/(FishingSkill+1);
+        double chance = (Math.random()*FISHING_DELAY)/(fishingSkill + 1);
 
         //We really do have our Rod in our inventory?
         if(!worker.hasItemInInventory(Items.fishing_rod))
