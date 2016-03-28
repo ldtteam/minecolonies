@@ -6,7 +6,6 @@ import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.InventoryUtils;
-import com.minecolonies.util.Utils;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -24,7 +23,7 @@ import java.util.Random;
  * <p>
  * To keep it immersive he chooses his place at random around the pond.
  *
- * @author Raycoms
+ * @author Raycoms, Kostronor
  */
 public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 {
@@ -106,6 +105,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return isStackRod(stack);
     }
 
+    private boolean isStackRod(ItemStack stack)
+    {
+        return stack != null && stack.getItem().equals(Items.fishing_rod);
+    }
+
     @Override
     public void workOnTask()
     {
@@ -166,8 +170,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (job.getStage() == Stage.CHECK_WATER)
         {
             //TODO After the executed a full rotation choose a new fishing spot!
-            int x = (int)(Math.random()*3);
-            if(x==1)
+            int x = (int) (Math.random() * 3);
+            if (x == 1)
             {
                 worker.setAngles(worker.rotationYaw, 400);
             }
@@ -373,11 +377,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private InventoryCitizen getInventory()
     {
         return worker.getInventory();
-    }
-
-    private boolean isStackRod(ItemStack stack)
-    {
-        return stack != null && stack.getItem().equals(Items.fishing_rod);
     }
 
     public enum Stage
