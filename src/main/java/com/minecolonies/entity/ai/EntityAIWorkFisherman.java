@@ -35,6 +35,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private static final int MIN_DISTANCE_TO_WATER = 3;
     private static final int MAX_FISHES_IN_INV = 10;
     private static final int DELAY = 100;
+    private static final int MAX_ROTATIONS = 12;
     /**
      * TODO: fix this with ttl
      */
@@ -49,11 +50,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private static final Logger logger = LogManager.getLogger("Fisherman");
     private int fishesCaught = 0;
     private PathJobFindWater.WaterPathResult pathResult;
-    /**
-     * TODO: don't just assign it one time at class initialization.
-     */
     private int fishingSkill = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
-
+    private int executedRotations=0;
     /**
      * Constructor for the Fisherman.
      *
@@ -169,23 +167,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (job.getStage() == Stage.CHECK_WATER)
         {
             //TODO Set custom rotationYaw and Pitch in the EntityCitizen class which are used by the fishEntity
-            //TODO After the executed a full rotation choose a new fishing spot!
-            int x = (int) (Math.random() * 3);
-            if (x == 1)
-            {
-                worker.setAngles(worker.rotationYaw, 400);
-            }
-            else
-            {
-                worker.rotationYaw = ROTATION_ANGLE;
-
-                worker.setAngles(ROTATION_ANGLE, worker.rotationPitch);
-            }
-            //TODO Different angle to throw the hook not that far
-            worker.getLookHelper();
-
+            tryDifferentAngles();
             job.setStage(Stage.START_FISHING);
-            return;
         }
 
         if (job.getStage() == Stage.START_FISHING)
@@ -196,6 +179,31 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         setDelay(DELAY);
     }
 
+    private void tryDifferentAngles()
+    {
+        int x = (int) (Math.random() * 3);
+        if (x == 1)
+        {
+            //Try a different angle to throw the hook not that far
+            worker.setRotation(worker.rotationYaw, 90);
+        }
+        else
+        {
+            /**If Fisherman has already turned a fixed amount of times,
+             * the water is probably not accessibly from the current position.
+             * Remove the current position from the ponds and search a new one.*/
+            executedRotations++;
+            if(executedRotations>=MAX_ROTATIONS)
+            {
+                job.ponds.remove(job.water.getLocation());
+                job.water = null;
+                job.setStage(Stage.SEARCHING_WATER);
+            }
+            worker.rotationYaw = ROTATION_ANGLE;
+            worker.setRotation(ROTATION_ANGLE, worker.rotationPitch);
+        }
+    }
+
     private boolean walkToWater()
     {
         return !(job.water == null || job.water.getLocation() == null) && walkToBlock(job.water.getLocation());
@@ -203,13 +211,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private void findWater()
     {
+        //TODO If he can't find 20 ponds, use the ponds he has
+        //If he can't find any pond, tell that to the player
         //If 20 ponds are already stored, take a random stored location
         if (job.ponds.size() >= MAX_PONDS)
         {
             job.water = new Water(world, job.ponds.get(new Random().nextInt(MAX_PONDS)));
             return;
         }
-
         if (pathResult == null || (!pathResult.isComputing() && !pathResult.getPathReachesDestination()))
         {
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.ponds);
@@ -306,9 +315,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             for (int z = (int) worker.posZ - MIN_DISTANCE_TO_WATER; z < (int) worker.posZ + MIN_DISTANCE_TO_WATER; z++)
             {
-                if (world.getBlock(x, (int) worker.posY - 1, z).equals(Blocks.water))
+                for(int y = (int) worker.posY - MIN_DISTANCE_TO_WATER; y < (int)worker.posY + MIN_DISTANCE_TO_WATER; y++)
                 {
-                    foundCloseWater = true;
+                    if (world.getBlock(x, y, z).equals(Blocks.water))
+                    {
+                        foundCloseWater = true;
+                    }
                 }
             }
         }
@@ -351,6 +363,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         worker.setCanPickUpLoot(true);
         worker.captureDrops = true;
         retrieveRod();
+        fishingSkill = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
         worker.setCaughtFish(false);
         fishesCaught++;
         return true;

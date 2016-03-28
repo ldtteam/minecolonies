@@ -16,7 +16,7 @@ import java.util.function.Predicate;
 public class PathJobFindWater extends PathJob
 {
     private static final int MIN_DISTANCE = 40;
-    private static final int MAX_RANGE = 80;
+    private static final int MAX_RANGE = 250;
 
     public static class WaterPathResult extends PathResult
     {

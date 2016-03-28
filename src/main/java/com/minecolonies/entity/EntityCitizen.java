@@ -182,6 +182,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return citizenData != null ? citizenData.getJob(type) : null;
     }
 
+    public void setRotation(float yaw, float pitch)
+    {
+        super.setRotation(yaw,pitch);
+    }
+
     public void onJobChanged(Job job)
     {
         //  Model
