@@ -21,6 +21,10 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
 
     public ColonyViewBuildingViewMessage(){}
 
+    /**
+     * Creates a
+     * @param building      Building to add or update a view for
+     */
     public ColonyViewBuildingViewMessage(Building building)
     {
         this.colonyId = building.getColony().getID();

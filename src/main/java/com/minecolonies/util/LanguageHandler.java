@@ -16,8 +16,8 @@ public class LanguageHandler
     /**
      * Localize a non-formatted string.
      *
-     * @param key  unlocalized key
-     * @return Localized string
+     * @param key   unlocalized key
+     * @return      Localized string
      */
     public static String getString(String key)
     {
@@ -29,7 +29,7 @@ public class LanguageHandler
      *
      * @param key  unlocalized key
      * @param args Objects for String.format()
-     * @return Localized string
+     * @return     Localized string
      */
     public static String format(String key, Object... args)
     {

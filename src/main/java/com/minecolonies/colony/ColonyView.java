@@ -6,7 +6,7 @@ import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.network.messages.PermissionsMessage;
-import com.minecolonies.network.messages.TownhallRenameMessage;
+import com.minecolonies.network.messages.TownHallRenameMessage;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.network.ByteBufUtils;
@@ -76,7 +76,7 @@ public class ColonyView implements IColony
     public void setName(String name)
     {
         this.name = name;
-        MineColonies.getNetwork().sendToServer(new TownhallRenameMessage(this, name));
+        MineColonies.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
     }
 
     /**

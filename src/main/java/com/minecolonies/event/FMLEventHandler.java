@@ -10,24 +10,51 @@ import net.minecraft.entity.player.EntityPlayerMP;
 
 public class FMLEventHandler
 {
+    /**
+     * Called when the server ticks
+     * Calls {@link ColonyManager#onServerTick(TickEvent.ServerTickEvent)}
+     *
+     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent}
+     * @see             {@link ColonyManager#onServerTick(TickEvent.ServerTickEvent)}
+     */
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event)
     {
         ColonyManager.onServerTick(event);
     }
 
+    /**
+     * Called when the client ticks
+     * Calls {@link ColonyManager#onClientTick(TickEvent.ClientTickEvent)}
+     *
+     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent}
+     * @see             {@link ColonyManager#onClientTick(TickEvent.ClientTickEvent)}
+     */
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event)
     {
         ColonyManager.onClientTick(event);
     }
 
+    /**
+     * Called when the world ticks
+     * Calls {@link ColonyManager#onWorldTick(TickEvent.WorldTickEvent)}
+     *
+     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent}
+     * @see             {@link ColonyManager#onWorldTick(TickEvent.WorldTickEvent)}
+     */
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
         ColonyManager.onWorldTick(event);
     }
 
+    /**
+     * Called when a player logs in
+     * If the joining player is a MP-Player, sends all possible styles in a message
+     *
+     * @param event     {@link cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent}
+     */
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
