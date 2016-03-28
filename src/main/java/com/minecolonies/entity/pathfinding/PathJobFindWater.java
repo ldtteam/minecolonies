@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 
 public class PathJobFindWater extends PathJob
 {
-    private static final int MIN_DISTANCE = 10;
+    private static final int MIN_DISTANCE = 40;
     private static final int MAX_RANGE = 80;
 
     public static class WaterPathResult extends PathResult
@@ -121,7 +121,7 @@ public class PathJobFindWater extends PathJob
 
     private Predicate<ChunkCoordinates> generateDistanceFrom(int range, ChunkCoordinates newpond)
     {
-        return pond -> squareDistance(pond, newpond) > range;
+        return pond -> squareDistance(pond, newpond) < range;
     }
 
     private boolean pondsAreNear(ArrayList<ChunkCoordinates> ponds, ChunkCoordinates newPond)
@@ -131,7 +131,7 @@ public class PathJobFindWater extends PathJob
             return false;
         }
         Predicate<ChunkCoordinates> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
-        return !ponds.stream().anyMatch(compare);
+        return ponds.stream().anyMatch(compare);
     }
 
 

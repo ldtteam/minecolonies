@@ -6,7 +6,6 @@ import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.InventoryUtils;
-import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -169,6 +168,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //Standing at the water, checking out pond
         if (job.getStage() == Stage.CHECK_WATER)
         {
+            //TODO Set custom rotationYaw and Pitch in the EntityCitizen class which are used by the fishEntity
             //TODO After the executed a full rotation choose a new fishing spot!
             int x = (int) (Math.random() * 3);
             if (x == 1)
@@ -177,6 +177,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             }
             else
             {
+                worker.rotationYaw = ROTATION_ANGLE;
+
                 worker.setAngles(ROTATION_ANGLE, worker.rotationPitch);
             }
             //TODO Different angle to throw the hook not that far
@@ -238,6 +240,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private void doFishing()
     {
+        worker.gatherXp();
 
         //We really do have our Rod in our inventory?
         if (!worker.hasItemInInventory(Items.fishing_rod))
@@ -246,21 +249,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return;
         }
 
-        //Check if there is water really close to me!
-        boolean foundCloseWater = false;
-        for (int x = (int) worker.posX - MIN_DISTANCE_TO_WATER; x < (int) worker.posX + MIN_DISTANCE_TO_WATER; x++)
-        {
-            for (int z = (int) worker.posZ - MIN_DISTANCE_TO_WATER; z < (int) worker.posZ + MIN_DISTANCE_TO_WATER; z++)
-            {
-                if (world.getBlock(x, (int) worker.posY - 1, z).equals(Blocks.water))
-                {
-                    foundCloseWater = true;
-                }
-            }
-        }
-
         //If there is no close water, try to move closer
-        if (!foundCloseWater)
+        if (!findCloseWater())
         {
             job.setStage(Stage.WATER_FOUND);
             return;
@@ -272,34 +262,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             equipRod();
         }
 
-        for (EntityXPOrb orb : worker.getXPOrbsOnGrid())
+        if(caughtFish())
         {
-            worker.addExperience(orb.getXpValue());
-            orb.setDead();
-        }
-
-        if (worker.isCaughtFish())
-        {
-            if (worker.getFishEntity() == null)
-            {
-                worker.setCaughtFish(false);
-                return;
-            }
-
-            worker.setCanPickUpLoot(true);
-            worker.captureDrops = true;
-
-            int i = worker.getFishEntity().func_146034_e();
-            worker.damageItemInHand(i);
-            worker.swingItem();
-            if (worker.getFishEntity() != null)
-            {
-                worker.getFishEntity().setDead();
-                worker.setFishEntity(null);
-            }
-
-            worker.setCaughtFish(false);
-            fishesCaught++;
             return;
         }
 
@@ -327,26 +291,69 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         else
         {
             //Check if hook landed on ground or in water, in some cases the hook bugs -> remove it after 2 minutes
-            if (!worker.getFishEntity().isInWater() && (worker.getFishEntity().onGround
-                                                        || (System.nanoTime() - worker.getFishEntity()
-                                                                                      .getCreationTime())
-                                                           / NANO_TIME_DIVIDER
-                                                           > worker.getFishEntity().getTtl()))
+            if (isFishHookStuck())
             {
-                worker.swingItem();
-                int i = worker.getFishEntity().func_146034_e();
-                worker.damageItemInHand(i);
-
-                //May already be null if the itemInHand has been destroyed
-                if (worker.getFishEntity() != null)
-                {
-                    worker.getFishEntity().setDead();
-                    worker.setFishEntity(null);
-                }
-
-                job.setStage(Stage.WATER_FOUND);
+                retrieveRod();
             }
         }
+    }
+
+    //Check if there is water really close to me
+    private boolean findCloseWater()
+    {
+        boolean foundCloseWater = false;
+        for (int x = (int) worker.posX - MIN_DISTANCE_TO_WATER; x < (int) worker.posX + MIN_DISTANCE_TO_WATER; x++)
+        {
+            for (int z = (int) worker.posZ - MIN_DISTANCE_TO_WATER; z < (int) worker.posZ + MIN_DISTANCE_TO_WATER; z++)
+            {
+                if (world.getBlock(x, (int) worker.posY - 1, z).equals(Blocks.water))
+                {
+                    foundCloseWater = true;
+                }
+            }
+        }
+        return foundCloseWater;
+    }
+
+    private boolean isFishHookStuck()
+    {
+        return !worker.getFishEntity().isInWater() && (worker.getFishEntity().onGround
+                || (System.nanoTime() - worker.getFishEntity()
+                .getCreationTime())
+                / NANO_TIME_DIVIDER
+                > worker.getFishEntity().getTtl());
+    }
+
+    private void retrieveRod()
+    {
+        worker.swingItem();
+        int i = worker.getFishEntity().func_146034_e();
+        worker.damageItemInHand(i);
+
+        //May already be null if the itemInHand has been destroyed
+        if (worker.getFishEntity() != null)
+        {
+            worker.getFishEntity().setDead();
+            worker.setFishEntity(null);
+        }
+
+        job.setStage(Stage.WATER_FOUND);
+    }
+
+    private boolean caughtFish()
+    {
+        if (!worker.isCaughtFish() || worker.getFishEntity() == null)
+        {
+            worker.setCaughtFish(false);
+            return false;
+        }
+
+        worker.setCanPickUpLoot(true);
+        worker.captureDrops = true;
+        retrieveRod();
+        worker.setCaughtFish(false);
+        fishesCaught++;
+        return true;
     }
 
     /**

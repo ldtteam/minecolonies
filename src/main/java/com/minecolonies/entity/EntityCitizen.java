@@ -232,6 +232,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
     }
 
+    public void gatherXp()
+    {
+        for (EntityXPOrb orb : getXPOrbsOnGrid())
+        {
+            addExperience(orb.getXpValue());
+            orb.setDead();
+        }
+    }
+
     private void setTexture()
     {
         if(!worldObj.isRemote)
