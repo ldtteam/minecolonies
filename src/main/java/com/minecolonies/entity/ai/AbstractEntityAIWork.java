@@ -189,7 +189,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Here the AI can check if the chestBelt has to be re rendered and do it.
      */
     protected void updateRenderMetaData()
-    {}
+    {
+        worker.setRenderMetadata("");
+    }
 
     /**
      * Looks for needed items as long as not all of them are there.
