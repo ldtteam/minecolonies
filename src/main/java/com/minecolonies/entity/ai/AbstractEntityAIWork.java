@@ -122,11 +122,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                  * Check if inventory has to be dumped.
                  */
                 new AITarget(() -> worker.isInventoryFull() || wantInventoryDumped(),
-                             () -> INVENTORY_FULL),
-                /**
-                 * Clear INVENTORY_FULL state.
-                 */
-                new AITarget(INVENTORY_FULL, () -> IDLE)
+                             () -> INVENTORY_FULL)
                              );
     }
 
@@ -491,7 +487,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * If inventory is dumped, continue execution
      * so that the state can be resolved.
      *
-     * @return INVENTORY_FULL | null
+     * @return INVENTORY_FULL | IDLE
      */
     private AIState dumpInventory()
     {
@@ -500,7 +496,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
         }
-        return null;
+        return IDLE;
     }
 
     /**
