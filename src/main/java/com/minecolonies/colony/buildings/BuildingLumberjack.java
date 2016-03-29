@@ -51,7 +51,7 @@ public class BuildingLumberjack extends BuildingWorker
 
         public com.blockout.views.Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<BuildingLumberjack.View>(this, LUMBERJACK_HUT_NAME);
+            return new WindowHutWorkerPlaceholder<>(this, LUMBERJACK_HUT_NAME);
         }
     }
 }

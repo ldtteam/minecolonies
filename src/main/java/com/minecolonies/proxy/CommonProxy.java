@@ -24,7 +24,7 @@ public class CommonProxy implements IProxy
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn
      */
-    private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<String, NBTTagCompound>();
+    private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
 
     @Override
     public boolean isClient()
@@ -91,7 +91,7 @@ public class CommonProxy implements IProxy
     public void registerTileEntityRendering(){}
 
     @Override
-    public void registerKeybindings(){}
+    public void registerKeyBindings(){}
 
     @Override
     public void showCitizenWindow(CitizenData.View citizen) {}

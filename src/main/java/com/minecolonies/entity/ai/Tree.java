@@ -53,21 +53,8 @@ public class Tree
 
     public void findLogs(World world)
     {
-        //System.out.println("Starting findLogs recursive search.");
-        long startTime = System.nanoTime();
-
         addAndSearch(world, location);
-        //System.out.println("Search time taken(ms): " + (System.nanoTime()-startTime)/1000000D);
-
-        Collections.sort(woodBlocks, new Comparator<ChunkCoordinates>()
-        {
-            @Override
-            public int compare(ChunkCoordinates c1, ChunkCoordinates c2)
-            {
-                return (int) (c1.getDistanceSquaredToChunkCoordinates(location) - c2.getDistanceSquaredToChunkCoordinates(location));
-            }
-        });
-        //System.out.println("Time including sort(ms): " + (System.nanoTime()-startTime)/1000000D);
+        Collections.sort(woodBlocks, (c1, c2) -> (int) (c1.getDistanceSquaredToChunkCoordinates(location) - c2.getDistanceSquaredToChunkCoordinates(location)));
     }
 
     public void addBaseLog()
@@ -264,7 +251,7 @@ public class Tree
         Tree tree = new Tree();
         tree.location = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
 
-        tree.woodBlocks = new LinkedList<ChunkCoordinates>();
+        tree.woodBlocks = new LinkedList<>();
         NBTTagList logs = compound.getTagList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
         for(int i = 0; i < logs.tagCount(); i++)
         {

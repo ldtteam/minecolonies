@@ -23,15 +23,15 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, certificateFingerprint = Constants.FINGERPRINT)
 public class MineColonies
 {
-    public static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
+    public  static final    Logger               logger     = LogManager.getLogger(Constants.MOD_ID);
 
-    private static SimpleNetworkWrapper network;
+    private static          SimpleNetworkWrapper network;
 
     @Mod.Instance(Constants.MOD_ID)
-    public static MineColonies instance;
+    public static           MineColonies         instance;
 
     @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
-    public static IProxy proxy;
+    public static           IProxy               proxy;
 
     public static SimpleNetworkWrapper getNetwork()
     {
@@ -60,7 +60,7 @@ public class MineColonies
 
         ModItems.init();
 
-        proxy.registerKeybindings();//Schematica
+        proxy.registerKeyBindings();//Schematica
     }
 
     @Mod.EventHandler
@@ -83,7 +83,7 @@ public class MineColonies
         //  Colony Request messages
         getNetwork().registerMessage(BuildRequestMessage.class,              BuildRequestMessage.class,              20, Side.SERVER);
         getNetwork().registerMessage(OpenInventoryMessage.class,             OpenInventoryMessage.class,             21, Side.SERVER);
-        getNetwork().registerMessage(TownhallRenameMessage.class,            TownhallRenameMessage.class,            22, Side.SERVER);
+        getNetwork().registerMessage(TownHallRenameMessage.class,            TownHallRenameMessage.class,            22, Side.SERVER);
         getNetwork().registerMessage(MinerSetLevelMessage.class,             MinerSetLevelMessage.class,             23, Side.SERVER);
         getNetwork().registerMessage(FarmerCropTypeMessage.class,            FarmerCropTypeMessage.class,            24, Side.SERVER);
         getNetwork().registerMessage(RecallCitizenMessage.class,             RecallCitizenMessage.class,             25, Side.SERVER);

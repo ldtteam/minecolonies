@@ -52,7 +52,7 @@ public class BuildingStonemason extends BuildingWorker
 
         public com.blockout.views.Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<BuildingStonemason.View>(this, STONEMASON_HUT_NAME);
+            return new WindowHutWorkerPlaceholder<>(this, STONEMASON_HUT_NAME);
         }
     }
 }

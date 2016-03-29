@@ -12,8 +12,8 @@ public final class ModItems
     public static void init()
     {
         supplyChest = new ItemSupplyChestDeployer();
-        buildTool = new ItemBuildTool();
-        scanTool = new ItemScanTool();
-        caliper = new ItemCaliper();
+        buildTool   = new ItemBuildTool();
+        scanTool    = new ItemScanTool();
+        caliper     = new ItemCaliper();
     }
 }

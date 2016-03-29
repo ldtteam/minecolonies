@@ -126,10 +126,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 decorationStep();
                 break;
             case ENTITIES:
-                for(Entity entity : job.getSchematic().getEntities())
-                {//TODO use iterator to do this overtime
-                    spawnEntity(entity);
-                }
+                //TODO use iterator to do this overtime
+                job.getSchematic().getEntities().forEach(this::spawnEntity);
                 completeBuild();
                 break;
             default:
@@ -407,6 +405,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
     {
         if(block != Blocks.air)//Breaking blocks doesn't require taking materials from the citizens inventory
@@ -497,10 +496,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 int slotID = world.rand.nextInt(worker.getInventory().getSizeInventory());
                 for(int i = 0; i < worker.getInventory().getSizeInventory(); i++)
                 {
-                    ItemStack invItem = worker.getInventory().getStackInSlot(i);
                     //Keeping the TODO but removing the if
                     //TODO change to isRequired material using chris' system
-                    leftOvers = invItem;
+                    leftOvers = worker.getInventory().getStackInSlot(i);
                     slotID = i;
                     break;
 
@@ -595,28 +593,24 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
     }
 
-    private boolean findNextBlockSolid()
+    private void findNextBlockSolid()
     {
         if(!job.getSchematic().findNextBlockSolid())//method returns false if there is no next block (schematic finished)
         {
             job.stage = JobBuilder.Stage.DECORATIONS;
             job.getSchematic().reset();
             incrementBlock();
-            return false;
         }
-        return true;
     }
 
-    private boolean findNextBlockNonSolid()
+    private void findNextBlockNonSolid()
     {
         if(!job.getSchematic().findNextBlockNonSolid())//method returns false if there is no next block (schematic finished)
         {
             job.stage = JobBuilder.Stage.ENTITIES;
             job.getSchematic().reset();
             incrementBlock();
-            return false;
         }
-        return true;
     }
 
     private boolean incrementBlock()

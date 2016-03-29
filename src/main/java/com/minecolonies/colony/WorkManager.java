@@ -11,7 +11,7 @@ import java.util.*;
 public class WorkManager
 {
     protected       final   Colony                  colony;
-    protected               Map<Integer, WorkOrder> workOrders                      = new HashMap<Integer, WorkOrder>();
+    protected               Map<Integer, WorkOrder> workOrders                      = new HashMap<>();
     protected               int                     topWorkOrderId                  = 0;
 
 //    protected final List<WorkOrder>      unclaimedOrders = new ArrayList<WorkOrder>();
@@ -134,7 +134,7 @@ public class WorkManager
      */
     public <ORDER extends WorkOrder> List<ORDER> getWorkOrdersOfType(Class<ORDER> type)
     {
-        List<ORDER> list = new ArrayList<ORDER>();
+        List<ORDER> list = new ArrayList<>();
         for (WorkOrder o : workOrders.values())
         {
             if (type.isAssignableFrom(o.getClass()))
@@ -152,13 +152,7 @@ public class WorkManager
      */
     public void clearWorkForCitizen(CitizenData citizen)
     {
-        for (WorkOrder o : workOrders.values())
-        {
-            if (o.isClaimedBy(citizen))
-            {
-                o.clearClaimedBy();
-            }
-        }
+        workOrders.values().stream().filter(o -> o.isClaimedBy(citizen)).forEach(WorkOrder::clearClaimedBy);
     }
 
     /**
@@ -231,13 +225,9 @@ public class WorkManager
 
             if ((event.world.getWorldTime() % WORK_ORDER_FULFILL_INCREMENT) == 0)
             {
-                for (WorkOrder o : workOrders.values())
-                {
-                    if (!o.isClaimed())
-                    {
-                        o.attemptToFulfill(colony);
-                    }
-                }
+                workOrders.values().stream().filter(o -> !o.isClaimed()).forEach(o -> {
+                    o.attemptToFulfill(colony);
+                });
             }
         }
     }

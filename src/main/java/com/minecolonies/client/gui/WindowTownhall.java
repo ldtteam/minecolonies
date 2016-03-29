@@ -274,7 +274,7 @@ public class WindowTownhall extends Window implements Button.Handler
             if (row >= 0 && row < users.size())
             {
                 Permissions.Player user = users.get(row);
-                Permissions.Rank newRank = user.rank;
+                Permissions.Rank newRank;
 
                 if (button.getID().equals(BUTTON_PROMOTE))
                 {

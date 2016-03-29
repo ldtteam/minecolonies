@@ -40,6 +40,7 @@ public class RenderBipedCitizen extends RenderBiped
     private static final Map<Model, ModelBiped> idToMaleModelMap = new HashMap<Model, ModelBiped>();
     private static final Map<Model, ModelBiped> idToFemaleModelMap = new HashMap<Model, ModelBiped>();
 
+
     static
     {
         idToMaleModelMap.put    (Model.DELIVERYMAN,     new ModelEntityDeliverymanMale());

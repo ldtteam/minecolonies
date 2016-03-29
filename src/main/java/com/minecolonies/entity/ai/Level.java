@@ -99,7 +99,7 @@ public class Level
         int ladderx = compound.getInteger(TAG_LADDERX);
         int ladderz = compound.getInteger(TAG_LADDERZ);
 
-        level.ladderNode = level.nodes.stream().filter(node -> node.getX() == ladderx && node.getZ() == ladderz).findFirst().get();
+        level.ladderNode = level.nodes.stream().filter(node -> node.getX() == ladderx && node.getZ() == ladderz).findFirst().get(); //TODO .isPresent()
 
         return level;
     }
