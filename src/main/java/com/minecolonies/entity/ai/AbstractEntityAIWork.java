@@ -90,8 +90,23 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         super(job);
         super.registerTargets(
+                /**
+                 * Init safety checks and transition to IDLE
+                 */
                 new AITarget(INIT, this::initSafetyChecks),
-                new AITarget(this::updateVisualState)
+                /**
+                 * Update chestbelt and nametag
+                 * Will be executed every time
+                 * and does not stop execution
+                 */
+                new AITarget(this::updateVisualState),
+                /**
+                 * If waitingForSomething returns true
+                 * stop execution to wait for it.
+                 * this keeps the current state
+                 * (returning null would not stop execution)
+                 */
+                new AITarget(this::waitingForSomething, ()->state)
                              );
     }
 
@@ -139,13 +154,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     public void updateTask()
     {
         super.updateTask();
-        
-        //Wait for delay if it exists
-        if (waitingForSomething())
-        {
-            return;
-        }
-
 
         //We need Items as it seems
         if (!itemsCurrentlyNeeded.isEmpty())
