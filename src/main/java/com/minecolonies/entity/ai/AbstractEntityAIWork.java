@@ -245,7 +245,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                InventoryFunctions
                        .matchFirstInInventory(
                                buildingMiner.getTileEntity(),
-                               (stack) -> stack != null && is.isItemEqual(stack),
+                               stack -> stack != null && is.isItemEqual(stack),
                                this::takeItemStackFromChest
                                              );
     }
@@ -390,7 +390,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         boolean needsTool = !InventoryFunctions
                 .matchFirstInInventory(
                         worker.getInventory(),
-                        stack -> (stack != null && stack.getItem().equals(Items.fishing_rod)),
+                        stack -> stack != null && stack.getItem().equals(Items.fishing_rod),
                         InventoryFunctions::doNothing);
         if (!needsTool)
         {
