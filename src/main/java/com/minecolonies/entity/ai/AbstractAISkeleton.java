@@ -151,7 +151,10 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
             log.log(Level.WARNING, "Action for target " + target + " threw an exception:", e);
             return false;
         }
-        state = newState;
+        if(newState != null)
+        {
+            state = newState;
+        }
         return true;
     }
 

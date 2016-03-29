@@ -8,7 +8,12 @@ import java.util.logging.Logger;
 
 
 /**
- * A simple target the AI tries to accomplish
+ * A simple target the AI tries to accomplish.
+ * It has a state matcher,
+ * so it only gets executed on matching state.
+ * It has a tester function to make more checks
+ * to tell if execution is wanted.
+ * And it can change state.
  */
 public class AITarget
 {
@@ -16,7 +21,7 @@ public class AITarget
     /**
      * Custom logger for the class.
      */
-    private static final Logger LOGGER = Logger.getLogger(AITarget.class.getName());
+    private static final Logger log = Logger.getLogger(AITarget.class.getName());
     private final AIStateBase state;
     private final BooleanSupplier predicate;
     private final Supplier<AIStateBase> action;
@@ -54,11 +59,20 @@ public class AITarget
         return state;
     }
 
+    /**
+     * Return whether the ai wants this target to be executed.
+     * @return true if execution is wanted.
+     */
     public boolean test()
     {
         return predicate.getAsBoolean();
     }
 
+    /**
+     * Execute this target.
+     * Do some stuff and return the state transition.
+     * @return the new state the ai is in. null if no change.
+     */
     public AIStateBase apply()
     {
         return action.get();
