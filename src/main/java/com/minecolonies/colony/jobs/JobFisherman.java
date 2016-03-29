@@ -2,19 +2,14 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.EntityAIWorkFisherman;
-import com.minecolonies.entity.ai.EntityAIWorkMiner;
-import com.minecolonies.entity.ai.Tree;
 import com.minecolonies.entity.ai.Water;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.Constants;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,9 +22,13 @@ public class JobFisherman extends Job
     private static final String TAG_WATER = "Water";
     private static final String TAG_PONDS = "Ponds";
 
-    private EntityAIWorkFisherman.Stage stage     = EntityAIWorkFisherman.Stage.START_WORKING;
-    public Water water;
-    public ArrayList<ChunkCoordinates> ponds = new ArrayList<>();
+    private EntityAIWorkFisherman.Stage stage = EntityAIWorkFisherman.Stage.START_WORKING;
+    //The water the fisherman is currently at
+    private Water water;
+    //Contains all possible fishing spots
+    private ArrayList<ChunkCoordinates> ponds = new ArrayList<>();
+
+    //Initializes the job class
     public JobFisherman(CitizenData entity)
     {
         super(entity);
@@ -38,11 +37,12 @@ public class JobFisherman extends Job
     @Override
     public String getName(){ return "com.minecolonies.job.Fisherman"; }
 
-    /*@Override
+    @Override
     public RenderBipedCitizen.Model getModel()
     {
-        return RenderBipedCitizen.Model.Fisherman;
-    }*/
+        //TODO Add Fisherman
+        return RenderBipedCitizen.Model.FARMER;
+    }
 
     @Override
     public void writeToNBT(NBTTagCompound compound)
@@ -62,7 +62,6 @@ public class JobFisherman extends Job
             ChunkCoordUtils.writeToNBTTagList(lakes, pond);
         }
         compound.setTag(TAG_PONDS, lakes);
-
     }
 
     @Override
@@ -76,11 +75,11 @@ public class JobFisherman extends Job
             water = Water.readFromNBT(compound.getCompoundTag(TAG_WATER));
         }
 
-        ponds = new ArrayList<ChunkCoordinates>();
-        NBTTagList listofponds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
-        for(int i = 0; i < listofponds.tagCount(); i++)
+        ponds = new ArrayList<>();
+        NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+        for(int i = 0; i < listOfPonds.tagCount(); i++)
         {
-            ponds.add(ChunkCoordUtils.readFromNBTTagList(listofponds, i));
+            ponds.add(ChunkCoordUtils.readFromNBTTagList(listOfPonds, i));
         }
     }
 
@@ -112,19 +111,35 @@ public class JobFisherman extends Job
         this.stage = stage;
     }
 
-    public void addItemNeededIfNotAlready(ItemStack stack)
-    {
-        List<ItemStack> itemsNeeded = super.getItemsNeeded();
+    public Water getWater() {
+        return water;
+    }
 
-        //check if stack is already in itemsNeeded
-        for(ItemStack neededItem : itemsNeeded)
-        {
-            if(stack.isItemEqual(neededItem))
-            {
-                return;
-            }
-        }
-        addItemNeeded(stack);
+    public void setWater(Water water) {
+        this.water = water;
+    }
+
+    public ArrayList<ChunkCoordinates> getPonds() {
+        return ponds;
+    }
+
+    public void setPonds(ArrayList<ChunkCoordinates> ponds) {
+        this.ponds = ponds;
+    }
+
+    public void addToPonds(ChunkCoordinates pond)
+    {
+        this.ponds.add(pond);
+    }
+
+    public void removeFromPonds(ChunkCoordinates pond)
+    {
+        this.ponds.remove(pond);
+    }
+
+    public void removeFromPonds(int index)
+    {
+        this.ponds.remove(index);
     }
 }
 

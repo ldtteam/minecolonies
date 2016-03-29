@@ -119,7 +119,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             }
             //Fisherman is at building
             job.setStage(Stage.PREPARING);
-            return;
         }
 
         //Fisherman is at building and prepares for work
@@ -127,7 +126,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             if (worker.hasItemInInventory(Items.fishing_rod))
             {
-                if (job.water == null)
+                if (job.getWater() == null)
                 {
                     job.setStage(Stage.SEARCHING_WATER);
                     return;
@@ -145,13 +144,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (job.getStage() == Stage.SEARCHING_WATER)
         {
             findWater();
-            return;
         }
 
         //Walking to the water to check out the mine
         if (job.getStage() == Stage.WATER_FOUND)
         {
-            if (job.water == null)
+            if (job.getWater() == null)
             {
                 job.setStage(Stage.SEARCHING_WATER);
                 return;
@@ -166,7 +164,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //Standing at the water, checking out pond
         if (job.getStage() == Stage.CHECK_WATER)
         {
-            //TODO Set custom rotationYaw and Pitch in the EntityCitizen class which are used by the fishEntity
             tryDifferentAngles();
             job.setStage(Stage.START_FISHING);
         }
@@ -174,14 +171,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (job.getStage() == Stage.START_FISHING)
         {
             doFishing();
-            return;
         }
         setDelay(DELAY);
     }
 
     private void tryDifferentAngles()
     {
-        int x = (int) (Math.random() * 3);
+        int x = itemRand.nextInt() * 3;
         if (x == 1)
         {
             //Try a different angle to throw the hook not that far
@@ -195,8 +191,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             executedRotations++;
             if(executedRotations>=MAX_ROTATIONS)
             {
-                job.ponds.remove(job.water.getLocation());
-                job.water = null;
+                job.removeFromPonds(job.getWater().getLocation());
+                job.setWater(null);
                 job.setStage(Stage.SEARCHING_WATER);
             }
             worker.rotationYaw = ROTATION_ANGLE;
@@ -206,29 +202,33 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private boolean walkToWater()
     {
-        return !(job.water == null || job.water.getLocation() == null) && walkToBlock(job.water.getLocation());
+        return !(job.getWater() == null || job.getWater().getLocation() == null) && walkToBlock(job.getWater().getLocation());
     }
 
     private void findWater()
     {
-        //TODO If he can't find 20 ponds, use the ponds he has
         //If he can't find any pond, tell that to the player
         //If 20 ponds are already stored, take a random stored location
-        if (job.ponds.size() >= MAX_PONDS)
+        if (job.getPonds().size() >= MAX_PONDS)
         {
-            job.water = new Water(world, job.ponds.get(new Random().nextInt(MAX_PONDS)));
+            job.setWater(new Water(world, job.getPonds().get(new Random().nextInt(MAX_PONDS))));
             return;
         }
         if (pathResult == null || (!pathResult.isComputing() && !pathResult.getPathReachesDestination()))
         {
-            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.ponds);
+            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
         }
         else if (pathResult.getPathReachesDestination())
         {
             if (pathResult.ponds != null)
             {
-                job.water = new Water(world, pathResult.ponds);
-                job.ponds.add(pathResult.ponds);
+                job.setWater(new Water(world, pathResult.ponds));
+                job.addToPonds(pathResult.ponds);
+            }
+            else
+            {
+                //TODO If he can't find 20 ponds, use the ponds he has, if he can't any, tell the player
+                logger.entry("Argh there is no more water around!");
             }
             pathResult = null;
             job.setStage(Stage.CHECK_WATER);
@@ -251,27 +251,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         worker.gatherXp();
 
-        //We really do have our Rod in our inventory?
-        if (!worker.hasItemInInventory(Items.fishing_rod))
-        {
-            job.setStage(Stage.PREPARING);
-            return;
-        }
-
-        //If there is no close water, try to move closer
-        if (!findCloseWater())
-        {
-            job.setStage(Stage.WATER_FOUND);
-            return;
-        }
-
-        //Check if Rod is held item if not put it as held item
-        if (worker.getHeldItem() == null || !worker.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
-        {
-            equipRod();
-        }
-
-        if(caughtFish())
+        if (!isReadyToFish() || caughtFish())
         {
             return;
         }
@@ -307,8 +287,34 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
     }
 
+    //Returns true if fisherman meets all requirements to fish
+    private boolean isReadyToFish()
+    {
+        //We really do have our Rod in our inventory?
+        if (!worker.hasItemInInventory(Items.fishing_rod))
+        {
+            job.setStage(Stage.PREPARING);
+            return false;
+        }
+
+        //If there is no close water, try to move closer
+        if (!isCloseToWater())
+        {
+            job.setStage(Stage.WATER_FOUND);
+            return false;
+        }
+
+        //Check if Rod is held item if not put it as held item
+        if (worker.getHeldItem() == null || !worker.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
+        {
+            equipRod();
+            return false;
+        }
+        return  true;
+    }
+
     //Check if there is water really close to me
-    private boolean findCloseWater()
+    private boolean isCloseToWater()
     {
         boolean foundCloseWater = false;
         for (int x = (int) worker.posX - MIN_DISTANCE_TO_WATER; x < (int) worker.posX + MIN_DISTANCE_TO_WATER; x++)
@@ -380,7 +386,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private boolean testRandomChance()
     {
         //+1 since the level may be 0
-        double chance = (Math.random() * FISHING_DELAY) / (fishingSkill + 1);
+        double chance = (itemRand.nextInt()* FISHING_DELAY) / (fishingSkill + 1);
         return chance >= CHANCE;
     }
 

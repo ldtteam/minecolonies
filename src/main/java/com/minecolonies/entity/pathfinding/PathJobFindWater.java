@@ -100,21 +100,7 @@ public class PathJobFindWater extends PathJob
         return false;
     }
 
-
-    private ChunkCoordinates findLandBlockBesidesWater(Node n)
-    {
-        for(int x = -1; x <= 1; x++)
-        {
-            for(int z = -1; z <= 1; z++) {
-                if (world.getBlock(n.x + x, n.y, n.z + z).getMaterial().isSolid())
-                {
-                    return new ChunkCoordinates(n.x + x, n.y, n.z + z);
-                }
-            }
-        }
-        return null;
-    }
-    private float squareDistance(ChunkCoordinates currentPond, ChunkCoordinates nextPond)
+    private static float squareDistance(ChunkCoordinates currentPond, ChunkCoordinates nextPond)
     {
         return currentPond.getDistanceSquaredToChunkCoordinates(nextPond);
     }

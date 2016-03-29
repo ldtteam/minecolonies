@@ -8,7 +8,6 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-//TODO For future use!
 public class Water
 {
     private static final String TAG_LOCATION = "Location";
@@ -83,6 +82,32 @@ public class Water
                 checkWaterPoolInDirectionZThenX(world, x, y, z, 1) || checkWaterPoolInDirectionZThenX(world, x, y, z, -1);
     }
 
+    private static boolean checkWaterPoolInDirectionX(IBlockAccess world, int x, int y, int z, int vector)
+    {
+        //Check 3 blocks in direction +/- x
+        for (int dx = x + 3 * vector; dx <= x + 3 * vector; dx++)
+        {
+            if (!world.getBlock(dx, y, z).equals(Blocks.water))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean checkWaterPoolInDirectionZ(IBlockAccess world, int x, int y, int z, int vector)
+    {
+        //Check 3 blocks in direction +/- z
+        for (int dz = z + 3 * vector; dz <= z + 3 * vector; dz++)
+        {
+            if (!world.getBlock(x, y, dz).equals(Blocks.water))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static boolean checkWaterPoolInDirectionXThenZ(IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 6 blocks in direction +/- x
@@ -97,19 +122,6 @@ public class Water
         return checkWaterPoolInDirectionZ(world,x + 3 * vector, y, z, 1) && checkWaterPoolInDirectionZ(world,x + 3 * vector, y, z, -1);
     }
 
-    private static boolean checkWaterPoolInDirectionX(IBlockAccess world, int x, int y, int z, int vector)
-    {
-        //Check 3 blocks in direction +/- x
-        for (int dx = x + 3 * vector; dx <= x + 3 * vector; dx++)
-        {
-            if (!world.getBlock(dx, y, z).equals(Blocks.water))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private static boolean checkWaterPoolInDirectionZThenX(IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 6 blocks in direction +/- z
@@ -122,19 +134,6 @@ public class Water
         }
         //Takes the middle z block and searches 3 water blocks to both sides
         return checkWaterPoolInDirectionX(world,x, y, z + 3 * vector, 1) && checkWaterPoolInDirectionX(world,x, y, z + 3 * vector, -1);
-    }
-
-    private static boolean checkWaterPoolInDirectionZ(IBlockAccess world, int x, int y, int z, int vector)
-    {
-        //Check 3 blocks in direction +/- z
-        for (int dz = z + 3 * vector; dz <= z + 3 * vector; dz++)
-        {
-            if (!world.getBlock(x, y, dz).equals(Blocks.water))
-            {
-                return false;
-            }
-        }
-        return true;
     }
 
     public ChunkCoordinates getLocation()
