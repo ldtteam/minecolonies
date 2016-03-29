@@ -238,7 +238,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
-    private final boolean isInHut(final ItemStack is)
+    private boolean isInHut(final ItemStack is)
     {
         final BuildingWorker buildingMiner = getOwnBuilding();
         return is != null &&
@@ -268,7 +268,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     private AIStateBase waitForShovel()
     {
         checkForShovel();
-        delay += 10;
+        delay += DELAY_RECHECK;
         return NEEDS_SHOVEL;
     }
 
@@ -326,7 +326,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     private AIStateBase waitForAxe()
     {
         checkForAxe();
-        delay += 10;
+        delay += DELAY_RECHECK;
         return NEEDS_AXE;
     }
 
@@ -350,7 +350,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     private AIStateBase waitForHoe()
     {
         checkForHoe();
-        delay += 10;
+        delay += DELAY_RECHECK;
         return NEEDS_HOE;
     }
 
@@ -374,7 +374,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     private AIStateBase waitForRod()
     {
         needsRod = checkForRod();
-        delay += 10;
+        delay += DELAY_RECHECK;
         return NEEDS_ROD;
     }
 
@@ -433,7 +433,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     private AIStateBase waitForPickaxe()
     {
         checkForPickaxe(needsPickaxeLevel);
-        delay += 10;
+        delay += DELAY_RECHECK;
         return NEEDS_PICKAXE;
     }
 
@@ -540,7 +540,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         {
             if (dumpOneMoreSlot())
             {
-                delay += 10;
+                delay += DELAY_RECHECK;
                 return;
             }
             //We do not need to dump more, use inv check below to resolve condition
