@@ -23,6 +23,7 @@ public enum AIStateBase
     NEEDS_HOE,
     NEEDS_ROD,
     NEEDS_PICKAXE,
+    INVENTORY_FULL,
     /**
      * The ai needs some items it is waiting for.
      */

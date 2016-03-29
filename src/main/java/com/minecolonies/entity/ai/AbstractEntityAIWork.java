@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.entity.ai.state.AIStateBase.IDLE;
 import static com.minecolonies.entity.ai.state.AIStateBase.INIT;
+import static com.minecolonies.entity.ai.state.AIStateBase.INVENTORY_FULL;
 import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_AXE;
 import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_HOE;
 import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_ITEM;
@@ -127,7 +128,22 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                 new AITarget(() -> this.needsAxe, this::waitForAxe),
                 new AITarget(() -> this.needsHoe, this::waitForHoe),
                 new AITarget(() -> this.needsRod, this::waitForRod),
-                new AITarget(() -> this.needsPickaxe, this::waitForPickaxe)
+                new AITarget(() -> this.needsPickaxe, this::waitForPickaxe),
+                /**
+                 * Dumps inventory as long as needs be.
+                 * If inventory is dumped, execution continues
+                 * to resolve state.
+                 */
+                new AITarget(INVENTORY_FULL, this::dumpInventory),
+                /**
+                 * Check if inventory has to be dumped.
+                 */
+                new AITarget(() -> worker.isInventoryFull() || wantInventoryDumped(),
+                             () -> INVENTORY_FULL),
+                /**
+                 * Clear INVENTORY_FULL state.
+                 */
+                new AITarget(INVENTORY_FULL, ()-> IDLE)
                              );
     }
 
@@ -530,28 +546,26 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                         this::takeItemStackFromChest);
     }
 
+    /**
+     * Walk to building and dump inventory.
+     * If inventory is dumped, continue execution
+     * so that the state can be resolved.
+     * @return INVENTORY_FULL | null
+     */
+    private AIStateBase dumpInventory(){
+        if (dumpOneMoreSlot())
+        {
+            delay += DELAY_RECHECK;
+            return INVENTORY_FULL;
+        }
+        return null;
+    }
+
     @Override
     public void updateTask()
     {
         super.updateTask();
-
-        //Inventory is full, walk to building and dump inventory
-        if (this.errorState == ErrorState.INVENTORY_FULL)
-        {
-            if (dumpOneMoreSlot())
-            {
-                delay += DELAY_RECHECK;
-                return;
-            }
-            //We do not need to dump more, use inv check below to resolve condition
-        }
-        //Check for full inventory
-        if (worker.isInventoryFull() || wantInventoryDumped())
-        {
-            this.errorState = ErrorState.INVENTORY_FULL;
-            return;
-        }
-        this.errorState = ErrorState.NONE;
+        
         workOnTask();
     }
 
