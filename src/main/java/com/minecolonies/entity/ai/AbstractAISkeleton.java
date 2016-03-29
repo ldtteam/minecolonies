@@ -160,6 +160,8 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
     /**
      * Continuation of checkOnTarget.
      * applies the target and changes the state.
+     * if the state is null, execute more targets
+     * and don't change state.
      *
      * @param target the target.
      * @return true if it worked.
@@ -179,8 +181,9 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         if (newState != null)
         {
             state = newState;
+            return true;
         }
-        return true;
+        return false;
     }
 
 }

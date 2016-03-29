@@ -94,6 +94,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                              );
     }
 
+    /**
+     * Check for null on important variables to prevent crashes.
+     *
+     * @return IDLE if all ready, else stay in INIT
+     */
     private AIStateBase initSafetyChecks()
     {
         //Something fatally wrong? Wait for re-init...
