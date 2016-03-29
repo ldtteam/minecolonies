@@ -234,7 +234,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             return;
         }
 
-        if (missesItemsInInventory(new ItemStack(Blocks.cobblestone, 2), new ItemStack(Blocks.ladder)))
+        if (checkOrRequestItems(new ItemStack(Blocks.cobblestone, 2), new ItemStack(Blocks.ladder)))
         {
             return;
         }
@@ -535,7 +535,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                             setDelay(1);
                             return true;
                         }
-                        if (missesItemsInInventory(new ItemStack(Blocks.cobblestone)))
+                        if (checkOrRequestItems(new ItemStack(Blocks.cobblestone)))
                         {
                             return true;
                         }
@@ -565,7 +565,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                        != Blocks.planks)
                 {
                     setDelay(10);
-                    if (missesItemsInInventory(new ItemStack(Blocks.planks)))
+                    if (checkOrRequestItems(new ItemStack(Blocks.planks)))
                     {
                         return true;
                     }
@@ -594,7 +594,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                     && world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ) != Blocks.fence)
                 {
                     setDelay(10);
-                    if (missesItemsInInventory(new ItemStack(Blocks.fence)))
+                    if (checkOrRequestItems(new ItemStack(Blocks.fence)))
                     {
                         return true;
                     }
@@ -624,7 +624,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                        != Blocks.torch)
                 {
                     setDelay(10);
-                    if (missesItemsInInventory(new ItemStack(Blocks.torch)))
+                    if (checkOrRequestItems(new ItemStack(Blocks.torch)))
                     {
                         return true;
                     }
@@ -745,7 +745,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                 setDelay(1);
                 return false;
             }
-            if (missesItemsInInventory(new ItemStack(Blocks.cobblestone)))
+            if (checkOrRequestItems(new ItemStack(Blocks.cobblestone)))
             {
                 return false;
             }
@@ -947,7 +947,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                         }
                     }
 
-                    if (missesItemsInInventory(new ItemStack(material)))
+                    if (checkOrRequestItems(new ItemStack(material)))
                     {
                         return false;
                     }
@@ -1044,7 +1044,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                         continue;
                     }
 
-                    if (missesItemsInInventory(new ItemStack(material)))
+                    if (checkOrRequestItems(new ItemStack(material)))
                     {
                         return false;
                     }
@@ -1093,7 +1093,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                         continue;
                     }
 
-                    if (missesItemsInInventory(new ItemStack(material)))
+                    if (checkOrRequestItems(new ItemStack(material)))
                     {
                         return false;
                     }

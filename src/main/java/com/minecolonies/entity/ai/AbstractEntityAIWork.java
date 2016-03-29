@@ -570,7 +570,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * @param items the items needed
      * @return true if they are in inventory
      */
-    protected boolean missesItemsInInventory(ItemStack... items)
+    protected boolean checkOrRequestItems(ItemStack... items)
     {
         boolean allClear = true;
         for (ItemStack stack : items)

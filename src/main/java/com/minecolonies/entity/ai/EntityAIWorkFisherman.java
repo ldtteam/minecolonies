@@ -86,7 +86,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     private AIState prepareForFishing(){
-        if (missesItemsInInventory(new ItemStack(Items.fishing_rod)))
+        if (checkOrRequestItems(new ItemStack(Items.fishing_rod)))
         {
             return state;
         }
