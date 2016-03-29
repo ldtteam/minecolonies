@@ -26,26 +26,50 @@ public class AITarget
     private final BooleanSupplier predicate;
     private final Supplier<AIStateBase> action;
 
+    /**
+     * Construct a traget.
+     *
+     * @param action the action to apply
+     */
     public AITarget(Supplier<AIStateBase> action)
     {
         this(() -> true, action);
     }
 
-    public AITarget(AIStateBase state, Supplier<AIStateBase> action)
-    {
-        this(state, () -> true, action);
-    }
-
+    /**
+     * Construct a traget.
+     *
+     * @param predicate the predicate for execution
+     * @param action    the action to apply
+     */
     public AITarget(BooleanSupplier predicate, Supplier<AIStateBase> action)
     {
         this(null, predicate, action);
     }
 
+    /**
+     * Construct a traget.
+     *
+     * @param state     the state it needs to be | null
+     * @param predicate the predicate for execution
+     * @param action    the action to apply
+     */
     public AITarget(AIStateBase state, BooleanSupplier predicate, Supplier<AIStateBase> action)
     {
         this.state = state;
         this.predicate = predicate;
         this.action = action;
+    }
+
+    /**
+     * Construct a traget.
+     *
+     * @param state  the state it needs to be | null
+     * @param action the action to apply
+     */
+    public AITarget(AIStateBase state, Supplier<AIStateBase> action)
+    {
+        this(state, () -> true, action);
     }
 
     /**
@@ -61,6 +85,7 @@ public class AITarget
 
     /**
      * Return whether the ai wants this target to be executed.
+     *
      * @return true if execution is wanted.
      */
     public boolean test()
@@ -71,6 +96,7 @@ public class AITarget
     /**
      * Execute this target.
      * Do some stuff and return the state transition.
+     *
      * @return the new state the ai is in. null if no change.
      */
     public AIStateBase apply()
