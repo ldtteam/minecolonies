@@ -578,7 +578,7 @@ public class EntityFishHook extends Entity
             }
             else if (this.field_146045_ax > 0)
             {
-                EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.func_146033_f());
+                EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot());
                 double d1 = this.citizen.posX - this.posX;
                 double d3 = this.citizen.posY - this.posY;
                 double d5 = this.citizen.posZ - this.posZ;
@@ -603,7 +603,7 @@ public class EntityFishHook extends Entity
         }
     }
 
-    private ItemStack func_146033_f()
+    private ItemStack getFishingLoot()
     {
         double f = this.worldObj.rand.nextDouble();
         int i = EnchantmentHelper.func_151386_g(this.citizen);
@@ -612,8 +612,9 @@ public class EntityFishHook extends Entity
         double f2 = 0.05 + i * 0.01 - j * 0.01;
         f1 = MathHelper.clamp_float((float)f1, 0.0F, 1.0F);
         f2 = MathHelper.clamp_float((float)f2, 0.0F, 1.0F);
+        int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
 
-        if (f < f1)
+        if (f < f1 || buildingLevel == 1)
         {
             return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, possibleDrops_1)).func_150708_a(this.rand);
         }
@@ -621,7 +622,7 @@ public class EntityFishHook extends Entity
         {
             f -= f1;
 
-            if (f < f2)
+            if (f < f2 || buildingLevel == 2)
             {
                 return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, possibleDrops_2)).func_150708_a(this.rand);
             }
