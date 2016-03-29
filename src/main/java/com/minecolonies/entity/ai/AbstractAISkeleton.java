@@ -87,18 +87,27 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         Arrays.asList(targets).forEach(this::registerTarget);
     }
 
+    /**
+     * Returns whether the EntityAIBase should begin execution.
+     */
     @Override
     public boolean shouldExecute()
     {
         return worker.getDesiredActivity() == EntityCitizen.DesiredActivity.WORK;
     }
 
+    /**
+     * Resets the task
+     */
     @Override
     public void resetTask()
     {
         worker.setStatus(IDLE);
     }
 
+    /**
+     * Execute a one shot task or start executing a continuous task
+     */
     @Override
     public void startExecuting()
     {
@@ -106,6 +115,9 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         log.info("Starting AI job " + job.getName());
     }
 
+    /**
+     * Updates the task
+     */
     @Override
     public void updateTask()
     {
@@ -120,6 +132,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      * And if that's a yes, runs the target.
      * Tester and target are both error-checked
      * to prevent minecraft from crashing on bad ai.
+     *
      * @param target the target to check
      * @return true if this target worked and we should stop executing this tick
      */
@@ -141,6 +154,18 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
             log.log(Level.WARNING, "Condition check for target " + target + " threw an exception:", e);
             return false;
         }
+        return applyTarget(target);
+    }
+
+    /**
+     * Continuation of checkOnTarget.
+     * applies the target and changes the state.
+     *
+     * @param target the target.
+     * @return true if it worked.
+     */
+    private boolean applyTarget(AITarget target)
+    {
         AIStateBase newState = null;
         try
         {
@@ -151,7 +176,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
             log.log(Level.WARNING, "Action for target " + target + " threw an exception:", e);
             return false;
         }
-        if(newState != null)
+        if (newState != null)
         {
             state = newState;
         }
