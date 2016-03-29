@@ -14,12 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
-import static com.minecolonies.entity.ai.AIState.FISHERMAN_CHECK_WATER;
-import static com.minecolonies.entity.ai.AIState.FISHERMAN_START_FISHING;
-import static com.minecolonies.entity.ai.AIState.PREPARING;
-import static com.minecolonies.entity.ai.AIState.FISHERMAN_SEARCHING_WATER;
-import static com.minecolonies.entity.ai.AIState.START_WORKING;
-import static com.minecolonies.entity.ai.AIState.FISHERMAN_WATER_FOUND;
+import static com.minecolonies.entity.ai.AIState.*;
 
 /**
  * Fisherman AI class
@@ -58,7 +53,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private int fishesCaught = 0;
     private PathJobFindWater.WaterPathResult pathResult;
     private int fishingSkill = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
-    private int executedRotations=0;
+    private int executedRotations = 0;
+
     /**
      * Constructor for the Fisherman.
      *
@@ -68,16 +64,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         super(job);
         super.registerTargets(
-                    new AITarget(START_WORKING,this::startWorkingAtOwnBuilding),
-                    new AITarget(PREPARING, this::prepareForFishing),
-                    new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
-                    new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
-                    new AITarget(FISHERMAN_WATER_FOUND, this::getToWater),
-                    new AITarget(FISHERMAN_START_FISHING, this::doFishing)
+                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+                new AITarget(PREPARING, this::prepareForFishing),
+                new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
+                new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
+                new AITarget(FISHERMAN_WATER_FOUND, this::getToWater),
+                new AITarget(FISHERMAN_START_FISHING, this::doFishing)
                              );
     }
 
-    private AIState startWorkingAtOwnBuilding(){
+    private AIState startWorkingAtOwnBuilding()
+    {
         if (walkToBuilding())
         {
             return state;
@@ -85,7 +82,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return PREPARING;
     }
 
-    private AIState prepareForFishing(){
+    private AIState prepareForFishing()
+    {
         if (checkOrRequestItems(new ItemStack(Items.fishing_rod)))
         {
             return state;
@@ -115,15 +113,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //TODO: Have rod displayed as well?
     }
 
-    /**
-     * This method will be overridden by AI implementations.
-     * It will serve as a tick function.
-     */
-    @Override
-    protected void workOnTask()
-    {
-    }
-
     //TODO Render model ROD/Fish
     private String getRenderMetaFish()
     {
@@ -132,6 +121,15 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return RENDER_META_FISH;
         }
         return "";
+    }
+
+    /**
+     * This method will be overridden by AI implementations.
+     * It will serve as a tick function.
+     */
+    @Override
+    protected void workOnTask()
+    {
     }
 
     @Override
@@ -151,7 +149,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return stack != null && stack.getItem().equals(Items.fishing_rod);
     }
 
-    private AIState getToWater(){
+    private AIState getToWater()
+    {
         if (job.getWater() == null)
         {
             return FISHERMAN_SEARCHING_WATER;
@@ -161,6 +160,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return state;
         }
         return FISHERMAN_CHECK_WATER;
+    }
+
+    private boolean walkToWater()
+    {
+        return !(job.getWater() == null || job.getWater().getLocation() == null) && walkToBlock(job.getWater()
+                                                                                                   .getLocation());
     }
 
     private AIState tryDifferentAngles()
@@ -177,7 +182,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
              * the water is probably not accessibly from the current position.
              * Remove the current position from the ponds and search a new one.*/
             executedRotations++;
-            if(executedRotations>=MAX_ROTATIONS)
+            if (executedRotations >= MAX_ROTATIONS)
             {
                 job.removeFromPonds(job.getWater().getLocation());
                 job.setWater(null);
@@ -187,11 +192,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             worker.setRotation(ROTATION_ANGLE, worker.rotationPitch);
         }
         return FISHERMAN_START_FISHING;
-    }
-
-    private boolean walkToWater()
-    {
-        return !(job.getWater() == null || job.getWater().getLocation() == null) && walkToBlock(job.getWater().getLocation());
     }
 
     private AIState findWater()
@@ -309,7 +309,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             for (int z = (int) worker.posZ - MIN_DISTANCE_TO_WATER; z < (int) worker.posZ + MIN_DISTANCE_TO_WATER; z++)
             {
-                for(int y = (int) worker.posY - MIN_DISTANCE_TO_WATER; y < (int)worker.posY + MIN_DISTANCE_TO_WATER; y++)
+                for (int y = (int) worker.posY - MIN_DISTANCE_TO_WATER; y
+                                                                        < (int) worker.posY
+                                                                          + MIN_DISTANCE_TO_WATER; y++)
                 {
                     if (world.getBlock(x, y, z).equals(Blocks.water))
                     {
@@ -321,27 +323,28 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return foundCloseWater;
     }
 
+    private void equipRod()
+    {
+        worker.setHeldItem(getRodSlot());
+    }
+
+    private int getRodSlot()
+    {
+        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
+    }
+
+    private InventoryCitizen getInventory()
+    {
+        return worker.getInventory();
+    }
+
     private boolean isFishHookStuck()
     {
         return !worker.getFishEntity().isInWater() && (worker.getFishEntity().onGround
-                || (System.nanoTime() - worker.getFishEntity()
-                .getCreationTime())
-                / NANO_TIME_DIVIDER
-                > worker.getFishEntity().getTtl());
-    }
-
-    private void retrieveRod()
-    {
-        worker.swingItem();
-        int i = worker.getFishEntity().func_146034_e();
-        worker.damageItemInHand(i);
-
-        //May already be null if the itemInHand has been destroyed
-        if (worker.getFishEntity() != null)
-        {
-            worker.getFishEntity().setDead();
-            worker.setFishEntity(null);
-        }
+                                                       || (System.nanoTime() - worker.getFishEntity()
+                                                                                     .getCreationTime())
+                                                          / NANO_TIME_DIVIDER
+                                                          > worker.getFishEntity().getTtl());
     }
 
     private boolean caughtFish()
@@ -361,6 +364,20 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return true;
     }
 
+    private void retrieveRod()
+    {
+        worker.swingItem();
+        int i = worker.getFishEntity().func_146034_e();
+        worker.damageItemInHand(i);
+
+        //May already be null if the itemInHand has been destroyed
+        if (worker.getFishEntity() != null)
+        {
+            worker.getFishEntity().setDead();
+            worker.setFishEntity(null);
+        }
+    }
+
     /**
      * Checks how lucky the fisherman is.
      * <p>
@@ -372,23 +389,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private boolean testRandomChance()
     {
         //+1 since the level may be 0
-        double chance = (itemRand.nextInt(FISHING_DELAY)/ (fishingSkill + 1));
+        double chance = (itemRand.nextInt(FISHING_DELAY) / (fishingSkill + 1));
         return chance >= CHANCE;
-    }
-
-    private void equipRod()
-    {
-        worker.setHeldItem(getRodSlot());
-    }
-
-    private int getRodSlot()
-    {
-        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
-    }
-
-    private InventoryCitizen getInventory()
-    {
-        return worker.getInventory();
     }
 
 }

@@ -17,14 +17,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import static com.minecolonies.entity.ai.AIState.IDLE;
-import static com.minecolonies.entity.ai.AIState.INIT;
-import static com.minecolonies.entity.ai.AIState.INVENTORY_FULL;
-import static com.minecolonies.entity.ai.AIState.NEEDS_AXE;
-import static com.minecolonies.entity.ai.AIState.NEEDS_HOE;
-import static com.minecolonies.entity.ai.AIState.NEEDS_ITEM;
-import static com.minecolonies.entity.ai.AIState.NEEDS_PICKAXE;
-import static com.minecolonies.entity.ai.AIState.NEEDS_SHOVEL;
+import static com.minecolonies.entity.ai.AIState.*;
 
 /**
  * This is the base class of all worker AIs.
