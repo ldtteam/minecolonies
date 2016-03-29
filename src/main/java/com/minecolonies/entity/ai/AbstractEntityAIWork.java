@@ -2,17 +2,15 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
-import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.ai.state.AIStateBase;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.InventoryFunctions;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
@@ -20,7 +18,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
+import static com.minecolonies.entity.ai.state.AIStateBase.*;
 
 /**
  * This is the base class of all worker AIs.
@@ -33,7 +31,7 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
+public abstract class AbstractEntityAIWork<J extends Job> extends AISkeleton<J>
 {
     public static final String PICKAXE = "pickaxe";
     public static final String SHOVEL = "shovel";
@@ -43,11 +41,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
     private static final Logger logger = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
     private static final int DELAY_RECHECK = 10;
-    private static final int MUTEX_MASK = 3;
+
     protected static Random itemRand = new Random();
-    protected final J job;
-    protected final EntityCitizen worker;
-    protected final World world;
+
 
     /**
      * A list of ItemStacks with needed items and their quantity.
@@ -81,7 +77,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      */
     private int delay = 0;
     private ChunkCoordinates currentStandingLocation = null;
-    private ChatSpamFilter chatSpamFilter;
+
 
     /**
      * Creates the abstract part of the AI.
@@ -91,55 +87,27 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      */
     public AbstractEntityAIWork(J job)
     {
-        setMutexBits(MUTEX_MASK);
-        this.job = job;
-        this.worker = this.job.getCitizen().getCitizenEntity();
-        this.world = this.worker.worldObj;
-        this.chatSpamFilter = new ChatSpamFilter(worker);
+        super(job);
+        super.registerTargets(
+                new AITarget(INIT, this::initSafetyChecks)
+                             );
     }
 
-    /**
-     * Made final to preserve behaviour:
-     * Sets a bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it
-     * yields zero, the two tasks may run concurrently, if not - they must run exclusively from each other.
-     *
-     * @param mutexBits the bits to flag this with.
-     */
-    @Override
-    public final void setMutexBits(int mutexBits)
-    {
-        super.setMutexBits(mutexBits);
-    }
-
-    @Override
-    public boolean shouldExecute()
-    {
-        return worker.getDesiredActivity() == EntityCitizen.DesiredActivity.WORK;
-    }
-
-    @Override
-    public void resetTask()
-    {
-        worker.setStatus(IDLE);
-    }
-
-    @Override
-    public void startExecuting()
-    {
-        worker.setStatus(EntityCitizen.Status.WORKING);
-        logger.info("Starting AI job " + job.getName());
-    }
-
-    @Override
-    public void updateTask()
-    {
+    private AIStateBase initSafetyChecks(){
         //Something fatally wrong? Wait for re-init...
         if (null == getOwnBuilding())
         {
             //TODO: perhaps destroy this task? will see...
-            return;
+            return INIT;
         }
+        return IDLE;
+    }
 
+
+    @Override
+    public void updateTask()
+    {
+        super.updateTask();
         //Update torch, seeds etc. in chestbelt etc.
         updateRenderMetaData();
 
@@ -206,9 +174,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     /**
      * Has to be overridden by classes to specify when to dump inventory.
      * Always dump on inventory full.
+     *
      * @return true if inventory needs to be dumped now
      */
-    protected boolean wantInventoryDumped(){
+    protected boolean wantInventoryDumped()
+    {
         return false;
     }
 
