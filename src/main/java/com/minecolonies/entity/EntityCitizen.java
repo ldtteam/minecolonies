@@ -270,9 +270,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         //Display some debug info always available while testing
         //TODO: remove this when in Beta!
         //Will help track down some hard to find bugs (Pathfinding etc.)
-        if(this.getColonyJob() != null)
+        if(this.getColonyJob() != null && Configurations.enableInDevelopmentFeatures)
         {
             setCustomNameTag(citizenData.getName() + " (" + getStatus() + ")" + this.getColonyJob().getNameTagDescription());
+        }else{
+            setCustomNameTag(citizenData.getName());
         }
     }
 
