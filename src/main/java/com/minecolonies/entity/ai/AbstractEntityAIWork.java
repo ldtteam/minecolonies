@@ -78,7 +78,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     protected boolean needsRod = false;
 
     protected int needsPickaxeLevel = -1;
-    private ErrorState errorState = ErrorState.NONE;
     private ChunkCoordinates currentWorkingLocation = null;
     /**
      * The time in ticks until the next action is made
@@ -143,8 +142,19 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                 /**
                  * Clear INVENTORY_FULL state.
                  */
-                new AITarget(INVENTORY_FULL, ()-> IDLE)
+                new AITarget(INVENTORY_FULL, () -> IDLE)
                              );
+    }
+
+    /**
+     * Has to be overridden by classes to specify when to dump inventory.
+     * Always dump on inventory full.
+     *
+     * @return true if inventory needs to be dumped now
+     */
+    protected boolean wantInventoryDumped()
+    {
+        return false;
     }
 
     /**
@@ -550,9 +560,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Walk to building and dump inventory.
      * If inventory is dumped, continue execution
      * so that the state can be resolved.
+     *
      * @return INVENTORY_FULL | null
      */
-    private AIStateBase dumpInventory(){
+    private AIStateBase dumpInventory()
+    {
         if (dumpOneMoreSlot())
         {
             delay += DELAY_RECHECK;
@@ -560,31 +572,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         }
         return null;
     }
-
-    @Override
-    public void updateTask()
-    {
-        super.updateTask();
-        
-        workOnTask();
-    }
-
-    /**
-     * Has to be overridden by classes to specify when to dump inventory.
-     * Always dump on inventory full.
-     *
-     * @return true if inventory needs to be dumped now
-     */
-    protected boolean wantInventoryDumped()
-    {
-        return false;
-    }
-
-    /**
-     * This method will be overridden by AI implementations.
-     * It will serve as a tick function.
-     */
-    protected abstract void workOnTask();
 
     /**
      * Dump the workers inventory into his building chest.
@@ -625,6 +612,20 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                     return stack.stackSize != returnStack.stackSize;
                 });
     }
+
+    @Override
+    public void updateTask()
+    {
+        super.updateTask();
+
+        workOnTask();
+    }
+
+    /**
+     * This method will be overridden by AI implementations.
+     * It will serve as a tick function.
+     */
+    protected abstract void workOnTask();
 
     /**
      * This method will return true if the AI is waiting for something.
@@ -722,22 +723,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             }
         }
         return bestSlot;
-    }
-
-    /**
-     * A displayable status showing why execution is not passed to the AI code.
-     * TODO: We have to find a better name than ErrorState as the states
-     * are no errors per se but are things to be resolved before
-     * AI execution can be resumed.
-     */
-    private enum ErrorState
-    {
-        NONE,
-        NEEDS_ITEM,
-        NEEDS_SHOVEL,
-        NEEDS_PICKAXE,
-        NEEDS_ROD,
-        INVENTORY_FULL,
     }
 
 }
