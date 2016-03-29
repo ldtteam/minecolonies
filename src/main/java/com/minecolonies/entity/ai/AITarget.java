@@ -1,7 +1,5 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.entity.ai.state.AIStateBase;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -22,16 +20,16 @@ public class AITarget
      * Custom logger for the class.
      */
     private static final Logger log = Logger.getLogger(AITarget.class.getName());
-    private final AIStateBase state;
+    private final AIState state;
     private final BooleanSupplier predicate;
-    private final Supplier<AIStateBase> action;
+    private final Supplier<AIState> action;
 
     /**
      * Construct a traget.
      *
      * @param action the action to apply
      */
-    public AITarget(Supplier<AIStateBase> action)
+    public AITarget(Supplier<AIState> action)
     {
         this(() -> true, action);
     }
@@ -42,7 +40,7 @@ public class AITarget
      * @param predicate the predicate for execution
      * @param action    the action to apply
      */
-    public AITarget(BooleanSupplier predicate, Supplier<AIStateBase> action)
+    public AITarget(BooleanSupplier predicate, Supplier<AIState> action)
     {
         this(null, predicate, action);
     }
@@ -54,7 +52,7 @@ public class AITarget
      * @param predicate the predicate for execution
      * @param action    the action to apply
      */
-    public AITarget(AIStateBase state, BooleanSupplier predicate, Supplier<AIStateBase> action)
+    public AITarget(AIState state, BooleanSupplier predicate, Supplier<AIState> action)
     {
         this.state = state;
         this.predicate = predicate;
@@ -67,7 +65,7 @@ public class AITarget
      * @param state  the state it needs to be | null
      * @param action the action to apply
      */
-    public AITarget(AIStateBase state, Supplier<AIStateBase> action)
+    public AITarget(AIState state, Supplier<AIState> action)
     {
         this(state, () -> true, action);
     }
@@ -78,7 +76,7 @@ public class AITarget
      *
      * @return the state
      */
-    public AIStateBase getState()
+    public AIState getState()
     {
         return state;
     }
@@ -99,7 +97,7 @@ public class AITarget
      *
      * @return the new state the ai is in. null if no change.
      */
-    public AIStateBase apply()
+    public AIState apply()
     {
         return action.get();
     }

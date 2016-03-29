@@ -14,6 +14,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
+import static com.minecolonies.entity.ai.AIState.FISHERMAN_CHECK_WATER;
+import static com.minecolonies.entity.ai.AIState.FISHERMAN_START_FISHING;
+import static com.minecolonies.entity.ai.AIState.PREPARING;
+import static com.minecolonies.entity.ai.AIState.FISHERMAN_SEARCHING_WATER;
+import static com.minecolonies.entity.ai.AIState.START_WORKING;
+import static com.minecolonies.entity.ai.AIState.FISHERMAN_WATER_FOUND;
+
 /**
  * Fisherman AI class
  * <p>
@@ -60,6 +67,34 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     public EntityAIWorkFisherman(JobFisherman job)
     {
         super(job);
+        super.registerTargets(
+                    new AITarget(START_WORKING,this::startWorkingAtOwnBuilding),
+                    new AITarget(PREPARING, this::prepareForFishing),
+                    new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
+                    new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
+                    new AITarget(FISHERMAN_WATER_FOUND, this::getToWater),
+                    new AITarget(FISHERMAN_START_FISHING, this::doFishing)
+                             );
+    }
+
+    private AIState startWorkingAtOwnBuilding(){
+        if (walkToBuilding())
+        {
+            return state;
+        }
+        return PREPARING;
+    }
+
+    private AIState prepareForFishing(){
+        if (missesItemsInInventory(new ItemStack(Items.fishing_rod)))
+        {
+            return state;
+        }
+        if (job.getWater() == null)
+        {
+            return FISHERMAN_SEARCHING_WATER;
+        }
+        return FISHERMAN_WATER_FOUND;
     }
 
     @Override
@@ -78,6 +113,15 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         String renderMetaData = getRenderMetaFish();
         //TODO: Have rod displayed as well?
+    }
+
+    /**
+     * This method will be overridden by AI implementations.
+     * It will serve as a tick function.
+     */
+    @Override
+    protected void workOnTask()
+    {
     }
 
     //TODO Render model ROD/Fish
@@ -102,78 +146,24 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return isStackRod(stack);
     }
 
-    private boolean isStackRod(ItemStack stack)
+    private static boolean isStackRod(ItemStack stack)
     {
         return stack != null && stack.getItem().equals(Items.fishing_rod);
     }
 
-    @Override
-    public void workOnTask()
-    {
-        //Fisherman wants to work but is not at building
-        if (job.getStage() == Stage.START_WORKING)
+    private AIState getToWater(){
+        if (job.getWater() == null)
         {
-            if (walkToBuilding())
-            {
-                return;
-            }
-            //Fisherman is at building
-            job.setStage(Stage.PREPARING);
+            return FISHERMAN_SEARCHING_WATER;
         }
-
-        //Fisherman is at building and prepares for work
-        if (job.getStage() == Stage.PREPARING)
+        if (walkToWater())
         {
-            if (missesItemsInInventory(new ItemStack(Items.fishing_rod)))
-            {
-                return;
-            }
-            if (job.getWater() == null)
-            {
-                job.setStage(Stage.SEARCHING_WATER);
-                return;
-            }
-            job.setStage(Stage.WATER_FOUND);
-
-            return;
+            return state;
         }
-
-        //Looking for the water to walk to
-        if (job.getStage() == Stage.SEARCHING_WATER)
-        {
-            findWater();
-        }
-
-        //Walking to the water to check out the mine
-        if (job.getStage() == Stage.WATER_FOUND)
-        {
-            if (job.getWater() == null)
-            {
-                job.setStage(Stage.SEARCHING_WATER);
-                return;
-            }
-            if (walkToWater())
-            {
-                return;
-            }
-            job.setStage(Stage.CHECK_WATER);
-        }
-
-        //Standing at the water, checking out pond
-        if (job.getStage() == Stage.CHECK_WATER)
-        {
-            tryDifferentAngles();
-            job.setStage(Stage.START_FISHING);
-        }
-
-        if (job.getStage() == Stage.START_FISHING)
-        {
-            doFishing();
-        }
-        setDelay(DELAY);
+        return FISHERMAN_CHECK_WATER;
     }
 
-    private void tryDifferentAngles()
+    private AIState tryDifferentAngles()
     {
         int x = itemRand.nextInt(3);
         if (x == 1)
@@ -191,11 +181,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             {
                 job.removeFromPonds(job.getWater().getLocation());
                 job.setWater(null);
-                job.setStage(Stage.SEARCHING_WATER);
+                return FISHERMAN_SEARCHING_WATER;
             }
             worker.rotationYaw = ROTATION_ANGLE;
             worker.setRotation(ROTATION_ANGLE, worker.rotationPitch);
         }
+        return FISHERMAN_START_FISHING;
     }
 
     private boolean walkToWater()
@@ -203,14 +194,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return !(job.getWater() == null || job.getWater().getLocation() == null) && walkToBlock(job.getWater().getLocation());
     }
 
-    private void findWater()
+    private AIState findWater()
     {
         //If he can't find any pond, tell that to the player
         //If 20 ponds are already stored, take a random stored location
         if (job.getPonds().size() >= MAX_PONDS)
         {
             job.setWater(new Water(world, job.getPonds().get(new Random().nextInt(MAX_PONDS))));
-            return;
+            return state;
         }
         if (pathResult == null || (!pathResult.isComputing() && !pathResult.getPathReachesDestination()))
         {
@@ -230,23 +221,27 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 logger.entry("Argh there is no more water around!");
             }
             pathResult = null;
-            job.setStage(Stage.CHECK_WATER);
+            return FISHERMAN_CHECK_WATER;
         }
         else if (pathResult.isCancelled())
         {
-            job.setStage(Stage.PREPARING);
             pathResult = null;
+            return PREPARING;
         }
-
+        return state;
     }
 
-    private void doFishing()
+    private AIState doFishing()
     {
         worker.gatherXp();
-
-        if (!isReadyToFish() || caughtFish())
+        AIState notReadyState = isReadyToFish();
+        if (notReadyState != null)
         {
-            return;
+            return notReadyState;
+        }
+        else if (caughtFish())
+        {
+            return FISHERMAN_WATER_FOUND;
         }
 
         if (worker.getFishEntity() == null)
@@ -254,7 +249,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             //Only sometimes the fisherman gets to throw its Rod (depends on intelligence)
             if (testRandomChance())
             {
-                return;
+                return state;
             }
 
             if (!world.isRemote)
@@ -276,34 +271,34 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             if (isFishHookStuck())
             {
                 retrieveRod();
+                return FISHERMAN_WATER_FOUND;
             }
         }
+        return state;
     }
 
     //Returns true if fisherman meets all requirements to fish
-    private boolean isReadyToFish()
+    private AIState isReadyToFish()
     {
         //We really do have our Rod in our inventory?
         if (!worker.hasItemInInventory(Items.fishing_rod))
         {
-            job.setStage(Stage.PREPARING);
-            return false;
+            return PREPARING;
         }
 
         //If there is no close water, try to move closer
         if (!isCloseToWater())
         {
-            job.setStage(Stage.WATER_FOUND);
-            return false;
+            return FISHERMAN_WATER_FOUND;
         }
 
         //Check if Rod is held item if not put it as held item
         if (worker.getHeldItem() == null || !worker.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
         {
             equipRod();
-            return false;
+            return state;
         }
-        return  true;
+        return null;
     }
 
     //Check if there is water really close to me
@@ -347,8 +342,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             worker.getFishEntity().setDead();
             worker.setFishEntity(null);
         }
-
-        job.setStage(Stage.WATER_FOUND);
     }
 
     private boolean caughtFish()
@@ -398,14 +391,4 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return worker.getInventory();
     }
 
-    public enum Stage
-    {
-        IDLE,
-        START_WORKING,
-        CHECK_WATER,
-        WATER_FOUND,
-        SEARCHING_WATER,
-        START_FISHING,
-        PREPARING,
-    }
 }

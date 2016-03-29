@@ -2,7 +2,6 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.ai.state.AIStateBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 
@@ -38,7 +37,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      * The current state the ai is in.
      * Used to compare to state matching targets.
      */
-    protected AIStateBase state;
+    protected AIState state;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -53,7 +52,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         this.worker = this.job.getCitizen().getCitizenEntity();
         this.world = this.worker.worldObj;
         this.chatSpamFilter = new ChatSpamFilter(worker);
-        this.state = AIStateBase.INIT;
+        this.state = AIState.INIT;
 
     }
 
@@ -168,7 +167,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      */
     private boolean applyTarget(AITarget target)
     {
-        AIStateBase newState = null;
+        AIState newState = null;
         try
         {
             newState = target.apply();

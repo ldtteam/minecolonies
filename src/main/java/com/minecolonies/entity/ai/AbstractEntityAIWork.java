@@ -2,7 +2,6 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
-import com.minecolonies.entity.ai.state.AIStateBase;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.InventoryFunctions;
 import com.minecolonies.util.InventoryUtils;
@@ -18,14 +17,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import static com.minecolonies.entity.ai.state.AIStateBase.IDLE;
-import static com.minecolonies.entity.ai.state.AIStateBase.INIT;
-import static com.minecolonies.entity.ai.state.AIStateBase.INVENTORY_FULL;
-import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_AXE;
-import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_HOE;
-import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_ITEM;
-import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_PICKAXE;
-import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_SHOVEL;
+import static com.minecolonies.entity.ai.AIState.IDLE;
+import static com.minecolonies.entity.ai.AIState.INIT;
+import static com.minecolonies.entity.ai.AIState.INVENTORY_FULL;
+import static com.minecolonies.entity.ai.AIState.NEEDS_AXE;
+import static com.minecolonies.entity.ai.AIState.NEEDS_HOE;
+import static com.minecolonies.entity.ai.AIState.NEEDS_ITEM;
+import static com.minecolonies.entity.ai.AIState.NEEDS_PICKAXE;
+import static com.minecolonies.entity.ai.AIState.NEEDS_SHOVEL;
 
 /**
  * This is the base class of all worker AIs.
@@ -154,7 +153,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @return IDLE if all ready, else stay in INIT
      */
-    private AIStateBase initSafetyChecks()
+    private AIState initSafetyChecks()
     {
         //Something fatally wrong? Wait for re-init...
         if (null == getOwnBuilding())
@@ -182,7 +181,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @return null to execute more targets.
      */
-    private AIStateBase updateVisualState()
+    private AIState updateVisualState()
     {
         //Update the current state the worker is in.
         job.setNameTag(this.state.toString());
@@ -205,7 +204,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @return NEEDS_ITEM
      */
-    private AIStateBase waitForNeededItems()
+    private AIState waitForNeededItems()
     {
         lookForNeededItems();
         delay = DELAY_RECHECK;
@@ -285,7 +284,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @return NEEDS_SHOVEL
      */
-    private AIStateBase waitForShovel()
+    private AIState waitForShovel()
     {
         checkForShovel();
         delay += DELAY_RECHECK;
@@ -316,14 +315,15 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             return false;
         }
         delay += DELAY_RECHECK;
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
+        if (walkToBuilding())
         {
-            if (isToolInHut(tool))
-            {
-                return false;
-            }
-            requestWithoutSpam(tool);
+            return true;
         }
+        if (isToolInHut(tool))
+        {
+            return false;
+        }
+        requestWithoutSpam(tool);
         return true;
     }
 
@@ -336,95 +336,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                         stack -> Utils.isTool(stack, tool),
                         this::takeItemStackFromChest);
 
-    }
-
-    /**
-     * Wait for a needed axe.
-     *
-     * @return NEEDS_AXE
-     */
-    private AIStateBase waitForAxe()
-    {
-        checkForAxe();
-        delay += DELAY_RECHECK;
-        return NEEDS_AXE;
-    }
-
-    /**
-     * Ensures that we have an axe available.
-     * Will set {@code needsAxe} accordingly.
-     *
-     * @return true if we have an axe
-     */
-    private boolean checkForAxe()
-    {
-        needsAxe = checkForTool(Utils.AXE);
-        return needsAxe;
-    }
-
-    /**
-     * Wait for a needed hoe.
-     *
-     * @return NEEDS_HOE
-     */
-    private AIStateBase waitForHoe()
-    {
-        checkForHoe();
-        delay += DELAY_RECHECK;
-        return NEEDS_HOE;
-    }
-
-    /**
-     * Ensures that we have a hoe available.
-     * Will set {@code needsHoe} accordingly.
-     *
-     * @return true if we have a hoe
-     */
-    private boolean checkForHoe()
-    {
-        needsHoe = checkForTool(Utils.HOE);
-        return needsHoe;
-    }
-
-    /**
-     * Wait for a needed pickaxe.
-     *
-     * @return NEEDS_PICKAXE
-     */
-    private AIStateBase waitForPickaxe()
-    {
-        checkForPickaxe(needsPickaxeLevel);
-        delay += DELAY_RECHECK;
-        return NEEDS_PICKAXE;
-    }
-
-    /**
-     * Ensures that we have a pickaxe available.
-     * Will set {@code needsPickaxe} accordingly.
-     *
-     * @param minlevel the minimum pickaxe level needed.
-     * @return true if we have a pickaxe
-     */
-    private boolean checkForPickaxe(int minlevel)
-    {
-        //Check for a pickaxe
-        needsPickaxe = InventoryFunctions
-                .matchFirstInInventory(
-                        worker.getInventory(),
-                        stack -> Utils.checkIfPickaxeQualifies(
-                                minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
-                        InventoryFunctions::doNothing);
-
-        delay += DELAY_RECHECK;
-        if (needsPickaxe && walkToBuilding())
-        {
-            if (isPickaxeInHut(minlevel))
-            {
-                return true;
-            }
-            requestWithoutSpam("Pickaxe at least level " + minlevel);
-        }
-        return needsPickaxe;
     }
 
     /**
@@ -469,6 +380,95 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
+     * Wait for a needed axe.
+     *
+     * @return NEEDS_AXE
+     */
+    private AIState waitForAxe()
+    {
+        checkForAxe();
+        delay += DELAY_RECHECK;
+        return NEEDS_AXE;
+    }
+
+    /**
+     * Ensures that we have an axe available.
+     * Will set {@code needsAxe} accordingly.
+     *
+     * @return true if we have an axe
+     */
+    private boolean checkForAxe()
+    {
+        needsAxe = checkForTool(Utils.AXE);
+        return needsAxe;
+    }
+
+    /**
+     * Wait for a needed hoe.
+     *
+     * @return NEEDS_HOE
+     */
+    private AIState waitForHoe()
+    {
+        checkForHoe();
+        delay += DELAY_RECHECK;
+        return NEEDS_HOE;
+    }
+
+    /**
+     * Ensures that we have a hoe available.
+     * Will set {@code needsHoe} accordingly.
+     *
+     * @return true if we have a hoe
+     */
+    private boolean checkForHoe()
+    {
+        needsHoe = checkForTool(Utils.HOE);
+        return needsHoe;
+    }
+
+    /**
+     * Wait for a needed pickaxe.
+     *
+     * @return NEEDS_PICKAXE
+     */
+    private AIState waitForPickaxe()
+    {
+        checkForPickaxe(needsPickaxeLevel);
+        delay += DELAY_RECHECK;
+        return NEEDS_PICKAXE;
+    }
+
+    /**
+     * Ensures that we have a pickaxe available.
+     * Will set {@code needsPickaxe} accordingly.
+     *
+     * @param minlevel the minimum pickaxe level needed.
+     * @return true if we have a pickaxe
+     */
+    private boolean checkForPickaxe(int minlevel)
+    {
+        //Check for a pickaxe
+        needsPickaxe = InventoryFunctions
+                .matchFirstInInventory(
+                        worker.getInventory(),
+                        stack -> Utils.checkIfPickaxeQualifies(
+                                minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
+                        InventoryFunctions::doNothing);
+
+        delay += DELAY_RECHECK;
+        if (needsPickaxe && walkToBuilding())
+        {
+            if (isPickaxeInHut(minlevel))
+            {
+                return true;
+            }
+            requestWithoutSpam("Pickaxe at least level " + minlevel);
+        }
+        return needsPickaxe;
+    }
+
+    /**
      * Looks for a pickaxe to mine a block of {@code minLevel}.
      * The pickaxe will be taken from the chest.
      * Make sure that the worker stands next the chest to not break immersion.
@@ -498,7 +498,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @return INVENTORY_FULL | null
      */
-    private AIStateBase dumpInventory()
+    private AIState dumpInventory()
     {
         if (dumpOneMoreSlot())
         {

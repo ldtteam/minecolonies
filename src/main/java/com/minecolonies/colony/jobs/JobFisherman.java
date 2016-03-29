@@ -22,7 +22,6 @@ public class JobFisherman extends Job
     private static final String TAG_WATER = "Water";
     private static final String TAG_PONDS = "Ponds";
 
-    private EntityAIWorkFisherman.Stage stage = EntityAIWorkFisherman.Stage.START_WORKING;
     //The water the fisherman is currently at
     private Water water;
     //Contains all possible fishing spots
@@ -48,7 +47,6 @@ public class JobFisherman extends Job
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        compound.setString(TAG_STAGE, stage.name());
 
         NBTTagCompound waterTag = new NBTTagCompound();
         if(water != null)
@@ -68,7 +66,6 @@ public class JobFisherman extends Job
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        stage = EntityAIWorkFisherman.Stage.valueOf(compound.getString(TAG_STAGE));
 
         if(compound.hasKey(TAG_WATER))
         {
@@ -87,16 +84,6 @@ public class JobFisherman extends Job
     public void addTasks(EntityAITasks tasks)
     {
         tasks.addTask(3, new EntityAIWorkFisherman(this));
-    }
-
-    public EntityAIWorkFisherman.Stage getStage()
-    {
-        return stage;
-    }
-
-    public void setStage(EntityAIWorkFisherman.Stage stage)
-    {
-        this.stage = stage;
     }
 
     public Water getWater() {
