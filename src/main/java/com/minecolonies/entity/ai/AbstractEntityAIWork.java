@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.entity.ai.state.AIStateBase.IDLE;
 import static com.minecolonies.entity.ai.state.AIStateBase.INIT;
+import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_ITEM;
 
 /**
  * This is the base class of all worker AIs.
@@ -106,7 +107,14 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                  * this keeps the current state
                  * (returning null would not stop execution)
                  */
-                new AITarget(this::waitingForSomething, ()->state)
+                new AITarget(this::waitingForSomething, ()->state),
+                /**
+                 * Check if any items are needed.
+                 * If yes, transition to NEEDS_ITEM.
+                 * and wait for new items.
+                 */
+                new AITarget(()->!itemsCurrentlyNeeded.isEmpty(),
+                                this::waitForNeededItems)
                              );
     }
 
@@ -141,6 +149,17 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
+     * Looks for needed items as long as not all of them are there.
+     * Also waits for DELAY_RECHECK.
+     * @return NEEDS_ITEM
+     */
+    private AIStateBase waitForNeededItems(){
+        lookForNeededItems();
+        delay = DELAY_RECHECK;
+        return NEEDS_ITEM;
+    }
+
+    /**
      * Can be overridden in implementations to return the exact building type.
      *
      * @return the building associated with this AI's worker.
@@ -154,15 +173,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     public void updateTask()
     {
         super.updateTask();
-
-        //We need Items as it seems
-        if (!itemsCurrentlyNeeded.isEmpty())
-        {
-            this.errorState = ErrorState.NEEDS_ITEM;
-            lookForNeededItems();
-            delay = DELAY_RECHECK;
-            return;
-        }
 
         //We need tools
         if (needsShovel)

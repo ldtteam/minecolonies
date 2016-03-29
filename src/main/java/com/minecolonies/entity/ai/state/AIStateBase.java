@@ -17,5 +17,9 @@ public enum AIStateBase
      * This state is only used on ai initialization.
      * It checks if any important things are null.
      */
-    INIT
+    INIT,
+    /**
+     * The ai needs some items it is waiting for.
+     */
+    NEEDS_ITEM
 }
