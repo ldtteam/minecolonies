@@ -172,12 +172,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             doFishing();
         }
-        setDelay(DELAY);
+        //setDelay(DELAY);
     }
 
     private void tryDifferentAngles()
     {
-        int x = itemRand.nextInt(3);
+        int x = itemRand.nextInt(5);
         if (x == 1)
         {
             //Try a different angle to throw the hook not that far
@@ -195,7 +195,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 job.setWater(null);
                 job.setStage(Stage.SEARCHING_WATER);
             }
-            worker.rotationYaw = ROTATION_ANGLE;
             worker.setRotation(ROTATION_ANGLE, worker.rotationPitch);
         }
     }
@@ -211,12 +210,26 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //If 20 ponds are already stored, take a random stored location
         if (job.getPonds().size() >= MAX_PONDS)
         {
-            job.setWater(new Water(world, job.getPonds().get(new Random().nextInt(MAX_PONDS))));
+            job.setWater(new Water(world, job.getPonds().get(itemRand.nextInt(MAX_PONDS))));
             return;
         }
-        if (pathResult == null || (!pathResult.isComputing() && !pathResult.getPathReachesDestination()))
+        if (pathResult == null)
         {
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+        }
+        else if(!pathResult.isComputing() && !pathResult.getPathReachesDestination())
+        {
+            if(job.getPonds().isEmpty())
+            {
+                //TODO Tell player, no water around
+                logger.entry("Argh there is no more water around!");
+                pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+            }
+            else
+            {
+                job.setWater(new Water(world, job.getPonds().get(itemRand.nextInt(job.getPonds().size()))));
+                job.setStage(Stage.CHECK_WATER);
+            }
         }
         else if (pathResult.getPathReachesDestination())
         {
@@ -224,12 +237,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             {
                 job.setWater(new Water(world, pathResult.pond));
                 job.addToPonds(pathResult.pond);
-            }
-            else
-            {
-                //GO to the dessert - Only create one small pond
-                //TODO If he can't find 20 ponds, use the ponds he has, if he can't any, tell the player
-                logger.entry("Argh there is no more water around!");
             }
             pathResult = null;
             job.setStage(Stage.CHECK_WATER);
@@ -239,7 +246,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             job.setStage(Stage.PREPARING);
             pathResult = null;
         }
-
     }
 
     private void requestTool()
