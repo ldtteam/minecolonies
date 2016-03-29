@@ -216,7 +216,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Utility method to search for items currently needed.
      * Poll this until all items are there.
      */
-    protected final void lookForNeededItems()
+    private void lookForNeededItems()
     {
         syncNeededItemsWithInventory();
         if (itemsCurrentlyNeeded.isEmpty())
@@ -258,7 +258,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
-    protected final boolean isInHut(final ItemStack is)
+    private final boolean isInHut(final ItemStack is)
     {
         final BuildingWorker buildingMiner = getOwnBuilding();
         return is != null &&
@@ -326,7 +326,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      *
      * @param slot the slot in the buildings inventory
      */
-    protected final void takeItemStackFromChest(int slot)
+    private void takeItemStackFromChest(int slot)
     {
         InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
     }
@@ -359,7 +359,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Only useful tools are kept!
      * Only dumps one block at a time!
      */
-    protected final boolean dumpOneMoreSlot()
+    private boolean dumpOneMoreSlot()
     {
         return dumpOneMoreSlot(this::neededForWorker);
     }
@@ -603,7 +603,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      *
      * @param chat the Item Name
      */
-    protected final void requestWithoutSpam(String chat)
+    private void requestWithoutSpam(String chat)
     {
         chatSpamFilter.requestWithoutSpam(chat);
     }
@@ -623,7 +623,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Checks if the rod is in the hut
      *
      * @param is is the searched item
-     * @returns true if he found a rod
+     * @return true if he found a rod
      */
     private boolean isRodInHut(ItemStack is)
     {
