@@ -111,3 +111,5 @@ entity.miner.messageNeedTools=Need tool %s!
 entity.miner.messageNeedBlockAndItem=I need %s!
 entity.miner.messageNeedBetterTools=I need better tools!
 entity.miner.messageMoreBlocks=I need more %s!
+
+entity.fisherman.messageWaterTooFar=Fisherman's hut is too far from water!
