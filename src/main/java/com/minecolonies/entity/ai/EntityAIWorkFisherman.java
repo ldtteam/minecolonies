@@ -146,13 +146,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                                                                                                    .getLocation());
     }
 
+    //Rotates the fisherman to guarantee that the fisherman throws his rod in the correct direction
     private AIState tryDifferentAngles()
     {
         int x = itemRand.nextInt(5);
         if (x == 1)
         {
             //Try a different angle to throw the hook not that far
-            worker.setRotation(worker.rotationYaw, 90);
+            worker.setRotation(ROTATION_ANGLE, 90F);
         }
         else
         {
@@ -164,6 +165,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             {
                 job.removeFromPonds(job.getWater().getLocation());
                 job.setWater(null);
+                executedRotations=0;
                 return FISHERMAN_SEARCHING_WATER;
             }
             worker.setRotation(ROTATION_ANGLE, worker.rotationPitch);

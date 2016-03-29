@@ -825,9 +825,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
 
+    //Defines the area in which the citizen automatically gathers experience
     @SuppressWarnings("unchecked")
-    public List<EntityXPOrb> getXPOrbsOnGrid() {
-        AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(posX, posY, posZ, posX + 2, posY + 2, posZ + 2);
+    private List<EntityXPOrb> getXPOrbsOnGrid() {
+        AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(posX, posY, posZ, posX + 3, posY + 3, posZ + 3);
         return worldObj.getEntitiesWithinAABB(EntityXPOrb.class, bb);
     }
 
