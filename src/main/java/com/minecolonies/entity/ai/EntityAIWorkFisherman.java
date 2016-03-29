@@ -12,8 +12,6 @@ import net.minecraft.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Random;
-
 import static com.minecolonies.entity.ai.AIState.*;
 
 /**
@@ -36,7 +34,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private static final int CHANCE = 2;
     private static final int MIN_DISTANCE_TO_WATER = 3;
     private static final int MAX_FISHES_IN_INV = 10;
-    private static final int DELAY = 100;
     private static final int MAX_ROTATIONS = 12;
     /**
      * TODO: fix this with ttl
@@ -44,10 +41,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private static final int NANO_TIME_DIVIDER = 1000 * 1000 * 1000;
     private static final float ROTATION_ANGLE = 90F;
     private static final String TOOL_TYPE_ROD = "rod";
-    /**
-     * TODO: add actual rendering of the fish
-     */
-    private static final String RENDER_META_FISH = "fish";
     private static final int SEARCH_RANGE = 50;
     private static final Logger logger = LogManager.getLogger("Fisherman");
     private int fishesCaught = 0;
@@ -64,6 +57,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         super(job);
         super.registerTargets(
+                new AITarget(IDLE, () -> START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(PREPARING, this::prepareForFishing),
                 new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
@@ -106,23 +100,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return false;
     }
 
-    @Override
-    protected void updateRenderMetaData()
-    {
-        String renderMetaData = getRenderMetaFish();
-        //TODO: Have rod displayed as well?
-    }
-
-    //TODO Render model ROD/Fish
-    private String getRenderMetaFish()
-    {
-        if (worker.hasItemInInventory(Items.fish))
-        {
-            return RENDER_META_FISH;
-        }
-        return "";
-    }
-
     /**
      * This method will be overridden by AI implementations.
      * It will serve as a tick function.
@@ -130,6 +107,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     @Override
     protected void workOnTask()
     {
+        //Migration to new system complete
     }
 
     @Override
@@ -206,9 +184,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
         }
-        else if(!pathResult.isComputing() && !pathResult.getPathReachesDestination())
+        else if (!pathResult.isComputing() && !pathResult.getPathReachesDestination())
         {
-            if(job.getPonds().isEmpty())
+            if (job.getPonds().isEmpty())
             {
                 //TODO Tell player, no water around
                 logger.entry("Argh there is no more water around!");
