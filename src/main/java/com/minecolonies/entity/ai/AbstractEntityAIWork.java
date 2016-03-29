@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import static com.minecolonies.entity.ai.state.AIStateBase.*;
+import static com.minecolonies.entity.ai.state.AIStateBase.IDLE;
+import static com.minecolonies.entity.ai.state.AIStateBase.INIT;
 
 /**
  * This is the base class of all worker AIs.
@@ -39,7 +40,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     public static final String HOE = "hoe";
     public static final String ROD = "rod";
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
-    private static final Logger logger = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
+    private static final Logger log = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
     private static final int DELAY_RECHECK = 10;
 
     protected static Random itemRand = new Random();
@@ -93,7 +94,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                              );
     }
 
-    private AIStateBase initSafetyChecks(){
+    private AIStateBase initSafetyChecks()
+    {
         //Something fatally wrong? Wait for re-init...
         if (null == getOwnBuilding())
         {
@@ -103,6 +105,15 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         return IDLE;
     }
 
+    /**
+     * Can be overridden in implementations to return the exact building type.
+     *
+     * @return the building associated with this AI's worker.
+     */
+    protected BuildingWorker getOwnBuilding()
+    {
+        return worker.getWorkBuilding();
+    }
 
     @Override
     public void updateTask()
@@ -299,16 +310,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     private void takeItemStackFromChest(int slot)
     {
         InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
-    }
-
-    /**
-     * Can be overridden in implementations to return the exact building type.
-     *
-     * @return the building associated with this AI's worker.
-     */
-    protected BuildingWorker getOwnBuilding()
-    {
-        return worker.getWorkBuilding();
     }
 
     /**

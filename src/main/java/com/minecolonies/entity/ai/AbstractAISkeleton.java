@@ -82,7 +82,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      *
      * @param targets a number of targets that need registration
      */
-    protected void registerTargets(AITarget... targets)
+    protected final void registerTargets(AITarget... targets)
     {
         Arrays.asList(targets).forEach(this::registerTarget);
     }
