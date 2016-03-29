@@ -197,23 +197,23 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private AIState waitForNeededItems()
     {
-        lookForNeededItems();
+
         delay = DELAY_RECHECK;
-        return NEEDS_ITEM;
+        return lookForNeededItems();
     }
 
     /**
      * Utility method to search for items currently needed.
      * Poll this until all items are there.
      */
-    private void lookForNeededItems()
+    private AIState lookForNeededItems()
     {
         syncNeededItemsWithInventory();
         if (itemsCurrentlyNeeded.isEmpty())
         {
             itemsNeeded.clear();
             job.clearItemsNeeded();
-            return;
+            return IDLE;
         }
         if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
         {
@@ -222,10 +222,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             //Takes one Stack from the hut if existent
             if (isInHut(first))
             {
-                return;
+                return NEEDS_ITEM;
             }
             requestWithoutSpam(first.getDisplayName());
         }
+        return NEEDS_ITEM;
     }
 
     /**
