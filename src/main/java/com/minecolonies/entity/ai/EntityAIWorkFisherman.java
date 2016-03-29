@@ -188,8 +188,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             if (job.getPonds().isEmpty())
             {
-                //TODO Tell player, no water around
-                logger.entry("Argh there is no more water around!");
+                chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
                 pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
             }
             else
