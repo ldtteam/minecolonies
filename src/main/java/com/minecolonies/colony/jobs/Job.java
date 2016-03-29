@@ -35,6 +35,7 @@ public abstract class Job
 
     private final CitizenData citizen;
     private List<ItemStack> itemsNeeded = new ArrayList<>();
+    private String nameTag;
 
     public Job(CitizenData entity)
     {
@@ -284,6 +285,11 @@ public abstract class Job
      */
     public String getNameTagDescription()
     {
-        return "";
+        return this.nameTag;
+    }
+
+    public void setNameTag(final String nameTag)
+    {
+        this.nameTag = nameTag;
     }
 }

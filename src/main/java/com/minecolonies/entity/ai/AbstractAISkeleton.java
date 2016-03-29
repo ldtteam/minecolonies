@@ -38,7 +38,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      * The current state the ai is in.
      * Used to compare to state matching targets.
      */
-    private AIStateBase state;
+    protected AIStateBase state;
 
     /**
      * Sets up some important skeleton stuff for every ai.

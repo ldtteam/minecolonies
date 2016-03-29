@@ -90,7 +90,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         super(job);
         super.registerTargets(
-                new AITarget(INIT, this::initSafetyChecks)
+                new AITarget(INIT, this::initSafetyChecks),
+                new AITarget(this::updateVisualState)
                              );
     }
 
@@ -111,6 +112,20 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
+     * Updates the visual state of the worker.
+     * Updates render meta data.
+     * Updates the current state on the nametag.
+     * @return null to execute more targets.
+     */
+    private AIStateBase updateVisualState(){
+        //Update the current state the worker is in.
+        job.setNameTag(this.state.toString());
+        //Update torch, seeds etc. in chestbelt etc.
+        updateRenderMetaData();
+        return null;
+    }
+
+    /**
      * Can be overridden in implementations to return the exact building type.
      *
      * @return the building associated with this AI's worker.
@@ -124,10 +139,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     public void updateTask()
     {
         super.updateTask();
-        //Update torch, seeds etc. in chestbelt etc.
-        updateRenderMetaData();
-
-
+        
         //Wait for delay if it exists
         if (waitingForSomething())
         {

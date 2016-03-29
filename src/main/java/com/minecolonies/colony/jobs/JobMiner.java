@@ -38,18 +38,6 @@ public class JobMiner extends Job
         compound.setString(TAG_STAGE, stage.name());
     }
 
-    /**
-     * This method can be used to display the current status.
-     * That a citizen is having.
-     *
-     * @return Small string to display info in name tag
-     */
-    @Override
-    public String getNameTagDescription()
-    {
-        return " [" + getStage() + "]";
-    }
-
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
