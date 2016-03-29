@@ -20,7 +20,7 @@ public class PathJobFindWater extends PathJob
 
     public static class WaterPathResult extends PathResult
     {
-        public ChunkCoordinates ponds;
+        public ChunkCoordinates pond;
     }
 
     private ChunkCoordinates hutLocation;
@@ -93,7 +93,7 @@ public class PathJobFindWater extends PathJob
 
         if(Water.checkWater(world, x, y, z))
         {
-            getResult().ponds = new ChunkCoordinates(x, y, z);
+            getResult().pond = new ChunkCoordinates(x, y, z);
             return true;
         }
 
@@ -119,7 +119,6 @@ public class PathJobFindWater extends PathJob
         Predicate<ChunkCoordinates> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
         return ponds.stream().anyMatch(compare);
     }
-
 
     @Override
     protected double getNodeResultScore(Node n)

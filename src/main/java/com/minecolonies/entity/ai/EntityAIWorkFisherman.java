@@ -177,7 +177,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private void tryDifferentAngles()
     {
-        int x = itemRand.nextInt() * 3;
+        int x = itemRand.nextInt(3);
         if (x == 1)
         {
             //Try a different angle to throw the hook not that far
@@ -220,13 +220,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
         else if (pathResult.getPathReachesDestination())
         {
-            if (pathResult.ponds != null)
+            if (pathResult.pond != null)
             {
-                job.setWater(new Water(world, pathResult.ponds));
-                job.addToPonds(pathResult.ponds);
+                job.setWater(new Water(world, pathResult.pond));
+                job.addToPonds(pathResult.pond);
             }
             else
             {
+                //GO to the dessert - Only create one small pond
                 //TODO If he can't find 20 ponds, use the ponds he has, if he can't any, tell the player
                 logger.entry("Argh there is no more water around!");
             }
@@ -386,7 +387,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private boolean testRandomChance()
     {
         //+1 since the level may be 0
-        double chance = (itemRand.nextInt()* FISHING_DELAY) / (fishingSkill + 1);
+        double chance = (itemRand.nextInt(FISHING_DELAY)/ (fishingSkill + 1));
         return chance >= CHANCE;
     }
 
