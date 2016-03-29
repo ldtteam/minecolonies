@@ -11,7 +11,6 @@ import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -19,8 +18,6 @@ import net.minecraft.util.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -33,46 +30,48 @@ public class WindowBuildTool extends Window implements Button.Handler
     /*
     All buttons for the GUI
      */
-    private static final String BUTTON_TYPE_ID = "buildingType";
-    private static final String BUTTON_HUT_ID = "hut";
-    private static final String BUTTON_STYLE_ID = "style";
-    private static final String BUTTON_DECORATION_ID = "decoration";
+    private static final    String          BUTTON_TYPE_ID              = "buildingType";
+    private static final    String          BUTTON_HUT_ID               = "hut";
+    private static final    String          BUTTON_STYLE_ID             = "style";
+    private static final    String          BUTTON_DECORATION_ID        = "decoration";
 
-    private static final String BUTTON_CONFIRM = "confirm";
-    private static final String BUTTON_CANCEL = "cancel";
+    private static final    String          BUTTON_CONFIRM              = "confirm";
+    private static final    String          BUTTON_CANCEL               = "cancel";
 
-    private static final String BUTTON_ROTATE_LEFT = "rotateLeft";
-    private static final String BUTTON_ROTATE_RIGHT = "rotateRight";
+    private static final    String          BUTTON_ROTATE_LEFT          = "rotateLeft";
+    private static final    String          BUTTON_ROTATE_RIGHT         = "rotateRight";
 
-    private static final String BUTTON_UP = "up";
-    private static final String BUTTON_DOWN = "down";
+    private static final    String          BUTTON_UP                   = "up";
+    private static final    String          BUTTON_DOWN                 = "down";
 
-    private static final String BUTTON_FORWARD = "forward";
-    private static final String BUTTON_BACK = "back";
-    private static final String BUTTON_LEFT = "left";
-    private static final String BUTTON_RIGHT = "right";
+    private static final    String          BUTTON_FORWARD              = "forward";
+    private static final    String          BUTTON_BACK                 = "back";
+    private static final    String          BUTTON_LEFT                 = "left";
+    private static final    String          BUTTON_RIGHT                = "right";
 
     /*
     Resource suffix and hut prefix
     */
-    private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowBuildTool.xml";
-    private static final String HUT_PREFIX = ":blockHut";
+    private static final    String          BUILD_TOOL_RESOURCE_SUFFIX  = ":gui/windowBuildTool.xml";
+    private static final    String          HUT_PREFIX                  = ":blockHut";
 
     /*
     List of buildings possible to make
      */
-    private List<String> huts = new ArrayList<>();
+    private                 List<String>    huts                        = new ArrayList<>();
     /*
     Index of the rendered hut
      */
-    private int hutDecIndex = 0;
+    private                 int             hutDecIndex                 = 0;
     /*
-    Index of the current style
+    Index of                 the             current style
      */
-    private int styleIndex = 0;
+    private                 int             styleIndex                  = 0;
 
-    private int posX, posY, posZ;
-    private int rotation = 0;
+    private                 int             posX;
+    private                 int             posY;
+    private                 int             posZ;
+    private                 int             rotation                    = 0;
 
     /**
      * Creates a window build tool
@@ -409,7 +408,7 @@ public class WindowBuildTool extends Window implements Button.Handler
     }
 
     /**
-     * Update poition of the schematic
+     * Update position of the schematic
      */
     private void updatePosition()
     {

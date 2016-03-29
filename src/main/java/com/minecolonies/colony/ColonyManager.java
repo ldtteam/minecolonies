@@ -154,6 +154,7 @@ public class ColonyManager
 
     /**
      * Returns a list of colonies that has the given owner
+     *
      * @param owner     UUID of the owner
      * @return          List of colonies that belong to given owner UUID
      */

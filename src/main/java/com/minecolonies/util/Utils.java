@@ -48,7 +48,7 @@ public class Utils
                     {
                         ChunkCoordinates tempCoords = new ChunkCoordinates(i, j, k);
 
-                        double distance = ChunkCoordUtils.distanceSqrd(tempCoords, x, y, z);
+                        double distance = tempCoords.getDistanceSquared(x, y, z);
                         if(closestCoords == null || distance < minDistance)
                         {
                             closestCoords = tempCoords;

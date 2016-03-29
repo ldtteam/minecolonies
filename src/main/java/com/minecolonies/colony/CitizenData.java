@@ -121,7 +121,7 @@ public class CitizenData
     /**
      * Returns the id of the citizen
      *
-     * @return id of the citizen
+     * @return      id of the citizen
      */
     public int getId()
     {
@@ -131,7 +131,7 @@ public class CitizenData
     /**
      * Returns the colony of the citizen
      *
-     * @return colony of the citizen
+     * @return      colony of the citizen
      */
     public Colony getColony()
     {
@@ -141,7 +141,7 @@ public class CitizenData
     /**
      * Returns the name of the citizen
      *
-     * @return name of the citizen
+     * @return      name of the citizen
      */
     public String getName()
     {
@@ -151,7 +151,7 @@ public class CitizenData
     /**
      * Returns true if citizen is female, false for male
      *
-     * @return  true for female, false for male
+     * @return      true for female, false for male
      */
     public boolean isFemale()
     {
@@ -161,7 +161,7 @@ public class CitizenData
     /**
      * Returns the texture id for the citizen
      *
-     * @return texture ID
+     * @return      texture ID
      */
     public int getTextureId()
     {
@@ -171,7 +171,7 @@ public class CitizenData
     /**
      * Returns the level of the citizen
      *
-     * @return level of the citizen
+     * @return      level of the citizen
      */
     public int getLevel()
     {
@@ -181,7 +181,7 @@ public class CitizenData
     /**
      * Returns whether or not the instance is dirty
      *
-     * @return  true when dirty, otherwise false
+     * @return      true when dirty, otherwise false
      */
     public boolean isDirty()
     {
@@ -208,7 +208,7 @@ public class CitizenData
     /**
      * Returns the home building of the citizen
      *
-     * @return  home building
+     * @return      home building
      */
     public BuildingHome getHomeBuilding()
     {
@@ -218,7 +218,7 @@ public class CitizenData
     /**
      * Sets the home of the citizen
      *
-     * @param building home building
+     * @param building  home building
      */
     public void setHomeBuilding(BuildingHome building)
     {
@@ -235,7 +235,7 @@ public class CitizenData
     /**
      * Returns the work building of a citizen
      *
-     * @return home building of a citizen
+     * @return      home building of a citizen
      */
     public BuildingWorker getWorkBuilding(){ return workBuilding; }
 
@@ -308,7 +308,7 @@ public class CitizenData
     /**
      * return the entity instance of the citizen data
      *
-     * @return {@link EntityCitizen} of the citizen data
+     * @return          {@link EntityCitizen} of the citizen data
      */
     public EntityCitizen getCitizenEntity()
     {
@@ -318,7 +318,7 @@ public class CitizenData
     /**
      * Sets the entity of the citizen data
      *
-     * @param citizen {@link EntityCitizen} instance of the citizen data
+     * @param citizen   {@link EntityCitizen} instance of the citizen data
      */
     public void setCitizenEntity(EntityCitizen citizen)
     {
@@ -337,7 +337,7 @@ public class CitizenData
     /**
      * Returns the job of the citizen
      *
-     * @return  Job of the citizen
+     * @return          Job of the citizen
      */
     public Job getJob()
     {
@@ -549,6 +549,7 @@ public class CitizenData
 
     /**
      * Writes the citizen data to a byte buf.
+     *
      * @param buf   Buffer to write to
      */
     public void serializeViewNetworkData(ByteBuf buf)

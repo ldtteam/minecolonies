@@ -15,29 +15,37 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 
+/**
+ * Custom class for Trees. Used by lumberjack
+ */
 public class Tree
 {
-    private static final String TAG_LOCATION = "Location";
-    private static final String TAG_LOGS = "Logs";
+    private static final    String                          TAG_LOCATION        = "Location";
+    private static final    String                          TAG_LOGS            = "Logs";
 
-    private static final int NUMBER_OF_LEAVES = 3;
+    private static final    int                             NUMBER_OF_LEAVES    = 3;
 
-    private ChunkCoordinates location;
-    private LinkedList<ChunkCoordinates> woodBlocks;
-    private boolean isTree = false;
+    private                 ChunkCoordinates                location;
+    private                 LinkedList<ChunkCoordinates>    woodBlocks;
+    private                 boolean                         isTree              = false;
 
     private Tree()
     {
         isTree = true;
     }
 
+    /**
+     *
+     * @param world
+     * @param log
+     */
     public Tree(World world, ChunkCoordinates log)
     {
         Block block = ChunkCoordUtils.getBlock(world, log);
         if(block.isWood(world, log.posX, log.posY, log.posZ))
         {
             location = getBaseLog(world, log.posX, log.posY, log.posZ);
-            woodBlocks = new LinkedList<ChunkCoordinates>();
+            woodBlocks = new LinkedList<>();
 
             checkTree(world, getTopLog(world, log.posX, log.posY, log.posZ));
         }

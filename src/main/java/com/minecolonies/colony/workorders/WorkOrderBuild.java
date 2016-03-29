@@ -10,13 +10,13 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class WorkOrderBuild extends WorkOrder
 {
-    protected ChunkCoordinates buildingId;
-    private int              upgradeLevel;
-    private String           upgradeName;
+    protected               ChunkCoordinates    buildingId;
+    private                 int                 upgradeLevel;
+    private                 String              upgradeName;
 
-    private static final String TAG_BUILDING      = "building";
-    private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
-    private static final String TAG_UPGRADE_NAME  = "upgrade";
+    private static final    String              TAG_BUILDING      = "building";
+    private static final    String              TAG_UPGRADE_LEVEL = "upgradeLevel";
+    private static final    String              TAG_UPGRADE_NAME  = "upgrade";
 
     public WorkOrderBuild()
     {

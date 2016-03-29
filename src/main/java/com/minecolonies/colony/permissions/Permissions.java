@@ -94,18 +94,18 @@ public class Permissions implements IPermissions
         public Rank rank;
     }
 
-    private final static String TAG_OWNERS      = "owners";
-    private final static String TAG_ID          = "id";
-    private final static String TAG_NAME        = "name";
-    private final static String TAG_RANK        = "rank";
-    private final static String TAG_PERMISSIONS = "permissions";
-    private final static String TAG_FLAGS       = "flags";
+    private final   static  String TAG_OWNERS                   = "owners";
+    private final   static  String TAG_ID                       = "id";
+    private final   static  String TAG_NAME                     = "name";
+    private final   static  String TAG_RANK                     = "rank";
+    private final   static  String TAG_PERMISSIONS              = "permissions";
+    private final   static  String TAG_FLAGS                    = "flags";
 
-    private Map<UUID, Player> players = new HashMap<>();
-    private Map<Rank, Integer> permissions = new HashMap<>();
-    private static Map<Rank, RankPair> promotionRanks = new HashMap<>();
+    private                 Map<UUID, Player>   players         = new HashMap<>();
+    private                 Map<Rank, Integer>  permissions     = new HashMap<>();
+    private         static  Map<Rank, RankPair> promotionRanks  = new HashMap<>();
 
-    private boolean isDirty = false;
+    private                 boolean             isDirty         = false;
 
     /**
      * Saves the permissions with allowed actions

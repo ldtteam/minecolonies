@@ -8,20 +8,18 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
-import org.apache.commons.codec.language.bm.Lang;
-import scala.tools.nsc.backend.icode.TypeKinds;
 
 public class WindowCitizen extends Window implements Button.Handler
 {
-    private static String INVENTORY_BUTTON_ID = "inventory";
-    private static String CITIZIN_RESOURCE_SUFFIX = ":gui/windowCitizen.xml";
-    private static String STRENGTH = "strength";
-    private static String STAMINA = "stamina";
-    private static String WISDOM = "wisdom";
-    private static String INTELLIGENCE= "intelligence";
-    private static String CHARISMA = "charisma";
+    private static  String              INVENTORY_BUTTON_ID     = "inventory";
+    private static  String              CITIZIN_RESOURCE_SUFFIX = ":gui/windowCitizen.xml";
+    private static  String              STRENGTH                = "strength";
+    private static  String              STAMINA                 = "stamina";
+    private static  String              WISDOM                  = "wisdom";
+    private static  String              INTELLIGENCE            = "intelligence";
+    private static  String              CHARISMA                = "charisma";
 
-    private CitizenData.View citizen;
+    private         CitizenData.View    citizen;
 
     public WindowCitizen(CitizenData.View citizen)
     {

@@ -12,10 +12,13 @@ import java.util.List;
 
 public class InventoryUtils {
 
-    private static final String TOOL_HOE = "hoe";
-    private static final String TOOL_SHOVEL = "shovel";
-    private static final String TOOL_PICKAXE = "pickaxe";
-
+    /**
+     * Filters a list of items, equal to given parameter, in an {@link IInventory}
+     *
+     * @param inventory     Inventory to get items from
+     * @param targetItem    Item to look for
+     * @return              List of item stacks with the given item in inventory
+     */
     public static List<ItemStack> filterInventory(IInventory inventory, Item targetItem){
         ArrayList<ItemStack> filtered = new ArrayList<>();
         if(targetItem == null){
@@ -31,6 +34,12 @@ public class InventoryUtils {
         return filtered;
     }
 
+    /**
+     * Returns an inventory as list of item stacks
+     *
+     * @param inventory     Inventory to convert
+     * @return              List of item stacks
+     */
     public static List<ItemStack> getInventoryAsList(IInventory inventory){
         ArrayList<ItemStack> filtered = new ArrayList<>();
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
@@ -42,18 +51,45 @@ public class InventoryUtils {
         return filtered;
     }
 
+    /**
+     * @see {@link #filterInventory(IInventory, Item)}
+     *
+     * @param inventory     Inventory to filter in
+     * @param block         Block to filter
+     * @return              List of item stacks
+     */
     public static List<ItemStack> filterInventory(IInventory inventory, Block block){
         return filterInventory(inventory, getItemFromBlock(block));
     }
 
+    /**
+     * Compares whether or not the item in an itemstack is equal to a given item
+     *
+     * @param itemStack     ItemStack to check
+     * @param targetItem    Item to check
+     * @return              True when item in item stack is equal to target item
+     */
     private static boolean compareItems(ItemStack itemStack, Item targetItem) {
         return itemStack != null && itemStack.getItem() == targetItem;
     }
 
+    /**
+     * Returns the index of the first occurrence of the block in the inventory
+     *
+     * @param inventory     Inventory to check
+     * @param block         Block to find
+     * @return              Index of the first occurrence
+     */
     public static int findFirstSlotInInventoryWith(IInventory inventory, Block block){
         return findFirstSlotInInventoryWith(inventory,getItemFromBlock(block));
     }
 
+    /**
+     *
+     * @param inventory
+     * @param targetItem
+     * @return
+     */
     public static int findFirstSlotInInventoryWith(IInventory inventory, Item targetItem){
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
             if(compareItems(inventory.getStackInSlot(slot),targetItem)){

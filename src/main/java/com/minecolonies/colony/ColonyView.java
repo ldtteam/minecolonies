@@ -149,8 +149,8 @@ public class ColonyView implements IColony
     /**
      * removes a specific permission to a rank. If the permission was set, it sends a message to the server
      *
-     * @param rank
-     * @param action
+     * @param rank      Rank to remove permission from
+     * @param action    Action to remove permission of
      */
     public void removePermission(Permissions.Rank rank, Permissions.Action action) {
         if(permissions.removePermission(rank, action))
@@ -163,8 +163,8 @@ public class ColonyView implements IColony
      *
      * Toggles a specific permission to a rank. Sends a message to the server
      *
-     * @param rank
-     * @param action
+     * @param rank      Rank to toggle permission of
+     * @param action    Action to toggle permission of
      */
     public void togglePermission(Permissions.Rank rank, Permissions.Action action) {
         permissions.togglePermission(rank, action);

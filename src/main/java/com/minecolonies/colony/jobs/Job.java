@@ -28,7 +28,7 @@ public abstract class Job
     //  Job and View Class Mapping
     private static          Map<String, Class<? extends Job>>   nameToClassMap      = new HashMap<>();
     private static          Map<Class<? extends Job>, String>   classToNameMap      = new HashMap<>();
-    private         final   CitizenData                         citizen;
+    private        final    CitizenData                         citizen;
     private                 List<ItemStack>                     itemsNeeded         = new ArrayList<>();
 
     static

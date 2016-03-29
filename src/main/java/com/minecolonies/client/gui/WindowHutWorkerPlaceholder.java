@@ -5,8 +5,8 @@ import com.minecolonies.lib.Constants;
 
 public class WindowHutWorkerPlaceholder<BUILDING extends BuildingWorker.View> extends WindowWorkerBuilding<BUILDING>
 {
-    private String name;
-    private static final String WORKER_PLACEHOLDER_RESOURCE_SUFFIX = ":gui/windowHutWorkerPlaceholder.xml";
+    private                 String name;
+    private static final    String WORKER_PLACEHOLDER_RESOURCE_SUFFIX = ":gui/windowHutWorkerPlaceholder.xml";
 
     public WindowHutWorkerPlaceholder(BUILDING building, String name)
     {
@@ -14,6 +14,7 @@ public class WindowHutWorkerPlaceholder<BUILDING extends BuildingWorker.View> ex
         this.name = name;
     }
 
+    @Override
     public String getBuildingName()
     {
         return "com.minecolonies.gui.workerHuts." + name;

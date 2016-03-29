@@ -22,34 +22,34 @@ import java.util.Map;
 
 public abstract class Building
 {
-    private         final   ChunkCoordinates            location;
-    private         final   Colony                      colony;
+    private         final       ChunkCoordinates            location;
+    private         final       Colony                      colony;
 
-    private                 TileEntityColonyBuilding    tileEntity;
+    private                     TileEntityColonyBuilding    tileEntity;
 
     //  Attributes
-    private                 int                         buildingLevel                   = 0;
-    private                 int                         rotation                        = 0;
-    private                 String                      style                           = "classic";
+    private                     int                         buildingLevel                   = 0;
+    private                     int                         rotation                        = 0;
+    private                     String                      style                           = "classic";
 
     //  State
-    private                 boolean                     isDirty                         = false;
+    private                     boolean                     isDirty                         = false;
 
     //  Building and View Class Mapping
-    private static          Map<String,      Class<?>>  nameToClassMap                  = new HashMap<>();
-    private static          Map<Class<?>,    String>    classToNameMap                  = new HashMap<>();
-    private static          Map<Class<?>,    Class<?>>  blockClassToBuildingClassMap    = new HashMap<>();
-    private static          Map<Integer,     Class<?>>  classNameHashToClassMap         = new HashMap<>();
+    private static              Map<String,      Class<?>>  nameToClassMap                  = new HashMap<>();
+    private static              Map<Class<?>,    String>    classToNameMap                  = new HashMap<>();
+    private static              Map<Class<?>,    Class<?>>  blockClassToBuildingClassMap    = new HashMap<>();
+    private static              Map<Integer,     Class<?>>  classNameHashToClassMap         = new HashMap<>();
 
-    private static final    String                      TAG_BUILDING_TYPE               = "type";
-    //    pr        ivate final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
-    private static final    String                      TAG_LOCATION                    = "location";  //  Location is unique (within a Colony) and so can double as the Id
-    private static final    String                      TAG_BUILDING_LEVEL              = "level";
-    private static final    String                      TAG_ROTATION                    = "rotation";
-    private static final    String                      TAG_STYLE                       = "style";
+    private static  final       String                      TAG_BUILDING_TYPE               = "type";
+    //    pr         ivate final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
+    private static  final       String                      TAG_LOCATION                    = "location";  //  Location is unique (within a Colony) and so can double as the Id
+    private static  final       String                      TAG_BUILDING_LEVEL              = "level";
+    private static  final       String                      TAG_ROTATION                    = "rotation";
+    private static  final       String                      TAG_STYLE                       = "style";
 
-    public abstract         String                      getSchematicName();
-    public abstract         int                         getMaxBuildingLevel();
+    public abstract             String                      getSchematicName();
+    public abstract             int                         getMaxBuildingLevel();
 
     /**
      * Add build to a mapping.

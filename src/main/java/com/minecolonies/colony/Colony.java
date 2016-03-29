@@ -232,7 +232,7 @@ public class Colony implements IColony
     /**
      * Returns the dimension ID
      *
-     * @return  Dimension ID
+     * @return      Dimension ID
      */
     public int getDimensionId()
     {
@@ -242,7 +242,7 @@ public class Colony implements IColony
     /**
      * Returns the world the colony is in.
      *
-     * @return  World the colony is in
+     * @return      World the colony is in
      */
     public World getWorld()
     {
@@ -256,7 +256,7 @@ public class Colony implements IColony
      * Sets the name of the colony
      * Marks dirty
      *
-     * @param n new name
+     * @param n     new name
      */
     public void setName(String n)
     {
@@ -267,7 +267,7 @@ public class Colony implements IColony
     /**
      * Returns the center of the colony
      *
-     * @return  Chunk Coordinates of the center of the colony
+     * @return      Chunk Coordinates of the center of the colony
      */
     public ChunkCoordinates getCenter() { return center; }
 
@@ -654,6 +654,7 @@ public class Colony implements IColony
 
     /**
      * Spawn a citizen with specific citizen data
+     *
      * @param data      Data to use to spawn citizen
      */
     private void spawnCitizen(CitizenData data)

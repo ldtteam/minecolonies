@@ -27,10 +27,10 @@ import net.minecraft.world.World;
  */
 public abstract class BlockHut extends Block implements ITileEntityProvider
 {
-    protected int workingRange;//TODO unused
+    protected   int     workingRange;//TODO unused
 
     /* 0 = top, 1 = bot, 2-5 = sides; */
-    private IIcon[] icons = new IIcon[6];
+    private     IIcon[] icons           = new IIcon[6];
 
     /**
      * Constructor for a block using the minecolonies mod.

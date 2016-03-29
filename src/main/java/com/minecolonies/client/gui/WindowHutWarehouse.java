@@ -10,27 +10,28 @@ import com.minecolonies.util.LanguageHandler;
 
 public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.View> implements Button.Handler
 {
-    private static final String BUTTON_BLACKSMITH_GOLD = "blacksmithGold";
-    private static final String BUTTON_BLACKSMITH_DIAMOND = "blacksmithDiamond";
-    private static final String BUTTON_STONEMASON_COBBLESTONE = "stonemasonCobblestone";
-    private static final String BUTTON_STONEMASON_SAND = "stonemasonSand";
-    private static final String BUTTON_STONEMASON_NETHERRACK = "stonemasonNetherrack";
-    private static final String BUTTON_STONEMASON_QUARTZ = "stonemasonQuartz";
-    private static final String BUTTON_GUARD_ARMOR = "guardArmor";
-    private static final String BUTTON_GUARD_WEAPON = "guardWeapon";
-    private static final String BUTTON_CITIZEN_CHESTS = "citizenChests";
-    private static final String BUTTON_PREVPAGE = "prevPage";
-    private static final String BUTTON_NEXTPAGE = "nextPage";
+    private static final    String BUTTON_BLACKSMITH_GOLD           = "blacksmithGold";
+    private static final    String BUTTON_BLACKSMITH_DIAMOND        = "blacksmithDiamond";
+    private static final    String BUTTON_STONEMASON_COBBLESTONE    = "stonemasonCobblestone";
+    private static final    String BUTTON_STONEMASON_SAND           = "stonemasonSand";
+    private static final    String BUTTON_STONEMASON_NETHERRACK     = "stonemasonNetherrack";
+    private static final    String BUTTON_STONEMASON_QUARTZ         = "stonemasonQuartz";
+    private static final    String BUTTON_GUARD_ARMOR               = "guardArmor";
+    private static final    String BUTTON_GUARD_WEAPON              = "guardWeapon";
+    private static final    String BUTTON_CITIZEN_CHESTS            = "citizenChests";
+    private static final    String BUTTON_PREVPAGE                  = "prevPage";
+    private static final    String BUTTON_NEXTPAGE                  = "nextPage";
 
-    private static final String VIEW_PAGES = "pages";
+    private static final    String VIEW_PAGES                       = "pages";
 
     /* Unused for now */
     //private static final String PAGE_ACTIONS = "pageActions";
     //private static final String PAGE_SETTINGS = "pageSettings";
 
-    private static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/windowHutWarehouse.xml";
+    private static final    String HUT_WAREHOUSE_RESOURCE_SUFFIX    = ":gui/windowHutWarehouse.xml";
 
-    private Button buttonPrevPage, buttonNextPage;
+    private                 Button buttonPrevPage;
+    private                 Button buttonNextPage;
 
     public WindowHutWarehouse(BuildingWarehouse.View building)
     {

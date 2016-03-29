@@ -2,7 +2,6 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -66,13 +65,13 @@ public class PathJobMoveToLocation extends PathJob
                     n.z == destination.posZ;
         }
 
-        return ChunkCoordUtils.distanceSqrd(destination, n.x, n.y, n.z) <= destinationSlack;
+        return destination.getDistanceSquared(n.x, n.y, n.z) <= destinationSlack;
     }
 
     @Override
     protected double getNodeResultScore(Node n)
     {
         //  For Result Score higher is better - return negative distance so closer to 0 = better
-        return -ChunkCoordUtils.distanceSqrd(destination, n.x, n.y, n.z);
+        return -destination.getDistanceSquared(n.x, n.y, n.z);
     }
 }

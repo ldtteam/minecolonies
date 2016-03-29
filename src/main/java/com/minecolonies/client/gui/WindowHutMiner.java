@@ -15,22 +15,22 @@ import java.awt.*;
 
 public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
 {
-    private static final String LIST_LEVELS = "levels";
-    private static final String PAGE_LEVELS = "levelActions";
-    private static final String BUTTON_PREVPAGE = "prevPage";
-    private static final String BUTTON_NEXTPAGE = "nextPage";
-    private static final String BUTTON_CURRENTLEVEL = "changeToLevel";
+    private static final    String              LIST_LEVELS                 = "levels";
+    private static final    String              PAGE_LEVELS                 = "levelActions";
+    private static final    String              BUTTON_PREVPAGE             = "prevPage";
+    private static final    String              BUTTON_NEXTPAGE             = "nextPage";
+    private static final    String              BUTTON_CURRENTLEVEL         = "changeToLevel";
 
-    private static final String VIEW_PAGES = "pages";
+    private static final    String              VIEW_PAGES                  = "pages";
 
-    private Button buttonPrevPage;
-    private Button buttonNextPage;
+    private                 Button              buttonPrevPage;
+    private                 Button              buttonNextPage;
 
-    private int[] levels;
-    private ScrollingList levelList;
-    private BuildingMiner.View miner;
+    private                 int[]               levels;
+    private                 ScrollingList       levelList;
+    private                 BuildingMiner.View  miner;
 
-    private static final String HUT_MINER_RESOURCE_SUFFIX = ":gui/windowHutMiner.xml";
+    private static final    String              HUT_MINER_RESOURCE_SUFFIX   = ":gui/windowHutMiner.xml";
 
     public WindowHutMiner(BuildingMiner.View building)
     {
@@ -141,9 +141,8 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
         }
     }
 
-    /**
-     *
-     */
+
+    //TODO reevaluate method, weird name, weird body
     private void updateUsers()
     {
         if(miner.getColony().getBuilding(miner.getID()) != null)

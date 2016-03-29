@@ -7,23 +7,22 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.FarmerCropTypeMessage;
-import com.typesafe.config.ConfigException;
 
 public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 {
-    private static String BUTTON_WHEAT = "wheat";
-    private static String BUTTON_POTATO = "potato";
-    private static String BUTTON_CARROT = "carrot";
-    private static String BUTTON_MELON = "melon";
-    private static String BUTTON_PUMPKIN = "pumpkin";
-    private static String BUTTON_PREVPAGE = "prevPage";
-    private static String BUTTON_NEXTPAGE = "nextPage";
-    private static String VIEW_PAGES = "pages";
+    private static  String BUTTON_WHEAT                  = "wheat";
+    private static  String BUTTON_POTATO                 = "potato";
+    private static  String BUTTON_CARROT                 = "carrot";
+    private static  String BUTTON_MELON                  = "melon";
+    private static  String BUTTON_PUMPKIN                = "pumpkin";
+    private static  String BUTTON_PREVPAGE               = "prevPage";
+    private static  String BUTTON_NEXTPAGE               = "nextPage";
+    private static  String VIEW_PAGES                    = "pages";
 
-    private static String HUT_FARMER_RESOURCE_SUFFIX = ":gui/windowHutFarmer.xml";
+    private static  String HUT_FARMER_RESOURCE_SUFFIX    = ":gui/windowHutFarmer.xml";
 
-    private Button buttonPrevPage;
-    private Button buttonNextPage;
+    private         Button buttonPrevPage;
+    private         Button buttonNextPage;
 
     public WindowHutFarmer(BuildingFarmer.View building)
     {

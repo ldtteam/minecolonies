@@ -6,7 +6,6 @@ import com.minecolonies.entity.ai.EntityAIWorkMiner;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
 
 import java.util.List;
 

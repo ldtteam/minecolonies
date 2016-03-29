@@ -12,13 +12,13 @@ import com.minecolonies.util.LanguageHandler;
 
 public class WindowHomeBuilding extends Window implements Button.Handler {
 
-    private final static String BUTTON_INVENTORY = "inventory";
-    private final static String BUTTON_BUILD = "build";
-    private final static String BUTTON_REPAIR = "repair";
-    private final static String LABEL_BUILDINGNAME = "name";
-    private final static String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowHutHome.xml";
+    private final static    String              BUTTON_INVENTORY                = "inventory";
+    private final static    String              BUTTON_BUILD                    = "build";
+    private final static    String              BUTTON_REPAIR                   = "repair";
+    private final static    String              LABEL_BUILDINGNAME              = "name";
+    private final static    String              HOME_BUILDING_RESOURCE_SUFFIX   = ":gui/windowHutHome.xml";
 
-    private BuildingHome.View building;
+    private                 BuildingHome.View   building;
 
     public WindowHomeBuilding(BuildingHome.View building)
     {

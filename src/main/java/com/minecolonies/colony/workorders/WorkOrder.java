@@ -11,16 +11,16 @@ import java.util.Map;
 
 public abstract class WorkOrder
 {
-    protected int id;
-    private int claimedBy;
+    protected               int                                     id;
+    private                 int                                     claimedBy;
 
     //  Job and View Class Mapping
-    private static Map<String, Class<? extends WorkOrder>> nameToClassMap = new HashMap<String, Class<? extends WorkOrder>>();
-    private static Map<Class<? extends WorkOrder>, String> classToNameMap = new HashMap<Class<? extends WorkOrder>, String>();
+    private static          Map<String, Class<? extends WorkOrder>> nameToClassMap  = new HashMap<String, Class<? extends WorkOrder>>();
+    private static          Map<Class<? extends WorkOrder>, String> classToNameMap  = new HashMap<Class<? extends WorkOrder>, String>();
 
-    private static final String TAG_TYPE = "type";
-    private static final String TAG_ID   = "id";
-    private static final String TAG_CLAIMED_BY = "claimedBy";
+    private static final    String                                  TAG_TYPE        = "type";
+    private static final    String                                  TAG_ID          = "id";
+    private static final    String                                  TAG_CLAIMED_BY  = "claimedBy";
 
     static
     {
@@ -63,7 +63,7 @@ public abstract class WorkOrder
     /**
      * Get the ID of the Work Order
      *
-     * @return ID of the work order
+     * @return          ID of the work order
      */
     public int getID() { return id; }
     public void setID(int id) { this.id = id; }
@@ -71,7 +71,7 @@ public abstract class WorkOrder
     /**
      * Is the Work Order claimed?
      *
-     * @return true if the Work Order has been claimed
+     * @return          true if the Work Order has been claimed
      */
     public boolean isClaimed()
     {
@@ -81,8 +81,8 @@ public abstract class WorkOrder
     /**
      * Is the Work Order claimed by the given citizen?
      *
-     * @param citizen The citizen to check
-     * @return true if the Work Order is claimed by this Citizen
+     * @param citizen   The citizen to check
+     * @return          true if the Work Order is claimed by this Citizen
      */
     public boolean isClaimedBy(CitizenData citizen)
     {
@@ -92,7 +92,7 @@ public abstract class WorkOrder
     /**
      * Get the ID of the Citizen that the Work Order is claimed by
      *
-     * @return ID of citizen the Work Order has been claimed by, or null
+     * @return          ID of citizen the Work Order has been claimed by, or null
      */
     public int getClaimedBy()
     {
@@ -199,8 +199,8 @@ public abstract class WorkOrder
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
      *
-     * @param colony The colony that owns the Work Order
-     * @return True if the WorkOrder is still valid, or False if it should be deleted
+     * @param colony    The colony that owns the Work Order
+     * @return          True if the WorkOrder is still valid, or False if it should be deleted
      */
     public boolean isValid(Colony colony) { return true; }
 
@@ -208,7 +208,7 @@ public abstract class WorkOrder
      * Attempt to fulfill the Work Order.
      * Override this with an implementation for the Work Order to find a Citizen to perform the job
      *
-     * @param colony The colony that owns the Work Order
+     * @param colony    The colony that owns the Work Order
      */
     public void attemptToFulfill(Colony colony) {}
 }

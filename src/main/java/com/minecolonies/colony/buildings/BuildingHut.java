@@ -11,6 +11,11 @@ public abstract class BuildingHut extends Building
         super(c, l);
     }
 
+    /**
+     * Returns the max amount of inhabitants
+     *
+     * @return  Max inhabitants
+     */
     public int getMaxInhabitants()
     {
         return 1;

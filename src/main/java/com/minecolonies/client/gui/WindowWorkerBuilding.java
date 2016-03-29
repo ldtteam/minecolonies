@@ -13,17 +13,17 @@ import com.minecolonies.util.LanguageHandler;
 
 public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View> extends Window implements Button.Handler
 {
-    private static String BUTTON_INVENTORY = "inventory";
-    private static String BUTTON_HIRE = "hire";
-    private static String BUTTON_RECALL = "recall";
-    private static String BUTTON_BUILD = "build";
-    private static String BUTTON_REPAIR = "repair";
-    private static String LABEL_BUILDINGNAME = "name";
-    private static String LABEL_BUILDINGTYPE = "type";
-    private static String LABEL_WORKERNAME = "workerName";
-    private static String LABEL_WORKERLEVEL = "workerLevel";
+    private static  String      BUTTON_INVENTORY      = "inventory";
+    private static  String      BUTTON_HIRE           = "hire";
+    private static  String      BUTTON_RECALL         = "recall";
+    private static  String      BUTTON_BUILD          = "build";
+    private static  String      BUTTON_REPAIR         = "repair";
+    private static  String      LABEL_BUILDINGNAME    = "name";
+    private static  String      LABEL_BUILDINGTYPE    = "type";
+    private static  String      LABEL_WORKERNAME      = "workerName";
+    private static  String      LABEL_WORKERLEVEL     = "workerLevel";
 
-    BUILDING building;
+    BUILDING    building;
 
     WindowWorkerBuilding(BUILDING building, String resource)
     {
@@ -31,6 +31,11 @@ public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View>
         this.building = building;
     }
 
+    /**
+     * Returns the name of a building
+     *
+     * @return      Name of a building
+     */
     public abstract String getBuildingName();
 
     @Override
