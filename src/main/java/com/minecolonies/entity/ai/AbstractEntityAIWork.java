@@ -8,12 +8,12 @@ import com.minecolonies.util.InventoryFunctions;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
@@ -25,7 +25,6 @@ import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_AXE;
 import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_HOE;
 import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_ITEM;
 import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_PICKAXE;
-import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_ROD;
 import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_SHOVEL;
 
 /**
@@ -41,11 +40,6 @@ import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_SHOVEL;
  */
 public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkeleton<J>
 {
-    public static final String PICKAXE = "pickaxe";
-    public static final String SHOVEL = "shovel";
-    public static final String AXE = "axe";
-    public static final String HOE = "hoe";
-    public static final String ROD = "rod";
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
     private static final Logger log = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
     private static final int DELAY_RECHECK = 10;
@@ -75,7 +69,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     protected boolean needsAxe = false;
     protected boolean needsHoe = false;
     protected boolean needsPickaxe = false;
-    protected boolean needsRod = false;
 
     protected int needsPickaxeLevel = -1;
     private ChunkCoordinates currentWorkingLocation = null;
@@ -126,7 +119,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                 new AITarget(() -> this.needsShovel, this::waitForShovel),
                 new AITarget(() -> this.needsAxe, this::waitForAxe),
                 new AITarget(() -> this.needsHoe, this::waitForHoe),
-                new AITarget(() -> this.needsRod, this::waitForRod),
                 new AITarget(() -> this.needsPickaxe, this::waitForPickaxe),
                 /**
                  * Dumps inventory as long as needs be.
@@ -200,6 +192,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
+     * Can be overridden in implementations.
+     * <p>
      * Here the AI can check if the chestBelt has to be re rendered and do it.
      */
     protected void updateRenderMetaData()
@@ -304,9 +298,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @return true if we have a shovel
      */
-    protected final boolean checkForShovel()
+    private boolean checkForShovel()
     {
-        needsShovel = checkForTool(SHOVEL);
+        needsShovel = checkForTool(Utils.SHOVEL);
         return needsShovel;
     }
 
@@ -362,9 +356,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @return true if we have an axe
      */
-    protected final boolean checkForAxe()
+    private boolean checkForAxe()
     {
-        needsAxe = checkForTool(AXE);
+        needsAxe = checkForTool(Utils.AXE);
         return needsAxe;
     }
 
@@ -386,69 +380,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @return true if we have a hoe
      */
-    protected final boolean checkForHoe()
+    private boolean checkForHoe()
     {
-        needsHoe = checkForTool(HOE);
+        needsHoe = checkForTool(Utils.HOE);
         return needsHoe;
-    }
-
-    /**
-     * Wait for a needed rod.
-     *
-     * @return NEEDS_ROD
-     */
-    private AIStateBase waitForRod()
-    {
-        needsRod = checkForRod();
-        delay += DELAY_RECHECK;
-        return NEEDS_ROD;
-    }
-
-    /**
-     * Ensures that we have a rod available in the inventory or chest
-     * <p>
-     * TODO: Rework and split up @marvin
-     *
-     * @return true if we have a shovel
-     */
-    protected final boolean checkForRod()
-    {
-        boolean needsTool = !InventoryFunctions
-                .matchFirstInInventory(
-                        worker.getInventory(),
-                        stack -> stack != null && stack.getItem().equals(Items.fishing_rod),
-                        InventoryFunctions::doNothing);
-        if (!needsTool)
-        {
-            return false;
-        }
-        delay += DELAY_RECHECK;
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
-        {
-            if (isRodInHut(new ItemStack(Items.fishing_rod)))
-            {
-                return false;
-            }
-            requestWithoutSpam(ROD);
-        }
-        return true;
-    }
-
-    /**
-     * Checks if the rod is in the hut
-     *
-     * @param is is the searched item
-     * @return true if he found a rod
-     */
-    private boolean isRodInHut(ItemStack is)
-    {
-        BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        stack -> stack != null && is.isItemEqual(stack),
-                        this::takeItemStackFromChest);
-
     }
 
     /**
@@ -470,14 +405,14 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * @param minlevel the minimum pickaxe level needed.
      * @return true if we have a pickaxe
      */
-    protected final boolean checkForPickaxe(int minlevel)
+    private boolean checkForPickaxe(int minlevel)
     {
         //Check for a pickaxe
         needsPickaxe = InventoryFunctions
                 .matchFirstInInventory(
                         worker.getInventory(),
                         stack -> Utils.checkIfPickaxeQualifies(
-                                minlevel, Utils.getMiningLevel(stack, PICKAXE)),
+                                minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
                         InventoryFunctions::doNothing);
 
         delay += DELAY_RECHECK;
@@ -552,7 +487,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                                 minlevel,
                                 Utils.getMiningLevel(
                                         stack,
-                                        PICKAXE)),
+                                        Utils.PICKAXE)),
                         this::takeItemStackFromChest);
     }
 
@@ -626,6 +561,37 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * It will serve as a tick function.
      */
     protected abstract void workOnTask();
+
+    /**
+     * Require that items are in the workers inventory.
+     * This safegate ensurs you have said items before you execute a task.
+     * Please stop execution on false returned.
+     *
+     * @param items the items needed
+     * @return true if they are in inventory
+     */
+    protected boolean missesItemsInInventory(ItemStack... items)
+    {
+        boolean allClear = true;
+        for (ItemStack stack : items)
+        {
+            int countOfItem = worker.getItemCountInInventory(stack.getItem());
+            if (countOfItem < stack.stackSize)
+            {
+                int itemsLeft = stack.stackSize - countOfItem;
+                ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
+                itemsCurrentlyNeeded.add(requiredStack);
+                allClear = false;
+            }
+        }
+        if (allClear)
+        {
+            return false;
+        }
+        itemsNeeded.clear();
+        Collections.addAll(itemsNeeded, items);
+        return true;
+    }
 
     /**
      * This method will return true if the AI is waiting for something.

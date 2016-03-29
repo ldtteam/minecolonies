@@ -124,19 +124,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //Fisherman is at building and prepares for work
         if (job.getStage() == Stage.PREPARING)
         {
-            if (worker.hasItemInInventory(Items.fishing_rod))
+            if (missesItemsInInventory(new ItemStack(Items.fishing_rod)))
             {
-                if (job.getWater() == null)
-                {
-                    job.setStage(Stage.SEARCHING_WATER);
-                    return;
-                }
-                job.setStage(Stage.WATER_FOUND);
+                return;
             }
-            else
+            if (job.getWater() == null)
             {
-                requestTool();
+                job.setStage(Stage.SEARCHING_WATER);
+                return;
             }
+            job.setStage(Stage.WATER_FOUND);
+
             return;
         }
 
@@ -240,12 +238,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             pathResult = null;
         }
 
-    }
-
-    private void requestTool()
-    {
-        job.setStage(Stage.PREPARING);
-        needsRod = true;
     }
 
     private void doFishing()

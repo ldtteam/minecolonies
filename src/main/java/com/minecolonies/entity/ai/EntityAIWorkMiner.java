@@ -196,12 +196,12 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
     private void requestTool(Block curblock)
     {
-        if (Objects.equals(curblock.getHarvestTool(0), SHOVEL))
+        if (Objects.equals(curblock.getHarvestTool(0), Utils.SHOVEL))
         {
             job.setStage(Stage.PREPARING);
             needsShovel = true;
         }
-        if (Objects.equals(curblock.getHarvestTool(0), PICKAXE))
+        if (Objects.equals(curblock.getHarvestTool(0), Utils.PICKAXE))
         {
             job.setStage(Stage.PREPARING);
             needsPickaxe = true;
@@ -223,33 +223,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         //we have to return; on false of this method
         //but omitted because end of method.
         mineBlock(currentWorkingLocation, currentStandingPosition);
-    }
-
-    private boolean missesItemsInInventory(ItemStack... items)
-    {
-        boolean allClear = true;
-        for (ItemStack stack : items)
-        {
-            int countOfItem = worker.getItemCountInInventory(stack.getItem());
-            if (countOfItem < stack.stackSize)
-            {
-                int itemsLeft = stack.stackSize - countOfItem;
-                ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
-                itemsCurrentlyNeeded.add(requiredStack);
-                allClear = false;
-            }
-        }
-        if (allClear)
-        {
-            return false;
-        }
-        itemsNeeded.clear();
-        for (ItemStack stack : items)
-        {
-            itemsNeeded.add(stack);
-        }
-        job.setStage(Stage.PREPARING);
-        return true;
     }
 
 

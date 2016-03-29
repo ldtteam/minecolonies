@@ -1,7 +1,6 @@
 package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.entity.ai.AbstractEntityAIWork;
 import com.minecolonies.lib.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -19,6 +18,12 @@ import java.util.*;
 
 public class Utils
 {
+    public static final String PICKAXE = "pickaxe";
+    public static final String SHOVEL = "shovel";
+    public static final String AXE = "axe";
+    public static final String HOE = "hoe";
+    public static final String ROD = "rod";
+
     /**
      * Find the closest block near the points
      *
@@ -424,12 +429,12 @@ public class Utils
      */
     public static boolean isShovel(ItemStack itemStack)
     {
-        return isTool(itemStack, AbstractEntityAIWork.SHOVEL);
+        return isTool(itemStack, SHOVEL);
     }
 
     public static boolean isFishingTool(ItemStack itemStack)
     {
-        return isTool(itemStack, AbstractEntityAIWork.ROD);
+        return isTool(itemStack, ROD);
     }
 
     /**
@@ -445,6 +450,6 @@ public class Utils
      */
     public static boolean isPickaxe(ItemStack itemStack)
     {
-        return isTool(itemStack, AbstractEntityAIWork.PICKAXE);
+        return isTool(itemStack, PICKAXE);
     }
 }
