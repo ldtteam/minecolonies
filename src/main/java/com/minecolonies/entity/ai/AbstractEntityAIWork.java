@@ -124,10 +124,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                  * Wait for different tools.
                  */
                 new AITarget(() -> this.needsShovel, this::waitForShovel),
-                new AITarget(() -> this.needsShovel, this::waitForAxe),
-                new AITarget(() -> this.needsShovel, this::waitForHoe),
-                new AITarget(() -> this.needsShovel, this::waitForRod),
-                new AITarget(() -> this.needsShovel, this::waitForPickaxe)
+                new AITarget(() -> this.needsAxe, this::waitForAxe),
+                new AITarget(() -> this.needsHoe, this::waitForHoe),
+                new AITarget(() -> this.needsRod, this::waitForRod),
+                new AITarget(() -> this.needsPickaxe, this::waitForPickaxe)
                              );
     }
 
