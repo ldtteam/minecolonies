@@ -14,7 +14,9 @@ public final class ModBlocks
             blockHutWarehouse = new BlockHutWarehouse(),
             blockHutBlacksmith = new BlockHutBlacksmith(),
             blockHutStonemason = new BlockHutStonemason(),
-            blockHutFarmer = new BlockHutFarmer();
+            blockHutFarmer = new BlockHutFarmer(),
+            blockHutFisherman = new BlockHutFisherman();
+
 
     public static void init()
     {

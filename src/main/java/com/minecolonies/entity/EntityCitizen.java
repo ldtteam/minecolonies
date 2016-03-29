@@ -14,10 +14,12 @@ import com.minecolonies.entity.ai.*;
 import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
@@ -25,6 +27,7 @@ import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInvBasic;
@@ -35,9 +38,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import scala.util.*;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.Random;
 
 import static net.minecraftforge.common.util.Constants.NBT;
 
@@ -50,11 +55,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int DATA_CITIZEN_ID      = 17;  //  Because Entity UniqueIDs are not identical between client and server
     private static final int DATA_MODEL           = 18;
     private static final int DATA_RENDER_METADATA = 19;
+    private static final int LEVEL_CAP = 10;
     private static Field navigatorField;
     protected Status status = Status.IDLE;
-    boolean isFemale;
-    RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
-    String renderMetadata;
+    private boolean isFemale;
+    private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
+    private String renderMetadata;
     private ResourceLocation texture;
     private InventoryCitizen inventory;
     private int              colonyId;
@@ -65,8 +71,28 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private int         textureId;
     private Map<String, Integer> statusMessages = new HashMap<>();
     private PathNavigate newNavigator;
-    private boolean useNewNavigation = false;
+    //Connects the fishingHook with the citizen
+    private EntityFishHook fishEntity;
+    //Will be set true when the citizen caught a fish (to reset the fisherman)
+    private boolean caughtFish=false;
+    //Skills, may be added more later
+    private int intelligence;
+    private int speed;
+    private int strength;
+    private int stamina;
+    private int diligence;
 
+    //The current experience level the citizen is on.
+    private int experienceLevel=1;
+    /*The total amount of experience the citizen has.
+    This also includes the amount of experience within their Experience Bar.*/
+    private int experienceTotal;
+    //The current amount of experience the citizen has within their Experience Bar.
+    private double experience;
+    //Something with ticks which I didn't understand yet!
+    private int nOTicks;
+
+    //Creates a citizen entity
     public EntityCitizen(World world)
     {
         super(world);
@@ -75,36 +101,32 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
+        Random random = new Random();
+
+        intelligence = random.nextInt(LEVEL_CAP-1) + 1;
+        speed        = random.nextInt(LEVEL_CAP-1) + 1;
+        strength     = random.nextInt(LEVEL_CAP-1) + 1;
+        stamina      = random.nextInt(LEVEL_CAP-1) + 1;
+        diligence    = random.nextInt(LEVEL_CAP-1) + 1;
 
         this.renderDistanceWeight = 2.0D;
-
         this.newNavigator = new PathNavigate(this, world);
 
-        useNewNavigation = true;
-        if(useNewNavigation)
-        {
-            if(navigatorField == null)
-            {
-                Field[] fields = EntityLiving.class.getDeclaredFields();
-                for(Field field : fields)
-                {
-                    if(field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
-                    {
-                        field.setAccessible(true);
-                        navigatorField = field;
-                        break;
-                    }
+        if (navigatorField == null) {
+            Field[] fields = EntityLiving.class.getDeclaredFields();
+            for (Field field : fields) {
+                if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class)) {
+                    field.setAccessible(true);
+                    navigatorField = field;
+                    break;
                 }
             }
+        }
 
-            try
-            {
-                navigatorField.set(this, this.newNavigator);
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
+        try {
+            navigatorField.set(this, this.newNavigator);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace(); //TODO: use a logger
         }
 
         this.getNavigator().setAvoidsWater(true);
@@ -135,7 +157,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.addObject(DATA_RENDER_METADATA, "");
     }
 
-    protected void initTasks()
+    private void initTasks()
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 1.6D));
@@ -150,7 +172,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         onJobChanged(getColonyJob());
     }
 
-    public Job getColonyJob()
+    private Job getColonyJob()
     {
         return citizenData != null ? citizenData.getJob() : null;
     }
@@ -158,6 +180,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public <JOB extends Job> JOB getColonyJob(Class<JOB> type)
     {
         return citizenData != null ? citizenData.getJob(type) : null;
+    }
+
+    public void setRotation(float yaw, float pitch)
+    {
+        super.setRotation(yaw,pitch);
     }
 
     public void onJobChanged(Job job)
@@ -210,6 +237,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
     }
 
+    public void gatherXp()
+    {
+        for (EntityXPOrb orb : getXPOrbsOnGrid())
+        {
+            addExperience(orb.getXpValue());
+            orb.setDead();
+        }
+    }
+
     private void setTexture()
     {
         if(!worldObj.isRemote)
@@ -249,7 +285,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onLivingUpdate()
     {
-        if(worldObj.isRemote) updateColonyClient();
+        if(worldObj.isRemote){ updateColonyClient();}
         else
         {
             pickupItems();
@@ -340,9 +376,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             EntityCitizen existingCitizen = data.getCitizenEntity();
             if(existingCitizen != null && existingCitizen != this)
             {
-                //  This Citizen already has a different Entity registered to it
+                // This Citizen already has a different Entity registered to it
                 MineColonies.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')", getUniqueID(), colonyId, citizenId, existingCitizen.getUniqueID()));
-                setDead();
+                if(!existingCitizen.getUniqueID().equals(this.getUniqueID()))
+                {
+                    setDead();
+                }
+                else
+                {
+                    data.setCitizenEntity(this);
+                }
                 return;
             }
 
@@ -398,12 +441,35 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onDeath(DamageSource par1DamageSource)
     {
+        int i;
+
+        if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
+        {
+            i = this.getExperiencePoints(this.attackingPlayer);
+
+            while (i > 0)
+            {
+                int j = EntityXPOrb.getXPSplit(i);
+                i -= j;
+                this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, j));
+            }
+        }
+
+        this.setDead();
+
+        for (i = 0; i < 20; ++i)
+        {
+            double d2 = this.rand.nextGaussian() * 0.02D;
+            double d0 = this.rand.nextGaussian() * 0.02D;
+            double d1 = this.rand.nextGaussian() * 0.02D;
+            this.worldObj.spawnParticle("explode", this.posX + (this.rand.nextDouble() * this.width * 2.0F) - (double)this.width, this.posY + (this.rand.nextDouble() * this.height), this.posZ + (this.rand.nextDouble() * this.width * 2.0F) - (double)this.width, d2, d0, d1);
+        }
+
         if(colony != null)
         {
             LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
             colony.removeCitizen(getCitizenData());
         }
-
         super.onDeath(par1DamageSource);
     }
 
@@ -444,7 +510,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return citizenData;
     }
 
-    public CitizenData.View getCitizenDataView()
+    private CitizenData.View getCitizenDataView()
     {
         if(colonyId != 0 && citizenId != 0)
         {
@@ -501,7 +567,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         onJobChanged(getColonyJob());
     }
 
-    public BuildingHome getHomeBuilding()
+    private BuildingHome getHomeBuilding()
     {
         return (citizenData != null) ? citizenData.getHomeBuilding() : null;
     }
@@ -524,7 +590,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public boolean isAtHome()
     {
         ChunkCoordinates homePosition = getHomePosition();
-        return homePosition != null && homePosition.getDistanceSquared(MathHelper.floor_double(posX), (int) posY, MathHelper.floor_double(posZ)) <= 16;
+        return homePosition != null && homePosition.getDistanceSquared((int)Math.floor(posX), (int) posY, (int)Math.floor(posZ)) <= 16;
     }
 
     public BuildingWorker getWorkBuilding()
@@ -552,7 +618,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         super.writeEntityToNBT(compound);
         compound.setInteger("status", status.ordinal());
-
+        compound.setDouble("xp",experience);
+        compound.setInteger("xpLevel",experienceLevel);
+        compound.setInteger("xpTotal",experienceTotal);
         if(colony != null && citizenData != null)
         {
             compound.setInteger("colony", colony.getID());
@@ -571,7 +639,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
         }
         compound.setTag("Inventory", inventoryList);
-
         compound.setInteger("HeldItemSlot", inventory.getHeldItemSlot());
     }
 
@@ -581,7 +648,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.readEntityFromNBT(compound);
 
         status = Status.values()[compound.getInteger("status")];
-
+        experience = compound.getDouble("xp");
+        experienceLevel = compound.getInteger("xpLevel");
+        experienceTotal = compound.getInteger("xpTotal");
         colonyId = compound.getInteger("colony");
         citizenId = compound.getInteger("citizen");
 
@@ -593,7 +662,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             ItemStack itemstack = ItemStack.loadItemStackFromNBT(tag);
             inventory.setInventorySlotContents(slot, itemstack);
         }
-
         inventory.setHeldItem(compound.getInteger("HeldItemSlot"));
     }
 
@@ -625,13 +693,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public EntityItem entityDropItem(ItemStack itemstack)
     {
-        return entityDropItem(itemstack, getEyeHeight() - 0.3F);
+        return entityDropItem(itemstack, 0.0F);
     }
 
     @Override
     protected void dropEquipment(boolean par1, int par2)
     {
-        for(int i = 0; i < getLastActiveItems().length; i++) setCurrentItemOrArmor(i, null);
+        for(int i = 0; i < getLastActiveItems().length; i++){ setCurrentItemOrArmor(i, null);}
         for(int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack itemstack = inventory.getStackInSlot(i);
@@ -643,16 +711,74 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     @Override
-    protected int getExperiencePoints(EntityPlayer par1EntityPlayer)
-    {
-        return 0;
-    }
-
-    @Override
     public void onInventoryChanged(InventoryBasic inventoryBasic)
     {
         //TODO use in future for lumberjack rendering logs, etc
         setCurrentItemOrArmor(0, inventory.getHeldItem());
+    }
+
+    //Add experience points to citizen.
+    public void addExperience(int xp)
+    {
+        int j = Integer.MAX_VALUE - this.experienceTotal;
+        int localXp = xp;
+        if (localXp > j)
+        {
+            localXp = j;
+        }
+
+        this.experience += localXp / this.xpBarCap();
+
+        for (this.experienceTotal += localXp; this.experience >= 1.0F; this.experience /= this.xpBarCap())
+        {
+            this.experience = (this.experience - 1.0) * this.xpBarCap();
+            this.addExperienceLevel(1);
+        }
+    }
+
+    //Add experience levels to this citizen.
+    private void addExperienceLevel(int nOLevels)
+    {
+        this.experienceLevel += nOLevels;
+
+        if (this.experienceLevel < 0)
+        {
+            this.experienceLevel = 0;
+            this.experience = 0.0;
+            this.experienceTotal = 0;
+        }
+
+        if (nOLevels > 0 && this.experienceLevel % 5 == 0 && this.nOTicks < this.ticksExisted - 100.0)
+        {
+            double f = this.experienceLevel > 30 ? 1.0 : this.experienceLevel / 30.0;
+            this.worldObj.playSoundAtEntity(this, "random.levelup", (float)f * 0.75F, 1.0F);
+            this.nOTicks = this.ticksExisted;
+        }
+    }
+
+    /**
+     * This method returns the cap amount of experience that the experience bar can hold. With each level, the
+     * experience cap on the citizen's experience bar is raised by 10.
+     */
+    private int xpBarCap()
+    {
+        return (this.experienceLevel >= 30 ? 62 + (this.experienceLevel - 30) * 7 : (this.experienceLevel >= 15 ? 17 + (this.experienceLevel - 15) * 3 : 17));
+    }
+
+    /**
+     * Get the experience points the entity currently has.
+     */
+    protected int getExperiencePoints()
+    {
+        if (this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
+        {
+            return 0;
+        }
+        else
+        {
+            int i = this.experienceLevel * 7;
+            return i > 100 ? 100 : i;
+        }
     }
 
     public InventoryCitizen getInventory()
@@ -680,14 +806,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return InventoryUtils.getItemCountInInventory(getInventory(), targetitem);
     }
 
-    public boolean hasitemInInventory(Block block)
+    public boolean hasItemInInventory(Block block)
     {
         return InventoryUtils.hasitemInInventory(getInventory(), block);
     }
 
-    public boolean hasitemInInventory(Item item)
+    public boolean hasItemInInventory(Item item)
     {
         return InventoryUtils.hasitemInInventory(getInventory(), item);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public List<EntityXPOrb> getXPOrbsOnGrid() {
+        AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(posX, posY, posZ, posX + 2, posY + 2, posZ + 2);
+        return worldObj.getEntitiesWithinAABB(EntityXPOrb.class, bb);
     }
 
     public void setInventorySize(int newSize, boolean dropLeftovers)
@@ -695,7 +828,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if(!worldObj.isRemote)
         {
             InventoryCitizen newInventory = new InventoryCitizen(inventory.getInventoryName(), inventory.hasCustomInventoryName(), newSize);
-            ArrayList<ItemStack> leftovers = new ArrayList<ItemStack>();
+            ArrayList<ItemStack> leftOvers = new ArrayList<ItemStack>();
             for(int i = 0; i < inventory.getSizeInventory(); i++)
             {
                 ItemStack itemstack = inventory.getStackInSlot(i);
@@ -705,14 +838,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 }
                 else
                 {
-                    if(itemstack != null) leftovers.add(itemstack);
+                    if(itemstack != null) leftOvers.add(itemstack);
                 }
             }
             inventory = newInventory;
             inventory.addIInvBasic(this);
             if(dropLeftovers)
             {
-                for(ItemStack leftover : leftovers)
+                for(ItemStack leftover : leftOvers)
                 {
                     if(leftover.stackSize > 0)
                     {
@@ -725,18 +858,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     private void pickupItems()
     {
-        @SuppressWarnings("unchecked") List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, boundingBox.expand(2.0F, 0.0F, 2.0F));//TODO change range
+        @SuppressWarnings("unchecked") List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, boundingBox.expand(2.0, 0.0, 2.0));//TODO change range
 
-        for(EntityItem item : list)
-        {
-            if(item != null && !item.isDead)
-            {
-                tryPickupEntityItem(item);
-            }
-        }
+        list.stream().filter(item -> item != null && !item.isDead && canPickUpLoot()).forEach(this::tryPickupEntityItem);
     }
 
-    public void tryPickupEntityItem(EntityItem entityItem)
+    private void tryPickupEntityItem(EntityItem entityItem)
     {
         if(!this.worldObj.isRemote)
         {
@@ -748,9 +875,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             ItemStack itemStack = entityItem.getEntityItem();
             int i = itemStack.stackSize;
 
-            if((i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventory(), itemStack)))
+            if(i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventory(), itemStack))
             {
-                this.worldObj.playSoundAtEntity(this, "random.pop", 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                this.worldObj.playSoundAtEntity(this, "random.pop", 0.2f,
+                                                (float) (((this.rand.nextDouble() - this.rand.nextDouble()) * 0.7D + 1.0D) * 2.0D));
                 this.onItemPickup(this, i);
 
                 if(itemStack.stackSize <= 0)
@@ -768,31 +896,72 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     /**
-     * Caused by: java.lang.RuntimeException: Attempted to load class bsx for invalid side SERVER
-     * not entirely sure jet...
+     * Swing entity arm, create sound and particle effects. if breakBlock is true then it will break the block (different sound and particles),
+     * and damage the tool in the citizens hand.
      *
-     * @param x
-     * @param y
-     * @param z
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param z z coordinate
      */
-    public void hitBlockWithToolInHand(int x, int y, int z)
+    private void hitBlockWithToolInHand(int x, int y, int z, boolean breakBlock)
     {
         this.swingItem();
-        try
+
+        Block block = worldObj.getBlock(x, y, z);
+        if(breakBlock)
         {
-            //FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, 1);
+            if(!worldObj.isRemote)
+            {
+                MineColonies.getNetwork().sendToAllAround(
+                        new BlockParticleEffectMessage(x, y, z, block, worldObj.getBlockMetadata(x, y, z), BlockParticleEffectMessage.BREAK_BLOCK),
+                        new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, x, y, z, 16.0D));
+            }
+            worldObj.playSoundEffect((float)(x + 0.5D), (float)(y + 0.5D), (float)(z + 0.5D), block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
+            worldObj.setBlockToAir(x, y, z);
+
+            damageItemInHand(1);
         }
-        catch(Exception e)
+        else
         {
-            //Ignored, happens when minecraft is not fully initialized
-            //TODO: Check the exception type and remove blanco catch
+            if(!worldObj.isRemote)//TODO might remove this
+            {
+                MineColonies.getNetwork().sendToAllAround(
+                        new BlockParticleEffectMessage(x, y, z, block, worldObj.getBlockMetadata(x, y, z), 1),//TODO correct side
+                        new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, x, y, z, 16.0D));
+            }
+            worldObj.playSoundEffect((float)(x + 0.5D), (float)(y + 0.5D), (float)(z + 0.5D), block.stepSound.getStepResourcePath(),
+
+                                     (float) ((block.stepSound.getVolume() + 1.0D) / 8.0D),
+                                     (float) (block.stepSound.getPitch() * 0.5D));
         }
     }
 
     public void hitBlockWithToolInHand(ChunkCoordinates block)
     {
         if(block == null) return;
-        hitBlockWithToolInHand(block.posX, block.posY, block.posZ);
+        hitBlockWithToolInHand(block.posX, block.posY, block.posZ, false);
+    }
+
+    public void hitBlockWithToolInHand(int x, int y, int z)
+    {
+        hitBlockWithToolInHand(x, y, z, false);
+    }
+
+    public void breakBlockWithToolInHand(ChunkCoordinates block)
+    {
+        if(block == null) return;
+        hitBlockWithToolInHand(block.posX, block.posY, block.posZ, true);
+    }
+
+    public void damageItemInHand(int damage)
+    {
+        getInventory().getHeldItem().damageItem(damage, this);
+
+        if(this.getInventory().getHeldItem().stackSize < 1)//if tool breaks
+        {
+            this.setCurrentItemOrArmor(0, null);
+            getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
+        }
     }
 
     public void sendChat(String msg)
@@ -829,4 +998,42 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         IDLE, SLEEPING, WORKING, GETTING_ITEMS, NEED_ASSISTANCE, PATHFINDING_ERROR
     }
+
+    public int getIntelligence() {
+        return intelligence;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public int getStamina() {
+        return stamina;
+    }
+
+    public int getDiligence() {
+        return diligence;
+    }
+
+    public EntityFishHook getFishEntity() {
+        return fishEntity;
+    }
+
+    public void setFishEntity(EntityFishHook fishEntity) {
+        this.fishEntity = fishEntity;
+    }
+
+    public boolean isCaughtFish() {
+        return caughtFish;
+    }
+
+    public void setCaughtFish(boolean caughtFish) {
+        this.caughtFish = caughtFish;
+    }
+
+    public int getExperienceLevel() {return experienceLevel; }
 }

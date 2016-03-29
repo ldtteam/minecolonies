@@ -9,6 +9,7 @@ import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -16,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 
 import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
@@ -37,13 +39,16 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     public static final String SHOVEL = "shovel";
     public static final String AXE = "axe";
     public static final String HOE = "hoe";
+    public static final String ROD = "rod";
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
     private static final Logger logger = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
     private static final int DELAY_RECHECK = 10;
     private static final int MUTEX_MASK = 3;
+    protected static Random itemRand = new Random();
     protected final J job;
     protected final EntityCitizen worker;
     protected final World world;
+
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -66,6 +71,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     protected boolean needsAxe = false;
     protected boolean needsHoe = false;
     protected boolean needsPickaxe = false;
+    protected boolean needsRod = false;
+
     protected int needsPickaxeLevel = -1;
     private ErrorState errorState = ErrorState.NONE;
     private ChunkCoordinates currentWorkingLocation = null;
@@ -168,6 +175,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
             delay += 10;
             return;
         }
+        if (needsRod)
+        {
+            this.errorState = ErrorState.NEEDS_ROD;
+            needsRod = checkForRod();
+            delay += 10;
+            return;
+        }
 
         //Inventory is full, walk to building and dump inventory
         if (this.errorState == ErrorState.INVENTORY_FULL)
@@ -180,13 +194,22 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
             //We do not need to dump more, use inv check below to resolve condition
         }
         //Check for full inventory
-        if (worker.isInventoryFull())
+        if (worker.isInventoryFull() || wantInventoryDumped())
         {
             this.errorState = ErrorState.INVENTORY_FULL;
             return;
         }
         this.errorState = ErrorState.NONE;
         workOnTask();
+    }
+
+    /**
+     * Has to be overridden by classes to specify when to dump inventory.
+     * Always dump on inventory full.
+     * @return true if inventory needs to be dumped now
+     */
+    protected boolean wantInventoryDumped(){
+        return false;
     }
 
     /**
@@ -240,11 +263,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         final BuildingWorker buildingMiner = getOwnBuilding();
         return is != null &&
                InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        (stack) -> stack != null && is.isItemEqual(stack),
-                        this::takeItemStackFromChest
-                                      );
+                       .matchFirstInInventory(
+                               buildingMiner.getTileEntity(),
+                               (stack) -> stack != null && is.isItemEqual(stack),
+                               this::takeItemStackFromChest
+                                             );
     }
 
     /**
@@ -481,6 +504,34 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         return needsShovel;
     }
 
+    /**
+     * Ensures that we have a rod available in the inventory or chest
+     *
+     * @return true if we have a shovel
+     */
+    protected final boolean checkForRod()
+    {
+        boolean needsTool = !InventoryFunctions
+                .matchFirstInInventory(
+                        worker.getInventory(),
+                        stack -> (stack != null && stack.getItem().equals(Items.fishing_rod)),
+                        InventoryFunctions::doNothing);
+        if (!needsTool)
+        {
+            return false;
+        }
+        delay += DELAY_RECHECK;
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
+        {
+            if (isRodInHut(new ItemStack(Items.fishing_rod)))
+            {
+                return false;
+            }
+            requestWithoutSpam(ROD);
+        }
+        return true;
+    }
+
     protected final boolean holdEfficientTool(Block target)
     {
         int bestSlot = getMostEfficientTool(target);
@@ -569,6 +620,23 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     }
 
     /**
+     * Checks if the rod is in the hut
+     *
+     * @param is is the searched item
+     * @returns true if he found a rod
+     */
+    private boolean isRodInHut(ItemStack is)
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        stack -> stack != null && is.isItemEqual(stack),
+                        this::takeItemStackFromChest);
+
+    }
+
+    /**
      * Ensures that we have a hoe available.
      * Will set {@code needsHoe} accordingly.
      *
@@ -592,6 +660,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         NEEDS_ITEM,
         NEEDS_SHOVEL,
         NEEDS_PICKAXE,
+        NEEDS_ROD,
         INVENTORY_FULL,
     }
 
