@@ -31,7 +31,7 @@ import static com.minecolonies.entity.ai.state.AIStateBase.*;
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIWork<J extends Job> extends AISkeleton<J>
+public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkeleton<J>
 {
     public static final String PICKAXE = "pickaxe";
     public static final String SHOVEL = "shovel";
