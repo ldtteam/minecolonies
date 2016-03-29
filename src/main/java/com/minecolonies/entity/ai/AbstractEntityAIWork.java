@@ -20,7 +20,12 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.entity.ai.state.AIStateBase.IDLE;
 import static com.minecolonies.entity.ai.state.AIStateBase.INIT;
+import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_AXE;
+import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_HOE;
 import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_ITEM;
+import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_PICKAXE;
+import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_ROD;
+import static com.minecolonies.entity.ai.state.AIStateBase.NEEDS_SHOVEL;
 
 /**
  * This is the base class of all worker AIs.
@@ -107,14 +112,22 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                  * this keeps the current state
                  * (returning null would not stop execution)
                  */
-                new AITarget(this::waitingForSomething, ()->state),
+                new AITarget(this::waitingForSomething, () -> state),
                 /**
                  * Check if any items are needed.
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-                new AITarget(()->!itemsCurrentlyNeeded.isEmpty(),
-                                this::waitForNeededItems)
+                new AITarget(() -> !itemsCurrentlyNeeded.isEmpty(),
+                             this::waitForNeededItems),
+                /**
+                 * Wait for different tools.
+                 */
+                new AITarget(() -> this.needsShovel, this::waitForShovel),
+                new AITarget(() -> this.needsShovel, this::waitForAxe),
+                new AITarget(() -> this.needsShovel, this::waitForHoe),
+                new AITarget(() -> this.needsShovel, this::waitForRod),
+                new AITarget(() -> this.needsShovel, this::waitForPickaxe)
                              );
     }
 
@@ -135,31 +148,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
-     * Updates the visual state of the worker.
-     * Updates render meta data.
-     * Updates the current state on the nametag.
-     * @return null to execute more targets.
-     */
-    private AIStateBase updateVisualState(){
-        //Update the current state the worker is in.
-        job.setNameTag(this.state.toString());
-        //Update torch, seeds etc. in chestbelt etc.
-        updateRenderMetaData();
-        return null;
-    }
-
-    /**
-     * Looks for needed items as long as not all of them are there.
-     * Also waits for DELAY_RECHECK.
-     * @return NEEDS_ITEM
-     */
-    private AIStateBase waitForNeededItems(){
-        lookForNeededItems();
-        delay = DELAY_RECHECK;
-        return NEEDS_ITEM;
-    }
-
-    /**
      * Can be overridden in implementations to return the exact building type.
      *
      * @return the building associated with this AI's worker.
@@ -169,63 +157,39 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         return worker.getWorkBuilding();
     }
 
-    @Override
-    public void updateTask()
+    /**
+     * Updates the visual state of the worker.
+     * Updates render meta data.
+     * Updates the current state on the nametag.
+     *
+     * @return null to execute more targets.
+     */
+    private AIStateBase updateVisualState()
     {
-        super.updateTask();
-
-        //We need tools
-        if (needsShovel)
-        {
-            this.errorState = ErrorState.NEEDS_SHOVEL;
-            checkForShovel();
-            delay += 10;
-            return;
-        }
-        if (needsPickaxe)
-        {
-            this.errorState = ErrorState.NEEDS_PICKAXE;
-            checkForPickaxe(needsPickaxeLevel);
-            delay += 10;
-            return;
-        }
-        if (needsRod)
-        {
-            this.errorState = ErrorState.NEEDS_ROD;
-            needsRod = checkForRod();
-            delay += 10;
-            return;
-        }
-
-        //Inventory is full, walk to building and dump inventory
-        if (this.errorState == ErrorState.INVENTORY_FULL)
-        {
-            if (dumpOneMoreSlot())
-            {
-                delay += 10;
-                return;
-            }
-            //We do not need to dump more, use inv check below to resolve condition
-        }
-        //Check for full inventory
-        if (worker.isInventoryFull() || wantInventoryDumped())
-        {
-            this.errorState = ErrorState.INVENTORY_FULL;
-            return;
-        }
-        this.errorState = ErrorState.NONE;
-        workOnTask();
+        //Update the current state the worker is in.
+        job.setNameTag(this.state.toString());
+        //Update torch, seeds etc. in chestbelt etc.
+        updateRenderMetaData();
+        return null;
     }
 
     /**
-     * Has to be overridden by classes to specify when to dump inventory.
-     * Always dump on inventory full.
-     *
-     * @return true if inventory needs to be dumped now
+     * Here the AI can check if the chestBelt has to be re rendered and do it.
      */
-    protected boolean wantInventoryDumped()
+    protected void updateRenderMetaData()
+    {}
+
+    /**
+     * Looks for needed items as long as not all of them are there.
+     * Also waits for DELAY_RECHECK.
+     *
+     * @return NEEDS_ITEM
+     */
+    private AIStateBase waitForNeededItems()
     {
-        return false;
+        lookForNeededItems();
+        delay = DELAY_RECHECK;
+        return NEEDS_ITEM;
     }
 
     /**
@@ -287,16 +251,366 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
+     * Request an Item without spamming the chat.
+     *
+     * @param chat the Item Name
+     */
+    private void requestWithoutSpam(String chat)
+    {
+        chatSpamFilter.requestWithoutSpam(chat);
+    }
+
+    /**
+     * Wait for a needed shovel.
+     *
+     * @return NEEDS_SHOVEL
+     */
+    private AIStateBase waitForShovel()
+    {
+        checkForShovel();
+        delay += 10;
+        return NEEDS_SHOVEL;
+    }
+
+    /**
+     * Ensures that we have a shovel available.
+     * Will set {@code needsShovel} accordingly.
+     *
+     * @return true if we have a shovel
+     */
+    protected final boolean checkForShovel()
+    {
+        needsShovel = checkForTool(SHOVEL);
+        return needsShovel;
+    }
+
+    private boolean checkForTool(String tool)
+    {
+        boolean needsTool = InventoryFunctions
+                .matchFirstInInventory(
+                        worker.getInventory(),
+                        stack -> Utils.isTool(stack, tool),
+                        InventoryFunctions::doNothing);
+        if (!needsTool)
+        {
+            return false;
+        }
+        delay += DELAY_RECHECK;
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
+        {
+            if (isToolInHut(tool))
+            {
+                return false;
+            }
+            requestWithoutSpam(tool);
+        }
+        return true;
+    }
+
+    private boolean isToolInHut(String tool)
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        stack -> Utils.isTool(stack, tool),
+                        this::takeItemStackFromChest);
+
+    }
+
+    /**
+     * Wait for a needed axe.
+     *
+     * @return NEEDS_AXE
+     */
+    private AIStateBase waitForAxe()
+    {
+        checkForAxe();
+        delay += 10;
+        return NEEDS_AXE;
+    }
+
+    /**
+     * Ensures that we have an axe available.
+     * Will set {@code needsAxe} accordingly.
+     *
+     * @return true if we have an axe
+     */
+    protected final boolean checkForAxe()
+    {
+        needsAxe = checkForTool(AXE);
+        return needsAxe;
+    }
+
+    /**
+     * Wait for a needed hoe.
+     *
+     * @return NEEDS_HOE
+     */
+    private AIStateBase waitForHoe()
+    {
+        checkForHoe();
+        delay += 10;
+        return NEEDS_HOE;
+    }
+
+    /**
+     * Ensures that we have a hoe available.
+     * Will set {@code needsHoe} accordingly.
+     *
+     * @return true if we have a hoe
+     */
+    protected final boolean checkForHoe()
+    {
+        needsHoe = checkForTool(HOE);
+        return needsHoe;
+    }
+
+    /**
+     * Wait for a needed rod.
+     *
+     * @return NEEDS_ROD
+     */
+    private AIStateBase waitForRod()
+    {
+        needsRod = checkForRod();
+        delay += 10;
+        return NEEDS_ROD;
+    }
+
+    /**
+     * Ensures that we have a rod available in the inventory or chest
+     * <p>
+     * TODO: Rework and split up @marvin
+     *
+     * @return true if we have a shovel
+     */
+    protected final boolean checkForRod()
+    {
+        boolean needsTool = !InventoryFunctions
+                .matchFirstInInventory(
+                        worker.getInventory(),
+                        stack -> (stack != null && stack.getItem().equals(Items.fishing_rod)),
+                        InventoryFunctions::doNothing);
+        if (!needsTool)
+        {
+            return false;
+        }
+        delay += DELAY_RECHECK;
+        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
+        {
+            if (isRodInHut(new ItemStack(Items.fishing_rod)))
+            {
+                return false;
+            }
+            requestWithoutSpam(ROD);
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the rod is in the hut
+     *
+     * @param is is the searched item
+     * @return true if he found a rod
+     */
+    private boolean isRodInHut(ItemStack is)
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        stack -> stack != null && is.isItemEqual(stack),
+                        this::takeItemStackFromChest);
+
+    }
+
+    /**
+     * Wait for a needed pickaxe.
+     *
+     * @return NEEDS_PICKAXE
+     */
+    private AIStateBase waitForPickaxe()
+    {
+        checkForPickaxe(needsPickaxeLevel);
+        delay += 10;
+        return NEEDS_PICKAXE;
+    }
+
+    /**
+     * Ensures that we have a pickaxe available.
+     * Will set {@code needsPickaxe} accordingly.
+     *
+     * @param minlevel the minimum pickaxe level needed.
+     * @return true if we have a pickaxe
+     */
+    protected final boolean checkForPickaxe(int minlevel)
+    {
+        //Check for a pickaxe
+        needsPickaxe = InventoryFunctions
+                .matchFirstInInventory(
+                        worker.getInventory(),
+                        stack -> Utils.checkIfPickaxeQualifies(
+                                minlevel, Utils.getMiningLevel(stack, PICKAXE)),
+                        InventoryFunctions::doNothing);
+
+        delay += DELAY_RECHECK;
+        if (needsPickaxe && walkToBuilding())
+        {
+            if (isPickaxeInHut(minlevel))
+            {
+                return true;
+            }
+            requestWithoutSpam("Pickaxe at least level " + minlevel);
+        }
+        return needsPickaxe;
+    }
+
+    /**
+     * Walk the worker to it's building chest.
+     * Please return immediately if this returns true.
+     *
+     * @return false if the worker is at his building
+     */
+    protected final boolean walkToBuilding()
+    {
+        return walkToBlock(getOwnBuilding().getLocation());
+    }
+
+    /**
+     * Sets the block the AI is currently walking to.
+     *
+     * @param stand where to walk to
+     */
+    protected final boolean walkToBlock(ChunkCoordinates stand)
+    {
+        if (!Utils.isWorkerAtSite(worker, stand.posX, stand.posY, stand.posZ, DEFAULT_RANGE_FOR_DELAY))
+        {
+            workOnBlock(null, stand, 1);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets the block the AI is currently working on.
+     * This block will receive animation hits on delay.
+     *
+     * @param target  the block that will be hit
+     * @param stand   the block the worker will walk to
+     * @param timeout the time in ticks to hit the block
+     */
+    protected final void workOnBlock(ChunkCoordinates target, ChunkCoordinates stand, int timeout)
+    {
+        this.currentWorkingLocation = target;
+        this.currentStandingLocation = stand;
+        this.delay = timeout;
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     * The pickaxe will be taken from the chest.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the pickaxe.
+     *
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
+     */
+    private boolean isPickaxeInHut(int minlevel)
+    {
+        BuildingWorker buildingMiner = getOwnBuilding();
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        stack -> Utils.checkIfPickaxeQualifies(
+                                minlevel,
+                                Utils.getMiningLevel(
+                                        stack,
+                                        PICKAXE)),
+                        this::takeItemStackFromChest);
+    }
+
+    @Override
+    public void updateTask()
+    {
+        super.updateTask();
+
+        //Inventory is full, walk to building and dump inventory
+        if (this.errorState == ErrorState.INVENTORY_FULL)
+        {
+            if (dumpOneMoreSlot())
+            {
+                delay += 10;
+                return;
+            }
+            //We do not need to dump more, use inv check below to resolve condition
+        }
+        //Check for full inventory
+        if (worker.isInventoryFull() || wantInventoryDumped())
+        {
+            this.errorState = ErrorState.INVENTORY_FULL;
+            return;
+        }
+        this.errorState = ErrorState.NONE;
+        workOnTask();
+    }
+
+    /**
+     * Has to be overridden by classes to specify when to dump inventory.
+     * Always dump on inventory full.
+     *
+     * @return true if inventory needs to be dumped now
+     */
+    protected boolean wantInventoryDumped()
+    {
+        return false;
+    }
+
+    /**
      * This method will be overridden by AI implementations.
      * It will serve as a tick function.
      */
     protected abstract void workOnTask();
 
     /**
-     * Here the AI can check if the chestBelt has to be re rendered and do it.
+     * Dump the workers inventory into his building chest.
+     * Only useful tools are kept!
+     * Only dumps one block at a time!
      */
-    protected void updateRenderMetaData()
-    {}
+    private boolean dumpOneMoreSlot()
+    {
+        return dumpOneMoreSlot(this::neededForWorker);
+    }
+
+    /**
+     * Dumps one inventory slot into the building chest.
+     *
+     * @param keepIt used to test it that stack should be kept
+     * @return true if is has to dump more.
+     */
+    private boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
+    {
+
+        return walkToBuilding()
+               || InventoryFunctions.matchFirstInInventory(
+                worker.getInventory(), (i, stack) -> {
+                    if (stack == null || keepIt.test(stack)){ return false; }
+                    ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
+                    if (returnStack == null)
+                    {
+                        worker.getInventory().decrStackSize(i, stack.stackSize);
+                        return true;
+                    }
+                    worker.getInventory().decrStackSize(
+                            i,
+                            stack.stackSize
+                            - returnStack.stackSize);
+                    //Check that we are not inserting
+                    // into a
+                    // full inventory.
+                    return stack.stackSize != returnStack.stackSize;
+                });
+    }
 
     /**
      * This method will return true if the AI is waiting for something.
@@ -360,182 +674,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         return false;
     }
 
-    /**
-     * Dump the workers inventory into his building chest.
-     * Only useful tools are kept!
-     * Only dumps one block at a time!
-     */
-    private boolean dumpOneMoreSlot()
-    {
-        return dumpOneMoreSlot(this::neededForWorker);
-    }
-
-    /**
-     * Dumps one inventory slot into the building chest.
-     *
-     * @param keepIt used to test it that stack should be kept
-     * @return true if is has to dump more.
-     */
-    private boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
-    {
-
-        return walkToBuilding()
-               || InventoryFunctions.matchFirstInInventory(
-                worker.getInventory(), (i, stack) -> {
-                    if (stack == null || keepIt.test(stack)){ return false; }
-                    ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
-                    if (returnStack == null)
-                    {
-                        worker.getInventory().decrStackSize(i, stack.stackSize);
-                        return true;
-                    }
-                    worker.getInventory().decrStackSize(
-                            i,
-                            stack.stackSize
-                            - returnStack.stackSize);
-                    //Check that we are not inserting
-                    // into a
-                    // full inventory.
-                    return stack.stackSize != returnStack.stackSize;
-                });
-    }
-
-    /**
-     * Walk the worker to it's building chest.
-     * Please return immediately if this returns true.
-     *
-     * @return false if the worker is at his building
-     */
-    protected final boolean walkToBuilding()
-    {
-        return walkToBlock(getOwnBuilding().getLocation());
-    }
-
-    /**
-     * Sets the block the AI is currently walking to.
-     *
-     * @param stand where to walk to
-     */
-    protected final boolean walkToBlock(ChunkCoordinates stand)
-    {
-        if (!Utils.isWorkerAtSite(worker, stand.posX, stand.posY, stand.posZ, DEFAULT_RANGE_FOR_DELAY))
-        {
-            workOnBlock(null, stand, 1);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Sets the block the AI is currently working on.
-     * This block will receive animation hits on delay.
-     *
-     * @param target  the block that will be hit
-     * @param stand   the block the worker will walk to
-     * @param timeout the time in ticks to hit the block
-     */
-    protected final void workOnBlock(ChunkCoordinates target, ChunkCoordinates stand, int timeout)
-    {
-        this.currentWorkingLocation = target;
-        this.currentStandingLocation = stand;
-        this.delay = timeout;
-    }
-
     protected final void setDelay(int timeout)
     {
         this.delay = timeout;
-    }
-
-    /**
-     * Ensures that we have a pickaxe available.
-     * Will set {@code needsPickaxe} accordingly.
-     *
-     * @param minlevel the minimum pickaxe level needed.
-     * @return true if we have a pickaxe
-     */
-    protected final boolean checkForPickaxe(int minlevel)
-    {
-        //Check for a pickaxe
-        needsPickaxe = InventoryFunctions
-                .matchFirstInInventory(
-                        worker.getInventory(),
-                        stack -> Utils.checkIfPickaxeQualifies(
-                                minlevel, Utils.getMiningLevel(stack, PICKAXE)),
-                        InventoryFunctions::doNothing);
-
-        delay += DELAY_RECHECK;
-        if (needsPickaxe && walkToBuilding())
-        {
-            if (isPickaxeInHut(minlevel))
-            {
-                return true;
-            }
-            requestWithoutSpam("Pickaxe at least level " + minlevel);
-        }
-        return needsPickaxe;
-    }
-
-    /**
-     * Looks for a pickaxe to mine a block of {@code minLevel}.
-     * The pickaxe will be taken from the chest.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the pickaxe.
-     *
-     * @param minlevel the needed pickaxe level
-     * @return true if a pickaxe was found
-     */
-    private boolean isPickaxeInHut(int minlevel)
-    {
-        BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        stack -> Utils.checkIfPickaxeQualifies(
-                                minlevel,
-                                Utils.getMiningLevel(
-                                        stack,
-                                        PICKAXE)),
-                        this::takeItemStackFromChest);
-    }
-
-    /**
-     * Ensures that we have a shovel available.
-     * Will set {@code needsShovel} accordingly.
-     *
-     * @return true if we have a shovel
-     */
-    protected final boolean checkForShovel()
-    {
-        needsShovel = checkForTool(SHOVEL);
-        return needsShovel;
-    }
-
-    /**
-     * Ensures that we have a rod available in the inventory or chest
-     *
-     * @return true if we have a shovel
-     */
-    protected final boolean checkForRod()
-    {
-        boolean needsTool = !InventoryFunctions
-                .matchFirstInInventory(
-                        worker.getInventory(),
-                        stack -> (stack != null && stack.getItem().equals(Items.fishing_rod)),
-                        InventoryFunctions::doNothing);
-        if (!needsTool)
-        {
-            return false;
-        }
-        delay += DELAY_RECHECK;
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
-        {
-            if (isRodInHut(new ItemStack(Items.fishing_rod)))
-            {
-                return false;
-            }
-            requestWithoutSpam(ROD);
-        }
-        return true;
     }
 
     protected final boolean holdEfficientTool(Block target)
@@ -567,91 +708,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             }
         }
         return bestSlot;
-    }
-
-    /**
-     * Ensures that we have an axe available.
-     * Will set {@code needsAxe} accordingly.
-     *
-     * @return true if we have an axe
-     */
-    protected final boolean checkForAxe()
-    {
-        needsAxe = checkForTool(AXE);
-        return needsAxe;
-    }
-
-    private boolean checkForTool(String tool)
-    {
-        boolean needsTool = InventoryFunctions
-                .matchFirstInInventory(
-                        worker.getInventory(),
-                        stack -> Utils.isTool(stack, tool),
-                        InventoryFunctions::doNothing);
-        if (!needsTool)
-        {
-            return false;
-        }
-        delay += DELAY_RECHECK;
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
-        {
-            if (isToolInHut(tool))
-            {
-                return false;
-            }
-            requestWithoutSpam(tool);
-        }
-        return true;
-    }
-
-    /**
-     * Request an Item without spamming the chat.
-     *
-     * @param chat the Item Name
-     */
-    private void requestWithoutSpam(String chat)
-    {
-        chatSpamFilter.requestWithoutSpam(chat);
-    }
-
-    private boolean isToolInHut(String tool)
-    {
-        BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        stack -> Utils.isTool(stack, tool),
-                        this::takeItemStackFromChest);
-
-    }
-
-    /**
-     * Checks if the rod is in the hut
-     *
-     * @param is is the searched item
-     * @return true if he found a rod
-     */
-    private boolean isRodInHut(ItemStack is)
-    {
-        BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        stack -> stack != null && is.isItemEqual(stack),
-                        this::takeItemStackFromChest);
-
-    }
-
-    /**
-     * Ensures that we have a hoe available.
-     * Will set {@code needsHoe} accordingly.
-     *
-     * @return true if we have a hoe
-     */
-    protected final boolean checkForHoe()
-    {
-        needsHoe = checkForTool(HOE);
-        return needsHoe;
     }
 
     /**

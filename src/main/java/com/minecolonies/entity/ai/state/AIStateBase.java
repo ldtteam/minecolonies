@@ -18,6 +18,11 @@ public enum AIStateBase
      * It checks if any important things are null.
      */
     INIT,
+    NEEDS_SHOVEL,
+    NEEDS_AXE,
+    NEEDS_HOE,
+    NEEDS_ROD,
+    NEEDS_PICKAXE,
     /**
      * The ai needs some items it is waiting for.
      */
