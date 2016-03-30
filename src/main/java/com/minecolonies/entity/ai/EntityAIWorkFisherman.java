@@ -353,7 +353,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private void retrieveRod()
     {
         worker.swingItem();
-        int i = worker.getFishEntity().func_146034_e();
+        int i = worker.getFishEntity().getDamage();
         worker.damageItemInHand(i);
 
         //May already be null if the itemInHand has been destroyed
