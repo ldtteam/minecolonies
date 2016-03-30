@@ -85,10 +85,11 @@ public class InventoryUtils {
     }
 
     /**
+     * @see {@link #findFirstSlotInInventoryWith(IInventory, Block)}
      *
-     * @param inventory
-     * @param targetItem
-     * @return
+     * @param inventory     Inventory to check
+     * @param targetItem    Item to find
+     * @return              Index of the first occurrence
      */
     public static int findFirstSlotInInventoryWith(IInventory inventory, Item targetItem){
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
@@ -101,6 +102,13 @@ public class InventoryUtils {
         //throw new IllegalStateException("Item "+targetItem.getUnlocalizedName() + " not found in Inventory!");
     }
 
+    /**
+     * Returns the amount of occurrences in the inventory
+     *
+     * @param inventory     Inventory to scan
+     * @param targetitem    Item to count
+     * @return              Amount of occurences
+     */
     public static int getItemCountInInventory(IInventory inventory, Item targetitem){
         int count = 0;
         for(ItemStack is : filterInventory(inventory, targetitem)){
@@ -109,14 +117,37 @@ public class InventoryUtils {
         return count;
     }
 
+    /**
+     * @see {@link #getItemCountInInventory(IInventory, Item)}
+     *
+     * @param inventory     Inventory to scan
+     * @param block         block to count
+     * @return              Amount of occurences
+     */
     public static int getItemCountInInventory(IInventory inventory, Block block){
         return getItemCountInInventory(inventory, getItemFromBlock(block));
     }
 
+    /**
+     * Checks if a player has an item in the inventory
+     * Checked by {@link #getItemCountInInventory(IInventory, Item)} > 0;
+     *
+     * @param inventory     Inventory to scan
+     * @param item          Item to count
+     * @return              True when in inventory, otherwise false
+     */
     public static boolean hasitemInInventory(IInventory inventory, Item item){
         return getItemCountInInventory(inventory, item)>0;
     }
 
+    /**
+     * Checks if a player has an block in the inventory
+     * Checked by {@link #getItemCountInInventory(IInventory, Block)} > 0;
+     *
+     * @param inventory     Inventory to scan
+     * @param block         Block to count
+     * @return              True when in inventory, otherwise false
+     */
     public static boolean hasitemInInventory(IInventory inventory, Block block){
         return hasitemInInventory(inventory, getItemFromBlock(block));
     }
