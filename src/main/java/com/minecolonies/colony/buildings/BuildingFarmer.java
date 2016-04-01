@@ -10,19 +10,26 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
+/*
+Class is not used yet
+ */
 public class BuildingFarmer extends BuildingWorker
 {
-    public int wheat = 100,
-            potato = 0,
-            carrot = 0,
-            melon = 0,
-            pumpkin = 0;
 
-    public static final String WHEAT_TAG = "wheat",
-            POTATO_TAG = "potato",
-            CARROT_TAG = "carrot",
-            MELON_TAG = "melon",
-            PUMPKIN_TAG = "pumpkin";
+    public                  int     wheat    = 100;
+    public                  int     potato   = 0;
+    public                  int     carrot   = 0;
+    public                  int     melon    = 0;
+    public                  int     pumpkin  = 0;
+
+    public  static final    String  WHEAT_TAG    = "wheat";
+    public  static final    String  POTATO_TAG   = "potato";
+    public  static final    String  CARROT_TAG   = "carrot";
+    public  static final    String  MELON_TAG    = "melon";
+    public  static final    String  PUMPKIN_TAG  = "pumpkin";
+
+    private static final    String  FARMER      = "Farmer";
+    private static final    String  TAG_FARMER  = "farmer";
 
     public BuildingFarmer(Colony c, ChunkCoordinates l)
     {
@@ -30,13 +37,13 @@ public class BuildingFarmer extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName(){ return "Farmer"; }
+    public String getSchematicName(){ return FARMER; }
 
     @Override
     public int getMaxBuildingLevel(){ return 3; }
 
     @Override
-    public String getJobName(){ return "Farmer"; }
+    public String getJobName(){ return FARMER; }
 
     @Override
     public Job createJob(CitizenData citizen)
@@ -49,7 +56,7 @@ public class BuildingFarmer extends BuildingWorker
     {
         super.readFromNBT(compound);
 
-        NBTTagCompound farmerCompound = compound.getCompoundTag("farmer");
+        NBTTagCompound farmerCompound = compound.getCompoundTag(TAG_FARMER);
 
         wheat = farmerCompound.getInteger(WHEAT_TAG);
         potato = farmerCompound.getInteger(POTATO_TAG);
@@ -71,7 +78,7 @@ public class BuildingFarmer extends BuildingWorker
         farmerCompound.setInteger(MELON_TAG,melon);
         farmerCompound.setInteger(PUMPKIN_TAG, pumpkin);
 
-        compound.setTag("farmer", farmerCompound);
+        compound.setTag(TAG_FARMER, farmerCompound);
     }
 
     public static class View extends BuildingWorker.View
@@ -118,6 +125,11 @@ public class BuildingFarmer extends BuildingWorker
         buf.writeInt(pumpkin);
     }
 
+    /**
+     * Returns the farm radius of the building
+     *
+     * @return      Farm radius
+     */
     public int getFarmRadius()
     {
         return getBuildingLevel()+3;

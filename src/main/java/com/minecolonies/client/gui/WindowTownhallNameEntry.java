@@ -3,20 +3,22 @@ package com.minecolonies.client.gui;
 import com.blockout.controls.Button;
 import com.blockout.controls.TextField;
 import com.blockout.views.Window;
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.Constants;
 
 public class WindowTownhallNameEntry extends Window implements Button.Handler
 {
-    private static String BUTTON_DONE = "done",
-            BUTTON_CANCEL = "cancel",
-            INPUT_NAME = "name";
+    private static final    String      BUTTON_DONE                     = "done";
+    private static final    String      BUTTON_CANCEL                   = "cancel";
+    private static final    String      INPUT_NAME                      = "name";
+    private static final    String      TOWNHALL_NAME_RESOURCE_SUFFIX   = ":gui/windowTownhallNameEntry.xml";
 
-    ColonyView colony;
+    private                 ColonyView  colony;
 
     public WindowTownhallNameEntry(ColonyView c)
     {
-        super(Constants.MOD_ID + ":" + "gui/windowTownhallNameEntry.xml");
+        super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
         this.colony = c;
     }
 
@@ -27,7 +29,10 @@ public class WindowTownhallNameEntry extends Window implements Button.Handler
         {
             findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(colony.getName());
         }
-        catch (NullPointerException exc) {}
+        catch (NullPointerException exc)
+        {
+            MineColonies.logger.error("findPane error, report to mod authors");
+        }
     }
 
     @Override

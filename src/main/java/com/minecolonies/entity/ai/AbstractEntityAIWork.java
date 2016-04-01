@@ -246,8 +246,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param is the type of item requested (amount is ignored)
-     * @return true if a stack of that type was found
+     * @param is    the type of item requested (amount is ignored)
+     * @return      true if a stack of that type was found
      */
     private boolean isInHut(final ItemStack is)
     {
@@ -334,7 +334,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Walk the worker to it's building chest.
      * Please return immediately if this returns true.
      *
-     * @return false if the worker is at his building
+     * @return      false if the worker is at his building
      */
     protected final boolean walkToBuilding()
     {
@@ -435,8 +435,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Ensures that we have a pickaxe available.
      * Will set {@code needsPickaxe} accordingly.
      *
-     * @param minlevel the minimum pickaxe level needed.
-     * @return true if we have a pickaxe
+     * @param minlevel  the minimum pickaxe level needed.
+     * @return          true if we have a pickaxe
      */
     private boolean checkForPickaxe(int minlevel)
     {
@@ -466,8 +466,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the pickaxe.
      *
-     * @param minlevel the needed pickaxe level
-     * @return true if a pickaxe was found
+     * @param minlevel  the needed pickaxe level
+     * @return          true if a pickaxe was found
      */
     private boolean isPickaxeInHut(int minlevel)
     {

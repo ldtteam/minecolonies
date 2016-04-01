@@ -27,19 +27,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 {
-    private static final String TOOL_TYPE_HOE = "hoe";
-    private static final String TOOL_TYPE_SHOVEL = "shovel";
-    private static final String RENDER_META_SEEDS = "Seeds";
-    private static Logger logger = LogManager.getLogger("Farmer");
-    private List<ChunkCoordinates> farmAbleLand = new ArrayList<>();
-    private List<ChunkCoordinates> plowedLand = new ArrayList<>();
-    private List<ChunkCoordinates> crops = new ArrayList<>();
-    private List<ChunkCoordinates> crops2 = new ArrayList<>();
-    private ChunkCoordinates currentFarmLand;
-    private int harvestCounter = 0;
-    private String needItem = "";
-    private double baseSpeed;
-    private int delay = 0;
+    private static final    String                  TOOL_TYPE_HOE       = "hoe";
+    private static final    String                  TOOL_TYPE_SHOVEL    = "shovel";
+    private static final    String                  RENDER_META_SEEDS   = "Seeds";
+    private static          Logger                  logger              = LogManager.getLogger("Farmer");
+    private                 List<ChunkCoordinates>  farmAbleLand        = new ArrayList<>();
+    private                 List<ChunkCoordinates>  plowedLand          = new ArrayList<>();
+    private                 List<ChunkCoordinates>  crops               = new ArrayList<>();
+    private                 List<ChunkCoordinates>  crops2              = new ArrayList<>();
+    private                 ChunkCoordinates        currentFarmLand;
+    private                 int                     harvestCounter      = 0;
+    private                 String                  needItem            = "";
+    private                 double                  baseSpeed;
+    private                 int                     delay               = 0;
 
     //TODO Check for duplicates
     public EntityAIWorkFarmer(JobFarmer job)
@@ -55,6 +55,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         return (BuildingFarmer) (worker.getWorkBuilding());
     }
 
+    /**
+     *
+     */
     private void checkForCrops()
     {
         if (crops.isEmpty() && !crops2.isEmpty())
@@ -65,6 +68,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         }
     }
 
+    /**
+     * @return          String for seeds renderer if farmer has seeds, otherwise empty string
+     */
     private String getRenderMetaSeeds()
     {
         if (hasSeed())

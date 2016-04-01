@@ -10,25 +10,30 @@ import com.minecolonies.network.messages.FarmerCropTypeMessage;
 
 public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 {
-    private static String BUTTON_WHEAT = "wheat",
-            BUTTON_POTATO = "potato",
-            BUTTON_CARROT = "carrot",
-            BUTTON_MELON = "melon",
-            BUTTON_PUMPKIN = "pumpkin",
-            BUTTON_PREVPAGE = "prevPage",
-            BUTTON_NEXTPAGE = "nextPage",
-            VIEW_PAGES = "pages";
+    private static  String BUTTON_WHEAT                  = "wheat";
+    private static  String BUTTON_POTATO                 = "potato";
+    private static  String BUTTON_CARROT                 = "carrot";
+    private static  String BUTTON_MELON                  = "melon";
+    private static  String BUTTON_PUMPKIN                = "pumpkin";
+    private static  String BUTTON_PREVPAGE               = "prevPage";
+    private static  String BUTTON_NEXTPAGE               = "nextPage";
+    private static  String VIEW_PAGES                    = "pages";
 
-    Button buttonPrevPage, buttonNextPage;
+    private static  String HUT_FARMER_RESOURCE_SUFFIX    = ":gui/windowHutFarmer.xml";
 
+    private         Button buttonPrevPage;
+    private         Button buttonNextPage;
 
     public WindowHutFarmer(BuildingFarmer.View building)
     {
-        super(building, Constants.MOD_ID + ":gui/windowHutFarmer.xml");
+        super(building, Constants.MOD_ID + HUT_FARMER_RESOURCE_SUFFIX);
     }
 
-    public String getBuildingName() { return "com.minecolonies.gui.workerHuts.farmer"; }
-
+    @Override
+    public String getBuildingName()
+    {
+        return "com.minecolonies.gui.workerHuts.farmer";
+    }
 
     @Override
     public void onOpened()
@@ -39,12 +44,17 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         try
         {
             findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
-            buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
-            buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
         }
-        catch (NullPointerException exc) {}
+        catch (NullPointerException exc) {
+            MineColonies.logger.error("findPane error, report to mod authors");
+        }
+        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
+        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
     }
 
+    /**
+     * Updates the labels on the buttons
+     */
     private void updateButtonLabels()
     {
         try
@@ -57,7 +67,9 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 
         }
         catch (NullPointerException exc)
-        {}
+        {
+            MineColonies.logger.error("findPane error, report to mod authors");
+        }
     }
 
     @Override
@@ -107,13 +119,25 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         {
             if (button.getID().equals(BUTTON_PREVPAGE))
             {
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                try
+                {
+                    findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                } catch (NullPointerException e)
+                {
+                    MineColonies.logger.error("findPane error, report to mod authors");
+                }
                 buttonPrevPage.setEnabled(false);
                 buttonNextPage.setEnabled(true);
             }
             else if (button.getID().equals(BUTTON_NEXTPAGE))
             {
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                try
+                {
+                    findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                } catch (NullPointerException e)
+                {
+                    MineColonies.logger.error("findPane error, report to mod authors");
+                }
                 buttonPrevPage.setEnabled(true);
                 buttonNextPage.setEnabled(false);
             }
@@ -128,16 +152,31 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         updateButtonLabels();
     }
 
+    /**
+     * Returns the sum of all materials at the hut
+     *
+     * @return      The sum of wheat, carrots, melons, potatoes and pumpkins.
+     */
     public int sum()
     {
         return building.wheat + building.carrot + building.melon + building.potato + building.pumpkin;
     }
 
+    /**
+     * Remove one of the materials, described by s
+     * Possible inputs are:
+     *      - potato
+     *      - wheat
+     *      - carrot
+     *      - melon
+     *      - pumpkin
+     *
+     * @param s     String presentation of the material to remove
+     */
     public void removeOthers(String s)
     {
         while(sum() > 100)
         {
-
             int rand = (int)(Math.random()*5);
 
             if (building.potato != 0 && !s.equals("potato") && rand == 0)
@@ -164,7 +203,7 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 
         if(sum() < 100)
         {
-            building.wheat = building.wheat + 100-sum();
+            building.wheat = building.wheat + 100 - sum();
         }
 
         MineColonies.getNetwork().sendToServer(new FarmerCropTypeMessage(building));

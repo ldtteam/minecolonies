@@ -57,7 +57,7 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      * @param x     x coordinate clicked
      * @param y     y coordinate clicked
      * @param z     z coordinate clicked
-     * @return facings it can be placed at (2-5)
+     * @return      facings it can be placed at (2-5)
      */
     public int canShipBePlaced(World world, int x, int y, int z)
     {
@@ -89,7 +89,7 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      * @param z                      z coordinate clicked
      * @param shouldCheckX           boolean whether the x-sides should be checks
      * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false)
-     * @return whether the space in the I shape is free or not
+     * @return                       whether the space in the I shape is free or not
      */
     private boolean check(World world, int x, int y, int z, boolean shouldCheckX, boolean isCoordPositivelyAdded)
     {
@@ -148,12 +148,12 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
     /**
      * Checks if the player already placed a supply chest
      *
-     * @param player The player
-     * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
+     * @param player    The player
+     * @return          boolean, returns true when player hasn't placed before, or when infinite placing is on.
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest())
+        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).getHasPlacedSupplyChest())
             return true;
         LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.error.supplyChestAlreadyPlaced");
         return false;
@@ -205,7 +205,7 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
             MineColonies.logger.error("Supply chest tile entity was null.");
             return;
         }
-        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownhall));
+        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
         chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
     }
 }

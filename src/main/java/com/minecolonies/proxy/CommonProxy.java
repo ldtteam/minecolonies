@@ -25,7 +25,7 @@ public class CommonProxy implements IProxy
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn
      */
-    private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<String, NBTTagCompound>();
+    private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
 
     @Override
     public boolean isClient()
@@ -53,8 +53,8 @@ public class CommonProxy implements IProxy
     /**
      * Removes the compound from the map and returns the NBT tag stored for name or null if none exists
      *
-     * @param name player UUID + Properties name, HashMap key
-     * @return NBTTagCompound PlayerProperties NBT compound
+     * @param name  player UUID + Properties name, HashMap key
+     * @return      NBTTagCompound PlayerProperties NBT compound
      */
     public static NBTTagCompound getEntityData(String name)
     {
@@ -95,7 +95,7 @@ public class CommonProxy implements IProxy
     public void registerTileEntityRendering(){}
 
     @Override
-    public void registerKeybindings(){}
+    public void registerKeyBindings(){}
 
     @Override
     public void showCitizenWindow(CitizenData.View citizen) {}

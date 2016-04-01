@@ -28,6 +28,17 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
     public BuildToolPlaceMessage() {}
 
+    /**
+     * Create the building that was made with the build tool.
+     * Item in inventory required
+     *
+     * @param hut       String representation of sort of hut that made the request
+     * @param style     String representation of style that was requested
+     * @param x         x-coordinate
+     * @param y         y-coordinate
+     * @param z         z-coordinate
+     * @param rotation  int representation of the rotation
+     */
     public BuildToolPlaceMessage(String hut, String style, int x, int y, int z, int rotation)
     {
         this.hut = hut;

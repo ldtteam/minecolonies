@@ -475,7 +475,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if(colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()), "tile.blockHutTownhall.messageColonistDead", citizenData.getName());
+            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()), "tile.blockHutTownHall.messageColonistDead", citizenData.getName());
             colony.removeCitizen(getCitizenData());
         }
         super.onDeath(par1DamageSource);
@@ -837,7 +837,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if(!worldObj.isRemote)
         {
             InventoryCitizen newInventory = new InventoryCitizen(inventory.getInventoryName(), inventory.hasCustomInventoryName(), newSize);
-            ArrayList<ItemStack> leftOvers = new ArrayList<ItemStack>();
+            ArrayList<ItemStack> leftovers = new ArrayList<>();
             for(int i = 0; i < inventory.getSizeInventory(); i++)
             {
                 ItemStack itemstack = inventory.getStackInSlot(i);
@@ -854,13 +854,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             inventory.addIInvBasic(this);
             if(dropLeftovers)
             {
-                for(ItemStack leftover : leftOvers)
-                {
-                    if(leftover.stackSize > 0)
-                    {
-                        entityDropItem(leftover);
-                    }
-                }
+                leftovers.stream().filter(leftover -> leftover.stackSize > 0).forEach(this::entityDropItem);
             }
         }
     }

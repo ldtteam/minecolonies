@@ -1,7 +1,7 @@
 package com.minecolonies.event;
 
 import com.minecolonies.blocks.BlockHut;
-import com.minecolonies.blocks.BlockHutTownHall;
+import com.minecolonies.blocks.BlockHutTownhall;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.IColony;
 import com.minecolonies.colony.buildings.Building;
@@ -22,6 +22,12 @@ import net.minecraftforge.event.world.WorldEvent;
 
 public class EventHandler
 {
+    /**
+     * Event when a block is broken
+     * Event gets cancelled when there no permission to break a hut
+     *
+     * @param event     {@link net.minecraftforge.event.world.BlockEvent.BreakEvent}
+     */
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent event)
     {
@@ -45,6 +51,13 @@ public class EventHandler
         }
     }
 
+    /**
+     * Event when a placker right clicks a block, or right clicks with an item
+     * Event gets cancelled when player has no permission
+     * Event gets cancelled when the player has no permission to place a hut, and tried it
+     *
+     * @param event {@link PlayerInteractEvent}
+     */
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent event)
     {
@@ -109,12 +122,12 @@ public class EventHandler
      * @param x      The x coordinate of the block
      * @param y      The y coordinate of the block
      * @param z      The z coordinate of the block
-     * @return false to cancel the event
+     * @return       false to cancel the event
      */
     public static boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, int x, int y, int z)//TODO use permissions
     {
         //  Check if this Hut Block can be placed
-        if (block instanceof BlockHutTownHall)
+        if (block instanceof BlockHutTownhall)
         {
             IColony colony = ColonyManager.getClosestIColony(world, x, y, z);
             if (colony != null)
@@ -125,7 +138,7 @@ public class EventHandler
                     if (colony.hasTownhall())
                     {
                         //  Placing in a colony which already has a town hall
-                        LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
+                        LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
                         return false;
                     }
                     else if (!colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
@@ -143,7 +156,7 @@ public class EventHandler
                 else if (colony.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
                 {
                     //  Placing too close to an existing colony
-                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
                     return false;
                 }
             }
@@ -151,7 +164,7 @@ public class EventHandler
             if (!ColonyManager.getIColoniesByOwner(world, player).isEmpty())
             {
                 //  Players are currently only allowed a single colony
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
+                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messagePlacedAlready");
                 return false;
             }
         }
@@ -182,6 +195,12 @@ public class EventHandler
         return true;
     }
 
+    /**
+     * Called when an entity is being constructed
+     * Used to register player properties
+     *
+     * @param event     {@link net.minecraftforge.event.entity.EntityEvent.EntityConstructing}
+     */
     @SubscribeEvent
     public void onEntityConstructing(EntityEvent.EntityConstructing event)
     {
@@ -195,6 +214,12 @@ public class EventHandler
         }
     }
 
+    /**
+     * Called when an entity dies
+     * Player property data is saved when a player dies
+     *
+     * @param event     {@link LivingDeathEvent}
+     */
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event)
     {
@@ -204,6 +229,12 @@ public class EventHandler
         }
     }
 
+    /**
+     * Called when an entity joins the world
+     * Loads player property data when player enters
+     *
+     * @param event     {@link EntityJoinWorldEvent}
+     */
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
@@ -213,18 +244,39 @@ public class EventHandler
         }
     }
 
+    /**
+     * Gets called when world loads.
+     * Calls {@link ColonyManager#onWorldLoad(World)}
+     *
+     * @param event     {@link net.minecraftforge.event.world.WorldEvent.Load}
+     * @see             {@link ColonyManager#onWorldLoad(World)}
+     */
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event)
     {
         ColonyManager.onWorldLoad(event.world);
     }
 
+    /**
+     * Gets called when world unloads.
+     * Calls {@link ColonyManager#onWorldUnload(World)}
+     *
+     * @param event     {@link net.minecraftforge.event.world.WorldEvent.Unload}
+     * @see             {@link ColonyManager#onWorldUnload(World)}
+     */
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload event)
     {
         ColonyManager.onWorldUnload(event.world);
     }
 
+    /**
+     * Gets called when world saves.
+     * Calls {@link ColonyManager#onWorldSave(World)}
+     *
+     * @param event     {@link net.minecraftforge.event.world.WorldEvent.Save}
+     * @see             {@link ColonyManager#onWorldSave(World)}
+     */
     @SubscribeEvent
     public void onWorldSave(WorldEvent.Save event)
     {

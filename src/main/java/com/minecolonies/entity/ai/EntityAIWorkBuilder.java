@@ -53,33 +53,34 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             loadSchematic();
 
             WorkOrderBuild wo = job.getWorkOrder();
-            if(wo == null)
+            if (wo == null)
             {
                 MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)", worker.getColony().getID(), worker.getCitizenData().getId(), job.getWorkOrderId()));
                 return;
             }
             Building building = job.getColony().getBuilding(wo.getBuildingId());
-            if(building == null)
+            if (building == null)
             {
                 MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)", worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
             }
             //Don't go through the CLEAR stage for repairs and upgrades
-            if(building.getBuildingLevel() > 0)
+            if (building != null)
             {
-                job.stage = JobBuilder.Stage.REQUEST_MATERIALS;
+                if (building.getBuildingLevel() > 0) {
+                    job.stage = JobBuilder.Stage.REQUEST_MATERIALS;
 
-                if(!job.hasSchematic() || !incrementBlock())
-                {
-                    return;
+                    if (!job.hasSchematic() || !incrementBlock()) {
+                        return;
+                    }
+                } else {
+                    job.stage = JobBuilder.Stage.CLEAR;
+                    if (!job.hasSchematic() || !job.getSchematic().decrementBlock()) {
+                        return;
+                    }
                 }
-            }
-            else
+            } else
             {
-                job.stage = JobBuilder.Stage.CLEAR;
-                if(!job.hasSchematic() || !job.getSchematic().decrementBlock())
-                {
-                    return;
-                }
+                throw new NullPointerException();
             }
 
 
@@ -126,10 +127,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 decorationStep();
                 break;
             case ENTITIES:
-                for(Entity entity : job.getSchematic().getEntities())
-                {//TODO use iterator to do this overtime
-                    spawnEntity(entity);
-                }
+                //TODO use iterator to do this overtime
+                job.getSchematic().getEntities().forEach(this::spawnEntity);
                 completeBuild();
                 break;
             default:
@@ -407,6 +406,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
     {
         if(block != Blocks.air)//Breaking blocks doesn't require taking materials from the citizens inventory
@@ -497,10 +497,10 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 int slotID = world.rand.nextInt(worker.getInventory().getSizeInventory());
                 for(int i = 0; i < worker.getInventory().getSizeInventory(); i++)
                 {
-                    ItemStack invItem = worker.getInventory().getStackInSlot(i);
                     //Keeping the TODO but removing the if
                     //TODO change to isRequired material using chris' system
-                    leftOvers = invItem;
+                    //TODO make looping??
+                    leftOvers = worker.getInventory().getStackInSlot(i);
                     slotID = i;
                     break;
 
@@ -595,28 +595,24 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
     }
 
-    private boolean findNextBlockSolid()
+    private void findNextBlockSolid()
     {
         if(!job.getSchematic().findNextBlockSolid())//method returns false if there is no next block (schematic finished)
         {
             job.stage = JobBuilder.Stage.DECORATIONS;
             job.getSchematic().reset();
             incrementBlock();
-            return false;
         }
-        return true;
     }
 
-    private boolean findNextBlockNonSolid()
+    private void findNextBlockNonSolid()
     {
         if(!job.getSchematic().findNextBlockNonSolid())//method returns false if there is no next block (schematic finished)
         {
             job.stage = JobBuilder.Stage.ENTITIES;
             job.getSchematic().reset();
             incrementBlock();
-            return false;
         }
-        return true;
     }
 
     private boolean incrementBlock()

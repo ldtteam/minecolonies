@@ -5,6 +5,9 @@ import net.minecraft.entity.ai.EntityAIBase;
 
 import static com.minecolonies.entity.EntityCitizen.Status.SLEEPING;
 
+/**
+ * AI to send Entity to sleep
+ */
 public class EntityAISleep extends EntityAIBase
 {
     private EntityCitizen citizen;

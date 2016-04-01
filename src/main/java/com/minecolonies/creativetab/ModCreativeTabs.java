@@ -7,12 +7,15 @@ import net.minecraft.item.Item;
 
 public class ModCreativeTabs
 {
+    private ModCreativeTabs() {
+    }
+
     public static final CreativeTabs MINECOLONIES = new CreativeTabs(Constants.MOD_ID)
     {
         @Override
         public Item getTabIconItem()
         {
-            return Item.getItemFromBlock(ModBlocks.blockHutTownhall);
+            return Item.getItemFromBlock(ModBlocks.blockHutTownHall);
         }
     };
 }

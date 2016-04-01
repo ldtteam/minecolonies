@@ -17,6 +17,12 @@ public class ColonyViewRemoveCitizenMessage implements IMessage, IMessageHandler
 
     public ColonyViewRemoveCitizenMessage(){}
 
+    /**
+     * Creates an object for the remove message for citizen
+     *
+     * @param colony        Colony the citizen is in
+     * @param citizen       Citizen ID
+     */
     public ColonyViewRemoveCitizenMessage(Colony colony, int citizen)
     {
         this.colonyId = colony.getID();

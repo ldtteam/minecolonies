@@ -13,19 +13,19 @@ import net.minecraft.util.ChunkCoordinates;
 public class JobBuilder extends Job
 {
     //TODO save some of this in building
-    protected int              workOrderId;
-    protected Schematic        schematic;
-    protected String           schematicName;
-    protected ChunkCoordinates schematicPos;
-    protected ChunkCoordinates schematicProgress;
-    public    Stage stage;
+    protected               int                 workOrderId;
+    protected               Schematic           schematic;
+    protected               String              schematicName;
+    protected               ChunkCoordinates    schematicPos;
+    protected               ChunkCoordinates    schematicProgress;
+    public                  Stage               stage;
 
-    private static final String TAG_WORK_ORDER = "workorder";
-    private static final String TAG_SCHEMATIC  = "schematic";
-    private static final String TAG_NAME       = "name";
-    private static final String TAG_POSITION   = "position";
-    private static final String TAG_PROGRESS   = "progress";
-    private static final String TAG_STAGE      = "stage";
+    private static final    String              TAG_WORK_ORDER = "workorder";
+    private static final    String              TAG_SCHEMATIC  = "schematic";
+    private static final    String              TAG_NAME       = "name";
+    private static final    String              TAG_POSITION   = "position";
+    private static final    String              TAG_PROGRESS   = "progress";
+    private static final    String              TAG_STAGE      = "stage";
 
     public JobBuilder(CitizenData entity)
     {
@@ -106,7 +106,7 @@ public class JobBuilder extends Job
     /**
      * Set a Work Order for this Job
      *
-     * @param order Work Order to associate with this job, or null
+     * @param order     Work Order to associate with this job, or null
      */
     public void setWorkOrder(WorkOrderBuild order)
     {
@@ -116,7 +116,7 @@ public class JobBuilder extends Job
     /**
      * Get the Work Order ID for this Job
      *
-     * @return UUID of the Work Order claimed by this Job, or null
+     * @return          UUID of the Work Order claimed by this Job, or null
      */
     public int getWorkOrderId()
     {
@@ -127,7 +127,7 @@ public class JobBuilder extends Job
      * Get the Work Order for the Job
      * Warning: WorkOrder is not cached
      *
-     * @return WorkOrderBuild for the Build
+     * @return          WorkOrderBuild for the Build
      */
     public WorkOrderBuild getWorkOrder()
     {
@@ -137,7 +137,7 @@ public class JobBuilder extends Job
     /**
      * Does this job have a Work Order it has claimed?
      *
-     * @return true if there is a Work Order claimed by this Job
+     * @return      true if there is a Work Order claimed by this Job
      */
     public boolean hasWorkOrder()
     {
@@ -147,7 +147,7 @@ public class JobBuilder extends Job
     /**
      * Does this job have a loaded Schematic?
      *
-     * @return true if there is a loaded schematic for this Job
+     * @return      true if there is a loaded schematic for this Job
      */
     public boolean hasSchematic()
     {
@@ -157,18 +157,27 @@ public class JobBuilder extends Job
     /**
      * Get the Schematic loaded by the Job
      *
-     * @return Schematic loaded by the Job
+     * @return      Schematic loaded by the Job
      */
     public Schematic getSchematic()
     {
         return schematic;
     }
 
+    /**
+     * Set the schematic of builder's job
+     *
+     * @param schematic         {@link Schematic} object
+     */
     public void setSchematic(Schematic schematic)
     {
         this.schematic = schematic;
     }
 
+    /**
+     * Returns the work interval of the worker //unfinished
+     * @return              work interval
+     */
     public int getWorkInterval()
     {
         return 1;//Constants.BUILDERWORKINTERFALL - this.getLevel();//TODO
@@ -184,6 +193,9 @@ public class JobBuilder extends Job
         setSchematic(null);
     }
 
+    /**
+     * Stages of a building
+     */
     public enum Stage
     {
         CLEAR,

@@ -18,21 +18,27 @@ import java.util.List;
  */
 public class Level
 {
-    private static final String TAG_DEPTH   = "Depth";
-    private static final String TAG_NODES   = "Nodes";
-    private static final String TAG_LADDERX = "LadderX";
-    private static final String TAG_LADDERZ = "LadderZ";
+    private static final    String              TAG_DEPTH   = "Depth";
+    private static final    String              TAG_NODES   = "Nodes";
+    private static final    String              TAG_LADDERX = "LadderX";
+    private static final    String              TAG_LADDERZ = "LadderZ";
     /**
      * The depth of the level stored as the y coordinate
      */
-    private int depth;
-    private List<Node> nodes      = new ArrayList<>();
-    private Node       ladderNode = null;
+    private                 int                 depth;
+    private                 List<Node>          nodes      = new ArrayList<>();
+    private                 Node                ladderNode = null;
 
+    //TODO document class
     private Level()
     {
     }
 
+    /**
+     *
+     * @param buildingMiner
+     * @param depth
+     */
     public Level(BuildingMiner buildingMiner, int depth)
     {
         this.depth = depth;
@@ -94,7 +100,7 @@ public class Level
         int ladderx = compound.getInteger(TAG_LADDERX);
         int ladderz = compound.getInteger(TAG_LADDERZ);
 
-        level.ladderNode = level.nodes.stream().filter(node -> node.getX() == ladderx && node.getZ() == ladderz).findFirst().get();
+        level.ladderNode = level.nodes.stream().filter(node -> node.getX() == ladderx && node.getZ() == ladderz).findFirst().get(); //TODO .isPresent()
 
         return level;
     }

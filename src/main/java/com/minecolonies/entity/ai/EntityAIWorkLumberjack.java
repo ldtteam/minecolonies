@@ -18,6 +18,7 @@ import net.minecraft.util.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 {
@@ -306,17 +307,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 
     private void searchForItems()
     {
-        items = new ArrayList<ChunkCoordinates>();
+        items = new ArrayList<>();
 
         @SuppressWarnings("unchecked") List<EntityItem> list = world.getEntitiesWithinAABB(EntityItem.class, worker.boundingBox.expand(15.0F, 3.0F, 15.0F));
 
-        for(EntityItem item : list)
-        {
-            if(item != null && !item.isDead)//TODO check if sapling or apple (currently picks up all items, which may be okay)
-            {
-                items.add(ChunkCoordUtils.fromEntity(item));
-            }
-        }
+        //TODO check if sapling or apple (currently picks up all items, which may be okay)
+        items.addAll(list.stream().filter(item -> item != null && !item.isDead).map(ChunkCoordUtils::fromEntity).collect(Collectors.toList()));
     }
 
     private void gatherItems()

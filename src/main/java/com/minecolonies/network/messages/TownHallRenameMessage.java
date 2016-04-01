@@ -9,16 +9,21 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
 
-public class TownhallRenameMessage implements IMessage, IMessageHandler<TownhallRenameMessage, IMessage>
+public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHallRenameMessage, IMessage>
 {
     private int    colonyId;
     private String name;
 
-    public TownhallRenameMessage(){}
+    public TownHallRenameMessage(){}
 
-    public TownhallRenameMessage(ColonyView colony, String name)
+    /**
+     * Object creation for the town hall rename message
+     *
+     * @param colony    Colony the rename is going to occur in
+     * @param name      New name of the town hall
+     */
+    public TownHallRenameMessage(ColonyView colony, String name)
     {
         this.colonyId = colony.getID();
         this.name = name;
@@ -39,9 +44,8 @@ public class TownhallRenameMessage implements IMessage, IMessageHandler<Townhall
     }
 
     @Override
-    public IMessage onMessage(TownhallRenameMessage message, MessageContext ctx)
+    public IMessage onMessage(TownHallRenameMessage message, MessageContext ctx)
     {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
         Colony colony = ColonyManager.getColony(message.colonyId);
 
         if (colony != null)

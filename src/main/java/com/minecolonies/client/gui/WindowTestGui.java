@@ -11,6 +11,10 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
 
+/*
+UNUSED
+ */
+@Deprecated
 public class WindowTestGui extends Window implements Button.Handler
 {
     private static String INVENTORY_BUTTON_ID = "inventory";

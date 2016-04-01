@@ -7,25 +7,31 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorkManager
 {
-    protected final Colony colony;
-    protected Map<Integer, WorkOrder> workOrders     = new HashMap<Integer, WorkOrder>();
-    protected int                     topWorkOrderId = 0;
+    protected       final   Colony                  colony;
+    protected               Map<Integer, WorkOrder> workOrders                      = new HashMap<>();
+    protected               int                     topWorkOrderId                  = 0;
 
 //    protected final List<WorkOrder>      unclaimedOrders = new ArrayList<WorkOrder>();
 //    protected final List<WorkOrder>      claimedOrders   = new ArrayList<WorkOrder>();
 
-    private final static String TAG_WORK_ORDERS = "workOrders";
+    private static  final   String                  TAG_WORK_ORDERS                 = "workOrders";
 
-    private final static int WORK_ORDER_FULFILL_INCREMENT = 1 * 20;   //  Once a second
+    private static  final   int                     WORK_ORDER_FULFILL_INCREMENT    = 1 * 20;   //  Once a second
 
     public WorkManager(Colony c)
     {
         colony = c;
     }
 
+    /**
+     * Adds work order to the work manager
+     *
+     * @param order    Order to add
+     */
     public void addWorkOrder(WorkOrder order)
     {
         if (order.getID() == 0)
@@ -45,6 +51,11 @@ public class WorkManager
 //        }
     }
 
+    /**
+     * Removes a work order from the work manager
+     *
+     * @param orderId   ID of the order to remove
+     */
     public void removeWorkOrder(int orderId)
     {
         WorkOrder order = workOrders.remove(orderId);
@@ -55,6 +66,11 @@ public class WorkManager
         }
     }
 
+    /**
+     * Removes a work order from the work manager
+     *
+     * @param order     {@link WorkOrder} to remove
+     */
     public void removeWorkOrder(WorkOrder order)
     {
         workOrders.remove(order.getID());
@@ -64,8 +80,9 @@ public class WorkManager
 
     /**
      * Get a work order of the specified id
-     * @param id the id of the work order
-     * @return the work order of the specified id, or null
+     *
+     * @param id        the id of the work order
+     * @return          the work order of the specified id, or null
      */
     public WorkOrder getWorkOrder(int id)
     {
@@ -74,9 +91,10 @@ public class WorkManager
 
     /**
      * Get a work order of the specified id, as a specific type
-     * @param id the id of the work order
-     * @param type the class of the expected type of the work order
-     * @return the work order of the specified id, or null if it was not found or is of an incompatible type
+     *
+     * @param id        the id of the work order
+     * @param type      the class of the expected type of the work order
+     * @return          the work order of the specified id, or null if it was not found or is of an incompatible type
      */
     public <ORDER extends WorkOrder> ORDER getWorkOrder(int id, Class<ORDER> type)
     {
@@ -92,8 +110,9 @@ public class WorkManager
 
     /**
      * Get an unclaimed work order of a specified type
-     * @param type the class of the type of work order to find
-     * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found
+     *
+     * @param type      the class of the type of work order to find
+     * @return          an unclaimed work order of the given type, or null if no unclaimed work order of the type was found
      */
     public <ORDER extends WorkOrder> ORDER getUnassignedWorkOrder(Class<ORDER> type)
     {
@@ -110,41 +129,29 @@ public class WorkManager
 
     /**
      * Get all work orders of a specified type
+     *
      * @param type the class of the type of work order to find
      * @return a list of all work orders of the given type
      */
     public <ORDER extends WorkOrder> List<ORDER> getWorkOrdersOfType(Class<ORDER> type)
     {
-        List<ORDER> list = new ArrayList<ORDER>();
-        for (WorkOrder o : workOrders.values())
-        {
-            if (type.isAssignableFrom(o.getClass()))
-            {
-                list.add(type.cast(o));
-            }
-        }
-        return list;
+        return workOrders.values().stream().filter(o -> type.isAssignableFrom(o.getClass())).map(type::cast).collect(Collectors.toList());
     }
 
     /**
      * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen
      *
-     * @param citizen
+     * @param citizen       Citizen to unclaim work for.
      */
     public void clearWorkForCitizen(CitizenData citizen)
     {
-        for (WorkOrder o : workOrders.values())
-        {
-            if (o.isClaimedBy(citizen))
-            {
-                o.clearClaimedBy();
-            }
-        }
+        workOrders.values().stream().filter(o -> o.isClaimedBy(citizen)).forEach(WorkOrder::clearClaimedBy);
     }
 
     /**
      * Save the Work Manager
-     * @param compound
+     *
+     * @param compound      Compound to save to
      */
     public void writeToNBT(NBTTagCompound compound)
     {
@@ -161,7 +168,8 @@ public class WorkManager
 
     /**
      * Restore the Work Manager
-     * @param compound
+     *
+     * @param compound      Compound to read from
      */
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -191,7 +199,8 @@ public class WorkManager
     /**
      * Process updates on the World Tick
      * Currently, does periodic Work Order cleanup
-     * @param event
+     *
+     * @param event         {@link cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
@@ -209,13 +218,7 @@ public class WorkManager
 
             if ((event.world.getWorldTime() % WORK_ORDER_FULFILL_INCREMENT) == 0)
             {
-                for (WorkOrder o : workOrders.values())
-                {
-                    if (!o.isClaimed())
-                    {
-                        o.attemptToFulfill(colony);
-                    }
-                }
+                workOrders.values().stream().filter(o -> !o.isClaimed()).forEach(o -> o.attemptToFulfill(colony));
             }
         }
     }

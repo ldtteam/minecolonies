@@ -18,6 +18,7 @@ import net.minecraft.util.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * BuildTool Window
@@ -26,37 +27,65 @@ import java.util.List;
  */
 public class WindowBuildTool extends Window implements Button.Handler
 {
-    private static final String BUTTON_TYPE_ID = "buildingType";
-    private static final String BUTTON_HUT_ID = "hut";
-    private static final String BUTTON_STYLE_ID = "style";
-    private static final String BUTTON_DECORATION_ID = "decoration";
+    /*
+    All buttons for the GUI
+     */
+    private static final    String          BUTTON_TYPE_ID              = "buildingType";
+    private static final    String          BUTTON_HUT_ID               = "hut";
+    private static final    String          BUTTON_STYLE_ID             = "style";
+    private static final    String          BUTTON_DECORATION_ID        = "decoration";
 
-    private static final String BUTTON_CONFIRM = "confirm";
-    private static final String BUTTON_CANCEL = "cancel";
+    private static final    String          BUTTON_CONFIRM              = "confirm";
+    private static final    String          BUTTON_CANCEL               = "cancel";
 
-    private static final String BUTTON_ROTATE_LEFT = "rotateLeft";
-    private static final String BUTTON_ROTATE_RIGHT = "rotateRight";
+    private static final    String          BUTTON_ROTATE_LEFT          = "rotateLeft";
+    private static final    String          BUTTON_ROTATE_RIGHT         = "rotateRight";
 
-    private static final String BUTTON_UP = "up";
-    private static final String BUTTON_DOWN = "down";
+    private static final    String          BUTTON_UP                   = "up";
+    private static final    String          BUTTON_DOWN                 = "down";
 
-    private static final String BUTTON_FORWARD = "forward";
-    private static final String BUTTON_BACK = "back";
-    private static final String BUTTON_LEFT = "left";
-    private static final String BUTTON_RIGHT = "right";
+    private static final    String          BUTTON_FORWARD              = "forward";
+    private static final    String          BUTTON_BACK                 = "back";
+    private static final    String          BUTTON_LEFT                 = "left";
+    private static final    String          BUTTON_RIGHT                = "right";
 
-    private boolean inHutMode = true;
+    /*
+    Resource suffix and hut prefix
+    */
+    private static final    String          BUILD_TOOL_RESOURCE_SUFFIX  = ":gui/windowBuildTool.xml";
+    private static final    String          HUT_PREFIX                  = ":blockHut";
 
-    private List<String> huts = new ArrayList<>();
-    private int hutDecIndex = 0;
-    private int styleIndex = 0;
+    /*
+    List of buildings possible to make
+     */
+    private                 List<String>    huts                        = new ArrayList<>();
+    /*
+    Index of the rendered hut
+     */
+    private                 int             hutDecIndex                 = 0;
+    /*
+    Index of                 the             current style
+     */
+    private                 int             styleIndex                  = 0;
 
-    private int posX, posY, posZ;
-    private int rotation = 0;
+    private                 int             posX;
+    private                 int             posY;
+    private                 int             posZ;
+    private                 int             rotation                    = 0;
 
+    /**
+     * Creates a window build tool
+     * This requires X, Y and Z coordinates
+     * If a schematic is active, recalculates the X Y Z with offset.
+     * Otherwise the given parameters are used
+     *
+     * @param x     x-coordinate
+     * @param y     y-coordinate
+     * @param z     z-coordinate
+     */
     public WindowBuildTool(int x, int y, int z)
     {
-        super(Constants.MOD_ID + ":gui/windowBuildTool.xml");
+        super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
         if(MineColonies.proxy.getActiveSchematic() != null)
         {
@@ -76,53 +105,76 @@ public class WindowBuildTool extends Window implements Button.Handler
     @Override
     public void onOpened()
     {
+        boolean inHutMode = true; //TODO is this not redundant? see no usage
         if(inHutMode)
         {
-            findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
+            try
+            {
+                findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
+            } catch (NullPointerException e)
+            {
+                MineColonies.logger.error("findPane error, report to mod authors");
+            }
 
             InventoryPlayer inventory = this.mc.thePlayer.inventory;
 
-            for (String hut : Schematics.getHuts())
-            {
-                if (inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut).getItem(null, 0, 0, 0)) && Schematics.getStylesForHut(hut) != null)
-                {
-                    huts.add(hut);
-                }
-            }
+            /*
+            Add possible huts (has item) to list, if it has a schematic, and player has the block
+             */
+            huts.addAll(Schematics.getHuts().stream().filter(hut -> inventory.hasItem(
+                    Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, 0, 0, 0))
+                    && Schematics.getStylesForHut(hut) != null).collect(Collectors.toList()));
 
-            if(huts.size() > 0)
+            if (huts.size() > 0)
             {
-                if(MineColonies.proxy.getActiveSchematic() != null)
+                if (MineColonies.proxy.getActiveSchematic() != null)
                 {
                     hutDecIndex = Math.max(0, huts.indexOf(Settings.instance.hut));
                     styleIndex = Math.max(0, Schematics.getStylesForHut(huts.get(hutDecIndex)).indexOf(Settings.instance.style));
                 }
 
                 Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
-                //TODO Localize
-                hut.setLabel(huts.get(hutDecIndex));
-                hut.setEnabled(true);
+
+                if (hut != null)
+                {
+                    hut.setLabel(huts.get(hutDecIndex));
+                    hut.setEnabled(true);
+                } else
+                {
+                    MineColonies.logger.error("The hut was null, should not happen, report to mod authors");
+                }
 
                 Button style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
-                style.setVisible(true);
-                style.setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
+
+                if (style != null)
+                {
+                    style.setVisible(true);
+                    style.setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
+                } else
+                {
+                    MineColonies.logger.error("The style was null, should not happen, report to mod authors");
+                }
 
                 //Render stuff
-                if(MineColonies.proxy.getActiveSchematic() == null)
+                if (MineColonies.proxy.getActiveSchematic() == null)
                 {
                     changeSchematic();
                 }
-            }
-            else
+            } else
             {
                 Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
-                hut.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.nohut"));
-                hut.setEnabled(false);
+                if (hut != null)
+                {
+                    hut.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.nullHut"));
+                    hut.setEnabled(false);
+                } else
+                {
+                    MineColonies.logger.error(LanguageHandler.format("The hut was null, should not happen, report to mod authors"));
+                }
 
                 MineColonies.proxy.setActiveSchematic(null);
             }
-        }
-        else
+        } else
         {
             Button type = findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class);
             type.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.decoration"));
@@ -138,9 +190,14 @@ public class WindowBuildTool extends Window implements Button.Handler
         if(MineColonies.proxy.getActiveSchematic() != null)
         {
             Settings.instance.rotation = rotation;
-
-            Settings.instance.hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
-            Settings.instance.style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+            try
+            {
+                Settings.instance.hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
+                Settings.instance.style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+            } catch (NullPointerException e)
+            {
+                MineColonies.logger.error("findPane error, report to mod authors");
+            }
         }
     }
 
@@ -166,17 +223,28 @@ public class WindowBuildTool extends Window implements Button.Handler
             break;
         case BUTTON_HUT_ID:
             hutDecIndex = (hutDecIndex + 1) % huts.size();
-            findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).setLabel(huts.get(hutDecIndex));
             styleIndex = 0;
-            findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
+            try
+            {
+                findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).setLabel(huts.get(hutDecIndex));
+                findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
+            } catch (NullPointerException e)
+            {
+                MineColonies.logger.error("findPane error, report to mod authors");
+            }
 
             changeSchematic();
             break;
         case BUTTON_STYLE_ID:
             List<String> styles = Schematics.getStylesForHut(huts.get(hutDecIndex));
             styleIndex = (styleIndex + 1) % styles.size();
-            findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(styles.get(styleIndex));
-
+            try
+            {
+                findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(styles.get(styleIndex));
+            } catch (NullPointerException e)
+            {
+                MineColonies.logger.error("findPane error, report to mod authors");
+            }
             changeSchematic();
             break;
         case BUTTON_DECORATION_ID:
@@ -184,7 +252,8 @@ public class WindowBuildTool extends Window implements Button.Handler
             break;
 
         case BUTTON_CONFIRM:
-            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(huts.get(hutDecIndex), Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex), posX, posY, posZ, rotation));
+            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(huts.get(hutDecIndex),
+                    Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex), posX, posY, posZ, rotation));
             MineColonies.proxy.setActiveSchematic(null);
             close();
             break;
@@ -221,10 +290,15 @@ public class WindowBuildTool extends Window implements Button.Handler
             break;
 
         default:
-            MineColonies.logger.warn("WindowBuildTool: Unhandled Button ID: " + button.getID());
+            MineColonies.logger.warn("WindowBuildTool: Unhandled Button ID:" + button.getID());
         }
     }
 
+    /**
+     * Moves the pointer to a new position
+     *
+     * @param id    Button ID
+     */
     private void moveArrow(String id)
     {
         int facing = MathHelper.floor_double((double) (this.mc.thePlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
@@ -300,17 +374,27 @@ public class WindowBuildTool extends Window implements Button.Handler
             }
             break;
         }
-
         updatePosition();
     }
 
+    /**
+     * Changes the current schematic.
+     * Set to button position at that time
+     */
     private void changeSchematic()
     {
         if(MineColonies.isClient())
         {
-            String hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
-            String style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
-
+            String hut = "";
+            String style = "";
+            try
+            {
+                hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
+                style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+            } catch (NullPointerException e)
+            {
+                MineColonies.logger.error("findPane error, report to mod authors");
+            }
             SchematicWorld schematic = Schematic.loadSchematic(this.mc.theWorld, style + '/' + hut + '1').getWorldForRender();
             MineColonies.proxy.setActiveSchematic(schematic);
 
@@ -323,6 +407,9 @@ public class WindowBuildTool extends Window implements Button.Handler
         }
     }
 
+    /**
+     * Update position of the schematic
+     */
     private void updatePosition()
     {
         Settings.instance.moveTo(posX, posY, posZ);

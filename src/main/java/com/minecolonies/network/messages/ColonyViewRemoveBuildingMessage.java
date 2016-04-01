@@ -19,6 +19,12 @@ public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandle
 
     public ColonyViewRemoveBuildingMessage(){}
 
+    /**
+     * Creates an object for the building remove message
+     *
+     * @param colony        Colony the building is in
+     * @param building      Building that is removed
+     */
     public ColonyViewRemoveBuildingMessage(Colony colony, ChunkCoordinates building)
     {
         this.colonyId = colony.getID();

@@ -11,7 +11,15 @@ public abstract class BuildingHut extends Building
         super(c, l);
     }
 
-    public int getMaxInhabitants() { return 1; }
+    /**
+     * Returns the max amount of inhabitants
+     *
+     * @return  Max inhabitants
+     */
+    public int getMaxInhabitants()
+    {
+        return 1;
+    }
 
     public static class View extends Building.View
     {

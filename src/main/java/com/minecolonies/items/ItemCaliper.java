@@ -10,10 +10,9 @@ import net.minecraft.world.World;
 public class ItemCaliper extends ItemMinecolonies
 {
     private static final RangedAttribute ATTRIBUTE_CALIPER_USE = new RangedAttribute("player.caliperUse", 0.0, 0.0, 1.0);
-
-    private int startPositionX;
-    private int startPositionY;
-    private int startPositionZ;
+    private              int             startPositionX;
+    private              int             startPositionY;
+    private              int             startPositionZ;
 
     public ItemCaliper()
     {
@@ -30,13 +29,16 @@ public class ItemCaliper extends ItemMinecolonies
     @Override
     public boolean onItemUse(ItemStack itemstack, EntityPlayer entityPlayer, World world, int x, int y, int z, int face, float px, float py, float pz)
     {
+        // if client world, do nothing
         if(world.isRemote) return false;
 
+        // if attribute instance is not known, register it.
         IAttributeInstance attribute = entityPlayer.getEntityAttribute(ATTRIBUTE_CALIPER_USE);
         if(attribute == null)
         {
             attribute = entityPlayer.getAttributeMap().registerAttribute(ATTRIBUTE_CALIPER_USE);
         }
+        // if the value of the attribute is still 0, set the start values. (first point)
         if(attribute.getAttributeValue() == 0)
         {
             startPositionX = x;
@@ -46,11 +48,14 @@ public class ItemCaliper extends ItemMinecolonies
             return true;
         }
         attribute.setBaseValue(0.0);
+        //Start == end, same location
         if(startPositionX == x && startPositionY == y && startPositionZ == z)
         {
             LanguageHandler.sendPlayerLocalizedMessage(entityPlayer, "item.caliper.message.same");
             return true;
         }
+
+        //Create the box
         if(startPositionX == x)
         {
             if(startPositionY == y)
