@@ -383,7 +383,7 @@ public class WindowBuildTool extends Window implements Button.Handler
      */
     private void changeSchematic()
     {
-        if(MineColonies.proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isClient())
+        if(MineColonies.isClient())
         {
             String hut = "";
             String style = "";
