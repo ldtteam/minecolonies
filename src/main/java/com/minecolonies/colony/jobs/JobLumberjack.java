@@ -68,7 +68,7 @@ public class JobLumberjack extends Job
     /**
      * Returns the stage of the worker
      *
-     * @return  {@link com.minecolonies.entity.ai.EntityAIWorkLumberjack.Stage}
+     * @return          {@link com.minecolonies.entity.ai.EntityAIWorkLumberjack.Stage}
      */
     public EntityAIWorkLumberjack.Stage getStage()
     {

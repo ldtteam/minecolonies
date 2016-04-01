@@ -498,6 +498,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 {
                     //Keeping the TODO but removing the if
                     //TODO change to isRequired material using chris' system
+                    //TODO make looping??
                     leftOvers = worker.getInventory().getStackInSlot(i);
                     slotID = i;
                     break;

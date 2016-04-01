@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Utils
 {
@@ -377,12 +378,8 @@ public class Utils
      */
     public static List<Entity> getEntitiesFromID(World world, List<Integer> ids)
     {
-        List<Entity> entities = new ArrayList<>();
+        List<Entity> entities = ids.stream().map(world::getEntityByID).collect(Collectors.toList());
 
-        for(int id : ids)
-        {
-            entities.add(world.getEntityByID(id));
-        }
         if(!entities.isEmpty())
         {
             return entities;

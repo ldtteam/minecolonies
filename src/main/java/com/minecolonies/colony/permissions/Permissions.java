@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Colony Permissions System
@@ -138,6 +139,7 @@ public class Permissions implements IPermissions
     }
     /**
      * Reads the permissions from a NBT
+     *
      * @param compound  NBT to read from
      */
     public void loadPermissions(NBTTagCompound compound) {
@@ -172,6 +174,7 @@ public class Permissions implements IPermissions
 
     /**
      * Save the permissions to a NBT
+     *
      * @param compound  NBT to write to
      */
     public void savePermissions(NBTTagCompound compound) {
@@ -220,19 +223,13 @@ public class Permissions implements IPermissions
     /**
      * Returns a set of UUID's that have permission to send (and receive) messages
      *
-     * @return Set of UUID's allowed to send and receive messages
+     * @return      Set of UUID's allowed to send and receive messages
      */
     public Set<UUID> getMessagePlayers()
     {
-        Set<UUID> messagePlayers = new HashSet<>();
-        for (Player player : players.values())
-        {
-            if (hasPermission(player.rank, Action.SEND_MESSAGES))
-            {
-                messagePlayers.add(player.id);
-            }
-        }
-        return messagePlayers;
+        return players.values().stream().filter(player ->
+                hasPermission(player.rank, Action.SEND_MESSAGES)).map(player -> player.id).collect(Collectors.toSet());
+
     }
 
     /*
@@ -267,7 +264,7 @@ public class Permissions implements IPermissions
     /**
      * Returns the map of permissions and ranks
      *
-     * @return  map of permissions
+     * @return          map of permissions
      */
     public Map<Rank, Integer> getPermissions() {
         return permissions;
@@ -277,7 +274,7 @@ public class Permissions implements IPermissions
      * Returns the rank of a player
      *
      * @param player    player to check rank
-     * @return Rank of te player
+     * @return          Rank of te player
      */
     public Rank getRank(EntityPlayer player)
     {
@@ -300,7 +297,7 @@ public class Permissions implements IPermissions
      *
      * @param player    {@link EntityPlayer} player
      * @param action    {@link com.minecolonies.colony.permissions.Permissions.Action} action
-     * @return true if player has permissions, otherwise false
+     * @return          true if player has permissions, otherwise false
      */
     public boolean hasPermission(EntityPlayer player, Action action) {
         return hasPermission(getRank(player), action);
@@ -317,7 +314,7 @@ public class Permissions implements IPermissions
      *
      * @param rank      Rank you want to check
      * @param action    Action you want to perform
-     * @return  true if rank has permission for action, otherwise false
+     * @return          true if rank has permission for action, otherwise false
      */
     public boolean hasPermission(Rank rank, Action action) {
         return Utils.testFlag(permissions.get(rank), action.flag);
@@ -620,27 +617,13 @@ public class Permissions implements IPermissions
 
         public Set<Player> getPlayersByRank(Rank rank)
         {
-            Set<Player> players = new HashSet<>();
-            for (Player player : this.players.values())
-            {
-                if (player.rank == rank)
-                {
-                    players.add(player);
-                }
-            }
+            Set<Player> players = this.players.values().stream().filter(player -> player.rank == rank).collect(Collectors.toSet());
             return Collections.unmodifiableSet(players);
         }
 
         public Set<Player> getPlayersByRank(Set<Rank> ranks)
         {
-            Set<Player> players = new HashSet<>();
-            for (Player player : this.players.values())
-            {
-                if (ranks.contains(player.rank))
-                {
-                    players.add(player);
-                }
-            }
+            Set<Player> players = this.players.values().stream().filter(player -> ranks.contains(player.rank)).collect(Collectors.toSet());
             return Collections.unmodifiableSet(players);
         }
 

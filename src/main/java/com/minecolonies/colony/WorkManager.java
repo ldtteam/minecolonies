@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorkManager
 {
@@ -134,15 +135,7 @@ public class WorkManager
      */
     public <ORDER extends WorkOrder> List<ORDER> getWorkOrdersOfType(Class<ORDER> type)
     {
-        List<ORDER> list = new ArrayList<>();
-        for (WorkOrder o : workOrders.values())
-        {
-            if (type.isAssignableFrom(o.getClass()))
-            {
-                list.add(type.cast(o));
-            }
-        }
-        return list;
+        return workOrders.values().stream().filter(o -> type.isAssignableFrom(o.getClass())).map(type::cast).collect(Collectors.toList());
     }
 
     /**
@@ -225,9 +218,7 @@ public class WorkManager
 
             if ((event.world.getWorldTime() % WORK_ORDER_FULFILL_INCREMENT) == 0)
             {
-                workOrders.values().stream().filter(o -> !o.isClaimed()).forEach(o -> {
-                    o.attemptToFulfill(colony);
-                });
+                workOrders.values().stream().filter(o -> !o.isClaimed()).forEach(o -> o.attemptToFulfill(colony));
             }
         }
     }

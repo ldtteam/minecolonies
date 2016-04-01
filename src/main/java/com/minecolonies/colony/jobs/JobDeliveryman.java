@@ -66,7 +66,8 @@ public class JobDeliveryman extends Job
 
     /**
      * Returns whether or not the job has a destination
-     * @return  true if has destination, otherwise false
+     *
+     * @return          true if has destination, otherwise false
      */
     public boolean hasDestination()
     {
@@ -75,7 +76,8 @@ public class JobDeliveryman extends Job
 
     /**
      * Returns the {@link ChunkCoordinates} of the destination
-     * @return  {@link ChunkCoordinates} of the destination
+     *
+     * @return          {@link ChunkCoordinates} of the destination
      */
     public ChunkCoordinates getDestination()
     {
@@ -84,7 +86,8 @@ public class JobDeliveryman extends Job
 
     /**
      * Sets the destination of the job
-     * @param destination {@link ChunkCoordinates} of the destination
+     *
+     * @param destination   {@link ChunkCoordinates} of the destination
      */
     public void setDestination(ChunkCoordinates destination)
     {

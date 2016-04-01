@@ -29,6 +29,7 @@ public class Level
     private                 List<Node>          nodes      = new ArrayList<>();
     private                 Node                ladderNode = null;
 
+    //TODO document class
     private Level()
     {
     }

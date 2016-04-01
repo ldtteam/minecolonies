@@ -62,7 +62,7 @@ public class JobFarmer extends Job
     /**
      * Returns the stage of the worker
      *
-     * @return  {@link com.minecolonies.entity.ai.EntityAIWorkFarmer.Stage}
+     * @return          {@link com.minecolonies.entity.ai.EntityAIWorkFarmer.Stage}
      */
     public EntityAIWorkFarmer.Stage getStage()
     {
@@ -72,7 +72,7 @@ public class JobFarmer extends Job
     /**
      * Adds items if job requires items not in inventory
      *
-     * @param stack Stack to check if it is a required item
+     * @param stack     Stack to check if it is a required item
      */
     public void addItemNeededIfNotAlready(ItemStack stack)
     {

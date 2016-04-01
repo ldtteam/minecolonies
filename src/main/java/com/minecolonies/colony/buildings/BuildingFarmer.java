@@ -128,7 +128,7 @@ public class BuildingFarmer extends BuildingWorker
     /**
      * Returns the farm radius of the building
      *
-     * @return Farm radius
+     * @return      Farm radius
      */
     public int getFarmRadius()
     {

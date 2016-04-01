@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Colony implements IColony
 {
@@ -116,8 +117,8 @@ public class Colony implements IColony
     /**
      * Load a saved colony
      *
-     * @param compound The NBT compound containing the colony's data
-     * @return loaded colony
+     * @param compound  The NBT compound containing the colony's data
+     * @return          loaded colony
      */
     public static Colony loadColony(NBTTagCompound compound)
     {
@@ -692,7 +693,7 @@ public class Colony implements IColony
      * Returns a map with all buildings within the colony
      * Key is ID (Coordinates), value is building object
      *
-     * @return Map with ID (coordinates) as key, and buildings as value
+     * @return      Map with ID (coordinates) as key, and buildings as value
      */
     public Map<ChunkCoordinates, Building> getBuildings()
     {
@@ -702,7 +703,7 @@ public class Colony implements IColony
     /**
      * Gets the town hall of the colony
      *
-     * @return  Town hall of the colony
+     * @return      Town hall of the colony
      */
     public BuildingTownHall getTownhall()
     {
@@ -880,7 +881,7 @@ public class Colony implements IColony
      * Returns a map of citizens in the colony
      * The map has ID as key, and citizen data as value
      *
-     * @return Map of citizens in the colony, with as key the citizen ID, and as value the citiizen data
+     * @return          Map of citizens in the colony, with as key the citizen ID, and as value the citiizen data
      */
     public Map<Integer, CitizenData> getCitizens() { return Collections.unmodifiableMap(citizens); }
 
@@ -929,7 +930,7 @@ public class Colony implements IColony
      * Get citizen by ID
      *
      * @param citizenId ID of the Citizen
-     * @return CitizenData associated with the ID, or null if it was not found
+     * @return          CitizenData associated with the ID, or null if it was not found
      */
     public CitizenData getCitizen(int citizenId)
     {
@@ -939,7 +940,7 @@ public class Colony implements IColony
     /**
      * Get the first unemployed citizen
      *
-     * @return Citizen with no current job
+     * @return          Citizen with no current job
      */
     public CitizenData getJoblessCitizen()
     {
@@ -957,7 +958,7 @@ public class Colony implements IColony
     /**
      * Get the Work Manager for the Colony
      *
-     * @return WorkManager for the Colony
+     * @return          WorkManager for the Colony
      */
     public WorkManager getWorkManager()
     {
@@ -966,21 +967,10 @@ public class Colony implements IColony
 
     public List<ChunkCoordinates> getDeliverymanRequired()
     {
-        List<ChunkCoordinates> deliverymanRequired = new ArrayList<>();
 
-        for (CitizenData citizen : citizens.values())
-        {
-            if (citizen.getWorkBuilding() != null &&
-                    citizen.getJob() != null)
-            {
-                if (!citizen.getJob().isMissingNeededItem())
-                {
-                    deliverymanRequired.add(citizen.getWorkBuilding().getLocation());
-                }
-            }
-        }
-
-        return deliverymanRequired;
+        return citizens.values().stream().filter(citizen -> citizen.getWorkBuilding() != null &&
+                citizen.getJob() != null).filter(citizen -> !citizen.getJob().isMissingNeededItem()).map(citizen ->
+                citizen.getWorkBuilding().getLocation()).collect(Collectors.toList());
     }
 
     //public int getAutoHostile()

@@ -1,7 +1,5 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.sun.istack.internal.NotNull;
-
 public class Node implements Comparable<Node>
 {
     public Node parent;

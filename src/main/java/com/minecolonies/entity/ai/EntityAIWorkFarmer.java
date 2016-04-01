@@ -69,8 +69,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
     }
 
     /**
-     *
-     * @return
+     * @return          String for seeds renderer if farmer has seeds, otherwise empty string
      */
     private String getRenderMetaSeeds()
     {

@@ -21,7 +21,6 @@ public interface IColony
 
     /**
      * Determine if a given chunk coordinate is considered to be within the colony's bounds
-     * Calls {@link #isCoordInColony(World, int, int, int)}
      *
      * @param w         World to check
      * @param x         x-coordinate

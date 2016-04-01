@@ -23,6 +23,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ColonyManager
 {
@@ -160,17 +161,10 @@ public class ColonyManager
      */
     public static List<Colony> getColoniesByOwner(UUID owner)
     {
-        List<Colony> results = new ArrayList<>();
 
-        for (Colony c : colonies.values())
-        {
-            if (c.getPermissions().getOwner().equals(owner))//TODO is this what we want? Also improve
-            {
-                results.add(c);
-            }
-        }
+        //TODO is this what we want? Also improve
 
-        return results;
+        return colonies.values().stream().filter(c -> c.getPermissions().getOwner().equals(owner)).collect(Collectors.toList());
     }
 
     /**

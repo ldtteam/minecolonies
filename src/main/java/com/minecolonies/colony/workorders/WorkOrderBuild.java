@@ -44,7 +44,7 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * Returns the level up level of the building
      *
-     * @return  Level after upgrade
+     * @return      Level after upgrade
      */
     public int getUpgradeLevel()
     {
@@ -54,7 +54,7 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * Returns the name after upgrade
      *
-     * @return  Name after yograde
+     * @return      Name after yograde
      */
     public String getUpgradeName()
     {

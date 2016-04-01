@@ -39,7 +39,7 @@ public class JobMiner extends Job
      * This method can be used to display the current status.
      * That a citizen is having.
      *
-     * @return Small string to display info in name tag
+     * @return      Small string to display info in name tag
      */
     @Override
     public String getNameTagDescription()
@@ -63,7 +63,7 @@ public class JobMiner extends Job
     /**
     * Returns the stage of the worker
      *
-    * @return  {@link com.minecolonies.entity.ai.EntityAIWorkMiner.Stage}
+    * @return           {@link com.minecolonies.entity.ai.EntityAIWorkMiner.Stage}
     */
     public EntityAIWorkMiner.Stage getStage()
     {
@@ -83,7 +83,7 @@ public class JobMiner extends Job
     /**
      * Adds items if job requires items not in inventory
      *
-     * @param stack Stack to check if it is a required item
+     * @param stack     Stack to check if it is a required item
      */
     public void addItemNeededIfNotAlready(ItemStack stack)
     {

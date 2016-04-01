@@ -126,7 +126,7 @@ public class ColonyView implements IColony
      * Returns a map of players in the colony
      * Key is the UUID, value is {@link com.minecolonies.colony.permissions.Permissions.Player}
      *
-     * @return  Map of UUID's and {@link com.minecolonies.colony.permissions.Permissions.Player}
+     * @return                  Map of UUID's and {@link com.minecolonies.colony.permissions.Permissions.Player}
      */
     public Map<UUID, Permissions.Player> getPlayers()
     {
@@ -136,8 +136,8 @@ public class ColonyView implements IColony
     /**
      * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server
      *
-     * @param rank          Rank to get the permission
-     * @param action        Permission to get
+     * @param rank              Rank to get the permission
+     * @param action            Permission to get
      */
     public void setPermission(Permissions.Rank rank, Permissions.Action action) {
         if(permissions.setPermission(rank, action))
@@ -149,8 +149,8 @@ public class ColonyView implements IColony
     /**
      * removes a specific permission to a rank. If the permission was set, it sends a message to the server
      *
-     * @param rank      Rank to remove permission from
-     * @param action    Action to remove permission of
+     * @param rank              Rank to remove permission from
+     * @param action            Action to remove permission of
      */
     public void removePermission(Permissions.Rank rank, Permissions.Action action) {
         if(permissions.removePermission(rank, action))
@@ -176,7 +176,7 @@ public class ColonyView implements IColony
     /**
      * Returns the maximum amount of citizen in the colony
      *
-     * @return  maximum amount of citizens
+     * @return          maximum amount of citizens
      */
     public int getMaxCitizens() {
         return maxCitizens;

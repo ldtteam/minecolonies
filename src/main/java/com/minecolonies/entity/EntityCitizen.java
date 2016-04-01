@@ -754,14 +754,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         setCurrentItemOrArmor(0, inventory.getStackInSlot(slot));
     }
 
-    /**
-     * Caused by: java.lang.RuntimeException: Attempted to load class bsx for invalid side SERVER
-     * not entirely sure jet...
-     *
-     * @param x
-     * @param y
-     * @param z
-     */
+    //TODO what is this???
     public void hitBlockWithToolInHand(int x, int y, int z)
     {
         this.swingItem();

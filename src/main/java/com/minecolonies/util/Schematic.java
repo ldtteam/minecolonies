@@ -297,14 +297,10 @@ public class Schematic
         return pos.posY <= 0 || schematic.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematic.getBlockMetadata(x, y, z) == ChunkCoordUtils.getBlockMetadata(world, pos);
     }
 
-    public boolean worldBlockAir()
-    {
+    public boolean worldBlockAir() {
         ChunkCoordinates pos = this.getBlockPosition();
-        if(pos.posY <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        {
-            return true;
-        }
-        return world.isAirBlock(pos.posX, pos.posY, pos.posZ);
+        //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
+        return pos.posY <= 0 || world.isAirBlock(pos.posX, pos.posY, pos.posZ);
     }
 
     public static String saveSchematic(World world, ChunkCoordinates from, ChunkCoordinates to)

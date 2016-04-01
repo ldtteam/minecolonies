@@ -52,8 +52,8 @@ public class CommonProxy implements IProxy
     /**
      * Removes the compound from the map and returns the NBT tag stored for name or null if none exists
      *
-     * @param name player UUID + Properties name, HashMap key
-     * @return NBTTagCompound PlayerProperties NBT compound
+     * @param name  player UUID + Properties name, HashMap key
+     * @return      NBTTagCompound PlayerProperties NBT compound
      */
     public static NBTTagCompound getEntityData(String name)
     {

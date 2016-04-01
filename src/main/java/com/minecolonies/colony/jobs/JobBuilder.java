@@ -106,7 +106,7 @@ public class JobBuilder extends Job
     /**
      * Set a Work Order for this Job
      *
-     * @param order Work Order to associate with this job, or null
+     * @param order     Work Order to associate with this job, or null
      */
     public void setWorkOrder(WorkOrderBuild order)
     {
@@ -116,7 +116,7 @@ public class JobBuilder extends Job
     /**
      * Get the Work Order ID for this Job
      *
-     * @return UUID of the Work Order claimed by this Job, or null
+     * @return          UUID of the Work Order claimed by this Job, or null
      */
     public int getWorkOrderId()
     {
@@ -127,7 +127,7 @@ public class JobBuilder extends Job
      * Get the Work Order for the Job
      * Warning: WorkOrder is not cached
      *
-     * @return WorkOrderBuild for the Build
+     * @return          WorkOrderBuild for the Build
      */
     public WorkOrderBuild getWorkOrder()
     {
@@ -137,7 +137,7 @@ public class JobBuilder extends Job
     /**
      * Does this job have a Work Order it has claimed?
      *
-     * @return true if there is a Work Order claimed by this Job
+     * @return      true if there is a Work Order claimed by this Job
      */
     public boolean hasWorkOrder()
     {
@@ -147,7 +147,7 @@ public class JobBuilder extends Job
     /**
      * Does this job have a loaded Schematic?
      *
-     * @return true if there is a loaded schematic for this Job
+     * @return      true if there is a loaded schematic for this Job
      */
     public boolean hasSchematic()
     {
@@ -157,7 +157,7 @@ public class JobBuilder extends Job
     /**
      * Get the Schematic loaded by the Job
      *
-     * @return Schematic loaded by the Job
+     * @return      Schematic loaded by the Job
      */
     public Schematic getSchematic()
     {
@@ -167,7 +167,7 @@ public class JobBuilder extends Job
     /**
      * Set the schematic of builder's job
      *
-     * @param schematic {@link Schematic} object
+     * @param schematic         {@link Schematic} object
      */
     public void setSchematic(Schematic schematic)
     {
@@ -176,7 +176,7 @@ public class JobBuilder extends Job
 
     /**
      * Returns the work interval of the worker //unfinished
-     * @return  work interval
+     * @return              work interval
      */
     public int getWorkInterval()
     {

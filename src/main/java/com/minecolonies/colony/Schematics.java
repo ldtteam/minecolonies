@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 /**
  * Created by chris on 10/19/15.
+ * Schematic class
  */
 public class Schematics
 {

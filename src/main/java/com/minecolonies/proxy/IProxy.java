@@ -48,11 +48,30 @@ public interface IProxy
      * @param citizen       {@link com.minecolonies.colony.CitizenData.View}
      */
     void showCitizenWindow(CitizenData.View citizen);
+
+    /**
+     * Opens a build tool window
+     *
+     * @param x     X-coordinate
+     * @param y     Y-coordinate
+     * @param z     Z-coordinate
+     */
     void openBuildToolWindow(int x, int y, int z);
 
     //Schematica
 
+    /**
+     * Sets the active schematica.
+     * The current {@link SchematicWorld} os given
+     *
+     * @param world     {@link SchematicWorld}
+     */
     void setActiveSchematic(SchematicWorld world);
 
+    /**
+     * Returns the active schematica
+     *
+     * @return          {@link SchematicWorld}
+     */
     SchematicWorld getActiveSchematic();
 }

@@ -77,7 +77,7 @@ public class InventoryCitizen extends InventoryBasic
      * Gets slot that hold item that is being held by citizen
      *
      * @return              Slot index of held item
-     * @see {@link #getHeldItem()}
+     * @see                 {@link #getHeldItem()}
      */
     public int getHeldItemSlot()
     {

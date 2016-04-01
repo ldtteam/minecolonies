@@ -12,7 +12,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 
 /**
