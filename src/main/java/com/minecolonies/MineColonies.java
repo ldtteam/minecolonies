@@ -111,11 +111,21 @@ public class MineColonies
     {
     }
 
+    /**
+     * Returns whether the side is client or not
+     *
+     * @return      True when client, otherwise false
+     */
     public static boolean isClient()
     {
         return proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isClient();
     }
 
+    /**
+     * Returns whether the side is client or not
+     *
+     * @return      True when server, otherwise false
+     */
     public static boolean isServer()
     {
         return !proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isServer();
