@@ -87,12 +87,14 @@ public class ClientProxy extends CommonProxy
 
     //Schematica
     @Override
-    public void setActiveSchematic(SchematicWorld world) {
+    public void setActiveSchematic(SchematicWorld world)
+    {
         this.schematicWorld = world;
     }
 
     @Override
-    public SchematicWorld getActiveSchematic() {
+    public SchematicWorld getActiveSchematic()
+    {
         return this.schematicWorld;
     }
 }
