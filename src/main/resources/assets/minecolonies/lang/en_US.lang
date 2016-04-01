@@ -63,7 +63,7 @@ tile.blockHutFarmer.name=Farm
 tile.blockHutLumberjack.name=Sawmill
 tile.blockHutMiner.name=Mine
 tile.blockHutStonemason.name=Quarry
-tile.blockHutTownHall.name=Town Hall
+tile.blockHutTownhall.name=Town Hall
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
 
 com.minecolonies.job.Builder=Builder
