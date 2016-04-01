@@ -837,7 +837,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if(!worldObj.isRemote)
         {
             InventoryCitizen newInventory = new InventoryCitizen(inventory.getInventoryName(), inventory.hasCustomInventoryName(), newSize);
-            ArrayList<ItemStack> leftovers = new ArrayList<>();
+            ArrayList<ItemStack> leftOvers = new ArrayList<>();
             for(int i = 0; i < inventory.getSizeInventory(); i++)
             {
                 ItemStack itemstack = inventory.getStackInSlot(i);
@@ -854,7 +854,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             inventory.addIInvBasic(this);
             if(dropLeftovers)
             {
-                leftovers.stream().filter(leftover -> leftover.stackSize > 0).forEach(this::entityDropItem);
+                leftOvers.stream().filter(leftover -> leftover.stackSize > 0).forEach(this::entityDropItem);
             }
         }
     }
