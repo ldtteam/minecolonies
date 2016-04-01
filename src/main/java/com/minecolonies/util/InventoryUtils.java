@@ -157,8 +157,9 @@ public class InventoryUtils {
     //But seems like ItemStack does it right...
     /**
      * Converts a Block to its Item so it can be compared.
+     *
      * @param block the block to convert
-     * @return an item from the registry
+     * @return      an item from the registry
      */
     public static Item getItemFromBlock(Block block){
         return new ItemStack(block).getItem();
@@ -168,7 +169,7 @@ public class InventoryUtils {
      * Tries to put an item into Inventory
      *
      * @param stack Item stack with items to be transferred
-     * @return returns null if successful, or stack of remaining items
+     * @return      returns null if successful, or stack of remaining items
      */
     public static ItemStack setStack(IInventory inventory, ItemStack stack)
     {
@@ -212,7 +213,7 @@ public class InventoryUtils {
     /**
      * returns first open slot in the inventory
      *
-     * @return slot number or -1 if none found.
+     * @return      slot number or -1 if none found.
      */
     public static int getOpenSlot(IInventory inventory)
     {
@@ -229,7 +230,7 @@ public class InventoryUtils {
     /**
      * returns a slot number if a chest contains given ItemStack item
      *
-     * @return returns slot number if found, -1 when not found.
+     * @return      returns slot number if found, -1 when not found.
      */
     public static int containsStack(IInventory inventory, ItemStack stack)
     {
@@ -247,7 +248,7 @@ public class InventoryUtils {
     /**
      * returns a slot number if a chest contains given ItemStack item that is not fully stacked
      *
-     * @return returns slot number if found, -1 when not found.
+     * @return      returns slot number if found, -1 when not found.
      */
     public static int containsPartialStack(IInventory inventory, ItemStack stack)
     {
@@ -262,19 +263,49 @@ public class InventoryUtils {
         return -1;
     }
 
+    /**
+     * @see {@link #takeStackInSlot(IInventory, IInventory, int, int, boolean)}
+     * Default:
+     *      amount: 1
+     *      takeAll: true
+     *
+     * @param sendingInv        Inventory of sender
+     * @param receivingInv      Inventory of receiver
+     * @param slotID            Slot ID to take from
+     * @return                  True if item is swapped, otherwise false
+     */
     public static boolean takeStackInSlot(IInventory sendingInv, IInventory receivingInv, int slotID){
         return takeStackInSlot(sendingInv, receivingInv, slotID, 1, true);
     }
 
+    /**
+     * @see {@link #takeStackInSlot(IInventory, IInventory, int, int, boolean)}
+     * Default:
+     *      takeAll: false
+     *
+     * @param sendingInv        Inventory of sender
+     * @param receivingInv      Inventory of receiver
+     * @param slotID            Slot ID to take from
+     * @param amount            Amount to swap
+     * @return                  True if item is swapped, otherwise false
+     */
     public static boolean takeStackInSlot(IInventory sendingInv, IInventory receivingInv, int slotID, int amount)
     {
         return takeStackInSlot(sendingInv, receivingInv, slotID, amount, false);
     }
 
     /**
-     * @param takeAll Whether or not {@code receiving} will take the rest if possible
-     * @return true if itemstack in specified {@code slotID} is not null and if {@code receivingInv} received
-     * at least {@code amount} of itemstack
+     * Gives an item from an slot index from an inventory and puts it in a receiving inventory
+     * If <code>takeAll</code> is true, the entire slot will we transferred.
+     * This only applied when at least <code>amount</code> can be taken.
+     *
+     * @param sendingInv        Inventory of sender
+     * @param receivingInv      Inventory of receiver
+     * @param slotID            Slot ID to take from
+     * @param amount            Amount to swap
+     * @param takeAll           Whether or not the entire stack of the sender should be emptied if possible
+     *                          Only applies when <code>amount</code> is sufficient
+     * @return                  True if item is swapped, otherwise false
      */
     public static boolean takeStackInSlot(IInventory sendingInv, IInventory receivingInv,
                                           int slotID, int amount, boolean takeAll)
@@ -310,6 +341,13 @@ public class InventoryUtils {
         return false;
     }
 
+    /**
+     * Returns all <code>ItemStack</code>s in an inventory.
+     * Stores this in an array
+     *
+     * @param inventory     Inventory to return all item stacks from
+     * @return              Array of item stacks
+     */
     public static ItemStack[] getAllItemStacks(IInventory inventory)
     {
         ItemStack[] itemStack = new ItemStack[inventory.getSizeInventory()];
@@ -320,6 +358,13 @@ public class InventoryUtils {
         return itemStack;
     }
 
+    /**
+     * Returns the amount of item stacks in an inventory
+     * This equals {@link #getAllItemStacks(IInventory)}<code>.length();</code>
+     *
+     * @param inventory     Inventory to count item stacks of
+     * @return              Amount of item stacks in inventory
+     */
     public static int getAmountOfStacks(IInventory inventory)
     {
         int count = 0;
@@ -333,6 +378,11 @@ public class InventoryUtils {
         return count;
     }
 
+    /**
+     * Clears an entire inventory
+     *
+     * @param inventory     Inventory to clear
+     */
     public static void clear(IInventory inventory)
     {
         for(int slot = 0; slot < inventory.getSizeInventory(); slot++)
@@ -344,7 +394,7 @@ public class InventoryUtils {
     /**
      * returns a slot number if an inventory contains given tool type
      *
-     * @return returns slot number if found, -1 if not found.
+     * @return      slot number if found, -1 if not found.
      */
     public static int getFirstSlotContainingTool(IInventory inventory, String tool)
     {
@@ -359,11 +409,11 @@ public class InventoryUtils {
     }
 
     /**
-     * Adapted from InventoryPlayer
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}
      *
-     * @param inventory Inventory
-     * @param itemStack ItemStack to add
-     * @return Success
+     * @param inventory     Inventory to add itemstack to
+     * @param itemStack     ItemStack to add
+     * @return              True if successful, otherwise false
      */
     public static boolean addItemStackToInventory(IInventory inventory, final ItemStack itemStack)
     {
@@ -409,10 +459,14 @@ public class InventoryUtils {
     }
 
     /**
-     * Adapted from InventoryPlayer
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storePartialItemStack(ItemStack)}
      *
      * This function stores as many items of an ItemStack as possible in a matching slot and returns the quantity of
      * left over items.
+     *
+     * @param inventory     Inventory to add stack to
+     * @param itemStack     Item stack to store in inventory
+     * @return              Leftover items in itemstack
      */
     private static int storePartialItemStack(IInventory inventory, ItemStack itemStack)
     {
@@ -493,9 +547,13 @@ public class InventoryUtils {
     }
 
     /**
-     * Adapted from InventoryPlayer - storeItemStack
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storeItemStack(ItemStack)}
      *
      * find a slot to store an ItemStack in
+     *
+     * @param inventory     Inventory to look in
+     * @param itemStack     Item Stack to look for
+     * @return              Index of the item stack. If not found, returns -1
      */
     private static int findSlotForItemStack(IInventory inventory, ItemStack itemStack)
     {

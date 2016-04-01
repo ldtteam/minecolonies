@@ -1,7 +1,7 @@
 package com.minecolonies.event;
 
 import com.minecolonies.blocks.BlockHut;
-import com.minecolonies.blocks.BlockHutTownHall;
+import com.minecolonies.blocks.BlockHutTownhall;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.IColony;
 import com.minecolonies.colony.buildings.Building;
@@ -127,7 +127,7 @@ public class EventHandler
     public static boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, int x, int y, int z)//TODO use permissions
     {
         //  Check if this Hut Block can be placed
-        if (block instanceof BlockHutTownHall)
+        if (block instanceof BlockHutTownhall)
         {
             IColony colony = ColonyManager.getClosestIColony(world, x, y, z);
             if (colony != null)

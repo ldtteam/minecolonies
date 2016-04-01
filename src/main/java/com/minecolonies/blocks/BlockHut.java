@@ -98,10 +98,10 @@ public abstract class BlockHut extends Block implements ITileEntityProvider
 
             Colony colony = ColonyManager.getColony(world, hut.getPosition());
 
-            if(this instanceof BlockHutTownHall)
+            if(this instanceof BlockHutTownhall)
             {
                 /*
-                True if you try to place a BlockHutTownHall, and there is no colony at your location yet.
+                True if you try to place a BlockHutTownhall, and there is no colony at your location yet.
                 Creates a new colony
                  */
                 if (colony == null)

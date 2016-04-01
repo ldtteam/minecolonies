@@ -39,7 +39,6 @@ public class MineColonies
     }
 
     @Mod.EventHandler
-    @SuppressWarnings("unused")
     public void invalidFingerprint(FMLFingerprintViolationEvent event)
     {
         if(Constants.FINGERPRINT.equals("@FINGERPRINT@"))
@@ -107,15 +106,5 @@ public class MineColonies
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
-    }
-
-    public static boolean isClient()
-    {
-        return proxy.isClient();
-    }
-
-    public static boolean isServer()
-    {
-        return !proxy.isClient();
     }
 }
