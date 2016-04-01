@@ -37,7 +37,11 @@ public class ScrollingListContainer extends ScrollingContainer
             }
 
             child.setPosition(0, i * listElementHeight);
-            dataProvider.updateElement(i, child);
+
+            if(dataProvider != null)
+                dataProvider.updateElement(i, child);
+            else
+                throw new NullPointerException();
         }
 
         while (children.size() > numElements)

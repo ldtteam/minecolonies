@@ -10,13 +10,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,6 +67,7 @@ public class Loader
         }
         catch (NoSuchMethodException exception)
         {
+            logger.error("No method exception in Loader.java");
             throw new IllegalArgumentException("Missing (XMLNode) constructor for type '" + name + "' when adding Pane class mapping for " + paneClass.getName());
         }
     }
@@ -94,12 +98,12 @@ public class Loader
             {
                 return constructor.newInstance(params);
             }
-            catch (Exception exc)
+            catch (InstantiationException | IllegalAccessException | InvocationTargetException exc)
             {
-                exc.printStackTrace();
                 logger.error(
                         String.format("Exception when parsing XML for pane type %s", paneType),
                         exc);
+                exc.printStackTrace();
             }
         }
 
@@ -168,10 +172,10 @@ public class Loader
 
             createFromXML(doc, parent);
         }
-        catch (Exception exc)
+        catch (ParserConfigurationException | SAXException | IOException exc)
         {
-            exc.printStackTrace();
             logger.error("Exception when parsing XML.", exc);
+            exc.printStackTrace();
         }
     }
 
@@ -229,6 +233,7 @@ public class Loader
         }
         catch(IOException e)
         {
+            logger.error("IOException Loader.java");
             e.printStackTrace();
         }
         return null;

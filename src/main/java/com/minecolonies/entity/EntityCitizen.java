@@ -43,29 +43,29 @@ import static net.minecraftforge.common.util.Constants.NBT;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
-    private static final int DATA_TEXTURE         = 13;
-    private static final int DATA_LEVEL           = 14;
-    private static final int DATA_IS_FEMALE       = 15;
-    private static final int DATA_COLONY_ID       = 16;
-    private static final int DATA_CITIZEN_ID      = 17;  //  Because Entity UniqueIDs are not identical between client and server
-    private static final int DATA_MODEL           = 18;
-    private static final int DATA_RENDER_METADATA = 19;
-    private static Field navigatorField;
-    protected Status status = Status.IDLE;
-    boolean isFemale;
-    RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
-    String renderMetadata;
-    private ResourceLocation texture;
-    private InventoryCitizen inventory;
-    private int              colonyId;
-    private int citizenId = 0;
-    private Colony      colony;
-    private CitizenData citizenData;
-    private int         level;
-    private int         textureId;
-    private Map<String, Integer> statusMessages = new HashMap<>();
-    private PathNavigate newNavigator;
-    private boolean useNewNavigation = false;
+    private static final int                             DATA_TEXTURE         = 13;
+    private static final int                             DATA_LEVEL           = 14;
+    private static final int                             DATA_IS_FEMALE       = 15;
+    private static final int                             DATA_COLONY_ID       = 16;
+    private static final int                             DATA_CITIZEN_ID      = 17;  //  Because Entity UniqueIDs are not identical between client and server
+    private static final int                             DATA_MODEL           = 18;
+    private static final int                             DATA_RENDER_METADATA = 19;
+    private static       Field                           navigatorField;
+    protected            Status                          status               = Status.IDLE;
+    private              boolean                         isFemale;
+    private              RenderBipedCitizen.Model        modelId              = RenderBipedCitizen.Model.SETTLER;
+    private              String                          renderMetadata;
+    private              ResourceLocation                texture;
+    private              InventoryCitizen                inventory;
+    private              int                             colonyId;
+    private              int                             citizenId = 0;
+    private              Colony                          colony;
+    private              CitizenData                     citizenData;
+    private              int                             level;
+    private              int                             textureId;
+    private              Map<String, Integer>            statusMessages      = new HashMap<>();
+    private              PathNavigate                    newNavigator;
+    private              boolean                         useNewNavigation    = false;
 
     public EntityCitizen(World world)
     {

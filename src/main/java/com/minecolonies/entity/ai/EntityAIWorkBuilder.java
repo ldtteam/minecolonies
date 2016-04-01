@@ -53,33 +53,34 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             loadSchematic();
 
             WorkOrderBuild wo = job.getWorkOrder();
-            if(wo == null)
+            if (wo == null)
             {
                 MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)", worker.getColony().getID(), worker.getCitizenData().getId(), job.getWorkOrderId()));
                 return;
             }
             Building building = job.getColony().getBuilding(wo.getBuildingId());
-            if(building == null)
+            if (building == null)
             {
                 MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)", worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
             }
             //Don't go through the CLEAR stage for repairs and upgrades
-            if(building.getBuildingLevel() > 0)
+            if (building != null)
             {
-                job.stage = JobBuilder.Stage.REQUEST_MATERIALS;
+                if (building.getBuildingLevel() > 0) {
+                    job.stage = JobBuilder.Stage.REQUEST_MATERIALS;
 
-                if(!job.hasSchematic() || !incrementBlock())
-                {
-                    return;
+                    if (!job.hasSchematic() || !incrementBlock()) {
+                        return;
+                    }
+                } else {
+                    job.stage = JobBuilder.Stage.CLEAR;
+                    if (!job.hasSchematic() || !job.getSchematic().decrementBlock()) {
+                        return;
+                    }
                 }
-            }
-            else
+            } else
             {
-                job.stage = JobBuilder.Stage.CLEAR;
-                if(!job.hasSchematic() || !job.getSchematic().decrementBlock())
-                {
-                    return;
-                }
+                throw new NullPointerException();
             }
 
 
