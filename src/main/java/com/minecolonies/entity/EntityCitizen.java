@@ -199,13 +199,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return currentRotation + wrappedAngle;
     }
 
-
     public void faceBlock(ChunkCoordinates block)
     {
 
         double xDifference = block.posX - this.posX;
         double zDifference = block.posZ - this.posZ;
-        double yDifference = block.posY - (this.posY + (double)this.getEyeHeight());
+        double yDifference = block.posY - (this.posY + (double)this.getEyeHeight()-0.5);
 
         double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
         double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
@@ -753,7 +752,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     //Add experience points to citizen.
-    public void addExperience(int xp)
+    private void addExperience(int xp)
     {
         int j = Integer.MAX_VALUE - this.experienceTotal;
         int localXp = xp;

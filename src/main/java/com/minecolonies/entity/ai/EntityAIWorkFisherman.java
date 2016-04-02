@@ -91,7 +91,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     @Override
     protected boolean wantInventoryDumped()
     {
-        //TODO Change state to searching water
         if (fishesCaught > MAX_FISHES_IN_INV)
         {
             fishesCaught = 0;
@@ -238,6 +237,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
             if (!world.isRemote)
             {
+                worker.faceBlock(job.getWater().getLocation());
                 world.playSoundAtEntity(worker,
                                         "random.bow",
                                         0.5F,
