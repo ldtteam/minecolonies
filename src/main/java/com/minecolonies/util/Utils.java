@@ -24,6 +24,7 @@ public class Utils
     public static final String AXE = "axe";
     public static final String HOE = "hoe";
     public static final String ROD = "rod";
+    private static final int NANO_TIME_DIVIDER = 1000 * 1000 * 1000;
 
     /**
      * Find the closest block near the points
@@ -120,6 +121,11 @@ public class Utils
     {
         PathPoint pathpoint = citizen.getNavigator().getPath().getFinalPathPoint();
         return pathpoint != null && pathpoint.xCoord == x && pathpoint.zCoord == z;
+    }
+
+    public static long nanoSecondsToSeconds(long nanoSeconds)
+    {
+        return nanoSeconds/NANO_TIME_DIVIDER;
     }
 
     /**

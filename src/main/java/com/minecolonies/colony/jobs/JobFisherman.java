@@ -18,7 +18,6 @@ import java.util.List;
 
 public class JobFisherman extends Job
 {
-    private static final String TAG_STAGE = "Stage";
     private static final String TAG_WATER = "Water";
     private static final String TAG_PONDS = "Ponds";
 
@@ -86,32 +85,43 @@ public class JobFisherman extends Job
         tasks.addTask(3, new EntityAIWorkFisherman(this));
     }
 
-    public Water getWater() {
+    //Returns the water object
+    public Water getWater()
+    {
         return water;
     }
 
-    public void setWater(Water water) {
+    //Sets the water object
+    public void setWater(Water water)
+    {
         this.water = water;
     }
 
-    public ArrayList<ChunkCoordinates> getPonds() {
-        return ponds;
+    //returns the pond list
+    public List<ChunkCoordinates> getPonds()
+    {
+        return new ArrayList<>(ponds);
     }
 
-    public void setPonds(ArrayList<ChunkCoordinates> ponds) {
-        this.ponds = ponds;
+    //Overwrites the pond list
+    public void setPonds(List<ChunkCoordinates> ponds)
+    {
+        this.ponds = new ArrayList<>(ponds);
     }
 
+    //Adds a new Pond to the pond list
     public void addToPonds(ChunkCoordinates pond)
     {
         this.ponds.add(pond);
     }
 
+    //Removes an object following it's coordinates from the pond list
     public void removeFromPonds(ChunkCoordinates pond)
     {
         this.ponds.remove(pond);
     }
 
+    //Removes an object from the ponds list
     public void removeFromPonds(int index)
     {
         this.ponds.remove(index);

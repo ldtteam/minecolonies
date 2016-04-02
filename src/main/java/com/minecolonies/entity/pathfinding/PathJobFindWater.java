@@ -4,6 +4,7 @@ import com.minecolonies.entity.ai.Water;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -35,7 +36,7 @@ public class PathJobFindWater extends PathJob
      * @param range maximum path range
      * @param ponds already visited fishing places
      */
-    PathJobFindWater(World world, ChunkCoordinates start, ChunkCoordinates home, int range, ArrayList<ChunkCoordinates> ponds)
+    PathJobFindWater(World world, ChunkCoordinates start, ChunkCoordinates home, int range, List<ChunkCoordinates> ponds)
     {
         super(world, start, start, range, new WaterPathResult());
         this.ponds.addAll(ponds);

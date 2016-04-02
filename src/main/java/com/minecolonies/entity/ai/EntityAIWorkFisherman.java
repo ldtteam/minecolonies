@@ -6,6 +6,7 @@ import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.InventoryUtils;
+import com.minecolonies.util.Utils;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -35,10 +36,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private static final int MIN_DISTANCE_TO_WATER = 3;
     private static final int MAX_FISHES_IN_INV = 10;
     private static final int MAX_ROTATIONS = 12;
-    /**
-     * TODO: fix this with ttl
-     */
-    private static final int NANO_TIME_DIVIDER = 1000 * 1000 * 1000;
     private static final String TOOL_TYPE_ROD = "rod";
     private static final int SEARCH_RANGE = 50;
     private static final Logger logger = LogManager.getLogger("Fisherman");
@@ -325,9 +322,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private boolean isFishHookStuck()
     {
         return !worker.getFishEntity().isInWater() && (worker.getFishEntity().onGround
-                                                       || (System.nanoTime() - worker.getFishEntity()
-                                                                                     .getCreationTime())
-                                                          / NANO_TIME_DIVIDER
+                                                       || Utils.nanoSecondsToSeconds(System.nanoTime() - worker.getFishEntity().getCreationTime())
                                                           > worker.getFishEntity().getTtl());
     }
 
@@ -373,7 +368,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private boolean testRandomChance()
     {
         //+1 since the level may be 0
-        double chance = (itemRand.nextInt(FISHING_DELAY) / (fishingSkill + 1));
+        double chance = itemRand.nextInt(FISHING_DELAY) / (fishingSkill + 1);
         return chance >= CHANCE;
     }
 
