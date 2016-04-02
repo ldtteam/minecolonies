@@ -39,7 +39,7 @@ public final class EntityFishHook extends Entity
     private Block                 inTile;
     private boolean               inGround;
     private int                   shake;
-    private EntityAIWorkFisherman fisherman;
+    public EntityAIWorkFisherman fisherman;
     private int                   hitBlock;
     private int                   hitWater;
     private int                   movedOnX;
