@@ -58,7 +58,7 @@ public class RenderFishHook extends Render
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GL11.glPopMatrix();
 
-        if(entityFishHook.fisherman.getCitizen() != null)
+        if(entityFishHook.fisherman != null)
         {
             final double orientation = entityFishHook.fisherman.getCitizen().getSwingProgress(angle);
             final double finalOrientation = Math.sin(Math.sqrt(orientation) * Math.PI);

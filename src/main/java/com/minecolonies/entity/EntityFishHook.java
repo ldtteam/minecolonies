@@ -303,7 +303,7 @@ public final class EntityFishHook extends Entity
             {
                 Entity entity1 = (Entity) aList;
 
-                if (entity1.canBeCollidedWith() && (!entity1.equals(this.fisherman.getCitizen()) || this.hitWater >= 5))
+                if (entity1.canBeCollidedWith() && this.fisherman!=null && (!entity1.equals(this.fisherman.getCitizen()) || this.hitWater >= 5))
                 {
                     double f = 0.3;
                     AxisAlignedBB axisAlignedBB = entity1.boundingBox.expand(f, f, f);
@@ -675,4 +675,8 @@ public final class EntityFishHook extends Entity
         return creationTime;
     }
 
+    public boolean hasHitEntity()
+    {
+        return hitEntity!=null;
+    }
 }

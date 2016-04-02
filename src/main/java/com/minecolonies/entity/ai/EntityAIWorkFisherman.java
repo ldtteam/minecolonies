@@ -326,7 +326,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private boolean isFishHookStuck()
     {
-        return !getFishEntity().isInWater() && (getFishEntity().onGround
+        return !getFishEntity().isInWater() && (getFishEntity().onGround || getFishEntity().hasHitEntity()
                                                        || Utils.nanoSecondsToSeconds(System.nanoTime() - getFishEntity().getCreationTime())
                                                           > getFishEntity().getTtl());
     }
