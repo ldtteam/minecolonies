@@ -2,6 +2,7 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.colony.jobs.JobFisherman;
+import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.inventory.InventoryCitizen;
@@ -43,6 +44,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private PathJobFindWater.WaterPathResult pathResult;
     private int fishingSkill = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
     private int executedRotations = 0;
+    //Connects the fishingHook with the citizen
+    private EntityFishHook fishEntity;
+    //Will be set true when the citizen caught a fish (to reset the fisherman)
+    private boolean caughtFish=false;
 
     /**
      * Constructor for the Fisherman.
@@ -224,7 +229,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return FISHERMAN_WATER_FOUND;
         }
 
-        if (worker.getFishEntity() == null)
+        if (getFishEntity() == null)
         {
             //Only sometimes the fisherman gets to throw its Rod (depends on intelligence)
             if (testRandomChance())
@@ -239,8 +244,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                                         "random.bow",
                                         0.5F,
                                         (float) (0.4D / (itemRand.nextDouble() * 0.4D + 0.8D)));
-                EntityFishHook hook = new EntityFishHook(world, worker);
-                worker.setFishEntity(hook);
+                EntityFishHook hook = new EntityFishHook(world, this);
+                setFishEntity(hook);
                 world.spawnEntityInWorld(hook);
             }
 
@@ -321,16 +326,16 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private boolean isFishHookStuck()
     {
-        return !worker.getFishEntity().isInWater() && (worker.getFishEntity().onGround
-                                                       || Utils.nanoSecondsToSeconds(System.nanoTime() - worker.getFishEntity().getCreationTime())
-                                                          > worker.getFishEntity().getTtl());
+        return !getFishEntity().isInWater() && (getFishEntity().onGround
+                                                       || Utils.nanoSecondsToSeconds(System.nanoTime() - getFishEntity().getCreationTime())
+                                                          > getFishEntity().getTtl());
     }
 
     private boolean caughtFish()
     {
-        if (!worker.isCaughtFish() || worker.getFishEntity() == null)
+        if (!isCaughtFish() || getFishEntity() == null)
         {
-            worker.setCaughtFish(false);
+            setCaughtFish(false);
             return false;
         }
 
@@ -338,7 +343,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         worker.captureDrops = true;
         retrieveRod();
         fishingSkill = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
-        worker.setCaughtFish(false);
+        setCaughtFish(false);
         fishesCaught++;
         return true;
     }
@@ -346,15 +351,31 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private void retrieveRod()
     {
         worker.swingItem();
-        int i = worker.getFishEntity().getDamage();
+        int i = getFishEntity().getDamage();
         worker.damageItemInHand(i);
 
         //May already be null if the itemInHand has been destroyed
-        if (worker.getFishEntity() != null)
+        if (getFishEntity() != null)
         {
-            worker.getFishEntity().setDead();
-            worker.setFishEntity(null);
+            getFishEntity().setDead();
+            setFishEntity(null);
         }
+    }
+
+    public EntityFishHook getFishEntity() {
+        return fishEntity;
+    }
+
+    public void setFishEntity(EntityFishHook fishEntity) {
+        this.fishEntity = fishEntity;
+    }
+
+    public boolean isCaughtFish() {
+        return caughtFish;
+    }
+
+    public void setCaughtFish(boolean caughtFish) {
+        this.caughtFish = caughtFish;
     }
 
     /**
@@ -370,6 +391,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //+1 since the level may be 0
         double chance = itemRand.nextInt(FISHING_DELAY) / (fishingSkill + 1);
         return chance >= CHANCE;
+    }
+
+    public EntityCitizen getCitizen()
+    {
+        return worker;
     }
 
 }

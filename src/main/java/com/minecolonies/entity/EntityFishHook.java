@@ -1,5 +1,6 @@
 package com.minecolonies.entity;
 
+import com.minecolonies.entity.ai.EntityAIWorkFisherman;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Arrays;
@@ -32,29 +33,29 @@ public final class EntityFishHook extends Entity
     private static final List possibleDrops_1 = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F), new WeightedRandomFishable(new ItemStack(Items.leather), 10), new WeightedRandomFishable(new ItemStack(Items.bone), 10), new WeightedRandomFishable(new ItemStack(Items.potionitem), 10), new WeightedRandomFishable(new ItemStack(Items.string), 5), (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F), new WeightedRandomFishable(new ItemStack(Items.bowl), 10), new WeightedRandomFishable(new ItemStack(Items.stick), 5), new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1), new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10), new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
     private static final List possibleDrops_2 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1), new WeightedRandomFishable(new ItemStack(Items.name_tag), 1), new WeightedRandomFishable(new ItemStack(Items.saddle), 1), (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(0.25F).func_150707_a(), (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).func_150709_a(0.25F).func_150707_a(), (new WeightedRandomFishable(new ItemStack(Items.book), 1)).func_150707_a());
     private static final List possibleDrops_3 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
-    private int xTile;
-    private int yTile;
-    private int zTile;
-    private Block inTile;
-    private boolean inGround;
-    private int shake;
-    private EntityCitizen citizen;
-    private int hitBlock;
-    private int hitWater;
-    private int movedOnX;
-    private int movedOnY;
-    private int movedOnZ;
-    private double relativeRotation;
+    private int                   xTile;
+    private int                   yTile;
+    private int                   zTile;
+    private Block                 inTile;
+    private boolean               inGround;
+    private int                   shake;
+    private EntityAIWorkFisherman fisherman;
+    private int                   hitBlock;
+    private int                   hitWater;
+    private int                   movedOnX;
+    private int                   movedOnY;
+    private int                   movedOnZ;
+    private double                relativeRotation;
     //If the hook hits an entity it will stay with the entity
-    private Entity hitEntity;
-    private int newPosRotationIncrements;
-    private double newX;
-    private double newY;
-    private double newZ;
-    private double newRotationYaw;
-    private double newRotationPitch;
+    private Entity                hitEntity;
+    private int                   newPosRotationIncrements;
+    private double                newX;
+    private double                newY;
+    private double                newZ;
+    private double                newRotationYaw;
+    private double                newRotationPitch;
     @SideOnly(Side.CLIENT)
-    private double hookVectorX;
+    private double                hookVectorX;
     @SideOnly(Side.CLIENT)
     private double hookVectorY;
     @SideOnly(Side.CLIENT)
@@ -74,27 +75,27 @@ public final class EntityFishHook extends Entity
     }
 
     @SideOnly(Side.CLIENT)
-    public EntityFishHook(World world, double x, double y, double z, EntityCitizen citizen)
+    public EntityFishHook(World world, double x, double y, double z, EntityAIWorkFisherman fisherman)
     {
         this(world);
         this.setPosition(x, y, z);
         this.ignoreFrustumCheck = true;
-        this.citizen = citizen;
-        citizen.setFishEntity(this);
+        this.fisherman = fisherman;
+        fisherman.setFishEntity(this);
         this.creationTime = System.nanoTime();
     }
 
-    public EntityFishHook(World world, EntityCitizen citizen)
+    public EntityFishHook(World world, EntityAIWorkFisherman fisherman)
     {
         super(world);
         this.xTile = -1;
         this.yTile = -1;
         this.zTile = -1;
         this.ignoreFrustumCheck = true;
-        this.citizen = citizen;
-        this.citizen.setFishEntity(this);
+        this.fisherman = fisherman;
+        this.fisherman.setFishEntity(this);
         this.setSize(0.25F, 0.25F);
-        this.setLocationAndAngles(citizen.posX, citizen.posY + 1.62 - (double)citizen.yOffset, citizen.posZ, citizen.rotationYaw, citizen.rotationPitch);
+        this.setLocationAndAngles(fisherman.getCitizen().posX, fisherman.getCitizen().posY + 1.62 - (double)fisherman.getCitizen().yOffset, fisherman.getCitizen().posZ, fisherman.getCitizen().rotationYaw, fisherman.getCitizen().rotationPitch);
         this.posX -= Math.cos(this.rotationYaw / 180.0 * Math.PI) * 0.16;
         this.posY -= 0.10000000149011612;
         this.posZ -= Math.sin(this.rotationYaw / 180.0 * Math.PI) * 0.16;
@@ -117,8 +118,7 @@ public final class EntityFishHook extends Entity
     @Override
     public boolean equals(Object o)
     {
-        if(o == null || getClass() != o.getClass() || !super.equals(o)) {return false;}
-        return true;
+        return !(o == null || getClass() != o.getClass() || !super.equals(o));
     }
 
     private void setPosition(double x, double y, double z, double yaw, double pitch)
@@ -224,17 +224,17 @@ public final class EntityFishHook extends Entity
         {
             if (!this.worldObj.isRemote)
             {
-                if(this.citizen == null)
+                if(this.fisherman == null)
                 {
                     return;
                 }
 
-                ItemStack itemstack = this.citizen.getInventory().getHeldItem();
+                ItemStack itemstack = this.fisherman.getCitizen().getInventory().getHeldItem();
 
-                if (this.citizen.isDead || !this.citizen.isEntityAlive() || itemstack == null || !itemstack.getItem().equals(Items.fishing_rod) || this.getDistanceSqToEntity(this.citizen) > 1024.0D)
+                if (this.fisherman.getCitizen().isDead || !this.fisherman.getCitizen().isEntityAlive() || itemstack == null || !itemstack.getItem().equals(Items.fishing_rod) || this.getDistanceSqToEntity(this.fisherman.getCitizen()) > 1024.0D)
                 {
                     this.setDead();
-                    this.citizen.setFishEntity(null);
+                    this.fisherman.setFishEntity(null);
                     return;
                 }
 
@@ -303,7 +303,7 @@ public final class EntityFishHook extends Entity
             {
                 Entity entity1 = (Entity) aList;
 
-                if (entity1.canBeCollidedWith() && (!entity1.equals(this.citizen) || this.hitWater >= 5))
+                if (entity1.canBeCollidedWith() && (!entity1.equals(this.fisherman.getCitizen()) || this.hitWater >= 5))
                 {
                     double f = 0.3;
                     AxisAlignedBB axisAlignedBB = entity1.boundingBox.expand(f, f, f);
@@ -332,7 +332,7 @@ public final class EntityFishHook extends Entity
             {
                 if (movingobjectposition.entityHit != null)
                 {
-                    if (movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.citizen), 0.0F))
+                    if (movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.fisherman.getCitizen()), 0.0F))
                     {
                         this.hitEntity = movingobjectposition.entityHit;
                     }
@@ -443,7 +443,7 @@ public final class EntityFishHook extends Entity
                                 worldserver.func_147487_a("bubble", this.posX, (bubbleY + 1.0), this.posZ, (int)(1.0 + this.width * 20.0), (double)this.width, 0.0, (double)this.width, 0.20000000298023224);
                                 worldserver.func_147487_a("wake", this.posX, (bubbleY + 1.0), this.posZ, (int)(1.0 + this.width * 20.0), (double)this.width, 0.0, (double)this.width, 0.20000000298023224);
                                 this.movedOnX = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
-                                citizen.setCaughtFish(true);
+                                fisherman.setCaughtFish(true);
                             }
                             else
                             {
@@ -505,7 +505,7 @@ public final class EntityFishHook extends Entity
                         else
                         {
                             this.movedOnY = MathHelper.getRandomIntegerInRange(this.rand, 100, 900);
-                            this.movedOnY -= EnchantmentHelper.func_151387_h(this.citizen) * 20 * 5;
+                            this.movedOnY -= EnchantmentHelper.func_151387_h(this.fisherman.getCitizen()) * 20 * 5;
                         }
                     }
 
@@ -552,7 +552,7 @@ public final class EntityFishHook extends Entity
     @Override
     public void readEntityFromNBT(NBTTagCompound p_70037_1_)
     {
-        if(!citizen.getFishEntity().equals(this))
+        if(!fisherman.getFishEntity().equals(this))
         {
             this.setDead();
         }
@@ -576,6 +576,10 @@ public final class EntityFishHook extends Entity
 
     public int getDamage()
     {
+        double citizenPosX = this.fisherman.getCitizen().posX;
+        double citizenPosY = this.fisherman.getCitizen().posY;
+        double citizenPosZ = this.fisherman.getCitizen().posZ;
+
         if (this.worldObj.isRemote)
         {
             return 0;
@@ -586,9 +590,10 @@ public final class EntityFishHook extends Entity
 
             if (this.hitEntity != null)
             {
-                double x = this.citizen.posX - this.posX;
-                double y = this.citizen.posY - this.posY;
-                double z = this.citizen.posZ - this.posZ;
+                double x = citizenPosX - this.posX;
+                double y = citizenPosY - this.posY;
+                double z = citizenPosZ - this.posZ;
+
                 this.hitEntity.motionX += x * 0.1;
                 this.hitEntity.motionY += y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08;
                 this.hitEntity.motionZ += z * 0.1;
@@ -597,15 +602,15 @@ public final class EntityFishHook extends Entity
             else if (this.movedOnX > 0)
             {
                 EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot());
-                double distanceX = this.citizen.posX - this.posX;
-                double distanceY = this.citizen.posY - this.posY;
-                double distanceZ = this.citizen.posZ - this.posZ;
+                double distanceX = citizenPosX - this.posX;
+                double distanceY = citizenPosY - this.posY;
+                double distanceZ = citizenPosZ - this.posZ;
 
                 entityitem.motionX = distanceX * 0.1;
                 entityitem.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
                 entityitem.motionZ = distanceZ * 0.1;
                 this.worldObj.spawnEntityInWorld(entityitem);
-                this.citizen.worldObj.spawnEntityInWorld(new EntityXPOrb(this.citizen.worldObj, this.citizen.posX, this.citizen.posY + 0.D, this.citizen.posZ + 0.5, this.rand.nextInt(6) + 1));
+                this.fisherman.getCitizen().worldObj.spawnEntityInWorld(new EntityXPOrb(this.fisherman.getCitizen().worldObj, citizenPosX, citizenPosY + 0.D, citizenPosZ + 0.5, this.rand.nextInt(6) + 1));
                 itemDamage = 1;
             }
 
@@ -615,7 +620,7 @@ public final class EntityFishHook extends Entity
             }
 
             this.setDead();
-            this.citizen.setFishEntity(null);
+            this.fisherman.setFishEntity(null);
             return itemDamage;
         }
     }
@@ -623,14 +628,14 @@ public final class EntityFishHook extends Entity
     private ItemStack getFishingLoot()
     {
         double random = this.worldObj.rand.nextDouble();
-        int fishingSpeedEnchantment = EnchantmentHelper.func_151386_g(this.citizen);
-        int fishingLootEnchantment = EnchantmentHelper.func_151387_h(this.citizen);
+        int fishingSpeedEnchantment = EnchantmentHelper.func_151386_g(this.fisherman.getCitizen());
+        int fishingLootEnchantment = EnchantmentHelper.func_151387_h(this.fisherman.getCitizen());
         double speedBonus = 0.1 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
         double lootBonus = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
         //clamp_float gives the values an upper limit
         speedBonus = MathHelper.clamp_float((float)speedBonus, 0.0F, 1.0F);
         lootBonus = MathHelper.clamp_float((float)lootBonus, 0.0F, 1.0F);
-        int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
+        int buildingLevel = fisherman.getCitizen().getWorkBuilding().getBuildingLevel();
 
         if (random < speedBonus || buildingLevel == 1)
         {
@@ -659,9 +664,9 @@ public final class EntityFishHook extends Entity
     {
         super.setDead();
 
-        if (this.citizen != null)
+        if (this.fisherman != null)
         {
-            this.citizen.setFishEntity(null);
+            this.fisherman.setFishEntity(null);
         }
     }
 

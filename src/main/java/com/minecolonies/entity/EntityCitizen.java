@@ -68,10 +68,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private int         textureId;
     private Map<String, Integer> statusMessages = new HashMap<>();
     private PathNavigate newNavigator;
-    //Connects the fishingHook with the citizen
-    private EntityFishHook fishEntity;
-    //Will be set true when the citizen caught a fish (to reset the fisherman)
-    private boolean caughtFish=false;
     //Skills, may be added more later
     private int intelligence;
     private int speed;
@@ -1046,22 +1042,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public int getDiligence() {
         return diligence;
-    }
-
-    public EntityFishHook getFishEntity() {
-        return fishEntity;
-    }
-
-    public void setFishEntity(EntityFishHook fishEntity) {
-        this.fishEntity = fishEntity;
-    }
-
-    public boolean isCaughtFish() {
-        return caughtFish;
-    }
-
-    public void setCaughtFish(boolean caughtFish) {
-        this.caughtFish = caughtFish;
     }
 
     public int getExperienceLevel() {return experienceLevel; }
