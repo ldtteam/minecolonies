@@ -21,10 +21,7 @@ import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.block.Block;
-import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.INpc;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
@@ -182,9 +179,39 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return citizenData != null ? citizenData.getJob(type) : null;
     }
 
-    public void setRotation(float yaw, float pitch)
+    /**
+     * Arguments: current rotation, intended rotation, max increment.
+     */
+    private double updateRotation(double currentRotation, double intentedRotation, double maxIncrement)
     {
-        super.setRotation(yaw,pitch);
+        double wrappedAngle = MathHelper.wrapAngleTo180_double(intentedRotation - currentRotation);
+
+        if (wrappedAngle > maxIncrement)
+        {
+            wrappedAngle = maxIncrement;
+        }
+
+        if (wrappedAngle < -maxIncrement)
+        {
+            wrappedAngle = -maxIncrement;
+        }
+
+        return currentRotation + wrappedAngle;
+    }
+
+
+    public void faceBlock(ChunkCoordinates block)
+    {
+
+        double xDifference = block.posX - this.posX;
+        double zDifference = block.posZ - this.posZ;
+        double yDifference = block.posY - (this.posY + (double)this.getEyeHeight());
+
+        double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
+        double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
+        double intendedRotationPitch = (-(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI));
+        this.rotationPitch = (float)this.updateRotation(this.rotationPitch, intendedRotationPitch, 30);
+        this.rotationYaw = (float)this.updateRotation(this.rotationYaw, intendedRotationYaw, 30);
     }
 
     public void onJobChanged(Job job)

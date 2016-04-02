@@ -149,27 +149,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     //Rotates the fisherman to guarantee that the fisherman throws his rod in the correct direction
     private AIState tryDifferentAngles()
     {
-        int x = itemRand.nextInt(5);
-        if (x == 1)
-        {
             //Try a different angle to throw the hook not that far
-            worker.setRotation(ROTATION_ANGLE, 90F);
-        }
-        else
-        {
-            /**If Fisherman has already turned a fixed amount of times,
-             * the water is probably not accessibly from the current position.
-             * Remove the current position from the ponds and search a new one.*/
-            executedRotations++;
-            if (executedRotations >= MAX_ROTATIONS)
-            {
-                job.removeFromPonds(job.getWater().getLocation());
-                job.setWater(null);
-                executedRotations=0;
-                return FISHERMAN_SEARCHING_WATER;
-            }
-            worker.setRotation(ROTATION_ANGLE, worker.rotationPitch);
-        }
+            worker.faceBlock(job.getWater().getLocation());
         return FISHERMAN_START_FISHING;
     }
 
