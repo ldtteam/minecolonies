@@ -62,6 +62,8 @@ public final class EntityFishHook extends Entity
     private double hookVectorZ;
     //Time at which the entity has been created
     private long creationTime;
+    //Will be set true when the citizen caught a fish (to reset the fisherman)
+    private boolean isCaughtFish =false;
 
     public EntityFishHook(World world)
     {
@@ -443,7 +445,7 @@ public final class EntityFishHook extends Entity
                                 worldserver.func_147487_a("bubble", this.posX, (bubbleY + 1.0), this.posZ, (int)(1.0 + this.width * 20.0), (double)this.width, 0.0, (double)this.width, 0.20000000298023224);
                                 worldserver.func_147487_a("wake", this.posX, (bubbleY + 1.0), this.posZ, (int)(1.0 + this.width * 20.0), (double)this.width, 0.0, (double)this.width, 0.20000000298023224);
                                 this.movedOnX = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
-                                fisherman.setCaughtFish(true);
+                                isCaughtFish = true;
                             }
                             else
                             {
@@ -678,5 +680,15 @@ public final class EntityFishHook extends Entity
     public boolean hasHitEntity()
     {
         return hitEntity!=null;
+    }
+
+    public boolean caughtFish()
+    {
+        return isCaughtFish;
+    }
+
+    public void setCaughtFish(boolean caughtFish)
+    {
+        isCaughtFish = caughtFish;
     }
 }

@@ -46,8 +46,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private int executedRotations = 0;
     //Connects the fishingHook with the citizen
     private EntityFishHook fishEntity;
-    //Will be set true when the citizen caught a fish (to reset the fisherman)
-    private boolean caughtFish=false;
+
 
     /**
      * Constructor for the Fisherman.
@@ -130,6 +129,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return stack != null && stack.getItem().equals(Items.fishing_rod);
     }
 
+    /**
+     * If the job class has no water object the fisherman should search water.
+     * @return the next AIState the fisherman should switch to, after executing this method
+     */
     private AIState getToWater()
     {
         if (job.getWater() == null)
@@ -143,13 +146,20 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return FISHERMAN_CHECK_WATER;
     }
 
+    /**
+     * Let's the fisherman walk to the water if the water object in his job class has been filled.
+     * @return true if the fisherman has arrived at the water
+     */
     private boolean walkToWater()
     {
         return !(job.getWater() == null || job.getWater().getLocation() == null) && walkToBlock(job.getWater()
                                                                                                    .getLocation());
     }
 
-    //Rotates the fisherman to guarantee that the fisherman throws his rod in the correct direction
+    /**
+     * Rotates the fisherman to guarantee that the fisherman throws his rod in the correct direction
+     * @return the next AIState the fisherman should switch to, after executing this method
+     */
     private AIState tryDifferentAngles()
     {
         if (executedRotations >= MAX_ROTATIONS)
@@ -165,6 +175,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return FISHERMAN_START_FISHING;
     }
 
+    /**
+     * Uses the pathFinding system to search close water spots which possibilitate fishing.
+     * Sets a number of possible water pools and sets the water pool the fisherman should fish now.
+     * @return the next AIState the fisherman should switch to, after executing this method
+     */
     private AIState findWater()
     {
         //Reset executedRotations when fisherman searches a new Pond
@@ -211,6 +226,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return state;
     }
 
+    /**
+     *  Main fishing methods, let's the fisherman gather xp orbs next to him, check if all requirements to fish are given.
+     *  Actually fish, retrieve his rod if stuck or if a fish bites.
+     * @return the next AIState the fisherman should switch to, after executing this method
+     */
     private AIState doFishing()
     {
         worker.gatherXp();
@@ -236,24 +256,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             {
                 return state;
             }
-
-            if (!world.isRemote)
-            {
-                worker.faceBlock(job.getWater().getLocation());
-                world.playSoundAtEntity(worker,
-                                        "random.bow",
-                                        0.5F,
-                                        (float) (0.4D / (itemRand.nextDouble() * 0.4D + 0.8D)));
-                EntityFishHook hook = new EntityFishHook(world, this);
-                setFishEntity(hook);
-                world.spawnEntityInWorld(hook);
-            }
-
-            worker.swingItem();
+            throwRod();
         }
         else
         {
-            //Check if hook landed on ground or in water, in some cases the hook bugs -> remove it after 2 minutes
+            //Check if hook landed on ground or in water, in some cases the hook bugs -> remove it after 2 minutes.
             if (isFishHookStuck())
             {
                 retrieveRod();
@@ -263,7 +270,31 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return state;
     }
 
-    //Returns true if fisherman meets all requirements to fish
+    /**
+     * Let's the fisherman face the water, play the throw sound and create the fishingHook and throw it
+     */
+    private void throwRod()
+    {
+        if (!world.isRemote)
+        {
+            worker.faceBlock(job.getWater().getLocation());
+            world.playSoundAtEntity(worker,
+                    "random.bow",
+                    0.5F,
+                    (float) (0.4D / (itemRand.nextDouble() * 0.4D + 0.8D)));
+            EntityFishHook hook = new EntityFishHook(world, this);
+            setFishEntity(hook);
+            world.spawnEntityInWorld(hook);
+        }
+
+        worker.swingItem();
+    }
+
+    /**
+     * Checks if the fisherman has his fishingRod in his hand and is close to the water
+     * @return true if fisherman meets all requirements to fish, else returns false
+
+     */
     private AIState isReadyToFish()
     {
         //We really do have our Rod in our inventory?
@@ -287,7 +318,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return null;
     }
 
-    //Check if there is water really close to me
+    /**
+     * Checks if there is water really close to the fisherman
+     * @return true if he found close water
+     */
     private boolean isCloseToWater()
     {
         boolean foundCloseWater = false;
@@ -309,6 +343,59 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return foundCloseWater;
     }
 
+
+    /**
+     * Checks if the fishHook is stuck on land or in an entity.
+     * If the fishhook is neither in water,land nether connected with an entity, give it a time to land in water.
+     * @return false if the hook landed in water, else return true
+     */
+    private boolean isFishHookStuck()
+    {
+        return !getFishEntity().isInWater() && (getFishEntity().onGround || getFishEntity().hasHitEntity()
+                                                       || Utils.nanoSecondsToSeconds(System.nanoTime() - getFishEntity().getCreationTime())
+                                                          > getFishEntity().getTtl());
+    }
+
+    /**
+     * Will be called to check if the fisherman caught a fish. If the hook hasn't noticed a fish it will return false.
+     * Else the method will pick up the loot and call the method to retrieve the rod.
+     * @return If the fisherman caught a fish
+     */
+    private boolean caughtFish()
+    {
+        if (!fishEntity.caughtFish() || getFishEntity() == null)
+        {
+            fishEntity.setCaughtFish(false);
+            return false;
+        }
+
+        worker.setCanPickUpLoot(true);
+        worker.captureDrops = true;
+        retrieveRod();
+        fishingSkill = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
+        fishEntity.setCaughtFish(false);
+        fishesCaught++;
+        return true;
+    }
+
+    /**
+     * Retrieves the previously thrown fishingRod.
+     * If the fishingRod still has a hook connected to it, destroy the hook object
+     */
+    private void retrieveRod()
+    {
+        worker.swingItem();
+        int i = getFishEntity().getDamage();
+        worker.damageItemInHand(i);
+
+        //May already be null if the itemInHand has been destroyed
+        if (getFishEntity() != null)
+        {
+            getFishEntity().setDead();
+            setFishEntity(null);
+        }
+    }
+
     private void equipRod()
     {
         worker.setHeldItem(getRodSlot());
@@ -324,58 +411,19 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return worker.getInventory();
     }
 
-    private boolean isFishHookStuck()
+    public EntityFishHook getFishEntity()
     {
-        return !getFishEntity().isInWater() && (getFishEntity().onGround || getFishEntity().hasHitEntity()
-                                                       || Utils.nanoSecondsToSeconds(System.nanoTime() - getFishEntity().getCreationTime())
-                                                          > getFishEntity().getTtl());
-    }
-
-    private boolean caughtFish()
-    {
-        if (!hasCaughtFish() || getFishEntity() == null)
-        {
-            setCaughtFish(false);
-            return false;
-        }
-
-        worker.setCanPickUpLoot(true);
-        worker.captureDrops = true;
-        retrieveRod();
-        fishingSkill = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
-        setCaughtFish(false);
-        fishesCaught++;
-        return true;
-    }
-
-    private void retrieveRod()
-    {
-        worker.swingItem();
-        int i = getFishEntity().getDamage();
-        worker.damageItemInHand(i);
-
-        //May already be null if the itemInHand has been destroyed
-        if (getFishEntity() != null)
-        {
-            getFishEntity().setDead();
-            setFishEntity(null);
-        }
-    }
-
-    public EntityFishHook getFishEntity() {
         return fishEntity;
     }
 
-    public void setFishEntity(EntityFishHook fishEntity) {
+    public void setFishEntity(EntityFishHook fishEntity)
+    {
         this.fishEntity = fishEntity;
     }
 
-    public boolean hasCaughtFish() {
-        return caughtFish;
-    }
-
-    public void setCaughtFish(boolean caughtFish) {
-        this.caughtFish = caughtFish;
+    public EntityCitizen getCitizen()
+    {
+        return worker;
     }
 
     /**
@@ -391,11 +439,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //+1 since the level may be 0
         double chance = itemRand.nextInt(FISHING_DELAY) / (fishingSkill + 1);
         return chance >= CHANCE;
-    }
-
-    public EntityCitizen getCitizen()
-    {
-        return worker;
     }
 
 }
