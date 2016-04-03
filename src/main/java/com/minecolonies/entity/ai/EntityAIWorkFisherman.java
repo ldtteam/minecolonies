@@ -188,8 +188,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //If 20 ponds are already stored, take a random stored location
         if (job.getPonds().size() >= MAX_PONDS)
         {
-            job.setWater(new Water(world, job.getPonds().get(itemRand.nextInt(MAX_PONDS))));
-            return FISHERMAN_CHECK_WATER;
+            return setRandomWater();
         }
         return findNewWater();
     }
@@ -204,21 +203,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (pathResult == null)
         {
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+            return state;
         }
-        else if (!pathResult.isComputing() && !pathResult.getPathReachesDestination())
+        if (!pathResult.isComputing() && !pathResult.getPathReachesDestination())
         {
-            if (job.getPonds().isEmpty())
-            {
-                chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
-                pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
-            }
-            else
-            {
-                job.setWater(new Water(world, job.getPonds().get(itemRand.nextInt(job.getPonds().size()))));
-                return FISHERMAN_CHECK_WATER;
-            }
+            return setRandomWater();
         }
-        else if (pathResult.getPathReachesDestination())
+        if (pathResult.getPathReachesDestination())
         {
             if (pathResult.pond != null)
             {
@@ -228,10 +219,24 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             pathResult = null;
             return FISHERMAN_CHECK_WATER;
         }
-        else if (pathResult.isCancelled())
+        if (pathResult.isCancelled())
         {
             pathResult = null;
             return PREPARING;
+        }
+        return state;
+    }
+
+    private AIState setRandomWater(){
+        if (job.getPonds().isEmpty())
+        {
+            chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
+            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+        }
+        else
+        {
+            job.setWater(new Water(world, job.getPonds().get(itemRand.nextInt(job.getPonds().size()))));
+            return FISHERMAN_CHECK_WATER;
         }
         return state;
     }
