@@ -176,8 +176,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     /**
-     * Uses the pathFinding system to search close water spots which possibilitate fishing.
-     * Sets a number of possible water pools and sets the water pool the fisherman should fish now.
+     * Checks if the fisherman already has found 20 pools, if yes search a water pool out of these 20, else
+     * search a new one.
      * @return the next AIState the fisherman should switch to, after executing this method
      */
     private AIState findWater()
@@ -189,8 +189,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (job.getPonds().size() >= MAX_PONDS)
         {
             job.setWater(new Water(world, job.getPonds().get(itemRand.nextInt(MAX_PONDS))));
-            return state;
+            return FISHERMAN_CHECK_WATER;
         }
+        return findNewWater();
+    }
+
+    /**
+     * Uses the pathFinding system to search close water spots which possibilitate fishing.
+     * Sets a number of possible water pools and sets the water pool the fisherman should fish now.
+     * @return the next AIState the fisherman should switch to, after executing this method
+     */
+    private AIState findNewWater()
+    {
         if (pathResult == null)
         {
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
@@ -437,7 +447,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private boolean testRandomChance()
     {
         //+1 since the level may be 0
-        double chance = itemRand.nextInt(FISHING_DELAY) / (fishingSkill + 1);
+        double chance = itemRand.nextInt(FISHING_DELAY) / (double)(fishingSkill + 1);
         return chance >= CHANCE;
     }
 
