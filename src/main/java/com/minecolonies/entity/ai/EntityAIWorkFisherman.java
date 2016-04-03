@@ -240,7 +240,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     /**
-     *  Main fishing methods, let's the fisherman gather xp orbs next to him, check if all requirements to fish are given.
+     *  Main fishing methods,
+     *  let's the fisherman gather xp orbs next to him,
+     *  check if all requirements to fish are given.
      *  Actually fish, retrieve his rod if stuck or if a fish bites.
      * @return the next AIState the fisherman should switch to, after executing this method
      */
@@ -252,7 +254,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             return notReadyState;
         }
-        else if (caughtFish())
+        if (caughtFish())
         {
             if(fishesCaught>=MAX_FISHES_IN_INV)
             {
@@ -262,6 +264,16 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return FISHERMAN_WATER_FOUND;
         }
 
+        return throwOrRetrieveHook();
+    }
+
+    /**
+     *  Check if a hook is out there,
+     *  and throw/retrieve it if needed
+     * @return the next AIState the fisherman should switch to, after executing this method
+     */
+    private AIState throwOrRetrieveHook()
+    {
         if (getFishEntity() == null)
         {
             //Only sometimes the fisherman gets to throw its Rod (depends on intelligence)
