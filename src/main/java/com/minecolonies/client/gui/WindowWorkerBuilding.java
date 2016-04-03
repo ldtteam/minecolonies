@@ -13,15 +13,15 @@ import com.minecolonies.util.LanguageHandler;
 
 public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View> extends Window implements Button.Handler
 {
-    private static  String      BUTTON_INVENTORY      = "inventory";
-    private static  String      BUTTON_HIRE           = "hire";
-    private static  String      BUTTON_RECALL         = "recall";
-    private static  String      BUTTON_BUILD          = "build";
-    private static  String      BUTTON_REPAIR         = "repair";
-    private static  String      LABEL_BUILDINGNAME    = "name";
-    private static  String      LABEL_BUILDINGTYPE    = "type";
-    private static  String      LABEL_WORKERNAME      = "workerName";
-    private static  String      LABEL_WORKERLEVEL     = "workerLevel";
+    private static final String      BUTTON_INVENTORY      = "inventory";
+    private static final String      BUTTON_HIRE           = "hire";
+    private static final String      BUTTON_RECALL         = "recall";
+    private static final String      BUTTON_BUILD          = "build";
+    private static final String      BUTTON_REPAIR         = "repair";
+    private static final String      LABEL_BUILDINGNAME    = "name";
+    private static final String      LABEL_BUILDINGTYPE    = "type";
+    private static final String      LABEL_WORKERNAME      = "workerName";
+    private static final String      LABEL_WORKERLEVEL     = "workerLevel";
 
     BUILDING    building;
 
@@ -78,7 +78,7 @@ public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View>
             }
         }
         catch (NullPointerException exc) {
-            System.out.println("Opening error, shouldnt happen");
+            MineColonies.logger.error("Opening error, shouldnt happen",exc);
         }
     }
 

@@ -10,16 +10,16 @@ import com.minecolonies.network.messages.FarmerCropTypeMessage;
 
 public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 {
-    private static  String BUTTON_WHEAT                  = "wheat";
-    private static  String BUTTON_POTATO                 = "potato";
-    private static  String BUTTON_CARROT                 = "carrot";
-    private static  String BUTTON_MELON                  = "melon";
-    private static  String BUTTON_PUMPKIN                = "pumpkin";
-    private static  String BUTTON_PREVPAGE               = "prevPage";
-    private static  String BUTTON_NEXTPAGE               = "nextPage";
-    private static  String VIEW_PAGES                    = "pages";
+    private static final String BUTTON_WHEAT                  = "wheat";
+    private static final String BUTTON_POTATO                 = "potato";
+    private static final String BUTTON_CARROT                 = "carrot";
+    private static final String BUTTON_MELON                  = "melon";
+    private static final String BUTTON_PUMPKIN                = "pumpkin";
+    private static final String BUTTON_PREVPAGE               = "prevPage";
+    private static final String BUTTON_NEXTPAGE               = "nextPage";
+    private static final String VIEW_PAGES                    = "pages";
 
-    private static  String HUT_FARMER_RESOURCE_SUFFIX    = ":gui/windowHutFarmer.xml";
+    private static final String HUT_FARMER_RESOURCE_SUFFIX    = ":gui/windowHutFarmer.xml";
 
     private         Button buttonPrevPage;
     private         Button buttonNextPage;
@@ -46,7 +46,7 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
             findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
         }
         catch (NullPointerException exc) {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            MineColonies.logger.error("findPane error, report to mod authors",exc);
         }
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
@@ -68,85 +68,83 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         }
         catch (NullPointerException exc)
         {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            MineColonies.logger.error("findPane error, report to mod authors",exc);
         }
     }
 
     @Override
     public void onButtonClicked(Button button)
     {
-        if (button.getID().equals(BUTTON_WHEAT))
+        switch (button.getID())
         {
-            if(building.wheat < 100)
-            {
-                building.wheat++;
-                removeOthers("wheat");
-            }
-        }
-        else if (button.getID().equals(BUTTON_POTATO))
-        {
-            if (building.potato < 100)
-            {
-                building.potato++;
-                removeOthers("potato");
-            }
-        }
-        else if (button.getID().equals(BUTTON_CARROT))
-        {
-            if(building.carrot < 100)
-            {
-                building.carrot++;
-                removeOthers("carrot");
-            }
-        }
-        else if (button.getID().equals(BUTTON_MELON))
-        {
-            if(building.melon < 100)
-            {
-                building.melon++;
-                removeOthers("melon");
-            }
-        }
-        else if (button.getID().equals(BUTTON_PUMPKIN))
-        {
-            if(building.pumpkin < 100)
-            {
-                building.pumpkin++;
-                removeOthers("pumpkin");
-            }
-        }
-        else
-        {
-            if (button.getID().equals(BUTTON_PREVPAGE))
-            {
-                try
+            case BUTTON_WHEAT:
+                if (building.wheat < 100)
                 {
-                    findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                } catch (NullPointerException e)
-                {
-                    MineColonies.logger.error("findPane error, report to mod authors");
+                    building.wheat++;
+                    removeOthers("wheat");
                 }
-                buttonPrevPage.setEnabled(false);
-                buttonNextPage.setEnabled(true);
-            }
-            else if (button.getID().equals(BUTTON_NEXTPAGE))
-            {
-                try
+                break;
+            case BUTTON_POTATO:
+                if (building.potato < 100)
                 {
-                    findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                } catch (NullPointerException e)
-                {
-                    MineColonies.logger.error("findPane error, report to mod authors");
+                    building.potato++;
+                    removeOthers("potato");
                 }
-                buttonPrevPage.setEnabled(true);
-                buttonNextPage.setEnabled(false);
-            }
-            else
-            {
-                super.onButtonClicked(button);
-            }
+                break;
+            case BUTTON_CARROT:
+                if (building.carrot < 100)
+                {
+                    building.carrot++;
+                    removeOthers("carrot");
+                }
+                break;
+            case BUTTON_MELON:
+                if (building.melon < 100)
+                {
+                    building.melon++;
+                    removeOthers("melon");
+                }
+                break;
+            case BUTTON_PUMPKIN:
+                if (building.pumpkin < 100)
+                {
+                    building.pumpkin++;
+                    removeOthers("pumpkin");
+                }
+                break;
+            default:
+                switch (button.getID())
+                {
+                    case BUTTON_PREVPAGE:
+                        try
+                        {
+                            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                        }
+                        catch (NullPointerException e)
+                        {
+                            MineColonies.logger.error("findPane error, report to mod authors",e);
+                        }
+                        buttonPrevPage.setEnabled(false);
+                        buttonNextPage.setEnabled(true);
+                        break;
+                    case BUTTON_NEXTPAGE:
+                        try
+                        {
+                            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                        }
+                        catch (NullPointerException e)
+                        {
+                            MineColonies.logger.error("findPane error, report to mod authors",e);
+                        }
+                        buttonPrevPage.setEnabled(true);
+                        buttonNextPage.setEnabled(false);
+                        break;
+                    default:
+                        super.onButtonClicked(button);
+                        break;
+                }
 
-            return;
+                return;
         }
 
         updateButtonLabels();
@@ -157,7 +155,7 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
      *
      * @return      The sum of wheat, carrots, melons, potatoes and pumpkins.
      */
-    public int sum()
+    private int sum()
     {
         return building.wheat + building.carrot + building.melon + building.potato + building.pumpkin;
     }
@@ -173,7 +171,7 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
      *
      * @param s     String presentation of the material to remove
      */
-    public void removeOthers(String s)
+    private void removeOthers(String s)
     {
         while(sum() > 100)
         {

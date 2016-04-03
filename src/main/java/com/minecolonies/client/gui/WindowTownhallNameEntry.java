@@ -31,7 +31,7 @@ public class WindowTownhallNameEntry extends Window implements Button.Handler
         }
         catch (NullPointerException exc)
         {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            MineColonies.logger.error("findPane error, report to mod authors",exc);
         }
     }
 

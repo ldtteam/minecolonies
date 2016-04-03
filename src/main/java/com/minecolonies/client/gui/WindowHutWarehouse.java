@@ -55,7 +55,7 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
             findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
         }
         catch (NullPointerException exc) {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            MineColonies.logger.error("findPane error, report to mod authors",exc);
         }
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
@@ -80,7 +80,7 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
         }
         catch (NullPointerException exc)
         {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            MineColonies.logger.error("findPane error, report to mod authors",exc);
         }
     }
 
@@ -138,7 +138,7 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
                     return;
                 } catch (NullPointerException e)
                 {
-                    MineColonies.logger.error("findPane error, report to mod authors");
+                    MineColonies.logger.error("findPane error, report to mod authors",e);
                 }
                 break;
         }

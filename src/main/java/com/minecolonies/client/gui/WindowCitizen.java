@@ -32,15 +32,20 @@ public class WindowCitizen extends Window implements Button.Handler
     {
         try
         {
-            findPaneOfTypeByID(STRENGTH, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength));
-            findPaneOfTypeByID(STAMINA, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina));
-            findPaneOfTypeByID(WISDOM, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom));
-            findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
-            findPaneOfTypeByID(CHARISMA, Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
+            findPaneOfTypeByID(STRENGTH, Label.class).setLabel(
+                    LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength));
+            findPaneOfTypeByID(STAMINA, Label.class).setLabel(
+                    LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina));
+            findPaneOfTypeByID(WISDOM, Label.class).setLabel(
+                    LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom));
+            findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabel(
+                    LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
+            findPaneOfTypeByID(CHARISMA, Label.class).setLabel(
+                    LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
         }
         catch (NullPointerException exc)
         {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            MineColonies.logger.error("findPane error, report to mod authors",exc);
         }
     }
 

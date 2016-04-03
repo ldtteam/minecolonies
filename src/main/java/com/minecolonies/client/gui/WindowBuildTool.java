@@ -113,7 +113,7 @@ public class WindowBuildTool extends Window implements Button.Handler
                 findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
             } catch (NullPointerException e)
             {
-                MineColonies.logger.error("findPane error, report to mod authors");
+                MineColonies.logger.error("findPane error, report to mod authors", e);
             }
 
             InventoryPlayer inventory = this.mc.thePlayer.inventory;
@@ -135,24 +135,24 @@ public class WindowBuildTool extends Window implements Button.Handler
 
                 Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
 
-                if (hut != null)
+                try
                 {
                     hut.setLabel(huts.get(hutDecIndex));
                     hut.setEnabled(true);
-                } else
+                } catch (NullPointerException e)
                 {
-                    MineColonies.logger.error("The hut was null, should not happen, report to mod authors");
+                    MineColonies.logger.error("The hut was null, should not happen, report to mod authors",e);
                 }
 
                 Button style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
 
-                if (style != null)
+                try
                 {
                     style.setVisible(true);
                     style.setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
-                } else
+                } catch (NullPointerException e)
                 {
-                    MineColonies.logger.error("The style was null, should not happen, report to mod authors");
+                    MineColonies.logger.error("The style was null, should not happen, report to mod authors",e);
                 }
 
                 //Render stuff
@@ -163,13 +163,15 @@ public class WindowBuildTool extends Window implements Button.Handler
             } else
             {
                 Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
-                if (hut != null)
+                try
                 {
                     hut.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.nullHut"));
                     hut.setEnabled(false);
-                } else
+                } catch (NullPointerException e)
                 {
-                    MineColonies.logger.error(LanguageHandler.format("The hut was null, should not happen, report to mod authors"));
+                    //TODO: Why use LanguageHandler here and not otherwise?
+                    MineColonies.logger.error(
+                            LanguageHandler.format("The hut was null, should not happen, report to mod authors",e));
                 }
 
                 MineColonies.proxy.setActiveSchematic(null);
@@ -196,7 +198,7 @@ public class WindowBuildTool extends Window implements Button.Handler
                 Settings.instance.style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
             } catch (NullPointerException e)
             {
-                MineColonies.logger.error("findPane error, report to mod authors");
+                MineColonies.logger.error("findPane error, report to mod authors",e);
             }
         }
     }
@@ -230,7 +232,7 @@ public class WindowBuildTool extends Window implements Button.Handler
                 findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
             } catch (NullPointerException e)
             {
-                MineColonies.logger.error("findPane error, report to mod authors");
+                MineColonies.logger.error("findPane error, report to mod authors",e);
             }
 
             changeSchematic();
@@ -243,7 +245,7 @@ public class WindowBuildTool extends Window implements Button.Handler
                 findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(styles.get(styleIndex));
             } catch (NullPointerException e)
             {
-                MineColonies.logger.error("findPane error, report to mod authors");
+                MineColonies.logger.error("findPane error, report to mod authors",e);
             }
             changeSchematic();
             break;
@@ -393,7 +395,7 @@ public class WindowBuildTool extends Window implements Button.Handler
                 style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
             } catch (NullPointerException e)
             {
-                MineColonies.logger.error("findPane error, report to mod authors");
+                MineColonies.logger.error("findPane error, report to mod authors",e);
             }
             SchematicWorld schematic = Schematic.loadSchematic(this.mc.theWorld, style + '/' + hut + '1').getWorldForRender();
             MineColonies.proxy.setActiveSchematic(schematic);

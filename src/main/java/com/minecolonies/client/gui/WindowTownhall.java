@@ -128,7 +128,7 @@ public class WindowTownhall extends Window implements Button.Handler
             findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
         } catch (NullPointerException e)
         {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            MineColonies.logger.error("findPane error, report to mod authors",e);
         }
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
         lastTabButton.setEnabled(false);
@@ -170,7 +170,7 @@ public class WindowTownhall extends Window implements Button.Handler
                  }
                  catch (NullPointerException exc)
                  {
-                     MineColonies.logger.error("findPane error, report to mod authors");
+                     MineColonies.logger.error("findPane error, report to mod authors",exc);
                  }
              }
         });
@@ -197,7 +197,7 @@ public class WindowTownhall extends Window implements Button.Handler
                 }
                 catch (NullPointerException exc)
                 {
-                    MineColonies.logger.error("findPane error, report to mod authors");
+                    MineColonies.logger.error("findPane error, report to mod authors",exc);
                 }
             }
         });

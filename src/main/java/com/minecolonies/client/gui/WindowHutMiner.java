@@ -50,7 +50,7 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
         }
         catch(NullPointerException exc)
         {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            MineColonies.logger.error("findPane error, report to mod authors",exc);
         }
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
@@ -84,7 +84,7 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
                 }
                 catch(NullPointerException exc)
                 {
-                    MineColonies.logger.error("findPane error, report to mod authors");
+                    MineColonies.logger.error("findPane error, report to mod authors",exc);
                 }
             }
         });
@@ -120,7 +120,7 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
             }
         } catch (NullPointerException e)
         {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            MineColonies.logger.error("findPane error, report to mod authors",e);
         }
     }
 
@@ -137,7 +137,7 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
             }
         } catch (NullPointerException e)
         {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            MineColonies.logger.error("findPane error, report to mod authors",e);
         }
     }
 

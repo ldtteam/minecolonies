@@ -35,7 +35,7 @@ public class WindowHomeBuilding extends Window implements Button.Handler {
                     LanguageHandler.getString("com.minecolonies.gui.workerHuts.homeHut"));
         } catch (NullPointerException e)
         {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            MineColonies.logger.error("findPane error, report to mod authors",e);
         }
         /*
         If level == 0, set build button, and disable repair button
@@ -48,7 +48,7 @@ public class WindowHomeBuilding extends Window implements Button.Handler {
                         LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
             } catch (NullPointerException e)
             {
-                MineColonies.logger.error("findPane error, report to mod authors");
+                MineColonies.logger.error("findPane error, report to mod authors",e);
             }
             findPaneByID(BUTTON_REPAIR).disable();
         } else if (building.isBuildingMaxLevel())
@@ -63,7 +63,7 @@ public class WindowHomeBuilding extends Window implements Button.Handler {
                 button.disable();
             } catch (NullPointerException e)
             {
-                MineColonies.logger.error("findPane error, report to mod authors");
+                MineColonies.logger.error("findPane error, report to mod authors",e);
             }
         }
     }
