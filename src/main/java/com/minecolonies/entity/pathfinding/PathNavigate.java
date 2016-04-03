@@ -13,7 +13,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -291,6 +290,6 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
 
     public boolean isUnableToReachDestination()
     {
-        return pathResult != null && pathResult.isComputedAndDoesntReachDestination();
+        return pathResult != null && pathResult.failedToReachDestination();
     }
 }
