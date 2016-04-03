@@ -177,10 +177,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     /**
      * Arguments: current rotation, intended rotation, max increment.
+     * Returns the new rotation degree calculated from the current and intended rotation up to a max.
      */
-    private double updateRotation(double currentRotation, double intentedRotation, double maxIncrement)
+    private double updateRotation(double currentRotation, double intendedRotation, double maxIncrement)
     {
-        double wrappedAngle = MathHelper.wrapAngleTo180_double(intentedRotation - currentRotation);
+        double wrappedAngle = MathHelper.wrapAngleTo180_double(intendedRotation - currentRotation);
 
         if (wrappedAngle > maxIncrement)
         {

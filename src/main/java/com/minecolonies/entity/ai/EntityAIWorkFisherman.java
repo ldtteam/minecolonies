@@ -333,7 +333,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private boolean caughtFish()
     {
-        if (!isCaughtFish() || getFishEntity() == null)
+        if (!hasCaughtFish() || getFishEntity() == null)
         {
             setCaughtFish(false);
             return false;
@@ -370,7 +370,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         this.fishEntity = fishEntity;
     }
 
-    public boolean isCaughtFish() {
+    public boolean hasCaughtFish() {
         return caughtFish;
     }
 

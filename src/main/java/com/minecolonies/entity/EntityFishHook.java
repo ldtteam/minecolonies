@@ -136,8 +136,8 @@ public final class EntityFishHook extends Entity
         this.motionX = newX;
         this.motionY = newY;
         this.motionZ = newZ;
-        this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(x, z) * 180.0 / Math.PI);
-        this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(y, Math.sqrt(x * x + z * z)) * 180.0 / Math.PI);
+        this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(newX, newZ) * 180.0 / Math.PI);
+        this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(newY, Math.sqrt(newX * newX + newZ * newZ)) * 180.0 / Math.PI);
         this.hitBlock = 0;
     }
 
@@ -259,7 +259,7 @@ public final class EntityFishHook extends Entity
 
             if (this.inGround)
             {
-                if (this.worldObj.getBlock(this.xTile, this.yTile, this.zTile).equals(this.inTile))
+                if (this.worldObj.getBlock(this.xTile, this.yTile, this.zTile) == this.inTile)
                 {
                     ++this.hitBlock;
 
