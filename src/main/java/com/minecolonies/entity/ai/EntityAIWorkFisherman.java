@@ -329,7 +329,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
 
         //If there is no close water, try to move closer
-        if (!isCloseToWater())
+        if (Utils.isBlockInRange(world, Blocks.water, (int)worker.posX, (int)worker.posY, (int)worker.posZ, MIN_DISTANCE_TO_WATER))
         {
             return FISHERMAN_WATER_FOUND;
         }
@@ -342,29 +342,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
         return null;
     }
-
-    /**
-     * Checks if there is water really close to the fisherman
-     * @return true if he found close water
-     */
-    private boolean isCloseToWater()
-    {
-        for (int x = (int) worker.posX - MIN_DISTANCE_TO_WATER; x < (int) worker.posX + MIN_DISTANCE_TO_WATER; x++)
-        {
-            for (int z = (int) worker.posZ - MIN_DISTANCE_TO_WATER; z < (int) worker.posZ + MIN_DISTANCE_TO_WATER; z++)
-            {
-                for (int y = (int) worker.posY - MIN_DISTANCE_TO_WATER; y < (int) worker.posY + MIN_DISTANCE_TO_WATER; y++)
-                {
-                    if (world.getBlock(x, y, z).equals(Blocks.water))
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
 
     /**
      * Checks if the fishHook is stuck on land or in an entity.

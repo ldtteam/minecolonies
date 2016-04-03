@@ -123,6 +123,38 @@ public class Utils
         return pathpoint != null && pathpoint.xCoord == x && pathpoint.zCoord == z;
     }
 
+    /**
+     * Seaches a block in a custom range
+     * @param world World instance
+     * @param block searched Block
+     * @param posX X-coordinate
+     * @param posY Y-coordinate
+     * @param posZ Z-coordinate
+     * @param range
+     * @return true if he found the block
+     */
+    public static boolean isBlockInRange(World world, Block block, int posX, int posY, int posZ, int range)
+    {
+        for (int x = posX - range; x < posX + range; x++)
+        {
+            for (int z = posZ - range; z < posZ + range; z++)
+            {
+                for (int y = posY - range; y < posY
+                        + range; y++)
+                {
+                    if (world.getBlock(x, y, z) == block)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    /**
+     * @param nanoSeconds as input
+     * @return nanoSeconds to seconds
+     */
     public static long nanoSecondsToSeconds(long nanoSeconds)
     {
         return nanoSeconds/NANO_TIME_DIVIDER;
