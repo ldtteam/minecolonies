@@ -672,6 +672,14 @@ public final class EntityFishHook extends Entity
         }
     }
 
+    @Override
+    public int hashCode()
+    {
+        int result = super.hashCode();
+        result = 31 * result + (fisherman != null ? fisherman.hashCode() : 0);
+        return result;
+    }
+
     public long getCreationTime()
     {
         return creationTime;
