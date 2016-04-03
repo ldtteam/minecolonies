@@ -338,6 +338,25 @@ public class ColonyView implements IColony
     }
 
     /**
+     * todo: document and fix parameters?
+     * @param player
+     * @param rank
+     */
+    public void addPlayer(String player, Permissions.Rank rank)
+    {
+        MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(this, player));
+    }
+
+    /**
+     * todo: document and fix parameters?
+     * @param player
+     */
+    public void removePlayer(UUID player)
+    {
+        MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(this, player));
+    }
+
+    /**
      * @see  {@link #isCoordInColony(World, int, int, int)}
      *
      * @param w         World to check

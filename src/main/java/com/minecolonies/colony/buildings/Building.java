@@ -118,7 +118,7 @@ public abstract class Building
         addMapping("Lumberjack",    BuildingLumberjack.class,    BlockHutLumberjack.class);
         addMapping("Miner",         BuildingMiner.class,         BlockHutMiner.class);
         addMapping("Stonemason",    BuildingStonemason.class,    BlockHutStonemason.class);
-        addMapping("Townhall", BuildingTownhall.class, BlockHutTownhall.class);
+        addMapping("Townhall",      BuildingTownhall.class,      BlockHutTownhall.class);
         addMapping("Warehouse",     BuildingWarehouse.class,     BlockHutWarehouse.class);
     }
 
@@ -429,7 +429,7 @@ public abstract class Building
     private void requestWorkOrder(int level)
     {
         for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
-        // <<< why isnt this a map? if you have to loop and get check the ID
+
         {
             if (o.getBuildingId().equals(getID()))
             {

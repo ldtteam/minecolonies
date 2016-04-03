@@ -48,7 +48,7 @@ public class Colony implements IColony
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private BuildingTownhall townhall;
+    private                 BuildingTownhall                townhall;
     private                 Map<ChunkCoordinates, Building> buildings                       = new HashMap<>();
 
     //  Citizenry
