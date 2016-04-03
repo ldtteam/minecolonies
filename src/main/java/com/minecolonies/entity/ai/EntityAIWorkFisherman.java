@@ -205,7 +205,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
             return state;
         }
-        if (pathResult.isComputedAndDoesntReachDestination())
+        if (pathResult.failedToReachDestination())
         {
             return setRandomWater();
         }

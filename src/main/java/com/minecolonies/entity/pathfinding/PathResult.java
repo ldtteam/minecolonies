@@ -40,14 +40,16 @@ public class PathResult
     public boolean isInProgress() { return isComputing() || status == Status.IN_PROGRESS_FOLLOWING; }
 
     /**
-     * @return true if the path was cancelled before being computed or before the entity reached it's destination
+     * @return true if the no path can be found
      */
-
-    public boolean isComputedAndDoesntReachDestination()
+    public boolean failedToReachDestination()
     {
-        return isComputing() && getPathReachesDestination();
+        return !isComputing() && !getPathReachesDestination();
     }
 
+    /**
+     * @return true if the path was cancelled before being computed or before the entity reached it's destination
+     */
     public boolean isCancelled() { return status == Status.CANCELLED; }
 
     /**
