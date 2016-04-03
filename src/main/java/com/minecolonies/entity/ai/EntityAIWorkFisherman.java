@@ -6,7 +6,6 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.inventory.InventoryCitizen;
-import com.minecolonies.util.FunctionalUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.init.Blocks;
@@ -346,23 +345,27 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     /**
      * Checks if there is water really close to the fisherman
-     *
      * @return true if he found close water
      */
     private boolean isCloseToWater()
     {
-        final boolean[] foundCloseWater = {false};
-        FunctionalUtils.forXYZLoop(
-                (int) worker.posX - MIN_DISTANCE_TO_WATER, (int) worker.posX + MIN_DISTANCE_TO_WATER,
-                (int) worker.posY - MIN_DISTANCE_TO_WATER, (int) worker.posY + MIN_DISTANCE_TO_WATER,
-                (int) worker.posZ - MIN_DISTANCE_TO_WATER, (int) worker.posZ + MIN_DISTANCE_TO_WATER,
-                x -> (y, z) -> {
+        boolean foundCloseWater = false;
+        for (int x = (int) worker.posX - MIN_DISTANCE_TO_WATER; x < (int) worker.posX + MIN_DISTANCE_TO_WATER; x++)
+        {
+            for (int z = (int) worker.posZ - MIN_DISTANCE_TO_WATER; z < (int) worker.posZ + MIN_DISTANCE_TO_WATER; z++)
+            {
+                for (int y = (int) worker.posY - MIN_DISTANCE_TO_WATER; y
+                                                                        < (int) worker.posY
+                                                                          + MIN_DISTANCE_TO_WATER; y++)
+                {
                     if (world.getBlock(x, y, z).equals(Blocks.water))
                     {
-                        foundCloseWater[0] = true;
+                        foundCloseWater = true;
                     }
-                });
-        return foundCloseWater[0];
+                }
+            }
+        }
+        return foundCloseWater;
     }
 
 
