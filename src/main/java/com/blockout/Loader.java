@@ -27,7 +27,7 @@ public class Loader
 {
     public static Logger logger = LogManager.getLogger("BlockOut");
 
-    private static Map<String, Constructor<? extends Pane>> paneConstructorMap = new HashMap<String, Constructor<? extends Pane>>();
+    private static Map<String, Constructor<? extends Pane>> paneConstructorMap = new HashMap<>();
 
     static
     {
@@ -46,18 +46,21 @@ public class Loader
         register("switch", SwitchView.class);
     }
 
-    public static String makeFactoryKey(String name, String style)
+    private static String makeFactoryKey(String name, String style)
     {
         return name + ":" + (style != null ? style : "");
     }
 
-    public static void register(String name, String style, Class<? extends Pane> paneClass)
+    private static void register(String name, String style, Class<? extends Pane> paneClass)
     {
         String key = makeFactoryKey(name, style);
 
         if (paneConstructorMap.containsKey(key))
         {
-            throw new IllegalArgumentException("Duplicate pane type '" + name + "' of style '" + style + "' when registering Pane class mapping for " + paneClass.getName());
+            throw new IllegalArgumentException("Duplicate pane type '"
+                                               + name + "' of style '"
+                                               + style + "' when registering Pane class mapping for "
+                                               + paneClass.getName());
         }
 
         try
@@ -67,18 +70,18 @@ public class Loader
         }
         catch (NoSuchMethodException exception)
         {
-            logger.error("No method exception in Loader.java");
-            throw new IllegalArgumentException("Missing (XMLNode) constructor for type '" + name + "' when adding Pane class mapping for " + paneClass.getName());
+            throw new IllegalArgumentException("Missing (XMLNode) constructor for type '"
+                                               + name + "' when adding Pane class mapping for " + paneClass.getName());
         }
     }
 
-    public static void register(String name, Class<? extends Pane> paneClass)
+    private static void register(String name, Class<? extends Pane> paneClass)
     {
         register(name, null, paneClass);
     }
 
 
-    public static Pane createFromPaneParams(PaneParams params)
+    private static Pane createFromPaneParams(PaneParams params)
     {
         //  Parse Attributes first, to full construct
         String paneType = params.getType();
@@ -103,7 +106,6 @@ public class Loader
                 logger.error(
                         String.format("Exception when parsing XML for pane type %s", paneType),
                         exc);
-                exc.printStackTrace();
             }
         }
 
@@ -162,7 +164,7 @@ public class Loader
      * @param input
      * @param parent
      */
-    public static void createFromXML(InputSource input, View parent)
+    private static void createFromXML(InputSource input, View parent)
     {
         try
         {
@@ -175,7 +177,6 @@ public class Loader
         catch (ParserConfigurationException | SAXException | IOException exc)
         {
             logger.error("Exception when parsing XML.", exc);
-            exc.printStackTrace();
         }
     }
 
@@ -233,8 +234,7 @@ public class Loader
         }
         catch(IOException e)
         {
-            logger.error("IOException Loader.java");
-            e.printStackTrace();
+            logger.error("IOException Loader.java", e);
         }
         return null;
     }
