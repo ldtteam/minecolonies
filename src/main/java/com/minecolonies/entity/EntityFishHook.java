@@ -567,7 +567,7 @@ public class EntityFishHook extends Entity
                 double y = this.citizen.posY - this.posY;
                 double z = this.citizen.posZ - this.posZ;
                 this.hitEntity.motionX += x * 0.1;
-                this.hitEntity.motionY += y * 0.1 + (double)Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08;
+                this.hitEntity.motionY += y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08;
                 this.hitEntity.motionZ += z * 0.1;
                 itemDamage = 3;
             }
@@ -579,7 +579,7 @@ public class EntityFishHook extends Entity
                 double distanceZ = this.citizen.posZ - this.posZ;
 
                 entityitem.motionX = distanceX * 0.1;
-                entityitem.motionY = distanceY * 0.1 + (double)Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
+                entityitem.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
                 entityitem.motionZ = distanceZ * 0.1;
                 this.worldObj.spawnEntityInWorld(entityitem);
                 this.citizen.worldObj.spawnEntityInWorld(new EntityXPOrb(this.citizen.worldObj, this.citizen.posX, this.citizen.posY + 0.D, this.citizen.posZ + 0.5, this.rand.nextInt(6) + 1));
@@ -611,7 +611,7 @@ public class EntityFishHook extends Entity
 
         if (random < speedBonus || buildingLevel == 1)
         {
-            return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, possibleDrops_1)).func_150708_a(this.rand);
+            return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, possibleDrops_3)).func_150708_a(this.rand);
         }
         else
         {
@@ -619,11 +619,11 @@ public class EntityFishHook extends Entity
 
             if (random < lootBonus || buildingLevel == 2)
             {
-                return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, possibleDrops_2)).func_150708_a(this.rand);
+                return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, possibleDrops_3)).func_150708_a(this.rand);
             }
             else
             {
-                return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, possibleDrops_3)).func_150708_a(this.rand);
+                return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, possibleDrops_2)).func_150708_a(this.rand);
             }
         }
     }

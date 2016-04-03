@@ -39,7 +39,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      * TODO: fix this with ttl
      */
     private static final int NANO_TIME_DIVIDER = 1000 * 1000 * 1000;
-    private static final float ROTATION_ANGLE = 90F;
     private static final String TOOL_TYPE_ROD = "rod";
     private static final int SEARCH_RANGE = 50;
     private static final Logger logger = LogManager.getLogger("Fisherman");
@@ -92,9 +91,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     @Override
     protected boolean wantInventoryDumped()
     {
+        //TODO Change state to searching water
         if (fishesCaught > MAX_FISHES_IN_INV)
         {
             fishesCaught = 0;
+            job.setWater(null);
+
             return true;
         }
         return false;
@@ -149,13 +151,23 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     //Rotates the fisherman to guarantee that the fisherman throws his rod in the correct direction
     private AIState tryDifferentAngles()
     {
-            //Try a different angle to throw the hook not that far
-            worker.faceBlock(job.getWater().getLocation());
+        if (executedRotations >= MAX_ROTATIONS)
+        {
+            job.removeFromPonds(job.getWater().getLocation());
+            job.setWater(null);
+            executedRotations=0;
+            return FISHERMAN_SEARCHING_WATER;
+        }
+        //Try a different angle to throw the hook not that far
+        worker.faceBlock(job.getWater().getLocation());
+        executedRotations++;
         return FISHERMAN_START_FISHING;
     }
 
     private AIState findWater()
     {
+        //Reset executedRotations when fisherman searches a new Pond
+        executedRotations=0;
         //If he can't find any pond, tell that to the player
         //If 20 ponds are already stored, take a random stored location
         if (job.getPonds().size() >= MAX_PONDS)
@@ -208,6 +220,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
         else if (caughtFish())
         {
+            if(fishesCaught>=MAX_FISHES_IN_INV)
+            {
+                job.setWater(null);
+                return FISHERMAN_SEARCHING_WATER;
+            }
             return FISHERMAN_WATER_FOUND;
         }
 
