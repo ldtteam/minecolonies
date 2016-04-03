@@ -349,23 +349,20 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private boolean isCloseToWater()
     {
-        boolean foundCloseWater = false;
         for (int x = (int) worker.posX - MIN_DISTANCE_TO_WATER; x < (int) worker.posX + MIN_DISTANCE_TO_WATER; x++)
         {
             for (int z = (int) worker.posZ - MIN_DISTANCE_TO_WATER; z < (int) worker.posZ + MIN_DISTANCE_TO_WATER; z++)
             {
-                for (int y = (int) worker.posY - MIN_DISTANCE_TO_WATER; y
-                                                                        < (int) worker.posY
-                                                                          + MIN_DISTANCE_TO_WATER; y++)
+                for (int y = (int) worker.posY - MIN_DISTANCE_TO_WATER; y < (int) worker.posY + MIN_DISTANCE_TO_WATER; y++)
                 {
                     if (world.getBlock(x, y, z).equals(Blocks.water))
                     {
-                        foundCloseWater = true;
+                        return true;
                     }
                 }
             }
         }
-        return foundCloseWater;
+        return false;
     }
 
 
