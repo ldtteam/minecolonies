@@ -10,12 +10,12 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 
-public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHallRenameMessage, IMessage>
+public class TownhallRenameMessage implements IMessage, IMessageHandler<TownhallRenameMessage, IMessage>
 {
     private int    colonyId;
     private String name;
 
-    public TownHallRenameMessage(){}
+    public TownhallRenameMessage(){}
 
     /**
      * Object creation for the town hall rename message
@@ -23,7 +23,7 @@ public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHall
      * @param colony    Colony the rename is going to occur in
      * @param name      New name of the town hall
      */
-    public TownHallRenameMessage(ColonyView colony, String name)
+    public TownhallRenameMessage(ColonyView colony, String name)
     {
         this.colonyId = colony.getID();
         this.name = name;
@@ -44,7 +44,7 @@ public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHall
     }
 
     @Override
-    public IMessage onMessage(TownHallRenameMessage message, MessageContext ctx)
+    public IMessage onMessage(TownhallRenameMessage message, MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
 

@@ -3,7 +3,7 @@ package com.minecolonies.colony;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingHome;
-import com.minecolonies.colony.buildings.BuildingTownHall;
+import com.minecolonies.colony.buildings.BuildingTownhall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
@@ -48,7 +48,7 @@ public class Colony implements IColony
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private                 BuildingTownHall                townhall;
+    private BuildingTownhall townhall;
     private                 Map<ChunkCoordinates, Building> buildings                       = new HashMap<>();
 
     //  Citizenry
@@ -509,12 +509,17 @@ public class Colony implements IColony
         subscribers = new HashSet<>();
 
         //  Add owners
-        MinecraftServer.getServer().getConfigurationManager().playerEntityList.stream().filter(o -> o instanceof EntityPlayerMP).forEach(o -> {
-            EntityPlayerMP player = (EntityPlayerMP) o;
-            if (permissions.isSubscriber(player)) {
-                subscribers.add(player);
+        for (Object o : MinecraftServer.getServer().getConfigurationManager().playerEntityList)
+        {
+            if (o instanceof EntityPlayerMP)
+            {
+                EntityPlayerMP player = (EntityPlayerMP)o;
+                if (permissions.isSubscriber(player))
+                {
+                    subscribers.add(player);
+                }
             }
-        });
+        }
 
         //  Add nearby players
         if (world != null)
@@ -580,7 +585,9 @@ public class Colony implements IColony
             // Permissions
             if(permissions.isDirty() || hasNewSubscribers)
             {
-                subscribers.stream().filter(player -> permissions.isDirty() || !oldSubscribers.contains(player)).forEach(player -> {
+                subscribers
+                        .stream()
+                        .filter(player -> permissions.isDirty() || !oldSubscribers.contains(player)).forEach(player -> {
                     Permissions.Rank rank = getPermissions().getRank(player);
                     MineColonies.getNetwork().sendTo(new PermissionsMessage.View(this, rank), player);
                 });
@@ -595,7 +602,9 @@ public class Colony implements IColony
                     {
                         ColonyViewCitizenViewMessage msg = new ColonyViewCitizenViewMessage(this, citizen);
 
-                        subscribers.stream().filter(player -> citizen.isDirty() || !oldSubscribers.contains(player)).forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
+                        subscribers.stream()
+                                   .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
+                                   .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
                     }
                 }
             }
@@ -609,7 +618,9 @@ public class Colony implements IColony
                     {
                         ColonyViewBuildingViewMessage msg = new ColonyViewBuildingViewMessage(building);
 
-                        subscribers.stream().filter(player -> building.isDirty() || !oldSubscribers.contains(player)).forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
+                        subscribers.stream()
+                                   .filter(player -> building.isDirty() || !oldSubscribers.contains(player))
+                                   .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
                     }
                 }
             }
@@ -655,7 +666,8 @@ public class Colony implements IColony
             return;
         }
 
-        ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, xCoord, yCoord, zCoord, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer);
+        ChunkCoordinates spawnPoint =
+                Utils.scanForBlockNearPoint(world, xCoord, yCoord, zCoord, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer);
 
         if(spawnPoint != null)
         {
@@ -670,7 +682,10 @@ public class Colony implements IColony
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
-                    LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, permissions.getMessagePlayers()), "tile.blockHutTownHall.messageMaxSize");//TODO: add Colony Name prefix?
+                    //TODO: add Colony Name prefix?
+                    LanguageHandler.sendPlayersLocalizedMessage(
+                            Utils.getPlayersFromUUID(world, permissions.getMessagePlayers()),
+                            "tile.blockHutTownhall.messageMaxSize");
                 }
             }
 
@@ -705,7 +720,7 @@ public class Colony implements IColony
      *
      * @return      Town hall of the colony
      */
-    public BuildingTownHall getTownhall()
+    public BuildingTownhall getTownhall()
     {
         return townhall;
     }
@@ -739,7 +754,7 @@ public class Colony implements IColony
         {
             return type.cast(buildings.get(buildingId));
         }
-        catch (ClassCastException exc) {}
+        catch (ClassCastException ignored) {}
 
         return null;
     }
@@ -754,12 +769,12 @@ public class Colony implements IColony
         buildings.put(building.getID(), building);
         building.markDirty();
 
-        if (building instanceof BuildingTownHall)
+        if (building instanceof BuildingTownhall)
         {
             //  Limit 1 town hall
             if (townhall == null)
             {
-                townhall = (BuildingTownHall) building;
+                townhall = (BuildingTownhall) building;
             }
         }
     }
@@ -968,9 +983,11 @@ public class Colony implements IColony
     public List<ChunkCoordinates> getDeliverymanRequired()
     {
 
-        return citizens.values().stream().filter(citizen -> citizen.getWorkBuilding() != null &&
-                citizen.getJob() != null).filter(citizen -> !citizen.getJob().isMissingNeededItem()).map(citizen ->
-                citizen.getWorkBuilding().getLocation()).collect(Collectors.toList());
+        return citizens.values().stream()
+                       .filter(citizen -> citizen.getWorkBuilding() != null && citizen.getJob() != null)
+                       .filter(citizen -> !citizen.getJob().isMissingNeededItem())
+                       .map(citizen -> citizen.getWorkBuilding().getLocation())
+                       .collect(Collectors.toList());
     }
 
     //public int getAutoHostile()

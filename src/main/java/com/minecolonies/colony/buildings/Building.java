@@ -118,7 +118,7 @@ public abstract class Building
         addMapping("Lumberjack",    BuildingLumberjack.class,    BlockHutLumberjack.class);
         addMapping("Miner",         BuildingMiner.class,         BlockHutMiner.class);
         addMapping("Stonemason",    BuildingStonemason.class,    BlockHutStonemason.class);
-        addMapping("Townhall",      BuildingTownHall.class,      BlockHutTownhall.class);
+        addMapping("Townhall", BuildingTownhall.class, BlockHutTownhall.class);
         addMapping("Warehouse",     BuildingWarehouse.class,     BlockHutWarehouse.class);
     }
 
@@ -312,7 +312,8 @@ public abstract class Building
      *
      * @param level     Level of the building
      */
-    public void setBuildingLevel(int level)     //TODO Since this is public, dont we want to do some security checks? mw
+    public void setBuildingLevel(int level)
+    //todo: Since this is public, dont we want to do some security checks? mw
     {
         buildingLevel = level;
         markDirty();
@@ -347,8 +348,8 @@ public abstract class Building
                     tileEntity = (TileEntityColonyBuilding)te;
                     if (tileEntity.getBuilding() == null)
                     {
-                        tileEntity.setColony(colony); //todo  <<<< is this required? isnt it set when it was first created? // agree not usefull mw
-                        tileEntity.setBuilding(this); //todo  <<<< is this required? isnt it set when it was first created? // agree not usefull mw
+                        tileEntity.setColony(colony);
+                        tileEntity.setBuilding(this);
                     }
                 }
             }
@@ -427,7 +428,8 @@ public abstract class Building
      */
     private void requestWorkOrder(int level)
     {
-        for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class)) // <<< why isnt this a map? if you have to loop and get check the ID
+        for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        // <<< why isnt this a map? if you have to loop and get check the ID
         {
             if (o.getBuildingId().equals(getID()))
             {

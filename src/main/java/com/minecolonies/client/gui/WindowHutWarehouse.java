@@ -3,7 +3,6 @@ package com.minecolonies.client.gui;
 import com.blockout.controls.Button;
 import com.blockout.controls.ButtonVanilla;
 import com.blockout.views.SwitchView;
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.BuildingWarehouse;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
@@ -107,24 +106,19 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
             case BUTTON_CITIZEN_CHESTS:
                 building.citizenVisit = !building.citizenVisit;
                 break;
+            case BUTTON_PREVPAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                buttonPrevPage.setEnabled(false);
+                buttonNextPage.setEnabled(true);
+                break;
+            case BUTTON_NEXTPAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                buttonPrevPage.setEnabled(true);
+                buttonNextPage.setEnabled(false);
+                break;
             default:
-                switch (button.getID())
-                {
-                    case BUTTON_PREVPAGE:
-                        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                        buttonPrevPage.setEnabled(false);
-                        buttonNextPage.setEnabled(true);
-                        break;
-                    case BUTTON_NEXTPAGE:
-                        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                        buttonPrevPage.setEnabled(true);
-                        buttonNextPage.setEnabled(false);
-                        break;
-                    default:
-                        super.onButtonClicked(button);
-                        break;
-                }
-                return;
+                super.onButtonClicked(button);
+                break;
         }
 
         updateButtonLabels();

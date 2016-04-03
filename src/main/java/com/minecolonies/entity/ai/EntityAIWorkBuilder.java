@@ -1,6 +1,5 @@
 package com.minecolonies.entity.ai;
 
-import com.schematica.config.BlockInfo;
 import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.colony.buildings.Building;
@@ -10,6 +9,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
+import com.schematica.config.BlockInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -55,32 +55,32 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             WorkOrderBuild wo = job.getWorkOrder();
             if (wo == null)
             {
-                MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)", worker.getColony().getID(), worker.getCitizenData().getId(), job.getWorkOrderId()));
+                MineColonies.logger.error(
+                        String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)",
+                                      worker.getColony().getID(),
+                                      worker.getCitizenData().getId(), job.getWorkOrderId()));
                 return;
             }
             Building building = job.getColony().getBuilding(wo.getBuildingId());
             if (building == null)
             {
-                MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)", worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
+                MineColonies.logger.error(
+                        String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)",
+                                      worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
+                return;
             }
             //Don't go through the CLEAR stage for repairs and upgrades
-            if (building != null)
-            {
-                if (building.getBuildingLevel() > 0) {
-                    job.stage = JobBuilder.Stage.REQUEST_MATERIALS;
+            if (building.getBuildingLevel() > 0) {
+                job.stage = JobBuilder.Stage.REQUEST_MATERIALS;
 
-                    if (!job.hasSchematic() || !incrementBlock()) {
-                        return;
-                    }
-                } else {
-                    job.stage = JobBuilder.Stage.CLEAR;
-                    if (!job.hasSchematic() || !job.getSchematic().decrementBlock()) {
-                        return;
-                    }
+                if (!job.hasSchematic() || !incrementBlock()) {
+                    return;
                 }
-            } else
-            {
-                throw new NullPointerException();
+            } else {
+                job.stage = JobBuilder.Stage.CLEAR;
+                if (!job.hasSchematic() || !job.getSchematic().decrementBlock()) {
+                    return;
+                }
             }
 
 

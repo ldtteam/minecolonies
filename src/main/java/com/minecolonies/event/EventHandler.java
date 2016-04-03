@@ -138,7 +138,7 @@ public class EventHandler
                     if (colony.hasTownhall())
                     {
                         //  Placing in a colony which already has a town hall
-                        LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
+                        LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
                         return false;
                     }
                     else if (!colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
@@ -156,7 +156,7 @@ public class EventHandler
                 else if (colony.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
                 {
                     //  Placing too close to an existing colony
-                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
                     return false;
                 }
             }
@@ -164,7 +164,7 @@ public class EventHandler
             if (!ColonyManager.getIColoniesByOwner(world, player).isEmpty())
             {
                 //  Players are currently only allowed a single colony
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messagePlacedAlready");
+                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messagePlacedAlready");
                 return false;
             }
         }

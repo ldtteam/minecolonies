@@ -2,11 +2,11 @@ package com.minecolonies.colony;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingTownHall;
+import com.minecolonies.colony.buildings.BuildingTownhall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.network.messages.PermissionsMessage;
-import com.minecolonies.network.messages.TownHallRenameMessage;
+import com.minecolonies.network.messages.TownhallRenameMessage;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.network.ByteBufUtils;
@@ -33,7 +33,7 @@ public class ColonyView implements IColony
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private         BuildingTownHall.View                   townhall;
+    private         BuildingTownhall.View townhall;
     private         Map<ChunkCoordinates, Building.View>    buildings       = new HashMap<>();
 
     //  Citizenry
@@ -86,15 +86,15 @@ public class ColonyView implements IColony
     public void setName(String name)
     {
         this.name = name;
-        MineColonies.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
+        MineColonies.getNetwork().sendToServer(new TownhallRenameMessage(this, name));
     }
 
     /**
      * Get the Town hall View for this ColonyView
      *
-     * @return      {@link com.minecolonies.colony.buildings.BuildingTownHall.View} of the colony
+     * @return      {@link BuildingTownhall.View} of the colony
      */
-    public BuildingTownHall.View getTownhall() {
+    public BuildingTownhall.View getTownhall() {
         return townhall;
     }
 
@@ -171,7 +171,6 @@ public class ColonyView implements IColony
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
     }
 
-//    public void addPlayer(String player, Permissions.Rank rank)
 
     /**
      * Returns the maximum amount of citizen in the colony
@@ -262,9 +261,9 @@ public class ColonyView implements IColony
     /**
      * //TODO document
      * @param buf
-     * @return
+     * @return null == no response
      */
-    public IMessage handlePermissionsViewMessage(ByteBuf buf)   //TODO why do we have return type IMessage, while we always return null
+    public IMessage handlePermissionsViewMessage(ByteBuf buf)
     {
         permissions.deserialize(buf);
         return null;
@@ -276,9 +275,9 @@ public class ColonyView implements IColony
      *
      * @param id        ID of the citizen
      * @param buf       Network data
-     * @return          //todo document
+     * @return          null == no response
      */
-    public IMessage handleColonyViewCitizensMessage(int id, ByteBuf buf) //TODO why do we have return type IMessage, while we always return null
+    public IMessage handleColonyViewCitizensMessage(int id, ByteBuf buf)
     {
         CitizenData.View citizen = CitizenData.createCitizenDataView(id, buf);
         if (citizen != null)
@@ -292,9 +291,9 @@ public class ColonyView implements IColony
     /**
      * Remove a citizen from the ColonyView
      *
-     * @return          //todo document
+     * @return          null == no response
      */
-    public IMessage handleColonyViewRemoveCitizenMessage(int citizen) //TODO why do we have return type IMessage, while we always return null
+    public IMessage handleColonyViewRemoveCitizenMessage(int citizen)
     {
         citizens.remove(citizen);
         return null;
@@ -303,9 +302,9 @@ public class ColonyView implements IColony
     /**
      * Remove a building from the ColonyView
      *
-     * @return          //todo document
+     * @return          null == no response
      */
-    public IMessage handleColonyViewRemoveBuildingMessage(ChunkCoordinates buildingId) //TODO why do we have return type IMessage, while we always return null
+    public IMessage handleColonyViewRemoveBuildingMessage(ChunkCoordinates buildingId)
     {
         Building.View building = buildings.remove(buildingId);
         if (townhall == building)
@@ -320,18 +319,18 @@ public class ColonyView implements IColony
      * This uses a full-replacement - buildings do not get updated and are instead overwritten
      *
      * @param buf
-     * @return          //todo document
+     * @return          null == no response
      */
-    public IMessage handleColonyBuildingViewMessage(ChunkCoordinates buildingId, ByteBuf buf) //TODO why do we have return type IMessage, while we always return null
+    public IMessage handleColonyBuildingViewMessage(ChunkCoordinates buildingId, ByteBuf buf)
     {
         Building.View building = Building.createBuildingView(this, buildingId, buf);
         if (building != null)
         {
             buildings.put(building.getID(), building);
 
-            if (building instanceof BuildingTownHall.View)
+            if (building instanceof BuildingTownhall.View)
             {
-                townhall = (BuildingTownHall.View)building;
+                townhall = (BuildingTownhall.View)building;
             }
         }
 

@@ -42,7 +42,6 @@ public class Schematics
         try
         {
             URI uri = ColonyManager.class.getResource("/assets/minecolonies/schematics/").toURI();
-            System.out.println(uri.toString());     //todo why do we print this
             Path basePath;
 
             if (uri.getScheme().equals("jar"))

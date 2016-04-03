@@ -34,10 +34,13 @@ public class Permissions implements IPermissions
         HOSTILE (false);
 
         /**
-         * Subscribers have some rights within a colony.
-         * Some ranks get this status
+         * Ranks enum constructor.
          *
-         * @param isSubscriber      boolean whether rank is subscriber or not
+         * Subscribers are receiving events from the colony.
+         * They are either citizens or near enough.
+         * Ranks with true are automatically subscribed to the colony.
+         *
+         * @param isSubscriber      boolean whether auto-subscribed to this colony.
          */
         Rank(boolean isSubscriber)
         {
@@ -58,7 +61,7 @@ public class Permissions implements IPermissions
         CAN_DEMOTE(5),
         SEND_MESSAGES(6);
 
-        //TODO grief control?
+        //todo: grief control?
 
         private final int flag;
 
@@ -95,18 +98,16 @@ public class Permissions implements IPermissions
         public Rank rank;
     }
 
-    private final   static  String TAG_OWNERS                   = "owners";
-    private final   static  String TAG_ID                       = "id";
-    private final   static  String TAG_NAME                     = "name";
-    private final   static  String TAG_RANK                     = "rank";
-    private final   static  String TAG_PERMISSIONS              = "permissions";
-    private final   static  String TAG_FLAGS                    = "flags";
-
-    private                 Map<UUID, Player>   players         = new HashMap<>();
-    private                 Map<Rank, Integer>  permissions     = new HashMap<>();
-    private         static  Map<Rank, RankPair> promotionRanks  = new HashMap<>();
-
-    private                 boolean             isDirty         = false;
+    private static final String TAG_OWNERS = "owners";
+    private static final String TAG_ID = "id";
+    private static final String TAG_NAME = "name";
+    private static final String TAG_RANK = "rank";
+    private static final String TAG_PERMISSIONS = "permissions";
+    private static final String TAG_FLAGS = "flags";
+    private static Map<Rank, RankPair> promotionRanks = new HashMap<>();
+    private Map<UUID, Player> players = new HashMap<>();
+    private Map<Rank, Integer> permissions = new HashMap<>();
+    private boolean isDirty = false;
 
     /**
      * Saves the permissions with allowed actions
@@ -213,12 +214,11 @@ public class Permissions implements IPermissions
 
     }
 
-    /*
+
     public Map<UUID, Player> getPlayers()
     {
         return Collections.unmodifiableMap(players);
     }
-    */
 
     /**
      * Returns a set of UUID's that have permission to send (and receive) messages
@@ -232,34 +232,19 @@ public class Permissions implements IPermissions
 
     }
 
-    /*
     public Set<Player> getPlayersByRank(Rank rank)
     {
-        Set<Player> players = new HashSet<Player>();
-        for (Player player : this.players.values())
-        {
-            if (player.rank.equals(rank))
-            {
-                players.add(player);
-            }
-        }
-        return players;
+        return this.players.values().stream()
+                           .filter(player -> player.rank.equals(rank))
+                           .collect(Collectors.toSet());
     }
-    */
 
-    /*
-    public Set<Player> getPlayersByRank(Set<Rank> ranks) {
-        Set<Player> players = new HashSet<Player>();
-        for (Player player : this.players.values())
-        {
-            if (ranks.contains(player.rank))
-            {
-                players.add(player);
-            }
-        }
-        return players;
+    public Set<Player> getPlayersByRank(Set<Rank> ranks)
+    {
+        return this.players.values().stream()
+                           .filter(player -> ranks.contains(player.rank))
+                           .collect(Collectors.toSet());
     }
-    */
 
     /**
      * Returns the map of permissions and ranks

@@ -205,7 +205,7 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
             MineColonies.logger.error("Supply chest tile entity was null.");
             return;
         }
-        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
+        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownhall));
         chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
     }
 }
