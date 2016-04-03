@@ -205,7 +205,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
             return state;
         }
-        if (!pathResult.isComputing() && !pathResult.getPathReachesDestination())
+        if (pathResult.isComputedAndDoesntReachDestination())
         {
             return setRandomWater();
         }
@@ -227,18 +227,16 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return state;
     }
 
-    private AIState setRandomWater(){
+    private AIState setRandomWater()
+    {
         if (job.getPonds().isEmpty())
         {
             chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+            return state;
         }
-        else
-        {
-            job.setWater(new Water(world, job.getPonds().get(itemRand.nextInt(job.getPonds().size()))));
-            return FISHERMAN_CHECK_WATER;
-        }
-        return state;
+        job.setWater(new Water(world, job.getPonds().get(itemRand.nextInt(job.getPonds().size()))));
+        return FISHERMAN_CHECK_WATER;
     }
 
     /**

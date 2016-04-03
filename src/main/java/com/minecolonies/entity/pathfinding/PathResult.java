@@ -42,6 +42,12 @@ public class PathResult
     /**
      * @return true if the path was cancelled before being computed or before the entity reached it's destination
      */
+
+    public boolean isComputedAndDoesntReachDestination()
+    {
+        return isComputing() && getPathReachesDestination();
+    }
+
     public boolean isCancelled() { return status == Status.CANCELLED; }
 
     /**
