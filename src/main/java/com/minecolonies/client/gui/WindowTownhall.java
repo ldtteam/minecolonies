@@ -117,19 +117,15 @@ public class WindowTownhall extends Window implements Button.Handler
         String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townhall.population.builders", builders);
         String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townhall.population.deliverymen", deliverymen);
 
-        try
-        {
-            findPaneOfTypeByID(COLONY_NAME, Label.class).setLabel(townhall.getColony().getName());
-            findPaneOfTypeByID(CURRENT_SPEC, Label.class).setLabel("<Industrial>");
-            findPaneOfTypeByID(TOTAL_CITIZENS, Label.class).setLabel(numberOfCitizens);
-            findPaneOfTypeByID(UNEMP_CITIZENS, Label.class).setLabel(numberOfUnemployed);
-            findPaneOfTypeByID(BUILDERS, Label.class).setLabel(numberOfBuilders);
-            findPaneOfTypeByID(DELIVERY_MAN, Label.class).setLabel(numberOfDeliverymen);
-            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
-        } catch (NullPointerException e)
-        {
-            MineColonies.logger.error("findPane error, report to mod authors",e);
-        }
+
+        findPaneOfTypeByID(COLONY_NAME, Label.class).setLabel(townhall.getColony().getName());
+        findPaneOfTypeByID(CURRENT_SPEC, Label.class).setLabel("<Industrial>");
+        findPaneOfTypeByID(TOTAL_CITIZENS, Label.class).setLabel(numberOfCitizens);
+        findPaneOfTypeByID(UNEMP_CITIZENS, Label.class).setLabel(numberOfUnemployed);
+        findPaneOfTypeByID(BUILDERS, Label.class).setLabel(numberOfBuilders);
+        findPaneOfTypeByID(DELIVERY_MAN, Label.class).setLabel(numberOfDeliverymen);
+        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
+
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
         lastTabButton.setEnabled(false);
 
@@ -158,20 +154,15 @@ public class WindowTownhall extends Window implements Button.Handler
              @Override
              public void updateElement(int index, Pane rowPane)
              {
-                 try
-                 {
-                     Permissions.Player player = users.get(index);
 
-                     String rank = player.rank.name();
-                     rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
+                 Permissions.Player player = users.get(index);
 
-                     rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.name);
-                     rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
-                 }
-                 catch (NullPointerException exc)
-                 {
-                     MineColonies.logger.error("findPane error, report to mod authors",exc);
-                 }
+                 String rank = player.rank.name();
+                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
+
+                 rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.name);
+                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
+
              }
         });
 
@@ -188,17 +179,12 @@ public class WindowTownhall extends Window implements Button.Handler
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-                try
-                {
-                    CitizenData.View citizen = citizens.get(index);
 
-                    rowPane.findPaneOfTypeByID("name", Label.class).setLabel(citizen.getName());
-                    //rowPane.findPaneOfTypeByID("job", Label.class).setLabel("" /* Not working yet */);
-                }
-                catch (NullPointerException exc)
-                {
-                    MineColonies.logger.error("findPane error, report to mod authors",exc);
-                }
+                CitizenData.View citizen = citizens.get(index);
+
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(citizen.getName());
+                //rowPane.findPaneOfTypeByID("job", Label.class).setLabel("" /* Not working yet */);
+
             }
         });
     }

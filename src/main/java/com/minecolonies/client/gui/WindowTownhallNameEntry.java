@@ -25,14 +25,7 @@ public class WindowTownhallNameEntry extends Window implements Button.Handler
     @Override
     public void onOpened()
     {
-        try
-        {
-            findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(colony.getName());
-        }
-        catch (NullPointerException exc)
-        {
-            MineColonies.logger.error("findPane error, report to mod authors",exc);
-        }
+        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(colony.getName());
     }
 
     @Override

@@ -64,7 +64,7 @@ public class WindowTestGui extends Window implements Button.Handler
                     }
                 });
         }
-        catch (NullPointerException exc) {}
+        catch (NullPointerException ignored) {}
     }
 
     @Override

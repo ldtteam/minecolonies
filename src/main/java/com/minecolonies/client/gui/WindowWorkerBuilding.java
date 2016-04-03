@@ -54,31 +54,25 @@ public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View>
             }
         }
 
-        try
+        findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabel(workerName);
+        findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class).setLabel(
+                LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel",
+                        workerLevel));
+
+        findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
+                LanguageHandler.getString(getBuildingName()));
+        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabel("xxxxxxxx");
+
+        if (building.getBuildingLevel() == 0)
         {
-            findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabel(workerName);
-            findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class).setLabel(
-                    LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel",
-                            workerLevel));
-
-            findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
-                    LanguageHandler.getString(getBuildingName()));
-            findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabel("xxxxxxxx");
-
-            if (building.getBuildingLevel() == 0)
-            {
-                findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
-                        LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
-                findPaneByID(BUTTON_REPAIR).disable();
-            } else if (building.isBuildingMaxLevel())
-            {
-                Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-                button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
-                button.disable();
-            }
-        }
-        catch (NullPointerException exc) {
-            MineColonies.logger.error("Opening error, shouldnt happen",exc);
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
+                    LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
+            findPaneByID(BUTTON_REPAIR).disable();
+        } else if (building.isBuildingMaxLevel())
+        {
+            Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+            button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
+            button.disable();
         }
     }
 

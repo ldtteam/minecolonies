@@ -41,13 +41,7 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         super.onOpened();
 
         updateButtonLabels();
-        try
-        {
-            findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
-        }
-        catch (NullPointerException exc) {
-            MineColonies.logger.error("findPane error, report to mod authors",exc);
-        }
+        findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
     }

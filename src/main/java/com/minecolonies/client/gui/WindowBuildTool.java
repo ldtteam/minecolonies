@@ -105,84 +105,66 @@ public class WindowBuildTool extends Window implements Button.Handler
     @Override
     public void onOpened()
     {
-        boolean inHutMode = true; //TODO is this not redundant? see no usage
-        if(inHutMode)
-        {
-            try
-            {
-                findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
-            } catch (NullPointerException e)
-            {
-                MineColonies.logger.error("findPane error, report to mod authors", e);
-            }
-
-            InventoryPlayer inventory = this.mc.thePlayer.inventory;
-
-            /*
-            Add possible huts (has item) to list, if it has a schematic, and player has the block
-             */
-            huts.addAll(Schematics.getHuts().stream().filter(hut -> inventory.hasItem(
-                    Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, 0, 0, 0))
-                    && Schematics.getStylesForHut(hut) != null).collect(Collectors.toList()));
-
-            if (huts.size() > 0)
-            {
-                if (MineColonies.proxy.getActiveSchematic() != null)
-                {
-                    hutDecIndex = Math.max(0, huts.indexOf(Settings.instance.hut));
-                    styleIndex = Math.max(0, Schematics.getStylesForHut(huts.get(hutDecIndex)).indexOf(Settings.instance.style));
-                }
-
-                Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
-
-                try
-                {
-                    hut.setLabel(huts.get(hutDecIndex));
-                    hut.setEnabled(true);
-                } catch (NullPointerException e)
-                {
-                    MineColonies.logger.error("The hut was null, should not happen, report to mod authors",e);
-                }
-
-                Button style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
-
-                try
-                {
-                    style.setVisible(true);
-                    style.setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
-                } catch (NullPointerException e)
-                {
-                    MineColonies.logger.error("The style was null, should not happen, report to mod authors",e);
-                }
-
-                //Render stuff
-                if (MineColonies.proxy.getActiveSchematic() == null)
-                {
-                    changeSchematic();
-                }
-            } else
-            {
-                Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
-                try
-                {
-                    hut.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.nullHut"));
-                    hut.setEnabled(false);
-                } catch (NullPointerException e)
-                {
-                    //TODO: Why use LanguageHandler here and not otherwise?
-                    MineColonies.logger.error(
-                            LanguageHandler.format("The hut was null, should not happen, report to mod authors",e));
-                }
-
-                MineColonies.proxy.setActiveSchematic(null);
-            }
-        } else
+        boolean inHutMode = true;
+        //TODO is this not redundant? see no usage
+        if (!inHutMode)
         {
             Button type = findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class);
             type.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.decoration"));
             type.setEnabled(false);//TODO disabled for now
 
             //TODO do stuff with decoration button
+            return;
+        }
+
+        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
+
+
+        InventoryPlayer inventory = this.mc.thePlayer.inventory;
+
+            /*
+            Add possible huts (has item) to list, if it has a schematic, and player has the block
+             */
+        huts.addAll(Schematics.getHuts().stream().filter(hut -> inventory.hasItem(
+                Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, 0, 0, 0))
+                                                                && Schematics.getStylesForHut(hut) != null).collect(
+                Collectors.toList()));
+
+        if (huts.size() > 0)
+        {
+            if (MineColonies.proxy.getActiveSchematic() != null)
+            {
+                hutDecIndex = Math.max(0, huts.indexOf(Settings.instance.hut));
+                styleIndex = Math.max(0, Schematics.getStylesForHut(huts.get(hutDecIndex)).indexOf(Settings.instance.style));
+            }
+
+            Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
+
+
+            hut.setLabel(huts.get(hutDecIndex));
+            hut.setEnabled(true);
+
+
+            Button style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
+
+
+            style.setVisible(true);
+            style.setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
+
+
+            //Render stuff
+            if (MineColonies.proxy.getActiveSchematic() == null)
+            {
+                changeSchematic();
+            }
+        } else
+        {
+            Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
+
+            hut.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.nullHut"));
+            hut.setEnabled(false);
+
+            MineColonies.proxy.setActiveSchematic(null);
         }
     }
 
@@ -192,14 +174,10 @@ public class WindowBuildTool extends Window implements Button.Handler
         if(MineColonies.proxy.getActiveSchematic() != null)
         {
             Settings.instance.rotation = rotation;
-            try
-            {
-                Settings.instance.hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
-                Settings.instance.style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
-            } catch (NullPointerException e)
-            {
-                MineColonies.logger.error("findPane error, report to mod authors",e);
-            }
+
+            Settings.instance.hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
+            Settings.instance.style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+
         }
     }
 
@@ -226,14 +204,10 @@ public class WindowBuildTool extends Window implements Button.Handler
         case BUTTON_HUT_ID:
             hutDecIndex = (hutDecIndex + 1) % huts.size();
             styleIndex = 0;
-            try
-            {
-                findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).setLabel(huts.get(hutDecIndex));
-                findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
-            } catch (NullPointerException e)
-            {
-                MineColonies.logger.error("findPane error, report to mod authors",e);
-            }
+
+            findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).setLabel(huts.get(hutDecIndex));
+            findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
+
 
             changeSchematic();
             break;
@@ -389,14 +363,10 @@ public class WindowBuildTool extends Window implements Button.Handler
         {
             String hut = "";
             String style = "";
-            try
-            {
-                hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
-                style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
-            } catch (NullPointerException e)
-            {
-                MineColonies.logger.error("findPane error, report to mod authors",e);
-            }
+
+            hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
+            style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+
             SchematicWorld schematic = Schematic.loadSchematic(this.mc.theWorld, style + '/' + hut + '1').getWorldForRender();
             MineColonies.proxy.setActiveSchematic(schematic);
 

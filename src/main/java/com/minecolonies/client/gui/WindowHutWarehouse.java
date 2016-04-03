@@ -50,13 +50,9 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
         super.onOpened();
 
         updateButtonLabels();
-        try
-        {
-            findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
-        }
-        catch (NullPointerException exc) {
-            MineColonies.logger.error("findPane error, report to mod authors",exc);
-        }
+
+        findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
+
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
     }
@@ -66,22 +62,17 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
      */
     private void updateButtonLabels()
     {
-        try
-        {
-            findPaneOfTypeByID(BUTTON_BLACKSMITH_GOLD, ButtonVanilla.class).setLabel(getYesOrNo(building.blacksmithGold));
-            findPaneOfTypeByID(BUTTON_BLACKSMITH_DIAMOND, ButtonVanilla.class).setLabel(getYesOrNo(building.blacksmithDiamond));
-            findPaneOfTypeByID(BUTTON_STONEMASON_COBBLESTONE, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonStone));
-            findPaneOfTypeByID(BUTTON_STONEMASON_SAND, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonSand));
-            findPaneOfTypeByID(BUTTON_STONEMASON_NETHERRACK, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonNetherrack));
-            findPaneOfTypeByID(BUTTON_STONEMASON_QUARTZ, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonQuartz));
-            findPaneOfTypeByID(BUTTON_GUARD_ARMOR, ButtonVanilla.class).setLabel(getYesOrNo(building.guardArmor));
-            findPaneOfTypeByID(BUTTON_GUARD_WEAPON, ButtonVanilla.class).setLabel(getYesOrNo(building.guardWeapon));
-            findPaneOfTypeByID(BUTTON_CITIZEN_CHESTS, ButtonVanilla.class).setLabel(getYesOrNo(building.citizenVisit));
-        }
-        catch (NullPointerException exc)
-        {
-            MineColonies.logger.error("findPane error, report to mod authors",exc);
-        }
+
+        findPaneOfTypeByID(BUTTON_BLACKSMITH_GOLD, ButtonVanilla.class).setLabel(getYesOrNo(building.blacksmithGold));
+        findPaneOfTypeByID(BUTTON_BLACKSMITH_DIAMOND, ButtonVanilla.class).setLabel(getYesOrNo(building.blacksmithDiamond));
+        findPaneOfTypeByID(BUTTON_STONEMASON_COBBLESTONE, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonStone));
+        findPaneOfTypeByID(BUTTON_STONEMASON_SAND, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonSand));
+        findPaneOfTypeByID(BUTTON_STONEMASON_NETHERRACK, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonNetherrack));
+        findPaneOfTypeByID(BUTTON_STONEMASON_QUARTZ, ButtonVanilla.class).setLabel(getYesOrNo(building.stonemasonQuartz));
+        findPaneOfTypeByID(BUTTON_GUARD_ARMOR, ButtonVanilla.class).setLabel(getYesOrNo(building.guardArmor));
+        findPaneOfTypeByID(BUTTON_GUARD_WEAPON, ButtonVanilla.class).setLabel(getYesOrNo(building.guardWeapon));
+        findPaneOfTypeByID(BUTTON_CITIZEN_CHESTS, ButtonVanilla.class).setLabel(getYesOrNo(building.citizenVisit));
+
     }
 
     @Override
@@ -117,30 +108,23 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
                 building.citizenVisit = !building.citizenVisit;
                 break;
             default:
-                try
+                switch (button.getID())
                 {
-                    switch (button.getID())
-                    {
-                        case BUTTON_PREVPAGE:
-                            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                            buttonPrevPage.setEnabled(false);
-                            buttonNextPage.setEnabled(true);
-                            break;
-                        case BUTTON_NEXTPAGE:
-                            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                            buttonPrevPage.setEnabled(true);
-                            buttonNextPage.setEnabled(false);
-                            break;
-                        default:
-                            super.onButtonClicked(button);
-                            break;
-                    }
-                    return;
-                } catch (NullPointerException e)
-                {
-                    MineColonies.logger.error("findPane error, report to mod authors",e);
+                    case BUTTON_PREVPAGE:
+                        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                        buttonPrevPage.setEnabled(false);
+                        buttonNextPage.setEnabled(true);
+                        break;
+                    case BUTTON_NEXTPAGE:
+                        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                        buttonPrevPage.setEnabled(true);
+                        buttonNextPage.setEnabled(false);
+                        break;
+                    default:
+                        super.onButtonClicked(button);
+                        break;
                 }
-                break;
+                return;
         }
 
         updateButtonLabels();
