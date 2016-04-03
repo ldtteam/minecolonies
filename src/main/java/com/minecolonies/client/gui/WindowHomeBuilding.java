@@ -29,27 +29,19 @@ public class WindowHomeBuilding extends Window implements Button.Handler {
     @Override
     public void onOpened()
     {
-        try
-        {
-            findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
-                    LanguageHandler.getString("com.minecolonies.gui.workerHuts.homeHut"));
-        } catch (NullPointerException e)
-        {
-            MineColonies.logger.error("findPane error, report to mod authors");
-        }
+
+        findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
+                LanguageHandler.getString("com.minecolonies.gui.workerHuts.homeHut"));
+
         /*
         If level == 0, set build button, and disable repair button
          */
         if (building.getBuildingLevel() == 0)
         {
-            try
-            {
-                findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
-                        LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
-            } catch (NullPointerException e)
-            {
-                MineColonies.logger.error("findPane error, report to mod authors");
-            }
+
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
+                    LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
+
             findPaneByID(BUTTON_REPAIR).disable();
         } else if (building.isBuildingMaxLevel())
             /*
@@ -57,14 +49,10 @@ public class WindowHomeBuilding extends Window implements Button.Handler {
              */
         {
             Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-            try
-            {
-                button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
-                button.disable();
-            } catch (NullPointerException e)
-            {
-                MineColonies.logger.error("findPane error, report to mod authors");
-            }
+
+            button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
+            button.disable();
+
         }
     }
 

@@ -44,14 +44,9 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     {
         super.onOpened();
 
-        try
-        {
-            findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
-        }
-        catch(NullPointerException exc)
-        {
-            MineColonies.logger.error("findPane error, report to mod authors");
-        }
+
+        findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
+
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
 
@@ -68,24 +63,19 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-                try
-                {
-                    if(index == miner.current)
-                    {
-                        rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.RED.getRGB());
-                    }
-                    else
-                    {
-                        rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.BLACK.getRGB());
-                    }
 
-                    rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
-                    rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + levels[index]);
-                }
-                catch(NullPointerException exc)
+                if(index == miner.current)
                 {
-                    MineColonies.logger.error("findPane error, report to mod authors");
+                    rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.RED.getRGB());
                 }
+                else
+                {
+                    rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.BLACK.getRGB());
+                }
+
+                rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
+                rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + levels[index]);
+
             }
         });
     }
@@ -93,52 +83,43 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     @Override
     public void onButtonClicked(Button button)
     {
-        try
+
+        switch (button.getID())
         {
-            switch (button.getID())
-            {
-                case BUTTON_PREVPAGE:
-                    findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                    buttonPrevPage.setEnabled(false);
-                    buttonNextPage.setEnabled(true);
-                    break;
-                case BUTTON_NEXTPAGE:
-                    findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                    buttonPrevPage.setEnabled(true);
-                    buttonNextPage.setEnabled(false);
-                    break;
-                case BUTTON_CURRENTLEVEL:
-                    int row = levelList.getListElementIndexByPane(button);
-                    if (row != miner.current && row >= 0 && row < levels.length) {
-                        miner.current = row;
-                        MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
-                    }
-                    break;
-                default:
-                    super.onButtonClicked(button);
-                    break;
-            }
-        } catch (NullPointerException e)
-        {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            case BUTTON_PREVPAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                buttonPrevPage.setEnabled(false);
+                buttonNextPage.setEnabled(true);
+                break;
+            case BUTTON_NEXTPAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                buttonPrevPage.setEnabled(true);
+                buttonNextPage.setEnabled(false);
+                break;
+            case BUTTON_CURRENTLEVEL:
+                int row = levelList.getListElementIndexByPane(button);
+                if (row != miner.current && row >= 0 && row < levels.length) {
+                    miner.current = row;
+                    MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
+                }
+                break;
+            default:
+                super.onButtonClicked(button);
+                break;
         }
     }
 
     @Override
     public void onUpdate()
     {
-        try
+
+        String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
+        if (currentPage.equals(PAGE_LEVELS))
         {
-            String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
-            if (currentPage.equals(PAGE_LEVELS))
-            {
-                updateUsers();
-                window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
-            }
-        } catch (NullPointerException e)
-        {
-            MineColonies.logger.error("findPane error, report to mod authors");
+            updateUsers();
+            window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
         }
+
     }
 
 
