@@ -49,12 +49,6 @@ public final class EntityFishHook extends Entity
                                                                 new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25),
                                                                 new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2),
                                                                 new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
-    private static final String TAG_X_TILE      = "xTile";
-    private static final String TAG_Y_TILE      = "yTile";
-    private static final String TAG_Z_TILE      = "zTile";
-    private static final String TAG_IN_TILE     = "inTile";
-    private static final String TAG_SHAKE       = "shake";
-    private static final String TAG_IN_GROUND   = "inGround";
     public  EntityAIWorkFisherman fisherman;
     private int                   xTile;
     private int                   yTile;
@@ -63,13 +57,10 @@ public final class EntityFishHook extends Entity
     private boolean               inGround;
     private int                   shake;
     private int                   hitBlock;
-    private int                   hitWater;
     private int                   movedOnX;
     private int                   movedOnY;
     private int                   movedOnZ;
     private double                relativeRotation;
-    //If the hook hits an entity it will stay with the entity
-    private Entity                hitEntity;
     private int                   newPosRotationIncrements;
     private double                newX;
     private double                newY;
@@ -277,7 +268,6 @@ public final class EntityFishHook extends Entity
 
         if (!this.inGround)
         {
-            ++this.hitWater;
             return false;
         }
 
@@ -298,7 +288,6 @@ public final class EntityFishHook extends Entity
         this.motionY *= (this.rand.nextDouble() * 0.2);
         this.motionZ *= (this.rand.nextDouble() * 0.2);
         this.hitBlock = 0;
-        this.hitWater = 0;
 
         return false;
     }
