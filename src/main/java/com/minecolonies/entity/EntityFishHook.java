@@ -327,6 +327,12 @@ public final class EntityFishHook extends Entity
         return false;
     }
 
+    /**
+     * Update some movement things for the hook.
+     * Detect if the hook is on ground and maybe bounce.
+     * Also count how long the hook is laying on the ground or in water.
+     * @return true if the hook is killed.
+     */
     private boolean isInGround()
     {
         if (this.shake > 0)
@@ -334,34 +340,39 @@ public final class EntityFishHook extends Entity
             --this.shake;
         }
 
-        if (this.inGround)
-        {
-            if (this.worldObj.getBlock(this.xTile, this.yTile, this.zTile) == this.inTile)
-            {
-                ++this.hitBlock;
-
-                if (this.hitBlock == 1200)
-                {
-                    this.setDead();
-                }
-
-                return true;
-            }
-
-            this.inGround = false;
-            this.motionX *= (this.rand.nextDouble() * 0.2);
-            this.motionY *= (this.rand.nextDouble() * 0.2);
-            this.motionZ *= (this.rand.nextDouble() * 0.2);
-            this.hitBlock = 0;
-            this.hitWater = 0;
-        }
-        else
+        if (!this.inGround)
         {
             ++this.hitWater;
+            return false;
         }
+
+        if (this.worldObj.getBlock(this.xTile, this.yTile, this.zTile) == this.inTile)
+        {
+            ++this.hitBlock;
+
+            if (this.hitBlock == 1200)
+            {
+                this.setDead();
+            }
+
+            return true;
+        }
+
+        this.inGround = false;
+        this.motionX *= (this.rand.nextDouble() * 0.2);
+        this.motionY *= (this.rand.nextDouble() * 0.2);
+        this.motionZ *= (this.rand.nextDouble() * 0.2);
+        this.hitBlock = 0;
+        this.hitWater = 0;
+
         return false;
     }
 
+    /**
+     * Remove hook if the fisher became invalid.
+     *
+     * @return true if fisher became invalid
+     */
     private boolean hasToUpdateServerSide()
     {
         if (!this.worldObj.isRemote && this.fisherman == null)
