@@ -58,12 +58,6 @@ public final class EntityFishHook extends Entity
     private int                   movedOnY;
     private int                   movedOnZ;
     private double                relativeRotation;
-    private int                   newPosRotationIncrements;
-    private double                newX;
-    private double                newY;
-    private double                newZ;
-    private double                newRotationYaw;
-    private double                newRotationPitch;
     //Time at which the entity has been created
     private long                  creationTime;
     //Will be set true when the citizen caught a fish (to reset the fisherman)
@@ -190,14 +184,6 @@ public final class EntityFishHook extends Entity
      */
     private boolean preconditionsFail()
     {
-        if (hasToRotateIncrementally())
-        {
-            return true;
-        }
-        if (hasToUpdateServerSide())
-        {
-            return true;
-        }
         return isInGround() || this.inGround;
     }
 
@@ -229,21 +215,6 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Remove hook if the fisher became invalid.
-     *
-     * @return true if fisher became invalid
-     */
-    private boolean hasToUpdateServerSide()
-    {
-        if (!this.worldObj.isRemote && this.fisherman == null)
-        {
-            this.setDead();
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Will get destroyed next tick.
      */
     @Override
@@ -255,24 +226,6 @@ public final class EntityFishHook extends Entity
         {
             this.fisherman.setEntityFishHook(null);
         }
-    }
-
-    private boolean hasToRotateIncrementally()
-    {
-        if (this.newPosRotationIncrements > 0)
-        {
-            double x           = this.posX + (this.newX - this.posX) / (double) this.newPosRotationIncrements;
-            double y           = this.posY + (this.newY - this.posY) / (double) this.newPosRotationIncrements;
-            double z           = this.posZ + (this.newZ - this.posZ) / (double) this.newPosRotationIncrements;
-            double newRotation = MathHelper.wrapAngleTo180_double(this.newRotationYaw - (double) this.rotationYaw);
-            this.rotationYaw = (float) ((double) this.rotationYaw + newRotation / (double) this.newPosRotationIncrements);
-            this.rotationPitch = (float) ((double) this.rotationPitch + (this.newRotationPitch - (double) this.rotationPitch) / (double) this.newPosRotationIncrements);
-            --this.newPosRotationIncrements;
-            this.setPosition(x, y, z);
-            this.setRotation(this.rotationYaw, this.rotationPitch);
-            return true;
-        }
-        return false;
     }
 
     private void moveSomeStuff()
