@@ -229,6 +229,43 @@ public final class EntityFishHook extends Entity
         if(hasToUpdateServerSide()){
             return true;
         }
+        if(isInGround()){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isInGround(){
+        if (this.shake > 0)
+        {
+            --this.shake;
+        }
+
+        if (this.inGround)
+        {
+            if (this.worldObj.getBlock(this.xTile, this.yTile, this.zTile) == this.inTile)
+            {
+                ++this.hitBlock;
+
+                if (this.hitBlock == 1200)
+                {
+                    this.setDead();
+                }
+
+                return true;
+            }
+
+            this.inGround = false;
+            this.motionX *= (this.rand.nextDouble() * 0.2);
+            this.motionY *= (this.rand.nextDouble() * 0.2);
+            this.motionZ *= (this.rand.nextDouble() * 0.2);
+            this.hitBlock = 0;
+            this.hitWater = 0;
+        }
+        else
+        {
+            ++this.hitWater;
+        }
         return false;
     }
 
@@ -299,36 +336,7 @@ public final class EntityFishHook extends Entity
 
 
 
-        if (this.shake > 0)
-        {
-            --this.shake;
-        }
 
-        if (this.inGround)
-        {
-            if (this.worldObj.getBlock(this.xTile, this.yTile, this.zTile) == this.inTile)
-            {
-                ++this.hitBlock;
-
-                if (this.hitBlock == 1200)
-                {
-                    this.setDead();
-                }
-
-                return;
-            }
-
-            this.inGround = false;
-            this.motionX *= (this.rand.nextDouble() * 0.2);
-            this.motionY *= (this.rand.nextDouble() * 0.2);
-            this.motionZ *= (this.rand.nextDouble() * 0.2);
-            this.hitBlock = 0;
-            this.hitWater = 0;
-        }
-        else
-        {
-            ++this.hitWater;
-        }
 
         Vec3                 vec31                = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
         Vec3                 vec3                 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
