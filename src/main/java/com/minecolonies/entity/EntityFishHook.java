@@ -50,13 +50,8 @@ public final class EntityFishHook extends Entity
                                                                 new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2),
                                                                 new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
     public  EntityAIWorkFisherman fisherman;
-    private int                   xTile;
-    private int                   yTile;
-    private int                   zTile;
-    private Block                 inTile;
     private boolean               inGround;
     private int                   shake;
-    private int                   hitBlock;
     private int                   movedOnX;
     private int                   movedOnY;
     private int                   movedOnZ;
@@ -92,9 +87,6 @@ public final class EntityFishHook extends Entity
     public EntityFishHook(World world)
     {
         super(world);
-        this.xTile = -1;
-        this.yTile = -1;
-        this.zTile = -1;
         this.setSize(0.25F, 0.25F);
         this.ignoreFrustumCheck = true;
         this.creationTime = System.nanoTime();
@@ -103,9 +95,6 @@ public final class EntityFishHook extends Entity
     public EntityFishHook(World world, EntityAIWorkFisherman fisherman)
     {
         super(world);
-        this.xTile = -1;
-        this.yTile = -1;
-        this.zTile = -1;
         this.ignoreFrustumCheck = true;
         this.fisherman = fisherman;
         this.fisherman.setEntityFishHook(this);
@@ -145,7 +134,6 @@ public final class EntityFishHook extends Entity
         this.motionZ = newZ;
         this.prevRotationYaw = this.rotationYaw = (float) (Math.atan2(newX, newZ) * 180.0 / Math.PI);
         this.prevRotationPitch = this.rotationPitch = (float) (Math.atan2(newY, Math.sqrt(newX * newX + newZ * newZ)) * 180.0 / Math.PI);
-        this.hitBlock = 0;
     }
 
     /**
@@ -271,23 +259,10 @@ public final class EntityFishHook extends Entity
             return false;
         }
 
-        if (this.worldObj.getBlock(this.xTile, this.yTile, this.zTile) == this.inTile)
-        {
-            ++this.hitBlock;
-
-            if (this.hitBlock == 1200)
-            {
-                this.setDead();
-            }
-
-            return true;
-        }
-
         this.inGround = false;
         this.motionX *= (this.rand.nextDouble() * 0.2);
         this.motionY *= (this.rand.nextDouble() * 0.2);
         this.motionZ *= (this.rand.nextDouble() * 0.2);
-        this.hitBlock = 0;
 
         return false;
     }
