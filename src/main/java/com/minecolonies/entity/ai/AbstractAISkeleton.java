@@ -1,5 +1,6 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -23,10 +24,6 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
 public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
 {
 
-    /**
-     * Custom logger for the class.
-     */
-    private static final Logger log        = Logger.getLogger(AbstractAISkeleton.class.getName());
     private static final int    MUTEX_MASK = 3;
     protected final J                   job;
     protected final EntityCitizen       worker;
@@ -117,7 +114,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
     public void startExecuting()
     {
         worker.setStatus(EntityCitizen.Status.WORKING);
-        log.info("Starting AI job " + job.getName());
+        MineColonies.logger.info("Starting AI job " + job.getName());
     }
 
     /**
@@ -156,7 +153,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         }
         catch (Exception e)
         {
-            log.log(Level.WARNING, "Condition check for target " + target + " threw an exception:", e);
+            MineColonies.logger.warn("Condition check for target " + target + " threw an exception:", e);
             return false;
         }
         return applyTarget(target);
@@ -173,14 +170,14 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      */
     private boolean applyTarget(AITarget target)
     {
-        AIState newState = null;
+        AIState newState;
         try
         {
             newState = target.apply();
         }
         catch (Exception e)
         {
-            log.log(Level.WARNING, "Action for target " + target + " threw an exception:", e);
+            MineColonies.logger.warn("Action for target " + target + " threw an exception:", e);
             return false;
         }
         if (newState != null)

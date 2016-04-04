@@ -39,7 +39,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private static final int    MAX_ROTATIONS         = 12;
     private static final String TOOL_TYPE_ROD         = "rod";
     private static final int    SEARCH_RANGE          = 50;
-    private static final Logger logger                = LogManager.getLogger("Fisherman");
     private              int    fishesCaught          = 0;
     private PathJobFindWater.WaterPathResult pathResult;
     private int fishingSkill      = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);

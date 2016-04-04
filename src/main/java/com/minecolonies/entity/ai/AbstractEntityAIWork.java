@@ -33,7 +33,6 @@ import static com.minecolonies.entity.ai.AIState.*;
 public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkeleton<J>
 {
     private static final int    DEFAULT_RANGE_FOR_DELAY = 3;
-    private static final Logger log                     = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
     private static final int    DELAY_RECHECK           = 10;
 
     protected static Random           itemRand                = new Random();
