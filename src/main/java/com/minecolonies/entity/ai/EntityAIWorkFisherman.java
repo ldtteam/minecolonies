@@ -362,7 +362,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return false;
         }
         return entityFishHook.onGround
-               || entityFishHook.hasHitEntity()
                || fishHookIsOverTimeToLive();
 
     }

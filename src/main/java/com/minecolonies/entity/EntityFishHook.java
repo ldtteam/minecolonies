@@ -623,18 +623,7 @@ public final class EntityFishHook extends Entity
         {
             byte itemDamage = 0;
 
-            if (this.hitEntity != null)
-            {
-                double x = citizenPosX - this.posX;
-                double y = citizenPosY - this.posY;
-                double z = citizenPosZ - this.posZ;
-
-                this.hitEntity.motionX += x * 0.1;
-                this.hitEntity.motionY += y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08;
-                this.hitEntity.motionZ += z * 0.1;
-                itemDamage = 3;
-            }
-            else if (this.movedOnX > 0)
+           if (this.movedOnX > 0)
             {
                 EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot());
                 double     distanceX  = citizenPosX - this.posX;
@@ -706,11 +695,6 @@ public final class EntityFishHook extends Entity
     public long getCreationTime()
     {
         return creationTime;
-    }
-
-    public boolean hasHitEntity()
-    {
-        return hitEntity != null;
     }
 
     public boolean caughtFish()
