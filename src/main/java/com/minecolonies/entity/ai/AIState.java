@@ -56,7 +56,7 @@ public enum AIState
     /**
      * The fisherman has found water and can start fishing
      */
-    FISHERMAN_WATER_FOUND,
+    FISHERMAN_WALKING_TO_WATER,
     FISHERMAN_CHECK_WATER,
     FISHERMAN_START_FISHING,
 }

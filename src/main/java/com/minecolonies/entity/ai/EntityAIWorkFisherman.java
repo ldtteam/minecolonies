@@ -62,7 +62,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 new AITarget(PREPARING, this::prepareForFishing),
                 new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
                 new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
-                new AITarget(FISHERMAN_WATER_FOUND, this::getToWater),
+                new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
                 new AITarget(FISHERMAN_START_FISHING, this::doFishing)
                              );
     }
@@ -86,7 +86,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             return FISHERMAN_SEARCHING_WATER;
         }
-        return FISHERMAN_WATER_FOUND;
+        return FISHERMAN_WALKING_TO_WATER;
     }
 
     @Override
@@ -267,7 +267,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 job.setWater(null);
                 return FISHERMAN_SEARCHING_WATER;
             }
-            return FISHERMAN_WATER_FOUND;
+            return FISHERMAN_WALKING_TO_WATER;
         }
 
         return throwOrRetrieveHook();
@@ -296,7 +296,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             if (isFishHookStuck())
             {
                 retrieveRod();
-                return FISHERMAN_WATER_FOUND;
+                return FISHERMAN_WALKING_TO_WATER;
             }
         }
         return state;
@@ -315,7 +315,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                                     0.5F,
                                     (float) (0.4D / (itemRand.nextDouble() * 0.4D + 0.8D)));
             EntityFishHook hook = new EntityFishHook(world, this);
-            setEntityFishHook(hook);
+            this.entityFishHook = hook;
             world.spawnEntityInWorld(hook);
         }
 
@@ -338,7 +338,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //If there is no close water, try to move closer
         if (!Utils.isBlockInRange(world, Blocks.water, (int) worker.posX, (int) worker.posY, (int) worker.posZ, MIN_DISTANCE_TO_WATER))
         {
-            return FISHERMAN_WATER_FOUND;
+            return FISHERMAN_WALKING_TO_WATER;
         }
 
         //Check if Rod is held item if not put it as held item
@@ -358,9 +358,19 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private boolean isFishHookStuck()
     {
-        return !getEntityFishHook().isInWater() && (getEntityFishHook().onGround || getEntityFishHook().hasHitEntity()
-                                                    || Utils.nanoSecondsToSeconds(System.nanoTime() - getEntityFishHook().getCreationTime())
-                                                       > getEntityFishHook().getTtl());
+        if (entityFishHook.isInWater())
+        {
+            return false;
+        }
+        return entityFishHook.onGround
+               || entityFishHook.hasHitEntity()
+               || fishHookIsOverTimeToLive();
+
+    }
+
+    private boolean fishHookIsOverTimeToLive()
+    {
+        return Utils.nanoSecondsToSeconds(System.nanoTime() - entityFishHook.getCreationTime()) > entityFishHook.getTtl();
     }
 
     /**
