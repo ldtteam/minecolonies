@@ -1,14 +1,5 @@
 package com.minecolonies.client.render;
 
-/*******************************************************************************
- * RenderFishHook.java
- * Copyright (c) 2014 Radix-Shock Entertainment.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v3.0
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/gpl.html
- ******************************************************************************/
-
 import com.minecolonies.entity.EntityFishHook;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -28,6 +19,9 @@ public class RenderFishHook extends Render
 {
     private static final ResourceLocation texture = new ResourceLocation("textures/particle/particles.png");
 
+    /**
+     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
+     */
     @Override
     protected ResourceLocation getEntityTexture(Entity entity)
     {
@@ -39,12 +33,29 @@ public class RenderFishHook extends Render
         return texture;
     }
 
+    /**
+     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
+     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
+     * (Render<T extends Entity>) and this method has signature public void func_76986_a(T entity, double d, double d1,
+     * double d2, float f, float f1). But JAD is pre 1.5 so doesn't do that.
+     */
     @Override
     public void doRender(Entity entity, double par2, double par4, double par6, float par8, float par9)
     {
         this.doRenderFishHook((EntityFishHook) entity, par2, par4, par6, par9);
     }
 
+    /**
+     * Render a fishing hook entity in the world
+     * This class uses some GL11 stuff
+     * and seems hard to document...
+     *
+     * @param entityFishHook the hook to render
+     * @param posX           the x position
+     * @param posY           the y position
+     * @param posZ           the z position
+     * @param angle          the angle thrown
+     */
     private void doRenderFishHook(EntityFishHook entityFishHook, double posX, double posY, double posZ, float angle)
     {
         GL11.glPushMatrix();
@@ -115,8 +126,8 @@ public class RenderFishHook extends Render
                         ((double) entityFishHook.fisherman.getCitizen().prevRenderYawOffset
                          + ((double) entityFishHook.fisherman.getCitizen().renderYawOffset - (double) entityFishHook.fisherman.getCitizen().prevRenderYawOffset) * (double) angle)
                         * Math.PI / 180.0D;
-                double  d7  = Math.sin(f11);
-                double  d8  = Math.cos(f11);
+                double d7 = Math.sin(f11);
+                double d8 = Math.cos(f11);
 
                 correctedPosX =
                         entityFishHook.fisherman.getCitizen().prevPosX + (entityFishHook.fisherman.getCitizen().posX - entityFishHook.fisherman.getCitizen().prevPosX) * angle
