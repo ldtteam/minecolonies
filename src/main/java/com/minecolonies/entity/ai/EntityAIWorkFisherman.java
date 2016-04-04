@@ -11,8 +11,6 @@ import com.minecolonies.util.Utils;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static com.minecolonies.entity.ai.AIState.*;
 
@@ -368,7 +366,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private boolean fishHookIsOverTimeToLive()
     {
-        return Utils.nanoSecondsToSeconds(System.nanoTime() - entityFishHook.getCreationTime()) > entityFishHook.getTtl();
+        return Utils.nanoSecondsToSeconds(System.nanoTime() - entityFishHook.getCreationTime()) > EntityFishHook.TTL;
     }
 
     /**

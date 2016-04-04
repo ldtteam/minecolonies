@@ -29,28 +29,28 @@ import java.util.List;
  */
 public final class EntityFishHook extends Entity
 {
-    private static final int    TTL             = 360;
-    private static final List   possibleDrops_1 = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
-                                                                new WeightedRandomFishable(new ItemStack(Items.leather), 10),
-                                                                new WeightedRandomFishable(new ItemStack(Items.bone), 10),
-                                                                new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
-                                                                new WeightedRandomFishable(new ItemStack(Items.string), 5),
-                                                                (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F),
-                                                                new WeightedRandomFishable(new ItemStack(Items.bowl), 10),
-                                                                new WeightedRandomFishable(new ItemStack(Items.stick), 5),
-                                                                new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1),
-                                                                new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10),
-                                                                new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
-    private static final List   possibleDrops_2 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
-                                                                new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
-                                                                new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
-                                                                (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(0.25F).func_150707_a(),
-                                                                (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).func_150709_a(0.25F).func_150707_a(),
-                                                                (new WeightedRandomFishable(new ItemStack(Items.book), 1)).func_150707_a());
-    private static final List   possibleDrops_3 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
-                                                                new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25),
-                                                                new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2),
-                                                                new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
+    public static final  int  TTL             = 360;
+    private static final List possibleDrops_1 = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
+                                                              new WeightedRandomFishable(new ItemStack(Items.leather), 10),
+                                                              new WeightedRandomFishable(new ItemStack(Items.bone), 10),
+                                                              new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
+                                                              new WeightedRandomFishable(new ItemStack(Items.string), 5),
+                                                              (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F),
+                                                              new WeightedRandomFishable(new ItemStack(Items.bowl), 10),
+                                                              new WeightedRandomFishable(new ItemStack(Items.stick), 5),
+                                                              new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1),
+                                                              new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10),
+                                                              new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
+    private static final List possibleDrops_2 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
+                                                              new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
+                                                              new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
+                                                              (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(0.25F).func_150707_a(),
+                                                              (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).func_150709_a(0.25F).func_150707_a(),
+                                                              (new WeightedRandomFishable(new ItemStack(Items.book), 1)).func_150707_a());
+    private static final List possibleDrops_3 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
+                                                              new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25),
+                                                              new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2),
+                                                              new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
     public  EntityAIWorkFisherman fisherman;
     private boolean               inGround;
     private int                   shake;
@@ -76,21 +76,9 @@ public final class EntityFishHook extends Entity
     private boolean isCaughtFish = false;
 
     /**
-     * Lowest denominator constructor
-     * Used by other constructors to do general stuff
-     * @param world the world this entity lives in
-     */
-    public EntityFishHook(World world)
-    {
-        super(world);
-        this.setSize(0.25F, 0.25F);
-        this.ignoreFrustumCheck = true;
-        this.creationTime = System.nanoTime();
-    }
-
-    /**
      * Constructor for throwing out a hook.
-     * @param world the world the hook lives in
+     *
+     * @param world     the world the hook lives in
      * @param fisherman the fisherman throwing the hook
      */
     public EntityFishHook(World world, EntityAIWorkFisherman fisherman)
@@ -113,6 +101,20 @@ public final class EntityFishHook extends Entity
         this.motionZ = Math.cos(this.rotationYaw / 180.0 * Math.PI) * Math.cos(this.rotationPitch / 180.0 * Math.PI) * f;
         this.motionY = -Math.sin(this.rotationPitch / 180.0 * Math.PI) * f;
         this.setPosition(this.motionX, this.motionY, this.motionZ, 1.5, 1.0);
+    }
+
+    /**
+     * Lowest denominator constructor
+     * Used by other constructors to do general stuff
+     *
+     * @param world the world this entity lives in
+     */
+    public EntityFishHook(World world)
+    {
+        super(world);
+        this.setSize(0.25F, 0.25F);
+        this.ignoreFrustumCheck = true;
+        this.creationTime = System.nanoTime();
     }
 
     private void setPosition(double x, double y, double z, double yaw, double pitch)
@@ -141,14 +143,6 @@ public final class EntityFishHook extends Entity
     protected void entityInit(){}
 
     /**
-     * Returns time to life of the entity
-     */
-    public int getTtl()
-    {
-        return TTL;
-    }
-
-    /**
      * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
      * length * 64 * renderDistanceWeight Args: distance
      *
@@ -162,30 +156,6 @@ public final class EntityFishHook extends Entity
         double maxLength = this.boundingBox.getAverageEdgeLength() * 4.0;
         maxLength *= 64.0;
         return range < maxLength * maxLength;
-    }
-
-    /**
-     * Sets the position and rotation. Only difference from the other one is no bounding on the rotation.
-     *
-     * @param x                  posX
-     * @param y                  posY
-     * @param z                  posZ
-     * @param yaw                The rotation yaw
-     * @param pitch              The rotation pitch
-     * @param rotationIncrements rotation increments
-     */
-    @SideOnly(Side.CLIENT)
-    public void setPositionAndRotation2(double x, double y, double z, double yaw, double pitch, int rotationIncrements)
-    {
-        this.newX = x;
-        this.newY = y;
-        this.newZ = z;
-        this.newRotationYaw = yaw;
-        this.newRotationPitch = pitch;
-        this.newPosRotationIncrements = rotationIncrements;
-        this.motionX = this.hookVectorX;
-        this.motionY = this.hookVectorY;
-        this.motionZ = this.hookVectorZ;
     }
 
     /**
@@ -563,6 +533,7 @@ public final class EntityFishHook extends Entity
     /**
      * Returns a damage value by how much the fishingRod should be damaged.
      * Also spawns loot and exp and destroys the hook.
+     *
      * @return the numer of damage points to be deducted.
      */
     public int getDamage()
@@ -621,7 +592,7 @@ public final class EntityFishHook extends Entity
 
     /**
      * Determines which loot table should be used.
-     *
+     * <p>
      * The selection is somewhat random and depends on enchantments
      * and the level of the fisherman hut.
      *
