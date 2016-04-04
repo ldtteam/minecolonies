@@ -402,7 +402,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private void retrieveRod()
     {
         worker.swingItem();
-        int i = getEntityFishHook().getDamage();
+        int i = getEntityFishHook().getDamage(this);
         worker.damageItemInHand(i);
     }
 

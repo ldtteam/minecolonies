@@ -64,12 +64,6 @@ public final class EntityFishHook extends Entity
     private double                newZ;
     private double                newRotationYaw;
     private double                newRotationPitch;
-    @SideOnly(Side.CLIENT)
-    private double                hookVectorX;
-    @SideOnly(Side.CLIENT)
-    private double                hookVectorY;
-    @SideOnly(Side.CLIENT)
-    private double                hookVectorZ;
     //Time at which the entity has been created
     private long                  creationTime;
     //Will be set true when the citizen caught a fish (to reset the fisherman)
@@ -169,9 +163,9 @@ public final class EntityFishHook extends Entity
     @SideOnly(Side.CLIENT)
     public void setVelocity(double vectorX, double vectorY, double vectorZ)
     {
-        this.hookVectorX = this.motionX = vectorX;
-        this.hookVectorY = this.motionY = vectorY;
-        this.hookVectorZ = this.motionZ = vectorZ;
+        this.motionX = vectorX;
+        this.motionY = vectorY;
+        this.motionZ = vectorZ;
     }
 
     /**
@@ -189,6 +183,11 @@ public final class EntityFishHook extends Entity
         moveSomeStuff();
     }
 
+    /**
+     * Test some preconditions and update some stuff.
+     *
+     * @return true if something failed
+     */
     private boolean preconditionsFail()
     {
         if (hasToRotateIncrementally())
@@ -199,15 +198,7 @@ public final class EntityFishHook extends Entity
         {
             return true;
         }
-        if (isInGround())
-        {
-            return true;
-        }
-        if (this.inGround)
-        {
-            return true;
-        }
-        return false;
+        return isInGround() || this.inGround;
     }
 
     /**
@@ -535,20 +526,20 @@ public final class EntityFishHook extends Entity
      * Also spawns loot and exp and destroys the hook.
      *
      * @return the numer of damage points to be deducted.
+     * @param entityAIWorkFisherman the fisherman fishing
      */
-    public int getDamage()
+    public int getDamage(final EntityAIWorkFisherman entityAIWorkFisherman)
     {
         if (this.worldObj.isRemote)
         {
             this.setDead();
-            this.fisherman.setEntityFishHook(null);
             return 0;
         }
         byte itemDamage = 0;
 
         if (this.movedOnX > 0)
         {
-            spawnLootAndExp();
+            spawnLootAndExp(entityAIWorkFisherman);
             itemDamage = 1;
         }
 
@@ -558,7 +549,6 @@ public final class EntityFishHook extends Entity
         }
 
         this.setDead();
-        this.fisherman.setEntityFishHook(null);
         return itemDamage;
 
     }
@@ -568,13 +558,14 @@ public final class EntityFishHook extends Entity
      * and some exp orbs.
      * Should be calles when retrieving a hook.
      * todo: Perhaps streamline this and directly add the items?
+     * @param entityAIWorkFisherman the fisherman getting the loot
      */
-    private void spawnLootAndExp()
+    private void spawnLootAndExp(final EntityAIWorkFisherman entityAIWorkFisherman)
     {
         double     citizenPosX = this.fisherman.getCitizen().posX;
         double     citizenPosY = this.fisherman.getCitizen().posY;
         double     citizenPosZ = this.fisherman.getCitizen().posZ;
-        EntityItem entityitem  = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot());
+        EntityItem entityitem  = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot(entityAIWorkFisherman));
         double     distanceX   = citizenPosX - this.posX;
         double     distanceY   = citizenPosY - this.posY;
         double     distanceZ   = citizenPosZ - this.posZ;
@@ -597,12 +588,13 @@ public final class EntityFishHook extends Entity
      * and the level of the fisherman hut.
      *
      * @return an ItemStack randomly from the loot table
+     * @param entityAIWorkFisherman the fisherman getting the loot
      */
-    private ItemStack getFishingLoot()
+    private ItemStack getFishingLoot(final EntityAIWorkFisherman entityAIWorkFisherman)
     {
         double random                  = this.worldObj.rand.nextDouble();
-        int    fishingSpeedEnchantment = EnchantmentHelper.func_151386_g(this.fisherman.getCitizen());
-        int    fishingLootEnchantment  = EnchantmentHelper.func_151387_h(this.fisherman.getCitizen());
+        int    fishingSpeedEnchantment = EnchantmentHelper.func_151386_g(entityAIWorkFisherman.getCitizen());
+        int    fishingLootEnchantment  = EnchantmentHelper.func_151387_h(entityAIWorkFisherman.getCitizen());
         double speedBonus              = 0.1 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
         double lootBonus               = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
         //clamp_float gives the values an upper limit
