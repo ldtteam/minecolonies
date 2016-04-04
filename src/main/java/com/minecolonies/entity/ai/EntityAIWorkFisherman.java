@@ -320,6 +320,38 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     /**
+     * Checks if the fishHook is stuck on land or in an entity.
+     * If the fishhook is neither in water,land nether connected with an entity, give it a time to land in water.
+     *
+     * @return false if the hook landed in water, else return true
+     */
+    private boolean isFishHookStuck()
+    {
+        if (entityFishHook.isInWater())
+        {
+            return false;
+        }
+        return entityFishHook.onGround
+               || entityFishHook.fishHookIsOverTimeToLive();
+
+    }
+
+    /**
+     * Checks how lucky the fisherman is.
+     * <p>
+     * This check depends on his fishing skill.
+     * Which in turn depends on intelligence.
+     *
+     * @return true if he has to wait
+     */
+    private boolean testRandomChance()
+    {
+        //+1 since the level may be 0
+        double chance = itemRand.nextInt(FISHING_DELAY) / (double) (fishingSkill + 1);
+        return chance >= CHANCE;
+    }
+
+    /**
      * Checks if the fisherman has his fishingRod in his hand and is close to the water
      *
      * @return true if fisherman meets all requirements to fish, else returns false
@@ -347,26 +379,19 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return null;
     }
 
-    /**
-     * Checks if the fishHook is stuck on land or in an entity.
-     * If the fishhook is neither in water,land nether connected with an entity, give it a time to land in water.
-     *
-     * @return false if the hook landed in water, else return true
-     */
-    private boolean isFishHookStuck()
+    private void equipRod()
     {
-        if (entityFishHook.isInWater())
-        {
-            return false;
-        }
-        return entityFishHook.onGround
-               || fishHookIsOverTimeToLive();
-
+        worker.setHeldItem(getRodSlot());
     }
 
-    private boolean fishHookIsOverTimeToLive()
+    private int getRodSlot()
     {
-        return Utils.nanoSecondsToSeconds(System.nanoTime() - entityFishHook.getCreationTime()) > EntityFishHook.TTL;
+        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
+    }
+
+    private InventoryCitizen getInventory()
+    {
+        return worker.getInventory();
     }
 
     /**
@@ -406,39 +431,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         entityFishHook = null;
     }
 
-    private void equipRod()
-    {
-        worker.setHeldItem(getRodSlot());
-    }
-
-    private int getRodSlot()
-    {
-        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
-    }
-
-    private InventoryCitizen getInventory()
-    {
-        return worker.getInventory();
-    }
-
     public EntityCitizen getCitizen()
     {
         return worker;
-    }
-
-    /**
-     * Checks how lucky the fisherman is.
-     * <p>
-     * This check depends on his fishing skill.
-     * Which in turn depends on intelligence.
-     *
-     * @return true if he has to wait
-     */
-    private boolean testRandomChance()
-    {
-        //+1 since the level may be 0
-        double chance = itemRand.nextInt(FISHING_DELAY) / (double) (fishingSkill + 1);
-        return chance >= CHANCE;
     }
 
 }

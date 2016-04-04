@@ -1,6 +1,7 @@
 package com.minecolonies.entity;
 
 import com.minecolonies.entity.ai.EntityAIWorkFisherman;
+import com.minecolonies.util.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
@@ -29,7 +30,7 @@ import java.util.List;
  */
 public final class EntityFishHook extends Entity
 {
-    public static final  int  TTL             = 360;
+    private static final int  TTL             = 360;
     private static final List possibleDrops_1 = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
                                                               new WeightedRandomFishable(new ItemStack(Items.leather), 10),
                                                               new WeightedRandomFishable(new ItemStack(Items.bone), 10),
@@ -174,6 +175,10 @@ public final class EntityFishHook extends Entity
     public void onUpdate()
     {
         super.onUpdate();
+        if (fishHookIsOverTimeToLive())
+        {
+            this.setDead();
+        }
         if (bounceFromGround() || this.inGround)
         {
             return;
@@ -257,6 +262,15 @@ public final class EntityFishHook extends Entity
         this.setPosition(this.posX, this.posY, this.posZ);
     }
 
+    /**
+     * Server side method to do
+     * some animation and movement stuff
+     * when the hook swims in water
+     * <p>
+     * will set isFishCaught if a fish bites
+     *
+     * @param d10 the amount of water around
+     */
     private void checkIfFishBites(double d10)
     {
         if (!this.worldObj.isRemote && d10 > 0.0)
@@ -332,20 +346,7 @@ public final class EntityFishHook extends Entity
 
                     if (this.rand.nextDouble() < bubbleY)
                     {
-                        sinYPosition = (double) MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292D;
-                        cosYPosition = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
-                        bubbleX = this.posX + (Math.sin(sinYPosition) * cosYPosition * 0.1);
-                        increasedYPosition = Math.floor(this.boundingBox.minY) + 1.0;
-                        bubbleZ = this.posZ + (Math.cos(sinYPosition) * cosYPosition * 0.1);
-                        worldServer.func_147487_a("splash",
-                                                  bubbleX,
-                                                  increasedYPosition,
-                                                  bubbleZ,
-                                                  2 + this.rand.nextInt(2),
-                                                  0.10000000149011612,
-                                                  0.0,
-                                                  0.10000000149011612,
-                                                  0.0);
+                        renderLittleSplash(worldServer);
 
                     }
 
@@ -367,6 +368,30 @@ public final class EntityFishHook extends Entity
                 this.motionY -= (this.rand.nextDouble() * this.rand.nextDouble() * this.rand.nextDouble()) * 0.2;
             }
         }
+    }
+
+    /**
+     * Render little splashes around the fishing hook
+     * simulating fish movement
+     *
+     * @param worldServer the server side world
+     */
+    private void renderLittleSplash(WorldServer worldServer)
+    {
+        double sinYPosition       = (double) MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292D;
+        double cosYPosition       = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
+        double bubbleX            = this.posX + (Math.sin(sinYPosition) * cosYPosition * 0.1);
+        double increasedYPosition = Math.floor(this.boundingBox.minY) + 1.0;
+        double bubbleZ            = this.posZ + (Math.cos(sinYPosition) * cosYPosition * 0.1);
+        worldServer.func_147487_a("splash",
+                                  bubbleX,
+                                  increasedYPosition,
+                                  bubbleZ,
+                                  2 + this.rand.nextInt(2),
+                                  0.10000000149011612,
+                                  0.0,
+                                  0.10000000149011612,
+                                  0.0);
     }
 
     /**
@@ -466,6 +491,18 @@ public final class EntityFishHook extends Entity
     }
 
     /**
+     * Check if a fishhook is there for too long
+     * and became bugged.
+     * After 360 seconds remove the hook.
+     *
+     * @return true if the time to live is over
+     */
+    public boolean fishHookIsOverTimeToLive()
+    {
+        return Utils.nanoSecondsToSeconds(System.nanoTime() - creationTime) > TTL;
+    }
+
+    /**
      * No need to write anything to NBT.
      * A hook does not need to be saved.
      */
@@ -501,7 +538,7 @@ public final class EntityFishHook extends Entity
      * Also spawns loot and exp and destroys the hook.
      *
      * @param entityAIWorkFisherman the fisherman fishing
-     * @return the numer of damage points to be deducted.
+     * @return the number of damage points to be deducted.
      */
     public int getDamage(final EntityAIWorkFisherman entityAIWorkFisherman)
     {
@@ -511,18 +548,19 @@ public final class EntityFishHook extends Entity
             return 0;
         }
         byte itemDamage = 0;
-
-        if (this.movedOnX > 0)
+        if (isFishCaugth)
         {
-            spawnLootAndExp(entityAIWorkFisherman);
-            itemDamage = 1;
-        }
+            if (this.movedOnX > 0)
+            {
+                spawnLootAndExp(entityAIWorkFisherman);
+                itemDamage = 1;
+            }
 
-        if (this.inGround)
-        {
-            itemDamage = 0;
+            if (this.inGround)
+            {
+                itemDamage = 0;
+            }
         }
-
         this.setDead();
         return itemDamage;
 
@@ -595,11 +633,11 @@ public final class EntityFishHook extends Entity
         }
     }
 
-    public long getCreationTime()
-    {
-        return creationTime;
-    }
-
+    /**
+     * returns true if a fish was caught.
+     *
+     * @return true | false
+     */
     public boolean caughtFish()
     {
         return isFishCaugth;
