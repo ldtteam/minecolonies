@@ -383,7 +383,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
         if (!entityFishHook.caughtFish())
         {
-            entityFishHook.setCaughtFish(false);
             return false;
         }
 
@@ -404,6 +403,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         worker.swingItem();
         int i = entityFishHook.getDamage(this);
         worker.damageItemInHand(i);
+        entityFishHook = null;
     }
 
     private void equipRod()

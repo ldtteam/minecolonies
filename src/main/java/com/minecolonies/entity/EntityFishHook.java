@@ -52,18 +52,18 @@ public final class EntityFishHook extends Entity
                                                               new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2),
                                                               new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
     public  EntityCitizen citizen;
-    private int                   fishingSpeedEnchantment;
-    private int                   fishingLootEnchantment;
-    private boolean               inGround;
-    private int                   shake;
-    private int                   movedOnX;
-    private int                   movedOnY;
-    private int                   movedOnZ;
-    private double                relativeRotation;
+    private int           fishingSpeedEnchantment;
+    private int           fishingLootEnchantment;
+    private boolean       inGround;
+    private int           shake;
+    private int           movedOnX;
+    private int           movedOnY;
+    private int           movedOnZ;
+    private double        relativeRotation;
     //Time at which the entity has been created
-    private long                  creationTime;
+    private long          creationTime;
     //Will be set true when the citizen caught a fish (to reset the fisherman)
-    private boolean isCaughtFish = false;
+    private boolean isFishCaugth = false;
 
     /**
      * Constructor for throwing out a hook.
@@ -209,36 +209,13 @@ public final class EntityFishHook extends Entity
         return false;
     }
 
+    /**
+     * Main update method thingie
+     * hopefully I'm able to reduce it somewhat...
+     */
     private void moveSomeStuff()
     {
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
-        double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-        this.rotationYaw = (float) (Math.atan2(this.motionY, this.motionZ) * 180.0 / Math.PI);
-        this.rotationPitch = (float) (Math.atan2(this.motionY, motion) * 180.0 / Math.PI);
-        while ((double) this.rotationPitch - (double) this.prevRotationPitch < -180.0)
-        {
-            this.prevRotationPitch -= 360.0;
-        }
-
-        while ((double) this.rotationPitch - (double) this.prevRotationPitch >= 180.0)
-        {
-            this.prevRotationPitch += 360.0;
-        }
-
-        while ((double) this.rotationYaw - (double) this.prevRotationYaw < -180.0)
-        {
-            this.prevRotationYaw -= 360.0;
-        }
-
-        while ((double) this.rotationYaw - (double) this.prevRotationYaw >= 180.0)
-        {
-            this.prevRotationYaw += 360.0;
-        }
-
-        this.rotationPitch =
-                (float) ((double) this.prevRotationPitch + ((double) this.rotationPitch - (double) this.prevRotationPitch) * 0.2D);
-        this.rotationYaw =
-                (float) ((double) this.prevRotationYaw + ((double) this.rotationYaw - (double) this.prevRotationYaw) * 0.2D);
+        updateMotionAndRotation();
         double f6 = 0.92F;
 
         if (this.onGround || this.isCollidedHorizontally)
@@ -249,33 +226,53 @@ public final class EntityFishHook extends Entity
         byte   b0  = 5;
         double d10 = 0.0;
 
+        //Check how much water is around the hook
         for (int j = 0; j < b0; ++j)
         {
             double        d3             = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * j / b0 - 0.125 + 0.125;
             double        d4             = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (j + 1) / b0 - 0.125 + 0.125;
             AxisAlignedBB axisAlignedBB1 = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d3, this.boundingBox.minZ, this.boundingBox.maxX, d4, this.boundingBox.maxZ);
 
+            //If the hook is swimming
             if (this.worldObj.isAABBInMaterial(axisAlignedBB1, Material.water))
             {
                 d10 += 1.0 / b0;
             }
         }
 
+        checkIfFishBites(d10);
+
+        double currentDistance = d10 * 2.0D - 1.0;
+        this.motionY += 0.03999999910593033 * currentDistance;
+
+        if (d10 > 0.0)
+        {
+            f6 = f6 * 0.9;
+            this.motionY *= 0.8;
+        }
+
+        this.motionX *= f6;
+        this.motionY *= f6;
+        this.motionZ *= f6;
+        this.setPosition(this.posX, this.posY, this.posZ);
+    }
+
+    private void checkIfFishBites(double d10)
+    {
         if (!this.worldObj.isRemote && d10 > 0.0)
         {
-            WorldServer worldserver = (WorldServer) this.worldObj;
+
+            WorldServer worldServer = (WorldServer) this.worldObj;
             int         k           = 1;
 
-            if (this.rand.nextDouble() < 0.25 && this.worldObj.canLightningStrikeAt(MathHelper.floor_double(this.posX),
-                                                                                    MathHelper.floor_double(this.posY) + 1,
-                                                                                    MathHelper.floor_double(this.posZ)))
+            if (this.rand.nextDouble() < 0.25
+                && this.worldObj.canLightningStrikeAt(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ)))
             {
                 k = 2;
             }
 
-            if (this.rand.nextDouble() < 0.5 && !this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX),
-                                                                                 MathHelper.floor_double(this.posY) + 1,
-                                                                                 MathHelper.floor_double(this.posZ)))
+            if (this.rand.nextDouble() < 0.5
+                && !this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ)))
             {
                 --k;
             }
@@ -306,51 +303,13 @@ public final class EntityFishHook extends Entity
 
                     if (this.movedOnZ <= 0)
                     {
-                        this.motionY -= 0.20000000298023224D;
-                        this.playSound("random.splash", 0.25F,
-                                       (float) (1.0D + (this.rand.nextDouble() - this.rand.nextDouble()) * 0.4D));
-                        bubbleY = Math.floor(this.boundingBox.minY);
-                        worldserver.func_147487_a("bubble",
-                                                  this.posX,
-                                                  (bubbleY + 1.0),
-                                                  this.posZ,
-                                                  (int) (1.0 + this.width * 20.0),
-                                                  (double) this.width,
-                                                  0.0,
-                                                  (double) this.width,
-                                                  0.20000000298023224);
-                        worldserver.func_147487_a("wake",
-                                                  this.posX,
-                                                  (bubbleY + 1.0),
-                                                  this.posZ,
-                                                  (int) (1.0 + this.width * 20.0),
-                                                  (double) this.width,
-                                                  0.0,
-                                                  (double) this.width,
-                                                  0.20000000298023224);
-                        this.movedOnX = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
-                        isCaughtFish = true;
+                        //Show fish bite animation
+                        showFishBiteAnimation(worldServer);
                     }
                     else
                     {
-                        this.relativeRotation = this.relativeRotation + this.rand.nextGaussian() * 4.0;
-                        bubbleY = this.relativeRotation * 0.017453292;
-                        sinYPosition = Math.sin(bubbleY);
-                        cosYPosition = Math.cos(bubbleY);
-                        bubbleX = this.posX + (sinYPosition * this.movedOnZ * 0.1);
-                        increasedYPosition = Math.floor(this.boundingBox.minY) + 1.0;
-                        bubbleZ = this.posZ + (cosYPosition * this.movedOnZ * 0.1);
-
-                        if (this.rand.nextDouble() < 0.15)
-                        {
-                            worldserver.func_147487_a("bubble", bubbleX, increasedYPosition - 0.10000000149011612, bubbleZ, 1, sinYPosition, 0.1D, cosYPosition, 0.0);
-                        }
-
-                        double f3 = sinYPosition * 0.04;
-                        double f4 = cosYPosition * 0.04;
-                        worldserver.func_147487_a("wake", bubbleX, increasedYPosition, bubbleZ, 0, f4, 0.01, (-f3), 1.0);
-                        worldserver.func_147487_a("wake", bubbleX, increasedYPosition, bubbleZ, 0, (-f4), 0.01, f3, 1.0);
-
+                        //Show fish swim animation
+                        showFishSwimmingTowardsHookAnimation(worldServer);
                     }
                 }
                 else if (this.movedOnY > 0)
@@ -378,7 +337,7 @@ public final class EntityFishHook extends Entity
                         bubbleX = this.posX + (Math.sin(sinYPosition) * cosYPosition * 0.1);
                         increasedYPosition = Math.floor(this.boundingBox.minY) + 1.0;
                         bubbleZ = this.posZ + (Math.cos(sinYPosition) * cosYPosition * 0.1);
-                        worldserver.func_147487_a("splash",
+                        worldServer.func_147487_a("splash",
                                                   bubbleX,
                                                   increasedYPosition,
                                                   bubbleZ,
@@ -408,20 +367,102 @@ public final class EntityFishHook extends Entity
                 this.motionY -= (this.rand.nextDouble() * this.rand.nextDouble() * this.rand.nextDouble()) * 0.2;
             }
         }
+    }
 
-        double currentDistance = d10 * 2.0D - 1.0;
-        this.motionY += 0.03999999910593033 * currentDistance;
+    /**
+     * Show bubbles moving towards the hook
+     * make it look like a fish will bite soon
+     *
+     * @param worldServer the server side world
+     */
+    private void showFishSwimmingTowardsHookAnimation(WorldServer worldServer)
+    {
+        this.relativeRotation = this.relativeRotation + this.rand.nextGaussian() * 4.0;
+        double bubbleY            = this.relativeRotation * 0.017453292;
+        double sinYPosition       = Math.sin(bubbleY);
+        double cosYPosition       = Math.cos(bubbleY);
+        double bubbleX            = this.posX + (sinYPosition * this.movedOnZ * 0.1);
+        double increasedYPosition = Math.floor(this.boundingBox.minY) + 1.0;
+        double bubbleZ            = this.posZ + (cosYPosition * this.movedOnZ * 0.1);
 
-        if (d10 > 0.0)
+        if (this.rand.nextDouble() < 0.15)
         {
-            f6 = f6 * 0.9;
-            this.motionY *= 0.8;
+            worldServer.func_147487_a("bubble", bubbleX, increasedYPosition - 0.10000000149011612, bubbleZ, 1, sinYPosition, 0.1D, cosYPosition, 0.0);
         }
 
-        this.motionX *= f6;
-        this.motionY *= f6;
-        this.motionZ *= f6;
-        this.setPosition(this.posX, this.posY, this.posZ);
+        double f3 = sinYPosition * 0.04;
+        double f4 = cosYPosition * 0.04;
+        worldServer.func_147487_a("wake", bubbleX, increasedYPosition, bubbleZ, 0, f4, 0.01, (-f3), 1.0);
+        worldServer.func_147487_a("wake", bubbleX, increasedYPosition, bubbleZ, 0, (-f4), 0.01, f3, 1.0);
+    }
+
+    /**
+     * Show bubbles towards the hook.
+     * Let the hook sink in a bit.
+     * Play a sound to signal to the player,
+     * that a fish bit
+     *
+     * @param worldServer the server side world
+     */
+    private void showFishBiteAnimation(final WorldServer worldServer)
+    {
+        this.motionY -= 0.20000000298023224D;
+        this.playSound("random.splash", 0.25F, (float) (1.0D + (this.rand.nextDouble() - this.rand.nextDouble()) * 0.4D));
+        double bubbleY = Math.floor(this.boundingBox.minY);
+        worldServer.func_147487_a("bubble",
+                                  this.posX,
+                                  (bubbleY + 1.0),
+                                  this.posZ,
+                                  (int) (1.0 + this.width * 20.0),
+                                  (double) this.width,
+                                  0.0,
+                                  (double) this.width,
+                                  0.20000000298023224);
+        worldServer.func_147487_a("wake",
+                                  this.posX,
+                                  (bubbleY + 1.0),
+                                  this.posZ,
+                                  (int) (1.0 + this.width * 20.0),
+                                  (double) this.width,
+                                  0.0,
+                                  (double) this.width,
+                                  0.20000000298023224);
+        this.movedOnX = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
+        isFishCaugth = true;
+    }
+
+    /**
+     * Update the fishing hooks motion
+     * and its rotation.
+     */
+    private void updateMotionAndRotation()
+    {
+        this.moveEntity(this.motionX, this.motionY, this.motionZ);
+        double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+        this.rotationYaw = (float) (Math.atan2(this.motionY, this.motionZ) * 180.0 / Math.PI);
+        this.rotationPitch = (float) (Math.atan2(this.motionY, motion) * 180.0 / Math.PI);
+        while ((double) this.rotationPitch - (double) this.prevRotationPitch < -180.0)
+        {
+            this.prevRotationPitch -= 360.0;
+        }
+
+        while ((double) this.rotationPitch - (double) this.prevRotationPitch >= 180.0)
+        {
+            this.prevRotationPitch += 360.0;
+        }
+
+        while ((double) this.rotationYaw - (double) this.prevRotationYaw < -180.0)
+        {
+            this.prevRotationYaw -= 360.0;
+        }
+
+        while ((double) this.rotationYaw - (double) this.prevRotationYaw >= 180.0)
+        {
+            this.prevRotationYaw += 360.0;
+        }
+
+        this.rotationPitch = (float) ((double) this.prevRotationPitch + ((double) this.rotationPitch - (double) this.prevRotationPitch) * 0.2D);
+        this.rotationYaw = (float) ((double) this.prevRotationYaw + ((double) this.rotationYaw - (double) this.prevRotationYaw) * 0.2D);
     }
 
     /**
@@ -510,10 +551,10 @@ public final class EntityFishHook extends Entity
         entityitem.motionZ = distanceZ * 0.1;
         this.worldObj.spawnEntityInWorld(entityitem);
         entityAIWorkFisherman.getCitizen().worldObj.spawnEntityInWorld(new EntityXPOrb(entityAIWorkFisherman.getCitizen().worldObj,
-                                                                                citizenPosX,
-                                                                                citizenPosY + 0.D,
-                                                                                citizenPosZ + 0.5,
-                                                                                this.rand.nextInt(6) + 1));
+                                                                                       citizenPosX,
+                                                                                       citizenPosY + 0.D,
+                                                                                       citizenPosZ + 0.5,
+                                                                                       this.rand.nextInt(6) + 1));
     }
 
     /**
@@ -527,9 +568,9 @@ public final class EntityFishHook extends Entity
      */
     private ItemStack getFishingLoot(final EntityAIWorkFisherman entityAIWorkFisherman)
     {
-        double random                  = this.worldObj.rand.nextDouble();
-        double speedBonus              = 0.1 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
-        double lootBonus               = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
+        double random     = this.worldObj.rand.nextDouble();
+        double speedBonus = 0.1 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
+        double lootBonus  = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
         //clamp_float gives the values an upper limit
         speedBonus = MathHelper.clamp_float((float) speedBonus, 0.0F, 1.0F);
         lootBonus = MathHelper.clamp_float((float) lootBonus, 0.0F, 1.0F);
@@ -561,11 +602,7 @@ public final class EntityFishHook extends Entity
 
     public boolean caughtFish()
     {
-        return isCaughtFish;
+        return isFishCaugth;
     }
 
-    public void setCaughtFish(boolean caughtFish)
-    {
-        isCaughtFish = caughtFish;
-    }
 }
