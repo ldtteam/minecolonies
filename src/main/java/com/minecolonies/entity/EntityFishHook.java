@@ -21,11 +21,7 @@ import net.minecraft.world.WorldServer;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Creates a custom fishHook for the Fisherman to throw
- * <p>
- * This class represents said entity
- */
+//Creates a custom fishHook for the Fisherman to throw
 public final class EntityFishHook extends Entity
 {
     private static final int  TTL             = 360;
@@ -71,10 +67,38 @@ public final class EntityFishHook extends Entity
     private double                newZ;
     private double                newRotationYaw;
     private double                newRotationPitch;
+    @SideOnly(Side.CLIENT)
+    private double                hookVectorX;
+    @SideOnly(Side.CLIENT)
+    private double                hookVectorY;
+    @SideOnly(Side.CLIENT)
+    private double                hookVectorZ;
     //Time at which the entity has been created
     private long                  creationTime;
     //Will be set true when the citizen caught a fish (to reset the fisherman)
     private boolean isCaughtFish = false;
+
+    @SideOnly(Side.CLIENT)
+    public EntityFishHook(World world, double x, double y, double z, EntityAIWorkFisherman fisherman)
+    {
+        this(world);
+        this.setPosition(x, y, z);
+        this.ignoreFrustumCheck = true;
+        this.fisherman = fisherman;
+        fisherman.setEntityFishHook(this);
+        this.creationTime = System.nanoTime();
+    }
+
+    public EntityFishHook(World world)
+    {
+        super(world);
+        this.xTile = -1;
+        this.yTile = -1;
+        this.zTile = -1;
+        this.setSize(0.25F, 0.25F);
+        this.ignoreFrustumCheck = true;
+        this.creationTime = System.nanoTime();
+    }
 
     public EntityFishHook(World world, EntityAIWorkFisherman fisherman)
     {
@@ -84,7 +108,7 @@ public final class EntityFishHook extends Entity
         this.zTile = -1;
         this.ignoreFrustumCheck = true;
         this.fisherman = fisherman;
-        this.fisherman.setFishEntity(this);
+        this.fisherman.setEntityFishHook(this);
         this.setSize(0.25F, 0.25F);
         this.setLocationAndAngles(fisherman.getCitizen().posX,
                                   fisherman.getCitizen().posY + 1.62 - (double) fisherman.getCitizen().yOffset,
@@ -153,6 +177,46 @@ public final class EntityFishHook extends Entity
     }
 
     /**
+     * Sets the position and rotation. Only difference from the other one is no bounding on the rotation.
+     *
+     * @param x                  posX
+     * @param y                  posY
+     * @param z                  posZ
+     * @param yaw                The rotation yaw
+     * @param pitch              The rotation pitch
+     * @param rotationIncrements rotation increments
+     */
+    @SideOnly(Side.CLIENT)
+    public void setPositionAndRotation2(double x, double y, double z, double yaw, double pitch, int rotationIncrements)
+    {
+        this.newX = x;
+        this.newY = y;
+        this.newZ = z;
+        this.newRotationYaw = yaw;
+        this.newRotationPitch = pitch;
+        this.newPosRotationIncrements = rotationIncrements;
+        this.motionX = this.hookVectorX;
+        this.motionY = this.hookVectorY;
+        this.motionZ = this.hookVectorZ;
+    }
+
+    /**
+     * Sets the velocity to the args.
+     *
+     * @param vectorX directionX
+     * @param vectorY directionY
+     * @param vectorZ directionZ
+     */
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void setVelocity(double vectorX, double vectorY, double vectorZ)
+    {
+        this.hookVectorX = this.motionX = vectorX;
+        this.hookVectorY = this.motionY = vectorY;
+        this.hookVectorZ = this.motionZ = vectorZ;
+    }
+
+    /**
      * Called to update the entity's position/logic.
      */
     @Override
@@ -190,7 +254,7 @@ public final class EntityFishHook extends Entity
                     || this.getDistanceSqToEntity(this.fisherman.getCitizen()) > 1024.0D)
                 {
                     this.setDead();
-                    this.fisherman.setFishEntity(null);
+                    this.fisherman.setEntityFishHook(null);
                     return;
                 }
 
@@ -527,7 +591,7 @@ public final class EntityFishHook extends Entity
 
         if (this.fisherman != null)
         {
-            this.fisherman.setFishEntity(null);
+            this.fisherman.setEntityFishHook(null);
         }
     }
 
@@ -551,7 +615,7 @@ public final class EntityFishHook extends Entity
     @Override
     public void readEntityFromNBT(NBTTagCompound p_70037_1_)
     {
-        if (!fisherman.getFishEntity().equals(this))
+        if (!fisherman.getEntityFishHook().equals(this))
         {
             this.setDead();
         }
@@ -629,7 +693,7 @@ public final class EntityFishHook extends Entity
             }
 
             this.setDead();
-            this.fisherman.setFishEntity(null);
+            this.fisherman.setEntityFishHook(null);
             return itemDamage;
         }
     }
