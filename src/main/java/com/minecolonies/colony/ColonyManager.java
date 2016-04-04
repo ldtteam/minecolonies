@@ -164,7 +164,9 @@ public class ColonyManager
 
         //TODO is this what we want? Also improve
 
-        return colonies.values().stream().filter(c -> c.getPermissions().getOwner().equals(owner)).collect(Collectors.toList());
+        return colonies.values().stream()
+                       .filter(c -> c.getPermissions().getOwner().equals(owner))
+                       .collect(Collectors.toList());
     }
 
     /**
@@ -214,7 +216,8 @@ public class ColonyManager
      * @param z     z-coordinate
      * @return      Returns the view belonging to the building at (x, y, z)
      */
-    public static Building.View getBuildingView(World w, int x, int y, int z)       //todo why do we have a world object if we dont use it
+    public static Building.View getBuildingView(World w, int x, int y, int z)
+    //todo why do we have a world object if we dont use it
     {
         //  On client we will just check all known views
         ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
@@ -475,7 +478,9 @@ public class ColonyManager
     public static void onWorldTick(
             TickEvent.WorldTickEvent event)
     {
-        colonies.values().stream().filter(c -> c.getDimensionId() == event.world.provider.dimensionId).forEach(c -> c.onWorldTick(event));
+        colonies.values().stream()
+                .filter(c -> c.getDimensionId() == event.world.provider.dimensionId)
+                .forEach(c -> c.onWorldTick(event));
     }
 
     /**

@@ -50,7 +50,6 @@ public class EntityAICitizenWander extends EntityAIBase
 
     /**
      * Returns the right height for the given position (ground block)
-     * //TODO World.getTopBlock ?
      * @param position      Current position of the entity
      * @return              Ground level at (position.x, position.z)
      */

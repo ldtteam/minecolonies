@@ -106,39 +106,20 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
                     removeOthers("pumpkin");
                 }
                 break;
+            case BUTTON_PREVPAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                buttonPrevPage.setEnabled(false);
+                buttonNextPage.setEnabled(true);
+                break;
+            case BUTTON_NEXTPAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                buttonPrevPage.setEnabled(true);
+                buttonNextPage.setEnabled(false);
+                break;
             default:
-                switch (button.getID())
-                {
-                    case BUTTON_PREVPAGE:
-                        try
-                        {
-                            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                        }
-                        catch (NullPointerException e)
-                        {
-                            MineColonies.logger.error("findPane error, report to mod authors",e);
-                        }
-                        buttonPrevPage.setEnabled(false);
-                        buttonNextPage.setEnabled(true);
-                        break;
-                    case BUTTON_NEXTPAGE:
-                        try
-                        {
-                            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                        }
-                        catch (NullPointerException e)
-                        {
-                            MineColonies.logger.error("findPane error, report to mod authors",e);
-                        }
-                        buttonPrevPage.setEnabled(true);
-                        buttonNextPage.setEnabled(false);
-                        break;
-                    default:
-                        super.onButtonClicked(button);
-                        break;
-                }
+                super.onButtonClicked(button);
+                break;
 
-                return;
         }
 
         updateButtonLabels();

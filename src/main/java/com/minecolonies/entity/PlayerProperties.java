@@ -40,7 +40,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
     {
         NBTTagCompound properties = new NBTTagCompound();
 
-        properties.setBoolean("getHasPlacedSupplyChest", hasPlacedSupplyChest);
+        properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
         compound.setTag(Constants.PLAYER_PROPERTY_NAME, properties);
     }
@@ -50,7 +50,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
     {
         NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PLAYER_PROPERTY_NAME);
 
-        this.hasPlacedSupplyChest = properties.getBoolean("getHasPlacedSupplyChest");
+        this.hasPlacedSupplyChest = properties.getBoolean("hasPlacedSupplyChest");
     }
 
     @Override

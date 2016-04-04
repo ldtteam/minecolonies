@@ -346,10 +346,10 @@ public class CitizenData
 
 
     /**
-     *  //todo document
-     * @param type
-     * @param <JOB>
-     * @return
+     * Returns the job subclass needed. Returns null on type mismatch.
+     * @param type the type of job wanted.
+     * @param <JOB> The job type returned
+     * @return the job this citizen has
      */
     public <JOB extends Job> JOB getJob(Class<JOB> type)
     {

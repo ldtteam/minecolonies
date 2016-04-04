@@ -36,7 +36,7 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     {
         super(building, Constants.MOD_ID + HUT_MINER_RESOURCE_SUFFIX);
         this.miner = building;
-        updateUsers();
+        pullLevelsFromHut();
     }
 
     @Override
@@ -116,19 +116,19 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
         String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_LEVELS))
         {
-            updateUsers();
+            pullLevelsFromHut();
             window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
         }
 
     }
 
-
-    //TODO reevaluate method, weird name, weird body
-    private void updateUsers()
+    /**
+     * Retrieve levels from the building to display in GUI
+     */
+    private void pullLevelsFromHut()
     {
         if(miner.getColony().getBuilding(miner.getID()) != null)
         {
-            levels = new int[miner.levels.length]; // TODO why double assignment?
             levels = miner.levels;
         }
     }

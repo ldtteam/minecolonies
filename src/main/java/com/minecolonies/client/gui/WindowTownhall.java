@@ -9,7 +9,7 @@ import com.blockout.views.SwitchView;
 import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.buildings.BuildingTownHall;
+import com.minecolonies.colony.buildings.BuildingTownhall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildRequestMessage;
@@ -57,7 +57,7 @@ public class WindowTownhall extends Window implements Button.Handler
 
     private static final    String                      TOWNHALL_RESOURCE_SUFFIX    = ":gui/windowTownhall.xml";
 
-    private                 BuildingTownHall.View       townhall;
+    private                 BuildingTownhall.View townhall;
     private                 List<Permissions.Player>    users                       = new ArrayList<>();
     private                 List<CitizenData.View>      citizens                    = new ArrayList<>();
 
@@ -66,7 +66,7 @@ public class WindowTownhall extends Window implements Button.Handler
     private                 ScrollingList               citizenList;
     private                 ScrollingList               userList;
 
-    public WindowTownhall(BuildingTownHall.View townhall)
+    public WindowTownhall(BuildingTownhall.View townhall)
     {
         super(Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
         this.townhall = townhall;

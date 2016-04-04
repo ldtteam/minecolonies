@@ -5,11 +5,11 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import net.minecraft.util.ChunkCoordinates;
 
-public class BuildingTownHall extends BuildingHut
+public class BuildingTownhall extends BuildingHut
 {
     private static final String TOWNHALL = "Townhall";
 
-    public BuildingTownHall(Colony c, ChunkCoordinates l)
+    public BuildingTownhall(Colony c, ChunkCoordinates l)
     {
         super(c, l);
     }
