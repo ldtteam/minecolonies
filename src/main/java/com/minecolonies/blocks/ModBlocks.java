@@ -14,6 +14,7 @@ public final class ModBlocks
     public static final Block blockHutBlacksmith = new BlockHutBlacksmith();
     public static final Block blockHutStonemason = new BlockHutStonemason();
     public static final Block blockHutFarmer     = new BlockHutFarmer();
+    public static final Block blockHutFisherman  = new BlockHutFisherman();
 
     /* //todo Guess its safe to delete now*/
     public static void init()
