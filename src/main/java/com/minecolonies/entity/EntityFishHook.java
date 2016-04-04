@@ -566,37 +566,21 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * (abstract) Protected helper method to write subclass entity data to NBT.
+     * No need to write anything to NBT.
+     * A hook does not need to be saved.
      */
     @Override
-    public void writeEntityToNBT(NBTTagCompound p_70014_1_)
+    public void writeEntityToNBT(NBTTagCompound unused)
     {
-        p_70014_1_.setShort(TAG_X_TILE, (short) this.xTile);
-        p_70014_1_.setShort(TAG_Y_TILE, (short) this.yTile);
-        p_70014_1_.setShort(TAG_Z_TILE, (short) this.zTile);
-        p_70014_1_.setByte(TAG_IN_TILE, (byte) Block.getIdFromBlock(this.inTile));
-        p_70014_1_.setByte(TAG_SHAKE, (byte) this.shake);
-        p_70014_1_.setByte(TAG_IN_GROUND, (byte) (this.inGround ? 1 : 0));
     }
 
     /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
+     * If a hook gets loaded, kill it immediately.
      */
     @Override
-    public void readEntityFromNBT(NBTTagCompound p_70037_1_)
+    public void readEntityFromNBT(NBTTagCompound unused)
     {
-        if (fisherman == null || fisherman.getEntityFishHook() == null || !fisherman.getEntityFishHook().equals(this))
-        {
-            this.setDead();
-            return;
-        }
-        this.xTile = p_70037_1_.getShort(TAG_X_TILE);
-        this.yTile = p_70037_1_.getShort(TAG_Y_TILE);
-        this.zTile = p_70037_1_.getShort(TAG_Z_TILE);
-        this.inTile = Block.getBlockById(p_70037_1_.getByte(TAG_IN_TILE) & 255);
-        this.shake = p_70037_1_.getByte(TAG_SHAKE) & 255;
-        this.inGround = p_70037_1_.getByte(TAG_IN_GROUND) == 1;
-
+        this.setDead();
     }
 
     @Override
@@ -612,6 +596,11 @@ public final class EntityFishHook extends Entity
         return 0.0F;
     }
 
+    /**
+     * Returns a damage value by how much the fishingRod should be damaged.
+     * Also spawns loot and exp and destroys the hook.
+     * @return the numer of damage points to be deducted.
+     */
     public int getDamage()
     {
         if (this.worldObj.isRemote)
@@ -630,7 +619,7 @@ public final class EntityFishHook extends Entity
 
         if (this.inGround)
         {
-            itemDamage = 2;
+            itemDamage = 0;
         }
 
         this.setDead();
@@ -666,6 +655,14 @@ public final class EntityFishHook extends Entity
                                                                                 this.rand.nextInt(6) + 1));
     }
 
+    /**
+     * Determines which loot table should be used.
+     *
+     * The selection is somewhat random and depends on enchantments
+     * and the level of the fisherman hut.
+     *
+     * @return an ItemStack randomly from the loot table
+     */
     private ItemStack getFishingLoot()
     {
         double random                  = this.worldObj.rand.nextDouble();
