@@ -1,6 +1,5 @@
 package com.minecolonies.entity;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.entity.ai.EntityAIWorkFisherman;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -15,7 +14,10 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemFishFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.WeightedRandomFishable;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -263,6 +265,7 @@ public final class EntityFishHook extends Entity
      * Update some movement things for the hook.
      * Detect if the hook is on ground and maybe bounce.
      * Also count how long the hook is laying on the ground or in water.
+     *
      * @return true if the hook is killed.
      */
     private boolean isInGround()
@@ -611,46 +614,56 @@ public final class EntityFishHook extends Entity
 
     public int getDamage()
     {
-        double citizenPosX = this.fisherman.getCitizen().posX;
-        double citizenPosY = this.fisherman.getCitizen().posY;
-        double citizenPosZ = this.fisherman.getCitizen().posZ;
-
         if (this.worldObj.isRemote)
         {
-            return 0;
-        }
-        else
-        {
-            byte itemDamage = 0;
-
-           if (this.movedOnX > 0)
-            {
-                EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot());
-                double     distanceX  = citizenPosX - this.posX;
-                double     distanceY  = citizenPosY - this.posY;
-                double     distanceZ  = citizenPosZ - this.posZ;
-
-                entityitem.motionX = distanceX * 0.1;
-                entityitem.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
-                entityitem.motionZ = distanceZ * 0.1;
-                this.worldObj.spawnEntityInWorld(entityitem);
-                this.fisherman.getCitizen().worldObj.spawnEntityInWorld(new EntityXPOrb(this.fisherman.getCitizen().worldObj,
-                                                                                        citizenPosX,
-                                                                                        citizenPosY + 0.D,
-                                                                                        citizenPosZ + 0.5,
-                                                                                        this.rand.nextInt(6) + 1));
-                itemDamage = 1;
-            }
-
-            if (this.inGround)
-            {
-                itemDamage = 2;
-            }
-
             this.setDead();
             this.fisherman.setEntityFishHook(null);
-            return itemDamage;
+            return 0;
         }
+        byte itemDamage = 0;
+
+        if (this.movedOnX > 0)
+        {
+            spawnLootAndExp();
+            itemDamage = 1;
+        }
+
+        if (this.inGround)
+        {
+            itemDamage = 2;
+        }
+
+        this.setDead();
+        this.fisherman.setEntityFishHook(null);
+        return itemDamage;
+
+    }
+
+    /**
+     * Spawns a random loot from the loottable
+     * and some exp orbs.
+     * Should be calles when retrieving a hook.
+     * todo: Perhaps streamline this and directly add the items?
+     */
+    private void spawnLootAndExp()
+    {
+        double     citizenPosX = this.fisherman.getCitizen().posX;
+        double     citizenPosY = this.fisherman.getCitizen().posY;
+        double     citizenPosZ = this.fisherman.getCitizen().posZ;
+        EntityItem entityitem  = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot());
+        double     distanceX   = citizenPosX - this.posX;
+        double     distanceY   = citizenPosY - this.posY;
+        double     distanceZ   = citizenPosZ - this.posZ;
+
+        entityitem.motionX = distanceX * 0.1;
+        entityitem.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
+        entityitem.motionZ = distanceZ * 0.1;
+        this.worldObj.spawnEntityInWorld(entityitem);
+        this.fisherman.getCitizen().worldObj.spawnEntityInWorld(new EntityXPOrb(this.fisherman.getCitizen().worldObj,
+                                                                                citizenPosX,
+                                                                                citizenPosY + 0.D,
+                                                                                citizenPosZ + 0.5,
+                                                                                this.rand.nextInt(6) + 1));
     }
 
     private ItemStack getFishingLoot()

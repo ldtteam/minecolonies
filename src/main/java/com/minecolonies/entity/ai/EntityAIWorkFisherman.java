@@ -406,13 +406,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         worker.swingItem();
         int i = getEntityFishHook().getDamage();
         worker.damageItemInHand(i);
-
-        //May already be null if the itemInHand has been destroyed
-        if (entityFishHook != null)
-        {
-            entityFishHook.setDead();
-            this.entityFishHook = null;
-        }
     }
 
     private void equipRod()
