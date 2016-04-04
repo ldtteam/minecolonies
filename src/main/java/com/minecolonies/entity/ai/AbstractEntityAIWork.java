@@ -32,13 +32,16 @@ import static com.minecolonies.entity.ai.AIState.*;
  */
 public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkeleton<J>
 {
-    private static final int DEFAULT_RANGE_FOR_DELAY = 3;
-    private static final Logger log = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
-    private static final int DELAY_RECHECK = 10;
+    private static final int    DEFAULT_RANGE_FOR_DELAY = 3;
+    private static final Logger log                     = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
+    private static final int    DELAY_RECHECK           = 10;
 
-    protected static Random itemRand = new Random();
-
-
+    protected static Random           itemRand                = new Random();
+    protected        boolean          needsShovel             = false;
+    protected        boolean          needsAxe                = false;
+    protected        boolean          needsHoe                = false;
+    protected        boolean          needsPickaxe            = false;
+    protected        int              needsPickaxeLevel       = -1;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -48,7 +51,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * <p>
      * Will be cleared on restart, be aware!
      */
-    protected List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
+    private          List<ItemStack>  itemsCurrentlyNeeded    = new ArrayList<>();
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -56,19 +59,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * <p>
      * Will be cleared on restart, be aware!
      */
-    protected List<ItemStack> itemsNeeded = new ArrayList<>();
-    protected boolean needsShovel = false;
-    protected boolean needsAxe = false;
-    protected boolean needsHoe = false;
-    protected boolean needsPickaxe = false;
-
-    protected int needsPickaxeLevel = -1;
-    private ChunkCoordinates currentWorkingLocation = null;
+    private          List<ItemStack>  itemsNeeded             = new ArrayList<>();
+    private          ChunkCoordinates currentWorkingLocation  = null;
     /**
      * The time in ticks until the next action is made
      */
-    private int delay = 0;
-    private ChunkCoordinates currentStandingLocation = null;
+    private          int              delay                   = 0;
+    private          ChunkCoordinates currentStandingLocation = null;
 
 
     /**
@@ -246,8 +243,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param is    the type of item requested (amount is ignored)
-     * @return      true if a stack of that type was found
+     * @param is the type of item requested (amount is ignored)
+     * @return true if a stack of that type was found
      */
     private boolean isInHut(final ItemStack is)
     {
@@ -334,7 +331,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Walk the worker to it's building chest.
      * Please return immediately if this returns true.
      *
-     * @return      false if the worker is at his building
+     * @return false if the worker is at his building
      */
     protected final boolean walkToBuilding()
     {
@@ -435,8 +432,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Ensures that we have a pickaxe available.
      * Will set {@code needsPickaxe} accordingly.
      *
-     * @param minlevel  the minimum pickaxe level needed.
-     * @return          true if we have a pickaxe
+     * @param minlevel the minimum pickaxe level needed.
+     * @return true if we have a pickaxe
      */
     private boolean checkForPickaxe(int minlevel)
     {
@@ -466,8 +463,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the pickaxe.
      *
-     * @param minlevel  the needed pickaxe level
-     * @return          true if a pickaxe was found
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
      */
     private boolean isPickaxeInHut(int minlevel)
     {
@@ -570,7 +567,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             int countOfItem = worker.getItemCountInInventory(stack.getItem());
             if (countOfItem < stack.stackSize)
             {
-                int itemsLeft = stack.stackSize - countOfItem;
+                int       itemsLeft     = stack.stackSize - countOfItem;
                 ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
                 itemsCurrentlyNeeded.add(requiredStack);
                 allClear = false;
@@ -665,15 +662,15 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
 
     protected final int getMostEfficientTool(Block target)
     {
-        String tool = target.getHarvestTool(0);
-        int required = target.getHarvestLevel(0);
-        int bestSlot = -1;
-        int bestLevel = Integer.MAX_VALUE;
+        String           tool      = target.getHarvestTool(0);
+        int              required  = target.getHarvestLevel(0);
+        int              bestSlot  = -1;
+        int              bestLevel = Integer.MAX_VALUE;
         InventoryCitizen inventory = worker.getInventory();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            ItemStack item = inventory.getStackInSlot(i);
-            int level = Utils.getMiningLevel(item, tool);
+            ItemStack item  = inventory.getStackInSlot(i);
+            int       level = Utils.getMiningLevel(item, tool);
             if (level >= required && level < bestLevel)
             {
                 bestSlot = i;

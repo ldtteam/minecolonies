@@ -362,7 +362,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private boolean caughtFish()
     {
-        if (!fishEntity.caughtFish() || getFishEntity() == null)
+        if (fishEntity == null)
+        {
+            return false;
+        }
+        if (!fishEntity.caughtFish())
         {
             fishEntity.setCaughtFish(false);
             return false;

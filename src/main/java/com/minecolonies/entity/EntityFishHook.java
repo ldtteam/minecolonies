@@ -21,7 +21,11 @@ import net.minecraft.world.WorldServer;
 import java.util.Arrays;
 import java.util.List;
 
-//Creates a custom fishHook for the Fisherman to throw
+/**
+ * Creates a custom fishHook for the Fisherman to throw
+ * <p>
+ * This class represents said entity
+ */
 public final class EntityFishHook extends Entity
 {
     private static final int  TTL             = 360;
@@ -67,38 +71,10 @@ public final class EntityFishHook extends Entity
     private double                newZ;
     private double                newRotationYaw;
     private double                newRotationPitch;
-    @SideOnly(Side.CLIENT)
-    private double                hookVectorX;
-    @SideOnly(Side.CLIENT)
-    private double                hookVectorY;
-    @SideOnly(Side.CLIENT)
-    private double                hookVectorZ;
     //Time at which the entity has been created
     private long                  creationTime;
     //Will be set true when the citizen caught a fish (to reset the fisherman)
     private boolean isCaughtFish = false;
-
-    @SideOnly(Side.CLIENT)
-    public EntityFishHook(World world, double x, double y, double z, EntityAIWorkFisherman fisherman)
-    {
-        this(world);
-        this.setPosition(x, y, z);
-        this.ignoreFrustumCheck = true;
-        this.fisherman = fisherman;
-        fisherman.setFishEntity(this);
-        this.creationTime = System.nanoTime();
-    }
-
-    public EntityFishHook(World world)
-    {
-        super(world);
-        this.xTile = -1;
-        this.yTile = -1;
-        this.zTile = -1;
-        this.setSize(0.25F, 0.25F);
-        this.ignoreFrustumCheck = true;
-        this.creationTime = System.nanoTime();
-    }
 
     public EntityFishHook(World world, EntityAIWorkFisherman fisherman)
     {
@@ -174,46 +150,6 @@ public final class EntityFishHook extends Entity
         double maxLength = this.boundingBox.getAverageEdgeLength() * 4.0;
         maxLength *= 64.0;
         return range < maxLength * maxLength;
-    }
-
-    /**
-     * Sets the position and rotation. Only difference from the other one is no bounding on the rotation.
-     *
-     * @param x                  posX
-     * @param y                  posY
-     * @param z                  posZ
-     * @param yaw                The rotation yaw
-     * @param pitch              The rotation pitch
-     * @param rotationIncrements rotation increments
-     */
-    @SideOnly(Side.CLIENT)
-    public void setPositionAndRotation2(double x, double y, double z, double yaw, double pitch, int rotationIncrements)
-    {
-        this.newX = x;
-        this.newY = y;
-        this.newZ = z;
-        this.newRotationYaw = yaw;
-        this.newRotationPitch = pitch;
-        this.newPosRotationIncrements = rotationIncrements;
-        this.motionX = this.hookVectorX;
-        this.motionY = this.hookVectorY;
-        this.motionZ = this.hookVectorZ;
-    }
-
-    /**
-     * Sets the velocity to the args.
-     *
-     * @param vectorX directionX
-     * @param vectorY directionY
-     * @param vectorZ directionZ
-     */
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void setVelocity(double vectorX, double vectorY, double vectorZ)
-    {
-        this.hookVectorX = this.motionX = vectorX;
-        this.hookVectorY = this.motionY = vectorY;
-        this.hookVectorZ = this.motionZ = vectorZ;
     }
 
     /**
@@ -314,9 +250,9 @@ public final class EntityFishHook extends Entity
                 vec3 = Vec3.createVectorHelper(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
             }
 
-            Entity entity          = null;
-            List   list            = this.worldObj.getEntitiesWithinAABBExcludingEntity(this,
-                                                                                        this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0, 1.0, 1.0));
+            Entity entity = null;
+            List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this,
+                                                                           this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0, 1.0, 1.0));
             double initialDistance = 0.0;
             double currentDistance;
 

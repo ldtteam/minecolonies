@@ -26,18 +26,18 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
     /**
      * Custom logger for the class.
      */
-    private static final Logger log = Logger.getLogger(AbstractAISkeleton.class.getName());
-    private static final int MUTEX_MASK = 3;
-    protected final J job;
-    protected final EntityCitizen worker;
-    protected final World world;
-    protected final ChatSpamFilter chatSpamFilter;
-    private final ArrayList<AITarget> targetList;
+    private static final Logger log        = Logger.getLogger(AbstractAISkeleton.class.getName());
+    private static final int    MUTEX_MASK = 3;
+    protected final J                   job;
+    protected final EntityCitizen       worker;
+    protected final World               world;
+    protected final ChatSpamFilter      chatSpamFilter;
+    private final   ArrayList<AITarget> targetList;
     /**
      * The current state the ai is in.
      * Used to compare to state matching targets.
      */
-    protected AIState state;
+    protected       AIState             state;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -69,6 +69,10 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         super.setMutexBits(mutexBits);
     }
 
+    /**
+     * Register one target.
+     * @param target the target to register
+     */
     private void registerTarget(AITarget target)
     {
         targetList.add(target);
@@ -88,6 +92,8 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
 
     /**
      * Returns whether the EntityAIBase should begin execution.
+     *
+     * @return true if execution is wanted
      */
     @Override
     public boolean shouldExecute()
