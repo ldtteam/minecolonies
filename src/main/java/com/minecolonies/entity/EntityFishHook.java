@@ -364,38 +364,10 @@ public final class EntityFishHook extends Entity
 
     private boolean hasToUpdateServerSide()
     {
-        if (!this.worldObj.isRemote)
+        if (!this.worldObj.isRemote && this.fisherman == null)
         {
-            if (this.fisherman == null)
-            {
-                return true;
-            }
-
-            ItemStack itemstack = this.fisherman.getCitizen().getInventory().getHeldItem();
-
-            if (this.fisherman.getCitizen().isDead
-                || !this.fisherman.getCitizen().isEntityAlive()
-                || itemstack == null
-                || !itemstack.getItem().equals(Items.fishing_rod)
-                || this.getDistanceSqToEntity(this.fisherman.getCitizen()) > 1024.0D)
-            {
-                this.setDead();
-                this.fisherman.setEntityFishHook(null);
-                return true;
-            }
-
-            if (this.hitEntity != null)
-            {
-                if (!this.hitEntity.isDead)
-                {
-                    this.posX = this.hitEntity.posX;
-                    this.posY = this.hitEntity.boundingBox.minY + (double) this.hitEntity.height * 0.8D;
-                    this.posZ = this.hitEntity.posZ;
-                    return true;
-                }
-
-                this.hitEntity = null;
-            }
+            this.setDead();
+            return true;
         }
         return false;
     }
