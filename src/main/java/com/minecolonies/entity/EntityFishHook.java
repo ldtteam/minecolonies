@@ -3,7 +3,6 @@ package com.minecolonies.entity;
 import com.minecolonies.entity.ai.EntityAIWorkFisherman;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -24,7 +23,10 @@ import net.minecraft.world.WorldServer;
 import java.util.Arrays;
 import java.util.List;
 
-//Creates a custom fishHook for the Fisherman to throw
+/**
+ * Creates a custom fishHook for the Fisherman to throw
+ * This class manages the entity
+ */
 public final class EntityFishHook extends Entity
 {
     private static final int    TTL             = 360;
@@ -142,7 +144,9 @@ public final class EntityFishHook extends Entity
     @Override
     protected void entityInit(){}
 
-    //Returns time to life of the entity
+    /**
+     * Returns time to life of the entity
+     */
     public int getTtl()
     {
         return TTL;

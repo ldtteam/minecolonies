@@ -7,9 +7,9 @@ import com.minecolonies.lib.Constants;
 
 public class WindowHutFisherman extends WindowWorkerBuilding<BuildingFisherman.View>
 {
-    private static String BUTTON_PREVPAGE = "prevPage";
-    private static String BUTTON_NEXTPAGE = "nextPage";
-    private static String VIEW_PAGES      = "pages";
+    private static final String BUTTON_PREVPAGE = "prevPage";
+    private static final String BUTTON_NEXTPAGE = "nextPage";
+    private static final String VIEW_PAGES      = "pages";
 
     Button buttonPrevPage;
     Button buttonNextPage;
