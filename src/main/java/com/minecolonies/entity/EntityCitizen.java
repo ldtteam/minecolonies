@@ -21,7 +21,10 @@ import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.block.Block;
-import net.minecraft.entity.*;
+import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.INpc;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
@@ -35,29 +38,28 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import scala.util.*;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.Random;
 
 import static net.minecraftforge.common.util.Constants.NBT;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
+    //  Because Entity UniqueIDs are not identical between client and server
     private static final int DATA_TEXTURE         = 13;
     private static final int DATA_LEVEL           = 14;
     private static final int DATA_IS_FEMALE       = 15;
     private static final int DATA_COLONY_ID       = 16;
-    private static final int DATA_CITIZEN_ID      = 17;  //  Because Entity UniqueIDs are not identical between client and server
+    private static final int DATA_CITIZEN_ID      = 17;
     private static final int DATA_MODEL           = 18;
     private static final int DATA_RENDER_METADATA = 19;
-    private static final int LEVEL_CAP = 10;
+    private static final int LEVEL_CAP            = 10;
     private static Field navigatorField;
     protected Status status = Status.IDLE;
     private boolean isFemale;
     private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
-    private String renderMetadata;
+    private String           renderMetadata;
     private ResourceLocation texture;
     private InventoryCitizen inventory;
     private int              colonyId;
@@ -69,21 +71,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private Map<String, Integer> statusMessages = new HashMap<>();
     private PathNavigate newNavigator;
     //Skills, may be added more later
-    private int intelligence;
-    private int speed;
-    private int strength;
-    private int stamina;
-    private int diligence;
+    private int          intelligence;
+    private int          speed;
+    private int          strength;
+    private int          stamina;
+    private int          diligence;
 
     //The current experience level the citizen is on.
-    private int experienceLevel=1;
+    private int experienceLevel = 1;
     /*The total amount of experience the citizen has.
     This also includes the amount of experience within their Experience Bar.*/
-    private int experienceTotal;
+    private int    experienceTotal;
     //The current amount of experience the citizen has within their Experience Bar.
     private double experience;
     //Something with ticks which I didn't understand yet!
-    private int nOTicks;
+    private int    nOTicks;
 
     //Creates a citizen entity
     public EntityCitizen(World world)
