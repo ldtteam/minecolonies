@@ -15,19 +15,28 @@ import java.awt.*;
 
 public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
 {
-    private static final String LIST_LEVELS = "levels", PAGE_LEVELS = "levelActions", BUTTON_PREVPAGE = "prevPage", BUTTON_NEXTPAGE = "nextPage", BUTTON_CURRENTLEVEL = "changeToLevel",
+    private static final    String              LIST_LEVELS                 = "levels";
+    private static final    String              PAGE_LEVELS                 = "levelActions";
+    private static final    String              BUTTON_PREVPAGE             = "prevPage";
+    private static final    String              BUTTON_NEXTPAGE             = "nextPage";
+    private static final    String              BUTTON_CURRENTLEVEL         = "changeToLevel";
 
-    VIEW_PAGES = "pages";
-    Button buttonPrevPage, buttonNextPage;
-    private ScrollingList      levelList;
-    private int[]              levels;
-    private BuildingMiner.View miner;
+    private static final    String              VIEW_PAGES                  = "pages";
+
+    private                 Button              buttonPrevPage;
+    private                 Button              buttonNextPage;
+
+    private                 int[]               levels;
+    private                 ScrollingList       levelList;
+    private                 BuildingMiner.View  miner;
+
+    private static final    String              HUT_MINER_RESOURCE_SUFFIX   = ":gui/windowHutMiner.xml";
 
     public WindowHutMiner(BuildingMiner.View building)
     {
-        super(building, Constants.MOD_ID + ":gui/windowHutMiner.xml");
+        super(building, Constants.MOD_ID + HUT_MINER_RESOURCE_SUFFIX);
         this.miner = building;
-        updateUsers();
+        pullLevelsFromHut();
     }
 
     @Override
@@ -35,13 +44,11 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     {
         super.onOpened();
 
-        try
-        {
-            findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
-            buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
-            buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
-        }
-        catch(NullPointerException exc){}
+
+        findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
+
+        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
+        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
 
 
         levelList = findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class);
@@ -56,23 +63,19 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-                try
-                {
-                    if(index == miner.current)
-                    {
-                        rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.RED.getRGB());
-                    }
-                    else
-                    {
-                        rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.BLACK.getRGB());
-                    }
 
-                    rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
-                    rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + levels[index]);
-                }
-                catch(NullPointerException exc)
+                if(index == miner.current)
                 {
+                    rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.RED.getRGB());
                 }
+                else
+                {
+                    rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.BLACK.getRGB());
+                }
+
+                rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
+                rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + levels[index]);
+
             }
         });
     }
@@ -80,53 +83,57 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     @Override
     public void onButtonClicked(Button button)
     {
-        if(button.getID().equals(BUTTON_PREVPAGE))
+
+        switch (button.getID())
         {
-            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-            buttonPrevPage.setEnabled(false);
-            buttonNextPage.setEnabled(true);
-        }
-        else if(button.getID().equals(BUTTON_NEXTPAGE))
-        {
-            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-            buttonPrevPage.setEnabled(true);
-            buttonNextPage.setEnabled(false);
-        }
-        else if(button.getID().equals(BUTTON_CURRENTLEVEL))
-        {
-            int row = levelList.getListElementIndexByPane(button);
-            if(row != miner.current && row >= 0 && row < levels.length)
-            {
-                miner.current = row;
-                MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
-            }
-        }
-        else
-        {
-            super.onButtonClicked(button);
+            case BUTTON_PREVPAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                buttonPrevPage.setEnabled(false);
+                buttonNextPage.setEnabled(true);
+                break;
+            case BUTTON_NEXTPAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                buttonPrevPage.setEnabled(true);
+                buttonNextPage.setEnabled(false);
+                break;
+            case BUTTON_CURRENTLEVEL:
+                int row = levelList.getListElementIndexByPane(button);
+                if (row != miner.current && row >= 0 && row < levels.length) {
+                    miner.current = row;
+                    MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
+                }
+                break;
+            default:
+                super.onButtonClicked(button);
+                break;
         }
     }
 
     @Override
     public void onUpdate()
     {
+
         String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
-        if(currentPage.equals(PAGE_LEVELS))
+        if (currentPage.equals(PAGE_LEVELS))
         {
-            updateUsers();
+            pullLevelsFromHut();
             window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
         }
+
     }
 
-    private void updateUsers()
+    /**
+     * Retrieve levels from the building to display in GUI
+     */
+    private void pullLevelsFromHut()
     {
         if(miner.getColony().getBuilding(miner.getID()) != null)
         {
-            levels = new int[miner.levels.length];
             levels = miner.levels;
         }
     }
 
+    @Override
     public String getBuildingName()
     {
         return "com.minecolonies.gui.workerHuts.minerHut";

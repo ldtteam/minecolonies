@@ -76,7 +76,7 @@ public class Schematic
 
     public void placeSchematic(int x, int y, int z)
     {
-        List<ChunkCoordinates> delayedBlocks = new ArrayList<ChunkCoordinates>();
+        List<ChunkCoordinates> delayedBlocks = new ArrayList<>();
 
         for(int j = 0; j < schematic.getHeight(); j++)
         {
@@ -291,24 +291,16 @@ public class Schematic
         return true;
     }
 
-    public boolean doesSchematicBlockEqualWorldBlock()
-    {
+    public boolean doesSchematicBlockEqualWorldBlock() {
         ChunkCoordinates pos = this.getBlockPosition();
-        if(pos.posY <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        {
-            return true;
-        }
-        return schematic.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematic.getBlockMetadata(x, y, z) == ChunkCoordUtils.getBlockMetadata(world, pos);
+        //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
+        return pos.posY <= 0 || schematic.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematic.getBlockMetadata(x, y, z) == ChunkCoordUtils.getBlockMetadata(world, pos);
     }
 
-    public boolean worldBlockAir()
-    {
+    public boolean worldBlockAir() {
         ChunkCoordinates pos = this.getBlockPosition();
-        if(pos.posY <= 0)//had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        {
-            return true;
-        }
-        return world.isAirBlock(pos.posX, pos.posY, pos.posZ);
+        //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
+        return pos.posY <= 0 || world.isAirBlock(pos.posX, pos.posY, pos.posZ);
     }
 
     public static String saveSchematic(World world, ChunkCoordinates from, ChunkCoordinates to)
@@ -368,7 +360,7 @@ public class Schematic
 
         short[][][] blocks = new short[width][height][length];
         byte[][][] metadata = new byte[width][height][length];
-        List<TileEntity> tileEntities = new ArrayList<TileEntity>();
+        List<TileEntity> tileEntities = new ArrayList<>();
         TileEntity tileEntity;
         NBTTagCompound tileEntityNBT;
 
@@ -422,41 +414,33 @@ public class Schematic
         List<EntityMinecart> entityMinecarts = world.getEntitiesWithinAABB(EntityMinecart.class, region);
         NBTTagList entityList = new NBTTagList();
 
-        for(EntityHanging entity : entityHangings)
-        {
-            if(entity != null)
-            {
-                NBTTagCompound entityData = new NBTTagCompound();
+        entityHangings.stream().filter(entity -> entity != null).forEach(entity -> {
+            NBTTagCompound entityData = new NBTTagCompound();
 
-                entityData.setString("id", EntityList.getEntityString(entity));
-                entity.writeToNBT(entityData);
+            entityData.setString("id", EntityList.getEntityString(entity));
+            entity.writeToNBT(entityData);
 
-                entityData.setTag("TileX", new NBTTagInt(entity.field_146063_b - minX));
-                entityData.setTag("TileY", new NBTTagInt(entity.field_146064_c - minY));
-                entityData.setTag("TileZ", new NBTTagInt(entity.field_146062_d - minZ));
+            entityData.setTag("TileX", new NBTTagInt(entity.field_146063_b - minX));
+            entityData.setTag("TileY", new NBTTagInt(entity.field_146064_c - minY));
+            entityData.setTag("TileZ", new NBTTagInt(entity.field_146062_d - minZ));
 
-                entityList.appendTag(entityData);
-            }
-        }
-        for(EntityMinecart minecart : entityMinecarts)
-        {
-            if(minecart != null)
-            {
+            entityList.appendTag(entityData);
+        });
+        entityMinecarts.stream().filter(minecart -> minecart != null).forEach(minecart -> {
 
-                NBTTagCompound entityData = new NBTTagCompound();
+            NBTTagCompound entityData = new NBTTagCompound();
 
-                entityData.setString("id", EntityList.getEntityString(minecart));
-                minecart.writeToNBT(entityData);
+            entityData.setString("id", EntityList.getEntityString(minecart));
+            minecart.writeToNBT(entityData);
 
-                NBTTagList pos = new NBTTagList();
-                pos.appendTag(new NBTTagDouble(minecart.posX - minX));
-                pos.appendTag(new NBTTagDouble(minecart.posY - minY));
-                pos.appendTag(new NBTTagDouble(minecart.posZ - minZ));
-                entityData.setTag("Pos", pos);
+            NBTTagList pos = new NBTTagList();
+            pos.appendTag(new NBTTagDouble(minecart.posX - minX));
+            pos.appendTag(new NBTTagDouble(minecart.posY - minY));
+            pos.appendTag(new NBTTagDouble(minecart.posZ - minZ));
+            entityData.setTag("Pos", pos);
 
-                entityList.appendTag(entityData);
-            }
-        }
+            entityList.appendTag(entityData);
+        });
 
         if(icon != null)
         {

@@ -23,40 +23,38 @@ import net.minecraftforge.common.util.Constants.NBT;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ColonyManager
 {
-    private static Map<Integer, Colony>       colonies        = new HashMap<>();
-    private static Map<Integer, List<Colony>> coloniesByWorld = new HashMap<>();
-    private static int                        topColonyId     = 0;
+    private static          Map<Integer, Colony>       colonies                     = new HashMap<>();
+    private static          Map<Integer, List<Colony>> coloniesByWorld              = new HashMap<>();
+    private static          int                        topColonyId                  = 0;
 
-    private static Map<Integer, ColonyView>   colonyViews     = new HashMap<>();
+    private static          Map<Integer, ColonyView>   colonyViews                  = new HashMap<>();
 
-    private static int numWorldsLoaded;    //  Used to trigger loading/unloading colonies
-    private static boolean saveNeeded;
+    private static          int                         numWorldsLoaded;    //  Used to trigger loading/unloading colonies
+    private static          boolean                     saveNeeded;
 
-    private final static String FILENAME_MINECOLONIES_PATH = "minecolonies";
-    private final static String FILENAME_MINECOLONIES = "colonies.dat";
-
-    private final static String TAG_COLONIES = "colonies";
+    private static final    String                      FILENAME_MINECOLONIES_PATH  = "minecolonies";
+    private static final    String                      FILENAME_MINECOLONIES       = "colonies.dat";
+    private static final    String                      TAG_COLONIES                = "colonies";
 
     /**
      * Create a new Colony in the given world and at that location
      *
-     * @param w
-     * @param coord
-     * @return
+     * @param w         World of the colony
+     * @param coord     Coordinate of the center of the colony
+     * @return          The created colony
      */
-    public static Colony createColony(
-            World w,
-            ChunkCoordinates coord)
+    public static Colony createColony(World w, ChunkCoordinates coord)
     {
         Colony colony = new Colony(++topColonyId, w, coord);
         colonies.put(colony.getID(), colony);
 
         if (!coloniesByWorld.containsKey(colony.getDimensionId()))
         {
-            coloniesByWorld.put(colony.getDimensionId(), new ArrayList<Colony>());
+            coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
         }
 
         coloniesByWorld.get(colony.getDimensionId()).add(colony);
@@ -71,24 +69,32 @@ public class ColonyManager
     /**
      * Get Colony by UUID
      *
-     * @param id UUID of colony
-     * @return
+     * @param id    ID of colony
+     * @return      Colony with given ID
      */
     public static Colony getColony(int id) { return colonies.get(id); }
 
     /**
      * Get Colony that contains a given ChunkCoordinates
      *
-     * @param w
-     * @param coord
-     * @return
+     * @param w         World
+     * @param coord     Coordinate of a place in the colony to get
+     * @return          Colony at the given location
      */
     public static Colony getColony(World w, ChunkCoordinates coord)
     {
         return getColony(w, coord.posX, coord.posY, coord.posZ);
     }
 
-
+    /**
+     * Get colony that contains a given coordinate
+     *
+     * @param w     World
+     * @param x     x-coordinate
+     * @param y     y-coordiante
+     * @param z     z-coordinate
+     * @return      Colony at the given location
+     */
     public static Colony getColony(World w, int x, int y, int z)
     {
         List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.dimensionId);
@@ -105,9 +111,9 @@ public class ColonyManager
     /**
      * Get closest colony by ChunkCoordinate
      *
-     * @param w
-     * @param coord
-     * @return
+     * @param w         World
+     * @param coord     coordinates to get closes colony by
+     * @return          Colony closest to coordinates
      */
     public static Colony getClosestColony(World w, ChunkCoordinates coord)
     {
@@ -117,11 +123,11 @@ public class ColonyManager
     /**
      * Get closest colony by x,y,z
      *
-     * @param w
-     * @param x
-     * @param y
-     * @param z
-     * @return
+     * @param w     World
+     * @param x     x-coordinate
+     * @param y     y-coordinate
+     * @param z     z-coordinate
+     * @return      Colony closest to coordinates
      */
     public static Colony getClosestColony(World w, int x, int y, int z)
     {
@@ -147,29 +153,30 @@ public class ColonyManager
         return closestColony;
     }
 
+    /**
+     * Returns a list of colonies that has the given owner
+     *
+     * @param owner     UUID of the owner
+     * @return          List of colonies that belong to given owner UUID
+     */
     public static List<Colony> getColoniesByOwner(UUID owner)
     {
-        List<Colony> results = new ArrayList<Colony>();
 
-        for (Colony c : colonies.values())
-        {
-            if (c.getPermissions().getOwner().equals(owner))//TODO is this what we want? Also improve
-            {
-                results.add(c);
-            }
-        }
+        //TODO is this what we want? Also improve
 
-        return results;
+        return colonies.values().stream()
+                       .filter(c -> c.getPermissions().getOwner().equals(owner))
+                       .collect(Collectors.toList());
     }
 
     /**
      * Get a Building by a World and coordinates
      *
-     * @param w
-     * @param x
-     * @param y
-     * @param z
-     * @return
+     * @param w     World
+     * @param x     x-coordinate
+     * @param y     y-coordinate
+     * @param z     z-coordinate
+     * @return      Building at the given location
      */
     public static Building getBuilding(World w, int x, int y, int z)
     {
@@ -203,13 +210,14 @@ public class ColonyManager
     /**
      * Get a Building by a World and coordinates
      *
-     * @param w
-     * @param x
-     * @param y
-     * @param z
-     * @return
+     * @param w     World
+     * @param x     x-coordinate
+     * @param y     y-coordinate
+     * @param z     z-coordinate
+     * @return      Returns the view belonging to the building at (x, y, z)
      */
     public static Building.View getBuildingView(World w, int x, int y, int z)
+    //todo why do we have a world object if we dont use it
     {
         //  On client we will just check all known views
         ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
@@ -226,10 +234,10 @@ public class ColonyManager
     }
 
     /**
-     * Get ColonyView by UUID
+     * Get ColonyView by ID
      *
-     * @param id UUID of colony
-     * @return
+     * @param id    ID of colony
+     * @return      The ColonyView belonging to the colony
      */
     public static ColonyView getColonyView(int id)
     {
@@ -239,9 +247,9 @@ public class ColonyManager
     /**
      * Get Colony that contains a given ChunkCoordinates
      *
-     * @param w
-     * @param coord
-     * @return
+     * @param w         World
+     * @param coord     Coordinates
+     * @return          returns the view belonging to the colony at given chunk coordinates
      */
     public static ColonyView getColonyView(World w, ChunkCoordinates coord)
     {
@@ -249,6 +257,15 @@ public class ColonyManager
     }
 
 
+    /**
+     * Get Colony that contains a given (x, y, z)
+     *
+     * @param w         World
+     * @param x         x-coordinate
+     * @param y         y-coordinate
+     * @param z         z-coordinate
+     * @return          returns the view belonging to the colony at x, y, z,
+     */
     public static ColonyView getColonyView(World w, int x, int y, int z)
     {
         for (ColonyView c : colonyViews.values())
@@ -259,6 +276,16 @@ public class ColonyManager
         return null;
     }
 
+    /**
+     * Returns the closest view
+     * @see {@link #getColonyView(World, int, int, int)}
+     *
+     * @param w     World
+     * @param x     x-coordinate
+     * @param y     y-coordinate
+     * @param z     z-coordinate
+     * @return      View of the closest colony
+     */
     public static ColonyView getClosestColonyView(World w, int x, int y, int z)
     {
         ColonyView closestColony = null;
@@ -280,14 +307,26 @@ public class ColonyManager
         return closestColony;
     }
 
+    /**
+     * Returns list of views of colony with specific owner
+     *
+     * @param player        EntityPlayer
+     * @return              List of colony views
+     */
     public static List<ColonyView> getColonyViewsByOwner(EntityPlayer player)
     {
         return getColonyViewsByOwner(player.getGameProfile().getId());
     }
 
+    /**
+     * Returns a list of views of colonies with specific owner
+     *
+     * @param owner     UUID of the owner
+     * @return          List of colony views
+     */
     public static List<ColonyView> getColonyViewsByOwner(UUID owner)
     {
-        List<ColonyView> results = new ArrayList<ColonyView>();
+        List<ColonyView> results = new ArrayList<>();
 
         for (ColonyView c : colonyViews.values())
         {
@@ -302,36 +341,92 @@ public class ColonyManager
     }
 
     //  IColony Side-neutral
+
+    /**
+     * Side netural method to get colony.
+     * On clients it returns the view.
+     * On servers it returns the colony itself
+     *
+     * @param world     World object
+     * @param id        ID of the colony
+     * @return          View of colony or colony itself depending on side
+     */
     public static IColony getIColony(World world, int id)
     {
         return world.isRemote ? getColonyView(id) : getColony(id);
     }
 
+    /**
+     * @see {@link #getIColony(World, int)}
+     *
+     * @param w         World
+     * @param x         x-coordinate
+     * @param y         y-coordinate
+     * @param z         z-coordinate
+     * @return          View of colony or colony itself depending on side
+     */
     public static IColony getIColony(World w, int x, int y, int z)
     {
         return w.isRemote ? getColonyView(w, x, y, z) : getColony(w, x, y, z);
     }
 
+    /**
+     * @see {@link #getIColony(World, int)}
+     *
+     * @param w         World
+     * @param coord     Coordinates of the colony
+     * @return          View of colony or colony itself depending on side
+     */
     public static IColony getIColony(World w, ChunkCoordinates coord)
     {
         return getIColony(w, coord.posX, coord.posY, coord.posZ);
     }
 
+    /**
+     * See {@link #getIColony(World, int)} and {@link #getClosestColony(World, int, int, int)}
+     *
+     * @param w         World
+     * @param x         x-coordinate
+     * @param y         y-coordinate
+     * @param z         z-coordinate
+     * @return          View of colony or colony itself depending on side, closest to coordinates
+     */
     public static IColony getClosestIColony(World w, int x, int y, int z)
     {
         return w.isRemote ? getClosestColonyView(w, x, y, z) : getClosestColony(w, x, y, z);
     }
 
+    /**
+     * @see {@link #getIColony(World, int)}
+     * Returns a list of colonies or views with given Player as owner
+     *
+     * @param w         World
+     * @param owner     Entity Player
+     * @return          List of IColonies belonging to specific player
+     */
     public static List<? extends IColony> getIColoniesByOwner(World w, EntityPlayer owner)
     {
         return getIColoniesByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
     }
 
+    /**
+     * @see {@link #getIColony(World, int)}
+     * Returns a list of colonies or views with given Player as owner
+     *
+     * @param w         World
+     * @param owner     UUID of the owner
+     * @return          List of IColonies belonging to specific player
+     */
     public static List<? extends IColony> getIColoniesByOwner(World w, UUID owner)
     {
         return w.isRemote ? getColonyViewsByOwner(owner) : getColoniesByOwner(owner);
     }
 
+    /**
+     * Returns the minimum distance between two townhalls, to not make colonies collide
+     *
+     * @return          Minimum town hall distance
+     */
     public static double getMinimumDistanceBetweenTownHalls()
     {
         //  [Townhall](Radius)+(Padding)+(Radius)[TownHall]
@@ -342,10 +437,9 @@ public class ColonyManager
      * On server tick, tick every Colony
      * NOTE: Review this for performance
      *
-     * @param event
+     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
-    public static void onServerTick(
-            TickEvent.ServerTickEvent event)
+    public static void onServerTick(TickEvent.ServerTickEvent event)
     {
         for (Colony c : colonies.values())
         {
@@ -358,8 +452,12 @@ public class ColonyManager
         }
     }
 
-    public static void onClientTick(
-            TickEvent.ClientTickEvent event)
+    /**
+     * On Client tick, clears views when player left
+     *
+     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent}
+     */
+    public static void onClientTick(TickEvent.ClientTickEvent event)
     {
         if (event.phase == TickEvent.Phase.END)
         {
@@ -375,27 +473,22 @@ public class ColonyManager
      * On world tick, tick every Colony in that world
      * NOTE: Review this for performance
      *
-     * @param event
+     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
     public static void onWorldTick(
             TickEvent.WorldTickEvent event)
     {
-        for (Colony c : colonies.values())
-        {
-            if (c.getDimensionId() == event.world.provider.dimensionId)
-            {
-                c.onWorldTick(event);
-            }
-        }
+        colonies.values().stream()
+                .filter(c -> c.getDimensionId() == event.world.provider.dimensionId)
+                .forEach(c -> c.onWorldTick(event));
     }
 
     /**
      * Read Colonies from saved NBT data
      *
-     * @param compound
+     * @param compound   NBT Tag
      */
-    public static void readFromNBT(
-            NBTTagCompound compound)
+    public static void readFromNBT(NBTTagCompound compound)
     {
         NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
         for (int i = 0; i < colonyTags.tagCount(); ++i)
@@ -405,7 +498,7 @@ public class ColonyManager
 
             if (!coloniesByWorld.containsKey(colony.getDimensionId()))
             {
-                coloniesByWorld.put(colony.getDimensionId(), new ArrayList<Colony>());
+                coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
             }
             coloniesByWorld.get(colony.getDimensionId()).add(colony);
 
@@ -418,10 +511,9 @@ public class ColonyManager
     /**
      * Write colonies to NBT data for saving
      *
-     * @param compound
+     * @param compound      NBT-Tag
      */
-    public static void writeToNBT(
-            NBTTagCompound compound)
+    public static void writeToNBT(NBTTagCompound compound)
     {
         NBTTagList colonyTagList = new NBTTagList();
         for(Colony colony : colonies.values())
@@ -436,7 +528,7 @@ public class ColonyManager
     /**
      * Get save location for Minecolonies data, from the world/save directory
      *
-     * @return
+     * @return      Save file for minecolonies
      */
     private static File getSaveLocation()
     {
@@ -447,8 +539,8 @@ public class ColonyManager
     /**
      * Load a file and return the data as an NBTTagCompound
      *
-     * @param file The path to the file
-     * @return the data from the file as an NBTTagCompound, or null
+     * @param file  The path to the file
+     * @return      the data from the file as an NBTTagCompound, or null
      */
     private static NBTTagCompound loadNBTFromPath(
             File file)
@@ -458,10 +550,9 @@ public class ColonyManager
             if (file != null && file.exists())
             {
                 return CompressedStreamTools.read(file);
-//                return CompressedStreamTools.readCompressed(new FileInputStream(file));
+                //return CompressedStreamTools.readCompressed(new FileInputStream(file));
             }
-        }
-        catch (IOException exception)
+        } catch (IOException exception)
         {
             MineColonies.logger.error("Exception when loading ColonyManger", exception);
         }
@@ -471,12 +562,10 @@ public class ColonyManager
     /**
      * Save an NBTTagCompound to a file.  Does so in a safe manner using an intermediate tmp file
      *
-     * @param file The destination file to write the data to
-     * @param compound The NBTTagCompound to write to the file
+     * @param file      The destination file to write the data to
+     * @param compound  The NBTTagCompound to write to the file
      */
-    private static void saveNBTToPath(
-            File file,
-            NBTTagCompound compound)
+    private static void saveNBTToPath(File file, NBTTagCompound compound)
     {
         try
         {
@@ -485,16 +574,17 @@ public class ColonyManager
                 file.getParentFile().mkdir();
                 CompressedStreamTools.safeWrite(compound, file);
 
-//                File tempFile = new File(file.getAbsolutePath() + "_tmp");
-//                tempFile.delete();
-//
-//                CompressedStreamTools.writeCompressed(compound, new DataOutputStream(new FileOutputStream(tempFile)));
-//
-//                file.delete();
-//                tempFile.renameTo(file);
+                /*
+                File tempFile = new File(file.getAbsolutePath() + "_tmp");
+                tempFile.delete();
+
+                CompressedStreamTools.writeCompressed(compound, new DataOutputStream(new FileOutputStream(tempFile)));
+
+                file.delete();
+                tempFile.renameTo(file);
+                */
             }
-        }
-        catch (IOException exception)
+        } catch (IOException exception)
         {
             MineColonies.logger.error("Exception when saving ColonyManager", exception);
         }
@@ -523,7 +613,7 @@ public class ColonyManager
      * When a world is loaded, Colonies in that world need to grab the reference to the World
      * Additionally, when loading the first world, load all colonies.
      *
-     * @param world
+     * @param world     World
      */
     public static void onWorldLoad(World world)
     {
@@ -560,6 +650,11 @@ public class ColonyManager
         }
     }
 
+    /**
+     * Saves data when world is saved
+     *
+     * @param world     World
+     */
     public static void onWorldSave(World world)
     {
         if (!world.isRemote &&
@@ -573,7 +668,7 @@ public class ColonyManager
      * When a world unloads, all colonies in that world are informed
      * Additionally, when the last world is unloaded, delete all colonies
      *
-     * @param world
+     * @param world     World
      */
     public static void onWorldUnload(World world)
     {
@@ -598,11 +693,13 @@ public class ColonyManager
     }
 
     /**
+     * Sends view message to the right view
      *
-     * @param colonyId
-     * @param colonyData
+     * @param colonyId          ID of the colony
+     * @param colonyData        {@link ByteBuf} with colony data
+     * @param isNewSubscription whether this is a new subscription or not
      */
-    static public IMessage handleColonyViewMessage(int colonyId, ByteBuf colonyData, boolean isNewSubscription)
+    public static IMessage handleColonyViewMessage(int colonyId, ByteBuf colonyData, boolean isNewSubscription)
     {
         ColonyView view = getColonyView(colonyId);
         if (view == null)
@@ -614,6 +711,14 @@ public class ColonyManager
         return view.handleColonyViewMessage(colonyData, isNewSubscription);
     }
 
+    /**
+     * Returns result of {@link ColonyView#handlePermissionsViewMessage(ByteBuf)} if {@link #getColonyView(int)}
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     *
+     * @param colonyID      ID of the colony
+     * @param data          {@link ByteBuf} with colony data
+     * @return              result of {@link ColonyView#handlePermissionsViewMessage(ByteBuf)} or null
+     */
     public static IMessage handlePermissionsViewMessage(int colonyID, ByteBuf data)
     {
         ColonyView view = getColonyView(colonyID);
@@ -629,12 +734,15 @@ public class ColonyManager
     }
 
     /**
+     * Returns result of {@link ColonyView#handleColonyViewCitizensMessage(int, ByteBuf)} if {@link #getColonyView(int)}
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
      *
-     * @param colonyId
-     * @param citizenId
-     * @param buf
+     * @param colonyId      ID of the colony
+     * @param citizenId     ID of the citizen
+     * @param buf           {@link ByteBuf} with colony data
+     * @return              result of {@link ColonyView#handleColonyViewCitizensMessage(int, ByteBuf)} or null
      */
-    static public IMessage handleColonyViewCitizensMessage(int colonyId, int citizenId, ByteBuf buf)
+    public static IMessage handleColonyViewCitizensMessage(int colonyId, int citizenId, ByteBuf buf)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
@@ -646,11 +754,14 @@ public class ColonyManager
     }
 
     /**
+     * Returns result of {@link ColonyView#handleColonyViewRemoveCitizenMessage(int)} if {@link #getColonyView(int)}
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
      *
-     * @param colonyId
-     * @param citizenId
+     * @param colonyId      ID of the colony
+     * @param citizenId     ID of the citizen
+     * @return              result of {@link ColonyView#handleColonyViewRemoveCitizenMessage(int)}  or null
      */
-    static public IMessage handleColonyViewRemoveCitizenMessage(int colonyId, int citizenId)
+    public static IMessage handleColonyViewRemoveCitizenMessage(int colonyId, int citizenId)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
@@ -664,9 +775,13 @@ public class ColonyManager
     }
 
     /**
+     * Returns result of {@link ColonyView#handleColonyBuildingViewMessage(ChunkCoordinates, ByteBuf)} if {@link #getColonyView(int)}
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
      *
-     * @param colonyId The ID of the colony
-     * @param buf      The building data, or null if it was removed
+     * @param colonyId      ID of the colony
+     * @param buildingId    ID of the building
+     * @param buf           {@link ByteBuf} with colony data
+     * @return              result of {@link ColonyView#handleColonyBuildingViewMessage(ChunkCoordinates, ByteBuf)} or null
      */
     static public IMessage handleColonyBuildingViewMessage(int colonyId, ChunkCoordinates buildingId, ByteBuf buf)
     {
@@ -683,9 +798,12 @@ public class ColonyManager
     }
 
     /**
+     * Returns result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(ChunkCoordinates)} if {@link #getColonyView(int)}
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
      *
-     * @param colonyId
-     * @param buildingId
+     * @param colonyId      ID of the colony
+     * @param buildingId    ID of the building
+     * @return              result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(ChunkCoordinates)}  or null
      */
     static public IMessage handleColonyViewRemoveBuildingMessage(int colonyId, ChunkCoordinates buildingId)
     {
@@ -702,12 +820,23 @@ public class ColonyManager
 
     public static class ColonyManagerWorldAccess implements IWorldAccess
     {
-        @Override public void markBlockForUpdate(int p_147586_1_, int p_147586_2_, int p_147586_3_) {}
-        @Override public void markBlockForRenderUpdate(int p_147588_1_, int p_147588_2_, int p_147588_3_) {}
-        @Override public void markBlockRangeForRenderUpdate(int p_147585_1_, int p_147585_2_, int p_147585_3_, int p_147585_4_, int p_147585_5_, int p_147585_6_) {}
-        @Override public void playSound(String p_72704_1_, double p_72704_2_, double p_72704_4_, double p_72704_6_, float p_72704_8_, float p_72704_9_) {}
-        @Override public void playSoundToNearExcept(EntityPlayer p_85102_1_, String p_85102_2_, double p_85102_3_, double p_85102_5_, double p_85102_7_, float p_85102_9_, float p_85102_10_) {}
-        @Override public void spawnParticle(String p_72708_1_, double p_72708_2_, double p_72708_4_, double p_72708_6_, double p_72708_8_, double p_72708_10_, double p_72708_12_) {}
+        @Override
+        public void markBlockForUpdate(int p_147586_1_, int p_147586_2_, int p_147586_3_) {}
+
+        @Override
+        public void markBlockForRenderUpdate(int p_147588_1_, int p_147588_2_, int p_147588_3_) {}
+
+        @Override
+        public void markBlockRangeForRenderUpdate(int p_147585_1_, int p_147585_2_, int p_147585_3_, int p_147585_4_, int p_147585_5_, int p_147585_6_) {}
+
+        @Override
+        public void playSound(String p_72704_1_, double p_72704_2_, double p_72704_4_, double p_72704_6_, float p_72704_8_, float p_72704_9_) {}
+
+        @Override
+        public void playSoundToNearExcept(EntityPlayer p_85102_1_, String p_85102_2_, double p_85102_3_, double p_85102_5_, double p_85102_7_, float p_85102_9_, float p_85102_10_) {}
+
+        @Override
+        public void spawnParticle(String p_72708_1_, double p_72708_2_, double p_72708_4_, double p_72708_6_, double p_72708_8_, double p_72708_10_, double p_72708_12_) {}
 
         @Override
         public void onEntityCreate(Entity entity)
@@ -732,9 +861,13 @@ public class ColonyManager
         }
 
         @Override public void playRecord(String p_72702_1_, int p_72702_2_, int p_72702_3_, int p_72702_4_) {}
+
         @Override public void broadcastSound(int p_82746_1_, int p_82746_2_, int p_82746_3_, int p_82746_4_, int p_82746_5_) {}
+
         @Override public void playAuxSFX(EntityPlayer p_72706_1_, int p_72706_2_, int p_72706_3_, int p_72706_4_, int p_72706_5_, int p_72706_6_) {}
+
         @Override public void destroyBlockPartially(int p_147587_1_, int p_147587_2_, int p_147587_3_, int p_147587_4_, int p_147587_5_) {}
+
         @Override public void onStaticEntitiesChanged() {}
     }
 }

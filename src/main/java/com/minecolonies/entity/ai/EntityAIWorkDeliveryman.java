@@ -100,6 +100,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIWork<JobDeliveryman
     }
 
     /**
+     * {@inheritDoc}
      * This method will be overridden by AI implementations
      */
     @Override

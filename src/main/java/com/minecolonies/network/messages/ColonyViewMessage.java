@@ -20,12 +20,18 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
 
     public ColonyViewMessage(){}
 
+    /**
+     * Add or Update a ColonyView on the client
+     *
+     * @param colony                Colony of the view to update
+     * @param isNewSubscription     Boolean whether or not this is a new subscription
+     */
     public ColonyViewMessage(Colony colony, boolean isNewSubscription)
     {
         this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
         this.colonyBuffer = Unpooled.buffer();
-        ColonyView.serializeNetworkData(colony, isNewSubscription, colonyBuffer);
+        ColonyView.serializeNetworkData(colony, colonyBuffer, isNewSubscription);
     }
 
     @Override

@@ -22,7 +22,9 @@ public class EntityAICitizenWander extends EntityAIBase
     }
 
     /**
+     * {@inheritDoc}
      * Returns whether the EntityAIBase should begin execution.
+     * True when age < 100, when a random (120) is chosen correctly, and when a citizen is nearby
      */
     @Override
     public boolean shouldExecute()
@@ -46,6 +48,11 @@ public class EntityAICitizenWander extends EntityAIBase
         return true;
     }
 
+    /**
+     * Returns the right height for the given position (ground block)
+     * @param position      Current position of the entity
+     * @return              Ground level at (position.x, position.z)
+     */
     private double getValidHeight(Vec3 position)
     {
         double returnHeight = position.yCoord;
@@ -66,6 +73,12 @@ public class EntityAICitizenWander extends EntityAIBase
         return returnHeight;
     }
 
+    /**
+     * Returns whether or not the citizen is too old to wander
+     * True when age >= 100;
+     *
+     * @return      True when age => 100, otherwise false
+     */
     private boolean isToOld()
     {
         return citizen.getAge() >= 100;
@@ -77,6 +90,7 @@ public class EntityAICitizenWander extends EntityAIBase
     }
 
     /**
+     * {@inheritDoc}
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     @Override
@@ -86,6 +100,7 @@ public class EntityAICitizenWander extends EntityAIBase
     }
 
     /**
+     * {@inheritDoc}
      * Execute a one shot task or start executing a continuous task
      */
     @Override

@@ -9,11 +9,11 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class JobLumberjack extends Job
 {
-    private EntityAIWorkLumberjack.Stage stage = EntityAIWorkLumberjack.Stage.IDLE;
-    public Tree tree;
+    private                 EntityAIWorkLumberjack.Stage    stage       = EntityAIWorkLumberjack.Stage.IDLE;
+    public                  Tree                            tree;
 
-    private static final String TAG_STAGE = "Stage";
-    private static final String TAG_TREE = "Tree";
+    private static final    String                          TAG_STAGE   = "Stage";
+    private static final    String                          TAG_TREE    = "Tree";
 
     public JobLumberjack(CitizenData entity)
     {
@@ -40,6 +40,7 @@ public class JobLumberjack extends Job
         compound.setString(TAG_STAGE, stage.name());
 
         NBTTagCompound treeTag = new NBTTagCompound();
+
         if(tree != null)
         {
             tree.writeToNBT(treeTag);
@@ -64,11 +65,21 @@ public class JobLumberjack extends Job
         tasks.addTask(3, new EntityAIWorkLumberjack(this));
     }
 
+    /**
+     * Returns the stage of the worker
+     *
+     * @return          {@link com.minecolonies.entity.ai.EntityAIWorkLumberjack.Stage}
+     */
     public EntityAIWorkLumberjack.Stage getStage()
     {
         return stage;
     }
 
+    /**
+     * Sets the stage of the worker
+     *
+     * @param stage     {@link com.minecolonies.entity.ai.EntityAIWorkLumberjack.Stage} to set
+     */
     public void setStage(EntityAIWorkLumberjack.Stage stage)
     {
         this.stage = stage;

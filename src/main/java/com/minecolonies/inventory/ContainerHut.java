@@ -15,6 +15,7 @@ import net.minecraft.inventory.Container;
  *
  * @author Colton
  */
+@Deprecated //TODO undepricate when finished
 public class ContainerHut extends Container //ContainerChest in future
 {
     private TileEntityColonyBuilding hut;

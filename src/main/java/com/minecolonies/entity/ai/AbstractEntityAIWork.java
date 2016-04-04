@@ -33,17 +33,17 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
  */
 public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
 {
-    public static final String PICKAXE = "pickaxe";
-    public static final String SHOVEL = "shovel";
-    public static final String AXE = "axe";
-    public static final String HOE = "hoe";
-    private static final int DEFAULT_RANGE_FOR_DELAY = 3;
-    private static final Logger logger = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
-    private static final int DELAY_RECHECK = 10;
-    private static final int MUTEX_MASK = 3;
-    protected final J job;
-    protected final EntityCitizen worker;
-    protected final World world;
+    public      static  final   String              PICKAXE                 = "pickaxe";
+    public      static  final   String              SHOVEL                  = "shovel";
+    public      static  final   String              AXE                     = "axe";
+    public      static  final   String              HOE                     = "hoe";
+    private     static  final   int                 DEFAULT_RANGE_FOR_DELAY = 3;
+    private     static  final   Logger              logger                  = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
+    private     static  final   int                 DELAY_RECHECK           = 10;
+    private     static  final   int                 MUTEX_MASK              = 3;
+    protected           final   J                   job;
+    protected           final   EntityCitizen       worker;
+    protected           final   World               world;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -53,7 +53,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * <p>
      * Will be cleared on restart, be aware!
      */
-    protected List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
+    protected                   List<ItemStack>     itemsCurrentlyNeeded    = new ArrayList<>();
+
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -61,20 +62,20 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * <p>
      * Will be cleared on restart, be aware!
      */
-    protected List<ItemStack> itemsNeeded = new ArrayList<>();
-    protected boolean needsShovel = false;
-    protected boolean needsAxe = false;
-    protected boolean needsHoe = false;
-    protected boolean needsPickaxe = false;
-    protected int needsPickaxeLevel = -1;
-    private ErrorState errorState = ErrorState.NONE;
-    private ChunkCoordinates currentWorkingLocation = null;
+    protected                   List<ItemStack>     itemsNeeded             = new ArrayList<>();
+    protected                   boolean             needsShovel             = false;
+    protected                   boolean             needsAxe                = false;
+    protected                   boolean             needsHoe                = false;
+    protected                   boolean             needsPickaxe            = false;
+    protected                   int                 needsPickaxeLevel       = -1;
+    private                     ErrorState          errorState              = ErrorState.NONE;
+    private                     ChunkCoordinates    currentWorkingLocation  = null;
     /**
      * The time in ticks until the next action is made
      */
-    private int delay = 0;
-    private ChunkCoordinates currentStandingLocation = null;
-    private ChatSpamFilter chatSpamFilter;
+    private                     int                 delay = 0;
+    private                     ChunkCoordinates    currentStandingLocation = null;
+    private                     ChatSpamFilter      chatSpamFilter;
 
     /**
      * Creates the abstract part of the AI.
@@ -232,8 +233,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param is the type of item requested (amount is ignored)
-     * @return true if a stack of that type was found
+     * @param is    the type of item requested (amount is ignored)
+     * @return      true if a stack of that type was found
      */
     protected final boolean isInHut(final ItemStack is)
     {
@@ -265,9 +266,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Call this exactly once per tick to get the delay right.
      * The worker will move and animate correctly while he waits.
      *
-     * @return true if we have to wait for something
-     * @see #currentStandingLocation @see #currentWorkingLocation
-     * @see #DEFAULT_RANGE_FOR_DELAY @see #delay
+     * @return          true if we have to wait for something
+     * @see             #currentStandingLocation
+     * @see             #currentWorkingLocation
+     * @see             #DEFAULT_RANGE_FOR_DELAY
+     * @see             #delay
      */
     private boolean waitingForSomething()
     {
@@ -301,7 +304,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Takes whatever is in that slot of the workers chest and puts it in his inventory.
      * If the inventory is full, only the fitting part will be moved.
      *
-     * @param slot the slot in the buildings inventory
+     * @param slot      the slot in the buildings inventory
      */
     protected final void takeItemStackFromChest(int slot)
     {
@@ -311,7 +314,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     /**
      * Can be overridden in implementations to return the exact building type.
      *
-     * @return the building associated with this AI's worker.
+     * @return          the building associated with this AI's worker.
      */
     protected BuildingWorker getOwnBuilding()
     {
@@ -323,8 +326,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * When the inventory is full, everything get's dumped into the building chest.
      * But you can use this method to hold some stacks back.
      *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
+     * @param stack     the stack to decide on
+     * @return          true if the stack should remain in inventory
      */
     protected boolean neededForWorker(ItemStack stack)
     {
@@ -344,8 +347,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     /**
      * Dumps one inventory slot into the building chest.
      *
-     * @param keepIt used to test it that stack should be kept
-     * @return true if is has to dump more.
+     * @param keepIt    used to test it that stack should be kept
+     * @return          true if is has to dump more.
      */
     private boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
     {
@@ -375,7 +378,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Walk the worker to it's building chest.
      * Please return immediately if this returns true.
      *
-     * @return false if the worker is at his building
+     * @return      false if the worker is at his building
      */
     protected final boolean walkToBuilding()
     {
@@ -421,8 +424,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Ensures that we have a pickaxe available.
      * Will set {@code needsPickaxe} accordingly.
      *
-     * @param minlevel the minimum pickaxe level needed.
-     * @return true if we have a pickaxe
+     * @param minlevel  the minimum pickaxe level needed.
+     * @return          true if we have a pickaxe
      */
     protected final boolean checkForPickaxe(int minlevel)
     {
@@ -452,8 +455,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the pickaxe.
      *
-     * @param minlevel the needed pickaxe level
-     * @return true if a pickaxe was found
+     * @param minlevel  the needed pickaxe level
+     * @return          true if a pickaxe was found
      */
     private boolean isPickaxeInHut(int minlevel)
     {
@@ -473,7 +476,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Ensures that we have a shovel available.
      * Will set {@code needsShovel} accordingly.
      *
-     * @return true if we have a shovel
+     * @return      true if we have a shovel
      */
     protected final boolean checkForShovel()
     {
@@ -516,7 +519,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Ensures that we have an axe available.
      * Will set {@code needsAxe} accordingly.
      *
-     * @return true if we have an axe
+     * @return      true if we have an axe
      */
     protected final boolean checkForAxe()
     {
@@ -550,7 +553,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
     /**
      * Request an Item without spamming the chat.
      *
-     * @param chat the Item Name
+     * @param chat      the Item Name
      */
     protected final void requestWithoutSpam(String chat)
     {
@@ -572,7 +575,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Ensures that we have a hoe available.
      * Will set {@code needsHoe} accordingly.
      *
-     * @return true if we have a hoe
+     * @return          true if we have a hoe
      */
     protected final boolean checkForHoe()
     {
@@ -586,7 +589,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * are no errors per se but are things to be resolved before
      * AI execution can be resumed.
      */
-    private enum ErrorState
+    private enum ErrorState //TODO perhaps BlockerState?
     {
         NONE,
         NEEDS_ITEM,

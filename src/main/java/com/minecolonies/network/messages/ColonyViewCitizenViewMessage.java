@@ -20,6 +20,12 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
 
     public ColonyViewCitizenViewMessage(){}
 
+    /**
+     * Updates a {@link com.minecolonies.colony.CitizenData.View} of the citizens
+     *
+     * @param colony     Colony of the citizen
+     * @param citizen    Citizen data of the citizen to update view
+     */
     public ColonyViewCitizenViewMessage(Colony colony, CitizenData citizen)
     {
         this.colonyId = colony.getID();

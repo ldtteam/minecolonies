@@ -13,17 +13,17 @@ import com.minecolonies.util.LanguageHandler;
 
 public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View> extends Window implements Button.Handler
 {
-    private static String BUTTON_INVENTORY = "inventory",
-            BUTTON_HIRE = "hire",
-            BUTTON_RECALL = "recall",
-            BUTTON_BUILD = "build",
-            BUTTON_REPAIR = "repair",
-            LABEL_BUILDINGNAME = "name",
-            LABEL_BUILDINGTYPE = "type",
-            LABEL_WORKERNAME = "workerName",
-            LABEL_WORKERLEVEL = "workerLevel";
+    private static final String      BUTTON_INVENTORY      = "inventory";
+    private static final String      BUTTON_HIRE           = "hire";
+    private static final String      BUTTON_RECALL         = "recall";
+    private static final String      BUTTON_BUILD          = "build";
+    private static final String      BUTTON_REPAIR         = "repair";
+    private static final String      LABEL_BUILDINGNAME    = "name";
+    private static final String      LABEL_BUILDINGTYPE    = "type";
+    private static final String      LABEL_WORKERNAME      = "workerName";
+    private static final String      LABEL_WORKERLEVEL     = "workerLevel";
 
-    BUILDING building;
+    BUILDING    building;
 
     WindowWorkerBuilding(BUILDING building, String resource)
     {
@@ -31,6 +31,11 @@ public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View>
         this.building = building;
     }
 
+    /**
+     * Returns the name of a building
+     *
+     * @return      Name of a building
+     */
     public abstract String getBuildingName();
 
     @Override
@@ -49,31 +54,26 @@ public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View>
             }
         }
 
-        try
+        findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabel(workerName);
+        findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class).setLabel(
+                LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel",
+                        workerLevel));
+
+        findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
+                LanguageHandler.getString(getBuildingName()));
+        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabel("xxxxxxxx");
+
+        if (building.getBuildingLevel() == 0)
         {
-            findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabel(workerName);
-            findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class).setLabel(
-                    LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel",
-                            workerLevel));
-
-            findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
-                    LanguageHandler.getString(getBuildingName()));
-            findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabel("xxxxxxxx");
-
-            if (building.getBuildingLevel() == 0)
-            {
-                findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
-                        LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
-                findPaneByID(BUTTON_REPAIR).disable();
-            }
-            else if (building.isBuildingMaxLevel())
-            {
-                Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-                button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
-                button.disable();
-            }
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
+                    LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
+            findPaneByID(BUTTON_REPAIR).disable();
+        } else if (building.isBuildingMaxLevel())
+        {
+            Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+            button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
+            button.disable();
         }
-        catch (NullPointerException exc) {}
     }
 
     @Override
@@ -95,16 +95,13 @@ public abstract class WindowWorkerBuilding<BUILDING extends BuildingWorker.View>
 //                //TODO: fire worker
 //                guiButton.displayString = LanguageHandler.format("com.minecolonies.gui.workerHuts.hire");
 //            }
-        }
-        else if (button.getID().equals(BUTTON_RECALL))
+        } else if (button.getID().equals(BUTTON_RECALL))
         {
             MineColonies.getNetwork().sendToServer(new RecallCitizenMessage(building));
-        }
-        else if (button.getID().equals(BUTTON_BUILD))
+        } else if (button.getID().equals(BUTTON_BUILD))
         {
             MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
-        }
-        else if (button.getID().equals(BUTTON_REPAIR))
+        } else if (button.getID().equals(BUTTON_REPAIR))
         {
             MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
         }

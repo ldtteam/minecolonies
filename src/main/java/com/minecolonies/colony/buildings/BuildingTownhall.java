@@ -5,18 +5,26 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import net.minecraft.util.ChunkCoordinates;
 
-public class BuildingTownHall extends BuildingHut
+public class BuildingTownhall extends BuildingHut
 {
-    public BuildingTownHall(Colony c, ChunkCoordinates l)
+    private static final String TOWNHALL = "Townhall";
+
+    public BuildingTownhall(Colony c, ChunkCoordinates l)
     {
         super(c, l);
     }
 
     @Override
-    public String getSchematicName(){ return "Townhall"; }
+    public String getSchematicName()
+    {
+        return TOWNHALL;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 4; }
+    public int getMaxBuildingLevel()
+    {
+        return 4;
+    }
 
     public static class View extends BuildingHut.View
     {

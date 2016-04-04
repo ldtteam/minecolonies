@@ -15,11 +15,17 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
 {
     private int              colonyId;
     private ChunkCoordinates buildingId;
-    private int level;
+    private int              level;
 
     public MinerSetLevelMessage(){}
 
-    public MinerSetLevelMessage(Building.View building, int level)
+    /**
+     * Creates object for the miner set level message
+     *
+     * @param building       View of the building to read data from
+     * @param level          Level of the miner
+     */
+    public MinerSetLevelMessage(Building.View building, int level)  //TODO don't we want BuildingMiner.View ?
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();

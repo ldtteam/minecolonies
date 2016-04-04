@@ -94,6 +94,7 @@ public class ModelEntityDeliverymanMale extends ModelBiped
             bipedLeftArm.rotationPointX = MathHelper.cos(bipedBody.rotateAngleY) * 5F;
             bipedRightArm.rotateAngleY += bipedBody.rotateAngleY;
             bipedLeftArm.rotateAngleY += bipedBody.rotateAngleY;
+            //noinspection SuspiciousNameCombination
             bipedLeftArm.rotateAngleX += bipedBody.rotateAngleY;
             f6 = 1.0F - onGround;
             f6 *= f6;

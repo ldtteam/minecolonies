@@ -5,10 +5,16 @@ import com.minecolonies.lib.Constants;
 
 public class WindowHutBuilder extends WindowWorkerBuilding<BuildingBuilder.View>
 {
+    private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowHutBuilder.xml";
+
     public WindowHutBuilder(BuildingBuilder.View building)
     {
-        super(building, Constants.MOD_ID + ":gui/windowHutBuilder.xml");
+        super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
     }
 
-    public String getBuildingName() { return "com.minecolonies.gui.workerHuts.buildersHut"; }
+    @Override
+    public String getBuildingName()
+    {
+        return "com.minecolonies.gui.workerHuts.buildersHut";
+    }
 }

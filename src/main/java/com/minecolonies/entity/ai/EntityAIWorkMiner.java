@@ -244,10 +244,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             return false;
         }
         itemsNeeded.clear();
-        for (ItemStack stack : items)
-        {
-            itemsNeeded.add(stack);
-        }
+        Collections.addAll(itemsNeeded, items);
         job.setStage(Stage.PREPARING);
         return true;
     }

@@ -22,7 +22,7 @@ import net.minecraftforge.common.MinecraftForge;
 public class ClientProxy extends CommonProxy
 {
     private RendererSchematicGlobal rendererSchematicGlobal;
-    private SchematicWorld schematicWorld = null;
+    private SchematicWorld          schematicWorld          = null;
 
     @Override
     public boolean isClient()
@@ -31,7 +31,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void registerKeybindings()
+    public void registerKeyBindings()
     {
 //        for(KeyBinding keyBinding : KeyInputHandler.KEY_BINDINGS)
 //        {
@@ -87,12 +87,14 @@ public class ClientProxy extends CommonProxy
 
     //Schematica
     @Override
-    public void setActiveSchematic(SchematicWorld world) {
+    public void setActiveSchematic(SchematicWorld world)
+    {
         this.schematicWorld = world;
     }
 
     @Override
-    public SchematicWorld getActiveSchematic() {
+    public SchematicWorld getActiveSchematic()
+    {
         return this.schematicWorld;
     }
 }
