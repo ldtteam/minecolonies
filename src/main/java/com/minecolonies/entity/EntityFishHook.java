@@ -232,6 +232,73 @@ public final class EntityFishHook extends Entity
         if(isInGround()){
             return true;
         }
+        if(hasEnemyBeenHit()){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasEnemyBeenHit(){
+        Vec3                 vec31                = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
+        Vec3                 vec3                 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+        MovingObjectPosition movingobjectposition = this.worldObj.rayTraceBlocks(vec31, vec3);
+        vec31 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
+        vec3 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+
+        if (movingobjectposition != null)
+        {
+            vec3 = Vec3.createVectorHelper(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+        }
+
+        Entity entity = null;
+        List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this,
+                                                                       this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0, 1.0, 1.0));
+        double initialDistance = 0.0;
+        double currentDistance;
+
+        for (Object aList : list)
+        {
+            Entity entity1 = (Entity) aList;
+
+            if (entity1.canBeCollidedWith() && this.fisherman != null && (!entity1.equals(this.fisherman.getCitizen()) || this.hitWater >= 5))
+            {
+                double               f                     = 0.3;
+                AxisAlignedBB        axisAlignedBB         = entity1.boundingBox.expand(f, f, f);
+                MovingObjectPosition movingObjectPosition1 = axisAlignedBB.calculateIntercept(vec31, vec3);
+
+                if (movingObjectPosition1 != null)
+                {
+                    currentDistance = vec31.distanceTo(movingObjectPosition1.hitVec);
+
+                    if (currentDistance < initialDistance || Math.abs(initialDistance) <= 0.001)
+
+                    {
+                        entity = entity1;
+                        initialDistance = currentDistance;
+                    }
+                }
+            }
+        }
+
+        if (entity != null)
+        {
+            movingobjectposition = new MovingObjectPosition(entity);
+        }
+
+        if (movingobjectposition != null)
+        {
+            if (movingobjectposition.entityHit != null)
+            {
+                if (fisherman != null && movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.fisherman.getCitizen()), 0.0F))
+                {
+                    this.hitEntity = movingobjectposition.entityHit;
+                }
+            }
+            else
+            {
+                this.inGround = true;
+            }
+        }
         return false;
     }
 
@@ -338,66 +405,7 @@ public final class EntityFishHook extends Entity
 
 
 
-        Vec3                 vec31                = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
-        Vec3                 vec3                 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
-        MovingObjectPosition movingobjectposition = this.worldObj.rayTraceBlocks(vec31, vec3);
-        vec31 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
-        vec3 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
-        if (movingobjectposition != null)
-        {
-            vec3 = Vec3.createVectorHelper(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
-        }
-
-        Entity entity = null;
-        List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this,
-                                                                       this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0, 1.0, 1.0));
-        double initialDistance = 0.0;
-        double currentDistance;
-
-        for (Object aList : list)
-        {
-            Entity entity1 = (Entity) aList;
-
-            if (entity1.canBeCollidedWith() && this.fisherman != null && (!entity1.equals(this.fisherman.getCitizen()) || this.hitWater >= 5))
-            {
-                double               f                     = 0.3;
-                AxisAlignedBB        axisAlignedBB         = entity1.boundingBox.expand(f, f, f);
-                MovingObjectPosition movingObjectPosition1 = axisAlignedBB.calculateIntercept(vec31, vec3);
-
-                if (movingObjectPosition1 != null)
-                {
-                    currentDistance = vec31.distanceTo(movingObjectPosition1.hitVec);
-
-                    if (currentDistance < initialDistance || Math.abs(initialDistance) <= 0.001)
-
-                    {
-                        entity = entity1;
-                        initialDistance = currentDistance;
-                    }
-                }
-            }
-        }
-
-        if (entity != null)
-        {
-            movingobjectposition = new MovingObjectPosition(entity);
-        }
-
-        if (movingobjectposition != null)
-        {
-            if (movingobjectposition.entityHit != null)
-            {
-                if (movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.fisherman.getCitizen()), 0.0F))
-                {
-                    this.hitEntity = movingobjectposition.entityHit;
-                }
-            }
-            else
-            {
-                this.inGround = true;
-            }
-        }
 
         if (!this.inGround)
         {
@@ -599,7 +607,7 @@ public final class EntityFishHook extends Entity
                 }
             }
 
-            currentDistance = d10 * 2.0D - 1.0;
+            double currentDistance = d10 * 2.0D - 1.0;
             this.motionY += 0.03999999910593033 * currentDistance;
 
             if (d10 > 0.0)
