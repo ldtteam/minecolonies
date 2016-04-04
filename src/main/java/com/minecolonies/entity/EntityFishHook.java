@@ -24,8 +24,8 @@ import java.util.List;
 //Creates a custom fishHook for the Fisherman to throw
 public final class EntityFishHook extends Entity
 {
-    private static final int  TTL             = 360;
-    private static final List possibleDrops_1 = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
+    private static final int TTL = 360;
+    private static final List   possibleDrops_1 = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
                                                               new WeightedRandomFishable(new ItemStack(Items.leather), 10),
                                                               new WeightedRandomFishable(new ItemStack(Items.bone), 10),
                                                               new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
@@ -42,10 +42,16 @@ public final class EntityFishHook extends Entity
                                                               (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(0.25F).func_150707_a(),
                                                               (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).func_150709_a(0.25F).func_150707_a(),
                                                               (new WeightedRandomFishable(new ItemStack(Items.book), 1)).func_150707_a());
-    private static final List possibleDrops_3 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
+    private static final List   possibleDrops_3 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
                                                               new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25),
                                                               new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2),
                                                               new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
+    private static final String TAG_X_TILE      = "xTile";
+    private static final String TAG_Y_TILE      = "yTile";
+    private static final String TAG_Z_TILE      = "zTile";
+    private static final String TAG_IN_TILE     = "inTile";
+    private static final String TAG_SHAKE       = "shake";
+    private static final String TAG_IN_GROUND   = "inGround";
     public  EntityAIWorkFisherman fisherman;
     private int                   xTile;
     private int                   yTile;
@@ -601,12 +607,12 @@ public final class EntityFishHook extends Entity
     @Override
     public void writeEntityToNBT(NBTTagCompound p_70014_1_)
     {
-        p_70014_1_.setShort("xTile", (short) this.xTile);
-        p_70014_1_.setShort("yTile", (short) this.yTile);
-        p_70014_1_.setShort("zTile", (short) this.zTile);
-        p_70014_1_.setByte("inTile", (byte) Block.getIdFromBlock(this.inTile));
-        p_70014_1_.setByte("shake", (byte) this.shake);
-        p_70014_1_.setByte("inGround", (byte) (this.inGround ? 1 : 0));
+        p_70014_1_.setShort(TAG_X_TILE, (short) this.xTile);
+        p_70014_1_.setShort(TAG_Y_TILE, (short) this.yTile);
+        p_70014_1_.setShort(TAG_Z_TILE, (short) this.zTile);
+        p_70014_1_.setByte(TAG_IN_TILE, (byte) Block.getIdFromBlock(this.inTile));
+        p_70014_1_.setByte(TAG_SHAKE, (byte) this.shake);
+        p_70014_1_.setByte(TAG_IN_GROUND, (byte) (this.inGround ? 1 : 0));
     }
 
     /**
@@ -615,19 +621,18 @@ public final class EntityFishHook extends Entity
     @Override
     public void readEntityFromNBT(NBTTagCompound p_70037_1_)
     {
-        if (!fisherman.getEntityFishHook().equals(this))
+        if (fisherman == null || fisherman.getEntityFishHook() == null || !fisherman.getEntityFishHook().equals(this))
         {
             this.setDead();
+            return;
         }
-        else
-        {
-            this.xTile = p_70037_1_.getShort("xTile");
-            this.yTile = p_70037_1_.getShort("yTile");
-            this.zTile = p_70037_1_.getShort("zTile");
-            this.inTile = Block.getBlockById(p_70037_1_.getByte("inTile") & 255);
-            this.shake = p_70037_1_.getByte("shake") & 255;
-            this.inGround = p_70037_1_.getByte("inGround") == 1;
-        }
+        this.xTile = p_70037_1_.getShort(TAG_X_TILE);
+        this.yTile = p_70037_1_.getShort(TAG_Y_TILE);
+        this.zTile = p_70037_1_.getShort(TAG_Z_TILE);
+        this.inTile = Block.getBlockById(p_70037_1_.getByte(TAG_IN_TILE) & 255);
+        this.shake = p_70037_1_.getByte(TAG_SHAKE) & 255;
+        this.inGround = p_70037_1_.getByte(TAG_IN_GROUND) == 1;
+
     }
 
     @Override
