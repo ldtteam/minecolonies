@@ -729,7 +729,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         this.setDead();
 
-        for (experience = 0; experience < 20; ++experience)
+        for (int i = 0; i < 20; ++i)
         {
             double d2 = this.rand.nextGaussian() * 0.02D;
             double d0 = this.rand.nextGaussian() * 0.02D;

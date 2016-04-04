@@ -75,17 +75,11 @@ public final class EntityFishHook extends Entity
     //Will be set true when the citizen caught a fish (to reset the fisherman)
     private boolean isCaughtFish = false;
 
-    @SideOnly(Side.CLIENT)
-    public EntityFishHook(World world, double x, double y, double z, EntityAIWorkFisherman fisherman)
-    {
-        this(world);
-        this.setPosition(x, y, z);
-        this.ignoreFrustumCheck = true;
-        this.fisherman = fisherman;
-        fisherman.setEntityFishHook(this);
-        this.creationTime = System.nanoTime();
-    }
-
+    /**
+     * Lowest denominator constructor
+     * Used by other constructors to do general stuff
+     * @param world the world this entity lives in
+     */
     public EntityFishHook(World world)
     {
         super(world);
@@ -94,13 +88,16 @@ public final class EntityFishHook extends Entity
         this.creationTime = System.nanoTime();
     }
 
+    /**
+     * Constructor for throwing out a hook.
+     * @param world the world the hook lives in
+     * @param fisherman the fisherman throwing the hook
+     */
     public EntityFishHook(World world, EntityAIWorkFisherman fisherman)
     {
-        super(world);
-        this.ignoreFrustumCheck = true;
+        this(world);
         this.fisherman = fisherman;
         this.fisherman.setEntityFishHook(this);
-        this.setSize(0.25F, 0.25F);
         this.setLocationAndAngles(fisherman.getCitizen().posX,
                                   fisherman.getCitizen().posY + 1.62 - (double) fisherman.getCitizen().yOffset,
                                   fisherman.getCitizen().posZ,
@@ -116,7 +113,6 @@ public final class EntityFishHook extends Entity
         this.motionZ = Math.cos(this.rotationYaw / 180.0 * Math.PI) * Math.cos(this.rotationPitch / 180.0 * Math.PI) * f;
         this.motionY = -Math.sin(this.rotationPitch / 180.0 * Math.PI) * f;
         this.setPosition(this.motionX, this.motionY, this.motionZ, 1.5, 1.0);
-        this.creationTime = System.nanoTime();
     }
 
     private void setPosition(double x, double y, double z, double yaw, double pitch)
