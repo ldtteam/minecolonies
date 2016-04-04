@@ -24,28 +24,28 @@ import java.util.List;
 //Creates a custom fishHook for the Fisherman to throw
 public final class EntityFishHook extends Entity
 {
-    private static final int TTL = 360;
+    private static final int    TTL             = 360;
     private static final List   possibleDrops_1 = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
-                                                              new WeightedRandomFishable(new ItemStack(Items.leather), 10),
-                                                              new WeightedRandomFishable(new ItemStack(Items.bone), 10),
-                                                              new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
-                                                              new WeightedRandomFishable(new ItemStack(Items.string), 5),
-                                                              (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F),
-                                                              new WeightedRandomFishable(new ItemStack(Items.bowl), 10),
-                                                              new WeightedRandomFishable(new ItemStack(Items.stick), 5),
-                                                              new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1),
-                                                              new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10),
-                                                              new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
-    private static final List possibleDrops_2 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
-                                                              new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
-                                                              new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
-                                                              (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(0.25F).func_150707_a(),
-                                                              (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).func_150709_a(0.25F).func_150707_a(),
-                                                              (new WeightedRandomFishable(new ItemStack(Items.book), 1)).func_150707_a());
+                                                                new WeightedRandomFishable(new ItemStack(Items.leather), 10),
+                                                                new WeightedRandomFishable(new ItemStack(Items.bone), 10),
+                                                                new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
+                                                                new WeightedRandomFishable(new ItemStack(Items.string), 5),
+                                                                (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F),
+                                                                new WeightedRandomFishable(new ItemStack(Items.bowl), 10),
+                                                                new WeightedRandomFishable(new ItemStack(Items.stick), 5),
+                                                                new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1),
+                                                                new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10),
+                                                                new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
+    private static final List   possibleDrops_2 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
+                                                                new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
+                                                                new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
+                                                                (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(0.25F).func_150707_a(),
+                                                                (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).func_150709_a(0.25F).func_150707_a(),
+                                                                (new WeightedRandomFishable(new ItemStack(Items.book), 1)).func_150707_a());
     private static final List   possibleDrops_3 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
-                                                              new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25),
-                                                              new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2),
-                                                              new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
+                                                                new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25),
+                                                                new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2),
+                                                                new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
     private static final String TAG_X_TILE      = "xTile";
     private static final String TAG_Y_TILE      = "yTile";
     private static final String TAG_Z_TILE      = "zTile";
@@ -222,14 +222,14 @@ public final class EntityFishHook extends Entity
         this.hookVectorZ = this.motionZ = vectorZ;
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
+    private boolean preconditionsFail(){
+        if(hasToRotateIncrementally()){
+            return true;
+        }
+        return false;
+    }
 
+    private boolean hasToRotateIncrementally(){
         if (this.newPosRotationIncrements > 0)
         {
             double x           = this.posX + (this.newX - this.posX) / (double) this.newPosRotationIncrements;
@@ -241,350 +241,363 @@ public final class EntityFishHook extends Entity
             --this.newPosRotationIncrements;
             this.setPosition(x, y, z);
             this.setRotation(this.rotationYaw, this.rotationPitch);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Called to update the entity's position/logic.
+     */
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        if(preconditionsFail()){
+            return;
+        }
+
+        if (!this.worldObj.isRemote)
+        {
+            if (this.fisherman == null)
+            {
+                return;
+            }
+
+            ItemStack itemstack = this.fisherman.getCitizen().getInventory().getHeldItem();
+
+            if (this.fisherman.getCitizen().isDead
+                || !this.fisherman.getCitizen().isEntityAlive()
+                || itemstack == null
+                || !itemstack.getItem().equals(Items.fishing_rod)
+                || this.getDistanceSqToEntity(this.fisherman.getCitizen()) > 1024.0D)
+            {
+                this.setDead();
+                this.fisherman.setEntityFishHook(null);
+                return;
+            }
+
+            if (this.hitEntity != null)
+            {
+                if (!this.hitEntity.isDead)
+                {
+                    this.posX = this.hitEntity.posX;
+                    this.posY = this.hitEntity.boundingBox.minY + (double) this.hitEntity.height * 0.8D;
+                    this.posZ = this.hitEntity.posZ;
+                    return;
+                }
+
+                this.hitEntity = null;
+            }
+        }
+
+        if (this.shake > 0)
+        {
+            --this.shake;
+        }
+
+        if (this.inGround)
+        {
+            if (this.worldObj.getBlock(this.xTile, this.yTile, this.zTile) == this.inTile)
+            {
+                ++this.hitBlock;
+
+                if (this.hitBlock == 1200)
+                {
+                    this.setDead();
+                }
+
+                return;
+            }
+
+            this.inGround = false;
+            this.motionX *= (this.rand.nextDouble() * 0.2);
+            this.motionY *= (this.rand.nextDouble() * 0.2);
+            this.motionZ *= (this.rand.nextDouble() * 0.2);
+            this.hitBlock = 0;
+            this.hitWater = 0;
         }
         else
         {
-            if (!this.worldObj.isRemote)
+            ++this.hitWater;
+        }
+
+        Vec3                 vec31                = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
+        Vec3                 vec3                 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+        MovingObjectPosition movingobjectposition = this.worldObj.rayTraceBlocks(vec31, vec3);
+        vec31 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
+        vec3 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+
+        if (movingobjectposition != null)
+        {
+            vec3 = Vec3.createVectorHelper(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+        }
+
+        Entity entity = null;
+        List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this,
+                                                                       this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0, 1.0, 1.0));
+        double initialDistance = 0.0;
+        double currentDistance;
+
+        for (Object aList : list)
+        {
+            Entity entity1 = (Entity) aList;
+
+            if (entity1.canBeCollidedWith() && this.fisherman != null && (!entity1.equals(this.fisherman.getCitizen()) || this.hitWater >= 5))
             {
-                if (this.fisherman == null)
-                {
-                    return;
-                }
+                double               f                     = 0.3;
+                AxisAlignedBB        axisAlignedBB         = entity1.boundingBox.expand(f, f, f);
+                MovingObjectPosition movingObjectPosition1 = axisAlignedBB.calculateIntercept(vec31, vec3);
 
-                ItemStack itemstack = this.fisherman.getCitizen().getInventory().getHeldItem();
-
-                if (this.fisherman.getCitizen().isDead
-                    || !this.fisherman.getCitizen().isEntityAlive()
-                    || itemstack == null
-                    || !itemstack.getItem().equals(Items.fishing_rod)
-                    || this.getDistanceSqToEntity(this.fisherman.getCitizen()) > 1024.0D)
+                if (movingObjectPosition1 != null)
                 {
-                    this.setDead();
-                    this.fisherman.setEntityFishHook(null);
-                    return;
-                }
+                    currentDistance = vec31.distanceTo(movingObjectPosition1.hitVec);
 
-                if (this.hitEntity != null)
-                {
-                    if (!this.hitEntity.isDead)
+                    if (currentDistance < initialDistance || Math.abs(initialDistance) <= 0.001)
+
                     {
-                        this.posX = this.hitEntity.posX;
-                        this.posY = this.hitEntity.boundingBox.minY + (double) this.hitEntity.height * 0.8D;
-                        this.posZ = this.hitEntity.posZ;
-                        return;
+                        entity = entity1;
+                        initialDistance = currentDistance;
                     }
-
-                    this.hitEntity = null;
                 }
             }
+        }
 
-            if (this.shake > 0)
-            {
-                --this.shake;
-            }
+        if (entity != null)
+        {
+            movingobjectposition = new MovingObjectPosition(entity);
+        }
 
-            if (this.inGround)
+        if (movingobjectposition != null)
+        {
+            if (movingobjectposition.entityHit != null)
             {
-                if (this.worldObj.getBlock(this.xTile, this.yTile, this.zTile) == this.inTile)
+                if (movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.fisherman.getCitizen()), 0.0F))
                 {
-                    ++this.hitBlock;
-
-                    if (this.hitBlock == 1200)
-                    {
-                        this.setDead();
-                    }
-
-                    return;
+                    this.hitEntity = movingobjectposition.entityHit;
                 }
-
-                this.inGround = false;
-                this.motionX *= (this.rand.nextDouble() * 0.2);
-                this.motionY *= (this.rand.nextDouble() * 0.2);
-                this.motionZ *= (this.rand.nextDouble() * 0.2);
-                this.hitBlock = 0;
-                this.hitWater = 0;
             }
             else
             {
-                ++this.hitWater;
+                this.inGround = true;
+            }
+        }
+
+        if (!this.inGround)
+        {
+            this.moveEntity(this.motionX, this.motionY, this.motionZ);
+            double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+            this.rotationYaw = (float) (Math.atan2(this.motionY, this.motionZ) * 180.0 / Math.PI);
+            this.rotationPitch = (float) (Math.atan2(this.motionY, motion) * 180.0 / Math.PI);
+            while ((double) this.rotationPitch - (double) this.prevRotationPitch < -180.0)
+            {
+                this.prevRotationPitch -= 360.0;
             }
 
-            Vec3                 vec31                = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
-            Vec3                 vec3                 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
-            MovingObjectPosition movingobjectposition = this.worldObj.rayTraceBlocks(vec31, vec3);
-            vec31 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
-            vec3 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
-
-            if (movingobjectposition != null)
+            while ((double) this.rotationPitch - (double) this.prevRotationPitch >= 180.0)
             {
-                vec3 = Vec3.createVectorHelper(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+                this.prevRotationPitch += 360.0;
             }
 
-            Entity entity = null;
-            List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this,
-                                                                           this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0, 1.0, 1.0));
-            double initialDistance = 0.0;
-            double currentDistance;
-
-            for (Object aList : list)
+            while ((double) this.rotationYaw - (double) this.prevRotationYaw < -180.0)
             {
-                Entity entity1 = (Entity) aList;
+                this.prevRotationYaw -= 360.0;
+            }
 
-                if (entity1.canBeCollidedWith() && this.fisherman != null && (!entity1.equals(this.fisherman.getCitizen()) || this.hitWater >= 5))
+            while ((double) this.rotationYaw - (double) this.prevRotationYaw >= 180.0)
+            {
+                this.prevRotationYaw += 360.0;
+            }
+
+            this.rotationPitch =
+                    (float) ((double) this.prevRotationPitch + ((double) this.rotationPitch - (double) this.prevRotationPitch) * 0.2D);
+            this.rotationYaw =
+                    (float) ((double) this.prevRotationYaw + ((double) this.rotationYaw - (double) this.prevRotationYaw) * 0.2D);
+            double f6 = 0.92F;
+
+            if (this.onGround || this.isCollidedHorizontally)
+            {
+                f6 = 0.5;
+            }
+
+            byte   b0  = 5;
+            double d10 = 0.0;
+
+            for (int j = 0; j < b0; ++j)
+            {
+                double        d3             = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * j / b0 - 0.125 + 0.125;
+                double        d4             = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (j + 1) / b0 - 0.125 + 0.125;
+                AxisAlignedBB axisAlignedBB1 = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d3, this.boundingBox.minZ, this.boundingBox.maxX, d4, this.boundingBox.maxZ);
+
+                if (this.worldObj.isAABBInMaterial(axisAlignedBB1, Material.water))
                 {
-                    double               f                     = 0.3;
-                    AxisAlignedBB        axisAlignedBB         = entity1.boundingBox.expand(f, f, f);
-                    MovingObjectPosition movingObjectPosition1 = axisAlignedBB.calculateIntercept(vec31, vec3);
-
-                    if (movingObjectPosition1 != null)
-                    {
-                        currentDistance = vec31.distanceTo(movingObjectPosition1.hitVec);
-
-                        if (currentDistance < initialDistance || Math.abs(initialDistance) <= 0.001)
-
-                        {
-                            entity = entity1;
-                            initialDistance = currentDistance;
-                        }
-                    }
+                    d10 += 1.0 / b0;
                 }
             }
 
-            if (entity != null)
+            if (!this.worldObj.isRemote && d10 > 0.0)
             {
-                movingobjectposition = new MovingObjectPosition(entity);
-            }
+                WorldServer worldserver = (WorldServer) this.worldObj;
+                int         k           = 1;
 
-            if (movingobjectposition != null)
-            {
-                if (movingobjectposition.entityHit != null)
+                if (this.rand.nextDouble() < 0.25 && this.worldObj.canLightningStrikeAt(MathHelper.floor_double(this.posX),
+                                                                                        MathHelper.floor_double(this.posY) + 1,
+                                                                                        MathHelper.floor_double(this.posZ)))
                 {
-                    if (movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.fisherman.getCitizen()), 0.0F))
+                    k = 2;
+                }
+
+                if (this.rand.nextDouble() < 0.5 && !this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX),
+                                                                                     MathHelper.floor_double(this.posY) + 1,
+                                                                                     MathHelper.floor_double(this.posZ)))
+                {
+                    --k;
+                }
+
+                if (this.movedOnX > 0)
+                {
+                    --this.movedOnX;
+
+                    if (this.movedOnX <= 0)
                     {
-                        this.hitEntity = movingobjectposition.entityHit;
+                        this.movedOnY = 0;
+                        this.movedOnZ = 0;
                     }
                 }
                 else
                 {
-                    this.inGround = true;
-                }
-            }
+                    double bubbleY;
+                    double bubbleZ;
+                    double bubbleX;
 
-            if (!this.inGround)
-            {
-                this.moveEntity(this.motionX, this.motionY, this.motionZ);
-                double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-                this.rotationYaw = (float) (Math.atan2(this.motionY, this.motionZ) * 180.0 / Math.PI);
-                this.rotationPitch = (float) (Math.atan2(this.motionY, motion) * 180.0 / Math.PI);
-                while ((double) this.rotationPitch - (double) this.prevRotationPitch < -180.0)
-                {
-                    this.prevRotationPitch -= 360.0;
-                }
+                    double cosYPosition;
+                    double increasedYPosition;
+                    double sinYPosition;
 
-                while ((double) this.rotationPitch - (double) this.prevRotationPitch >= 180.0)
-                {
-                    this.prevRotationPitch += 360.0;
-                }
-
-                while ((double) this.rotationYaw - (double) this.prevRotationYaw < -180.0)
-                {
-                    this.prevRotationYaw -= 360.0;
-                }
-
-                while ((double) this.rotationYaw - (double) this.prevRotationYaw >= 180.0)
-                {
-                    this.prevRotationYaw += 360.0;
-                }
-
-                this.rotationPitch =
-                        (float) ((double) this.prevRotationPitch + ((double) this.rotationPitch - (double) this.prevRotationPitch) * 0.2D);
-                this.rotationYaw =
-                        (float) ((double) this.prevRotationYaw + ((double) this.rotationYaw - (double) this.prevRotationYaw) * 0.2D);
-                double f6 = 0.92F;
-
-                if (this.onGround || this.isCollidedHorizontally)
-                {
-                    f6 = 0.5;
-                }
-
-                byte   b0  = 5;
-                double d10 = 0.0;
-
-                for (int j = 0; j < b0; ++j)
-                {
-                    double        d3             = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * j / b0 - 0.125 + 0.125;
-                    double        d4             = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (j + 1) / b0 - 0.125 + 0.125;
-                    AxisAlignedBB axisAlignedBB1 = AxisAlignedBB.getBoundingBox(this.boundingBox.minX, d3, this.boundingBox.minZ, this.boundingBox.maxX, d4, this.boundingBox.maxZ);
-
-                    if (this.worldObj.isAABBInMaterial(axisAlignedBB1, Material.water))
+                    if (this.movedOnZ > 0)
                     {
-                        d10 += 1.0 / b0;
-                    }
-                }
+                        this.movedOnZ -= k;
 
-                if (!this.worldObj.isRemote && d10 > 0.0)
-                {
-                    WorldServer worldserver = (WorldServer) this.worldObj;
-                    int         k           = 1;
-
-                    if (this.rand.nextDouble() < 0.25 && this.worldObj.canLightningStrikeAt(MathHelper.floor_double(this.posX),
-                                                                                            MathHelper.floor_double(this.posY) + 1,
-                                                                                            MathHelper.floor_double(this.posZ)))
-                    {
-                        k = 2;
-                    }
-
-                    if (this.rand.nextDouble() < 0.5 && !this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX),
-                                                                                         MathHelper.floor_double(this.posY) + 1,
-                                                                                         MathHelper.floor_double(this.posZ)))
-                    {
-                        --k;
-                    }
-
-                    if (this.movedOnX > 0)
-                    {
-                        --this.movedOnX;
-
-                        if (this.movedOnX <= 0)
+                        if (this.movedOnZ <= 0)
                         {
-                            this.movedOnY = 0;
-                            this.movedOnZ = 0;
+                            this.motionY -= 0.20000000298023224D;
+                            this.playSound("random.splash", 0.25F,
+                                           (float) (1.0D + (this.rand.nextDouble() - this.rand.nextDouble()) * 0.4D));
+                            bubbleY = Math.floor(this.boundingBox.minY);
+                            worldserver.func_147487_a("bubble",
+                                                      this.posX,
+                                                      (bubbleY + 1.0),
+                                                      this.posZ,
+                                                      (int) (1.0 + this.width * 20.0),
+                                                      (double) this.width,
+                                                      0.0,
+                                                      (double) this.width,
+                                                      0.20000000298023224);
+                            worldserver.func_147487_a("wake",
+                                                      this.posX,
+                                                      (bubbleY + 1.0),
+                                                      this.posZ,
+                                                      (int) (1.0 + this.width * 20.0),
+                                                      (double) this.width,
+                                                      0.0,
+                                                      (double) this.width,
+                                                      0.20000000298023224);
+                            this.movedOnX = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
+                            isCaughtFish = true;
+                        }
+                        else
+                        {
+                            this.relativeRotation = this.relativeRotation + this.rand.nextGaussian() * 4.0;
+                            bubbleY = this.relativeRotation * 0.017453292;
+                            sinYPosition = Math.sin(bubbleY);
+                            cosYPosition = Math.cos(bubbleY);
+                            bubbleX = this.posX + (sinYPosition * this.movedOnZ * 0.1);
+                            increasedYPosition = Math.floor(this.boundingBox.minY) + 1.0;
+                            bubbleZ = this.posZ + (cosYPosition * this.movedOnZ * 0.1);
+
+                            if (this.rand.nextDouble() < 0.15)
+                            {
+                                worldserver.func_147487_a("bubble", bubbleX, increasedYPosition - 0.10000000149011612, bubbleZ, 1, sinYPosition, 0.1D, cosYPosition, 0.0);
+                            }
+
+                            double f3 = sinYPosition * 0.04;
+                            double f4 = cosYPosition * 0.04;
+                            worldserver.func_147487_a("wake", bubbleX, increasedYPosition, bubbleZ, 0, f4, 0.01, (-f3), 1.0);
+                            worldserver.func_147487_a("wake", bubbleX, increasedYPosition, bubbleZ, 0, (-f4), 0.01, f3, 1.0);
+
+                        }
+                    }
+                    else if (this.movedOnY > 0)
+                    {
+                        this.movedOnY -= k;
+                        bubbleY = 0.15;
+
+                        if (this.movedOnY < 20)
+                        {
+                            bubbleY = bubbleY + (double) (20 - this.movedOnY) * 0.05;
+                        }
+                        else if (this.movedOnY < 40)
+                        {
+                            bubbleY = bubbleY + (double) (40 - this.movedOnY) * 0.02;
+                        }
+                        else if (this.movedOnY < 60)
+                        {
+                            bubbleY = bubbleY + (double) (60 - this.movedOnY) * 0.01;
+                        }
+
+                        if (this.rand.nextDouble() < bubbleY)
+                        {
+                            sinYPosition = (double) MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292D;
+                            cosYPosition = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
+                            bubbleX = this.posX + (Math.sin(sinYPosition) * cosYPosition * 0.1);
+                            increasedYPosition = Math.floor(this.boundingBox.minY) + 1.0;
+                            bubbleZ = this.posZ + (Math.cos(sinYPosition) * cosYPosition * 0.1);
+                            worldserver.func_147487_a("splash",
+                                                      bubbleX,
+                                                      increasedYPosition,
+                                                      bubbleZ,
+                                                      2 + this.rand.nextInt(2),
+                                                      0.10000000149011612,
+                                                      0.0,
+                                                      0.10000000149011612,
+                                                      0.0);
+
+                        }
+
+                        if (this.movedOnY <= 0)
+                        {
+                            this.relativeRotation = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F);
+                            this.movedOnZ = MathHelper.getRandomIntegerInRange(this.rand, 20, 80);
                         }
                     }
                     else
                     {
-                        double bubbleY;
-                        double bubbleZ;
-                        double bubbleX;
-
-                        double cosYPosition;
-                        double increasedYPosition;
-                        double sinYPosition;
-
-                        if (this.movedOnZ > 0)
-                        {
-                            this.movedOnZ -= k;
-
-                            if (this.movedOnZ <= 0)
-                            {
-                                this.motionY -= 0.20000000298023224D;
-                                this.playSound("random.splash", 0.25F,
-                                               (float) (1.0D + (this.rand.nextDouble() - this.rand.nextDouble()) * 0.4D));
-                                bubbleY = Math.floor(this.boundingBox.minY);
-                                worldserver.func_147487_a("bubble",
-                                                          this.posX,
-                                                          (bubbleY + 1.0),
-                                                          this.posZ,
-                                                          (int) (1.0 + this.width * 20.0),
-                                                          (double) this.width,
-                                                          0.0,
-                                                          (double) this.width,
-                                                          0.20000000298023224);
-                                worldserver.func_147487_a("wake",
-                                                          this.posX,
-                                                          (bubbleY + 1.0),
-                                                          this.posZ,
-                                                          (int) (1.0 + this.width * 20.0),
-                                                          (double) this.width,
-                                                          0.0,
-                                                          (double) this.width,
-                                                          0.20000000298023224);
-                                this.movedOnX = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
-                                isCaughtFish = true;
-                            }
-                            else
-                            {
-                                this.relativeRotation = this.relativeRotation + this.rand.nextGaussian() * 4.0;
-                                bubbleY = this.relativeRotation * 0.017453292;
-                                sinYPosition = Math.sin(bubbleY);
-                                cosYPosition = Math.cos(bubbleY);
-                                bubbleX = this.posX + (sinYPosition * this.movedOnZ * 0.1);
-                                increasedYPosition = Math.floor(this.boundingBox.minY) + 1.0;
-                                bubbleZ = this.posZ + (cosYPosition * this.movedOnZ * 0.1);
-
-                                if (this.rand.nextDouble() < 0.15)
-                                {
-                                    worldserver.func_147487_a("bubble", bubbleX, increasedYPosition - 0.10000000149011612, bubbleZ, 1, sinYPosition, 0.1D, cosYPosition, 0.0);
-                                }
-
-                                double f3 = sinYPosition * 0.04;
-                                double f4 = cosYPosition * 0.04;
-                                worldserver.func_147487_a("wake", bubbleX, increasedYPosition, bubbleZ, 0, f4, 0.01, (-f3), 1.0);
-                                worldserver.func_147487_a("wake", bubbleX, increasedYPosition, bubbleZ, 0, (-f4), 0.01, f3, 1.0);
-
-                            }
-                        }
-                        else if (this.movedOnY > 0)
-                        {
-                            this.movedOnY -= k;
-                            bubbleY = 0.15;
-
-                            if (this.movedOnY < 20)
-                            {
-                                bubbleY = bubbleY + (double) (20 - this.movedOnY) * 0.05;
-                            }
-                            else if (this.movedOnY < 40)
-                            {
-                                bubbleY = bubbleY + (double) (40 - this.movedOnY) * 0.02;
-                            }
-                            else if (this.movedOnY < 60)
-                            {
-                                bubbleY = bubbleY + (double) (60 - this.movedOnY) * 0.01;
-                            }
-
-                            if (this.rand.nextDouble() < bubbleY)
-                            {
-                                sinYPosition = (double) MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292D;
-                                cosYPosition = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
-                                bubbleX = this.posX + (Math.sin(sinYPosition) * cosYPosition * 0.1);
-                                increasedYPosition = Math.floor(this.boundingBox.minY) + 1.0;
-                                bubbleZ = this.posZ + (Math.cos(sinYPosition) * cosYPosition * 0.1);
-                                worldserver.func_147487_a("splash",
-                                                          bubbleX,
-                                                          increasedYPosition,
-                                                          bubbleZ,
-                                                          2 + this.rand.nextInt(2),
-                                                          0.10000000149011612,
-                                                          0.0,
-                                                          0.10000000149011612,
-                                                          0.0);
-
-                            }
-
-                            if (this.movedOnY <= 0)
-                            {
-                                this.relativeRotation = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F);
-                                this.movedOnZ = MathHelper.getRandomIntegerInRange(this.rand, 20, 80);
-                            }
-                        }
-                        else
-                        {
-                            this.movedOnY = MathHelper.getRandomIntegerInRange(this.rand, 100, 900);
-                            this.movedOnY -= EnchantmentHelper.func_151387_h(this.fisherman.getCitizen()) * 20 * 5;
-                        }
-                    }
-
-                    if (this.movedOnX > 0)
-                    {
-                        this.motionY -= (this.rand.nextDouble() * this.rand.nextDouble() * this.rand.nextDouble()) * 0.2;
+                        this.movedOnY = MathHelper.getRandomIntegerInRange(this.rand, 100, 900);
+                        this.movedOnY -= EnchantmentHelper.func_151387_h(this.fisherman.getCitizen()) * 20 * 5;
                     }
                 }
 
-                currentDistance = d10 * 2.0D - 1.0;
-                this.motionY += 0.03999999910593033 * currentDistance;
-
-                if (d10 > 0.0)
+                if (this.movedOnX > 0)
                 {
-                    f6 = f6 * 0.9;
-                    this.motionY *= 0.8;
+                    this.motionY -= (this.rand.nextDouble() * this.rand.nextDouble() * this.rand.nextDouble()) * 0.2;
                 }
-
-                this.motionX *= f6;
-                this.motionY *= f6;
-                this.motionZ *= f6;
-                this.setPosition(this.posX, this.posY, this.posZ);
             }
+
+            currentDistance = d10 * 2.0D - 1.0;
+            this.motionY += 0.03999999910593033 * currentDistance;
+
+            if (d10 > 0.0)
+            {
+                f6 = f6 * 0.9;
+                this.motionY *= 0.8;
+            }
+
+            this.motionX *= f6;
+            this.motionY *= f6;
+            this.motionZ *= f6;
+            this.setPosition(this.posX, this.posY, this.posZ);
         }
+
     }
 
     /**
