@@ -31,7 +31,7 @@ public abstract class Job
     private static          Map<Class<? extends Job>, String>   classToNameMap      = new HashMap<>();
     private        final    CitizenData                         citizen;
     private                 List<ItemStack>                     itemsNeeded         = new ArrayList<>();
-    private String nameTag = "";
+    private                 String                              nameTag             = "";
     static
     {
         addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
@@ -294,7 +294,12 @@ public abstract class Job
         return this.nameTag;
     }
 
-    public void setNameTag(final String nameTag)
+    /**
+     * Used by the AI skeleton to change a citizens name.
+     * Mostly used to update debugging information.
+     * @param nameTag The name tag to display
+     */
+    public final void setNameTag(final String nameTag)
     {
         this.nameTag = nameTag;
     }
