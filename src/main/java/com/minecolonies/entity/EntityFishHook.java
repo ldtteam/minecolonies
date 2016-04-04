@@ -29,29 +29,34 @@ import java.util.List;
  */
 public final class EntityFishHook extends Entity
 {
-    private static final int  TTL             = 360;
-    private static final List possibleDrops_1 = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
-                                                              new WeightedRandomFishable(new ItemStack(Items.leather), 10),
-                                                              new WeightedRandomFishable(new ItemStack(Items.bone), 10),
-                                                              new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
-                                                              new WeightedRandomFishable(new ItemStack(Items.string), 5),
-                                                              (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F),
-                                                              new WeightedRandomFishable(new ItemStack(Items.bowl), 10),
-                                                              new WeightedRandomFishable(new ItemStack(Items.stick), 5),
-                                                              new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1),
-                                                              new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10),
-                                                              new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
-    private static final List possibleDrops_2 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
-                                                              new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
-                                                              new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
-                                                              (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(0.25F).func_150707_a(),
-                                                              (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).func_150709_a(0.25F).func_150707_a(),
-                                                              (new WeightedRandomFishable(new ItemStack(Items.book), 1)).func_150707_a());
-    private static final List possibleDrops_3 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
-                                                              new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25),
-                                                              new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2),
-                                                              new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
-    public  EntityCitizen citizen;
+    private static final int TTL = 360;
+    private static final List   possibleDrops_1 = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
+                                                                new WeightedRandomFishable(new ItemStack(Items.leather), 10),
+                                                                new WeightedRandomFishable(new ItemStack(Items.bone), 10),
+                                                                new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
+                                                                new WeightedRandomFishable(new ItemStack(Items.string), 5),
+                                                                (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F),
+                                                                new WeightedRandomFishable(new ItemStack(Items.bowl), 10),
+                                                                new WeightedRandomFishable(new ItemStack(Items.stick), 5),
+                                                                new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1),
+                                                                new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10),
+                                                                new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
+    private static final List   possibleDrops_2 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
+                                                                new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
+                                                                new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
+                                                                (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(0.25F).func_150707_a(),
+                                                                (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).func_150709_a(0.25F).func_150707_a(),
+                                                                (new WeightedRandomFishable(new ItemStack(Items.book), 1)).func_150707_a());
+    private static final List   possibleDrops_3 = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
+                                                                new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25),
+                                                                new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2),
+                                                                new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
+    /**
+     * 180 degree used in trig. functions
+     */
+    private static final double HALF_CIRCLE     = 180.0;
+    public static final double RANDOM_MOVEMENT_OFFSET = 0.007499999832361937;
+    private EntityCitizen citizen;
     private int           fishingSpeedEnchantment;
     private int           fishingLootEnchantment;
     private boolean       inGround;
@@ -80,15 +85,15 @@ public final class EntityFishHook extends Entity
                                   citizen.posZ,
                                   citizen.rotationYaw,
                                   citizen.rotationPitch);
-        this.posX -= Math.cos(this.rotationYaw / 180.0 * Math.PI) * 0.16;
+        this.posX -= Math.cos(this.rotationYaw / HALF_CIRCLE * Math.PI) * 0.16;
         this.posY -= 0.10000000149011612;
-        this.posZ -= Math.sin(this.rotationYaw / 180.0 * Math.PI) * 0.16;
+        this.posZ -= Math.sin(this.rotationYaw / HALF_CIRCLE * Math.PI) * 0.16;
         this.setPosition(this.posX, this.posY, this.posZ);
         this.yOffset = 0.0F;
         double f = 0.4;
-        this.motionX = -Math.sin(this.rotationYaw / 180.0 * Math.PI) * Math.cos(this.rotationPitch / 180.0 * Math.PI) * f;
-        this.motionZ = Math.cos(this.rotationYaw / 180.0 * Math.PI) * Math.cos(this.rotationPitch / 180.0 * Math.PI) * f;
-        this.motionY = -Math.sin(this.rotationPitch / 180.0 * Math.PI) * f;
+        this.motionX = -Math.sin(this.rotationYaw / HALF_CIRCLE * Math.PI) * Math.cos(this.rotationPitch / HALF_CIRCLE * Math.PI) * f;
+        this.motionZ = Math.cos(this.rotationYaw / HALF_CIRCLE * Math.PI) * Math.cos(this.rotationPitch / HALF_CIRCLE * Math.PI) * f;
+        this.motionY = -Math.sin(this.rotationPitch / HALF_CIRCLE * Math.PI) * f;
         this.setPosition(this.motionX, this.motionY, this.motionZ, 1.5, 1.0);
         fishingSpeedEnchantment = EnchantmentHelper.func_151386_g(citizen);
         fishingLootEnchantment = EnchantmentHelper.func_151387_h(citizen);
@@ -116,17 +121,17 @@ public final class EntityFishHook extends Entity
         double newX          = x / squareRootXYZ;
         double newY          = y / squareRootXYZ;
         double newZ          = z / squareRootXYZ;
-        newX += this.rand.nextGaussian() * 0.007499999832361937 * pitch;
-        newY += this.rand.nextGaussian() * 0.007499999832361937 * pitch;
-        newZ += this.rand.nextGaussian() * 0.007499999832361937 * pitch;
+        newX += this.rand.nextGaussian() * RANDOM_MOVEMENT_OFFSET * pitch;
+        newY += this.rand.nextGaussian() * RANDOM_MOVEMENT_OFFSET * pitch;
+        newZ += this.rand.nextGaussian() * RANDOM_MOVEMENT_OFFSET * pitch;
         newX *= yaw;
         newY *= yaw;
         newZ *= yaw;
         this.motionX = newX;
         this.motionY = newY;
         this.motionZ = newZ;
-        this.prevRotationYaw = this.rotationYaw = (float) (Math.atan2(newX, newZ) * 180.0 / Math.PI);
-        this.prevRotationPitch = this.rotationPitch = (float) (Math.atan2(newY, Math.sqrt(newX * newX + newZ * newZ)) * 180.0 / Math.PI);
+        this.prevRotationYaw = this.rotationYaw = (float) (Math.atan2(newX, newZ) * HALF_CIRCLE / Math.PI);
+        this.prevRotationPitch = this.rotationPitch = (float) (Math.atan2(newY, Math.sqrt(newX * newX + newZ * newZ)) * HALF_CIRCLE / Math.PI);
     }
 
     /**
@@ -143,7 +148,13 @@ public final class EntityFishHook extends Entity
      * Minecraft may call this method
      */
     @Override
-    protected void entityInit(){}
+    protected void entityInit()
+    {
+        /**
+         * No need to use this method.
+         * It will be ignored.
+         */
+    }
 
     /**
      * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
@@ -467,24 +478,24 @@ public final class EntityFishHook extends Entity
     {
         this.moveEntity(this.motionX, this.motionY, this.motionZ);
         double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-        this.rotationYaw = (float) (Math.atan2(this.motionY, this.motionZ) * 180.0 / Math.PI);
-        this.rotationPitch = (float) (Math.atan2(this.motionY, motion) * 180.0 / Math.PI);
-        while ((double) this.rotationPitch - (double) this.prevRotationPitch < -180.0)
+        this.rotationYaw = (float) (Math.atan2(this.motionY, this.motionZ) * HALF_CIRCLE / Math.PI);
+        this.rotationPitch = (float) (Math.atan2(this.motionY, motion) * HALF_CIRCLE / Math.PI);
+        while ((double) this.rotationPitch - (double) this.prevRotationPitch < -HALF_CIRCLE)
         {
             this.prevRotationPitch -= 360.0;
         }
 
-        while ((double) this.rotationPitch - (double) this.prevRotationPitch >= 180.0)
+        while ((double) this.rotationPitch - (double) this.prevRotationPitch >= HALF_CIRCLE)
         {
             this.prevRotationPitch += 360.0;
         }
 
-        while ((double) this.rotationYaw - (double) this.prevRotationYaw < -180.0)
+        while ((double) this.rotationYaw - (double) this.prevRotationYaw < -HALF_CIRCLE)
         {
             this.prevRotationYaw -= 360.0;
         }
 
-        while ((double) this.rotationYaw - (double) this.prevRotationYaw >= 180.0)
+        while ((double) this.rotationYaw - (double) this.prevRotationYaw >= HALF_CIRCLE)
         {
             this.prevRotationYaw += 360.0;
         }

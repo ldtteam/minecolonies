@@ -426,7 +426,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private void retrieveRod()
     {
         worker.swingItem();
-        int i = entityFishHook.getDamage(this);
+        int i = entityFishHook.getDamage(this.getCitizen());
         worker.damageItemInHand(i);
         entityFishHook = null;
     }
