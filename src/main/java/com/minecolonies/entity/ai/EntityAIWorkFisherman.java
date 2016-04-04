@@ -215,7 +215,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             if (pathResult.pond != null)
             {
-                job.setWater(new Water(world, pathResult.pond));
+                job.setWater(Pond.createWater(world, pathResult.pond));
                 job.addToPonds(pathResult.pond);
             }
             pathResult = null;
@@ -237,7 +237,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
             return state;
         }
-        job.setWater(new Water(world, job.getPonds().get(itemRand.nextInt(job.getPonds().size()))));
+        job.setWater(Pond.createWater(world, job.getPonds().get(itemRand.nextInt(job.getPonds().size()))));
         return FISHERMAN_CHECK_WATER;
     }
 
@@ -327,13 +327,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private boolean isFishHookStuck()
     {
-        if (entityFishHook.isInWater())
-        {
-            return false;
-        }
-        return entityFishHook.onGround
-               || entityFishHook.fishHookIsOverTimeToLive();
-
+        return !entityFishHook.isInWater() && (entityFishHook.onGround || entityFishHook.fishHookIsOverTimeToLive());
     }
 
     /**

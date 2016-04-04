@@ -1,41 +1,39 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.util.ChunkCoordUtils;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class Water
+public class Pond
 {
     private static final String TAG_LOCATION = "Location";
 
     private ChunkCoordinates location;
-    private boolean water = false;
 
-    private Water()
+    private Pond(){}
+
+    private Pond(World world, ChunkCoordinates water)
     {
-        water = true;
+        this.location = water;
     }
 
-    //TODO: What if that is an illegal pond of water?
-    // I would suggest making the constructor private
-    // and have some factory method check for water and return one if valid
-    Water(World world, ChunkCoordinates water)
+    /**
+     * Creates a new Pond iff water is a valid water block
+     * @param world The world the player is in
+     * @param water the coordinates to check
+     * @return a Pond object if the pond is valid, else null
+     */
+    public static Pond createWater(World world, ChunkCoordinates water)
     {
-        Block block = ChunkCoordUtils.getBlock(world, water);
-        if(block.equals(Blocks.water) && checkWater(world, water))
+        Pond pond = new Pond(world,water);
+        if(checkWater(world,water))
         {
-            this.water = true;
-            location = water;
+            return pond;
         }
-    }
-
-    public boolean isWater()
-    {
-        return water;
+        return null;
     }
 
     /** Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough ( > 20)
@@ -43,7 +41,7 @@ public class Water
      * @param world The world the player is in
      * @param water The coordinate to check
      */
-    private boolean checkWater(World world, ChunkCoordinates water)
+    private static boolean checkWater(World world, ChunkCoordinates water)
     {
         int x = water.posX;
         int y = water.posY;
@@ -60,28 +58,14 @@ public class Water
     }
 
     /**
-     * For use in PathJobFindWater
-     *
-     * @param world the world
-     * @param x log x coordinate
-     * @param y log y coordinate
-     * @param z log z coordinate
-     * @return true if the water is part of a river, sea ...
+     * Checks if all blocks in direction X are Pond
+     * @param world     World
+     * @param x         posX
+     * @param y         posY
+     * @param z         posZ
+     * @param vector    direction
+     * @return true if all blocks are water, else false
      */
-    public static boolean checkWater(IBlockAccess world, int x, int y, int z)
-    {
-        Block shouldBeWater = world.getBlock(x,y,z);
-        Block shouldBeAir = world.getBlock(x,y+1,z);
-        if(!shouldBeWater.equals(Blocks.water) || !shouldBeAir.equals(Blocks.air))
-        {
-            return false;
-        }
-
-        //If not one direction contains a pool with length at least 6 and width 7
-        return checkWaterPoolInDirectionXThenZ(world, x, y, z, 1) || checkWaterPoolInDirectionXThenZ(world, x, y, z, -1) ||
-                checkWaterPoolInDirectionZThenX(world, x, y, z, 1) || checkWaterPoolInDirectionZThenX(world, x, y, z, -1);
-    }
-
     private static boolean checkWaterPoolInDirectionX(IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 3 blocks in direction +/- x
@@ -95,6 +79,15 @@ public class Water
         return true;
     }
 
+    /**
+     * Checks if all blocks in direction Z are Pond
+     * @param world     World
+     * @param x         posX
+     * @param y         posY
+     * @param z         posZ
+     * @param vector    direction
+     * @return true if all blocks are water, else false
+     */
     private static boolean checkWaterPoolInDirectionZ(IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 3 blocks in direction +/- z
@@ -108,6 +101,16 @@ public class Water
         return true;
     }
 
+    /**
+     * Checks if all blocks in direction X are water and if yes from the middle to both sides in
+     * direction Z all blocks are also water.
+     * @param world     World
+     * @param x         posX
+     * @param y         posY
+     * @param z         posZ
+     * @param vector    direction
+     * @return true if all blocks are water, else false
+     */
     private static boolean checkWaterPoolInDirectionXThenZ(IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 6 blocks in direction +/- x
@@ -122,6 +125,16 @@ public class Water
         return checkWaterPoolInDirectionZ(world,x + 3 * vector, y, z, 1) && checkWaterPoolInDirectionZ(world,x + 3 * vector, y, z, -1);
     }
 
+    /**
+     * Checks if all blocks in direction Z are water and if yes from the middle to both sides in
+     * direction X all blocks are also water.
+     * @param world     World
+     * @param x         posX
+     * @param y         posY
+     * @param z         posZ
+     * @param vector    direction
+     * @return true if all blocks are water, else false
+     */
     private static boolean checkWaterPoolInDirectionZThenX(IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 6 blocks in direction +/- z
@@ -149,25 +162,21 @@ public class Water
 
     @Override
     public boolean equals(Object obj){
-        if(!(obj instanceof Water)){
+        if(!(obj instanceof Pond)){
             return false;
         }
-        Water wobj = (Water)obj;
+        Pond wobj = (Pond)obj;
         return location.equals(wobj.getLocation());
     }
 
     public void writeToNBT(NBTTagCompound compound)
     {
-        if(!water)
-        {
-            return;
-        }
         ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, location);
     }
 
-    public static Water readFromNBT(NBTTagCompound compound)
+    public static Pond readFromNBT(NBTTagCompound compound)
     {
-        Water water = new Water();
+        Pond water = new Pond();
         water.location = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
         return water;
     }

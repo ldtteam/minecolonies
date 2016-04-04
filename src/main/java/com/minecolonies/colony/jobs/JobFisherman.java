@@ -3,7 +3,7 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.EntityAIWorkFisherman;
-import com.minecolonies.entity.ai.Water;
+import com.minecolonies.entity.ai.Pond;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,13 +20,13 @@ import java.util.List;
  */
 public class JobFisherman extends Job
 {
-    private static final String TAG_WATER = "Water";
+    private static final String TAG_WATER = "Pond";
     private static final String TAG_PONDS = "Ponds";
 
     /**
      * The water the fisherman is currently fishing at
      */
-    private Water water;
+    private Pond water;
     /**
      * Contains all possible fishing spots
      */
@@ -96,7 +96,7 @@ public class JobFisherman extends Job
 
         if (compound.hasKey(TAG_WATER))
         {
-            water = Water.readFromNBT(compound.getCompoundTag(TAG_WATER));
+            water = Pond.readFromNBT(compound.getCompoundTag(TAG_WATER));
         }
 
         ponds = new ArrayList<>();
@@ -121,7 +121,7 @@ public class JobFisherman extends Job
     /**
      * getter for current water
      */
-    public Water getWater()
+    public Pond getWater()
     {
         return water;
     }
@@ -129,7 +129,7 @@ public class JobFisherman extends Job
     /**
      * Setter for current water
      */
-    public void setWater(Water water)
+    public void setWater(Pond water)
     {
         this.water = water;
     }

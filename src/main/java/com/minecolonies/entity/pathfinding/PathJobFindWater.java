@@ -1,6 +1,6 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.minecolonies.entity.ai.Water;
+import com.minecolonies.entity.ai.Pond;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import java.util.ArrayList;
@@ -92,7 +92,9 @@ public class PathJobFindWater extends PathJob
             return false;
         }
 
-        if(Water.checkWater(world, x, y, z))
+        Pond pond = Pond.createWater((World) world,newPond);
+
+        if(pond != null)
         {
             getResult().pond = new ChunkCoordinates(x, y, z);
             return true;
