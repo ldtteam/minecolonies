@@ -278,7 +278,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private AIState throwOrRetrieveHook()
     {
-        if (getEntityFishHook() == null)
+        if (entityFishHook == null)
         {
             //Only sometimes the fisherman gets to throw its Rod (depends on intelligence)
             if (testRandomChance())
@@ -402,7 +402,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private void retrieveRod()
     {
         worker.swingItem();
-        int i = getEntityFishHook().getDamage(this);
+        int i = entityFishHook.getDamage(this);
         worker.damageItemInHand(i);
     }
 
@@ -419,16 +419,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private InventoryCitizen getInventory()
     {
         return worker.getInventory();
-    }
-
-    public EntityFishHook getEntityFishHook()
-    {
-        return entityFishHook;
-    }
-
-    public void setEntityFishHook(EntityFishHook entityFishHook)
-    {
-        this.entityFishHook = entityFishHook;
     }
 
     public EntityCitizen getCitizen()

@@ -51,7 +51,9 @@ public final class EntityFishHook extends Entity
                                                               new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()), 25),
                                                               new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.func_150976_a()), 2),
                                                               new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.func_150976_a()), 13));
-    public  EntityAIWorkFisherman fisherman;
+    public  EntityCitizen citizen;
+    private int                   fishingSpeedEnchantment;
+    private int                   fishingLootEnchantment;
     private boolean               inGround;
     private int                   shake;
     private int                   movedOnX;
@@ -72,8 +74,7 @@ public final class EntityFishHook extends Entity
     public EntityFishHook(World world, EntityAIWorkFisherman fisherman)
     {
         this(world);
-        this.fisherman = fisherman;
-        this.fisherman.setEntityFishHook(this);
+        this.citizen = fisherman.getCitizen();
         this.setLocationAndAngles(fisherman.getCitizen().posX,
                                   fisherman.getCitizen().posY + 1.62 - (double) fisherman.getCitizen().yOffset,
                                   fisherman.getCitizen().posZ,
@@ -89,6 +90,8 @@ public final class EntityFishHook extends Entity
         this.motionZ = Math.cos(this.rotationYaw / 180.0 * Math.PI) * Math.cos(this.rotationPitch / 180.0 * Math.PI) * f;
         this.motionY = -Math.sin(this.rotationPitch / 180.0 * Math.PI) * f;
         this.setPosition(this.motionX, this.motionY, this.motionZ, 1.5, 1.0);
+        fishingSpeedEnchantment = EnchantmentHelper.func_151386_g(fisherman.getCitizen());
+        fishingLootEnchantment = EnchantmentHelper.func_151387_h(fisherman.getCitizen());
     }
 
     /**
@@ -103,6 +106,8 @@ public final class EntityFishHook extends Entity
         this.setSize(0.25F, 0.25F);
         this.ignoreFrustumCheck = true;
         this.creationTime = System.nanoTime();
+        fishingLootEnchantment = 0;
+        fishingSpeedEnchantment = 0;
     }
 
     private void setPosition(double x, double y, double z, double yaw, double pitch)
@@ -169,22 +174,12 @@ public final class EntityFishHook extends Entity
     public void onUpdate()
     {
         super.onUpdate();
-        if (preconditionsFail())
+        if (bounceFromGround() || this.inGround)
         {
             return;
         }
 
         moveSomeStuff();
-    }
-
-    /**
-     * Test some preconditions and update some stuff.
-     *
-     * @return true if something failed
-     */
-    private boolean preconditionsFail()
-    {
-        return isInGround() || this.inGround;
     }
 
     /**
@@ -194,7 +189,7 @@ public final class EntityFishHook extends Entity
      *
      * @return true if the hook is killed.
      */
-    private boolean isInGround()
+    private boolean bounceFromGround()
     {
         if (this.shake > 0)
         {
@@ -212,20 +207,6 @@ public final class EntityFishHook extends Entity
         this.motionZ *= (this.rand.nextDouble() * 0.2);
 
         return false;
-    }
-
-    /**
-     * Will get destroyed next tick.
-     */
-    @Override
-    public void setDead()
-    {
-        super.setDead();
-
-        if (this.fisherman != null)
-        {
-            this.fisherman.setEntityFishHook(null);
-        }
     }
 
     private void moveSomeStuff()
@@ -418,7 +399,7 @@ public final class EntityFishHook extends Entity
                 else
                 {
                     this.movedOnY = MathHelper.getRandomIntegerInRange(this.rand, 100, 900);
-                    this.movedOnY -= EnchantmentHelper.func_151387_h(this.fisherman.getCitizen()) * 20 * 5;
+                    this.movedOnY -= fishingSpeedEnchantment * 20 * 5;
                 }
             }
 
@@ -478,8 +459,8 @@ public final class EntityFishHook extends Entity
      * Returns a damage value by how much the fishingRod should be damaged.
      * Also spawns loot and exp and destroys the hook.
      *
-     * @return the numer of damage points to be deducted.
      * @param entityAIWorkFisherman the fisherman fishing
+     * @return the numer of damage points to be deducted.
      */
     public int getDamage(final EntityAIWorkFisherman entityAIWorkFisherman)
     {
@@ -511,13 +492,14 @@ public final class EntityFishHook extends Entity
      * and some exp orbs.
      * Should be calles when retrieving a hook.
      * todo: Perhaps streamline this and directly add the items?
+     *
      * @param entityAIWorkFisherman the fisherman getting the loot
      */
     private void spawnLootAndExp(final EntityAIWorkFisherman entityAIWorkFisherman)
     {
-        double     citizenPosX = this.fisherman.getCitizen().posX;
-        double     citizenPosY = this.fisherman.getCitizen().posY;
-        double     citizenPosZ = this.fisherman.getCitizen().posZ;
+        double     citizenPosX = entityAIWorkFisherman.getCitizen().posX;
+        double     citizenPosY = entityAIWorkFisherman.getCitizen().posY;
+        double     citizenPosZ = entityAIWorkFisherman.getCitizen().posZ;
         EntityItem entityitem  = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot(entityAIWorkFisherman));
         double     distanceX   = citizenPosX - this.posX;
         double     distanceY   = citizenPosY - this.posY;
@@ -527,7 +509,7 @@ public final class EntityFishHook extends Entity
         entityitem.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
         entityitem.motionZ = distanceZ * 0.1;
         this.worldObj.spawnEntityInWorld(entityitem);
-        this.fisherman.getCitizen().worldObj.spawnEntityInWorld(new EntityXPOrb(this.fisherman.getCitizen().worldObj,
+        entityAIWorkFisherman.getCitizen().worldObj.spawnEntityInWorld(new EntityXPOrb(entityAIWorkFisherman.getCitizen().worldObj,
                                                                                 citizenPosX,
                                                                                 citizenPosY + 0.D,
                                                                                 citizenPosZ + 0.5,
@@ -540,20 +522,18 @@ public final class EntityFishHook extends Entity
      * The selection is somewhat random and depends on enchantments
      * and the level of the fisherman hut.
      *
-     * @return an ItemStack randomly from the loot table
      * @param entityAIWorkFisherman the fisherman getting the loot
+     * @return an ItemStack randomly from the loot table
      */
     private ItemStack getFishingLoot(final EntityAIWorkFisherman entityAIWorkFisherman)
     {
         double random                  = this.worldObj.rand.nextDouble();
-        int    fishingSpeedEnchantment = EnchantmentHelper.func_151386_g(entityAIWorkFisherman.getCitizen());
-        int    fishingLootEnchantment  = EnchantmentHelper.func_151387_h(entityAIWorkFisherman.getCitizen());
         double speedBonus              = 0.1 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
         double lootBonus               = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
         //clamp_float gives the values an upper limit
         speedBonus = MathHelper.clamp_float((float) speedBonus, 0.0F, 1.0F);
         lootBonus = MathHelper.clamp_float((float) lootBonus, 0.0F, 1.0F);
-        int buildingLevel = fisherman.getCitizen().getWorkBuilding().getBuildingLevel();
+        int buildingLevel = entityAIWorkFisherman.getCitizen().getWorkBuilding().getBuildingLevel();
 
         if (random < speedBonus || buildingLevel == 1)
         {
@@ -572,14 +552,6 @@ public final class EntityFishHook extends Entity
                 return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, possibleDrops_2)).func_150708_a(this.rand);
             }
         }
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int result = super.hashCode();
-        result = 31 * result + (fisherman != null ? fisherman.hashCode() : 0);
-        return result;
     }
 
     public long getCreationTime()

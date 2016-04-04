@@ -86,59 +86,59 @@ public class RenderFishHook extends Render
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GL11.glPopMatrix();
 
-        if (entityFishHook.fisherman != null)
+        if (entityFishHook.citizen != null)
         {
-            final double orientation      = entityFishHook.fisherman.getCitizen().getSwingProgress(angle);
+            final double orientation      = entityFishHook.citizen.getSwingProgress(angle);
             final double finalOrientation = Math.sin(Math.sqrt(orientation) * Math.PI);
             final Vec3   vec3             = Vec3.createVectorHelper(-0.5, 0.03, 0.8);
 
-            vec3.rotateAroundX((float) (-(entityFishHook.fisherman.getCitizen().prevRotationPitch
-                                          + (entityFishHook.fisherman.getCitizen().rotationPitch - entityFishHook.fisherman.getCitizen().prevRotationPitch) * angle) * Math.PI
+            vec3.rotateAroundX((float) (-(entityFishHook.citizen.prevRotationPitch
+                                          + (entityFishHook.citizen.rotationPitch - entityFishHook.citizen.prevRotationPitch) * angle) * Math.PI
                                         / 180.0D));
-            vec3.rotateAroundY((float) (-(entityFishHook.fisherman.getCitizen().prevRotationYaw
-                                          + (entityFishHook.fisherman.getCitizen().rotationYaw - entityFishHook.fisherman.getCitizen().prevRotationYaw) * angle) * Math.PI
+            vec3.rotateAroundY((float) (-(entityFishHook.citizen.prevRotationYaw
+                                          + (entityFishHook.citizen.rotationYaw - entityFishHook.citizen.prevRotationYaw) * angle) * Math.PI
                                         / 180.0D));
             vec3.rotateAroundY((float) (finalOrientation * 0.5D));
             vec3.rotateAroundX((float) (-finalOrientation * 0.7D));
 
             double
                     correctedPosX =
-                    entityFishHook.fisherman.getCitizen().prevPosX
-                    + (entityFishHook.fisherman.getCitizen().posX - entityFishHook.fisherman.getCitizen().prevPosX) * angle
+                    entityFishHook.citizen.prevPosX
+                    + (entityFishHook.citizen.posX - entityFishHook.citizen.prevPosX) * angle
                     + vec3.xCoord;
             double
                     correctedPosY =
-                    entityFishHook.fisherman.getCitizen().prevPosY
-                    + (entityFishHook.fisherman.getCitizen().posY - entityFishHook.fisherman.getCitizen().prevPosY) * angle
+                    entityFishHook.citizen.prevPosY
+                    + (entityFishHook.citizen.posY - entityFishHook.citizen.prevPosY) * angle
                     + vec3.yCoord;
             double
                     correctedPosZ =
-                    entityFishHook.fisherman.getCitizen().prevPosZ
-                    + (entityFishHook.fisherman.getCitizen().posZ - entityFishHook.fisherman.getCitizen().prevPosZ) * angle
+                    entityFishHook.citizen.prevPosZ
+                    + (entityFishHook.citizen.posZ - entityFishHook.citizen.prevPosZ) * angle
                     + vec3.zCoord;
 
-            double scale = (double) entityFishHook.fisherman.getCitizen().getEyeHeight();
+            double scale = (double) entityFishHook.citizen.getEyeHeight();
 
             if (this.renderManager.options.thirdPersonView > 0)
             {
                 double
                         f11 =
-                        ((double) entityFishHook.fisherman.getCitizen().prevRenderYawOffset
-                         + ((double) entityFishHook.fisherman.getCitizen().renderYawOffset - (double) entityFishHook.fisherman.getCitizen().prevRenderYawOffset) * (double) angle)
+                        ((double) entityFishHook.citizen.prevRenderYawOffset
+                         + ((double) entityFishHook.citizen.renderYawOffset - (double) entityFishHook.citizen.prevRenderYawOffset) * (double) angle)
                         * Math.PI / 180.0D;
                 double d7 = Math.sin(f11);
                 double d8 = Math.cos(f11);
 
                 correctedPosX =
-                        entityFishHook.fisherman.getCitizen().prevPosX + (entityFishHook.fisherman.getCitizen().posX - entityFishHook.fisherman.getCitizen().prevPosX) * angle
+                        entityFishHook.citizen.prevPosX + (entityFishHook.citizen.posX - entityFishHook.citizen.prevPosX) * angle
                         - d8 * 0.35
                         - d7 * 0.85;
                 correctedPosY =
-                        entityFishHook.fisherman.getCitizen().prevPosY
+                        entityFishHook.citizen.prevPosY
                         + scale
-                        + (entityFishHook.fisherman.getCitizen().posY - entityFishHook.fisherman.getCitizen().prevPosY) * angle - 0.45;
+                        + (entityFishHook.citizen.posY - entityFishHook.citizen.prevPosY) * angle - 0.45;
                 correctedPosZ =
-                        entityFishHook.fisherman.getCitizen().prevPosZ + (entityFishHook.fisherman.getCitizen().posZ - entityFishHook.fisherman.getCitizen().prevPosZ) * angle
+                        entityFishHook.citizen.prevPosZ + (entityFishHook.citizen.posZ - entityFishHook.citizen.prevPosZ) * angle
                         - d7 * 0.35 + d8 * 0.85;
             }
 
