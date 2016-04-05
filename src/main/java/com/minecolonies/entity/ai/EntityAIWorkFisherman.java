@@ -32,6 +32,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private static final int    MAX_PONDS             = 20;
     /**
      * Variable to calculate the delay the fisherman needs to throw his rod.
+     * The delay will be calculated randomly. The FISHING_DELAY defines the upper limit.
+     * The delay is calculated using the CHANCE anf fishingSkill variables. A higher FISHING_DELAY will lead
+     * to a longer delay.
      */
     private static final int    FISHING_DELAY         = 500;
     /**
@@ -39,7 +42,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private static final int    CHANCE                = 2;
     /**
-     * The minimum distance to the water which is required for the fisherman to throw his rod.
+     * The minimum distance in blocks to the water which is required for the fisherman to throw his rod.
      */
     private static final int    MIN_DISTANCE_TO_WATER = 3;
     /**
@@ -76,7 +79,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private int fishingSkill      = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
     /**
-     * Connects the fishingHook with the citizen.
+     * Connects the citizen with the fishingHook.
      */
     private EntityFishHook entityFishHook;
 
@@ -165,9 +168,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     /**
-     * Contains the items which the fisherman requires to work.
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
      * @param stack the stack to decide on
-     * @return the needed items
+     * @return true if the stack should remain in inventory
      */
     @Override
     protected boolean neededForWorker(ItemStack stack)
