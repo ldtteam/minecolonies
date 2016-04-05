@@ -39,7 +39,7 @@ public class PathJobFindWater extends PathJob
     PathJobFindWater(World world, ChunkCoordinates start, ChunkCoordinates home, int range, List<ChunkCoordinates> ponds)
     {
         super(world, start, start, range, new WaterPathResult());
-        this.ponds.addAll(ponds);
+        this.ponds = new ArrayList<>(ponds);
         hutLocation = home;
     }
 
