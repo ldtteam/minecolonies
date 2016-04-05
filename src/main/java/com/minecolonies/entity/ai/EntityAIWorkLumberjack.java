@@ -431,10 +431,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a instanceof BlockSapling;
     }
 
+    /**
+     * Can be overridden in implementations.
+     * <p>
+     * Here the AI can check if the chestBelt has to be re rendered and do it.
+     */
     @Override
-    public void updateTask()
+    protected void updateRenderMetaData()
     {
-        //TODO always has to be executed!
         worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
     }
 
@@ -475,73 +479,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     public void resetTask()
     {
         job.setStage(Stage.IDLE);
-    }
-
-    private void requestAxe()
-    {
-        //TODO request by tool type
-        //job.addItemNeeded();
-        worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), 4);//Go Home
-    }
-
-    private void dumpInventory()
-    {
-        if (worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), 4))
-        {
-            int saplingStacks = 0;
-            for (int i = 0; i < getInventory().getSizeInventory(); i++)
-            {
-                ItemStack stack = getInventory().getStackInSlot(i);
-                if (stack != null && !isStackAxe(stack))
-                {
-                    if (isStackSapling(stack) && saplingStacks < 5)
-                    {
-                        saplingStacks++;
-                    }
-                    else
-                    {
-                        ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(), stack);//TODO tile entity null
-                        if (returnStack == null)
-                        {
-                            getInventory().decrStackSize(i, stack.stackSize);
-                        }
-                        else
-                        {
-                            getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
-                        }
-                    }
-                }
-            }
-            job.setStage(Stage.IDLE);
-        }
-    }
-
-    private boolean hasAxe()
-    {
-        return getAxeSlot() != -1;
-    }
-
-    private boolean hasAxeWithEquip()
-    {
-        if (hasAxe())
-        {
-            if (!isStackAxe(worker.getHeldItem()))
-            {
-                equipAxe();
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private int getAxeSlot()
-    {
-        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_AXE);
-    }
-
-    private void equipAxe()
-    {
-        worker.setHeldItem(getAxeSlot());
     }
 
     public enum Stage

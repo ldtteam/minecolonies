@@ -92,6 +92,9 @@ public class PathJobFindWater extends PathJob
             return false;
         }
 
+        /*todo: unsafe conversion
+        * todo: use IBlockAccess because that is what the pathJob returns
+        */
         Pond pond = Pond.createWater((World) world,newPond);
 
         if(pond != null)
