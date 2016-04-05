@@ -17,11 +17,16 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.entity.ai.AIState.*;
 
+/**
+ * The lumberjack AI class
+ */
 public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 {
     private static final String TOOL_TYPE_AXE           = "axe";
+    /**
+     * The render name to render logs
+     */
     private static final String RENDER_META_LOGS        = "Logs";
-    private static final int    MAX_LOG_BREAK_TIME      = 30;
     /**
      * The range in which the lumberjack searches for trees.
      */
@@ -79,23 +84,20 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * Vertical range in which the lumberjack picks up items
      */
     private static final float  RANGE_VERTICAL_PICKUP   = 15.0F;
-
-
-    private int chopTicks        = 0;
     /**
      * Number of ticks the lumberjack is standing still
      */
-    private int stillTicks       = 0;
+    private              int    stillTicks              = 0;
     /**
      * Used to store the walk distance
      * to check if the lumberjack is still walking
      */
-    private int previousDistance = 0;
+    private              int    previousDistance        = 0;
     /**
      * Used to store the path index
      * to check if the lumberjack is still walking
      */
-    private int previousIndex    = 0;
+    private              int    previousIndex           = 0;
     /**
      * Positions of all items that have to be collected.
      */
@@ -115,6 +117,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private int searchIncrement  = 0;
 
+    /**
+     * Create a new LumberjackAI
+     *
+     * @param job the lumberjackjob
+     */
     public EntityAIWorkLumberjack(JobLumberjack job)
     {
         super(job);
