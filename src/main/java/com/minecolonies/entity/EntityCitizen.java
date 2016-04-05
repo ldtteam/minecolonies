@@ -740,7 +740,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
         {
-            experience = this.getExperiencePoints(this.attackingPlayer);
+            experience = this.getExperiencePoints();
 
             while (experience > 0)
             {
