@@ -1,6 +1,5 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -20,54 +19,66 @@ import static com.minecolonies.entity.ai.AIState.*;
 
 public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 {
-    private static final String TOOL_TYPE_AXE          = "axe";
-    private static final String RENDER_META_LOGS       = "Logs";
-    private static final int    MAX_LOG_BREAK_TIME     = 30;
+    private static final String TOOL_TYPE_AXE           = "axe";
+    private static final String RENDER_META_LOGS        = "Logs";
+    private static final int    MAX_LOG_BREAK_TIME      = 30;
     /**
      * The range in which the lumberjack searches for trees.
      */
-    private static final int    SEARCH_RANGE           = 50;
+    private static final int    SEARCH_RANGE            = 50;
     /**
      * If no trees are found, increment the range
      */
-    private static final int    SEARCH_INCREMENT       = 5;
+    private static final int    SEARCH_INCREMENT        = 5;
     /**
      * If this limit is reached, no trees are found.
      */
-    private static final int    SEARCH_LIMIT           = 150;
+    private static final int    SEARCH_LIMIT            = 150;
     /**
      * Number of ticks to wait before coming
      * to the conclusion of being stuck
      */
-    private static final int    STUCK_WAIT_TIME        = 10;
+    private static final int    STUCK_WAIT_TIME         = 10;
     /**
      * Number of ticks until he gives up destroying leaves
      * and walks a bit back to try a new path
      */
-    private static final int    WALKING_BACK_WAIT_TIME = 60;
+    private static final int    WALKING_BACK_WAIT_TIME  = 60;
     /**
      * How much he backs away when really not finding any path
      */
-    private static final double WALK_BACK_RANGE        = 3.0;
+    private static final double WALK_BACK_RANGE         = 3.0;
     /**
      * The speed in which he backs away
      */
-    private static final double WALK_BACK_SPEED        = 1.0;
+    private static final double WALK_BACK_SPEED         = 1.0;
     /**
      * Time in ticks to wait before placing a sapling.
      * Is used to collect falling saplings from the ground.
      */
-    private static final int    WAIT_BEFORE_SAPLING    = 100;
+    private static final int    WAIT_BEFORE_SAPLING     = 100;
     /**
      * Time in ticks to wait before rechecking
      * if there are trees in the
      * range of the lumberjack
      */
-    private static final int    WAIT_BEFORE_SEARCH     = 100;
+    private static final int    WAIT_BEFORE_SEARCH      = 100;
     /**
      * Time in ticks before incrementing the search radius.
      */
-    private static final int    WAIT_BEFORE_INCREMENT  = 20;
+    private static final int    WAIT_BEFORE_INCREMENT   = 20;
+    /**
+     * The amount of time to wait while walking to items
+     */
+    private static final int    WAIT_WHILE_WALKING      = 5;
+    /**
+     * Horizontal range in which the lumberjack picks up items
+     */
+    private static final float  RANGE_HORIZONTAL_PICKUP = 45.0F;
+    /**
+     * Vertical range in which the lumberjack picks up items
+     */
+    private static final float  RANGE_VERTICAL_PICKUP   = 15.0F;
 
 
     private int chopTicks        = 0;
@@ -75,12 +86,33 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * Number of ticks the lumberjack is standing still
      */
     private int stillTicks       = 0;
+    /**
+     * Used to store the walk distance
+     * to check if the lumberjack is still walking
+     */
     private int previousDistance = 0;
+    /**
+     * Used to store the path index
+     * to check if the lumberjack is still walking
+     */
     private int previousIndex    = 0;
-    private int logBreakTime     = Integer.MAX_VALUE;
+    /**
+     * Positions of all items that have to be collected.
+     */
     private List<ChunkCoordinates>         items;
+    /**
+     * The active pathfinding job used to walk to trees
+     */
     private PathJobFindTree.TreePathResult pathResult;
+    /**
+     * Lumberjack woodcutting experience
+     * todo: enable usage of this
+     */
     private int woodCuttingSkill = worker.getStrength() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
+    /**
+     * A counter by how much the tree search radius
+     * has been increased by now.
+     */
     private int searchIncrement  = 0;
 
     public EntityAIWorkLumberjack(JobLumberjack job)
@@ -405,7 +437,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         if (items == null)
         {
             searchForItems();
-            return state;
         }
         if (!items.isEmpty())
         {
@@ -416,43 +447,69 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         return LUMBERJACK_SEARCHING_TREE;
     }
 
+    /**
+     * Search for all items around the Lumberjack
+     * and store them in the items list
+     */
     private void searchForItems()
     {
         items = new ArrayList<>();
-
-        @SuppressWarnings("unchecked") List<EntityItem> list = world.getEntitiesWithinAABB(EntityItem.class, worker.boundingBox.expand(15.0F, 3.0F, 15.0F));
+        List<EntityItem> list = new ArrayList<>();
+        for (Object o : world.getEntitiesWithinAABB(EntityItem.class, worker.boundingBox.expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)))
+        {
+            if (o instanceof EntityItem)
+            {
+                list.add((EntityItem) o);
+            }
+        }
 
         //TODO check if sapling or apple (currently picks up all items, which may be okay)
-        items.addAll(list.stream().filter(item -> item != null && !item.isDead).map(ChunkCoordUtils::fromEntity).collect(Collectors.toList()));
+        items = list.stream()
+                    .filter(item -> item != null && !item.isDead)
+                    .map(ChunkCoordUtils::fromEntity)
+                    .collect(Collectors.toList());
     }
 
+    /**
+     * Collect one item by walking to it
+     */
     private void gatherItems()
     {
         if (worker.getNavigator().noPath())
         {
             ChunkCoordinates pos = getAndRemoveClosestItem();
             worker.isWorkerAtSiteWithMove(pos, 3);
+            return;
         }
-        else if (worker.getNavigator().getPath() != null)
+        if (worker.getNavigator().getPath() == null)
         {
-            int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
-            if (currentIndex == previousIndex)
-            {
-                stillTicks++;
-                if (stillTicks > 20)//Stuck
-                {
-                    worker.getNavigator().clearPathEntity();//Skip this item
-                    //System.out.println("Lumberjack skipped item (couldn't reach)");
-                }
-            }
-            else
-            {
-                stillTicks = 0;
-                previousIndex = currentIndex;
-            }
+            setDelay(WAIT_WHILE_WALKING);
+            return;
+        }
+
+        int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
+        //We moved a bit, not stuck
+        if (currentIndex != previousIndex)
+        {
+            stillTicks = 0;
+            previousIndex = currentIndex;
+            return;
+        }
+
+        stillTicks++;
+        //Stuck for too long
+        if (stillTicks > 20)
+        {
+            //Skip this item
+            worker.getNavigator().clearPathEntity();
         }
     }
 
+    /**
+     * Find the closest item and remove it from the list.
+     *
+     * @return the closest item
+     */
     private ChunkCoordinates getAndRemoveClosestItem()
     {
         int   index    = 0;
@@ -471,12 +528,27 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         return items.remove(index);
     }
 
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
     @Override
     protected boolean neededForWorker(ItemStack stack)
     {
         return isStackAxe(stack) || isStackSapling(stack);
     }
 
+    /**
+     * Check if a stack is an axe
+     * todo: use parent code
+     *
+     * @param stack the stack to check
+     * @return true if an axe
+     */
     private boolean isStackAxe(ItemStack stack)
     {
         return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_AXE);
@@ -493,6 +565,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
     }
 
+    /**
+     * Checks if the lumberjack has logs in it's inventory.
+     *
+     * @return true if he has logs
+     */
     private boolean hasLogs()
     {
         for (int i = 0; i < getInventory().getSizeInventory(); i++)
@@ -505,6 +582,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         return false;
     }
 
+    /**
+     * Checks if a stack is a type of log
+     *
+     * @param stack the stack to check
+     * @return true if it is a log type
+     */
     private boolean isStackLog(ItemStack stack)
     {
         return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a.isWood(null, 0, 0, 0);
@@ -518,27 +601,5 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     protected void workOnTask()
     {
         //Migration to new system complete
-    }
-
-    @Override
-    public boolean continueExecuting()
-    {
-        return super.continueExecuting();
-    }
-
-    @Override
-    public void resetTask()
-    {
-        job.setStage(Stage.IDLE);
-    }
-
-    public enum Stage
-    {
-        IDLE,
-        //No resources
-        SEARCHING,
-        CHOPPING,
-        GATHERING,
-        INVENTORY_FULL
     }
 }

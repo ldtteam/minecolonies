@@ -314,7 +314,7 @@ public class ChunkCoordUtils
     }
 
     /**
-     * Returns the Chunk Coordinate created from an enitty
+     * Returns the Chunk Coordinate created from an entity
      *
      * @param entity        Entity to create chunk coordinates from
      * @return              Chunk Coordinates created from the entity
