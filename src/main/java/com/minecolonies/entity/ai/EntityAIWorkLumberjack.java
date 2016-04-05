@@ -1,5 +1,6 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.inventory.InventoryCitizen;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.entity.ai.AIState.*;
+
 public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 {
     private static final String TOOL_TYPE_AXE    = "axe";
@@ -34,106 +37,142 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     private int logBreakTime = Integer.MAX_VALUE;
     private List<ChunkCoordinates> items;
     private PathJobFindTree.TreePathResult pathResult;
+    private int woodCuttingSkill    = worker.getStrength() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
+    private boolean inventoryFull = false;
 
     public EntityAIWorkLumberjack(JobLumberjack job)
     {
         super(job);
+        super.registerTargets(
+                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+                new AITarget(PREPARING, this::prepareForWoodcutting),
+                new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
+                new AITarget(LUMBERJACK_CHOPP_TREES, this::choppWood),
+                new AITarget(LUMBERJACK_GATHERING, this::gathering)
+        );
     }
 
-    @Override
-    public void startExecuting()
+    private AIState startWorkingAtOwnBuilding()
     {
-        //TODO: rework with new AI framework
+        if (walkToBuilding())
+        {
+            return state;
+        }
+        return PREPARING;
+    }
+
+    /**
+     * Checks if lumberjack has all neccessary tools
+     * @return next AIState
+     */
+    private AIState prepareForWoodcutting()
+    {
         if(!hasAxeWithEquip())
         {
             requestAxe();
         }
+        else
+        {
+            return LUMBERJACK_SEARCHING_TREE;
+        }
+        return state;
+    }
+
+    /**
+     * Checks if lumberjack has already found some trees. If not search trees.
+     * @return next AIState
+     */
+    private AIState findTrees()
+    {
+        if(job.tree == null)
+        {
+            findTree();
+        }
+        else
+        {
+            return LUMBERJACK_CHOPP_TREES;
+        }
+        return state;
+    }
+
+    /**
+     * Again checks if all preconditions are given to execute chopping.
+     * If yes go chopping, else return to previous AIStates.
+     * @return next AIState
+     */
+    private AIState choppWood()
+    {
+        if(!hasAxeWithEquip())
+        {
+            return IDLE;
+        }
+        else if(job.tree == null)
+        {
+            return LUMBERJACK_SEARCHING_TREE;
+        }
+        else
+        {
+            if(logBreakTime == Integer.MAX_VALUE)
+            {
+                ItemStack axe = worker.getHeldItem();
+                logBreakTime = MAX_LOG_BREAK_TIME - (int) axe.getItem().getDigSpeed(axe, ChunkCoordUtils.getBlock(world, job.tree.getLocation()), ChunkCoordUtils.getBlockMetadata(world, job.tree.getLocation()));
+            }
+
+            chopTree();
+        }
+        return state;
+    }
+
+    /**
+     * Checks if the lumberjack found items on the ground, if yes collect them, if not search for them.
+     * @return
+     */
+    private AIState gathering()
+    {
+        if(items == null)
+        {
+            searchForItems();
+        }
+        else if(!items.isEmpty())
+        {
+            gatherItems();
+        }
+        else
+        {
+            items = null;
+            return LUMBERJACK_SEARCHING_TREE;
+        }
+        return state;
+    }
+
+    @Override
+    protected boolean wantInventoryDumped()
+    {
+        return inventoryFull;
+    }
+
+    @Override
+    protected boolean neededForWorker(ItemStack stack)
+    {
+        return isStackAxe(stack) || isStackSapling(stack);
     }
 
     @Override
     public void updateTask()
     {
-        if(delay > 0)
-        {
-            delay--;
-            return;
-        }
-
+        //TODO always has to be executed!
         worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
-
-        switch(job.getStage())
-        {
-            case IDLE:
-                if(!hasAxeWithEquip())
-                {
-                    requestAxe();
-                }
-                else
-                {
-                    job.setStage(Stage.SEARCHING);
-                }
-                break;
-            case SEARCHING:
-                if(job.tree == null)
-                {
-                    findTree();
-                }
-                else
-                {
-                    job.setStage(Stage.CHOPPING);
-                }
-                break;
-            case CHOPPING:
-                if(!hasAxeWithEquip())
-                {
-                    job.setStage(Stage.IDLE);
-                }
-                else if(job.tree == null)
-                {
-                    job.setStage(Stage.SEARCHING);
-                }
-                else
-                {
-                    if(logBreakTime == Integer.MAX_VALUE)
-                    {
-                        ItemStack axe = worker.getHeldItem();
-                        logBreakTime = MAX_LOG_BREAK_TIME - (int) axe.getItem().getDigSpeed(axe, ChunkCoordUtils.getBlock(world, job.tree.getLocation()), ChunkCoordUtils.getBlockMetadata(world, job.tree.getLocation()));
-                    }
-
-                    chopTree();
-                }
-                break;
-            //Entities now pick up nearby items
-            case GATHERING:
-                if(items == null)
-                {
-                    searchForItems();
-                }
-                else if(!items.isEmpty())
-                {
-                    gatherItems();
-                }
-                else
-                {
-                    items = null;
-                    job.setStage(Stage.SEARCHING);
-                }
-                break;
-            case INVENTORY_FULL:
-                dumpInventory();
-                break;
-            default:
-                //System.out.println("Invalid stage in EntityAIWorkLumberjack");
-        }
     }
 
     /**
-     * This method will be overridden by AI implementations
+     * This method will be overridden by AI implementations.
+     * It will serve as a tick function.
      */
     @Override
     protected void workOnTask()
     {
-        //TODO: rework the lumberjack to use workOnTask eventually
+        //Migration to new system complete
     }
 
     @Override
