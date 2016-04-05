@@ -227,30 +227,32 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
         {
             ItemStack stack = getInventory().getStackInSlot(slot);
-            if (stack != null && stack.getItem() instanceof ItemBlock)
+            if (isStackSapling(stack))
             {
                 Block block = ((ItemBlock) stack.getItem()).field_150939_a;
-                if (block instanceof BlockSapling)
+                worker.setHeldItem(slot);
+                if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
                 {
-                    worker.setHeldItem(slot);
-                    if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
-                    {
-                        worker.swingItem();
-                        world.playSoundEffect((float) location.posX + 0.5F,
-                                              (float) location.posY + 0.5F,
-                                              (float) location.posZ + 0.5F,
-                                              block.stepSound.getBreakSound(),
-                                              block.stepSound.getVolume(),
-                                              block.stepSound.getPitch());
-                        getInventory().decrStackSize(slot, 1);
-                        setDelay(10);
-                        return true;
-                    }
-                    break;
+                    worker.swingItem();
+                    world.playSoundEffect((float) location.posX + 0.5F,
+                                          (float) location.posY + 0.5F,
+                                          (float) location.posZ + 0.5F,
+                                          block.stepSound.getBreakSound(),
+                                          block.stepSound.getVolume(),
+                                          block.stepSound.getPitch());
+                    getInventory().decrStackSize(slot, 1);
+                    setDelay(10);
+                    return true;
                 }
+                break;
             }
         }
         return false;
+    }
+
+    private boolean isStackSapling(ItemStack stack)
+    {
+        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a instanceof BlockSapling;
     }
 
     /**
@@ -418,11 +420,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     private boolean isStackAxe(ItemStack stack)
     {
         return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_AXE);
-    }
-
-    private boolean isStackSapling(ItemStack stack)
-    {
-        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a instanceof BlockSapling;
     }
 
     /**
