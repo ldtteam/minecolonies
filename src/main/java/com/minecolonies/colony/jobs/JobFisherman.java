@@ -57,7 +57,7 @@ public class JobFisherman extends Job
     public RenderBipedCitizen.Model getModel()
     {
         //todo: Add Fisherman
-        return RenderBipedCitizen.Model.FARMER;
+        return RenderBipedCitizen.Model.FISHERMAN;
     }
 
     /**

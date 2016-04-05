@@ -73,6 +73,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return PREPARING;
     }
 
+    /**
+     * Prepares the fisherman for fishing
+     * requests fishingRod and check if the fisherman already had found a pond
+     * @return the next AIState
+     */
     private AIState prepareForFishing()
     {
         if (checkOrRequestItems(new ItemStack(Items.fishing_rod)))
@@ -86,6 +91,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return FISHERMAN_WALKING_TO_WATER;
     }
 
+    /**
+     * After the fisherman has caught 10 fishes -> dump inventory
+     * @return true if the inventory should be dumped
+     */
     @Override
     protected boolean wantInventoryDumped()
     {

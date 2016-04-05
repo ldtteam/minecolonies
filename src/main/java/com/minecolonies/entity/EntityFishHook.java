@@ -32,11 +32,11 @@ public final class EntityFishHook extends Entity
     /**
      * Number of seconds to wait before removing a stuck hook
      */
-    private static final int    TTL                         = 360;
+    private static final int  TTL        = 360;
     /**
      * possible drop list for level 3 building
      */
-    private static final List   possibleDrops_1             = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
+    private static final List  chunkDrops  = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
                                                                             new WeightedRandomFishable(new ItemStack(Items.leather), 10),
                                                                             new WeightedRandomFishable(new ItemStack(Items.bone), 10),
                                                                             new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
@@ -50,11 +50,11 @@ public final class EntityFishHook extends Entity
     /**
      * Entity size to scale it down
      */
-    private static final float  ENTITY_SIZE                 = 0.25F;
+    private static final float ENTITY_SIZE = 0.25F;
     /**
      * possible drop list for level 2 building
      */
-    private static final List   possibleDrops_2             = Arrays.asList(new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
+    private static final List rareDrops = Arrays.asList(new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
                                                                             new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
                                                                             new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
                                                                             (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(ENTITY_SIZE).func_150707_a(),
@@ -64,7 +64,7 @@ public final class EntityFishHook extends Entity
     /**
      * possible drop list for level 1 building
      */
-    private static final List   possibleDrops_3             = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
+    private static final List fishDrops = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
                                                                             new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()),
                                                                                                        25),
                                                                             new WeightedRandomFishable(new ItemStack(Items.fish,
@@ -717,7 +717,7 @@ public final class EntityFishHook extends Entity
 
         if (random < speedBonus || buildingLevel == 1)
         {
-            return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, possibleDrops_3)).func_150708_a(this.rand);
+            return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, fishDrops)).func_150708_a(this.rand);
         }
         else
         {
@@ -725,11 +725,11 @@ public final class EntityFishHook extends Entity
 
             if (random < lootBonus || buildingLevel == 2)
             {
-                return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, possibleDrops_1)).func_150708_a(this.rand);
+                return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, chunkDrops)).func_150708_a(this.rand);
             }
             else
             {
-                return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, possibleDrops_2)).func_150708_a(this.rand);
+                return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, rareDrops)).func_150708_a(this.rand);
             }
         }
     }

@@ -23,7 +23,8 @@ public class RenderBipedCitizen extends RenderBiped
         DELIVERYMAN ( "Deliveryman",    1 ),
         MINER       ( "Miner",          1 ),
         LUMBERJACK  ( "Lumberjack",     1 ),//4 male, 1 female
-        FARMER      ( "Farmer",         1 );
+        FARMER      ( "Farmer",         1 ),
+        FISHERMAN      ( "Fisherman",         1 );
 
         Model(String textureBase, int numTextures)
         {
@@ -45,7 +46,7 @@ public class RenderBipedCitizen extends RenderBiped
     {
         idToMaleModelMap.put    (Model.DELIVERYMAN,     new ModelEntityDeliverymanMale());
         idToMaleModelMap.put    (Model.LUMBERJACK,      new ModelEntityLumberjackMale());
-        idToMaleModelMap.put    (Model.FARMER,          new ModelEntityFarmerMale());
+        idToMaleModelMap.put    (Model.FARMER,          new ModelEntityFarmerMale()); //TODO male
 
         idToFemaleModelMap.put  (Model.NOBLE,           new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put  (Model.ARISTOCRAT,      new ModelEntityCitizenFemaleAristocrat());
@@ -54,6 +55,8 @@ public class RenderBipedCitizen extends RenderBiped
         idToFemaleModelMap.put  (Model.MINER,           new ModelEntityMinerFemale());
         idToFemaleModelMap.put  (Model.LUMBERJACK,      new ModelEntityLumberjackFemale());
         idToFemaleModelMap.put  (Model.FARMER,          new ModelEntityFarmerFemale());
+        idToMaleModelMap.put    (Model.FISHERMAN,       new ModelEntityFarmerFemale()); //TODO female
+
     }
 
     /**
