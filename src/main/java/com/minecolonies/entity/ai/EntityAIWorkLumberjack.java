@@ -1,10 +1,10 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
-import com.minecolonies.util.InventoryUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.item.EntityItem;
@@ -43,6 +43,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * The speed in which he backs away
      */
     private static final double WALK_BACK_SPEED        = 1.0;
+    /**
+     * Time in ticks to wait before placing a sapling.
+     * Is used to collect falling saplings from the ground.
+     */
+    private static final int WAIT_BEFORE_SAPLING      = 100;
     private              int    chopTicks              = 0;
     /**
      * Number of ticks the lumberjack is standing still
@@ -151,71 +156,53 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         {
             return LUMBERJACK_SEARCHING_TREE;
         }
-        if (logBreakTime == Integer.MAX_VALUE)
-        {
-            //todo: use api diggingspeed and use setDelay()
-            ItemStack axe = worker.getHeldItem();
-            logBreakTime = MAX_LOG_BREAK_TIME - (int) axe.getItem().getDigSpeed(
-                    axe, ChunkCoordUtils.getBlock(world, job.tree.getLocation()),
-                    ChunkCoordUtils.getBlockMetadata(world, job.tree.getLocation()));
-        }
         chopTree();
         return state;
     }
 
+    /**
+     * Place a sappling for the current tree.
+     */
+    private void plantSapling(){
+        //TODO place correct sapling
+        plantSapling(job.tree.getLocation());
+        job.tree = null;
+    }
+
+    /**
+     * Work on the tree.
+     * First find your way to the tree trunk.
+     * Then chop away
+     * and wait for saplings to drop
+     * then place a sapling
+     */
     private void chopTree()
     {
         ChunkCoordinates location = job.tree.getLocation();
-
-        if (!walkToBlock(location))
+        MineColonies.logger.info(location.toString());
+        if (walkToBlock(location))
         {
             checkIfStuckOnLeaves(location);
-
             return;
         }
 
-        if (chopTicks == logBreakTime)//log break
+        if (!job.tree.hasLogs())
         {
-            ChunkCoordinates log   = job.tree.pollNextLog();//remove log from queue
-            Block            block = ChunkCoordUtils.getBlock(world, log);
-            if (block.isWood(null, 0, 0, 0))
+            if(hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
-                //handle drops (usually one log)
-                List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, log, 0);//0 is fortune level, it doesn't matter
-                for (ItemStack item : items)
-                {
-                    InventoryUtils.setStack(getInventory(), item);
-                }
-                //break block
-                worker.breakBlockWithToolInHand(log);
+                return;
             }
+            plantSapling();
+            return;
+        }
 
-            //tree is gone
-            if (!job.tree.hasLogs())
-            {
-                //TODO place correct sapling
-                plantSapling(location);
-                job.tree = null;
-                logBreakTime = Integer.MAX_VALUE;
-            }
-            chopTicks = -1;//will be increased to 0 at the end of the method
+        //take first log from queue
+        ChunkCoordinates log = job.tree.peekNextLog();
+        MineColonies.logger.info(location.toString() + " | "+log.toString());
+        if(!mineBlock(log)){
+            return;
         }
-        else if (chopTicks % 5 == 0)//time to swing and play sounds
-        {
-            ChunkCoordinates log   = job.tree.peekNextLog();
-            Block            block = ChunkCoordUtils.getBlock(world, log);
-            if (chopTicks == 0)
-            {
-                if (!block.isWood(null, 0, 0, 0))
-                {
-                    chopTicks = logBreakTime;
-                    return;
-                }
-                worker.getLookHelper().setLookPosition(log.posX, log.posY, log.posZ, 10f, worker.getVerticalFaceSpeed());//TODO doesn't work right
-            }
-            worker.hitBlockWithToolInHand(log);
-        }
-        chopTicks++;
+        job.tree.pollNextLog();
     }
 
     /**

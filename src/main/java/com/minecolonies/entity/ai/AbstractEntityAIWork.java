@@ -763,12 +763,21 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             MineColonies.logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool + "\n"
                                      + "Please report to MineColonies with this text to add support!");
         }
+
+        if(walkToBlock(safeStand)){
+            return true;
+        }
         currentWorkingLocation = blockToMine;
         currentStandingLocation = safeStand;
+
+
+        return hasNotDelayed(getBlockMiningDelay(curBlock, blockToMine));
+    }
+
+    protected final boolean hasNotDelayed(int time){
         if (!hasDelayed)
         {
-            workOnBlock(currentWorkingLocation, currentStandingLocation,
-                        getBlockMiningDelay(curBlock, blockToMine));
+            setDelay(time);
             hasDelayed = true;
             return true;
         }

@@ -1050,6 +1050,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     private void hitBlockWithToolInHand(int x, int y, int z, boolean breakBlock)
     {
+        //todo: this is not optimal but works
+        getLookHelper().setLookPosition(x, y, z, 10f, getVerticalFaceSpeed());
+
         this.swingItem();
 
         Block block = worldObj.getBlock(x, y, z);
