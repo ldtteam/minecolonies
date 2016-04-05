@@ -1,10 +1,10 @@
 package com.schematica.client.events;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.util.Log;
 import com.schematica.Settings;
 import com.schematica.client.renderer.RendererSchematicChunk;
 import com.schematica.world.SchematicWorld;
-import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;

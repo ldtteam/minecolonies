@@ -1,9 +1,9 @@
 package com.minecolonies.util;
 
-import com.schematica.world.SchematicWorld;
-import com.schematica.world.schematic.SchematicFormat;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
+import com.schematica.world.SchematicWorld;
+import com.schematica.world.schematic.SchematicFormat;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;

@@ -1,21 +1,21 @@
 package com.minecolonies.proxy;
 
-import com.minecolonies.client.render.RenderFishHook;
-import com.minecolonies.entity.EntityFishHook;
-import com.schematica.client.events.TickHandler;
-import com.schematica.client.renderer.RendererSchematicGlobal;
-import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.gui.WindowBuildTool;
 import com.minecolonies.client.gui.WindowCitizen;
 import com.minecolonies.client.render.EmptyTileEntitySpecialRenderer;
 import com.minecolonies.client.render.RenderBipedCitizen;
+import com.minecolonies.client.render.RenderFishHook;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.event.ClientEventHandler;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+import com.schematica.client.events.TickHandler;
+import com.schematica.client.renderer.RendererSchematicGlobal;
+import com.schematica.world.SchematicWorld;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;

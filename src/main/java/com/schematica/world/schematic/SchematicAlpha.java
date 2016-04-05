@@ -1,8 +1,8 @@
 package com.schematica.world.schematic;
 
+import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.util.Log;
 import com.schematica.world.SchematicWorld;
-import com.minecolonies.blocks.BlockHut;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
