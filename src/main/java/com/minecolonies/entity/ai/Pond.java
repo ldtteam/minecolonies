@@ -26,10 +26,9 @@ public class Pond
      */
     public static Pond createWater(World world, ChunkCoordinates water)
     {
-        Pond pond = new Pond(water);
         if(checkWater(world,water))
         {
-            return pond;
+            return new Pond(water);
         }
         return null;
     }
