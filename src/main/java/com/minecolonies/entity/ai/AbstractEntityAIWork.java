@@ -281,9 +281,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private AIState waitForShovel()
     {
-        checkForShovel();
-        delay += DELAY_RECHECK;
-        return NEEDS_SHOVEL;
+        if (checkForShovel())
+        {
+            delay += DELAY_RECHECK;
+            return NEEDS_SHOVEL;
+        }
+        return IDLE;
     }
 
     /**
@@ -300,7 +303,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
 
     private boolean checkForTool(String tool)
     {
-        boolean needsTool = InventoryFunctions
+        boolean needsTool = !InventoryFunctions
                 .matchFirstInInventory(
                         worker.getInventory(),
                         stack -> Utils.isTool(stack, tool),
@@ -381,9 +384,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private AIState waitForAxe()
     {
-        checkForAxe();
-        delay += DELAY_RECHECK;
-        return NEEDS_AXE;
+        if (checkForAxe())
+        {
+            delay += DELAY_RECHECK;
+            return NEEDS_AXE;
+        }
+        return IDLE;
     }
 
     /**
@@ -405,9 +411,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private AIState waitForHoe()
     {
-        checkForHoe();
-        delay += DELAY_RECHECK;
-        return NEEDS_HOE;
+        if (checkForHoe())
+        {
+            delay += DELAY_RECHECK;
+            return NEEDS_HOE;
+        }
+        return IDLE;
     }
 
     /**
@@ -429,9 +438,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private AIState waitForPickaxe()
     {
-        checkForPickaxe(needsPickaxeLevel);
-        delay += DELAY_RECHECK;
-        return NEEDS_PICKAXE;
+        if (checkForPickaxe(needsPickaxeLevel))
+        {
+            delay += DELAY_RECHECK;
+            return NEEDS_PICKAXE;
+        }
+        return IDLE;
     }
 
     /**
@@ -770,6 +782,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Because it simulates delay, it has to be called 2 times.
      * So make sure the code path up to this function is reachable a second time.
      * And make sure to immediately exit the update function when this returns false.
+     *
      * @param posX the x coordinate of the block that should be mined
      * @param posY the y coordinate of the block that should be mined
      * @param posZ the z coordinate of the block that should be mined
@@ -777,7 +790,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     protected final boolean mineBlock(int posX, int posY, int posZ)
     {
-        return mineBlock(new ChunkCoordinates(posX,posY,posZ));
+        return mineBlock(new ChunkCoordinates(posX, posY, posZ));
     }
 
     /**
