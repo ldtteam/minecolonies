@@ -386,11 +386,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
     }
 
-    private InventoryCitizen getInventory()
-    {
-        return super.getInventory();
-    }
-
     /**
      * Will be called to check if the fisherman caught a fish. If the hook hasn't noticed a fish it will return false.
      * Else the method will pick up the loot and call the method to retrieve the rod.

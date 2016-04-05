@@ -23,7 +23,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     private static final String TOOL_TYPE_AXE          = "axe";
     private static final String RENDER_META_LOGS       = "Logs";
     private static final int    MAX_LOG_BREAK_TIME     = 30;
+    /**
+     * The range in which the lumberjack searches for trees.
+     */
     private static final int    SEARCH_RANGE           = 50;
+    /**
+     * If no trees are found, increment the range
+     */
+    private static final int    SEARCH_INCREMENT       = 5;
+    /**
+     * If this limit is reached, no trees are found.
+     */
+    private static final int    SEARCH_LIMIT           = 150;
     /**
      * Number of ticks to wait before coming
      * to the conclusion of being stuck
@@ -47,17 +58,30 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * Is used to collect falling saplings from the ground.
      */
     private static final int    WAIT_BEFORE_SAPLING    = 100;
-    private              int    chopTicks              = 0;
+    /**
+     * Time in ticks to wait before rechecking
+     * if there are trees in the
+     * range of the lumberjack
+     */
+    private static final int    WAIT_BEFORE_SEARCH     = 100;
+    /**
+     * Time in ticks before incrementing the search radius.
+     */
+    private static final int    WAIT_BEFORE_INCREMENT  = 20;
+
+
+    private int chopTicks        = 0;
     /**
      * Number of ticks the lumberjack is standing still
      */
-    private              int    stillTicks             = 0;
-    private              int    previousDistance       = 0;
-    private              int    previousIndex          = 0;
-    private              int    logBreakTime           = Integer.MAX_VALUE;
+    private int stillTicks       = 0;
+    private int previousDistance = 0;
+    private int previousIndex    = 0;
+    private int logBreakTime     = Integer.MAX_VALUE;
     private List<ChunkCoordinates>         items;
     private PathJobFindTree.TreePathResult pathResult;
     private int woodCuttingSkill = worker.getStrength() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
+    private int searchIncrement  = 0;
 
     public EntityAIWorkLumberjack(JobLumberjack job)
     {
@@ -67,8 +91,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(PREPARING, this::prepareForWoodcutting),
                 new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
-                new AITarget(LUMBERJACK_CHOPP_TREES, this::choppWood),
-                new AITarget(LUMBERJACK_GATHERING, this::gathering)
+                new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood),
+                new AITarget(LUMBERJACK_GATHERING, this::gathering),
+                new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
                              );
     }
 
@@ -101,6 +126,22 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     }
 
     /**
+     * If the search radius was exceeded,
+     * we have to wait dome time before
+     * searching again.
+     *
+     * @return LUMBERJACK_SEARCHING_TREE once waited enough
+     */
+    private AIState waitBeforeCheckingAgain()
+    {
+        if (hasNotDelayed(WAIT_BEFORE_SEARCH))
+        {
+            return state;
+        }
+        return LUMBERJACK_SEARCHING_TREE;
+    }
+
+    /**
      * Checks if lumberjack has already found some trees. If not search trees.
      *
      * @return next AIState
@@ -111,14 +152,19 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         {
             return findTree();
         }
-        return LUMBERJACK_CHOPP_TREES;
+        return LUMBERJACK_CHOP_TREE;
     }
 
+    /**
+     * Search for a tree
+     *
+     * @return LUMBERJACK_GATHERING if job was canceled
+     */
     private AIState findTree()
     {
         if (pathResult == null)
         {
-            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE, 1.0D);
+            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D);
             return state;
         }
         if (pathResult.getPathReachesDestination())
@@ -128,7 +174,17 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 job.tree = new Tree(world, pathResult.treeLocation);
                 job.tree.findLogs(world);
             }
+            else
+            {
+                setDelay(WAIT_BEFORE_INCREMENT);
+                if (searchIncrement + SEARCH_RANGE > SEARCH_LIMIT)
+                {
+                    return LUMBERJACK_NO_TREES_FOUND;
+                }
+                searchIncrement += SEARCH_INCREMENT;
+            }
             pathResult = null;
+
             return state;
         }
         if (pathResult.isCancelled())
@@ -145,7 +201,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      *
      * @return next AIState
      */
-    private AIState choppWood()
+    private AIState chopWood()
     {
         if (checkForAxe())
         {
@@ -171,7 +227,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     private AIState chopTree()
     {
         ChunkCoordinates location = job.tree.getLocation();
-        MineColonies.logger.info(location.toString());
         if (walkToBlock(location))
         {
             checkIfStuckOnLeaves(location);
@@ -190,7 +245,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 
         //take first log from queue
         ChunkCoordinates log = job.tree.peekNextLog();
-        MineColonies.logger.info(location.toString() + " | " + log.toString());
         if (!mineBlock(log))
         {
             return state;
@@ -250,6 +304,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         return false;
     }
 
+    /**
+     * Checks if a stack is a type of sapling
+     *
+     * @param stack the stack to check
+     * @return true if sapling
+     */
     private boolean isStackSapling(ItemStack stack)
     {
         return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a instanceof BlockSapling;

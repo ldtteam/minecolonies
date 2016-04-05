@@ -70,8 +70,15 @@ public enum AIState
     /**
      * The lumberjack has found trees and can start cutting them
      */
-    LUMBERJACK_CHOPP_TREES,
+    LUMBERJACK_CHOP_TREE,
+    /**
+     * The Lumberjack is gathering saplings
+     */
     LUMBERJACK_GATHERING,
+    /**
+     * There are no trees in his search range
+     */
+    LUMBERJACK_NO_TREES_FOUND,
 
 
 }
