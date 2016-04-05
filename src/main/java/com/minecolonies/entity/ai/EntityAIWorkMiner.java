@@ -1331,7 +1331,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         int slot = worker.findFirstSlotInInventoryWith(block);
         if (slot != -1)
         {
-            worker.getInventory().decrStackSize(slot, 1);
+            getInventory().decrStackSize(slot, 1);
             //Flag 1+2 is needed for updates
             world.setBlock(location.posX, location.posY, location.posZ, block, metadata, 3);
         }

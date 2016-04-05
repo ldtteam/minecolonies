@@ -368,7 +368,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
 
         //Check if Rod is held item if not put it as held item
-        if (worker.getHeldItem() == null || !worker.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
+        if (worker.getHeldItem() == null || !super.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
         {
             equipRod();
             return state;
@@ -388,7 +388,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     private InventoryCitizen getInventory()
     {
-        return worker.getInventory();
+        return super.getInventory();
     }
 
     /**

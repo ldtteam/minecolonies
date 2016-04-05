@@ -284,11 +284,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         return null;
     }
 
-    private InventoryCitizen getInventory()
-    {
-        return worker.getInventory();
-    }
-
     private boolean plantSapling(ChunkCoordinates location)
     {
         if (ChunkCoordUtils.getBlock(world, location) != Blocks.air)

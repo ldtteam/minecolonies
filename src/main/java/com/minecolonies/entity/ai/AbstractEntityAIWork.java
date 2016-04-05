@@ -649,6 +649,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
     }
 
+    protected InventoryCitizen getInventory()
+    {
+        return worker.getInventory();
+    }
+
     /**
      * Override this method if you want to keep some items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.

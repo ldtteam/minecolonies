@@ -429,7 +429,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
             ItemStack material = new ItemStack(BlockInfo.getItemFromBlock(block), 1, metadata);
 
-            int slotID = InventoryUtils.containsStack(worker.getInventory(), material);
+            int slotID = InventoryUtils.containsStack(getInventory(), material);
             if(slotID == -1)//inventory doesn't contain item
             {
                 TileEntityColonyBuilding workBuildingTileEntity = worker.getWorkBuilding().getTileEntity();
@@ -444,7 +444,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 {
                     if(ChunkCoordUtils.distanceSqrd(worker.getWorkBuilding().getLocation(), worker.getPosition()) < 16)//We are close to the chest
                     {
-                        if(!InventoryUtils.takeStackInSlot(workBuildingTileEntity, worker.getInventory(), chestSlotID, 1, true))
+                        if(!InventoryUtils.takeStackInSlot(workBuildingTileEntity, getInventory(), chestSlotID, 1, true))
                         {
                             ItemStack chestItem = workBuildingTileEntity.getStackInSlot(chestSlotID);
                             workBuildingTileEntity.setInventorySlotContents(chestSlotID, null);
@@ -462,7 +462,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
             else
             {
-                worker.getInventory().decrStackSize(slotID, 1);
+                getInventory().decrStackSize(slotID, 1);
             }
         }
 
@@ -491,21 +491,21 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     {
         if(stack != null && stack.getItem() != null && stack.stackSize > 0)
         {
-            ItemStack leftOvers = InventoryUtils.setStack(worker.getInventory(), stack);
+            ItemStack leftOvers = InventoryUtils.setStack(getInventory(), stack);
             if(shouldUseForce && leftOvers != null)
             {
-                int slotID = world.rand.nextInt(worker.getInventory().getSizeInventory());
-                for(int i = 0; i < worker.getInventory().getSizeInventory(); i++)
+                int slotID = world.rand.nextInt(getInventory().getSizeInventory());
+                for(int i = 0; i < getInventory().getSizeInventory(); i++)
                 {
                     //Keeping the TODO but removing the if
                     //TODO change to isRequired material using chris' system
                     //TODO make looping??
-                    leftOvers = worker.getInventory().getStackInSlot(i);
+                    leftOvers = getInventory().getStackInSlot(i);
                     slotID = i;
                     break;
 
                 }
-                worker.getInventory().setInventorySlotContents(slotID, stack);
+                getInventory().setInventorySlotContents(slotID, stack);
             }
 
             if(ChunkCoordUtils.distanceSqrd(worker.getWorkBuilding().getLocation(), worker.getPosition()) < 16)
