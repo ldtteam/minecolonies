@@ -770,6 +770,41 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Because it simulates delay, it has to be called 2 times.
      * So make sure the code path up to this function is reachable a second time.
      * And make sure to immediately exit the update function when this returns false.
+     * @param posX the x coordinate of the block that should be mined
+     * @param posY the y coordinate of the block that should be mined
+     * @param posZ the z coordinate of the block that should be mined
+     * @return true once we're done
+     */
+    protected final boolean mineBlock(int posX, int posY, int posZ)
+    {
+        return mineBlock(new ChunkCoordinates(posX,posY,posZ));
+    }
+
+    /**
+     * Will simulate mining a block with particles ItemDrop etc.
+     * Attention:
+     * Because it simulates delay, it has to be called 2 times.
+     * So make sure the code path up to this function is reachable a second time.
+     * And make sure to immediately exit the update function when this returns false.
+     *
+     * @param blockToMine the block that should be mined
+     * @return true once we're done
+     */
+    protected final boolean mineBlock(ChunkCoordinates blockToMine)
+    {
+        return mineBlock(blockToMine, new ChunkCoordinates((int) worker.posX, (int) worker.posY, (int) worker.posZ));
+    }
+
+    /**
+     * Will simulate mining a block with particles ItemDrop etc.
+     * Attention:
+     * Because it simulates delay, it has to be called 2 times.
+     * So make sure the code path up to this function is reachable a second time.
+     * And make sure to immediately exit the update function when this returns false.
+     *
+     * @param blockToMine the block that should be mined
+     * @param safeStand   the block we want to stand on to do that
+     * @return true once we're done
      */
     protected final boolean mineBlock(ChunkCoordinates blockToMine, ChunkCoordinates safeStand)
     {

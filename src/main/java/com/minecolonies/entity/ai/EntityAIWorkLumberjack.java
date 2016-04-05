@@ -5,7 +5,6 @@ import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.InventoryUtils;
-import com.minecolonies.util.Vec3Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.item.EntityItem;
@@ -13,8 +12,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +21,36 @@ import static com.minecolonies.entity.ai.AIState.*;
 
 public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 {
-    private static final String TOOL_TYPE_AXE      = "axe";
-    private static final String RENDER_META_LOGS   = "Logs";
-    private static final int    MAX_LOG_BREAK_TIME = 30;
-    private static final int    SEARCH_RANGE       = 50;
-    private              int    chopTicks          = 0;
-    private              int    stillTicks         = 0;
-    private              int    previousDistance   = 0;
-    private              int    previousIndex      = 0;
-    private              int    logBreakTime       = Integer.MAX_VALUE;
+    private static final String TOOL_TYPE_AXE          = "axe";
+    private static final String RENDER_META_LOGS       = "Logs";
+    private static final int    MAX_LOG_BREAK_TIME     = 30;
+    private static final int    SEARCH_RANGE           = 50;
+    /**
+     * Number of ticks to wait before coming
+     * to the conclusion of being stuck
+     */
+    private static final int    STUCK_WAIT_TIME        = 10;
+    /**
+     * Number of ticks until he gives up destroying leaves
+     * and walks a bit back to try a new path
+     */
+    private static final int    WALKING_BACK_WAIT_TIME = 60;
+    /**
+     * How much he backs away when really not finding any path
+     */
+    private static final double WALK_BACK_RANGE        = 3.0;
+    /**
+     * The speed in which he backs away
+     */
+    private static final double WALK_BACK_SPEED        = 1.0;
+    private              int    chopTicks              = 0;
+    /**
+     * Number of ticks the lumberjack is standing still
+     */
+    private              int    stillTicks             = 0;
+    private              int    previousDistance       = 0;
+    private              int    previousIndex          = 0;
+    private              int    logBreakTime           = Integer.MAX_VALUE;
     private List<ChunkCoordinates>         items;
     private PathJobFindTree.TreePathResult pathResult;
     private int woodCuttingSkill = worker.getStrength() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
@@ -147,85 +165,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 
     private void chopTree()
     {
-        if (InventoryUtils.getOpenSlot(getInventory()) == -1)//inventory has an open slot - this doesn't account for slots with non full stacks
-        {                                                   //also we still may have problems if the block drops multiple items
-            job.setStage(Stage.INVENTORY_FULL);
-            return;
-        }
-
         ChunkCoordinates location = job.tree.getLocation();
-        if (!worker.isWorkerAtSiteWithMove(location, 3))
+
+        if (!walkToBlock(location))
         {
-            int distance = (int) ChunkCoordUtils.distanceSqrd(location, worker.getPosition());
-            if (previousDistance == distance)//Stuck, probably on leaves
-            {
-                stillTicks++;
-                if (stillTicks >= 10)
-                {
-                    Vec3 treeDirection = Vec3Utils
-                            .vec3Floor(worker.getPosition())
-                            .subtract(Vec3.createVectorHelper(location.posX, location.posY + 2, location.posZ))
-                            .normalize();
+            checkIfStuckOnLeaves(location);
 
-                    int x = MathHelper.floor_double(worker.posX);
-                    int y = MathHelper.floor_double(worker.posY) + 1;
-                    int z = MathHelper.floor_double(worker.posZ);
-                    if (treeDirection.xCoord > 0.5F)
-                    {
-                        x++;
-                    }
-                    else if (treeDirection.xCoord < -0.5F)
-                    {
-                        x--;
-                    }
-                    else if (treeDirection.zCoord > 0.5F)
-                    {
-                        z++;
-                    }
-                    else if (treeDirection.zCoord < -0.5F)
-                    {
-                        z--;
-                    }
-                    //These need some work
-                    if (treeDirection.yCoord > 0.75F)
-                    {
-                        y++;
-                    }
-                    else if (treeDirection.yCoord < -0.75F)
-                    {
-                        y--;
-                    }
-
-                    Block block = world.getBlock(x, y, z);
-                    if (worker.getOffsetTicks() % 20 == 0)//Less spam
-                    {
-                        //System.out.println(String.format("Block: %s  x:%d y:%d z:%d", block.getUnlocalizedName(), x, y, z));
-                    }
-                    if (block.isLeaves(world, x, y, z))//Parameters not used
-                    {
-                        //drops
-                        List<ItemStack> items = block.getDrops(world, x, y, z, world.getBlockMetadata(x, y, z), 0 /*worker.getHeldItem().getEnchantmentTagList()*/);//TODO fortune
-                        for (ItemStack item : items)
-                        {
-                            InventoryUtils.setStack(getInventory(), item);
-                        }
-                        //break leaves
-                        world.setBlockToAir(x, y, z);
-                        worker.hitBlockWithToolInHand(x, y, z);//TODO should this damage tool? if so change to breakBlockWithToolInHand
-
-                        stillTicks = 0;
-                    }
-                    else if (stillTicks > 60)//If the worker gets too stuck he moves around a bit
-                    {
-                        worker.getNavigator().moveAwayFromXYZ(worker.posX, worker.posY, worker.posZ, 3.0, 1.0);
-                    }
-                }
-            }
-            else
-            {
-                stillTicks = 0;
-                previousDistance = distance;
-            }
             return;
         }
 
@@ -271,6 +216,85 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             worker.hitBlockWithToolInHand(log);
         }
         chopTicks++;
+    }
+
+    /**
+     * Check if distance to block changed and
+     * if we are not moving for too long, try to get unstuck
+     *
+     * @param location the block we want to go to
+     */
+    private void checkIfStuckOnLeaves(final ChunkCoordinates location)
+    {
+        int distance = (int) ChunkCoordUtils.distanceSqrd(location, worker.getPosition());
+        if (previousDistance != distance)
+        {
+            //something is moving, reset counters
+            stillTicks = 0;
+            previousDistance = distance;
+            return;
+        }
+        //Stuck, probably on leaves
+        stillTicks++;
+        if (stillTicks < STUCK_WAIT_TIME)
+        {
+            //Wait for some time before jumping to conclusions
+            return;
+        }
+        //now we seem to be stuck!
+        tryGettingUnstuckFromLeaves();
+    }
+
+    /**
+     * We are stuck, remove some leaves and try to get unstuck
+     * <p>
+     * if this takes too long, try backing up a bit
+     */
+    private void tryGettingUnstuckFromLeaves()
+    {
+        ChunkCoordinates nextLeaves = findNearLeaves();
+        //If the worker gets too stuck he moves around a bit
+        if (nextLeaves == null || stillTicks > WALKING_BACK_WAIT_TIME)
+        {
+            worker.getNavigator().moveAwayFromXYZ(worker.posX, worker.posY, worker.posZ, WALK_BACK_RANGE, WALK_BACK_SPEED);
+            stillTicks = 0;
+            return;
+        }
+        if (!mineBlock(nextLeaves))
+        {
+            return;
+        }
+        stillTicks = 0;
+
+    }
+
+    /**
+     * Utility method to check for leaves around the citizen.
+     * <p>
+     * Will report the location of the first leaves block it finds.
+     *
+     * @return a leaves block or null if none found
+     */
+    private ChunkCoordinates findNearLeaves()
+    {
+        int playerX = (int) worker.posX;
+        int playerY = (int) (worker.posY + 1);
+        int playerZ = (int) worker.posZ;
+        int radius  = 3;
+        for (int x = -radius; x < playerX + radius; x++)
+        {
+            for (int y = -radius; y < playerY + radius; y++)
+            {
+                for (int z = -radius; z < playerZ + radius; z++)
+                {
+                    if (world.getBlock(x, y, z).isLeaves(world, x, y, z))
+                    {
+                        return new ChunkCoordinates(x, y, z);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private InventoryCitizen getInventory()
