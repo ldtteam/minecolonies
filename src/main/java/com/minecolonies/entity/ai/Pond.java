@@ -50,8 +50,8 @@ public class Pond
         }
 
         //If not one direction contains a pool with length at least 6 and width 7
-        return !(!checkWaterPoolInDirectionX(world, x, y, z, 1) && !checkWaterPoolInDirectionX(world, x, y, z, -1) &&
-                !checkWaterPoolInDirectionZ(world, x, y, z, 1) && !checkWaterPoolInDirectionZ(world, x, y, z, -1));
+        return checkWaterPoolInDirectionXThenZ(world, x, y, z, 1) || checkWaterPoolInDirectionXThenZ(world, x, y, z, -1) ||
+               checkWaterPoolInDirectionZThenX(world, x, y, z, 1) || checkWaterPoolInDirectionZThenX(world, x, y, z, -1);
     }
 
     /**
