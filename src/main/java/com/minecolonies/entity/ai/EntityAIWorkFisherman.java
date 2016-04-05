@@ -30,23 +30,59 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      * The maximum number of ponds to remember at one time.
      */
     private static final int    MAX_PONDS             = 20;
+    /**
+     * Variable to calculate the delay the fisherman needs to throw his rod.
+     */
     private static final int    FISHING_DELAY         = 500;
+    /**
+     * The chance the fisherman has to throw his rod. Directly connected with delay.
+     */
     private static final int    CHANCE                = 2;
+    /**
+     * The minimum distance to the water which is required for the fisherman to throw his rod.
+     */
     private static final int    MIN_DISTANCE_TO_WATER = 3;
+    /**
+     * The amount of catches until the fisherman empties his inventory.
+     */
     private static final int    MAX_FISHES_IN_INV     = 10;
+    /**
+     * The maximum amount of adjusts of his rotation until the fisherman discards a fishing location.
+     */
     private static final int    MAX_ROTATIONS         = 12;
-    private static final String TOOL_TYPE_ROD         = "rod";
-    private static final int    SEARCH_RANGE          = 50;
-    private              int    fishesCaught          = 0;
-    private PathJobFindWater.WaterPathResult pathResult;
-    private int fishingSkill      = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
+    /**
+     * The number of executed adjusts of the fisherman's rotation.
+     */
     private int executedRotations = 0;
-    //Connects the fishingHook with the citizen
+    /**
+     * The tool used by the fisherman.
+     */
+    private static final String TOOL_TYPE_ROD         = "rod";
+    /**
+     * The range in which the fisherman searches water.
+     */
+    private static final int    SEARCH_RANGE          = 50;
+    /**
+     * The number of fishes/stuff the fisherman caught.
+     */
+    private              int    fishesCaught          = 0;
+    /**
+     * The PathResult when the fisherman searches water.
+     */
+    private PathJobFindWater.WaterPathResult pathResult;
+    /**
+     * The fishingSkill which directly influences the fisherman's chance to throw his rod.
+     * May in the future also influence his luck/speed.
+     */
+    private int fishingSkill      = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
+    /**
+     * Connects the fishingHook with the citizen.
+     */
     private EntityFishHook entityFishHook;
-
 
     /**
      * Constructor for the Fisherman.
+     * Defines the tasks the fisherman executes.
      *
      * @param job a fisherman job to use.
      */
@@ -74,8 +110,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     /**
-     * Prepares the fisherman for fishing
-     * requests fishingRod and check if the fisherman already had found a pond
+     * Prepares the fisherman for fishing and
+     * requests fishingRod and checks if the fisherman already had found a pond.
      * @return the next AIState
      */
     private AIState prepareForFishing()
@@ -92,7 +128,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     /**
-     * After the fisherman has caught 10 fishes -> dump inventory
+     * After the fisherman has caught 10 fishes -> dump inventory.
      * @return true if the inventory should be dumped
      */
     @Override
@@ -118,18 +154,32 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         //Migration to new system complete
     }
 
+    /**
+     * Returns the fisherman's work building.
+     * @return building instance
+     */
     @Override
     protected BuildingFisherman getOwnBuilding()
     {
         return (BuildingFisherman) worker.getWorkBuilding();
     }
 
+    /**
+     * Contains the items which the fisherman requires to work.
+     * @param stack the stack to decide on
+     * @return the needed items
+     */
     @Override
     protected boolean neededForWorker(ItemStack stack)
     {
         return isStackRod(stack);
     }
 
+    /**
+     * Checks if a given stack equals a fishingRod.
+     * @param stack the stack to decide on
+     * @return if the stack matches
+     */
     private static boolean isStackRod(ItemStack stack)
     {
         return stack != null && stack.getItem().equals(Items.fishing_rod);
@@ -154,7 +204,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     /**
-     * Let's the fisherman walk to the water if the water object in his job class has been filled.
+     * Let's the fisherman walk to the water if the water object in his job class already has been filled.
      *
      * @return true if the fisherman has arrived at the water
      */
@@ -165,7 +215,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     /**
-     * Rotates the fisherman to guarantee that the fisherman throws his rod in the correct direction
+     * Rotates the fisherman to guarantee that the fisherman throws his rod in the correct direction.
      *
      * @return the next AIState the fisherman should switch to, after executing this method
      */
@@ -238,6 +288,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return state;
     }
 
+    /**
+     * If the fisherman can't find 20 ponds or already has found 20, the fisherman should randomly choose a fishing spot
+     * from the previously found ones.
+     * @return the next AIState.
+     */
     private AIState setRandomWater()
     {
         if (job.getPonds().isEmpty())
@@ -281,7 +336,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
     /**
      * Check if a hook is out there,
-     * and throw/retrieve it if needed
+     * and throw/retrieve it if needed.
      *
      * @return the next AIState the fisherman should switch to, after executing this method
      */
@@ -309,7 +364,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     /**
-     * Let's the fisherman face the water, play the throw sound and create the fishingHook and throw it
+     * Let's the fisherman face the water, play the throw sound and create the fishingHook and throw it.
      */
     private void throwRod()
     {
@@ -355,7 +410,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     /**
-     * Checks if the fisherman has his fishingRod in his hand and is close to the water
+     * Checks if the fisherman has his fishingRod in his hand and is close to the water.
      *
      * @return true if fisherman meets all requirements to fish, else returns false
      */
@@ -382,16 +437,27 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         return null;
     }
 
+    /**
+     * Sets the rod as held item.
+     */
     private void equipRod()
     {
         worker.setHeldItem(getRodSlot());
     }
 
+    /**
+     * Get's the slot in which the rod is in.
+     * @return slot number
+     */
     private int getRodSlot()
     {
         return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
     }
 
+    /**
+     * Returns the workers inventory instance.
+     * @return inventory instance
+     */
     private InventoryCitizen getInventory()
     {
         return worker.getInventory();
@@ -434,6 +500,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         entityFishHook = null;
     }
 
+    /**
+     * Returns the fisherman's worker instance. Called from outside this class.
+     * @return citizen object
+     */
     public EntityCitizen getCitizen()
     {
         return worker;

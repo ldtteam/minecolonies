@@ -36,7 +36,8 @@ public final class EntityFishHook extends Entity
     /**
      * possible drop list for level 2 building with speed
      */
-    private static final List junkDrops = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
+    private static final List junkDrops = Arrays.asList(
+                                                        (new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
                                                         new WeightedRandomFishable(new ItemStack(Items.leather), 10),
                                                         new WeightedRandomFishable(new ItemStack(Items.bone), 10),
                                                         new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
@@ -54,7 +55,8 @@ public final class EntityFishHook extends Entity
     /**
      * possible drop list for level 3 building with luck
      */
-    private static final List rareDrops = Arrays.asList(new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
+    private static final List rareDrops = Arrays.asList(
+                                                                            new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
                                                                             new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
                                                                             new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
                                                                             (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(ENTITY_SIZE).func_150707_a(),
@@ -64,7 +66,8 @@ public final class EntityFishHook extends Entity
     /**
      * possible drop list for level 1 building and without luck or speed
      */
-    private static final List fishDrops = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
+    private static final List fishDrops = Arrays.asList(
+                                                                            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
                                                                             new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()),
                                                                                                        25),
                                                                             new WeightedRandomFishable(new ItemStack(Items.fish,
@@ -126,7 +129,7 @@ public final class EntityFishHook extends Entity
     /**
      * Chance to get rare drops while fishing. Higher value leads to a lower chance.
      */
-    private static final double INCREASE_RARENESS = 7.5;
+    private static final double INCREASE_RARENESS_MODIFIER  = 7.5;
     /**
      * The citizen who threw this rod
      */
@@ -712,7 +715,7 @@ public final class EntityFishHook extends Entity
     private ItemStack getFishingLoot(final EntityCitizen citizen)
     {
         //Reduce random to get more fish drops
-        double random     = this.worldObj.rand.nextDouble()/INCREASE_RARENESS;
+        double random     = this.worldObj.rand.nextDouble() / INCREASE_RARENESS_MODIFIER;
         double speedBonus = 0.1 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
         double lootBonus  = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
         //clamp_float gives the values an upper limit
