@@ -29,6 +29,10 @@ public class RenderFishHook extends Render
         return this.getTexture();
     }
 
+    /**
+     * Returns the location of an entity's texture.
+     * @return the address of the resource
+     */
     private ResourceLocation getTexture()
     {
         return texture;

@@ -15,25 +15,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The fishermans job class,
+ * The fisherman's job class,
  * implements some useful things for him.
  */
 public class JobFisherman extends Job
 {
+    /**
+     * Final strings to save and retrieve the current water location and pond list.
+     */
     private static final String TAG_WATER = "Pond";
     private static final String TAG_PONDS = "Ponds";
 
     /**
+     * Sets the priority of the workers job.
+     */
+    private static final int TASK_PRIORITY = 3;
+    /**
      * The water the fisherman is currently fishing at
+     * Contains the location of the water so that the fisherman can path to the fishing spot.
      */
     private Pond water;
     /**
-     * Contains all possible fishing spots
+     * Contains all possible fishing spots.
+     * This list is filled during the execution of the fisherman.
+     * The fisherman will go from spot to spot and always store the location in this list.
+     * After the fisherman has visited an fixed amount of ponds the fisherman will choose a random pond
+     * from this list as the next fishing spot.
      */
     private ArrayList<ChunkCoordinates> ponds = new ArrayList<>();
 
+
     /**
      * Initializes the job class
+     * @param entity The entity which will use this job class.
      */
     public JobFisherman(CitizenData entity)
     {
@@ -46,7 +60,10 @@ public class JobFisherman extends Job
      * @return          localization label String
      */
     @Override
-    public String getName(){ return "com.minecolonies.job.Fisherman"; }
+    public String getName()
+    {
+        return "com.minecolonies.job.Fisherman";
+    }
 
     /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
@@ -56,7 +73,6 @@ public class JobFisherman extends Job
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        //todo: Add Fisherman
         return RenderBipedCitizen.Model.FISHERMAN;
     }
 
@@ -115,7 +131,7 @@ public class JobFisherman extends Job
     @Override
     public void addTasks(EntityAITasks tasks)
     {
-        tasks.addTask(3, new EntityAIWorkFisherman(this));
+        tasks.addTask(TASK_PRIORITY, new EntityAIWorkFisherman(this));
     }
 
     /**

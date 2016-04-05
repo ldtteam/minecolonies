@@ -79,7 +79,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private int         textureId;
     private Map<String, Integer> statusMessages = new HashMap<>();
     private PathNavigate newNavigator;
-    //Skills, may be added more later
+    /**
+     *  Skills, which influence the workers behaviour.
+     *  May be added more later
+     */
     private int          intelligence;
     private int          speed;
     private int          strength;
@@ -119,6 +122,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.inventory.addIInvBasic(this);
         Random random = new Random();
 
+        //Initialize the citizen skills and make sure they are never 0
         intelligence = random.nextInt(LEVEL_CAP - 1) + 1;
         speed = random.nextInt(LEVEL_CAP - 1) + 1;
         strength = random.nextInt(LEVEL_CAP - 1) + 1;
@@ -159,6 +163,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         initTasks();
     }
 
+    /**
+     * Initiates basic citizen tasks.
+     */
     private void initTasks()
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
@@ -491,6 +498,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         updateArmSwingProgress();
     }
 
+    /**
+     * Sets the textures of all citizens and distinguishes between male and female
+     */
     private void setTexture()
     {
         if (!worldObj.isRemote)
@@ -632,8 +642,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         List<EntityItem> retList = new ArrayList<>();
         //I know streams look better but they are flawed in type erasure
-        for (Object o : worldObj.getEntitiesWithinAABB(EntityItem.class, boundingBox.expand(2.0F, 0.0F, 2.0F))){
-            if(o instanceof EntityItem){
+        for (Object o : worldObj.getEntitiesWithinAABB(EntityItem.class, boundingBox.expand(2.0F, 0.0F, 2.0F)))
+        {
+            if(o instanceof EntityItem)
+            {
                 retList.add((EntityItem) o);
             }
         }
@@ -670,6 +682,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return null;
     }
 
+    /**
+     * Applies attributes like health, speed etc to the citizens.
+     */
     @Override
     protected void applyEntityAttributes()
     {
@@ -679,6 +694,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(100);//path finding search range
     }
 
+
+    /**
+     * Called when a player tries to interact with a citizen.
+     * @param player which interacts with the citizen
+     * @return If citizen should interact or not.
+     */
     @Override
     public boolean interact(EntityPlayer player)
     {
@@ -707,8 +728,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return null;
     }
 
+
     /**
      * Called when the mob's health reaches 0.
+     * @param par1DamageSource the attacking entity
      */
     @Override
     public void onDeath(DamageSource par1DamageSource)
@@ -729,6 +752,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         this.setDead();
 
+        //Spawn particle explotion of xp orbs on death
         for (int i = 0; i < 20; ++i)
         {
             double d2 = this.rand.nextGaussian() * 0.02D;
@@ -779,6 +803,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return homePosition != null && homePosition.getDistanceSquared((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= 16;
     }
 
+    /**
+     * Returns the home position of each citizen (His house or townhall)
+     * @return location
+     */
     public ChunkCoordinates getHomePosition()
     {
         BuildingHome homeBuilding = getHomeBuilding();
