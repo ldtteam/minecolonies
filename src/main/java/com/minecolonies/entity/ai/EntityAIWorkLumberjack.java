@@ -3,7 +3,6 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
-import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
@@ -47,7 +46,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * Time in ticks to wait before placing a sapling.
      * Is used to collect falling saplings from the ground.
      */
-    private static final int WAIT_BEFORE_SAPLING      = 100;
+    private static final int    WAIT_BEFORE_SAPLING    = 100;
     private              int    chopTicks              = 0;
     /**
      * Number of ticks the lumberjack is standing still
@@ -161,15 +160,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     }
 
     /**
-     * Place a sappling for the current tree.
-     */
-    private void plantSapling(){
-        //TODO place correct sapling
-        plantSapling(job.tree.getLocation());
-        job.tree = null;
-    }
-
-    /**
      * Work on the tree.
      * First find your way to the tree trunk.
      * Then chop away
@@ -190,7 +180,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 
         if (!job.tree.hasLogs())
         {
-            if(hasNotDelayed(WAIT_BEFORE_SAPLING))
+            if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
                 return state;
             }
@@ -200,12 +190,67 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 
         //take first log from queue
         ChunkCoordinates log = job.tree.peekNextLog();
-        MineColonies.logger.info(location.toString() + " | "+log.toString());
-        if(!mineBlock(log)){
+        MineColonies.logger.info(location.toString() + " | " + log.toString());
+        if (!mineBlock(log))
+        {
             return state;
         }
         job.tree.pollNextLog();
         return state;
+    }
+
+    /**
+     * Place a sappling for the current tree.
+     */
+    private void plantSapling()
+    {
+        //TODO place correct sapling
+        plantSapling(job.tree.getLocation());
+        job.tree = null;
+    }
+
+    /**
+     * Plant a sapling at said location.
+     * <p>
+     * todo: make sure to get the right sapling
+     *
+     * @param location the location to plant the sapling at
+     * @return true if a sapling was planted
+     */
+    private boolean plantSapling(ChunkCoordinates location)
+    {
+        if (ChunkCoordUtils.getBlock(world, location) != Blocks.air)
+        {
+            return false;
+        }
+
+        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
+        {
+            ItemStack stack = getInventory().getStackInSlot(slot);
+            if (stack != null && stack.getItem() instanceof ItemBlock)
+            {
+                Block block = ((ItemBlock) stack.getItem()).field_150939_a;
+                if (block instanceof BlockSapling)
+                {
+                    worker.setHeldItem(slot);
+                    if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
+                    {
+                        worker.swingItem();
+                        world.playSoundEffect((float) location.posX + 0.5F,
+                                              (float) location.posY + 0.5F,
+                                              (float) location.posZ + 0.5F,
+                                              block.stepSound.getBreakSound(),
+                                              block.stepSound.getVolume(),
+                                              block.stepSound.getPitch());
+                        getInventory().decrStackSize(slot, 1);
+                        setDelay(10);
+                        return true;
+                    }
+                    break;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -285,49 +330,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             }
         }
         return null;
-    }
-
-    /**
-     * Plant a sapling at said location.
-     *
-     * todo: make sure to get the right sapling
-     * @param location the location to plant the sapling at
-     * @return true if a sapling was planted
-     */
-    private boolean plantSapling(ChunkCoordinates location)
-    {
-        if (ChunkCoordUtils.getBlock(world, location) != Blocks.air)
-        {
-            return false;
-        }
-
-        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = getInventory().getStackInSlot(slot);
-            if (stack != null && stack.getItem() instanceof ItemBlock)
-            {
-                Block block = ((ItemBlock) stack.getItem()).field_150939_a;
-                if (block instanceof BlockSapling)
-                {
-                    worker.setHeldItem(slot);
-                    if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
-                    {
-                        worker.swingItem();
-                        world.playSoundEffect((float) location.posX + 0.5F,
-                                              (float) location.posY + 0.5F,
-                                              (float) location.posZ + 0.5F,
-                                              block.stepSound.getBreakSound(),
-                                              block.stepSound.getVolume(),
-                                              block.stepSound.getPitch());
-                        getInventory().decrStackSize(slot, 1);
-                        setDelay(10);
-                        return true;
-                    }
-                    break;
-                }
-            }
-        }
-        return false;
     }
 
     /**
