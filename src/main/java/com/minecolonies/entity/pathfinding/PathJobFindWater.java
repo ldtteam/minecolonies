@@ -92,7 +92,7 @@ public class PathJobFindWater extends PathJob
             return false;
         }
 
-        Pond pond = Pond.createWater((World) world,newPond);
+        Pond pond = Pond.createWater(world,newPond);
 
         if(pond != null)
         {

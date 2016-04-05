@@ -24,7 +24,7 @@ public class Pond
      * @param water the coordinates to check
      * @return a Pond object if the pond is valid, else null
      */
-    public static Pond createWater(World world, ChunkCoordinates water)
+    public static Pond createWater(IBlockAccess world, ChunkCoordinates water)
     {
         if(checkWater(world,water))
         {
@@ -38,7 +38,7 @@ public class Pond
      * @param world The world the player is in
      * @param water The coordinate to check
      */
-    private static boolean checkWater(World world, ChunkCoordinates water)
+    private static boolean checkWater(IBlockAccess world, ChunkCoordinates water)
     {
         int x = water.posX;
         int y = water.posY;
