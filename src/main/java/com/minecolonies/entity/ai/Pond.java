@@ -13,9 +13,7 @@ public class Pond
 
     private ChunkCoordinates location;
 
-    private Pond(){}
-
-    private Pond(World world, ChunkCoordinates water)
+    private Pond(ChunkCoordinates water)
     {
         this.location = water;
     }
@@ -28,7 +26,7 @@ public class Pond
      */
     public static Pond createWater(World world, ChunkCoordinates water)
     {
-        Pond pond = new Pond(world,water);
+        Pond pond = new Pond(water);
         if(checkWater(world,water))
         {
             return pond;
@@ -176,8 +174,6 @@ public class Pond
 
     public static Pond readFromNBT(NBTTagCompound compound)
     {
-        Pond water = new Pond();
-        water.location = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
-        return water;
+        return new Pond(ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION));
     }
 }
