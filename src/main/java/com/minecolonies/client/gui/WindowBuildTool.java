@@ -2,6 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
 import com.blockout.views.Window;
+import com.minecolonies.util.Log;
 import com.schematica.Settings;
 import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
@@ -10,7 +11,6 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -219,7 +219,7 @@ public class WindowBuildTool extends Window implements Button.Handler
                 findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(styles.get(styleIndex));
             } catch (NullPointerException e)
             {
-                MineColonies.logger.error("findPane error, report to mod authors",e);
+                Log.logger.error("findPane error, report to mod authors", e);
             }
             changeSchematic();
             break;
@@ -266,7 +266,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             break;
 
         default:
-            MineColonies.logger.warn("WindowBuildTool: Unhandled Button ID:" + button.getID());
+            Log.logger.warn("WindowBuildTool: Unhandled Button ID:" + button.getID());
         }
     }
 

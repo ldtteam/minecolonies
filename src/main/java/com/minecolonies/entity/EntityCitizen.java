@@ -15,10 +15,7 @@ import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
-import com.minecolonies.util.ChunkCoordUtils;
-import com.minecolonies.util.InventoryUtils;
-import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.*;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
@@ -148,7 +145,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         catch (IllegalAccessException e)
         {
-            MineColonies.logger.error("Navigator error", e);
+            Log.logger.error("Navigator error", e);
         }
 
         this.getNavigator().setAvoidsWater(true);
@@ -530,7 +527,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
             if (c == null)
             {
-                MineColonies.logger.warn(String.format("EntityCitizen '%s' unable to find Colony #%d", getUniqueID(), colonyId));
+                Log.logger.warn(String.format("EntityCitizen '%s' unable to find Colony #%d", getUniqueID(), colonyId));
                 setDead();
                 return;
             }
@@ -539,10 +536,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             if (data == null)
             {
                 //  Citizen does not exist in the Colony
-                MineColonies.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen %d, but not known to colony",
-                                                       getUniqueID(),
-                                                       colonyId,
-                                                       citizenId));
+                Log.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen %d, but not known to colony",
+                                              getUniqueID(),
+                                              colonyId,
+                                              citizenId));
                 setDead();
                 return;
             }
@@ -551,11 +548,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             if (existingCitizen != null && existingCitizen != this)
             {
                 // This Citizen already has a different Entity registered to it
-                MineColonies.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
-                                                       getUniqueID(),
-                                                       colonyId,
-                                                       citizenId,
-                                                       existingCitizen.getUniqueID()));
+                Log.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
+                                              getUniqueID(),
+                                              colonyId,
+                                              citizenId,
+                                              existingCitizen.getUniqueID()));
                 if (!existingCitizen.getUniqueID().equals(this.getUniqueID()))
                 {
                     setDead();

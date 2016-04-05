@@ -1,7 +1,7 @@
 package com.schematica.world.schematic;
 
+import com.minecolonies.util.Log;
 import com.schematica.world.SchematicWorld;
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
@@ -199,7 +199,7 @@ public class SchematicAlpha extends SchematicFormat
                 if(--count > 0)
                 {
                     Block block = world.getBlockRaw(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
-                    MineColonies.logger.error(String.format("Block %s[%s] with TileEntity %s failed to save! Replacing with bedrock...", block, block != null ? GameData.getBlockRegistry().getNameForObject(block) : "?", tileEntity.getClass().getName()), e);
+                    Log.logger.error(String.format("Block %s[%s] with TileEntity %s failed to save! Replacing with bedrock...", block, block != null ? GameData.getBlockRegistry().getNameForObject(block) : "?", tileEntity.getClass().getName()), e);
                 }
                 localBlocks[pos] = (byte) GameData.getBlockRegistry().getId(Blocks.bedrock);
                 localMetadata[pos] = 0;

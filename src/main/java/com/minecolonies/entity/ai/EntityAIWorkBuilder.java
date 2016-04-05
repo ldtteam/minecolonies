@@ -1,6 +1,5 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.jobs.JobBuilder;
@@ -55,7 +54,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             WorkOrderBuild wo = job.getWorkOrder();
             if (wo == null)
             {
-                MineColonies.logger.error(
+                Log.logger.error(
                         String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)",
                                       worker.getColony().getID(),
                                       worker.getCitizenData().getId(), job.getWorkOrderId()));
@@ -64,7 +63,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             Building building = job.getColony().getBuilding(wo.getBuildingId());
             if (building == null)
             {
-                MineColonies.logger.error(
+                Log.logger.error(
                         String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)",
                                       worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
                 return;
@@ -188,7 +187,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             if(!world.setBlockToAir(x, y, z))
             {
                 //TODO: create own logger in class
-                MineColonies.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
+                Log.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
                 //TODO handle - for now, just skipping
             }
             worker.swingItem();
@@ -261,7 +260,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         if(block == null)//should never happen
         {
             ChunkCoordinates local = job.getSchematic().getLocalPosition();
-            MineColonies.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.posX, local.posY, local.posZ));
+            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.posX, local.posY, local.posZ));
             findNextBlockSolid();
             return;
         }
@@ -283,7 +282,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
             if(!world.setBlockToAir(x, y, z))
             {
-                MineColonies.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
+                Log.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
                 //TODO handle - for now, just skipping
             }
         }
@@ -298,7 +297,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
             else
             {
-                MineColonies.logger.error(String.format("Block place failure %s at %d, %d, %d", block.getUnlocalizedName(), x, y, z));
+                Log.logger.error(String.format("Block place failure %s at %d, %d, %d", block.getUnlocalizedName(), x, y, z));
                 //TODO handle - for now, just skipping
             }
         }
@@ -337,7 +336,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         if(block == null)//should never happen
         {
             ChunkCoordinates local = job.getSchematic().getLocalPosition();
-            MineColonies.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.posX, local.posY, local.posZ));
+            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.posX, local.posY, local.posZ));
             findNextBlockNonSolid();
             return;
         }
@@ -362,7 +361,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
         else
         {
-            MineColonies.logger.error(String.format("Block place failure %s at %d, %d, %d", block.getUnlocalizedName(), x, y, z));
+            Log.logger.error(String.format("Block place failure %s at %d, %d, %d", block.getUnlocalizedName(), x, y, z));
             //TODO handle - for now, just skipping
         }
 
@@ -633,7 +632,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         if(building == null)
         {
-            MineColonies.logger.warn("Building does not exist - removing build request");
+            Log.logger.warn("Building does not exist - removing build request");
             worker.getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
         }
@@ -644,7 +643,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         if(job.getSchematic() == null)
         {
-            MineColonies.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name));
+            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name));
             worker.getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
         }
@@ -669,12 +668,12 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
             else
             {
-                MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)", worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
+                Log.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)", worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
             }
         }
         else
         {
-            MineColonies.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)", worker.getColony().getID(), worker.getCitizenData().getId(), job.getWorkOrderId()));
+            Log.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)", worker.getColony().getID(), worker.getCitizenData().getId(), job.getWorkOrderId()));
         }
 
         job.complete();

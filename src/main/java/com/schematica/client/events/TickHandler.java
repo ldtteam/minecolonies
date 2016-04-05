@@ -1,5 +1,6 @@
 package com.schematica.client.events;
 
+import com.minecolonies.util.Log;
 import com.schematica.Settings;
 import com.schematica.client.renderer.RendererSchematicChunk;
 import com.schematica.world.SchematicWorld;
@@ -79,7 +80,7 @@ public class TickHandler {
 					}
 				}
 			} catch (Exception e) {
-				MineColonies.logger.error("Dirty check failed!", e);
+				Log.logger.error("Dirty check failed!", e);
 			}
 		}
 	}

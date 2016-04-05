@@ -1,9 +1,9 @@
 package com.schematica.client.renderer;
 
+import com.minecolonies.util.Log;
 import com.schematica.Settings;
 import com.schematica.config.Config;
 import com.schematica.world.SchematicWorld;
-import com.minecolonies.MineColonies;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -83,7 +83,7 @@ public class RendererSchematicChunk {
 		try {
 			this.fieldMapTexturesStiched = ReflectionHelper.findField(TextureMap.class, "f", "field_94252_e", "mapUploadedSprites");
 		} catch (Exception ex) {
-			MineColonies.logger.fatal("Failed to initialize mapTexturesStiched!", ex);
+			Log.logger.fatal("Failed to initialize mapTexturesStiched!", ex);
 			this.fieldMapTexturesStiched = null;
 		}
 	}
@@ -323,7 +323,7 @@ public class RendererSchematicChunk {
 							}
 						}
 					} catch (Exception e) {
-						MineColonies.logger.error("Failed to render block!", e);
+						Log.logger.error("Failed to render block!", e);
 					}
 				}
 			}
@@ -371,14 +371,14 @@ public class RendererSchematicChunk {
 							GL11.glDisable(GL11.GL_TEXTURE_2D);
 							OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 						} catch (Exception e) {
-							MineColonies.logger.error("Failed to render a tile entity!", e);
+							Log.logger.error("Failed to render a tile entity!", e);
 						}
 						GL11.glColor4f(1.0f, 1.0f, 1.0f, Config.alpha);
 					}
 				}
 			}
 		} catch (Exception ex) {
-			MineColonies.logger.error("Failed to render tile entities!", ex);
+			Log.logger.error("Failed to render tile entities!", ex);
 		}
 	}
 

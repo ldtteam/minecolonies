@@ -2,7 +2,6 @@ package com.minecolonies.util;
 
 import com.schematica.world.SchematicWorld;
 import com.schematica.world.schematic.SchematicFormat;
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHut;
 import com.minecolonies.configuration.Configurations;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -385,7 +384,7 @@ public class Schematic
                         }
                         else
                         {
-                            MineColonies.logger.warn("Scan contained multiple BlockHut's ignoring this one");
+                            Log.logger.warn("Scan contained multiple BlockHut's ignoring this one");
                             blocks[x - minX][y - minY][z - minZ] = 0;
                             metadata[x - minX][y - minY][z - minZ] = 0;
                         }

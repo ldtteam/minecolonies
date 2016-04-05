@@ -1,13 +1,9 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.inventory.InventoryCitizen;
-import com.minecolonies.util.ChunkCoordUtils;
-import com.minecolonies.util.InventoryFunctions;
-import com.minecolonies.util.InventoryUtils;
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -765,8 +761,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
 
         if (tool != null && !ForgeHooks.canToolHarvestBlock(curBlock, 0, tool) && curBlock != Blocks.bedrock)
         {
-            MineColonies.logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool + "\n"
-                                     + "Please report to MineColonies with this text to add support!");
+            Log.logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool + "\n"
+                            + "Please report to MineColonies with this text to add support!");
         }
 
         if(walkToBlock(safeStand)){
