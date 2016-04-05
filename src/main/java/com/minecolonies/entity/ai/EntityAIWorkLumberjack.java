@@ -156,8 +156,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         {
             return LUMBERJACK_SEARCHING_TREE;
         }
-        chopTree();
-        return state;
+
+        return chopTree();
     }
 
     /**
@@ -175,34 +175,37 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * Then chop away
      * and wait for saplings to drop
      * then place a sapling
+     *
+     * @return LUMBERJACK_GATHERING if tree is done
      */
-    private void chopTree()
+    private AIState chopTree()
     {
         ChunkCoordinates location = job.tree.getLocation();
         MineColonies.logger.info(location.toString());
         if (walkToBlock(location))
         {
             checkIfStuckOnLeaves(location);
-            return;
+            return state;
         }
 
         if (!job.tree.hasLogs())
         {
             if(hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
-                return;
+                return state;
             }
             plantSapling();
-            return;
+            return LUMBERJACK_GATHERING;
         }
 
         //take first log from queue
         ChunkCoordinates log = job.tree.peekNextLog();
         MineColonies.logger.info(location.toString() + " | "+log.toString());
         if(!mineBlock(log)){
-            return;
+            return state;
         }
         job.tree.pollNextLog();
+        return state;
     }
 
     /**
@@ -284,6 +287,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         return null;
     }
 
+    /**
+     * Plant a sapling at said location.
+     *
+     * todo: make sure to get the right sapling
+     * @param location the location to plant the sapling at
+     * @return true if a sapling was planted
+     */
     private boolean plantSapling(ChunkCoordinates location)
     {
         if (ChunkCoordUtils.getBlock(world, location) != Blocks.air)
