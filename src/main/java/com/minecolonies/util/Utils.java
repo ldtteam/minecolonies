@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -683,5 +684,35 @@ public class Utils
     public static boolean isPickaxe(ItemStack itemStack)
     {
         return isTool(itemStack, PICKAXE);
+    }
+
+    /**
+     * Calculates the fortune level this tool has.
+     *
+     * @param tool the tool to check
+     * @return fortune level
+     */
+    public static int getFortuneOf(ItemStack tool)
+    {
+        if (tool == null)
+        {
+            return 0;
+        }
+        //calculate fortune enchantment
+        int fortune = 0;
+        if (tool.isItemEnchanted())
+        {
+            NBTTagList t = tool.getEnchantmentTagList();
+
+            for (int i = 0; i < t.tagCount(); i++)
+            {
+                short id = t.getCompoundTagAt(i).getShort("id");
+                if (id == 35)
+                {
+                    fortune = t.getCompoundTagAt(i).getShort("lvl");
+                }
+            }
+        }
+        return fortune;
     }
 }
