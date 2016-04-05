@@ -162,6 +162,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private AIState tryDifferentAngles()
     {
+        if(job.getWater() == null){
+            return FISHERMAN_SEARCHING_WATER;
+        }
         if (executedRotations >= MAX_ROTATIONS)
         {
             job.removeFromPonds(job.getWater().getLocation());

@@ -13,7 +13,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.ForgeHooks;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,8 +35,8 @@ import static com.minecolonies.entity.ai.AIState.*;
  */
 public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkeleton<J>
 {
-    private static final int    DEFAULT_RANGE_FOR_DELAY = 3;
-    private static final int    DELAY_RECHECK           = 10;
+    private static final int DEFAULT_RANGE_FOR_DELAY = 3;
+    private static final int DELAY_RECHECK           = 10;
 
     protected static Random           itemRand                = new Random();
     protected        boolean          needsShovel             = false;
@@ -72,7 +71,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     /**
      * If we have waited one delay
      */
-    private boolean hasDelayed = false;
+    private          boolean          hasDelayed              = false;
 
 
     /**
@@ -671,16 +670,18 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     /**
      * Request the appropriate tool for this block.
      *
-     *
      * @param target the block to mine
      */
     private void requestTool(Block target)
     {
-        String           tool      = target.getHarvestTool(0);
-        int              required  = target.getHarvestLevel(0);
-        if(Utils.PICKAXE.equalsIgnoreCase(tool)){
+        String tool     = target.getHarvestTool(0);
+        int    required = target.getHarvestLevel(0);
+        if (Utils.PICKAXE.equalsIgnoreCase(tool))
+        {
             checkForPickaxe(required);
-        }else{
+        }
+        else
+        {
             checkForTool(tool);
         }
     }
@@ -791,18 +792,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         //calculate fortune enchantment
         int fortune = Utils.getFortuneOf(tool);
 
-        //Dangerous TODO: validate that
-        //Seems like dispatching the event manually is a bad idea? any clues?
         if (tool != null)
         {
             //Reduce durability if not using hand
-            tool.getItem().onBlockDestroyed(tool,
-                                            world,
-                                            curBlock,
-                                            blockToMine.posX,
-                                            blockToMine.posY,
-                                            blockToMine.posZ,
-                                            worker);
+            tool.getItem().onBlockDestroyed(tool, world, curBlock, blockToMine.posX, blockToMine.posY, blockToMine.posZ, worker);
         }
 
         //if Tool breaks
@@ -812,11 +805,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             worker.getInventory().setInventorySlotContents(worker.getInventory().getHeldItemSlot(), null);
         }
 
-        Utils.blockBreakSoundAndEffect(world,
-                                       blockToMine.posX,
-                                       blockToMine.posY,
-                                       blockToMine.posZ,
-                                       curBlock,
+        Utils.blockBreakSoundAndEffect(world, blockToMine.posX, blockToMine.posY, blockToMine.posZ, curBlock,
                                        world.getBlockMetadata(blockToMine.posX, blockToMine.posY, blockToMine.posZ));
         //Don't drop bedrock but we want to mine bedrock in some cases...
         if (curBlock != Blocks.bedrock)
