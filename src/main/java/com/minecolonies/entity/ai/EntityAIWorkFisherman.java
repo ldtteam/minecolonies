@@ -60,15 +60,31 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     /**
      * The tool used by the fisherman.
      */
-    private static final String TOOL_TYPE_ROD         = "rod";
+    private static final String TOOL_TYPE_ROD                 = "rod";
     /**
      * The range in which the fisherman searches water.
      */
-    private static final int    SEARCH_RANGE          = 50;
+    private static final int    SEARCH_RANGE                  = 50;
+    /**
+     * The volume in percent which shall be played for the entity sounds
+     */
+    private static final float  VOLUME                        = 0.5F;
+    /**
+     * The upper limit for the frequency of the played sounds
+     */
+    private static final float  FREQUENCY_UPPER_LIMIT_DIVIDER = 1.2F;
+    /**
+     * The lower limit for the frequency of the played sounds
+     */
+    private static final float  FREQUENCY_LOWER_LIMIT_DIVIDER = 0.8F;
+    /**
+     * The frequency should be around this value
+     */
+    private static final float  FREQUENCY_BOUND_VALUE         = 0.4F;
     /**
      * The number of fishes/stuff the fisherman caught.
      */
-    private              int    fishesCaught          = 0;
+    private              int    fishesCaught                  = 0;
     /**
      * The PathResult when the fisherman searches water.
      */
@@ -379,8 +395,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             worker.faceBlock(job.getWater().getLocation());
             world.playSoundAtEntity(worker,
                                     "random.bow",
-                                    0.5F,
-                                    (float) (0.4D / (itemRand.nextDouble() * 0.4D + 0.8D)));
+                                    VOLUME,
+                                    (float) (FREQUENCY_BOUND_VALUE / (itemRand.nextDouble() * (FREQUENCY_UPPER_LIMIT_DIVIDER - FREQUENCY_LOWER_LIMIT_DIVIDER) + FREQUENCY_LOWER_LIMIT_DIVIDER)));
             EntityFishHook hook = new EntityFishHook(world, this.getCitizen());
             this.entityFishHook = hook;
             world.spawnEntityInWorld(hook);
