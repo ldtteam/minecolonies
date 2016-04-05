@@ -285,7 +285,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @return true if we have a shovel
      */
-    private boolean checkForShovel()
+    protected boolean checkForShovel()
     {
         needsShovel = checkForTool(Utils.SHOVEL);
         return needsShovel;
@@ -385,7 +385,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @return true if we have an axe
      */
-    private boolean checkForAxe()
+    protected boolean checkForAxe()
     {
         needsAxe = checkForTool(Utils.AXE);
         return needsAxe;
@@ -409,7 +409,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @return true if we have a hoe
      */
-    private boolean checkForHoe()
+    protected boolean checkForHoe()
     {
         needsHoe = checkForTool(Utils.HOE);
         return needsHoe;
@@ -434,7 +434,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * @param minlevel the minimum pickaxe level needed.
      * @return true if we have a pickaxe
      */
-    private boolean checkForPickaxe(int minlevel)
+    protected boolean checkForPickaxe(int minlevel)
     {
         //Check for a pickaxe
         needsPickaxe = InventoryFunctions

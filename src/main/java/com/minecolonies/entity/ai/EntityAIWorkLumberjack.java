@@ -1,6 +1,5 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.inventory.InventoryCitizen;
@@ -53,6 +52,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         );
     }
 
+    /**
+     * Walk to own building to check for tools.
+     *
+     * @return PREPARING once at the building
+     */
     private AIState startWorkingAtOwnBuilding()
     {
         if (walkToBuilding())
@@ -64,23 +68,21 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 
     /**
      * Checks if lumberjack has all neccessary tools
+     *
      * @return next AIState
      */
     private AIState prepareForWoodcutting()
     {
-        if(!hasAxeWithEquip())
+        if (checkForAxe())
         {
-            requestAxe();
+            return state;
         }
-        else
-        {
-            return LUMBERJACK_SEARCHING_TREE;
-        }
-        return state;
+        return LUMBERJACK_SEARCHING_TREE;
     }
 
     /**
      * Checks if lumberjack has already found some trees. If not search trees.
+     *
      * @return next AIState
      */
     private AIState findTrees()
@@ -88,44 +90,39 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         if(job.tree == null)
         {
             findTree();
+            return state;
         }
-        else
-        {
-            return LUMBERJACK_CHOPP_TREES;
-        }
-        return state;
+        return LUMBERJACK_CHOPP_TREES;
     }
 
     /**
      * Again checks if all preconditions are given to execute chopping.
      * If yes go chopping, else return to previous AIStates.
+     *
      * @return next AIState
      */
     private AIState choppWood()
     {
-        if(!hasAxeWithEquip())
+        if (checkForAxe())
         {
             return IDLE;
         }
-        else if(job.tree == null)
+        if(job.tree == null)
         {
             return LUMBERJACK_SEARCHING_TREE;
         }
-        else
+        if(logBreakTime == Integer.MAX_VALUE)
         {
-            if(logBreakTime == Integer.MAX_VALUE)
-            {
-                ItemStack axe = worker.getHeldItem();
-                logBreakTime = MAX_LOG_BREAK_TIME - (int) axe.getItem().getDigSpeed(axe, ChunkCoordUtils.getBlock(world, job.tree.getLocation()), ChunkCoordUtils.getBlockMetadata(world, job.tree.getLocation()));
-            }
-
-            chopTree();
+            ItemStack axe = worker.getHeldItem();
+            logBreakTime = MAX_LOG_BREAK_TIME - (int) axe.getItem().getDigSpeed(axe, ChunkCoordUtils.getBlock(world, job.tree.getLocation()), ChunkCoordUtils.getBlockMetadata(world, job.tree.getLocation()));
         }
+        chopTree();
         return state;
     }
 
     /**
      * Checks if the lumberjack found items on the ground, if yes collect them, if not search for them.
+     *
      * @return
      */
     private AIState gathering()
