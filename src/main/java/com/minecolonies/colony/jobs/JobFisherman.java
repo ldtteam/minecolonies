@@ -3,7 +3,6 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.EntityAIWorkFisherman;
-import com.minecolonies.entity.ai.Pond;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,7 +33,7 @@ public class JobFisherman extends Job
      * The water the fisherman is currently fishing at
      * Contains the location of the water so that the fisherman can path to the fishing spot.
      */
-    private Pond water;
+    private ChunkCoordinates water;
     /**
      * Contains all possible fishing spots.
      * This list is filled during the execution of the fisherman.
@@ -89,7 +88,7 @@ public class JobFisherman extends Job
         NBTTagCompound waterTag = new NBTTagCompound();
         if (water != null)
         {
-            water.writeToNBT(waterTag);
+            ChunkCoordUtils.writeToNBT(waterTag,TAG_WATER,water);
         }
 
         NBTTagList lakes = new NBTTagList();
@@ -112,7 +111,7 @@ public class JobFisherman extends Job
 
         if (compound.hasKey(TAG_WATER))
         {
-            water = Pond.readFromNBT(compound.getCompoundTag(TAG_WATER));
+            water = ChunkCoordUtils.readFromNBT(compound,TAG_WATER);
         }
 
         ponds = new ArrayList<>();
@@ -137,7 +136,7 @@ public class JobFisherman extends Job
     /**
      * getter for current water
      */
-    public Pond getWater()
+    public ChunkCoordinates getWater()
     {
         return water;
     }
@@ -145,7 +144,7 @@ public class JobFisherman extends Job
     /**
      * Setter for current water
      */
-    public void setWater(Pond water)
+    public void setWater(ChunkCoordinates water)
     {
         this.water = water;
     }

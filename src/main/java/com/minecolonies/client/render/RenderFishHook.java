@@ -18,6 +18,9 @@ import org.lwjgl.opengl.GL12;
 @SideOnly(Side.CLIENT)
 public class RenderFishHook extends Render
 {
+    /**
+     * The resource location containing the particle textures (Spawned by the fishHook)
+     */
     private static final ResourceLocation texture = new ResourceLocation("textures/particle/particles.png");
 
     /**

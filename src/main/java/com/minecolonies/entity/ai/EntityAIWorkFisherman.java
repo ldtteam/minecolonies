@@ -232,8 +232,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private boolean walkToWater()
     {
-        return !(job.getWater() == null || job.getWater().getLocation() == null) && walkToBlock(job.getWater()
-                                                                                                   .getLocation());
+        return !(job.getWater() == null || job.getWater() == null) && walkToBlock(job.getWater());
     }
 
     /**
@@ -245,13 +244,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         if (executedRotations >= MAX_ROTATIONS)
         {
-            job.removeFromPonds(job.getWater().getLocation());
+            job.removeFromPonds(job.getWater());
             job.setWater(null);
             executedRotations = 0;
             return FISHERMAN_SEARCHING_WATER;
         }
         //Try a different angle to throw the hook not that far
-        worker.faceBlock(job.getWater().getLocation());
+        worker.faceBlock(job.getWater());
         executedRotations++;
         return FISHERMAN_START_FISHING;
     }
@@ -296,7 +295,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         {
             if (pathResult.pond != null)
             {
-                job.setWater(Pond.createWater(world, pathResult.pond));
+                job.setWater(pathResult.pond);
                 job.addToPonds(pathResult.pond);
             }
             pathResult = null;
@@ -323,7 +322,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
             return state;
         }
-        job.setWater(Pond.createWater(world, job.getPonds().get(itemRand.nextInt(job.getPonds().size()))));
+        job.setWater(job.getPonds().get(itemRand.nextInt(job.getPonds().size())));
+
         return FISHERMAN_CHECK_WATER;
     }
 
@@ -392,7 +392,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         if (!world.isRemote)
         {
-            worker.faceBlock(job.getWater().getLocation());
+            worker.faceBlock(job.getWater());
             world.playSoundAtEntity(worker,
                                     "random.bow",
                                     VOLUME,
