@@ -32,12 +32,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     private              int    stillTicks         = 0;
     private              int    previousDistance   = 0;
     private              int    previousIndex      = 0;
-    private              int    delay              = 0;
     private              int    logBreakTime       = Integer.MAX_VALUE;
     private List<ChunkCoordinates>         items;
     private PathJobFindTree.TreePathResult pathResult;
-    private int     woodCuttingSkill = worker.getStrength() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
-    private boolean inventoryFull    = false;
+    private int woodCuttingSkill = worker.getStrength() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
 
     public EntityAIWorkLumberjack(JobLumberjack job)
     {
@@ -67,7 +65,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     }
 
     /**
-     * Checks if lumberjack has all neccessary tools
+     * Checks if lumberjack has all necessary tools
      *
      * @return next AIState
      */
@@ -89,19 +87,19 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     {
         if (job.tree == null)
         {
-            findTree();
-            return state;
+            return findTree();
         }
         return LUMBERJACK_CHOPP_TREES;
     }
 
-    private void findTree()
+    private AIState findTree()
     {
         if (pathResult == null)
         {
             pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE, 1.0D);
+            return state;
         }
-        else if (pathResult.getPathReachesDestination())
+        if (pathResult.getPathReachesDestination())
         {
             if (pathResult.treeLocation != null)
             {
@@ -109,12 +107,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 job.tree.findLogs(world);
             }
             pathResult = null;
+            return state;
         }
-        else if (pathResult.isCancelled())
+        if (pathResult.isCancelled())
         {
-            job.setStage(Stage.GATHERING);
             pathResult = null;
+            return LUMBERJACK_GATHERING;
         }
+        return state;
     }
 
     /**
@@ -135,10 +135,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         }
         if (logBreakTime == Integer.MAX_VALUE)
         {
+            //todo: use api diggingspeed and use setDelay()
             ItemStack axe = worker.getHeldItem();
-            logBreakTime = MAX_LOG_BREAK_TIME - (int) axe.getItem().getDigSpeed(axe,
-                                                                                ChunkCoordUtils.getBlock(world, job.tree.getLocation()),
-                                                                                ChunkCoordUtils.getBlockMetadata(world, job.tree.getLocation()));
+            logBreakTime = MAX_LOG_BREAK_TIME - (int) axe.getItem().getDigSpeed(
+                    axe, ChunkCoordUtils.getBlock(world, job.tree.getLocation()),
+                    ChunkCoordUtils.getBlockMetadata(world, job.tree.getLocation()));
         }
         chopTree();
         return state;
@@ -303,7 +304,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                                               block.stepSound.getVolume(),
                                               block.stepSound.getPitch());
                         getInventory().decrStackSize(slot, 1);
-                        delay = 10;
+                        setDelay(10);
                         return true;
                     }
                     break;
@@ -314,26 +315,25 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     }
 
     /**
-     * Checks if the lumberjack found items on the ground, if yes collect them, if not search for them.
+     * Checks if the lumberjack found items on the ground,
+     * if yes collect them, if not search for them.
      *
-     * @return
+     * @return LUMBERJACK_GATHERING as long as gathering takes.
      */
     private AIState gathering()
     {
         if (items == null)
         {
             searchForItems();
+            return state;
         }
-        else if (!items.isEmpty())
+        if (!items.isEmpty())
         {
             gatherItems();
+            return state;
         }
-        else
-        {
-            items = null;
-            return LUMBERJACK_SEARCHING_TREE;
-        }
-        return state;
+        items = null;
+        return LUMBERJACK_SEARCHING_TREE;
     }
 
     private void searchForItems()
@@ -389,12 +389,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         }
 
         return items.remove(index);
-    }
-
-    @Override
-    protected boolean wantInventoryDumped()
-    {
-        return inventoryFull;
     }
 
     @Override
@@ -529,7 +523,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     public enum Stage
     {
         IDLE,
-//No resources
+        //No resources
         SEARCHING,
         CHOPPING,
         GATHERING,
