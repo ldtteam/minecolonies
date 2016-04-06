@@ -2,8 +2,6 @@ package com.minecolonies.client.render;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
@@ -15,13 +13,18 @@ import org.lwjgl.opengl.GL12;
 /**
  * Determines how the fish hook is rendered.
  */
-@SideOnly(Side.CLIENT)
 public class RenderFishHook extends Render
 {
+    /**
+     * The resource location containing the particle textures (Spawned by the fishHook)
+     */
     private static final ResourceLocation texture = new ResourceLocation("textures/particle/particles.png");
 
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
+     *
+     * @param entity the entity to get the texture from
+     * @return a resource location for the texture
      */
     @Override
     protected ResourceLocation getEntityTexture(Entity entity)
@@ -29,6 +32,10 @@ public class RenderFishHook extends Render
         return this.getTexture();
     }
 
+    /**
+     * Returns the location of an entity's texture.
+     * @return the address of the resource
+     */
     private ResourceLocation getTexture()
     {
         return texture;

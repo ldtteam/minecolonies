@@ -40,7 +40,7 @@ public class PathJobFindWater extends PathJob
     PathJobFindWater(World world, ChunkCoordinates start, ChunkCoordinates home, int range, List<ChunkCoordinates> ponds)
     {
         super(world, start, start, range, new WaterPathResult());
-        this.ponds.addAll(ponds);
+        this.ponds = new ArrayList<>(ponds);
         hutLocation = home;
     }
 
@@ -93,10 +93,7 @@ public class PathJobFindWater extends PathJob
             return false;
         }
 
-        /*todo: unsafe conversion
-        * todo: use IBlockAccess because that is what the pathJob returns
-        */
-        Pond pond = Pond.createWater((World) world,newPond);
+        Pond pond = Pond.createWater(world,newPond);
 
         if(pond != null)
         {

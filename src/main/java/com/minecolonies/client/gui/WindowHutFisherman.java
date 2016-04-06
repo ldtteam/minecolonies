@@ -20,7 +20,15 @@ public class WindowHutFisherman extends WindowWorkerBuilding<BuildingFisherman.V
         super(building, Constants.MOD_ID + ":gui/windowHutFisherman.xml");
     }
 
-    public String getBuildingName(){ return "com.minecolonies.gui.workerHuts.fisherman"; }
+    /**
+     * Returns the name of a building
+     *
+     * @return      Name of a building
+     */
+    public String getBuildingName()
+    {
+        return "com.minecolonies.gui.workerHuts.fisherman";
+    }
 
     /**
      * Called when the Window is displayed.

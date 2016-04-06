@@ -32,29 +32,31 @@ public final class EntityFishHook extends Entity
     /**
      * Number of seconds to wait before removing a stuck hook
      */
-    private static final int    TTL                         = 360;
+    private static final int  TTL       = 360;
     /**
-     * possible drop list for level 3 building
+     * possible drop list for level 2 building with speed
      */
-    private static final List   possibleDrops_1             = Arrays.asList((new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.leather), 10),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.bone), 10),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.string), 5),
-                                                                            (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.bowl), 10),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.stick), 5),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1),
-                                                                            new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
+    private static final List junkDrops = Arrays.asList(
+                                                        (new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F),
+                                                        new WeightedRandomFishable(new ItemStack(Items.leather), 10),
+                                                        new WeightedRandomFishable(new ItemStack(Items.bone), 10),
+                                                        new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
+                                                        new WeightedRandomFishable(new ItemStack(Items.string), 5),
+                                                        (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F),
+                                                        new WeightedRandomFishable(new ItemStack(Items.bowl), 10),
+                                                        new WeightedRandomFishable(new ItemStack(Items.stick), 5),
+                                                        new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1),
+                                                        new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10),
+                                                        new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
     /**
      * Entity size to scale it down
      */
-    private static final float  ENTITY_SIZE                 = 0.25F;
+    private static final float ENTITY_SIZE = 0.25F;
     /**
-     * possible drop list for level 2 building
+     * possible drop list for level 3 building with luck
      */
-    private static final List   possibleDrops_2             = Arrays.asList(new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
+    private static final List rareDrops = Arrays.asList(
+                                                                            new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
                                                                             new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
                                                                             new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
                                                                             (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).func_150709_a(ENTITY_SIZE).func_150707_a(),
@@ -62,9 +64,10 @@ public final class EntityFishHook extends Entity
                                                                                                                                              .func_150707_a(),
                                                                             (new WeightedRandomFishable(new ItemStack(Items.book), 1)).func_150707_a());
     /**
-     * possible drop list for level 1 building
+     * possible drop list for level 1 building and without luck or speed
      */
-    private static final List   possibleDrops_3             = Arrays.asList(new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
+    private static final List fishDrops = Arrays.asList(
+                                                                            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.func_150976_a()), 60),
                                                                             new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.func_150976_a()),
                                                                                                        25),
                                                                             new WeightedRandomFishable(new ItemStack(Items.fish,
@@ -123,6 +126,10 @@ public final class EntityFishHook extends Entity
      * Chance to speed up fishing when lightning can strike
      */
     private static final double CAN_STRIKE_LIGHTNING_CHANCE = 0.25;
+    /**
+     * Chance to get rare drops while fishing. Higher value leads to a lower chance.
+     */
+    private static final double INCREASE_RARENESS_MODIFIER  = 7.5;
     /**
      * The citizen who threw this rod
      */
@@ -707,7 +714,8 @@ public final class EntityFishHook extends Entity
      */
     private ItemStack getFishingLoot(final EntityCitizen citizen)
     {
-        double random     = this.worldObj.rand.nextDouble();
+        //Reduce random to get more fish drops
+        double random     = this.worldObj.rand.nextDouble() / INCREASE_RARENESS_MODIFIER;
         double speedBonus = 0.1 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
         double lootBonus  = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
         //clamp_float gives the values an upper limit
@@ -717,7 +725,7 @@ public final class EntityFishHook extends Entity
 
         if (random < speedBonus || buildingLevel == 1)
         {
-            return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, possibleDrops_3)).func_150708_a(this.rand);
+            return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, fishDrops)).func_150708_a(this.rand);
         }
         else
         {
@@ -725,11 +733,11 @@ public final class EntityFishHook extends Entity
 
             if (random < lootBonus || buildingLevel == 2)
             {
-                return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, possibleDrops_1)).func_150708_a(this.rand);
+                return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, junkDrops)).func_150708_a(this.rand);
             }
             else
             {
-                return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, possibleDrops_2)).func_150708_a(this.rand);
+                return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, rareDrops)).func_150708_a(this.rand);
             }
         }
     }

@@ -13,9 +13,7 @@ public class Pond
 
     private ChunkCoordinates location;
 
-    private Pond(){}
-
-    private Pond(World world, ChunkCoordinates water)
+    private Pond(ChunkCoordinates water)
     {
         this.location = water;
     }
@@ -26,12 +24,11 @@ public class Pond
      * @param water the coordinates to check
      * @return a Pond object if the pond is valid, else null
      */
-    public static Pond createWater(World world, ChunkCoordinates water)
+    public static Pond createWater(IBlockAccess world, ChunkCoordinates water)
     {
-        Pond pond = new Pond(world,water);
         if(checkWater(world,water))
         {
-            return pond;
+            return new Pond(water);
         }
         return null;
     }
@@ -41,7 +38,7 @@ public class Pond
      * @param world The world the player is in
      * @param water The coordinate to check
      */
-    private static boolean checkWater(World world, ChunkCoordinates water)
+    private static boolean checkWater(IBlockAccess world, ChunkCoordinates water)
     {
         int x = water.posX;
         int y = water.posY;
@@ -53,8 +50,8 @@ public class Pond
         }
 
         //If not one direction contains a pool with length at least 6 and width 7
-        return !(!checkWaterPoolInDirectionX(world, x, y, z, 1) && !checkWaterPoolInDirectionX(world, x, y, z, -1) &&
-                !checkWaterPoolInDirectionZ(world, x, y, z, 1) && !checkWaterPoolInDirectionZ(world, x, y, z, -1));
+        return checkWaterPoolInDirectionXThenZ(world, x, y, z, 1) || checkWaterPoolInDirectionXThenZ(world, x, y, z, -1) ||
+               checkWaterPoolInDirectionZThenX(world, x, y, z, 1) || checkWaterPoolInDirectionZThenX(world, x, y, z, -1);
     }
 
     /**
@@ -176,8 +173,6 @@ public class Pond
 
     public static Pond readFromNBT(NBTTagCompound compound)
     {
-        Pond water = new Pond();
-        water.location = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
-        return water;
+        return new Pond(ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION));
     }
 }
