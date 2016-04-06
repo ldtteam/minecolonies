@@ -283,6 +283,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return newNavigator;
     }
 
+    /**
+     * Checks if a worker is at his working site.
+     * If he isn't, sets it's path to the location
+     *
+     * @param site  the place where he should walk to
+     * @param range Range to check in
+     * @return True if worker is at site, otherwise false.
+     */
     public boolean isWorkerAtSiteWithMove(ChunkCoordinates site, int range)
     {
         return Utils.isWorkerAtSiteWithMove(this, site.posX, site.posY, site.posZ, range)

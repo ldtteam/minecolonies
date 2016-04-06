@@ -22,6 +22,9 @@ public class RenderFishHook extends Render
 
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
+     *
+     * @param entity the entity to get the texture from
+     * @return a resource location for the texture
      */
     @Override
     protected ResourceLocation getEntityTexture(Entity entity)
