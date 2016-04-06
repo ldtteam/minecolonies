@@ -699,6 +699,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         }
     }
 
+    /**
+     * Calculates the most efficient tool to use
+     * on that block.
+     *
+     * @param target the Block type to mine
+     * @return the slot with the best tool
+     */
     private int getMostEfficientTool(Block target)
     {
         String           tool      = target.getHarvestTool(0);
@@ -719,6 +726,15 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         return bestSlot;
     }
 
+    /**
+     * Calculate how long it takes to mine this block.
+     *
+     * @param block the block type
+     * @param x     x coordinate
+     * @param y     y coordinate
+     * @param z     z coordinate
+     * @return the delay in ticks
+     */
     private int getBlockMiningDelay(Block block, int x, int y, int z)
     {
         if (worker.getHeldItem() == null)
@@ -729,6 +745,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                       / (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0)));
     }
 
+    /**
+     * Calculate how long it takes to mine this block.
+     *
+     * @param block            the block type
+     * @param chunkCoordinates coordinates of the block
+     * @return the delay in ticks
+     */
     private int getBlockMiningDelay(Block block, ChunkCoordinates chunkCoordinates)
     {
         return getBlockMiningDelay(block, chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ);
@@ -765,7 +788,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                             + "Please report to MineColonies with this text to add support!");
         }
 
-        if(walkToBlock(safeStand)){
+        if (walkToBlock(safeStand))
+        {
             return true;
         }
         currentWorkingLocation = blockToMine;
@@ -775,7 +799,15 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         return hasNotDelayed(getBlockMiningDelay(curBlock, blockToMine));
     }
 
-    protected final boolean hasNotDelayed(int time){
+    /**
+     * Will delay one time and pass through the second time.
+     * Use for convenience instead of SetDelay
+     *
+     * @param time the time to wait
+     * @return true if you should wait
+     */
+    protected final boolean hasNotDelayed(int time)
+    {
         if (!hasDelayed)
         {
             setDelay(time);
