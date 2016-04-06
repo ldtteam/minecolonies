@@ -4,6 +4,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Utils;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -41,9 +42,9 @@ public class ChatSpamFilter
      * @param key       the translation key
      * @param chat      the chat message
      */
-    public void talkWithoutSpam(String key, String chat)
+    public void talkWithoutSpam(String key, String... chat)
     {
-        String curstring = key + chat;
+        String curstring = key + Arrays.toString(chat);
         if (Objects.equals(speechDelayString, curstring))
         {
             if (speechDelay > 0)
@@ -58,8 +59,8 @@ public class ChatSpamFilter
             speechDelay = 0;
             speechRepeat = 1;
         }
-        worker.sendLocalizedChat(key, chat);
-        speechDelayString = key + chat;
+        worker.sendLocalizedChat(key, (Object[]) chat);
+        speechDelayString = key + Arrays.toString(chat);
 
         speechDelay = (int) Math.pow(30, speechRepeat);
     }

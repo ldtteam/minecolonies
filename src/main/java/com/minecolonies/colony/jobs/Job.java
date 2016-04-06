@@ -24,13 +24,14 @@ public abstract class Job
     private static final    String                              MAPPING_MINER       = "Miner";
     private static final    String                              MAPPING_LUMBERJACK  = "Lumberjack";
     private static final    String                              MAPPING_FARMER      = "Farmer";
+    private static final    String                              MAPPING_FISHERMAN   = "Fisherman";
 
     //  Job and View Class Mapping
     private static          Map<String, Class<? extends Job>>   nameToClassMap      = new HashMap<>();
     private static          Map<Class<? extends Job>, String>   classToNameMap      = new HashMap<>();
     private        final    CitizenData                         citizen;
     private                 List<ItemStack>                     itemsNeeded         = new ArrayList<>();
-
+    private                 String                              nameTag             = "";
     static
     {
         addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
@@ -39,6 +40,7 @@ public abstract class Job
         addMapping(MAPPING_MINER, JobMiner.class);
         addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
         addMapping(MAPPING_FARMER, JobFarmer.class);
+        addMapping(MAPPING_FISHERMAN, JobFisherman.class);
     }
 
     public Job(CitizenData entity)
@@ -289,6 +291,16 @@ public abstract class Job
      */
     public String getNameTagDescription()
     {
-        return "";
+        return this.nameTag;
+    }
+
+    /**
+     * Used by the AI skeleton to change a citizens name.
+     * Mostly used to update debugging information.
+     * @param nameTag The name tag to display
+     */
+    public final void setNameTag(final String nameTag)
+    {
+        this.nameTag = nameTag;
     }
 }

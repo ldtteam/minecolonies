@@ -2,23 +2,22 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.InventoryFunctions;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 
-import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
+import static com.minecolonies.entity.ai.AIState.*;
 
 /**
  * This is the base class of all worker AIs.
@@ -31,19 +30,17 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
+public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkeleton<J>
 {
-    public      static  final   String              PICKAXE                 = "pickaxe";
-    public      static  final   String              SHOVEL                  = "shovel";
-    public      static  final   String              AXE                     = "axe";
-    public      static  final   String              HOE                     = "hoe";
-    private     static  final   int                 DEFAULT_RANGE_FOR_DELAY = 3;
-    private     static  final   Logger              logger                  = Utils.generateLoggerForClass(AbstractEntityAIWork.class);
-    private     static  final   int                 DELAY_RECHECK           = 10;
-    private     static  final   int                 MUTEX_MASK              = 3;
-    protected           final   J                   job;
-    protected           final   EntityCitizen       worker;
-    protected           final   World               world;
+    private static final int    DEFAULT_RANGE_FOR_DELAY = 3;
+    private static final int    DELAY_RECHECK           = 10;
+
+    protected static Random           itemRand                = new Random();
+    protected        boolean          needsShovel             = false;
+    protected        boolean          needsAxe                = false;
+    protected        boolean          needsHoe                = false;
+    protected        boolean          needsPickaxe            = false;
+    protected        int              needsPickaxeLevel       = -1;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -53,8 +50,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * <p>
      * Will be cleared on restart, be aware!
      */
-    protected                   List<ItemStack>     itemsCurrentlyNeeded    = new ArrayList<>();
-
+    private          List<ItemStack>  itemsCurrentlyNeeded    = new ArrayList<>();
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -62,20 +58,14 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * <p>
      * Will be cleared on restart, be aware!
      */
-    protected                   List<ItemStack>     itemsNeeded             = new ArrayList<>();
-    protected                   boolean             needsShovel             = false;
-    protected                   boolean             needsAxe                = false;
-    protected                   boolean             needsHoe                = false;
-    protected                   boolean             needsPickaxe            = false;
-    protected                   int                 needsPickaxeLevel       = -1;
-    private                     ErrorState          errorState              = ErrorState.NONE;
-    private                     ChunkCoordinates    currentWorkingLocation  = null;
+    private          List<ItemStack>  itemsNeeded             = new ArrayList<>();
+    private          ChunkCoordinates currentWorkingLocation  = null;
     /**
      * The time in ticks until the next action is made
      */
-    private                     int                 delay = 0;
-    private                     ChunkCoordinates    currentStandingLocation = null;
-    private                     ChatSpamFilter      chatSpamFilter;
+    private          int              delay                   = 0;
+    private          ChunkCoordinates currentStandingLocation = null;
+
 
     /**
      * Creates the abstract part of the AI.
@@ -85,123 +75,141 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      */
     public AbstractEntityAIWork(J job)
     {
-        setMutexBits(MUTEX_MASK);
-        this.job = job;
-        this.worker = this.job.getCitizen().getCitizenEntity();
-        this.world = this.worker.worldObj;
-        this.chatSpamFilter = new ChatSpamFilter(worker);
+        super(job);
+        super.registerTargets(
+                /**
+                 * Init safety checks and transition to IDLE
+                 */
+                new AITarget(INIT, this::initSafetyChecks),
+                /**
+                 * Update chestbelt and nametag
+                 * Will be executed every time
+                 * and does not stop execution
+                 */
+                new AITarget(this::updateVisualState),
+                /**
+                 * If waitingForSomething returns true
+                 * stop execution to wait for it.
+                 * this keeps the current state
+                 * (returning null would not stop execution)
+                 */
+                new AITarget(this::waitingForSomething, () -> state),
+                /**
+                 * Check if any items are needed.
+                 * If yes, transition to NEEDS_ITEM.
+                 * and wait for new items.
+                 */
+                new AITarget(() -> !itemsCurrentlyNeeded.isEmpty(),
+                             this::waitForNeededItems),
+                /**
+                 * Wait for different tools.
+                 */
+                new AITarget(() -> this.needsShovel, this::waitForShovel),
+                new AITarget(() -> this.needsAxe, this::waitForAxe),
+                new AITarget(() -> this.needsHoe, this::waitForHoe),
+                new AITarget(() -> this.needsPickaxe, this::waitForPickaxe),
+                /**
+                 * Dumps inventory as long as needs be.
+                 * If inventory is dumped, execution continues
+                 * to resolve state.
+                 */
+                new AITarget(INVENTORY_FULL, this::dumpInventory),
+                /**
+                 * Check if inventory has to be dumped.
+                 */
+                new AITarget(() -> worker.isInventoryFull() || wantInventoryDumped(),
+                             () -> INVENTORY_FULL)
+                             );
     }
 
     /**
-     * Made final to preserve behaviour:
-     * Sets a bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it
-     * yields zero, the two tasks may run concurrently, if not - they must run exclusively from each other.
+     * Has to be overridden by classes to specify when to dump inventory.
+     * Always dump on inventory full.
      *
-     * @param mutexBits the bits to flag this with.
+     * @return true if inventory needs to be dumped now
      */
-    @Override
-    public final void setMutexBits(int mutexBits)
+    protected boolean wantInventoryDumped()
     {
-        super.setMutexBits(mutexBits);
+        return false;
     }
 
-    @Override
-    public boolean shouldExecute()
-    {
-        return worker.getDesiredActivity() == EntityCitizen.DesiredActivity.WORK;
-    }
-
-    @Override
-    public void resetTask()
-    {
-        worker.setStatus(IDLE);
-    }
-
-    @Override
-    public void startExecuting()
-    {
-        worker.setStatus(EntityCitizen.Status.WORKING);
-        logger.info("Starting AI job " + job.getName());
-    }
-
-    @Override
-    public void updateTask()
+    /**
+     * Check for null on important variables to prevent crashes.
+     *
+     * @return IDLE if all ready, else stay in INIT
+     */
+    private AIState initSafetyChecks()
     {
         //Something fatally wrong? Wait for re-init...
         if (null == getOwnBuilding())
         {
             //TODO: perhaps destroy this task? will see...
-            return;
+            return INIT;
         }
+        return IDLE;
+    }
 
+    /**
+     * Can be overridden in implementations to return the exact building type.
+     *
+     * @return the building associated with this AI's worker.
+     */
+    protected BuildingWorker getOwnBuilding()
+    {
+        return worker.getWorkBuilding();
+    }
+
+    /**
+     * Updates the visual state of the worker.
+     * Updates render meta data.
+     * Updates the current state on the nametag.
+     *
+     * @return null to execute more targets.
+     */
+    private AIState updateVisualState()
+    {
+        //Update the current state the worker is in.
+        job.setNameTag(this.state.toString());
         //Update torch, seeds etc. in chestbelt etc.
         updateRenderMetaData();
+        return null;
+    }
 
+    /**
+     * Can be overridden in implementations.
+     * <p>
+     * Here the AI can check if the chestBelt has to be re rendered and do it.
+     */
+    protected void updateRenderMetaData()
+    {
+        worker.setRenderMetadata("");
+    }
 
-        //Wait for delay if it exists
-        if (waitingForSomething())
-        {
-            return;
-        }
+    /**
+     * Looks for needed items as long as not all of them are there.
+     * Also waits for DELAY_RECHECK.
+     *
+     * @return NEEDS_ITEM
+     */
+    private AIState waitForNeededItems()
+    {
 
-
-        //We need Items as it seems
-        if (!itemsCurrentlyNeeded.isEmpty())
-        {
-            this.errorState = ErrorState.NEEDS_ITEM;
-            lookForNeededItems();
-            delay = DELAY_RECHECK;
-            return;
-        }
-
-        //We need tools
-        if (needsShovel)
-        {
-            this.errorState = ErrorState.NEEDS_SHOVEL;
-            checkForShovel();
-            delay += 10;
-            return;
-        }
-        if (needsPickaxe)
-        {
-            this.errorState = ErrorState.NEEDS_PICKAXE;
-            checkForPickaxe(needsPickaxeLevel);
-            delay += 10;
-            return;
-        }
-
-        //Inventory is full, walk to building and dump inventory
-        if (this.errorState == ErrorState.INVENTORY_FULL)
-        {
-            if (dumpOneMoreSlot())
-            {
-                delay += 10;
-                return;
-            }
-            //We do not need to dump more, use inv check below to resolve condition
-        }
-        //Check for full inventory
-        if (worker.isInventoryFull())
-        {
-            this.errorState = ErrorState.INVENTORY_FULL;
-            return;
-        }
-        this.errorState = ErrorState.NONE;
-        workOnTask();
+        delay = DELAY_RECHECK;
+        return lookForNeededItems();
     }
 
     /**
      * Utility method to search for items currently needed.
      * Poll this until all items are there.
      */
-    protected final void lookForNeededItems()
+    private AIState lookForNeededItems()
     {
         syncNeededItemsWithInventory();
         if (itemsCurrentlyNeeded.isEmpty())
         {
             itemsNeeded.clear();
             job.clearItemsNeeded();
-            return;
+            return IDLE;
         }
         if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
         {
@@ -210,10 +218,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
             //Takes one Stack from the hut if existent
             if (isInHut(first))
             {
-                return;
+                return NEEDS_ITEM;
             }
             requestWithoutSpam(first.getDisplayName());
         }
+        return NEEDS_ITEM;
     }
 
     /**
@@ -233,152 +242,95 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param is    the type of item requested (amount is ignored)
-     * @return      true if a stack of that type was found
+     * @param is the type of item requested (amount is ignored)
+     * @return true if a stack of that type was found
      */
-    protected final boolean isInHut(final ItemStack is)
+    private boolean isInHut(final ItemStack is)
     {
         final BuildingWorker buildingMiner = getOwnBuilding();
         return is != null &&
                InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        (stack) -> stack != null && is.isItemEqual(stack),
-                        this::takeItemStackFromChest
-                                      );
+                       .matchFirstInInventory(
+                               buildingMiner.getTileEntity(),
+                               stack -> stack != null && is.isItemEqual(stack),
+                               this::takeItemStackFromChest
+                                             );
     }
 
     /**
-     * This method will be overridden by AI implementations.
-     * It will serve as a tick function.
-     */
-    protected abstract void workOnTask();
-
-    /**
-     * Here the AI can check if the chestBelt has to be re rendered and do it.
-     */
-    protected void updateRenderMetaData()
-    {}
-
-    /**
-     * This method will return true if the AI is waiting for something.
-     * In that case, don't execute any more AI code, until it returns false.
-     * Call this exactly once per tick to get the delay right.
-     * The worker will move and animate correctly while he waits.
+     * Request an Item without spamming the chat.
      *
-     * @return          true if we have to wait for something
-     * @see             #currentStandingLocation
-     * @see             #currentWorkingLocation
-     * @see             #DEFAULT_RANGE_FOR_DELAY
-     * @see             #delay
+     * @param chat the Item Name
      */
-    private boolean waitingForSomething()
+    private void requestWithoutSpam(String chat)
     {
-        if (delay > 0)
+        chatSpamFilter.requestWithoutSpam(chat);
+    }
+
+    /**
+     * Wait for a needed shovel.
+     *
+     * @return NEEDS_SHOVEL
+     */
+    private AIState waitForShovel()
+    {
+        checkForShovel();
+        delay += DELAY_RECHECK;
+        return NEEDS_SHOVEL;
+    }
+
+    /**
+     * Ensures that we have a shovel available.
+     * Will set {@code needsShovel} accordingly.
+     *
+     * @return true if we have a shovel
+     */
+    private boolean checkForShovel()
+    {
+        needsShovel = checkForTool(Utils.SHOVEL);
+        return needsShovel;
+    }
+
+    private boolean checkForTool(String tool)
+    {
+        boolean needsTool = InventoryFunctions
+                .matchFirstInInventory(
+                        worker.getInventory(),
+                        stack -> Utils.isTool(stack, tool),
+                        InventoryFunctions::doNothing);
+        if (!needsTool)
         {
-            if (currentStandingLocation != null &&
-                !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
-            {
-                //Don't decrease delay as we are just walking...
-                return true;
-            }
-            worker.hitBlockWithToolInHand(currentWorkingLocation);
-            delay--;
+            return false;
+        }
+        delay += DELAY_RECHECK;
+        if (walkToBuilding())
+        {
             return true;
         }
-        clearWorkTarget();
-        return false;
+        if (isToolInHut(tool))
+        {
+            return false;
+        }
+        requestWithoutSpam(tool);
+        return true;
     }
 
-    /**
-     * Remove the current working block and it's delay.
-     */
-    protected final void clearWorkTarget()
+    private boolean isToolInHut(String tool)
     {
-        this.currentStandingLocation = null;
-        this.currentWorkingLocation = null;
-        this.delay = 0;
-    }
+        BuildingWorker buildingMiner = getOwnBuilding();
+        return InventoryFunctions
+                .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        stack -> Utils.isTool(stack, tool),
+                        this::takeItemStackFromChest);
 
-    /**
-     * Takes whatever is in that slot of the workers chest and puts it in his inventory.
-     * If the inventory is full, only the fitting part will be moved.
-     *
-     * @param slot      the slot in the buildings inventory
-     */
-    protected final void takeItemStackFromChest(int slot)
-    {
-        InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
-    }
-
-    /**
-     * Can be overridden in implementations to return the exact building type.
-     *
-     * @return          the building associated with this AI's worker.
-     */
-    protected BuildingWorker getOwnBuilding()
-    {
-        return worker.getWorkBuilding();
-    }
-
-    /**
-     * Override this method if you want to keep some items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @param stack     the stack to decide on
-     * @return          true if the stack should remain in inventory
-     */
-    protected boolean neededForWorker(ItemStack stack)
-    {
-        return false;
-    }
-
-    /**
-     * Dump the workers inventory into his building chest.
-     * Only useful tools are kept!
-     * Only dumps one block at a time!
-     */
-    protected final boolean dumpOneMoreSlot()
-    {
-        return dumpOneMoreSlot(this::neededForWorker);
-    }
-
-    /**
-     * Dumps one inventory slot into the building chest.
-     *
-     * @param keepIt    used to test it that stack should be kept
-     * @return          true if is has to dump more.
-     */
-    private boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
-    {
-
-        return walkToBuilding()
-               || InventoryFunctions.matchFirstInInventory(
-                worker.getInventory(), (i, stack) -> {
-                    if (stack == null || keepIt.test(stack)){ return false; }
-                    ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
-                    if (returnStack == null)
-                    {
-                        worker.getInventory().decrStackSize(i, stack.stackSize);
-                        return true;
-                    }
-                    worker.getInventory().decrStackSize(
-                            i,
-                            stack.stackSize
-                            - returnStack.stackSize);
-                    //Check that we are not inserting
-                    // into a
-                    // full inventory.
-                    return stack.stackSize != returnStack.stackSize;
-                });
     }
 
     /**
      * Walk the worker to it's building chest.
      * Please return immediately if this returns true.
      *
-     * @return      false if the worker is at his building
+     * @return false if the worker is at his building
      */
     protected final boolean walkToBuilding()
     {
@@ -415,26 +367,81 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
         this.delay = timeout;
     }
 
-    protected final void setDelay(int timeout)
+    /**
+     * Wait for a needed axe.
+     *
+     * @return NEEDS_AXE
+     */
+    private AIState waitForAxe()
     {
-        this.delay = timeout;
+        checkForAxe();
+        delay += DELAY_RECHECK;
+        return NEEDS_AXE;
+    }
+
+    /**
+     * Ensures that we have an axe available.
+     * Will set {@code needsAxe} accordingly.
+     *
+     * @return true if we have an axe
+     */
+    private boolean checkForAxe()
+    {
+        needsAxe = checkForTool(Utils.AXE);
+        return needsAxe;
+    }
+
+    /**
+     * Wait for a needed hoe.
+     *
+     * @return NEEDS_HOE
+     */
+    private AIState waitForHoe()
+    {
+        checkForHoe();
+        delay += DELAY_RECHECK;
+        return NEEDS_HOE;
+    }
+
+    /**
+     * Ensures that we have a hoe available.
+     * Will set {@code needsHoe} accordingly.
+     *
+     * @return true if we have a hoe
+     */
+    private boolean checkForHoe()
+    {
+        needsHoe = checkForTool(Utils.HOE);
+        return needsHoe;
+    }
+
+    /**
+     * Wait for a needed pickaxe.
+     *
+     * @return NEEDS_PICKAXE
+     */
+    private AIState waitForPickaxe()
+    {
+        checkForPickaxe(needsPickaxeLevel);
+        delay += DELAY_RECHECK;
+        return NEEDS_PICKAXE;
     }
 
     /**
      * Ensures that we have a pickaxe available.
      * Will set {@code needsPickaxe} accordingly.
      *
-     * @param minlevel  the minimum pickaxe level needed.
-     * @return          true if we have a pickaxe
+     * @param minlevel the minimum pickaxe level needed.
+     * @return true if we have a pickaxe
      */
-    protected final boolean checkForPickaxe(int minlevel)
+    private boolean checkForPickaxe(int minlevel)
     {
         //Check for a pickaxe
         needsPickaxe = InventoryFunctions
                 .matchFirstInInventory(
                         worker.getInventory(),
                         stack -> Utils.checkIfPickaxeQualifies(
-                                minlevel, Utils.getMiningLevel(stack, PICKAXE)),
+                                minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
                         InventoryFunctions::doNothing);
 
         delay += DELAY_RECHECK;
@@ -455,8 +462,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the pickaxe.
      *
-     * @param minlevel  the needed pickaxe level
-     * @return          true if a pickaxe was found
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
      */
     private boolean isPickaxeInHut(int minlevel)
     {
@@ -468,20 +475,177 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
                                 minlevel,
                                 Utils.getMiningLevel(
                                         stack,
-                                        PICKAXE)),
+                                        Utils.PICKAXE)),
                         this::takeItemStackFromChest);
     }
 
     /**
-     * Ensures that we have a shovel available.
-     * Will set {@code needsShovel} accordingly.
+     * Walk to building and dump inventory.
+     * If inventory is dumped, continue execution
+     * so that the state can be resolved.
      *
-     * @return      true if we have a shovel
+     * @return INVENTORY_FULL | IDLE
      */
-    protected final boolean checkForShovel()
+    private AIState dumpInventory()
     {
-        needsShovel = checkForTool(SHOVEL);
-        return needsShovel;
+        if (dumpOneMoreSlot())
+        {
+            delay += DELAY_RECHECK;
+            return INVENTORY_FULL;
+        }
+        return IDLE;
+    }
+
+    /**
+     * Dump the workers inventory into his building chest.
+     * Only useful tools are kept!
+     * Only dumps one block at a time!
+     */
+    private boolean dumpOneMoreSlot()
+    {
+        return dumpOneMoreSlot(this::neededForWorker);
+    }
+
+    /**
+     * Dumps one inventory slot into the building chest.
+     *
+     * @param keepIt used to test it that stack should be kept
+     * @return true if is has to dump more.
+     */
+    private boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
+    {
+
+        return walkToBuilding()
+               || InventoryFunctions.matchFirstInInventory(
+                worker.getInventory(), (i, stack) -> {
+                    if (stack == null || keepIt.test(stack)){ return false; }
+                    ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
+                    if (returnStack == null)
+                    {
+                        worker.getInventory().decrStackSize(i, stack.stackSize);
+                        return true;
+                    }
+                    worker.getInventory().decrStackSize(
+                            i,
+                            stack.stackSize
+                            - returnStack.stackSize);
+                    //Check that we are not inserting
+                    // into a
+                    // full inventory.
+                    return stack.stackSize != returnStack.stackSize;
+                });
+    }
+
+    @Override
+    public void updateTask()
+    {
+        super.updateTask();
+
+        workOnTask();
+    }
+
+    /**
+     * This method will be overridden by AI implementations.
+     * It will serve as a tick function.
+     */
+    protected abstract void workOnTask();
+
+    /**
+     * Require that items are in the workers inventory.
+     * This safegate ensurs you have said items before you execute a task.
+     * Please stop execution on false returned.
+     *
+     * @param items the items needed
+     * @return true if they are in inventory
+     */
+    protected boolean checkOrRequestItems(ItemStack... items)
+    {
+        boolean allClear = true;
+        for (ItemStack stack : items)
+        {
+            int countOfItem = worker.getItemCountInInventory(stack.getItem());
+            if (countOfItem < stack.stackSize)
+            {
+                int       itemsLeft     = stack.stackSize - countOfItem;
+                ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
+                itemsCurrentlyNeeded.add(requiredStack);
+                allClear = false;
+            }
+        }
+        if (allClear)
+        {
+            return false;
+        }
+        itemsNeeded.clear();
+        Collections.addAll(itemsNeeded, items);
+        return true;
+    }
+
+    /**
+     * This method will return true if the AI is waiting for something.
+     * In that case, don't execute any more AI code, until it returns false.
+     * Call this exactly once per tick to get the delay right.
+     * The worker will move and animate correctly while he waits.
+     *
+     * @return true if we have to wait for something
+     * @see #currentStandingLocation @see #currentWorkingLocation
+     * @see #DEFAULT_RANGE_FOR_DELAY @see #delay
+     */
+    private boolean waitingForSomething()
+    {
+        if (delay > 0)
+        {
+            if (currentStandingLocation != null &&
+                !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
+            {
+                //Don't decrease delay as we are just walking...
+                return true;
+            }
+            worker.hitBlockWithToolInHand(currentWorkingLocation);
+            delay--;
+            return true;
+        }
+        clearWorkTarget();
+        return false;
+    }
+
+    /**
+     * Remove the current working block and it's delay.
+     */
+    protected final void clearWorkTarget()
+    {
+        this.currentStandingLocation = null;
+        this.currentWorkingLocation = null;
+        this.delay = 0;
+    }
+
+    /**
+     * Takes whatever is in that slot of the workers chest and puts it in his inventory.
+     * If the inventory is full, only the fitting part will be moved.
+     *
+     * @param slot the slot in the buildings inventory
+     */
+    private void takeItemStackFromChest(int slot)
+    {
+        InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
+    }
+
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
+    protected boolean neededForWorker(ItemStack stack)
+    {
+        return false;
+    }
+
+    protected final void setDelay(int timeout)
+    {
+        this.delay = timeout;
     }
 
     protected final boolean holdEfficientTool(Block target)
@@ -497,15 +661,15 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
 
     protected final int getMostEfficientTool(Block target)
     {
-        String tool = target.getHarvestTool(0);
-        int required = target.getHarvestLevel(0);
-        int bestSlot = -1;
-        int bestLevel = Integer.MAX_VALUE;
+        String           tool      = target.getHarvestTool(0);
+        int              required  = target.getHarvestLevel(0);
+        int              bestSlot  = -1;
+        int              bestLevel = Integer.MAX_VALUE;
         InventoryCitizen inventory = worker.getInventory();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            ItemStack item = inventory.getStackInSlot(i);
-            int level = Utils.getMiningLevel(item, tool);
+            ItemStack item  = inventory.getStackInSlot(i);
+            int       level = Utils.getMiningLevel(item, tool);
             if (level >= required && level < bestLevel)
             {
                 bestSlot = i;
@@ -513,89 +677,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends EntityAIBase
             }
         }
         return bestSlot;
-    }
-
-    /**
-     * Ensures that we have an axe available.
-     * Will set {@code needsAxe} accordingly.
-     *
-     * @return      true if we have an axe
-     */
-    protected final boolean checkForAxe()
-    {
-        needsAxe = checkForTool(AXE);
-        return needsAxe;
-    }
-
-    private boolean checkForTool(String tool)
-    {
-        boolean needsTool = InventoryFunctions
-                .matchFirstInInventory(
-                        worker.getInventory(),
-                        stack -> Utils.isTool(stack, tool),
-                        InventoryFunctions::doNothing);
-        if (!needsTool)
-        {
-            return false;
-        }
-        delay += DELAY_RECHECK;
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
-        {
-            if (isToolInHut(tool))
-            {
-                return false;
-            }
-            requestWithoutSpam(tool);
-        }
-        return true;
-    }
-
-    /**
-     * Request an Item without spamming the chat.
-     *
-     * @param chat      the Item Name
-     */
-    protected final void requestWithoutSpam(String chat)
-    {
-        chatSpamFilter.requestWithoutSpam(chat);
-    }
-
-    private boolean isToolInHut(String tool)
-    {
-        BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        stack -> Utils.isTool(stack, tool),
-                        this::takeItemStackFromChest);
-
-    }
-
-    /**
-     * Ensures that we have a hoe available.
-     * Will set {@code needsHoe} accordingly.
-     *
-     * @return          true if we have a hoe
-     */
-    protected final boolean checkForHoe()
-    {
-        needsHoe = checkForTool(HOE);
-        return needsHoe;
-    }
-
-    /**
-     * A displayable status showing why execution is not passed to the AI code.
-     * TODO: We have to find a better name than ErrorState as the states
-     * are no errors per se but are things to be resolved before
-     * AI execution can be resumed.
-     */
-    private enum ErrorState //TODO perhaps BlockerState?
-    {
-        NONE,
-        NEEDS_ITEM,
-        NEEDS_SHOVEL,
-        NEEDS_PICKAXE,
-        INVENTORY_FULL,
     }
 
 }

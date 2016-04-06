@@ -120,6 +120,8 @@ public abstract class Building
         addMapping("Stonemason",    BuildingStonemason.class,    BlockHutStonemason.class);
         addMapping("Townhall",      BuildingTownhall.class,      BlockHutTownhall.class);
         addMapping("Warehouse",     BuildingWarehouse.class,     BlockHutWarehouse.class);
+        addMapping("Fisherman",     BuildingFisherman.class,     BlockHutFisherman.class);
+
     }
 
     /**
