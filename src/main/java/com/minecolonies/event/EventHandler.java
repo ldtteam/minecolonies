@@ -1,6 +1,6 @@
 package com.minecolonies.event;
 
-import com.minecolonies.blocks.BlockHut;
+import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.BlockHutTownhall;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.IColony;
@@ -33,7 +33,7 @@ public class EventHandler
     {
         World world = event.world;
 
-        if(!world.isRemote && event.block instanceof BlockHut)
+        if(!world.isRemote && event.block instanceof AbstractBlockHut)
         {
             Building building = ColonyManager.getBuilding(world, event.x, event.y, event.z);
             if (building == null)
@@ -69,7 +69,7 @@ public class EventHandler
 
             if(!player.isSneaking() || player.getHeldItem() == null || player.getHeldItem().getItem() == null || player.getHeldItem().getItem().doesSneakBypassUse(world, x, y, z, player))
             {
-                if(world.getBlock(x, y, z) instanceof BlockHut)//this was the simple way of doing it, minecraft calls onBlockActivated
+                if(world.getBlock(x, y, z) instanceof AbstractBlockHut)//this was the simple way of doing it, minecraft calls onBlockActivated
                 {                                              // and uses that return value, but I didn't want to call it twice
                     IColony colony = ColonyManager.getIColony(world, x, y, z);
                     if (colony != null &&
@@ -85,7 +85,7 @@ public class EventHandler
             if(player.getHeldItem() == null || player.getHeldItem().getItem() == null) return;
 
             Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
-            if(heldBlock instanceof BlockHut)
+            if(heldBlock instanceof AbstractBlockHut)
             {
                 switch(event.face)
                 {
@@ -114,7 +114,7 @@ public class EventHandler
     }
 
     /**
-     * Called when a player tries to place a BlockHut. Returns true if successful and false to cancel the block placement.
+     * Called when a player tries to place a AbstractBlockHut. Returns true if successful and false to cancel the block placement.
      *
      * @param world  The world the player is in
      * @param player The player

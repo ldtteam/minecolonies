@@ -1,6 +1,6 @@
 package com.minecolonies.blocks;
 
-public class BlockHutMiner extends BlockHut
+public class BlockHutMiner extends AbstractBlockHut
 {
     protected BlockHutMiner()
     {

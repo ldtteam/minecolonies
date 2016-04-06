@@ -1,6 +1,6 @@
 package com.minecolonies.util;
 
-import com.minecolonies.blocks.BlockHut;
+import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.schematica.world.SchematicWorld;
 import com.schematica.world.schematic.SchematicFormat;
@@ -374,7 +374,7 @@ public class Schematic
                     blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(world.getBlock(x, y, z));
                     metadata[x - minX][y - minY][z - minZ] = (byte) world.getBlockMetadata(x, y, z);
 
-                    if(world.getBlock(x, y, z) instanceof BlockHut)
+                    if(world.getBlock(x, y, z) instanceof AbstractBlockHut)
                     {
                         if(xOffset == 0 && yOffset == 0 && zOffset == 0)
                         {
@@ -384,7 +384,7 @@ public class Schematic
                         }
                         else
                         {
-                            Log.logger.warn("Scan contained multiple BlockHut's ignoring this one");
+                            Log.logger.warn("Scan contained multiple AbstractBlockHut's ignoring this one");
                             blocks[x - minX][y - minY][z - minZ] = 0;
                             metadata[x - minX][y - minY][z - minZ] = 0;
                         }

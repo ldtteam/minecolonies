@@ -2,7 +2,7 @@ package com.minecolonies.blocks;
 
 import com.minecolonies.configuration.Configurations;
 
-public class BlockHutTownhall extends BlockHut
+public class BlockHutTownhall extends AbstractBlockHut
 {
     protected BlockHutTownhall()
     {
