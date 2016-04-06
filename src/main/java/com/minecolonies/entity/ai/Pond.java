@@ -5,7 +5,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
 public class Pond
 {
