@@ -22,11 +22,11 @@ public final class RecipeHandler
 
         if (Configurations.enableInDevelopmentFeatures)
         {
-            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBaker, 1),       "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.wheat);
-            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutWarehouse, 1),   "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Blocks.chest);
-            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBlacksmith, 1),  "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.iron_ingot);
-            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutStonemason, 1),  "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Blocks.stonebrick);
-            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutFarmer, 1),      "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.wooden_hoe);
+            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.wheat);
+            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutWarehouse, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Blocks.chest);
+            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBlacksmith, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.iron_ingot);
+            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutStonemason, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Blocks.stonebrick);
+            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutFarmer, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.wooden_hoe);
         }
 
         if (Configurations.supplyChests)

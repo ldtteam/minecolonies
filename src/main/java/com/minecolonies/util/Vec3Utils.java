@@ -8,11 +8,11 @@ public class Vec3Utils
     /**
      * Returns the distance from a {@link Vec3} to a location
      *
-     * @param vec       Vector (point 1)
-     * @param x         x-coordinate (point 2)
-     * @param y         y-coordinate (point 2)
-     * @param z         z-coordinate (point 2)
-     * @return          Distance between points
+     * @param vec Vector (point 1)
+     * @param x   x-coordinate (point 2)
+     * @param y   y-coordinate (point 2)
+     * @param z   z-coordinate (point 2)
+     * @return Distance between points
      */
     public static double distanceTo(Vec3 vec, double x, double y, double z)
     {
@@ -22,11 +22,11 @@ public class Vec3Utils
     /**
      * Returns whether or not the locations are the same
      *
-     * @param vec       Vector (point 1)
-     * @param x         x-coordinate (point 2)
-     * @param y         y-coordinate (point 2)
-     * @param z         z-coordinate (point 2)
-     * @return          True if locations are equal, otherwise false
+     * @param vec Vector (point 1)
+     * @param x   x-coordinate (point 2)
+     * @param y   y-coordinate (point 2)
+     * @param z   z-coordinate (point 2)
+     * @return True if locations are equal, otherwise false
      */
     public static boolean equals(Vec3 vec, double x, double y, double z)
     {
@@ -36,9 +36,9 @@ public class Vec3Utils
     /**
      * Returns whether or not the locations are the same
      *
-     * @param vec1       Vector (point 1)
-     * @param vec2       Vector (point 2)
-     * @return           True if locations are equal, otherwise false
+     * @param vec1 Vector (point 1)
+     * @param vec2 Vector (point 2)
+     * @return True if locations are equal, otherwise false
      */
     public static boolean equals(Vec3 vec1, Vec3 vec2)
     {
@@ -48,8 +48,8 @@ public class Vec3Utils
     /**
      * Creates a floor {@link Vec3}
      *
-     * @param vec       Vector
-     * @return          Floor vector
+     * @param vec Vector
+     * @return Floor vector
      */
     public static Vec3 vec3Floor(Vec3 vec)
     {
