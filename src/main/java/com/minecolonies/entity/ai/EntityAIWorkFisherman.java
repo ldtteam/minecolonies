@@ -397,9 +397,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                                     "random.bow",
                                     VOLUME,
                                     (float) (FREQUENCY_BOUND_VALUE / (itemRand.nextDouble() * (FREQUENCY_UPPER_LIMIT_DIVIDER - FREQUENCY_LOWER_LIMIT_DIVIDER) + FREQUENCY_LOWER_LIMIT_DIVIDER)));
-            EntityFishHook hook = new EntityFishHook(world, this.getCitizen());
-            this.entityFishHook = hook;
-            world.spawnEntityInWorld(hook);
+            this.entityFishHook = new EntityFishHook(world, this.getCitizen());
+            world.spawnEntityInWorld(this.entityFishHook);
         }
 
         worker.swingItem();

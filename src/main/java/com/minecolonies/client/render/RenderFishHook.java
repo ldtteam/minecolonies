@@ -92,6 +92,21 @@ public class RenderFishHook extends Render
         GL11.glPopMatrix();
 
         EntityCitizen citizen = entityFishHook.getCitizen();
+
+        //If the citizen is null (Which he probably is) get the nearest citizen to the fishHook position.
+        //Check if he is a fisherman -> Through his texture
+        if(citizen==null)
+        {
+            for (Object citizenX : entityFishHook.worldObj.getEntitiesWithinAABB(EntityCitizen.class, entityFishHook.boundingBox.expand(10,10,10)))
+            {
+                if(((EntityCitizen) citizenX).getModelID().textureBase.contains("Fisherman"))
+                {
+                    citizen = (EntityCitizen)citizenX;
+                    break;
+                }
+            }
+        }
+
         if (citizen != null)
         {
             final double orientation      = citizen.getSwingProgress(angle);
@@ -123,31 +138,6 @@ public class RenderFishHook extends Render
                     + (citizen.posZ - citizen.prevPosZ) * angle
                     + vec3.zCoord;
 
-            double scale = (double) citizen.getEyeHeight();
-
-            if (this.renderManager.options.thirdPersonView > 0)
-            {
-                double
-                        f11 =
-                        ((double) citizen.prevRenderYawOffset
-                         + ((double) citizen.renderYawOffset - (double) citizen.prevRenderYawOffset) * (double) angle)
-                        * Math.PI / 180.0D;
-                double d7 = Math.sin(f11);
-                double d8 = Math.cos(f11);
-
-                correctedPosX =
-                        citizen.prevPosX + (citizen.posX - citizen.prevPosX) * angle
-                        - d8 * 0.35
-                        - d7 * 0.85;
-                correctedPosY =
-                        citizen.prevPosY
-                        + scale
-                        + (citizen.posY - citizen.prevPosY) * angle - 0.45;
-                correctedPosZ =
-                        citizen.prevPosZ + (citizen.posZ - citizen.prevPosZ) * angle
-                        - d7 * 0.35 + d8 * 0.85;
-            }
-
             final double distX = entityFishHook.prevPosX + (entityFishHook.posX - entityFishHook.prevPosX) * angle;
             double       distY = entityFishHook.prevPosY + (entityFishHook.posY - entityFishHook.prevPosY) * angle + 0.25;
             double       distZ = entityFishHook.prevPosZ + (entityFishHook.posZ - entityFishHook.prevPosZ) * angle;
@@ -164,7 +154,7 @@ public class RenderFishHook extends Render
             for (int i = 0; i <= 16; ++i)
             {
                 double crazyVar = (double) i / (double) 16;
-                tessellator.addVertex(posX + correctionX * crazyVar, posY + correctionY * (crazyVar * crazyVar + crazyVar) * 0.5 + 0.25, posZ + correctionZ * crazyVar);
+                tessellator.addVertex(posX + correctionX * crazyVar, posY + (correctionY+1) * (crazyVar * crazyVar + crazyVar) * 0.5 + 0.25, posZ + correctionZ * crazyVar);
             }
 
             tessellator.draw();
