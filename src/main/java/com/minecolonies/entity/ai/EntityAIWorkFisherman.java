@@ -399,9 +399,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                                     "random.bow",
                                     VOLUME,
                                     (float) (FREQUENCY_BOUND_VALUE / (itemRand.nextDouble() * (FREQUENCY_UPPER_LIMIT_DIVIDER - FREQUENCY_LOWER_LIMIT_DIVIDER) + FREQUENCY_LOWER_LIMIT_DIVIDER)));
-            EntityFishHook hook = new EntityFishHook(world, this.getCitizen());
-            this.entityFishHook = hook;
-            world.spawnEntityInWorld(hook);
+            this.entityFishHook = new EntityFishHook(world, this.getCitizen());
+            world.spawnEntityInWorld(this.entityFishHook);
         }
 
         worker.swingItem();
@@ -446,6 +445,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return PREPARING;
         }
 
+        if(world.getBlock((int)worker.posX,(int)worker.posY,(int)worker.posZ) == Blocks.water)
+        {
+            job.removeFromPonds(job.getWater());
+            job.setWater(null);
+            return FISHERMAN_SEARCHING_WATER;
+        }
         //If there is no close water, try to move closer
         if (!Utils.isBlockInRange(world, Blocks.water, (int) worker.posX, (int) worker.posY, (int) worker.posZ, MIN_DISTANCE_TO_WATER))
         {
