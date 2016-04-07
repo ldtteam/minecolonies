@@ -57,7 +57,7 @@ public class RenderBipedCitizen extends RenderBiped
         idToFemaleModelMap.put  (Model.MINER,           new ModelEntityMinerFemale());
         idToFemaleModelMap.put  (Model.LUMBERJACK,      new ModelEntityLumberjackFemale());
         idToFemaleModelMap.put  (Model.FARMER,          new ModelEntityFarmerFemale());
-        idToFemaleModelMap.put    (Model.FISHERMAN,       new ModelBiped()); //TODO female
+        idToFemaleModelMap.put  (Model.FISHERMAN,       new ModelEntityCitizenFemaleCitizen()); //TODO female
 
     }
 
