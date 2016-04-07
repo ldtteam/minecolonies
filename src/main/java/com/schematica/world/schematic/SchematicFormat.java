@@ -1,7 +1,7 @@
 package com.schematica.world.schematic;
 
+import com.minecolonies.util.Log;
 import com.schematica.world.SchematicWorld;
-import com.minecolonies.MineColonies;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
@@ -42,7 +42,7 @@ public abstract class SchematicFormat
         }
         catch(Exception ex)
         {
-            MineColonies.logger.error("Failed to read schematic!", ex);
+            Log.logger.error("Failed to read schematic!", ex);
         }
 
         return null;
@@ -67,7 +67,7 @@ public abstract class SchematicFormat
         }
         catch(Exception ex)
         {
-            MineColonies.logger.error("Failed to read schematic!", ex);
+            Log.logger.error("Failed to read schematic!", ex);
         }
 
         return null;
@@ -99,7 +99,7 @@ public abstract class SchematicFormat
         }
         catch(Exception ex)
         {
-            MineColonies.logger.error("Failed to write schematic!", ex);
+            Log.logger.error("Failed to write schematic!", ex);
         }
 
         return false;

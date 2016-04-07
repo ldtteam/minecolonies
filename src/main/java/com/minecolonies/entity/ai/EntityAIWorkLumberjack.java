@@ -2,10 +2,7 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
-import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
-import com.minecolonies.util.InventoryUtils;
-import com.minecolonies.util.Vec3Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.item.EntityItem;
@@ -13,344 +10,522 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.entity.ai.AIState.*;
+
+/**
+ * The lumberjack AI class
+ */
 public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 {
-    private static final String TOOL_TYPE_AXE    = "axe";
-    private static final String RENDER_META_LOGS = "Logs";
-    private static final int MAX_LOG_BREAK_TIME = 30;
-    private static final int SEARCH_RANGE       = 50;
-    private int chopTicks        = 0;
-    private int stillTicks       = 0;
-    private int previousDistance = 0;
-    private int previousIndex    = 0;
-    private int delay = 0;
-    private int logBreakTime = Integer.MAX_VALUE;
-    private List<ChunkCoordinates> items;
+    private static final String TOOL_TYPE_AXE           = "axe";
+    /**
+     * The render name to render logs
+     */
+    private static final String RENDER_META_LOGS        = "Logs";
+    /**
+     * The range in which the lumberjack searches for trees.
+     */
+    private static final int    SEARCH_RANGE            = 50;
+    /**
+     * If no trees are found, increment the range
+     */
+    private static final int    SEARCH_INCREMENT        = 5;
+    /**
+     * If this limit is reached, no trees are found.
+     */
+    private static final int    SEARCH_LIMIT            = 150;
+    /**
+     * Number of ticks to wait before coming
+     * to the conclusion of being stuck
+     */
+    private static final int    STUCK_WAIT_TIME         = 10;
+    /**
+     * Number of ticks until he gives up destroying leaves
+     * and walks a bit back to try a new path
+     */
+    private static final int    WALKING_BACK_WAIT_TIME  = 60;
+    /**
+     * How much he backs away when really not finding any path
+     */
+    private static final double WALK_BACK_RANGE         = 3.0;
+    /**
+     * The speed in which he backs away
+     */
+    private static final double WALK_BACK_SPEED         = 1.0;
+    /**
+     * Time in ticks to wait before placing a sapling.
+     * Is used to collect falling saplings from the ground.
+     */
+    private static final int    WAIT_BEFORE_SAPLING     = 100;
+    /**
+     * Time in ticks to wait before rechecking
+     * if there are trees in the
+     * range of the lumberjack
+     */
+    private static final int    WAIT_BEFORE_SEARCH      = 100;
+    /**
+     * Time in ticks before incrementing the search radius.
+     */
+    private static final int    WAIT_BEFORE_INCREMENT   = 20;
+    /**
+     * The amount of time to wait while walking to items
+     */
+    private static final int    WAIT_WHILE_WALKING      = 5;
+    /**
+     * Horizontal range in which the lumberjack picks up items
+     */
+    private static final float  RANGE_HORIZONTAL_PICKUP = 45.0F;
+    /**
+     * Vertical range in which the lumberjack picks up items
+     */
+    private static final float  RANGE_VERTICAL_PICKUP   = 15.0F;
+    /**
+     * Number of ticks the lumberjack is standing still
+     */
+    private              int    stillTicks              = 0;
+    /**
+     * Used to store the walk distance
+     * to check if the lumberjack is still walking
+     */
+    private              int    previousDistance        = 0;
+    /**
+     * Used to store the path index
+     * to check if the lumberjack is still walking
+     */
+    private              int    previousIndex           = 0;
+    /**
+     * Positions of all items that have to be collected.
+     */
+    private List<ChunkCoordinates>         items;
+    /**
+     * The active pathfinding job used to walk to trees
+     */
     private PathJobFindTree.TreePathResult pathResult;
+    /**
+     * Lumberjack woodcutting experience
+     * todo: enable usage of this
+     */
+    private int woodCuttingSkill = worker.getStrength() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
+    /**
+     * A counter by how much the tree search radius
+     * has been increased by now.
+     */
+    private int searchIncrement  = 0;
 
+    /**
+     * Create a new LumberjackAI
+     *
+     * @param job the lumberjackjob
+     */
     public EntityAIWorkLumberjack(JobLumberjack job)
     {
         super(job);
-    }
-
-    @Override
-    public void startExecuting()
-    {
-        //TODO: rework with new AI framework
-        if(!hasAxeWithEquip())
-        {
-            requestAxe();
-        }
-    }
-
-    @Override
-    public void updateTask()
-    {
-        if(delay > 0)
-        {
-            delay--;
-            return;
-        }
-
-        worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
-
-        switch(job.getStage())
-        {
-            case IDLE:
-                if(!hasAxeWithEquip())
-                {
-                    requestAxe();
-                }
-                else
-                {
-                    job.setStage(Stage.SEARCHING);
-                }
-                break;
-            case SEARCHING:
-                if(job.tree == null)
-                {
-                    findTree();
-                }
-                else
-                {
-                    job.setStage(Stage.CHOPPING);
-                }
-                break;
-            case CHOPPING:
-                if(!hasAxeWithEquip())
-                {
-                    job.setStage(Stage.IDLE);
-                }
-                else if(job.tree == null)
-                {
-                    job.setStage(Stage.SEARCHING);
-                }
-                else
-                {
-                    if(logBreakTime == Integer.MAX_VALUE)
-                    {
-                        ItemStack axe = worker.getHeldItem();
-                        logBreakTime = MAX_LOG_BREAK_TIME - (int) axe.getItem().getDigSpeed(axe, ChunkCoordUtils.getBlock(world, job.tree.getLocation()), ChunkCoordUtils.getBlockMetadata(world, job.tree.getLocation()));
-                    }
-
-                    chopTree();
-                }
-                break;
-            //Entities now pick up nearby items
-            case GATHERING:
-                if(items == null)
-                {
-                    searchForItems();
-                }
-                else if(!items.isEmpty())
-                {
-                    gatherItems();
-                }
-                else
-                {
-                    items = null;
-                    job.setStage(Stage.SEARCHING);
-                }
-                break;
-            case INVENTORY_FULL:
-                dumpInventory();
-                break;
-            default:
-                //System.out.println("Invalid stage in EntityAIWorkLumberjack");
-        }
+        super.registerTargets(
+                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+                new AITarget(PREPARING, this::prepareForWoodcutting),
+                new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
+                new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood),
+                new AITarget(LUMBERJACK_GATHERING, this::gathering),
+                new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
+                             );
     }
 
     /**
-     * This method will be overridden by AI implementations
+     * Walk to own building to check for tools.
+     *
+     * @return PREPARING once at the building
      */
-    @Override
-    protected void workOnTask()
+    private AIState startWorkingAtOwnBuilding()
     {
-        //TODO: rework the lumberjack to use workOnTask eventually
-    }
-
-    @Override
-    public boolean continueExecuting()
-    {
-        return super.continueExecuting();
-    }
-
-    @Override
-    public void resetTask()
-    {
-        job.setStage(Stage.IDLE);
-    }
-
-    private void requestAxe()
-    {
-        //TODO request by tool type
-        //job.addItemNeeded();
-        worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), 4);//Go Home
-    }
-
-    private void findTree()
-    {
-        if(pathResult == null)
+        if (walkToBuilding())
         {
-            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE, 1.0D);
+            return state;
         }
-        else if(pathResult.getPathReachesDestination())
+        return PREPARING;
+    }
+
+    /**
+     * Checks if lumberjack has all necessary tools
+     *
+     * @return next AIState
+     */
+    private AIState prepareForWoodcutting()
+    {
+        if (checkForAxe())
         {
-            if(pathResult.treeLocation != null)
+            return state;
+        }
+        return LUMBERJACK_SEARCHING_TREE;
+    }
+
+    /**
+     * If the search radius was exceeded,
+     * we have to wait dome time before
+     * searching again.
+     *
+     * @return LUMBERJACK_SEARCHING_TREE once waited enough
+     */
+    private AIState waitBeforeCheckingAgain()
+    {
+        if (hasNotDelayed(WAIT_BEFORE_SEARCH))
+        {
+            return state;
+        }
+        return LUMBERJACK_SEARCHING_TREE;
+    }
+
+    /**
+     * Checks if lumberjack has already found some trees. If not search trees.
+     *
+     * @return next AIState
+     */
+    private AIState findTrees()
+    {
+        if (job.tree == null)
+        {
+            return findTree();
+        }
+        return LUMBERJACK_CHOP_TREE;
+    }
+
+    /**
+     * Search for a tree
+     *
+     * @return LUMBERJACK_GATHERING if job was canceled
+     */
+    private AIState findTree()
+    {
+        if (pathResult == null)
+        {
+            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D);
+            return state;
+        }
+        if (pathResult.getPathReachesDestination())
+        {
+            if (pathResult.treeLocation != null)
             {
                 job.tree = new Tree(world, pathResult.treeLocation);
                 job.tree.findLogs(world);
             }
-            pathResult = null;
-        }
-        else if(pathResult.isCancelled())
-        {
-            job.setStage(Stage.GATHERING);
-            pathResult = null;
-        }
-    }
-
-    private void chopTree()
-    {
-        if(InventoryUtils.getOpenSlot(getInventory()) == -1)//inventory has an open slot - this doesn't account for slots with non full stacks
-        {                                                   //also we still may have problems if the block drops multiple items
-            job.setStage(Stage.INVENTORY_FULL);
-            return;
-        }
-
-        ChunkCoordinates location = job.tree.getLocation();
-        if(!worker.isWorkerAtSiteWithMove(location, 3))
-        {
-            int distance = (int) ChunkCoordUtils.distanceSqrd(location, worker.getPosition());
-            if(previousDistance == distance)//Stuck, probably on leaves
-            {
-                stillTicks++;
-                if(stillTicks >= 10)
-                {
-                    Vec3 treeDirection = Vec3Utils
-                            .vec3Floor(worker.getPosition())
-                            .subtract(Vec3.createVectorHelper(location.posX, location.posY + 2, location.posZ))
-                            .normalize();
-
-                    int x = MathHelper.floor_double(worker.posX);
-                    int y = MathHelper.floor_double(worker.posY) + 1;
-                    int z = MathHelper.floor_double(worker.posZ);
-                    if(treeDirection.xCoord > 0.5F)
-                    {
-                        x++;
-                    }
-                    else if(treeDirection.xCoord < -0.5F)
-                    {
-                        x--;
-                    }
-                    else if(treeDirection.zCoord > 0.5F)
-                    {
-                        z++;
-                    }
-                    else if(treeDirection.zCoord < -0.5F)
-                    {
-                        z--;
-                    }
-                    //These need some work
-                    if(treeDirection.yCoord > 0.75F)
-                    {
-                        y++;
-                    }
-                    else if(treeDirection.yCoord < -0.75F)
-                    {
-                        y--;
-                    }
-
-                    Block block = world.getBlock(x, y, z);
-                    if(worker.getOffsetTicks() % 20 == 0)//Less spam
-                    {
-                        //System.out.println(String.format("Block: %s  x:%d y:%d z:%d", block.getUnlocalizedName(), x, y, z));
-                    }
-                    if(block.isLeaves(world, x, y, z))//Parameters not used
-                    {
-                        //drops
-                        List<ItemStack> items = block.getDrops(world, x, y, z, world.getBlockMetadata(x, y, z), 0 /*worker.getHeldItem().getEnchantmentTagList()*/);//TODO fortune
-                        for(ItemStack item : items)
-                        {
-                            InventoryUtils.setStack(getInventory(), item);
-                        }
-                        //break leaves
-                        world.setBlockToAir(x, y, z);
-                        worker.hitBlockWithToolInHand(x, y, z);//TODO should this damage tool? if so change to breakBlockWithToolInHand
-
-                        stillTicks = 0;
-                    }
-                    else if(stillTicks > 60)//If the worker gets too stuck he moves around a bit
-                    {
-                        worker.getNavigator().moveAwayFromXYZ(worker.posX, worker.posY, worker.posZ, 3.0, 1.0);
-                    }
-                }
-            }
             else
             {
-                stillTicks = 0;
-                previousDistance = distance;
-            }
-            return;
-        }
-
-        if(chopTicks == logBreakTime)//log break
-        {
-            ChunkCoordinates log = job.tree.pollNextLog();//remove log from queue
-            Block block = ChunkCoordUtils.getBlock(world, log);
-            if(block.isWood(null, 0, 0, 0))
-            {
-                //handle drops (usually one log)
-                List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, log, 0);//0 is fortune level, it doesn't matter
-                for(ItemStack item : items)
+                setDelay(WAIT_BEFORE_INCREMENT);
+                if (searchIncrement + SEARCH_RANGE > SEARCH_LIMIT)
                 {
-                    InventoryUtils.setStack(getInventory(), item);
+                    return LUMBERJACK_NO_TREES_FOUND;
                 }
-                //break block
-                worker.breakBlockWithToolInHand(log);
+                searchIncrement += SEARCH_INCREMENT;
             }
+            pathResult = null;
 
-            //tree is gone
-            if(!job.tree.hasLogs())
-            {
-                //TODO place correct sapling
-                plantSapling(location);
-                job.tree = null;
-                logBreakTime = Integer.MAX_VALUE;
-            }
-            chopTicks = -1;//will be increased to 0 at the end of the method
+            return state;
         }
-        else if(chopTicks % 5 == 0)//time to swing and play sounds
+        if (pathResult.isCancelled())
         {
-            ChunkCoordinates log = job.tree.peekNextLog();
-            Block block = ChunkCoordUtils.getBlock(world, log);
-            if(chopTicks == 0)
-            {
-                if(!block.isWood(null, 0, 0, 0))
-                {
-                    chopTicks = logBreakTime;
-                    return;
-                }
-                worker.getLookHelper().setLookPosition(log.posX, log.posY, log.posZ, 10f, worker.getVerticalFaceSpeed());//TODO doesn't work right
-            }
-            worker.hitBlockWithToolInHand(log);
+            pathResult = null;
+            return LUMBERJACK_GATHERING;
         }
-        chopTicks++;
+        return state;
     }
 
+    /**
+     * Again checks if all preconditions are given to execute chopping.
+     * If yes go chopping, else return to previous AIStates.
+     *
+     * @return next AIState
+     */
+    private AIState chopWood()
+    {
+        if (checkForAxe())
+        {
+            return IDLE;
+        }
+        if (job.tree == null)
+        {
+            return LUMBERJACK_SEARCHING_TREE;
+        }
+
+        return chopTree();
+    }
+
+    /**
+     * Work on the tree.
+     * First find your way to the tree trunk.
+     * Then chop away
+     * and wait for saplings to drop
+     * then place a sapling
+     *
+     * @return LUMBERJACK_GATHERING if tree is done
+     */
+    private AIState chopTree()
+    {
+        ChunkCoordinates location = job.tree.getLocation();
+        if (walkToBlock(location))
+        {
+            checkIfStuckOnLeaves(location);
+            return state;
+        }
+
+        if (!job.tree.hasLogs())
+        {
+            if (hasNotDelayed(WAIT_BEFORE_SAPLING))
+            {
+                return state;
+            }
+            plantSapling();
+            return LUMBERJACK_GATHERING;
+        }
+
+        //take first log from queue
+        ChunkCoordinates log = job.tree.peekNextLog();
+        if (!mineBlock(log))
+        {
+            return state;
+        }
+        job.tree.pollNextLog();
+        return state;
+    }
+
+    /**
+     * Place a sappling for the current tree.
+     */
+    private void plantSapling()
+    {
+        //TODO place correct sapling
+        plantSapling(job.tree.getLocation());
+        job.tree = null;
+    }
+
+    /**
+     * Plant a sapling at said location.
+     * <p>
+     * todo: make sure to get the right sapling
+     *
+     * @param location the location to plant the sapling at
+     * @return true if a sapling was planted
+     */
+    private boolean plantSapling(ChunkCoordinates location)
+    {
+        if (ChunkCoordUtils.getBlock(world, location) != Blocks.air)
+        {
+            return false;
+        }
+
+        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
+        {
+            ItemStack stack = getInventory().getStackInSlot(slot);
+            if (isStackSapling(stack))
+            {
+                Block block = ((ItemBlock) stack.getItem()).field_150939_a;
+                worker.setHeldItem(slot);
+                if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
+                {
+                    worker.swingItem();
+                    world.playSoundEffect((float) location.posX + 0.5F,
+                                          (float) location.posY + 0.5F,
+                                          (float) location.posZ + 0.5F,
+                                          block.stepSound.getBreakSound(),
+                                          block.stepSound.getVolume(),
+                                          block.stepSound.getPitch());
+                    getInventory().decrStackSize(slot, 1);
+                    setDelay(10);
+                    return true;
+                }
+                break;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a stack is a type of sapling
+     *
+     * @param stack the stack to check
+     * @return true if sapling
+     */
+    private boolean isStackSapling(ItemStack stack)
+    {
+        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a instanceof BlockSapling;
+    }
+
+    /**
+     * Check if distance to block changed and
+     * if we are not moving for too long, try to get unstuck
+     *
+     * @param location the block we want to go to
+     */
+    private void checkIfStuckOnLeaves(final ChunkCoordinates location)
+    {
+        int distance = (int) ChunkCoordUtils.distanceSqrd(location, worker.getPosition());
+        if (previousDistance != distance)
+        {
+            //something is moving, reset counters
+            stillTicks = 0;
+            previousDistance = distance;
+            return;
+        }
+        //Stuck, probably on leaves
+        stillTicks++;
+        if (stillTicks < STUCK_WAIT_TIME)
+        {
+            //Wait for some time before jumping to conclusions
+            return;
+        }
+        //now we seem to be stuck!
+        tryGettingUnstuckFromLeaves();
+    }
+
+    /**
+     * We are stuck, remove some leaves and try to get unstuck
+     * <p>
+     * if this takes too long, try backing up a bit
+     */
+    private void tryGettingUnstuckFromLeaves()
+    {
+        ChunkCoordinates nextLeaves = findNearLeaves();
+        //If the worker gets too stuck he moves around a bit
+        if (nextLeaves == null || stillTicks > WALKING_BACK_WAIT_TIME)
+        {
+            worker.getNavigator().moveAwayFromXYZ(worker.posX, worker.posY, worker.posZ, WALK_BACK_RANGE, WALK_BACK_SPEED);
+            stillTicks = 0;
+            return;
+        }
+        if (!mineBlock(nextLeaves))
+        {
+            return;
+        }
+        stillTicks = 0;
+
+    }
+
+    /**
+     * Utility method to check for leaves around the citizen.
+     * <p>
+     * Will report the location of the first leaves block it finds.
+     *
+     * @return a leaves block or null if none found
+     */
+    private ChunkCoordinates findNearLeaves()
+    {
+        int playerX = (int) worker.posX;
+        int playerY = (int) (worker.posY + 1);
+        int playerZ = (int) worker.posZ;
+        int radius  = 3;
+        for (int x = -radius; x < playerX + radius; x++)
+        {
+            for (int y = -radius; y < playerY + radius; y++)
+            {
+                for (int z = -radius; z < playerZ + radius; z++)
+                {
+                    if (world.getBlock(x, y, z).isLeaves(world, x, y, z))
+                    {
+                        return new ChunkCoordinates(x, y, z);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if the lumberjack found items on the ground,
+     * if yes collect them, if not search for them.
+     *
+     * @return LUMBERJACK_GATHERING as long as gathering takes.
+     */
+    private AIState gathering()
+    {
+        if (items == null)
+        {
+            searchForItems();
+        }
+        if (!items.isEmpty())
+        {
+            gatherItems();
+            return state;
+        }
+        items = null;
+        return LUMBERJACK_SEARCHING_TREE;
+    }
+
+    /**
+     * Search for all items around the Lumberjack
+     * and store them in the items list
+     */
     private void searchForItems()
     {
         items = new ArrayList<>();
-
-        @SuppressWarnings("unchecked") List<EntityItem> list = world.getEntitiesWithinAABB(EntityItem.class, worker.boundingBox.expand(15.0F, 3.0F, 15.0F));
+        List<EntityItem> list = new ArrayList<>();
+        for (Object o : world.getEntitiesWithinAABB(EntityItem.class, worker.boundingBox.expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)))
+        {
+            if (o instanceof EntityItem)
+            {
+                list.add((EntityItem) o);
+            }
+        }
 
         //TODO check if sapling or apple (currently picks up all items, which may be okay)
-        items.addAll(list.stream().filter(item -> item != null && !item.isDead).map(ChunkCoordUtils::fromEntity).collect(Collectors.toList()));
+        items = list.stream()
+                    .filter(item -> item != null && !item.isDead)
+                    .map(ChunkCoordUtils::fromEntity)
+                    .collect(Collectors.toList());
     }
 
+    /**
+     * Collect one item by walking to it
+     */
     private void gatherItems()
     {
-        if(worker.getNavigator().noPath())
+        if (worker.getNavigator().noPath())
         {
             ChunkCoordinates pos = getAndRemoveClosestItem();
             worker.isWorkerAtSiteWithMove(pos, 3);
+            return;
         }
-        else if(worker.getNavigator().getPath() != null)
+        if (worker.getNavigator().getPath() == null)
         {
-            int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
-            if(currentIndex == previousIndex)
-            {
-                stillTicks++;
-                if(stillTicks > 20)//Stuck
-                {
-                    worker.getNavigator().clearPathEntity();//Skip this item
-                    //System.out.println("Lumberjack skipped item (couldn't reach)");
-                }
-            }
-            else
-            {
-                stillTicks = 0;
-                previousIndex = currentIndex;
-            }
+            setDelay(WAIT_WHILE_WALKING);
+            return;
+        }
+
+        int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
+        //We moved a bit, not stuck
+        if (currentIndex != previousIndex)
+        {
+            stillTicks = 0;
+            previousIndex = currentIndex;
+            return;
+        }
+
+        stillTicks++;
+        //Stuck for too long
+        if (stillTicks > 20)
+        {
+            //Skip this item
+            worker.getNavigator().clearPathEntity();
         }
     }
 
+    /**
+     * Find the closest item and remove it from the list.
+     *
+     * @return the closest item
+     */
     private ChunkCoordinates getAndRemoveClosestItem()
     {
-        int index = 0;
+        int   index    = 0;
         float distance = Float.MAX_VALUE;
 
-        for(int i = 0; i < items.size(); i++)
+        for (int i = 0; i < items.size(); i++)
         {
             float tempDistance = ChunkCoordUtils.distanceSqrd(items.get(i), worker.getPosition());
-            if(tempDistance < distance)
+            if (tempDistance < distance)
             {
                 index = i;
                 distance = tempDistance;
@@ -360,117 +535,53 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         return items.remove(index);
     }
 
-    private void dumpInventory()
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
+    @Override
+    protected boolean neededForWorker(ItemStack stack)
     {
-        if(worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), 4))
-        {
-            int saplingStacks = 0;
-            for(int i = 0; i < getInventory().getSizeInventory(); i++)
-            {
-                ItemStack stack = getInventory().getStackInSlot(i);
-                if(stack != null && !isStackAxe(stack))
-                {
-                    if(isStackSapling(stack) && saplingStacks < 5)
-                    {
-                        saplingStacks++;
-                    }
-                    else
-                    {
-                        ItemStack returnStack = InventoryUtils.setStack(worker.getWorkBuilding().getTileEntity(), stack);//TODO tile entity null
-                        if(returnStack == null)
-                        {
-                            getInventory().decrStackSize(i, stack.stackSize);
-                        }
-                        else
-                        {
-                            getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
-                        }
-                    }
-                }
-            }
-            job.setStage(Stage.IDLE);
-        }
+        return isStackAxe(stack) || isStackSapling(stack);
     }
 
-    private InventoryCitizen getInventory()
-    {
-        return worker.getInventory();
-    }
-
-    private boolean hasAxe()
-    {
-        return getAxeSlot() != -1;
-    }
-
-    private boolean hasAxeWithEquip()
-    {
-        if(hasAxe())
-        {
-            if(!isStackAxe(worker.getHeldItem()))
-            {
-                equipAxe();
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private int getAxeSlot()
-    {
-        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_AXE);
-    }
-
-    private void equipAxe()
-    {
-        worker.setHeldItem(getAxeSlot());
-    }
-
+    /**
+     * Check if a stack is an axe
+     * todo: use parent code
+     *
+     * @param stack the stack to check
+     * @return true if an axe
+     */
     private boolean isStackAxe(ItemStack stack)
     {
         return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_AXE);
     }
 
-    private boolean isStackSapling(ItemStack stack)
+    /**
+     * Can be overridden in implementations.
+     * <p>
+     * Here the AI can check if the chestBelt has to be re rendered and do it.
+     */
+    @Override
+    protected void updateRenderMetaData()
     {
-        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a instanceof BlockSapling;
+        worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
     }
 
-    private boolean plantSapling(ChunkCoordinates location)
-    {
-        if(ChunkCoordUtils.getBlock(world, location) != Blocks.air)
-        {
-            return false;
-        }
-
-        for(int slot = 0; slot < getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = getInventory().getStackInSlot(slot);
-            if(stack != null && stack.getItem() instanceof ItemBlock)
-            {
-                Block block = ((ItemBlock) stack.getItem()).field_150939_a;
-                if(block instanceof BlockSapling)
-                {
-                    worker.setHeldItem(slot);
-                    if(ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
-                    {
-                        worker.swingItem();
-                        world.playSoundEffect((float) location.posX + 0.5F, (float) location.posY + 0.5F, (float) location.posZ + 0.5F, block.stepSound.getBreakSound(), block.stepSound.getVolume(), block.stepSound.getPitch());
-                        getInventory().decrStackSize(slot, 1);
-                        delay = 10;
-                        return true;
-                    }
-                    break;
-                }
-            }
-        }
-        return false;
-    }
-
+    /**
+     * Checks if the lumberjack has logs in it's inventory.
+     *
+     * @return true if he has logs
+     */
     private boolean hasLogs()
     {
-        for(int i = 0; i < getInventory().getSizeInventory(); i++)
+        for (int i = 0; i < getInventory().getSizeInventory(); i++)
         {
-            if(isStackLog(getInventory().getStackInSlot(i)))
+            if (isStackLog(getInventory().getStackInSlot(i)))
             {
                 return true;
             }
@@ -478,17 +589,24 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         return false;
     }
 
+    /**
+     * Checks if a stack is a type of log
+     *
+     * @param stack the stack to check
+     * @return true if it is a log type
+     */
     private boolean isStackLog(ItemStack stack)
     {
         return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a.isWood(null, 0, 0, 0);
     }
 
-    public enum Stage
+    /**
+     * This method will be overridden by AI implementations.
+     * It will serve as a tick function.
+     */
+    @Override
+    protected void workOnTask()
     {
-        IDLE,//No resources
-        SEARCHING,
-        CHOPPING,
-        GATHERING,
-        INVENTORY_FULL
+        //Migration to new system complete
     }
 }

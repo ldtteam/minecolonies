@@ -1,6 +1,5 @@
 package com.minecolonies.colony.buildings;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.*;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -9,6 +8,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.Log;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -175,13 +175,14 @@ public abstract class Building
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
+                Log.logger.error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                                        compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
                 building = null;
             }
         }
         else
         {
-            MineColonies.logger.warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_BUILDING_TYPE)));
+            Log.logger.warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_BUILDING_TYPE)));
         }
 
         return building;
@@ -212,13 +213,13 @@ public abstract class Building
             }
             else
             {
-                MineColonies.logger.error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
+                Log.logger.error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
             }
         }
         catch (Exception exception)
         {
             exception.printStackTrace();
-            MineColonies.logger.error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
+            Log.logger.error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
         return building;
@@ -238,7 +239,7 @@ public abstract class Building
         style = compound.getString(TAG_STYLE);
         if(style.equals(""))
         {
-            MineColonies.logger.warn("Loaded empty style, setting to classic");
+            Log.logger.warn("Loaded empty style, setting to classic");
             style = "classic";
         }
     }
@@ -636,13 +637,13 @@ public abstract class Building
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(String.format("A Building View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author", oclass.getName()), ex);
+                Log.logger.error(String.format("A Building View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author", oclass.getName()), ex);
                 view = null;
             }
         }
         else
         {
-            MineColonies.logger.warn("Unknown Building type, missing View subclass, or missing constructor of proper format.");
+            Log.logger.warn("Unknown Building type, missing View subclass, or missing constructor of proper format.");
         }
 
         return view;

@@ -11,6 +11,7 @@ import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.Utils;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -440,7 +441,7 @@ public class Colony implements IColony
                 //  If we don't have any references to them, destroy the citizen
 
                 citizens.values().stream().filter(citizen -> citizen.getCitizenEntity() == null).forEach(citizen -> {
-                    MineColonies.logger.warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
+                    Log.logger.warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
                     spawnCitizen(citizen);
                 });
             }
@@ -795,17 +796,17 @@ public class Colony implements IColony
             addBuilding(building);
             tileEntity.setBuilding(building);
 
-            MineColonies.logger.info(String.format("Colony %d - new Building for %s at %s",
-                    getID(),
-                    tileEntity.getBlockType().getClass(),
-                    tileEntity.getPosition()));
+            Log.logger.info(String.format("Colony %d - new Building for %s at %s",
+                                          getID(),
+                                          tileEntity.getBlockType().getClass(),
+                                          tileEntity.getPosition()));
         }
         else
         {
-            MineColonies.logger.error(String.format("Colony %d unable to create Building for %s at %s",
-                    getID(),
-                    tileEntity.getBlockType().getClass(),
-                    tileEntity.getPosition()));
+            Log.logger.error(String.format("Colony %d unable to create Building for %s at %s",
+                                           getID(),
+                                           tileEntity.getBlockType().getClass(),
+                                           tileEntity.getPosition()));
         }
 
         calculateMaxCitizens();
@@ -830,10 +831,10 @@ public class Colony implements IColony
                 MineColonies.getNetwork().sendTo(msg, player);
             }
 
-            MineColonies.logger.info(String.format("Colony %d - removed Building %s of type %s",
-                    getID(),
-                    building.getID(),
-                    building.getSchematicName()));
+            Log.logger.info(String.format("Colony %d - removed Building %s of type %s",
+                                          getID(),
+                                          building.getID(),
+                                          building.getSchematicName()));
         }
 
         if (building == townhall)

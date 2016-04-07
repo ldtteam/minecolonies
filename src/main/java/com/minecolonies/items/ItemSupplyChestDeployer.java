@@ -1,10 +1,10 @@
 package com.minecolonies.items;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -202,7 +202,7 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
     {
         if(chest == null)
         {
-            MineColonies.logger.error("Supply chest tile entity was null.");
+            Log.logger.error("Supply chest tile entity was null.");
             return;
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownhall));

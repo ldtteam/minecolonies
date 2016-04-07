@@ -1,9 +1,9 @@
 package com.minecolonies.colony.jobs;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
+import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -111,7 +111,7 @@ public abstract class Job
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(String.format(
+                Log.logger.error(String.format(
                         "A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report "
                         + "this to the mod author",
                         compound.getString(TAG_TYPE),
@@ -121,8 +121,8 @@ public abstract class Job
         }
         else
         {
-            MineColonies.logger.warn(String.format("Unknown Job type '%s' or missing constructor of proper format.",
-                                                   compound.getString(TAG_TYPE)));
+            Log.logger.warn(String.format("Unknown Job type '%s' or missing constructor of proper format.",
+                                          compound.getString(TAG_TYPE)));
         }
 
         return job;

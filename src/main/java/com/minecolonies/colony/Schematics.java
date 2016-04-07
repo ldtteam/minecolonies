@@ -1,7 +1,7 @@
 package com.minecolonies.colony;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.Log;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -70,9 +70,9 @@ public class Schematics
 
                         if (Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut) == null)
                         {
-                            MineColonies.logger.warn(String.format("Malformed schematic name: %s/%s ignoring file",
-                                                                   style,
-                                                                   hut));
+                            Log.logger.warn(String.format("Malformed schematic name: %s/%s ignoring file",
+                                                          style,
+                                                          hut));
                             continue;
                         }
 
@@ -88,7 +88,7 @@ public class Schematics
         }
         catch (IOException | URISyntaxException e)
         {
-            MineColonies.logger.error("Error loading Schematic directory. Things will break!");
+            Log.logger.error("Error loading Schematic directory. Things will break!");
         }
     }
 
