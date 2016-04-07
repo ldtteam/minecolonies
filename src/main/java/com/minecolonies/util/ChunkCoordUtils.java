@@ -216,22 +216,22 @@ public class ChunkCoordUtils
      * @param citizen Citizen you want to check
      * @param pos     Position you want to check
      * @return True if citizen heads to pos, otherwise false
-     * @see {@link Utils#isPathingTo(EntityCitizen, int, int)}
+     * @see {@link EntityUtils#isPathingTo(EntityCitizen, int, int)}
      */
     public static boolean isPathingTo(EntityCitizen citizen, ChunkCoordinates pos)
     {
-        return Utils.isPathingTo(citizen, pos.posX, pos.posZ);
+        return EntityUtils.isPathingTo(citizen, pos.posX, pos.posZ);
     }
 
     /**
      * @param worker Worker to check
      * @param site   Chunk coordinates of site to check
      * @return True when worker is at site, otherwise false
-     * @see {@link Utils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int)}
+     * @see {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int)}
      */
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, ChunkCoordinates site)
     {
-        return Utils.isWorkerAtSiteWithMove(worker, site.posX, site.posY, site.posZ);
+        return EntityUtils.isWorkerAtSiteWithMove(worker, site.posX, site.posY, site.posZ);
     }
 
     /**
@@ -239,22 +239,22 @@ public class ChunkCoordUtils
      * @param site   Chunk coordinates of site to check
      * @param range  Range to check in
      * @return True when within range, otherwise false
-     * @see {@link Utils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}
+     * @see {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}
      */
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, ChunkCoordinates site, int range)
     {
-        return Utils.isWorkerAtSiteWithMove(worker, site.posX, site.posY, site.posZ, range);
+        return EntityUtils.isWorkerAtSiteWithMove(worker, site.posX, site.posY, site.posZ, range);
     }
 
     /**
      * @param living      A living entity
      * @param destination chunk coordinates to check moving to
      * @return True when XYZ is found, an set moving to, otherwise false
-     * @see {@link Utils#tryMoveLivingToXYZ(EntityLiving, int, int, int)}
+     * @see {@link EntityUtils#tryMoveLivingToXYZ(EntityLiving, int, int, int)}
      */
     public static boolean tryMoveLivingToXYZ(EntityLiving living, ChunkCoordinates destination)
     {
-        return Utils.tryMoveLivingToXYZ(living, destination.posX, destination.posY, destination.posZ);
+        return EntityUtils.tryMoveLivingToXYZ(living, destination.posX, destination.posY, destination.posZ);
     }
 
     /**

@@ -682,7 +682,7 @@ public class Colony implements IColony
                 {
                     //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersLocalizedMessage(
-                            Utils.getPlayersFromUUID(world, permissions.getMessagePlayers()),
+                            EntityUtils.getPlayersFromUUID(world, permissions.getMessagePlayers()),
                             "tile.blockHutTownhall.messageMaxSize");
                 }
             }

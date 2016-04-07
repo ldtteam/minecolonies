@@ -83,7 +83,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
 
 
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", job.getSchematic().getName());
+            LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", job.getSchematic().getName());
         }
         ChunkCoordUtils.tryMoveLivingToXYZ(worker, job.getSchematic().getPosition());
 
@@ -656,7 +656,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     private void completeBuild()
     {
         String schematicName = job.getSchematic().getName();
-        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
+        LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
 
         WorkOrderBuild wo = job.getWorkOrder();
         if(wo != null)
