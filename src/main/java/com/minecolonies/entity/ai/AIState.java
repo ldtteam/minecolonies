@@ -59,4 +59,26 @@ public enum AIState
     FISHERMAN_WALKING_TO_WATER,
     FISHERMAN_CHECK_WATER,
     FISHERMAN_START_FISHING,
+
+    /*
+###Lumberjack###
+     */
+    /**
+     * The fisherman is looking for water
+     */
+    LUMBERJACK_SEARCHING_TREE,
+    /**
+     * The lumberjack has found trees and can start cutting them
+     */
+    LUMBERJACK_CHOP_TREE,
+    /**
+     * The Lumberjack is gathering saplings
+     */
+    LUMBERJACK_GATHERING,
+    /**
+     * There are no trees in his search range
+     */
+    LUMBERJACK_NO_TREES_FOUND,
+
+
 }

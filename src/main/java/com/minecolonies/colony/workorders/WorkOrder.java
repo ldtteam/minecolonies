@@ -1,8 +1,8 @@
 package com.minecolonies.colony.workorders;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
+import com.minecolonies.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.lang.reflect.Constructor;
@@ -151,13 +151,13 @@ public abstract class WorkOrder
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
+                Log.logger.error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
                 order = null;
             }
         }
         else
         {
-            MineColonies.logger.warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            Log.logger.warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
         }
 
         return order;

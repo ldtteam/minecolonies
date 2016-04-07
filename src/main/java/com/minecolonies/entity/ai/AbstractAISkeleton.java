@@ -1,15 +1,13 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
 
@@ -114,7 +112,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
     public void startExecuting()
     {
         worker.setStatus(EntityCitizen.Status.WORKING);
-        MineColonies.logger.info("Starting AI job " + job.getName());
+        Log.logger.info("Starting AI job " + job.getName());
     }
 
     /**
@@ -153,7 +151,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         }
         catch (Exception e)
         {
-            MineColonies.logger.warn("Condition check for target " + target + " threw an exception:", e);
+            Log.logger.warn("Condition check for target " + target + " threw an exception:", e);
             return false;
         }
         return applyTarget(target);
@@ -177,7 +175,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         }
         catch (Exception e)
         {
-            MineColonies.logger.warn("Action for target " + target + " threw an exception:", e);
+            Log.logger.warn("Action for target " + target + " threw an exception:", e);
             return false;
         }
         if (newState != null)

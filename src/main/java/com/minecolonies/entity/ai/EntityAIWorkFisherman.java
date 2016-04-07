@@ -5,7 +5,6 @@ import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
-import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.init.Blocks;
@@ -242,6 +241,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private AIState tryDifferentAngles()
     {
+        if(job.getWater() == null){
+            return FISHERMAN_SEARCHING_WATER;
+        }
         if (executedRotations >= MAX_ROTATIONS)
         {
             job.removeFromPonds(job.getWater());
@@ -456,7 +458,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
 
         //Check if Rod is held item if not put it as held item
-        if (worker.getHeldItem() == null || !worker.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
+        if (worker.getHeldItem() == null || !super.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
         {
             equipRod();
             return state;
@@ -479,15 +481,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private int getRodSlot()
     {
         return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
-    }
-
-    /**
-     * Returns the workers inventory instance.
-     * @return inventory instance
-     */
-    private InventoryCitizen getInventory()
-    {
-        return worker.getInventory();
     }
 
     /**

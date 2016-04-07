@@ -1,7 +1,7 @@
 package com.minecolonies.proxy;
 
-import com.schematica.world.SchematicWorld;
 import com.minecolonies.colony.CitizenData;
+import com.schematica.world.SchematicWorld;
 
 public interface IProxy
 {

@@ -7,6 +7,7 @@ import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.proxy.IProxy;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.RecipeHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -18,14 +19,10 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, certificateFingerprint = Constants.FINGERPRINT)
 public class MineColonies
 {
-    public  static final    Logger               logger     = LogManager.getLogger(Constants.MOD_ID);
-
     private static          SimpleNetworkWrapper network;
 
     @Mod.Instance(Constants.MOD_ID)
@@ -44,7 +41,7 @@ public class MineColonies
     {
         if(Constants.FINGERPRINT.equals("@FINGERPRINT@"))
         {
-            logger.error("No Fingerprint. Might not be a valid version!");
+            Log.logger.error("No Fingerprint. Might not be a valid version!");
         }
     }
 

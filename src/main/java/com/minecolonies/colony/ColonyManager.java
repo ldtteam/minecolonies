@@ -1,10 +1,10 @@
 package com.minecolonies.colony;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.Log;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
@@ -61,7 +61,7 @@ public class ColonyManager
 
         markDirty();
 
-        MineColonies.logger.info(String.format("New Colony %d", colony.getID()));
+        Log.logger.info(String.format("New Colony %d", colony.getID()));
 
         return colony;
     }
@@ -505,7 +505,7 @@ public class ColonyManager
             topColonyId = Math.max(topColonyId, colony.getID());
         }
 
-        MineColonies.logger.info(String.format("Loaded %d colonies", colonies.size()));
+        Log.logger.info(String.format("Loaded %d colonies", colonies.size()));
     }
 
     /**
@@ -554,7 +554,7 @@ public class ColonyManager
             }
         } catch (IOException exception)
         {
-            MineColonies.logger.error("Exception when loading ColonyManger", exception);
+            Log.logger.error("Exception when loading ColonyManger", exception);
         }
         return null;
     }
@@ -586,7 +586,7 @@ public class ColonyManager
             }
         } catch (IOException exception)
         {
-            MineColonies.logger.error("Exception when saving ColonyManager", exception);
+            Log.logger.error("Exception when saving ColonyManager", exception);
         }
     }
 
@@ -728,7 +728,7 @@ public class ColonyManager
         }
         else
         {
-            MineColonies.logger.error(String.format("Colony view does not exist for ID #%d", colonyID));
+            Log.logger.error(String.format("Colony view does not exist for ID #%d", colonyID));
             return null;
         }
     }
@@ -792,7 +792,7 @@ public class ColonyManager
         }
         else
         {
-            MineColonies.logger.error(String.format("Colony view does not exist for ID #%d", colonyId));
+            Log.logger.error(String.format("Colony view does not exist for ID #%d", colonyId));
             return null;
         }
     }
