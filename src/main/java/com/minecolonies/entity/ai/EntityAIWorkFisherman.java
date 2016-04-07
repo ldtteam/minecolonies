@@ -443,6 +443,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return PREPARING;
         }
 
+        if(world.getBlock((int)worker.posX,(int)worker.posY,(int)worker.posZ) == Blocks.water)
+        {
+            job.removeFromPonds(job.getWater());
+            job.setWater(null);
+            return FISHERMAN_SEARCHING_WATER;
+        }
         //If there is no close water, try to move closer
         if (!Utils.isBlockInRange(world, Blocks.water, (int) worker.posX, (int) worker.posY, (int) worker.posZ, MIN_DISTANCE_TO_WATER))
         {
