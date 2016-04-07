@@ -1,6 +1,6 @@
 package com.minecolonies.entity;
 
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.MathUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
@@ -607,7 +607,7 @@ public final class EntityFishHook extends Entity
      */
     public boolean fishHookIsOverTimeToLive()
     {
-        return Utils.nanoSecondsToSeconds(System.nanoTime() - creationTime) > TTL;
+        return MathUtils.nanoSecondsToSeconds(System.nanoTime() - creationTime) > TTL;
     }
 
     /**

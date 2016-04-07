@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -595,5 +596,37 @@ public class InventoryUtils
         }
 
         return -1;
+    }
+
+    /**
+     * Checks if an item stack's item is in an array of item stacks
+     *
+     * @param itemstack ItemStack to check
+     * @param array     Array to check in
+     * @return True if item stack in array, otherwise false
+     * @see {@link #containsStackInList(ItemStack, List)}
+     */
+    public static boolean containsStackInArray(ItemStack itemstack, ItemStack... array)
+    {
+        return containsStackInList(itemstack, Arrays.asList(array));
+    }
+
+    /**
+     * Checks if an item stack's item is in a list of item stacks
+     *
+     * @param itemstack Item stack to find
+     * @param list      List to check in
+     * @return True if itemStack is in list, otherwise false
+     */
+    public static boolean containsStackInList(ItemStack itemstack, List<ItemStack> list)
+    {
+        for (ItemStack listStack : list)
+        {
+            if (listStack.isItemEqual(itemstack))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

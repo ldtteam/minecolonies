@@ -1,7 +1,7 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.Log;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ public class ChatSpamFilter
     /**
      * Custom logger for the class.
      */
-    private static  final   Logger          LOGGER              = Utils.generateLoggerForClass(ChatSpamFilter.class);
+    private static  final   Logger          LOGGER              = Log.generateLoggerForClass(ChatSpamFilter.class);
     private         final   EntityCitizen   worker;
     private                 int             speechDelay         = 0;
     private                 String          speechDelayString   = "";

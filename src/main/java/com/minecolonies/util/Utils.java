@@ -18,22 +18,33 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Utils
+/**
+ * General purpose utilities class
+ * todo: split up into logically distinct parts
+ */
+public final class Utils
 {
-    public static final  String PICKAXE           = "pickaxe";
-    public static final  String SHOVEL            = "shovel";
-    public static final  String AXE               = "axe";
-    public static final  String HOE               = "hoe";
-    public static final  String ROD               = "rod";
-    private static final int    NANO_TIME_DIVIDER = 1000 * 1000 * 1000;
+    public static final String PICKAXE = "pickaxe";
+    public static final String SHOVEL  = "shovel";
+    public static final String AXE     = "axe";
+    public static final String HOE     = "hoe";
+    public static final String ROD     = "rod";
+    public static final int SOUND_EVENT_ID = 2001;
+    public static final int METADATA_BITSHIFT = 12;
+    public static final int FORTUNE_ENCHANT_ID = 35;
+
+    /**
+     * Private contructor to hide the implicit public one
+     */
+    private Utils()
+    {
+    }
 
     /**
      * Find the closest block near the points
      *
      * @param world   the world
-     * @param x       Origin
-     * @param y       Origin
-     * @param z       Origin
+     * @param point   the point where to search
      * @param radiusX x search distance
      * @param radiusY y search distance
      * @param radiusZ z search distance
@@ -41,22 +52,22 @@ public class Utils
      * @param blocks  Blocks to test for
      * @return the coordinates of the found block
      */
-    public static ChunkCoordinates scanForBlockNearPoint(World world, int x, int y, int z, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
+    public static ChunkCoordinates scanForBlockNearPoint(World world, ChunkCoordinates point, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
     {
         ChunkCoordinates closestCoords = null;
         double           minDistance   = Double.MAX_VALUE;
 
-        for (int i = x - radiusX; i <= x + radiusX; i++)
+        for (int i = point.posX - radiusX; i <= point.posX + radiusX; i++)
         {
-            for (int j = y - radiusY; j <= y + radiusY; j++)
+            for (int j = point.posY - radiusY; j <= point.posY + radiusY; j++)
             {
-                for (int k = z - radiusZ; k <= z + radiusZ; k++)
+                for (int k = point.posZ - radiusZ; k <= point.posZ + radiusZ; k++)
                 {
-                    if (checkHeight(world, blocks, i, j, k, height))
+                    if (checkHeight(world, i, j, k, height, blocks))
                     {
                         ChunkCoordinates tempCoords = new ChunkCoordinates(i, j, k);
 
-                        double distance = tempCoords.getDistanceSquared(x, y, z);
+                        double distance = tempCoords.getDistanceSquared(point.posX, point.posY, point.posZ);
                         if (closestCoords == null || distance < minDistance)
                         {
                             closestCoords = tempCoords;
@@ -70,17 +81,17 @@ public class Utils
     }
 
     /**
-     * //TODO document
+     * Checks if the blocks above that point are all of the spezified block types.
      *
-     * @param world
-     * @param blocks
-     * @param x
-     * @param y
-     * @param z
-     * @param height
-     * @return
+     * @param world  the world we check on
+     * @param x      the x coordinate
+     * @param y      the y coordinate
+     * @param z      the z coordinate
+     * @param height the number of blocks above to check
+     * @param blocks the block types required
+     * @return true if all blocks are of that type
      */
-    private static boolean checkHeight(World world, Block[] blocks, int x, int y, int z, int height)
+    private static boolean checkHeight(World world, int x, int y, int z, int height, Block... blocks)
     {
         for (int dy = 0; dy < height; dy++)
         {
@@ -103,7 +114,7 @@ public class Utils
     {
         for (Object o : array)
         {
-            if (key.equals(o))
+            if (Objects.equals(key, o))
             {
                 return true;
             }
@@ -126,14 +137,14 @@ public class Utils
     }
 
     /**
-     * Seaches a block in a custom range
+     * Searches a block in a custom range
      *
      * @param world World instance
      * @param block searched Block
      * @param posX  X-coordinate
      * @param posY  Y-coordinate
      * @param posZ  Z-coordinate
-     * @param range
+     * @param range the range to check around the point
      * @return true if he found the block
      */
     public static boolean isBlockInRange(World world, Block block, int posX, int posY, int posZ, int range)
@@ -142,10 +153,9 @@ public class Utils
         {
             for (int z = posZ - range; z < posZ + range; z++)
             {
-                for (int y = posY - range; y < posY
-                                               + range; y++)
+                for (int y = posY - range; y < posY + range; y++)
                 {
-                    if (world.getBlock(x, y, z) == block)
+                    if (Objects.equals(world.getBlock(x, y, z), block))
                     {
                         return true;
                     }
@@ -153,56 +163,6 @@ public class Utils
             }
         }
         return false;
-    }
-
-    /**
-     * @param nanoSeconds as input
-     * @return nanoSeconds to seconds
-     */
-    public static long nanoSecondsToSeconds(long nanoSeconds)
-    {
-        return nanoSeconds / NANO_TIME_DIVIDER;
-    }
-
-    /**
-     * @param worker Worker to check
-     * @param x      X-coordinate
-     * @param y      Y-coordinate
-     * @param z      Z-coordinate
-     * @return True if worker is at site, otherwise false
-     * @see {@link #isWorkerAtSite(EntityCitizen, int, int, int, int)}
-     * Default:
-     * range: 2
-     */
-    public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z)
-    {
-        return isWorkerAtSite(worker, x, y, z, 2);
-    }
-
-    /**
-     * Returns whether or not the worker is within a specific range of his working site
-     *
-     * @param worker Worker to check
-     * @param x      X-coordinate
-     * @param y      Y-coordinate
-     * @param z      Z-coordinate
-     * @param range  Range to check in
-     * @return True if worker is at site, otherwise false
-     */
-    public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z, int range)
-    {
-        return worker.getPosition().squareDistanceTo(x, y, z) < square(range);
-    }
-
-    /**
-     * Returns the square product of a number
-     *
-     * @param number Number to square
-     * @return Answer of calculation
-     */
-    public static double square(double number)
-    {
-        return number * number;
     }
 
     /**
@@ -235,24 +195,38 @@ public class Utils
      */
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, int x, int y, int z, int range)
     {
-        if (!isWorkerAtSite(worker, x, y, z, range))//Too far away
+        //If too far away
+        if (!isWorkerAtSite(worker, x, y, z, range))
         {
-            if (worker.getNavigator().noPath())//Not moving
+            //If not moving the try setting the point where the entity should move to
+            if (worker.getNavigator().noPath() && !tryMoveLivingToXYZ(worker, x, y, z))
             {
-                if (!tryMoveLivingToXYZ(worker, x, y, z))
-                {
-                    worker.setStatus(EntityCitizen.Status.PATHFINDING_ERROR);
-                }
+                worker.setStatus(EntityCitizen.Status.PATHFINDING_ERROR);
             }
             return false;
         }
-        else
-        {
-            return true;
-        }
+        return true;
     }
 
     /**
+     * Returns whether or not the worker is within a specific range of his working site
+     *
+     * @param worker Worker to check
+     * @param x      X-coordinate
+     * @param y      Y-coordinate
+     * @param z      Z-coordinate
+     * @param range  Range to check in
+     * @return True if worker is at site, otherwise false
+     */
+    public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z, int range)
+    {
+        return worker.getPosition().squareDistanceTo(x, y, z) < MathUtils.square(range);
+    }
+
+    /**
+     * Sets the movement of the entity to specific point.
+     * Returns true if direction is set, otherwise false
+     *
      * @param living Entity to move
      * @param x      x-coordinate
      * @param y      y-coordinate
@@ -300,25 +274,14 @@ public class Utils
         {
             yHolder++;
         }
-        while (world.getBlock(x, yHolder, z) == Blocks.air ||
-               !world.getBlock(x, yHolder, z).isOpaqueCube() ||
-               world.getBlock(x, yHolder, z) == Blocks.leaves ||
-               world.getBlock(x, yHolder, z) == Blocks.leaves2)
+        while (!world.getBlock(x, yHolder, z).isOpaqueCube() ||
+               arrayContains(
+                       new Block[]{Blocks.air, Blocks.leaves, Blocks.leaves2}
+                       , world.getBlock(x, yHolder, z)))
         {
             yHolder--;
         }
         return yHolder;
-    }
-
-    /**
-     * Checks if the block is water
-     *
-     * @param block block to be checked
-     * @return true if is water.
-     */
-    public static boolean isWater(Block block)
-    {
-        return (block == Blocks.water || block == Blocks.flowing_water);
     }
 
     /**
@@ -385,11 +348,7 @@ public class Utils
                 }
             }
         }
-        if (!players.isEmpty())
-        {
-            return players;
-        }
-        return null;
+        return players;
     }
 
     /**
@@ -418,11 +377,7 @@ public class Utils
                 }
             }
         }
-        if (!entities.isEmpty())
-        {
-            return entities;
-        }
-        return null;
+        return entities;
     }
 
     /**
@@ -434,43 +389,9 @@ public class Utils
      */
     public static List<Entity> getEntitiesFromID(World world, List<Integer> ids)
     {
-        List<Entity> entities = ids.stream().map(world::getEntityByID).collect(Collectors.toList());
-
-        if (!entities.isEmpty())
-        {
-            return entities;
-        }
-        return null;
-    }
-
-    /**
-     * @param itemstack ItemStack to check
-     * @param array     Array to check in
-     * @return True if item stack in array, otherwise false
-     * @see {@link #containsStackInList(ItemStack, List)}
-     */
-    public static boolean containsStackInArray(ItemStack itemstack, ItemStack... array)
-    {
-        return containsStackInList(itemstack, Arrays.asList(array));
-    }
-
-    /**
-     * Checks if an item stack is in a list of item stacks
-     *
-     * @param itemstack Item stack to find
-     * @param list      List to check in
-     * @return True if itemStack is in list, otherwise false
-     */
-    public static boolean containsStackInList(ItemStack itemstack, List<ItemStack> list)
-    {
-        for (ItemStack listStack : list)
-        {
-            if (listStack.isItemEqual(itemstack))
-            {
-                return true;
-            }
-        }
-        return false;
+        return ids.stream()
+                  .map(world::getEntityByID)
+                  .collect(Collectors.toList());
     }
 
     /**
@@ -566,18 +487,7 @@ public class Utils
      */
     public static void blockBreakSoundAndEffect(World world, int x, int y, int z, Block block, int metadata)
     {
-        world.playAuxSFX(2001, x, y, z, Block.getIdFromBlock(block) + (metadata << 12));
-    }
-
-    /**
-     * Generates a logger for a specific class
-     *
-     * @param clazz Class to generate logger for
-     * @return Created {@link org.apache.logging.log4j.Logger}
-     */
-    public static Logger generateLoggerForClass(Class clazz)
-    {
-        return LogManager.getLogger(Constants.MOD_ID + "::" + clazz.getSimpleName());
+        world.playAuxSFX(SOUND_EVENT_ID, x, y, z, Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
     }
 
     /**
@@ -669,7 +579,8 @@ public class Utils
     {
         if (tool == null)
         {
-            return stack == null ? 0 : 1; //empty hand is best on blocks who don't care (0 better 1)
+            //empty hand is best on blocks who don't care (0 better 1)
+            return stack == null ? 0 : 1;
         }
         if (stack == null)
         {
@@ -710,7 +621,7 @@ public class Utils
             for (int i = 0; i < t.tagCount(); i++)
             {
                 short id = t.getCompoundTagAt(i).getShort("id");
-                if (id == 35)
+                if (id == FORTUNE_ENCHANT_ID)
                 {
                     fortune = t.getCompoundTagAt(i).getShort("lvl");
                 }

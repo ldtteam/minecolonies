@@ -483,7 +483,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private boolean isBlockFree(Block block, int metadata)
     {
-        return Utils.isWater(block) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && Utils.testFlag(metadata, 0x08)) || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08));
+        return BlockUtils.isWater(block) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && Utils.testFlag(metadata, 0x08)) || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08));
     }
 
     private void setStackInBuilder(ItemStack stack, boolean shouldUseForce)

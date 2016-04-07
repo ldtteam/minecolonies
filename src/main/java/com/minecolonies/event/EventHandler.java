@@ -8,7 +8,7 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.MathUtils;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -153,7 +153,7 @@ public class EventHandler
                         return true;
                     }
                 }
-                else if (colony.getDistanceSquared(x, y, z) <= Utils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+                else if (colony.getDistanceSquared(x, y, z) <= MathUtils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
                 {
                     //  Placing too close to an existing colony
                     LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooClose");
