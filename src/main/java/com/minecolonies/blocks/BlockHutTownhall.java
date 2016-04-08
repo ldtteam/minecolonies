@@ -33,9 +33,14 @@ public class BlockHutTownhall extends AbstractBlockHut
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+        if(world.isRemote)
+        {
+            return;
+        }
         TileEntity te = world.getTileEntity(x, y, z);
 
-        if(entityLivingBase instanceof EntityPlayer && te instanceof TileEntityColonyBuilding){
+        if(entityLivingBase instanceof EntityPlayer && te instanceof TileEntityColonyBuilding)
+        {
 
             EntityPlayer player = (EntityPlayer)entityLivingBase;
             TileEntityColonyBuilding hut = (TileEntityColonyBuilding) te;

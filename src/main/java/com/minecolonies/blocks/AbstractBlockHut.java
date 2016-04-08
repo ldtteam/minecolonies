@@ -3,12 +3,10 @@ package com.minecolonies.blocks;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.lib.Literals;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.LanguageHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -100,8 +98,8 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         if(entityLivingBase instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
             TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-
             Colony colony = ColonyManager.getColony(world, hut.getPosition());
+
             if (colony != null)
             {
                 colony.addNewBuilding(hut);
