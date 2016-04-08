@@ -290,9 +290,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public boolean isWorkerAtSiteWithMove(ChunkCoordinates site, int range)
     {
-        return Utils.isWorkerAtSiteWithMove(this, site.posX, site.posY, site.posZ, range)
+        return EntityUtils.isWorkerAtSiteWithMove(this, site.posX, site.posY, site.posZ, range)
                //Fix for getting stuck sometimes
-               || Utils.isWorkerAtSite(this, site.posX, site.posY, site.posZ, range + 1);
+               || EntityUtils.isWorkerAtSite(this, site.posX, site.posY, site.posZ, range + 1);
     }
 
     @Override
@@ -330,6 +330,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         double intendedRotationPitch = (-(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI));
         this.rotationPitch = (float) this.updateRotation(this.rotationPitch, intendedRotationPitch, 30);
         this.rotationYaw = (float) this.updateRotation(this.rotationYaw, intendedRotationYaw, 30);
+        this.updateColonyClient();
+        this.updateColonyServer();
     }
 
     /**
@@ -774,7 +776,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if (colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()),
+            LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()),
                                                         "tile.blockHutTownhall.messageColonistDead",
                                                         citizenData.getName());
             colony.removeCitizen(getCitizenData());
@@ -1163,7 +1165,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         statusMessages.put(msg, ticksExisted);
 
-        LanguageHandler.sendPlayersMessage(Utils.getPlayersFromUUID(worldObj, getColony().getPermissions().getMessagePlayers()),
+        LanguageHandler.sendPlayersMessage(EntityUtils.getPlayersFromUUID(worldObj, getColony().getPermissions().getMessagePlayers()),
                                            LanguageHandler.format(this.getColonyJob().getName()) + " " + this.getCustomNameTag() + ": " + msg);
     }
 

@@ -51,7 +51,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     /**
      * The maximum amount of adjusts of his rotation until the fisherman discards a fishing location.
      */
-    private static final int    MAX_ROTATIONS         = 12;
+    private static final int    MAX_ROTATIONS         = 6;
     /**
      * The number of executed adjusts of the fisherman's rotation.
      */
@@ -97,6 +97,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      * Connects the citizen with the fishingHook.
      */
     private EntityFishHook entityFishHook;
+    /**
+     * Checks if the fisherman recently removed a pond from his list
+     */
+    private boolean recentlyRemovedAPond = false;
 
     /**
      * Constructor for the Fisherman.
@@ -246,6 +250,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
         if (executedRotations >= MAX_ROTATIONS)
         {
+            recentlyRemovedAPond = true;
             job.removeFromPonds(job.getWater());
             job.setWater(null);
             executedRotations = 0;
@@ -320,8 +325,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         if (job.getPonds().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
+            if(!recentlyRemovedAPond)
+            {
+                chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
+            }
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+            recentlyRemovedAPond = false;
             return state;
         }
         job.setWater(job.getPonds().get(itemRand.nextInt(job.getPonds().size())));
@@ -399,9 +408,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                                     "random.bow",
                                     VOLUME,
                                     (float) (FREQUENCY_BOUND_VALUE / (itemRand.nextDouble() * (FREQUENCY_UPPER_LIMIT_DIVIDER - FREQUENCY_LOWER_LIMIT_DIVIDER) + FREQUENCY_LOWER_LIMIT_DIVIDER)));
-            EntityFishHook hook = new EntityFishHook(world, this.getCitizen());
-            this.entityFishHook = hook;
-            world.spawnEntityInWorld(hook);
+            this.entityFishHook = new EntityFishHook(world, this.getCitizen());
+            world.spawnEntityInWorld(this.entityFishHook);
         }
 
         worker.swingItem();
@@ -446,6 +454,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return PREPARING;
         }
 
+        if(world.getBlock((int)worker.posX,(int)worker.posY,(int)worker.posZ) == Blocks.water)
+        {
+            recentlyRemovedAPond = true;
+            job.removeFromPonds(job.getWater());
+            job.setWater(null);
+            return FISHERMAN_SEARCHING_WATER;
+        }
         //If there is no close water, try to move closer
         if (!Utils.isBlockInRange(world, Blocks.water, (int) worker.posX, (int) worker.posY, (int) worker.posZ, MIN_DISTANCE_TO_WATER))
         {

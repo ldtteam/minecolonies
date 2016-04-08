@@ -8,13 +8,12 @@ public class SoundHandler
 {
 
     /**
+     * @param world World to play sound in
+     * @param name  Name of the sound to play
+     * @param x     X-coordinate
+     * @param y     Y-coordinate
+     * @param z     Z-coordinate
      * @see {@link #playSound(World, String, double, double, double, float, float)}
-     *
-     * @param world     World to play sound in
-     * @param name      Name of the sound to play
-     * @param x         X-coordinate
-     * @param y         Y-coordinate
-     * @param z         Z-coordinate
      */
     public static void playSound(World world, String name, int x, int y, int z)
     {
@@ -25,13 +24,13 @@ public class SoundHandler
      * Plays a sound effect at a specific location.
      * Pitch and volume will be applied
      *
-     * @param world     World to play sound in
-     * @param name      Name of the sound
-     * @param x         X-coordinate
-     * @param y         Y-coordinate
-     * @param z         Z-coordinate
-     * @param volume    Volume to play sound
-     * @param pitch     Pitch to play sound
+     * @param world  World to play sound in
+     * @param name   Name of the sound
+     * @param x      X-coordinate
+     * @param y      Y-coordinate
+     * @param z      Z-coordinate
+     * @param volume Volume to play sound
+     * @param pitch  Pitch to play sound
      */
     public static void playSound(World world, String name, double x, double y, double z, float volume, float pitch)
     {
@@ -41,10 +40,10 @@ public class SoundHandler
     /**
      * Plays sound near an entity
      *
-     * @param entity        Entity to play sound at
-     * @param name          Name of the sound to play
-     * @param volume        Volume to play sound
-     * @param pitch         Pitch to play sound
+     * @param entity Entity to play sound at
+     * @param name   Name of the sound to play
+     * @param volume Volume to play sound
+     * @param pitch  Pitch to play sound
      */
     public static void playSoundAtEntity(Entity entity, String name, float volume, float pitch)
     {

@@ -8,7 +8,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.TownhallRenameMessage;
 import com.minecolonies.util.ChunkCoordUtils;
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.MathUtils;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
@@ -371,7 +371,7 @@ public class ColonyView implements IColony
     public boolean isCoordInColony(World w, int x, int y, int z) {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.provider.dimensionId == dimensionId &&
-                center.getDistanceSquared(x, center.posY, z) <= Utils.square(Configurations.workingRangeTownhall);
+               center.getDistanceSquared(x, center.posY, z) <= MathUtils.square(Configurations.workingRangeTownhall);
     }
 
     /**

@@ -9,10 +9,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.ChunkCoordUtils;
-import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Log;
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.*;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -311,7 +308,7 @@ public class Colony implements IColony
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.equals(getWorld()) &&
-                center.getDistanceSquared(x, center.posY, z) <= Utils.square(Configurations.workingRangeTownhall);
+               center.getDistanceSquared(x, center.posY, z) <= MathUtils.square(Configurations.workingRangeTownhall);
     }
 
     /**
@@ -538,13 +535,13 @@ public class Colony implements IColony
                     }
 
                     double distance = player.getDistanceSq(center.posX, center.posY, center.posZ);
-                    if (distance < Utils.square(Configurations.workingRangeTownhall + 16))
+                    if (distance < MathUtils.square(Configurations.workingRangeTownhall + 16))
                     {
                         //  Players become subscribers if they come within 16 blocks of the edge of the colony
                         subscribers.add(player);
                     }
                     else if (oldSubscribers.contains(player) &&
-                            distance < Utils.square(Configurations.workingRangeTownhall * 2))
+                             distance < MathUtils.square(Configurations.workingRangeTownhall * 2))
                     {
                         //  Players remain subscribers while they remain within double the colony's radius
                         subscribers.add(player);
@@ -668,7 +665,7 @@ public class Colony implements IColony
         }
 
         ChunkCoordinates spawnPoint =
-                Utils.scanForBlockNearPoint(world, xCoord, yCoord, zCoord, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer);
+                Utils.scanForBlockNearPoint(world, new ChunkCoordinates(xCoord, yCoord, zCoord), 1, 0, 1, 2, Blocks.air, Blocks.snow_layer);
 
         if(spawnPoint != null)
         {
@@ -685,7 +682,7 @@ public class Colony implements IColony
                 {
                     //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersLocalizedMessage(
-                            Utils.getPlayersFromUUID(world, permissions.getMessagePlayers()),
+                            EntityUtils.getPlayersFromUUID(world, permissions.getMessagePlayers()),
                             "tile.blockHutTownhall.messageMaxSize");
                 }
             }

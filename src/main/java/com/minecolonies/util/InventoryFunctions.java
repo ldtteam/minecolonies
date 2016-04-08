@@ -19,7 +19,7 @@ public class InventoryFunctions
     /**
      * A NOOP Consumer to use for any function.
      *
-     * @param o         will be consumed and ignored
+     * @param o will be consumed and ignored
      */
     public static void doNothing(Object... o)
     {
@@ -32,7 +32,7 @@ public class InventoryFunctions
      * @param inventory the inventory to search in
      * @param tester    the function to use for testing slots
      * @param action    the function to use if a slot matches
-     * @return          true if it found a stack
+     * @return true if it found a stack
      */
     public static boolean matchFirstInInventory(IInventory inventory, Predicate<ItemStack> tester,
                                                 Consumer<Integer> action)
@@ -52,10 +52,10 @@ public class InventoryFunctions
      *
      * @param inventory the inventory to search in
      * @param tester    the function to use for testing slots
-     * @return          true if it found a stack
+     * @return true if it found a stack
      */
     private static boolean matchFirstInInventory(IInventory inventory, Function<IInventory, Function<Integer,
-                                                    Predicate<ItemStack>>> tester)
+            Predicate<ItemStack>>> tester)
     {
         return matchInInventory(inventory, tester, true);
     }
@@ -67,16 +67,16 @@ public class InventoryFunctions
      * @param inventory      the inventory to loop over
      * @param tester         the function to use for testing slots
      * @param stopAfterFirst if it should stop executing after finding one stack that applies
-     * @return               true if it found a stack
+     * @return true if it found a stack
      */
     private static boolean matchInInventory(IInventory inventory, Function<IInventory, Function<Integer,
-                                                Predicate<ItemStack>>> tester, boolean stopAfterFirst)
+            Predicate<ItemStack>>> tester, boolean stopAfterFirst)
     {
         if (inventory == null)
         {
             return false;
         }
-        int size = inventory.getSizeInventory();
+        int     size     = inventory.getSizeInventory();
         boolean foundOne = false;
         for (int slot = 0; slot < size; slot++)
         {
@@ -100,7 +100,7 @@ public class InventoryFunctions
      *
      * @param inventory the inventory to search in
      * @param tester    the function to use for testing slots
-     * @return          true if it found a stack
+     * @return true if it found a stack
      */
     public static boolean matchFirstInInventory(IInventory inventory, BiPredicate<Integer, ItemStack> tester)
     {

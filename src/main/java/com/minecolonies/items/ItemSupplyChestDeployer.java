@@ -3,10 +3,7 @@ package com.minecolonies.items;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Log;
-import com.minecolonies.util.Schematic;
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -114,15 +111,15 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
             for(int i = 0; i < WIDTH; i++)
             {
                 int j = k * i;
-                if(!Utils.isWater(world.getBlock(x + j, y, z)) ||
-                        !Utils.isWater(world.getBlock(x + j, y, z + spaceRightK)) ||
-                        !Utils.isWater(world.getBlock(x + j, y, z - spaceLeftK))) return false;
+                if(!BlockUtils.isWater(world.getBlock(x + j, y, z)) ||
+                   !BlockUtils.isWater(world.getBlock(x + j, y, z + spaceRightK)) ||
+                   !BlockUtils.isWater(world.getBlock(x + j, y, z - spaceLeftK))) return false;
             }
             for(int i = 0; i < LENGTH; i++)
             {
-                if(!Utils.isWater(world.getBlock(x, y, z - horizontalX + i)) ||
-                        !Utils.isWater(world.getBlock(x + widthKHalf, y, z - horizontalX + i)) ||
-                        !Utils.isWater(world.getBlock(x + widthK, y, z - horizontalX + i))) return false;
+                if(!BlockUtils.isWater(world.getBlock(x, y, z - horizontalX + i)) ||
+                   !BlockUtils.isWater(world.getBlock(x + widthKHalf, y, z - horizontalX + i)) ||
+                   !BlockUtils.isWater(world.getBlock(x + widthK, y, z - horizontalX + i))) return false;
             }
         }
         else
@@ -130,16 +127,16 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
             for(int i = 0; i < WIDTH; i++)
             {
                 int j = k * i;
-                if(!Utils.isWater(world.getBlock(x, y, z + j)) ||
-                        !Utils.isWater(world.getBlock(x - spaceRightK, y, z + j)) ||
-                        !Utils.isWater(world.getBlock(x + spaceLeftK, y, z + j))) return false;
+                if(!BlockUtils.isWater(world.getBlock(x, y, z + j)) ||
+                   !BlockUtils.isWater(world.getBlock(x - spaceRightK, y, z + j)) ||
+                   !BlockUtils.isWater(world.getBlock(x + spaceLeftK, y, z + j))) return false;
             }
 
             for(int i = 0; i < LENGTH; i++)
             {
-                if(!Utils.isWater(world.getBlock(x - horizontalZ + i, y, z)) ||
-                        !Utils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthKHalf)) ||
-                        !Utils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthK))) return false;
+                if(!BlockUtils.isWater(world.getBlock(x - horizontalZ + i, y, z)) ||
+                   !BlockUtils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthKHalf)) ||
+                   !BlockUtils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthK))) return false;
             }
         }
         return true;
