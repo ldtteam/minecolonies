@@ -1,6 +1,16 @@
 package com.minecolonies.blocks;
 
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.util.LanguageHandler;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 /**
  * Hut for the town hall.
@@ -19,5 +29,20 @@ public class BlockHutTownhall extends AbstractBlockHut
     public String getName()
     {
         return "blockHutTownhall";
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+        TileEntity te = world.getTileEntity(x, y, z);
+
+        if(entityLivingBase instanceof EntityPlayer && te instanceof TileEntityColonyBuilding){
+
+            EntityPlayer player = (EntityPlayer)entityLivingBase;
+            TileEntityColonyBuilding hut = (TileEntityColonyBuilding) te;
+            Colony colony = ColonyManager.createColony(world, hut.getPosition());
+            String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
+            colony.setName(colonyName);
+            colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
+        }
     }
 }

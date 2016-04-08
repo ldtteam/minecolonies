@@ -29,10 +29,10 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
 {
-    protected   int     workingRange;
-    private     float   RESISTANCE      = 10F;
-    /* 0 is top, 1 is bot, 2-5 are sides; */
-    private     IIcon[] icons           = new IIcon[Literals.SIDES_TEXTURES];
+    protected           int     workingRange;
+    private     final   float   RESISTANCE      = 10F;
+    /* 0 is top, 1 is bot, 2-5 are sides */
+    private             IIcon[] icons           = new IIcon[Literals.SIDES_TEXTURES];
 
     /**
      * Constructor for a block using the minecolonies mod.
@@ -99,26 +99,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if(entityLivingBase instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
-            EntityPlayer player = (EntityPlayer) entityLivingBase;
             TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
 
             Colony colony = ColonyManager.getColony(world, hut.getPosition());
-
-            /*
-                True if you try to place a BlockHutTownhall, and there is no colony at your location yet.
-                Creates a new colony
-                todo: really sure that colony has to be not null there? @martijn
-                todo: fixed for now, was colony != null
-            */
-            if(this instanceof BlockHutTownhall && colony == null)
-            {
-                colony = ColonyManager.createColony(world, hut.getPosition());
-                String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
-                colony.setName(colonyName);
-                colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
-            }
-            // Add a new building to the colony.
-            // todo: added a null check because of crashes, please rework @martijn
             if (colony != null)
             {
                 colony.addNewBuilding(hut);
