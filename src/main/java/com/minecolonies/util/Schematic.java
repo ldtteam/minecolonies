@@ -135,7 +135,7 @@ public final class Schematic
      */
     private static ResourceLocation getResourceLocation(String name)
     {
-        return new ResourceLocation("minecolonies:schematics/" + name + ".schematicWorld");
+        return new ResourceLocation("minecolonies:schematics/" + name + ".schematic");
     }
 
     /**

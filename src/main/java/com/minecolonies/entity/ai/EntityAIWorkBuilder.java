@@ -646,6 +646,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         catch (IllegalStateException e)
         {
             Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
+            job.setSchematic(null);
             return;
         }
 
