@@ -16,17 +16,27 @@ import net.minecraft.client.Minecraft;
  */
 public class BlockParticleEffectMessage implements IMessage, IMessageHandler<BlockParticleEffectMessage, IMessage>
 {
-    public static final int BREAK_BLOCK = -1;
+    public static final int     BREAK_BLOCK = -1;
 
-    private int x;
-    private int y;
-    private int z;
-    private Block block;
-    private int metadata;
-    private int side;
+    private             int     x;
+    private             int     y;
+    private             int     z;
+    private             Block   block;
+    private             int     metadata;
+    private             int     side;
 
     public BlockParticleEffectMessage() {}
 
+    /**
+     * Sends a message for particle effect
+     *
+     * @param x         X-coordinate
+     * @param y         Y-coordinate
+     * @param z         Z-coordinate
+     * @param block     Block causing effect
+     * @param metadata  Meta data of the block causing effect
+     * @param side      Side of the block causing effect
+     */
     public BlockParticleEffectMessage(int x, int y, int z, Block block, int metadata, int side)
     {
         this.x = x;

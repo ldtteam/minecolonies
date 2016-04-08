@@ -1,8 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.Log;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -40,7 +39,7 @@ public class PathJobMoveAwayFromLocation extends PathJob
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
-            MineColonies.logger.info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]", start.posX, start.posY, start.posZ, avoid.posX, avoid.posY, avoid.posZ));
+            Log.logger.info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]", start.posX, start.posY, start.posZ, avoid.posX, avoid.posY, avoid.posZ));
         }
 
         return super.search();
@@ -72,6 +71,6 @@ public class PathJobMoveAwayFromLocation extends PathJob
     @Override
     protected double getNodeResultScore(Node n)
     {
-        return ChunkCoordUtils.distanceSqrd(avoid, n.x, n.y, n.z);
+        return avoid.getDistanceSquared(n.x, n.y, n.z);
     }
 }

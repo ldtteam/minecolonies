@@ -10,19 +10,32 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingStonemason extends BuildingWorker
 {
+
+    private static final String STONEMASON          = "Stonemason";
+    private static final String STONEMASON_HUT_NAME = "stonemasonHut";
+
     public BuildingStonemason(Colony c, ChunkCoordinates l)
     {
         super(c, l);
     }
 
     @Override
-    public String getSchematicName(){ return "Stonemason"; }
+    public String getSchematicName()
+    {
+        return STONEMASON;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 1; }
+    public int getMaxBuildingLevel()
+    {
+        return 1;
+    }
 
     @Override
-    public String getJobName(){ return "Stonemason"; }
+    public String getJobName()
+    {
+        return STONEMASON;
+    }
 
     @Override
     public Job createJob(CitizenData citizen)
@@ -39,7 +52,7 @@ public class BuildingStonemason extends BuildingWorker
 
         public com.blockout.views.Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<BuildingStonemason.View>(this, "stonemasonHut");
+            return new WindowHutWorkerPlaceholder<>(this, STONEMASON_HUT_NAME);
         }
     }
 }

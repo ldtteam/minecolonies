@@ -2,34 +2,34 @@ com.minecolonies.error.supplyChestAlreadyPlaced=You have already placed a supply
 
 com.minecolonies.gui.townhall.build=Baue Rathaus
 com.minecolonies.gui.townhall.repair=Repariere Rathaus
-com.minecolonies.gui.townhall.recall=Rufe Bürger
+com.minecolonies.gui.townhall.recall=Rufe BÃ¼rger
 com.minecolonies.gui.townhall.togglespec=An/Aus Spezialisation
 com.minecolonies.gui.townhall.currTownhallName=Name der Kolonie:
 com.minecolonies.gui.townhall.currentSpecialization=Derzeitige Spezialisation:
-com.minecolonies.gui.townhall.rename=Namensänderung
-com.minecolonies.gui.townhall.rename.title=Ändere den Namen deiner Kolonie
+com.minecolonies.gui.townhall.rename=NamensÃ¤nderung
+com.minecolonies.gui.townhall.rename.title=Ã„ndere den Namen deiner Kolonie
 com.minecolonies.gui.townhall.actions=Aktionen
 com.minecolonies.gui.townhall.defaultName=%s's Kolonie
-com.minecolonies.gui.townhall.citizens=Bürger
+com.minecolonies.gui.townhall.citizens=BÃ¼rger
 com.minecolonies.gui.townhall.permissions=Erlaubnisse
 
-com.minecolonies.gui.townhall.population.totalCitizens=Anzahl an Bürger: %d/%d
+com.minecolonies.gui.townhall.population.totalCitizens=Anzahl an BÃ¼rger: %d/%d
 com.minecolonies.gui.townhall.population.unemployed=Arbeitslos: %d
 com.minecolonies.gui.townhall.population.builders=Bauarbeiter: %d
 com.minecolonies.gui.townhall.population.deliverymen=Lieferanten: %d
 
-com.minecolonies.gui.workerHuts.buildersHut=Bauarbeiterhütte
+com.minecolonies.gui.workerHuts.buildersHut=BauarbeiterhÃ¼tte
 com.minecolonies.gui.workerHuts.warehouse=Lager
 com.minecolonies.gui.workerHuts.workerAssigned=Zugeteilte Arbeiter:
 com.minecolonies.gui.workerHuts.workerLevel=Level des Arbeiters: %s
 com.minecolonies.gui.workerHuts.hire=Arbeiter einstellen
 com.minecolonies.gui.workerHuts.fire=Arbeiter entlassen
 com.minecolonies.gui.workerHuts.recall=Arbeiter rufen
-com.minecolonies.gui.workerHuts.build=Baue Gebäude
-com.minecolonies.gui.workerHuts.upgrade=Verbessere Gebäude
-com.minecolonies.gui.workerHuts.upgradeUnavailable=Keine Verbesserung Verfügbar
-com.minecolonies.gui.workerHuts.repair=Gebäude reparieren
-com.minecolonies.gui.workerHuts.buildType=Gebäudetyp:
+com.minecolonies.gui.workerHuts.build=Baue GebÃ¤ude
+com.minecolonies.gui.workerHuts.upgrade=Verbessere GebÃ¤ude
+com.minecolonies.gui.workerHuts.upgradeUnavailable=Keine Verbesserung VerfÃ¼gbar
+com.minecolonies.gui.workerHuts.repair=GebÃ¤ude reparieren
+com.minecolonies.gui.workerHuts.buildType=GebÃ¤udetyp:
 com.minecolonies.gui.workerHuts.information=Information
 com.minecolonies.gui.workerHuts.settings=Einstellungen
 com.minecolonies.gui.workerHuts.minerHut = Stollen
@@ -40,34 +40,34 @@ com.minecolonies.gui.workerHuts.minerNodeList=Ebenen
 com.minecolonies.gui.warehouse.toBlacksmith=An Schmied senden:
 com.minecolonies.gui.warehouse.toStonemason=An Steinmetz senden:
 com.minecolonies.gui.warehouse.toGuards=An Wachen senden:
-com.minecolonies.gui.warehouse.visitCitizenChests=Bürgertruhen besuchen:
+com.minecolonies.gui.warehouse.visitCitizenChests=BÃ¼rgertruhen besuchen:
 
-com.minecolonies.gui.citizen.skills=Fähigkeiten
-com.minecolonies.gui.citizen.skills.strength=Stärke: %d
+com.minecolonies.gui.citizen.skills=FÃ¤higkeiten
+com.minecolonies.gui.citizen.skills.strength=StÃ¤rke: %d
 com.minecolonies.gui.citizen.skills.stamina=Stamina: %d
 com.minecolonies.gui.citizen.skills.wisdom=Weisheit: %d
 com.minecolonies.gui.citizen.skills.intelligence=Intelligenz: %d
 com.minecolonies.gui.citizen.skills.charisma=Charisma: %d
 
-tile.blockHutCitizen.name=Bürgerhütte
-tile.blockHutBaker.name=Bäckerei
+tile.blockHutCitizen.name=BÃ¼rgerhÃ¼tte
+tile.blockHutBaker.name=BÃ¤ckerei
 tile.blockHutBlacksmith.name=Forge
-tile.blockHutBuilder.name=Bauarbeiterhütte
+tile.blockHutBuilder.name=BauarbeiterhÃ¼tte
 tile.blockHutWarehouse.name=Lager
 tile.blockHutFarmer.name=Bauernhof
-tile.blockHutLumberjack.name=Sägewerk
+tile.blockHutLumberjack.name=SÃ¤gewerk
 tile.blockHutMiner.name=Mine
 tile.blockHutStonemason.name=Steinbruch
 tile.blockHutTownhall.name=Rathaus
-tile.blockHut.messageNoPermission=Du hast keine Erlaubnis die Hütten in %s zu öffnen.
+tile.blockHut.messageNoPermission=Du hast keine Erlaubnis die HÃ¼tten in %s zu Ã¶ffnen.
 
-tile.blockHutTownhall.messageMaxSize=Die Kolonie hat ihre maximale Größe Erreicht
+tile.blockHutTownhall.messageMaxSize=Die Kolonie hat ihre maximale GrÃ¶ÃŸe Erreicht
 tile.blockHutTownhall.messageColonistDead=Ein Kolonist starb!
 tile.blockHutTownhall.messagePlacedAlready=Du hast schon ein Rathaus plaziert
 tile.blockHutTownhall.messageInvalidWorld=Du kannst in diesem Welttyp kein Rathaus platzieren
 tile.blockHutTownhall.messageTooClose=Zu Nahe an existierendem Rathaus
 
-tile.blockHut.messageTooFarFromTownhall=Du musst näher bei deinem Rathaus sein!
+tile.blockHut.messageTooFarFromTownhall=Du musst nÃ¤her bei deinem Rathaus sein!
 tile.blockHut.messageNoTownhall=Du musst erst ein Rathaus platzieren!
 
 item.supplyChestDeployer.name=Versorgungskiste
@@ -75,7 +75,7 @@ item.scepterGold.name=Arbeiterwerkzeug
 item.scepterSteel.name=Scanwerkzeug
 item.caliper.name=Caliper
 
-item.supplyChestDeployer.invalid=Du musst nahe an einer großen Wasserquelle sein
+item.supplyChestDeployer.invalid=Du musst nahe an einer groÃŸen Wasserquelle sein
 
 item.scepterSteel.point=Punkt 1 gespeichert
 item.scepterSteel.point2=Punkt zwei gespeichert, erneuter Rechtsklick zum speichern der Schematik
@@ -87,7 +87,7 @@ item.scepterSteel.scanFailure=Scan nicht erfolgreich gespeichert
 item.caliper.message.same=Das ist der selbe Block.
 item.caliper.message.line=Das ist eine %d Blocklinie.
 item.caliper.message.square=Das ist ein %d mal %d Quadrat.
-item.caliper.message.cube=Das ist ein %d by %d mal %d Würfel.
+item.caliper.message.cube=Das ist ein %d by %d mal %d WÃ¼rfel.
 
 itemGroup.minecolonies=MinenKolonien
 
@@ -100,4 +100,4 @@ entity.miner.messageNeed=Ich brauche %s!
 entity.miner.messageNeedBetterTools=Ich brauche bessere Werkzeuge!
 entity.miner.messageMoreBlocks=Ich brauche mehr %s!
 
-
+entity.fisherman.messageWaterTooFar=FischerhÃ¼tter befindet sich zu weit weg von Wasser!

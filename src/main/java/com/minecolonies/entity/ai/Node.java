@@ -13,25 +13,33 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class Node
 {
-    private static final String TAG_X                 = "idX";
-    private static final String TAG_Z                 = "idZ";//TODO change to z, but will break saves
-    private static final String TAG_STYLE             = "Style";
-    private static final String TAG_STATUS            = "Status";
-    private static final String TAG_STATUS_POSITIVE_X = "positiveX";
-    private static final String TAG_STATUS_NEGATIVE_X = "negativeX";
-    private static final String TAG_STATUS_POSITIVE_Z = "positiveZ";
-    private static final String TAG_STATUS_NEGATIVE_Z = "negativeZ";
+    private static final    String      TAG_X                 = "idX";
+    private static final    String      TAG_Z                 = "idZ";//TODO change to z, but will break saves
+    private static final    String      TAG_STYLE             = "Style";
+    private static final    String      TAG_STATUS            = "Status";
+    private static final    String      TAG_STATUS_POSITIVE_X = "positiveX";
+    private static final    String      TAG_STATUS_NEGATIVE_X = "negativeX";
+    private static final    String      TAG_STATUS_POSITIVE_Z = "positiveZ";
+    private static final    String      TAG_STATUS_NEGATIVE_Z = "negativeZ";
     /**
      * Location of the node
      */
-    private int x, z;
-    private NodeType   style;
-    private NodeStatus status;
-    private NodeStatus directionPosX; //+X
-    private NodeStatus directionNegX; //-X
-    private NodeStatus directionPosZ; //+Z
-    private NodeStatus directionNegZ; //-Z
+    private                 int         x;
+    private                 int         z;
+    private                 NodeType    style;
+    private                 NodeStatus  status;
+    private                 NodeStatus  directionPosX; //+X
+    private                 NodeStatus  directionNegX; //-X
+    private                 NodeStatus  directionPosZ; //+Z
+    private                 NodeStatus  directionNegZ; //-Z
 
+    /**
+     * Initializes the node.
+     * Requires a location in the node as parameters
+     *
+     * @param x         X-coordinate in the node
+     * @param z         Z-coordinate in the node
+     */
     public Node(int x, int z)
     {
         this.x = x;
@@ -44,6 +52,13 @@ public class Node
         directionNegZ = NodeStatus.AVAILABLE;
     }
 
+    /**
+     * Creates a node from the NBT Tag.
+     * Returns the created node
+     *
+     * @param compound      Compound to read from
+     * @return              Node created from compound
+     */
     public static Node createFromNBT(NBTTagCompound compound)
     {
         int x = compound.getInteger(TAG_X);
@@ -69,46 +84,91 @@ public class Node
         return node;
     }
 
+    /**
+     * Returns the status of the positive X node.
+     *
+     * @return      {@link NodeStatus}
+     */
     public NodeStatus getDirectionPosX()
     {
         return directionPosX;
     }
 
+    /**
+     * Sets the node status of the positive x node.
+     *
+     * @param directionPosX     {@link NodeStatus} of Positive X node
+     */
     public void setDirectionPosX(NodeStatus directionPosX)
     {
         this.directionPosX = directionPosX;
     }
 
+    /**
+     * Returns the status of the negative X node.
+     *
+     * @return      {@link NodeStatus}
+     */
     public NodeStatus getDirectionNegX()
     {
         return directionNegX;
     }
 
+    /**
+     * Sets the node status of the negative x node.
+     *
+     * @param directionNegX     {@link NodeStatus} of Negative X node
+     */
     public void setDirectionNegX(NodeStatus directionNegX)
     {
         this.directionNegX = directionNegX;
     }
 
+    /**
+     * Returns the status of the positive Z node.
+     *
+     * @return      {@link NodeStatus}
+     */
     public NodeStatus getDirectionPosZ()
     {
         return directionPosZ;
     }
 
+    /**
+     * Sets the node status of the positive z node.
+     *
+     * @param directionPosZ     {@link NodeStatus} of positive Z node
+     */
     public void setDirectionPosZ(NodeStatus directionPosZ)
     {
         this.directionPosZ = directionPosZ;
     }
 
+    /**
+     * Returns the status of the negative Z node.
+     *
+     * @return      {@link NodeStatus}
+     */
     public NodeStatus getDirectionNegZ()
     {
         return directionNegZ;
     }
 
+    /**
+     * Sets the node status of the negative z node.
+     *
+     * @param directionNegZ     {@link NodeStatus} of negative Z node
+     */
     public void setDirectionNegZ(NodeStatus directionNegZ)
     {
         this.directionNegZ = directionNegZ;
     }
 
+    /**
+     * Writes the node to a NBT-compound
+     *
+     * @param compound      Compound to write to
+     */
     public void writeToNBT(NBTTagCompound compound)
     {
         compound.setInteger(TAG_X, x);
@@ -124,21 +184,41 @@ public class Node
         compound.setString(TAG_STATUS_NEGATIVE_Z, directionNegZ.name());
     }
 
+    /**
+     * Returns the x-coordinate in the node
+     *
+     * @return      x-coordinate
+     */
     public int getX()
     {
         return x;
     }
 
+    /**
+     * Returns the z-coordinate in the node
+     *
+     * @return      z-coordinate
+     */
     public int getZ()
     {
         return z;
     }
 
+    /**
+     * Returns the {@link NodeStatus} of the current node
+     *
+     * @return      {@link NodeStatus}
+     */
     public NodeStatus getStatus()
     {
         return status;
     }
 
+    /**
+     * Sets the status of the current node
+     *
+     * @param status        {@link NodeStatus}
+     */
     public void setStatus(NodeStatus status)
     {
         this.status = status;
@@ -160,11 +240,21 @@ public class Node
         return sb.toString();
     }
 
+    /**
+     * Sets the {@link NodeType} of the current node
+     *
+     * @param style     {@link NodeType}
+     */
     public void setStyle(NodeType style)
     {
         this.style = style;
     }
 
+    /**
+     * Returns the {@link NodeType} of the current node
+     *
+     * @return          {@link NodeType}
+     */
     public NodeType getStyle()
     {
         return style;
@@ -175,6 +265,7 @@ public class Node
      * AVAILABLE means it can be mined
      * IN_PROGRESS means it is currently being mined
      * COMPLETED means it has been mined and all torches/wood structure has been placed
+     * //TODO WALL?
      * LADDER means this side has the ladder and must not be mined
      */
     enum NodeStatus
@@ -182,15 +273,18 @@ public class Node
         AVAILABLE,
         IN_PROGRESS,
         COMPLETED,
-        WALL, LADDER
+        WALL,
+        LADDER
     }
 
     /**
      * Sets the node style used
+     * //TODO document the types
      */
     enum NodeType
     {
-        SHAFT, LADDER_BACK,
+        SHAFT,
+        LADDER_BACK,
         TUNNEL,
         CROSSROAD,
         BEND

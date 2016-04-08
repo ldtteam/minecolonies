@@ -16,7 +16,7 @@ import java.util.concurrent.*;
 public class Pathfinding
 {
     static private ThreadPoolExecutor executor;
-    static private final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<Runnable>();
+    static private final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<>();
 
     static
     {

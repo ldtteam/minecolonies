@@ -27,19 +27,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 {
-    private static final String TOOL_TYPE_HOE = "hoe";
-    private static final String TOOL_TYPE_SHOVEL = "shovel";
-    private static final String RENDER_META_SEEDS = "Seeds";
-    private static Logger logger = LogManager.getLogger("Farmer");
-    private List<ChunkCoordinates> farmAbleLand = new ArrayList<>();
-    private List<ChunkCoordinates> plowedLand = new ArrayList<>();
-    private List<ChunkCoordinates> crops = new ArrayList<>();
-    private List<ChunkCoordinates> crops2 = new ArrayList<>();
-    private ChunkCoordinates currentFarmLand;
-    private int harvestCounter = 0;
-    private String needItem = "";
-    private double baseSpeed;
-    private int delay = 0;
+    private static final    String                  TOOL_TYPE_HOE       = "hoe";
+    private static final    String                  TOOL_TYPE_SHOVEL    = "shovel";
+    private static final    String                  RENDER_META_SEEDS   = "Seeds";
+    private static          Logger                  logger              = LogManager.getLogger("Farmer");
+    private                 List<ChunkCoordinates>  farmAbleLand        = new ArrayList<>();
+    private                 List<ChunkCoordinates>  plowedLand          = new ArrayList<>();
+    private                 List<ChunkCoordinates>  crops               = new ArrayList<>();
+    private                 List<ChunkCoordinates>  crops2              = new ArrayList<>();
+    private                 ChunkCoordinates        currentFarmLand;
+    private                 int                     harvestCounter      = 0;
+    private                 String                  needItem            = "";
+    private                 double                  baseSpeed;
+    private                 int                     delay               = 0;
 
     //TODO Check for duplicates
     public EntityAIWorkFarmer(JobFarmer job)
@@ -55,6 +55,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         return (BuildingFarmer) (worker.getWorkBuilding());
     }
 
+    /**
+     *
+     */
     private void checkForCrops()
     {
         if (crops.isEmpty() && !crops2.isEmpty())
@@ -65,6 +68,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         }
     }
 
+    /**
+     * @return          String for seeds renderer if farmer has seeds, otherwise empty string
+     */
     private String getRenderMetaSeeds()
     {
         if (hasSeed())
@@ -334,7 +340,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                                                            plowedLand.get(0).posZ);
 
                     int slot = getFirstSeed();
-                    ItemStack seed = worker.getInventory().getStackInSlot(slot);
+                    ItemStack seed = getInventory().getStackInSlot(slot);
                     if (seed == null)
                     {
                         job.setStage(Stage.WORKING);
@@ -361,7 +367,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                     {
                         ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.carrots);
                     }
-                    worker.getInventory().decrStackSize(slot, 1);
+                    getInventory().decrStackSize(slot, 1);
                     delay = 10;
                 }
 
@@ -420,7 +426,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 
                     for (ItemStack item : items)
                     {
-                        InventoryUtils.setStack(worker.getInventory(), item);
+                        InventoryUtils.setStack(getInventory(), item);
                     }
                     try
                     {
@@ -480,9 +486,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 
     private int getFirstSeed()
     {
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
+        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
         {
-            ItemStack stack = worker.getInventory().getStackInSlot(slot);
+            ItemStack stack = getInventory().getStackInSlot(slot);
 
             if (stack != null && stack.getItem() != null)
             {
@@ -504,9 +510,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 
     private boolean hasSeed()
     {
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
+        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
         {
-            ItemStack stack = worker.getInventory().getStackInSlot(slot);
+            ItemStack stack = getInventory().getStackInSlot(slot);
 
             if (stack != null && stack.getItem() != null)
             {
@@ -539,7 +545,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                 Item content = stack.getItem();
                 if (isSeed(content))
                 {
-                    ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
+                    ItemStack returnStack = InventoryUtils.setStack(getInventory(), stack);
 
                     if (returnStack == null)
                     {
@@ -583,7 +589,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                     || content.getToolClasses(stack).contains(needItem)
                     || stack.getUnlocalizedName().contains(needItem))
                 {
-                    ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
+                    ItemStack returnStack = InventoryUtils.setStack(getInventory(), stack);
 
                     if (returnStack == null)
                     {
@@ -605,9 +611,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
     {
         if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
         {
-            for (int i = 0; i < worker.getInventory().getSizeInventory(); i++)
+            for (int i = 0; i < getInventory().getSizeInventory(); i++)
             {
-                ItemStack stack = worker.getInventory().getStackInSlot(i);
+                ItemStack stack = getInventory().getStackInSlot(i);
                 if (stack != null && !isStackTool(stack))
                 {
                     if (worker.getWorkBuilding().getTileEntity() != null)
@@ -616,11 +622,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                                                                         stack);
                         if (returnStack == null)
                         {
-                            worker.getInventory().decrStackSize(i, stack.stackSize);
+                            getInventory().decrStackSize(i, stack.stackSize);
                         }
                         else
                         {
-                            worker.getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+                            getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
                         }
                     }
                 }
@@ -646,8 +652,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                     TOOL_TYPE_SHOVEL);
         }
 
-        int hasSpade = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), TOOL_TYPE_SHOVEL);
-        int hasHoe = InventoryUtils.getFirstSlotContainingTool(worker.getInventory(), TOOL_TYPE_HOE);
+        int hasSpade = InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_SHOVEL);
+        int hasHoe = InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_HOE);
 
         boolean Spade = hasSpade > -1 || hasSpadeInHand;
         boolean Hoe = hasHoeInHand || hasHoe > -1;
@@ -685,9 +691,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
             return -1;
         }
 
-        for (int slot = 0; slot < worker.getInventory().getSizeInventory(); slot++)
+        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
         {
-            ItemStack stack = worker.getInventory().getStackInSlot(slot);
+            ItemStack stack = getInventory().getStackInSlot(slot);
 
             if (stack != null && stack.getItem() != null)
             {

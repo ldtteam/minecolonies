@@ -2,7 +2,7 @@ package com.minecolonies.blocks;
 
 public class BlockHutCitizen extends BlockHut
 {
-    public BlockHutCitizen()
+    protected BlockHutCitizen()
     {
         super();
     }

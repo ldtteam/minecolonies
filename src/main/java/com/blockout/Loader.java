@@ -10,13 +10,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +27,7 @@ public class Loader
 {
     public static Logger logger = LogManager.getLogger("BlockOut");
 
-    private static Map<String, Constructor<? extends Pane>> paneConstructorMap = new HashMap<String, Constructor<? extends Pane>>();
+    private static Map<String, Constructor<? extends Pane>> paneConstructorMap = new HashMap<>();
 
     static
     {
@@ -43,18 +46,21 @@ public class Loader
         register("switch", SwitchView.class);
     }
 
-    public static String makeFactoryKey(String name, String style)
+    private static String makeFactoryKey(String name, String style)
     {
         return name + ":" + (style != null ? style : "");
     }
 
-    public static void register(String name, String style, Class<? extends Pane> paneClass)
+    private static void register(String name, String style, Class<? extends Pane> paneClass)
     {
         String key = makeFactoryKey(name, style);
 
         if (paneConstructorMap.containsKey(key))
         {
-            throw new IllegalArgumentException("Duplicate pane type '" + name + "' of style '" + style + "' when registering Pane class mapping for " + paneClass.getName());
+            throw new IllegalArgumentException("Duplicate pane type '"
+                                               + name + "' of style '"
+                                               + style + "' when registering Pane class mapping for "
+                                               + paneClass.getName());
         }
 
         try
@@ -64,17 +70,18 @@ public class Loader
         }
         catch (NoSuchMethodException exception)
         {
-            throw new IllegalArgumentException("Missing (XMLNode) constructor for type '" + name + "' when adding Pane class mapping for " + paneClass.getName());
+            throw new IllegalArgumentException("Missing (XMLNode) constructor for type '"
+                                               + name + "' when adding Pane class mapping for " + paneClass.getName());
         }
     }
 
-    public static void register(String name, Class<? extends Pane> paneClass)
+    private static void register(String name, Class<? extends Pane> paneClass)
     {
         register(name, null, paneClass);
     }
 
 
-    public static Pane createFromPaneParams(PaneParams params)
+    private static Pane createFromPaneParams(PaneParams params)
     {
         //  Parse Attributes first, to full construct
         String paneType = params.getType();
@@ -94,9 +101,8 @@ public class Loader
             {
                 return constructor.newInstance(params);
             }
-            catch (Exception exc)
+            catch (InstantiationException | IllegalAccessException | InvocationTargetException exc)
             {
-                exc.printStackTrace();
                 logger.error(
                         String.format("Exception when parsing XML for pane type %s", paneType),
                         exc);
@@ -158,7 +164,7 @@ public class Loader
      * @param input
      * @param parent
      */
-    public static void createFromXML(InputSource input, View parent)
+    private static void createFromXML(InputSource input, View parent)
     {
         try
         {
@@ -168,9 +174,8 @@ public class Loader
 
             createFromXML(doc, parent);
         }
-        catch (Exception exc)
+        catch (ParserConfigurationException | SAXException | IOException exc)
         {
-            exc.printStackTrace();
             logger.error("Exception when parsing XML.", exc);
         }
     }
@@ -229,7 +234,7 @@ public class Loader
         }
         catch(IOException e)
         {
-            e.printStackTrace();
+            logger.error("IOException Loader.java", e);
         }
         return null;
     }

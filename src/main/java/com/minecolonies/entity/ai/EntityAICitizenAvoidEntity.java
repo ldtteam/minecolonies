@@ -13,8 +13,8 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     public final IEntitySelector entitySelector = new IEntitySelector()
     {
         /**
-         * Return whether the specified entity is applicable to this filter.
-         * TODO: what is this filter filtering for??? improve docs
+         * Return whether the specified entity is applicable to avoid an entity
+         * This is true when the entity is alive, and can see the target
          */
         @Override
         public boolean isEntityApplicable(Entity target)
@@ -42,7 +42,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     }
 
     /**
-     * Returns whether the EntityAIBase should begin execution.
+     * Returns whether the EntityAIBase should begin execution of avoiding
      */
     @Override
     public boolean shouldExecute()
@@ -102,6 +102,12 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         }
     }
 
+    /**
+     * Returns the closest entity to avoid
+     * //TODO is this what we want? do we want to get the closest entity, and run away from that, or from enemies?
+     *
+     * @return  Entity to avoid
+     */
     protected Entity getClosestToAvoid()
     {
         if (targetEntityClass == EntityPlayer.class)
@@ -121,6 +127,9 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         }
     }
 
+    /**
+     * Makes entity move away from {@link #closestLivingEntity}
+     */
     protected void performMoveAway()
     {
         theEntity.getNavigator().moveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2, nearSpeed);

@@ -27,6 +27,11 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
 
     public RecallCitizenMessage(){}
 
+    /**
+     * Object creation for the recall
+     *
+     * @param building      View of the building the citizen is working in
+     */
     public RecallCitizenMessage(BuildingWorker.View building)
     {
         this.colonyId = building.getColony().getID();

@@ -12,15 +12,33 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class BuildingWarehouse extends BuildingWorker
 {
-    public boolean blacksmithGold = false,
-            blacksmithDiamond = false,
-            stonemasonStone = false,
-            stonemasonSand = false,
-            stonemasonNetherrack = false,
-            stonemasonQuartz = false,
-            guardArmor = false,
-            guardWeapon = false,
-            citizenVisit = false;
+
+    private static final    String  WAREHOUSE               = "Warehouse";
+    private static final    String  DELIVERYMAN             = "Deliveryman";
+
+    private static final    String  TAG_DELIVERY            = "delivery";
+    private static final    String  TAG_BLACKSMITH          = "blacksmith";
+    private static final    String  TAG_GOLD                = "gold";
+    private static final    String  TAG_DIAMOND             = "diamond";
+    private static final    String  TAG_STONEMASON          = "stonemason";
+    private static final    String  TAG_STONE               = "stone";
+    private static final    String  TAG_SAND                = "sand";
+    private static final    String  TAG_NETHERRACK          = "netherrack";
+    private static final    String  TAG_QUARTZ              = "quartz";
+    private static final    String  TAG_GUARD               = "guard";
+    private static final    String  TAG_ARMOR               = "armor";
+    private static final    String  TAG_WEAPON              = "weapon";
+    private static final    String  TAG_CITIZEN             = "citizen";
+
+    public                  boolean blacksmithGold          = false;
+    public                  boolean blacksmithDiamond       = false;
+    public                  boolean stonemasonStone         = false;
+    public                  boolean stonemasonSand          = false;
+    public                  boolean stonemasonNetherrack    = false;
+    public                  boolean stonemasonQuartz        = false;
+    public                  boolean guardArmor              = false;
+    public                  boolean guardWeapon             = false;
+    public                  boolean citizenVisit            = false;
 
     public BuildingWarehouse(Colony c, ChunkCoordinates l)
     {
@@ -28,43 +46,55 @@ public class BuildingWarehouse extends BuildingWorker
     }
 
     @Override
-    public String getSchematicName(){ return "Warehouse"; }
+    public String getSchematicName()
+    {
+        return WAREHOUSE;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 4; }
+    public int getMaxBuildingLevel()
+    {
+        return 4;
+    }
 
     @Override
-    public String getJobName(){ return "Deliveryman"; }
+    public String getJobName()
+    {
+        return DELIVERYMAN;
+    }
 
     @Override
-    public Job createJob(CitizenData citizen){ return new JobDeliveryman(citizen); }
+    public Job createJob(CitizenData citizen)
+    {
+        return new JobDeliveryman(citizen);
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
-        NBTTagCompound deliveryCompound = compound.getCompoundTag("delivery");
+        NBTTagCompound deliveryCompound = compound.getCompoundTag(TAG_DELIVERY);
 
         //  Blacksmith
-        NBTTagCompound blacksmithCompound = deliveryCompound.getCompoundTag("blacksmith");
-        blacksmithGold = blacksmithCompound.getBoolean("gold");
-        blacksmithDiamond = blacksmithCompound.getBoolean("diamond");
+        NBTTagCompound blacksmithCompound = deliveryCompound.getCompoundTag(TAG_BLACKSMITH);
+        blacksmithGold = blacksmithCompound.getBoolean(TAG_GOLD);
+        blacksmithDiamond = blacksmithCompound.getBoolean(TAG_DIAMOND);
 
         //  Stonemason
-        NBTTagCompound stonemasonCompound = deliveryCompound.getCompoundTag("stonemason");
-        stonemasonStone = stonemasonCompound.getBoolean("stone");
-        stonemasonSand = stonemasonCompound.getBoolean("sand");
-        stonemasonNetherrack = stonemasonCompound.getBoolean("netherrack");
-        stonemasonQuartz = stonemasonCompound.getBoolean("quartz");
+        NBTTagCompound stonemasonCompound = deliveryCompound.getCompoundTag(TAG_STONEMASON);
+        stonemasonStone = stonemasonCompound.getBoolean(TAG_STONE);
+        stonemasonSand = stonemasonCompound.getBoolean(TAG_SAND);
+        stonemasonNetherrack = stonemasonCompound.getBoolean(TAG_NETHERRACK);
+        stonemasonQuartz = stonemasonCompound.getBoolean(TAG_QUARTZ);
 
         //  Guard
-        NBTTagCompound guardCompound = deliveryCompound.getCompoundTag("guard");
-        guardArmor = guardCompound.getBoolean("armor");
-        guardWeapon = guardCompound.getBoolean("weapon");
+        NBTTagCompound guardCompound = deliveryCompound.getCompoundTag(TAG_GUARD);
+        guardArmor = guardCompound.getBoolean(TAG_ARMOR);
+        guardWeapon = guardCompound.getBoolean(TAG_WEAPON);
 
         //  Misc
-        citizenVisit = deliveryCompound.getBoolean("citizen");
+        citizenVisit = deliveryCompound.getBoolean(TAG_CITIZEN);
     }
 
     @Override
@@ -76,28 +106,28 @@ public class BuildingWarehouse extends BuildingWorker
 
         //  Blacksmith
         NBTTagCompound blacksmithCompound = new NBTTagCompound();
-        blacksmithCompound.setBoolean("gold", blacksmithGold);
-        blacksmithCompound.setBoolean("diamond", blacksmithDiamond);
-        deliveryCompound.setTag("blacksmith", blacksmithCompound);
+        blacksmithCompound.setBoolean(TAG_GOLD, blacksmithGold);
+        blacksmithCompound.setBoolean(TAG_DIAMOND, blacksmithDiamond);
+        deliveryCompound.setTag(TAG_BLACKSMITH, blacksmithCompound);
 
         //  Stonemason
         NBTTagCompound stonemasonCompound = new NBTTagCompound();
-        stonemasonCompound.setBoolean("stone", stonemasonStone);
-        stonemasonCompound.setBoolean("sand", stonemasonSand);
-        stonemasonCompound.setBoolean("netherrack", stonemasonNetherrack);
-        stonemasonCompound.setBoolean("quartz", stonemasonQuartz);
-        deliveryCompound.setTag("stonemason", stonemasonCompound);
+        stonemasonCompound.setBoolean(TAG_STONE, stonemasonStone);
+        stonemasonCompound.setBoolean(TAG_SAND, stonemasonSand);
+        stonemasonCompound.setBoolean(TAG_NETHERRACK, stonemasonNetherrack);
+        stonemasonCompound.setBoolean(TAG_QUARTZ, stonemasonQuartz);
+        deliveryCompound.setTag(TAG_STONEMASON, stonemasonCompound);
 
         //  Guard
         NBTTagCompound guardCompound = new NBTTagCompound();
-        guardCompound.setBoolean("armor", guardArmor);
-        guardCompound.setBoolean("weapon", guardWeapon);
-        deliveryCompound.setTag("guard", guardCompound);
+        guardCompound.setBoolean(TAG_ARMOR, guardArmor);
+        guardCompound.setBoolean(TAG_WEAPON, guardWeapon);
+        deliveryCompound.setTag(TAG_GUARD, guardCompound);
 
         //  Misc
-        deliveryCompound.setBoolean("citizen", citizenVisit);
+        deliveryCompound.setBoolean(TAG_CITIZEN, citizenVisit);
 
-        compound.setTag("delivery", deliveryCompound);
+        compound.setTag(TAG_DELIVERY, deliveryCompound);
     }
 
     /**
@@ -105,15 +135,15 @@ public class BuildingWarehouse extends BuildingWorker
      */
     public static class View extends BuildingWorker.View
     {
-        public boolean blacksmithGold = false,
-                blacksmithDiamond = false,
-                stonemasonStone = false,
-                stonemasonSand = false,
-                stonemasonNetherrack = false,
-                stonemasonQuartz = false,
-                guardArmor = false,
-                guardWeapon = false,
-                citizenVisit = false;
+        public boolean blacksmithGold = false;
+        public boolean blacksmithDiamond = false;
+        public boolean stonemasonStone = false;
+        public boolean stonemasonSand = false;
+        public boolean stonemasonNetherrack = false;
+        public boolean stonemasonQuartz = false;
+        public boolean guardArmor = false;
+        public boolean guardWeapon = false;
+        public boolean citizenVisit = false;
 
         public View(ColonyView c, ChunkCoordinates l)
         {

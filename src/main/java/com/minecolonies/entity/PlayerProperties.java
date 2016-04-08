@@ -8,7 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
-public class PlayerProperties implements IExtendedEntityProperties
+public final class PlayerProperties implements IExtendedEntityProperties
 {
     private boolean hasPlacedSupplyChest = false;
 
@@ -56,7 +56,7 @@ public class PlayerProperties implements IExtendedEntityProperties
     @Override
     public void init(Entity entity, World world)
     {
-
+        // Do nothing, need to override, but unused
     }
 
     /**
@@ -106,13 +106,13 @@ public class PlayerProperties implements IExtendedEntityProperties
      *
      * @return whether the player has placed a supply chest.
      */
-    public boolean hasPlacedSupplyChest()
+    public boolean getHasPlacedSupplyChest()
     {
         return hasPlacedSupplyChest;
     }
 
     /**
-     * Sets hasPlacedSupplyChest to true
+     * Sets getHasPlacedSupplyChest to true
      */
     public void placeSupplyChest()
     {

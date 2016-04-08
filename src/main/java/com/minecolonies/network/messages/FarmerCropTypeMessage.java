@@ -21,10 +21,21 @@ public class FarmerCropTypeMessage implements IMessage, IMessageHandler<FarmerCr
     private int              colonyId;
     private ChunkCoordinates buildingId;
 
-    private int wheat, potato, carrot, melon, pumpkin;
+    private int              wheat;
+    private int              potato;
+    private int              carrot;
+    private int              melon;
+    private int              pumpkin;
 
     public FarmerCropTypeMessage(){}
 
+    /**
+     * Object for the crop type message.
+     * Used to change crop percentages
+     * Reads objects from {@link com.minecolonies.colony.buildings.BuildingFarmer.View}
+     *
+     * @param building      The view of the {@link BuildingFarmer}
+     */
     public FarmerCropTypeMessage(BuildingFarmer.View building)
     {
         this.colonyId = building.getColony().getID();

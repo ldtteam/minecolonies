@@ -18,17 +18,23 @@ import net.minecraft.util.ChunkCoordinates;
  */
 public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
 {
-    private int              colonyId;
-    private ChunkCoordinates buildingId;
-    private int              mode;
+    private             ChunkCoordinates buildingId;
+    private             int              colonyId;
+    private             int              mode;
 
 
-    public static final int BUILD  = 0;
-    public static final int REPAIR = 1;
+    public static final int              BUILD  = 0;
+    public static final int              REPAIR = 1;
 
 
     public BuildRequestMessage(){}
 
+    /**
+     * Creates a build request message
+     *
+     * @param building      Building of the request
+     * @param mode          Mode of the request, 1 is repair, 0 is build
+     */
     public BuildRequestMessage(Building.View building, int mode)
     {
         this.colonyId = building.getColony().getID();
