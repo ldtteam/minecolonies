@@ -27,8 +27,8 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
 {
-    protected           int     workingRange;
-    private     final   float   RESISTANCE      = 10F;
+    protected               int     workingRange;
+    private   static final  float   RESISTANCE      = 10F;
     /* 0 is top, 1 is bot, 2-5 are sides */
     private             IIcon[] icons           = new IIcon[Literals.SIDES_TEXTURES];
 

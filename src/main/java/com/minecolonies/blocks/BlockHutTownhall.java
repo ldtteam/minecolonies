@@ -32,7 +32,8 @@ public class BlockHutTownhall extends AbstractBlockHut
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
+    {
         if(world.isRemote)
         {
             return;
