@@ -18,6 +18,9 @@ import com.minecolonies.util.LanguageHandler;
 
 import java.util.*;
 
+/**
+ * Window for the town hall
+ */
 public class WindowTownhall extends Window implements Button.Handler
 {
     private static final    String                      BUTTON_INFO                 = "info";
@@ -66,6 +69,11 @@ public class WindowTownhall extends Window implements Button.Handler
     private                 ScrollingList               citizenList;
     private                 ScrollingList               userList;
 
+    /**
+     * Constructor for the town hall window
+     *
+     * @param townhall      {@link com.minecolonies.colony.buildings.BuildingTownhall.View}
+     */
     public WindowTownhall(BuildingTownhall.View townhall)
     {
         super(Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
@@ -104,16 +112,18 @@ public class WindowTownhall extends Window implements Button.Handler
      * Executed when <code>WindowTownhall</code> is opened.
      * Does tasks like setting buttons
      */
+    @Override
     public void onOpened()
     {
         int citizensSize = townhall.getColony().getCitizens().size();
 
         //TODO - Base these on server-side computed statistics
         int workers = 0;
-        int builders = 0, deliverymen = 0;
+        int builders = 0;
+        int deliverymen = 0;
 
         String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens", citizensSize, townhall.getColony().getMaxCitizens());
-        String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed", (citizensSize - workers));
+        String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed", citizensSize - workers);
         String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townhall.population.builders", builders);
         String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townhall.population.deliverymen", deliverymen);
 
@@ -243,39 +253,12 @@ public class WindowTownhall extends Window implements Button.Handler
         }
         else if (button.getID().equals(BUTTON_REMOVEPLAYER))
         {
-            int row = userList.getListElementIndexByPane(button);
-            if (row >= 0 && row < users.size())
-            {
-                Permissions.Player user = users.get(row);
-                if (user.rank != Permissions.Rank.OWNER)
-                {
-                    MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townhall.getColony(), user.id));
-                }
-            }
+            doButtonRemovePlayer(button);
         }
         else if (button.getID().equals(BUTTON_PROMOTE) ||
                 button.getID().equals(BUTTON_DEMOTE))
         {
-            int row = userList.getListElementIndexByPane(button);
-            if (row >= 0 && row < users.size())
-            {
-                Permissions.Player user = users.get(row);
-                Permissions.Rank newRank;
-
-                if (button.getID().equals(BUTTON_PROMOTE))
-                {
-                    newRank = Permissions.getPromotionRank(user.rank);
-                }
-                else
-                {
-                    newRank = Permissions.getDemotionRank(user.rank);
-                }
-
-                if (newRank != user.rank)
-                {
-                    MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townhall.getColony(), user.id, newRank));
-                }
-            }
+            doButtonPromoteDemote(button);
         }
         else if (button.getID().equals(BUTTON_RECALL))
         {
@@ -289,6 +272,41 @@ public class WindowTownhall extends Window implements Button.Handler
         {
             WindowTownhallNameEntry window = new WindowTownhallNameEntry(townhall.getColony());
             window.open();
+        }
+    }
+
+    private void doButtonRemovePlayer(Button button) {
+        int row = userList.getListElementIndexByPane(button);
+        if (row >= 0 && row < users.size())
+        {
+            Permissions.Player user = users.get(row);
+            if (user.rank != Permissions.Rank.OWNER)
+            {
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townhall.getColony(), user.id));
+            }
+        }
+    }
+
+    private void doButtonPromoteDemote(Button button) {
+        int row = userList.getListElementIndexByPane(button);
+        if (row >= 0 && row < users.size())
+        {
+            Permissions.Player user = users.get(row);
+            Permissions.Rank newRank;
+
+            if (button.getID().equals(BUTTON_PROMOTE))
+            {
+                newRank = Permissions.getPromotionRank(user.rank);
+            }
+            else
+            {
+                newRank = Permissions.getDemotionRank(user.rank);
+            }
+
+            if (newRank != user.rank)
+            {
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townhall.getColony(), user.id, newRank));
+            }
         }
     }
 }
