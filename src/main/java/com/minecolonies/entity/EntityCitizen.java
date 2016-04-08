@@ -937,12 +937,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             setCurrentItemOrArmor(i, null);
         }
-
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        for (int i = 0; i < getLastActiveItems().length; i++)
-        {
-            setCurrentItemOrArmor(i, null);
-        }
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack itemstack = inventory.getStackInSlotOnClosing(i);

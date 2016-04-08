@@ -137,7 +137,7 @@ public abstract class Building
     {
         location = new ChunkCoordinates(chunkCoordinates);
         this.colony = colony;
-        materialStore = new MaterialStore(MaterialStore.Type.CHEST, c.getMaterialSystem());
+        materialStore = new MaterialStore(MaterialStore.Type.CHEST, colony.getMaterialSystem());
     }
 
 
@@ -395,15 +395,13 @@ public abstract class Building
         colony.markBuildingsDirty();
     }
 
+    /**
+     * Method to do things when a block is destroyed.
+     */
     public void onDestroyed()
     {
        materialStore.destroy();
     }
-
-    /**
-     * Method to do things when a block is destroyed.
-     */
-    public void onDestroyed() {}
 
     /**
      * Destroys the block.
