@@ -10,16 +10,25 @@ import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
 
-public class WindowHomeBuilding extends Window implements Button.Handler {
+/**
+ * Window for the home building
+ */
+public class WindowHomeBuilding extends Window implements Button.Handler
+{
 
-    private final static    String              BUTTON_INVENTORY                = "inventory";
-    private final static    String              BUTTON_BUILD                    = "build";
-    private final static    String              BUTTON_REPAIR                   = "repair";
-    private final static    String              LABEL_BUILDINGNAME              = "name";
-    private final static    String              HOME_BUILDING_RESOURCE_SUFFIX   = ":gui/windowHutHome.xml";
+    private static final    String              BUTTON_INVENTORY                = "inventory";
+    private static final    String              BUTTON_BUILD                    = "build";
+    private static final    String              BUTTON_REPAIR                   = "repair";
+    private static final    String              LABEL_BUILDING_NAME = "name";
+    private static final    String              HOME_BUILDING_RESOURCE_SUFFIX   = ":gui/windowHutHome.xml";
 
     private                 BuildingHome.View   building;
 
+    /**
+     * Creates the Window object
+     *
+     * @param building       View of the home building
+     */
     public WindowHomeBuilding(BuildingHome.View building)
     {
         super(Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
@@ -30,7 +39,7 @@ public class WindowHomeBuilding extends Window implements Button.Handler {
     public void onOpened()
     {
 
-        findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
+        findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class).setLabel(
                 LanguageHandler.getString("com.minecolonies.gui.workerHuts.homeHut"));
 
         /*
@@ -43,7 +52,8 @@ public class WindowHomeBuilding extends Window implements Button.Handler {
                     LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
 
             findPaneByID(BUTTON_REPAIR).disable();
-        } else if (building.isBuildingMaxLevel())
+        }
+        else if (building.isBuildingMaxLevel())
             /*
             Else if level == max, disable build button
              */
@@ -69,6 +79,8 @@ public class WindowHomeBuilding extends Window implements Button.Handler {
                 break;
             case BUTTON_REPAIR:
                 MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
+                break;
+            default:
                 break;
         }
     }

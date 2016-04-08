@@ -6,6 +6,7 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.Literals;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.LanguageHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -29,8 +30,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
 {
     protected   int     workingRange;
+    private     float   RESISTANCE      = 10F;
     /* 0 is top, 1 is bot, 2-5 are sides; */
-    private     IIcon[] icons           = new IIcon[ForgeDirection.values().length - 1];
+    private     IIcon[] icons           = new IIcon[Literals.SIDES_TEXTURES];
 
     /**
      * Constructor for a block using the minecolonies mod.
@@ -42,13 +44,14 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         initBlock();
     }
 
-    private void initBlock(){
+    private void initBlock()
+    {
         setBlockName(getName());
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         //Blast resistance for creepers etc. makes them explosion proof
-        setResistance(6000000000f);
+        setResistance((float)Integer.MAX_VALUE);
         //Hardness of 10 takes a long time to mine to not loose progress
-        setHardness(10f);
+        setHardness(RESISTANCE);
         GameRegistry.registerBlock(this, getName());
     }
 
@@ -68,9 +71,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         Icons are called with [minecolonies:block[Top/sideChest]].
         Bottom is same as top.
          */
-        icons[0] = iconRegister.registerIcon(Constants.MOD_ID + ":" + getName() + "Top");
-        icons[1] = icons[0];
-        for(int i = 2; i <= 5; i++)
+        icons[ForgeDirection.UP.ordinal()] = iconRegister.registerIcon(Constants.MOD_ID + ":" + getName() + "Top");
+        icons[ForgeDirection.DOWN.ordinal()] = icons[ForgeDirection.UP.ordinal()];
+        for(int i = Literals.FIRST_INDEX_SIDES; i <= Literals.LAST_INDEX_SIDES; i++)
         {
             icons[i] = iconRegister.registerIcon(Constants.MOD_ID + ":" + "sideChest");
         }
@@ -82,17 +85,16 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return icons[side];
     }
 
-    /*
-    Todo, does (colony.getTownhall() != null) really have to be a null pointer, or can we return, and inform the player
-    Todo, (colony == null) checks if the colony is made already. Seems like there is no check for > 1 colony
-     */
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
     {
         /*
         Only work on server side
         */
-        if(world.isRemote) return;
+        if(world.isRemote)
+        {
+            return;
+        }
 
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if(entityLivingBase instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
@@ -102,18 +104,18 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
 
             Colony colony = ColonyManager.getColony(world, hut.getPosition());
 
-            if(this instanceof BlockHutTownhall) {
-                /*
+            /*
                 True if you try to place a BlockHutTownhall, and there is no colony at your location yet.
                 Creates a new colony
-                 */
-                if (colony == null) {
-                    colony = ColonyManager.createColony(world, hut.getPosition());
-                    String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
-                    colony.setName(colonyName);
-                    colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
-                }
+            */
+            if(this instanceof BlockHutTownhall && colony != null)
+            {
+                colony = ColonyManager.createColony(world, hut.getPosition());
+                String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
+                colony.setName(colonyName);
+                colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
             }
+            // Add a new building to the colony.
             colony.addNewBuilding(hut);
         }
     }
@@ -122,7 +124,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float px, float py, float pz)
     {
         /*
-        If the world is client, open the gui of the buildign
+        If the world is client, open the gui of the building
          */
         if(world.isRemote)
         {
@@ -139,6 +141,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     @Override
     public TileEntity createNewTileEntity(World world, int meta)
     {
+        //Creates a tile entity for our building
         return new TileEntityColonyBuilding();
     }
 }

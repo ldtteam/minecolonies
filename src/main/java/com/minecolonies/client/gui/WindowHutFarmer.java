@@ -9,6 +9,9 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.FarmerCropTypeMessage;
 import com.minecolonies.util.Log;
 
+/**
+ * Window for the farmer hut
+ */
 public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 {
     private static final String BUTTON_WHEAT                  = "wheat";
@@ -19,12 +22,18 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
     private static final String BUTTON_PREVPAGE               = "prevPage";
     private static final String BUTTON_NEXTPAGE               = "nextPage";
     private static final String VIEW_PAGES                    = "pages";
+    private static final int    MAX_AMOUNT                    = 100;
 
     private static final String HUT_FARMER_RESOURCE_SUFFIX    = ":gui/windowHutFarmer.xml";
 
     private         Button buttonPrevPage;
     private         Button buttonNextPage;
 
+    /**
+     * Constructor for the window of the farmer
+     *
+     * @param building      {@link com.minecolonies.colony.buildings.BuildingFarmer.View}
+     */
     public WindowHutFarmer(BuildingFarmer.View building)
     {
         super(building, Constants.MOD_ID + HUT_FARMER_RESOURCE_SUFFIX);
@@ -54,11 +63,11 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
     {
         try
         {
-            findPaneOfTypeByID(BUTTON_WHEAT, ButtonVanilla.class).setLabel(""+building.wheat);
-            findPaneOfTypeByID(BUTTON_POTATO, ButtonVanilla.class).setLabel(""+building.potato);
-            findPaneOfTypeByID(BUTTON_CARROT, ButtonVanilla.class).setLabel("" + building.carrot);
-            findPaneOfTypeByID(BUTTON_MELON, ButtonVanilla.class).setLabel(""+building.melon);
-            findPaneOfTypeByID(BUTTON_PUMPKIN, ButtonVanilla.class).setLabel(""+building.pumpkin);
+            findPaneOfTypeByID(BUTTON_WHEAT, ButtonVanilla.class).setLabel(Integer.toString(building.wheat));
+            findPaneOfTypeByID(BUTTON_POTATO, ButtonVanilla.class).setLabel(Integer.toString(building.potato));
+            findPaneOfTypeByID(BUTTON_CARROT, ButtonVanilla.class).setLabel(Integer.toString(building.carrot));
+            findPaneOfTypeByID(BUTTON_MELON, ButtonVanilla.class).setLabel(Integer.toString(building.melon));
+            findPaneOfTypeByID(BUTTON_PUMPKIN, ButtonVanilla.class).setLabel(Integer.toString(building.pumpkin));
 
         }
         catch (NullPointerException exc)
@@ -73,35 +82,35 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         switch (button.getID())
         {
             case BUTTON_WHEAT:
-                if (building.wheat < 100)
+                if (building.wheat < MAX_AMOUNT)
                 {
                     building.wheat++;
                     removeOthers("wheat");
                 }
                 break;
             case BUTTON_POTATO:
-                if (building.potato < 100)
+                if (building.potato < MAX_AMOUNT)
                 {
                     building.potato++;
                     removeOthers("potato");
                 }
                 break;
             case BUTTON_CARROT:
-                if (building.carrot < 100)
+                if (building.carrot < MAX_AMOUNT)
                 {
                     building.carrot++;
                     removeOthers("carrot");
                 }
                 break;
             case BUTTON_MELON:
-                if (building.melon < 100)
+                if (building.melon < MAX_AMOUNT)
                 {
                     building.melon++;
                     removeOthers("melon");
                 }
                 break;
             case BUTTON_PUMPKIN:
-                if (building.pumpkin < 100)
+                if (building.pumpkin < MAX_AMOUNT)
                 {
                     building.pumpkin++;
                     removeOthers("pumpkin");
@@ -120,9 +129,7 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
             default:
                 super.onButtonClicked(button);
                 break;
-
         }
-
         updateButtonLabels();
     }
 
@@ -149,7 +156,7 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
      */
     private void removeOthers(String s)
     {
-        while(sum() > 100)
+        while(sum() > MAX_AMOUNT)
         {
             int rand = (int)(Math.random()*5);
 
@@ -175,9 +182,9 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
             }
         }
 
-        if(sum() < 100)
+        if(sum() < MAX_AMOUNT)
         {
-            building.wheat = building.wheat + 100 - sum();
+            building.wheat = building.wheat + MAX_AMOUNT - sum();
         }
 
         MineColonies.getNetwork().sendToServer(new FarmerCropTypeMessage(building));

@@ -5,6 +5,7 @@ import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.Literals;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
@@ -30,20 +31,23 @@ public class WindowBuildTool extends Window implements Button.Handler
     /*
     All buttons for the GUI
      */
+    // Navigation buttons (selecting options)
     private static final    String          BUTTON_TYPE_ID              = "buildingType";
     private static final    String          BUTTON_HUT_ID               = "hut";
     private static final    String          BUTTON_STYLE_ID             = "style";
     private static final    String          BUTTON_DECORATION_ID        = "decoration";
 
+    // Navigation buttons (confirm, cancel)
     private static final    String          BUTTON_CONFIRM              = "confirm";
     private static final    String          BUTTON_CANCEL               = "cancel";
 
+    //Rotating buttons (left, right)
     private static final    String          BUTTON_ROTATE_LEFT          = "rotateLeft";
     private static final    String          BUTTON_ROTATE_RIGHT         = "rotateRight";
 
+    //Directional buttons (x, y, z)
     private static final    String          BUTTON_UP                   = "up";
     private static final    String          BUTTON_DOWN                 = "down";
-
     private static final    String          BUTTON_FORWARD              = "forward";
     private static final    String          BUTTON_BACK                 = "back";
     private static final    String          BUTTON_LEFT                 = "left";
@@ -68,6 +72,7 @@ public class WindowBuildTool extends Window implements Button.Handler
      */
     private                 int             styleIndex                  = 0;
 
+    //Position and rotation for the tool
     private                 int             posX;
     private                 int             posY;
     private                 int             posZ;
@@ -106,12 +111,11 @@ public class WindowBuildTool extends Window implements Button.Handler
     public void onOpened()
     {
         boolean inHutMode = true;
-        //TODO is this not redundant? see no usage
         if (!inHutMode)
         {
             Button type = findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class);
             type.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.decoration"));
-            type.setEnabled(false);//TODO disabled for now
+            type.setEnabled(false);
 
             //TODO do stuff with decoration button
             return;
@@ -130,7 +134,7 @@ public class WindowBuildTool extends Window implements Button.Handler
                                                                 && Schematics.getStylesForHut(hut) != null).collect(
                 Collectors.toList()));
 
-        if (huts.size() > 0)
+        if (!huts.isEmpty())
         {
             if (MineColonies.proxy.getActiveSchematic() != null)
             {
@@ -157,7 +161,8 @@ public class WindowBuildTool extends Window implements Button.Handler
             {
                 changeSchematic();
             }
-        } else
+        }
+        else
         {
             Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
 
@@ -179,18 +184,6 @@ public class WindowBuildTool extends Window implements Button.Handler
             Settings.instance.style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
         }
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-    }
-
-    @Override
-    public boolean onKeyTyped(char ch, int key)
-    {
-        return super.onKeyTyped(ch, key);
     }
 
     @Override
@@ -217,7 +210,8 @@ public class WindowBuildTool extends Window implements Button.Handler
             try
             {
                 findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(styles.get(styleIndex));
-            } catch (NullPointerException e)
+            }
+            catch (NullPointerException e)
             {
                 Log.logger.error("findPane error, report to mod authors", e);
             }
@@ -253,14 +247,15 @@ public class WindowBuildTool extends Window implements Button.Handler
             break;
 
         case BUTTON_ROTATE_LEFT:
-            rotation = (rotation+3) % 4;
+            rotation = (rotation + Literals.LAST_INDEX_SIDES - Literals.FIRST_INDEX_SIDES - 1)
+                    % Literals.LAST_INDEX_SIDES - Literals.FIRST_INDEX_SIDES;
             MineColonies.proxy.getActiveSchematic().rotate();
             MineColonies.proxy.getActiveSchematic().rotate();
             MineColonies.proxy.getActiveSchematic().rotate();
             updatePosition();
             break;
         case BUTTON_ROTATE_RIGHT:
-            rotation = (rotation+1) % 4;
+            rotation = (rotation + 1) % Literals.LAST_INDEX_SIDES - Literals.FIRST_INDEX_SIDES;
             MineColonies.proxy.getActiveSchematic().rotate();
             updatePosition();
             break;
@@ -330,6 +325,8 @@ public class WindowBuildTool extends Window implements Button.Handler
             case 3:
                 posX++;
                 break;
+                default:
+                    break;
             }
             break;
         case BUTTON_BACK:
@@ -361,8 +358,8 @@ public class WindowBuildTool extends Window implements Button.Handler
     {
         if(MineColonies.isClient())
         {
-            String hut = "";
-            String style = "";
+            String hut;
+            String style;
 
             hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
             style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();

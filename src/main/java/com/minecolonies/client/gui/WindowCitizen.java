@@ -9,18 +9,26 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
 
+/**
+ * Window for the citizen
+ */
 public class WindowCitizen extends Window implements Button.Handler
 {
-    private static  String              INVENTORY_BUTTON_ID     = "inventory";
-    private static  String              CITIZIN_RESOURCE_SUFFIX = ":gui/windowCitizen.xml";
-    private static  String              STRENGTH                = "strength";
-    private static  String              STAMINA                 = "stamina";
-    private static  String              WISDOM                  = "wisdom";
-    private static  String              INTELLIGENCE            = "intelligence";
-    private static  String              CHARISMA                = "charisma";
+    private static final String              INVENTORY_BUTTON_ID     = "inventory";
+    private static final String              CITIZIN_RESOURCE_SUFFIX = ":gui/windowCitizen.xml";
+    private static final String              STRENGTH                = "strength";
+    private static final String              STAMINA                 = "stamina";
+    private static final String              WISDOM                  = "wisdom";
+    private static final String              INTELLIGENCE            = "intelligence";
+    private static final String              CHARISMA                = "charisma";
 
-    private         CitizenData.View    citizen;
+    private              CitizenData.View    citizen;
 
+    /**
+     * Window for the citizen
+     *
+     * @param citizen       View object of the citizen data
+     */
     public WindowCitizen(CitizenData.View citizen)
     {
         super(Constants.MOD_ID + CITIZIN_RESOURCE_SUFFIX);
