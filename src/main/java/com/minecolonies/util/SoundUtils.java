@@ -4,8 +4,23 @@ import com.minecolonies.lib.Constants;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
-public class SoundHandler
+/**
+ * Utilities for playing sounds
+ * todo: at the moment unused @colton check if useful
+ */
+public final class SoundUtils
 {
+
+    private static final double HALF_BLOCK_OFFSET  = 0.5D;
+    private static final double STATIC_PITCH_VALUE = 0.9D;
+    private static final double RANDOM_PITCH_VALUE = 0.1D;
+
+    /**
+     * Private constructor to hide the implicit public one
+     */
+    private SoundUtils()
+    {
+    }
 
     /**
      * @param world World to play sound in
@@ -17,7 +32,9 @@ public class SoundHandler
      */
     public static void playSound(World world, String name, int x, int y, int z)
     {
-        playSound(world, name, x + 0.5D, y + 0.5D, z + 0.5D, 1.0F, world.rand.nextFloat() * 0.1F + 0.9F);
+        playSound(world, name,
+                  x + HALF_BLOCK_OFFSET, y + HALF_BLOCK_OFFSET, z + HALF_BLOCK_OFFSET,
+                  1.0F, (float) (world.rand.nextDouble() * RANDOM_PITCH_VALUE + STATIC_PITCH_VALUE));
     }
 
     /**
