@@ -67,10 +67,8 @@ public abstract class SchematicFormat
         }
         catch(Exception ex)
         {
-            Log.logger.error("Failed to read schematic!", ex);
+            throw new IllegalStateException("Failed to read schematic!",ex);
         }
-
-        return null;
     }
 
     //Minecolonies end

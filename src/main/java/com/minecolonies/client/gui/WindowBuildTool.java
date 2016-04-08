@@ -364,7 +364,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
             style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
-            SchematicWorld schematic = Schematic.loadSchematic(this.mc.theWorld, style + '/' + hut + '1').getWorldForRender();
+            SchematicWorld schematic = new Schematic(this.mc.theWorld, style + '/' + hut + '1').getWorldForRender();
             MineColonies.proxy.setActiveSchematic(schematic);
 
             Settings.instance.renderBlocks = new RenderBlocks(schematic);

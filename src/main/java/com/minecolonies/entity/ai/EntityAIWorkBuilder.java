@@ -639,12 +639,13 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         String name = building.getStyle() + '/' + workOrder.getUpgradeName();
 
-        job.setSchematic(Schematic.loadSchematic(world, name));
-
-        if(job.getSchematic() == null)
+        try
         {
-            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name));
-            worker.getColony().getWorkManager().removeWorkOrder(workOrder);
+            job.setSchematic(new Schematic(world, name));
+        }
+        catch (IllegalStateException e)
+        {
+            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
             return;
         }
 
