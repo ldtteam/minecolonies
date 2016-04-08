@@ -11,6 +11,10 @@ import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.network.messages.RecallCitizenMessage;
 import com.minecolonies.util.LanguageHandler;
 
+/**
+ * Abstract class for window for worker building
+ * @param <B>   Class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
+ */
 public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View> extends Window implements Button.Handler
 {
     private static final String      BUTTON_INVENTORY      = "inventory";
@@ -23,8 +27,15 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
     private static final String      LABEL_WORKERNAME      = "workerName";
     private static final String      LABEL_WORKERLEVEL     = "workerLevel";
 
+    /** Type B is a class that extends {@link com.minecolonies.colony.buildings.BuildingWorker.View}*/
     protected B building;
 
+    /**
+     * Constructor for the window of the worker building
+     *
+     * @param building      class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
+     * @param resource      Resource of the window
+     */
     AbstractWindowWorkerBuilding(B building, String resource)
     {
         super(resource);
