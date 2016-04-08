@@ -6,7 +6,7 @@ import com.minecolonies.lib.Constants;
 /**
  * Window for the builder hut
  */
-public class WindowHutBuilder extends WindowWorkerBuilding<BuildingBuilder.View>
+public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilder.View>
 {
     private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowHutBuilder.xml";
 

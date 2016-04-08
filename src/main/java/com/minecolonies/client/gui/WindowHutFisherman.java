@@ -8,7 +8,7 @@ import com.minecolonies.lib.Constants;
 /**
  * Window for the fisherman hut
  */
-public class WindowHutFisherman extends WindowWorkerBuilding<BuildingFisherman.View>
+public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFisherman.View>
 {
     private static final String BUTTON_PREVPAGE = "prevPage";
     private static final String BUTTON_NEXTPAGE = "nextPage";

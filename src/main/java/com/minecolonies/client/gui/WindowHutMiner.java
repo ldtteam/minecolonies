@@ -16,7 +16,7 @@ import java.awt.*;
 /**
  * Window for the miner hut
  */
-public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
+public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.View>
 {
     private static final    String              LIST_LEVELS                 = "levels";
     private static final    String              PAGE_LEVELS                 = "levelActions";

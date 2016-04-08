@@ -12,7 +12,7 @@ import com.minecolonies.util.Log;
 /**
  * Window for the farmer hut
  */
-public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
+public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer.View>
 {
     private static final String BUTTON_WHEAT                  = "wheat";
     private static final String BUTTON_POTATO                 = "potato";

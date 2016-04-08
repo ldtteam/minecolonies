@@ -10,7 +10,7 @@ import com.minecolonies.util.LanguageHandler;
 /**
  * Window for the farmer hut
  */
-public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.View> implements Button.Handler
+public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWarehouse.View> implements Button.Handler
 {
     private static final    String BUTTON_BLACKSMITH_GOLD           = "blacksmithGold";
     private static final    String BUTTON_BLACKSMITH_DIAMOND        = "blacksmithDiamond";

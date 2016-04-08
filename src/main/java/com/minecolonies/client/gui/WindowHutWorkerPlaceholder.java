@@ -3,7 +3,7 @@ package com.minecolonies.client.gui;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.lib.Constants;
 
-public class WindowHutWorkerPlaceholder<BUILDING extends BuildingWorker.View> extends WindowWorkerBuilding<BUILDING>
+public class WindowHutWorkerPlaceholder<BUILDING extends BuildingWorker.View> extends AbstractWindowWorkerBuilding<BUILDING>
 {
     private                 String name;
     private static final    String WORKER_PLACEHOLDER_RESOURCE_SUFFIX = ":gui/windowHutWorkerPlaceholder.xml";
