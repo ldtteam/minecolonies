@@ -19,8 +19,13 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
     private static final String BUTTON_CARROT                 = "carrot";
     private static final String BUTTON_MELON                  = "melon";
     private static final String BUTTON_PUMPKIN                = "pumpkin";
-    private static final String BUTTON_PREVPAGE               = "prevPage";
-    private static final String BUTTON_NEXTPAGE               = "nextPage";
+    private static final String WHEAT                         = "wheat";
+    private static final String POTATO                        = "potato";
+    private static final String CARROT                        = "carrot";
+    private static final String MELON                         = "melon";
+    private static final String PUMPKIN                       = "pumpkin";
+    private static final String BUTTON_PREV_PAGE              = "prevPage";
+    private static final String BUTTON_NEXT_PAGE              = "nextPage";
     private static final String VIEW_PAGES                    = "pages";
     private static final int    MAX_AMOUNT                    = 100;
 
@@ -51,9 +56,9 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         super.onOpened();
 
         updateButtonLabels();
-        findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
-        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
-        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
+        findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class).setEnabled(false);
+        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class);
+        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXT_PAGE, Button.class);
     }
 
     /**
@@ -85,28 +90,28 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
                 if (building.wheat < MAX_AMOUNT)
                 {
                     building.wheat++;
-                    removeOthers("wheat");
+                    removeOthers(WHEAT);
                 }
                 break;
             case BUTTON_POTATO:
                 if (building.potato < MAX_AMOUNT)
                 {
                     building.potato++;
-                    removeOthers("potato");
+                    removeOthers(POTATO);
                 }
                 break;
             case BUTTON_CARROT:
                 if (building.carrot < MAX_AMOUNT)
                 {
                     building.carrot++;
-                    removeOthers("carrot");
+                    removeOthers(CARROT);
                 }
                 break;
             case BUTTON_MELON:
                 if (building.melon < MAX_AMOUNT)
                 {
                     building.melon++;
-                    removeOthers("melon");
+                    removeOthers(MELON);
                 }
                 break;
             case BUTTON_PUMPKIN:
@@ -116,12 +121,12 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
                     removeOthers("pumpkin");
                 }
                 break;
-            case BUTTON_PREVPAGE:
+            case BUTTON_PREV_PAGE:
                 findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
                 buttonPrevPage.setEnabled(false);
                 buttonNextPage.setEnabled(true);
                 break;
-            case BUTTON_NEXTPAGE:
+            case BUTTON_NEXT_PAGE:
                 findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
                 buttonPrevPage.setEnabled(true);
                 buttonNextPage.setEnabled(false);
@@ -158,25 +163,26 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
     {
         while(sum() > MAX_AMOUNT)
         {
-            int rand = (int)(Math.random()*5);
+            final int numberOfProducts = 5;
+            int rand = (int)(Math.random() * numberOfProducts);
 
-            if (building.potato != 0 && !s.equals("potato") && rand == 0)
+            if (building.potato != 0 && !s.equals(POTATO) && rand == 0)
             {
                 building.potato--;
             }
-            else if (building.wheat != 0 && !s.equals("wheat") && rand == 1)
+            else if (building.wheat != 0 && !s.equals(WHEAT) && rand == 1)
             {
                 building.wheat--;
             }
-            else if (building.carrot != 0 && !s.equals("carrot") && rand == 2)
+            else if (building.carrot != 0 && !s.equals(CARROT) && rand == 2)
             {
                 building.carrot--;
             }
-            else if (building.melon != 0 && !s.equals("melon") && rand == 3)
+            else if (building.melon != 0 && !s.equals(MELON) && rand == 3)
             {
                 building.melon--;
             }
-            else if (building.pumpkin != 0 && !s.equals("pumpkin") && rand == 4)
+            else if (building.pumpkin != 0 && !s.equals(PUMPKIN) && rand == 4)
             {
                 building.pumpkin--;
             }

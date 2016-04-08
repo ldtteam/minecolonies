@@ -13,6 +13,9 @@ import com.minecolonies.util.LanguageHandler;
 
 import java.awt.*;
 
+/**
+ * Window for the miner hut
+ */
 public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
 {
     private static final    String              LIST_LEVELS                 = "levels";
@@ -32,6 +35,11 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
 
     private static final    String              HUT_MINER_RESOURCE_SUFFIX   = ":gui/windowHutMiner.xml";
 
+    /**
+     * Constructor for the window of the miner hut
+     *
+     * @param building      {@link com.minecolonies.colony.buildings.BuildingMiner.View}
+     */
     public WindowHutMiner(BuildingMiner.View building)
     {
         super(building, Constants.MOD_ID + HUT_MINER_RESOURCE_SUFFIX);
@@ -73,7 +81,7 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
                     rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.BLACK.getRGB());
                 }
 
-                rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
+                rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel(Integer.toString(index));
                 rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + levels[index]);
 
             }
@@ -98,7 +106,8 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
                 break;
             case BUTTON_CURRENTLEVEL:
                 int row = levelList.getListElementIndexByPane(button);
-                if (row != miner.current && row >= 0 && row < levels.length) {
+                if (row != miner.current && row >= 0 && row < levels.length)
+                {
                     miner.current = row;
                     MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
                 }

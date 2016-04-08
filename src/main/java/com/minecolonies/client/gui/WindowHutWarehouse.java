@@ -7,6 +7,9 @@ import com.minecolonies.colony.buildings.BuildingWarehouse;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
 
+/**
+ * Window for the farmer hut
+ */
 public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.View> implements Button.Handler
 {
     private static final    String BUTTON_BLACKSMITH_GOLD           = "blacksmithGold";
@@ -32,6 +35,11 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
     private                 Button buttonPrevPage;
     private                 Button buttonNextPage;
 
+    /**
+     * Constructor for the window of the warehouse hut
+     *
+     * @param building      {@link com.minecolonies.colony.buildings.BuildingWarehouse.View}
+     */
     public WindowHutWarehouse(BuildingWarehouse.View building)
     {
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
@@ -130,7 +138,7 @@ public class WindowHutWarehouse extends WindowWorkerBuilding<BuildingWarehouse.V
      * @param bool      Boolean value to check
      * @return          String depending on boolean value
      */
-    private String getYesOrNo(boolean bool)
+    private static String getYesOrNo(boolean bool)
     {
         return bool ? LanguageHandler.format("gui.yes") : LanguageHandler.format("gui.no");
     }

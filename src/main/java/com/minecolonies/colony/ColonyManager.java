@@ -4,6 +4,7 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -47,7 +48,7 @@ public class ColonyManager
      * @param coord     Coordinate of the center of the colony
      * @return          The created colony
      */
-    public static Colony createColony(World w, ChunkCoordinates coord)
+    public static Colony createColony(World w, ChunkCoordinates coord, EntityPlayer player)
     {
         Colony colony = new Colony(++topColonyId, w, coord);
         colonies.put(colony.getID(), colony);
@@ -58,6 +59,10 @@ public class ColonyManager
         }
 
         coloniesByWorld.get(colony.getDimensionId()).add(colony);
+
+        String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
+        colony.setName(colonyName);
+        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
 
         markDirty();
 

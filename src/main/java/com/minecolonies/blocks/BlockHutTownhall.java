@@ -45,10 +45,7 @@ public class BlockHutTownhall extends AbstractBlockHut
 
             EntityPlayer player = (EntityPlayer)entityLivingBase;
             TileEntityColonyBuilding hut = (TileEntityColonyBuilding) te;
-            Colony colony = ColonyManager.createColony(world, hut.getPosition());
-            String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
-            colony.setName(colonyName);
-            colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
+            ColonyManager.createColony(world, hut.getPosition(), player);
         }
     }
 }
