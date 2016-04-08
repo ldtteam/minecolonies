@@ -8,6 +8,9 @@ import com.minecolonies.lib.Constants;
  */
 public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilder.View>
 {
+    /**
+     * The builders gui file
+     */
     private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowHutBuilder.xml";
 
     /**
@@ -20,6 +23,11 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
     }
 
+    /**
+     * Returns the name of a building
+     *
+     * @return Name of a building
+     */
     @Override
     public String getBuildingName()
     {

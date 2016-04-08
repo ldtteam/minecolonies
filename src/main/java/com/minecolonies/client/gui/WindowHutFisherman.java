@@ -25,6 +25,29 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
     public WindowHutFisherman(BuildingFisherman.View building)
     {
         super(building, Constants.MOD_ID + ":gui/windowHutFisherman.xml");
+        registerButton(BUTTON_PREVPAGE, this::prevClicked);
+        registerButton(BUTTON_NEXTPAGE, this::nextClicked);
+    }
+
+    /**
+     * Go to the previous page
+     * @param ignored ignored
+     */
+    private void prevClicked(Button ignored)
+    {
+        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+        buttonPrevPage.setEnabled(false);
+        buttonNextPage.setEnabled(true);
+    }
+    /**
+     * Go to the next page
+     * @param ignored ignored
+     */
+    private void nextClicked(Button ignored)
+    {
+        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+        buttonPrevPage.setEnabled(true);
+        buttonNextPage.setEnabled(false);
     }
 
     /**
@@ -50,25 +73,5 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
 
     }
 
-    @Override
-    public void onButtonClicked(Button button)
-    {
-        if (button.getID().equals(BUTTON_PREVPAGE))
-        {
-            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-            buttonPrevPage.setEnabled(false);
-            buttonNextPage.setEnabled(true);
-        }
-        else if (button.getID().equals(BUTTON_NEXTPAGE))
-        {
-            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-            buttonPrevPage.setEnabled(true);
-            buttonNextPage.setEnabled(false);
-        }
-        else
-        {
-            super.onButtonClicked(button);
-        }
-    }
 }
 
