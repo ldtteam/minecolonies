@@ -107,8 +107,10 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
             /*
                 True if you try to place a BlockHutTownhall, and there is no colony at your location yet.
                 Creates a new colony
+                todo: really sure that colony has to be not null there? @martijn
+                todo: fixed for now, was colony != null
             */
-            if(this instanceof BlockHutTownhall && colony != null)
+            if(this instanceof BlockHutTownhall && colony == null)
             {
                 colony = ColonyManager.createColony(world, hut.getPosition());
                 String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
@@ -116,7 +118,11 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
                 colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
             }
             // Add a new building to the colony.
-            colony.addNewBuilding(hut);
+            // todo: added a null check because of crashes, please rework @martijn
+            if (colony != null)
+            {
+                colony.addNewBuilding(hut);
+            }
         }
     }
 
