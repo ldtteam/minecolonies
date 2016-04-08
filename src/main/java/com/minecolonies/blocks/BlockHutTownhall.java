@@ -40,7 +40,7 @@ public class BlockHutTownhall extends AbstractBlockHut
         }
         TileEntity te = world.getTileEntity(x, y, z);
 
-        if(entityLivingBase instanceof EntityPlayer && te instanceof TileEntityColonyBuilding)
+        if(entityLivingBase instanceof EntityPlayer && te instanceof TileEntityColonyBuilding && ColonyManager.getColony(world, x, y, z) == null)
         {
 
             EntityPlayer player = (EntityPlayer)entityLivingBase;
