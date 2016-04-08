@@ -2,7 +2,6 @@ package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
 import com.blockout.controls.Label;
-import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.BuildingWorker;
@@ -13,46 +12,64 @@ import com.minecolonies.util.LanguageHandler;
 
 /**
  * Abstract class for window for worker building
- * @param <B>   Class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
+ *
+ * @param <B> Class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
  */
-public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View> extends Window implements Button.Handler
+public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View> extends AbstractWindowSkeleton<B> implements Button.Handler
 {
-    private static final String      BUTTON_INVENTORY      = "inventory";
-    private static final String      BUTTON_HIRE           = "hire";
-    private static final String      BUTTON_RECALL         = "recall";
-    private static final String      BUTTON_BUILD          = "build";
-    private static final String      BUTTON_REPAIR         = "repair";
-    private static final String      LABEL_BUILDINGNAME    = "name";
-    private static final String      LABEL_BUILDINGTYPE    = "type";
-    private static final String      LABEL_WORKERNAME      = "workerName";
-    private static final String      LABEL_WORKERLEVEL     = "workerLevel";
+    private static final String BUTTON_INVENTORY   = "inventory";
+    private static final String BUTTON_HIRE        = "hire";
+    private static final String BUTTON_RECALL      = "recall";
+    private static final String BUTTON_BUILD       = "build";
+    private static final String BUTTON_REPAIR      = "repair";
+    private static final String LABEL_BUILDINGNAME = "name";
+    private static final String LABEL_BUILDINGTYPE = "type";
+    private static final String LABEL_WORKERNAME   = "workerName";
+    private static final String LABEL_WORKERLEVEL  = "workerLevel";
 
-    /** Type B is a class that extends {@link com.minecolonies.colony.buildings.BuildingWorker.View}*/
+    /**
+     * Type B is a class that extends {@link com.minecolonies.colony.buildings.BuildingWorker.View}
+     */
     protected B building;
 
     /**
      * Constructor for the window of the worker building
      *
-     * @param building      class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
-     * @param resource      Resource of the window
+     * @param building class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
+     * @param resource Resource of the window
      */
     AbstractWindowWorkerBuilding(B building, String resource)
     {
-        super(resource);
+        super(building, resource);
         this.building = building;
+        super.registerButton(BUTTON_INVENTORY, this::inventoryClicked);
+        super.registerButton(BUTTON_HIRE, this::doNothing);
+        super.registerButton(BUTTON_RECALL, this::recallClicked);
+        super.registerButton(BUTTON_BUILD, this::buildClicked);
+        super.registerButton(BUTTON_REPAIR, this::repairClicked);
     }
 
-    /**
-     * Returns the name of a building
-     *
-     * @return      Name of a building
-     */
-    public abstract String getBuildingName();
+    private void inventoryClicked(Button ignored)
+    {
+        MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
+    }
 
+    private void recallClicked(Button ignored)
+    {
+        MineColonies.getNetwork().sendToServer(new RecallCitizenMessage(building));
+    }
+    private void buildClicked(Button ignored)
+    {
+        MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
+    }
+    private void repairClicked(Button ignored)
+    {
+        MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
+    }
     @Override
     public void onOpened()
     {
-        String workerName = "";
+        String workerName  = "";
         String workerLevel = "";
 
         if (building.getWorkerId() != 0)
@@ -68,7 +85,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
         findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabel(workerName);
         findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class).setLabel(
                 LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel",
-                        workerLevel));
+                                       workerLevel));
 
         findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
                 LanguageHandler.getString(getBuildingName()));
@@ -88,37 +105,10 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
         }
     }
 
-    @Override
-    public void onButtonClicked(Button button)
-    {
-        if (button.getID().equals(BUTTON_INVENTORY))
-        {
-            MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
-        }
-        else if (button.getID().equals(BUTTON_HIRE))
-        {
-//            if(guiButton.displayString.equals(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire")))
-//            {
-//                //TODO: hire worker
-//                guiButton.displayString = LanguageHandler.format("com.minecolonies.gui.workerHuts.fire");
-//            }
-//            else
-//            {
-//                //TODO: fire worker
-//                guiButton.displayString = LanguageHandler.format("com.minecolonies.gui.workerHuts.hire");
-//            }
-        }
-        else if (button.getID().equals(BUTTON_RECALL))
-        {
-            MineColonies.getNetwork().sendToServer(new RecallCitizenMessage(building));
-        }
-        else if (button.getID().equals(BUTTON_BUILD))
-        {
-            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
-        }
-        else if (button.getID().equals(BUTTON_REPAIR))
-        {
-            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
-        }
-    }
+    /**
+     * Returns the name of a building
+     *
+     * @return Name of a building
+     */
+    public abstract String getBuildingName();
 }
