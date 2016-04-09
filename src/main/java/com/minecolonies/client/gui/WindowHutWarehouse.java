@@ -12,37 +12,46 @@ import com.minecolonies.util.LanguageHandler;
  */
 public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWarehouse.View> implements Button.Handler
 {
-    private static final    String BUTTON_BLACKSMITH_GOLD           = "blacksmithGold";
-    private static final    String BUTTON_BLACKSMITH_DIAMOND        = "blacksmithDiamond";
-    private static final    String BUTTON_STONEMASON_COBBLESTONE    = "stonemasonCobblestone";
-    private static final    String BUTTON_STONEMASON_SAND           = "stonemasonSand";
-    private static final    String BUTTON_STONEMASON_NETHERRACK     = "stonemasonNetherrack";
-    private static final    String BUTTON_STONEMASON_QUARTZ         = "stonemasonQuartz";
-    private static final    String BUTTON_GUARD_ARMOR               = "guardArmor";
-    private static final    String BUTTON_GUARD_WEAPON              = "guardWeapon";
-    private static final    String BUTTON_CITIZEN_CHESTS            = "citizenChests";
-    private static final    String BUTTON_PREVPAGE                  = "prevPage";
-    private static final    String BUTTON_NEXTPAGE                  = "nextPage";
-
-    private static final    String VIEW_PAGES                       = "pages";
+    private static final String BUTTON_BLACKSMITH_GOLD        = "blacksmithGold";
+    private static final String BUTTON_BLACKSMITH_DIAMOND     = "blacksmithDiamond";
+    private static final String BUTTON_STONEMASON_COBBLESTONE = "stonemasonCobblestone";
+    private static final String BUTTON_STONEMASON_SAND        = "stonemasonSand";
+    private static final String BUTTON_STONEMASON_NETHERRACK  = "stonemasonNetherrack";
+    private static final String BUTTON_STONEMASON_QUARTZ      = "stonemasonQuartz";
+    private static final String BUTTON_GUARD_ARMOR            = "guardArmor";
+    private static final String BUTTON_GUARD_WEAPON           = "guardWeapon";
+    private static final String BUTTON_CITIZEN_CHESTS         = "citizenChests";
+    private static final String BUTTON_PREVPAGE               = "prevPage";
+    private static final String BUTTON_NEXTPAGE               = "nextPage";
+    private static final String VIEW_PAGES                    = "pages";
 
     /* Unused for now */
     //private static final String PAGE_ACTIONS = "pageActions";
     //private static final String PAGE_SETTINGS = "pageSettings";
 
-    private static final    String HUT_WAREHOUSE_RESOURCE_SUFFIX    = ":gui/windowHutWarehouse.xml";
+    private static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/windowHutWarehouse.xml";
 
-    private                 Button buttonPrevPage;
-    private                 Button buttonNextPage;
+    private Button buttonPrevPage;
+    private Button buttonNextPage;
 
     /**
      * Constructor for the window of the warehouse hut
      *
-     * @param building      {@link com.minecolonies.colony.buildings.BuildingWarehouse.View}
+     * @param building {@link com.minecolonies.colony.buildings.BuildingWarehouse.View}
      */
     public WindowHutWarehouse(BuildingWarehouse.View building)
     {
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
+        super.registerButton(BUTTON_BLACKSMITH_GOLD, (b) -> building.blacksmithGold = !building.blacksmithGold);
+        super.registerButton(BUTTON_BLACKSMITH_DIAMOND, (b) -> building.blacksmithDiamond = !building.blacksmithDiamond);
+        super.registerButton(BUTTON_STONEMASON_COBBLESTONE, (b) -> building.stonemasonStone = !building.stonemasonStone);
+        super.registerButton(BUTTON_STONEMASON_SAND, (b) -> building.stonemasonSand = !building.stonemasonSand);
+        super.registerButton(BUTTON_STONEMASON_NETHERRACK, (b) -> building.stonemasonNetherrack = !building.stonemasonNetherrack);
+        super.registerButton(BUTTON_STONEMASON_QUARTZ, (b) -> building.stonemasonQuartz = !building.stonemasonQuartz);
+        super.registerButton(BUTTON_GUARD_ARMOR, (b) -> building.guardArmor = !building.guardArmor);
+        super.registerButton(BUTTON_GUARD_WEAPON, (b) -> building.guardWeapon = !building.guardWeapon);
+        super.registerButton(BUTTON_CITIZEN_CHESTS, (b) -> building.citizenVisit = !building.citizenVisit);
+        super.registerButton(BUTTON_BLACKSMITH_GOLD, (b) -> building.blacksmithGold = !building.blacksmithGold);
     }
 
     @Override
@@ -82,38 +91,22 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
 
     }
 
+    /**
+     * Returns specific string depending on the boolean value
+     *
+     * @param bool Boolean value to check
+     * @return String depending on boolean value
+     */
+    private static String getYesOrNo(boolean bool)
+    {
+        return bool ? LanguageHandler.format("gui.yes") : LanguageHandler.format("gui.no");
+    }
+
     @Override
     public void onButtonClicked(Button button)
     {
         switch (button.getID())
         {
-            case BUTTON_BLACKSMITH_GOLD:
-                building.blacksmithGold = !building.blacksmithGold;
-                break;
-            case BUTTON_BLACKSMITH_DIAMOND:
-                building.blacksmithDiamond = !building.blacksmithDiamond;
-                break;
-            case BUTTON_STONEMASON_COBBLESTONE:
-                building.stonemasonStone = !building.stonemasonStone;
-                break;
-            case BUTTON_STONEMASON_SAND:
-                building.stonemasonSand = !building.stonemasonSand;
-                break;
-            case BUTTON_STONEMASON_NETHERRACK:
-                building.stonemasonNetherrack = !building.stonemasonNetherrack;
-                break;
-            case BUTTON_STONEMASON_QUARTZ:
-                building.stonemasonQuartz = !building.stonemasonQuartz;
-                break;
-            case BUTTON_GUARD_ARMOR:
-                building.guardArmor = !building.guardArmor;
-                break;
-            case BUTTON_GUARD_WEAPON:
-                building.guardWeapon = !building.guardWeapon;
-                break;
-            case BUTTON_CITIZEN_CHESTS:
-                building.citizenVisit = !building.citizenVisit;
-                break;
             case BUTTON_PREVPAGE:
                 findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
                 buttonPrevPage.setEnabled(false);
@@ -130,16 +123,5 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
         }
 
         updateButtonLabels();
-    }
-
-    /**
-     * Returns specific string depending on the boolean value
-     *
-     * @param bool      Boolean value to check
-     * @return          String depending on boolean value
-     */
-    private static String getYesOrNo(boolean bool)
-    {
-        return bool ? LanguageHandler.format("gui.yes") : LanguageHandler.format("gui.no");
     }
 }
