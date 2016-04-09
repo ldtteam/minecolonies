@@ -45,7 +45,20 @@ public class LanguageHandler
      */
     public static String getString(String key)
     {
-        return LanguageRegistry.instance().getStringLocalization(key);
+        return getString(key, key);
+    }
+
+    /**
+     * Localize a non-formatted string.
+     *
+     * @param key          unlocalized key
+     * @param defaultValue the value to return if no key is found
+     * @return Localized string
+     */
+    public static String getString(String key, String defaultValue)
+    {
+        String value = LanguageRegistry.instance().getStringLocalization(key);
+        return "".equals(value) ? defaultValue : value;
     }
 
     public static void sendPlayerMessage(EntityPlayer player, String message)

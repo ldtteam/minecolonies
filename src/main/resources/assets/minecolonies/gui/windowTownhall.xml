@@ -47,7 +47,7 @@
                 <label size="100% 11"
                        label="$(com.minecolonies.gui.townhall.currTownhallName)" textalign="Middle" color="green"/>
                 <label size="100% 11"
-                       id="colonyName" textalign="Middle" color="black"/>
+                       id="name" textalign="Middle" color="black"/>
             </group>
 
             <group spacing="4" size="100% 92" pos="0 29">

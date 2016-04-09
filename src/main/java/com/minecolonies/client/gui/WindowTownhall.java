@@ -42,7 +42,6 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View
     private static final String PAGE_CITIZENS            = "pageCitizens";
     private static final String LIST_USERS               = "users";
     private static final String LIST_CITIZENS            = "citizenList";
-    private static final String COLONY_NAME              = "colonyName";
     private static final String CURRENT_SPEC             = "currentSpec";
     private static final String TOTAL_CITIZENS           = "totalCitizens";
     private static final String UNEMP_CITIZENS           = "unemployedCitizens";
@@ -125,8 +124,6 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View
         String numberOfBuilders    = LanguageHandler.format("com.minecolonies.gui.townhall.population.builders", builders);
         String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townhall.population.deliverymen", deliverymen);
 
-
-        findPaneOfTypeByID(COLONY_NAME, Label.class).setLabel(townhall.getColony().getName());
         findPaneOfTypeByID(CURRENT_SPEC, Label.class).setLabel("<Industrial>");
         findPaneOfTypeByID(TOTAL_CITIZENS, Label.class).setLabel(numberOfCitizens);
         findPaneOfTypeByID(UNEMP_CITIZENS, Label.class).setLabel(numberOfUnemployed);
