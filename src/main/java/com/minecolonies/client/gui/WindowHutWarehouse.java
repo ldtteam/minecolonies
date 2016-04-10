@@ -42,16 +42,16 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
     public WindowHutWarehouse(BuildingWarehouse.View building)
     {
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
-        super.registerButton(BUTTON_BLACKSMITH_GOLD, (b) -> building.blacksmithGold = !building.blacksmithGold);
-        super.registerButton(BUTTON_BLACKSMITH_DIAMOND, (b) -> building.blacksmithDiamond = !building.blacksmithDiamond);
-        super.registerButton(BUTTON_STONEMASON_COBBLESTONE, (b) -> building.stonemasonStone = !building.stonemasonStone);
-        super.registerButton(BUTTON_STONEMASON_SAND, (b) -> building.stonemasonSand = !building.stonemasonSand);
-        super.registerButton(BUTTON_STONEMASON_NETHERRACK, (b) -> building.stonemasonNetherrack = !building.stonemasonNetherrack);
-        super.registerButton(BUTTON_STONEMASON_QUARTZ, (b) -> building.stonemasonQuartz = !building.stonemasonQuartz);
-        super.registerButton(BUTTON_GUARD_ARMOR, (b) -> building.guardArmor = !building.guardArmor);
-        super.registerButton(BUTTON_GUARD_WEAPON, (b) -> building.guardWeapon = !building.guardWeapon);
-        super.registerButton(BUTTON_CITIZEN_CHESTS, (b) -> building.citizenVisit = !building.citizenVisit);
-        super.registerButton(BUTTON_BLACKSMITH_GOLD, (b) -> building.blacksmithGold = !building.blacksmithGold);
+        super.registerButton(BUTTON_BLACKSMITH_GOLD, b -> building.blacksmithGold = !building.blacksmithGold);
+        super.registerButton(BUTTON_BLACKSMITH_DIAMOND, b -> building.blacksmithDiamond = !building.blacksmithDiamond);
+        super.registerButton(BUTTON_STONEMASON_COBBLESTONE, b -> building.stonemasonStone = !building.stonemasonStone);
+        super.registerButton(BUTTON_STONEMASON_SAND, b -> building.stonemasonSand = !building.stonemasonSand);
+        super.registerButton(BUTTON_STONEMASON_NETHERRACK, b -> building.stonemasonNetherrack = !building.stonemasonNetherrack);
+        super.registerButton(BUTTON_STONEMASON_QUARTZ, b -> building.stonemasonQuartz = !building.stonemasonQuartz);
+        super.registerButton(BUTTON_GUARD_ARMOR, b -> building.guardArmor = !building.guardArmor);
+        super.registerButton(BUTTON_GUARD_WEAPON, b -> building.guardWeapon = !building.guardWeapon);
+        super.registerButton(BUTTON_CITIZEN_CHESTS, b -> building.citizenVisit = !building.citizenVisit);
+        super.registerButton(BUTTON_BLACKSMITH_GOLD, b -> building.blacksmithGold = !building.blacksmithGold);
     }
 
     @Override

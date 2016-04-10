@@ -75,7 +75,7 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View
         tabsToPages.put(BUTTON_PERMISSIONS, PAGE_PERMISSIONS);
         tabsToPages.put(BUTTON_CITIZENS, PAGE_CITIZENS);
 
-        tabsToPages.keySet().forEach((key) -> registerButton(key, this::onTabClicked));
+        tabsToPages.keySet().forEach(key -> registerButton(key, this::onTabClicked));
         registerButton(BUTTON_ADD_PLAYER, this::addPlayerCLicked);
         registerButton(BUTTON_RENAME, this::renameCLicked);
         registerButton(BUTTON_REMOVE_PLAYER, this::removePlayerClicked);
@@ -148,10 +148,8 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View
             {
 
                 Permissions.Player player = users.get(index);
-
                 String rank = player.rank.name();
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
-
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.name);
                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
 
