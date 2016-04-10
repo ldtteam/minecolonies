@@ -77,7 +77,7 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View
 
         tabsToPages.keySet().forEach(key -> registerButton(key, this::onTabClicked));
         registerButton(BUTTON_ADD_PLAYER, this::addPlayerCLicked);
-        registerButton(BUTTON_RENAME, this::renameCLicked);
+        registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_REMOVE_PLAYER, this::removePlayerClicked);
         registerButton(BUTTON_PROMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
@@ -221,12 +221,26 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View
         }
     }
 
-    private void renameCLicked(Button ignored)
+
+    /**
+     * Action performed when rename button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
+    private void renameClicked(Button ignored)
     {
         WindowTownhallNameEntry window = new WindowTownhallNameEntry(townhall.getColony());
         window.open();
     }
 
+
+    /**
+     * Action performed when add player button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
     private void addPlayerCLicked(Button ignored)
     {
         TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
@@ -234,6 +248,12 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View
         input.setText("");
     }
 
+
+    /**
+     * Action performed when remove player button is clicked
+     *
+     * @param button    Button that holds the user clicked on
+     */
     private void removePlayerClicked(Button button)
     {
         int row = userList.getListElementIndexByPane(button);
@@ -247,6 +267,12 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View
         }
     }
 
+
+    /**
+     * Action performed when popato button is clicked
+     *
+     * @param button    Button that holds the  user clicked on
+     */
     private void promoteDemoteClicked(Button button)
     {
         int row = userList.getListElementIndexByPane(button);

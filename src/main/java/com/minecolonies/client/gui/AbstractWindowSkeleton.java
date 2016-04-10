@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 
 /**
  * manage windows and their events
+ * @param <B>   Class extending {@link com.minecolonies.colony.buildings.BuildingHut.View}
  */
 public abstract class AbstractWindowSkeleton<B extends BuildingHut.View> extends Window implements Button.Handler
 {
@@ -27,6 +28,12 @@ public abstract class AbstractWindowSkeleton<B extends BuildingHut.View> extends
     protected final B                                 building;
     private final   HashMap<String, Consumer<Button>> buttons;
 
+    /**
+     * Constructor for the skeleton class of the windows
+     *
+     * @param building      Class extending {@link com.minecolonies.colony.buildings.BuildingHut.View}
+     * @param resource      Resource location string
+     */
     public AbstractWindowSkeleton(final B building, final String resource)
     {
         super(resource);
@@ -37,21 +44,45 @@ public abstract class AbstractWindowSkeleton<B extends BuildingHut.View> extends
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
     }
 
+    /**
+     * Register a button on the window
+     *
+     * @param id        Button ID
+     * @param action    Consumer with the action to be performed
+     */
     public void registerButton(String id, Consumer<Button> action)
     {
         buttons.put(id, action);
     }
 
+    /**
+     * Action when build button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
     private void buildClicked(Button ignored)
     {
         MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
     }
 
+    /**
+     * Action when repair button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
     private void repairClicked(Button ignored)
     {
         MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
     }
 
+    /**
+     * Action when a button opening an inventory is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
     private void inventoryClicked(Button ignored)
     {
         MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
@@ -74,6 +105,12 @@ public abstract class AbstractWindowSkeleton<B extends BuildingHut.View> extends
         }
     }
 
+    /**
+     * Button clicked without an action. Method is ignored
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
     public final void doNothing(Button ignored)
     {
         //do nothing with that event

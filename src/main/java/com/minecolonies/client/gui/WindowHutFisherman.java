@@ -29,9 +29,12 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
         registerButton(BUTTON_NEXTPAGE, this::nextClicked);
     }
 
+
     /**
-     * Go to the previous page
-     * @param ignored ignored
+     * Action performed when previous button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
      */
     private void prevClicked(Button ignored)
     {
@@ -39,9 +42,12 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
         buttonPrevPage.setEnabled(false);
         buttonNextPage.setEnabled(true);
     }
+
     /**
-     * Go to the next page
-     * @param ignored ignored
+     * Action performed when next button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
      */
     private void nextClicked(Button ignored)
     {
@@ -55,6 +61,7 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
      *
      * @return      Name of a building
      */
+    @Override
     public String getBuildingName()
     {
         return "com.minecolonies.gui.workerHuts.fisherman";

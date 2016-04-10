@@ -51,16 +51,6 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         registerButton(BUTTON_NEXT_PAGE, this::nextClicked);
     }
 
-    private void wheatClicked(Button ignored)
-    {
-        if (building.wheat >= MAX_AMOUNT)
-        {
-            return;
-        }
-        building.wheat++;
-        removeOthers(WHEAT);
-    }
-
     /**
      * Remove one of the materials, described by s
      * Possible inputs are:
@@ -119,6 +109,28 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         return building.wheat + building.carrot + building.melon + building.potato + building.pumpkin;
     }
 
+    /**
+     * Action performed when wheat button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
+    private void wheatClicked(Button ignored)
+    {
+        if (building.wheat >= MAX_AMOUNT)
+        {
+            return;
+        }
+        building.wheat++;
+        removeOthers(WHEAT);
+    }
+
+    /**
+     * Action performed when potato button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
     private void potatoClicked(Button ignored)
     {
         if (building.potato >= MAX_AMOUNT)
@@ -129,6 +141,12 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         removeOthers(POTATO);
     }
 
+    /**
+     * Action performed when melon button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
     private void melonClicked(Button ignored)
     {
         if (building.melon >= MAX_AMOUNT)
@@ -139,6 +157,13 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         removeOthers(MELON);
     }
 
+
+    /**
+     * Action performed when pumpkin button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
     private void pumpkinClicked(Button ignored)
     {
         if (building.pumpkin >= MAX_AMOUNT)
@@ -149,6 +174,13 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         removeOthers(PUMPKIN);
     }
 
+
+    /**
+     * Action performed when carrot button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
     private void carrotClicked(Button ignored)
     {
         if (building.carrot >= MAX_AMOUNT)
@@ -196,6 +228,13 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         }
     }
 
+
+    /**
+     * Action performed when previous button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
     private void prevClicked(Button ignored)
     {
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
@@ -203,6 +242,13 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         buttonNextPage.setEnabled(true);
     }
 
+
+    /**
+     * Action performed when next button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
     private void nextClicked(Button ignored)
     {
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();

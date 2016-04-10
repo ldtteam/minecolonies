@@ -1,11 +1,8 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.LanguageHandler;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
