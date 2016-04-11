@@ -366,6 +366,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     /**
      * Add experience points to citizen.
+     * Increases the citizen level if he has sufficient experience.
+     * This will reset the experience.
      *
      * @param xp the amount of points added
      */
@@ -389,10 +391,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         else
         {
-            if(experienceTotal>=(200*(experienceLevel*experienceLevel)))
+            if(experienceTotal>=(100*(experienceLevel*experienceLevel)))
             {
-                experienceTotal -= 200;
-                experienceLevel+= 1;
+                experienceTotal -= 100*(experienceLevel*experienceLevel);
+                experienceLevel += 1;
             }
         }
         citizenData.markDirty();
@@ -709,17 +711,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     /**
-     * Called when the mob's health reaches 0.
-     * @param par1DamageSource the attacking entity
+     * Drop some experience share depending on the experience and experienceLevel.
      */
-    @Override
-    public void onDeath(DamageSource par1DamageSource)
+    private void dropExperience()
     {
         int experience;
 
         if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
         {
-            experience = this.getExperiencePoints();
+            experience = this.experienceLevel*100 + this.getExperiencePoints();
 
             while (experience > 0)
             {
@@ -729,9 +729,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
         }
 
-        this.setDead();
-
-        //Spawn particle explotion of xp orbs on death
+        //Spawn particle explosion of xp orbs on death
         for (int i = 0; i < 20; ++i)
         {
             double d2 = this.rand.nextGaussian() * 0.02D;
@@ -745,6 +743,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                                         d0,
                                         d1);
         }
+    }
+    /**
+     * Called when the mob's health reaches 0.
+     * @param par1DamageSource the attacking entity
+     */
+    @Override
+    public void onDeath(DamageSource par1DamageSource)
+    {
+        dropExperience();
+        this.setDead();
 
         if (colony != null)
         {
