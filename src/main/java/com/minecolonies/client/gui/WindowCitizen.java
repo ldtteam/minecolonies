@@ -55,7 +55,7 @@ public class WindowCitizen extends Window implements Button.Handler
 
         if (xpBarCap > 0)
         {
-            int experienceRatio = citizen.getLevel()!=0 ? (int)((double)(citizen.getExperience()+1)/((citizen.getLevel()*citizen.getLevel())*100)*100) : 100;
+            int experienceRatio = citizen.getLevel()!=0 ? (int)((double)(citizen.getExperience()+1)/((citizen.getLevel()*citizen.getLevel())*100)*100) : (citizen.getExperience()/100)*100;
 
             findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabel(""+citizen.getLevel());
             findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(60,30);
