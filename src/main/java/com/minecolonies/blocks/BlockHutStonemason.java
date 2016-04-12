@@ -1,9 +1,14 @@
 package com.minecolonies.blocks;
 
-public class BlockHutStonemason extends BlockHut
+/**
+ * Hut for the stone mason.
+ * No different from {@link AbstractBlockHut}
+ */
+public class BlockHutStonemason extends AbstractBlockHut
 {
     protected BlockHutStonemason()
     {
+        //No different from Abstract parent
         super();
     }
 

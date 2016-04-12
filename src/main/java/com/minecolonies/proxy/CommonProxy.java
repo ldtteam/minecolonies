@@ -1,13 +1,14 @@
 package com.minecolonies.proxy;
 
-import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+import com.schematica.world.SchematicWorld;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -24,7 +25,7 @@ public class CommonProxy implements IProxy
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn
      */
-    private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<String, NBTTagCompound>();
+    private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
 
     @Override
     public boolean isClient()
@@ -52,8 +53,8 @@ public class CommonProxy implements IProxy
     /**
      * Removes the compound from the map and returns the NBT tag stored for name or null if none exists
      *
-     * @param name player UUID + Properties name, HashMap key
-     * @return NBTTagCompound PlayerProperties NBT compound
+     * @param name  player UUID + Properties name, HashMap key
+     * @return      NBTTagCompound PlayerProperties NBT compound
      */
     public static NBTTagCompound getEntityData(String name)
     {
@@ -74,6 +75,9 @@ public class CommonProxy implements IProxy
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
         EntityRegistry.registerModEntity(EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
+        EntityRegistry.registerModEntity(EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
+
+
     }
 
     @Override
@@ -91,7 +95,7 @@ public class CommonProxy implements IProxy
     public void registerTileEntityRendering(){}
 
     @Override
-    public void registerKeybindings(){}
+    public void registerKeyBindings(){}
 
     @Override
     public void showCitizenWindow(CitizenData.View citizen) {}

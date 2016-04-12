@@ -15,6 +15,11 @@ public abstract class ItemMinecolonies extends Item
         GameRegistry.registerItem(this, getName());
     }
 
+    /**
+     * Returns the name of the item
+     *
+     * @return      Name of the item
+     */
     public abstract String getName();
 
     @Override

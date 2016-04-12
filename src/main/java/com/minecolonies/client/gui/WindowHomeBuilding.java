@@ -1,68 +1,35 @@
 package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
-import com.blockout.controls.Label;
-import com.blockout.views.Window;
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.messages.BuildRequestMessage;
-import com.minecolonies.network.messages.OpenInventoryMessage;
-import com.minecolonies.util.LanguageHandler;
 
-public class WindowHomeBuilding extends Window implements Button.Handler
+/**
+ * Window for the home building
+ */
+public class WindowHomeBuilding extends AbstractWindowSkeleton<BuildingHome.View> implements Button.Handler
 {
-    private final static String BUTTON_INVENTORY = "inventory",
-            BUTTON_BUILD = "build",
-            BUTTON_REPAIR = "repair",
-            LABEL_BUILDINGNAME = "name";
+    private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowHutHome.xml";
 
-    private BuildingHome.View building;
-
+    /**
+     * Creates the Window object
+     *
+     * @param building View of the home building
+     */
     public WindowHomeBuilding(BuildingHome.View building)
     {
-        super(Constants.MOD_ID + ":gui/windowHutHome.xml");
-        this.building = building;
+        super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
     }
 
+    /**
+     * Returns the name of a building
+     *
+     * @return Name of a building
+     */
     @Override
-    public void onOpened()
+    public String getBuildingName()
     {
-        try
-        {
-            findPaneOfTypeByID(LABEL_BUILDINGNAME, Label.class).setLabel(
-                    LanguageHandler.getString("com.minecolonies.gui.workerHuts.homeHut"));
-
-            if (building.getBuildingLevel() == 0)
-            {
-                findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
-                        LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
-                findPaneByID(BUTTON_REPAIR).disable();
-            }
-            else if (building.isBuildingMaxLevel())
-            {
-                Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-                button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
-                button.disable();
-            }
-        }
-        catch (NullPointerException exc) {}
+        return "com.minecolonies.gui.workerHuts.homeHut";
     }
 
-    @Override
-    public void onButtonClicked(Button button)
-    {
-        if (button.getID().equals(BUTTON_INVENTORY))
-        {
-            MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
-        }
-        else if (button.getID().equals(BUTTON_BUILD))
-        {
-            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
-        }
-        else if (button.getID().equals(BUTTON_REPAIR))
-        {
-            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
-        }
-    }
 }

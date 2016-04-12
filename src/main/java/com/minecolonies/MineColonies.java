@@ -3,11 +3,14 @@ package com.minecolonies;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.configuration.ConfigurationHandler;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.proxy.IProxy;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.RecipeHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
@@ -17,21 +20,17 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, certificateFingerprint = Constants.FINGERPRINT)
 public class MineColonies
 {
-    public static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
-
-    private static SimpleNetworkWrapper network;
+    private static          SimpleNetworkWrapper network;
 
     @Mod.Instance(Constants.MOD_ID)
-    public static MineColonies instance;
+    public static           MineColonies         instance;
 
     @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
-    public static IProxy proxy;
+    public static           IProxy               proxy;
 
     public static SimpleNetworkWrapper getNetwork()
     {
@@ -39,12 +38,11 @@ public class MineColonies
     }
 
     @Mod.EventHandler
-    @SuppressWarnings("unused")
     public void invalidFingerprint(FMLFingerprintViolationEvent event)
     {
         if(Constants.FINGERPRINT.equals("@FINGERPRINT@"))
         {
-            logger.error("No Fingerprint. Might not be a valid version!");
+            Log.logger.error("No Fingerprint. Might not be a valid version!");
         }
     }
 
@@ -60,7 +58,7 @@ public class MineColonies
 
         ModItems.init();
 
-        proxy.registerKeybindings();//Schematica
+        proxy.registerKeyBindings();//Schematica
     }
 
     @Mod.EventHandler
@@ -88,10 +86,12 @@ public class MineColonies
         getNetwork().registerMessage(FarmerCropTypeMessage.class,            FarmerCropTypeMessage.class,            24, Side.SERVER);
         getNetwork().registerMessage(RecallCitizenMessage.class,             RecallCitizenMessage.class,             25, Side.SERVER);
         getNetwork().registerMessage(BuildToolPlaceMessage.class,            BuildToolPlaceMessage.class,            26, Side.SERVER);
-        
+        //Client side only
+        getNetwork().registerMessage(BlockParticleEffectMessage.class,       BlockParticleEffectMessage.class,       50, Side.CLIENT);
+
         proxy.registerTileEntities();
 
-        RecipeHandler.init();
+        RecipeHandler.init(Configurations.enableInDevelopmentFeatures, Configurations.supplyChests);
 
         proxy.registerEvents();
 
@@ -109,13 +109,23 @@ public class MineColonies
     {
     }
 
+    /**
+     * Returns whether the side is client or not
+     *
+     * @return      True when client, otherwise false
+     */
     public static boolean isClient()
     {
-        return proxy.isClient();
+        return proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isClient();
     }
 
+    /**
+     * Returns whether the side is client or not
+     *
+     * @return      True when server, otherwise false
+     */
     public static boolean isServer()
     {
-        return !proxy.isClient();
+        return !proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isServer();
     }
 }

@@ -1,9 +1,14 @@
 package com.minecolonies.blocks;
 
-public class BlockHutLumberjack extends BlockHut
+/**
+ * Hut for the citizen.
+ * No different from {@link AbstractBlockHut}
+ */
+public class BlockHutLumberjack extends AbstractBlockHut
 {
     protected BlockHutLumberjack()
     {
+        //No different from Abstract parent
         super();
     }
 

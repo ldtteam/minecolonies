@@ -1,7 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
@@ -27,8 +27,8 @@ public abstract class PathJob implements Callable<PathEntity>
     protected boolean allowSwimming                = true;
     protected boolean allowJumpPointSearchTypeWalk = false; //  May be faster, but can produce strange results
 
-    protected final Queue<Node>        nodesOpen    = new PriorityQueue<Node>(500);
-    protected final Map<Integer, Node> nodesVisited = new HashMap<Integer, Node>();
+    protected final Queue<Node>        nodesOpen    = new PriorityQueue<>(500);
+    protected final Map<Integer, Node> nodesVisited = new HashMap<>();
 
     protected final PathResult         result;
 
@@ -84,9 +84,9 @@ public abstract class PathJob implements Callable<PathEntity>
         {
             debugDrawEnabled = true;
             debugSleepMs = 0;
-            debugNodesVisited = new HashSet<Node>();
-            debugNodesNotVisited = new HashSet<Node>();
-            debugNodesPath       = new HashSet<Node>();
+            debugNodesVisited = new HashSet<>();
+            debugNodesNotVisited = new HashSet<>();
+            debugNodesPath       = new HashSet<>();
         }
     }
 
@@ -157,7 +157,7 @@ public abstract class PathJob implements Callable<PathEntity>
 
             if (Configurations.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
             {
-                MineColonies.logger.info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f", currentNode.x, currentNode.y, currentNode.z, currentNode.cost, currentNode.score));
+                Log.logger.info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f", currentNode.x, currentNode.y, currentNode.z, currentNode.cost, currentNode.score));
             }
 
             if (isAtDestination(currentNode))
@@ -213,8 +213,8 @@ public abstract class PathJob implements Callable<PathEntity>
             {
                 synchronized (debugNodeMonitor)
                 {
-                    lastDebugNodesNotVisited = new HashSet<Node>(debugNodesNotVisited);
-                    lastDebugNodesVisited = new HashSet<Node>(debugNodesVisited);
+                    lastDebugNodesNotVisited = new HashSet<>(debugNodesNotVisited);
+                    lastDebugNodesVisited = new HashSet<>(debugNodesVisited);
                     lastDebugNodesPath = null;
                 }
 
@@ -359,14 +359,14 @@ public abstract class PathJob implements Callable<PathEntity>
 
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
-            MineColonies.logger.info("Path found:");
+            Log.logger.info("Path found:");
 
             for (PathPoint p : points)
             {
-                MineColonies.logger.info(String.format("Step: [%d,%d,%d]", p.xCoord, p.yCoord, p.zCoord));
+                Log.logger.info(String.format("Step: [%d,%d,%d]", p.xCoord, p.yCoord, p.zCoord));
             }
 
-            MineColonies.logger.info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
+            Log.logger.info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
         }
 
         return new PathEntity(points);

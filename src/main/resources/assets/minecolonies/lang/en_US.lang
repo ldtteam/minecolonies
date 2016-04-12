@@ -44,10 +44,10 @@ com.minecolonies.gui.warehouse.visitCitizenChests=Visit Citizenchests:
 
 com.minecolonies.gui.citizen.skills=Skills
 com.minecolonies.gui.citizen.skills.strength=Strength: %d
-com.minecolonies.gui.citizen.skills.stamina=Stamina: %d
-com.minecolonies.gui.citizen.skills.wisdom=Wisdom: %d
-com.minecolonies.gui.citizen.skills.intelligence=Intelligence: %d
+com.minecolonies.gui.citizen.skills.endurance=Endurance: %d
 com.minecolonies.gui.citizen.skills.charisma=Charisma: %d
+com.minecolonies.gui.citizen.skills.intelligence=Intelligence: %d
+com.minecolonies.gui.citizen.skills.diligence=Diligence: %d
 
 com.minecolonies.gui.buildtool.nohut=No Huts
 com.minecolonies.gui.buildtool.nodecoration=No Decorations
@@ -61,6 +61,7 @@ tile.blockHutBuilder.name=Builder's Hut
 tile.blockHutWarehouse.name=Warehouse
 tile.blockHutFarmer.name=Farm
 tile.blockHutLumberjack.name=Sawmill
+tile.blockHutFisherman.name=Fisherman's Hut
 tile.blockHutMiner.name=Mine
 tile.blockHutStonemason.name=Quarry
 tile.blockHutTownhall.name=Town Hall
@@ -110,3 +111,5 @@ entity.miner.messageNeedTools=Need tool %s!
 entity.miner.messageNeedBlockAndItem=I need %s!
 entity.miner.messageNeedBetterTools=I need better tools!
 entity.miner.messageMoreBlocks=I need more %s!
+
+entity.fisherman.messageWaterTooFar=Fisherman's hut is too far from water!

@@ -1,12 +1,9 @@
 package com.minecolonies.items;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Schematic;
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -57,7 +54,7 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      * @param x     x coordinate clicked
      * @param y     y coordinate clicked
      * @param z     z coordinate clicked
-     * @return facings it can be placed at (2-5)
+     * @return      facings it can be placed at (2-5)
      */
     public int canShipBePlaced(World world, int x, int y, int z)
     {
@@ -89,7 +86,7 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      * @param z                      z coordinate clicked
      * @param shouldCheckX           boolean whether the x-sides should be checks
      * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false)
-     * @return whether the space in the I shape is free or not
+     * @return                       whether the space in the I shape is free or not
      */
     private boolean check(World world, int x, int y, int z, boolean shouldCheckX, boolean isCoordPositivelyAdded)
     {
@@ -114,15 +111,15 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
             for(int i = 0; i < WIDTH; i++)
             {
                 int j = k * i;
-                if(!Utils.isWater(world.getBlock(x + j, y, z)) ||
-                        !Utils.isWater(world.getBlock(x + j, y, z + spaceRightK)) ||
-                        !Utils.isWater(world.getBlock(x + j, y, z - spaceLeftK))) return false;
+                if(!BlockUtils.isWater(world.getBlock(x + j, y, z)) ||
+                   !BlockUtils.isWater(world.getBlock(x + j, y, z + spaceRightK)) ||
+                   !BlockUtils.isWater(world.getBlock(x + j, y, z - spaceLeftK))) return false;
             }
             for(int i = 0; i < LENGTH; i++)
             {
-                if(!Utils.isWater(world.getBlock(x, y, z - horizontalX + i)) ||
-                        !Utils.isWater(world.getBlock(x + widthKHalf, y, z - horizontalX + i)) ||
-                        !Utils.isWater(world.getBlock(x + widthK, y, z - horizontalX + i))) return false;
+                if(!BlockUtils.isWater(world.getBlock(x, y, z - horizontalX + i)) ||
+                   !BlockUtils.isWater(world.getBlock(x + widthKHalf, y, z - horizontalX + i)) ||
+                   !BlockUtils.isWater(world.getBlock(x + widthK, y, z - horizontalX + i))) return false;
             }
         }
         else
@@ -130,16 +127,16 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
             for(int i = 0; i < WIDTH; i++)
             {
                 int j = k * i;
-                if(!Utils.isWater(world.getBlock(x, y, z + j)) ||
-                        !Utils.isWater(world.getBlock(x - spaceRightK, y, z + j)) ||
-                        !Utils.isWater(world.getBlock(x + spaceLeftK, y, z + j))) return false;
+                if(!BlockUtils.isWater(world.getBlock(x, y, z + j)) ||
+                   !BlockUtils.isWater(world.getBlock(x - spaceRightK, y, z + j)) ||
+                   !BlockUtils.isWater(world.getBlock(x + spaceLeftK, y, z + j))) return false;
             }
 
             for(int i = 0; i < LENGTH; i++)
             {
-                if(!Utils.isWater(world.getBlock(x - horizontalZ + i, y, z)) ||
-                        !Utils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthKHalf)) ||
-                        !Utils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthK))) return false;
+                if(!BlockUtils.isWater(world.getBlock(x - horizontalZ + i, y, z)) ||
+                   !BlockUtils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthKHalf)) ||
+                   !BlockUtils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthK))) return false;
             }
         }
         return true;
@@ -148,12 +145,12 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
     /**
      * Checks if the player already placed a supply chest
      *
-     * @param player The player
-     * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
+     * @param player    The player
+     * @return          boolean, returns true when player hasn't placed before, or when infinite placing is on.
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest())
+        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).getHasPlacedSupplyChest())
             return true;
         LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.error.supplyChestAlreadyPlaced");
         return false;
@@ -202,7 +199,7 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
     {
         if(chest == null)
         {
-            MineColonies.logger.error("Supply chest tile entity was null.");
+            Log.logger.error("Supply chest tile entity was null.");
             return;
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownhall));

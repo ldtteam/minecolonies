@@ -1,9 +1,14 @@
 package com.minecolonies.blocks;
 
-public class BlockHutBaker extends BlockHut
+/**
+ * Hut for the baker.
+ * No different from {@link AbstractBlockHut}
+ */
+public class BlockHutBaker extends AbstractBlockHut
 {
     protected BlockHutBaker()
     {
+        //No different forom Abstract parennt
         super();
     }
 

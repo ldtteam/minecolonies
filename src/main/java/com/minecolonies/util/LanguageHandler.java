@@ -14,14 +14,15 @@ import java.util.List;
 public class LanguageHandler
 {
     /**
-     * Localize a non-formatted string.
+     * Send a localized and formatted message to a player
      *
-     * @param key  unlocalized key
-     * @return Localized string
+     * @param player player to send the message to
+     * @param key    unlocalized key
+     * @param args   Objects for String.format()
      */
-    public static String getString(String key)
+    public static void sendPlayerLocalizedMessage(EntityPlayer player, String key, Object... args)
     {
-        return LanguageRegistry.instance().getStringLocalization(key);
+        sendPlayerMessage(player, format(key, args));
     }
 
     /**
@@ -36,30 +37,33 @@ public class LanguageHandler
         return String.format(getString(key), args);
     }
 
-    public static void sendPlayerMessage(EntityPlayer player, String message)
+    /**
+     * Localize a non-formatted string.
+     *
+     * @param key unlocalized key
+     * @return Localized string
+     */
+    public static String getString(String key)
     {
-        player.addChatComponentMessage(new ChatComponentText(message));
+        return getString(key, key);
     }
 
     /**
-     * Send a localized and formatted message to a player
+     * Localize a non-formatted string.
      *
-     * @param player player to send the message to
-     * @param key    unlocalized key
-     * @param args   Objects for String.format()
+     * @param key          unlocalized key
+     * @param defaultValue the value to return if no key is found
+     * @return Localized string
      */
-    public static void sendPlayerLocalizedMessage(EntityPlayer player, String key, Object... args)
+    public static String getString(String key, String defaultValue)
     {
-        sendPlayerMessage(player, format(key, args));
+        String value = LanguageRegistry.instance().getStringLocalization(key);
+        return "".equals(value) ? defaultValue : value;
     }
 
-    public static void sendPlayersMessage(List<EntityPlayer> players, String message)
+    public static void sendPlayerMessage(EntityPlayer player, String message)
     {
-        if(players == null || players.isEmpty()) return;
-        for(EntityPlayer player : players)
-        {
-            sendPlayerMessage(player, message);
-        }
+        player.addChatComponentMessage(new ChatComponentText(message));
     }
 
     /**
@@ -72,5 +76,14 @@ public class LanguageHandler
     public static void sendPlayersLocalizedMessage(List<EntityPlayer> players, String key, Object... args)
     {
         sendPlayersMessage(players, format(key, args));
+    }
+
+    public static void sendPlayersMessage(List<EntityPlayer> players, String message)
+    {
+        if (players == null || players.isEmpty()){ return; }
+        for (EntityPlayer player : players)
+        {
+            sendPlayerMessage(player, message);
+        }
     }
 }

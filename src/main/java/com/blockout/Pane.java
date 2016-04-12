@@ -241,7 +241,7 @@ public class Pane extends Gui
 
     /**
      * Returns the first Pane (depth-first search) of a given ID,
-     * if it matches the specifiedtype
+     * if it matches the specified type
      * Performs a depth-first search on the hierarchy of Panes and Views
      *
      * @param id ID of Pane to find
@@ -255,11 +255,10 @@ public class Pane extends Gui
         {
             return type.cast(p);
         }
-        catch (ClassCastException exc)
+        catch (ClassCastException ignored)
         {
         }
-
-        return null;
+        throw new IllegalArgumentException(String.format("No pane with id %s and type %s was found.", id, type));
     }
 
     /**
@@ -309,7 +308,7 @@ public class Pane extends Gui
      * @param my
      * @return
      */
-    public boolean isPointInPane(int mx, int my)
+    protected boolean isPointInPane(int mx, int my)
     {
         return mx >= x && mx < (x + width) &&
                my >= y && my < (y + height);

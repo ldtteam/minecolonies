@@ -21,7 +21,7 @@ public class ScrollingListContainer extends ScrollingContainer
         int numElements = (dataProvider != null) ? dataProvider.getElementCount() : 0;
         for (int i = 0; i < numElements; ++i)
         {
-            Pane child = null;
+            Pane child;
             if (i < children.size())
             {
                 child = children.get(i);
@@ -32,11 +32,13 @@ public class ScrollingListContainer extends ScrollingContainer
 
                 if (i == 0)
                 {
+                    //TODO: May be null
                     listElementHeight = child.getHeight();
                 }
             }
-
+            //TODO: May be null
             child.setPosition(0, i * listElementHeight);
+
             dataProvider.updateElement(i, child);
         }
 

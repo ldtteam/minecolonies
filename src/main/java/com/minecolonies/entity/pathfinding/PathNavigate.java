@@ -13,7 +13,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import javax.swing.tree.TreePath;
+import java.util.List;
 import java.util.concurrent.Future;
 
 public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
@@ -92,6 +92,12 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     {
         ChunkCoordinates start = PathJob.prepareStart(theEntity);
         return (PathJobFindTree.TreePathResult) setPathJob(new PathJobFindTree(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range), null, speed);
+    }
+
+    public PathJobFindWater.WaterPathResult moveToWater(int range, double speed, List<ChunkCoordinates> ponds)
+    {
+        ChunkCoordinates start = PathJob.prepareStart(theEntity);
+        return (PathJobFindWater.WaterPathResult) setPathJob(new PathJobFindWater(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range, ponds), null, speed);
     }
 
     @Override
@@ -284,6 +290,6 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
 
     public boolean isUnableToReachDestination()
     {
-        return pathResult != null && !pathResult.isComputing() && !pathResult.getPathReachesDestination();
+        return pathResult != null && pathResult.failedToReachDestination();
     }
 }

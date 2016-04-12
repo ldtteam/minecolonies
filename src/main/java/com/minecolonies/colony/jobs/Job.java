@@ -1,9 +1,9 @@
 package com.minecolonies.colony.jobs;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
+import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,24 +15,37 @@ import java.util.*;
 
 public abstract class Job
 {
-    private final CitizenData citizen;
-    private List<ItemStack> itemsNeeded = new ArrayList<>();
+    private static final    String                              TAG_TYPE            = "type";
+    private static final    String                              TAG_ITEMS_NEEDED    = "itemsNeeded";
+
+    private static final    String                              MAPPING_PLACEHOLDER = "Placeholder";
+    private static final    String                              MAPPING_BUILDER     = "Builder";
+    private static final    String                              MAPPING_DELIVERY    = "Deliveryman";
+    private static final    String                              MAPPING_MINER       = "Miner";
+    private static final    String                              MAPPING_LUMBERJACK  = "Lumberjack";
+    private static final    String                              MAPPING_FARMER      = "Farmer";
+    private static final    String                              MAPPING_FISHERMAN   = "Fisherman";
 
     //  Job and View Class Mapping
-    private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<String, Class<? extends Job>>();
-    private static Map<Class<? extends Job>, String> classToNameMap = new HashMap<Class<? extends Job>, String>();
-
-    private static final String TAG_TYPE         = "type";
-    private static final String TAG_ITEMS_NEEDED = "itemsNeeded";
-
+    private static          Map<String, Class<? extends Job>>   nameToClassMap      = new HashMap<>();
+    private static          Map<Class<? extends Job>, String>   classToNameMap      = new HashMap<>();
+    private        final    CitizenData                         citizen;
+    private                 List<ItemStack>                     itemsNeeded         = new ArrayList<>();
+    private                 String                              nameTag             = "";
     static
     {
-        addMapping("Placeholder", JobPlaceholder.class);
-        addMapping("Builder", JobBuilder.class);
-        addMapping("Deliveryman", JobDeliveryman.class);
-        addMapping("Miner", JobMiner.class);
-        addMapping("Lumberjack", JobLumberjack.class);
-        addMapping("Farmer", JobFarmer.class);
+        addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
+        addMapping(MAPPING_BUILDER, JobBuilder.class);
+        addMapping(MAPPING_DELIVERY, JobDeliveryman.class);
+        addMapping(MAPPING_MINER, JobMiner.class);
+        addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
+        addMapping(MAPPING_FARMER, JobFarmer.class);
+        addMapping(MAPPING_FISHERMAN, JobFisherman.class);
+    }
+
+    public Job(CitizenData entity)
+    {
+        citizen = entity;
     }
 
     /**
@@ -47,60 +60,28 @@ public abstract class Job
         {
             throw new IllegalArgumentException("Duplicate type '" + name + "' when adding Job class mapping");
         }
-        else
+        try
         {
-            try
+            if (jobClass.getDeclaredConstructor(CitizenData.class) != null)
             {
-                if (jobClass.getDeclaredConstructor(CitizenData.class) != null)
-                {
-                    nameToClassMap.put(name, jobClass);
-                    classToNameMap.put(jobClass, name);
-                }
+                nameToClassMap.put(name, jobClass);
+                classToNameMap.put(jobClass, name);
             }
-            catch (NoSuchMethodException exception)
-            {
-                throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Job class mapping");
-            }
+        }
+        catch (NoSuchMethodException exception)
+        {
+            throw new IllegalArgumentException("Missing constructor for type '"
+                                               + name
+                                               + "' when adding Job class mapping");
         }
     }
 
-    public Job(CitizenData entity)
-    {
-        citizen = entity;
-    }
-
-    /**
-     * Return a Localization label for the Job
-     * @return localization label String
-     */
-    public abstract String getName();
-
-    /**
-     * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
-     * @return
-     */
-    public RenderBipedCitizen.Model getModel()
-    {
-        return RenderBipedCitizen.Model.CITIZEN;
-    }
-
-    /**
-     * Get the CitizenData that this Job belongs to
-     * @return CitizenData that owns this Job
-     */
-    public CitizenData getCitizen() { return citizen; }
-
-    /**
-     * Get the Colony that this Job is associated with (shortcut for getCitizen().getColony())
-     * @return
-     */
-    public Colony getColony() { return citizen.getColony(); }
-
     /**
      * Create a Job from saved NBTTagCompound data
-     * @param citizen The citizen that owns the Job
+     *
+     * @param citizen  The citizen that owns the Job
      * @param compound The NBTTagCompound containing the saved Job data
-     * @return new Job created from the data, or null
+     * @return          New Job created from the data, or null
      */
     public static Job createFromNBT(CitizenData citizen, NBTTagCompound compound)
     {
@@ -114,7 +95,7 @@ public abstract class Job
             if (oclass != null)
             {
                 Constructor<?> constructor = oclass.getDeclaredConstructor(CitizenData.class);
-                job = (Job)constructor.newInstance(citizen);
+                job = (Job) constructor.newInstance(citizen);
             }
         }
         catch (Exception exception)
@@ -130,21 +111,73 @@ public abstract class Job
             }
             catch (Exception ex)
             {
-                MineColonies.logger.error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
+                Log.logger.error(String.format(
+                        "A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report "
+                        + "this to the mod author",
+                        compound.getString(TAG_TYPE),
+                        oclass.getName()), ex);
                 job = null;
             }
         }
         else
         {
-            MineColonies.logger.warn(String.format("Unknown Job type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            Log.logger.warn(String.format("Unknown Job type '%s' or missing constructor of proper format.",
+                                          compound.getString(TAG_TYPE)));
         }
 
         return job;
     }
 
     /**
+     * Restore the Job from an NBTTagCompound
+     *
+     * @param compound  NBTTagCompound containing saved Job data
+     */
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        NBTTagList itemsNeededTag = compound.getTagList(TAG_ITEMS_NEEDED, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < itemsNeededTag.tagCount(); i++)
+        {
+            NBTTagCompound itemCompound = itemsNeededTag.getCompoundTagAt(i);
+            itemsNeeded.add(ItemStack.loadItemStackFromNBT(itemCompound));
+        }
+    }
+
+    /**
+     * Return a Localization label for the Job
+     *
+     * @return          localization label String
+     */
+    public abstract String getName();
+
+    /**
+     * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
+     *
+     * @return Model of the citizen
+     */
+    public RenderBipedCitizen.Model getModel()
+    {
+        return RenderBipedCitizen.Model.CITIZEN;
+    }
+
+    /**
+     * Get the CitizenData that this Job belongs to
+     *
+     * @return          CitizenData that owns this Job
+     */
+    public CitizenData getCitizen(){ return citizen; }
+
+    /**
+     * Get the Colony that this Job is associated with (shortcut for getCitizen().getColony())
+     *
+     * @return  {@link Colony} of the citizen
+     */
+    public Colony getColony(){ return citizen.getColony(); }
+
+    /**
      * Save the Job to an NBTTagCompound
-     * @param compound NBTTagCompound to save the Job to
+     *
+     * @param compound  NBTTagCompound to save the Job to
      */
     public void writeToNBT(NBTTagCompound compound)
     {
@@ -171,23 +204,9 @@ public abstract class Job
     }
 
     /**
-     * Restore the Job from an NBTTagCompound
-     * @param compound NBTTagCompound containing saved Job data
-     */
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        NBTTagList itemsNeededTag = compound.getTagList(TAG_ITEMS_NEEDED, Constants.NBT.TAG_COMPOUND);
-        for(int i = 0; i < itemsNeededTag.tagCount(); i++)
-        {
-            NBTTagCompound itemCompound = itemsNeededTag.getCompoundTagAt(i);
-            itemsNeeded.add(ItemStack.loadItemStackFromNBT(itemCompound));
-        }
-    }
-
-    /**
      * Does the Job have _all_ the needed items?
      *
-     * @return true if the Job has no needed items
+     * @return              true if the Job has no needed items
      */
     public boolean isMissingNeededItem()
     {
@@ -197,7 +216,7 @@ public abstract class Job
     /**
      * Get the list of items needed by the Job
      *
-     * @return List of items needed by the Job
+     * @return              List of items needed by the Job
      */
     public List<ItemStack> getItemsNeeded()
     {
@@ -212,13 +231,13 @@ public abstract class Job
     /**
      * Add (or increment) an ItemStack to the items needed by the Job
      *
-     * @param stack Item+count needed to do the job
+     * @param stack             Item+count needed to do the job
      */
     public void addItemNeeded(ItemStack stack)
     {
-        for(ItemStack neededItem : itemsNeeded)
+        for (ItemStack neededItem : itemsNeeded)
         {
-            if(stack.isItemEqual(neededItem))
+            if (stack.isItemEqual(neededItem))
             {
                 neededItem.stackSize += stack.stackSize;
                 return;
@@ -231,21 +250,21 @@ public abstract class Job
     /**
      * Remove a items from those required to do the Job
      *
-     * @param stack ItemStack (item+count) to remove from the list of needed items
-     * @return modified ItemStack with remaining items (or null)
+     * @param stack         ItemStack (item+count) to remove from the list of needed items
+     * @return              modified ItemStack with remaining items (or null)
      */
     public ItemStack removeItemNeeded(ItemStack stack)
     {
         ItemStack stackCopy = stack.copy();
-        for(ItemStack neededItem : itemsNeeded)
+        for (ItemStack neededItem : itemsNeeded)
         {
-            if(stackCopy.isItemEqual(neededItem))
+            if (stackCopy.isItemEqual(neededItem))
             {
                 int itemsToRemove = Math.min(neededItem.stackSize, stackCopy.stackSize);
                 neededItem.stackSize -= itemsToRemove;
                 stackCopy.stackSize -= itemsToRemove;
 
-                if(neededItem.stackSize == 0)
+                if (neededItem.stackSize == 0)
                 {
                     itemsNeeded.remove(neededItem);
                 }
@@ -260,16 +279,28 @@ public abstract class Job
     /**
      * Override to add Job-specific AI tasks to the given EntityAITask list
      *
-     * @param tasks EntityAITasks list to add tasks to
+     * @param tasks         EntityAITasks list to add tasks to
      */
-    public void addTasks(EntityAITasks tasks) {}
+    public void addTasks(EntityAITasks tasks){}
 
     /**
      * This method can be used to display the current status.
      * That a citizen is having.
-     * @return Small string to display info in name tag
+     *
+     * @return              Small string to display info in name tag
      */
-    public String getNameTagDescription() {
-        return "";
+    public String getNameTagDescription()
+    {
+        return this.nameTag;
+    }
+
+    /**
+     * Used by the AI skeleton to change a citizens name.
+     * Mostly used to update debugging information.
+     * @param nameTag The name tag to display
+     */
+    public final void setNameTag(final String nameTag)
+    {
+        this.nameTag = nameTag;
     }
 }

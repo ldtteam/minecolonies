@@ -1,0 +1,11 @@
+* EntityAIBuillder contains for loop without loop
+
+* Need some doc help at
+	- CitizenData
+	- Colony
+	- ColonyView
+	- entity.*
+	- Utils
+
+* EntityCitizen -> hitBlockWithToolInHand
+

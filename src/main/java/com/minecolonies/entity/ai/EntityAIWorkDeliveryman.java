@@ -17,7 +17,7 @@ import static com.minecolonies.entity.EntityCitizen.Status.WORKING;
  *
  * @author MrIbby
  */
-public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
+public class EntityAIWorkDeliveryman extends AbstractEntityAIWork<JobDeliveryman>
 {
     public EntityAIWorkDeliveryman(JobDeliveryman deliveryman)
     {
@@ -97,6 +97,16 @@ public class EntityAIWorkDeliveryman extends EntityAIWork<JobDeliveryman>
 
         job.setDestination(null);
         resetTask();
+    }
+
+    /**
+     * {@inheritDoc}
+     * This method will be overridden by AI implementations
+     */
+    @Override
+    protected void workOnTask()
+    {
+        //TODO: rework the deliveryman to use workOnTask eventually
     }
 
     @Override

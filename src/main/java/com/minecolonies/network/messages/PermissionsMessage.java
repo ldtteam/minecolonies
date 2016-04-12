@@ -1,11 +1,11 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.network.PacketUtils;
+import com.minecolonies.util.Log;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -55,6 +55,13 @@ public class PermissionsMessage
         }
     }
 
+    /**
+     * Enums for Message Type for the permission message
+     *
+     * SET_PERMISSION       Setting a permission
+     * REMOVE_PERMISSION    Removing a permission
+     * TOGGLE_PERMISSION    Toggeling a permission
+     */
     public enum MessageType
     {
         SET_PERMISSION,
@@ -64,15 +71,23 @@ public class PermissionsMessage
 
     public static class Permission implements IMessage, IMessageHandler<Permission, IMessage>
     {
+        int                 colonyID;
+        MessageType         type;
+        Permissions.Rank    rank;
+        Permissions.Action  action;
+
         public Permission()
         {
         }
 
-        int colonyID;
-        MessageType type;
-        Permissions.Rank rank;
-        Permissions.Action action;
-
+        /**
+         * @see {@link Permission}
+         *
+         * @param colony        Colony the permission is set in
+         * @param type          Type of permission {@link MessageType}
+         * @param rank          Rank of the permission {@link com.minecolonies.colony.permissions.Permissions.Rank}
+         * @param action        Action of the permission {@link com.minecolonies.colony.permissions.Permissions.Action}
+         */
         public Permission(ColonyView colony, MessageType type, Permissions.Rank rank, Permissions.Action action)
         {
             this.colonyID = colony.getID();
@@ -107,7 +122,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                MineColonies.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
                 return null;
             }
 
@@ -123,12 +138,15 @@ public class PermissionsMessage
                 colony.getPermissions().togglePermission(message.rank, message.action);
                 break;
             default:
-                MineColonies.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
+                Log.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
             }
             return null;
         }
     }
 
+    /**
+     * Message class for adding a player to a permission set
+     */
     public static class AddPlayer implements IMessage, IMessageHandler<AddPlayer, IMessage>
     {
         int colonyID;
@@ -136,6 +154,12 @@ public class PermissionsMessage
 
         public AddPlayer() {}
 
+        /**
+         * Constructor for adding player to permission message
+         *
+         * @param colony        Colony the permission is set in
+         * @param player        New player name to be added
+         */
         public AddPlayer(ColonyView colony, String player)
         {
             this.colonyID = colony.getID();
@@ -168,12 +192,15 @@ public class PermissionsMessage
             }
             else
             {
-                MineColonies.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
             }
             return null;
         }
     }
 
+    /**
+     * Message class for setting a player rank in the permissions
+     */
     public static class SetPlayerRank implements IMessage, IMessageHandler<SetPlayerRank, IMessage>
     {
         int colonyID;
@@ -182,6 +209,13 @@ public class PermissionsMessage
 
         public SetPlayerRank() {}
 
+        /**
+         * Constructor for setting a player rank
+         *
+         * @param colony        Colony the rank is set in
+         * @param player        UUID of the player to set rank
+         * @param rank          Rank to be set
+         */
         public SetPlayerRank(ColonyView colony, UUID player, Permissions.Rank rank)
         {
             this.colonyID = colony.getID();
@@ -217,12 +251,15 @@ public class PermissionsMessage
             }
             else
             {
-                MineColonies.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
             }
             return null;
         }
     }
 
+    /**
+     * Message class for removing a player from a permission set
+     */
     public static class RemovePlayer implements IMessage, IMessageHandler<RemovePlayer, IMessage>
     {
         int colonyID;
@@ -230,6 +267,12 @@ public class PermissionsMessage
 
         public RemovePlayer() {}
 
+        /**
+         * Constructor for removing player from permission set
+         *
+         * @param colony        Colony the player is removed from the permission
+         * @param player        UUID of the removed player
+         */
         public RemovePlayer(ColonyView colony, UUID player)
         {
             this.colonyID = colony.getID();
@@ -262,7 +305,7 @@ public class PermissionsMessage
             }
             else
             {
-                MineColonies.logger.error(String.format("Colony '#%d' does not exist.", message.colonyID));
+                Log.logger.error(String.format("Colony '#%d' does not exist.", message.colonyID));
             }
             return null;
         }

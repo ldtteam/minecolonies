@@ -6,28 +6,33 @@ import com.blockout.views.Window;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.Constants;
 
+/**
+ * Window for a town hall name entry
+ */
 public class WindowTownhallNameEntry extends Window implements Button.Handler
 {
-    private static String BUTTON_DONE = "done",
-            BUTTON_CANCEL = "cancel",
-            INPUT_NAME = "name";
+    private static final    String      BUTTON_DONE                     = "done";
+    private static final    String      BUTTON_CANCEL                   = "cancel";
+    private static final    String      INPUT_NAME                      = "name";
+    private static final    String      TOWNHALL_NAME_RESOURCE_SUFFIX   = ":gui/windowTownhallNameEntry.xml";
 
-    ColonyView colony;
+    private                 ColonyView  colony;
 
+    /**
+     * Constructor for a town hall rename entry window
+     *
+     * @param c         {@link ColonyView}
+     */
     public WindowTownhallNameEntry(ColonyView c)
     {
-        super(Constants.MOD_ID + ":" + "gui/windowTownhallNameEntry.xml");
+        super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
         this.colony = c;
     }
 
     @Override
     public void onOpened()
     {
-        try
-        {
-            findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(colony.getName());
-        }
-        catch (NullPointerException exc) {}
+        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(colony.getName());
     }
 
     @Override

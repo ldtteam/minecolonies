@@ -1,9 +1,15 @@
 package com.minecolonies.blocks;
 
-public class BlockHutWarehouse extends BlockHut
+/**
+ * Hut for the warehouse.
+ * No different from {@link AbstractBlockHut}
+ */
+
+public class BlockHutWarehouse extends AbstractBlockHut
 {
     protected BlockHutWarehouse()
     {
+        //No different from Abstract parent
         super();
     }
 

@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.util.ChunkCoordUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
@@ -11,32 +12,39 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 
+/**
+ * Custom class for Trees. Used by lumberjack
+ */
 public class Tree
 {
-    private static final String TAG_LOCATION = "Location";
-    private static final String TAG_LOGS = "Logs";
+    private static final    String                          TAG_LOCATION        = "Location";
+    private static final    String                          TAG_LOGS            = "Logs";
 
-    private static final int NUMBER_OF_LEAVES = 3;
+    private static final    int                             NUMBER_OF_LEAVES    = 3;
 
-    private ChunkCoordinates location;
-    private LinkedList<ChunkCoordinates> woodBlocks;
-    private boolean isTree = false;
+    private                 ChunkCoordinates                location;
+    private                 LinkedList<ChunkCoordinates>    woodBlocks;
+    private                 boolean                         isTree              = false;
 
     private Tree()
     {
         isTree = true;
     }
 
+    /**
+     *
+     * @param world
+     * @param log
+     */
     public Tree(World world, ChunkCoordinates log)
     {
         Block block = ChunkCoordUtils.getBlock(world, log);
         if(block.isWood(world, log.posX, log.posY, log.posZ))
         {
             location = getBaseLog(world, log.posX, log.posY, log.posZ);
-            woodBlocks = new LinkedList<ChunkCoordinates>();
+            woodBlocks = new LinkedList<>();
 
             checkTree(world, getTopLog(world, log.posX, log.posY, log.posZ));
         }
@@ -44,21 +52,8 @@ public class Tree
 
     public void findLogs(World world)
     {
-        //System.out.println("Starting findLogs recursive search.");
-        long startTime = System.nanoTime();
-
         addAndSearch(world, location);
-        //System.out.println("Search time taken(ms): " + (System.nanoTime()-startTime)/1000000D);
-
-        Collections.sort(woodBlocks, new Comparator<ChunkCoordinates>()
-        {
-            @Override
-            public int compare(ChunkCoordinates c1, ChunkCoordinates c2)
-            {
-                return (int) (c1.getDistanceSquaredToChunkCoordinates(location) - c2.getDistanceSquaredToChunkCoordinates(location));
-            }
-        });
-        //System.out.println("Time including sort(ms): " + (System.nanoTime()-startTime)/1000000D);
+        Collections.sort(woodBlocks, (c1, c2) -> (int) (c1.getDistanceSquaredToChunkCoordinates(location) - c2.getDistanceSquaredToChunkCoordinates(location)));
     }
 
     public void addBaseLog()
@@ -140,8 +135,8 @@ public class Tree
             y--;
         }
 
-        //Make sure tree is on solid ground
-        if(!world.getBlock(x, y-1, z).getMaterial().isSolid())
+        //Make sure tree is on solid ground and tree is not build above cobblestone
+        if(!world.getBlock(x, y-1, z).getMaterial().isSolid() || world.getBlock(x, y-1, z) == Blocks.cobblestone)
         {
             return false;
         }
@@ -255,7 +250,7 @@ public class Tree
         Tree tree = new Tree();
         tree.location = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
 
-        tree.woodBlocks = new LinkedList<ChunkCoordinates>();
+        tree.woodBlocks = new LinkedList<>();
         NBTTagList logs = compound.getTagList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
         for(int i = 0; i < logs.tagCount(); i++)
         {

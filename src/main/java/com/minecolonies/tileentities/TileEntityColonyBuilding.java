@@ -6,6 +6,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
@@ -14,11 +15,11 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class TileEntityColonyBuilding extends TileEntityChest
 {
-    private int      colonyId = 0;
-    private Colony   colony;
-    private Building building;
+    private              int        colonyId    = 0;
+    private              Colony     colony;
+    private              Building   building;
 
-    private final static String TAG_COLONY = "colony";
+    private final static String     TAG_COLONY  = "colony";
 
     public TileEntityColonyBuilding(){}
 
@@ -36,6 +37,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
         }
     }
 
+    /**
+     * Synchronises colony references from the tile entity
+     */
     private void updateColonyReferences()
     {
         if (colony == null)
@@ -129,12 +133,32 @@ public class TileEntityColonyBuilding extends TileEntityChest
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, compound);
     }
 
-    public int getColonyId() { return colonyId; }
+    /**
+     * Returns the colony ID
+     *
+     * @return      ID of the colony
+     */
+    public int getColonyId()
+    {
+        return colonyId;
+    }
+
+    /**
+     * Returns the colony of the tile entity
+     *
+     * @return    Colony of the tile entity
+     */
     public Colony getColony()
     {
         if (colony == null) updateColonyReferences();
         return colony;
     }
+
+    /**
+     * Sets the colony of the tile entity
+     *
+     * @param c     Colony to set in references
+     */
     public void setColony(Colony c)
     {
         colony = c;
@@ -142,29 +166,120 @@ public class TileEntityColonyBuilding extends TileEntityChest
         markDirty();
     }
 
+    /**
+     * Returns the building associated with the tile entity
+     *
+     * @return      {@link Building} associated with the tile entity
+     */
     public Building getBuilding()
     {
         if (building == null) updateColonyReferences();
         return building;
     }
+
+    /**
+     *  Sets the building associated with the tile entity
+     *
+     * @param b     {@link Building} to associate with the tile entity
+     */
     public void setBuilding(Building b)
     {
         building = b;
     }
+
+    /**
+     * Returns the view of the building associated with the tile entity
+     *
+     * @return      {@link com.minecolonies.colony.buildings.Building.View} the tile entity is associated with
+     */
     public Building.View getBuildingView()
     {
         ColonyView c = ColonyManager.getColonyView(colonyId);
         return c!= null ? c.getBuilding(getPosition()) : null;
     }
 
-    public boolean hasAccessPermission(EntityPlayer player)//This is called every tick the GUI is open. Is that bad?
+    /**
+     * Checks if the player has permission to access the hut
+     *
+     * @param player    Player to check permission of
+     * @return          True when player has access, or building doesn't exist, otherwise false.
+     */
+    public boolean hasAccessPermission(EntityPlayer player)//TODO This is called every tick the GUI is open. Is that bad?
     {
         return building == null || building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
 
     }
 
+    /**
+     * Returns the position of the tile entity
+     *
+     * @return      Chunk Coordinates of the tile entity
+     */
     public ChunkCoordinates getPosition()
     {
         return new ChunkCoordinates(xCoord, yCoord, zCoord);
+    }
+
+    //-----------------------------Material Handling--------------------------------
+
+    /**
+     * Makes sure ItemStacks inside of the inventory aren't affected by changes to the returned stack.
+     */
+    @Override
+    public ItemStack getStackInSlot(int index)
+    {
+        ItemStack stack = super.getStackInSlot(index);
+        if(stack == null)
+        {
+            return null;
+        }
+        return stack.copy();
+    }
+
+    @Override
+    public ItemStack decrStackSize(int index, int quantity)
+    {
+        ItemStack removed = super.decrStackSize(index, quantity);
+
+        removeStackFromMaterialStore(removed);
+
+        return removed;
+    }
+
+    @Override
+    public ItemStack getStackInSlotOnClosing(int index)
+    {
+        ItemStack removed = super.getStackInSlotOnClosing(index);
+
+        removeStackFromMaterialStore(removed);
+
+        return removed;
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack)
+    {
+        ItemStack previous = getStackInSlot(index);
+        removeStackFromMaterialStore(previous);
+
+        super.setInventorySlotContents(index, stack);
+
+        addStackToMaterialStore(stack);
+    }
+
+    private void addStackToMaterialStore(ItemStack stack)
+    {
+        if(stack == null){
+            return;
+        }
+        building.getMaterialStore().addMaterial(stack.getItem(), stack.stackSize);
+    }
+
+    private void removeStackFromMaterialStore(ItemStack stack)
+    {
+        if(stack == null){
+            return;
+        }
+        building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
     }
 }

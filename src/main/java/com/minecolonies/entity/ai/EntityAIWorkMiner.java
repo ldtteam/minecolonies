@@ -2,20 +2,12 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
-import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.inventory.InventoryCitizen;
-import com.minecolonies.util.ChunkCoordUtils;
-import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraftforge.common.ForgeHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,186 +20,71 @@ import java.util.*;
  * @author Raycoms, Kostronor
  */
 
-public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
+public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 {
 
-    public static final String PICKAXE = "pickaxe";
-    public static final String SHOVEL = "shovel";
     private static final String RENDER_META_TORCH = "Torch";
-    private static final int RANGE_CHECK_AROUND_BUILDING_CHEST = 5;
-    private static final int RANGE_CHECK_AROUND_BUILDING_LADDER = 3;
-    private static final int RANGE_CHECK_AROUND_MINING_BLOCK = 2;
     private static final int NODE_DISTANCE = 7;
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
-    private static final Set<Block> notReplacedInSecuringMine = new HashSet<>(Arrays.asList(Blocks.cobblestone,
-                                                                                            Blocks.stone,
-                                                                                            Blocks.dirt));
+    private static final Set<Block> notReplacedInSecuringMine =
+            new HashSet<>(Arrays.asList(
+                    Blocks.cobblestone,
+                    Blocks.stone,
+                    Blocks.dirt
+                                       ));
     private static Logger logger = LogManager.getLogger("Miner");
     //The current block to mine
     private ChunkCoordinates currentWorkingLocation;
     //the last safe location now being air
     private ChunkCoordinates currentStandingPosition;
-    /**
-     * The time in ticks until the next action is made
-     */
-    private int delay = 0;
-    /**
-     * If we have waited one delay
-     */
-    private boolean hasDelayed = false;
 
-    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
-    private List<ItemStack> itemsNeeded = new ArrayList<>();
-    private int speechDelay = 0;
-    private boolean needsShovel = false;
-    private boolean needsPickaxe = false;
-    private int needsPickaxeLevel = -1;
-    private String speechDelayString = "";
-    private int speechRepeat = 1;
     private Node workingNode = null;
 
 
     public EntityAIWorkMiner(JobMiner job)
     {
         super(job);
+        super.registerTargets(new AITarget(() -> {
+            workOnTask();
+            return AIState.START_WORKING;
+        }));
     }
 
     @Override
-    public void startExecuting()
-    {
-        worker.setStatus(EntityCitizen.Status.WORKING);
-        updateTask();
-    }
-
-    private String getRenderMetaTorch()
-    {
-        if (worker.hasitemInInventory(Blocks.torch))
-        {
-            return RENDER_META_TORCH;
-        }
-        return "";
-    }
-
-    private void renderChestBelt()
+    protected void updateRenderMetaData()
     {
         String renderMetaData = getRenderMetaTorch();
         //TODO: Have pickaxe etc. displayed?
         worker.setRenderMetadata(renderMetaData);
     }
 
-    private BuildingMiner getOwnBuilding()
+    private String getRenderMetaTorch()
+    {
+        if (worker.hasItemInInventory(Blocks.torch))
+        {
+            return RENDER_META_TORCH;
+        }
+        return "";
+    }
+
+    @Override
+    protected BuildingMiner getOwnBuilding()
     {
         return (BuildingMiner) worker.getWorkBuilding();
     }
 
-    private boolean waitingForSomething()
+
+    private boolean walkToLadder()
     {
-        if (delay > 0)
-        {
-            if (job.getStage() == Stage.MINING_SHAFT || job.getStage() == Stage.MINING_NODE)
-            {
-                if (worker.isWorkerAtSiteWithMove(currentStandingPosition, RANGE_CHECK_AROUND_MINING_BLOCK))
-                {
-                    worker.hitBlockWithToolInHand(currentWorkingLocation);
-                }
-                else
-                {
-                    //Don't decrease delay as we are just walking...
-                    return true;
-                }
-            }
-            delay--;
-            return true;
-        }
-        return false;
+        return walkToBlock(getOwnBuilding().ladderLocation);
     }
 
-    private void walkToBuilding()
+    @Override
+    protected boolean neededForWorker(ItemStack stack)
     {
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
-        {
-            job.setStage(Stage.PREPARING);
-        }
-        else
-        {
-            delay += 20;
-        }
-    }
-
-    private void walkToLadder()
-    {
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().ladderLocation, RANGE_CHECK_AROUND_BUILDING_LADDER))
-        {
-            job.setStage(Stage.CHECK_MINESHAFT);
-        }
-        else
-        {
-            delay += 20;
-        }
-    }
-
-    /**
-     * Dump the miners inventory into his building chest.
-     * Only useful tools are kept!
-     * Only dumps one block at a time!
-     */
-    private boolean dumpOneMoreSlot()
-    {
-        if (!worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
-        {
-            return true;
-        }
-        for (int i = 0; i < worker.getInventory().getSizeInventory(); i++)
-        {
-            ItemStack stack = worker.getInventory().getStackInSlot(i);
-            //Check if it is a useful tool.
-            if (stack == null || isMiningTool(stack))
-            {
-                continue;
-            }
-            //Do nothing when building is broken.
-            if (getOwnBuilding().getTileEntity() == null)
-            {
-                return true;
-            }
-            ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
-            if (returnStack == null)
-            {
-                worker.getInventory().decrStackSize(i, stack.stackSize);
-            }
-            else
-            {
-                worker.getInventory().decrStackSize(i, stack.stackSize - returnStack.stackSize);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Checks if this tool is useful for the miner.
-     */
-    private boolean isMiningTool(ItemStack itemStack)
-    {
-        return isPickaxe(itemStack) || isShovel(itemStack);
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Pickaxe.
-     */
-    private boolean isPickaxe(ItemStack itemStack)
-    {
-        return getMiningLevel(itemStack, PICKAXE) >= 0;
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Shovel.
-     */
-    private boolean isShovel(ItemStack itemStack)
-    {
-        return getMiningLevel(itemStack, SHOVEL) >= 0;
+        return Utils.isMiningTool(stack);
     }
 
     private void lookForLadder()
@@ -257,7 +134,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         {
             int firstLadderY = getFirstLadder(x, y, z);
             buildingMiner.ladderLocation = new ChunkCoordinates(x, firstLadderY, z);
-            delay += 10;
             validateLadderOrientation();
         }
     }
@@ -306,21 +182,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         buildingMiner.foundLadder = true;
     }
 
-    private void requestTool(Block curblock)
-    {
-        if (Objects.equals(curblock.getHarvestTool(0), SHOVEL))
-        {
-            job.setStage(Stage.PREPARING);
-            needsShovel = true;
-        }
-        if (Objects.equals(curblock.getHarvestTool(0), PICKAXE))
-        {
-            job.setStage(Stage.PREPARING);
-            needsPickaxe = true;
-            needsPickaxeLevel = curblock.getHarvestLevel(0);
-        }
-    }
-
     private void doShaftMining()
     {
 
@@ -337,33 +198,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         mineBlock(currentWorkingLocation, currentStandingPosition);
     }
 
-    private boolean missesItemsInInventory(ItemStack... items)
-    {
-        boolean allClear = true;
-        for (ItemStack stack : items)
-        {
-            int countOfItem = worker.getItemCountInInventory(stack.getItem());
-            if (countOfItem < stack.stackSize)
-            {
-                int itemsLeft = stack.stackSize - countOfItem;
-                ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
-                itemsCurrentlyNeeded.add(requiredStack);
-                allClear = false;
-            }
-        }
-        if (allClear)
-        {
-            return false;
-        }
-        itemsNeeded.clear();
-        for (ItemStack stack : items)
-        {
-            itemsNeeded.add(stack);
-        }
-        job.setStage(Stage.PREPARING);
-        return true;
-    }
-
 
     private void advanceLadder()
     {
@@ -373,7 +207,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             return;
         }
 
-        if (missesItemsInInventory(new ItemStack(Blocks.cobblestone, 2), new ItemStack(Blocks.ladder)))
+        if (checkOrRequestItems(new ItemStack(Blocks.cobblestone, 2), new ItemStack(Blocks.ladder)))
         {
             return;
         }
@@ -426,141 +260,9 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         job.setStage(Stage.CHECK_MINESHAFT);
     }
 
-    /**
-     * Checks for the right tools and waits for an appropriate delay.
-     *
-     * @param blockToMine the block to mine eventually
-     * @param safeStand   a safe stand to mine from (AIR Block!)
-     */
-    private boolean checkMiningLocation(ChunkCoordinates blockToMine, ChunkCoordinates safeStand)
-    {
-
-        Block curBlock = world.getBlock(blockToMine.posX, blockToMine.posY, blockToMine.posZ);
-
-        if (!holdEfficientTool(curBlock))
-        {
-            //We are missing a tool to harvest this block...
-            requestTool(curBlock);
-            return true;
-        }
-
-        ItemStack tool = worker.getHeldItem();
-
-        if (curBlock.getHarvestLevel(0) < getMiningLevel(tool, curBlock.getHarvestTool(0)))
-        {
-            //We have to high of a tool...
-            //TODO: request lower tier tools
-        }
-
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(curBlock, 0, tool) && curBlock != Blocks.bedrock)
-        {
-            logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool + "\n"
-                        + "Please report to MineColonies with this text to add support!");
-        }
-        currentWorkingLocation = blockToMine;
-        currentStandingPosition = safeStand;
-        if (!hasDelayed)
-        {
-            delay += getBlockMiningDelay(curBlock, blockToMine);
-            hasDelayed = true;
-            return true;
-        }
-        hasDelayed = false;
-        return false;
-    }
-
-    private int getFortuneOf(ItemStack tool)
-    {
-        if (tool == null)
-        {
-            return 0;
-        }
-        //calculate fortune enchantment
-        int fortune = 0;
-        if (tool.isItemEnchanted())
-        {
-            NBTTagList t = tool.getEnchantmentTagList();
-
-            for (int i = 0; i < t.tagCount(); i++)
-            {
-                short id = t.getCompoundTagAt(i).getShort("id");
-                if (id == 35)
-                {
-                    fortune = t.getCompoundTagAt(i).getShort("lvl");
-                }
-            }
-        }
-        return fortune;
-    }
-
-    /**
-     * Will simulate mining a block with particles ItemDrop etc.
-     * Attention:
-     * Because it simulates delay, it has to be called 2 times.
-     * So make sure the code path up to this function is reachable a second time.
-     * And make sure to immediately exit the update function when this returns false.
-     */
-    private boolean mineBlock(ChunkCoordinates blockToMine, ChunkCoordinates safeStand)
-    {
-        Block curBlock = world.getBlock(blockToMine.posX, blockToMine.posY, blockToMine.posZ);
-        if (curBlock == null || curBlock == Blocks.air)
-        {
-            //no need to mine block...
-            return true;
-        }
-
-        if (checkMiningLocation(blockToMine, safeStand))
-        {
-            //we have to wait for delay
-            return false;
-        }
-
-        ItemStack tool = worker.getHeldItem();
 
 
-        //calculate fortune enchantment
-        int fortune = getFortuneOf(tool);
 
-        //Dangerous TODO: validate that
-        //Seems like dispatching the event manually is a bad idea? any clues?
-        if (tool != null)
-        {
-            //Reduce durability if not using hand
-            tool.getItem().onBlockDestroyed(tool,
-                                            world,
-                                            curBlock,
-                                            blockToMine.posX,
-                                            blockToMine.posY,
-                                            blockToMine.posZ,
-                                            worker);
-        }
-
-        //if Tool breaks
-        if (tool != null && tool.stackSize < 1)
-        {
-            worker.setCurrentItemOrArmor(0, null);
-            worker.getInventory().setInventorySlotContents(worker.getInventory().getHeldItemSlot(), null);
-        }
-
-        Utils.blockBreakSoundAndEffect(world,
-                                       blockToMine.posX,
-                                       blockToMine.posY,
-                                       blockToMine.posZ,
-                                       curBlock,
-                                       world.getBlockMetadata(blockToMine.posX, blockToMine.posY, blockToMine.posZ));
-        //Don't drop bedrock but we want to mine bedrock in some cases...
-        if (curBlock != Blocks.bedrock)
-        {
-            List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, blockToMine, fortune);
-            for (ItemStack item : items)
-            {
-                InventoryUtils.setStack(worker.getInventory(), item);
-            }
-        }
-
-        world.setBlockToAir(blockToMine.posX, blockToMine.posY, blockToMine.posZ);
-        return true;
-    }
 
     /**
      * Calculates the next non-air block to mine.
@@ -636,223 +338,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         return nextBlockToMine;
     }
 
-    private void syncNeededItemsWithInventory()
-    {
-        job.clearItemsNeeded();
-        itemsNeeded.forEach(job::addItemNeeded);
-        InventoryUtils.getInventoryAsList(worker.getInventory()).forEach(job::removeItemNeeded);
-        itemsCurrentlyNeeded = new ArrayList<>(job.getItemsNeeded());
-    }
-
-    private void lookForNeededItems()
-    {
-        syncNeededItemsWithInventory();
-        if (itemsCurrentlyNeeded.isEmpty())
-        {
-            itemsNeeded.clear();
-            job.clearItemsNeeded();
-            return;
-        }
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
-        {
-            delay += 10;
-            ItemStack first = itemsCurrentlyNeeded.get(0);
-            //Takes one Stack from the hut if existent
-            if (isInHut(first))
-            {
-                return;
-            }
-            requestWithoutSpam(first.getDisplayName());
-        }
-    }
-
-    private void takeItemStackFromChest(IInventory chest, ItemStack stack, int slot)
-    {
-        ItemStack returnStack = InventoryUtils.setStack(worker.getInventory(), stack);
-        if (returnStack == null)
-        {
-            chest.decrStackSize(slot, stack.stackSize);
-        }
-        else
-        {
-            chest.decrStackSize(slot, stack.stackSize - returnStack.stackSize);
-        }
-    }
-
-    private boolean isInHut(ItemStack is)
-    {
-        BuildingMiner buildingMiner = getOwnBuilding();
-        if (buildingMiner.getTileEntity() == null)
-        {
-            return false;
-        }
-        int size = buildingMiner.getTileEntity().getSizeInventory();
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
-            if (stack != null)
-            {
-                Item content = stack.getItem();
-                if (content == is.getItem())
-                {
-                    takeItemStackFromChest(buildingMiner.getTileEntity(), stack, i);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isShovelInHut()
-    {
-        BuildingMiner buildingMiner = getOwnBuilding();
-        if (buildingMiner.getTileEntity() == null)
-        {
-            return false;
-        }
-        int size = buildingMiner.getTileEntity().getSizeInventory();
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
-            if (stack != null && isShovel(stack))
-            {
-                takeItemStackFromChest(buildingMiner.getTileEntity(), stack, i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isPickaxeInHut(int minlevel)
-    {
-        BuildingMiner buildingMiner = getOwnBuilding();
-        if (buildingMiner.getTileEntity() == null)
-        {
-            return false;
-        }
-        int size = buildingMiner.getTileEntity().getSizeInventory();
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = buildingMiner.getTileEntity().getStackInSlot(i);
-            int level = getMiningLevel(stack, PICKAXE);
-            if (stack != null && checkIfPickaxeQualifies(minlevel, level))
-            {
-                takeItemStackFromChest(buildingMiner.getTileEntity(), stack, i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean checkIfPickaxeQualifies(int minlevel, int level)
-    {
-        if (minlevel < 0)
-        {
-            return true;
-        }
-        if (minlevel == 0)
-        {
-            if (level >= 0 && level <= 1)
-            {
-                return true;
-            }
-        }
-        else if (level >= minlevel)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    private void requestWithoutSpam(String chat)
-    {
-        talkWithoutSpam("entity.miner.messageNeedBlockAndItem", chat);
-    }
-
-    private void talkWithoutSpam(String key, String chat)
-    {
-        String curstring = key + chat;
-        if (Objects.equals(speechDelayString, curstring))
-        {
-            if (speechDelay > 0)
-            {
-                speechDelay--;
-                return;
-            }
-            speechRepeat++;
-        }
-        else
-        {
-            speechDelay = 0;
-            speechRepeat = 1;
-        }
-        worker.sendLocalizedChat(key, chat);
-        speechDelayString = key + chat;
-
-        speechDelay = (int) Math.pow(30, speechRepeat);
-        if (delay < 20)
-        {
-            delay = 20;
-        }
-    }
-
-    private void checkForPickaxe(int minlevel)
-    {
-        //Check for a pickaxe
-        boolean twoPickaxes = false;
-        for (ItemStack is : InventoryUtils.getInventoryAsList(worker.getInventory()))
-        {
-            int level = getMiningLevel(is, PICKAXE);
-            //Lower tools preferred
-            if (checkIfPickaxeQualifies(minlevel, level))
-            {
-                needsPickaxe = false;
-                return;
-            }
-            //When we have two Pickaxes, ignore efficiency
-            if (level >= minlevel)
-            {
-                if (twoPickaxes)
-                {
-                    needsPickaxe = false;
-                    return;
-                }
-                twoPickaxes = true;
-            }
-        }
-        delay += 20;
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
-        {
-            if (isPickaxeInHut(minlevel))
-            {
-                return;
-            }
-            requestWithoutSpam("Pickaxe at least level " + minlevel);
-        }
-
-    }
-
-    private void checkForShovel()
-    {
-        //Check for a shovel
-        needsShovel = InventoryUtils.getInventoryAsList(worker.getInventory()).stream().noneMatch(this::isShovel);
-
-        if (!needsShovel)
-        {
-            return;
-        }
-        delay += 20;
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
-        {
-            if (isShovelInHut())
-            {
-                return;
-            }
-            requestWithoutSpam("Shovel");
-        }
-
-    }
-
     private boolean buildNextBlockInShaft()
     {
         ChunkCoordinates ladderPos = getOwnBuilding().ladderLocation;
@@ -886,10 +371,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                     {
                         if (!mineBlock(curBlock, getOwnBuilding().getLocation()))
                         {
-                            delay = 1;
+                            //make securing go fast as to not confuse the player
+                            setDelay(1);
                             return true;
                         }
-                        if (missesItemsInInventory(new ItemStack(Blocks.cobblestone)))
+                        if (checkOrRequestItems(new ItemStack(Blocks.cobblestone)))
                         {
                             return true;
                         }
@@ -918,8 +404,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                       curBlock.posZ)
                        != Blocks.planks)
                 {
-                    delay += 10;
-                    if (missesItemsInInventory(new ItemStack(Blocks.planks)))
+                    setDelay(10);
+                    if (checkOrRequestItems(new ItemStack(Blocks.planks)))
                     {
                         return true;
                     }
@@ -947,8 +433,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                          && Math.abs(normalizedX) < 3))
                     && world.getBlock(curBlock.posX, curBlock.posY, curBlock.posZ) != Blocks.fence)
                 {
-                    delay += 10;
-                    if (missesItemsInInventory(new ItemStack(Blocks.fence)))
+                    setDelay(10);
+                    if (checkOrRequestItems(new ItemStack(Blocks.fence)))
                     {
                         return true;
                     }
@@ -977,8 +463,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                                       curBlock.posZ)
                        != Blocks.torch)
                 {
-                    delay += 10;
-                    if (missesItemsInInventory(new ItemStack(Blocks.torch)))
+                    setDelay(10);
+                    if (checkOrRequestItems(new ItemStack(Blocks.torch)))
                     {
                         return true;
                     }
@@ -998,7 +484,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
     private void doShaftBuilding()
     {
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), RANGE_CHECK_AROUND_BUILDING_CHEST))
+        if (walkToBuilding())
         {
             if (buildNextBlockInShaft())
             {
@@ -1029,7 +515,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
             workingNode = findNodeOnLevel(currentLevel);
             return;
         }
-
         //Looking for a node to stand on while mining workingNode
         int foundDirection = 0;
         Node foundNode = null;
@@ -1072,11 +557,10 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         ChunkCoordinates standingPosition = new ChunkCoordinates(workingNode.getX() + xoffset,
                                                                  currentLevel.getDepth(),
                                                                  workingNode.getZ() + zoffset);
-        delay += 10;
         currentStandingPosition = standingPosition;
         if (workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS
             || workingNode.getStatus() == Node.NodeStatus.COMPLETED
-            || worker.isWorkerAtSiteWithMove(standingPosition, RANGE_CHECK_AROUND_MINING_BLOCK))
+            || !walkToBlock(standingPosition))
         {
             mineNodeFromStand(workingNode, standingPosition, foundDirection);
         }
@@ -1097,10 +581,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
             if (!mineBlock(curBlock, safeStand))
             {
-                delay = 0;
+                //make securing go fast to not confuse the player
+                setDelay(1);
                 return false;
             }
-            if (missesItemsInInventory(new ItemStack(Blocks.cobblestone)))
+            if (checkOrRequestItems(new ItemStack(Blocks.cobblestone)))
             {
                 return false;
             }
@@ -1302,7 +787,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         }
                     }
 
-                    if (missesItemsInInventory(new ItemStack(material)))
+                    if (checkOrRequestItems(new ItemStack(material)))
                     {
                         return false;
                     }
@@ -1399,7 +884,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         continue;
                     }
 
-                    if (missesItemsInInventory(new ItemStack(material)))
+                    if (checkOrRequestItems(new ItemStack(material)))
                     {
                         return false;
                     }
@@ -1448,7 +933,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                         continue;
                     }
 
-                    if (missesItemsInInventory(new ItemStack(material)))
+                    if (checkOrRequestItems(new ItemStack(material)))
                     {
                         return false;
                     }
@@ -1736,27 +1221,18 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
 
 
     @Override
-    public void updateTask()
+    public void workOnTask()
     {
-        //Something fatally wrong? Wait for init...
-        if (null == getOwnBuilding())
-        {
-            return;
-        }
-
-        //Update torch in chestbelt etc.
-        renderChestBelt();
-
-        //Mining animation while delay is decreasing.
-        if (waitingForSomething())
-        {
-            return;
-        }
 
         //Miner wants to work but is not at building
         if (job.getStage() == Stage.START_WORKING)
         {
-            walkToBuilding();
+            if (walkToBuilding())
+            {
+                return;
+            }
+            //Miner is at building
+            job.setStage(Stage.PREPARING);
             return;
         }
 
@@ -1768,52 +1244,8 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
                 job.setStage(Stage.SEARCHING_LADDER);
                 return;
             }
-            //We need Items as it seems
-            if (!itemsCurrentlyNeeded.isEmpty())
-            {
-                lookForNeededItems();
-                delay += 10;
-                return;
-            }
-            //We need tools
-            if (needsShovel)
-            {
-                checkForShovel();
-                delay += 10;
-                return;
-            }
-            if (needsPickaxe)
-            {
-                checkForPickaxe(needsPickaxeLevel);
-                delay += 10;
-                return;
-            }
 
             job.setStage(Stage.CHECK_MINESHAFT);
-        }
-
-        //Miner is at building and dumps Inventory
-        if (job.getStage() == Stage.INVENTORY_FULL)
-        {
-
-
-            if (dumpOneMoreSlot())
-            {
-                delay += 10;
-            }
-            else
-            {
-                job.setStage(Stage.PREPARING);
-            }
-
-            return;
-        }
-
-        //Check for full inventory
-        if (worker.isInventoryFull())
-        {
-            job.setStage(Stage.INVENTORY_FULL);
-            return;
         }
 
         //Looking for the ladder to walk to
@@ -1826,8 +1258,11 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         //Walking to the ladder to check out the mine
         if (job.getStage() == Stage.LADDER_FOUND)
         {
-            walkToLadder();
-            return;
+            if (walkToLadder())
+            {
+                return;
+            }
+            job.setStage(Stage.CHECK_MINESHAFT);
         }
 
         //Standing on top of the ladder, checking out mine
@@ -1867,51 +1302,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         }
 
         logger.info("[" + job.getStage() + "] Stopping here, old code ahead...");
-        delay += 100;
-    }
-
-    int getMiningLevel(ItemStack stack, String tool)
-    {
-        if (tool == null)
-        {
-            return stack == null ? 0 : 1; //empty hand is best on blocks who don't care (0 better 1)
-        }
-        if (stack == null)
-        {
-            return -1;
-        }
-        return stack.getItem().getHarvestLevel(stack, tool);
-    }
-
-    boolean holdEfficientTool(Block target)
-    {
-        int bestSlot = getMostEfficientTool(target);
-        if (bestSlot >= 0)
-        {
-            worker.setHeldItem(bestSlot);
-            return true;
-        }
-        return false;
-    }
-
-    int getMostEfficientTool(Block target)
-    {
-        String tool = target.getHarvestTool(0);
-        int required = target.getHarvestLevel(0);
-        int bestSlot = -1;
-        int bestLevel = Integer.MAX_VALUE;
-        InventoryCitizen inventory = worker.getInventory();
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            ItemStack item = inventory.getStackInSlot(i);
-            int level = getMiningLevel(item, tool);
-            if (level >= required && level < bestLevel)
-            {
-                bestSlot = i;
-                bestLevel = level;
-            }
-        }
-        return bestSlot;
+        setDelay(100);
     }
 
     @Override
@@ -1926,24 +1317,6 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         super.resetTask();
     }
 
-    private int getBlockMiningDelay(Block block, ChunkCoordinates chunkCoordinates)
-    {
-        return getBlockMiningDelay(block, chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ);
-    }
-
-    private int getBlockMiningDelay(Block block, int x, int y, int z)
-    {
-        if (worker.getHeldItem() == null)
-        {
-            return (int) block.getBlockHardness(world, x, y, z);
-        }
-        return (int) (50 * block.getBlockHardness(world, x, y, z) / (worker.getHeldItem()
-                                                                           .getItem()
-                                                                           .getDigSpeed(worker.getHeldItem(),
-                                                                                        block,
-                                                                                        0)));
-    }
-
     private void setBlockFromInventory(ChunkCoordinates location, Block block)
     {
         setBlockFromInventory(location, block, 0);
@@ -1954,7 +1327,7 @@ public class EntityAIWorkMiner extends EntityAIWork<JobMiner>
         int slot = worker.findFirstSlotInInventoryWith(block);
         if (slot != -1)
         {
-            worker.getInventory().decrStackSize(slot, 1);
+            getInventory().decrStackSize(slot, 1);
             //Flag 1+2 is needed for updates
             world.setBlock(location.posX, location.posY, location.posZ, block, metadata, 3);
         }

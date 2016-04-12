@@ -1,10 +1,10 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.Log;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -28,6 +28,17 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
     public BuildToolPlaceMessage() {}
 
+    /**
+     * Create the building that was made with the build tool.
+     * Item in inventory required
+     *
+     * @param hut       String representation of sort of hut that made the request
+     * @param style     String representation of style that was requested
+     * @param x         x-coordinate
+     * @param y         y-coordinate
+     * @param z         z-coordinate
+     * @param rotation  int representation of the rotation
+     */
     public BuildToolPlaceMessage(String hut, String style, int x, int y, int z, int rotation)
     {
         this.hut = hut;
@@ -87,7 +98,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
             }
             else
             {
-                MineColonies.logger.error("BuildTool: building is null!");
+                Log.logger.error("BuildTool: building is null!");
             }
         }
 

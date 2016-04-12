@@ -1,6 +1,5 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.Schematics;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -13,6 +12,7 @@ import java.util.*;
 public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStylesMessage, IMessage>
 {
     private Map<String, List<String>> hutStyleMap;
+
     public ColonyStylesMessage(){}
 
     @Override
@@ -54,6 +54,15 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Sets the styles of the huts to the given value in the message
+     *
+     * @param message       Message
+     * @param ctx           Context
+     * @return              Null
+     */
     @Override
     public IMessage onMessage(ColonyStylesMessage message, MessageContext ctx)
     {
