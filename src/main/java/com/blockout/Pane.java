@@ -241,7 +241,7 @@ public class Pane extends Gui
 
     /**
      * Returns the first Pane (depth-first search) of a given ID,
-     * if it matches the specifiedtype
+     * if it matches the specified type
      * Performs a depth-first search on the hierarchy of Panes and Views
      *
      * @param id ID of Pane to find

@@ -150,11 +150,17 @@ public class InventoryCitizen extends InventoryBasic
 
     private void addStackToMaterialStore(ItemStack stack)
     {
+        if(stack == null){
+            return;
+        }
         materialStore.addMaterial(stack.getItem(), stack.stackSize);
     }
 
     private void removeStackFromMaterialStore(ItemStack stack)
     {
+        if(stack == null){
+            return;
+        }
         materialStore.removeMaterial(stack.getItem(), stack.stackSize);
     }
 }

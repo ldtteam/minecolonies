@@ -269,11 +269,17 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
     private void addStackToMaterialStore(ItemStack stack)
     {
+        if(stack == null){
+            return;
+        }
         building.getMaterialStore().addMaterial(stack.getItem(), stack.stackSize);
     }
 
     private void removeStackFromMaterialStore(ItemStack stack)
     {
+        if(stack == null){
+            return;
+        }
         building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
     }
 }

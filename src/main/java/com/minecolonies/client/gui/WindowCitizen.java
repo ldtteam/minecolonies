@@ -210,7 +210,7 @@ public class WindowCitizen extends Window implements Button.Handler
      */
     private void createHealthBar()
     {
-        findPaneOfTypeByID("healthBar", View.class).setAlignment(Alignment.MiddleRight);
+        findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).setAlignment(Alignment.MiddleRight);
 
         //MaxHealth (Black hearts)
         for(int i=0;i<citizen.maxHealth/2;i++)
