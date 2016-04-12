@@ -110,7 +110,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * Lumberjack woodcutting experience
      * todo: enable usage of this
      */
-    private int woodCuttingSkill = worker.getStrength() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
+    private int woodCuttingSkill = worker.getStrength() * worker.getCharisma() * (worker.getExperienceLevel() + 1);
     /**
      * A counter by how much the tree search radius
      * has been increased by now.

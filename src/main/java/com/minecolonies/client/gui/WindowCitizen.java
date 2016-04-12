@@ -16,21 +16,54 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * The static labels to find text in the language files in order to load it in the gui.
      */
-    private final static String                 INVENTORY_BUTTON_ID     = "inventory";
-    private final static String                 CITIZEN_RESOURCE_SUFFIX = ":gui/windowCitizen.xml";
-    private final static String                 STRENGTH                = "strength";
-    private final static String                 STAMINA                 = "stamina";
-    private final static String                 SPEED                   = "speed";
-    private final static String                 INTELLIGENCE            = "intelligence";
-    private final static String                 DILIGENCE               = "diligence";
+    private static final  String                INVENTORY_BUTTON_ID             = "inventory";
+    private static final  String                CITIZEN_RESOURCE_SUFFIX         = ":gui/windowCitizen.xml";
+    private static final  String                STRENGTH                        = "strength";
+    private static final  String                ENDURANCE                       = "endurance";
+    private static final  String                CHARISMA                        = "charisma";
+    private static final  String                INTELLIGENCE                    = "intelligence";
+    private static final  String                DILIGENCE                       = "diligence";
+
+    /**
+     * Xp-bar constants
+     */
+    private static final int                    XP_HEIGHT                       = 5;
+    private static final int                    LEFT_BORDER_X                   = 10;
+    private static final int                    LEFT_BORDER_Y                   = 10;
+
+    private static final int                    XP_BAR_ICON_COLUMN              = 0;
+    private static final int                    XP_BAR_ICON_COLUMN_END          = 172;
+    private static final int                    XP_BAR_ICON_COLUMN_END_WIDTH    = 10;
+    private static final int                    XP_BAR_ICON_END_OFFSET          = 90;
+
+
+    //Width is halved to fit into the gui.
+    private static final int                    XP_BAR_WIDTH                    = 182/2;
+    private static final int                    XP_BAR_EMPTY_ROW                = 64;
+    private static final int                    XP_BAR_FULL_ROW                 = 64;
+    private static final int                    XP_LABEL_X                      = 60;
+    private static final int                    XP_LABEL_Y                      = 30;
+
+    /**
+     * Health bar constants
+     */
+    private static final int                    EMPTY_HEART_ICON_ROW_POS        = 16;
+    private static final int                    FULL_HEART_ICON_ROW_POS         = 53;
+    private static final int                    HALF_HEART_ICON_ROW_POS         = 62;
+    private static final int                    HEART_ICON_COLUMN               = 0;
+    private static final int                    HEART_ICON_HEIGHT_WIDTH         = 9;
+    private static final int                    HEART_ICON_POS_X                = 10;
+    private static final int                    HEART_ICON_OFFSET_X             = 10;
+    private static final int                    HEART_ICON_POS_Y                = 10;
+
 
     /**
      * Contains the id's of the elements in the windowCitizen.xml
      */
-    private final static String                 WINDOW_ID_NAME = "name";
-    private final static String                 WINDOW_ID_XP = "xpLabel";
-    private final static String                 WINDOW_ID_XPBAR = "xpBar";
-    private final static String                 WINDOW_ID_HEALTHBAR = "healthBar";
+    private static final  String                 WINDOW_ID_NAME                 = "name";
+    private static final  String                 WINDOW_ID_XP                   = "xpLabel";
+    private static final  String                 WINDOW_ID_XPBAR                = "xpBar";
+    private static final  String                 WINDOW_ID_HEALTHBAR            = "healthBar";
 
     private              CitizenData.View       citizen;
 
@@ -55,18 +88,19 @@ public class WindowCitizen extends Window implements Button.Handler
 
         if (xpBarCap > 0)
         {
+            //Calculates how much percent of the next level has been completed
             int experienceRatio = citizen.getLevel()!=0 ? (int)((double)(citizen.getExperience()+1)/((citizen.getLevel()*citizen.getLevel())*100)*100) : (citizen.getExperience()/100)*100;
 
             findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabel(""+citizen.getLevel());
-            findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(60,30);
+            findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X,XP_LABEL_Y);
 
             Image xpBar = new Image();
-            xpBar.setImage(Gui.icons,0,64,182/2,5);
-            xpBar.setPosition(10,10);
+            xpBar.setImage(Gui.icons,XP_BAR_ICON_COLUMN,XP_BAR_EMPTY_ROW,XP_BAR_WIDTH,XP_HEIGHT);
+            xpBar.setPosition(LEFT_BORDER_X,LEFT_BORDER_Y);
 
             Image xpBar2 = new Image();
-            xpBar2.setImage(Gui.icons,172,64,10,5);
-            xpBar2.setPosition(100,10);
+            xpBar2.setImage(Gui.icons,XP_BAR_ICON_COLUMN_END,XP_BAR_EMPTY_ROW,XP_BAR_ICON_COLUMN_END_WIDTH,XP_HEIGHT);
+            xpBar2.setPosition(XP_BAR_ICON_END_OFFSET+LEFT_BORDER_X,LEFT_BORDER_Y);
 
             findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar);
             findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar2);
@@ -74,8 +108,8 @@ public class WindowCitizen extends Window implements Button.Handler
             if (experienceRatio > 0)
             {
                 Image xpBarFull = new Image();
-                xpBarFull.setImage(Gui.icons,0,69,experienceRatio,5);
-                xpBarFull.setPosition(10,10);
+                xpBarFull.setImage(Gui.icons,XP_BAR_ICON_COLUMN,XP_BAR_FULL_ROW,experienceRatio,XP_HEIGHT);
+                xpBarFull.setPosition(LEFT_BORDER_X,LEFT_BORDER_Y);
                 findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBarFull);
             }
         }
@@ -92,8 +126,8 @@ public class WindowCitizen extends Window implements Button.Handler
         for(int i=0;i<citizen.maxHealth/2;i++)
         {
             Image heart = new Image();
-            heart.setImage(Gui.icons, 16, 0, 9, 9);
-            heart.setPosition(i*10+10,10);
+            heart.setImage(Gui.icons, EMPTY_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            heart.setPosition(i*HEART_ICON_POS_X+HEART_ICON_OFFSET_X,HEART_ICON_POS_Y);
             findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
         }
 
@@ -102,8 +136,8 @@ public class WindowCitizen extends Window implements Button.Handler
         for(heartPos=0;heartPos<((int)citizen.health/2);heartPos++)
         {
             Image heart = new Image();
-            heart.setImage(Gui.icons, 53, 0, 9, 9);
-            heart.setPosition(heartPos*10+11,10);
+            heart.setImage(Gui.icons, FULL_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            heart.setPosition(heartPos*HEART_ICON_POS_X+HEART_ICON_OFFSET_X,HEART_ICON_POS_Y);
             findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
         }
 
@@ -111,8 +145,8 @@ public class WindowCitizen extends Window implements Button.Handler
         if(citizen.health/2%1!=0)
         {
             Image heart = new Image();
-            heart.setImage(Gui.icons, 53+9, 0, 9, 9);
-            heart.setPosition(heartPos*10+11,10);
+            heart.setImage(Gui.icons, HALF_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            heart.setPosition(heartPos*HEART_ICON_POS_X+HEART_ICON_OFFSET_X,HEART_ICON_POS_Y);
             findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
         }
     }
@@ -137,10 +171,10 @@ public class WindowCitizen extends Window implements Button.Handler
     {
         findPaneOfTypeByID(STRENGTH, Label.class).setLabel(
                 LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength));
-        findPaneOfTypeByID(STAMINA, Label.class).setLabel(
-                LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina));
-        findPaneOfTypeByID(SPEED, Label.class).setLabel(
-                LanguageHandler.format("com.minecolonies.gui.citizen.skills.speed", citizen.speed));
+        findPaneOfTypeByID(ENDURANCE, Label.class).setLabel(
+                LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.endurance));
+        findPaneOfTypeByID(CHARISMA, Label.class).setLabel(
+                LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
         findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabel(
                 LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
         findPaneOfTypeByID(DILIGENCE, Label.class).setLabel(

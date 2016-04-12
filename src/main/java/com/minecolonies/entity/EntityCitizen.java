@@ -634,7 +634,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     /**
-     * Applies attributes like health, speed etc to the citizens.
+     * Applies attributes like health, charisma etc to the citizens.
      */
     @Override
     protected void applyEntityAttributes()
@@ -1112,12 +1112,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return citizenData.getIntelligence();
     }
     /**
-     * Speed getter
-     * @return citizen Speed value
+     * Charisma getter
+     * @return citizen Charisma value
      */
-    public int getSpeed()
+    public int getCharisma()
     {
-        return citizenData.getSpeed();
+        return citizenData.getCharisma();
     }
     /**
      * Strength getter
@@ -1128,16 +1128,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return citizenData.getStrength();
     }
     /**
-     * Stamina getter
-     * @return citizen Stamina value
+     * Endurance getter
+     * @return citizen Endurance value
      */
-    public int getStamina()
+    public int getEndurance()
     {
-        return citizenData.getStamina();
+        return citizenData.getEndurance();
     }
     /**
      * Diligence getter
-     * @return citizen Diligence value
+     * @return citizen E value
      */
     public int getDiligence()
     {

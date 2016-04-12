@@ -43,8 +43,8 @@ public class CitizenData
      *  May be added more later
     */
     private                 int             strength;
-    private                 int             stamina;
-    private                 int             speed;
+    private                 int             endurance;
+    private                 int             charisma;
     private                 int             intelligence;
     private                 int             diligence;
     private                 float           health;
@@ -68,8 +68,8 @@ public class CitizenData
 
     private static final    String          TAG_SKILLS              = "skills";
     private static final    String          TAG_SKILL_STRENGTH      = "strength";
-    private static final    String          TAG_SKILL_STAMINA       = "stamina";
-    private static final    String          TAG_SKILL_SPEED         = "speed";
+    private static final    String          TAG_SKILL_STAMINA       = "endurance";
+    private static final    String          TAG_SKILL_SPEED         = "charisma";
     private static final    String          TAG_SKILL_INTELLIGENCE  = "intelligence";
     private static final    String          TAG_SKILL_DILIGENCE     = "diligence";
 
@@ -122,9 +122,9 @@ public class CitizenData
 
         //Initialize the citizen skills and make sure they are never 0
         intelligence = random.nextInt(LEVEL_CAP - 1) + 1;
-        speed = random.nextInt(LEVEL_CAP - 1) + 1;
+        charisma = random.nextInt(LEVEL_CAP - 1) + 1;
         strength = random.nextInt(LEVEL_CAP - 1) + 1;
-        stamina = random.nextInt(LEVEL_CAP - 1) + 1;
+        endurance = random.nextInt(LEVEL_CAP - 1) + 1;
         diligence = random.nextInt(LEVEL_CAP - 1) + 1;
 
         markDirty();
@@ -471,8 +471,8 @@ public class CitizenData
 
         NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
         nbtTagSkillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_STAMINA, stamina);
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_SPEED, speed);
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_STAMINA, endurance);
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_SPEED, charisma);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_DILIGENCE, diligence);
         compound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
@@ -505,8 +505,8 @@ public class CitizenData
 
         NBTTagCompound nbtTagSkillsCompound = compound.getCompoundTag("skills");
         strength = nbtTagSkillsCompound.getInteger("strength");
-        stamina = nbtTagSkillsCompound.getInteger("stamina");
-        speed = nbtTagSkillsCompound.getInteger("speed");
+        endurance = nbtTagSkillsCompound.getInteger("endurance");
+        charisma = nbtTagSkillsCompound.getInteger("charisma");
         intelligence = nbtTagSkillsCompound.getInteger("intelligence");
         diligence = nbtTagSkillsCompound.getInteger("diligence");
 
@@ -569,21 +569,21 @@ public class CitizenData
     }
 
     /**
-     * Stamina getter
-     * @return citizen Stamina value
+     * Endurance getter
+     * @return citizen Endurance value
      */
-    public int getStamina()
+    public int getEndurance()
     {
-        return stamina;
+        return endurance;
     }
 
     /**
-     * Speed getter
-     * @return citizen Speed value
+     * Charisma getter
+     * @return citizen Charisma value
      */
-    public int getSpeed()
+    public int getCharisma()
     {
-        return speed;
+        return charisma;
     }
 
     /**
@@ -611,46 +611,126 @@ public class CitizenData
      */
     public static class View
     {
-        private final int     id;
-        private       int     entityId;
-        private       String  name;
-        private       boolean isFemale;
+        /**
+         * Attributes
+         */
+        private final int       id;
+        private       int       entityId;
+        private       String    name;
+        private       boolean   isFemale;
 
         //  Placeholder skills
-        private int level;
-        private int experience;
-        public float health;
-        public float maxHealth;
-        public  int strength, stamina, speed, intelligence, diligence;
+        private       int       level;
+        private       int       experience;
+        public        float     health;
+        public        float     maxHealth;
+        public        int       strength, endurance, charisma, intelligence, diligence;
 
+        /**
+         * Job identifier
+         */
         private String job;
 
+        /**
+         * Working and home position
+         */
         private ChunkCoordinates homeBuilding;
         private ChunkCoordinates workBuilding;
 
+        /**
+         * Set View id
+         * @param id the id to set
+         */
         protected View(int id)
         {
             this.id = id;
         }
 
-        public int getID(){ return id; }
+        /**
+         * Id getter
+         * @return view Id
+         */
+        public int getID()
+        {
+            return id;
+        }
 
-        public int getEntityId(){ return entityId; }
+        /**
+         * Entity Id getter
+         * @return entity id
+         */
+        public int getEntityId()
+        {
+            return entityId;
+        }
 
-        public String getName(){ return name; }
+        /**
+         * Entity name getter
+         * @return entity name
+         */
+        public String getName()
+        {
+            return name;
+        }
 
-        public boolean isFemale(){ return isFemale; }
+        /**
+         * Check entity sex
+         * @return true if entity is female
+         */
+        public boolean isFemale()
+        {
+            return isFemale;
+        }
 
-        public int getLevel(){ return level; }
+        /**
+         * Entity level getter
+         * @return the citizens level
+         */
+        public int getLevel()
+        {
+            return level;
+        }
 
-        public int getExperience(){ return experience; }
+        /**
+         * Entity experience getter
+         * @return it's experience
+         */
+        public int getExperience()
+        {
+            return experience;
+        }
 
-        public String getJob(){ return job; }
+        /**
+         * Entity job getter
+         * @return the job as a string
+         */
+        public String getJob()
+        {
+            return job;
+        }
 
-        public ChunkCoordinates getHomeBuilding(){ return homeBuilding; }
+        /**
+         * Get the entities home building
+         * @return the home coordinates
+         */
+        public ChunkCoordinates getHomeBuilding()
+        {
+            return homeBuilding;
+        }
 
-        public ChunkCoordinates getWorkBuilding(){ return workBuilding; }
+        /**
+         * Get the entities work building
+         * @return the work coordinates
+         */
+        public ChunkCoordinates getWorkBuilding()
+        {
+            return workBuilding;
+        }
 
+        /**
+         * Deserialize the attributes and variables from transition
+         * @param buf Byte buffer to deserialize
+         */
         public void deserialize(ByteBuf buf)
         {
             name = ByteBufUtils.readUTF8String(buf);
@@ -667,8 +747,8 @@ public class CitizenData
             maxHealth = buf.readFloat();
 
             strength = buf.readInt();
-            stamina = buf.readInt();
-            speed = buf.readInt();
+            endurance = buf.readInt();
+            charisma = buf.readInt();
             intelligence = buf.readInt();
             diligence = buf.readInt();
 
@@ -677,7 +757,7 @@ public class CitizenData
     }
 
     /**
-     * Writes the citizen data to a byte buf.
+     * Writes the citizen data to a byte buf for transition.
      *
      * @param buf   Buffer to write to
      */
@@ -718,8 +798,8 @@ public class CitizenData
         }
 
         buf.writeInt(getStrength());
-        buf.writeInt(getStamina());
-        buf.writeInt(getSpeed());
+        buf.writeInt(getEndurance());
+        buf.writeInt(getCharisma());
         buf.writeInt(getIntelligence());
         buf.writeInt(getDiligence());
 
