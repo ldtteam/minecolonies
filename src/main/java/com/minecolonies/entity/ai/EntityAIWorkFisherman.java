@@ -51,7 +51,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     /**
      * The maximum amount of adjusts of his rotation until the fisherman discards a fishing location.
      */
-    private static final int    MAX_ROTATIONS         = 12;
+    private static final int    MAX_ROTATIONS         = 6;
     /**
      * The number of executed adjusts of the fisherman's rotation.
      */
@@ -90,13 +90,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private PathJobFindWater.WaterPathResult pathResult;
     /**
      * The fishingSkill which directly influences the fisherman's chance to throw his rod.
-     * May in the future also influence his luck/speed.
+     * May in the future also influence his luck/charisma.
      */
-    private int fishingSkill      = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
+    private int fishingSkill      = worker.getIntelligence() * worker.getCharisma() * (worker.getExperienceLevel() + 1);
     /**
      * Connects the citizen with the fishingHook.
      */
     private EntityFishHook entityFishHook;
+    /**
+     * Checks if the fisherman recently removed a pond from his list
+     */
+    private boolean recentlyRemovedAPond = false;
 
     /**
      * Constructor for the Fisherman.
@@ -241,11 +245,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private AIState tryDifferentAngles()
     {
-        if(job.getWater() == null){
+        if(job.getWater() == null)
+        {
             return FISHERMAN_SEARCHING_WATER;
         }
         if (executedRotations >= MAX_ROTATIONS)
         {
+            recentlyRemovedAPond = true;
             job.removeFromPonds(job.getWater());
             job.setWater(null);
             executedRotations = 0;
@@ -320,8 +326,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         if (job.getPonds().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
+            if(!recentlyRemovedAPond)
+            {
+                chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
+            }
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+            recentlyRemovedAPond = false;
             return state;
         }
         job.setWater(job.getPonds().get(itemRand.nextInt(job.getPonds().size())));
@@ -447,6 +457,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
         if(world.getBlock((int)worker.posX,(int)worker.posY,(int)worker.posZ) == Blocks.water)
         {
+            recentlyRemovedAPond = true;
             job.removeFromPonds(job.getWater());
             job.setWater(null);
             return FISHERMAN_SEARCHING_WATER;
@@ -458,7 +469,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
 
         //Check if Rod is held item if not put it as held item
-        if (worker.getHeldItem() == null || !super.getInventory().getHeldItem().getItem().equals(Items.fishing_rod))
+        if (worker.getHeldItem() == null || !worker.getHeldItem().getItem().equals(Items.fishing_rod))
         {
             equipRod();
             return state;
@@ -503,7 +514,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         worker.setCanPickUpLoot(true);
         worker.captureDrops = true;
         retrieveRod();
-        fishingSkill = worker.getIntelligence() * worker.getSpeed() * (worker.getExperienceLevel() + 1);
+        fishingSkill = worker.getIntelligence() * worker.getCharisma() * (worker.getExperienceLevel() + 1);
         fishesCaught++;
         return true;
     }

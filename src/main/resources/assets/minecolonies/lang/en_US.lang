@@ -44,10 +44,10 @@ com.minecolonies.gui.warehouse.visitCitizenChests=Visit Citizenchests:
 
 com.minecolonies.gui.citizen.skills=Skills
 com.minecolonies.gui.citizen.skills.strength=Strength: %d
-com.minecolonies.gui.citizen.skills.stamina=Stamina: %d
-com.minecolonies.gui.citizen.skills.wisdom=Wisdom: %d
-com.minecolonies.gui.citizen.skills.intelligence=Intelligence: %d
+com.minecolonies.gui.citizen.skills.endurance=Endurance: %d
 com.minecolonies.gui.citizen.skills.charisma=Charisma: %d
+com.minecolonies.gui.citizen.skills.intelligence=Intelligence: %d
+com.minecolonies.gui.citizen.skills.diligence=Diligence: %d
 
 com.minecolonies.gui.buildtool.nohut=No Huts
 com.minecolonies.gui.buildtool.nodecoration=No Decorations

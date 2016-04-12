@@ -32,10 +32,10 @@ public class WindowTestGui extends Window implements Button.Handler
         try
         {
             findPaneOfTypeByID("strength", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength));
-            findPaneOfTypeByID("stamina", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.stamina", citizen.stamina));
-            findPaneOfTypeByID("wisdom", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.wisdom", citizen.wisdom));
+            findPaneOfTypeByID("endurance", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.endurance));
+            findPaneOfTypeByID("charisma", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
             //findPaneOfTypeByID("intelligence", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
-            //findPaneOfTypeByID("charisma", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
+            //findPaneOfTypeByID("diligence", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.diligence", citizen.diligence));
 
             findPaneOfTypeByID("scrollgroup", ScrollingList.class).setDataProvider(
                 new ScrollingList.DataProvider() {
