@@ -42,19 +42,19 @@ public class WindowCitizen extends Window implements Button.Handler
      */
     private static final  String                DILIGENCE                       = "diligence";
 
+
     /**
      * Xp-bar height
      */
     private static final int                    XP_HEIGHT                       = 5;
     /**
-     * The distance to the x border
+     * The x-distance to the left border of the gui of the xpBar
      */
     private static final int                    LEFT_BORDER_X                   = 10;
     /**
-     * The distance to the y border
+     * The y-distance to the top-left border of the gui of the xpBar
      */
     private static final int                    LEFT_BORDER_Y                   = 10;
-
     /**
      * The column in which the icon starts
      */
@@ -71,7 +71,6 @@ public class WindowCitizen extends Window implements Button.Handler
      * The offset where the end should be placed in the GUI
      */
     private static final int                    XP_BAR_ICON_END_OFFSET          = 90;
-
     /**
      * The number to calculate the experienceLevel of the citizen
      */
@@ -80,7 +79,6 @@ public class WindowCitizen extends Window implements Button.Handler
      * The number to create a percentage from another number (ex. 100*0.25 = 25)
      */
     private static final int                    EXPERIENCE_MULTIPLIER           = 100;
-
     /**
      * The width of the xpBar (Original width is halved to fit in the gui)
      */
@@ -92,7 +90,7 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * The row where the full xpBar starts
      */
-    private static final int                    XP_BAR_FULL_ROW                 = 64;
+    private static final int                    XP_BAR_FULL_ROW                 = 69;
     /**
      * X position of the xpLabel
      */
@@ -101,6 +99,7 @@ public class WindowCitizen extends Window implements Button.Handler
      * Y position of the xpLabel
      */
     private static final int                    XP_LABEL_Y                      = 30;
+
 
     /**
      * Row position of the empty heart icon
@@ -175,9 +174,9 @@ public class WindowCitizen extends Window implements Button.Handler
      */
     private void createXpBar()
     {
-        /**
+        /*
          * Calculates how much percent of the next level has been completed.
-         *getExperience +1 in order to not get infinite if experience
+         * getExperience +1 in order to not get infinite if experience
          */
         int experienceRatio =
                 citizen.getLevel() != 0 ?
