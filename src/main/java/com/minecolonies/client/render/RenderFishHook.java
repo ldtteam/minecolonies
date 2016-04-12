@@ -2,6 +2,7 @@ package com.minecolonies.client.render;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
+import com.minecolonies.lib.Literals;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
@@ -29,14 +30,14 @@ public class RenderFishHook extends Render
     @Override
     protected ResourceLocation getEntityTexture(Entity entity)
     {
-        return this.getTexture();
+        return getTexture();
     }
 
     /**
      * Returns the location of an entity's texture.
      * @return the address of the resource
      */
-    private ResourceLocation getTexture()
+    private static ResourceLocation getTexture()
     {
         return texture;
     }
@@ -69,26 +70,26 @@ public class RenderFishHook extends Render
         GL11.glPushMatrix();
         GL11.glTranslatef((float) posX, (float) posY, (float) posZ);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-        GL11.glScalef(0.5F, 0.5F, 0.5F);
+        GL11.glScalef(Literals.HALF_MODIFIER, Literals.HALF_MODIFIER, Literals.HALF_MODIFIER);
 
         this.bindEntityTexture(entityFishHook);
 
         final Tessellator tessellator = Tessellator.instance;
 
-        double textureSizeU     = (8) / 128.0;
-        double textureSizeV     = (8 + 8) / 128.0;
-        double textureLocationX = (2 * 8) / 128.0;
-        double textureLocationY = (2 * 8 + 8) / 128.0;
+        double textureSizeU     = (Literals.TEXTURE_ICON_LENGTH) / Literals.TEXTURE_FILE_LENGTH;
+        double textureSizeV     = (Literals.TEXTURE_ICON_LENGTH + Literals.TEXTURE_ICON_LENGTH) / Literals.TEXTURE_FILE_LENGTH;
+        double textureLocationX = (2 * Literals.TEXTURE_ICON_LENGTH) / Literals.TEXTURE_FILE_LENGTH;
+        double textureLocationY = (2 * Literals.TEXTURE_ICON_LENGTH + Literals.TEXTURE_ICON_LENGTH) / Literals.TEXTURE_FILE_LENGTH;
 
-        GL11.glRotatef((float) (180.0D - this.renderManager.playerViewY), 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef((float) (Literals.HALF_CIRCKLE - this.renderManager.playerViewY), 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
 
         tessellator.startDrawingQuads();
         tessellator.setNormal(0.0F, 1.0F, 0.0F);
-        tessellator.addVertexWithUV(0.0 - 0.5, 0.0 - 0.5, 0.0D, textureSizeU, textureLocationY);
-        tessellator.addVertexWithUV(1.0 - 0.5, 0.0 - 0.5, 0.0D, textureSizeV, textureLocationY);
-        tessellator.addVertexWithUV(1.0 - 0.5, 1.0 - 0.5, 0.0D, textureSizeV, textureLocationX);
-        tessellator.addVertexWithUV(0.0 - 0.5, 1.0 - 0.5, 0.0D, textureSizeU, textureLocationX);
+        tessellator.addVertexWithUV(0.0 - Literals.HALF_MODIFIER, 0.0 - Literals.HALF_MODIFIER, 0.0D, textureSizeU, textureLocationY);
+        tessellator.addVertexWithUV(1.0 - Literals.HALF_MODIFIER, 0.0 - Literals.HALF_MODIFIER, 0.0D, textureSizeV, textureLocationY);
+        tessellator.addVertexWithUV(1.0 - Literals.HALF_MODIFIER, 1.0 - Literals.HALF_MODIFIER, 0.0D, textureSizeV, textureLocationX);
+        tessellator.addVertexWithUV(0.0 - Literals.HALF_MODIFIER, 1.0 - Literals.HALF_MODIFIER, 0.0D, textureSizeU, textureLocationX);
         tessellator.draw();
 
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
@@ -116,12 +117,12 @@ public class RenderFishHook extends Render
             final double finalOrientation = Math.sin(Math.sqrt(orientation) * Math.PI);
             final Vec3   vec3             = Vec3.createVectorHelper(-0.5, 0.03, 0.8);
 
-            vec3.rotateAroundX((float) (-(citizen.prevRotationPitch
-                                          + (citizen.rotationPitch - citizen.prevRotationPitch) * angle) * Math.PI
-                                        / 180.0D));
-            vec3.rotateAroundY((float) (-(citizen.prevRotationYaw
-                                          + (citizen.rotationYaw - citizen.prevRotationYaw) * angle) * Math.PI
-                                        / 180.0D));
+            vec3.rotateAroundX((float) (-((double)citizen.prevRotationPitch
+                                          + ((double)citizen.rotationPitch - (double)citizen.prevRotationPitch) * angle) * Math.PI
+                                        / Literals.HALF_CIRCKLE));
+            vec3.rotateAroundY((float) (-((double)citizen.prevRotationYaw
+                                          + ((double)citizen.rotationYaw - (double)citizen.prevRotationYaw) * angle) * Math.PI
+                                        / Literals.HALF_CIRCKLE));
             vec3.rotateAroundY((float) (finalOrientation * 0.5D));
             vec3.rotateAroundX((float) (-finalOrientation * 0.7D));
 

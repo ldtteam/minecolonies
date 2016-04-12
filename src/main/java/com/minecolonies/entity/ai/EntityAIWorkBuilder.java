@@ -1,6 +1,6 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.blocks.BlockHut;
+import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
@@ -83,7 +83,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
 
 
-            LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", job.getSchematic().getName());
+            LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", job.getSchematic().getName());
         }
         ChunkCoordUtils.tryMoveLivingToXYZ(worker, job.getSchematic().getPosition());
 
@@ -175,7 +175,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         Block worldBlock = world.getBlock(x, y, z);
 
-        if(worldBlock != Blocks.air && !(worldBlock instanceof BlockHut) && worldBlock != Blocks.bedrock)
+        if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock)
         {
             if(!Configurations.builderInfiniteResources)//We need to deal with materials
             {
@@ -218,7 +218,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
             Block worldBlock = ChunkCoordUtils.getBlock(world, job.getSchematic().getBlockPosition());
 
-            if(itemstack.getItem() != null && block != null && block != Blocks.air && worldBlock != Blocks.bedrock && !(worldBlock instanceof BlockHut) && !isBlockFree(block, metadata))
+            if(itemstack.getItem() != null && block != null && block != Blocks.air && worldBlock != Blocks.bedrock && !(worldBlock instanceof AbstractBlockHut) && !isBlockFree(block, metadata))
             {
                 //TODO add item to prerequisites
             }
@@ -264,8 +264,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             findNextBlockSolid();
             return;
         }
-        if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock ||
-                block instanceof BlockHut)//don't overwrite huts or bedrock, nor place huts
+        if(worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
+                block instanceof AbstractBlockHut)//don't overwrite huts or bedrock, nor place huts
         {
             findNextBlockSolid();
             return;
@@ -340,8 +340,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             findNextBlockNonSolid();
             return;
         }
-        if(worldBlock instanceof BlockHut || worldBlock == Blocks.bedrock ||
-                block instanceof BlockHut)//don't overwrite huts or bedrock, nor place huts
+        if(worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
+                block instanceof AbstractBlockHut)//don't overwrite huts or bedrock, nor place huts
         {
             findNextBlockNonSolid();
             return;
@@ -483,7 +483,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private boolean isBlockFree(Block block, int metadata)
     {
-        return Utils.isWater(block) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && Utils.testFlag(metadata, 0x08)) || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08));
+        return BlockUtils.isWater(block) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && Utils.testFlag(metadata, 0x08)) || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08));
     }
 
     private void setStackInBuilder(ItemStack stack, boolean shouldUseForce)
@@ -639,12 +639,14 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         String name = building.getStyle() + '/' + workOrder.getUpgradeName();
 
-        job.setSchematic(Schematic.loadSchematic(world, name));
-
-        if(job.getSchematic() == null)
+        try
         {
-            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name));
-            worker.getColony().getWorkManager().removeWorkOrder(workOrder);
+            job.setSchematic(new Schematic(world, name));
+        }
+        catch (IllegalStateException e)
+        {
+            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
+            job.setSchematic(null);
             return;
         }
 
@@ -656,7 +658,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     private void completeBuild()
     {
         String schematicName = job.getSchematic().getName();
-        LanguageHandler.sendPlayersLocalizedMessage(Utils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
+        LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
 
         WorkOrderBuild wo = job.getWorkOrder();
         if(wo != null)

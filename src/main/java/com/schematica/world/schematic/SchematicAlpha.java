@@ -1,6 +1,6 @@
 package com.schematica.world.schematic;
 
-import com.minecolonies.blocks.BlockHut;
+import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.util.Log;
 import com.schematica.world.SchematicWorld;
 import cpw.mods.fml.common.registry.GameData;
@@ -161,7 +161,7 @@ public class SchematicAlpha extends SchematicFormat
                         mapping.setShort(name, (short) blockId);
                     }
 
-                    if(world.getBlock(x, y, z) instanceof BlockHut)
+                    if(world.getBlock(x, y, z) instanceof AbstractBlockHut)
                     {
                         xOffset = x;
                         yOffset = y;

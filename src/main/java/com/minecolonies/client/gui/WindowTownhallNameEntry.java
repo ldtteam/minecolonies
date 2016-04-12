@@ -6,6 +6,9 @@ import com.blockout.views.Window;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.Constants;
 
+/**
+ * Window for a town hall name entry
+ */
 public class WindowTownhallNameEntry extends Window implements Button.Handler
 {
     private static final    String      BUTTON_DONE                     = "done";
@@ -15,6 +18,11 @@ public class WindowTownhallNameEntry extends Window implements Button.Handler
 
     private                 ColonyView  colony;
 
+    /**
+     * Constructor for a town hall rename entry window
+     *
+     * @param c         {@link ColonyView}
+     */
     public WindowTownhallNameEntry(ColonyView c)
     {
         super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);

@@ -5,19 +5,55 @@ import com.blockout.views.SwitchView;
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.lib.Constants;
 
-public class WindowHutFisherman extends WindowWorkerBuilding<BuildingFisherman.View>
+/**
+ * Window for the fisherman hut
+ */
+public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFisherman.View>
 {
     private static final String BUTTON_PREVPAGE = "prevPage";
     private static final String BUTTON_NEXTPAGE = "nextPage";
     private static final String VIEW_PAGES      = "pages";
 
-    Button buttonPrevPage;
-    Button buttonNextPage;
+    private Button buttonPrevPage;
+    private Button buttonNextPage;
 
-
+    /**
+     * Constructor for the window of the fisherman
+     *
+     * @param building      {@link com.minecolonies.colony.buildings.BuildingFisherman.View}
+     */
     public WindowHutFisherman(BuildingFisherman.View building)
     {
         super(building, Constants.MOD_ID + ":gui/windowHutFisherman.xml");
+        registerButton(BUTTON_PREVPAGE, this::prevClicked);
+        registerButton(BUTTON_NEXTPAGE, this::nextClicked);
+    }
+
+
+    /**
+     * Action performed when previous button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
+    private void prevClicked(Button ignored)
+    {
+        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+        buttonPrevPage.setEnabled(false);
+        buttonNextPage.setEnabled(true);
+    }
+
+    /**
+     * Action performed when next button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
+    private void nextClicked(Button ignored)
+    {
+        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+        buttonPrevPage.setEnabled(true);
+        buttonNextPage.setEnabled(false);
     }
 
     /**
@@ -25,6 +61,7 @@ public class WindowHutFisherman extends WindowWorkerBuilding<BuildingFisherman.V
      *
      * @return      Name of a building
      */
+    @Override
     public String getBuildingName()
     {
         return "com.minecolonies.gui.workerHuts.fisherman";
@@ -43,25 +80,5 @@ public class WindowHutFisherman extends WindowWorkerBuilding<BuildingFisherman.V
 
     }
 
-    @Override
-    public void onButtonClicked(Button button)
-    {
-        if (button.getID().equals(BUTTON_PREVPAGE))
-        {
-            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-            buttonPrevPage.setEnabled(false);
-            buttonNextPage.setEnabled(true);
-        }
-        else if (button.getID().equals(BUTTON_NEXTPAGE))
-        {
-            findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-            buttonPrevPage.setEnabled(true);
-            buttonNextPage.setEnabled(false);
-        }
-        else
-        {
-            super.onButtonClicked(button);
-        }
-    }
 }
 

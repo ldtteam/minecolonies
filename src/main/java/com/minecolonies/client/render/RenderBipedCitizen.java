@@ -8,11 +8,18 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Renderer for the citizens
+ */
 public class RenderBipedCitizen extends RenderBiped
 {
+    /**
+     * Enum with possible citizens
+     */
     public enum Model
     {
         SETTLER     ( "Settler",        3 ),
@@ -22,24 +29,33 @@ public class RenderBipedCitizen extends RenderBiped
         BUILDER     ( "Builder",        1 ),
         DELIVERYMAN ( "Deliveryman",    1 ),
         MINER       ( "Miner",          1 ),
-        LUMBERJACK  ( "Lumberjack",     1 ),//4 male, 1 female
+        // Lumberjack: 4 male, 1 female
+        LUMBERJACK  ( "Lumberjack",     1 ),
         FARMER      ( "Farmer",         1 ),
         FISHERMAN   ( "Fisherman",      1 );
+
+        /**
+         *  String describing the citizen.
+         *  Used by the renderer.
+         *  Starts with a capital, and does not contain spaces or other special characters
+         */
+        public final String textureBase;
+        /**
+         * Amount of different textures available for the renderer
+         */
+        public final int    numTextures;
 
         Model(String textureBase, int numTextures)
         {
             this.textureBase = textureBase;
             this.numTextures = numTextures;
         }
-
-        public final String textureBase;
-        public final int    numTextures;
     }
 
     private static final ModelBiped             defaultModelMale = new ModelBiped();
     private static final ModelBiped             defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
-    private static final Map<Model, ModelBiped> idToMaleModelMap = new HashMap<>();
-    private static final Map<Model, ModelBiped> idToFemaleModelMap = new HashMap<>();
+    private static final Map<Model, ModelBiped> idToMaleModelMap = new EnumMap<>(Model.class);
+    private static final Map<Model, ModelBiped> idToFemaleModelMap = new EnumMap<>(Model.class);
 
 
     static
@@ -47,17 +63,16 @@ public class RenderBipedCitizen extends RenderBiped
         idToMaleModelMap.put    (Model.DELIVERYMAN,     new ModelEntityDeliverymanMale());
         idToMaleModelMap.put    (Model.LUMBERJACK,      new ModelEntityLumberjackMale());
         idToMaleModelMap.put    (Model.FARMER,          new ModelEntityFarmerMale());
-        idToMaleModelMap.put    (Model.FISHERMAN,       new ModelBiped()); //TODO male
-
+        idToMaleModelMap.put    (Model.FISHERMAN,       new ModelBiped());
 
         idToFemaleModelMap.put  (Model.NOBLE,           new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put  (Model.ARISTOCRAT,      new ModelEntityCitizenFemaleAristocrat());
         idToFemaleModelMap.put  (Model.BUILDER,         new ModelEntityBuilderFemale());
-        idToFemaleModelMap.put  (Model.DELIVERYMAN,     new ModelEntityDeliverymanMale());//TODO female
+        idToFemaleModelMap.put  (Model.DELIVERYMAN,     new ModelEntityDeliverymanMale());
         idToFemaleModelMap.put  (Model.MINER,           new ModelEntityMinerFemale());
         idToFemaleModelMap.put  (Model.LUMBERJACK,      new ModelEntityLumberjackFemale());
         idToFemaleModelMap.put  (Model.FARMER,          new ModelEntityFarmerFemale());
-        idToFemaleModelMap.put  (Model.FISHERMAN,       new ModelEntityCitizenFemaleCitizen()); //TODO female
+        idToFemaleModelMap.put  (Model.FISHERMAN,       new ModelEntityCitizenFemaleCitizen());
 
     }
 
@@ -66,7 +81,7 @@ public class RenderBipedCitizen extends RenderBiped
      */
     public RenderBipedCitizen()
     {
-        super(defaultModelMale, 0.5f);
+        super(defaultModelMale, 0.5F);
     }
 
     @Override

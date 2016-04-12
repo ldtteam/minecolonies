@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -40,11 +41,14 @@ public class InventoryUtils {
      * @param inventory     Inventory to convert
      * @return              List of item stacks
      */
-    public static List<ItemStack> getInventoryAsList(IInventory inventory){
+    public static List<ItemStack> getInventoryAsList(IInventory inventory)
+    {
         ArrayList<ItemStack> filtered = new ArrayList<>();
-        for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+        for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
+        {
             ItemStack stack = inventory.getStackInSlot(slot);
-            if(stack != null) {
+            if (stack != null)
+            {
                 filtered.add(inventory.getStackInSlot(slot));
             }
         }
@@ -58,7 +62,8 @@ public class InventoryUtils {
      * @param block         Block to filter
      * @return              List of item stacks
      */
-    public static List<ItemStack> filterInventory(IInventory inventory, Block block){
+    public static List<ItemStack> filterInventory(IInventory inventory, Block block)
+    {
         return filterInventory(inventory, getItemFromBlock(block));
     }
 
@@ -69,7 +74,8 @@ public class InventoryUtils {
      * @param targetItem    Item to check
      * @return              True when item in item stack is equal to target item
      */
-    private static boolean compareItems(ItemStack itemStack, Item targetItem) {
+    private static boolean compareItems(ItemStack itemStack, Item targetItem)
+    {
         return itemStack != null && itemStack.getItem() == targetItem;
     }
 
@@ -80,8 +86,9 @@ public class InventoryUtils {
      * @param block         Block to find
      * @return              Index of the first occurrence
      */
-    public static int findFirstSlotInInventoryWith(IInventory inventory, Block block){
-        return findFirstSlotInInventoryWith(inventory,getItemFromBlock(block));
+    public static int findFirstSlotInInventoryWith(IInventory inventory, Block block)
+    {
+        return findFirstSlotInInventoryWith(inventory, getItemFromBlock(block));
     }
 
     /**
@@ -91,9 +98,12 @@ public class InventoryUtils {
      * @param targetItem    Item to find
      * @return              Index of the first occurrence
      */
-    public static int findFirstSlotInInventoryWith(IInventory inventory, Item targetItem){
-        for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
-            if(compareItems(inventory.getStackInSlot(slot),targetItem)){
+    public static int findFirstSlotInInventoryWith(IInventory inventory, Item targetItem)
+    {
+        for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
+        {
+            if (compareItems(inventory.getStackInSlot(slot), targetItem))
+            {
                 return slot;
             }
         }
@@ -109,9 +119,11 @@ public class InventoryUtils {
      * @param targetitem    Item to count
      * @return              Amount of occurences
      */
-    public static int getItemCountInInventory(IInventory inventory, Item targetitem){
+    public static int getItemCountInInventory(IInventory inventory, Item targetitem)
+    {
         int count = 0;
-        for(ItemStack is : filterInventory(inventory, targetitem)){
+        for (ItemStack is : filterInventory(inventory, targetitem))
+        {
             count += is.stackSize;
         }
         return count;
@@ -148,7 +160,8 @@ public class InventoryUtils {
      * @param block         Block to count
      * @return              True when in inventory, otherwise false
      */
-    public static boolean hasitemInInventory(IInventory inventory, Block block){
+    public static boolean hasitemInInventory(IInventory inventory, Block block)
+    {
         return hasitemInInventory(inventory, getItemFromBlock(block));
     }
 
@@ -173,7 +186,7 @@ public class InventoryUtils {
      */
     public static ItemStack setStack(IInventory inventory, ItemStack stack)
     {
-        if(stack != null)
+        if (stack != null)
         {
             ItemStack returnStack = stack;
             int slot;
@@ -422,38 +435,38 @@ public class InventoryUtils {
     {
         if (itemStack != null && itemStack.stackSize != 0 && itemStack.getItem() != null)
         {
-                int stackSize;
+            int stackSize;
 
-                if (itemStack.isItemDamaged())
+            if (itemStack.isItemDamaged())
+            {
+                stackSize = getOpenSlot(inventory);
+
+                if (stackSize >= 0)
                 {
-                    stackSize = getOpenSlot(inventory);
+                    ItemStack copy = ItemStack.copyItemStack(itemStack);
+                    copy.animationsToGo = 5;
+                    inventory.setInventorySlotContents(stackSize, copy);
 
-                    if (stackSize >= 0)
-                    {
-                        ItemStack copy = ItemStack.copyItemStack(itemStack);
-                        copy.animationsToGo = 5;
-                        inventory.setInventorySlotContents(stackSize, copy);
-
-                        itemStack.stackSize = 0;
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    itemStack.stackSize = 0;
+                    return true;
                 }
                 else
                 {
-                    do
-                    {
-                        stackSize = itemStack.stackSize;
-                        itemStack.stackSize = storePartialItemStack(inventory, itemStack);
-                    }
-                    while (itemStack.stackSize > 0 && itemStack.stackSize < stackSize);
-
-
-                    return itemStack.stackSize < stackSize;
+                    return false;
                 }
+            }
+            else
+            {
+                do
+                {
+                    stackSize = itemStack.stackSize;
+                    itemStack.stackSize = storePartialItemStack(inventory, itemStack);
+                }
+                while (itemStack.stackSize > 0 && itemStack.stackSize < stackSize);
+
+
+                return itemStack.stackSize < stackSize;
+            }
         }
         else
         {
@@ -463,7 +476,7 @@ public class InventoryUtils {
 
     /**
      * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storePartialItemStack(ItemStack)}
-     *
+     * <p>
      * This function stores as many items of an ItemStack as possible in a matching slot and returns the quantity of
      * left over items.
      *
@@ -473,9 +486,9 @@ public class InventoryUtils {
      */
     private static int storePartialItemStack(IInventory inventory, ItemStack itemStack)
     {
-        Item item = itemStack.getItem();
-        int stackSize = itemStack.stackSize;
-        int slot;
+        Item item      = itemStack.getItem();
+        int  stackSize = itemStack.stackSize;
+        int  slot;
 
         if (itemStack.getMaxStackSize() == 1)
         {
@@ -551,7 +564,7 @@ public class InventoryUtils {
 
     /**
      * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storeItemStack(ItemStack)}
-     *
+     * <p>
      * find a slot to store an ItemStack in
      *
      * @param inventory     Inventory to look in
@@ -563,7 +576,13 @@ public class InventoryUtils {
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack inventoryItem = inventory.getStackInSlot(i);
-            if (inventoryItem != null && inventoryItem.getItem() == itemStack.getItem() && inventoryItem.isStackable() && inventoryItem.stackSize < inventoryItem.getMaxStackSize() && inventoryItem.stackSize < inventory.getInventoryStackLimit() && (!inventoryItem.getHasSubtypes() || inventoryItem.getItemDamage() == itemStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(inventoryItem, itemStack))
+            if (inventoryItem != null
+                && inventoryItem.getItem() == itemStack.getItem()
+                && inventoryItem.isStackable()
+                && inventoryItem.stackSize < inventoryItem.getMaxStackSize()
+                && inventoryItem.stackSize < inventory.getInventoryStackLimit()
+                && (!inventoryItem.getHasSubtypes() || inventoryItem.getItemDamage() == itemStack.getItemDamage())
+                && ItemStack.areItemStackTagsEqual(inventoryItem, itemStack))
             {
                 return i;
             }

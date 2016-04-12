@@ -11,6 +11,9 @@ import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.Gui;
 
+/**
+ * Window for the citizen
+ */
 public class WindowCitizen extends Window implements Button.Handler
 {
     /**

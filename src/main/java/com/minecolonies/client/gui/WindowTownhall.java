@@ -6,69 +6,64 @@ import com.blockout.controls.Label;
 import com.blockout.controls.TextField;
 import com.blockout.views.ScrollingList;
 import com.blockout.views.SwitchView;
-import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.BuildingTownhall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.util.LanguageHandler;
 
 import java.util.*;
 
-public class WindowTownhall extends Window implements Button.Handler
+/**
+ * Window for the town hall
+ */
+public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View> implements Button.Handler
 {
-    private static final    String                      BUTTON_INFO                 = "info";
-    private static final    String                      BUTTON_ACTIONS              = "actions";
-    private static final    String                      BUTTON_SETTINGS             = "settings";
-    private static final    String                      BUTTON_PERMISSIONS          = "permissions";
-    private static final    String                      BUTTON_CITIZENS             = "citizens";
-    private static final    String                      BUTTON_BUILD                = "build";
-    private static final    String                      BUTTON_REPAIR               = "repair";
-    private static final    String                      BUTTON_RECALL               = "recall";
-    private static final    String                      BUTTON_CHANGESPEC           = "changeSpec";
-    private static final    String                      BUTTON_RENAME               = "rename";
+    private static final String BUTTON_INFO          = "info";
+    private static final String BUTTON_ACTIONS       = "actions";
+    private static final String BUTTON_SETTINGS      = "settings";
+    private static final String BUTTON_PERMISSIONS   = "permissions";
+    private static final String BUTTON_CITIZENS      = "citizens";
+    private static final String BUTTON_RECALL        = "recall";
+    private static final String BUTTON_CHANGE_SPEC   = "changeSpec";
+    private static final String BUTTON_RENAME        = "rename";
+    private static final String BUTTON_ADD_PLAYER    = "addPlayer";
+    private static final String INPUT_ADDPLAYER_NAME = "addPlayerName";
+    private static final String BUTTON_REMOVE_PLAYER = "removePlayer";
+    private static final String BUTTON_PROMOTE       = "promote";
+    private static final String BUTTON_DEMOTE        = "demote";
+    private static final String VIEW_PAGES           = "pages";
+    private static final String PAGE_INFO            = "pageInfo";
+    private static final String PAGE_ACTIONS         = "pageActions";
+    private static final String PAGE_SETTINGS            = "pageSettings";
+    private static final String PAGE_PERMISSIONS         = "pagePermissions";
+    private static final String PAGE_CITIZENS            = "pageCitizens";
+    private static final String LIST_USERS               = "users";
+    private static final String LIST_CITIZENS            = "citizenList";
+    private static final String CURRENT_SPEC             = "currentSpec";
+    private static final String TOTAL_CITIZENS           = "totalCitizens";
+    private static final String UNEMP_CITIZENS           = "unemployedCitizens";
+    private static final String BUILDERS                 = "builders";
+    private static final String DELIVERY_MAN             = "deliverymen";
+    private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownhall.xml";
+    private BuildingTownhall.View townhall;
+    private List<Permissions.Player> users       = new ArrayList<>();
+    private List<CitizenData.View>   citizens    = new ArrayList<>();
+    private Map<String, String>      tabsToPages = new HashMap<>();
+    private Button        lastTabButton;
+    private ScrollingList citizenList;
+    private ScrollingList userList;
 
-    private static final    String                      BUTTON_ADDPLAYER            = "addPlayer";
-    private static final    String                      INPUT_ADDPLAYER_NAME        = "addPlayerName";
-
-    private static final    String                      BUTTON_REMOVEPLAYER         = "removePlayer";
-    private static final    String                      BUTTON_PROMOTE              = "promote";
-    private static final    String                      BUTTON_DEMOTE               = "demote";
-
-    private static final    String                      VIEW_PAGES                  = "pages";
-    private static final    String                      PAGE_INFO                   = "pageInfo";
-    private static final    String                      PAGE_ACTIONS                = "pageActions";
-    private static final    String                      PAGE_SETTINGS               = "pageSettings";
-    private static final    String                      PAGE_PERMISSIONS            = "pagePermissions";
-    private static final    String                      PAGE_CITIZENS               = "pageCitizens";
-
-    private static final    String                      LIST_USERS                  = "users";
-    private static final    String                      LIST_CITIZENS               = "citizenList";
-
-    private static final    String                      COLONY_NAME                 = "colonyName";
-    private static final    String                      CURRENT_SPEC                = "currentSpec";
-    private static final    String                      TOTAL_CITIZENS              = "totalCitizens";
-    private static final    String                      UNEMP_CITIZENS              = "unemployedCitizens";
-    private static final    String                      BUILDERS                    = "builders";
-    private static final    String                      DELIVERY_MAN                = "deliverymen";
-
-    private static final    String                      TOWNHALL_RESOURCE_SUFFIX    = ":gui/windowTownhall.xml";
-
-    private                 BuildingTownhall.View townhall;
-    private                 List<Permissions.Player>    users                       = new ArrayList<>();
-    private                 List<CitizenData.View>      citizens                    = new ArrayList<>();
-
-    private                 Map<String, String>         tabsToPages                 = new HashMap<>();
-    private                 Button                      lastTabButton;
-    private                 ScrollingList               citizenList;
-    private                 ScrollingList               userList;
-
+    /**
+     * Constructor for the town hall window
+     *
+     * @param townhall {@link com.minecolonies.colony.buildings.BuildingTownhall.View}
+     */
     public WindowTownhall(BuildingTownhall.View townhall)
     {
-        super(Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
+        super(townhall, Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
         this.townhall = townhall;
 
         updateUsers();
@@ -79,10 +74,19 @@ public class WindowTownhall extends Window implements Button.Handler
         tabsToPages.put(BUTTON_SETTINGS, PAGE_SETTINGS);
         tabsToPages.put(BUTTON_PERMISSIONS, PAGE_PERMISSIONS);
         tabsToPages.put(BUTTON_CITIZENS, PAGE_CITIZENS);
+
+        tabsToPages.keySet().forEach(key -> registerButton(key, this::onTabClicked));
+        registerButton(BUTTON_ADD_PLAYER, this::addPlayerCLicked);
+        registerButton(BUTTON_RENAME, this::renameClicked);
+        registerButton(BUTTON_REMOVE_PLAYER, this::removePlayerClicked);
+        registerButton(BUTTON_PROMOTE, this::promoteDemoteClicked);
+        registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
+        registerButton(BUTTON_RECALL,this::doNothing);
+        registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
     }
 
     /**
-     *  Clears and resets all users
+     * Clears and resets all users
      */
     private void updateUsers()
     {
@@ -104,21 +108,22 @@ public class WindowTownhall extends Window implements Button.Handler
      * Executed when <code>WindowTownhall</code> is opened.
      * Does tasks like setting buttons
      */
+    @Override
     public void onOpened()
     {
+        super.onOpened();
         int citizensSize = townhall.getColony().getCitizens().size();
 
         //TODO - Base these on server-side computed statistics
-        int workers = 0;
-        int builders = 0, deliverymen = 0;
+        int workers     = 0;
+        int builders    = 0;
+        int deliverymen = 0;
 
-        String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens", citizensSize, townhall.getColony().getMaxCitizens());
-        String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed", (citizensSize - workers));
-        String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townhall.population.builders", builders);
+        String numberOfCitizens    = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens", citizensSize, townhall.getColony().getMaxCitizens());
+        String numberOfUnemployed  = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed", citizensSize - workers);
+        String numberOfBuilders    = LanguageHandler.format("com.minecolonies.gui.townhall.population.builders", builders);
         String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townhall.population.deliverymen", deliverymen);
 
-
-        findPaneOfTypeByID(COLONY_NAME, Label.class).setLabel(townhall.getColony().getName());
         findPaneOfTypeByID(CURRENT_SPEC, Label.class).setLabel("<Industrial>");
         findPaneOfTypeByID(TOTAL_CITIZENS, Label.class).setLabel(numberOfCitizens);
         findPaneOfTypeByID(UNEMP_CITIZENS, Label.class).setLabel(numberOfUnemployed);
@@ -129,41 +134,26 @@ public class WindowTownhall extends Window implements Button.Handler
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
         lastTabButton.setEnabled(false);
 
-        if (townhall.getBuildingLevel() == 0)
-        {
-            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
-                    LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
-            findPaneByID(BUTTON_REPAIR).disable();
-        }
-        else if (townhall.isBuildingMaxLevel())
-        {
-            Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-            button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
-            button.disable();
-        }
-
         userList = findPaneOfTypeByID(LIST_USERS, ScrollingList.class);
         userList.setDataProvider(new ScrollingList.DataProvider()
         {
-             @Override
-             public int getElementCount()
-             {
-                 return users.size();
-             }
+            @Override
+            public int getElementCount()
+            {
+                return users.size();
+            }
 
-             @Override
-             public void updateElement(int index, Pane rowPane)
-             {
+            @Override
+            public void updateElement(int index, Pane rowPane)
+            {
 
-                 Permissions.Player player = users.get(index);
+                Permissions.Player player = users.get(index);
+                String rank = player.rank.name();
+                rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.name);
+                rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
 
-                 String rank = player.rank.name();
-                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
-
-                 rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.name);
-                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
-
-             }
+            }
         });
 
 
@@ -190,9 +180,20 @@ public class WindowTownhall extends Window implements Button.Handler
     }
 
     /**
+     * Returns the name of a building
+     *
+     * @return Name of a building
+     */
+    @Override
+    public String getBuildingName()
+    {
+        return townhall.getColony().getName();
+    }
+
+    /**
      * Sets the clicked tab
      *
-     * @param button    Tab button clicked on
+     * @param button Tab button clicked on
      */
     private void onTabClicked(Button button)
     {
@@ -220,75 +221,79 @@ public class WindowTownhall extends Window implements Button.Handler
         }
     }
 
-    @Override
-    public void onButtonClicked(Button button)
+
+    /**
+     * Action performed when rename button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
+    private void renameClicked(Button ignored)
     {
-        if (tabsToPages.containsKey(button.getID()))
+        WindowTownhallNameEntry window = new WindowTownhallNameEntry(townhall.getColony());
+        window.open();
+    }
+
+
+    /**
+     * Action performed when add player button is clicked
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
+    private void addPlayerCLicked(Button ignored)
+    {
+        TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
+        MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townhall.getColony(), input.getText()));
+        input.setText("");
+    }
+
+
+    /**
+     * Action performed when remove player button is clicked
+     *
+     * @param button    Button that holds the user clicked on
+     */
+    private void removePlayerClicked(Button button)
+    {
+        int row = userList.getListElementIndexByPane(button);
+        if (row >= 0 && row < users.size())
         {
-            onTabClicked(button);
-        }
-        else if (button.getID().equals(BUTTON_BUILD))
-        {
-            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.BUILD));
-        }
-        else if (button.getID().equals(BUTTON_REPAIR))
-        {
-            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(townhall, BuildRequestMessage.REPAIR));
-        }
-        else if (button.getID().equals(BUTTON_ADDPLAYER))
-        {
-            TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
-            MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townhall.getColony(), input.getText()));
-            input.setText("");
-        }
-        else if (button.getID().equals(BUTTON_REMOVEPLAYER))
-        {
-            int row = userList.getListElementIndexByPane(button);
-            if (row >= 0 && row < users.size())
+            Permissions.Player user = users.get(row);
+            if (user.rank != Permissions.Rank.OWNER)
             {
-                Permissions.Player user = users.get(row);
-                if (user.rank != Permissions.Rank.OWNER)
-                {
-                    MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townhall.getColony(), user.id));
-                }
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townhall.getColony(), user.id));
             }
         }
-        else if (button.getID().equals(BUTTON_PROMOTE) ||
-                button.getID().equals(BUTTON_DEMOTE))
+    }
+
+
+    /**
+     * Action performed when popato button is clicked
+     *
+     * @param button    Button that holds the  user clicked on
+     */
+    private void promoteDemoteClicked(Button button)
+    {
+        int row = userList.getListElementIndexByPane(button);
+        if (row >= 0 && row < users.size())
         {
-            int row = userList.getListElementIndexByPane(button);
-            if (row >= 0 && row < users.size())
+            Permissions.Player user = users.get(row);
+            Permissions.Rank   newRank;
+
+            if (button.getID().equals(BUTTON_PROMOTE))
             {
-                Permissions.Player user = users.get(row);
-                Permissions.Rank newRank;
-
-                if (button.getID().equals(BUTTON_PROMOTE))
-                {
-                    newRank = Permissions.getPromotionRank(user.rank);
-                }
-                else
-                {
-                    newRank = Permissions.getDemotionRank(user.rank);
-                }
-
-                if (newRank != user.rank)
-                {
-                    MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townhall.getColony(), user.id, newRank));
-                }
+                newRank = Permissions.getPromotionRank(user.rank);
             }
-        }
-        else if (button.getID().equals(BUTTON_RECALL))
-        {
-            /* TODO unused */
-        }
-        else if (button.getID().equals(BUTTON_CHANGESPEC))
-        {
-            /* TODO unused */
-        }
-        else if (button.getID().equals(BUTTON_RENAME))
-        {
-            WindowTownhallNameEntry window = new WindowTownhallNameEntry(townhall.getColony());
-            window.open();
+            else
+            {
+                newRank = Permissions.getDemotionRank(user.rank);
+            }
+
+            if (newRank != user.rank)
+            {
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townhall.getColony(), user.id, newRank));
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.Schematic;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -88,11 +89,13 @@ public class JobBuilder extends Job
     {
         if (schematicName != null)
         {
-            schematic = Schematic.loadSchematic(getCitizen().getColony().getWorld(), schematicName);
-            if (schematic != null)
+            try
             {
+                schematic = new Schematic(getCitizen().getColony().getWorld(), schematicName);
                 schematic.setPosition(schematicPos);
                 schematic.setLocalPosition(schematicProgress);
+            }catch (IllegalStateException e){
+                Log.logger.error("Could not create schematic!",e);
             }
 
             schematicName = null;
@@ -147,11 +150,13 @@ public class JobBuilder extends Job
     /**
      * Does this job have a loaded Schematic?
      *
+     * if a schematic is not null there exists a location for it
+     *
      * @return      true if there is a loaded schematic for this Job
      */
     public boolean hasSchematic()
     {
-        return schematic != null && schematic.hasSchematic();
+        return schematic != null;
     }
 
     /**

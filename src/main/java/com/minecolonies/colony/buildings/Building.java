@@ -57,13 +57,13 @@ public abstract class Building
     /**
      * Add build to a mapping.
      * <code>buildingClass</code> needs to extend {@link com.minecolonies.colony.buildings.Building}
-     * <code>parentBlock</code> needs to extend {@link com.minecolonies.blocks.BlockHut}
+     * <code>parentBlock</code> needs to extend {@link AbstractBlockHut}
      *
      * @param name              name of building.
      * @param buildingClass     subclass of Building, located in {@link com.minecolonies.colony.buildings}
      * @param parentBlock       subclass of Block, located in {@link com.minecolonies.blocks}
      */
-    private static void addMapping(String name, Class<? extends Building> buildingClass, Class<? extends BlockHut> parentBlock)
+    private static void addMapping(String name, Class<? extends Building> buildingClass, Class<? extends AbstractBlockHut> parentBlock)
     {
         if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(buildingClass.getName().hashCode()))
         {

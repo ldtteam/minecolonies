@@ -3,6 +3,7 @@ package com.minecolonies;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.configuration.ConfigurationHandler;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.*;
@@ -90,7 +91,7 @@ public class MineColonies
 
         proxy.registerTileEntities();
 
-        RecipeHandler.init();
+        RecipeHandler.init(Configurations.enableInDevelopmentFeatures, Configurations.supplyChests);
 
         proxy.registerEvents();
 

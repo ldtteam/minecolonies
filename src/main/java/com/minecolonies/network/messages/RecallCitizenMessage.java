@@ -66,7 +66,7 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
                 if(citizen != null)
                 {
                     World world = colony.getWorld();
-                    ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, loc.posX, loc.posY+1, loc.posZ, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer, Blocks.tallgrass, Blocks.red_flower, Blocks.yellow_flower);
+                    ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, new ChunkCoordinates(loc.posX, loc.posY+1, loc.posZ), 1, 0, 1, 2, Blocks.air, Blocks.snow_layer, Blocks.tallgrass, Blocks.red_flower, Blocks.yellow_flower);
 
                     citizen.setLocationAndAngles(spawnPoint.posX+0.5, spawnPoint.posY, spawnPoint.posZ+0.5, citizen.rotationYaw, citizen.rotationPitch);
                 }

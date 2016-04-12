@@ -13,30 +13,45 @@ import com.minecolonies.util.LanguageHandler;
 
 import java.awt.*;
 
-public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
+/**
+ * Window for the miner hut
+ */
+public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.View>
 {
-    private static final    String              LIST_LEVELS                 = "levels";
-    private static final    String              PAGE_LEVELS                 = "levelActions";
-    private static final    String              BUTTON_PREVPAGE             = "prevPage";
-    private static final    String              BUTTON_NEXTPAGE             = "nextPage";
-    private static final    String              BUTTON_CURRENTLEVEL         = "changeToLevel";
+    private static final String LIST_LEVELS               = "levels";
+    private static final String PAGE_LEVELS               = "levelActions";
+    private static final String BUTTON_PREVPAGE           = "prevPage";
+    private static final String BUTTON_NEXTPAGE           = "nextPage";
+    private static final String BUTTON_CURRENTLEVEL       = "changeToLevel";
+    private static final String VIEW_PAGES                = "pages";
+    private static final String HUT_MINER_RESOURCE_SUFFIX = ":gui/windowHutMiner.xml";
+    private Button             buttonPrevPage;
+    private Button             buttonNextPage;
+    private int[]              levels;
+    private ScrollingList      levelList;
+    private BuildingMiner.View miner;
 
-    private static final    String              VIEW_PAGES                  = "pages";
-
-    private                 Button              buttonPrevPage;
-    private                 Button              buttonNextPage;
-
-    private                 int[]               levels;
-    private                 ScrollingList       levelList;
-    private                 BuildingMiner.View  miner;
-
-    private static final    String              HUT_MINER_RESOURCE_SUFFIX   = ":gui/windowHutMiner.xml";
-
+    /**
+     * Constructor for the window of the miner hut
+     *
+     * @param building {@link com.minecolonies.colony.buildings.BuildingMiner.View}
+     */
     public WindowHutMiner(BuildingMiner.View building)
     {
         super(building, Constants.MOD_ID + HUT_MINER_RESOURCE_SUFFIX);
         this.miner = building;
         pullLevelsFromHut();
+    }
+
+    /**
+     * Retrieve levels from the building to display in GUI
+     */
+    private void pullLevelsFromHut()
+    {
+        if (miner.getColony().getBuilding(miner.getID()) != null)
+        {
+            levels = miner.levels;
+        }
     }
 
     @Override
@@ -64,7 +79,7 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
             public void updateElement(int index, Pane rowPane)
             {
 
-                if(index == miner.current)
+                if (index == miner.current)
                 {
                     rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.RED.getRGB());
                 }
@@ -73,7 +88,7 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
                     rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.BLACK.getRGB());
                 }
 
-                rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel("" + index);
+                rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel(Integer.toString(index));
                 rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + levels[index]);
 
             }
@@ -83,7 +98,6 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
     @Override
     public void onButtonClicked(Button button)
     {
-
         switch (button.getID())
         {
             case BUTTON_PREVPAGE:
@@ -98,7 +112,8 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
                 break;
             case BUTTON_CURRENTLEVEL:
                 int row = levelList.getListElementIndexByPane(button);
-                if (row != miner.current && row >= 0 && row < levels.length) {
+                if (row != miner.current && row >= 0 && row < levels.length)
+                {
                     miner.current = row;
                     MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
                 }
@@ -120,17 +135,6 @@ public class WindowHutMiner extends WindowWorkerBuilding<BuildingMiner.View>
             window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
         }
 
-    }
-
-    /**
-     * Retrieve levels from the building to display in GUI
-     */
-    private void pullLevelsFromHut()
-    {
-        if(miner.getColony().getBuilding(miner.getID()) != null)
-        {
-            levels = miner.levels;
-        }
     }
 
     @Override

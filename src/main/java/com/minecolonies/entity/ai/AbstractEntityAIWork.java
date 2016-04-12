@@ -350,7 +350,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     protected final boolean walkToBlock(ChunkCoordinates stand)
     {
-        if (!Utils.isWorkerAtSite(worker, stand.posX, stand.posY, stand.posZ, DEFAULT_RANGE_FOR_DELAY))
+        if (!EntityUtils.isWorkerAtSite(worker, stand.posX, stand.posY, stand.posZ, DEFAULT_RANGE_FOR_DELAY))
         {
             workOnBlock(null, stand, 1);
             return true;
