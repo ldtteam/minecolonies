@@ -176,7 +176,7 @@ public class WindowCitizen extends Window implements Button.Handler
     {
         /*
          * Calculates how much percent of the next level has been completed.
-         * getExperience +1 in order to not get infinite if experience
+         * getExperience +1 in order to not get infinite if experience is zero
          */
         int experienceRatio =
                 citizen.getLevel() != 0 ?
