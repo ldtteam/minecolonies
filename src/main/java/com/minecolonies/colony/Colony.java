@@ -3,6 +3,7 @@ package com.minecolonies.colony;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingHome;
+import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.buildings.BuildingTownhall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -63,6 +64,8 @@ public class Colony implements IColony
 
     //  Workload and Jobs
     private         final   WorkManager                     workManager                     = new WorkManager(this);
+
+    private final MaterialSystem materialSystem = new MaterialSystem();
 
     private static  final   String                          TAG_ID                          = "id";
     private static  final   String                          TAG_NAME                        = "name";
@@ -989,6 +992,11 @@ public class Colony implements IColony
                        .filter(citizen -> !citizen.getJob().isMissingNeededItem())
                        .map(citizen -> citizen.getWorkBuilding().getLocation())
                        .collect(Collectors.toList());
+    }
+
+    public MaterialSystem getMaterialSystem()
+    {
+        return materialSystem;
     }
 
     //public int getAutoHostile()

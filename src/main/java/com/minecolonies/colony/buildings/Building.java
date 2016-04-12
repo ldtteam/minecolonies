@@ -5,6 +5,7 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.ChunkCoordUtils;
@@ -25,7 +26,9 @@ public abstract class Building
     private         final       ChunkCoordinates            location;
     private         final       Colony                      colony;
 
-    private                     TileEntityColonyBuilding    tileEntity;
+    private MaterialStore materialStore;
+
+    private TileEntityColonyBuilding tileEntity;
 
     //  Attributes
     private                     int                         buildingLevel                   = 0;
@@ -134,6 +137,7 @@ public abstract class Building
     {
         location = new ChunkCoordinates(chunkCoordinates);
         this.colony = colony;
+        materialStore = new MaterialStore(MaterialStore.Type.CHEST, colony.getMaterialSystem());
     }
 
 
@@ -242,6 +246,8 @@ public abstract class Building
             Log.logger.warn("Loaded empty style, setting to classic");
             style = "classic";
         }
+
+        materialStore.readFromNBT(compound);
     }
 
     /**
@@ -268,6 +274,7 @@ public abstract class Building
         compound.setInteger(TAG_ROTATION, rotation);
         compound.setString(TAG_STYLE, style);
 
+        materialStore.writeToNBT(compound);
     }
 
     /**
@@ -391,7 +398,10 @@ public abstract class Building
     /**
      * Method to do things when a block is destroyed.
      */
-    public void onDestroyed() {}
+    public void onDestroyed()
+    {
+       materialStore.destroy();
+    }
 
     /**
      * Destroys the block.
@@ -505,6 +515,11 @@ public abstract class Building
     public String getStyle()
     {
         return style;
+    }
+
+    public MaterialStore getMaterialStore()
+    {
+        return materialStore;
     }
 
     /**

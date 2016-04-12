@@ -368,8 +368,10 @@ public class InventoryUtils {
     public static int getAmountOfStacks(IInventory inventory)
     {
         int count = 0;
-        for(ItemStack is : getAllItemStacks(inventory))
+        for(int i = 0; i < inventory.getSizeInventory(); i++)
         {
+            ItemStack is = inventory.getStackInSlot(i);
+
             if(is != null)
             {
                 count++;

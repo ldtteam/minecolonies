@@ -530,6 +530,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
 
             setColony(c, data);
+
+            inventory.createMaterialStore(c.getMaterialSystem());
         }
     }
 
@@ -883,7 +885,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            ItemStack itemstack = inventory.getStackInSlot(i);
+            ItemStack itemstack = inventory.getStackInSlotOnClosing(i);
             if (itemstack != null && itemstack.stackSize > 0)
             {
                 entityDropItem(itemstack);
