@@ -294,6 +294,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         double intendedRotationPitch = (-(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI));
         this.rotationPitch = (float) this.updateRotation(this.rotationPitch, intendedRotationPitch, 30);
         this.rotationYaw = (float) this.updateRotation(this.rotationYaw, intendedRotationYaw, 30);
+        //todo something needs to update the rotation
     }
 
     /**
