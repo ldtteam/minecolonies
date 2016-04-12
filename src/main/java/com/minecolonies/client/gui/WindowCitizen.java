@@ -14,57 +14,148 @@ import net.minecraft.client.gui.Gui;
 public class WindowCitizen extends Window implements Button.Handler
 {
     /**
-     * The static labels to find text in the language files in order to load it in the gui.
+     * The label to find the inventory button
      */
     private static final  String                INVENTORY_BUTTON_ID             = "inventory";
+    /**
+     * The label to find the gui of the citizen
+     */
     private static final  String                CITIZEN_RESOURCE_SUFFIX         = ":gui/windowCitizen.xml";
+    /**
+     * The label to find strength in the gui
+     */
     private static final  String                STRENGTH                        = "strength";
+    /**
+     * The label to find endurance in the gui
+     */
     private static final  String                ENDURANCE                       = "endurance";
+    /**
+     * The label to find charisma in the gui
+     */
     private static final  String                CHARISMA                        = "charisma";
+    /**
+     * The label to find intelligence in the gui
+     */
     private static final  String                INTELLIGENCE                    = "intelligence";
+    /**
+     * The label to find diligence in the gui
+     */
     private static final  String                DILIGENCE                       = "diligence";
 
     /**
-     * Xp-bar constants
+     * Xp-bar height
      */
     private static final int                    XP_HEIGHT                       = 5;
+    /**
+     * The distance to the x border
+     */
     private static final int                    LEFT_BORDER_X                   = 10;
+    /**
+     * The distance to the y border
+     */
     private static final int                    LEFT_BORDER_Y                   = 10;
 
+    /**
+     * The column in which the icon starts
+     */
     private static final int                    XP_BAR_ICON_COLUMN              = 0;
+    /**
+     * The column where the icon ends
+     */
     private static final int                    XP_BAR_ICON_COLUMN_END          = 172;
+    /**
+     * The width of the end piece of the xpBar
+     */
     private static final int                    XP_BAR_ICON_COLUMN_END_WIDTH    = 10;
+    /**
+     * The offset where the end should be placed in the GUI
+     */
     private static final int                    XP_BAR_ICON_END_OFFSET          = 90;
 
+    /**
+     * The number to calculate the experienceLevel of the citizen
+     */
+    private static final int                    PERCENT_MULTIPLIER              = 100;
+    /**
+     * The number to create a percentage from another number (ex. 100*0.25 = 25)
+     */
+    private static final int                    EXPERIENCE_MULTIPLIER           = 100;
 
-    //Width is halved to fit into the gui.
+    /**
+     * The width of the xpBar (Original width is halved to fit in the gui)
+     */
     private static final int                    XP_BAR_WIDTH                    = 182/2;
+    /**
+     * The row where the empty xpBar starts
+     */
     private static final int                    XP_BAR_EMPTY_ROW                = 64;
+    /**
+     * The row where the full xpBar starts
+     */
     private static final int                    XP_BAR_FULL_ROW                 = 64;
+    /**
+     * X position of the xpLabel
+     */
     private static final int                    XP_LABEL_X                      = 60;
+    /**
+     * Y position of the xpLabel
+     */
     private static final int                    XP_LABEL_Y                      = 30;
 
     /**
-     * Health bar constants
+     * Row position of the empty heart icon
      */
     private static final int                    EMPTY_HEART_ICON_ROW_POS        = 16;
+    /**
+     * Row position of the full heart icon
+     */
     private static final int                    FULL_HEART_ICON_ROW_POS         = 53;
+    /**
+     * Row position of the half/full heart icon
+     */
     private static final int                    HALF_HEART_ICON_ROW_POS         = 62;
+    /**
+     * Column position of the heart icons
+     */
     private static final int                    HEART_ICON_COLUMN               = 0;
+    /**
+     * Dimension of the hearts
+     */
     private static final int                    HEART_ICON_HEIGHT_WIDTH         = 9;
+    /**
+     * The position x where the heart is placed
+     */
     private static final int                    HEART_ICON_POS_X                = 10;
+    /**
+     * The offset x where the next heart should be placed
+     */
     private static final int                    HEART_ICON_OFFSET_X             = 10;
+    /**
+     * The position y where the heart is placed
+     */
     private static final int                    HEART_ICON_POS_Y                = 10;
 
 
     /**
-     * Contains the id's of the elements in the windowCitizen.xml
+     * The label to find name in the gui
      */
     private static final  String                 WINDOW_ID_NAME                 = "name";
+    /**
+     * The label to find xpLabel in the gui
+     */
     private static final  String                 WINDOW_ID_XP                   = "xpLabel";
+    /**
+     * The label to find xpBar in the gui
+     */
     private static final  String                 WINDOW_ID_XPBAR                = "xpBar";
+    /**
+     * The label to find healthBar in the gui
+     */
     private static final  String                 WINDOW_ID_HEALTHBAR            = "healthBar";
 
+    /**
+     * The citizenData.View object
+     */
     private              CitizenData.View       citizen;
 
     /**
@@ -84,34 +175,34 @@ public class WindowCitizen extends Window implements Button.Handler
      */
     private void createXpBar()
     {
-        int xpBarCap = ((citizen.getLevel() >= 30 ? 62 + (citizen.getLevel() - 30) * 7 : (citizen.getLevel() >= 15 ? 17 + (citizen.getLevel() - 15) * 3 : 17)));
+        /**
+         * Calculates how much percent of the next level has been completed.
+         *getExperience +1 in order to not get infinite if experience
+         */
+        int experienceRatio =
+                citizen.getLevel() != 0 ?
+                (int) ((double) (citizen.getExperience() + 1) / ((citizen.getLevel() * citizen.getLevel()) * EXPERIENCE_MULTIPLIER) * 100) : (citizen.getExperience() / EXPERIENCE_MULTIPLIER) * PERCENT_MULTIPLIER;
 
-        if (xpBarCap > 0)
+        findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabel("" + citizen.getLevel());
+        findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X, XP_LABEL_Y);
+
+        Image xpBar = new Image();
+        xpBar.setImage(Gui.icons, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT);
+        xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
+
+        Image xpBar2 = new Image();
+        xpBar2.setImage(Gui.icons, XP_BAR_ICON_COLUMN_END, XP_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT);
+        xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
+
+        findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar);
+        findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar2);
+
+        if (experienceRatio > 0)
         {
-            //Calculates how much percent of the next level has been completed
-            int experienceRatio = citizen.getLevel()!=0 ? (int)((double)(citizen.getExperience()+1)/((citizen.getLevel()*citizen.getLevel())*100)*100) : (citizen.getExperience()/100)*100;
-
-            findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabel(""+citizen.getLevel());
-            findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X,XP_LABEL_Y);
-
-            Image xpBar = new Image();
-            xpBar.setImage(Gui.icons,XP_BAR_ICON_COLUMN,XP_BAR_EMPTY_ROW,XP_BAR_WIDTH,XP_HEIGHT);
-            xpBar.setPosition(LEFT_BORDER_X,LEFT_BORDER_Y);
-
-            Image xpBar2 = new Image();
-            xpBar2.setImage(Gui.icons,XP_BAR_ICON_COLUMN_END,XP_BAR_EMPTY_ROW,XP_BAR_ICON_COLUMN_END_WIDTH,XP_HEIGHT);
-            xpBar2.setPosition(XP_BAR_ICON_END_OFFSET+LEFT_BORDER_X,LEFT_BORDER_Y);
-
-            findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar);
-            findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar2);
-
-            if (experienceRatio > 0)
-            {
-                Image xpBarFull = new Image();
-                xpBarFull.setImage(Gui.icons,XP_BAR_ICON_COLUMN,XP_BAR_FULL_ROW,experienceRatio,XP_HEIGHT);
-                xpBarFull.setPosition(LEFT_BORDER_X,LEFT_BORDER_Y);
-                findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBarFull);
-            }
+            Image xpBarFull = new Image();
+            xpBarFull.setImage(Gui.icons, XP_BAR_ICON_COLUMN, XP_BAR_FULL_ROW, experienceRatio, XP_HEIGHT);
+            xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
+            findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBarFull);
         }
     }
 

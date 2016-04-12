@@ -13,8 +13,8 @@
     <box padding="3" size="100 61" pos="40 70">
         <group size="100% 100%">
             <label id="strength" size="100% 11" color="black" />
-            <label id="stamina" size="100% 11" color="black" />
-            <label id="speed" size="100% 11" color="black" />
+            <label id="endurance" size="100% 11" color="black" />
+            <label id="charisma" size="100% 11" color="black" />
             <label id="intelligence" size="100% 11" color="black" />
             <label id="diligence" size="100% 11" color="black" />
         </group>

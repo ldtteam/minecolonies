@@ -1137,7 +1137,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
     /**
      * Diligence getter
-     * @return citizen E value
+     * @return citizen Diligence value
      */
     public int getDiligence()
     {
