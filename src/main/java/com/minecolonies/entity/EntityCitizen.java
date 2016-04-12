@@ -348,7 +348,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             localXp = j;
         }
-        citizenData.setExperience(citizenData.getExperience()+localXp);
+        citizenData.addExperience(localXp);
 
         if(citizenData.getLevel()==0)
         {
