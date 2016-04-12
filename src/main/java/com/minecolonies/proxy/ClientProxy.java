@@ -71,15 +71,8 @@ public class ClientProxy extends CommonProxy
     @Override
     public void showCitizenWindow(CitizenData.View citizen)
     {
-        if (Configurations.enableInDevelopmentFeatures)
-        {
-            WindowCitizen window = new WindowCitizen(citizen);
-            window.open();
-        }
-        else
-        {
-            MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen));
-        }
+        WindowCitizen window = new WindowCitizen(citizen);
+        window.open();
     }
 
     @Override

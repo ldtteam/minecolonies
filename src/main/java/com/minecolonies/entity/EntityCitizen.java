@@ -76,33 +76,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private int         textureId;
     private Map<String, Integer> statusMessages = new HashMap<>();
     private PathNavigate newNavigator;
-    /**
-     *  Skills, which influence the workers behaviour.
-     *  May be added more later
-     */
-    private int          intelligence;
-    private int          speed;
-    private int          strength;
-    private int          stamina;
-    private int          diligence;
-
-    /**
-     * The current experience level the citizen is on.
-     */
-    private int experienceLevel = 1;
-    /**
-     * The total amount of experience the citizen has.
-     * This also includes the amount of experience within their Experience Bar.
-     */
-    private int    experienceTotal;
-    /**
-     * The current amount of experience the citizen has within their Experience Bar.
-     */
-    private double experience;
-    /**
-     * Something with ticks which I didn't understand yet!
-     */
-    private int    nOTicks;
 
     /**
      * Citizen constructor.
@@ -117,14 +90,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
-        Random random = new Random();
-
-        //Initialize the citizen skills and make sure they are never 0
-        intelligence = random.nextInt(LEVEL_CAP - 1) + 1;
-        speed = random.nextInt(LEVEL_CAP - 1) + 1;
-        strength = random.nextInt(LEVEL_CAP - 1) + 1;
-        stamina = random.nextInt(LEVEL_CAP - 1) + 1;
-        diligence = random.nextInt(LEVEL_CAP - 1) + 1;
 
         this.renderDistanceWeight = 2.0D;
         this.newNavigator = new PathNavigate(this, world);
@@ -320,7 +285,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public void faceBlock(ChunkCoordinates block)
     {
-
         double xDifference = block.posX - this.posX;
         double zDifference = block.posZ - this.posZ;
         double yDifference = block.posY - (this.posY + (double) this.getEyeHeight() - 0.5);
@@ -330,8 +294,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         double intendedRotationPitch = (-(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI));
         this.rotationPitch = (float) this.updateRotation(this.rotationPitch, intendedRotationPitch, 30);
         this.rotationYaw = (float) this.updateRotation(this.rotationYaw, intendedRotationYaw, 30);
-        this.updateColonyClient();
-        this.updateColonyServer();
+        //todo something needs to update the rotation
     }
 
     /**
@@ -373,60 +336,38 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     /**
      * Add experience points to citizen.
+     * Increases the citizen level if he has sufficient experience.
+     * This will reset the experience.
      *
      * @param xp the amount of points added
      */
     private void addExperience(int xp)
     {
-        int j       = Integer.MAX_VALUE - this.experienceTotal;
+        int j       = Integer.MAX_VALUE - citizenData.getExperience();
         int localXp = xp;
         if (localXp > j)
         {
             localXp = j;
         }
+        citizenData.addExperience(localXp);
 
-        this.experience += localXp / this.xpBarCap();
-
-        for (this.experienceTotal += localXp; this.experience >= 1.0F; this.experience /= this.xpBarCap())
+        if(citizenData.getLevel()==0)
         {
-            this.experience = (this.experience - 1.0) * this.xpBarCap();
-            this.addExperienceLevel(1);
+            if(citizenData.getExperience()>=100)
+            {
+                citizenData.addExperience(-100);
+                citizenData.setLevel(1);
+            }
         }
-    }
-
-    /**
-     * Add experience levels to this citizen.
-     *
-     * @param numLevels The amount of levels added
-     */
-    private void addExperienceLevel(int numLevels)
-    {
-        this.experienceLevel += numLevels;
-
-        if (this.experienceLevel < 0)
+        else
         {
-            this.experienceLevel = 0;
-            this.experience = 0.0;
-            this.experienceTotal = 0;
+            if(citizenData.getExperience()>=(100*(citizenData.getLevel()*citizenData.getLevel())))
+            {
+                citizenData.addExperience(-100*(citizenData.getLevel()*citizenData.getLevel()));
+                citizenData.increaseLevel();
+            }
         }
-
-        if (numLevels > 0 && this.experienceLevel % 5 == 0 && this.nOTicks < this.ticksExisted - 100.0)
-        {
-            double f = this.experienceLevel > 30 ? 1.0 : this.experienceLevel / 30.0;
-            this.worldObj.playSoundAtEntity(this, "random.levelup", (float) f * 0.75F, 1.0F);
-            this.nOTicks = this.ticksExisted;
-        }
-    }
-
-    /**
-     * This method returns the cap amount of experience that the experience bar can hold. W
-     * ith each level, the experience cap on the citizen's experience bar is raised by 10.
-     *
-     * @return the xp cap
-     */
-    private int xpBarCap()
-    {
-        return (this.experienceLevel >= 30 ? 62 + (this.experienceLevel - 30) * 7 : (this.experienceLevel >= 15 ? 17 + (this.experienceLevel - 15) * 3 : 17));
+        citizenData.markDirty();
     }
 
     /**
@@ -463,6 +404,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onLivingUpdate()
     {
+        if(recentlyHit>0)
+        {
+            citizenData.markDirty();
+        }
         if (worldObj.isRemote)
         {
             updateColonyClient();
@@ -585,6 +530,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
 
             setColony(c, data);
+
+            inventory.createMaterialStore(c.getMaterialSystem());
         }
     }
 
@@ -690,7 +637,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     /**
-     * Applies attributes like health, speed etc to the citizens.
+     * Applies attributes like health, charisma etc to the citizens.
      */
     @Override
     protected void applyEntityAttributes()
@@ -735,19 +682,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return null;
     }
 
-
     /**
-     * Called when the mob's health reaches 0.
-     * @param par1DamageSource the attacking entity
+     * Drop some experience share depending on the experience and experienceLevel.
      */
-    @Override
-    public void onDeath(DamageSource par1DamageSource)
+    private void dropExperience()
     {
         int experience;
 
         if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
         {
-            experience = this.getExperiencePoints();
+            experience = citizenData.getLevel()*100 + this.getExperiencePoints();
 
             while (experience > 0)
             {
@@ -757,9 +701,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
         }
 
-        this.setDead();
-
-        //Spawn particle explotion of xp orbs on death
+        //Spawn particle explosion of xp orbs on death
         for (int i = 0; i < 20; ++i)
         {
             double d2 = this.rand.nextGaussian() * 0.02D;
@@ -773,6 +715,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                                         d0,
                                         d1);
         }
+    }
+    /**
+     * Called when the mob's health reaches 0.
+     * @param par1DamageSource the attacking entity
+     */
+    @Override
+    public void onDeath(DamageSource par1DamageSource)
+    {
+        dropExperience();
+        this.setDead();
 
         if (colony != null)
         {
@@ -849,9 +801,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         super.writeEntityToNBT(compound);
         compound.setInteger(TAG_STATUS, status.ordinal());
-        compound.setDouble(TAG_XP, experience);
-        compound.setInteger(TAG_XP_LEVEL, experienceLevel);
-        compound.setInteger(TAG_XP_TOTAL, experienceTotal);
         if (colony != null && citizenData != null)
         {
             compound.setInteger(TAG_COLONY_ID, colony.getID());
@@ -879,9 +828,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.readEntityFromNBT(compound);
 
         status = Status.values()[compound.getInteger(TAG_STATUS)];
-        experience = compound.getDouble(TAG_XP);
-        experienceLevel = compound.getInteger(TAG_XP_LEVEL);
-        experienceTotal = compound.getInteger(TAG_XP_TOTAL);
         colonyId = compound.getInteger(TAG_COLONY_ID);
         citizenId = compound.getInteger(TAG_CITIZEN);
 
@@ -939,7 +885,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            ItemStack itemstack = inventory.getStackInSlot(i);
+            ItemStack itemstack = inventory.getStackInSlotOnClosing(i);
             if (itemstack != null && itemstack.stackSize > 0)
             {
                 entityDropItem(itemstack);
@@ -966,18 +912,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      *
      * @return the amount of xp this entity has
      */
-    protected int getExperiencePoints()
+    public int getExperiencePoints()
     {
-        if (this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
-        {
-            return 0;
-        }
-        int i = this.experienceLevel * 7;
-        if (i > 100)
-        {
-            return 100;
-        }
-        return i;
+        return citizenData.getExperience();
     }
 
     public int findFirstSlotInInventoryWith(Item targetItem)
@@ -1175,15 +1112,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public int getIntelligence()
     {
-        return intelligence;
+        return citizenData.getIntelligence();
     }
     /**
-     * Speed getter
-     * @return citizen Speed value
+     * Charisma getter
+     * @return citizen Charisma value
      */
-    public int getSpeed()
+    public int getCharisma()
     {
-        return speed;
+        return citizenData.getCharisma();
     }
     /**
      * Strength getter
@@ -1191,15 +1128,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public int getStrength()
     {
-        return strength;
+        return citizenData.getStrength();
     }
     /**
-     * Stamina getter
-     * @return citizen Stamina value
+     * Endurance getter
+     * @return citizen Endurance value
      */
-    public int getStamina()
+    public int getEndurance()
     {
-        return stamina;
+        return citizenData.getEndurance();
     }
     /**
      * Diligence getter
@@ -1207,13 +1144,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public int getDiligence()
     {
-        return diligence;
+        return citizenData.getDiligence();
     }
     /**
      * ExperienceLevel getter
      * @return citizen ExperienceLevel value
      */
-    public int getExperienceLevel(){return experienceLevel; }
+    public int getExperienceLevel()
+    {
+        return citizenData.getExperience();
+    }
 
     public enum DesiredActivity
     {
