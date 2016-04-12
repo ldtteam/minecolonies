@@ -3,7 +3,6 @@ package com.minecolonies.client.gui;
 import com.blockout.controls.Button;
 import com.blockout.controls.TextField;
 import com.blockout.views.Window;
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.Constants;
 

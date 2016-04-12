@@ -1,11 +1,11 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.network.PacketUtils;
+import com.minecolonies.util.Log;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -122,7 +122,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                MineColonies.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
                 return null;
             }
 
@@ -138,7 +138,7 @@ public class PermissionsMessage
                 colony.getPermissions().togglePermission(message.rank, message.action);
                 break;
             default:
-                MineColonies.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
+                Log.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
             }
             return null;
         }
@@ -192,7 +192,7 @@ public class PermissionsMessage
             }
             else
             {
-                MineColonies.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
             }
             return null;
         }
@@ -251,7 +251,7 @@ public class PermissionsMessage
             }
             else
             {
-                MineColonies.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
             }
             return null;
         }
@@ -305,7 +305,7 @@ public class PermissionsMessage
             }
             else
             {
-                MineColonies.logger.error(String.format("Colony '#%d' does not exist.", message.colonyID));
+                Log.logger.error(String.format("Colony '#%d' does not exist.", message.colonyID));
             }
             return null;
         }

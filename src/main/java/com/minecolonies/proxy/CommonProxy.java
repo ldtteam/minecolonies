@@ -1,14 +1,14 @@
 package com.minecolonies.proxy;
 
-import com.minecolonies.entity.EntityFishHook;
-import com.schematica.world.SchematicWorld;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+import com.schematica.world.SchematicWorld;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;

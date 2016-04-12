@@ -7,6 +7,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.FarmerCropTypeMessage;
+import com.minecolonies.util.Log;
 
 public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
 {
@@ -62,7 +63,7 @@ public class WindowHutFarmer extends WindowWorkerBuilding<BuildingFarmer.View>
         }
         catch (NullPointerException exc)
         {
-            MineColonies.logger.error("findPane error, report to mod authors",exc);
+            Log.logger.error("findPane error, report to mod authors", exc);
         }
     }
 

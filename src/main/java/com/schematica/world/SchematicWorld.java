@@ -1,8 +1,8 @@
 package com.schematica.world;
 
+import com.minecolonies.util.Log;
 import com.schematica.config.BlockInfo;
 import com.schematica.world.storage.EmptySaveHandler;
-import com.minecolonies.MineColonies;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -110,7 +110,7 @@ public class SchematicWorld extends World
                 }
                 catch(Exception e)
                 {
-                    MineColonies.logger.error(String.format("TileEntity validation for %s failed!", tileEntity.getClass()), e);
+                    Log.logger.error(String.format("TileEntity validation for %s failed!", tileEntity.getClass()), e);
                 }
             }
         }
@@ -201,7 +201,7 @@ public class SchematicWorld extends World
         }
         catch(Exception e)
         {
-            MineColonies.logger.error("Failed to read schematic icon!", e);
+            Log.logger.error("Failed to read schematic icon!", e);
         }
 
         return SchematicWorld.DEFAULT_ICON.copy();
@@ -498,7 +498,7 @@ public class SchematicWorld extends World
             }
             catch(Exception e)
             {
-                MineColonies.logger.error(String.format("TileEntity validation for %s failed!", tileEntity.getClass()), e);
+                Log.logger.error(String.format("TileEntity validation for %s failed!", tileEntity.getClass()), e);
             }
         }
     }

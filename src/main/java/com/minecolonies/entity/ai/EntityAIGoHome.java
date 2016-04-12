@@ -1,7 +1,7 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.ChunkCoordinates;
 
@@ -35,7 +35,7 @@ public class EntityAIGoHome extends EntityAIBase
         ChunkCoordinates pos = citizen.getHomePosition();
         if(pos == null)
         {
-            MineColonies.logger.error("EntityCitizen has null townhall (And no home)");
+            Log.logger.error("EntityCitizen has null townhall (And no home)");
             return;
         }
 
