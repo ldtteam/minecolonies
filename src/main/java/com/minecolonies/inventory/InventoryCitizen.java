@@ -153,7 +153,8 @@ public class InventoryCitizen extends InventoryBasic
         if(stack == null){
             return;
         }
-        materialStore.addMaterial(stack.getItem(), stack.stackSize);
+        //todo: colton reenable it
+        //materialStore.addMaterial(stack.getItem(), stack.stackSize);
     }
 
     private void removeStackFromMaterialStore(ItemStack stack)
@@ -161,6 +162,7 @@ public class InventoryCitizen extends InventoryBasic
         if(stack == null){
             return;
         }
-        materialStore.removeMaterial(stack.getItem(), stack.stackSize);
+        //todo: colton reenable it
+        //materialStore.removeMaterial(stack.getItem(), stack.stackSize);
     }
 }
