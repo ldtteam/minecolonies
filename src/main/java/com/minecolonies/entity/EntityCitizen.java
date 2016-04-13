@@ -1067,10 +1067,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public void damageItemInHand(int damage)
     {
-        getInventory().getHeldItem().damageItem(damage, this);
+        final ItemStack heldItem = getInventory().getHeldItem();
+        //If we hit with bare hands, ignore
+        if(heldItem == null)
+        {
+            return;
+        }
+        heldItem.damageItem(damage, this);
 
         //check if tool breaks
-        if (this.getInventory().getHeldItem().stackSize < 1)
+        if (heldItem.stackSize < 1)
         {
             this.setCurrentItemOrArmor(0, null);
             getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
