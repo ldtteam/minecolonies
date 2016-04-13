@@ -885,7 +885,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         if (tool != null)
         {
             //Reduce durability if not using hand
-            tool.getItem().onBlockDestroyed(tool, world, curBlock, blockToMine.posX, blockToMine.posY, blockToMine.posZ, worker);
+            worker.breakBlockWithToolInHand(blockToMine);
         }
 
         //if Tool breaks

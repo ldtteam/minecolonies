@@ -115,9 +115,10 @@ public class CitizenData
         name = generateName(rand);
 
         textureId = entity.worldObj.rand.nextInt(Integer.MAX_VALUE);
-        experience = entity.getExperiencePoints();
         health = entity.getHealth();
         maxHealth = entity.getMaxHealth();
+        experience = 0;
+        level = 0;
         Random random = new Random();
 
         //Initialize the citizen skills and make sure they are never 0

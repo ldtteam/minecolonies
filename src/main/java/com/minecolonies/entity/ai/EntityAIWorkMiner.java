@@ -164,13 +164,13 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         else if (ladderOrientation == 3)
         {
             //South
-            buildingMiner.vectorZ = 1;
+            buildingMiner.vectorZ = -1;
             buildingMiner.vectorX = 0;
         }
         else if (ladderOrientation == 2)
         {
             //North
-            buildingMiner.vectorZ = -1;
+            buildingMiner.vectorZ = 1;
             buildingMiner.vectorX = 0;
         }
         else
@@ -486,13 +486,14 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
     {
         if (walkToBuilding())
         {
-            if (buildNextBlockInShaft())
-            {
-                return;
-            }
-            getOwnBuilding().startingLevelShaft = 0;
-            job.setStage(Stage.START_WORKING);
+            return;
         }
+        if (buildNextBlockInShaft())
+        {
+            return;
+        }
+        getOwnBuilding().startingLevelShaft = 0;
+        job.setStage(Stage.START_WORKING);
     }
 
     private void doNodeMining()
