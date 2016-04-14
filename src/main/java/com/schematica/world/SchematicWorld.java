@@ -3,9 +3,7 @@ package com.schematica.world;
 import com.minecolonies.util.Log;
 import com.schematica.config.BlockInfo;
 import com.schematica.world.storage.EmptySaveHandler;
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -19,6 +17,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntitySkull;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
@@ -26,7 +25,10 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.File;
@@ -342,11 +344,11 @@ public class SchematicWorld extends World
     }
 
     @Override
-    public TileEntity getTileEntity(int x, int y, int z)
+    public TileEntity getTileEntity(BlockPos pos)
     {
         for(TileEntity tileEntity : this.tileEntities)
         {
-            if(tileEntity.xCoord == x && tileEntity.yCoord == y && tileEntity.zCoord == z)
+            if(tileEntity.getPos() == pos)
             {
                 return tileEntity;
             }
@@ -354,15 +356,15 @@ public class SchematicWorld extends World
         return null;
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
+    @SideOnly(Side.CLIENT)
     public int getSkyBlockTypeBrightness(EnumSkyBlock skyBlock, int x, int y, int z)
     {
         return 15;
     }
 
     @Override
-    public float getLightBrightness(int x, int y, int z)
+    public float getLightBrightness(BlockPos pos)
     {
         return 1.0f;
     }
@@ -399,18 +401,18 @@ public class SchematicWorld extends World
     }
 
     @Override
-    public boolean isAirBlock(int x, int y, int z)
+    public boolean isAirBlock(BlockPos pos)
     {
-        Block block = getBlock(x, y, z);
+        Block block = getBlockState(pos).getBlock();
         if(block == null)
         {
             return true;
         }
-        return block.isAir(this, x, y, z);
+        return block.isAir(this, pos);
     }
 
     @Override
-    public BiomeGenBase getBiomeGenForCoords(int x, int z)
+    public BiomeGenBase getBiomeGenForCoords(final BlockPos pos)
     {
         return BiomeGenBase.jungle;
     }

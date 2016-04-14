@@ -83,4 +83,9 @@ public class EmptySaveHandler implements ISaveHandler
     {
         return null;
     }
+
+	@Override
+	public IPlayerFileData getPlayerNBTManager() {
+		return null;
+	}
 }

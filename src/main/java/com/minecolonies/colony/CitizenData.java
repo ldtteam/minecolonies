@@ -8,10 +8,11 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.ChunkCoordUtils;
 import com.minecolonies.util.Log;
-import cpw.mods.fml.common.network.ByteBufUtils;
+
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.util.Random;
 

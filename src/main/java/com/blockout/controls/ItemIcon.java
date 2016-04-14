@@ -34,7 +34,7 @@ public class ItemIcon extends Pane
     @Override
     protected void drawSelf(int mx, int my)
     {
-        itemRender.renderItemAndEffectIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemStack, x, y);
-        itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemStack, x, y);
+        itemRender.renderItemAndEffectIntoGUI(itemStack, x, y);
+        itemRender.renderItemOverlayIntoGUI(mc.fontRendererObj, itemStack, x, y, "");
     }
 }

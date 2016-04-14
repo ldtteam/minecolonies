@@ -3,20 +3,28 @@ package com.minecolonies.client.render;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.lib.Literals;
+
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 /**
  * Determines how the fish hook is rendered.
  */
-public class RenderFishHook extends Render
+public class RenderFishHook extends Render<EntityFishHook>
 {
-    /**
+	
+    public RenderFishHook(RenderManager renderManagerIn) {
+		super(renderManagerIn);
+	}
+
+	/**
      * The resource location containing the particle textures (Spawned by the fishHook)
      */
     private static final ResourceLocation texture = new ResourceLocation("textures/particle/particles.png");
@@ -28,7 +36,7 @@ public class RenderFishHook extends Render
      * @return a resource location for the texture
      */
     @Override
-    protected ResourceLocation getEntityTexture(Entity entity)
+    protected ResourceLocation getEntityTexture(EntityFishHook entity)
     {
         return getTexture();
     }
@@ -49,9 +57,9 @@ public class RenderFishHook extends Render
      * double d2, float f, float f1). But JAD is pre 1.5 so doesn't do that.
      */
     @Override
-    public void doRender(Entity entity, double par2, double par4, double par6, float par8, float par9)
+    public void doRender(EntityFishHook entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
-        this.doRenderFishHook((EntityFishHook) entity, par2, par4, par6, par9);
+        this.doRenderFishHook((EntityFishHook) entity, x, y, z, entityYaw);
     }
 
     /**
@@ -65,7 +73,8 @@ public class RenderFishHook extends Render
      * @param posZ           the z position
      * @param angle          the angle thrown
      */
-    private void doRenderFishHook(EntityFishHook entityFishHook, double posX, double posY, double posZ, float angle)
+    @SuppressWarnings("unchecked")
+	private void doRenderFishHook(EntityFishHook entityFishHook, double posX, double posY, double posZ, float angle)
     {
         GL11.glPushMatrix();
         GL11.glTranslatef((float) posX, (float) posY, (float) posZ);
@@ -74,7 +83,7 @@ public class RenderFishHook extends Render
 
         this.bindEntityTexture(entityFishHook);
 
-        final Tessellator tessellator = Tessellator.instance;
+        final Tessellator tessellator = Tessellator.getInstance();
 
         double textureSizeU     = (Literals.TEXTURE_ICON_LENGTH) / Literals.TEXTURE_FILE_LENGTH;
         double textureSizeV     = (Literals.TEXTURE_ICON_LENGTH + Literals.TEXTURE_ICON_LENGTH) / Literals.TEXTURE_FILE_LENGTH;

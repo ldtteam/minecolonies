@@ -4,18 +4,16 @@ import com.minecolonies.client.model.*;
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderBiped;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Renderer for the citizens
  */
-public class RenderBipedCitizen extends RenderBiped
+public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
 {
     /**
      * Enum with possible citizens
@@ -79,13 +77,13 @@ public class RenderBipedCitizen extends RenderBiped
     /**
      * Renders model, see {@link RenderBiped}
      */
-    public RenderBipedCitizen()
+    public RenderBipedCitizen(RenderManager renderManagerIn)
     {
-        super(defaultModelMale, 0.5F);
+        super(renderManagerIn, defaultModelMale, 0.5F);
     }
 
     @Override
-    public void doRender(EntityLiving entity, double d, double d1, double d2, float f, float f1)
+    public void doRender(EntityCitizen entity, double d, double d1, double d2, float f, float f1)
     {
         if (entity instanceof EntityCitizen)
         {
@@ -106,9 +104,7 @@ public class RenderBipedCitizen extends RenderBiped
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(Entity entity)
-    {
-        EntityCitizen entityCitizen = (EntityCitizen) entity;
-        return entityCitizen.getTexture();
+    protected ResourceLocation getEntityTexture(EntityCitizen entity) {
+    	return entity.getTexture();
     }
 }

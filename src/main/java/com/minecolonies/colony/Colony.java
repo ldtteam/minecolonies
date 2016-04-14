@@ -11,15 +11,15 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
-import cpw.mods.fml.common.gameevent.TickEvent;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -82,7 +82,7 @@ public class Colony implements IColony
      */
     public Colony(int id, World w, ChunkCoordinates c)
     {
-        this(id, w.provider.dimensionId);
+        this(id, w.provider.getDimensionId());
         center = c;
         world = w;
     }
@@ -339,7 +339,7 @@ public class Colony implements IColony
      */
     public void onWorldLoad(World w)
     {
-        if (w.provider.dimensionId == dimensionId)
+        if (w.provider.getDimensionId() == dimensionId)
         {
             world = w;
         }

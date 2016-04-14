@@ -2,10 +2,11 @@ package com.schematica.world.schematic;
 
 import com.minecolonies.util.Log;
 import com.schematica.world.SchematicWorld;
-import cpw.mods.fml.relauncher.ReflectionHelper;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.io.*;
 import java.lang.reflect.Method;

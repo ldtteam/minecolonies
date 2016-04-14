@@ -1,7 +1,5 @@
 package com.schematica.config;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

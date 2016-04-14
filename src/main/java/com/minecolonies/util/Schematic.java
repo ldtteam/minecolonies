@@ -22,6 +22,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -149,7 +150,7 @@ public final class Schematic
      * @param z         z coordinate
      * @param rotations number of times rotated
      */
-    public static void loadAndPlaceSchematicWithRotation(World worldObj, String name, int x, int y, int z, int rotations)
+    public static void loadAndPlaceSchematicWithRotation(World worldObj, String name, BlockPos pos, int rotations)
     {
         Schematic schematic;
         try
@@ -165,7 +166,7 @@ public final class Schematic
         {
             schematic.rotate();
         }
-        schematic.placeSchematic(x, y, z);
+        schematic.placeSchematic(pos);
     }
 
     /**
@@ -175,7 +176,7 @@ public final class Schematic
      * @param y anchor y position
      * @param z anchor z position
      */
-    private void placeSchematic(int x, int y, int z)
+    private void placeSchematic(BlockPos pos)
     {
         List<ChunkCoordinates> delayedBlocks = new ArrayList<>();
 
@@ -191,7 +192,7 @@ public final class Schematic
 
                     if (block == Blocks.air && !world.getBlock(x + i, y + j, z + k).getMaterial().isSolid())
                     {
-                        world.setBlockToAir(x + i, y + j, z + k);
+                        world.setBlockToAir(pos.add(i, j, k));
                     }
                     else if (block.getMaterial().isSolid())
                     {
@@ -209,9 +210,9 @@ public final class Schematic
                     {
                         delayedBlocks.add(new ChunkCoordinates(i, j, k));
                     }
-                    if (schematicWorld.getTileEntity(x, y, z) != null)
+                    if (schematicWorld.getTileEntity(pos) != null)
                     {
-                        world.setTileEntity(x + i, y + j, z + k, schematicWorld.getTileEntity(x, y, z));
+                        world.setTileEntity(pos.add(i, j, k), schematicWorld.getTileEntity(pos));
                     }
                 }
             }

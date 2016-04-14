@@ -4,11 +4,10 @@ import com.minecolonies.util.Log;
 import com.schematica.Settings;
 import com.schematica.config.Config;
 import com.schematica.world.SchematicWorld;
-import cpw.mods.fml.relauncher.ReflectionHelper;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -17,8 +16,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -243,37 +246,39 @@ public class RendererSchematicChunk {
 						wx = (int) this.settings.offset.x + x;
 						wy = (int) this.settings.offset.y + y;
 						wz = (int) this.settings.offset.z + z;
-
-						mcBlock = mcWorld.getBlock(wx, wy, wz);
+						
+						BlockPos pos = new BlockPos(x, y, z);
+						BlockPos wPos = new BlockPos(wx, wy, wz);
+						mcBlock = mcWorld.getBlockState(wPos).getBlock();
 
 						sides = 0;
 						if (block != null) {
-							if (block.shouldSideBeRendered(this.schematic, x, y - 1, z, 0)) {
+							if (block.shouldSideBeRendered(this.schematic, pos.down(), EnumFacing.DOWN)) {
 								sides |= RenderHelper.QUAD_DOWN;
 							}
 
-							if (block.shouldSideBeRendered(this.schematic, x, y + 1, z, 1)) {
+							if (block.shouldSideBeRendered(this.schematic, pos.up(), EnumFacing.UP)) {
 								sides |= RenderHelper.QUAD_UP;
 							}
 
-							if (block.shouldSideBeRendered(this.schematic, x, y, z - 1, 2)) {
+							if (block.shouldSideBeRendered(this.schematic, pos.north(), EnumFacing.NORTH)) {
 								sides |= RenderHelper.QUAD_NORTH;
 							}
 
-							if (block.shouldSideBeRendered(this.schematic, x, y, z + 1, 3)) {
+							if (block.shouldSideBeRendered(this.schematic, pos.south(), EnumFacing.SOUTH)) {
 								sides |= RenderHelper.QUAD_SOUTH;
 							}
 
-							if (block.shouldSideBeRendered(this.schematic, x - 1, y, z, 4)) {
+							if (block.shouldSideBeRendered(this.schematic, pos.west(), EnumFacing.WEST)) {
 								sides |= RenderHelper.QUAD_WEST;
 							}
 
-							if (block.shouldSideBeRendered(this.schematic, x + 1, y, z, 5)) {
+							if (block.shouldSideBeRendered(this.schematic, pos.east(), EnumFacing.EAST)) {
 								sides |= RenderHelper.QUAD_EAST;
 							}
 						}
 
-						boolean isAirBlock = mcWorld.isAirBlock(wx, wy, wz);
+						boolean isAirBlock = mcWorld.isAirBlock(wPos);
 
 						if (!isAirBlock) {
 							if (Config.highlight && renderPass == 2) {
@@ -295,7 +300,7 @@ public class RendererSchematicChunk {
 									if (Config.drawLines) {
 										RenderHelper.drawCuboidOutline(zero, size, sides, 1.0f, 0.0f, 0.0f, 0.25f);
 									}
-								} else if (this.schematic.getBlockMetadata(x, y, z) != mcWorld.getBlockMetadata(wx, wy, wz)) {
+								} else if (this.schematic.getBlockState(pos) != mcWorld.getBlockState(wPos)) {
 									zero.set(x, y, z);
 									size.set(x + 1, y + 1, z + 1);
 									if (Config.drawQuads) {
@@ -329,7 +334,7 @@ public class RendererSchematicChunk {
 			}
 		}
 
-		Tessellator.instance.draw();
+		Tessellator.getInstance().draw();
 
 		this.minecraft.gameSettings.ambientOcclusion = ambientOcclusion;
 	}
@@ -359,7 +364,7 @@ public class RendererSchematicChunk {
 					}
 				}
 
-				mcBlock = mcWorld.getBlock(x + (int) this.settings.offset.x, y + (int) this.settings.offset.y, z + (int) this.settings.offset.z);
+				mcBlock = mcWorld.getBlockState(new BlockPos(x + (int) this.settings.offset.x, y + (int) this.settings.offset.y, z + (int) this.settings.offset.z)).getBlock();
 
 				if (mcBlock == Blocks.air) {
 					TileEntitySpecialRenderer tileEntitySpecialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);

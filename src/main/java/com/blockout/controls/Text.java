@@ -60,7 +60,7 @@ public class Text extends Pane
         formattedText = null;
     }
 
-    public int getLineHeight() { return (int)(mc.fontRenderer.FONT_HEIGHT * scale); }
+    public int getLineHeight() { return (int)(mc.fontRendererObj.FONT_HEIGHT * scale); }
 
     public int getTextHeight()
     {
@@ -68,7 +68,7 @@ public class Text extends Pane
         return textHeight;
     }
 
-    public int getStringWidth(String s) { return (int)(mc.fontRenderer.getStringWidth(s) * scale); }
+    public int getStringWidth(String s) { return (int)(mc.fontRendererObj.getStringWidth(s) * scale); }
 
     @SuppressWarnings("unchecked")
     public List<String> getFormattedText()
@@ -81,7 +81,7 @@ public class Text extends Pane
             }
             else
             {
-                formattedText = Collections.unmodifiableList(mc.fontRenderer.listFormattedStringToWidth(text, (int)(getWidth() / scale)));
+                formattedText = Collections.unmodifiableList(mc.fontRendererObj.listFormattedStringToWidth(text, (int)(getWidth() / scale)));
             }
 
             int numLines = getFormattedText().size();
@@ -141,7 +141,7 @@ public class Text extends Pane
             GL11.glPushMatrix();
             GL11.glTranslatef(getX() + offsetX, getY() + offsetY, 0);
             GL11.glScalef(scale, scale, scale);
-            mc.fontRenderer.drawString(s, 0, 0, textColor, shadow);
+            mc.fontRendererObj.drawString(s, 0, 0, textColor, shadow);
             GL11.glPopMatrix();
 
             offsetY += getLineHeight() + scaledLinespace;

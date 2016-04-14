@@ -1,11 +1,11 @@
 package com.schematica.config;
 
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.registry.GameData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
