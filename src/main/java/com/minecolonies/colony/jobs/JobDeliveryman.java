@@ -8,7 +8,6 @@ import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChunkCoordinates;
 
 public class JobDeliveryman extends Job
 {

@@ -5,7 +5,6 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,7 +12,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
-import net.minecraft.world.ChunkCoordIntPair;
 
 public class TileEntityColonyBuilding extends TileEntityChest
 {
@@ -123,7 +121,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
     {
-        NBTTagCompound compound = packet.func_148857_g();
+        NBTTagCompound compound = packet.getNbtCompound();
         colonyId = compound.getInteger(TAG_COLONY);
     }
 

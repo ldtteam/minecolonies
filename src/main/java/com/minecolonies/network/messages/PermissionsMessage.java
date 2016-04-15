@@ -6,7 +6,6 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.network.PacketUtils;
 import com.minecolonies.util.Log;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.common.network.ByteBufUtils;

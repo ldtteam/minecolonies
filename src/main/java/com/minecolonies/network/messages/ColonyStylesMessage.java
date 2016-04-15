@@ -1,7 +1,6 @@
 package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Schematics;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

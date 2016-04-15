@@ -186,7 +186,7 @@ public class BlockPosUtil
      */
     public static int getBlockMetadata(World world, BlockPos coords)
     {
-        return null //todo i have no clue
+        return null; //todo i have no clue
     }
 
     /**

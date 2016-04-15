@@ -6,16 +6,13 @@ import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Utils;
-
+import io.netty.buffer.ByteBuf;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.world.World;
 
 /**
  * Recalls the citizen to the hut

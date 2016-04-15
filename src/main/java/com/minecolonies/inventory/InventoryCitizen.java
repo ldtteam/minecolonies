@@ -34,7 +34,7 @@ public class InventoryCitizen extends InventoryBasic
      */
     public void addIInvBasic(IInvBasic inventory)
     {
-        func_110134_a(inventory);
+        addInventoryChangeListener(inventory);
     }
 
     /**
@@ -44,7 +44,7 @@ public class InventoryCitizen extends InventoryBasic
      */
     public void removeIInvBasic(IInvBasic inventory)
     {
-        func_110132_b(inventory);
+        removeInventoryChangeListener(inventory);
     }
 
     /**
@@ -54,7 +54,7 @@ public class InventoryCitizen extends InventoryBasic
      */
     public void setInventoryName(String name)
     {
-        func_110133_a(name);
+        setCustomName(name);
     }
 
     /**
@@ -121,16 +121,6 @@ public class InventoryCitizen extends InventoryBasic
     public ItemStack decrStackSize(int index, int quantity)
     {
         ItemStack removed = super.decrStackSize(index, quantity);
-
-        removeStackFromMaterialStore(removed);
-
-        return removed;
-    }
-
-    @Override
-    public ItemStack getStackInSlotOnClosing(int index)
-    {
-        ItemStack removed = super.getStackInSlotOnClosing(index);
 
         removeStackFromMaterialStore(removed);
 

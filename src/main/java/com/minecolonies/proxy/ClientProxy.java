@@ -15,7 +15,6 @@ import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.schematica.client.events.TickHandler;
 import com.schematica.client.renderer.RendererSchematicGlobal;
 import com.schematica.world.SchematicWorld;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;

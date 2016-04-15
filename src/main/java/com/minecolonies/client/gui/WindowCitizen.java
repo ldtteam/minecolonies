@@ -2,7 +2,9 @@ package com.minecolonies.client.gui;
 
 import com.blockout.Alignment;
 import com.blockout.View;
-import com.blockout.controls.*;
+import com.blockout.controls.Button;
+import com.blockout.controls.Image;
+import com.blockout.controls.Label;
 import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
