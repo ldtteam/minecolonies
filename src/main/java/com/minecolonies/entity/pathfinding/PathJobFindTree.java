@@ -2,7 +2,7 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.entity.ai.Tree;
 import net.minecraft.block.Block;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 /**
@@ -15,10 +15,10 @@ public class PathJobFindTree extends PathJob
 {
     public static class TreePathResult extends PathResult
     {
-        public ChunkCoordinates    treeLocation;
+        public BlockPos treeLocation;
     }
 
-    ChunkCoordinates hutLocation;
+    BlockPos hutLocation;
 
     /**
      * PathJob constructor
@@ -28,7 +28,7 @@ public class PathJobFindTree extends PathJob
      * @param home   the position of the workers hut
      * @param range maximum path range
      */
-    public PathJobFindTree(World world, ChunkCoordinates start, ChunkCoordinates home, int range)
+    public PathJobFindTree(World world, BlockPos start, BlockPos home, int range)
     {
         super(world, start, start, range, new TreePathResult());
 
@@ -41,9 +41,9 @@ public class PathJobFindTree extends PathJob
     @Override
     protected double computeHeuristic(int x, int y, int z)
     {
-        int dx = x - hutLocation.posX;
-        int dy = y - hutLocation.posY;
-        int dz = z - hutLocation.posZ;
+        int dx = x - hutLocation.getX();
+        int dy = y - hutLocation.getY();
+        int dz = z - hutLocation.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker - halved
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.501D ;
@@ -73,7 +73,7 @@ public class PathJobFindTree extends PathJob
     {
         if(Tree.checkTree(world, x, y, z))
         {
-            getResult().treeLocation = new ChunkCoordinates(x, y, z);
+            getResult().treeLocation = new BlockPos(x, y, z);
             return true;
         }
 
@@ -89,6 +89,6 @@ public class PathJobFindTree extends PathJob
     @Override
     protected boolean isPassable(Block block, int x, int y, int z)
     {
-        return super.isPassable(block, x, y, z) || block.isLeaves(world, x, y, z);
+        return super.isPassable(block, x, y, z) || block.isLeaves(world,new BlockPos(x, y, z));
     }
 }

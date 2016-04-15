@@ -3,7 +3,7 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -45,16 +45,16 @@ public class Level
         //TODO: Store in HashMap for faster access
         nodes = new ArrayList<>();
 
-        int cobbleX = buildingMiner.cobbleLocation.posX;
-        int cobbleZ = buildingMiner.cobbleLocation.posZ;
+        int cobbleX = buildingMiner.cobbleLocation.getX();
+        int cobbleZ = buildingMiner.cobbleLocation.getZ();
 
         //check for orientation
-        ChunkCoordinates cobbleCenter = new ChunkCoordinates(cobbleX - (buildingMiner.vectorX * 3), depth, cobbleZ - (buildingMiner.vectorZ * 3));
-        ChunkCoordinates ladderCenter = new ChunkCoordinates(cobbleX + (buildingMiner.vectorX * 4), depth, cobbleZ + (buildingMiner.vectorZ * 4));
+        BlockPos         cobbleCenter = new BlockPos(cobbleX - (buildingMiner.vectorX * 3), depth, cobbleZ - (buildingMiner.vectorZ * 3));
+        BlockPos ladderCenter = new BlockPos(cobbleX + (buildingMiner.vectorX * 4), depth, cobbleZ + (buildingMiner.vectorZ * 4));
         //TODO: let them know they are ladder and cobble (they are handled different)
-        Node cobbleNode = new Node(cobbleCenter.posX, cobbleCenter.posZ);
+        Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getZ());
         cobbleNode.setStyle(Node.NodeType.LADDER_BACK);
-        ladderNode = new Node(ladderCenter.posX, ladderCenter.posZ);
+        ladderNode = new Node(ladderCenter.getX(), ladderCenter.getZ());
         ladderNode.setStyle(Node.NodeType.SHAFT);
         ladderNode.setStatus(Node.NodeStatus.COMPLETED);
         ladderNode.setDirectionNegX(Node.NodeStatus.COMPLETED);

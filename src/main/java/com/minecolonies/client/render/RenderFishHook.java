@@ -69,15 +69,6 @@ public class RenderFishHook extends Render<EntityFishHook>
         this.bindEntityTexture(entity);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        boolean i = true;
-        boolean j = true;
-        float f = 0.0625F;
-        float f1 = 0.125F;
-        float f2 = 0.125F;
-        float f3 = 0.1875F;
-        float f4 = 1.0F;
-        float f5 = 0.5F;
-        float f6 = 0.5F;
         GlStateManager.rotate(180.0F - this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
@@ -146,7 +137,6 @@ public class RenderFishHook extends Render<EntityFishHook>
             double correctionZ = correctedPosZ - distZ;
 
             worldrenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
-            boolean k = true;
 
             for(int l = 0; l <= 16; ++l) {
                 float f10 = (float)l / 16.0F;

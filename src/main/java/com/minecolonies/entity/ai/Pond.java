@@ -3,16 +3,16 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 public class Pond
 {
     private static final String TAG_LOCATION = "Location";
 
-    private ChunkCoordinates location;
+    private BlockPos location;
 
-    private Pond(ChunkCoordinates water)
+    private Pond(BlockPos water)
     {
         this.location = water;
     }
@@ -23,7 +23,7 @@ public class Pond
      * @param water the coordinates to check
      * @return a Pond object if the pond is valid, else null
      */
-    public static Pond createWater(IBlockAccess world, ChunkCoordinates water)
+    public static Pond createWater(IBlockAccess world, BlockPos water)
     {
         if(checkWater(world,water))
         {
@@ -37,13 +37,13 @@ public class Pond
      * @param world The world the player is in
      * @param water The coordinate to check
      */
-    private static boolean checkWater(IBlockAccess world, ChunkCoordinates water)
+    private static boolean checkWater(IBlockAccess world, BlockPos water)
     {
-        int x = water.posX;
-        int y = water.posY;
-        int z = water.posZ;
+        int x = water.getX();
+        int y = water.getY();
+        int z = water.getZ();
 
-        if(!world.getBlock(x, y, z).equals(Blocks.water) || !world.isAirBlock(x, y + 1, z))
+        if(!(world.getBlockState(water).getBlock() == Blocks.water) || !world.isAirBlock(water.up()))
         {
             return false;
         }
@@ -67,7 +67,7 @@ public class Pond
         //Check 3 blocks in direction +/- x
         for (int dx = x + 3 * vector; dx <= x + 3 * vector; dx++)
         {
-            if (!world.getBlock(dx, y, z).equals(Blocks.water))
+            if (!(world.getBlockState(new BlockPos(dx, y, z)).getBlock() == Blocks.water))
             {
                 return false;
             }
@@ -89,7 +89,7 @@ public class Pond
         //Check 3 blocks in direction +/- z
         for (int dz = z + 3 * vector; dz <= z + 3 * vector; dz++)
         {
-            if (!world.getBlock(x, y, dz).equals(Blocks.water))
+            if (!(world.getBlockState(new BlockPos(x, y, dz)).getBlock() == Blocks.water))
             {
                 return false;
             }
@@ -112,7 +112,7 @@ public class Pond
         //Check 6 blocks in direction +/- x
         for (int dx = x + 6 * vector; dx <= x + 6 * vector; dx++)
         {
-            if (!world.getBlock(dx, y, z).equals(Blocks.water))
+            if (!(world.getBlockState(new BlockPos(dx, y, z)).getBlock() == Blocks.water))
             {
                 return false;
             }
@@ -136,7 +136,7 @@ public class Pond
         //Check 6 blocks in direction +/- z
         for (int dz = z + 6 * vector; dz <= z + 6 * vector; dz++)
         {
-            if (!world.getBlock(x, y, dz).equals(Blocks.water))
+            if (!(world.getBlockState(new BlockPos(x, y, dz)).getBlock() == Blocks.water))
             {
                 return false;
             }
@@ -145,7 +145,7 @@ public class Pond
         return checkWaterPoolInDirectionX(world,x, y, z + 3 * vector, 1) && checkWaterPoolInDirectionX(world,x, y, z + 3 * vector, -1);
     }
 
-    public ChunkCoordinates getLocation()
+    public BlockPos getLocation()
     {
         return location;
     }
