@@ -5,9 +5,10 @@ import com.minecolonies.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
@@ -18,8 +19,8 @@ import java.util.concurrent.Callable;
 
 public abstract class PathJob implements Callable<PathEntity>
 {
-    protected final ChunkCoordinates start;
-    protected final int maxRange;
+    protected final BlockPos start;
+    protected final int      maxRange;
 
     protected final IBlockAccess world;
 
@@ -59,21 +60,21 @@ public abstract class PathJob implements Callable<PathEntity>
      * @param end the end position to path to
      * @param range maximum path range
      */
-    public PathJob(World world, ChunkCoordinates start, ChunkCoordinates end, int range)
+    public PathJob(World world, BlockPos start, BlockPos end, int range)
     {
         this(world, start, end, range, new PathResult());
     }
 
-    public PathJob(World world, ChunkCoordinates start, ChunkCoordinates end, int range, PathResult result)
+    public PathJob(World world, BlockPos start, BlockPos end, int range, PathResult result)
     {
-        int minX = Math.min(start.posX, end.posX);
-        int minZ = Math.min(start.posZ, end.posZ);
-        int maxX = Math.max(start.posX, end.posX);
-        int maxZ = Math.max(start.posZ, end.posZ);
+        int minX = Math.min(start.getX(), end.getX());
+        int minZ = Math.min(start.getZ(), end.getZ());
+        int maxX = Math.max(start.getX(), end.getX());
+        int maxZ = Math.max(start.getZ(), end.getZ());
 
-        this.world = new ChunkCache(world, minX, 0, minZ, maxX, 256, maxZ, range);
+        this.world = new ChunkCache(world, new BlockPos(minX, 0, minZ),new BlockPos(maxX, 256, maxZ), range);
 
-        this.start = new ChunkCoordinates(start);
+        this.start = new BlockPos(start);
         this.maxRange = range;
 
         this.result = result;
@@ -118,20 +119,20 @@ public abstract class PathJob implements Callable<PathEntity>
      */
     protected PathEntity search()
     {
-        Node startNode = new Node(start.posX, start.posY, start.posZ,
-                computeHeuristic(start.posX, start.posY, start.posZ));
+        Node startNode = new Node(start.getX(), start.getY(), start.getZ(),
+                computeHeuristic(start.getX(), start.getY(), start.getZ()));
 
-        if (isLadder(start.posX, start.posY, start.posZ))
+        if (isLadder(start.getX(), start.getY(), start.getZ()))
         {
             startNode.isLadder = true;
         }
-        else if (world.getBlock(start.posX, start.posY - 1, start.posZ).getMaterial().isLiquid())
+        else if (world.getBlockState(start).getBlock().getMaterial().isLiquid())
         {
             startNode.isSwimming = true;
         }
 
         nodesOpen.offer(startNode);
-        nodesVisited.put(computeNodeKey(start.posX, start.posY, start.posZ), startNode);
+        nodesVisited.put(computeNodeKey(start.getX(), start.getY(), start.getZ()), startNode);
 
         ++totalNodesAdded;
 
@@ -250,20 +251,19 @@ public abstract class PathJob implements Callable<PathEntity>
      * @param entity Entity for the pathfinding operation
      * @return ChunkCoordinates for starting location
      */
-    public static ChunkCoordinates prepareStart(EntityLiving entity)
+    public static BlockPos prepareStart(EntityLiving entity)
     {
         int x = MathHelper.floor_double(entity.posX);
         int y = (int)entity.posY;
         int z = MathHelper.floor_double(entity.posZ);
-
-        Block b = entity.worldObj.getBlock(x, y, z);
+        Block b = entity.worldObj.getBlockState(new BlockPos(x,y,z)).getBlock();
 
         if (entity.isInWater())
         {
             while (b.getMaterial().isLiquid())
             {
                 ++y;
-                b = entity.worldObj.getBlock(x,y, z);
+                b = entity.worldObj.getBlockState(new BlockPos(x,y,z)).getBlock();
             }
         }
 //        else if (y > 0 && world.getBlock(x, y - 1, z).getMaterial() == Material.air)
@@ -286,7 +286,7 @@ public abstract class PathJob implements Callable<PathEntity>
             else if (dZ > 0.9)  z += 1;
         }
 
-        return new ChunkCoordinates(x, y, z);
+        return new BlockPos(x, y, z);
     }
 
     /**
@@ -342,7 +342,7 @@ public abstract class PathJob implements Callable<PathEntity>
                 if (nextInPath.y > y)
                 {
                     //  We only care about facing if going up
-                    p.ladderFacing = world.getBlockMetadata(x, y, z);
+                    p.ladderFacing = world.getBlockState(new BlockPos(x,y,z)).getValue(BlockLadder.FACING);
                 }
             }
             else if (node.parent != null && node.parent.isLadder &&
@@ -498,7 +498,7 @@ public abstract class PathJob implements Callable<PathEntity>
         }
 
 
-        boolean isSwimming = (node != null) ? node.isSwimming : world.getBlock(x, y - 1, z).getMaterial().isLiquid();
+        boolean isSwimming = (node != null) ? node.isSwimming : world.getBlockState(new BlockPos(x, y - 1, z)).getBlock().getMaterial().isLiquid();
 
         //  Cost may have changed due to a jump up or drop
         double stepCost = computeCost(parent, dx, dy, dz, isSwimming);
@@ -580,7 +580,7 @@ public abstract class PathJob implements Callable<PathEntity>
         }
 
         //  Now check the block we want to move to
-        Block target = world.getBlock(x, y, z);
+        Block target = world.getBlockState(new BlockPos(x, y, z)).getBlock();
         if (!isPassable(target, x, y, z))
         {
             //  Need to try jumping up one, if we can
@@ -606,7 +606,7 @@ public abstract class PathJob implements Callable<PathEntity>
         }
 
         //  Do we have something to stand on in the target space?
-        Block below = world.getBlock(x, y - 1, z);
+        Block below = world.getBlockState(new BlockPos(x, y - 1, z)).getBlock();
         if (isWalkableSurface(below, x, y - 1, z))
         {
             //  Level path
@@ -649,7 +649,7 @@ public abstract class PathJob implements Callable<PathEntity>
         }
 
         //  How far of a drop?
-        below = world.getBlock(x, y - 2, z);
+        below = world.getBlockState(new BlockPos(x, y - 2, z)).getBlock();
         if (isWalkableSurface(below, x, y - 2, z))
         {
             return y - 1;
@@ -687,7 +687,7 @@ public abstract class PathJob implements Callable<PathEntity>
 
     protected boolean isPassable(int x, int y, int z)
     {
-        return isPassable(world.getBlock(x, y, z), x, y, z);
+        return isPassable(world.getBlockState(new BlockPos(x, y, z)).getBlock(), x, y, z);
     }
 
     /**
@@ -714,11 +714,11 @@ public abstract class PathJob implements Callable<PathEntity>
      */
     protected boolean isLadder(Block block, int x, int y, int z)
     {
-        return block.isLadder(world, x, y, z, null);
+        return block.isLadder(world,new BlockPos(x, y, z), null);
     }
 
     protected boolean isLadder(int x, int y, int z)
     {
-        return isLadder(world.getBlock(x, y, z), x, y, z);
+        return isLadder(world.getBlockState(new BlockPos(x, y, z)).getBlock(), x, y, z);
     }
 }

@@ -1,7 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.entity.ai.Pond;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -22,11 +22,11 @@ public class PathJobFindWater extends PathJob
 
     public static class WaterPathResult extends PathResult
     {
-        public ChunkCoordinates pond;
+        public BlockPos pond;
     }
 
-    private ChunkCoordinates hutLocation;
-    private ArrayList<ChunkCoordinates> ponds = new ArrayList<>();
+    private BlockPos hutLocation;
+    private ArrayList<BlockPos> ponds = new ArrayList<>();
 
     /**
      * PathJob constructor
@@ -37,7 +37,7 @@ public class PathJobFindWater extends PathJob
      * @param range maximum path range
      * @param ponds already visited fishing places
      */
-    PathJobFindWater(World world, ChunkCoordinates start, ChunkCoordinates home, int range, List<ChunkCoordinates> ponds)
+    PathJobFindWater(World world, BlockPos start, BlockPos home, int range, List<BlockPos> ponds)
     {
         super(world, start, start, range, new WaterPathResult());
         this.ponds = new ArrayList<>(ponds);
@@ -50,9 +50,9 @@ public class PathJobFindWater extends PathJob
     @Override
     protected double computeHeuristic(int x, int y, int z)
     {
-        int dx = x - hutLocation.posX;
-        int dy = y - hutLocation.posY;
-        int dz = z - hutLocation.posZ;
+        int dx = x - hutLocation.getX();
+        int dy = y - hutLocation.getY();
+        int dz = z - hutLocation.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker - halved
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.501D ;
@@ -67,7 +67,7 @@ public class PathJobFindWater extends PathJob
             return false;
         }
 
-        if(squareDistance(hutLocation,new ChunkCoordinates(n.x,n.y,n.z))>MAX_RANGE)
+        if(squareDistance(hutLocation,new BlockPos(n.x,n.y,n.z))>MAX_RANGE)
         {
             return false;
         }
@@ -86,7 +86,7 @@ public class PathJobFindWater extends PathJob
 
     private boolean isWater(int x, int y, int z)
     {
-        ChunkCoordinates newPond = new ChunkCoordinates(x,y,z);
+        BlockPos newPond = new BlockPos(x,y,z);
 
         if(ponds.contains(newPond) || pondsAreNear(ponds,newPond))
         {
@@ -97,30 +97,30 @@ public class PathJobFindWater extends PathJob
 
         if(pond != null)
         {
-            getResult().pond = new ChunkCoordinates(x, y, z);
+            getResult().pond = new BlockPos(x, y, z);
             return true;
         }
 
         return false;
     }
 
-    private static float squareDistance(ChunkCoordinates currentPond, ChunkCoordinates nextPond)
+    private static double squareDistance(BlockPos currentPond, BlockPos nextPond)
     {
-        return currentPond.getDistanceSquaredToChunkCoordinates(nextPond);
+        return currentPond.distanceSq(nextPond.getX(),nextPond.getY(),nextPond.getZ());
     }
 
-    private Predicate<ChunkCoordinates> generateDistanceFrom(int range, ChunkCoordinates newpond)
+    private Predicate<BlockPos> generateDistanceFrom(int range, BlockPos newpond)
     {
         return pond -> squareDistance(pond, newpond) < range;
     }
 
-    private boolean pondsAreNear(ArrayList<ChunkCoordinates> ponds, ChunkCoordinates newPond)
+    private boolean pondsAreNear(ArrayList<BlockPos> ponds, BlockPos newPond)
     {
         if(ponds.isEmpty())
         {
             return false;
         }
-        Predicate<ChunkCoordinates> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
+        Predicate<BlockPos> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
         return ponds.stream().anyMatch(compare);
     }
 

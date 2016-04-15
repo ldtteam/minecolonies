@@ -3,30 +3,30 @@ package com.minecolonies.entity.pathfinding;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.Log;
 import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class PathJobMoveAwayFromLocation extends PathJob
 {
-    protected final ChunkCoordinates avoid;
-    protected final ChunkCoordinates heuristicPoint;
-    protected final int avoidDistance;
+    protected final BlockPos         avoid;
+    protected final BlockPos heuristicPoint;
+    protected final int              avoidDistance;
 
-    public PathJobMoveAwayFromLocation(World world, ChunkCoordinates start, ChunkCoordinates avoid, int avoidDistance, int range)
+    public PathJobMoveAwayFromLocation(World world, BlockPos start, BlockPos avoid, int avoidDistance, int range)
     {
         super(world, start, avoid, range);
 
-        this.avoid = new ChunkCoordinates(avoid);
+        this.avoid = new BlockPos(avoid);
         this.avoidDistance = avoidDistance;
 
-        double dx = start.posX - avoid.posX;
-        double dz = start.posZ - avoid.posZ;
+        double dx = start.getX() - avoid.getX();
+        double dz = start.getZ() - avoid.getZ();
 
         double scalar = avoidDistance / Math.sqrt(dx * dx + dz * dz);
         dx *= scalar;
         dz *= scalar;
 
-        heuristicPoint = new ChunkCoordinates(start.posX + (int)dx, start.posY, start.posZ + (int)dz);
+        heuristicPoint = new BlockPos(start.getX() + (int)dx, start.getY(), start.getZ() + (int)dz);
     }
 
     /**
@@ -39,7 +39,7 @@ public class PathJobMoveAwayFromLocation extends PathJob
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
-            Log.logger.info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]", start.posX, start.posY, start.posZ, avoid.posX, avoid.posY, avoid.posZ));
+            Log.logger.info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]", start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
         }
 
         return super.search();
@@ -53,9 +53,9 @@ public class PathJobMoveAwayFromLocation extends PathJob
     @Override
     protected double computeHeuristic(int x, int y, int z)
     {
-        int dx = x - heuristicPoint.posX;
-        int dy = y - heuristicPoint.posY;
-        int dz = z - heuristicPoint.posZ;
+        int dx = x - heuristicPoint.getX();
+        int dy = y - heuristicPoint.getY();
+        int dz = z - heuristicPoint.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 1.001D;
@@ -71,6 +71,6 @@ public class PathJobMoveAwayFromLocation extends PathJob
     @Override
     protected double getNodeResultScore(Node n)
     {
-        return avoid.getDistanceSquared(n.x, n.y, n.z);
+        return avoid.distanceSq(n.x, n.y, n.z);
     }
 }
