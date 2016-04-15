@@ -1,6 +1,8 @@
 package com.minecolonies.items;
 
 import com.minecolonies.util.LanguageHandler;
+
+import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,7 +13,7 @@ import net.minecraft.world.World;
 
 public class ItemCaliper extends ItemMinecolonies
 {
-    private static final RangedAttribute ATTRIBUTE_CALIPER_USE = new RangedAttribute("player.caliperUse", 0.0, 0.0, 1.0);
+    private static final RangedAttribute ATTRIBUTE_CALIPER_USE = new RangedAttribute((IAttribute) null,"player.caliperUse", 0.0, 0.0, 1.0);
     private              BlockPos             startPosition;
 
     public ItemCaliper()
@@ -47,7 +49,7 @@ public class ItemCaliper extends ItemMinecolonies
         }
         attribute.setBaseValue(0.0);
         //Start == end, same location
-        if(startPosition == pos)
+        if(startPosition.getX() == pos.getX() && startPosition.getY() == pos.getY() && startPosition.getZ() == pos.getZ())
         {
             LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.caliper.message.same");
             return true;
@@ -97,9 +99,9 @@ public class ItemCaliper extends ItemMinecolonies
             return true;
         }
 
-        int distance1 = java.lang.Math.abs(x - startPositionX) + 1;
-        int distance2 = java.lang.Math.abs(y - startPositionY) + 1;
-        int distance3 = java.lang.Math.abs(z - startPositionZ) + 1;
+        int distance1 = java.lang.Math.abs(pos.getX() - startPosition.getX()) + 1;
+        int distance2 = java.lang.Math.abs(pos.getY() - startPosition.getY()) + 1;
+        int distance3 = java.lang.Math.abs(pos.getZ() - startPosition.getZ()) + 1;
 
         LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.caliper.message.cube", distance1, distance2, distance3);
         return true;
