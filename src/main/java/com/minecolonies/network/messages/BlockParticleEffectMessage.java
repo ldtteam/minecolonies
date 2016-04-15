@@ -1,5 +1,6 @@
 package com.minecolonies.network.messages;
 
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -76,11 +77,11 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
     {
         if(message.side == BREAK_BLOCK)
         {
-            Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(message.x, message.y, message.z, message.block, message.metadata);
+            Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(new BlockPos(message.x, message.y, message.z), message.block.getDefaultState()); //todo check default state, mw, trans 1.7
         }
         else
         {
-            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, message.side);
+            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(new BlockPos(x, y, z), side); //todo change side to face
         }
         return null;
     }

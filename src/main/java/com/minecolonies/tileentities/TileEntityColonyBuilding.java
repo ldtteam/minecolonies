@@ -132,7 +132,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger(TAG_COLONY, colonyId);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, compound);
+        return new S35PacketUpdateTileEntity(this.getPosition(), 0, compound);
     }
 
     /**

@@ -7,6 +7,7 @@ import com.minecolonies.util.BlockPosUtil;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -19,7 +20,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
 {
-    private             ChunkCoordinates buildingId;
+    private             BlockPos        buildingId;
     private             int              colonyId;
     private             int              mode;
 
