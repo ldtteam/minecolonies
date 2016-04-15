@@ -187,34 +187,34 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
     }
 
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
+    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
     {
-        setRotationAngles(f, f1, f2, f3, f4, f5, entity);
-        bipedHead.render(f5);
-        bipedBody.render(f5);
-        bipedRightArm.render(f5);
-        leftArm2.render(f5);
-        leftArm1.render(f5);
-        bipedRightLeg.render(f5);
-        bipedLeftLeg.render(f5);
-        breast.render(f5);
-        hair1.render(f5);
-        hair2.render(f5);
-        hair3.render(f5);
-        umbrellaHand.render(f5);
-        umbrella.render(f5);
-        dressPart1.render(f5);
-        dressPart2.render(f5);
-        dressPart3.render(f5);
-        dressPart5.render(f5);
-        dressPart6.render(f5);
-        dressPart7.render(f5);
-        dressPart8.render(f5);
-        dressPart9.render(f5);
-        dressPart10.render(f5);
-        dressPart11.render(f5);
-        dressPart12.render(f5);
-        dressPart13.render(f5);
+        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
+        bipedHead.render(scaleFactor);
+        bipedBody.render(scaleFactor);
+        bipedRightArm.render(scaleFactor);
+        leftArm2.render(scaleFactor);
+        leftArm1.render(scaleFactor);
+        bipedRightLeg.render(scaleFactor);
+        bipedLeftLeg.render(scaleFactor);
+        breast.render(scaleFactor);
+        hair1.render(scaleFactor);
+        hair2.render(scaleFactor);
+        hair3.render(scaleFactor);
+        umbrellaHand.render(scaleFactor);
+        umbrella.render(scaleFactor);
+        dressPart1.render(scaleFactor);
+        dressPart2.render(scaleFactor);
+        dressPart3.render(scaleFactor);
+        dressPart5.render(scaleFactor);
+        dressPart6.render(scaleFactor);
+        dressPart7.render(scaleFactor);
+        dressPart8.render(scaleFactor);
+        dressPart9.render(scaleFactor);
+        dressPart10.render(scaleFactor);
+        dressPart11.render(scaleFactor);
+        dressPart12.render(scaleFactor);
+        dressPart13.render(scaleFactor);
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z)
@@ -225,10 +225,10 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
     }
 
     @Override
-    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity)
+    public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn)
     {
-        bipedHead.rotateAngleY = f3 / 57.29578F;
-        bipedHead.rotateAngleX = f4 / 57.29578F;
+        bipedHead.rotateAngleY = netHeadYaw / 57.29578F;
+        bipedHead.rotateAngleX = headPitch / 57.29578F;
         hair1.rotateAngleY = bipedHead.rotateAngleY;
         hair1.rotateAngleX = bipedHead.rotateAngleX;
         hair2.rotateAngleY = bipedHead.rotateAngleY;
@@ -236,15 +236,15 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         hair3.rotateAngleY = bipedHead.rotateAngleY;
         hair3.rotateAngleX = bipedHead.rotateAngleX;
 
-        bipedRightArm.rotateAngleX = MathHelper.cos((float) (f * 0.6662F + Math.PI)) * 2.0F * f1 * 0.5F;
+        bipedRightArm.rotateAngleX = MathHelper.cos((float) (limbSwing * 0.6662F + Math.PI)) * 2.0F * limbSwingAmount * 0.5F;
 
-        bipedRightLeg.rotateAngleX = MathHelper.cos(f * 0.6662F) * 1.1F * f1;
-        bipedLeftLeg.rotateAngleX = MathHelper.cos((float) (f * 0.6662F + Math.PI)) * 1.1F * f1;
+        bipedRightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.1F * limbSwingAmount;
+        bipedLeftLeg.rotateAngleX = MathHelper.cos((float) (limbSwing * 0.6662F + Math.PI)) * 1.1F * limbSwingAmount;
         bipedRightLeg.rotateAngleY = 0.0F;
         bipedLeftLeg.rotateAngleY = 0.0F;
 
-        bipedRightArm.rotateAngleZ += MathHelper.cos(f2 * 0.09F) * 0.05F + 0.05F;
-        bipedRightArm.rotateAngleX += MathHelper.sin(f2 * 0.067F) * 0.05F;
+        bipedRightArm.rotateAngleZ += MathHelper.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
+        bipedRightArm.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
 
         if(onGround > -9990F)
         {

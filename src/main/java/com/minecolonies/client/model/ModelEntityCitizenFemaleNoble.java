@@ -143,28 +143,28 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
     }
 
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
+    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
     {
-        setRotationAngles(f, f1, f2, f3, f4, f5, entity);
-        bipedHead.render(f5);
-        bipedHeadwear.render(f5);
-        bipedBody.render(f5);
-        bipedLeftArm.render(f5);
-        bipedRightArm.render(f5);
-        bipedRightLeg.render(f5);
-        bipedLeftLeg.render(f5);
-        breast.render(f5);
-        hair.render(f5);
-        dressPart1.render(f5);
-        dressPart2.render(f5);
-        dressPart3.render(f5);
-        dressPart4.render(f5);
-        dressPart5.render(f5);
-        hat1.render(f5);
-        hat2.render(f5);
-        bag.render(f5);
-        bagHand1.render(f5);
-        bagHand2.render(f5);
+        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
+        bipedHead.render(scaleFactor);
+        bipedHeadwear.render(scaleFactor);
+        bipedBody.render(scaleFactor);
+        bipedLeftArm.render(scaleFactor);
+        bipedRightArm.render(scaleFactor);
+        bipedRightLeg.render(scaleFactor);
+        bipedLeftLeg.render(scaleFactor);
+        breast.render(scaleFactor);
+        hair.render(scaleFactor);
+        dressPart1.render(scaleFactor);
+        dressPart2.render(scaleFactor);
+        dressPart3.render(scaleFactor);
+        dressPart4.render(scaleFactor);
+        dressPart5.render(scaleFactor);
+        hat1.render(scaleFactor);
+        hat2.render(scaleFactor);
+        bag.render(scaleFactor);
+        bagHand1.render(scaleFactor);
+        bagHand2.render(scaleFactor);
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z)
@@ -175,10 +175,10 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
     }
 
     @Override
-    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity)
+    public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn)
     {
-        bipedHead.rotateAngleY = f3 / 57.29578F;
-        bipedHead.rotateAngleX = f4 / 57.29578F;
+        bipedHead.rotateAngleY = netHeadYaw / 57.29578F;
+        bipedHead.rotateAngleX = headPitch / 57.29578F;
         bipedHeadwear.rotateAngleY = bipedHead.rotateAngleY;
         bipedHeadwear.rotateAngleX = bipedHead.rotateAngleX;
         hair.rotateAngleY = bipedHead.rotateAngleY;
@@ -188,13 +188,13 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
         hat2.rotateAngleY = bipedHead.rotateAngleY;
         hat2.rotateAngleX = bipedHead.rotateAngleX;
 
-        bipedRightArm.rotateAngleX = MathHelper.cos(f * 0.6662F + 3.141593F) * 2.0F * f1 * 0.5F;
-        bipedLeftArm.rotateAngleX = MathHelper.cos(f * 0.6662F) * 2.0F * f1 * 0.5F;
-        bipedRightLeg.rotateAngleX = MathHelper.cos(f * 0.6662F) * 0.73F * f1;
-        bipedLeftLeg.rotateAngleX = MathHelper.cos(f * 0.6662F + 3.141593F) * 0.73F * f1;
+        bipedRightArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        bipedLeftArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
+        bipedRightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 0.73F * limbSwingAmount;
+        bipedLeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 0.73F * limbSwingAmount;
 
-        bipedRightArm.rotateAngleX += MathHelper.sin(f2 * 0.067F) * 0.05F;
-        bipedLeftArm.rotateAngleX -= MathHelper.sin(f2 * 0.067F) * 0.05F;
+        bipedRightArm.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        bipedLeftArm.rotateAngleX -= MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
 
     }
 }

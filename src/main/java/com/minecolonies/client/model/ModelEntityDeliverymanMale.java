@@ -47,30 +47,30 @@ public class ModelEntityDeliverymanMale extends ModelBiped
     }
 
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
+    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
     {
-        setRotationAngles(f, f1, f2, f3, f4, f5, entity);
-        bipedHead.render(f5);
-        bipedBody.render(f5);
-        bipedLeftArm.render(f5);
-        bipedRightArm.render(f5);
-        bipedRightLeg.render(f5);
-        bipedLeftLeg.render(f5);
-        backpack.render(f5);
+        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
+        bipedHead.render(scaleFactor);
+        bipedBody.render(scaleFactor);
+        bipedLeftArm.render(scaleFactor);
+        bipedRightArm.render(scaleFactor);
+        bipedRightLeg.render(scaleFactor);
+        bipedLeftLeg.render(scaleFactor);
+        backpack.render(scaleFactor);
     }
 
     @Override
-    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity)
+    public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn)
     {
-        bipedHead.rotateAngleY = f3 / 57.29578F;
-        bipedHead.rotateAngleX = f4 / 57.29578F + 0.45F;
+        bipedHead.rotateAngleY = netHeadYaw / 57.29578F;
+        bipedHead.rotateAngleX = headPitch / 57.29578F + 0.45F;
 
-        bipedRightArm.rotateAngleX = MathHelper.cos(f * 0.6662F + 3.141593F) * 1.0F * f1 * 0.5F;
-        bipedLeftArm.rotateAngleX = MathHelper.cos(f * 0.6662F) * 1.0F * f1 * 0.5F;
+        bipedRightArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 1.0F * limbSwingAmount * 0.5F;
+        bipedLeftArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.0F * limbSwingAmount * 0.5F;
         bipedRightArm.rotateAngleZ = 0.0F;
         bipedLeftArm.rotateAngleZ = 0.0F;
-        bipedRightLeg.rotateAngleX = MathHelper.cos(f * 0.6662F) * 1.4F * f1;
-        bipedLeftLeg.rotateAngleX = MathHelper.cos(f * 0.6662F + 3.141593F) * 1.4F * f1;
+        bipedRightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+        bipedLeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 1.4F * limbSwingAmount;
         bipedRightLeg.rotateAngleY = 0.0F;
         bipedLeftLeg.rotateAngleY = 0.0F;
         if(isRiding)
@@ -142,9 +142,9 @@ public class ModelEntityDeliverymanMale extends ModelBiped
             bipedLeftLeg.rotationPointY = 12F;
 
         }
-        bipedRightArm.rotateAngleZ += MathHelper.cos(f2 * 0.09F) * 0.01F + 0.05F;
-        bipedLeftArm.rotateAngleZ -= MathHelper.cos(f2 * 0.09F) * 0.01F + 0.05F;
-        bipedRightArm.rotateAngleX += MathHelper.sin(f2 * 0.067F) * 0.01F;
-        bipedLeftArm.rotateAngleX -= MathHelper.sin(f2 * 0.067F) * 0.01F;
+        bipedRightArm.rotateAngleZ += MathHelper.cos(ageInTicks * 0.09F) * 0.01F + 0.05F;
+        bipedLeftArm.rotateAngleZ -= MathHelper.cos(ageInTicks * 0.09F) * 0.01F + 0.05F;
+        bipedRightArm.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.01F;
+        bipedLeftArm.rotateAngleX -= MathHelper.sin(ageInTicks * 0.067F) * 0.01F;
     }
 }
