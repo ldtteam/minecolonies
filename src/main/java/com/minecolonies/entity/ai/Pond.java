@@ -43,7 +43,7 @@ public class Pond
         int y = water.getY();
         int z = water.getZ();
 
-        if(!(world.getBlockState(water).getBlock() == Blocks.water) || !world.isAirBlock(new BlockPos(x, y + 1, z)))
+        if(!(world.getBlockState(water).getBlock() == Blocks.water) || !world.isAirBlock(water.up()))
         {
             return false;
         }

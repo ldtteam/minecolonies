@@ -670,7 +670,7 @@ public abstract class PathJob implements Callable<PathEntity>
     {
         if (block.getMaterial() != Material.air)
         {
-            if (!block.getBlocksMovement(world, x, y, z))
+            if (!block.getMaterial().blocksMovement())
             {
                 return block instanceof BlockDoor ||
                         //  block instanceof BlockTrapDoor ||

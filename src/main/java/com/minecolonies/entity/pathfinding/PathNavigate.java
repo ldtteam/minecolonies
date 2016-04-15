@@ -8,6 +8,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
+import net.minecraft.pathfinding.PathNavigateSwimmer;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -165,23 +166,23 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
             {
                 Vec3 vec3 = this.getPath().getPosition(this.theEntity);
 
-                if (vec3.squareDistanceTo(theEntity.posX, vec3.yCoord, theEntity.posZ) < 0.1)
+                if (vec3.squareDistanceTo(new Vec3(theEntity.posX, vec3.yCoord, theEntity.posZ)) < 0.1)
                 {
                     double newSpeed = this.speed;
 
                     switch (pEx.ladderFacing)
                     {
                         //  Any of these values is climbing, so adjust our direction of travel towards the ladder
-                        case 2:
+                        case NORTH:
                             vec3.zCoord += 1;
                             break;
-                        case 3:
+                        case SOUTH:
                             vec3.zCoord -= 1;
                             break;
-                        case 4:
+                        case WEST:
                             vec3.xCoord += 1;
                             break;
-                        case 5:
+                        case EAST:
                             vec3.xCoord -= 1;
                             break;
                         //  Any other value is going down, so lets not move at all
@@ -209,7 +210,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
 
                 Vec3 vec3 = this.getPath().getPosition(this.theEntity);
 
-                if (vec3.squareDistanceTo(theEntity.posX, vec3.yCoord, theEntity.posZ) < 0.1 &&
+                if (vec3.squareDistanceTo(new Vec3(theEntity.posX, vec3.yCoord, theEntity.posZ)) < 0.1 &&
                         Math.abs(theEntity.posY - vec3.yCoord) < 0.5)
                 {
                     this.getPath().setCurrentPathIndex(this.getPath().getCurrentPathIndex() + 1);
