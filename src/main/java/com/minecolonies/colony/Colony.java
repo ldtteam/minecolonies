@@ -12,15 +12,14 @@ import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
 
-import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,8 +39,8 @@ public class Colony implements IColony
 
     //  General Attributes
     private                 String                          name                            = "ERROR(Wasn't placed by player)";
-    private         final String           dimensionName;
-    private               ChunkCoordinates center;
+    private         final   int                             dimensionId;
+    private                 ChunkCoordinates                center;
 
     //  Administration/permissions
     private                 Permissions                     permissions                     = new Permissions();
@@ -83,7 +82,7 @@ public class Colony implements IColony
      */
     public Colony(int id, World w, ChunkCoordinates c)
     {
-        this(id, w.provider.getDimensionName());
+        this(id, w.provider.getDimensionId());
         center = c;
         world = w;
     }
@@ -94,10 +93,10 @@ public class Colony implements IColony
      * @param id  The current id for the colony
      * @param dim The world the colony exists in
      */
-    protected Colony(int id, String dim)
+    protected Colony(int id, int dim)
     {
         this.id = id;
-        this.dimensionName = dim;
+        this.dimensionId = dim;
     }
 
     /**
@@ -125,7 +124,7 @@ public class Colony implements IColony
     public static Colony loadColony(NBTTagCompound compound)
     {
         int id = compound.getInteger(TAG_ID);
-        String dimensionId = compound.getString(TAG_DIMENSION);
+        int dimensionId = compound.getInteger(TAG_DIMENSION);
         Colony c = new Colony(id, dimensionId);
         c.readFromNBT(compound);
         return c;
@@ -183,7 +182,7 @@ public class Colony implements IColony
     {
         //  Core attributes
         compound.setInteger(TAG_ID, id);
-        compound.setString(TAG_DIMENSION, dimensionName);
+        compound.setInteger(TAG_DIMENSION, dimensionId);
 
         //  Basic data
         compound.setString(TAG_NAME, name);
@@ -237,9 +236,9 @@ public class Colony implements IColony
      *
      * @return      Dimension ID
      */
-    public String getDimensionName()
+    public int getDimensionId()
     {
-        return dimensionName;
+        return dimensionId;
     }
 
     /**
@@ -340,7 +339,7 @@ public class Colony implements IColony
      */
     public void onWorldLoad(World w)
     {
-        if (w.provider.getDimensionName().equals(dimensionName))
+        if (w.provider.getDimensionId() == dimensionId)
         {
             world = w;
         }

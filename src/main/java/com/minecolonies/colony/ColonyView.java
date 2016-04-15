@@ -211,7 +211,7 @@ public class ColonyView implements IColony
     {
         //  General Attributes
         ByteBufUtils.writeUTF8String(buf, colony.getName());
-        buf.writeInt(colony.getDimensionName());
+        buf.writeInt(colony.getDimensionId());
         ChunkCoordUtils.writeToByteBuf(buf, colony.getCenter());
 
         //  Citizenry

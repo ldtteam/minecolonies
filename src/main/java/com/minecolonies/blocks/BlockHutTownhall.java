@@ -3,10 +3,13 @@ package com.minecolonies.blocks;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 /**
@@ -29,22 +32,21 @@ public class BlockHutTownhall extends AbstractBlockHut
     }
 
     @Override
-    public void onBlockPlacedBy(final World worldIn, final int x, final int y, final int z, final EntityLivingBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         if(worldIn.isRemote)
         {
             return;
         }
-        TileEntity te = worldIn.getTileEntity(x,y,z);
+        TileEntity te = worldIn.getTileEntity(pos);
 
-        if(placer instanceof EntityPlayer && te instanceof TileEntityColonyBuilding && ColonyManager.getColony(worldIn, x, y, z) == null)
+        if(placer instanceof EntityPlayer && te instanceof TileEntityColonyBuilding && ColonyManager.getColony(worldIn, pos) == null)
         {
 
             EntityPlayer player = (EntityPlayer)placer;
             TileEntityColonyBuilding hut = (TileEntityColonyBuilding) te;
             ColonyManager.createColony(worldIn, hut.getPosition(), player);
         }
-        super.onBlockPlacedBy(worldIn, x, y, z, placer, stack);    }
-
-
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    }
 }

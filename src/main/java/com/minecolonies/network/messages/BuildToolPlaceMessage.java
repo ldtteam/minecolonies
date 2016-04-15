@@ -6,10 +6,10 @@ import com.minecolonies.event.EventHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.Log;
 
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import io.netty.buffer.ByteBuf;
 
@@ -87,9 +87,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
         if(player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, message.x, message.y, message.z))
         {
-            //todo is this correct?
-            world.setBlockMetadataWithNotify(message.x,message.y,message.z,block.getDamageValue(world,message.x,message.y,message.z),2);
-            //world.setBlockState(message.x, message.y, message.z, block);
+            world.setBlockState(message.x, message.y, message.z, block);
             block.onBlockPlacedBy(world, message.x, message.y, message.z, player, null);
 
             player.inventory.consumeInventoryItem(Item.getItemFromBlock(block));

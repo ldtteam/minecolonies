@@ -28,7 +28,7 @@ public class Label extends Pane
 
         if (width == 0)
         {
-            width = Math.min(mc.fontRenderer.getStringWidth(label), params.getParentWidth());
+            width = Math.min(mc.fontRendererObj.getStringWidth(label), params.getParentWidth());
         }
     }
 
@@ -53,8 +53,8 @@ public class Label extends Pane
     public float getScale() { return scale; }
     public void setScale(float s) { scale = s; }
 
-    public int getTextHeight() { return (int)(mc.fontRenderer.FONT_HEIGHT * scale); }
-    public int getStringWidth() { return (int)(mc.fontRenderer.getStringWidth(label) * scale); }
+    public int getTextHeight() { return (int)(mc.fontRendererObj.FONT_HEIGHT * scale); }
+    public int getStringWidth() { return (int)(mc.fontRendererObj.getStringWidth(label) * scale); }
 
     @Override
     public void drawSelf(int mx, int my)
@@ -85,7 +85,7 @@ public class Label extends Pane
         GL11.glPushMatrix();
         GL11.glTranslated(getX() + offsetX, getY() + offsetY, 0);
         GL11.glScalef(scale, scale, scale);
-        mc.fontRenderer.drawString(label, 0, 0, color, shadow);
+        mc.fontRendererObj.drawString(label, 0, 0, color, shadow);
         GL11.glPopMatrix();
     }
 }

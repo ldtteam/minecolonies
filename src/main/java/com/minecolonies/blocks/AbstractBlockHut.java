@@ -5,17 +5,21 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.lib.Literals;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
  * Abstract class for all minecolonies blocks.
@@ -39,13 +43,14 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
 
     private void initBlock()
     {
-        this.setBlockName(Constants.MOD_ID.toLowerCase() + "." + getName());
+        setRegistryName(getName());
+        setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + getName());
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         //Blast resistance for creepers etc. makes them explosion proof
         setResistance((float)Integer.MAX_VALUE);
         //Hardness of 10 takes a long time to mine to not loose progress
         setHardness(RESISTANCE);
-        GameRegistry.registerBlock(this,this.getName());
+        GameRegistry.registerBlock(this);
     }
 
     /**
@@ -56,12 +61,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     public abstract String getName();
 
     @Override
-    public void onBlockPlacedBy(final World worldIn,
-                                final int x,
-                                final int y,
-                                final int z,
-                                final EntityLivingBase placer,
-                                final ItemStack stack)
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         /*
         Only work on server side
@@ -71,7 +71,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
             return;
         }
 
-        TileEntity tileEntity = worldIn.getTileEntity(x,y,z);
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
         if(placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
             TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
@@ -81,25 +81,18 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
             {
                 colony.addNewBuilding(hut);
             }
-        }    }
+        }
+    }
 
     @Override
-    public boolean onBlockActivated(final World worldIn,
-                                    final int x,
-                                    final int y,
-                                    final int z,
-                                    final EntityPlayer player,
-                                    final int side,
-                                    final float hitX,
-                                    final float hitY,
-                                    final float hitZ)
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         /*
         If the world is client, open the gui of the building
          */
         if(worldIn.isRemote)
         {
-            Building.View building = ColonyManager.getBuildingView(worldIn, x,y,z);
+            Building.View building = ColonyManager.getBuildingView(worldIn, pos);
 
             if (building != null)
             {
