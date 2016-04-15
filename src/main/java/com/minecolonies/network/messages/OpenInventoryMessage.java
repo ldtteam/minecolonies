@@ -6,6 +6,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.BlockPosUtil;
 
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -27,7 +28,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     private              int              inventoryType;
 
     private              int              entityID;
-    private              ChunkCoordinates tePos;
+    private              BlockPos         tePos;
 
     public OpenInventoryMessage(){}
 

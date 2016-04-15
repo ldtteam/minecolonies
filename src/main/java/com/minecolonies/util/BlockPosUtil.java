@@ -137,7 +137,7 @@ public class BlockPosUtil
      */
     public static float distanceSqrd(BlockPos coords1, Vec3 coords2)
     {
-        return coords1.getDistanceSquared((int) coords2.xCoord, (int) coords2.yCoord, (int) coords2.zCoord);
+        return getDistanceSquared(coords1, new BlockPos((int) coords2.xCoord, (int) coords2.yCoord, (int) coords2.zCoord));
     }
 
     /**
@@ -149,7 +149,7 @@ public class BlockPosUtil
      */
     public static TileEntity getTileEntity(World world, BlockPos pos)
     {
-        return world.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
+        return world.getTileEntity(pos);
     }
 
     /**
@@ -174,7 +174,7 @@ public class BlockPosUtil
      */
     public static Block getBlock(World world, BlockPos coords)
     {
-        return world(coords.posX, coords.posY, coords.posZ);
+        return world.getBlockState(coords).getBlock();
     }
 
     /**
@@ -186,7 +186,7 @@ public class BlockPosUtil
      */
     public static int getBlockMetadata(World world, BlockPos coords)
     {
-        return world.getBlockMetadata(coords.posX, coords.posY, coords.posZ);
+        return null //todo i have no clue
     }
 
     /**
@@ -199,7 +199,7 @@ public class BlockPosUtil
      */
     public static boolean setBlock(World world, BlockPos coords, Block block)
     {
-        return world.setBlock(coords.posX, coords.posY, coords.posZ, block);
+        return world.setblock.setBlock(coords.posX, coords.posY, coords.posZ, block); //todo no idea yet
     }
 
     /**
@@ -214,7 +214,7 @@ public class BlockPosUtil
      */
     public static boolean setBlock(World world, BlockPos coords, Block block, int metadata, int flag)
     {
-        return world.setBlock(coords.posX, coords.posY, coords.posZ, block, metadata, flag);
+        return world.setBlock(coords.posX, coords.posY, coords.posZ, block, metadata, flag);//todo no idea yet
     }
 
     /**
@@ -227,7 +227,7 @@ public class BlockPosUtil
      */
     public static boolean isPathingTo(EntityCitizen citizen, BlockPos pos)
     {
-        return EntityUtils.isPathingTo(citizen, pos.posX, pos.posZ);
+        return EntityUtils.isPathingTo(citizen, pos.getX(), pos.getZ());
     }
 
     /**
@@ -238,7 +238,7 @@ public class BlockPosUtil
      */
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, BlockPos site)
     {
-        return EntityUtils.isWorkerAtSiteWithMove(worker, site.posX, site.posY, site.posZ);
+        return EntityUtils.isWorkerAtSiteWithMove(worker, site.getX(), site.getY(), site.getZ());
     }
 
     /**
@@ -250,7 +250,7 @@ public class BlockPosUtil
      */
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, BlockPos site, int range)
     {
-        return EntityUtils.isWorkerAtSiteWithMove(worker, site.posX, site.posY, site.posZ, range);
+        return EntityUtils.isWorkerAtSiteWithMove(worker, site.getX(), site.getY(), site.getZ(), range);
     }
 
     /**
@@ -261,7 +261,7 @@ public class BlockPosUtil
      */
     public static boolean tryMoveLivingToXYZ(EntityLiving living, BlockPos destination)
     {
-        return EntityUtils.tryMoveLivingToXYZ(living, destination.posX, destination.posY, destination.posZ);
+        return EntityUtils.tryMoveLivingToXYZ(living, destination.getX(), destination.getY(), destination.getZ());
     }
 
     /**
@@ -274,7 +274,7 @@ public class BlockPosUtil
      */
     public static PathResult moveLivingToXYZ(EntityCitizen citizen, BlockPos destination)
     {
-        return citizen.getNavigator().moveToXYZ(destination.posX, destination.posY, destination.posZ, 1.0);
+        return citizen.getNavigator().moveToXYZ(destination.getX(), destination.getY(), destination.getZ(), 1.0);
     }
 
     /**
@@ -288,7 +288,7 @@ public class BlockPosUtil
      */
     public static boolean equals(BlockPos coords, int x, int y, int z)
     {
-        return coords.posX == x && coords.posY == y && coords.posZ == z;
+        return coords.getX() == x && coords.getY() == y && coords.getZ() == z;
     }
 
     /**
@@ -300,7 +300,7 @@ public class BlockPosUtil
      */
     public static BlockPos subtract(BlockPos coords1, BlockPos coords2)
     {
-        return new BlockPos(coords1.posX - coords2.posX, coords1.posY - coords2.posY, coords1.posZ - coords2.posZ);
+        return new BlockPos(coords1.getX() - coords2.getX(), coords1.getY() - coords2.getY(), coords1.getZ() - coords2.getZ());
     }
 
     /**
@@ -314,7 +314,7 @@ public class BlockPosUtil
      */
     public static BlockPos add(BlockPos coords, int x, int y, int z)
     {
-        return new BlockPos(coords.posX + x, coords.posY + y, coords.posZ + z);
+        return new BlockPos(coords.getX() + x, coords.getY() + y, coords.getZ() + z);
     }
 
     /**

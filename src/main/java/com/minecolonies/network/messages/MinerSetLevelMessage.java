@@ -6,6 +6,7 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.util.BlockPosUtil;
 
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -15,7 +16,7 @@ import io.netty.buffer.ByteBuf;
 public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetLevelMessage, IMessage>
 {
     private int              colonyId;
-    private ChunkCoordinates buildingId;
+    private BlockPos         buildingId;
     private int              level;
 
     public MinerSetLevelMessage(){}

@@ -7,6 +7,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Utils;
 
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -25,7 +26,7 @@ import net.minecraft.world.World;
 public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCitizenMessage, IMessage>
 {
     private int              colonyId;
-    private ChunkCoordinates buildingId;
+    private BlockPos         buildingId;
 
     public RecallCitizenMessage(){}
 
@@ -63,14 +64,14 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
             BuildingWorker building = colony.getBuilding(message.buildingId, BuildingWorker.class);
             if (building != null)
             {
-                ChunkCoordinates loc = building.getLocation();
+                BlockPos loc = building.getLocation();
                 EntityCitizen citizen = building.getWorkerEntity();
                 if(citizen != null)
                 {
                     World world = colony.getWorld();
-                    ChunkCoordinates spawnPoint = Utils.scanForBlockNearPoint(world, new ChunkCoordinates(loc.posX, loc.posY+1, loc.posZ), 1, 0, 1, 2, Blocks.air, Blocks.snow_layer, Blocks.tallgrass, Blocks.red_flower, Blocks.yellow_flower);
+                    BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer, Blocks.tallgrass, Blocks.red_flower, Blocks.yellow_flower);
 
-                    citizen.setLocationAndAngles(spawnPoint.posX+0.5, spawnPoint.posY, spawnPoint.posZ+0.5, citizen.rotationYaw, citizen.rotationPitch);
+                    citizen.setLocationAndAngles(spawnPoint.getX()+0.5, spawnPoint.getY(), spawnPoint.getZ()+0.5, citizen.rotationYaw, citizen.rotationPitch);
                 }
             }
         }
