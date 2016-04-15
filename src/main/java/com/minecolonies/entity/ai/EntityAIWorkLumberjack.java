@@ -9,7 +9,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +101,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     /**
      * Positions of all items that have to be collected.
      */
-    private List<ChunkCoordinates>         items;
+    private List<BlockPos>                 items;
     /**
      * The active pathfinding job used to walk to trees
      */
@@ -265,7 +265,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private AIState chopTree()
     {
-        ChunkCoordinates location = job.tree.getLocation();
+        BlockPos location = job.tree.getLocation();
         if (walkToBlock(location))
         {
             checkIfStuckOnLeaves(location);
@@ -283,7 +283,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         }
 
         //take first log from queue
-        ChunkCoordinates log = job.tree.peekNextLog();
+        BlockPos log = job.tree.peekNextLog();
         if (!mineBlock(log))
         {
             return state;
@@ -310,7 +310,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * @param location the location to plant the sapling at
      * @return true if a sapling was planted
      */
-    private boolean plantSapling(ChunkCoordinates location)
+    private boolean plantSapling(BlockPos location)
     {
         if (BlockPosUtil.getBlock(world, location) != Blocks.air)
         {
@@ -360,7 +360,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      *
      * @param location the block we want to go to
      */
-    private void checkIfStuckOnLeaves(final ChunkCoordinates location)
+    private void checkIfStuckOnLeaves(final BlockPos location)
     {
         int distance = (int) BlockPosUtil.distanceSqrd(location, worker.getPosition());
         if (previousDistance != distance)
@@ -388,7 +388,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private void tryGettingUnstuckFromLeaves()
     {
-        ChunkCoordinates nextLeaves = findNearLeaves();
+        BlockPos nextLeaves = findNearLeaves();
         //If the worker gets too stuck he moves around a bit
         if (nextLeaves == null || stillTicks > WALKING_BACK_WAIT_TIME)
         {
@@ -411,7 +411,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      *
      * @return a leaves block or null if none found
      */
-    private ChunkCoordinates findNearLeaves()
+    private BlockPos findNearLeaves()
     {
         int playerX = (int) worker.posX;
         int playerY = (int) (worker.posY + 1);
@@ -425,7 +425,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 {
                     if (world.getBlock(x, y, z).isLeaves(world, x, y, z))
                     {
-                        return new ChunkCoordinates(x, y, z);
+                        return new BlockPos(x, y, z);
                     }
                 }
             }
@@ -484,7 +484,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     {
         if (worker.getNavigator().noPath())
         {
-            ChunkCoordinates pos = getAndRemoveClosestItem();
+            BlockPos pos = getAndRemoveClosestItem();
             worker.isWorkerAtSiteWithMove(pos, 3);
             return;
         }
@@ -517,7 +517,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      *
      * @return the closest item
      */
-    private ChunkCoordinates getAndRemoveClosestItem()
+    private BlockPos getAndRemoveClosestItem()
     {
         int   index    = 0;
         float distance = Float.MAX_VALUE;

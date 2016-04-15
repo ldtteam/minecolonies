@@ -43,10 +43,10 @@ public class Tree
         Block block = BlockPosUtil.getBlock(world, log);
         if(block.isWood(world, log))
         {
-            location = getBaseLog(world, log.getX(), log.getY(), log.getZ());
+            location = getBaseLog(world, log);
             woodBlocks = new LinkedList<>();
 
-            checkTree(world, getTopLog(world, log.getX(), log.getY(), log.getZ()));
+            checkTree(world, getTopLog(world, log));
         }
     }
 
@@ -116,35 +116,33 @@ public class Tree
      * For use in PathJobFindTree
      *
      * @param world the world
-     * @param x log x coordinate
-     * @param y log y coordinate
-     * @param z log z coordinate
+     * @param pos The coordinates
      * @return true if the log is part of a tree
      */
-    public static boolean checkTree(IBlockAccess world, int x, int y, int z)
+    public static boolean checkTree(IBlockAccess world, BlockPos pos)
     {
         //Is the first block a log?
-        if(!world.getBlockState(new BlockPos(x, y, z)).getBlock().isWood(world, new BlockPos(x, y, z)))
+        if(!world.getBlockState(pos).getBlock().isWood(world, pos))
         {
             return false;
         }
 
         //Get base log, should already be base log
-        while(world.getBlockState(new BlockPos(x, y-1, z)).getBlock().isWood(world, new BlockPos(x, y, z)))
+        while(world.getBlockState(pos.down()).getBlock().isWood(world, pos))
         {
-            y--;
+            pos = pos.down();
         }
 
         //Make sure tree is on solid ground and tree is not build above cobblestone
-        if(!world.getBlockState(new BlockPos(x, y-1, z)).getBlock().getMaterial().isSolid() || world.getBlockState(new BlockPos(x, y-1, z)).getBlock() == Blocks.cobblestone)
+        if(!world.getBlockState(pos.down()).getBlock().getMaterial().isSolid() || world.getBlockState(pos.down()).getBlock() == Blocks.cobblestone)
         {
             return false;
         }
 
         //Get top log
-        while(world.getBlockState(new BlockPos(x, y+1, z)).getBlock().isWood(world, new BlockPos(x, y, z)))
+        while(world.getBlockState(pos.up()).getBlock().isWood(world, pos))
         {
-            y++;
+            pos = pos.up();
         }
 
         int leafCount = 0;
@@ -154,7 +152,7 @@ public class Tree
             {
                 for(int dy = -1; dy <= 1; dy++)
                 {
-                    if(world.getBlockState(new BlockPos(x + dx, y + dy, z + dz)).getBlock().getMaterial().equals(Material.leaves))
+                    if(world.getBlockState(pos.add(dx,dy,dz)).getBlock().getMaterial().equals(Material.leaves))
                     {
                         leafCount++;
                         if(leafCount >= NUMBER_OF_LEAVES)
@@ -168,22 +166,34 @@ public class Tree
         return false;
     }
 
-    private BlockPos getBaseLog(World world, int x, int y, int z)
+    /**
+     * Get's the base log of the tree
+     * @param world The entity world
+     * @param pos The coordinates
+     * @return the base log position
+     */
+    private BlockPos getBaseLog(World world, BlockPos pos)
     {
-        while(world.getBlockState(new BlockPos(x, y-1, z)).getBlock().isWood(world, new BlockPos(x, y, z)))
+        while(world.getBlockState(pos.down()).getBlock().isWood(world, pos))
         {
-            y--;
+            pos = pos.down();
         }
-        return new BlockPos(x, y, z);
+        return pos;
     }
 
-    private BlockPos getTopLog(World world, int x, int y, int z)
+    /**
+     * Get's the top log of the tree
+     * @param world The entity world
+     * @param pos The coordinates
+     * @return the top log position
+     */
+    private BlockPos getTopLog(World world, BlockPos pos)
     {
-        while(world.getBlockState(new BlockPos(x, y+1, z)).getBlock().isWood(world,new BlockPos( x, y, z)))
+        while(world.getBlockState(pos.up()).getBlock().isWood(world,pos.down()))
         {
-            y++;
+            pos = pos.up();
         }
-        return new BlockPos(x, y, z);
+        return pos;
     }
 
     public BlockPos pollNextLog()

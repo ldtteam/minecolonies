@@ -5,11 +5,9 @@ import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIRestrictSun;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.pathfinding.PathFinder;
-import net.minecraft.pathfinding.PathNavigateSwimmer;
-import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.pathfinding.*;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
@@ -50,14 +48,13 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     @Override public void setSpeed(double d) { speed = d; super.setSpeed(d); }
 
     public boolean getAvoidSun() { return noSunPathfind; }
-    @Override public void setAvoidSun(boolean b) { noSunPathfind = b; super.setAvoidSun(b); }
-
+    public void setAvoidSun(boolean b) { noSunPathfind = b; PathNavigateGround.setAvoidSun(b); }
 
     public boolean getEnterDoors() { return canPassOpenWoodenDoors; }
-    @Override public void setEnterDoors(boolean b) { canPassOpenWoodenDoors = b; super.setEnterDoors(b);}
+    public void setEnterDoors(boolean b) { canPassOpenWoodenDoors = b; PathNavigateGround.setEnterDoors(b);}
 
     public boolean getCanSwim() { return canSwim; }
-    @Override public void setCanSwim(boolean b) { canSwim = b; super.setCanSwim(b); }
+    public void setCanSwim(boolean b) { canSwim = b; PathNavigateSwimmer.setCanSwim(b); }
 
     @Override
     public boolean tryMoveToXYZ(double x, double y, double z, double speed)
@@ -174,16 +171,16 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
                     {
                         //  Any of these values is climbing, so adjust our direction of travel towards the ladder
                         case NORTH:
-                            vec3.zCoord += 1;
+                            vec3.addVector(0,0,1);
                             break;
                         case SOUTH:
-                            vec3.zCoord -= 1;
+                            vec3.addVector(0,0,-1);
                             break;
                         case WEST:
-                            vec3.xCoord += 1;
+                            vec3.addVector(1,0,0);
                             break;
                         case EAST:
-                            vec3.xCoord -= 1;
+                            vec3.addVector(-1,0,0);
                             break;
                         //  Any other value is going down, so lets not move at all
                         default:

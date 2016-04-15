@@ -267,9 +267,9 @@ public final class Utils
      * @param block    Block that makes the sound
      * @param metadata Metadata of the block that makes sound
      */
-    public static void blockBreakSoundAndEffect(World world, int x, int y, int z, Block block, int metadata)
+    public static void blockBreakSoundAndEffect(World world, BlockPos pos, Block block, int metadata)
     {
-        world.playAuxSFX(SOUND_EVENT_ID, new BlockPos(x, y, z), Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
+        world.playAuxSFX(SOUND_EVENT_ID, pos , Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
     }
 
     /**

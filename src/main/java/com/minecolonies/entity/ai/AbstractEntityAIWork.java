@@ -7,7 +7,7 @@ import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
 
 import java.util.ArrayList;
@@ -58,12 +58,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Will be cleared on restart, be aware!
      */
     private          List<ItemStack>  itemsNeeded             = new ArrayList<>();
-    private          ChunkCoordinates currentWorkingLocation  = null;
+    private          BlockPos currentWorkingLocation  = null;
     /**
      * The time in ticks until the next action is made
      */
     private          int              delay                   = 0;
-    private          ChunkCoordinates currentStandingLocation = null;
+    private          BlockPos currentStandingLocation = null;
     /**
      * If we have waited one delay
      */
@@ -348,9 +348,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @param stand where to walk to
      */
-    protected final boolean walkToBlock(ChunkCoordinates stand)
+    protected final boolean walkToBlock(BlockPos stand)
     {
-        if (!EntityUtils.isWorkerAtSite(worker, stand.posX, stand.posY, stand.posZ, DEFAULT_RANGE_FOR_DELAY))
+        if (!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), DEFAULT_RANGE_FOR_DELAY))
         {
             workOnBlock(null, stand, 1);
             return true;
@@ -366,7 +366,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * @param stand   the block the worker will walk to
      * @param timeout the time in ticks to hit the block
      */
-    private void workOnBlock(ChunkCoordinates target, ChunkCoordinates stand, int timeout)
+    private void workOnBlock(BlockPos target, BlockPos stand, int timeout)
     {
         this.currentWorkingLocation = target;
         this.currentStandingLocation = stand;
@@ -687,8 +687,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private void requestTool(Block target)
     {
-        String tool     = target.getHarvestTool(0);
-        int    required = target.getHarvestLevel(0);
+        String tool     = target.getHarvestTool(target.getDefaultState());
+        int    required = target.getHarvestLevel(target.getDefaultState());
         if (Utils.PICKAXE.equalsIgnoreCase(tool))
         {
             checkForPickaxe(required);
@@ -708,8 +708,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private int getMostEfficientTool(Block target)
     {
-        String           tool      = target.getHarvestTool(0);
-        int              required  = target.getHarvestLevel(0);
+        String           tool      = target.getHarvestTool(target.getDefaultState());
+        int              required  = target.getHarvestLevel(target.getDefaultState());
         int              bestSlot  = -1;
         int              bestLevel = Integer.MAX_VALUE;
         InventoryCitizen inventory = worker.getInventory();
@@ -730,31 +730,17 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Calculate how long it takes to mine this block.
      *
      * @param block the block type
-     * @param x     x coordinate
-     * @param y     y coordinate
-     * @param z     z coordinate
+     * @param pos  coordinate
      * @return the delay in ticks
      */
-    private int getBlockMiningDelay(Block block, int x, int y, int z)
+    private int getBlockMiningDelay(Block block, BlockPos pos)
     {
         if (worker.getHeldItem() == null)
         {
-            return (int) block.getBlockHardness(world, x, y, z);
+            return (int) block.getBlockHardness(world, pos);
         }
-        return (int) (50 * block.getBlockHardness(world, x, y, z)
-                      / (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0)));
-    }
-
-    /**
-     * Calculate how long it takes to mine this block.
-     *
-     * @param block            the block type
-     * @param chunkCoordinates coordinates of the block
-     * @return the delay in ticks
-     */
-    private int getBlockMiningDelay(Block block, ChunkCoordinates chunkCoordinates)
-    {
-        return getBlockMiningDelay(block, chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ);
+        return (int) (50 * block.getBlockHardness(world, pos)
+                      / (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block.getDefaultState())));
     }
 
     /**
@@ -763,10 +749,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * @param blockToMine the block to mine eventually
      * @param safeStand   a safe stand to mine from (AIR Block!)
      */
-    private boolean checkMiningLocation(ChunkCoordinates blockToMine, ChunkCoordinates safeStand)
+    private boolean checkMiningLocation(BlockPos blockToMine, BlockPos safeStand)
     {
 
-        Block curBlock = world.getBlock(blockToMine.posX, blockToMine.posY, blockToMine.posZ);
+        Block curBlock = world.getBlockState(blockToMine).getBlock();
 
         if (!holdEfficientTool(curBlock))
         {
@@ -776,13 +762,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
 
         ItemStack tool = worker.getHeldItem();
 
-        if (curBlock.getHarvestLevel(0) < Utils.getMiningLevel(tool, curBlock.getHarvestTool(0)))
+        if (curBlock.getHarvestLevel(curBlock.getDefaultState()) < Utils.getMiningLevel(tool, curBlock.getHarvestTool(curBlock.getDefaultState())))
         {
             //We have to high of a tool...
             //TODO: request lower tier tools
         }
 
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(curBlock, 0, tool) && curBlock != Blocks.bedrock)
+        if (tool != null && !ForgeHooks.canToolHarvestBlock(world,blockToMine, tool) && curBlock != Blocks.bedrock)
         {
             Log.logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool + "\n"
                             + "Please report to MineColonies with this text to add support!");
@@ -825,29 +811,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * So make sure the code path up to this function is reachable a second time.
      * And make sure to immediately exit the update function when this returns false.
      *
-     * @param posX the x coordinate of the block that should be mined
-     * @param posY the y coordinate of the block that should be mined
-     * @param posZ the z coordinate of the block that should be mined
-     * @return true once we're done
-     */
-    protected final boolean mineBlock(int posX, int posY, int posZ)
-    {
-        return mineBlock(new ChunkCoordinates(posX, posY, posZ));
-    }
-
-    /**
-     * Will simulate mining a block with particles ItemDrop etc.
-     * Attention:
-     * Because it simulates delay, it has to be called 2 times.
-     * So make sure the code path up to this function is reachable a second time.
-     * And make sure to immediately exit the update function when this returns false.
-     *
      * @param blockToMine the block that should be mined
      * @return true once we're done
      */
-    protected final boolean mineBlock(ChunkCoordinates blockToMine)
+    protected final boolean mineBlock(BlockPos blockToMine)
     {
-        return mineBlock(blockToMine, new ChunkCoordinates((int) worker.posX, (int) worker.posY, (int) worker.posZ));
+        return mineBlock(blockToMine, new BlockPos((int) worker.posX, (int) worker.posY, (int) worker.posZ));
     }
 
     /**
@@ -861,9 +830,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * @param safeStand   the block we want to stand on to do that
      * @return true once we're done
      */
-    protected final boolean mineBlock(ChunkCoordinates blockToMine, ChunkCoordinates safeStand)
+    protected final boolean mineBlock(BlockPos blockToMine, BlockPos safeStand)
     {
-        Block curBlock = world.getBlock(blockToMine.posX, blockToMine.posY, blockToMine.posZ);
+        Block curBlock = world.getBlockState(blockToMine).getBlock();
         if (curBlock == null || curBlock == Blocks.air)
         {
             //no need to mine block...
@@ -896,8 +865,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             worker.getInventory().setInventorySlotContents(worker.getInventory().getHeldItemSlot(), null);
         }
 
-        Utils.blockBreakSoundAndEffect(world, blockToMine.posX, blockToMine.posY, blockToMine.posZ, curBlock,
-                                       world.getBlockMetadata(blockToMine.posX, blockToMine.posY, blockToMine.posZ));
+        //todo add meta data
+        Utils.blockBreakSoundAndEffect(world, blockToMine, curBlock,
+                                       0);
         //Don't drop bedrock but we want to mine bedrock in some cases...
         if (curBlock != Blocks.bedrock)
         {
@@ -908,7 +878,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             }
         }
 
-        world.setBlockToAir(blockToMine.posX, blockToMine.posY, blockToMine.posZ);
+        world.setBlockToAir(blockToMine);
         return true;
     }
 
