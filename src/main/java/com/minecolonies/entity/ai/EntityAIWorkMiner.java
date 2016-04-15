@@ -4,10 +4,14 @@ import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockOre;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -144,28 +148,28 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         int z = buildingMiner.ladderLocation.getZ();
 
         //TODO: for 1.8 change to getBlockState
-        int ladderOrientation = world.getBlockMetadata(x, y, z);
+        EnumFacing ladderOrientation = world.getBlockState(buildingMiner.ladderLocation).getValue(BlockLadder.FACING);
         //http://minecraft.gamepedia.com/Ladder
 
-        if (ladderOrientation == 4)
+        if (ladderOrientation == EnumFacing.NORTH)
         {
             //West
             buildingMiner.vectorX = 1;
             buildingMiner.vectorZ = 0;
         }
-        else if (ladderOrientation == 5)
+        else if (ladderOrientation == EnumFacing.SOUTH)
         {
             //East
             buildingMiner.vectorX = -1;
             buildingMiner.vectorZ = 0;
         }
-        else if (ladderOrientation == 3)
+        else if (ladderOrientation == EnumFacing.WEST)
         {
             //South
             buildingMiner.vectorZ = -1;
             buildingMiner.vectorX = 0;
         }
-        else if (ladderOrientation == 2)
+        else if (ladderOrientation == EnumFacing.EAST)
         {
             //North
             buildingMiner.vectorZ = 1;
@@ -249,7 +253,8 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
 
         //Get ladder orientation
-        int metadata = getBlockMetadata(safeStand);
+        IBlockState metadata = getBlockState(safeStand);
+
         //set cobblestone
         setBlockFromInventory(nextCobble, Blocks.cobblestone);
         //set ladder
@@ -258,8 +263,10 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         job.setStage(Stage.CHECK_MINESHAFT);
     }
 
-
-
+    private IBlockState getBlockState(BlockPos pos)
+    {
+        return world.getBlockState(pos);
+    }
 
 
     /**
@@ -1315,14 +1322,14 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         setBlockFromInventory(location, block, 0);
     }
 
-    private void setBlockFromInventory(BlockPos location, Block block, int metadata)
+    private void setBlockFromInventory(BlockPos location, Block block, IBlockState metadata)
     {
         int slot = worker.findFirstSlotInInventoryWith(block);
         if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);
             //Flag 1+2 is needed for updates
-            world.setBlockState(location, block, metadata, 3);
+            world.setBlockState(location,metadata);
         }
     }
 

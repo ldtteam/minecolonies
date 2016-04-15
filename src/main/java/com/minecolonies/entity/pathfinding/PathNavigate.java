@@ -84,10 +84,9 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
                 dest, speed);
     }
 
-    public PathResult moveAwayFromXYZ(double x, double y, double z, double range, double speed)
+    public PathResult moveAwayFromXYZ(BlockPos avoid, double range, double speed)
     {
         BlockPos start = PathJob.prepareStart(theEntity);
-        BlockPos avoid = new BlockPos(MathHelper.floor_double(x), (int)y, MathHelper.floor_double(z));
 
         return setPathJob(
                 new PathJobMoveAwayFromLocation(theEntity.worldObj, start, avoid, (int)range, (int)getPathSearchRange()),
@@ -119,7 +118,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
 
     public PathResult moveAwayFromEntityLiving(Entity e, double distance, double speed)
     {
-        return moveAwayFromXYZ(e.posX, e.posY, e.posZ, distance, speed);
+        return moveAwayFromXYZ(e.getPosition(), distance, speed);
     }
 
     @Override

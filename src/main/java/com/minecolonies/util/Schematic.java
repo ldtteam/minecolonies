@@ -5,6 +5,7 @@ import com.minecolonies.configuration.Configurations;
 import com.schematica.world.SchematicWorld;
 import com.schematica.world.schematic.SchematicFormat;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
@@ -575,13 +576,14 @@ public final class Schematic
         return this.schematicWorld.getBlock(x, y, z);
     }
 
-    public int getMetadata()
+    public IBlockState getMetadata()
     {
+        //todo why this x?
         if (x == -1)
         {
-            return 0;
+            return null;
         }
-        return this.schematicWorld.getBlockMetadata(x, y, z);
+        return this.schematicWorld.getBlockState(new BlockPos(x, y, z));
     }
 
     public TileEntity getTileEntity()

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.entity.ai.AIState.*;
+import static net.minecraft.client.renderer.ActiveRenderInfo.getPosition;
 
 /**
  * The lumberjack AI class
@@ -322,17 +323,17 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             ItemStack stack = getInventory().getStackInSlot(slot);
             if (isStackSapling(stack))
             {
-                Block block = ((ItemBlock) stack.getItem()).field_150939_a;
+                Block block = ((ItemBlock) stack.getItem()).getBlock();
                 worker.setHeldItem(slot);
                 if (BlockPosUtil.setBlock(world, location, block, stack.getItemDamage(), 0x02))
                 {
                     worker.swingItem();
-                    world.playSoundEffect((float) location.posX + 0.5F,
-                                          (float) location.posY + 0.5F,
-                                          (float) location.posZ + 0.5F,
+                    world.playSoundEffect((float) location.getX() + 0.5F,
+                                          (float) location.getY() + 0.5F,
+                                          (float) location.getZ() + 0.5F,
                                           block.stepSound.getBreakSound(),
                                           block.stepSound.getVolume(),
-                                          block.stepSound.getPitch());
+                                          block.stepSound.getFrequency());
                     getInventory().decrStackSize(slot, 1);
                     setDelay(10);
                     return true;
@@ -351,7 +352,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private boolean isStackSapling(ItemStack stack)
     {
-        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a instanceof BlockSapling;
+        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockSapling;
     }
 
     /**
@@ -362,7 +363,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private void checkIfStuckOnLeaves(final BlockPos location)
     {
-        int distance = (int) BlockPosUtil.distanceSqrd(location, worker.getPosition());
+        int distance = (int) location.distanceSq(worker.getPosition());
         if (previousDistance != distance)
         {
             //something is moving, reset counters
@@ -423,9 +424,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             {
                 for (int z = -radius; z < playerZ + radius; z++)
                 {
-                    if (world.getBlock(x, y, z).isLeaves(world, x, y, z))
+                    BlockPos pos = new BlockPos(x,y,z);
+                    if (world.getBlockState(pos).getBlock().isLeaves(world, pos))
                     {
-                        return new BlockPos(x, y, z);
+                        return pos;
                     }
                 }
             }
@@ -462,7 +464,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     {
         items = new ArrayList<>();
         List<EntityItem> list = new ArrayList<>();
-        for (Object o : world.getEntitiesWithinAABB(EntityItem.class, worker.boundingBox.expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)))
+        for (Object o : world.getEntitiesWithinAABB(EntityItem.class, worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)))
         {
             if (o instanceof EntityItem)
             {
@@ -520,11 +522,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     private BlockPos getAndRemoveClosestItem()
     {
         int   index    = 0;
-        float distance = Float.MAX_VALUE;
+        double distance = Double.MAX_VALUE;
 
         for (int i = 0; i < items.size(); i++)
         {
-            float tempDistance = BlockPosUtil.distanceSqrd(items.get(i), worker.getPosition());
+            double tempDistance = items.get(i).distanceSq(worker.getPosition());
             if (tempDistance < distance)
             {
                 index = i;
@@ -597,7 +599,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private boolean isStackLog(ItemStack stack)
     {
-        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a.isWood(null, 0, 0, 0);
+        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock().isWood(null,new BlockPos(0,0,0));
     }
 
     /**

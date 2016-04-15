@@ -5,6 +5,7 @@ import com.schematica.config.BlockInfo;
 import com.schematica.world.storage.EmptySaveHandler;
 
 import net.minecraft.block.*;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
@@ -370,13 +371,9 @@ public class SchematicWorld extends World
     }
 
     @Override
-    public int getBlockMetadata(int x, int y, int z)
+    public IBlockState getBlockState(final BlockPos pos)
     {
-        if(x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.length)
-        {
-            return 0;
-        }
-        return this.metadata[x][y][z];
+        return super.getBlockState(pos);
     }
 
     @Override

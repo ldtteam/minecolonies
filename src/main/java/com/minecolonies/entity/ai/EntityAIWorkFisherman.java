@@ -456,7 +456,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return PREPARING;
         }
 
-        if(world.getBlockState(new BlockPos(worker.posX,worker.posY,worker.posZ)).getBlock() == Blocks.water)
+        if(world.getBlockState(worker.getPosition()).getBlock() == Blocks.water)
         {
             recentlyRemovedAPond = true;
             job.removeFromPonds(job.getWater());

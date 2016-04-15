@@ -9,10 +9,8 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
 import com.schematica.config.BlockInfo;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockBed;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockDoublePlant;
+import net.minecraft.block.*;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
@@ -22,7 +20,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 
 /**
@@ -168,23 +167,23 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             worker.setStatus(EntityCitizen.Status.WORKING);
         }
 
-        ChunkCoordinates coords = job.getSchematic().getBlockPosition();
-        int x = coords.posX;
-        int y = coords.posY;
-        int z = coords.posZ;
+        BlockPos coords = job.getSchematic().getBlockPosition();
+        int      x      = coords.getX();
+        int      y      = coords.getY();
+        int      z      = coords.getZ();
 
-        Block worldBlock = world.getBlock(x, y, z);
+        Block worldBlock = world.getBlockState(coords).getBlock();
 
         if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock)
         {
             if(!Configurations.builderInfiniteResources)//We need to deal with materials
             {
-                if(!handleMaterials(Blocks.air, 0, worldBlock, world.getBlockMetadata(x, y, z))) return;
+                if(!handleMaterials(Blocks.air, 0, worldBlock, world.getBlockState(coords))) return;
             }
 
             worker.setCurrentItemOrArmor(0, null);
 
-            if(!world.setBlockToAir(x, y, z))
+            if(!world.setBlockToAir(coords))
             {
                 //TODO: create own logger in class
                 Log.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
@@ -213,12 +212,12 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
 
             Block block = job.getSchematic().getBlock();
-            int metadata = job.getSchematic().getMetadata();
-            ItemStack itemstack = new ItemStack(block, 1, metadata);
+            IBlockState metadata = job.getSchematic().getMetadata();
+            ItemStack itemstack = new ItemStack(block, 1);
 
             Block worldBlock = BlockPosUtil.getBlock(world, job.getSchematic().getBlockPosition());
 
-            if(itemstack.getItem() != null && block != null && block != Blocks.air && worldBlock != Blocks.bedrock && !(worldBlock instanceof AbstractBlockHut) && !isBlockFree(block, metadata))
+            if(itemstack.getItem() != null && block != null && block != Blocks.air && worldBlock != Blocks.bedrock && !(worldBlock instanceof AbstractBlockHut) && !isBlockFree(block, 0))
             {
                 //TODO add item to prerequisites
             }
@@ -247,20 +246,20 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
 
         Block block = job.getSchematic().getBlock();
-        int metadata = job.getSchematic().getMetadata();
+        IBlockState metadata = job.getSchematic().getMetadata();
 
-        ChunkCoordinates coords = job.getSchematic().getBlockPosition();
-        int x = coords.posX;
-        int y = coords.posY;
-        int z = coords.posZ;
+        BlockPos coords = job.getSchematic().getBlockPosition();
+        int x = coords.getX();
+        int y = coords.getY();
+        int z = coords.getZ();
 
-        Block worldBlock = world.getBlock(x, y, z);
-        int worldBlockMetadata = world.getBlockMetadata(x, y, z);
+        Block       worldBlock         = world.getBlockState(coords).getBlock();
+        IBlockState worldBlockMetadata = world.getBlockState(coords);
 
         if(block == null)//should never happen
         {
-            ChunkCoordinates local = job.getSchematic().getLocalPosition();
-            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.posX, local.posY, local.posZ));
+            BlockPos local = job.getSchematic().getLocalPosition();
+            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockSolid();
             return;
         }
@@ -273,14 +272,14 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         if(!Configurations.builderInfiniteResources)//We need to deal with materials
         {
-            if(!handleMaterials(block, metadata, worldBlock, worldBlockMetadata)) return;
+            if(!handleMaterials(block,0, worldBlock, worldBlockMetadata)) return;
         }
 
         if(block == Blocks.air)
         {
             worker.setCurrentItemOrArmor(0, null);
 
-            if(!world.setBlockToAir(x, y, z))
+            if(!world.setBlockToAir(coords))
             {
                 Log.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
                 //TODO handle - for now, just skipping
@@ -289,11 +288,11 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         else
         {
             Item item = Item.getItemFromBlock(block);
-            worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1, metadata) : null);
+            worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1) : null);
 
-            if(placeBlock(x, y, z, block, metadata))
+            if(placeBlock(new BlockPos(x,y,z), block, metadata))
             {
-                setTileEntity(x, y, z);
+                setTileEntity(new BlockPos(x, y, z));
             }
             else
             {
@@ -323,20 +322,20 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
 
         Block block = job.getSchematic().getBlock();
-        int metadata = job.getSchematic().getMetadata();
+        IBlockState metadata = job.getSchematic().getMetadata();
 
-        ChunkCoordinates coords = job.getSchematic().getBlockPosition();
-        int x = coords.posX;
-        int y = coords.posY;
-        int z = coords.posZ;
+        BlockPos coords = job.getSchematic().getBlockPosition();
+        int x = coords.getX();
+        int y = coords.getY();
+        int z = coords.getZ();
 
-        Block worldBlock = world.getBlock(x, y, z);
-        int worldBlockMetadata = world.getBlockMetadata(x, y, z);
+        Block       worldBlock         = world.getBlockState(coords).getBlock();
+        IBlockState worldBlockMetadata = world.getBlockState(coords);
 
         if(block == null)//should never happen
         {
-            ChunkCoordinates local = job.getSchematic().getLocalPosition();
-            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.posX, local.posY, local.posZ));
+            BlockPos local = job.getSchematic().getLocalPosition();
+            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockNonSolid();
             return;
         }
@@ -349,15 +348,15 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         if(!Configurations.builderInfiniteResources)//We need to deal with materials
         {
-            if(!handleMaterials(block, metadata, worldBlock, worldBlockMetadata)) return;
+            if(!handleMaterials(block, 0, worldBlock, worldBlockMetadata)) return;
         }
 
         Item item = Item.getItemFromBlock(block);
-        worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1, metadata) : null);
+        worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1) : null);
 
-        if(placeBlock(x, y, z, block, metadata))
+        if(placeBlock(new BlockPos(x, y, z), block, metadata))
         {
-            setTileEntity(x, y, z);
+            setTileEntity(new BlockPos(x, y, z));
         }
         else
         {
@@ -373,19 +372,19 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     {
         if(entity != null)
         {
-            ChunkCoordinates pos = job.getSchematic().getOffsetPosition();
+            BlockPos pos = job.getSchematic().getOffsetPosition();
 
             if(entity instanceof EntityHanging)
             {
                 EntityHanging entityHanging = (EntityHanging) entity;
 
-                entityHanging.field_146063_b += pos.posX;//tileX
-                entityHanging.field_146064_c += pos.posY;//tileY
-                entityHanging.field_146062_d += pos.posZ;//tileZ
+                entityHanging.posX += pos.getX();//tileX
+                entityHanging.posY += pos.getY();//tileY
+                entityHanging.posZ += pos.getZ();//tileZ
                 entityHanging.setDirection(entityHanging.hangingDirection);//also sets position based on tile
 
                 entityHanging.setWorld(world);
-                entityHanging.dimension = world.provider.dimensionId;
+                entityHanging.dimension = world.provider.getDimensionId();
 
                 world.spawnEntityInWorld(entityHanging);
             }
@@ -393,12 +392,12 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             {
                 EntityMinecart minecart = (EntityMinecart) entity;
                 minecart.riddenByEntity = null;
-                minecart.posX += pos.posX;
-                minecart.posY += pos.posY;
-                minecart.posZ += pos.posZ;
+                minecart.posX += pos.getX();
+                minecart.posY += pos.getY();
+                minecart.posZ += pos.getZ();
 
                 minecart.setWorld(world);
-                minecart.dimension = world.provider.dimensionId;
+                minecart.dimension = world.provider.getDimensionId();
 
                 world.spawnEntityInWorld(minecart);
             }
@@ -406,7 +405,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean handleMaterials(Block block, int metadata, Block worldBlock, int worldBlockMetadata)
+    private boolean handleMaterials(Block block, int metadata, Block worldBlock, IBlockState worldBlockMetadata)
     {
         if(block != Blocks.air)//Breaking blocks doesn't require taking materials from the citizens inventory
         {
@@ -441,7 +440,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 int chestSlotID = InventoryUtils.containsStack(workBuildingTileEntity, material);
                 if(chestSlotID != -1)//chest contains item
                 {
-                    if(BlockPosUtil.distanceSqrd(worker.getWorkBuilding().getLocation(), worker.getPosition()) < 16)//We are close to the chest
+                    if(worker.getWorkBuilding().getLocation().distanceSq(worker.getPosition()) < 16)//We are close to the chest
                     {
                         if(!InventoryUtils.takeStackInSlot(workBuildingTileEntity, getInventory(), chestSlotID, 1, true))
                         {
@@ -483,7 +482,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private boolean isBlockFree(Block block, int metadata)
     {
-        return BlockUtils.isWater(block) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && Utils.testFlag(metadata, 0x08)) || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08));
+        return BlockUtils.isWater(block.getDefaultState()) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && Utils.testFlag(metadata, 0x08)) || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08));
     }
 
     private void setStackInBuilder(ItemStack stack, boolean shouldUseForce)
@@ -507,7 +506,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 getInventory().setInventorySlotContents(slotID, stack);
             }
 
-            if(BlockPosUtil.distanceSqrd(worker.getWorkBuilding().getLocation(), worker.getPosition()) < 16)
+            if(worker.getWorkBuilding().getLocation().distanceSq(worker.getPosition()) < 16)
             {
                 TileEntityColonyBuilding tileEntity = worker.getWorkBuilding().getTileEntity();
                 if(tileEntity != null)
@@ -527,70 +526,71 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
     }
 
-    private boolean placeBlock(int x, int y, int z, Block block, int metadata)
+    private boolean placeBlock(BlockPos pos, Block block, IBlockState metadata)
     {
         //Move out of the way when placing blocks
-        if(MathHelper.floor_double(worker.posX) == x && MathHelper.abs_int(y - (int) worker.posY) <= 1 && MathHelper.floor_double(worker.posZ) == z && worker.getNavigator().noPath())
+        if(MathHelper.floor_double(worker.posX) == pos.getX() && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1 && MathHelper.floor_double(worker.posZ) == pos.getZ() && worker.getNavigator().noPath())
         {
-            worker.getNavigator().moveAwayFromXYZ(x, y, z, 4.1, 1.0);
+            worker.getNavigator().moveAwayFromXYZ(pos, 4.1, 1.0);
         }
 
         if(block instanceof BlockDoor)
         {
-            ItemDoor.placeDoorBlock(world, x, y, z, metadata, block);
+            ItemDoor.placeDoor(world, pos, metadata.getValue(BlockDoor.FACING), block);
         }
-        else if(block instanceof BlockBed && !Utils.testFlag(metadata, 0x8))
+        else if(block instanceof BlockBed /*&& !Utils.testFlag(metadata, 0x8)*/)
         {
-            world.setBlock(x, y, z, block, metadata, 0x03);
-
+            world.setBlockState(pos, metadata,0x03);
+            EnumFacing meta = metadata.getValue(BlockBed.FACING);
             int xOffset = 0, zOffset = 0;
-            if(metadata == 0)
+            if(meta == EnumFacing.NORTH)
             {
                 zOffset = 1;
             }
-            else if(metadata == 1)
+            else if(meta == EnumFacing.SOUTH)
             {
                 xOffset = -1;
             }
-            else if(metadata == 2)
+            else if(meta == EnumFacing.WEST)
             {
                 zOffset = -1;
             }
-            else if(metadata == 3)
+            else if(meta == EnumFacing.EAST)
             {
                 xOffset = 1;
             }
-            world.setBlock(x + xOffset, y, z + zOffset, block, metadata | 0x8, 0x03);
+            world.setBlockState(pos.add(xOffset,0,zOffset), metadata, 0x03);
         }
         else if(block instanceof BlockDoublePlant)
         {
-            world.setBlock(x, y, z, block, metadata, 0x03);
-            world.setBlock(x, y + 1, z, block, 0x8, 0x03);
+            world.setBlockState(pos, metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 0x03);
+            world.setBlockState(pos.up(), metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 0x03);
         }
         else
         {
-            if(!world.setBlock(x, y, z, block, metadata, 0x03))
+            if(!world.setBlockState(pos, metadata, 0x03))
             {
                 return false;
             }
-            if(world.getBlock(x, y, z) == block)
+            if(world.getBlockState(pos).getBlock() == block)
             {
-                if(world.getBlockMetadata(x, y, z) != metadata)
+                //todo
+                if(world.getBlockState(pos) != metadata)
                 {
-                    world.setBlockMetadataWithNotify(x, y, z, metadata, 0x03);
+                    world.setBlockState(pos, metadata, 0x03);
                 }
-                block.onPostBlockPlaced(world, x, y, z, metadata);
+                //block.onPostBlockPlaced(world, x, y, z, metadata);
             }
         }
         return true;
     }
 
-    private void setTileEntity(int x, int y, int z)
+    private void setTileEntity(BlockPos pos)
     {
         TileEntity tileEntity = job.getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
-        if(tileEntity != null && world.getTileEntity(x, y, z) != null)
+        if(tileEntity != null && world.getTileEntity(pos) != null)
         {
-            world.setTileEntity(x, y, z, tileEntity);
+            world.setTileEntity(pos, tileEntity);
         }
     }
 
@@ -627,7 +627,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             return;
         }
 
-        ChunkCoordinates pos = workOrder.getBuildingId();
+        BlockPos pos = workOrder.getBuildingId();
         Building building = worker.getColony().getBuilding(pos);
 
         if(building == null)

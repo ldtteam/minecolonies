@@ -34,6 +34,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeCache;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -252,11 +254,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      * @param range Range to check in
      * @return True if worker is at site, otherwise false.
      */
-    public boolean isWorkerAtSiteWithMove(ChunkCoordinates site, int range)
+    public boolean isWorkerAtSiteWithMove(BlockPos site, int range)
     {
-        return EntityUtils.isWorkerAtSiteWithMove(this, site.posX, site.posY, site.posZ, range)
+        return EntityUtils.isWorkerAtSiteWithMove(this, site.getX(), site.getY(), site.getZ(), range)
                //Fix for getting stuck sometimes
-               || EntityUtils.isWorkerAtSite(this, site.posX, site.posY, site.posZ, range + 1);
+               || EntityUtils.isWorkerAtSite(this, site.getX(), site.getY(), site.getZ(), range + 1);
     }
 
     @Override
@@ -282,11 +284,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      *
      * @param block the block he should look at
      */
-    public void faceBlock(ChunkCoordinates block)
+    public void faceBlock(BlockPos block)
     {
-        double xDifference = block.posX - this.posX;
-        double zDifference = block.posZ - this.posZ;
-        double yDifference = block.posY - (this.posY + (double) this.getEyeHeight() - 0.5);
+        double xDifference = block.getX() - this.posX;
+        double zDifference = block.getZ() - this.posZ;
+        double yDifference = block.getY() - (this.posY + (double) this.getEyeHeight() - 0.5);
 
         double squareDifference      = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
         double intendedRotationYaw   = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
@@ -376,7 +378,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     private List<EntityXPOrb> getXPOrbsOnGrid()
     {
-        AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
+        //todo should be fromBounds.
+        AxisAlignedBB bb = AxisAlignedBB.fromBounds(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
         List<EntityXPOrb> retList = new ArrayList<>();
         //I know streams look better but they are flawed in type erasure
         for (Object o : worldObj.getEntitiesWithinAABB(EntityXPOrb.class, bb)){
@@ -423,7 +426,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     private void updateColonyClient()
     {
-        if (dataWatcher.hasChanges())
+        if (dataWatcher.hasObjectChanged())
         {
             if (colonyId == 0)
             {
@@ -595,7 +598,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         List<EntityItem> retList = new ArrayList<>();
         //I know streams look better but they are flawed in type erasure
-        for (Object o : worldObj.getEntitiesWithinAABB(EntityItem.class, boundingBox.expand(2.0F, 0.0F, 2.0F)))
+        for (Object o : worldObj.getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(2.0F, 0.0F, 2.0F)))
         {
             if(o instanceof EntityItem)
             {
@@ -614,7 +617,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      * Entities treat being on ladders as not on ground; this breaks navigation logic
      */
     @Override
-    protected void updateFallState(double y, boolean onGround)
+    protected void updateFallState(final double y, final boolean onGroundIn, final Block blockIn, final BlockPos pos)
     {
         if (!onGround)
         {
@@ -622,10 +625,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             int py = (int) posY;
             int pz = MathHelper.floor_double(posZ);
 
-            this.onGround = worldObj.getBlock(px, py, pz).isLadder(worldObj, px, py, pz, this);
+            this.onGround = worldObj.getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(worldObj, new BlockPos(px, py, pz), this);
         }
 
-        super.updateFallState(y, this.onGround);
+        super.updateFallState(y, onGroundIn, blockIn, pos);
     }
 
     @Override
@@ -688,7 +691,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         int experience;
 
-        if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
+        if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.canDropLoot() && this.worldObj.getGameRules().getBoolean("doMobLoot"))
         {
             experience = citizenData.getLevel()*100 + this.getExperiencePoints();
 
@@ -706,7 +709,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             double d2 = this.rand.nextGaussian() * 0.02D;
             double d0 = this.rand.nextGaussian() * 0.02D;
             double d1 = this.rand.nextGaussian() * 0.02D;
-            this.worldObj.spawnParticle("explode",
+            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
                                         this.posX + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
                                         this.posY + (this.rand.nextDouble() * this.height),
                                         this.posZ + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
@@ -757,15 +760,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public boolean isAtHome()
     {
-        ChunkCoordinates homePosition = getHomePosition();
-        return homePosition != null && homePosition.getDistanceSquared((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= 16;
+        BlockPos homePosition = getHomePosition();
+        return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= 16;
     }
 
     /**
      * Returns the home position of each citizen (His house or townhall)
      * @return location
      */
-    public ChunkCoordinates getHomePosition()
+    public BlockPos getHomePosition()
     {
         BuildingHome homeBuilding = getHomeBuilding();
         if (homeBuilding != null)
@@ -790,9 +793,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return (citizenData != null) ? citizenData.getHomeBuilding() : null;
     }
 
-    public Vec3 getPosition()
+    public BlockPos getPosition()
     {
-        return Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
+        return new BlockPos(posX,posY,posZ);
     }
 
     @Override
@@ -848,10 +851,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public boolean isInventoryFull()
     {
-        return InventoryUtils.getOpenSlot(getInventory()) == -1;
+        return InventoryUtils.getOpenSlot(getInventoryCitizen()) == -1;
     }
 
-    public InventoryCitizen getInventory()
+    public InventoryCitizen getInventoryCitizen()
     {
         return inventory;
     }
@@ -918,39 +921,39 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public int findFirstSlotInInventoryWith(Item targetItem)
     {
-        return InventoryUtils.findFirstSlotInInventoryWith(getInventory(), targetItem);
+        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), targetItem);
     }
 
     public int findFirstSlotInInventoryWith(Block block)
     {
-        return InventoryUtils.findFirstSlotInInventoryWith(getInventory(), block);
+        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), block);
     }
 
     public int getItemCountInInventory(Block block)
     {
-        return InventoryUtils.getItemCountInInventory(getInventory(), block);
+        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), block);
     }
 
     public int getItemCountInInventory(Item targetitem)
     {
-        return InventoryUtils.getItemCountInInventory(getInventory(), targetitem);
+        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), targetitem);
     }
 
     public boolean hasItemInInventory(Block block)
     {
-        return InventoryUtils.hasitemInInventory(getInventory(), block);
+        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), block);
     }
 
     public boolean hasItemInInventory(Item item)
     {
-        return InventoryUtils.hasitemInInventory(getInventory(), item);
+        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), item);
     }
 
     public void setInventorySize(int newSize, boolean dropLeftovers)
     {
         if (!worldObj.isRemote)
         {
-            InventoryCitizen     newInventory = new InventoryCitizen(inventory.getInventoryName(), inventory.hasCustomInventoryName(), newSize);
+            InventoryCitizen     newInventory = new InventoryCitizen(inventory.getName(), inventory.hasCustomName(), newSize);
             ArrayList<ItemStack> leftOvers    = new ArrayList<>();
             for (int i = 0; i < inventory.getSizeInventory(); i++)
             {
@@ -985,7 +988,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             ItemStack itemStack = entityItem.getEntityItem();
             int       i         = itemStack.stackSize;
 
-            if (i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventory(), itemStack))
+            if (i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventoryCitizen(), itemStack))
             {
                 this.worldObj.playSoundAtEntity(this, "random.pop", 0.2f,
                                                 (float) (((this.rand.nextDouble() - this.rand.nextDouble()) * 0.7D + 1.0D) * 2.0D));
@@ -1005,10 +1008,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         setCurrentItemOrArmor(0, inventory.getStackInSlot(slot));
     }
 
-    public void hitBlockWithToolInHand(ChunkCoordinates block)
+    public void hitBlockWithToolInHand(BlockPos block)
     {
         if (block == null){ return; }
-        hitBlockWithToolInHand(block.posX, block.posY, block.posZ, false);
+        hitBlockWithToolInHand(block.getX(), block.getY(), block.getZ(), false);
     }
 
     /**
@@ -1023,10 +1026,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         //todo: this is not optimal but works
         getLookHelper().setLookPosition(x, y, z, 10f, getVerticalFaceSpeed());
+        BlockPos pos = new BlockPos(x,y,z);
 
         this.swingItem();
 
-        Block block = worldObj.getBlock(x, y, z);
+        Block block = worldObj.getBlockState(pos).getBlock();
         if (breakBlock)
         {
             if (!worldObj.isRemote)
@@ -1040,8 +1044,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                                      (float) (z + 0.5D),
                                      block.stepSound.getBreakSound(),
                                      block.stepSound.getVolume(),
-                                     block.stepSound.getPitch());
-            worldObj.setBlockToAir(x, y, z);
+                                     block.stepSound.getFrequency());
+            worldObj.setBlockToAir(pos);
 
             damageItemInHand(1);
         }
@@ -1050,13 +1054,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             if (!worldObj.isRemote)//TODO might remove this
             {
                 MineColonies.getNetwork().sendToAllAround(
-                        new BlockParticleEffectMessage(x, y, z, block, worldObj.getBlockMetadata(x, y, z), 1),//TODO correct side
-                        new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, x, y, z, 16.0D));
+                        new BlockParticleEffectMessage(x, y, z, block, worldObj.getBlock(x, y, z), 1),//TODO correct side
+                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), x, y, z, 16.0D));
             }
-            worldObj.playSoundEffect((float) (x + 0.5D), (float) (y + 0.5D), (float) (z + 0.5D), block.stepSound.getStepResourcePath(),
+            worldObj.playSoundEffect((float) (x + 0.5D), (float) (y + 0.5D), (float) (z + 0.5D), block.stepSound.getStepSound(),
 
                                      (float) ((block.stepSound.getVolume() + 1.0D) / 8.0D),
-                                     (float) (block.stepSound.getPitch() * 0.5D));
+                                     (float) (block.stepSound.getFrequency() * 0.5D));
         }
     }
 
@@ -1066,7 +1070,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public void damageItemInHand(int damage)
     {
-        final ItemStack heldItem = getInventory().getHeldItem();
+        final ItemStack heldItem = getInventoryCitizen().getHeldItem();
         //If we hit with bare hands, ignore
         if(heldItem == null)
         {
@@ -1078,7 +1082,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (heldItem.stackSize < 1)
         {
             this.setCurrentItemOrArmor(0, null);
-            getInventory().setInventorySlotContents(getInventory().getHeldItemSlot(), null);
+            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), null);
         }
     }
 
@@ -1087,10 +1091,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         hitBlockWithToolInHand(x, y, z, false);
     }
 
-    public void breakBlockWithToolInHand(ChunkCoordinates block)
+    public void breakBlockWithToolInHand(BlockPos block)
     {
         if (block == null){ return; }
-        hitBlockWithToolInHand(block.posX, block.posY, block.posZ, true);
+        hitBlockWithToolInHand(block.getX(), block.getY(), block.getZ(), true);
     }
 
     public void sendLocalizedChat(String key, Object... args)
