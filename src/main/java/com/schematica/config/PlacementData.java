@@ -1,5 +1,7 @@
 package com.schematica.config;
 
+import net.minecraft.util.EnumFacing;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +14,7 @@ public class PlacementData
         BLOCK, PLAYER, PISTON
     }
 
-    public static final ForgeDirection[] VALID_DIRECTIONS = ForgeDirection.VALID_DIRECTIONS;
+    public static final EnumFacing[] VALID_DIRECTIONS = EnumFacing.VALUES;
 
     public final PlacementType type;
     public       int                          maskOffset         = 0x0;
@@ -21,7 +23,7 @@ public class PlacementData
     public       int                          maskMetaInHand     = -1;
     public       int                          bitShiftMetaInHand = 0;
     public       int                          maskMeta           = 0xF;
-    public final Map<ForgeDirection, Integer> mapping            = new HashMap<>();
+    public final Map<EnumFacing, Integer>     mapping            = new HashMap<>();
 
     public PlacementData(PlacementType type, int... metadata)
     {
@@ -86,24 +88,24 @@ public class PlacementData
         return metadata;
     }
 
-    public ForgeDirection[] getValidDirections(ForgeDirection[] solidSides, int metadata)
+    public EnumFacing[] getValidDirections(EnumFacing[] solidSides, int metadata)
     {
-        List<ForgeDirection> list = new ArrayList<>();
+        List<EnumFacing> list = new ArrayList<>();
 
-        for(ForgeDirection direction : solidSides)
+        for(EnumFacing direction : solidSides)
         {
             if(this.maskOffset != 0)
             {
                 if((metadata & this.maskOffset) == 0)
                 {
-                    if(this.offsetLowY < 0.5f && direction == ForgeDirection.UP)
+                    if(this.offsetLowY < 0.5f && direction == EnumFacing.UP)
                     {
                         continue;
                     }
                 }
                 else
                 {
-                    if(this.offsetLowY < 0.5f && direction == ForgeDirection.DOWN)
+                    if(this.offsetLowY < 0.5f && direction == EnumFacing.DOWN)
                     {
                         continue;
                     }
@@ -122,7 +124,7 @@ public class PlacementData
             list.add(direction);
         }
 
-        ForgeDirection[] directions = new ForgeDirection[list.size()];
+        EnumFacing[] directions = new EnumFacing[list.size()];
         return list.toArray(directions);
     }
 }
