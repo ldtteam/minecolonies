@@ -1,6 +1,6 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -40,7 +40,7 @@ public class Tree
      */
     public Tree(World world, ChunkCoordinates log)
     {
-        Block block = ChunkCoordUtils.getBlock(world, log);
+        Block block = BlockPosUtil.getBlock(world, log);
         if(block.isWood(world, log.posX, log.posY, log.posZ))
         {
             location = getBaseLog(world, log.posX, log.posY, log.posZ);
@@ -70,8 +70,8 @@ public class Tree
             {
                 for(int z = -1; z <= 1; z++)
                 {
-                    ChunkCoordinates temp = ChunkCoordUtils.add(log, x, y, z);
-                    if(ChunkCoordUtils.getBlock(world, temp).isWood(null,0,0,0) && !woodBlocks.contains(temp))//TODO reorder if more optimal
+                    ChunkCoordinates temp = BlockPosUtil.add(log, x, y, z);
+                    if(BlockPosUtil.getBlock(world, temp).isWood(null,0,0,0) && !woodBlocks.contains(temp))//TODO reorder if more optimal
                     {
                         addAndSearch(world, temp);
                     }
@@ -235,12 +235,12 @@ public class Tree
             return;
         }
 
-        ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, location);
+        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
 
         NBTTagList logs = new NBTTagList();
         for(ChunkCoordinates log : woodBlocks)
         {
-            ChunkCoordUtils.writeToNBTTagList(logs, log);
+            BlockPosUtil.writeToNBTTagList(logs, log);
         }
         compound.setTag(TAG_LOGS, logs);
     }
@@ -248,13 +248,13 @@ public class Tree
     public static Tree readFromNBT(NBTTagCompound compound)
     {
         Tree tree = new Tree();
-        tree.location = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
+        tree.location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
 
         tree.woodBlocks = new LinkedList<>();
         NBTTagList logs = compound.getTagList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
         for(int i = 0; i < logs.tagCount(); i++)
         {
-            tree.woodBlocks.add(ChunkCoordUtils.readFromNBTTagList(logs, i));
+            tree.woodBlocks.add(BlockPosUtil.readFromNBTTagList(logs, i));
         }
         return tree;
     }

@@ -1,7 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -65,7 +65,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
 
         if (!noPath() &&
                 destination != null &&
-                ChunkCoordUtils.equals(destination, newX, newY, newZ))
+                BlockPosUtil.equals(destination, newX, newY, newZ))
         {
             return pathResult;
         }

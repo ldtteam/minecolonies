@@ -4,7 +4,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingMiner;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -37,7 +37,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(colonyId);
-        ChunkCoordUtils.writeToByteBuf(buf, buildingId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeInt(level);
     }
 
@@ -45,7 +45,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
-        buildingId = ChunkCoordUtils.readFromByteBuf(buf);
+        buildingId = BlockPosUtil.readFromByteBuf(buf);
         level = buf.readInt();
     }
 

@@ -85,7 +85,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
             LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", job.getSchematic().getName());
         }
-        ChunkCoordUtils.tryMoveLivingToXYZ(worker, job.getSchematic().getPosition());
+        BlockPosUtil.tryMoveLivingToXYZ(worker, job.getSchematic().getPosition());
 
         worker.setStatus(EntityCitizen.Status.WORKING);
     }
@@ -216,7 +216,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             int metadata = job.getSchematic().getMetadata();
             ItemStack itemstack = new ItemStack(block, 1, metadata);
 
-            Block worldBlock = ChunkCoordUtils.getBlock(world, job.getSchematic().getBlockPosition());
+            Block worldBlock = BlockPosUtil.getBlock(world, job.getSchematic().getBlockPosition());
 
             if(itemstack.getItem() != null && block != null && block != Blocks.air && worldBlock != Blocks.bedrock && !(worldBlock instanceof AbstractBlockHut) && !isBlockFree(block, metadata))
             {
@@ -441,7 +441,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 int chestSlotID = InventoryUtils.containsStack(workBuildingTileEntity, material);
                 if(chestSlotID != -1)//chest contains item
                 {
-                    if(ChunkCoordUtils.distanceSqrd(worker.getWorkBuilding().getLocation(), worker.getPosition()) < 16)//We are close to the chest
+                    if(BlockPosUtil.distanceSqrd(worker.getWorkBuilding().getLocation(), worker.getPosition()) < 16)//We are close to the chest
                     {
                         if(!InventoryUtils.takeStackInSlot(workBuildingTileEntity, getInventory(), chestSlotID, 1, true))
                         {
@@ -451,9 +451,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                             worker.setStatus(EntityCitizen.Status.WORKING);
                         }
                     }
-                    else if(worker.getNavigator().noPath() || !ChunkCoordUtils.isPathingTo(worker, worker.getWorkBuilding().getLocation()))
+                    else if(worker.getNavigator().noPath() || !BlockPosUtil.isPathingTo(worker, worker.getWorkBuilding().getLocation()))
                     {
-                        ChunkCoordUtils.moveLivingToXYZ(worker, worker.getWorkBuilding().getLocation());
+                        BlockPosUtil.moveLivingToXYZ(worker, worker.getWorkBuilding().getLocation());
                         worker.setStatus(EntityCitizen.Status.GETTING_ITEMS);
                     }
                 }
@@ -507,7 +507,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 getInventory().setInventorySlotContents(slotID, stack);
             }
 
-            if(ChunkCoordUtils.distanceSqrd(worker.getWorkBuilding().getLocation(), worker.getPosition()) < 16)
+            if(BlockPosUtil.distanceSqrd(worker.getWorkBuilding().getLocation(), worker.getPosition()) < 16)
             {
                 TileEntityColonyBuilding tileEntity = worker.getWorkBuilding().getTileEntity();
                 if(tileEntity != null)
@@ -517,7 +517,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
             else
             {
-                ChunkCoordUtils.moveLivingToXYZ(worker, worker.getWorkBuilding().getLocation());
+                BlockPosUtil.moveLivingToXYZ(worker, worker.getWorkBuilding().getLocation());
             }
 
             if(leftOvers != null)

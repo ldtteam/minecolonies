@@ -8,7 +8,7 @@ import com.blockout.views.ScrollingList;
 import com.blockout.views.SwitchView;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.buildings.BuildingTownhall;
+import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.PermissionsMessage;
@@ -19,7 +19,7 @@ import java.util.*;
 /**
  * Window for the town hall
  */
-public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View> implements Button.Handler
+public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownHall.View> implements Button.Handler
 {
     private static final String BUTTON_INFO          = "info";
     private static final String BUTTON_ACTIONS       = "actions";
@@ -48,7 +48,7 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View
     private static final String BUILDERS                 = "builders";
     private static final String DELIVERY_MAN             = "deliverymen";
     private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownhall.xml";
-    private BuildingTownhall.View townhall;
+    private BuildingTownHall.View townhall;
     private List<Permissions.Player> users       = new ArrayList<>();
     private List<CitizenData.View>   citizens    = new ArrayList<>();
     private Map<String, String>      tabsToPages = new HashMap<>();
@@ -59,9 +59,9 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownhall.View
     /**
      * Constructor for the town hall window
      *
-     * @param townhall {@link com.minecolonies.colony.buildings.BuildingTownhall.View}
+     * @param townhall {@link BuildingTownHall.View}
      */
-    public WindowTownhall(BuildingTownhall.View townhall)
+    public WindowTownhall(BuildingTownHall.View townhall)
     {
         super(townhall, Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
         this.townhall = townhall;

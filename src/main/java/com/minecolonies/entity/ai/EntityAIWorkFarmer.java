@@ -2,7 +2,7 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.jobs.JobFarmer;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.InventoryUtils;
 import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.block.Block;
@@ -106,7 +106,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
     {
         if (job.isMissingNeededItem())
         {
-            if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+            if (BlockPosUtil.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
             {
                 List<ItemStack> l = new CopyOnWriteArrayList<>();
                 l.addAll(job.getItemsNeeded());
@@ -141,7 +141,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                 make_land();
                 break;
             case NEED_SEEDS:
-                if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+                if (BlockPosUtil.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
                 {
                     delay = 200;
                     logger.info("Need Seeds");
@@ -349,23 +349,23 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 
                     if (seed.getItem() == Items.wheat_seeds)
                     {
-                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.wheat);
+                        BlockPosUtil.setBlock(world, plowedLand.get(0), Blocks.wheat);
                     }
                     else if (seed.getItem() == Items.pumpkin_seeds)
                     {
-                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.pumpkin_stem);
+                        BlockPosUtil.setBlock(world, plowedLand.get(0), Blocks.pumpkin_stem);
                     }
                     else if (seed.getItem() == Items.melon_seeds)
                     {
-                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.melon_stem);
+                        BlockPosUtil.setBlock(world, plowedLand.get(0), Blocks.melon_stem);
                     }
                     else if (seed.getItem() == Items.potato)
                     {
-                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.potatoes);
+                        BlockPosUtil.setBlock(world, plowedLand.get(0), Blocks.potatoes);
                     }
                     else if (seed.getItem() == Items.carrot)
                     {
-                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.carrots);
+                        BlockPosUtil.setBlock(world, plowedLand.get(0), Blocks.carrots);
                     }
                     getInventory().decrStackSize(slot, 1);
                     delay = 10;
@@ -413,16 +413,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         {
             delay = 10;
 
-            Block block = ChunkCoordUtils.getBlock(world, crops.get(0));
+            Block block = BlockPosUtil.getBlock(world, crops.get(0));
 
-            if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, crops.get(0)))
+            if (BlockPosUtil.isWorkerAtSiteWithMove(worker, crops.get(0)))
             {
                 if (block == Blocks.melon_block || block == Blocks.pumpkin || world.getBlockMetadata(crops.get(0).posX,
                                                                                                      crops.get(0).posY,
                                                                                                      crops.get(0).posZ)
                                                                               == 0x7)
                 {
-                    List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, crops.get(0), 0);
+                    List<ItemStack> items = BlockPosUtil.getBlockDrops(world, crops.get(0), 0);
 
                     for (ItemStack item : items)
                     {
@@ -609,7 +609,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 
     private void dumpInventory()
     {
-        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+        if (BlockPosUtil.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
         {
             for (int i = 0; i < getInventory().getSizeInventory(); i++)
             {

@@ -3,13 +3,13 @@ package com.minecolonies.colony.permissions;
 import com.minecolonies.network.PacketUtils;
 import com.minecolonies.util.Utils;
 import com.mojang.authlib.GameProfile;
-import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

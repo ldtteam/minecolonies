@@ -1,6 +1,6 @@
 package com.minecolonies.items;
 
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Schematic;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,17 +33,17 @@ public class ItemScanTool extends ItemMinecolonies
 
         if(!compound.hasKey("pos1"))
         {
-            ChunkCoordUtils.writeToNBT(compound, "pos1", new ChunkCoordinates(pos));
+            BlockPosUtil.writeToNBT(compound, "pos1", new ChunkCoordinates(pos));
             if(worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point");
             return true;
         }
         else if(!compound.hasKey("pos2"))
         {
-            ChunkCoordinates pos1 = ChunkCoordUtils.readFromNBT(compound, "pos1");
+            ChunkCoordinates pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
             ChunkCoordinates pos2 = new ChunkCoordinates(pos);
             if(pos2.getDistanceSquaredToChunkCoordinates(pos1) > 0)
             {
-                ChunkCoordUtils.writeToNBT(compound, "pos2", pos2);
+                BlockPosUtil.writeToNBT(compound, "pos2", pos2);
                 if(worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.scepterSteel.point2");
                 return true;
             }
@@ -52,8 +52,8 @@ public class ItemScanTool extends ItemMinecolonies
         }
         else
         {
-            ChunkCoordinates pos1 = ChunkCoordUtils.readFromNBT(compound, "pos1");
-            ChunkCoordinates pos2 = ChunkCoordUtils.readFromNBT(compound, "pos2");
+            ChunkCoordinates pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
+            ChunkCoordinates pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
             if(worldIn.isRemote)
             {
                 String result = Schematic.saveSchematic(worldIn, pos1, pos2);

@@ -8,7 +8,7 @@ import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobFarmer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public class BuildingFarmer extends BuildingWorker
 {
@@ -28,7 +28,7 @@ public class BuildingFarmer extends BuildingWorker
     private static final    String  FARMER      = "Farmer";
     private static final    String  TAG_FARMER  = "farmer";
 
-    public BuildingFarmer(Colony c, ChunkCoordinates l)
+    public BuildingFarmer(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -87,7 +87,7 @@ public class BuildingFarmer extends BuildingWorker
                 pumpkin = 0;
 
 
-        public View(ColonyView c, ChunkCoordinates l)
+        public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }

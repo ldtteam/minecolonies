@@ -1,7 +1,6 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.entity.EntityCitizen;
-import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;

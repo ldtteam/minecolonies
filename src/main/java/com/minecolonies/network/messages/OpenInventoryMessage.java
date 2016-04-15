@@ -4,7 +4,7 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -67,7 +67,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 buf.writeInt(entityID);
                 break;
             case INVENTORY_CHEST:
-                ChunkCoordUtils.writeToByteBuf(buf, tePos);
+                BlockPosUtil.writeToByteBuf(buf, tePos);
                 break;
         }
     }
@@ -83,7 +83,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 entityID = buf.readInt();
                 break;
             case INVENTORY_CHEST:
-                tePos = ChunkCoordUtils.readFromByteBuf(buf);
+                tePos = BlockPosUtil.readFromByteBuf(buf);
                 break;
         }
     }
@@ -102,7 +102,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 player.displayGUIChest(citizenInventory);
                 break;
             case INVENTORY_CHEST:
-                TileEntityChest chest = (TileEntityChest) ChunkCoordUtils.getTileEntity(player.worldObj, message.tePos);
+                TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
                 if(!StringUtils.isNullOrEmpty(message.name))
                     chest.func_145976_a(message.name);              //SetInventoryName
                 player.displayGUIChest(chest);

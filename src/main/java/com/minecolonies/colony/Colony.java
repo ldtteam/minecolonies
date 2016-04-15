@@ -4,7 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.materials.MaterialSystem;
-import com.minecolonies.colony.buildings.BuildingTownhall;
+import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
@@ -17,6 +17,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -40,15 +41,15 @@ public class Colony implements IColony
     //  General Attributes
     private                 String                          name                            = "ERROR(Wasn't placed by player)";
     private         final   int                             dimensionId;
-    private                 ChunkCoordinates                center;
+    private                 BlockPos                        center;
 
     //  Administration/permissions
     private                 Permissions                     permissions                     = new Permissions();
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private                 BuildingTownhall                townhall;
-    private                 Map<ChunkCoordinates, Building> buildings                       = new HashMap<>();
+    private BuildingTownHall townhall;
+    private                 Map<BlockPos, Building>         buildings                       = new HashMap<>();
 
     //  Citizenry
     private                 Map<Integer, CitizenData>       citizens                        = new HashMap<>();
@@ -80,7 +81,7 @@ public class Colony implements IColony
      * @param w The world the colony exists in
      * @param c The center of the colony (location of Town Hall).
      */
-    public Colony(int id, World w, ChunkCoordinates c)
+    public Colony(int id, World w, BlockPos c)
     {
         this(id, w.provider.getDimensionId());
         center = c;
@@ -138,7 +139,7 @@ public class Colony implements IColony
     protected void readFromNBT(NBTTagCompound compound)
     {
         name = compound.getString(TAG_NAME);
-        center = ChunkCoordUtils.readFromNBT(compound, TAG_CENTER);
+        center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
 
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 
@@ -186,7 +187,7 @@ public class Colony implements IColony
 
         //  Basic data
         compound.setString(TAG_NAME, name);
-        ChunkCoordUtils.writeToNBT(compound, TAG_CENTER, center);
+        BlockPosUtil.writeToNBT(compound, TAG_CENTER, center);
 
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
@@ -271,7 +272,7 @@ public class Colony implements IColony
      *
      * @return      Chunk Coordinates of the center of the colony
      */
-    public ChunkCoordinates getCenter() { return center; }
+    public BlockPos getCenter() { return center; }
 
     /**
      * Marks the instance dirty
@@ -301,9 +302,9 @@ public class Colony implements IColony
      * @param coord     ChunkCoordinates to check
      * @return          True if inside colony, otherwise false
      */
-    public boolean isCoordInColony(World w, ChunkCoordinates coord)
+    public boolean isCoordInColony(World w, BlockPos coord)
     {
-        return isCoordInColony(w, coord.posX, coord.posY, coord.posZ);
+        return isCoordInColony(w, coord.getX(), coord.getY(), coord.getZ());
     }
 
     @Override
@@ -311,25 +312,25 @@ public class Colony implements IColony
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.equals(getWorld()) &&
-               center.getDistanceSquared(x, center.posY, z) <= MathUtils.square(Configurations.workingRangeTownhall);
+                BlockPosUtil.getDistanceSquared(center, new BlockPos(x, center.getY(), z)) <= MathUtils.square(Configurations.workingRangeTownhall);
     }
 
     /**
      * @see {@link #getDistanceSquared(int, int, int)}
      *
-     * @param coord     Chunk coordinate to get squared position
+     * @param pos     Chunk coordinate to get squared position
      * @return          Squared position from center
      */
-    public float getDistanceSquared(ChunkCoordinates coord)
+    public float getDistanceSquared(BlockPos pos)
     {
-        return getDistanceSquared(coord.posX, coord.posY, coord.posZ);
+        return getDistanceSquared(pos.getX(), pos.getY(), pos.getZ());
     }
 
     @Override
     public float getDistanceSquared(int posX, int posY, int posZ) //todo why do we pass in y, if we dont use it
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return center.getDistanceSquared(posX, center.posY, posZ);
+        return BlockPosUtil.getDistanceSquared(center, new BlockPos(posX, center.getY(), posZ));
     }
 
     /**
@@ -363,7 +364,7 @@ public class Colony implements IColony
     /**
      * Any per-server-tick logic should be performed here
      *
-     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent}
+     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
     public void onServerTick(TickEvent.ServerTickEvent event)
     {
@@ -383,7 +384,7 @@ public class Colony implements IColony
      * NOTE: If the Colony's world isn't loaded, it won't have a worldtick.
      * Use onServerTick for logic that should _always_ run
      *
-     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent}
+     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
@@ -422,7 +423,7 @@ public class Colony implements IColony
             {
                 for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
                 {
-                    if (!event.world.blockExists(getCenter().posX + x, 128, getCenter().posZ + z))
+                    if (!event.world.isBlockLoaded(new BlockPos(getCenter().getX() + x, 128, getCenter().getZ() + z)))
                     {
                         allColonyChunksLoaded = false;
                         break;
@@ -454,9 +455,9 @@ public class Colony implements IColony
 
             for (Building building : buildings.values())
             {
-                ChunkCoordinates loc = building.getLocation();
-                if (event.world.blockExists(loc.posX, loc.posY, loc.posZ) &&
-                        !building.isMatchingBlock(event.world.getBlock(loc.posX, loc.posY, loc.posZ)))
+                BlockPos loc = building.getLocation();
+                if (event.world.isBlockLoaded(loc) &&
+                        !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
                 {
                     //  Sanity cleanup
                     if (removedBuildings == null)
@@ -537,7 +538,7 @@ public class Colony implements IColony
                         continue;
                     }
 
-                    double distance = player.getDistanceSq(center.posX, center.posY, center.posZ);
+                    double distance = player.getDistanceSq(center);
                     if (distance < MathUtils.square(Configurations.workingRangeTownhall + 16))
                     {
                         //  Players become subscribers if they come within 16 blocks of the edge of the colony
@@ -659,16 +660,14 @@ public class Colony implements IColony
      */
     private void spawnCitizen(CitizenData data)
     {
-        int xCoord = center.posX, yCoord = center.posY, zCoord = center.posZ;
-
-        if (!world.blockExists(center.posX, center.posY, center.posZ))
+        if (!world.isBlockLoaded(center))
         {
             //  Chunk with TownHall Block is not loaded
             return;
         }
 
-        ChunkCoordinates spawnPoint =
-                Utils.scanForBlockNearPoint(world, new ChunkCoordinates(xCoord, yCoord, zCoord), 1, 0, 1, 2, Blocks.air, Blocks.snow_layer);
+        BlockPos spawnPoint =
+                Utils.scanForBlockNearPoint(world, center, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer);
 
         if(spawnPoint != null)
         {
@@ -692,7 +691,7 @@ public class Colony implements IColony
 
             entity.setColony(this, data);
 
-            entity.setPosition(spawnPoint.posX, spawnPoint.posY, spawnPoint.posZ);
+            entity.setPosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
             world.spawnEntityInWorld(entity);
 
             markCitizensDirty();
@@ -711,7 +710,7 @@ public class Colony implements IColony
      *
      * @return      Map with ID (coordinates) as key, and buildings as value
      */
-    public Map<ChunkCoordinates, Building> getBuildings()
+    public Map<BlockPos, Building> getBuildings()
     {
         return Collections.unmodifiableMap(buildings);
     }
@@ -721,7 +720,7 @@ public class Colony implements IColony
      *
      * @return      Town hall of the colony
      */
-    public BuildingTownhall getTownhall()
+    public BuildingTownHall getTownhall()
     {
         return townhall;
     }
@@ -735,7 +734,7 @@ public class Colony implements IColony
      * @param buildingId    ID (coordinates) of the building to get
      * @return              Building belonging to the given ID
      */
-    public Building getBuilding(ChunkCoordinates buildingId)
+    public Building getBuilding(BlockPos buildingId)
     {
         return buildings.get(buildingId);
     }
@@ -749,7 +748,7 @@ public class Colony implements IColony
      * @param <BUILDING>
      * @return
      */
-    public <BUILDING extends Building> BUILDING getBuilding(ChunkCoordinates buildingId, Class<BUILDING> type)
+    public <BUILDING extends Building> BUILDING getBuilding(BlockPos buildingId, Class<BUILDING> type)
     {
         try
         {
@@ -770,12 +769,12 @@ public class Colony implements IColony
         buildings.put(building.getID(), building);
         building.markDirty();
 
-        if (building instanceof BuildingTownhall)
+        if (building instanceof BuildingTownHall)
         {
             //  Limit 1 town hall
             if (townhall == null)
             {
-                townhall = (BuildingTownhall) building;
+                townhall = (BuildingTownHall) building;
             }
         }
     }
@@ -981,7 +980,7 @@ public class Colony implements IColony
         return workManager;
     }
 
-    public List<ChunkCoordinates> getDeliverymanRequired()
+    public List<BlockPos> getDeliverymanRequired()
     {
 
         return citizens.values().stream()

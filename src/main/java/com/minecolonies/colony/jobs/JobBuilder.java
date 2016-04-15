@@ -4,11 +4,12 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.Schematic;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChunkCoordinates;
 
 public class JobBuilder extends Job
@@ -17,8 +18,8 @@ public class JobBuilder extends Job
     protected               int                 workOrderId;
     protected               Schematic           schematic;
     protected               String              schematicName;
-    protected               ChunkCoordinates    schematicPos;
-    protected               ChunkCoordinates    schematicProgress;
+    protected               BlockPos            schematicPos;
+    protected               BlockPos            schematicProgress;
     public                  Stage               stage;
 
     private static final    String              TAG_WORK_ORDER = "workorder";
@@ -57,8 +58,8 @@ public class JobBuilder extends Job
             {
                 NBTTagCompound schematicTag = new NBTTagCompound();
                 schematicTag.setString(TAG_NAME, schematic.getName());
-                ChunkCoordUtils.writeToNBT(schematicTag, TAG_POSITION, schematic.getPosition());
-                ChunkCoordUtils.writeToNBT(schematicTag, TAG_PROGRESS, schematic.getLocalPosition());
+                BlockPosUtil.writeToNBT(schematicTag, TAG_POSITION, schematic.getPosition());
+                BlockPosUtil.writeToNBT(schematicTag, TAG_PROGRESS, schematic.getLocalPosition());
                 compound.setTag(TAG_SCHEMATIC, schematicTag);
                 compound.setString(TAG_STAGE, stage.name());
             }
@@ -77,8 +78,8 @@ public class JobBuilder extends Job
             {
                 NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
                 schematicName = schematicTag.getString(TAG_NAME);
-                schematicPos = ChunkCoordUtils.readFromNBT(schematicTag, TAG_POSITION);
-                schematicProgress = ChunkCoordUtils.readFromNBT(schematicTag, TAG_PROGRESS);
+                schematicPos = BlockPosUtil.readFromNBT(schematicTag, TAG_POSITION);
+                schematicProgress = BlockPosUtil.readFromNBT(schematicTag, TAG_PROGRESS);
                 stage = Stage.valueOf(compound.getString(TAG_STAGE));
             }
         }

@@ -8,14 +8,14 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
-import cpw.mods.fml.common.gameevent.TickEvent;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ import java.util.Map;
 
 public abstract class Building
 {
-    private         final       ChunkCoordinates            location;
+    private         final       BlockPos                    location;
     private         final       Colony                      colony;
 
     private MaterialStore materialStore;
@@ -76,7 +76,7 @@ public abstract class Building
                 /*
                 If a constructor exist for the building, put the building in the lists.
                  */
-                if (buildingClass.getDeclaredConstructor(Colony.class, ChunkCoordinates.class) != null)
+                if (buildingClass.getDeclaredConstructor(Colony.class, BlockPos.class) != null)
                 {
                     nameToClassMap.put(name, buildingClass);
                     classToNameMap.put(buildingClass, name);
@@ -121,7 +121,7 @@ public abstract class Building
         addMapping("Lumberjack",    BuildingLumberjack.class,    BlockHutLumberjack.class);
         addMapping("Miner",         BuildingMiner.class,         BlockHutMiner.class);
         addMapping("Stonemason",    BuildingStonemason.class,    BlockHutStonemason.class);
-        addMapping("Townhall",      BuildingTownhall.class,      BlockHutTownhall.class);
+        addMapping("Townhall",      BuildingTownHall.class,      BlockHutTownhall.class);
         addMapping("Warehouse",     BuildingWarehouse.class,     BlockHutWarehouse.class);
         addMapping("Fisherman",     BuildingFisherman.class,     BlockHutFisherman.class);
 
@@ -131,11 +131,11 @@ public abstract class Building
      * Constructor for a Building.
      *
      * @param colony            Colony the building belongs to
-     * @param chunkCoordinates  Location of the building (it's Hut Block)
+     * @param pos  Location of the building (it's Hut Block)
      */
-    protected Building(Colony colony, ChunkCoordinates chunkCoordinates)
+    protected Building(Colony colony, BlockPos pos)
     {
-        location = new ChunkCoordinates(chunkCoordinates);
+        location = pos;
         this.colony = colony;
         materialStore = new MaterialStore(MaterialStore.Type.CHEST, colony.getMaterialSystem());
     }
@@ -161,9 +161,9 @@ public abstract class Building
             if (oclass != null)
             {
                 //UUID id = UUID.fromString(compound.getString("id"));
-                ChunkCoordinates chunkCoordinates = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
-                Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, ChunkCoordinates.class);
-                building = (Building)constructor.newInstance(colony, chunkCoordinates);
+                BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+                Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
+                building = (Building)constructor.newInstance(colony, pos);
             }
         }
         catch (Exception exception)
@@ -211,8 +211,8 @@ public abstract class Building
             if (oclass != null)
             {
                 //UUID id = UUID.fromString(compound.getString("id"));
-                ChunkCoordinates loc = parent.getPosition();
-                Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, ChunkCoordinates.class);
+                BlockPos loc = parent.getPosition();
+                Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
                 building = (Building)constructor.newInstance(colony, loc);
             }
             else
@@ -267,7 +267,7 @@ public abstract class Building
         else
         {
             compound.setString(TAG_BUILDING_TYPE, s);
-            ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, location);
+            BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
         }
 
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
@@ -288,21 +288,21 @@ public abstract class Building
     }
 
     /**
-     * Returns the {@link ChunkCoordinates} of the current object, also used as ID
+     * Returns the {@link BlockPos} of the current object, also used as ID
      *
-     * @return          {@link ChunkCoordinates} of the current object
+     * @return          {@link BlockPos} of the current object
      */
-    public ChunkCoordinates getID()
+    public BlockPos getID()
     {
         return location; //  Location doubles as ID
     }
 
     /**
-     * Returns the {@link ChunkCoordinates} of the current object, also used as ID
+     * Returns the {@link BlockPos} of the current object, also used as ID
      *
-     * @return          {@link ChunkCoordinates} of the current object
+     * @return          {@link BlockPos} of the current object
      */
-    public ChunkCoordinates getLocation()
+    public BlockPos getLocation()
     {
         return location;
     }
@@ -350,9 +350,9 @@ public abstract class Building
         if (tileEntity == null)
         {
             //  Lazy evaluation
-            if (colony.getWorld().blockExists(location.posX, location.posY, location.posZ))
+            if (colony.getWorld().getBlockState(location).getBlock() != null) //todo check (mw, transsition 1.8)
             {
-                TileEntity te = getColony().getWorld().getTileEntity(location.posX, location.posY, location.posZ);
+                TileEntity te = getColony().getWorld().getTileEntity(location);
                 if (te instanceof TileEntityColonyBuilding)
                 {
                     tileEntity = (TileEntityColonyBuilding)te;
@@ -423,14 +423,14 @@ public abstract class Building
     /**
      * On tick of the server
      *
-     * @param event         {@link cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent}
+     * @param event         {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
     public void onServerTick(TickEvent.ServerTickEvent event) {}
 
     /**
      * On tick of the world
      *
-     * @param event         {@link cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent}
+     * @param event         {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
     public void onWorldTick(TickEvent.WorldTickEvent event) {}
 
@@ -530,23 +530,23 @@ public abstract class Building
     public static class View
     {
         private final   ColonyView       colony;
-        private final   ChunkCoordinates location;
+        private final   BlockPos location;
 
         private int     buildingLevel       = 0;
         private int     buildingMaxLevel    = 0;
 
-        protected View(ColonyView c, ChunkCoordinates l)
+        protected View(ColonyView c, BlockPos l)
         {
             colony = c;
-            location = new ChunkCoordinates(l);
+            location = new BlockPos(l);
         }
 
-        public ChunkCoordinates getID()
+        public BlockPos getID()
         {
             return location; //  Location doubles as ID
         }
 
-        public ChunkCoordinates getLocation()
+        public BlockPos getLocation()
         {
             return location;
         }
@@ -616,7 +616,7 @@ public abstract class Building
      * @param       buf    The network data
      * @return      {@link com.minecolonies.colony.buildings.Building.View} created from reading the buf
      */
-    public static View createBuildingView(ColonyView colony, ChunkCoordinates id, ByteBuf buf)
+    public static View createBuildingView(ColonyView colony, BlockPos id, ByteBuf buf)
     {
         View view = null;
         Class<?> oclass = null;
@@ -632,7 +632,7 @@ public abstract class Building
                 {
                     if (c.getName().endsWith("$View"))
                     {
-                        Constructor<?> constructor = c.getDeclaredConstructor(ColonyView.class, ChunkCoordinates.class);
+                        Constructor<?> constructor = c.getDeclaredConstructor(ColonyView.class, BlockPos.class);
                         view = (View)constructor.newInstance(colony, id);
                         break;
                     }

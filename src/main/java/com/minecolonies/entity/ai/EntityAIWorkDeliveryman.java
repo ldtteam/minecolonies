@@ -5,7 +5,7 @@ import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.JobDeliveryman;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 
@@ -37,13 +37,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIWork<JobDeliveryman
         {
             job.setDestination(worker.getColony().getDeliverymanRequired().get(0));
         }
-        ChunkCoordUtils.tryMoveLivingToXYZ(worker, job.getDestination());
+        BlockPosUtil.tryMoveLivingToXYZ(worker, job.getDestination());
     }
 
     @Override
     public void updateTask()
     {
-        if(!ChunkCoordUtils.isWorkerAtSiteWithMove(worker, job.getDestination()))
+        if(!BlockPosUtil.isWorkerAtSiteWithMove(worker, job.getDestination()))
         {
             return;
         }

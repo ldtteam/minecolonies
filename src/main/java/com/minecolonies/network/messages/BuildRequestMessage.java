@@ -3,7 +3,7 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 
 import io.netty.buffer.ByteBuf;
 
@@ -47,7 +47,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(colonyId);
-        ChunkCoordUtils.writeToByteBuf(buf, buildingId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeInt(mode);
     }
 
@@ -55,7 +55,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
-        buildingId = ChunkCoordUtils.readFromByteBuf(buf);
+        buildingId = BlockPosUtil.readFromByteBuf(buf);
         mode = buf.readInt();
     }
 

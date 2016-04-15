@@ -188,7 +188,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             job.addTasks(this.tasks);
             if (ticksExisted > 0)
             {
-                ChunkCoordUtils.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
+                BlockPosUtil.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
             }
         }
     }

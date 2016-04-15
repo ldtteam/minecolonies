@@ -6,14 +6,14 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobPlaceholder;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public class BuildingBlacksmith extends BuildingWorker
 {
     private static final String BLACKSMITH          = "Blacksmith";
     private static final String BLACKSMITH_HUT_NAME = "blacksmithHut";
 
-    public BuildingBlacksmith(Colony c, ChunkCoordinates l)
+    public BuildingBlacksmith(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -44,7 +44,7 @@ public class BuildingBlacksmith extends BuildingWorker
 
     public static class View extends BuildingWorker.View
     {
-        public View(ColonyView c, ChunkCoordinates l)
+        public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }

@@ -2,7 +2,7 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.item.EntityItem;
@@ -312,7 +312,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private boolean plantSapling(ChunkCoordinates location)
     {
-        if (ChunkCoordUtils.getBlock(world, location) != Blocks.air)
+        if (BlockPosUtil.getBlock(world, location) != Blocks.air)
         {
             return false;
         }
@@ -324,7 +324,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             {
                 Block block = ((ItemBlock) stack.getItem()).field_150939_a;
                 worker.setHeldItem(slot);
-                if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
+                if (BlockPosUtil.setBlock(world, location, block, stack.getItemDamage(), 0x02))
                 {
                     worker.swingItem();
                     world.playSoundEffect((float) location.posX + 0.5F,
@@ -362,7 +362,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private void checkIfStuckOnLeaves(final ChunkCoordinates location)
     {
-        int distance = (int) ChunkCoordUtils.distanceSqrd(location, worker.getPosition());
+        int distance = (int) BlockPosUtil.distanceSqrd(location, worker.getPosition());
         if (previousDistance != distance)
         {
             //something is moving, reset counters
@@ -473,7 +473,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         //TODO check if sapling or apple (currently picks up all items, which may be okay)
         items = list.stream()
                     .filter(item -> item != null && !item.isDead)
-                    .map(ChunkCoordUtils::fromEntity)
+                    .map(BlockPosUtil::fromEntity)
                     .collect(Collectors.toList());
     }
 
@@ -524,7 +524,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 
         for (int i = 0; i < items.size(); i++)
         {
-            float tempDistance = ChunkCoordUtils.distanceSqrd(items.get(i), worker.getPosition());
+            float tempDistance = BlockPosUtil.distanceSqrd(items.get(i), worker.getPosition());
             if (tempDistance < distance)
             {
                 index = i;

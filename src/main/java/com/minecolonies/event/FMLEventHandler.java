@@ -3,10 +3,9 @@ package com.minecolonies.event;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.network.messages.ColonyStylesMessage;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class FMLEventHandler
 {
@@ -14,7 +13,7 @@ public class FMLEventHandler
      * Called when the server ticks
      * Calls {@link ColonyManager#onServerTick(TickEvent.ServerTickEvent)}
      *
-     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent}
+     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent
      * @see             {@link ColonyManager#onServerTick(TickEvent.ServerTickEvent)}
      */
     @SubscribeEvent
@@ -27,7 +26,7 @@ public class FMLEventHandler
      * Called when the client ticks
      * Calls {@link ColonyManager#onClientTick(TickEvent.ClientTickEvent)}
      *
-     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent}
+     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent
      * @see             {@link ColonyManager#onClientTick(TickEvent.ClientTickEvent)}
      */
     @SubscribeEvent

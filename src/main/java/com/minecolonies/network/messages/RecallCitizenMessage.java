@@ -4,7 +4,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Utils;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -44,14 +44,14 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(colonyId);
-        ChunkCoordUtils.writeToByteBuf(buf, buildingId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
-        buildingId = ChunkCoordUtils.readFromByteBuf(buf);
+        buildingId = BlockPosUtil.readFromByteBuf(buf);
     }
 
     @Override

@@ -901,7 +901,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         //Don't drop bedrock but we want to mine bedrock in some cases...
         if (curBlock != Blocks.bedrock)
         {
-            List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, blockToMine, fortune);
+            List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
             for (ItemStack item : items)
             {
                 InventoryUtils.setStack(worker.getInventory(), item);

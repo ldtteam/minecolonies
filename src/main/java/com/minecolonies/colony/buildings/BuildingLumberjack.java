@@ -6,14 +6,14 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobLumberjack;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public class BuildingLumberjack extends BuildingWorker
 {
     private static final String LUMBERJACK          = "Lumberjack";
     private static final String LUMBERJACK_HUT_NAME = "lumberjackHut";
 
-    public BuildingLumberjack(Colony c, ChunkCoordinates l)
+    public BuildingLumberjack(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -44,7 +44,7 @@ public class BuildingLumberjack extends BuildingWorker
 
     public static class View extends BuildingWorker.View
     {
-        public View(ColonyView c, ChunkCoordinates l)
+        public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }

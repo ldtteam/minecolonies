@@ -2,18 +2,18 @@ package com.minecolonies.colony;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingTownhall;
+import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.TownhallRenameMessage;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.MathUtils;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,15 +26,15 @@ public class ColonyView implements IColony
     private final   int                                     id;
     private         String                                  name            = "Unknown";
     private         int                                     dimensionId;
-    private         ChunkCoordinates                        center;
+    private         BlockPos                                center;
 
     //  Administration/permissions
     private         Permissions.View                        permissions     = new Permissions.View();
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private         BuildingTownhall.View townhall;
-    private         Map<ChunkCoordinates, Building.View>    buildings       = new HashMap<>();
+    private         BuildingTownHall.View                   townhall;
+    private         Map<BlockPos, Building.View>            buildings       = new HashMap<>();
 
     //  Citizenry
     private         Map<Integer, CitizenData.View>          citizens        = new HashMap<>();
@@ -92,9 +92,9 @@ public class ColonyView implements IColony
     /**
      * Get the Town hall View for this ColonyView
      *
-     * @return      {@link BuildingTownhall.View} of the colony
+     * @return      {@link BuildingTownHall.View} of the colony
      */
-    public BuildingTownhall.View getTownhall() {
+    public BuildingTownHall.View getTownhall() {
         return townhall;
     }
 
@@ -108,7 +108,7 @@ public class ColonyView implements IColony
      */
     public Building.View getBuilding(int x, int y, int z)
     {
-        return getBuilding(new ChunkCoordinates(x, y, z));
+        return getBuilding(new BlockPos(x, y, z));
     }
 
     /**
@@ -117,7 +117,7 @@ public class ColonyView implements IColony
      * @param buildingId        Coordinates/ID of the Building
      * @return                  {@link com.minecolonies.colony.buildings.Building.View} of a Building for the given Coordinates/ID, or null
      */
-    public Building.View getBuilding(ChunkCoordinates buildingId)
+    public Building.View getBuilding(BlockPos buildingId)
     {
         return buildings.get(buildingId);
     }
@@ -212,7 +212,7 @@ public class ColonyView implements IColony
         //  General Attributes
         ByteBufUtils.writeUTF8String(buf, colony.getName());
         buf.writeInt(colony.getDimensionId());
-        ChunkCoordUtils.writeToByteBuf(buf, colony.getCenter());
+        BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
 
         //  Citizenry
         buf.writeInt(colony.getMaxCitizens());
@@ -232,7 +232,7 @@ public class ColonyView implements IColony
         //  General Attributes
         name = ByteBufUtils.readUTF8String(buf);
         dimensionId = buf.readInt();
-        center = ChunkCoordUtils.readFromByteBuf(buf);
+        center = BlockPosUtil.readFromByteBuf(buf);
 
         //  Citizenry
         maxCitizens = buf.readInt();
@@ -304,7 +304,7 @@ public class ColonyView implements IColony
      *
      * @return          null == no response
      */
-    public IMessage handleColonyViewRemoveBuildingMessage(ChunkCoordinates buildingId)
+    public IMessage handleColonyViewRemoveBuildingMessage(BlockPos buildingId)
     {
         Building.View building = buildings.remove(buildingId);
         if (townhall == building)
@@ -321,16 +321,16 @@ public class ColonyView implements IColony
      * @param buf
      * @return          null == no response
      */
-    public IMessage handleColonyBuildingViewMessage(ChunkCoordinates buildingId, ByteBuf buf)
+    public IMessage handleColonyBuildingViewMessage(BlockPos buildingId, ByteBuf buf)
     {
         Building.View building = Building.createBuildingView(this, buildingId, buf);
         if (building != null)
         {
             buildings.put(building.getID(), building);
 
-            if (building instanceof BuildingTownhall.View)
+            if (building instanceof BuildingTownHall.View)
             {
-                townhall = (BuildingTownhall.View)building;
+                townhall = (BuildingTownHall.View)building;
             }
         }
 
@@ -363,15 +363,15 @@ public class ColonyView implements IColony
      * @param coord     ChunkCoordinates to check
      * @return          True if inside colony, otherwise false
      */
-    public boolean isCoordInColony(World w, ChunkCoordinates coord) {
-        return isCoordInColony(w, coord.posX, coord.posY, coord.posZ);
+    public boolean isCoordInColony(World w, BlockPos coord) {
+        return isCoordInColony(w, coord.getX(), coord.getY(), coord.getZ());
     }
 
     @Override
     public boolean isCoordInColony(World w, int x, int y, int z) {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w.provider.dimensionId == dimensionId &&
-               center.getDistanceSquared(x, center.posY, z) <= MathUtils.square(Configurations.workingRangeTownhall);
+        return w.provider.getDimensionId() == dimensionId &&
+               BlockPosUtil.getDistanceSquared(center, new BlockPos(x, center.getY(), z)) <= MathUtils.square(Configurations.workingRangeTownhall);
     }
 
     /**
@@ -380,14 +380,14 @@ public class ColonyView implements IColony
      * @param coord     Chunk coordinate to get squared position
      * @return          Squared position from center
      */
-    public float getDistanceSquared(ChunkCoordinates coord) {
-        return getDistanceSquared(coord.posX, coord.posY, coord.posZ);
+    public float getDistanceSquared(BlockPos coord) {
+        return getDistanceSquared(coord.getX(), coord.getY(), coord.getZ());
     }
 
     @Override
     public float getDistanceSquared(int posX, int posY, int posZ) {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return center.getDistanceSquared(posX, center.posY, posZ);
+        return BlockPosUtil.getDistanceSquared(center, new BlockPos(posX, center.getY(), posZ));
     }
 
     //    }

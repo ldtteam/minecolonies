@@ -6,8 +6,6 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -15,11 +13,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,12 +45,12 @@ public class ColonyManager
      * Create a new Colony in the given world and at that location
      *
      * @param w         World of the colony
-     * @param coord     Coordinate of the center of the colony
+     * @param pos     Coordinate of the center of the colony
      * @return          The created colony
      */
-    public static Colony createColony(World w, ChunkCoordinates coord, EntityPlayer player)
+    public static Colony createColony(World w, BlockPos pos, EntityPlayer player)
     {
-        Colony colony = new Colony(++topColonyId, w, coord);
+        Colony colony = new Colony(++topColonyId, w, pos);
         colonies.put(colony.getID(), colony);
 
         if (!coloniesByWorld.containsKey(colony.getDimensionId()))
@@ -83,12 +83,12 @@ public class ColonyManager
      * Get Colony that contains a given ChunkCoordinates
      *
      * @param w         World
-     * @param coord     Coordinate of a place in the colony to get
+     * @param pos     Coordinate of a place in the colony to get
      * @return          Colony at the given location
      */
-    public static Colony getColony(World w, ChunkCoordinates coord)
+    public static Colony getColony(World w, BlockPos pos)
     {
-        return getColony(w, coord.posX, coord.posY, coord.posZ);
+        return getColony(w, pos.getX(), pos.getY(), pos.getZ());
     }
 
     /**
@@ -102,7 +102,7 @@ public class ColonyManager
      */
     public static Colony getColony(World w, int x, int y, int z)
     {
-        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.dimensionId);
+        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
         if (coloniesInWorld == null) return null;
 
         for (Colony c : coloniesInWorld)
@@ -117,12 +117,12 @@ public class ColonyManager
      * Get closest colony by ChunkCoordinate
      *
      * @param w         World
-     * @param coord     coordinates to get closes colony by
+     * @param pos     coordinates to get closes colony by
      * @return          Colony closest to coordinates
      */
-    public static Colony getClosestColony(World w, ChunkCoordinates coord)
+    public static Colony getClosestColony(World w, BlockPos pos)
     {
-        return getClosestColony(w, coord.posX, coord.posY, coord.posZ);
+        return getClosestColony(w, pos.getX(), pos.getY(), pos.getZ());
     }
 
     /**
@@ -136,7 +136,7 @@ public class ColonyManager
      */
     public static Colony getClosestColony(World w, int x, int y, int z)
     {
-        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.dimensionId);
+        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
         if (coloniesInWorld == null) return null;
 
         Colony closestColony = null;
@@ -144,7 +144,7 @@ public class ColonyManager
 
         for (Colony c : coloniesInWorld)
         {
-            if (c.getDimensionId() == w.provider.dimensionId)
+            if (c.getDimensionId() == w.provider.getDimensionId())
             {
                 float dist = c.getDistanceSquared(x, y, z);
                 if (dist < closestDist)
@@ -185,11 +185,11 @@ public class ColonyManager
      */
     public static Building getBuilding(World w, int x, int y, int z)
     {
-        ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
-        Colony colony = getColony(w, coords);
+        BlockPos pos = new BlockPos(x, y, z);
+        Colony colony = getColony(w, pos);
         if (colony != null)
         {
-            Building building = colony.getBuilding(coords);
+            Building building = colony.getBuilding(pos);
             if (building != null)
             {
                 return building;
@@ -197,11 +197,11 @@ public class ColonyManager
         }
 
         //  Fallback - there might be a Building for this block, but it's outside of it's owning colony's radius
-        if (coloniesByWorld.containsKey(w.provider.dimensionId))
+        if (coloniesByWorld.containsKey(w.provider.getDimensionId()))
         {
-            for (Colony otherColony : coloniesByWorld.get(w.provider.dimensionId))
+            for (Colony otherColony : coloniesByWorld.get(w.provider.getDimensionId()))
             {
-                Building building = otherColony.getBuilding(coords);
+                Building building = otherColony.getBuilding(pos);
                 if (building != null)
                 {
                     return building;
@@ -225,10 +225,10 @@ public class ColonyManager
     //todo why do we have a world object if we dont use it
     {
         //  On client we will just check all known views
-        ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
+        BlockPos pos = new BlockPos(x, y, z);
         for (ColonyView colony : colonyViews.values())
         {
-            Building.View building = colony.getBuilding(coords);
+            Building.View building = colony.getBuilding(pos);
             if (building != null)
             {
                 return building;
@@ -253,12 +253,12 @@ public class ColonyManager
      * Get Colony that contains a given ChunkCoordinates
      *
      * @param w         World
-     * @param coord     Coordinates
+     * @param pos     Coordinates
      * @return          returns the view belonging to the colony at given chunk coordinates
      */
-    public static ColonyView getColonyView(World w, ChunkCoordinates coord)
+    public static ColonyView getColonyView(World w, BlockPos pos)
     {
-        return getColonyView(w, coord.posX, coord.posY, coord.posZ);
+        return getColonyView(w, pos.getX(), pos.getY(), pos.getZ());
     }
 
 
@@ -298,7 +298,7 @@ public class ColonyManager
 
         for (ColonyView c : colonyViews.values())
         {
-            if (c.getDimensionId() == w.provider.dimensionId)
+            if (c.getDimensionId() == w.provider.getDimensionId())
             {
                 float dist = c.getDistanceSquared(x, y, z);
                 if (dist < closestDist)
@@ -379,12 +379,12 @@ public class ColonyManager
      * @see {@link #getIColony(World, int)}
      *
      * @param w         World
-     * @param coord     Coordinates of the colony
+     * @param pos     Coordinates of the colony
      * @return          View of colony or colony itself depending on side
      */
-    public static IColony getIColony(World w, ChunkCoordinates coord)
+    public static IColony getIColony(World w, BlockPos pos)
     {
-        return getIColony(w, coord.posX, coord.posY, coord.posZ);
+        return getIColony(w, pos.getX(), pos.getY(), pos.getZ());
     }
 
     /**
@@ -442,7 +442,7 @@ public class ColonyManager
      * On server tick, tick every Colony
      * NOTE: Review this for performance
      *
-     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent}
+     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent
      */
     public static void onServerTick(TickEvent.ServerTickEvent event)
     {
@@ -460,7 +460,7 @@ public class ColonyManager
     /**
      * On Client tick, clears views when player left
      *
-     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent}
+     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}
      */
     public static void onClientTick(TickEvent.ClientTickEvent event)
     {
@@ -478,13 +478,13 @@ public class ColonyManager
      * On world tick, tick every Colony in that world
      * NOTE: Review this for performance
      *
-     * @param event     {@link cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent}
+     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
     public static void onWorldTick(
             TickEvent.WorldTickEvent event)
     {
         colonies.values().stream()
-                .filter(c -> c.getDimensionId() == event.world.provider.dimensionId)
+                .filter(c -> c.getDimensionId() == event.world.provider.getDimensionId())
                 .forEach(c -> c.onWorldTick(event));
     }
 
@@ -635,7 +635,7 @@ public class ColonyManager
             }
             ++numWorldsLoaded;
 
-            List<Colony> worldColonies = coloniesByWorld.get(world.provider.dimensionId);
+            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimensionId());
             if (worldColonies != null)
             {
                 for (Colony c : worldColonies)
@@ -663,7 +663,7 @@ public class ColonyManager
     public static void onWorldSave(World world)
     {
         if (!world.isRemote &&
-            world.provider.dimensionId == 0)    //  For now, save when 0 saves...
+            world.provider.getDimensionId() == 0)    //  For now, save when 0 saves...
         {
             saveColonies();
         }
@@ -679,7 +679,7 @@ public class ColonyManager
     {
         if (!world.isRemote)
         {
-            List<Colony> worldColonies = coloniesByWorld.get(world.provider.dimensionId);
+            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimensionId());
             if (worldColonies != null)
             {
                 for (Colony c : worldColonies)
@@ -780,15 +780,15 @@ public class ColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyBuildingViewMessage(ChunkCoordinates, ByteBuf)} if {@link #getColonyView(int)}
+     * Returns result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos, ByteBuf)} if {@link #getColonyView(int)}
      * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
      *
      * @param colonyId      ID of the colony
      * @param buildingId    ID of the building
      * @param buf           {@link ByteBuf} with colony data
-     * @return              result of {@link ColonyView#handleColonyBuildingViewMessage(ChunkCoordinates, ByteBuf)} or null
+     * @return              result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos, ByteBuf)} or null
      */
-    static public IMessage handleColonyBuildingViewMessage(int colonyId, ChunkCoordinates buildingId, ByteBuf buf)
+    static public IMessage handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, ByteBuf buf)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
@@ -803,14 +803,14 @@ public class ColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(ChunkCoordinates)} if {@link #getColonyView(int)}
+     * Returns result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)} if {@link #getColonyView(int)}
      * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
      *
      * @param colonyId      ID of the colony
      * @param buildingId    ID of the building
-     * @return              result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(ChunkCoordinates)}  or null
+     * @return              result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)}  or null
      */
-    static public IMessage handleColonyViewRemoveBuildingMessage(int colonyId, ChunkCoordinates buildingId)
+    static public IMessage handleColonyViewRemoveBuildingMessage(int colonyId, BlockPos buildingId)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
@@ -826,26 +826,33 @@ public class ColonyManager
     public static class ColonyManagerWorldAccess implements IWorldAccess
     {
         @Override
-        public void markBlockForUpdate(int p_147586_1_, int p_147586_2_, int p_147586_3_) {}
+        public void markBlockForUpdate(BlockPos pos) {
+
+        }
 
         @Override
-        public void markBlockForRenderUpdate(int p_147588_1_, int p_147588_2_, int p_147588_3_) {}
+        public void notifyLightSet(BlockPos pos) {
+
+        }
 
         @Override
-        public void markBlockRangeForRenderUpdate(int p_147585_1_, int p_147585_2_, int p_147585_3_, int p_147585_4_, int p_147585_5_, int p_147585_6_) {}
+        public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2){
+
+        }
 
         @Override
-        public void playSound(String p_72704_1_, double p_72704_2_, double p_72704_4_, double p_72704_6_, float p_72704_8_, float p_72704_9_) {}
+        public void playSound(String soundName, double x, double y, double z, float volume, float pitch) {}
 
         @Override
-        public void playSoundToNearExcept(EntityPlayer p_85102_1_, String p_85102_2_, double p_85102_3_, double p_85102_5_, double p_85102_7_, float p_85102_9_, float p_85102_10_) {}
+        public void playSoundToNearExcept(EntityPlayer except, String soundName, double x, double y, double z, float volume, float pitch){}
 
         @Override
-        public void spawnParticle(String p_72708_1_, double p_72708_2_, double p_72708_4_, double p_72708_6_, double p_72708_8_, double p_72708_10_, double p_72708_12_) {}
+        public void spawnParticle(int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset, int... parameters) {
+
+        }
 
         @Override
-        public void onEntityCreate(Entity entity)
-        {
+        public void onEntityAdded(Entity entity) {
             if (entity instanceof EntityCitizen)
             {
                 ((EntityCitizen) entity).updateColonyServer();
@@ -853,8 +860,7 @@ public class ColonyManager
         }
 
         @Override
-        public void onEntityDestroy(Entity entity)
-        {
+        public void onEntityRemoved(Entity entity) {
             if (entity instanceof EntityCitizen)
             {
                 CitizenData citizen = ((EntityCitizen) entity).getCitizenData();
@@ -865,14 +871,24 @@ public class ColonyManager
             }
         }
 
-        @Override public void playRecord(String p_72702_1_, int p_72702_2_, int p_72702_3_, int p_72702_4_) {}
+        @Override
+        public void playRecord(String recordName, BlockPos blockPosIn) {
 
-        @Override public void broadcastSound(int p_82746_1_, int p_82746_2_, int p_82746_3_, int p_82746_4_, int p_82746_5_) {}
+        }
 
-        @Override public void playAuxSFX(EntityPlayer p_72706_1_, int p_72706_2_, int p_72706_3_, int p_72706_4_, int p_72706_5_, int p_72706_6_) {}
+        @Override
+        public void broadcastSound(int soundID, BlockPos pos, int data) {
 
-        @Override public void destroyBlockPartially(int p_147587_1_, int p_147587_2_, int p_147587_3_, int p_147587_4_, int p_147587_5_) {}
+        }
 
-        @Override public void onStaticEntitiesChanged() {}
+        @Override
+        public void playAuxSFX(EntityPlayer player, int sfxType, BlockPos blockPosIn, int data) {
+
+        }
+
+        @Override
+        public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {
+
+        }
     }
 }

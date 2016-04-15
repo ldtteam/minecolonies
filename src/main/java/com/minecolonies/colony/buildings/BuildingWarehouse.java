@@ -8,7 +8,7 @@ import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobDeliveryman;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public class BuildingWarehouse extends BuildingWorker
 {
@@ -40,7 +40,7 @@ public class BuildingWarehouse extends BuildingWorker
     public                  boolean guardWeapon             = false;
     public                  boolean citizenVisit            = false;
 
-    public BuildingWarehouse(Colony c, ChunkCoordinates l)
+    public BuildingWarehouse(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -145,7 +145,7 @@ public class BuildingWarehouse extends BuildingWorker
         public boolean guardWeapon = false;
         public boolean citizenVisit = false;
 
-        public View(ColonyView c, ChunkCoordinates l)
+        public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }

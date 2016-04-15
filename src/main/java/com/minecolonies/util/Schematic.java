@@ -448,18 +448,18 @@ public final class Schematic
     {
         ChunkCoordinates pos = this.getBlockPosition();
         //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        return pos.posY <= 0 || schematicWorld.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematicWorld.getBlockMetadata(x, y, z)
-                                                                                                            == ChunkCoordUtils.getBlockMetadata(world, pos);
+        return pos.posY <= 0 || schematicWorld.getBlock(x, y, z) == BlockPosUtil.getBlock(world, pos) && schematicWorld.getBlockMetadata(x, y, z)
+                                                                                                            == BlockPosUtil.getBlockMetadata(world, pos);
     }
 
     public ChunkCoordinates getBlockPosition()
     {
-        return ChunkCoordUtils.add(getOffsetPosition(), x, y, z);
+        return BlockPosUtil.add(getOffsetPosition(), x, y, z);
     }
 
     public ChunkCoordinates getOffsetPosition()
     {
-        return ChunkCoordUtils.subtract(position, getOffset());
+        return BlockPosUtil.subtract(position, getOffset());
     }
 
     public ChunkCoordinates getOffset()

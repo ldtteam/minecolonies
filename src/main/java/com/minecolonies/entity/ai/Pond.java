@@ -1,6 +1,6 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
@@ -167,11 +167,11 @@ public class Pond
 
     public void writeToNBT(NBTTagCompound compound)
     {
-        ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, location);
+        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
     }
 
     public static Pond readFromNBT(NBTTagCompound compound)
     {
-        return new Pond(ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION));
+        return new Pond(BlockPosUtil.readFromNBT(compound, TAG_LOCATION));
     }
 }

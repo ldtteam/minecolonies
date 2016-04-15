@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
@@ -51,22 +52,22 @@ public final class Utils
      * @param blocks  Blocks to test for
      * @return the coordinates of the found block
      */
-    public static ChunkCoordinates scanForBlockNearPoint(World world, ChunkCoordinates point, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
+    public static BlockPos scanForBlockNearPoint(World world, BlockPos point, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
     {
-        ChunkCoordinates closestCoords = null;
+        BlockPos closestCoords = null;
         double           minDistance   = Double.MAX_VALUE;
 
-        for (int i = point.posX - radiusX; i <= point.posX + radiusX; i++)
+        for (int i = point.getX() - radiusX; i <= point.getX() + radiusX; i++)
         {
-            for (int j = point.posY - radiusY; j <= point.posY + radiusY; j++)
+            for (int j = point.getY() - radiusY; j <= point.getY() + radiusY; j++)
             {
-                for (int k = point.posZ - radiusZ; k <= point.posZ + radiusZ; k++)
+                for (int k = point.getZ() - radiusZ; k <= point.getZ() + radiusZ; k++)
                 {
                     if (checkHeight(world, i, j, k, height, blocks))
                     {
-                        ChunkCoordinates tempCoords = new ChunkCoordinates(i, j, k);
+                        BlockPos tempCoords = new BlockPos(i, j, k);
 
-                        double distance = tempCoords.getDistanceSquared(point.posX, point.posY, point.posZ);
+                        double distance = BlockPosUtil.getDistanceSquared(tempCoords, point);
                         if (closestCoords == null || distance < minDistance)
                         {
                             closestCoords = tempCoords;
