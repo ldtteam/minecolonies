@@ -6,8 +6,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
-
 public class Screen extends GuiScreen
 {
     protected Window window;
