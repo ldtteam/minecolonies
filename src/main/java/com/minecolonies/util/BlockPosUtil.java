@@ -4,6 +4,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.pathfinding.PathResult;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.ItemStack;
@@ -131,13 +132,14 @@ public class BlockPosUtil
     /**
      * Returns the squared distance to a Vec3
      *
-     * @param coords1 Chunk coordinates   (point 1)
-     * @param coords2 Vec3                (point 2)
+     * @param coords1 BlockPos   (point 1)
+     * @param coords2 BlockPos   (point 2)
      * @return Squared distance between points (float)
      */
-    public static float distanceSqrd(BlockPos coords1, Vec3 coords2)
+    public static float distanceSqrd(BlockPos coords1, BlockPos coords2)
     {
-        return getDistanceSquared(coords1, new BlockPos((int) coords2.xCoord, (int) coords2.yCoord, (int) coords2.zCoord));
+        return getDistanceSquared(coords1, coords2); // TODO: does this work
+    	//return getDistanceSquared(coords1, new BlockPos((int) coords2.xCoord, (int) coords2.yCoord, (int) coords2.zCoord));
     }
 
     /**
@@ -162,7 +164,7 @@ public class BlockPosUtil
      */
     public static List<ItemStack> getBlockDrops(World world, BlockPos coords, int fortune)
     {
-        return getBlock(world, coords).getDrops(world, new BlockPos(coords.getX(), coords.getY(), coords.getZ()), getBlockMetadata(world, coords), fortune);
+        return getBlock(world, coords).getDrops(world, new BlockPos(coords.getX(), coords.getY(), coords.getZ()), getBlockState(world, coords), fortune);
     }
 
     /**
@@ -184,9 +186,9 @@ public class BlockPosUtil
      * @param coords Coordinates of the block
      * @return Metadata of the block at the given coordinates
      */
-    public static int getBlockMetadata(World world, BlockPos coords)
+    public static IBlockState getBlockState(World world, BlockPos coords)
     {
-        return null; //todo i have no clue
+        return world.getBlockState(coords);
     }
 
     /**
@@ -199,22 +201,21 @@ public class BlockPosUtil
      */
     public static boolean setBlock(World world, BlockPos coords, Block block)
     {
-        return world.setblock.setBlock(coords.posX, coords.posY, coords.posZ, block); //todo no idea yet
+    	return world.setBlockState(coords, block.getDefaultState());
     }
 
     /**
      * Sets a block in the world, with specific metadata and flags
      *
-     * @param world    World the block needs to be set in
+     * @param worldIn  World the block needs to be set in
      * @param coords   Coordinate to place block
-     * @param block    Block to place
-     * @param metadata Metadata to set
+     * @param state    BlockState to be placed
      * @param flag     Flag to set
      * @return True if block is placed, otherwise false
      */
-    public static boolean setBlock(World world, BlockPos coords, Block block, int metadata, int flag)
+    public static boolean setBlock(World worldIn, BlockPos coords, IBlockState state, int flag)
     {
-        return world.setBlock(coords.posX, coords.posY, coords.posZ, block, metadata, flag);//todo no idea yet
+    	return worldIn.setBlockState(coords, state, flag);
     }
 
     /**

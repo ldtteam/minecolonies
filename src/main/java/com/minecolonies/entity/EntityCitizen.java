@@ -391,12 +391,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     /**
-     * Returns true if the newer Entity AI code should be run
+     * Returns false if the newer Entity AI code should be run
      */
     @Override
-    public boolean isAIEnabled()
+    public boolean isAIDisabled()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -980,7 +980,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if (!this.worldObj.isRemote)
         {
-            if (entityItem.delayBeforeCanPickup > 0)
+            if (entityItem.cannotPickup())
             {
                 return;
             }
@@ -1011,22 +1011,19 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void hitBlockWithToolInHand(BlockPos block)
     {
         if (block == null){ return; }
-        hitBlockWithToolInHand(block.getX(), block.getY(), block.getZ(), false);
+        hitBlockWithToolInHand(block, false);
     }
 
     /**
      * Swing entity arm, create sound and particle effects. if breakBlock is true then it will break the block (different sound and particles),
      * and damage the tool in the citizens hand.
      *
-     * @param x x coordinate
-     * @param y y coordinate
-     * @param z z coordinate
+     * @param pos Block position
      */
-    private void hitBlockWithToolInHand(int x, int y, int z, boolean breakBlock)
+    private void hitBlockWithToolInHand(BlockPos pos, boolean breakBlock)
     {
         //todo: this is not optimal but works
-        getLookHelper().setLookPosition(x, y, z, 10f, getVerticalFaceSpeed());
-        BlockPos pos = new BlockPos(x,y,z);
+        getLookHelper().setLookPosition(pos.getX(), pos.getY(), pos.getZ(), 10f, getVerticalFaceSpeed());
 
         this.swingItem();
 
@@ -1036,12 +1033,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             if (!worldObj.isRemote)
             {
                 MineColonies.getNetwork().sendToAllAround(
-                        new BlockParticleEffectMessage(x, y, z, block, worldObj.getBlockMetadata(x, y, z), BlockParticleEffectMessage.BREAK_BLOCK),
-                        new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, x, y, z, 16.0D));
+                        new BlockParticleEffectMessage(pos, worldObj.getBlockState(pos), BlockParticleEffectMessage.BREAK_BLOCK),
+                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), pos.getX(), pos.getY(), pos.getZ(), 16.0D));
             }
-            worldObj.playSoundEffect((float) (x + 0.5D),
-                                     (float) (y + 0.5D),
-                                     (float) (z + 0.5D),
+            worldObj.playSoundEffect((float) (pos.getX() + 0.5D),
+                                     (float) (pos.getY() + 0.5D),
+                                     (float) (pos.getZ() + 0.5D),
                                      block.stepSound.getBreakSound(),
                                      block.stepSound.getVolume(),
                                      block.stepSound.getFrequency());
@@ -1054,10 +1051,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             if (!worldObj.isRemote)//TODO might remove this
             {
                 MineColonies.getNetwork().sendToAllAround(
-                        new BlockParticleEffectMessage(x, y, z, block, worldObj.getBlock(x, y, z), 1),//TODO correct side
-                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), x, y, z, 16.0D));
+                        new BlockParticleEffectMessage(pos, worldObj.getBlockState(pos), 1),//TODO correct side
+                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), pos.getX(), pos.getY(), pos.getZ(), 16.0D));
             }
-            worldObj.playSoundEffect((float) (x + 0.5D), (float) (y + 0.5D), (float) (z + 0.5D), block.stepSound.getStepSound(),
+            worldObj.playSoundEffect((float) (pos.getX() + 0.5D), (float) (pos.getY() + 0.5D), (float) (pos.getZ() + 0.5D), block.stepSound.getStepSound(),
 
                                      (float) ((block.stepSound.getVolume() + 1.0D) / 8.0D),
                                      (float) (block.stepSound.getFrequency() * 0.5D));
@@ -1086,15 +1083,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
     }
 
-    public void hitBlockWithToolInHand(int x, int y, int z)
+    public void hitBlockWithToolInHand(int x, int y, int z, boolean noidea) // TODO: why do we need here a boolean and for what is this boolean?
     {
         hitBlockWithToolInHand(x, y, z, false);
     }
 
-    public void breakBlockWithToolInHand(BlockPos block)
+    public void breakBlockWithToolInHand(BlockPos pos)
     {
-        if (block == null){ return; }
-        hitBlockWithToolInHand(block.getX(), block.getY(), block.getZ(), true);
+        if (pos == null){ return; }
+        hitBlockWithToolInHand(pos.getX(), pos.getY(), pos.getZ(), true);
     }
 
     public void sendLocalizedChat(String key, Object... args)

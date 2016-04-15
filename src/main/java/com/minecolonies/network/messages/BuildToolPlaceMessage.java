@@ -85,7 +85,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
         if(player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, message.x, message.y, message.z))
         {
-            world.setBlockState(new BlockPos(message.x, message.y, message.z), block);
+            world.setBlockState(new BlockPos(message.x, message.y, message.z), block.getDefaultState());
             block.onBlockPlacedBy(world, new BlockPos(message.x, message.y, message.z), world.getBlockState(new BlockPos(message.x, message.y, message.z)), player, null);
 
             player.inventory.consumeInventoryItem(Item.getItemFromBlock(block));

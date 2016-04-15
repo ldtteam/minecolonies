@@ -2,8 +2,10 @@ package com.minecolonies.network.messages;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -34,17 +36,16 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
      * @param x         X-coordinate
      * @param y         Y-coordinate
      * @param z         Z-coordinate
-     * @param block     Block causing effect
-     * @param metadata  Meta data of the block causing effect
+     * @param state     Block State
      * @param side      Side of the block causing effect
      */
-    public BlockParticleEffectMessage(int x, int y, int z, Block block, int metadata, int side)
+    public BlockParticleEffectMessage(BlockPos pos, IBlockState state, int side)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.block = block;
-        this.metadata = metadata;
+    	this.x = pos.getX();
+    	this.y = pos.getY();
+    	this.z = pos.getZ();
+    	this.block = state.getBlock();
+    	this.metadata = state.getBlock().getMetaFromState(state);
         this.side = side;
     }
 
@@ -79,7 +80,7 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
         }
         else
         {
-            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(new BlockPos(x, y, z), side); //todo change side to face
+        	FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(new BlockPos(x, y, z), EnumFacing.getFront(side)); // TODO: test if this works
         }
         return null;
     }

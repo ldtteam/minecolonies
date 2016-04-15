@@ -94,7 +94,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
         switch(message.inventoryType)
         {
             case INVENTORY_CITIZEN:
-                InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventory();
+                InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
                 if(!StringUtils.isNullOrEmpty(message.name))
                     citizenInventory.setCustomName(message.name);   //SetInventoryName
                 player.displayGUIChest(citizenInventory);
