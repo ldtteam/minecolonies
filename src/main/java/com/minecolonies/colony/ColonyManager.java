@@ -53,12 +53,12 @@ public class ColonyManager
         Colony colony = new Colony(++topColonyId, w, coord);
         colonies.put(colony.getID(), colony);
 
-        if (!coloniesByWorld.containsKey(colony.getDimensionId()))
+        if (!coloniesByWorld.containsKey(colony.getDimensionName()))
         {
-            coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
+            coloniesByWorld.put(colony.getDimensionName(), new ArrayList<>());
         }
 
-        coloniesByWorld.get(colony.getDimensionId()).add(colony);
+        coloniesByWorld.get(colony.getDimensionName()).add(colony);
 
         String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
         colony.setName(colonyName);
@@ -144,7 +144,7 @@ public class ColonyManager
 
         for (Colony c : coloniesInWorld)
         {
-            if (c.getDimensionId() == w.provider.dimensionId)
+            if (c.getDimensionName() == w.provider.dimensionId)
             {
                 float dist = c.getDistanceSquared(x, y, z);
                 if (dist < closestDist)
@@ -484,7 +484,7 @@ public class ColonyManager
             TickEvent.WorldTickEvent event)
     {
         colonies.values().stream()
-                .filter(c -> c.getDimensionId() == event.world.provider.dimensionId)
+                .filter(c -> c.getDimensionName() == event.world.provider.dimensionId)
                 .forEach(c -> c.onWorldTick(event));
     }
 
@@ -501,11 +501,11 @@ public class ColonyManager
             Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i));
             colonies.put(colony.getID(), colony);
 
-            if (!coloniesByWorld.containsKey(colony.getDimensionId()))
+            if (!coloniesByWorld.containsKey(colony.getDimensionName()))
             {
-                coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
+                coloniesByWorld.put(colony.getDimensionName(), new ArrayList<>());
             }
-            coloniesByWorld.get(colony.getDimensionId()).add(colony);
+            coloniesByWorld.get(colony.getDimensionName()).add(colony);
 
             topColonyId = Math.max(topColonyId, colony.getID());
         }

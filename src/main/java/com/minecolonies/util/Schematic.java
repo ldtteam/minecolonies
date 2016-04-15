@@ -22,7 +22,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -150,7 +149,7 @@ public final class Schematic
      * @param z         z coordinate
      * @param rotations number of times rotated
      */
-    public static void loadAndPlaceSchematicWithRotation(World worldObj, String name, BlockPos pos, int rotations)
+    public static void loadAndPlaceSchematicWithRotation(World worldObj, String name, int x, int y, int z, int rotations)
     {
         Schematic schematic;
         try
@@ -166,7 +165,7 @@ public final class Schematic
         {
             schematic.rotate();
         }
-        schematic.placeSchematic(pos);
+        schematic.placeSchematic(x,y,z);
     }
 
     /**
@@ -176,7 +175,7 @@ public final class Schematic
      * @param y anchor y position
      * @param z anchor z position
      */
-    private void placeSchematic(BlockPos pos)
+    private void placeSchematic(int x, int y, int z)
     {
         List<ChunkCoordinates> delayedBlocks = new ArrayList<>();
 
@@ -210,7 +209,7 @@ public final class Schematic
                     {
                         delayedBlocks.add(new ChunkCoordinates(i, j, k));
                     }
-                    if (schematicWorld.getTileEntity(pos) != null)
+                    if (schematicWorld.getTileEntity(x,y,z) != null)
                     {
                         world.setTileEntity(pos.add(i, j, k), schematicWorld.getTileEntity(pos));
                     }

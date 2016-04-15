@@ -4,6 +4,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.lib.Literals;
 
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -17,51 +18,8 @@ import org.lwjgl.opengl.GL12;
 /**
  * Determines how the fish hook is rendered.
  */
-public class RenderFishHook extends Render<EntityFishHook>
+public class RenderFishHook extends Render
 {
-	
-    public RenderFishHook(RenderManager renderManagerIn) {
-		super(renderManagerIn);
-	}
-
-	/**
-     * The resource location containing the particle textures (Spawned by the fishHook)
-     */
-    private static final ResourceLocation texture = new ResourceLocation("textures/particle/particles.png");
-
-    /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-     *
-     * @param entity the entity to get the texture from
-     * @return a resource location for the texture
-     */
-    @Override
-    protected ResourceLocation getEntityTexture(EntityFishHook entity)
-    {
-        return getTexture();
-    }
-
-    /**
-     * Returns the location of an entity's texture.
-     * @return the address of the resource
-     */
-    private static ResourceLocation getTexture()
-    {
-        return texture;
-    }
-
-    /**
-     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
-     * (Render<T extends Entity>) and this method has signature public void func_76986_a(T entity, double d, double d1,
-     * double d2, float f, float f1). But JAD is pre 1.5 so doesn't do that.
-     */
-    @Override
-    public void doRender(EntityFishHook entity, double x, double y, double z, float entityYaw, float partialTicks)
-    {
-        this.doRenderFishHook((EntityFishHook) entity, x, y, z, entityYaw);
-    }
-
     /**
      * Render a fishing hook entity in the world
      * This class uses some GL11 stuff
@@ -83,7 +41,7 @@ public class RenderFishHook extends Render<EntityFishHook>
 
         this.bindEntityTexture(entityFishHook);
 
-        final Tessellator tessellator = Tessellator.getInstance();
+        final Tessellator tessellator = Tessellator.instance;
 
         double textureSizeU     = (Literals.TEXTURE_ICON_LENGTH) / Literals.TEXTURE_FILE_LENGTH;
         double textureSizeV     = (Literals.TEXTURE_ICON_LENGTH + Literals.TEXTURE_ICON_LENGTH) / Literals.TEXTURE_FILE_LENGTH;
@@ -175,4 +133,44 @@ public class RenderFishHook extends Render<EntityFishHook>
             GL11.glEnable(GL11.GL_TEXTURE_2D);
         }
     }
+
+    /**
+     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
+     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
+     * (Render<T extends Entity>) and this method has signature public void func_76986_a(T entity, double d, double d1,
+     * double d2, float f, float f1). But JAD is pre 1.5 so doesn't do that.
+     */
+    @Override
+    public void doRender(final Entity entity, final double x, final double y, final double z, final float entityYaw, final float partialTicks)
+    {
+        this.doRenderFishHook((EntityFishHook) entity, x, y, z, entityYaw);
+    }
+
+    /**
+     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
+     *
+     * @param entity the entity to get the texture from
+     * @return a resource location for the texture
+     */
+    @Override
+    protected ResourceLocation getEntityTexture(final Entity entity)
+    {
+        return getTexture();
+    }
+
+    /**
+     * The resource location containing the particle textures (Spawned by the fishHook)
+     */
+    private static final ResourceLocation texture = new ResourceLocation("textures/particle/particles.png");
+
+    /**
+     * Returns the location of an entity's texture.
+     * @return the address of the resource
+     */
+    private static ResourceLocation getTexture()
+    {
+        return texture;
+    }
+
+
 }

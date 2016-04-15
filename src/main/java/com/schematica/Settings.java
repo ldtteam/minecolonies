@@ -6,6 +6,8 @@ import com.schematica.world.SchematicWorld;
 
 import net.minecraft.client.Minecraft;
 
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
@@ -14,21 +16,21 @@ import java.util.List;
 public class Settings {
 	public static final Settings instance = new Settings();
 
-	private final Vector3f translationVector = new Vector3f();
-	public Minecraft minecraft = Minecraft.getMinecraft();
-	public Vector3f playerPosition = new Vector3f();
-	public final List<RendererSchematicChunk> sortedRendererSchematicChunk = new ArrayList<>();
-	public RenderBlocks renderBlocks = null;
-	public Vector3f pointA = new Vector3f();
-	public Vector3f pointB = new Vector3f();
-	public Vector3f pointMin = new Vector3f();
-	public Vector3f pointMax = new Vector3f();
-	public int rotationRender = 0;
-	public ForgeDirection orientation = ForgeDirection.UNKNOWN;
-	public Vector3f offset = new Vector3f();
-    public int rotation = 0;
-    public String hut = "";
-    public String style = "";
+	private final Vector3f                     translationVector            = new Vector3f();
+	public        Minecraft                    minecraft                    = Minecraft.getMinecraft();
+	public        Vector3f                     playerPosition               = new Vector3f();
+	public final  List<RendererSchematicChunk> sortedRendererSchematicChunk = new ArrayList<>();
+	public        RenderBlocks                 renderBlocks                 = null;
+	public        Vector3f                     pointA                       = new Vector3f();
+	public        Vector3f                     pointB                       = new Vector3f();
+	public        Vector3f                     pointMin                     = new Vector3f();
+	public        Vector3f                     pointMax                     = new Vector3f();
+	public        int                          rotationRender               = 0;
+	public        ForgeDirection               orientation                  = ForgeDirection.UNKNOWN;
+	public        Vector3f                     offset                       = new Vector3f();
+    public        int                          rotation                     = 0;
+    public        String                       hut                          = "";
+    public        String                       style                        = "";
 
 	public boolean isRenderingGuide = false;
 	public int chatLines = 0;
