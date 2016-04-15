@@ -183,8 +183,8 @@ public class ButtonImage extends Button
     public float getTextScale() { return textScale; }
     public void setTextScale(float s) { textScale = s; }
 
-    public int getTextHeight() { return (int)(mc.fontRendererObj.FONT_HEIGHT * textScale); }
-    public int getStringWidth() { return (int)(mc.fontRendererObj.getStringWidth(label) * textScale); }
+    public int getTextHeight() { return (int)(mc.fontRenderer.FONT_HEIGHT * textScale); }
+    public int getStringWidth() { return (int)(mc.fontRenderer.getStringWidth(label) * textScale); }
 
     @Override
     protected void drawSelf(int mx, int my)
@@ -280,7 +280,7 @@ public class ButtonImage extends Button
 
             GL11.glPushMatrix();
             GL11.glTranslatef(textScale, textScale, textScale);
-            mc.fontRendererObj.drawString(label, getX() + offsetX, getY() + offsetY, color, shadow);
+            mc.fontRenderer.drawString(label, getX() + offsetX, getY() + offsetY, color, shadow);
             GL11.glPopMatrix();
         }
     }

@@ -7,9 +7,10 @@ import com.minecolonies.util.ChunkCoordUtils;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.util.ChunkCoordinates;
 
 /**
  * Adds a entry to the builderRequired map
@@ -19,9 +20,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
 {
-    private             ChunkCoordinates buildingId;
-    private             int              colonyId;
-    private             int              mode;
+    private ChunkCoordinates buildingId;
+    private int              colonyId;
+    private int              mode;
 
 
     public static final int              BUILD  = 0;

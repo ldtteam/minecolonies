@@ -3,10 +3,10 @@ package com.blockout;
 import com.blockout.controls.*;
 import com.blockout.views.*;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -206,8 +206,8 @@ public class Pane extends Gui
 
                 if (isMouseOver && !id.equals(""))
                 {
-                    int stringWidth = mc.fontRendererObj.getStringWidth(id);
-                    mc.fontRendererObj.drawString(id, x + getWidth() - stringWidth, y + getHeight() - mc.fontRendererObj.FONT_HEIGHT, color);
+                    int stringWidth = mc.fontRenderer.getStringWidth(id);
+                    mc.fontRenderer.drawString(id, x + getWidth() - stringWidth, y + getHeight() - mc.fontRenderer.FONT_HEIGHT, color);
                 }
 
                 GL11.glPopAttrib();

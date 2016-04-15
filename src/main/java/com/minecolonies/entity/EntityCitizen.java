@@ -17,6 +17,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.util.*;
 
+import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
@@ -86,7 +87,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         super(world);
         setSize(0.6F, 1.8F);
-        this.enablePersistence();//Set persistenceRequired = true;
+        //todo missing?
+        //this.enablePersistence();//Set persistenceRequired = true;
         this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);

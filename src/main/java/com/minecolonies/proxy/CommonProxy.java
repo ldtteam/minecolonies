@@ -10,11 +10,11 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.schematica.world.SchematicWorld;
 
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+
 
 import java.util.HashMap;
 import java.util.Map;
