@@ -101,6 +101,8 @@ public class MineColonies
         proxy.registerEntityRendering();
 
         proxy.registerTileEntityRendering();
+        
+        proxy.registerRenderer();
 
         Schematics.init();
     }
