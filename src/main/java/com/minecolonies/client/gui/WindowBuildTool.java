@@ -15,6 +15,7 @@ import com.schematica.world.SchematicWorld;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 
 import java.util.ArrayList;
@@ -84,11 +85,9 @@ public class WindowBuildTool extends Window implements Button.Handler
      * If a schematic is active, recalculates the X Y Z with offset.
      * Otherwise the given parameters are used
      *
-     * @param x     x-coordinate
-     * @param y     y-coordinate
-     * @param z     z-coordinate
+     * @param pos     coordinate
      */
-    public WindowBuildTool(int x, int y, int z)
+    public WindowBuildTool(BlockPos pos)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
@@ -101,13 +100,13 @@ public class WindowBuildTool extends Window implements Button.Handler
         }
         else
         {
-            posX = x;
-            posY = y;
-            posZ = z;
+            posX = pos.getX();
+            posY = pos.getY();
+            posZ = pos.getZ();
         }
     }
 
-    @Override
+	@Override
     public void onOpened()
     {
         boolean inHutMode = true;
