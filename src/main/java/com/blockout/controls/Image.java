@@ -98,7 +98,7 @@ public class Image extends Pane
         mc.renderEngine.bindTexture(image);
 
         //Draw
-        func_146110_a(x, y,
+        drawModalRectWithCustomSizedTexture(x, y,
                 imageOffsetX, imageOffsetY,
                 imageWidth != 0 ? imageWidth : getWidth(),
                 imageHeight != 0 ? imageHeight : getHeight(),

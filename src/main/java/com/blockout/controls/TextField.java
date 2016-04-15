@@ -5,6 +5,8 @@ import com.blockout.PaneParams;
 import com.blockout.View;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -205,16 +207,22 @@ public class TextField extends Pane
                 selectionEndX = (x + width);
             }
 
-            Tessellator tessellator = Tessellator.instance;
+            Tessellator tessellator = Tessellator.getInstance();
             GL11.glColor4f(0.0F, 0.0F, 255.0F, 255.0F);
             GL11.glDisable(GL11.GL_TEXTURE_2D);
             GL11.glEnable(GL11.GL_COLOR_LOGIC_OP);
             GL11.glLogicOp(GL11.GL_OR_REVERSE);
-            tessellator.startDrawingQuads();
-            tessellator.addVertex((double)selectionStartX, (double)drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D);
-            tessellator.addVertex((double)selectionEndX, (double)drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D);
-            tessellator.addVertex((double)selectionEndX, (double)drawY - 1, 0.0D);
-            tessellator.addVertex((double)selectionStartX, (double)drawY - 1, 0.0D);
+            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+
+            // There are several to choose from, look at DefaultVertexFormats for more info
+            //todo may need to choose a different Format
+            worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+
+            //Since our points do not have any u,v this seems to be the correct code
+            worldrenderer.pos((double)selectionStartX, (double)drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            worldrenderer.pos((double)selectionEndX, (double)drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            worldrenderer.pos((double)selectionEndX, (double)drawY - 1, 0.0D).endVertex();
+            worldrenderer.pos((double)selectionStartX, (double)drawY - 1, 0.0D).endVertex();
             tessellator.draw();
             GL11.glDisable(GL11.GL_COLOR_LOGIC_OP);
             GL11.glEnable(GL11.GL_TEXTURE_2D);

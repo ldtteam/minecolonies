@@ -10,6 +10,7 @@ import com.minecolonies.util.Utils;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import static com.minecolonies.entity.ai.AIState.*;
 
@@ -455,7 +456,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             return PREPARING;
         }
 
-        if(world.getBlock((int)worker.posX,(int)worker.posY,(int)worker.posZ) == Blocks.water)
+        if(world.getBlockState(new BlockPos(worker.posX,worker.posY,worker.posZ)).getBlock() == Blocks.water)
         {
             recentlyRemovedAPond = true;
             job.removeFromPonds(job.getWater());

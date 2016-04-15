@@ -54,7 +54,7 @@ public class ButtonVanilla extends Button
     @Override
     public void handleClick(int mx, int my)
     {
-        mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+        mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         super.handleClick(mx, my);
     }
 }

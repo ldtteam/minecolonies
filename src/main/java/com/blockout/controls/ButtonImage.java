@@ -4,6 +4,7 @@ import com.blockout.Alignment;
 import com.blockout.PaneParams;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -249,8 +250,10 @@ public class ButtonImage extends Button
                 reader.dispose();
             }
         }
+
         //Draw
-        func_146110_a(x, y, offsetX, offsetY, w, h, mapWidth, mapHeight);
+        drawModalRectWithCustomSizedTexture(x, y, offsetX, offsetY, w, h, mapWidth, mapHeight);
+        //func_146110_a(x, y, offsetX, offsetY, w, h, mapWidth, mapHeight);
 
         //  Label, if any
         if (label != null)
@@ -288,7 +291,8 @@ public class ButtonImage extends Button
     @Override
     public void handleClick(int mx, int my)
     {
-        mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(soundClick, 1.0F));
+        //func_147674_a
+        mc.getSoundHandler().playSound(PositionedSoundRecord.create(soundClick, 1.0F));
         super.handleClick(mx, my);
     }
 }
