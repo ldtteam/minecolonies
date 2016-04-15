@@ -364,7 +364,7 @@ public class Permissions implements IPermissions
         }
         else
         {
-            GameProfile gameprofile = MinecraftServer.getServer().func_152358_ax().func_152652_a(id);
+            GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getProfileByUUID(id);
 
             return gameprofile != null && addPlayer(gameprofile, rank);
 
@@ -382,7 +382,7 @@ public class Permissions implements IPermissions
      */
     public boolean addPlayer(String player, Rank rank)
     {
-        GameProfile gameprofile = MinecraftServer.getServer().func_152358_ax().func_152655_a(player);
+        GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(player);
 
         return gameprofile != null && addPlayer(gameprofile, rank);
 
