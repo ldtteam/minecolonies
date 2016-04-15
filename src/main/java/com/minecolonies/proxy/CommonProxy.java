@@ -122,4 +122,7 @@ public class CommonProxy implements IProxy
     {
         return nextEntityId++;
     }
+
+	@Override
+	public void registerRenderer() { }
 }

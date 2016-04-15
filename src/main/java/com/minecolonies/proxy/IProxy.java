@@ -74,4 +74,9 @@ public interface IProxy
      * @return          {@link SchematicWorld}
      */
     SchematicWorld getActiveSchematic();
+    
+    /**
+     * Registers all block and item renderers.
+     */
+    void registerRenderer();
 }
