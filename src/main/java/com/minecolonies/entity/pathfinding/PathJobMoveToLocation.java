@@ -3,23 +3,23 @@ package com.minecolonies.entity.pathfinding;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.Log;
 import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class PathJobMoveToLocation extends PathJob
 {
-    protected final ChunkCoordinates destination;
+    protected final BlockPos destination;
 
     protected static final float DESTINATION_SLACK_NONE     = 0;
     protected static final float DESTINATION_SLACK_ADJACENT = 3.1F;    // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
     protected              float destinationSlack           = DESTINATION_SLACK_NONE; //  0 = exact match
 
 
-    public PathJobMoveToLocation(World world, ChunkCoordinates start, ChunkCoordinates end, int range)
+    public PathJobMoveToLocation(World world, BlockPos start, BlockPos end, int range)
     {
         super(world, start, end, range);
 
-        this.destination = new ChunkCoordinates(end);
+        this.destination = new BlockPos(end);
     }
 
     /**
@@ -32,11 +32,11 @@ public class PathJobMoveToLocation extends PathJob
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
-            Log.logger.info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]", start.posX, start.posY, start.posZ, destination.posX, destination.posY, destination.posZ));
+            Log.logger.info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]", start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ()));
         }
 
         //  Compute destination slack - if the destination point cannot be stood in
-        if (getGroundHeight(null, destination.posX, destination.posY, destination.posZ) != destination.posY)
+        if (getGroundHeight(null, destination.getX(), destination.getY(), destination.getZ()) != destination.getY())
         {
             destinationSlack = DESTINATION_SLACK_ADJACENT;
         }
@@ -47,9 +47,9 @@ public class PathJobMoveToLocation extends PathJob
     @Override
     protected double computeHeuristic(int x, int y, int z)
     {
-        int dx = x - destination.posX;
-        int dy = y - destination.posY;
-        int dz = z - destination.posZ;
+        int dx = x - destination.getX();
+        int dy = y - destination.getY();
+        int dz = z - destination.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 1.001D;
@@ -60,18 +60,18 @@ public class PathJobMoveToLocation extends PathJob
     {
         if (destinationSlack == DESTINATION_SLACK_NONE)
         {
-            return n.x == destination.posX &&
-                    n.y == destination.posY &&
-                    n.z == destination.posZ;
+            return n.x == destination.getX() &&
+                    n.y == destination.getY() &&
+                    n.z == destination.getZ();
         }
 
-        return destination.getDistanceSquared(n.x, n.y, n.z) <= destinationSlack;
+        return destination.distanceSq(n.x, n.y, n.z) <= destinationSlack;
     }
 
     @Override
     protected double getNodeResultScore(Node n)
     {
         //  For Result Score higher is better - return negative distance so closer to 0 = better
-        return -destination.getDistanceSquared(n.x, n.y, n.z);
+        return -destination.distanceSq(n.x, n.y, n.z);
     }
 }

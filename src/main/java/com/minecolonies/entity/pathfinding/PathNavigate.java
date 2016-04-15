@@ -7,8 +7,9 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -27,7 +28,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     protected boolean canSwim;
     protected boolean noSunPathfind;
 
-    protected ChunkCoordinates   destination;
+    protected BlockPos           destination;
     protected Future<PathEntity> future;
     protected PathResult         pathResult;
 
@@ -38,11 +39,18 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
         this.pathSearchRange = entity.getEntityAttribute(SharedMonsterAttributes.followRange);
     }
 
+    @Override
+    protected PathFinder getPathFinder()
+    {
+        return null;
+    }
+
     public double getSpeed() { return speed; }
     @Override public void setSpeed(double d) { speed = d; super.setSpeed(d); }
 
     public boolean getAvoidSun() { return noSunPathfind; }
     @Override public void setAvoidSun(boolean b) { noSunPathfind = b; super.setAvoidSun(b); }
+
 
     public boolean getEnterDoors() { return canPassOpenWoodenDoors; }
     @Override public void setEnterDoors(boolean b) { canPassOpenWoodenDoors = b; super.setEnterDoors(b);}
@@ -70,8 +78,8 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
             return pathResult;
         }
 
-        ChunkCoordinates start = PathJob.prepareStart(theEntity);
-        ChunkCoordinates dest = new ChunkCoordinates(newX, newY, newZ);
+        BlockPos start = PathJob.prepareStart(theEntity);
+        BlockPos dest = new BlockPos(newX, newY, newZ);
 
         return setPathJob(
                 new PathJobMoveToLocation(theEntity.worldObj, start, dest, (int)getPathSearchRange()),
@@ -80,8 +88,8 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
 
     public PathResult moveAwayFromXYZ(double x, double y, double z, double range, double speed)
     {
-        ChunkCoordinates start = PathJob.prepareStart(theEntity);
-        ChunkCoordinates avoid = new ChunkCoordinates(MathHelper.floor_double(x), (int)y, MathHelper.floor_double(z));
+        BlockPos start = PathJob.prepareStart(theEntity);
+        BlockPos avoid = new BlockPos(MathHelper.floor_double(x), (int)y, MathHelper.floor_double(z));
 
         return setPathJob(
                 new PathJobMoveAwayFromLocation(theEntity.worldObj, start, avoid, (int)range, (int)getPathSearchRange()),
@@ -90,13 +98,13 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
 
     public PathJobFindTree.TreePathResult moveToTree(int range, double speed)
     {
-        ChunkCoordinates start = PathJob.prepareStart(theEntity);
+        BlockPos start = PathJob.prepareStart(theEntity);
         return (PathJobFindTree.TreePathResult) setPathJob(new PathJobFindTree(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range), null, speed);
     }
 
-    public PathJobFindWater.WaterPathResult moveToWater(int range, double speed, List<ChunkCoordinates> ponds)
+    public PathJobFindWater.WaterPathResult moveToWater(int range, double speed, List<BlockPos> ponds)
     {
-        ChunkCoordinates start = PathJob.prepareStart(theEntity);
+        BlockPos start = PathJob.prepareStart(theEntity);
         return (PathJobFindWater.WaterPathResult) setPathJob(new PathJobFindWater(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range, ponds), null, speed);
     }
 
@@ -136,7 +144,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
                 PathPoint p = getPath().getFinalPathPoint();
                 if (p != null && destination == null)
                 {
-                    destination = new ChunkCoordinates(p.xCoord, p.yCoord, p.zCoord);
+                    destination = new BlockPos(p.xCoord, p.yCoord, p.zCoord);
                     pathResult.setPathReachesDestination(true);    //  PathJob with no destination, did reach it's destination
                 }
             }
@@ -253,6 +261,24 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     }
 
     @Override
+    protected Vec3 getEntityPosition()
+    {
+        return null;
+    }
+
+    @Override
+    protected boolean canNavigate()
+    {
+        return false;
+    }
+
+    @Override
+    protected boolean isDirectPathBetweenPoints(final Vec3 vec3, final Vec3 vec31, final int i, final int i1, final int i2)
+    {
+        return false;
+    }
+
+    @Override
     public boolean setPath(PathEntity path, double speed)
     {
         int pathLength = path.getCurrentPathLength();
@@ -270,13 +296,13 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
             path = new PathEntity(newPoints);
 
             PathPointExtended finalPoint = newPoints[pathLength - 1];
-            destination = new ChunkCoordinates(finalPoint.xCoord, finalPoint.yCoord, finalPoint.zCoord);
+            destination = new BlockPos(finalPoint.xCoord, finalPoint.yCoord, finalPoint.zCoord);
         }
 
         return super.setPath(path, speed);
     }
 
-    private PathResult setPathJob(PathJob job, ChunkCoordinates dest, double speed)
+    private PathResult setPathJob(PathJob job, BlockPos dest, double speed)
     {
         clearPathEntity();
 

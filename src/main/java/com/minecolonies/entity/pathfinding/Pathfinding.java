@@ -4,9 +4,13 @@ import com.minecolonies.configuration.Configurations;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ConcurrentModificationException;
@@ -28,7 +32,7 @@ public class Pathfinding
         return executor.submit(job);
     }
 
-
+    //todo may be clientSideOnly
     public static void debugDrawNode(Node n, byte r, byte g, byte b)
     {
         GL11.glPushMatrix();
@@ -39,7 +43,7 @@ public class Pathfinding
 
         //  Nameplate
 
-        Entity entity = Minecraft.getMinecraft().renderViewEntity;
+        Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
         double dx = n.x - entity.posX;
         double dy = n.y - entity.posY;
         double dz = n.z - entity.posZ;
@@ -47,25 +51,33 @@ public class Pathfinding
         {
             String s1 = String.format("F: %.3f [%d]", n.cost, n.counterAdded);
             String s2 = String.format("G: %.3f [%d]", n.score, n.counterVisited);
-            FontRenderer fontrenderer = Minecraft.getMinecraft().fontRenderer;
+            FontRenderer fontrenderer = Minecraft.getMinecraft().fontRendererObj;
             GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
             GL11.glPushMatrix();
             GL11.glTranslatef(0.0F, 0.75F, 0.0F);
             GL11.glNormal3f(0.0F, 1.0F, 0.0F);
-            GL11.glRotatef(-RenderManager.instance.playerViewY, 0.0F, 1.0F, 0.0F);
-            GL11.glRotatef(RenderManager.instance.playerViewX, 1.0F, 0.0F, 0.0F);
+
+            RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+            GL11.glRotatef(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
             GL11.glScalef(-f1, -f1, f1);
             GL11.glTranslatef(0.0F, 0.25F / f1, 0.0F);
             GL11.glDepthMask(false);
-            Tessellator tessellator = Tessellator.instance;
+
+            Tessellator   tessellator   = Tessellator.getInstance();
+            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
             GL11.glDisable(GL11.GL_TEXTURE_2D);
-            tessellator.startDrawingQuads();
+
+            // There are several to choose from, look at DefaultVertexFormats for more info
+            //todo may need to choose a different Format
+            worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
             int i = Math.max(fontrenderer.getStringWidth(s1), fontrenderer.getStringWidth(s2)) / 2;
-            tessellator.setColorRGBA_F(0.0F, 0.0F, 0.0F, 0.25F);
-            tessellator.addVertex((double) (-i - 1), -5.0D, 0.0D);
-            tessellator.addVertex((double) (-i - 1), 12.0D, 0.0D);
-            tessellator.addVertex((double) (i + 1), 12.0D, 0.0D);
-            tessellator.addVertex((double) (i + 1), -5.0D, 0.0D);
+
+            //that should set the colors correctly
+            worldrenderer.pos((double) (-i - 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+            worldrenderer.pos((double) (-i - 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+            worldrenderer.pos((double) (i + 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+            worldrenderer.pos((double) (i + 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
             tessellator.draw();
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             GL11.glDepthMask(true);
@@ -157,7 +169,7 @@ public class Pathfinding
             return;
         }
 
-        Entity entity = Minecraft.getMinecraft().renderViewEntity;
+        Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
         double dx = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * frame;
         double dy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * frame;
         double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;

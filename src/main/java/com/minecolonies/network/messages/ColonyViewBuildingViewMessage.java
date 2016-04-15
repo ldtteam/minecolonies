@@ -7,6 +7,7 @@ import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -17,7 +18,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<ColonyViewBuildingViewMessage, IMessage>
 {
     private int              colonyId;
-    private ChunkCoordinates buildingId;
+    private BlockPos         buildingId;
     private ByteBuf          buildingData;
 
     public ColonyViewBuildingViewMessage(){}

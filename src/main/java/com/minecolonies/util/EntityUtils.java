@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public final class EntityUtils
      */
     public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z, int range)
     {
-        return worker.getPosition().squareDistanceTo(x, y, z) < MathUtils.square(range);
+        return worker.getPosition().squareDistanceTo(new Vec3(x, y, z)) < MathUtils.square(range);
     }
 
     /**

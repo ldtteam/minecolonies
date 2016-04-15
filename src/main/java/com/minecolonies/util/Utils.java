@@ -95,7 +95,7 @@ public final class Utils
     {
         for (int dy = 0; dy < height; dy++)
         {
-            if (!arrayContains(blocks, world.getBlock(x, y + dy, z)))
+            if (!arrayContains(blocks, world.getBlockState(new BlockPos(x, y + dy, z)).getBlock()))
             {
                 return false;
             }
@@ -141,7 +141,7 @@ public final class Utils
             {
                 for (int y = posY - range; y < posY + range; y++)
                 {
-                    if (Objects.equals(world.getBlock(x, y, z), block))
+                    if (Objects.equals(world.getBlockState(new BlockPos(x, y, z)).getBlock(), block))
                     {
                         return true;
                     }
@@ -166,10 +166,10 @@ public final class Utils
         {
             yHolder++;
         }
-        while (!world.getBlock(x, yHolder, z).isOpaqueCube() ||
+        while (!world.getBlockState(new BlockPos(x, yHolder, z)).getBlock().isOpaqueCube() ||
                arrayContains(
                        new Block[]{Blocks.air, Blocks.leaves, Blocks.leaves2}
-                       , world.getBlock(x, yHolder, z)))
+                       , world.getBlockState(new BlockPos(x, yHolder, z)).getBlock()))
         {
             yHolder--;
         }
@@ -269,7 +269,7 @@ public final class Utils
      */
     public static void blockBreakSoundAndEffect(World world, int x, int y, int z, Block block, int metadata)
     {
-        world.playAuxSFX(SOUND_EVENT_ID, x, y, z, Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
+        world.playAuxSFX(SOUND_EVENT_ID, new BlockPos(x, y, z), Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
     }
 
     /**
