@@ -5,18 +5,15 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.BlockPosUtil;
-
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.StringUtils;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.StringUtils;
 
 public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInventoryMessage, IMessage>
 {
@@ -99,13 +96,13 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
             case INVENTORY_CITIZEN:
                 InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventory();
                 if(!StringUtils.isNullOrEmpty(message.name))
-                    citizenInventory.func_110133_a(message.name);   //SetInventoryName
+                    citizenInventory.setCustomName(message.name);   //SetInventoryName
                 player.displayGUIChest(citizenInventory);
                 break;
             case INVENTORY_CHEST:
                 TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
                 if(!StringUtils.isNullOrEmpty(message.name))
-                    chest.func_145976_a(message.name);              //SetInventoryName
+                    chest.setCustomName(message.name);              //SetInventoryName
                 player.displayGUIChest(chest);
                 break;
         }

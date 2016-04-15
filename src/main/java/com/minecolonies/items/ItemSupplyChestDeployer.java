@@ -3,8 +3,10 @@ package com.minecolonies.items;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.util.*;
-
+import com.minecolonies.util.BlockUtils;
+import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
+import com.minecolonies.util.Schematic;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;

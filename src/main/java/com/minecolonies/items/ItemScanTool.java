@@ -7,7 +7,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
@@ -41,7 +40,7 @@ public class ItemScanTool extends ItemMinecolonies
         {
             BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
             BlockPos pos2 = pos;
-            if(pos2.getDistanceSquaredToChunkCoordinates(pos1) > 0)
+            if(pos2.distanceSq(pos1) > 0)
             {
                 BlockPosUtil.writeToNBT(compound, "pos2", pos2);
                 if(worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point2");

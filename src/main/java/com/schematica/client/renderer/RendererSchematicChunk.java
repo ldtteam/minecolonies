@@ -48,7 +48,7 @@ public class RendererSchematicChunk {
 	private final SchematicWorld schematic;
 	private final List<TileEntity> tileEntities = new ArrayList<>();
 
-	private final AxisAlignedBB boundingBox = AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
+	private final AxisAlignedBB boundingBox = AxisAlignedBB.fromBounds(0, 0, 0, 0, 0, 0);
 
 	private static final Map<String, ResourceLocation> resourcePacks = new HashMap<>();
 	private Field fieldMapTexturesStiched;
@@ -66,9 +66,9 @@ public class RendererSchematicChunk {
 
 		int x, y, z;
 		for (TileEntity tileEntity : this.schematic.getTileEntities()) {
-			x = tileEntity.xCoord;
-			y = tileEntity.yCoord;
-			z = tileEntity.zCoord;
+			x = tileEntity.getPos().getX();
+			y = tileEntity.getPos().getY();
+			z = tileEntity.getPos().getZ();
 
 			if (x < this.boundingBox.minX || x >= this.boundingBox.maxX) {
 				continue;
@@ -235,7 +235,7 @@ public class RendererSchematicChunk {
 		int ambientOcclusion = this.minecraft.gameSettings.ambientOcclusion;
 		this.minecraft.gameSettings.ambientOcclusion = 0;
 
-		Tessellator.instance.startDrawingQuads();
+		Tessellator.getInstance().startDrawingQuads();
 
 		for (y = minY; y < maxY; y++) {
 			for (z = minZ; z < maxZ; z++) {
@@ -353,9 +353,9 @@ public class RendererSchematicChunk {
 
 		try {
 			for (TileEntity tileEntity : this.tileEntities) {
-				x = tileEntity.xCoord;
-				y = tileEntity.yCoord;
-				z = tileEntity.zCoord;
+				x = tileEntity.getPos().getX();
+				y = tileEntity.getPos().getY();
+				z = tileEntity.getPos().getZ();
 
 				int renderingLayer = this.schematic.getRenderingLayer();
 				if (renderingLayer >= 0) {
@@ -370,7 +370,7 @@ public class RendererSchematicChunk {
 					TileEntitySpecialRenderer tileEntitySpecialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
 					if (tileEntitySpecialRenderer != null) {
 						try {
-							tileEntitySpecialRenderer.renderTileEntityAt(tileEntity, x, y, z, 0);
+							tileEntitySpecialRenderer.renderTileEntityAt(tileEntity, x, y, z, 1f, 0);
 
 							OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
 							GL11.glDisable(GL11.GL_TEXTURE_2D);

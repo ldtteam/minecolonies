@@ -23,6 +23,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
@@ -313,10 +314,10 @@ public final class Schematic
             {
                 for (int z = minZ; z <= maxZ; z++)
                 {
-                    blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(world.getBlock(x, y, z));
+                    blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(world.getBlockState(new BlockPos(x, y, z)).getBlock())
                     metadata[x - minX][y - minY][z - minZ] = (byte) world.getBlockMetadata(x, y, z);
 
-                    if (world.getBlock(x, y, z) instanceof AbstractBlockHut)
+                    if (world.getBlockState(new BlockPos(x, y, z)).getBlock() instanceof AbstractBlockHut)
                     {
                         if (xOffset == 0 && yOffset == 0 && zOffset == 0)
                         {
@@ -554,7 +555,7 @@ public final class Schematic
     {
         BlockPos pos = this.getBlockPosition();
         //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        return pos.getY() <= 0 || world.isAirBlock(pos.getX(), pos.getY(), pos.getZ());
+        return pos.getY() <= 0 || world.isAirBlock(pos);
     }
 
     public void rotate(int times)

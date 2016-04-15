@@ -13,7 +13,6 @@ import com.minecolonies.util.Schematic;
 import com.schematica.Settings;
 import com.schematica.world.SchematicWorld;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -129,7 +128,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             Add possible huts (has item) to list, if it has a schematic, and player has the block
              */
         huts.addAll(Schematics.getHuts().stream().filter(hut -> inventory.hasItem(
-                Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, 0, 0, 0))
+                Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, new BlockPos(0, 0, 0)))
                                                                 && Schematics.getStylesForHut(hut) != null).collect(
                 Collectors.toList()));
 

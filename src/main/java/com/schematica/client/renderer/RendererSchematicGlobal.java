@@ -3,15 +3,14 @@ package com.schematica.client.renderer;
 import com.minecolonies.MineColonies;
 import com.schematica.Settings;
 import com.schematica.world.SchematicWorld;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.renderer.culling.Frustrum;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.profiler.Profiler;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -47,25 +46,25 @@ public class RendererSchematicGlobal {
 		}
 	}
 
-	private ForgeDirection getOrientation(EntityPlayer player) {
+	private EnumFacing getOrientation(EntityPlayer player) {
 		if (player.rotationPitch > 45) {
-			return ForgeDirection.DOWN;
+			return EnumFacing.DOWN;
 		} else if (player.rotationPitch < -45) {
-			return ForgeDirection.UP;
+			return EnumFacing.UP;
 		} else {
 			switch (MathHelper.floor_double(player.rotationYaw / 90.0 + 0.5) & 3) {
 			case 0:
-				return ForgeDirection.SOUTH;
+				return EnumFacing.SOUTH;
 			case 1:
-				return ForgeDirection.WEST;
+				return EnumFacing.WEST;
 			case 2:
-				return ForgeDirection.NORTH;
+				return EnumFacing.NORTH;
 			case 3:
-				return ForgeDirection.EAST;
+				return EnumFacing.EAST;
 			}
 		}
 
-		return ForgeDirection.UNKNOWN;
+		return EnumFacing.NORTH;
 	}
 
 	public void render(SchematicWorld schematic) {

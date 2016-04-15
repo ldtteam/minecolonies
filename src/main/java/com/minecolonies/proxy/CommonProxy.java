@@ -9,7 +9,6 @@ import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.schematica.world.SchematicWorld;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.MinecraftForge;

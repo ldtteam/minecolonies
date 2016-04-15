@@ -6,6 +6,7 @@ import com.schematica.world.SchematicWorld;
 
 import net.minecraft.client.Minecraft;
 
+import net.minecraft.util.EnumFacing;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class Settings {
 	public Vector3f pointMin = new Vector3f();
 	public Vector3f pointMax = new Vector3f();
 	public int rotationRender = 0;
-	public ForgeDirection orientation = ForgeDirection.UNKNOWN;
+	public EnumFacing orientation = EnumFacing.NORTH;
 	public Vector3f offset = new Vector3f();
     public int rotation = 0;
     public String hut = "";

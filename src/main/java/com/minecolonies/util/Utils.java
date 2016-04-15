@@ -5,7 +5,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import java.util.Objects;
@@ -162,7 +161,7 @@ public final class Utils
     public static int findTopGround(World world, int x, int z)
     {
         int yHolder = 1;
-        while (!world.canBlockSeeTheSky(x, yHolder, z))
+        while (!world.canBlockSeeSky(new BlockPos(x, yHolder, z)))
         {
             yHolder++;
         }

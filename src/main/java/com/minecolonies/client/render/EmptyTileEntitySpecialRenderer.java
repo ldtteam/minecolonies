@@ -1,7 +1,6 @@
 package com.minecolonies.client.render;
 
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 
 /**
