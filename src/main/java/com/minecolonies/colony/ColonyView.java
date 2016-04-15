@@ -356,38 +356,17 @@ public class ColonyView implements IColony
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(this, player));
     }
 
-    /**
-     * @see  {@link #isCoordInColony(World, int, int, int)}
-     *
-     * @param w         World to check
-     * @param coord     ChunkCoordinates to check
-     * @return          True if inside colony, otherwise false
-     */
-    public boolean isCoordInColony(World w, BlockPos coord) {
-        return isCoordInColony(w, coord.getX(), coord.getY(), coord.getZ());
-    }
-
     @Override
-    public boolean isCoordInColony(World w, int x, int y, int z) {
+    public boolean isCoordInColony(World w, BlockPos pos) {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.provider.getDimensionId() == dimensionId &&
-               BlockPosUtil.getDistanceSquared(center, new BlockPos(x, center.getY(), z)) <= MathUtils.square(Configurations.workingRangeTownhall);
-    }
-
-    /**
-     * @see {@link #getDistanceSquared(int, int, int)}
-     *
-     * @param coord     Chunk coordinate to get squared position
-     * @return          Squared position from center
-     */
-    public float getDistanceSquared(BlockPos coord) {
-        return getDistanceSquared(coord.getX(), coord.getY(), coord.getZ());
+               BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownhall);
     }
 
     @Override
-    public float getDistanceSquared(int posX, int posY, int posZ) {
+    public float getDistanceSquared(BlockPos pos) {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return BlockPosUtil.getDistanceSquared(center, new BlockPos(posX, center.getY(), posZ));
+        return BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ()));
     }
 
     //    }

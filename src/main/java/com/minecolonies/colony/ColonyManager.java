@@ -80,18 +80,6 @@ public class ColonyManager
     public static Colony getColony(int id) { return colonies.get(id); }
 
     /**
-     * Get Colony that contains a given ChunkCoordinates
-     *
-     * @param w         World
-     * @param pos     Coordinate of a place in the colony to get
-     * @return          Colony at the given location
-     */
-    public static Colony getColony(World w, BlockPos pos)
-    {
-        return getColony(w, pos.getX(), pos.getY(), pos.getZ());
-    }
-
-    /**
      * Get colony that contains a given coordinate
      *
      * @param w     World
@@ -100,29 +88,17 @@ public class ColonyManager
      * @param z     z-coordinate
      * @return      Colony at the given location
      */
-    public static Colony getColony(World w, int x, int y, int z)
+    public static Colony getColony(World w, BlockPos pos)
     {
         List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
         if (coloniesInWorld == null) return null;
 
         for (Colony c : coloniesInWorld)
         {
-            if (c.isCoordInColony(w, x, y, z)) return c;
+            if (c.isCoordInColony(w, pos)) return c;
         }
 
         return null;
-    }
-
-    /**
-     * Get closest colony by ChunkCoordinate
-     *
-     * @param w         World
-     * @param pos     coordinates to get closes colony by
-     * @return          Colony closest to coordinates
-     */
-    public static Colony getClosestColony(World w, BlockPos pos)
-    {
-        return getClosestColony(w, pos.getX(), pos.getY(), pos.getZ());
     }
 
     /**
@@ -134,7 +110,7 @@ public class ColonyManager
      * @param z     z-coordinate
      * @return      Colony closest to coordinates
      */
-    public static Colony getClosestColony(World w, int x, int y, int z)
+    public static Colony getClosestColony(World w, BlockPos pos)
     {
         List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
         if (coloniesInWorld == null) return null;
@@ -146,7 +122,7 @@ public class ColonyManager
         {
             if (c.getDimensionId() == w.provider.getDimensionId())
             {
-                float dist = c.getDistanceSquared(x, y, z);
+                float dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
                 {
                     closestColony = c;
@@ -178,14 +154,11 @@ public class ColonyManager
      * Get a Building by a World and coordinates
      *
      * @param w     World
-     * @param x     x-coordinate
-     * @param y     y-coordinate
-     * @param z     z-coordinate
+     * @param pos	Block position
      * @return      Building at the given location
      */
-    public static Building getBuilding(World w, int x, int y, int z)
+    public static Building getBuilding(World w, BlockPos pos)
     {
-        BlockPos pos = new BlockPos(x, y, z);
         Colony colony = getColony(w, pos);
         if (colony != null)
         {
@@ -216,16 +189,13 @@ public class ColonyManager
      * Get a Building by a World and coordinates
      *
      * @param w     World
-     * @param x     x-coordinate
-     * @param y     y-coordinate
-     * @param z     z-coordinate
+     * @param pos	Block position
      * @return      Returns the view belonging to the building at (x, y, z)
      */
-    public static Building.View getBuildingView(World w, int x, int y, int z)
+    public static Building.View getBuildingView(World w, BlockPos pos)
     //todo why do we have a world object if we dont use it
     {
         //  On client we will just check all known views
-        BlockPos pos = new BlockPos(x, y, z);
         for (ColonyView colony : colonyViews.values())
         {
             Building.View building = colony.getBuilding(pos);
@@ -249,18 +219,6 @@ public class ColonyManager
         return colonyViews.get(id);
     }
 
-    /**
-     * Get Colony that contains a given ChunkCoordinates
-     *
-     * @param w         World
-     * @param pos     Coordinates
-     * @return          returns the view belonging to the colony at given chunk coordinates
-     */
-    public static ColonyView getColonyView(World w, BlockPos pos)
-    {
-        return getColonyView(w, pos.getX(), pos.getY(), pos.getZ());
-    }
-
 
     /**
      * Get Colony that contains a given (x, y, z)
@@ -271,11 +229,11 @@ public class ColonyManager
      * @param z         z-coordinate
      * @return          returns the view belonging to the colony at x, y, z,
      */
-    public static ColonyView getColonyView(World w, int x, int y, int z)
+    public static ColonyView getColonyView(World w, BlockPos pos)
     {
         for (ColonyView c : colonyViews.values())
         {
-            if (c.isCoordInColony(w, x, y, z)) return c;
+            if (c.isCoordInColony(w, pos)) return c;
         }
 
         return null;
@@ -286,12 +244,10 @@ public class ColonyManager
      * @see {@link #getColonyView(World, int, int, int)}
      *
      * @param w     World
-     * @param x     x-coordinate
-     * @param y     y-coordinate
-     * @param z     z-coordinate
+     * @param pos	Block Position
      * @return      View of the closest colony
      */
-    public static ColonyView getClosestColonyView(World w, int x, int y, int z)
+    public static ColonyView getClosestColonyView(World w, BlockPos pos)
     {
         ColonyView closestColony = null;
         float closestDist = Float.MAX_VALUE;
@@ -300,7 +256,7 @@ public class ColonyManager
         {
             if (c.getDimensionId() == w.provider.getDimensionId())
             {
-                float dist = c.getDistanceSquared(x, y, z);
+                float dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
                 {
                     closestColony = c;
@@ -370,35 +326,21 @@ public class ColonyManager
      * @param z         z-coordinate
      * @return          View of colony or colony itself depending on side
      */
-    public static IColony getIColony(World w, int x, int y, int z)
-    {
-        return w.isRemote ? getColonyView(w, x, y, z) : getColony(w, x, y, z);
-    }
-
-    /**
-     * @see {@link #getIColony(World, int)}
-     *
-     * @param w         World
-     * @param pos     Coordinates of the colony
-     * @return          View of colony or colony itself depending on side
-     */
     public static IColony getIColony(World w, BlockPos pos)
     {
-        return getIColony(w, pos.getX(), pos.getY(), pos.getZ());
+        return w.isRemote ? getColonyView(w, pos) : getColony(w, pos);
     }
 
     /**
      * See {@link #getIColony(World, int)} and {@link #getClosestColony(World, int, int, int)}
      *
      * @param w         World
-     * @param x         x-coordinate
-     * @param y         y-coordinate
-     * @param z         z-coordinate
+     * @param pos		Block position
      * @return          View of colony or colony itself depending on side, closest to coordinates
      */
-    public static IColony getClosestIColony(World w, int x, int y, int z)
+    public static IColony getClosestIColony(World w, BlockPos pos)
     {
-        return w.isRemote ? getClosestColonyView(w, x, y, z) : getClosestColony(w, x, y, z);
+        return w.isRemote ? getClosestColonyView(w, pos) : getClosestColony(w, pos);
     }
 
     /**

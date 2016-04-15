@@ -294,42 +294,19 @@ public class Colony implements IColony
         return permissions;
     }
 
-    /**
-     * @see  {@link #isCoordInColony(World, int, int, int)}
-     *
-     * @param w         World to check
-     * @param coord     ChunkCoordinates to check
-     * @return          True if inside colony, otherwise false
-     */
-    public boolean isCoordInColony(World w, BlockPos coord)
-    {
-        return isCoordInColony(w, coord.getX(), coord.getY(), coord.getZ());
-    }
-
     @Override
-    public boolean isCoordInColony(World w, int x, int y, int z)
+    public boolean isCoordInColony(World w, BlockPos pos)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.equals(getWorld()) &&
-                BlockPosUtil.getDistanceSquared(center, new BlockPos(x, center.getY(), z)) <= MathUtils.square(Configurations.workingRangeTownhall);
-    }
-
-    /**
-     * @see {@link #getDistanceSquared(int, int, int)}
-     *
-     * @param pos     Chunk coordinate to get squared position
-     * @return          Squared position from center
-     */
-    public float getDistanceSquared(BlockPos pos)
-    {
-        return getDistanceSquared(pos.getX(), pos.getY(), pos.getZ());
+                BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownhall);
     }
 
     @Override
-    public float getDistanceSquared(int posX, int posY, int posZ) //todo why do we pass in y, if we dont use it
+    public float getDistanceSquared(BlockPos pos) //todo why do we pass in y, if we dont use it
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return BlockPosUtil.getDistanceSquared(center, new BlockPos(posX, center.getY(), posZ));
+        return BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ()));
     }
 
     /**
