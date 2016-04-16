@@ -34,7 +34,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeCache;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.lang.reflect.Field;

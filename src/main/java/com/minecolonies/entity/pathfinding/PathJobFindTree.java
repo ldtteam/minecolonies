@@ -71,7 +71,7 @@ public class PathJobFindTree extends PathJob
 
     private boolean isTree(int x, int y, int z)
     {
-        if(Tree.checkTree(world, x, y, z))
+        if(Tree.checkTree(world, new BlockPos(x, y, z)))
         {
             getResult().treeLocation = new BlockPos(x, y, z);
             return true;

@@ -20,9 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.Arrays;
 import java.util.List;
 
-import static net.minecraft.util.EnumParticleTypes.WATER_BUBBLE;
-import static net.minecraft.util.EnumParticleTypes.WATER_SPLASH;
-import static net.minecraft.util.EnumParticleTypes.WATER_WAKE;
+import static net.minecraft.util.EnumParticleTypes.*;
 
 /**
  * Creates a custom fishHook for the Fisherman to throw

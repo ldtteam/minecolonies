@@ -10,7 +10,6 @@ import com.minecolonies.util.Utils;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 
 import static com.minecolonies.entity.ai.AIState.*;
 

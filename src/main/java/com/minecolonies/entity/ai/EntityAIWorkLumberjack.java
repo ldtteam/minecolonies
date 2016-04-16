@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.entity.ai.AIState.*;
-import static net.minecraft.client.renderer.ActiveRenderInfo.getPosition;
 
 /**
  * The lumberjack AI class
