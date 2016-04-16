@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.concurrent.Future;
 
-public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
+public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
 {
     //  Parent class private members
     protected EntityLiving       theEntity;
@@ -48,13 +48,13 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigate
     @Override public void setSpeed(double d) { speed = d; super.setSpeed(d); }
 
     public boolean getAvoidSun() { return noSunPathfind; }
-    public void setAvoidSun(boolean b) { noSunPathfind = b; PathNavigateGround.setAvoidSun(b); }
+    public void setAvoidSun(boolean b) { noSunPathfind = b; super.setAvoidSun(b); }
 
     public boolean getEnterDoors() { return canPassOpenWoodenDoors; }
-    public void setEnterDoors(boolean b) { canPassOpenWoodenDoors = b; PathNavigateGround.setEnterDoors(b);}
+    public void setEnterDoors(boolean b) { canPassOpenWoodenDoors = b; super.setEnterDoors(b);}
 
     public boolean getCanSwim() { return canSwim; }
-    public void setCanSwim(boolean b) { canSwim = b; PathNavigateSwimmer.setCanSwim(b); }
+    public void setCanSwim(boolean b) { canSwim = b; super.setCanSwim(b); }
 
     @Override
     public boolean tryMoveToXYZ(double x, double y, double z, double speed)
