@@ -118,10 +118,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             Log.logger.error("Navigator error", e);
         }
 
-        this.getNavigator().setAvoidsWater(true);
         this.getNavigator().setCanSwim(true);
         this.getNavigator().setEnterDoors(true);
-        this.getNavigator().setBreakDoors(true);
 
         initTasks();
     }
@@ -885,13 +883,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     protected void dropEquipment(boolean par1, int par2)
     {
-        for (int i = 0; i < getLastActiveItems().length; i++)
+        //Collects equipment
+        for (int i = 0; i <  getInventory().length; i++)
         {
             setCurrentItemOrArmor(i, null);
         }
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            ItemStack itemstack = inventory.getStackInSlotOnClosing(i);
+            ItemStack itemstack = inventory.getStackInSlot(i);
             if (itemstack != null && itemstack.stackSize > 0)
             {
                 entityDropItem(itemstack);
@@ -1087,15 +1086,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
     }
 
-    public void hitBlockWithToolInHand(int x, int y, int z, boolean noidea) // TODO: why do we need here a boolean and for what is this boolean?
+    public void hitBlockWithToolInHand(int x, int y, int z) // TODO: why do we need here a boolean and for what is this boolean?
     {
-        hitBlockWithToolInHand(x, y, z, false);
+        hitBlockWithToolInHand(new BlockPos(x,y,z), false);
     }
 
     public void breakBlockWithToolInHand(BlockPos pos)
     {
         if (pos == null){ return; }
-        hitBlockWithToolInHand(pos.getX(), pos.getY(), pos.getZ(), true);
+        hitBlockWithToolInHand(pos, true);
     }
 
     public void sendLocalizedChat(String key, Object... args)
