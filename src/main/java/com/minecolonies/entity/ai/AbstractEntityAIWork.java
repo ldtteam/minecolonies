@@ -235,7 +235,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         job.clearItemsNeeded();
         itemsNeeded.forEach(job::addItemNeeded);
-        InventoryUtils.getInventoryAsList(worker.getInventory()).forEach(job::removeItemNeeded);
+        InventoryUtils.getInventoryAsList(worker.getInventoryCitizen()).forEach(job::removeItemNeeded);
         itemsCurrentlyNeeded = new ArrayList<>(job.getItemsNeeded());
     }
 
@@ -301,7 +301,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         boolean needsTool = !InventoryFunctions
                 .matchFirstInInventory(
-                        worker.getInventory(),
+                        worker.getInventoryCitizen(),
                         stack -> Utils.isTool(stack, tool),
                         InventoryFunctions::doNothing);
         if (!needsTool)
@@ -454,7 +454,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         //Check for a pickaxe
         needsPickaxe = InventoryFunctions
                 .matchFirstInInventory(
-                        worker.getInventory(),
+                        worker.getInventoryCitizen(),
                         stack -> Utils.checkIfPickaxeQualifies(
                                 minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
                         InventoryFunctions::doNothing);
@@ -532,15 +532,15 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
 
         return walkToBuilding()
                || InventoryFunctions.matchFirstInInventory(
-                worker.getInventory(), (i, stack) -> {
+                worker.getInventoryCitizen(), (i, stack) -> {
                     if (stack == null || keepIt.test(stack)){ return false; }
                     ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
                     if (returnStack == null)
                     {
-                        worker.getInventory().decrStackSize(i, stack.stackSize);
+                        worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
                         return true;
                     }
-                    worker.getInventory().decrStackSize(
+                    worker.getInventoryCitizen().decrStackSize(
                             i,
                             stack.stackSize
                             - returnStack.stackSize);
