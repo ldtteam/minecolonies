@@ -782,6 +782,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         return null;
     }
+    @Override
+    public ItemStack[] getInventory(){
+        throw new IllegalStateException("DO NOT USE THIS METHOD, DUDE!");
+    }
 
     public Colony getColony()
     {
