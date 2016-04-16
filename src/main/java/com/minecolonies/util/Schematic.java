@@ -315,7 +315,7 @@ public final class Schematic
             {
                 for (int z = minZ; z <= maxZ; z++)
                 {
-                    blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(world.getBlockState(new BlockPos(x, y, z)).getBlock())
+                    blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(world.getBlockState(new BlockPos(x, y, z)).getBlock());
                     metadata[x - minX][y - minY][z - minZ] = (byte) world.getBlockMetadata(x, y, z);
 
                     if (world.getBlockState(new BlockPos(x, y, z)).getBlock() instanceof AbstractBlockHut)
@@ -342,7 +342,7 @@ public final class Schematic
 
                         tileEntity = TileEntity.createAndLoadEntity(tileEntityNBT);
                         BlockPos pos = tileEntity.getPos();
-                        tileEntity.setPos(new BlockPos(pos.getX() - minX, pos.getY() - minY, pos.getZ() - minZ);
+                        tileEntity.setPos(new BlockPos(pos.getX() - minX, pos.getY() - minY, pos.getZ() - minZ));
                         tileEntities.add(tileEntity);
                     }
                 }

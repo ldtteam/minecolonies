@@ -6,21 +6,10 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EntityAICitizenAvoidEntity extends EntityAIBase
 {
-    public final IEntitySelector entitySelector = new IEntitySelector()
-    {
-        /**
-         * Return whether the specified entity is applicable to avoid an entity
-         * This is true when the entity is alive, and can see the target
-         */
-        @Override
-        public boolean isEntityApplicable(Entity target)
-        {
-            return target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target);
-        }
-    };
 
     /** The entity we are attached to */
     private EntityCitizen theEntity;
@@ -107,7 +96,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      *
      * @return  Entity to avoid
      */
-    protected Entity getClosestToAvoid()
+    private Entity getClosestToAvoid()
     {
         if (targetEntityClass == EntityPlayer.class)
         {
@@ -115,21 +104,26 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         }
         else
         {
-            List list = theEntity.worldObj.selectEntitiesWithinAABB(targetEntityClass, theEntity.boundingBox.expand((double)distanceFromEntity, 3.0D, (double)distanceFromEntity), entitySelector);
+            List<Entity> list = theEntity.worldObj.getEntitiesInAABBexcluding(
+                    theEntity, theEntity.getEntityBoundingBox().expand((double)distanceFromEntity, 3.0D, (double)distanceFromEntity),
+                    ( target) -> target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target));
+
+            list = list.stream().filter(entity -> targetEntityClass.isInstance(entity)).collect(Collectors.toList());
 
             if (list.isEmpty())
             {
                 return null;
             }
 
-            return (Entity)list.get(0);
+
+            return list.get(0);
         }
     }
 
     /**
      * Makes entity move away from {@link #closestLivingEntity}
      */
-    protected void performMoveAway()
+    private void performMoveAway()
     {
         theEntity.getNavigator().moveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2, nearSpeed);
     }

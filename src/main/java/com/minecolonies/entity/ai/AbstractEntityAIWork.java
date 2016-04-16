@@ -642,12 +642,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private void takeItemStackFromChest(int slot)
     {
-        InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
+        InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventoryCitizen(), slot);
     }
 
     protected InventoryCitizen getInventory()
     {
-        return worker.getInventory();
+        return worker.getInventoryCitizen();
     }
 
     /**
@@ -712,7 +712,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         int              required  = target.getHarvestLevel(target.getDefaultState());
         int              bestSlot  = -1;
         int              bestLevel = Integer.MAX_VALUE;
-        InventoryCitizen inventory = worker.getInventory();
+        InventoryCitizen inventory = worker.getInventoryCitizen();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack item  = inventory.getStackInSlot(i);
@@ -862,7 +862,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         if (tool != null && tool.stackSize < 1)
         {
             worker.setCurrentItemOrArmor(0, null);
-            worker.getInventory().setInventorySlotContents(worker.getInventory().getHeldItemSlot(), null);
+            worker.getInventoryCitizen().setInventorySlotContents(worker.getInventoryCitizen().getHeldItemSlot(), null);
         }
 
         //todo add meta data
@@ -874,7 +874,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
             for (ItemStack item : items)
             {
-                InventoryUtils.setStack(worker.getInventory(), item);
+                InventoryUtils.setStack(worker.getInventoryCitizen(), item);
             }
         }
 
