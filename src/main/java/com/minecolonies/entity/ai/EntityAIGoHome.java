@@ -3,7 +3,7 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 /**
  * EntityCitizen go home AI
@@ -32,14 +32,14 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public void startExecuting()
     {
-        ChunkCoordinates pos = citizen.getHomePosition();
+        BlockPos pos = citizen.getHomePosition();
         if(pos == null)
         {
             Log.logger.error("EntityCitizen has null townhall (And no home)");
             return;
         }
 
-        citizen.getNavigator().tryMoveToXYZ((double)pos.posX + 0.5D, (double)pos.posY, (double)pos.posZ + 0.5D, 1.0D);
+        citizen.getNavigator().tryMoveToXYZ((double)pos.getX() + 0.5D, (double)pos.getY(), (double)pos.getZ() + 0.5D, 1.0D);
     }
 
     @Override

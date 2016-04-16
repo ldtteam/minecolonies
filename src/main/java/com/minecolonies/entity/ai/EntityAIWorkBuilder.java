@@ -381,7 +381,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 entityHanging.posX += pos.getX();//tileX
                 entityHanging.posY += pos.getY();//tileY
                 entityHanging.posZ += pos.getZ();//tileZ
-                entityHanging.setDirection(entityHanging.hangingDirection);//also sets position based on tile
+                entityHanging.setPosition(entityHanging.getHangingPosition().getX(),
+                                          entityHanging.getHangingPosition().getY(),
+                                          entityHanging.getHangingPosition().getZ());//also sets position based on tile
 
                 entityHanging.setWorld(world);
                 entityHanging.dimension = world.provider.getDimensionId();
