@@ -40,7 +40,7 @@ public class EntityAICitizenWander extends EntityAIBase
             return false;
         }
 
-        vec3.yCoord = getValidHeight(vec3);
+        vec3 = new Vec3(vec3.xCoord, getValidHeight(vec3), vec3.zCoord);
 
         this.xPosition = vec3.xCoord;
         this.yPosition = vec3.yCoord;
