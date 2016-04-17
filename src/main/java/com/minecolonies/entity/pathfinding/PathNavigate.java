@@ -7,13 +7,11 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.pathfinder.WalkNodeProcessor;
 
 import java.util.List;
 import java.util.concurrent.Future;
@@ -38,13 +36,6 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         super(entity, world);
         this.theEntity = entity;
         this.pathSearchRange = entity.getEntityAttribute(SharedMonsterAttributes.followRange);
-        nodeProcessor = new WalkNodeProcessor();
-    }
-
-    @Override
-    protected PathFinder getPathFinder()
-    {
-        return null;
     }
 
     public double getSpeed() { return speed; }
