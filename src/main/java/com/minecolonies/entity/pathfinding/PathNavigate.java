@@ -260,13 +260,13 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     @Override
     protected boolean canNavigate()
     {
-        return false;
+        return true;
     }
 
     @Override
     protected boolean isDirectPathBetweenPoints(final Vec3 vec3, final Vec3 vec31, final int i, final int i1, final int i2)
     {
-        return false;
+        return super.isDirectPathBetweenPoints(vec3,vec31,i,i1,i2);
     }
 
     @Override
