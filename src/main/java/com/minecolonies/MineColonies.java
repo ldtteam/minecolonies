@@ -60,6 +60,10 @@ public class MineColonies
         ModItems.init();
 
         proxy.registerKeyBindings();//Schematica
+        
+        proxy.registerEntities();
+
+        proxy.registerEntityRendering();
     }
 
     @Mod.EventHandler
@@ -95,10 +99,6 @@ public class MineColonies
         RecipeHandler.init(Configurations.enableInDevelopmentFeatures, Configurations.supplyChests);
 
         proxy.registerEvents();
-
-        proxy.registerEntities();
-
-        proxy.registerEntityRendering();
 
         proxy.registerTileEntityRendering();
         
