@@ -22,12 +22,10 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.WorldType;
+import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,6 +44,21 @@ public class SchematicWorld extends World
 {
     // private static final AnvilSaveHandler SAVE_HANDLER = new AnvilSaveHandler(Minecraft.getMinecraft().mcDataDir, "tmp/com.github.lunatrius.schematica", false);
     private static final WorldSettings         WORLD_SETTINGS   = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
+    private static final WorldInfo             WORLD_INFO       = new WorldInfo(WORLD_SETTINGS, "Schematic");
+    private static final WorldProvider         WORLD_PROVIDER   = new WorldProvider()
+    {
+        @Override
+        public String getDimensionName()
+        {
+            return "Schematic";
+        }
+
+        @Override
+        public String getInternalNameSuffix()
+        {
+            return "schematic";
+        }
+    };
     private static final Comparator<ItemStack> BLOCK_COMPARATOR = new Comparator<ItemStack>()
     {
         @Override
@@ -59,7 +72,7 @@ public class SchematicWorld extends World
 
     private ItemStack   icon;
     private short[][][] blocks;
-    private IBlockState[][][]  metadata;
+    private byte[][][]  metadata;
     private final List<TileEntity> tileEntities = new ArrayList<>();
     private final List<ItemStack>  blockList    = new ArrayList<>();
     private short width;
@@ -73,7 +86,7 @@ public class SchematicWorld extends World
 
     public SchematicWorld()
     {
-        super(new EmptySaveHandler(), "Schematica", WORLD_SETTINGS, null, null);
+        super(new EmptySaveHandler(), WORLD_INFO, WORLD_PROVIDER, null, false);
         this.icon = SchematicWorld.DEFAULT_ICON.copy();
         this.blocks = null;
         this.metadata = null;
@@ -86,7 +99,7 @@ public class SchematicWorld extends World
         this.renderingLayer = -1;
     }
 
-    public SchematicWorld(ItemStack icon, short[][][] blocks, IBlockState[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length, int xOffset, int yOffset, int zOffset)
+    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length, int xOffset, int yOffset, int zOffset)
     {
         this(icon, blocks, metadata, tileEntities, entities, width, height, length);
         this.xOffset = xOffset;
@@ -94,7 +107,7 @@ public class SchematicWorld extends World
         this.zOffset = zOffset;
     }
 
-    public SchematicWorld(ItemStack icon, short[][][] blocks, IBlockState[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
+    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
     {
         this();
 
@@ -136,7 +149,7 @@ public class SchematicWorld extends World
         generateBlockList();
     }
 
-    public SchematicWorld(String iconName, short[][][] blocks, IBlockState[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
+    public SchematicWorld(String iconName, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
     {
         this(getIconFromName(iconName), blocks, metadata, tileEntities, entities, width, height, length);
     }
@@ -169,7 +182,8 @@ public class SchematicWorld extends World
             return icon;
         }
 
-        icon = new ItemStack(GameData.getItemRegistry().getObject(name, 1, damage);
+        //TODO verify we can just make this a ResourceLocation
+        icon = new ItemStack(GameData.getItemRegistry().getObject(new ResourceLocation(name)), 1, damage);
         if(icon.getItem() != null)
         {
             return icon;
@@ -231,7 +245,7 @@ public class SchematicWorld extends World
                     block = this.getBlock(x, y, z);
                     item = Item.getItemFromBlock(block);
                     //todo get damage value
-                    itemDamage = this.metadata[x][y][z].getBlock().getDamageValue(this,new BlockPos(x,y,z));
+                    itemDamage = this.metadata[x][y][z];
 
                     if(block == null || block == Blocks.air)
                     {
@@ -395,7 +409,9 @@ public class SchematicWorld extends World
     @Override
     public IBlockState getBlockState(final BlockPos pos)
     {
-        return super.getBlockState(pos);
+        //TODO null pointer exception, Most likely chunk provider. Trying this instead
+        Block block = getBlock(pos.getX(), pos.getY(), pos.getZ());
+        return block.getStateFromMeta(metadata[pos.getX()][pos.getY()][pos.getZ()]);
     }
 
     @Override
@@ -625,7 +641,7 @@ public class SchematicWorld extends World
     public void rotate()
     {
         short[][][] localBlocks = new short[this.length][this.height][this.width];
-        IBlockState[][][] localMetadata = new IBlockState[this.length][this.height][this.width];
+        byte[][][] localMetadata = new byte[this.length][this.height][this.width];
 
         for(int y = 0; y < this.height; y++)
         {

@@ -6,6 +6,7 @@ import com.schematica.world.SchematicWorld;
 
 import net.minecraft.client.Minecraft;
 
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.util.EnumFacing;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -19,7 +20,7 @@ public class Settings {
 	public Minecraft minecraft = Minecraft.getMinecraft();
 	public Vector3f playerPosition = new Vector3f();
 	public final List<RendererSchematicChunk> sortedRendererSchematicChunk = new ArrayList<>();
-	public RenderBlocks renderBlocks = null;
+	public BlockRendererDispatcher renderBlocks = null;
 	public Vector3f pointA = new Vector3f();
 	public Vector3f pointB = new Vector3f();
 	public Vector3f pointMin = new Vector3f();

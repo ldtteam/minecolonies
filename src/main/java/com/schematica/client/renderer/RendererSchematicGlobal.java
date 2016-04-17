@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -21,7 +22,6 @@ public class RendererSchematicGlobal {
 	private final Settings settings = Settings.instance;
 	private final Profiler profiler = this.minecraft.mcProfiler;
 
-	private final Frustrum frustrum = new Frustrum();
 	private final RendererSchematicChunkSorter rendererSchematicChunkSorter = new RendererSchematicChunkSorter();
 
 	@SubscribeEvent
@@ -166,9 +166,9 @@ public class RendererSchematicGlobal {
 	}
 
 	private void updateFrustrum() {
-		this.frustrum.setPosition(this.settings.getTranslationX(), this.settings.getTranslationY(), this.settings.getTranslationZ());
+		Vec3 vec = new Vec3(this.settings.getTranslationX(), this.settings.getTranslationY(), this.settings.getTranslationZ());
 		for (RendererSchematicChunk rendererSchematicChunk : this.settings.sortedRendererSchematicChunk) {
-			rendererSchematicChunk.isInFrustrum = this.frustrum.isBoundingBoxInFrustum(rendererSchematicChunk.getBoundingBox());
+			rendererSchematicChunk.isInFrustrum = rendererSchematicChunk.getBoundingBox().isVecInside(vec);
 		}
 	}
 

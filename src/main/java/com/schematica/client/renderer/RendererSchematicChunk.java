@@ -7,6 +7,7 @@ import com.schematica.world.SchematicWorld;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -48,7 +49,7 @@ public class RendererSchematicChunk {
 	private final SchematicWorld schematic;
 	private final List<TileEntity> tileEntities = new ArrayList<>();
 
-	private final AxisAlignedBB boundingBox = AxisAlignedBB.fromBounds(0, 0, 0, 0, 0, 0);
+	private final AxisAlignedBB boundingBox;
 
 	private static final Map<String, ResourceLocation> resourcePacks = new HashMap<>();
 	private Field fieldMapTexturesStiched;
@@ -58,7 +59,7 @@ public class RendererSchematicChunk {
 
 	public RendererSchematicChunk(SchematicWorld schematicWorld, int baseX, int baseY, int baseZ) {
 		this.schematic = schematicWorld;
-		this.boundingBox.setBounds(baseX * CHUNK_WIDTH, baseY * CHUNK_HEIGHT, baseZ * CHUNK_LENGTH, (baseX + 1) * CHUNK_WIDTH, (baseY + 1) * CHUNK_HEIGHT, (baseZ + 1) * CHUNK_LENGTH);
+		this.boundingBox = AxisAlignedBB.fromBounds(baseX * CHUNK_WIDTH, baseY * CHUNK_HEIGHT, baseZ * CHUNK_LENGTH, (baseX + 1) * CHUNK_WIDTH, (baseY + 1) * CHUNK_HEIGHT, (baseZ + 1) * CHUNK_LENGTH);
 
 		this.centerPosition.x = (int) ((baseX + 0.5) * CHUNK_WIDTH);
 		this.centerPosition.y = (int) ((baseY + 0.5) * CHUNK_HEIGHT);
@@ -224,7 +225,7 @@ public class RendererSchematicChunk {
 
 	public void renderBlocks(int renderPass, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
 		IBlockAccess mcWorld = this.minecraft.theWorld;
-		RenderBlocks renderBlocks = this.settings.renderBlocks;
+		BlockRendererDispatcher renderBlocks = this.settings.renderBlocks;
 
 		int x, y, z, wx, wy, wz;
 		int sides;
@@ -235,7 +236,9 @@ public class RendererSchematicChunk {
 		int ambientOcclusion = this.minecraft.gameSettings.ambientOcclusion;
 		this.minecraft.gameSettings.ambientOcclusion = 0;
 
-		Tessellator.getInstance().startDrawingQuads();
+		Tessellator tessellator = Tessellator.getInstance();
+		//tessellator.startDrawingQuads();
+		//TODO might have to initialize quad drawing
 
 		for (y = minY; y < maxY; y++) {
 			for (z = minZ; z < maxZ; z++) {
@@ -322,9 +325,11 @@ public class RendererSchematicChunk {
 									RenderHelper.drawCuboidOutline(zero, size, sides, 0.0f, 0.75f, 1.0f, 0.25f);
 								}
 							}
-
-							if (block != null && block.canRenderInPass(renderPass)) {
-								renderBlocks.renderBlockByRenderType(block, x, y, z);
+							//TODO check this
+							if (block != null && block.getBlockLayer().ordinal() == renderPass) {
+								//TODO change to actual block state
+								renderBlocks.renderBlock(block.getDefaultState(), new BlockPos(x,y,z), mcWorld, tessellator.getWorldRenderer());
+								//renderBlocks.renderBlockByRenderType(block, x, y, z);
 							}
 						}
 					} catch (Exception e) {
@@ -334,7 +339,7 @@ public class RendererSchematicChunk {
 			}
 		}
 
-		Tessellator.getInstance().draw();
+		tessellator.draw();
 
 		this.minecraft.gameSettings.ambientOcclusion = ambientOcclusion;
 	}

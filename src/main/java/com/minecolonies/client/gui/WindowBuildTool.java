@@ -13,6 +13,9 @@ import com.minecolonies.util.Schematic;
 import com.schematica.Settings;
 import com.schematica.world.SchematicWorld;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockModelShapes;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -365,7 +368,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             SchematicWorld schematic = new Schematic(this.mc.theWorld, style + '/' + hut + '1').getWorldForRender();
             MineColonies.proxy.setActiveSchematic(schematic);
 
-            Settings.instance.renderBlocks = new RenderBlocks(schematic);
+            Settings.instance.renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
             Settings.instance.createRendererSchematicChunk();
 
             updatePosition();

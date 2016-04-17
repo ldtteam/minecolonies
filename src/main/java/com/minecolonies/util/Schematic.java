@@ -303,7 +303,7 @@ public final class Schematic
         short length = (short) (Math.abs(maxZ - minZ) + 1);
 
         short[][][]         blocks       = new short[width][height][length];
-        IBlockState[][][]   metadata     = new IBlockState[width][height][length];
+        byte[][][]          metadata     = new byte[width][height][length];
         List<TileEntity>    tileEntities = new ArrayList<>();
         TileEntity          tileEntity;
         NBTTagCompound      tileEntityNBT;
@@ -316,10 +316,13 @@ public final class Schematic
             {
                 for (int z = minZ; z <= maxZ; z++)
                 {
-                    blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(world.getBlockState(new BlockPos(x, y, z)).getBlock());
-                    metadata[x - minX][y - minY][z - minZ] = world.getBlockState(new BlockPos(x, y, z));
+                    BlockPos pos = new BlockPos(x, y, z);
+                    IBlockState blockState = world.getBlockState(pos);
+                    Block block = blockState.getBlock();
+                    blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(block);
+                    metadata[x - minX][y - minY][z - minZ] = (byte) block.getMetaFromState(blockState);
 
-                    if (world.getBlockState(new BlockPos(x, y, z)).getBlock() instanceof AbstractBlockHut)
+                    if (block instanceof AbstractBlockHut)
                     {
                         if (xOffset == 0 && yOffset == 0 && zOffset == 0)
                         {
@@ -331,19 +334,19 @@ public final class Schematic
                         {
                             Log.logger.warn("Scan contained multiple AbstractBlockHut's ignoring this one");
                             blocks[x - minX][y - minY][z - minZ] = 0;
-                            metadata[x - minX][y - minY][z - minZ] = null;
+                            metadata[x - minX][y - minY][z - minZ] = 0;
                         }
                     }
 
-                    tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+                    tileEntity = world.getTileEntity(pos);
                     if (tileEntity != null)//creates a new tileEntity and formats its data for saving
                     {                     //a new tileEntity is needed to prevent changes to the real one
                         tileEntityNBT = new NBTTagCompound();
                         tileEntity.writeToNBT(tileEntityNBT);
 
                         tileEntity = TileEntity.createAndLoadEntity(tileEntityNBT);
-                        BlockPos pos = tileEntity.getPos();
-                        tileEntity.setPos(new BlockPos(pos.getX() - minX, pos.getY() - minY, pos.getZ() - minZ));
+                        BlockPos tPos = tileEntity.getPos();
+                        tileEntity.setPos(new BlockPos(tPos.getX() - minX, tPos.getY() - minY, tPos.getZ() - minZ));
                         tileEntities.add(tileEntity);
                     }
                 }

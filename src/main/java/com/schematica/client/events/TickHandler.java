@@ -21,10 +21,18 @@ import java.lang.reflect.Field;
 public class TickHandler {
 	private final Minecraft minecraft = Minecraft.getMinecraft();
 
-	private final Field sortedWorldRenderers;
+	private Field sortedWorldRenderers;
 
 	public TickHandler() {
-		this.sortedWorldRenderers = ReflectionHelper.findField(RenderGlobal.class, "n", "field_72768_k", "sortedWorldRenderers");
+		//TODO change all of this
+		try
+		{
+			this.sortedWorldRenderers = ReflectionHelper.findField(RenderGlobal.class, "n", "field_72768_k", "sortedWorldRenderers");
+		}
+		catch(ReflectionHelper.UnableToFindFieldException e)
+		{
+			this.sortedWorldRenderers = null;
+		}
 	}
 
 	@SubscribeEvent
@@ -71,10 +79,11 @@ public class TickHandler {
 				if (renderers != null) {
 					int count = 0;
 					for (WorldRenderer worldRenderer : renderers) {
-						if (worldRenderer != null && worldRenderer.needsUpdate && count++ < 125) {
-							AxisAlignedBB worldRendererBoundingBox = worldRenderer.rendererBoundingBox.getOffsetBoundingBox(-Settings.instance.offset.x, -Settings.instance.offset.y, -Settings.instance.offset.z);
+						//TODO check out all this commented stuff
+						if (worldRenderer != null /*&& worldRenderer.needsUpdate*/ && count++ < 125) {
+							//AxisAlignedBB worldRendererBoundingBox = worldRenderer.rendererBoundingBox.getOffsetBoundingBox(-Settings.instance.offset.x, -Settings.instance.offset.y, -Settings.instance.offset.z);
 							for (RendererSchematicChunk renderer : Settings.instance.sortedRendererSchematicChunk) {
-								if (!renderer.getDirty() && renderer.getBoundingBox().intersectsWith(worldRendererBoundingBox)) {
+								if (!renderer.getDirty() /*&& renderer.getBoundingBox().intersectsWith(worldRendererBoundingBox)*/) {
 									renderer.setDirty();
 								}
 							}

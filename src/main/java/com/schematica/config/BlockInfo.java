@@ -4,6 +4,7 @@ import net.minecraft.block.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameData;
 
@@ -55,7 +56,8 @@ public class BlockInfo
             return false;
         }
 
-        return addIgnoredBlock(GameData.getBlockRegistry().getObject(String.format("%s:%s", modId, blockName)));
+        //TODO make sure this can just be made into ResourceLocation
+        return addIgnoredBlock(GameData.getBlockRegistry().getObject(new ResourceLocation(String.format("%s:%s", modId, blockName))));
     }
 
     public static void populateIgnoredBlockMetadata()
@@ -84,7 +86,12 @@ public class BlockInfo
         addIgnoredBlockMetadata(Blocks.furnace);
         addIgnoredBlockMetadata(Blocks.lit_furnace);
         addIgnoredBlockMetadata(Blocks.standing_sign);
-        addIgnoredBlockMetadata(Blocks.wooden_door);
+        addIgnoredBlockMetadata(Blocks.acacia_door);
+        addIgnoredBlockMetadata(Blocks.birch_door);
+        addIgnoredBlockMetadata(Blocks.dark_oak_door);
+        addIgnoredBlockMetadata(Blocks.jungle_door);
+        addIgnoredBlockMetadata(Blocks.oak_door);
+        addIgnoredBlockMetadata(Blocks.spruce_door);
         addIgnoredBlockMetadata(Blocks.ladder);
         addIgnoredBlockMetadata(Blocks.rail);
         addIgnoredBlockMetadata(Blocks.stone_stairs);
@@ -106,7 +113,12 @@ public class BlockInfo
         addIgnoredBlockMetadata(Blocks.powered_repeater);
         addIgnoredBlockMetadata(Blocks.trapdoor);
         addIgnoredBlockMetadata(Blocks.vine);
-        addIgnoredBlockMetadata(Blocks.fence_gate);
+        addIgnoredBlockMetadata(Blocks.acacia_fence_gate);
+        addIgnoredBlockMetadata(Blocks.birch_fence_gate);
+        addIgnoredBlockMetadata(Blocks.dark_oak_fence_gate);
+        addIgnoredBlockMetadata(Blocks.jungle_fence_gate);
+        addIgnoredBlockMetadata(Blocks.oak_fence_gate);
+        addIgnoredBlockMetadata(Blocks.spruce_fence_gate);
         addIgnoredBlockMetadata(Blocks.brick_stairs);
         addIgnoredBlockMetadata(Blocks.stone_brick_stairs);
         addIgnoredBlockMetadata(Blocks.waterlily);
@@ -148,8 +160,8 @@ public class BlockInfo
         {
             return false;
         }
-
-        return addIgnoredBlockMetadata(GameData.getBlockRegistry().getObject(String.format("%s:%s", modId, blockName)));
+        //TODO make sure this can be a resource location
+        return addIgnoredBlockMetadata(GameData.getBlockRegistry().getObject(new ResourceLocation(String.format("%s:%s", modId, blockName))));
     }
 
     public static void populateBlockItemMap()
@@ -168,7 +180,12 @@ public class BlockInfo
         addBlockItemMapping(Blocks.wheat, Items.wheat_seeds);
         addBlockItemMapping(Blocks.lit_furnace, Blocks.furnace);
         addBlockItemMapping(Blocks.standing_sign, Items.sign);
-        addBlockItemMapping(Blocks.wooden_door, Items.wooden_door);
+        addBlockItemMapping(Blocks.acacia_door, Items.acacia_door);
+        addBlockItemMapping(Blocks.spruce_door, Items.spruce_door);
+        addBlockItemMapping(Blocks.oak_door, Items.oak_door);
+        addBlockItemMapping(Blocks.dark_oak_door, Items.dark_oak_door);
+        addBlockItemMapping(Blocks.jungle_door, Items.jungle_door);
+        addBlockItemMapping(Blocks.birch_door, Items.birch_door);
         addBlockItemMapping(Blocks.iron_door, Items.iron_door);
         addBlockItemMapping(Blocks.wall_sign, Items.sign);
         addBlockItemMapping(Blocks.unlit_redstone_torch, Blocks.redstone_torch);
@@ -222,7 +239,8 @@ public class BlockInfo
         }
         else if(blockObj instanceof String)
         {
-            block = GameData.getBlockRegistry().getObject(String.format("%s:%s", modId, blockObj));
+            //TODO make sure this can be a resource location
+            block = GameData.getBlockRegistry().getObject(new ResourceLocation(String.format("%s:%s", modId, blockObj)));
         }
 
         if(itemObj instanceof Item)
@@ -236,10 +254,10 @@ public class BlockInfo
         else if(itemObj instanceof String)
         {
             String formattedName = String.format("%s:%s", modId, itemObj);
-            item = GameData.getItemRegistry().getObject(formattedName);
+            item = GameData.getItemRegistry().getObject(new ResourceLocation(formattedName));
             if(item == null)
             {
-                item = Item.getItemFromBlock(GameData.getBlockRegistry().getObject(formattedName));
+                item = Item.getItemFromBlock(GameData.getBlockRegistry().getObject(new ResourceLocation(formattedName)));
             }
         }
 
@@ -285,7 +303,12 @@ public class BlockInfo
         addPlacementMapping(Blocks.monster_egg, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
         addPlacementMapping(Blocks.stonebrick, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
         addPlacementMapping(Blocks.quartz_block, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
-        addPlacementMapping(Blocks.fence_gate, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 2, 0, 1, 3).setMaskMeta(0x3));
+        addPlacementMapping(Blocks.acacia_fence_gate, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 2, 0, 1, 3).setMaskMeta(0x3));
+        addPlacementMapping(Blocks.spruce_fence_gate, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 2, 0, 1, 3).setMaskMeta(0x3));
+        addPlacementMapping(Blocks.birch_fence_gate, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 2, 0, 1, 3).setMaskMeta(0x3));
+        addPlacementMapping(Blocks.dark_oak_fence_gate, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 2, 0, 1, 3).setMaskMeta(0x3));
+        addPlacementMapping(Blocks.jungle_fence_gate, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 2, 0, 1, 3).setMaskMeta(0x3));
+        addPlacementMapping(Blocks.oak_fence_gate, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 2, 0, 1, 3).setMaskMeta(0x3));
         addPlacementMapping(Blocks.wooden_slab, new PlacementData(PlacementData.PlacementType.BLOCK).setOffset(0x8, 0.0f, 1.0f).setMaskMeta(0x7).setMaskMetaInHand(0x7));
         addPlacementMapping(Blocks.anvil, new PlacementData(PlacementData.PlacementType.PLAYER, -1, -1, 1, 3, 0, 2).setMaskMeta(0x3).setMaskMetaInHand(0xC).setBitShiftMetaInHand(2));
         addPlacementMapping(Blocks.stained_hardened_clay, new PlacementData(PlacementData.PlacementType.BLOCK).setMaskMetaInHand(0xF));
@@ -338,10 +361,10 @@ public class BlockInfo
         else if(itemObj instanceof String)
         {
             String formattedName = String.format("%s:%s", modId, itemObj);
-            item = GameData.getItemRegistry().getObject(formattedName);
+            item = GameData.getItemRegistry().getObject(new ResourceLocation(formattedName));
             if(item == null)
             {
-                item = Item.getItemFromBlock(GameData.getBlockRegistry().getObject(formattedName));
+                item = Item.getItemFromBlock(GameData.getBlockRegistry().getObject(new ResourceLocation(formattedName)));
             }
         }
 
