@@ -351,9 +351,7 @@ public final class Schematic
         }
 
         AxisAlignedBB region = AxisAlignedBB.fromBounds(minX, minY, minZ, maxX, maxY, maxZ);
-        @SuppressWarnings("unchecked")
         List<EntityHanging> entityHangings = world.getEntitiesWithinAABB(EntityHanging.class, region);
-        @SuppressWarnings("unchecked")
         List<EntityMinecart> entityMinecarts = world.getEntitiesWithinAABB(EntityMinecart.class, region);
         NBTTagList entityList = new NBTTagList();
 
@@ -363,9 +361,9 @@ public final class Schematic
             entityData.setString("id", EntityList.getEntityString(entity));
             entity.writeToNBT(entityData);
 
-            entityData.setTag("TileX", new NBTTagInt(entity.field_146063_b - minX));
-            entityData.setTag("TileY", new NBTTagInt(entity.field_146064_c - minY));
-            entityData.setTag("TileZ", new NBTTagInt(entity.field_146062_d - minZ));
+            entityData.setTag("TileX", new NBTTagInt(entity.getHangingPosition().getX() - minX));
+            entityData.setTag("TileY", new NBTTagInt(entity.getHangingPosition().getY() - minY));
+            entityData.setTag("TileZ", new NBTTagInt(entity.getHangingPosition().getZ() - minZ));
 
             entityList.appendTag(entityData);
         });
@@ -653,7 +651,6 @@ public final class Schematic
         return schematicWorld.getLength();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Entity> getEntities()
     {
         return schematicWorld.loadedEntityList;

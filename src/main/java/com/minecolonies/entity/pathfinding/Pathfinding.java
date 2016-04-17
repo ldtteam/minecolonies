@@ -34,7 +34,7 @@ public class Pathfinding
     public static void debugDrawNode(Node n, byte r, byte g, byte b)
     {
         GL11.glPushMatrix();
-        GL11.glTranslated((double) n.x + 0.375, (double) n.y + 0.375, (double) n.z + 0.375);
+        GL11.glTranslated((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
 
         float f = 1.6F;
         float f1 = 0.016666668F * f / 2;
@@ -42,9 +42,9 @@ public class Pathfinding
         //  Nameplate
 
         Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
-        double dx = n.x - entity.posX;
-        double dy = n.y - entity.posY;
-        double dz = n.z - entity.posZ;
+        double dx = n.pos.getX() - entity.posX;
+        double dy = n.pos.getY() - entity.posY;
+        double dz = n.pos.getZ() - entity.posZ;
         if (Math.sqrt(dx*dx + dy*dy + dz*dz) <= 5D)
         {
             String s1 = String.format("F: %.3f [%d]", n.cost, n.counterAdded);
@@ -147,9 +147,9 @@ public class Pathfinding
             GL11.glBegin(GL11.GL_LINES);
             GL11.glColor3f(0.75F, 0.75F, 0.75F);
 
-            double pdx = n.parent.x - n.x + 0.125;
-            double pdy = n.parent.y - n.y + 0.125;
-            double pdz = n.parent.z - n.z + 0.125;
+            double pdx = n.parent.pos.getX() - n.pos.getX() + 0.125;
+            double pdy = n.parent.pos.getY() - n.pos.getY() + 0.125;
+            double pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125;
 
             GL11.glVertex3d(0.5, 0.5, 0.5);
             GL11.glVertex3d(pdx / 0.25, pdy / 0.25, pdz / 0.25);

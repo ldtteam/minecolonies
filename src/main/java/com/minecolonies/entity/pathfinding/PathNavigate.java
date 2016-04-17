@@ -290,7 +290,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
             for (int i = 0; i < pathLength; ++i)
             {
                 PathPoint point = path.getPathPointFromIndex(i);
-                newPoints[i] = new PathPointExtended(point.xCoord, point.yCoord, point.zCoord);
+                newPoints[i] = new PathPointExtended(new BlockPos(point.xCoord, point.yCoord, point.zCoord));
             }
 
             path = new PathEntity(newPoints);

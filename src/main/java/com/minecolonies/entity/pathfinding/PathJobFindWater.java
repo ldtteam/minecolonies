@@ -48,11 +48,11 @@ public class PathJobFindWater extends PathJob
     public WaterPathResult getResult() { return (WaterPathResult)super.getResult(); }
 
     @Override
-    protected double computeHeuristic(int x, int y, int z)
+    protected double computeHeuristic(BlockPos pos)
     {
-        int dx = x - hutLocation.getX();
-        int dy = y - hutLocation.getY();
-        int dz = z - hutLocation.getZ();
+        int dx = pos.getX() - hutLocation.getX();
+        int dy = pos.getY() - hutLocation.getY();
+        int dz = pos.getZ() - hutLocation.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker - halved
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.501D ;
@@ -67,27 +67,25 @@ public class PathJobFindWater extends PathJob
             return false;
         }
 
-        if(squareDistance(hutLocation,new BlockPos(n.x,n.y,n.z))>MAX_RANGE)
+        if(squareDistance(hutLocation, n.pos)>MAX_RANGE)
         {
             return false;
         }
 
-        if (n.x != n.parent.x)
+        if (n.pos.getX() != n.parent.pos.getX())
         {
-            int dx = n.x > n.parent.x ? 1 : -1;
-            return isWater(n.x + dx, n.y-1, n.z) || isWater(n.x, n.y-1, n.z - 1) || isWater(n.x, n.y-1, n.z + 1);
+            int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
+            return isWater(n.pos.add(dx, -1, 0)) || isWater(n.pos.add(0, -1, - 1)) || isWater(n.pos.add(0, -1, 1));
         }
         else//z
         {
-            int dz = n.z > n.parent.z ? 1 : -1;
-            return isWater(n.x, n.y-1, n.z + dz) || isWater(n.x - 1, n.y-1, n.z) || isWater(n.x + 1, n.y-1, n.z);
+            int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
+            return isWater(n.pos.add(0, -1, dz)) || isWater(n.pos.add(-1, -1, 0)) || isWater(n.pos.add(1, -1, 0));
         }
     }
 
-    private boolean isWater(int x, int y, int z)
+    private boolean isWater(BlockPos newPond)
     {
-        BlockPos newPond = new BlockPos(x,y,z);
-
         if(ponds.contains(newPond) || pondsAreNear(ponds,newPond))
         {
             return false;
@@ -97,7 +95,7 @@ public class PathJobFindWater extends PathJob
 
         if(pond != null)
         {
-            getResult().pond = new BlockPos(x, y, z);
+            getResult().pond = newPond;
             return true;
         }
 

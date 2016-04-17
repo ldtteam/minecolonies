@@ -118,10 +118,10 @@ public abstract class PathJob implements Callable<PathEntity>
      */
     protected PathEntity search()
     {
-        Node startNode = new Node(start.getX(), start.getY(), start.getZ(),
-                computeHeuristic(start.getX(), start.getY(), start.getZ()));
+        Node startNode = new Node(start,
+                computeHeuristic(start));
 
-        if (isLadder(start.getX(), start.getY(), start.getZ()))
+        if (isLadder(start))
         {
             startNode.isLadder = true;
         }
@@ -131,7 +131,7 @@ public abstract class PathJob implements Callable<PathEntity>
         }
 
         nodesOpen.offer(startNode);
-        nodesVisited.put(computeNodeKey(start.getX(), start.getY(), start.getZ()), startNode);
+        nodesVisited.put(computeNodeKey(start), startNode);
 
         ++totalNodesAdded;
 
@@ -157,7 +157,7 @@ public abstract class PathJob implements Callable<PathEntity>
 
             if (Configurations.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
             {
-                Log.logger.info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f", currentNode.x, currentNode.y, currentNode.z, currentNode.cost, currentNode.score));
+                Log.logger.info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f", currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.cost, currentNode.score));
             }
 
             if (isAtDestination(currentNode))
@@ -177,36 +177,34 @@ public abstract class PathJob implements Callable<PathEntity>
 
             if (currentNode.steps <= maxRange)
             {
-                int dx = 0, dy = 0, dz = 0;
+                BlockPos dPos = new BlockPos(0, 0, 0);
                 if (currentNode.parent != null)
                 {
-                    dx = currentNode.x - currentNode.parent.x;
-                    dy = currentNode.y - currentNode.parent.y;
-                    dz = currentNode.z - currentNode.parent.z;
+                	dPos = currentNode.pos.subtract(currentNode.parent.pos);
                 }
 
                 if (currentNode.isLadder)
                 {
                     //  On a ladder, we can go 1 straight-up
-                    if (dy >= 0 || dx != 0 || dz != 0)
+                    if (dPos.getY() >= 0 || dPos.getX() != 0 || dPos.getZ() != 0)
                     {
-                        walk(currentNode, 0, 1, 0);
+                        walk(currentNode, new BlockPos(0, 1, 0));
                     }
                 }
 
                 //  We can also go down 1, if the lower block is a ladder
-                if (dy <= 0 || dx != 0 || dz != 0)
+                if (dPos.getY() <= 0 || dPos.getX() != 0 || dPos.getZ() != 0)
                 {
-                    if (isLadder(currentNode.x, currentNode.y - 1, currentNode.z))
+                    if (isLadder(currentNode.pos.down()))
                     {
-                        walk(currentNode, 0, -1, 0);
+                        walk(currentNode, new BlockPos(0, -1, 0));
                     }
                 }
 
-                if (dz <= 0)    walk(currentNode, 0, 0, -1);    //  N
-                if (dx >= 0)    walk(currentNode, 1, 0, 0);     //  E
-                if (dz >= 0)    walk(currentNode, 0, 0, 1);     //  S
-                if (dx <= 0)    walk(currentNode, -1, 0, 0);    //  W
+                if (dPos.getZ() <= 0)    walk(currentNode, new BlockPos(0, 0, -1));    //  N
+                if (dPos.getX() >= 0)    walk(currentNode, new BlockPos(1, 0, 0));     //  E
+                if (dPos.getZ() >= 0)    walk(currentNode, new BlockPos(0, 0, 1));     //  S
+                if (dPos.getX() <= 0)    walk(currentNode, new BlockPos(-1, 0, 0));    //  W
             }
 
             if (debugDrawEnabled && debugSleepMs != 0)
@@ -321,31 +319,29 @@ public abstract class PathJob implements Callable<PathEntity>
 
             --pathLength;
 
-            int x = node.x;
-            int y = node.y;
-            int z = node.z;
+            BlockPos pos = node.pos;
 
             if (node.isSwimming)
             {
                 //  Not truly necessary but helps prevent them spinning in place at swimming nodes
-                y -= 1;
+                pos.add(0, -1, 0);
             }
 
-            PathPointExtended p = new PathPointExtended(x, y, z);
+            PathPointExtended p = new PathPointExtended(pos);
 
             //  Climbing on a ladder?
             if (nextInPath != null && node.isLadder &&
-                    (nextInPath.x == x && nextInPath.z == z))
+                    (nextInPath.pos.getX() == pos.getX() && nextInPath.pos.getZ() == pos.getZ()))
             {
                 p.isOnLadder = true;
-                if (nextInPath.y > y)
+                if (nextInPath.pos.getY() > pos.getY())
                 {
                     //  We only care about facing if going up
-                    p.ladderFacing = world.getBlockState(new BlockPos(x,y,z)).getValue(BlockLadder.FACING);
+                    p.ladderFacing = world.getBlockState(pos).getValue(BlockLadder.FACING);
                 }
             }
             else if (node.parent != null && node.parent.isLadder &&
-                    (node.parent.x == x && node.parent.z == z))
+                    (node.parent.pos.getX() == pos.getX() && node.parent.pos.getZ() == pos.getZ()))
             {
                 p.isOnLadder = true;
             }
@@ -380,11 +376,11 @@ public abstract class PathJob implements Callable<PathEntity>
      * @param x,y,z coordinates to generate key from
      * @return key for node in map
      */
-    protected static int computeNodeKey(int x, int y, int z)
+    protected static int computeNodeKey(BlockPos pos)
     {
-        return ((x & 0xFFF) << 20) |
-                ((y & 0xFF) << 12) |
-                (z & 0xFFF);
+        return ((pos.getX() & 0xFFF) << 20) |
+                ((pos.getY() & 0xFF) << 12) |
+                (pos.getZ() & 0xFFF);
 
         //  64 bit variant: 60 bits, 26 bits each of (x,z) and 8 bits of y
         //  Covers entire reachable boundaries of the world
@@ -398,14 +394,14 @@ public abstract class PathJob implements Callable<PathEntity>
      * Compute the cost (immediate 'g' value) of moving from the parent space to the new space
      *
      * @param parent The parent node being moved from
-     * @param dx,dy,dz The delta from the parent to the new space; assumes dx,dy,dz in range of [-1..1]
+     * @param dPos The delta from the parent to the new space; assumes dx,dy,dz in range of [-1..1]
      * @return cost to move from the parent to the new position
      */
-    protected double computeCost(Node parent, int dx, int dy, int dz, boolean isSwimming)
+    protected double computeCost(Node parent, BlockPos dPos, boolean isSwimming)
     {
         double cost = 1D;
 
-        if (dy != 0 && (dx != 0 || dz != 0))
+        if (dPos.getY() != 0 && (dPos.getX() != 0 || dPos.getZ() != 0))
         {
             //  Tax the cost for jumping, dropping (warning: also taxes stairs)
             cost *= 1.1D;
@@ -430,10 +426,10 @@ public abstract class PathJob implements Callable<PathEntity>
      * Returning a very high value (such that 'h' is very high relative to 'g') then only 'h' (the heuristic) matters,
      *   as the search will be a very fast greedy best-first-search, ignoring cost weighting and distance
      *
-     * @param x,y,z Position to compute heuristic from
+     * @param pos Position to compute heuristic from
      * @return
      */
-    protected abstract double computeHeuristic(int x, int y, int z);
+    protected abstract double computeHeuristic(BlockPos pos);
 
     /**
      * Return true if the given node is a viable final destination, and the path should generate to here
@@ -457,18 +453,16 @@ public abstract class PathJob implements Callable<PathEntity>
      * move and adding or updating a node, as appropriate
      *
      * @param parent Node being walked from
-     * @param dx,dy,dz Delta from parent, expected in range of [-1..1]
+     * @param pos Delta from parent, expected in range of [-1..1]
      * @return true if a node was added or updated when attempting to move in the given direction
      */
-    protected final boolean walk(Node parent, int dx, int dy, int dz)
+    protected final boolean walk(Node parent, BlockPos dPos)
     {
-        int x = parent.x + dx;
-        int y = parent.y + dy;
-        int z = parent.z + dz;
+    	BlockPos pos = new BlockPos(parent.pos.add(dPos));
 
         //  Cheap test to perform before doing a 'y' test
         //  Has this node been visited?
-        int nodeKey = computeNodeKey(x, y, z);
+        int nodeKey = computeNodeKey(pos);
         Node node = nodesVisited.get(nodeKey);
         if (node != null && node.closed)
         {
@@ -477,17 +471,17 @@ public abstract class PathJob implements Callable<PathEntity>
         }
 
         //  Can we traverse into this node?  Fix the y up
-        int newY = getGroundHeight(parent, x, y, z);
+        int newY = getGroundHeight(parent, pos);
         if (newY < 0)
         {
             return false;
         }
 
-        if (y != newY)
+        if (pos.getY() != newY)
         {
             //  Has this node been visited?
-            y = newY;
-            nodeKey = computeNodeKey(x, y, z);
+            pos = new BlockPos(pos.getX(), newY, pos.getZ());
+            nodeKey = computeNodeKey(pos);
             node = nodesVisited.get(nodeKey);
             if (node != null && node.closed)
             {
@@ -497,11 +491,11 @@ public abstract class PathJob implements Callable<PathEntity>
         }
 
 
-        boolean isSwimming = (node != null) ? node.isSwimming : world.getBlockState(new BlockPos(x, y - 1, z)).getBlock().getMaterial().isLiquid();
+        boolean isSwimming = (node != null) ? node.isSwimming : world.getBlockState(pos.down()).getBlock().getMaterial().isLiquid();
 
         //  Cost may have changed due to a jump up or drop
-        double stepCost = computeCost(parent, dx, dy, dz, isSwimming);
-        double heuristic = computeHeuristic(x, y, z);
+        double stepCost = computeCost(parent, dPos, isSwimming);
+        double heuristic = computeHeuristic(pos);
         double cost = parent.cost + stepCost;
         double score = cost + heuristic;
 
@@ -526,14 +520,14 @@ public abstract class PathJob implements Callable<PathEntity>
         }
         else
         {
-            node = new Node(parent, x, y, z, cost, heuristic, score);
+            node = new Node(parent, pos, cost, heuristic, score);
             nodesVisited.put(nodeKey, node);
             if (debugDrawEnabled)
             {
                 debugNodesNotVisited.add(node);
             }
 
-            if (isLadder(x, y, z))
+            if (isLadder(pos))
             {
                 node.isLadder = true;
             }
@@ -553,7 +547,7 @@ public abstract class PathJob implements Callable<PathEntity>
         if (allowJumpPointSearchTypeWalk &&
                 node.heuristic <= parent.heuristic)
         {
-            walk(node, dx, dy, dz);
+            walk(node, dPos);
         }
 
         return true;
@@ -565,7 +559,7 @@ public abstract class PathJob implements Callable<PathEntity>
      * @param x,y,z coordinate of block
      * @return y height of first open, viable block above ground, or -1 if blocked or too far a drop
      */
-    protected int getGroundHeight(Node parent, int x, int y, int z)
+    protected int getGroundHeight(Node parent, BlockPos pos)
     {
         boolean canDrop = parent != null && !parent.isLadder;
         boolean canJump = parent != null && !parent.isLadder && !parent.isSwimming;
@@ -573,43 +567,43 @@ public abstract class PathJob implements Callable<PathEntity>
 
         //  Check (y+1) first, as it's always needed, either for the upper body (level),
         //  lower body (headroom drop) or lower body (jump up)
-        if (!isPassable(x, y + 1, z))
+        if (!isPassable(pos.up()))
         {
             return -1;
         }
 
         //  Now check the block we want to move to
-        Block target = world.getBlockState(new BlockPos(x, y, z)).getBlock();
-        if (!isPassable(target, x, y, z))
+        Block target = world.getBlockState(pos).getBlock();
+        if (!isPassable(target, pos))
         {
             //  Need to try jumping up one, if we can
-            if (!canJump || !isWalkableSurface(target, x, y, z))
+            if (!canJump || !isWalkableSurface(target, pos))
             {
                 return -1;
             }
 
             //  Check for headroom in the target space
-            if (!isPassable(x, y + 2, z))
+            if (!isPassable(pos.up(2)))
             {
                 return -1;
             }
 
             //  Check for jump room from the origin space
-            if (!isPassable(parent.x, parent.y + 2, parent.z))
+            if (!isPassable(parent.pos.up(2)))
             {
                 return -1;
             }
 
             //  Jump up one
-            return y + 1;
+            return pos.getY() + 1;
         }
 
         //  Do we have something to stand on in the target space?
-        Block below = world.getBlockState(new BlockPos(x, y - 1, z)).getBlock();
-        if (isWalkableSurface(below, x, y - 1, z))
+        Block below = world.getBlockState(pos.down()).getBlock();
+        if (isWalkableSurface(below, pos.down()))
         {
             //  Level path
-            return y;
+            return pos.getY();
         }
 
         if (below.getMaterial().isLiquid())
@@ -617,13 +611,13 @@ public abstract class PathJob implements Callable<PathEntity>
             if (isSwimming)
             {
                 //  Already swimming in something, or allowed to swim and this is water
-                return y;
+                return pos.getY();
             }
 
             if (allowSwimming && below.getMaterial() == Material.water)
             {
                 //  This is water, and we are allowed to swim
-                return y;
+                return pos.getY();
             }
 
             //  Not allowed to swim or this isn't water, and we're on dry land
@@ -636,9 +630,9 @@ public abstract class PathJob implements Callable<PathEntity>
 //            return -1;
 //        }
 
-        if (isLadder(below, x, y - 1, z))
+        if (isLadder(below, pos.down()))
         {
-            return y;
+            return pos.getY();
         }
 
         //  Nothing to stand on
@@ -648,10 +642,10 @@ public abstract class PathJob implements Callable<PathEntity>
         }
 
         //  How far of a drop?
-        below = world.getBlockState(new BlockPos(x, y - 2, z)).getBlock();
-        if (isWalkableSurface(below, x, y - 2, z))
+        below = world.getBlockState(pos.down(2)).getBlock();
+        if (isWalkableSurface(below, pos.down(2)))
         {
-            return y - 1;
+            return pos.getY() - 1;
         }
 
         //  Too far
@@ -662,10 +656,10 @@ public abstract class PathJob implements Callable<PathEntity>
      * Is the space passable?
      *
      * @param block
-     * @param x,y,z
+     * @param pos
      * @return true if the block does not block movement
      */
-    protected boolean isPassable(Block block, int x, int y, int z)
+    protected boolean isPassable(Block block, BlockPos pos)
     {
         if (block.getMaterial() != Material.air)
         {
@@ -684,19 +678,19 @@ public abstract class PathJob implements Callable<PathEntity>
         return true;
     }
 
-    protected boolean isPassable(int x, int y, int z)
+    protected boolean isPassable(BlockPos pos)
     {
-        return isPassable(world.getBlockState(new BlockPos(x, y, z)).getBlock(), x, y, z);
+        return isPassable(world.getBlockState(pos).getBlock(), pos);
     }
 
     /**
      * Is the block solid and can be stood upon?
      *
      * @param block Block to check
-     * @param x,y,z position of block
+     * @param pos position of block
      * @return
      */
-    protected boolean isWalkableSurface(Block block, int x, int y, int z)
+    protected boolean isWalkableSurface(Block block, BlockPos pos)
     {
         return //!block.getBlocksMovement(world, x, y, z) &&
                         block.getMaterial().isSolid() &&
@@ -708,16 +702,16 @@ public abstract class PathJob implements Callable<PathEntity>
     /**
      * Is the block a ladder?
      * @param block
-     * @param x,y,z
+     * @param pos
      * @return
      */
-    protected boolean isLadder(Block block, int x, int y, int z)
+    protected boolean isLadder(Block block, BlockPos pos)
     {
-        return block.isLadder(world,new BlockPos(x, y, z), null);
+        return block.isLadder(world, pos, null);
     }
 
-    protected boolean isLadder(int x, int y, int z)
+    protected boolean isLadder(BlockPos pos)
     {
-        return isLadder(world.getBlockState(new BlockPos(x, y, z)).getBlock(), x, y, z);
+        return isLadder(world.getBlockState(pos).getBlock(), pos);
     }
 }

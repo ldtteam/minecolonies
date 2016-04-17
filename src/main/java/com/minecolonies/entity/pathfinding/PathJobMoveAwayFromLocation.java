@@ -51,11 +51,11 @@ public class PathJobMoveAwayFromLocation extends PathJob
      * @return
      */
     @Override
-    protected double computeHeuristic(int x, int y, int z)
+    protected double computeHeuristic(BlockPos pos)
     {
-        int dx = x - heuristicPoint.getX();
-        int dy = y - heuristicPoint.getY();
-        int dz = z - heuristicPoint.getZ();
+        int dx = pos.getX() - heuristicPoint.getX();
+        int dy = pos.getY() - heuristicPoint.getY();
+        int dz = pos.getZ() - heuristicPoint.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 1.001D;
@@ -71,6 +71,6 @@ public class PathJobMoveAwayFromLocation extends PathJob
     @Override
     protected double getNodeResultScore(Node n)
     {
-        return avoid.distanceSq(n.x, n.y, n.z);
+        return avoid.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ());
     }
 }

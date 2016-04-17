@@ -36,7 +36,7 @@ public class PathJobMoveToLocation extends PathJob
         }
 
         //  Compute destination slack - if the destination point cannot be stood in
-        if (getGroundHeight(null, destination.getX(), destination.getY(), destination.getZ()) != destination.getY())
+        if (getGroundHeight(null, destination) != destination.getY())
         {
             destinationSlack = DESTINATION_SLACK_ADJACENT;
         }
@@ -45,11 +45,11 @@ public class PathJobMoveToLocation extends PathJob
     }
 
     @Override
-    protected double computeHeuristic(int x, int y, int z)
+    protected double computeHeuristic(BlockPos pos)
     {
-        int dx = x - destination.getX();
-        int dy = y - destination.getY();
-        int dz = z - destination.getZ();
+        int dx = pos.getX() - destination.getX();
+        int dy = pos.getY() - destination.getY();
+        int dz = pos.getZ() - destination.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 1.001D;
@@ -60,18 +60,18 @@ public class PathJobMoveToLocation extends PathJob
     {
         if (destinationSlack == DESTINATION_SLACK_NONE)
         {
-            return n.x == destination.getX() &&
-                    n.y == destination.getY() &&
-                    n.z == destination.getZ();
+            return n.pos.getX() == destination.getX() &&
+                    n.pos.getY() == destination.getY() &&
+                    n.pos.getZ() == destination.getZ();
         }
 
-        return destination.distanceSq(n.x, n.y, n.z) <= destinationSlack;
+        return destination.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ()) <= destinationSlack;
     }
 
     @Override
     protected double getNodeResultScore(Node n)
     {
         //  For Result Score higher is better - return negative distance so closer to 0 = better
-        return -destination.distanceSq(n.x, n.y, n.z);
+        return -destination.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ());
     }
 }
