@@ -260,9 +260,7 @@ public final class Utils
      * Plays the block break effect at specific location
      *
      * @param world    World to play effect in
-     * @param x        x-coordinate
-     * @param y        y-coordinate
-     * @param z        z-coordinate
+     * @param pos      Coordinates
      * @param block    Block that makes the sound
      * @param metadata Metadata of the block that makes sound
      */

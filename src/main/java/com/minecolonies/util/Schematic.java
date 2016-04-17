@@ -144,10 +144,8 @@ public final class Schematic
      * and place it in the right position and rotation
      *
      * @param worldObj  the world to load it in
-     * @param name      the schmetics name
-     * @param x         x coordinate
-     * @param y         y coordinate
-     * @param z         z coordinate
+     * @param name      the schematics name
+     * @param pos         coordinates
      * @param rotations number of times rotated
      */
     public static void loadAndPlaceSchematicWithRotation(World worldObj, String name, BlockPos pos, int rotations)
@@ -172,9 +170,7 @@ public final class Schematic
     /**
      * Place a schematic into the world.
      *
-     * @param x anchor x position
-     * @param y anchor y position
-     * @param z anchor z position
+     * @param pos coordinates
      */
     private void placeSchematic(BlockPos pos)
     {
@@ -188,7 +184,7 @@ public final class Schematic
                 {
 
                     Block block    = this.schematicWorld.getBlock(i, j, k);
-                    int   metadata = this.schematicWorld.getBlockMetadata(i, j, k);
+                    IBlockState   metadata = this.schematicWorld.getBlockState(new BlockPos(i, j, k));
 
                     if (block == Blocks.air && !world.getBlockState(new BlockPos(x+i, y+j, z+k)).getBlock().getMaterial().isSolid())
                     {
@@ -196,14 +192,16 @@ public final class Schematic
                     }
                     else if (block.getMaterial().isSolid())
                     {
-                        world.setBlock(x + i, y + j, z + k, block, metadata, 0x03);
+                        world.setBlockState(new BlockPos(x + i, y + j, z + k), metadata, 0x03);
                         if (world.getBlockState(new BlockPos(x+i, y+j, z+k)).getBlock() == block)
                         {
-                            if (world.getBlockState(new BlockPos(x+i, y+j, z+k)).getBlock().getMetaFromState(world.getBlockState(new BlockPos(x+i, y+j, z+k)))!= metadata)
+                            if (world.getBlockState(new BlockPos(x+i, y+j, z+k)) != metadata)
                             {
-                                world.setBlockMetadataWithNotify(x + i, y + j, z + k, metadata, 0x03);
+                                world.setBlockState(new BlockPos(x + i, y + j, z + k), metadata, 0x03);
                             }
-                            block.onPostBlockPlaced(world, x + i, y + j, z + k, metadata);
+                            //todo really needed?
+                            //Maybe the new BlockState may already update this
+                            //block.onPostBlockPlaced(world, x + i, y + j, z + k, metadata);
                         }
                     }
                     else
@@ -224,15 +222,18 @@ public final class Schematic
             int   j        = coords.getY();
             int   k        = coords.getZ();
             Block block    = this.schematicWorld.getBlock(i, j, k);
-            int   metadata = this.schematicWorld.getBlockMetadata(i, j, k);
-            world.setBlock(x + i, y + j, z + k, block, metadata, 0x03);
-            if (world.getBlockState(new BlockPos(x + i, y + j, z + k)).getBlock() == block)
+            IBlockState   metadata = this.schematicWorld.getBlockState(new BlockPos(i, j, k));
+            BlockPos newPos = new BlockPos(x + i, y + j, z + k);
+
+            world.setBlockState(newPos, metadata, 0x03);
+            if (world.getBlockState(newPos).getBlock() == block)
             {
-                if (world.getBlockMetadata(x + i, y + j, z + k) != metadata)
+                if (world.getBlockState(newPos) != metadata)
                 {
-                    world.setBlockMetadataWithNotify(x + i, y + j, z + k, metadata, 0x03);
+                    world.setBlockState(newPos, metadata, 0x03);
                 }
-                block.onPostBlockPlaced(world, x + i, y + j, z + k, metadata);
+                //todo Again, really needed?
+                //block.onPostBlockPlaced(world, newPos, metadata);
             }
         }
     }
@@ -301,11 +302,11 @@ public final class Schematic
         short height = (short) (Math.abs(maxY - minY) + 1);
         short length = (short) (Math.abs(maxZ - minZ) + 1);
 
-        short[][][]      blocks       = new short[width][height][length];
-        byte[][][]       metadata     = new byte[width][height][length];
-        List<TileEntity> tileEntities = new ArrayList<>();
-        TileEntity       tileEntity;
-        NBTTagCompound   tileEntityNBT;
+        short[][][]         blocks       = new short[width][height][length];
+        IBlockState[][][]   metadata     = new IBlockState[width][height][length];
+        List<TileEntity>    tileEntities = new ArrayList<>();
+        TileEntity          tileEntity;
+        NBTTagCompound      tileEntityNBT;
 
         int xOffset = 0, yOffset = 0, zOffset = 0;
 
@@ -316,7 +317,7 @@ public final class Schematic
                 for (int z = minZ; z <= maxZ; z++)
                 {
                     blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(world.getBlockState(new BlockPos(x, y, z)).getBlock());
-                    metadata[x - minX][y - minY][z - minZ] = (byte) world.getBlockMetadata(x, y, z);
+                    metadata[x - minX][y - minY][z - minZ] = world.getBlockState(new BlockPos(x, y, z));
 
                     if (world.getBlockState(new BlockPos(x, y, z)).getBlock() instanceof AbstractBlockHut)
                     {
@@ -330,7 +331,7 @@ public final class Schematic
                         {
                             Log.logger.warn("Scan contained multiple AbstractBlockHut's ignoring this one");
                             blocks[x - minX][y - minY][z - minZ] = 0;
-                            metadata[x - minX][y - minY][z - minZ] = 0;
+                            metadata[x - minX][y - minY][z - minZ] = null;
                         }
                     }
 
@@ -447,8 +448,8 @@ public final class Schematic
     {
         BlockPos pos = this.getBlockPosition();
         //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        return pos.getY() <= 0 || schematicWorld.getBlock(x, y, z) == BlockPosUtil.getBlock(world, pos) && schematicWorld.getBlockMetadata(x, y, z)
-                                                                                                            == BlockPosUtil.getBlockMetadata(world, pos);
+        return pos.getY() <= 0 || schematicWorld.getBlock(x, y, z) == BlockPosUtil.getBlock(world, pos) && schematicWorld.getBlockState(new BlockPos(x, y, z))
+                                                                                                            == BlockPosUtil.getBlockState(world, pos);
     }
 
     public BlockPos getBlockPosition()
@@ -498,7 +499,7 @@ public final class Schematic
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || (!schematicWorld.getBlock(x, y, z).getMaterial().isSolid() && !schematicWorld.isAirBlock(x, y, z)))
+        while ((doesSchematicBlockEqualWorldBlock() || (!schematicWorld.getBlock(x, y, z).getMaterial().isSolid() && !schematicWorld.isAirBlock(new BlockPos(x, y, z))))
                && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
@@ -517,7 +518,7 @@ public final class Schematic
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || (schematicWorld.getBlock(x, y, z).getMaterial().isSolid() || schematicWorld.isAirBlock(x, y, z)))
+        while ((doesSchematicBlockEqualWorldBlock() || (schematicWorld.getBlock(x, y, z).getMaterial().isSolid() || schematicWorld.isAirBlock(new BlockPos(x, y, z))))
                && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
