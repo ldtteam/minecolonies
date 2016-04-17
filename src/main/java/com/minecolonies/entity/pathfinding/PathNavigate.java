@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -23,13 +24,14 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     protected double             speed;
     protected IAttributeInstance pathSearchRange;
 
-    protected boolean canPassOpenWoodenDoors = true;
-    protected boolean canSwim;
-    protected boolean noSunPathfind;
-
     protected BlockPos           destination;
     protected Future<PathEntity> future;
     protected PathResult         pathResult;
+
+    private boolean shouldAvoidWater = false;
+    private boolean canEnterDoors = false;
+    private boolean canBreakDoors = false;
+    private boolean canSwim = false;
 
     public PathNavigate(EntityLiving entity, World world)
     {
@@ -38,17 +40,30 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         this.pathSearchRange = entity.getEntityAttribute(SharedMonsterAttributes.followRange);
     }
 
-    public double getSpeed() { return speed; }
-    @Override public void setSpeed(double d) { speed = d; super.setSpeed(d); }
+    @Override
+    protected PathFinder getPathFinder()
+    {
+        //TODO we don't use PathFinder - which may be okay
+        return null;
+    }
 
-    public boolean getAvoidSun() { return noSunPathfind; }
-    @Override public void setAvoidSun(boolean b) { noSunPathfind = b; super.setAvoidSun(b); }
+    @Override
+    public PathEntity getPathToPos(BlockPos pos)
+    {
+        //TODO Because this directly returns PathEntity we can't do it async. but I don't think it is used now.
+        return null;
+    }
 
-    @Override public boolean getEnterDoors() { return canPassOpenWoodenDoors; }
-    @Override public void setEnterDoors(boolean b) { canPassOpenWoodenDoors = b; super.setEnterDoors(b);}
+    public double getSpeed()
+    {
+        return speed;
+    }
 
-    @Override public boolean getCanSwim() { return canSwim; }
-    @Override public void setCanSwim(boolean b) { canSwim = b; super.setCanSwim(b); }
+    @Override
+    public void setSpeed(double d)
+    {
+        speed = d;
+    }
 
     @Override
     public boolean tryMoveToXYZ(double x, double y, double z, double speed)
@@ -266,7 +281,8 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     @Override
     protected boolean isDirectPathBetweenPoints(final Vec3 vec3, final Vec3 vec31, final int i, final int i1, final int i2)
     {
-        return super.isDirectPathBetweenPoints(vec3,vec31,i,i1,i2);
+        //TODO we don't use, so it doesn't matter
+        return false;
     }
 
     @Override
@@ -308,5 +324,48 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     public boolean isUnableToReachDestination()
     {
         return pathResult != null && pathResult.failedToReachDestination();
+    }
+
+    //We don't use any of these, but they need to be overriden.
+    @Override
+    public void setAvoidsWater(boolean avoidsWater)
+    {
+        this.shouldAvoidWater = avoidsWater;
+    }
+
+    @Override
+    public boolean getAvoidsWater()
+    {
+        return shouldAvoidWater;
+    }
+
+    @Override
+    public void setBreakDoors(boolean canBreakDoors)
+    {
+        this.canBreakDoors = canBreakDoors;
+    }
+
+    @Override
+    public void setEnterDoors(boolean canEnterDoors)
+    {
+        this.canEnterDoors = canEnterDoors;
+    }
+
+    @Override
+    public boolean getEnterDoors()
+    {
+        return canEnterDoors;
+    }
+
+    @Override
+    public void setCanSwim(boolean canSwim)
+    {
+        this.canSwim = canSwim;
+    }
+
+    @Override
+    public boolean getCanSwim()
+    {
+        return canSwim;
     }
 }

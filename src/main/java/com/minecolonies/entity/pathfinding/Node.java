@@ -22,7 +22,7 @@ public class Node implements Comparable<Node>
     /**
      * Create a Node that inherits from a parent, and has a Cost and Heuristic estimate
      * @param parent parent node arrives from
-     * @param x,y,z coordinate of node
+     * @param pos coordinate of node
      * @param cost
      * @param score
      */

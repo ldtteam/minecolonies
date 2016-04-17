@@ -373,7 +373,7 @@ public abstract class PathJob implements Callable<PathEntity>
      * This creates unique keys for all blocks within a 4096x256x4096 cube, which is FAR
      * bigger volume than one should attempt to pathfind within
      *
-     * @param x,y,z coordinates to generate key from
+     * @param pos BlockPos to generate key from
      * @return key for node in map
      */
     protected static int computeNodeKey(BlockPos pos)
@@ -453,7 +453,7 @@ public abstract class PathJob implements Callable<PathEntity>
      * move and adding or updating a node, as appropriate
      *
      * @param parent Node being walked from
-     * @param pos Delta from parent, expected in range of [-1..1]
+     * @param dPos Delta from parent, expected in range of [-1..1]
      * @return true if a node was added or updated when attempting to move in the given direction
      */
     protected final boolean walk(Node parent, BlockPos dPos)
@@ -556,7 +556,7 @@ public abstract class PathJob implements Callable<PathEntity>
     /**
      * Get the height of the ground at the given x,z coordinate, within 1 step of y
      *
-     * @param x,y,z coordinate of block
+     * @param pos coordinate of block
      * @return y height of first open, viable block above ground, or -1 if blocked or too far a drop
      */
     protected int getGroundHeight(Node parent, BlockPos pos)
