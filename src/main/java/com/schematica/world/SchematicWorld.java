@@ -21,6 +21,7 @@ import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
@@ -162,13 +163,13 @@ public class SchematicWorld extends World
             }
         }
 
-        icon = new ItemStack(GameData.getBlockRegistry().getObject(name), 1, damage);
+        icon = new ItemStack(GameData.getBlockRegistry().getObject(new ResourceLocation(name)), 1, damage);
         if(icon.getItem() != null)
         {
             return icon;
         }
 
-        icon = new ItemStack(GameData.getItemRegistry().getObject(name), 1, damage);
+        icon = new ItemStack(GameData.getItemRegistry().getObject(name, 1, damage);
         if(icon.getItem() != null)
         {
             return icon;
@@ -289,7 +290,8 @@ public class SchematicWorld extends World
                         TileEntity tileEntity = getTileEntity(new BlockPos(x, y, z));
                         if(tileEntity instanceof TileEntitySkull)
                         {
-                            itemDamage = ((TileEntitySkull) tileEntity).func_145904_a();
+                            //todo no damage value anymore, only metaData
+                            itemDamage = ((TileEntitySkull) tileEntity).getBlockMetadata();
                         }
                     }
 
@@ -341,7 +343,7 @@ public class SchematicWorld extends World
         return GameData.getBlockRegistry().getObjectById(getBlockIdRaw(x, y, z));
     }
 
-    @Override
+    //todo doesn't exist anymore in super class?
     public Block getBlock(int x, int y, int z)
     {
         return GameData.getBlockRegistry().getObjectById(getBlockId(x, y, z));
@@ -375,12 +377,14 @@ public class SchematicWorld extends World
         return -1;
     }
 
+    //todo doesn't exist anymore
+    /*
     @Override
     @SideOnly(Side.CLIENT)
     public int getSkyBlockTypeBrightness(EnumSkyBlock skyBlock, int x, int y, int z)
     {
         return 15;
-    }
+    }*/
 
     @Override
     public float getLightBrightness(BlockPos pos)
@@ -459,18 +463,19 @@ public class SchematicWorld extends World
     }
 
     //todo Doesn't seem to exist anymore
-    @Override
+    /*@Override
     public boolean blockExists(int x, int y, int z)
     {
         return false;
-    }
+    }*/
 
-    @Override
+    //Also does not exist anymore
+    /*@Override
     public boolean setBlockMetadataWithNotify(int x, int y, int z, int metadata, int flag)
     {
         this.metadata[x][y][z] = (byte) (metadata & 0xFF);
         return true;
-    }
+    }*/
 
     @Override
     public boolean isSideSolid(BlockPos pos, EnumFacing side)
@@ -642,12 +647,13 @@ public class SchematicWorld extends World
         {
             tileEntity.setPos(new BlockPos(this.length - 1 - tileEntity.getPos().getZ(),tileEntity.getPos().getY(),tileEntity.getPos().getX()));
 
-            tileEntity.blockMetadata = this.metadata[tileEntity.xCoord][tileEntity.yCoord][tileEntity.zCoord];
+            //todo there is no way anymore to set tileEntities metaData
+            //tileEntity.blockMetadata = this.metadata[tileEntity.xCoord][tileEntity.yCoord][tileEntity.zCoord];
 
-            if(tileEntity instanceof TileEntitySkull && tileEntity.blockMetadata == 0x1)
+            if(tileEntity instanceof TileEntitySkull && tileEntity.getBlockMetadata() == 0x1)
             {
                 TileEntitySkull skullTileEntity = (TileEntitySkull) tileEntity;
-                skullTileEntity.func_145903_a((skullTileEntity.func_145906_b() + 12) & 15);
+                skullTileEntity.setSkullRotation((skullTileEntity.getSkullRotation() + 12) & 15);
             }
         }
 
