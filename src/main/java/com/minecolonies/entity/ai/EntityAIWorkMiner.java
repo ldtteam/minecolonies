@@ -402,14 +402,14 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                 int normalizedZ = z - zOffset;
                 if ((Math.abs(normalizedX) >= 2 || Math.abs(normalizedZ) >= 2)
                     && world.getBlockState(curBlock).getBlock()
-                       != Blocks.planks)
+                       != getOwnBuilding().floorBlock)
                 {
                     setDelay(10);
-                    if (checkOrRequestItems(new ItemStack(Blocks.planks)))
+                    if (checkOrRequestItems(new ItemStack(getOwnBuilding().floorBlock)))
                     {
                         return true;
                     }
-                    setBlockFromInventory(curBlock, Blocks.planks);
+                    setBlockFromInventory(curBlock, getOwnBuilding().floorBlock);
                     return true;
                 }
             }
@@ -431,14 +431,14 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                 if (((Math.abs(normalizedX) == 2 && Math.abs(normalizedZ) < 3)
                      || (Math.abs(normalizedZ) == 2
                          && Math.abs(normalizedX) < 3))
-                    && world.getBlockState(curBlock).getBlock() != Blocks.fence)
+                    && world.getBlockState(curBlock).getBlock() != getOwnBuilding().fenceBlock)
                 {
                     setDelay(10);
-                    if (checkOrRequestItems(new ItemStack(Blocks.fence)))
+                    if (checkOrRequestItems(new ItemStack(getOwnBuilding().fenceBlock)))
                     {
                         return true;
                     }
-                    setBlockFromInventory(curBlock, Blocks.fence);
+                    setBlockFromInventory(curBlock, getOwnBuilding().fenceBlock);
                     return true;
                 }
             }
@@ -671,8 +671,8 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                                                                          standingPosition.getY() + y,
                                                                          minenode.getZ() + z);
                         if (getBlock(curBlock) == Blocks.torch
-                            || getBlock(curBlock) == Blocks.planks
-                            || getBlock(curBlock) == Blocks.fence)
+                            || getBlock(curBlock) == getOwnBuilding().floorBlock
+                            || getBlock(curBlock) == getOwnBuilding().fenceBlock)
                         {
                             continue;
                         }
@@ -759,22 +759,22 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                         && Math.abs(z) == Math.abs(getZDistance(direction) / NODE_DISTANCE)
                         && y < 4)
                     {
-                        material = Blocks.fence;
+                        material = getOwnBuilding().fenceBlock;
                     }
                     //Planks topping
                     if ((x == 0 || Math.abs(x) == Math.abs(getXDistance(direction) / NODE_DISTANCE))
                         && (z == 0 || Math.abs(z) == Math.abs(getZDistance(direction) / NODE_DISTANCE))
                         && y == 4)
                     {
-                        material = Blocks.planks;
+                        material = getOwnBuilding().floorBlock;
                     }
                     //torches at sides
                     if (((Math.abs(x) == 1 && Math.abs(z) == 0 && direction == 3)
                          || (Math.abs(x) == 0 && Math.abs(z) == 1 && direction == 1))
                         && y == 4
                         && getBlock(new BlockPos(minenode.getX(), standingPosition.getY() + y, minenode.getZ()))
-                           == Blocks.planks
-                        && getBlock(curBlock) != Blocks.planks)
+                           == getOwnBuilding().floorBlock
+                        && getBlock(curBlock) != getOwnBuilding().floorBlock)
                     {
                         material = Blocks.torch;
                     }
@@ -828,14 +828,14 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                         && Math.abs(z) == 1
                         && y < 4)
                     {
-                        material = Blocks.fence;
+                        material = getOwnBuilding().fenceBlock;
                     }
                     //Side pillars for z
                     if (z == (getZDistance(directionz) * 2) / NODE_DISTANCE
                         && Math.abs(x) == 1
                         && y < 4)
                     {
-                        material = Blocks.fence;
+                        material = getOwnBuilding().fenceBlock;
                     }
 
                     //Planks topping for x
@@ -843,14 +843,14 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                         && Math.abs(z) <= 1
                         && y == 4)
                     {
-                        material = Blocks.planks;
+                        material = getOwnBuilding().floorBlock;
                     }
                     //Planks topping for z
                     if (z == (getZDistance(directionz) * 2) / NODE_DISTANCE
                         && Math.abs(x) <= 1
                         && y == 4)
                     {
-                        material = Blocks.planks;
+                        material = getOwnBuilding().floorBlock;
                     }
 
                     //torches at sides
@@ -861,7 +861,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                             minenode.getX() + (getXDistance(directionx) * 2) / NODE_DISTANCE,
                             standingPosition.getY() + y,
                             minenode.getZ()))
-                           == Blocks.planks)
+                           == getOwnBuilding().floorBlock)
                     {
                         material = Blocks.torch;
                     }
@@ -873,7 +873,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                             minenode.getX(),
                             standingPosition.getY() + y,
                             minenode.getZ() + (getZDistance(directionz) * 2) / NODE_DISTANCE))
-                           == Blocks.planks)
+                           == getOwnBuilding().floorBlock)
                     {
                         material = Blocks.torch;
                     }
@@ -912,18 +912,18 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                     //Middle top block and side stands
                     if (x == 0 && z == 0 && y == 4)
                     {
-                        material = Blocks.fence;
+                        material = getOwnBuilding().fenceBlock;
                     }
                     //Planks topping
                     if (x == 0 && z == 0 && y == 3)
                     {
-                        material = Blocks.planks;
+                        material = getOwnBuilding().floorBlock;
                     }
                     //torches at sides
                     if (((Math.abs(x) == 1 && Math.abs(z) == 0) || (Math.abs(x) == 0 && Math.abs(z) == 1))
                         && y == 3
                         && getBlock(new BlockPos(minenode.getX(), standingPosition.getY() + y, minenode.getZ()))
-                           == Blocks.planks)
+                           == getOwnBuilding().floorBlock)
                     {
                         material = Blocks.torch;
                     }
@@ -996,8 +996,8 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                                                                      standingPosition.getY() + y,
                                                                      minenode.getZ() + z);
                     if (getBlock(curBlock) == Blocks.torch
-                        || getBlock(curBlock) == Blocks.planks
-                        || getBlock(curBlock) == Blocks.fence)
+                        || getBlock(curBlock) == getOwnBuilding().floorBlock
+                        || getBlock(curBlock) == getOwnBuilding().fenceBlock)
                     {
                         continue;
                     }
@@ -1318,7 +1318,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
     private void setBlockFromInventory(BlockPos location, Block block)
     {
-        setBlockFromInventory(location, block, 0);
+        setBlockFromInventory(location, block, block.getDefaultState());
     }
 
     private void setBlockFromInventory(BlockPos location, Block block, IBlockState metadata)
