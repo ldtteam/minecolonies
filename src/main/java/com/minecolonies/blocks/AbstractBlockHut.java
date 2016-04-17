@@ -9,6 +9,9 @@ import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,8 +19,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Abstract class for all minecolonies blocks.
@@ -28,6 +34,8 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
 {
     protected               int     workingRange;
     private   static final  float   RESISTANCE      = 10F;
+    
+	public static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
 
     /**
      * Constructor for a block using the minecolonies mod.
@@ -48,6 +56,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         setResistance((float)Integer.MAX_VALUE);
         //Hardness of 10 takes a long time to mine to not loose progress
         setHardness(RESISTANCE);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         GameRegistry.registerBlock(this);
     }
 
@@ -106,4 +115,44 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         //Creates a tile entity for our building
         return new TileEntityColonyBuilding();
     }
+    
+    
+    // =======================================================================
+    // ======================= Rendering & IBlockState =======================
+    // =======================================================================
+    
+    @Override
+    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    	EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
+    	return this.getDefaultState().withProperty(FACING, enumFacing);
+    }
+    
+    // render as a solid block, we don't want transparency here
+    @Override
+    @SideOnly(Side.CLIENT)
+    public EnumWorldBlockLayer getBlockLayer() {
+    	return EnumWorldBlockLayer.SOLID;
+    }
+    
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+    	EnumFacing facing = EnumFacing.getFront(meta);
+    	if(facing.getAxis() == EnumFacing.Axis.Y)
+    		facing = EnumFacing.NORTH;
+    	return this.getDefaultState().withProperty(FACING, facing);
+    }
+    
+    @Override
+    public int getMetaFromState(IBlockState state) {
+    	return ((EnumFacing)state.getValue(FACING)).getIndex();
+    }
+    
+    @Override
+    protected BlockState createBlockState() {
+    	return new BlockState(this, new IProperty[]{FACING});
+    }
+    
+    // =======================================================================
+    // ===================== END of Rendering & Meta-Data ====================
+    // =======================================================================
 }
