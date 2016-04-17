@@ -46,7 +46,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     // Because Entity UniqueIDs are not identical between client and server
     private static final int    DATA_TEXTURE         = 13;
     private static final int    DATA_LEVEL           = 14;
-    private static final int    DATA_IS_FEMALE       = 15;
+    private static final int    DATA_IS_FEMALE       = 20;
     private static final int    DATA_COLONY_ID       = 16;
     private static final int    DATA_CITIZEN_ID      = 17;
     private static final int    DATA_MODEL           = 18;
