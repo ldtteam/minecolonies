@@ -103,6 +103,19 @@ public class InventoryCitizen extends InventoryBasic
         return materialStore;
     }
 
+    //todo missing now
+    /*
+    @Override
+    public ItemStack getStackInSlotOnClosing(int index)
+    {
+            ItemStack removed = super.getStackInSlotOnClosing(index);
+
+                    removeStackFromMaterialStore(removed);
+
+                    return removed;
+    }*/
+
+
     /**
      * Makes sure ItemStacks inside of the inventory aren't affected by changes to the returned stack.
      */

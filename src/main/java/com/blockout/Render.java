@@ -23,7 +23,7 @@ public class Render
 
         // There are several to choose from, look at DefaultVertexFormats for more info
         //todo may need to choose a different Format
-        worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_TEX);
+        worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glLineWidth(lineWidth);
         GL11.glColor4f(r, g, b, a);

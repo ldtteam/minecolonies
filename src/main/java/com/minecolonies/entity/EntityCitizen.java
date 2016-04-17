@@ -34,6 +34,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraft.world.pathfinder.WalkNodeProcessor;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.lang.reflect.Field;
@@ -883,7 +884,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     protected void dropEquipment(boolean par1, int par2)
     {
         //Collects equipment
-        for (int i = 0; i <  getInventory().length; i++)
+        for (int i = 0; i <  getInventoryCitizen().getSizeInventory(); i++)
         {
             setCurrentItemOrArmor(i, null);
         }

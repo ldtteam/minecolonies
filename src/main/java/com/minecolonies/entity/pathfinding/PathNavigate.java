@@ -263,7 +263,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     @Override
     protected Vec3 getEntityPosition()
     {
-        return null;
+        return this.theEntity.getPositionVector();
     }
 
     @Override
