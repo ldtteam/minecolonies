@@ -42,13 +42,13 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     @Override public void setSpeed(double d) { speed = d; super.setSpeed(d); }
 
     public boolean getAvoidSun() { return noSunPathfind; }
-    public void setAvoidSun(boolean b) { noSunPathfind = b; super.setAvoidSun(b); }
+    @Override public void setAvoidSun(boolean b) { noSunPathfind = b; super.setAvoidSun(b); }
 
-    public boolean getEnterDoors() { return canPassOpenWoodenDoors; }
-    public void setEnterDoors(boolean b) { canPassOpenWoodenDoors = b; super.setEnterDoors(b);}
+    @Override public boolean getEnterDoors() { return canPassOpenWoodenDoors; }
+    @Override public void setEnterDoors(boolean b) { canPassOpenWoodenDoors = b; super.setEnterDoors(b);}
 
-    public boolean getCanSwim() { return canSwim; }
-    public void setCanSwim(boolean b) { canSwim = b; super.setCanSwim(b); }
+    @Override public boolean getCanSwim() { return canSwim; }
+    @Override public void setCanSwim(boolean b) { canSwim = b; super.setCanSwim(b); }
 
     @Override
     public boolean tryMoveToXYZ(double x, double y, double z, double speed)
