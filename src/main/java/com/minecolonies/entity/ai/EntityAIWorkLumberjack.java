@@ -324,7 +324,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             {
                 Block block = ((ItemBlock) stack.getItem()).getBlock();
                 worker.setHeldItem(slot);
-                if (BlockPosUtil.setBlock(world, location, block, stack.getItemDamage(), 0x02))
+                if (BlockPosUtil.setBlock(world, location, block.getDefaultState(), 0x02))
                 {
                     worker.swingItem();
                     world.playSoundEffect((float) location.getX() + 0.5F,
@@ -392,7 +392,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         //If the worker gets too stuck he moves around a bit
         if (nextLeaves == null || stillTicks > WALKING_BACK_WAIT_TIME)
         {
-            worker.getNavigator().moveAwayFromXYZ(worker.posX, worker.posY, worker.posZ, WALK_BACK_RANGE, WALK_BACK_SPEED);
+            worker.getNavigator().moveAwayFromXYZ(worker.getPosition(), WALK_BACK_RANGE, WALK_BACK_SPEED);
             stillTicks = 0;
             return;
         }
