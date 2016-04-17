@@ -13,6 +13,8 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.init.Blocks;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
@@ -239,6 +241,7 @@ public class RendererSchematicChunk {
 		Tessellator tessellator = Tessellator.getInstance();
 		//tessellator.startDrawingQuads();
 		//TODO might have to initialize quad drawing
+        Tessellator.getInstance().getWorldRenderer().begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
 
 		for (y = minY; y < maxY; y++) {
 			for (z = minZ; z < maxZ; z++) {
