@@ -19,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
@@ -57,7 +58,7 @@ public class SchematicWorld extends World
 
     private ItemStack   icon;
     private short[][][] blocks;
-    private byte[][][]  metadata;
+    private IBlockState[][][]  metadata;
     private final List<TileEntity> tileEntities = new ArrayList<>();
     private final List<ItemStack>  blockList    = new ArrayList<>();
     private short width;
@@ -84,7 +85,7 @@ public class SchematicWorld extends World
         this.renderingLayer = -1;
     }
 
-    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length, int xOffset, int yOffset, int zOffset)
+    public SchematicWorld(ItemStack icon, short[][][] blocks, IBlockState[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length, int xOffset, int yOffset, int zOffset)
     {
         this(icon, blocks, metadata, tileEntities, entities, width, height, length);
         this.xOffset = xOffset;
@@ -92,7 +93,7 @@ public class SchematicWorld extends World
         this.zOffset = zOffset;
     }
 
-    public SchematicWorld(ItemStack icon, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
+    public SchematicWorld(ItemStack icon, short[][][] blocks, IBlockState[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
     {
         this();
 
@@ -134,7 +135,7 @@ public class SchematicWorld extends World
         generateBlockList();
     }
 
-    public SchematicWorld(String iconName, short[][][] blocks, byte[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
+    public SchematicWorld(String iconName, short[][][] blocks, IBlockState[][][] metadata, List<TileEntity> tileEntities, NBTTagList entities, short width, short height, short length)
     {
         this(getIconFromName(iconName), blocks, metadata, tileEntities, entities, width, height, length);
     }
@@ -214,7 +215,8 @@ public class SchematicWorld extends World
     {
         this.blockList.clear();
 
-        int x, y, z, itemDamage;
+        int x, y, z;
+        int itemDamage;
         Block block;
         Item item;
         ItemStack itemStack;
@@ -227,7 +229,8 @@ public class SchematicWorld extends World
                 {
                     block = this.getBlock(x, y, z);
                     item = Item.getItemFromBlock(block);
-                    itemDamage = this.metadata[x][y][z];
+                    //todo get damage value
+                    itemDamage = this.metadata[x][y][z].getBlock().getDamageValue(this,new BlockPos(x,y,z));
 
                     if(block == null || block == Blocks.air)
                     {
@@ -283,7 +286,7 @@ public class SchematicWorld extends World
 
                     if(item == Items.skull)
                     {
-                        TileEntity tileEntity = getTileEntity(x, y, z);
+                        TileEntity tileEntity = getTileEntity(new BlockPos(x, y, z));
                         if(tileEntity instanceof TileEntitySkull)
                         {
                             itemDamage = ((TileEntitySkull) tileEntity).func_145904_a();
@@ -357,6 +360,21 @@ public class SchematicWorld extends World
         return null;
     }
 
+    /*
+    Has been the getRenderDistance previously
+    @Override
+    protected int func_152379_p()
+    {
+        return -1;//Render distance - view distance
+    }
+
+    */
+    @Override
+    protected int getRenderDistanceChunks()
+    {
+        return -1;
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public int getSkyBlockTypeBrightness(EnumSkyBlock skyBlock, int x, int y, int z)
@@ -377,25 +395,16 @@ public class SchematicWorld extends World
     }
 
     @Override
-    public boolean isBlockNormalCubeDefault(int x, int y, int z, boolean _default)
+    public boolean isBlockNormalCube(final BlockPos pos, final boolean _default)
     {
-        Block block = getBlock(x, y, z);
-        if(block == null)
+        Block block = getBlock(pos.getX(), pos.getY(), pos.getZ());
+        if (block == null)
         {
             return false;
         }
-        if(block.isNormalCube())
-        {
-            return true;
-        }
-        return _default;
+        return block.isNormalCube() || _default;
     }
 
-    @Override
-    protected int func_152379_p()
-    {
-        return -1;//Render distance - view distance
-    }
 
     @Override
     public boolean isAirBlock(BlockPos pos)
@@ -449,6 +458,7 @@ public class SchematicWorld extends World
         return null;
     }
 
+    //todo Doesn't seem to exist anymore
     @Override
     public boolean blockExists(int x, int y, int z)
     {
@@ -463,20 +473,20 @@ public class SchematicWorld extends World
     }
 
     @Override
-    public boolean isSideSolid(int x, int y, int z, ForgeDirection side)
+    public boolean isSideSolid(BlockPos pos, EnumFacing side)
     {
-        return isSideSolid(x, y, z, side, false);
+        return isSideSolid(pos, side, false);
     }
 
     @Override
-    public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default)
+    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default)
     {
-        Block block = getBlock(x, y, z);
+        Block block = getBlock(pos.getX(),pos.getY(),pos.getZ());
         if(block == null)
         {
             return false;
         }
-        return block.isSideSolid(this, x, y, z, side);
+        return block.isSideSolid(this, pos, side);
     }
 
     public ItemStack getIcon()
@@ -610,7 +620,7 @@ public class SchematicWorld extends World
     public void rotate()
     {
         short[][][] localBlocks = new short[this.length][this.height][this.width];
-        byte[][][] localMetadata = new byte[this.length][this.height][this.width];
+        IBlockState[][][] localMetadata = new IBlockState[this.length][this.height][this.width];
 
         for(int y = 0; y < this.height; y++)
         {
@@ -618,7 +628,7 @@ public class SchematicWorld extends World
             {
                 for(int x = 0; x < this.width; x++)
                 {
-                    getBlock(x, y, this.length - 1 - z).rotateBlock(this, x, y, this.length - 1 - z, ForgeDirection.UP);
+                    getBlock(x, y, this.length - 1 - z).rotateBlock(this, new BlockPos(x, y, this.length - 1 - z), EnumFacing.UP);
                     localBlocks[z][y][x] = this.blocks[x][y][this.length - 1 - z];
                     localMetadata[z][y][x] = this.metadata[x][y][this.length - 1 - z];
                 }
@@ -628,12 +638,10 @@ public class SchematicWorld extends World
         this.blocks = localBlocks;
         this.metadata = localMetadata;
 
-        int coord;
         for(TileEntity tileEntity : this.tileEntities)
         {
-            coord = tileEntity.zCoord;
-            tileEntity.zCoord = tileEntity.xCoord;
-            tileEntity.xCoord = this.length - 1 - coord;
+            tileEntity.setPos(new BlockPos(this.length - 1 - tileEntity.getPos().getZ(),tileEntity.getPos().getY(),tileEntity.getPos().getX()));
+
             tileEntity.blockMetadata = this.metadata[tileEntity.xCoord][tileEntity.yCoord][tileEntity.zCoord];
 
             if(tileEntity instanceof TileEntitySkull && tileEntity.blockMetadata == 0x1)
