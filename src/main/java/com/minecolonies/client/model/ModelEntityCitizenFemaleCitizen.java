@@ -148,9 +148,9 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         bipedRightArm.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
         bipedLeftArm.rotateAngleX -= MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
 
-        if(onGround > -9990F)
+        if(swingProgress > -9990F)
         {
-            float f6 = onGround;
+            float f6 = swingProgress;
             bipedBody.rotateAngleY = MathHelper.sin((float) (MathHelper.sqrt_float(f6) * Math.PI * 2.0F)) * 0.2F;
             breast.rotateAngleY = MathHelper.sin((float) (MathHelper.sqrt_float(f6) * Math.PI * 2.0F)) * 0.2F;
             bipedRightArm.rotationPointZ = MathHelper.sin(bipedBody.rotateAngleY) * 5F;
@@ -160,15 +160,15 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
             bipedLeftArm.rotateAngleY += bipedBody.rotateAngleY;
             //noinspection SuspiciousNameCombination
             bipedLeftArm.rotateAngleX += bipedBody.rotateAngleY;//TODO If model looks funny try changing to rotateAngleX
-            f6 = 1.0F - onGround;
+            f6 = 1.0F - swingProgress;
             f6 *= f6;
             f6 *= f6;
             f6 = 1.0F - f6;
             float f7 = MathHelper.sin((float) (f6 * Math.PI));
-            float f8 = MathHelper.sin((float) (onGround * Math.PI)) * -(bipedHead.rotateAngleX - 0.7F) * 0.75F;
+            float f8 = MathHelper.sin((float) (swingProgress * Math.PI)) * -(bipedHead.rotateAngleX - 0.7F) * 0.75F;
             bipedRightArm.rotateAngleX -= f7 * 1.2D + f8;
             bipedRightArm.rotateAngleY += bipedBody.rotateAngleY * 2.0F;
-            bipedRightArm.rotateAngleZ = MathHelper.sin((float) (onGround * Math.PI)) * -0.4F;
+            bipedRightArm.rotateAngleZ = MathHelper.sin((float) (swingProgress * Math.PI)) * -0.4F;
         }
     }
 }
