@@ -780,10 +780,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         return null;
     }
-    @Override
-    public ItemStack[] getInventory(){
-        throw new IllegalStateException("DO NOT USE THIS METHOD, DUDE!");
-    }
+
+    //TODO minecraft calls this when saving the entity
+    //@Override
+    //public ItemStack[] getInventory(){
+    //    throw new IllegalStateException("DO NOT USE THIS METHOD, DUDE!");
+    //}
 
     public Colony getColony()
     {
@@ -883,11 +885,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     protected void dropEquipment(boolean par1, int par2)
     {
-        //Collects equipment
-        for (int i = 0; i <  getInventoryCitizen().getSizeInventory(); i++)
+        //Delete stuff from Inventory Array that isn't really used.
+        for (int i = 0; i <  getInventory().length; i++)
         {
             setCurrentItemOrArmor(i, null);
         }
+
+        //Drop actual inventory
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack itemstack = inventory.getStackInSlot(i);
