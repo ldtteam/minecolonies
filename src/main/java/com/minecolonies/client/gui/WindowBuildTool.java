@@ -5,7 +5,6 @@ import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.lib.Literals;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
@@ -14,8 +13,6 @@ import com.schematica.Settings;
 import com.schematica.world.SchematicWorld;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -248,15 +245,15 @@ public class WindowBuildTool extends Window implements Button.Handler
             break;
 
         case BUTTON_ROTATE_LEFT:
-            rotation = (rotation + Literals.LAST_INDEX_SIDES - Literals.FIRST_INDEX_SIDES - 1)
-                    % Literals.LAST_INDEX_SIDES - Literals.FIRST_INDEX_SIDES;
+            rotation = (rotation + 3) % 4;
+            //TODO make a reverse rotate
             MineColonies.proxy.getActiveSchematic().rotate();
             MineColonies.proxy.getActiveSchematic().rotate();
             MineColonies.proxy.getActiveSchematic().rotate();
             updatePosition();
             break;
         case BUTTON_ROTATE_RIGHT:
-            rotation = (rotation + 1) % Literals.LAST_INDEX_SIDES - Literals.FIRST_INDEX_SIDES;
+            rotation = (rotation + 1) % 4;
             MineColonies.proxy.getActiveSchematic().rotate();
             updatePosition();
             break;

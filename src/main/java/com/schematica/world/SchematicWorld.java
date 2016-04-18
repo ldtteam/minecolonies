@@ -3,7 +3,6 @@ package com.schematica.world;
 import com.minecolonies.util.Log;
 import com.schematica.config.BlockInfo;
 import com.schematica.world.storage.EmptySaveHandler;
-
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -22,14 +21,16 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.*;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldSettings;
+import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.File;
@@ -59,14 +60,7 @@ public class SchematicWorld extends World
             return "schematic";
         }
     };
-    private static final Comparator<ItemStack> BLOCK_COMPARATOR = new Comparator<ItemStack>()
-    {
-        @Override
-        public int compare(ItemStack itemStackA, ItemStack itemStackB)
-        {
-            return itemStackA.getUnlocalizedName().compareTo(itemStackB.getUnlocalizedName());
-        }
-    };
+    private static final Comparator<ItemStack> BLOCK_COMPARATOR = (itemStackA, itemStackB) -> itemStackA.getUnlocalizedName().compareTo(itemStackB.getUnlocalizedName());
 
     public static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.grass);
 
@@ -408,9 +402,42 @@ public class SchematicWorld extends World
     @Override
     public IBlockState getBlockState(final BlockPos pos)
     {
-        //TODO null pointer exception, Most likely chunk provider. Trying this instead
         Block block = getBlock(pos.getX(), pos.getY(), pos.getZ());
         return block.getStateFromMeta(metadata[pos.getX()][pos.getY()][pos.getZ()]);
+    }
+
+    @Override
+    public boolean setBlockState(BlockPos pos, IBlockState state)
+    {
+        return this.setBlockState(pos, state, 3);
+    }
+
+    /**
+     * Sets the block state at a given location. Flag 1 will cause a block update. Flag 2 will send the change to
+     * clients (you almost always want this). Flag 4 prevents the block from being re-rendered, if this is a client
+     * world. Flags can be added together.
+     */
+    @Override
+    public boolean setBlockState(BlockPos pos, IBlockState state, int flags)
+    {
+        if (!this.isValid(pos))
+        {
+            return false;
+        }
+        else
+        {
+            Block block = state.getBlock();
+
+            blocks[pos.getX()][pos.getY()][pos.getZ()] = (short) GameData.getBlockRegistry().getIDForObject(block);
+            metadata[pos.getX()][pos.getY()][pos.getZ()] = (byte) block.getMetaFromState(state);
+
+            return true;
+        }
+    }
+
+    private boolean isValid(BlockPos pos)
+    {
+        return pos.getX() >= 0 && pos.getY() >= 0 && pos.getZ() >= 0 && pos.getX() < width && pos.getY() < height && pos.getZ() < length;
     }
 
     @Override
@@ -648,6 +675,7 @@ public class SchematicWorld extends World
             {
                 for(int x = 0; x < this.width; x++)
                 {
+                    //TODO look more into this method, doesn't seem to be working properly for all blocks
                     getBlock(x, y, this.length - 1 - z).rotateBlock(this, new BlockPos(x, y, this.length - 1 - z), EnumFacing.UP);
                     localBlocks[z][y][x] = this.blocks[x][y][this.length - 1 - z];
                     localMetadata[z][y][x] = this.metadata[x][y][this.length - 1 - z];
