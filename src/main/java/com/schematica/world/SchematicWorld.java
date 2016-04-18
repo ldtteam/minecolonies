@@ -4,6 +4,7 @@ import com.minecolonies.util.Log;
 import com.schematica.config.BlockInfo;
 import com.schematica.world.storage.EmptySaveHandler;
 import net.minecraft.block.*;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -680,7 +681,7 @@ public class SchematicWorld extends World
 
                     if(block.getBlock().getValidRotations(this,pos) != null)
                     {
-                        setBlockState(pos, block.withProperty(BlockStairs.FACING, getBlockState(new BlockPos(x,y,this.length-1-z)).getValue(BlockStairs.FACING).rotateY()));
+                        setBlockState(pos, block.withProperty(PropertyDirection.create("facing"), block.getValue(BlockStairs.FACING).rotateY()));
                     }
 
                     localBlocks[z][y][x] = this.blocks[x][y][this.length - 1 - z];
