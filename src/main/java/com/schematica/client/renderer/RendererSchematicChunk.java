@@ -332,8 +332,8 @@ public class RendererSchematicChunk {
 								renderBlocks.renderBlock(this.schematic.getBlockState(new BlockPos(x,y,z)), new BlockPos(x,y,z), mcWorld, renderer);
 							}
 						}
-					} catch (IndexOutOfBoundsException e) {
-						Log.logger.error("Failed to render block!", e.getStackTrace());
+					} catch (Exception e) {
+						Log.logger.error("Failed to render block!", e);
 					}
 				}
 			}
