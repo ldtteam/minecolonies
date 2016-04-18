@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -239,9 +240,8 @@ public class RendererSchematicChunk {
 		this.minecraft.gameSettings.ambientOcclusion = 0;
 
 		Tessellator tessellator = Tessellator.getInstance();
-		//tessellator.startDrawingQuads();
-		//TODO might have to initialize quad drawing
-        Tessellator.getInstance().getWorldRenderer().begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
+        WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
+        renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
 		for (y = minY; y < maxY; y++) {
 			for (z = minZ; z < maxZ; z++) {
@@ -328,15 +328,12 @@ public class RendererSchematicChunk {
 									RenderHelper.drawCuboidOutline(zero, size, sides, 0.0f, 0.75f, 1.0f, 0.25f);
 								}
 							}
-							//TODO check this
 							if (block != null && block.getBlockLayer().ordinal() == renderPass) {
-								//TODO change to actual block state
-								renderBlocks.renderBlock(block.getDefaultState(), new BlockPos(x,y,z), mcWorld, tessellator.getWorldRenderer());
-								//renderBlocks.renderBlockByRenderType(block, x, y, z);
+								renderBlocks.renderBlock(this.schematic.getBlockState(new BlockPos(x,y,z)), new BlockPos(x,y,z), mcWorld, renderer);
 							}
 						}
-					} catch (Exception e) {
-						Log.logger.error("Failed to render block!", e);
+					} catch (IndexOutOfBoundsException e) {
+						Log.logger.error("Failed to render block!", e.getStackTrace());
 					}
 				}
 			}
