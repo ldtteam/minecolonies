@@ -675,8 +675,14 @@ public class SchematicWorld extends World
             {
                 for(int x = 0; x < this.width; x++)
                 {
-                    //TODO look more into this method, doesn't seem to be working properly for all blocks
-                    getBlock(x, y, this.length - 1 - z).rotateBlock(this, new BlockPos(x, y, this.length - 1 - z), EnumFacing.UP);
+                    BlockPos pos = new BlockPos(x,y,this.length-1-z);
+                    IBlockState block = getBlockState(pos);
+
+                    if(block.getBlock().getValidRotations(this,pos) != null)
+                    {
+                        setBlockState(pos, block.withProperty(BlockStairs.FACING, getBlockState(new BlockPos(x,y,this.length-1-z)).getValue(BlockStairs.FACING).rotateY()));
+                    }
+
                     localBlocks[z][y][x] = this.blocks[x][y][this.length - 1 - z];
                     localMetadata[z][y][x] = this.metadata[x][y][this.length - 1 - z];
                 }
