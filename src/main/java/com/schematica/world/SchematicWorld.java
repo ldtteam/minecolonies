@@ -304,8 +304,7 @@ public class SchematicWorld extends World
                         TileEntity tileEntity = getTileEntity(new BlockPos(x, y, z));
                         if(tileEntity instanceof TileEntitySkull)
                         {
-                            //todo no damage value anymore, only metaData
-                            itemDamage = ((TileEntitySkull) tileEntity).getBlockMetadata();
+                            itemDamage = ((TileEntitySkull) tileEntity).getSkullType();
                         }
                     }
 

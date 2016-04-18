@@ -36,6 +36,7 @@ com.minecolonies.gui.workerHuts.minerHut=Miner
 com.minecolonies.gui.workerHuts.minerNode=Node
 com.minecolonies.gui.workerHuts.minerMineNode=Mine Level
 com.minecolonies.gui.workerHuts.minerNodeList=Levels
+com.minecolonies.gui.workerHuts.homeHut=Citizen's Hut
 
 com.minecolonies.gui.warehouse.toBlacksmith=Deliver to Blacksmith:
 com.minecolonies.gui.warehouse.toStonemason=Deliver to Stonemason:
