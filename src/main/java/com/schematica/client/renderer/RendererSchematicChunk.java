@@ -259,27 +259,27 @@ public class RendererSchematicChunk {
 
 						sides = 0;
 						if (block != null) {
-							if (block.shouldSideBeRendered(this.schematic, pos.down(), EnumFacing.DOWN)) {
+							if (y-1 > minY && block.shouldSideBeRendered(this.schematic, pos.down(), EnumFacing.DOWN)) {
 								sides |= RenderHelper.QUAD_DOWN;
 							}
 
-							if (block.shouldSideBeRendered(this.schematic, pos.up(), EnumFacing.UP)) {
+							if (y+1 < maxY && block.shouldSideBeRendered(this.schematic, pos.up(), EnumFacing.UP)) {
 								sides |= RenderHelper.QUAD_UP;
 							}
 
-							if (block.shouldSideBeRendered(this.schematic, pos.north(), EnumFacing.NORTH)) {
+							if (z-1 > minZ && block.shouldSideBeRendered(this.schematic, pos.north(), EnumFacing.NORTH)) {
 								sides |= RenderHelper.QUAD_NORTH;
 							}
 
-							if (block.shouldSideBeRendered(this.schematic, pos.south(), EnumFacing.SOUTH)) {
+							if (z+1 < maxZ && block.shouldSideBeRendered(this.schematic, pos.south(), EnumFacing.SOUTH)) {
 								sides |= RenderHelper.QUAD_SOUTH;
 							}
 
-							if (block.shouldSideBeRendered(this.schematic, pos.west(), EnumFacing.WEST)) {
+							if (x-1 > minX && block.shouldSideBeRendered(this.schematic, pos.west(), EnumFacing.WEST)) {
 								sides |= RenderHelper.QUAD_WEST;
 							}
 
-							if (block.shouldSideBeRendered(this.schematic, pos.east(), EnumFacing.EAST)) {
+							if (x+1 < maxX && block.shouldSideBeRendered(this.schematic, pos.east(), EnumFacing.EAST)) {
 								sides |= RenderHelper.QUAD_EAST;
 							}
 						}
