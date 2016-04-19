@@ -681,7 +681,15 @@ public class SchematicWorld extends World
 
                     if(block.getBlock().getValidRotations(this,pos) != null)
                     {
-                        setBlockState(pos, block.withProperty(PropertyDirection.create("facing"), block.getValue(BlockStairs.FACING).rotateY()));
+                        try
+                        {
+                            PropertyDirection facing = PropertyDirection.create("facing");
+                            setBlockState(pos, block.withProperty(facing, block.getValue(facing).rotateY()));
+                        }
+                        catch(IllegalStateException e)
+                        {
+                            //Ignore the error, just don't rotate that block
+                        }
                     }
 
                     localBlocks[z][y][x] = this.blocks[x][y][this.length - 1 - z];
