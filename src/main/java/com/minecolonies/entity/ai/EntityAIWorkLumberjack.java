@@ -201,7 +201,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private AIState findTree()
     {
-        if (pathResult == null)
+        if (pathResult == null || pathResult.treeLocation == null)
         {
             pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D);
             return state;
@@ -461,7 +461,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private void searchForItems()
     {
-        items = new ArrayList<>();
+       items = new ArrayList<>();
         List<EntityItem> list = new ArrayList<>();
         for (Object o : world.getEntitiesWithinAABB(EntityItem.class, worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)))
         {
@@ -483,6 +483,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private void gatherItems()
     {
+        worker.setCanPickUpLoot(true);
         if (worker.getNavigator().noPath())
         {
             BlockPos pos = getAndRemoveClosestItem();

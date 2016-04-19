@@ -327,7 +327,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         if (job.getPonds().isEmpty())
         {
-            if(lastPathResult !=null && lastPathResult.isEmpty)
+            if(lastPathResult !=null && lastPathResult.isEmpty && !lastPathResult.isCancelled())
             {
                 chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
             }

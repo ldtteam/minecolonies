@@ -38,6 +38,7 @@ com.minecolonies.gui.workerHuts.minerMineNode=Mine Level
 com.minecolonies.gui.workerHuts.minerNodeList=Levels
 com.minecolonies.gui.workerHuts.homeHut=Citizen's Hut
 com.minecolonies.gui.workerHuts.fisherman=Fisherman's Hut
+com.minecolonies.gui.workerHuts.lumberjackHut=Lumberjack's Hut
 
 com.minecolonies.gui.warehouse.toBlacksmith=Deliver to Blacksmith:
 com.minecolonies.gui.warehouse.toStonemason=Deliver to Stonemason:
@@ -74,6 +75,8 @@ com.minecolonies.job.Deliveryman=Deliveryman
 com.minecolonies.job.Farmer=Farmer
 com.minecolonies.job.Lumberjack=Lumberjack
 com.minecolonies.job.Miner=Miner
+com.minecolonies.job.Fisherman=Fisherman
+
 
 tile.blockHutTownhall.messageMaxSize=Colony has reached max size
 tile.blockHutTownhall.messageColonistDead=A colonist has died!

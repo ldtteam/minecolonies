@@ -131,7 +131,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         {
             return;
         }
-        if (world.getBlockState(pos).equals(Blocks.ladder))
+        if (world.getBlockState(pos).getBlock().equals(Blocks.ladder))
         {
             int firstLadderY = getFirstLadder(pos);
             buildingMiner.ladderLocation = new BlockPos(pos.getX(), firstLadderY, pos.getZ());
@@ -150,28 +150,24 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         EnumFacing ladderOrientation = world.getBlockState(buildingMiner.ladderLocation).getValue(BlockLadder.FACING);
         //http://minecraft.gamepedia.com/Ladder
 
-        if (ladderOrientation == EnumFacing.NORTH)
+        if (ladderOrientation == EnumFacing.WEST)
         {
-            //West
+            buildingMiner.vectorX = -1;
+            buildingMiner.vectorZ = 0;
+        }
+        else if (ladderOrientation == EnumFacing.EAST)
+        {
             buildingMiner.vectorX = 1;
             buildingMiner.vectorZ = 0;
         }
         else if (ladderOrientation == EnumFacing.SOUTH)
         {
-            //East
-            buildingMiner.vectorX = -1;
-            buildingMiner.vectorZ = 0;
-        }
-        else if (ladderOrientation == EnumFacing.WEST)
-        {
-            //South
-            buildingMiner.vectorZ = -1;
+            buildingMiner.vectorZ = 1;
             buildingMiner.vectorX = 0;
         }
-        else if (ladderOrientation == EnumFacing.EAST)
+        else if (ladderOrientation == EnumFacing.NORTH)
         {
-            //North
-            buildingMiner.vectorZ = 1;
+            buildingMiner.vectorZ = -1;
             buildingMiner.vectorX = 0;
         }
         else
