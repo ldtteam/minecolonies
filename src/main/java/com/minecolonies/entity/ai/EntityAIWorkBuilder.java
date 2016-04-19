@@ -539,11 +539,11 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             worker.getNavigator().moveAwayFromXYZ(pos, 4.1, 1.0);
         }
 
-        if(block instanceof BlockDoor)
+        if(block instanceof BlockDoor && metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
         {
             ItemDoor.placeDoor(world, pos, metadata.getValue(BlockDoor.FACING), block);
         }
-        else if(block instanceof BlockBed /*&& !Utils.testFlag(metadata, 0x8)*/)
+        else if(block instanceof BlockBed /*&& !Utils.testFlag(metadata, 0x8)*/)//TODO fix beds
         {
             world.setBlockState(pos, metadata,0x03);
             EnumFacing meta = metadata.getValue(BlockBed.FACING);
