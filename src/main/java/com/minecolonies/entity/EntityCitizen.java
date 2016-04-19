@@ -286,14 +286,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         double xDifference = block.getX() - this.posX;
         double zDifference = block.getZ() - this.posZ;
-        double yDifference = block.getY() - (this.posY + (double) this.getEyeHeight() - 0.5);
+        double yDifference = block.getY() - (this.posY + (double) this.getEyeHeight());
 
         double squareDifference      = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
         double intendedRotationYaw   = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
         double intendedRotationPitch = (-(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI));
-        this.rotationPitch = (float) this.updateRotation(this.rotationPitch, intendedRotationPitch, 30);
-        this.rotationYaw = (float) this.updateRotation(this.rotationYaw, intendedRotationYaw, 30);
-        //todo something needs to update the rotation
+        this.setRotation((float)updateRotation(this.rotationYaw, intendedRotationYaw, 30),(float)updateRotation(this.rotationPitch, intendedRotationPitch, 30));
     }
 
     /**

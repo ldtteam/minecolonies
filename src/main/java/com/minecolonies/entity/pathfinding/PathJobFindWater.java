@@ -23,6 +23,7 @@ public class PathJobFindWater extends PathJob
     public static class WaterPathResult extends PathResult
     {
         public BlockPos pond;
+        public boolean isEmpty;
     }
 
     private BlockPos hutLocation;
@@ -96,6 +97,7 @@ public class PathJobFindWater extends PathJob
         if(pond != null)
         {
             getResult().pond = newPond;
+            getResult().isEmpty = ponds.isEmpty();
             return true;
         }
 

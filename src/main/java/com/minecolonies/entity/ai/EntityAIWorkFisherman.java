@@ -25,6 +25,7 @@ import static com.minecolonies.entity.ai.AIState.*;
  */
 public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 {
+
     /**
      * The maximum number of ponds to remember at one time.
      */
@@ -89,6 +90,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      */
     private PathJobFindWater.WaterPathResult pathResult;
     /**
+     * The Previous PathResult when the fisherman already found water.
+     */
+    private PathJobFindWater.WaterPathResult lastPathResult;
+    /**
      * The fishingSkill which directly influences the fisherman's chance to throw his rod.
      * May in the future also influence his luck/charisma.
      */
@@ -97,10 +102,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      * Connects the citizen with the fishingHook.
      */
     private EntityFishHook entityFishHook;
-    /**
-     * Checks if the fisherman recently removed a pond from his list
-     */
-    private boolean recentlyRemovedAPond = false;
 
     /**
      * Constructor for the Fisherman.
@@ -251,7 +252,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
         if (executedRotations >= MAX_ROTATIONS)
         {
-            recentlyRemovedAPond = true;
             job.removeFromPonds(job.getWater());
             job.setWater(null);
             executedRotations = 0;
@@ -306,11 +306,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 job.setWater(pathResult.pond);
                 job.addToPonds(pathResult.pond);
             }
+            lastPathResult = pathResult;
             pathResult = null;
             return FISHERMAN_CHECK_WATER;
         }
         if (pathResult.isCancelled())
         {
+            lastPathResult = pathResult;
             pathResult = null;
             return PREPARING;
         }
@@ -326,12 +328,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         if (job.getPonds().isEmpty())
         {
-            if(!recentlyRemovedAPond)
+            if(lastPathResult !=null && lastPathResult.isEmpty)
             {
                 chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
             }
+            lastPathResult = pathResult;
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
-            recentlyRemovedAPond = false;
             return state;
         }
         job.setWater(job.getPonds().get(itemRand.nextInt(job.getPonds().size())));
@@ -457,7 +459,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 
         if(world.getBlockState(worker.getPosition()).getBlock() == Blocks.water)
         {
-            recentlyRemovedAPond = true;
             job.removeFromPonds(job.getWater());
             job.setWater(null);
             return FISHERMAN_SEARCHING_WATER;

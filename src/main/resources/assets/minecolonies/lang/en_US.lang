@@ -37,6 +37,7 @@ com.minecolonies.gui.workerHuts.minerNode=Node
 com.minecolonies.gui.workerHuts.minerMineNode=Mine Level
 com.minecolonies.gui.workerHuts.minerNodeList=Levels
 com.minecolonies.gui.workerHuts.homeHut=Citizen's Hut
+com.minecolonies.gui.workerHuts.Fisherman=Fisherman's Hut
 
 com.minecolonies.gui.warehouse.toBlacksmith=Deliver to Blacksmith:
 com.minecolonies.gui.warehouse.toStonemason=Deliver to Stonemason:
@@ -55,17 +56,17 @@ com.minecolonies.gui.buildtool.nodecoration=No Decorations
 com.minecolonies.gui.buildtool.hut=Huts
 com.minecolonies.gui.buildtool.decoration=Decorations
 
-tile.blockHutCitizen.name=Citizen's Hut
-tile.blockHutBaker.name=Bakery
-tile.blockHutBlacksmith.name=Forge
-tile.blockHutBuilder.name=Builder's Hut
-tile.blockHutWarehouse.name=Warehouse
-tile.blockHutFarmer.name=Farm
-tile.blockHutLumberjack.name=Sawmill
-tile.blockHutFisherman.name=Fisherman's Hut
-tile.blockHutMiner.name=Mine
-tile.blockHutStonemason.name=Quarry
-tile.blockHutTownhall.name=Town Hall
+tile.minecolonies.blockHutCitizen.name=Citizen's Hut
+tile.minecolonies.blockHutBaker.name=Bakery
+tile.minecolonies.blockHutBlacksmith.name=Forge
+tile.minecolonies.blockHutBuilder.name=Builder's Hut
+tile.minecolonies.blockHutWarehouse.name=Warehouse
+tile.minecolonies.blockHutFarmer.name=Farm
+tile.minecolonies.blockHutLumberjack.name=Sawmill
+tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
+tile.minecolonies.blockHutMiner.name=Mine
+tile.minecolonies.blockHutStonemason.name=Quarry
+tile.minecolonies.blockHutTownhall.name=Town Hall
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
 
 com.minecolonies.job.Builder=Builder
@@ -83,10 +84,10 @@ tile.blockHutTownhall.messageTooClose=Too close to existing townhall
 tile.blockHut.messageTooFarFromTownhall=You need to be closer to your townhall!
 tile.blockHut.messageNoTownhall=You need to place a townhall first!
 
-item.supplyChestDeployer.name=Supply Chest
-item.scepterGold.name=Building Tool
-item.scepterSteel.name=Scan Tool
-item.caliper.name=Caliper
+item.minecolonies.supplyChestDeployer.name=Supply Chest
+item.minecolonies.scepterGold.name=Building Tool
+item.minecolonies.scepterSteel.name=Scan Tool
+item.minecolonies.caliper.name=Caliper
 
 item.supplyChestDeployer.invalid=You must be near a big pool of water
 

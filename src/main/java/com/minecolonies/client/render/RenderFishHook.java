@@ -9,8 +9,10 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+import scala.tools.nsc.transform.patmat.Solving;
 
 /**
  * Determines how the fish hook is rendered.
@@ -69,6 +71,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         this.bindEntityTexture(entity);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+
         GlStateManager.rotate(180.0F - this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
@@ -98,49 +101,37 @@ public class RenderFishHook extends Render<EntityFishHook>
 
         if (citizen != null)
         {
-
-            final double orientation      = citizen.getSwingProgress(entityYaw);
+            final double orientation      = citizen.getSwingProgress(partialTicks);
             final double finalOrientation = Math.sin(Math.sqrt(orientation) * Math.PI);
-            final Vec3   vec3             = new Vec3(-0.5, 0.03, 0.8);
+            final Vec3   vec3             = new Vec3(-0.36D, 0.03D, 0.35D);
 
-            vec3.rotatePitch((float) (-((double)citizen.prevRotationPitch
-                                          + ((double)citizen.rotationPitch - (double)citizen.prevRotationPitch) * entityYaw) * Math.PI
-                                        / Literals.HALF_CIRCKLE));
-            vec3.rotateYaw((float) (-((double)citizen.prevRotationYaw
-                                          + ((double)citizen.rotationYaw - (double)citizen.prevRotationYaw) * entityYaw) * Math.PI
-                                        / Literals.HALF_CIRCKLE));
+            vec3.rotatePitch((float) (-((double)citizen.prevRotationPitch + ((double)citizen.rotationPitch - (double)citizen.prevRotationPitch) * partialTicks) * Math.PI / Literals.HALF_CIRCKLE));
+            vec3.rotateYaw((float) (-((double)citizen.prevRotationYaw + ((double)citizen.rotationYaw - (double)citizen.prevRotationYaw) * partialTicks) * Math.PI / Literals.HALF_CIRCKLE));
             vec3.rotateYaw((float) (finalOrientation * 0.5D));
             vec3.rotatePitch((float) (-finalOrientation * 0.7D));
 
-            double
-                    correctedPosX =
-                    citizen.prevPosX
-                    + (citizen.posX - citizen.prevPosX) * entityYaw
-                    + vec3.xCoord;
-            double
-                    correctedPosY =
-                    citizen.prevPosY
-                    + (citizen.posY - citizen.prevPosY) * entityYaw
-                    + vec3.yCoord;
-            double
-                    correctedPosZ =
-                    citizen.prevPosZ
-                    + (citizen.posZ - citizen.prevPosZ) * entityYaw
-                    + vec3.zCoord;
+            double thirdPersonOffset = (citizen.prevRenderYawOffset + (citizen.renderYawOffset - citizen.prevRenderYawOffset) * partialTicks) * 3.1415927F / Literals.HALF_CIRCKLE;
+            double correctedPosX = citizen.prevPosX + (citizen.posX - citizen.prevPosX) * (double)partialTicks - MathHelper.cos((float)thirdPersonOffset) * 0.35D - MathHelper.sin((float)thirdPersonOffset) * 0.8D;
+            double correctedPosY = citizen.prevPosY + citizen.getEyeHeight() + (citizen.posY - citizen.prevPosY) * (double)partialTicks - 0.45D;
+            double correctedPosZ = citizen.prevPosZ + (citizen.posZ - citizen.prevPosZ) * (double)partialTicks - MathHelper.sin((float)thirdPersonOffset) * 0.35D + MathHelper.cos((float)thirdPersonOffset) * 0.8D;
+            double eyeHeight = citizen.isSneaking()?-0.1875D:0.0D;
 
-            final double distX = entity.prevPosX + (entity.posX - entity.prevPosX) * entityYaw;
-            double       distY = entity.prevPosY + (entity.posY - entity.prevPosY) * entityYaw + 0.25;
-            double       distZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * entityYaw;
+            final double distX = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
+            double       distY = entity.posY  + 0.25;
+            double       distZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
 
             double correctionX = correctedPosX - distX;
-            double correctionY = correctedPosY - distY;
+            double correctionY = correctedPosY - distY + eyeHeight;
             double correctionZ = correctedPosZ - distZ;
 
+            GlStateManager.disableTexture2D();
+            GlStateManager.disableLighting();
             worldrenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
 
-            for(int l = 0; l <= 16; ++l) {
-                float f10 = (float)l / 16.0F;
-                worldrenderer.pos(x + correctionX * (double)f10, y + correctionY * (double)(f10 * f10 + f10) * 0.5D + 0.25D, z + correctionZ * (double)f10).color(0, 0, 0, 255).endVertex();
+            for(int l = 0; l <= 16; ++l)
+            {
+                double var = (double)l / 16.0;
+                worldrenderer.pos(x + correctionX * var, y + correctionY * (var * var + var) * 0.5D + 0.25D, z + correctionZ * var).color(0, 0, 0, 255).endVertex();
             }
 
             tessellator.draw();
