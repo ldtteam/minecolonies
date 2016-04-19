@@ -312,7 +312,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
         if (pathResult.isCancelled())
         {
-            lastPathResult = pathResult;
             pathResult = null;
             return PREPARING;
         }
@@ -332,7 +331,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             {
                 chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
             }
-            lastPathResult = pathResult;
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
             return state;
         }

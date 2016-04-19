@@ -4,6 +4,7 @@ import com.blockout.controls.Button;
 import com.blockout.views.SwitchView;
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.LanguageHandler;
 
 /**
  * Window for the fisherman hut
@@ -64,7 +65,7 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.gui.workerHuts.fisherman";
+        return LanguageHandler.format("com.minecolonies.gui.workerHuts.fisherman");
     }
 
     /**

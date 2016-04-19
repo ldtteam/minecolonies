@@ -21,7 +21,7 @@ public class RendererSchematicGlobal {
 	private final Minecraft minecraft = Minecraft.getMinecraft();
 	private final Settings settings = Settings.instance;
 	private final Profiler profiler = this.minecraft.mcProfiler;
-
+    private final int RENDER_DISTANCE = 40;
 	private final RendererSchematicChunkSorter rendererSchematicChunkSorter = new RendererSchematicChunkSorter();
 
 	@SubscribeEvent
@@ -168,7 +168,7 @@ public class RendererSchematicGlobal {
 	private void updateFrustrum() {
 		Vec3 vec = new Vec3(this.settings.getTranslationX(), this.settings.getTranslationY(), this.settings.getTranslationZ());
 		for (RendererSchematicChunk rendererSchematicChunk : this.settings.sortedRendererSchematicChunk) {
-			rendererSchematicChunk.isInFrustrum = rendererSchematicChunk.getBoundingBox().isVecInside(vec);
+			rendererSchematicChunk.isInFrustrum = rendererSchematicChunk.getBoundingBox().expand(RENDER_DISTANCE,RENDER_DISTANCE,RENDER_DISTANCE).isVecInside(vec);
 		}
 	}
 
