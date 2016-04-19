@@ -250,17 +250,17 @@ public abstract class PathJob implements Callable<PathEntity>
      */
     public static BlockPos prepareStart(EntityLiving entity)
     {
-        int x = MathHelper.floor_double(entity.posX);
-        int y = (int)entity.posY;
-        int z = MathHelper.floor_double(entity.posZ);
-        Block b = entity.worldObj.getBlockState(new BlockPos(x,y,z)).getBlock();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor_double(entity.posX),
+                                                                    (int) entity.posY,
+                                                                    MathHelper.floor_double(entity.posZ));
+        Block b = entity.worldObj.getBlockState(pos).getBlock();
 
         if (entity.isInWater())
         {
             while (b.getMaterial().isLiquid())
             {
-                ++y;
-                b = entity.worldObj.getBlockState(new BlockPos(x,y,z)).getBlock();
+                pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+                b = entity.worldObj.getBlockState(pos).getBlock();
             }
         }
 //        else if (y > 0 && world.getBlock(x, y - 1, z).getMaterial() == Material.air)
@@ -276,14 +276,14 @@ public abstract class PathJob implements Callable<PathEntity>
             double dX = entity.posX - Math.floor(entity.posX);
             double dZ = entity.posZ - Math.floor(entity.posZ);
 
-            if (dX < 0.1)       x -= 1;
-            else if (dX > 0.9)  x += 1;
+            if (dX < 0.1)       pos.set(pos.getX() - 1, pos.getY(), pos.getZ());
+            else if (dX > 0.9)  pos.set(pos.getX() + 1, pos.getY(), pos.getZ());
 
-            if (dZ < 0.1)       z -= 1;
-            else if (dZ > 0.9)  z += 1;
+            if (dZ < 0.1)       pos.set(pos.getX(), pos.getY(), pos.getZ() - 1);
+            else if (dZ > 0.9)  pos.set(pos.getX(), pos.getY(), pos.getZ() + 1);
         }
 
-        return new BlockPos(x, y, z);
+        return pos.getImmutable();
     }
 
     /**
@@ -458,7 +458,7 @@ public abstract class PathJob implements Callable<PathEntity>
      */
     protected final boolean walk(Node parent, BlockPos dPos)
     {
-    	BlockPos pos = new BlockPos(parent.pos.add(dPos));
+    	BlockPos pos = parent.pos.add(dPos);
 
         //  Cheap test to perform before doing a 'y' test
         //  Has this node been visited?
@@ -663,7 +663,7 @@ public abstract class PathJob implements Callable<PathEntity>
     {
         if (block.getMaterial() != Material.air)
         {
-            if (!block.getMaterial().blocksMovement())
+            if (block.getMaterial().blocksMovement())
             {
                 return block instanceof BlockDoor ||
                         //  block instanceof BlockTrapDoor ||
