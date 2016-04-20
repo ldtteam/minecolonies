@@ -14,7 +14,6 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
-
 plugins {
     id "org.sonarqube" version "1.2"
 }
@@ -29,6 +28,11 @@ sonarqube {
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
+
+dependencies {
+    testCompile 'junit:junit:4.11'
+    testCompile "org.mockito:mockito-core:1.+"
+}
 
 ext.configFile = file "build.properties"
 
