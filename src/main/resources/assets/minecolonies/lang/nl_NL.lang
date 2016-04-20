@@ -1,15 +1,15 @@
 com.minecolonies.error.supplyChestAlreadyPlaced=Je hebt het bevoorradingsschip al geplaatst!
 
-com.minecolonies.gui.townhall.build=Bouw Stadhuis
-com.minecolonies.gui.townhall.repair=Repareer Stadhuis
-com.minecolonies.gui.townhall.recall=Roep Burgers Terug
-com.minecolonies.gui.townhall.togglespec=Schakel Specialisatie
-com.minecolonies.gui.townhall.currTownhallName=Kolonie naam:
-com.minecolonies.gui.townhall.currentSpecialization=Huidige Specialisatie:
-com.minecolonies.gui.townhall.rename=Hernoem Kolonie
-com.minecolonies.gui.townhall.rename.title=Hernoem Je Kolonie
-com.minecolonies.gui.townhall.actions=Acties
-com.minecolonies.gui.townhall.defaultName=%s zijn Kolonie
+com.minecolonies.gui.townHall.build=Bouw Stadhuis
+com.minecolonies.gui.townHall.repair=Repareer Stadhuis
+com.minecolonies.gui.townHall.recall=Roep Burgers Terug
+com.minecolonies.gui.townHall.togglespec=Schakel Specialiatie
+com.minecolonies.gui.townHall.currTownHallName=Kolonie naam:
+com.minecolonies.gui.townHall.currentSpecialization=Huidige Specialisatie:
+com.minecolonies.gui.townHall.rename=Hernoem Kolonie
+com.minecolonies.gui.townHall.rename.title=Hernoem Je Kolonie
+com.minecolonies.gui.townHall.actions=Acties
+com.minecolonies.gui.townHall.defaultName=%s zijn Kolonie
 
 com.minecolonies.gui.workerHuts.buildersHut=Bouwvakkershut
 com.minecolonies.gui.workerHuts.warehouse=Warenhut
@@ -38,17 +38,17 @@ tile.blockHutFarmer.name=Boerderij
 tile.blockHutLumberjack.name=Houthakkershut
 tile.blockHutMiner.name=Mijn
 tile.blockHutStonemason.name=Steenhouwerhut
-tile.blockHutTownhall.name=Stadhuis
+tile.blockHutTownHall.name=Stadhuis
 tile.blockHut.messageNoPermission=Je hebt geen toestemming om huizen te openen in %s.
 
-tile.blockHutTownhall.messageMaxSize=De Kolonie heeft zijn maximale grootte bereikt.
-tile.blockHutTownhall.messageColonistDead=Een burger is gestorven!
-tile.blockHutTownhall.messagePlacedAlready=Je hebt al een Stadhuis geplaatst.
-tile.blockHutTownhall.messageInvalidWorld=Je kan geen Stadhuis bouwen in dit wereldtype.
-tile.blockHutTownhall.messageTooClose=Te dichtbij een ander Stadhuis.
+tile.blockHutTownHall.messageMaxSize=De Kolonie heeft zijn maximale grootte bereikt.
+tile.blockHutTownHall.messageColonistDead=Een burger is gestorven!
+tile.blockHutTownHall.messagePlacedAlready=Je hebt al een Stadhuis geplaatst.
+tile.blockHutTownHall.messageInvalidWorld=Je kan geen Stadhuis bouwen in dit wereldtype.
+tile.blockHutTownHall.messageTooClose=Te dichtbij een ander Stadhuis.
 
-tile.blockHut.messageTooFarFromTownhall=Je moet dichter bij je Stadhuis zijn!
-tile.blockHut.messageNoTownhall=Je moet eerst een Stadhuis plaatsen!
+tile.blockHut.messageTooFarFromTownHall=Je moet dichter bij je Stadhuis zijn!
+tile.blockHut.messageNoTownHall=Je moet eerst een Stadhuis plaatsen!
 
 item.supplyChestDeployer.name=Bevoorradings Kist
 item.scepterGold.name=Bouw Gereedschap

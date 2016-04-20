@@ -1,22 +1,22 @@
 com.minecolonies.error.supplyChestAlreadyPlaced=You have already placed a supply ship!
 
-com.minecolonies.gui.townhall.build=Baue Rathaus
-com.minecolonies.gui.townhall.repair=Repariere Rathaus
-com.minecolonies.gui.townhall.recall=Rufe Bürger
-com.minecolonies.gui.townhall.togglespec=An/Aus Spezialisation
-com.minecolonies.gui.townhall.currTownhallName=Name der Kolonie:
-com.minecolonies.gui.townhall.currentSpecialization=Derzeitige Spezialisation:
-com.minecolonies.gui.townhall.rename=Namensänderung
-com.minecolonies.gui.townhall.rename.title=Ändere den Namen deiner Kolonie
-com.minecolonies.gui.townhall.actions=Aktionen
-com.minecolonies.gui.townhall.defaultName=%s's Kolonie
-com.minecolonies.gui.townhall.citizens=Bürger
-com.minecolonies.gui.townhall.permissions=Erlaubnisse
+com.minecolonies.gui.townHall.build=Baue Rathaus
+com.minecolonies.gui.townHall.repair=Repariere Rathaus
+com.minecolonies.gui.townHall.recall=Rufe Bürger
+com.minecolonies.gui.townHall.togglespec=An/Aus Spezialisation
+com.minecolonies.gui.townHall.currTownHallName=Name der Kolonie:
+com.minecolonies.gui.townHall.currentSpecialization=Derzeitige Spezialisation:
+com.minecolonies.gui.townHall.rename=Namensänderung
+com.minecolonies.gui.townHall.rename.title=Ändere den Namen deiner Kolonie
+com.minecolonies.gui.townHall.actions=Aktionen
+com.minecolonies.gui.townHall.defaultName=%s's Kolonie
+com.minecolonies.gui.townHall.citizens=Bürger
+com.minecolonies.gui.townHall.permissions=Erlaubnisse
 
-com.minecolonies.gui.townhall.population.totalCitizens=Anzahl an Bürger: %d/%d
-com.minecolonies.gui.townhall.population.unemployed=Arbeitslos: %d
-com.minecolonies.gui.townhall.population.builders=Bauarbeiter: %d
-com.minecolonies.gui.townhall.population.deliverymen=Lieferanten: %d
+com.minecolonies.gui.townHall.population.totalCitizens=Anzahl an Bürger: %d/%d
+com.minecolonies.gui.townHall.population.unemployed=Arbeitslos: %d
+com.minecolonies.gui.townHall.population.builders=Bauarbeiter: %d
+com.minecolonies.gui.townHall.population.deliverymen=Lieferanten: %d
 
 com.minecolonies.gui.workerHuts.buildersHut=Bauarbeiterhütte
 com.minecolonies.gui.workerHuts.warehouse=Lager
@@ -58,17 +58,17 @@ tile.blockHutFarmer.name=Bauernhof
 tile.blockHutLumberjack.name=Sägewerk
 tile.blockHutMiner.name=Mine
 tile.blockHutStonemason.name=Steinbruch
-tile.blockHutTownhall.name=Rathaus
+tile.blockHutTownHall.name=Rathaus
 tile.blockHut.messageNoPermission=Du hast keine Erlaubnis die Hütten in %s zu öffnen.
 
-tile.blockHutTownhall.messageMaxSize=Die Kolonie hat ihre maximale Größe Erreicht
-tile.blockHutTownhall.messageColonistDead=Ein Kolonist starb!
-tile.blockHutTownhall.messagePlacedAlready=Du hast schon ein Rathaus plaziert
-tile.blockHutTownhall.messageInvalidWorld=Du kannst in diesem Welttyp kein Rathaus platzieren
-tile.blockHutTownhall.messageTooClose=Zu Nahe an existierendem Rathaus
+tile.blockHutTownHall.messageMaxSize=Die Kolonie hat ihre maximale Größe Erreicht
+tile.blockHutTownHall.messageColonistDead=Ein Kolonist starb!
+tile.blockHutTownHall.messagePlacedAlready=Du hast schon ein Rathaus plaziert
+tile.blockHutTownHall.messageInvalidWorld=Du kannst in diesem Welttyp kein Rathaus platzieren
+tile.blockHutTownHall.messageTooClose=Zu Nahe an existierendem Rathaus
 
-tile.blockHut.messageTooFarFromTownhall=Du musst näher bei deinem Rathaus sein!
-tile.blockHut.messageNoTownhall=Du musst erst ein Rathaus platzieren!
+tile.blockHut.messageTooFarFromTownHall=Du musst näher bei deinem Rathaus sein!
+tile.blockHut.messageNoTownHall=Du musst erst ein Rathaus platzieren!
 
 item.supplyChestDeployer.name=Versorgungskiste
 item.scepterGold.name=Arbeiterwerkzeug

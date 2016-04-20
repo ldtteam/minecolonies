@@ -9,12 +9,12 @@ import com.minecolonies.lib.Constants;
 /**
  * Window for a town hall name entry
  */
-public class WindowTownhallNameEntry extends Window implements Button.Handler
+public class WindowTownHallNameEntry extends Window implements Button.Handler
 {
     private static final    String      BUTTON_DONE                     = "done";
     private static final    String      BUTTON_CANCEL                   = "cancel";
     private static final    String      INPUT_NAME                      = "name";
-    private static final    String      TOWNHALL_NAME_RESOURCE_SUFFIX   = ":gui/windowTownhallNameEntry.xml";
+    private static final    String      TOWNHALL_NAME_RESOURCE_SUFFIX   = ":gui/windowTownHallNameEntry.xml";
 
     private                 ColonyView  colony;
 
@@ -23,7 +23,7 @@ public class WindowTownhallNameEntry extends Window implements Button.Handler
      *
      * @param c         {@link ColonyView}
      */
-    public WindowTownhallNameEntry(ColonyView c)
+    public WindowTownHallNameEntry(ColonyView c)
     {
         super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
         this.colony = c;
@@ -51,9 +51,9 @@ public class WindowTownhallNameEntry extends Window implements Button.Handler
             return;
         }
 
-        if (colony.getTownhall() != null)
+        if (colony.getTownHall() != null)
         {
-            colony.getTownhall().openGui();
+            colony.getTownHall().openGui();
         }
     }
 }

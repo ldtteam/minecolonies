@@ -6,7 +6,7 @@ import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.network.messages.PermissionsMessage;
-import com.minecolonies.network.messages.TownhallRenameMessage;
+import com.minecolonies.network.messages.TownHallRenameMessage;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.MathUtils;
 import io.netty.buffer.ByteBuf;
@@ -33,7 +33,7 @@ public class ColonyView implements IColony
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private         BuildingTownHall.View                   townhall;
+    private         BuildingTownHall.View                   townHall;
     private         Map<BlockPos, Building.View>            buildings       = new HashMap<>();
 
     //  Citizenry
@@ -86,16 +86,16 @@ public class ColonyView implements IColony
     public void setName(String name)
     {
         this.name = name;
-        MineColonies.getNetwork().sendToServer(new TownhallRenameMessage(this, name));
+        MineColonies.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
     }
 
-    /**
-     * Get the Town hall View for this ColonyView
+    /*
+     * Get the town hall View for this ColonyView
      *
      * @return      {@link BuildingTownHall.View} of the colony
      */
-    public BuildingTownHall.View getTownhall() {
-        return townhall;
+    public BuildingTownHall.View getTownHall() {
+        return townHall;
     }
 
     /**
@@ -240,7 +240,7 @@ public class ColonyView implements IColony
         if (isNewSubscription)
         {
             citizens.clear();
-            townhall = null;
+            townHall = null;
             buildings.clear();
         }
 
@@ -307,9 +307,9 @@ public class ColonyView implements IColony
     public IMessage handleColonyViewRemoveBuildingMessage(BlockPos buildingId)
     {
         Building.View building = buildings.remove(buildingId);
-        if (townhall == building)
+        if (townHall == building)
         {
-            townhall = null;
+            townHall = null;
         }
         return null;
     }
@@ -330,7 +330,7 @@ public class ColonyView implements IColony
 
             if (building instanceof BuildingTownHall.View)
             {
-                townhall = (BuildingTownHall.View)building;
+                townHall = (BuildingTownHall.View)building;
             }
         }
 
@@ -360,7 +360,7 @@ public class ColonyView implements IColony
     public boolean isCoordInColony(World w, BlockPos pos) {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.provider.getDimensionId() == dimensionId &&
-               BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownhall);
+               BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
     }
 
     @Override
@@ -383,7 +383,7 @@ public class ColonyView implements IColony
     }
 
     @Override
-    public boolean hasTownhall() { return townhall != null; }
+    public boolean hasTownHall() { return townHall != null; }
 
     @Override
     public Permissions.View getPermissions() { return permissions; }

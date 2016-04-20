@@ -12,21 +12,21 @@
         <buttonimage id="actions" size="100% 30"
                      source="minecolonies:textures/gui/guiBanners.png"
                      imageoffset="0 30" imagesize="120 30"
-                     label="$(com.minecolonies.gui.townhall.actions)"
+                     label="$(com.minecolonies.gui.townHall.actions)"
                      textalign="MiddleRight" textoffset="-15 1"
                      textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
 
         <buttonimage id="permissions" size="100% 30"
                      source="minecolonies:textures/gui/guiBanners.png"
                      imageoffset="0 60" imagesize="120 30"
-                     label="$(com.minecolonies.gui.townhall.permissions)"
+                     label="$(com.minecolonies.gui.townHall.permissions)"
                      textalign="MiddleRight" textoffset="-15 1"
                      textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
 
         <buttonimage id="citizens" size="100% 30"
                      source="minecolonies:textures/gui/guiBanners.png"
                      imageoffset="0 90" imagesize="120 30"
-                     label="$(com.minecolonies.gui.townhall.citizens)"
+                     label="$(com.minecolonies.gui.townHall.citizens)"
                      textalign="MiddleRight" textoffset="-15 1"
                      textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
 
@@ -45,33 +45,33 @@
 
             <group size="100% 22" pos="0 4">
                 <label size="100% 11"
-                       label="$(com.minecolonies.gui.townhall.currTownhallName)" textalign="Middle" color="green"/>
+                       label="$(com.minecolonies.gui.townHall.currTownHallName)" textalign="Middle" color="green"/>
                 <label size="100% 11"
                        id="name" textalign="Middle" color="black"/>
             </group>
 
             <group spacing="4" size="100% 92" pos="0 29">
                 <button id="build" align="TopMiddle" size="116 20"
-                        label="$(com.minecolonies.gui.townhall.build)"
+                        label="$(com.minecolonies.gui.townHall.build)"
                         />
                 <button id="repair" align="TopMiddle" size="116 20"
-                        label="$(com.minecolonies.gui.townhall.repair)"/>
+                        label="$(com.minecolonies.gui.townHall.repair)"/>
                 <button id="recall" align="TopMiddle" size="116 20"
-                        label="$(com.minecolonies.gui.townhall.recall)"/>
+                        label="$(com.minecolonies.gui.townHall.recall)"/>
                 <button id="changeSpec" align="TopMiddle" size="116 20"
-                        label="$(com.minecolonies.gui.townhall.togglespec)"/>
+                        label="$(com.minecolonies.gui.townHall.togglespec)"/>
             </group>
 
             <group size="100% 22" pos="0 129">
                 <label  size="100% 11"
-                       label="$(com.minecolonies.gui.townhall.currentSpecialization)" color="black"
+                       label="$(com.minecolonies.gui.townHall.currentSpecialization)" color="black"
                        textalign="Middle"/>
                 <label id="currentSpec" size="100% 11"
                        color="black" textalign="Middle"/>
             </group>
 
             <button id="rename" size="116 20" pos="0 153"
-                    label="$(com.minecolonies.gui.townhall.rename)"
+                    label="$(com.minecolonies.gui.townHall.rename)"
                     align="TopMiddle"/>
         </view>
         <view id="pageInfo">

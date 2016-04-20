@@ -15,19 +15,19 @@ import net.minecraft.world.World;
  * Hut for the town hall.
  * Sets the working range for the town hall in the constructor
  */
-public class BlockHutTownhall extends AbstractBlockHut
+public class BlockHutTownHall extends AbstractBlockHut
 {
-    protected BlockHutTownhall()
+    protected BlockHutTownHall()
     {
         super();
         //Sets the working range to whatever the config is set to
-        this.workingRange = Configurations.workingRangeTownhall;
+        this.workingRange = Configurations.workingRangeTownHall;
     }
 
     @Override
     public String getName()
     {
-        return "blockHutTownhall";
+        return "blockHutTownHall";
     }
 
     @Override

@@ -19,7 +19,7 @@ import java.util.*;
 /**
  * Window for the town hall
  */
-public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownHall.View> implements Button.Handler
+public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View> implements Button.Handler
 {
     private static final String BUTTON_INFO          = "info";
     private static final String BUTTON_ACTIONS       = "actions";
@@ -47,8 +47,8 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownHall.View
     private static final String UNEMP_CITIZENS           = "unemployedCitizens";
     private static final String BUILDERS                 = "builders";
     private static final String DELIVERY_MAN             = "deliverymen";
-    private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownhall.xml";
-    private BuildingTownHall.View townhall;
+    private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownHall.xml";
+    private BuildingTownHall.View townHall;
     private List<Permissions.Player> users       = new ArrayList<>();
     private List<CitizenData.View>   citizens    = new ArrayList<>();
     private Map<String, String>      tabsToPages = new HashMap<>();
@@ -59,12 +59,12 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownHall.View
     /**
      * Constructor for the town hall window
      *
-     * @param townhall {@link BuildingTownHall.View}
+     * @param townHall {@link BuildingTownHall.View}
      */
-    public WindowTownhall(BuildingTownHall.View townhall)
+    public WindowTownHall(BuildingTownHall.View townHall)
     {
-        super(townhall, Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
-        this.townhall = townhall;
+        super(townHall, Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
+        this.townHall = townHall;
 
         updateUsers();
         updateCitizens();
@@ -91,7 +91,7 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownHall.View
     private void updateUsers()
     {
         users.clear();
-        users.addAll(townhall.getColony().getPlayers().values());
+        users.addAll(townHall.getColony().getPlayers().values());
         Collections.sort(users, (o1, o2) -> o1.rank.compareTo(o2.rank));
     }
 
@@ -101,28 +101,28 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownHall.View
     private void updateCitizens()
     {
         citizens.clear();
-        citizens.addAll(townhall.getColony().getCitizens().values());
+        citizens.addAll(townHall.getColony().getCitizens().values());
     }
 
     /**
-     * Executed when <code>WindowTownhall</code> is opened.
+     * Executed when <code>WindowTownHall</code> is opened.
      * Does tasks like setting buttons
      */
     @Override
     public void onOpened()
     {
         super.onOpened();
-        int citizensSize = townhall.getColony().getCitizens().size();
+        int citizensSize = townHall.getColony().getCitizens().size();
 
         //TODO - Base these on server-side computed statistics
         int workers     = 0;
         int builders    = 0;
         int deliverymen = 0;
 
-        String numberOfCitizens    = LanguageHandler.format("com.minecolonies.gui.townhall.population.totalCitizens", citizensSize, townhall.getColony().getMaxCitizens());
-        String numberOfUnemployed  = LanguageHandler.format("com.minecolonies.gui.townhall.population.unemployed", citizensSize - workers);
-        String numberOfBuilders    = LanguageHandler.format("com.minecolonies.gui.townhall.population.builders", builders);
-        String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townhall.population.deliverymen", deliverymen);
+        String numberOfCitizens    = LanguageHandler.format("com.minecolonies.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
+        String numberOfUnemployed  = LanguageHandler.format("com.minecolonies.gui.townHall.population.unemployed", citizensSize - workers);
+        String numberOfBuilders    = LanguageHandler.format("com.minecolonies.gui.townHall.population.builders", builders);
+        String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townHall.population.deliverymen", deliverymen);
 
         findPaneOfTypeByID(CURRENT_SPEC, Label.class).setLabel("<Industrial>");
         findPaneOfTypeByID(TOTAL_CITIZENS, Label.class).setLabel(numberOfCitizens);
@@ -187,7 +187,7 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownHall.View
     @Override
     public String getBuildingName()
     {
-        return townhall.getColony().getName();
+        return townHall.getColony().getName();
     }
 
     /**
@@ -230,7 +230,7 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownHall.View
      */
     private void renameClicked(Button ignored)
     {
-        WindowTownhallNameEntry window = new WindowTownhallNameEntry(townhall.getColony());
+        WindowTownHallNameEntry window = new WindowTownHallNameEntry(townHall.getColony());
         window.open();
     }
 
@@ -244,7 +244,7 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownHall.View
     private void addPlayerCLicked(Button ignored)
     {
         TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
-        MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townhall.getColony(), input.getText()));
+        MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townHall.getColony(), input.getText()));
         input.setText("");
     }
 
@@ -262,7 +262,7 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownHall.View
             Permissions.Player user = users.get(row);
             if (user.rank != Permissions.Rank.OWNER)
             {
-                MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townhall.getColony(), user.id));
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.id));
             }
         }
     }
@@ -292,7 +292,7 @@ public class WindowTownhall extends AbstractWindowSkeleton<BuildingTownHall.View
 
             if (newRank != user.rank)
             {
-                MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townhall.getColony(), user.id, newRank));
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townHall.getColony(), user.id, newRank));
             }
         }
     }

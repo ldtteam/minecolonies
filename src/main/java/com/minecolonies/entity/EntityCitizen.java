@@ -727,7 +727,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         if (colony != null)
         {
             LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()),
-                                                        "tile.blockHutTownhall.messageColonistDead",
+                                                        "tile.blockHutTownHall.messageColonistDead",
                                                         citizenData.getName());
             colony.removeCitizen(getCitizenData());
         }
@@ -761,7 +761,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     /**
-     * Returns the home position of each citizen (His house or townhall)
+     * Returns the home position of each citizen (His house or town hall)
      * @return location
      */
     public BlockPos getHomePosition()
@@ -771,9 +771,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             return homeBuilding.getLocation();
         }
-        else if (getColony() != null && getColony().getTownhall() != null)
+        else if (getColony() != null && getColony().getTownHall() != null)
         {
-            return getColony().getTownhall().getLocation();
+            return getColony().getTownHall().getLocation();
         }
 
         return null;
