@@ -388,14 +388,22 @@ public class MaterialStore
     }
 
     /**
-     * Removes all Materials from the system before the MaterialStore is destroyed
+     * Removes all the Materials from the store
      */
-    public void destroy()
+    public void clear()
     {
         for(Map.Entry<Material, Integer> entry : dontNeed.entrySet())
         {
             removeMaterialFromExternal(entry.getKey(), entry.getValue());
         }
+    }
+
+    /**
+     * Removes all Materials from the system before the MaterialStore is destroyed
+     */
+    public void destroy()
+    {
+        this.clear();
 
         system.removeStore(this);
     }

@@ -528,8 +528,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
 
             setColony(c, data);
-
-            inventory.createMaterialStore(c.getMaterialSystem());
         }
     }
 
@@ -564,6 +562,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         citizenData.setCitizenEntity(this);
 
         onJobChanged(getColonyJob());
+
+        inventory.createMaterialStore(c.getMaterialSystem());
     }
 
     private void updateLevel()

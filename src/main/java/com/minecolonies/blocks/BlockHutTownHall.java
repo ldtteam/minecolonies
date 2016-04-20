@@ -41,7 +41,6 @@ public class BlockHutTownHall extends AbstractBlockHut
 
         if(placer instanceof EntityPlayer && te instanceof TileEntityColonyBuilding && ColonyManager.getColony(worldIn, pos) == null)
         {
-
             EntityPlayer player = (EntityPlayer)placer;
             TileEntityColonyBuilding hut = (TileEntityColonyBuilding) te;
             ColonyManager.createColony(worldIn, hut.getPosition(), player);
