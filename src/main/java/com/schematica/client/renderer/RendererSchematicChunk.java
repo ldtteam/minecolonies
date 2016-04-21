@@ -286,53 +286,72 @@ public class RendererSchematicChunk {
 
 						boolean isAirBlock = mcWorld.isAirBlock(wPos);
 
-						if (!isAirBlock) {
-							if (Config.highlight && renderPass == 2) {
-								if (block == Blocks.air && Config.highlightAir) {
+						if (!isAirBlock && mcBlock != Blocks.snow_layer)
+                        {
+							if (Config.highlight && renderPass == 2)
+                            {
+								if (block == Blocks.air && Config.highlightAir)
+                                {
 									zero.set(x, y, z);
 									size.set(x + 1, y + 1, z + 1);
-									if (Config.drawQuads) {
+									if (Config.drawQuads)
+                                    {
 										RenderHelper.drawCuboidSurface(zero, size, RenderHelper.QUAD_ALL, 0.75f, 0.0f, 0.75f, 0.25f);
 									}
-									if (Config.drawLines) {
+									if (Config.drawLines)
+                                    {
 										RenderHelper.drawCuboidOutline(zero, size, RenderHelper.LINE_ALL, 0.75f, 0.0f, 0.75f, 0.25f);
 									}
-								} else if (block != mcBlock) {
+								}
+                                else if (block != mcBlock)
+                                {
 									zero.set(x, y, z);
 									size.set(x + 1, y + 1, z + 1);
-									if (Config.drawQuads) {
+									if (Config.drawQuads)
+                                    {
 										RenderHelper.drawCuboidSurface(zero, size, sides, 1.0f, 0.0f, 0.0f, 0.25f);
 									}
-									if (Config.drawLines) {
+									if (Config.drawLines)
+                                    {
 										RenderHelper.drawCuboidOutline(zero, size, sides, 1.0f, 0.0f, 0.0f, 0.25f);
 									}
-								} else if (this.schematic.getBlockState(pos) != mcWorld.getBlockState(wPos)) {
+								}
+                                else if (this.schematic.getBlockState(pos) != mcWorld.getBlockState(wPos)) {
 									zero.set(x, y, z);
 									size.set(x + 1, y + 1, z + 1);
-									if (Config.drawQuads) {
+									if (Config.drawQuads)
+                                    {
 										RenderHelper.drawCuboidSurface(zero, size, sides, 0.75f, 0.35f, 0.0f, 0.25f);
 									}
-									if (Config.drawLines) {
+									if (Config.drawLines)
+                                    {
 										RenderHelper.drawCuboidOutline(zero, size, sides, 0.75f, 0.35f, 0.0f, 0.25f);
 									}
 								}
 							}
-						} else if (block != Blocks.air) {
-							if (Config.highlight && renderPass == 2) {
+						}
+                        else if (block != Blocks.air)
+                        {
+							if (Config.highlight && renderPass == 2)
+                            {
 								zero.set(x, y, z);
 								size.set(x + 1, y + 1, z + 1);
-								if (Config.drawQuads) {
+								if (Config.drawQuads)
+                                {
 									RenderHelper.drawCuboidSurface(zero, size, sides, 0.0f, 0.75f, 1.0f, 0.25f);
 								}
-								if (Config.drawLines) {
+								if (Config.drawLines)
+                                {
 									RenderHelper.drawCuboidOutline(zero, size, sides, 0.0f, 0.75f, 1.0f, 0.25f);
 								}
 							}
-							if (block != null && block.getBlockLayer().ordinal() == renderPass) {
-								renderBlocks.renderBlock(this.schematic.getBlockState(new BlockPos(x,y,z)), new BlockPos(x,y,z), mcWorld, renderer);
+							if (block != null && block.getBlockLayer().ordinal() == renderPass && block != Blocks.wooden_pressure_plate)
+                            {
+                                renderBlocks.renderBlock(this.schematic.getBlockState(new BlockPos(x,y,z)), new BlockPos(x,y,z), mcWorld, renderer);
 							}
 						}
-					} catch (Exception e) {
+					} catch (Exception e)
+                    {
 						Log.logger.error("Failed to render block!", e);
 					}
 				}
