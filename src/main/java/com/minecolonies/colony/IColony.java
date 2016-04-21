@@ -43,5 +43,5 @@ public interface IColony
      *
      * @return  whether or not the colony has a town hall
      */
-    boolean hasTownhall();
+    boolean hasTownHall();
 }

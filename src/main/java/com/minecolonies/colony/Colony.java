@@ -47,7 +47,7 @@ public class Colony implements IColony
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private BuildingTownHall townhall;
+    private BuildingTownHall                                townHall;
     private                 Map<BlockPos, Building>         buildings                       = new HashMap<>();
 
     //  Citizenry
@@ -299,7 +299,7 @@ public class Colony implements IColony
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.equals(getWorld()) &&
-                BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownhall);
+                BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
     }
 
     @Override
@@ -394,7 +394,7 @@ public class Colony implements IColony
             //  Assume all chunks are loaded until we find one that isn't
             boolean allColonyChunksLoaded = true;
 
-            int distanceFromCenter = Configurations.workingRangeTownhall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+            int distanceFromCenter = Configurations.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
             for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
             {
                 for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
@@ -452,12 +452,12 @@ public class Colony implements IColony
 
         //  Spawn Citizens
         if (event.phase == TickEvent.Phase.START &&
-                townhall != null)
+                townHall != null)
         {
             if (citizens.size() < maxCitizens)
             {
                 int respawnInterval = Configurations.citizenRespawnInterval * 20;
-                respawnInterval -= (60 * townhall.getBuildingLevel());
+                respawnInterval -= (60 * townHall.getBuildingLevel());
 
                 if (event.world.getWorldTime() % respawnInterval == 0)
                 {
@@ -515,13 +515,13 @@ public class Colony implements IColony
                     }
 
                     double distance = player.getDistanceSq(center);
-                    if (distance < MathUtils.square(Configurations.workingRangeTownhall + 16))
+                    if (distance < MathUtils.square(Configurations.workingRangeTownHall + 16))
                     {
                         //  Players become subscribers if they come within 16 blocks of the edge of the colony
                         subscribers.add(player);
                     }
                     else if (oldSubscribers.contains(player) &&
-                             distance < MathUtils.square(Configurations.workingRangeTownhall * 2))
+                             distance < MathUtils.square(Configurations.workingRangeTownHall * 2))
                     {
                         //  Players remain subscribers while they remain within double the colony's radius
                         subscribers.add(player);
@@ -661,7 +661,7 @@ public class Colony implements IColony
                     //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersLocalizedMessage(
                             EntityUtils.getPlayersFromUUID(world, permissions.getMessagePlayers()),
-                            "tile.blockHutTownhall.messageMaxSize");
+                            "tile.blockHutTownHall.messageMaxSize");
                 }
             }
 
@@ -696,13 +696,13 @@ public class Colony implements IColony
      *
      * @return      Town hall of the colony
      */
-    public BuildingTownHall getTownhall()
+    public BuildingTownHall getTownHall()
     {
-        return townhall;
+        return townHall;
     }
 
     @Override
-    public boolean hasTownhall() { return townhall != null; }
+    public boolean hasTownHall() { return townHall != null; }
 
     /**
      * Get building in Colony by ID
@@ -748,9 +748,9 @@ public class Colony implements IColony
         if (building instanceof BuildingTownHall)
         {
             //  Limit 1 town hall
-            if (townhall == null)
+            if (townHall == null)
             {
-                townhall = (BuildingTownHall) building;
+                townHall = (BuildingTownHall) building;
             }
         }
     }
@@ -812,9 +812,9 @@ public class Colony implements IColony
                                           building.getSchematicName()));
         }
 
-        if (building == townhall)
+        if (building == townHall)
         {
-            townhall = null;
+            townHall = null;
         }
 
         //  Allow Citizens to fix up any data that wasn't fixed up by the Building's own onDestroyed

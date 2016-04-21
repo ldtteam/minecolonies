@@ -16,7 +16,7 @@ public final class ModBlocks
      * Creating objects for all blocks in the mod.
      * References can be made to here.
      */
-    public static final Block blockHutTownhall   = new BlockHutTownhall();
+    public static final Block blockHutTownHall   = new BlockHutTownHall();
     public static final Block blockHutCitizen    = new BlockHutCitizen();
     public static final Block blockHutMiner      = new BlockHutMiner();
     public static final Block blockHutLumberjack = new BlockHutLumberjack();

@@ -99,10 +99,10 @@ public class WorkOrderBuild extends WorkOrder
             //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
             //  - The Builder's Work Building is built
             //  - OR the WorkOrder is for the Builder's Work Building
-            //  - OR the WorkOrder is for the Townhall
+            //  - OR the WorkOrder is for the TownHall
             if (citizen.getWorkBuilding().getBuildingLevel() > 0 ||
                     citizen.getWorkBuilding().getID().equals(buildingId) ||
-                    (colony.hasTownhall() && colony.getTownhall().getID().equals(buildingId)))
+                    (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingId)))
             {
                 job.setWorkOrder(this);
                 setClaimedBy(citizen);

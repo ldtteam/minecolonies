@@ -88,6 +88,11 @@ public class InventoryCitizen extends InventoryBasic
         return heldItem;
     }
 
+    public boolean isSlotEmpty(int index)
+    {
+        return super.getStackInSlot(index) == null;
+    }
+
     //-----------------------------Material Handling--------------------------------
 
     public void createMaterialStore(MaterialSystem system)
@@ -151,13 +156,56 @@ public class InventoryCitizen extends InventoryBasic
         addStackToMaterialStore(stack);
     }
 
+    /**
+     * Put stack in inventory.
+     *
+     * @param stack The {@link ItemStack} to put into the inventory
+     * @return null if successful, otherwise return whatever couldn't be put into the inventory
+     */
+    public ItemStack func_174894_a(ItemStack stack)
+    {
+        //Minecraft code makes a copy of stack and doesn't change it, so its safe for us to use later on
+        ItemStack returned = super.func_174894_a(stack);
+
+        if(returned == null)
+        {
+            addStackToMaterialStore(stack);
+        }
+        else if(stack.stackSize != returned.stackSize)
+        {
+            materialStore.addMaterial(stack.getItem(), stack.stackSize - returned.stackSize);
+        }
+
+        return returned;
+    }
+
+    /**
+     * Removes a stack from the given slot and returns it.
+     */
+    @Override
+    public ItemStack removeStackFromSlot(int index)
+    {
+        ItemStack stack = super.removeStackFromSlot(index);
+        removeStackFromMaterialStore(stack);
+
+        return stack;
+    }
+
+    @Override
+    public void clear()
+    {
+        materialStore.clear();
+
+        super.clear();
+    }
+
     private void addStackToMaterialStore(ItemStack stack)
     {
         if(stack == null){
             return;
         }
         //todo: colton reenable it
-        //materialStore.addMaterial(stack.getItem(), stack.stackSize);
+        materialStore.addMaterial(stack.getItem(), stack.stackSize);
     }
 
     private void removeStackFromMaterialStore(ItemStack stack)
@@ -166,6 +214,6 @@ public class InventoryCitizen extends InventoryBasic
             return;
         }
         //todo: colton reenable it
-        //materialStore.removeMaterial(stack.getItem(), stack.stackSize);
+        materialStore.removeMaterial(stack.getItem(), stack.stackSize);
     }
 }

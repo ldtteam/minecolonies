@@ -82,15 +82,17 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + message.hut);
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         World world = player.worldObj;
+        BlockPos pos = new BlockPos(message.x, message.y, message.z);
 
-        if(player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, new BlockPos(message.x, message.y, message.z)))
+        if(player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, pos))
         {
-            world.setBlockState(new BlockPos(message.x, message.y, message.z), block.getDefaultState());
-            block.onBlockPlacedBy(world, new BlockPos(message.x, message.y, message.z), world.getBlockState(new BlockPos(message.x, message.y, message.z)), player, null);
+            world.destroyBlock(pos, true);
+            world.setBlockState(pos, block.getDefaultState());
+            block.onBlockPlacedBy(world, pos, world.getBlockState(pos), player, null);
 
             player.inventory.consumeInventoryItem(Item.getItemFromBlock(block));
 
-            Building building = ColonyManager.getBuilding(world, new BlockPos(message.x, message.y, message.z));
+            Building building = ColonyManager.getBuilding(world, pos);
 
             if(building != null)
             {

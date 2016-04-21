@@ -121,7 +121,7 @@ public abstract class Building
         addMapping("Lumberjack",    BuildingLumberjack.class,    BlockHutLumberjack.class);
         addMapping("Miner",         BuildingMiner.class,         BlockHutMiner.class);
         addMapping("Stonemason",    BuildingStonemason.class,    BlockHutStonemason.class);
-        addMapping("Townhall",      BuildingTownHall.class,      BlockHutTownhall.class);
+        addMapping("TownHall",      BuildingTownHall.class,      BlockHutTownHall.class);
         addMapping("Warehouse",     BuildingWarehouse.class,     BlockHutWarehouse.class);
         addMapping("Fisherman",     BuildingFisherman.class,     BlockHutFisherman.class);
 

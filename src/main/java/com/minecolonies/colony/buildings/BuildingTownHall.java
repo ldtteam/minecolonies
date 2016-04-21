@@ -1,6 +1,6 @@
 package com.minecolonies.colony.buildings;
 
-import com.minecolonies.client.gui.WindowTownhall;
+import com.minecolonies.client.gui.WindowTownHall;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import net.minecraft.util.BlockPos;
@@ -35,7 +35,7 @@ public class BuildingTownHall extends BuildingHut
 
         public com.blockout.views.Window getWindow()
         {
-            return new WindowTownhall(this);
+            return new WindowTownHall(this);
         }
     }
 }

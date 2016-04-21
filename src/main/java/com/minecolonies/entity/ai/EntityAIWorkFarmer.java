@@ -426,8 +426,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                     }
                     try
                     {
-                        //Crashes when called before Minecraft Client fully initialized
-                        FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(crops.get(0), world.getBlockState(crops.get(0)));
+                        //Crashes when called before Minecraft Client fully initialized, crashes the server as well
+                        //FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(crops.get(0), world.getBlockState(crops.get(0)));
                     }
                     catch (Exception exp)
                     {

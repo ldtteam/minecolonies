@@ -60,7 +60,7 @@ public class ColonyManager
 
         coloniesByWorld.get(colony.getDimensionId()).add(colony);
 
-        String colonyName = LanguageHandler.format("com.minecolonies.gui.townhall.defaultName", player.getDisplayName());
+        String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayName());
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
 
@@ -370,14 +370,14 @@ public class ColonyManager
     }
 
     /**
-     * Returns the minimum distance between two townhalls, to not make colonies collide
+     * Returns the minimum distance between two town halls, to not make colonies collide
      *
      * @return          Minimum town hall distance
      */
     public static double getMinimumDistanceBetweenTownHalls()
     {
-        //  [Townhall](Radius)+(Padding)+(Radius)[TownHall]
-        return (2 * Configurations.workingRangeTownhall) + Configurations.townhallPadding;
+        //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
+        return (2 * Configurations.workingRangeTownHall) + Configurations.townHallPadding;
     }
 
     /**

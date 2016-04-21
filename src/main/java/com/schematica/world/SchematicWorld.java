@@ -623,46 +623,46 @@ public class SchematicWorld extends World
     {
         /*
         int tmp;
-		for (int x = 0; x < this.width; x++) {
-			for (int y = 0; y < this.height; y++) {
-				for (int z = 0; z < (this.length + 1) / 2; z++) {
-					tmp = this.blocks[x][y][z];
-					this.blocks[x][y][z] = this.blocks[x][y][this.length - 1 - z];
-					this.blocks[x][y][this.length - 1 - z] = tmp;
+        for (int x = 0; x < this.width; x++) {
+            for (int y = 0; y < this.height; y++) {
+                for (int z = 0; z < (this.length + 1) / 2; z++) {
+                    tmp = this.blocks[x][y][z];
+                    this.blocks[x][y][z] = this.blocks[x][y][this.length - 1 - z];
+                    this.blocks[x][y][this.length - 1 - z] = tmp;
 
-					if (z == this.length - 1 - z) {
-						this.metadata[x][y][z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][z], this.metadata[x][y][z]);
-					} else {
-						tmp = this.metadata[x][y][z];
-						this.metadata[x][y][z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][z], this.metadata[x][y][this.length - 1 - z]);
-						this.metadata[x][y][this.length - 1 - z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][this.length - 1 - z], tmp);
-					}
-				}
-			}
-		}
+                    if (z == this.length - 1 - z) {
+                        this.metadata[x][y][z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][z], this.metadata[x][y][z]);
+                    } else {
+                        tmp = this.metadata[x][y][z];
+                        this.metadata[x][y][z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][z], this.metadata[x][y][this.length - 1 - z]);
+                        this.metadata[x][y][this.length - 1 - z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][this.length - 1 - z], tmp);
+                    }
+                }
+            }
+        }
 
-		TileEntity tileEntity;
-		for (int i = 0; i < this.tileEntities.size(); i++) {
-			tileEntity = this.tileEntities.get(i);
-			tileEntity.zCoord = this.length - 1 - tileEntity.zCoord;
-			tileEntity.blockMetadata = this.metadata[tileEntity.xCoord][tileEntity.yCoord][tileEntity.zCoord];
+        TileEntity tileEntity;
+        for (int i = 0; i < this.tileEntities.size(); i++) {
+            tileEntity = this.tileEntities.get(i);
+            tileEntity.zCoord = this.length - 1 - tileEntity.zCoord;
+            tileEntity.blockMetadata = this.metadata[tileEntity.xCoord][tileEntity.yCoord][tileEntity.zCoord];
 
-			if (tileEntity instanceof TileEntitySkull && tileEntity.blockMetadata == 0x1) {
-				TileEntitySkull skullTileEntity = (TileEntitySkull) tileEntity;
-				int angle = skullTileEntity.func_82119_b();
-				int base = 0;
-				if (angle <= 7) {
-					base = 4;
-				} else {
-					base = 12;
-				}
+            if (tileEntity instanceof TileEntitySkull && tileEntity.blockMetadata == 0x1) {
+                TileEntitySkull skullTileEntity = (TileEntitySkull) tileEntity;
+                int angle = skullTileEntity.func_82119_b();
+                int base = 0;
+                if (angle <= 7) {
+                    base = 4;
+                } else {
+                    base = 12;
+                }
 
-				skullTileEntity.setSkullRotation((2 * base - angle) & 15);
-			}
-		}
+                skullTileEntity.setSkullRotation((2 * base - angle) & 15);
+            }
+        }
 
-		refreshChests();
-		*/
+        refreshChests();
+        */
     }
 
     public void rotate()

@@ -1,22 +1,22 @@
 com.minecolonies.error.supplyChestAlreadyPlaced=You have already placed a supply ship!
 
-com.minecolonies.gui.townhall.build=Build Townhall
-com.minecolonies.gui.townhall.repair=Repair Townhall
-com.minecolonies.gui.townhall.recall=Recall Citizens
-com.minecolonies.gui.townhall.togglespec=Toggle Specialization
-com.minecolonies.gui.townhall.currTownhallName=Colony Name:
-com.minecolonies.gui.townhall.currentSpecialization=Current Specialization:
-com.minecolonies.gui.townhall.rename=Rename Colony
-com.minecolonies.gui.townhall.rename.title=Rename Your Colony
-com.minecolonies.gui.townhall.actions=Actions
-com.minecolonies.gui.townhall.defaultName=%s's Colony
-com.minecolonies.gui.townhall.citizens=Citizens
-com.minecolonies.gui.townhall.permissions=Permissions
+com.minecolonies.gui.townHall.build=Build TownHall
+com.minecolonies.gui.townHall.repair=Repair TownHall
+com.minecolonies.gui.townHall.recall=Recall Citizens
+com.minecolonies.gui.townHall.togglespec=Toggle Specialization
+com.minecolonies.gui.townHall.currTownHallName=Colony Name:
+com.minecolonies.gui.townHall.currentSpecialization=Current Specialization:
+com.minecolonies.gui.townHall.rename=Rename Colony
+com.minecolonies.gui.townHall.rename.title=Rename Your Colony
+com.minecolonies.gui.townHall.actions=Actions
+com.minecolonies.gui.townHall.defaultName=%s's Colony
+com.minecolonies.gui.townHall.citizens=Citizens
+com.minecolonies.gui.townHall.permissions=Permissions
 
-com.minecolonies.gui.townhall.population.totalCitizens=Number of Citizens: %d/%d
-com.minecolonies.gui.townhall.population.unemployed=Unemployed: %d
-com.minecolonies.gui.townhall.population.builders=Builders: %d
-com.minecolonies.gui.townhall.population.deliverymen=Deliverymen: %d
+com.minecolonies.gui.townHall.population.totalCitizens=Number of Citizens: %d/%d
+com.minecolonies.gui.townHall.population.unemployed=Unemployed: %d
+com.minecolonies.gui.townHall.population.builders=Builders: %d
+com.minecolonies.gui.townHall.population.deliverymen=Deliverymen: %d
 
 com.minecolonies.gui.workerHuts.buildersHut=Builder's Hut
 com.minecolonies.gui.workerHuts.warehouse=Warehouse
@@ -39,6 +39,7 @@ com.minecolonies.gui.workerHuts.minerNodeList=Levels
 com.minecolonies.gui.workerHuts.homeHut=Citizen's Hut
 com.minecolonies.gui.workerHuts.fisherman=Fisherman's Hut
 com.minecolonies.gui.workerHuts.lumberjackHut=Lumberjack's Hut
+com.minecolonies.gui.buildtool.nullHut=No Hut available
 
 com.minecolonies.gui.warehouse.toBlacksmith=Deliver to Blacksmith:
 com.minecolonies.gui.warehouse.toStonemason=Deliver to Stonemason:
@@ -67,7 +68,9 @@ tile.minecolonies.blockHutLumberjack.name=Sawmill
 tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
 tile.minecolonies.blockHutMiner.name=Mine
 tile.minecolonies.blockHutStonemason.name=Quarry
-tile.minecolonies.blockHutTownhall.name=Town Hall
+tile.minecolonies.blockHutTownHall.name=Town Hall
+tile.minecolonies.blockHutTownHall.name=Town Hall
+
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
 
 com.minecolonies.job.Builder=Builder
@@ -77,15 +80,14 @@ com.minecolonies.job.Lumberjack=Lumberjack
 com.minecolonies.job.Miner=Miner
 com.minecolonies.job.Fisherman=Fisherman
 
+tile.blockHutTownHall.messageMaxSize=Colony has reached max size
+tile.blockHutTownHall.messageColonistDead=A colonist has died!
+tile.blockHutTownHall.messagePlacedAlready=You have placed a Town Hall already
+tile.blockHutTownHall.messageInvalidWorld=You can't place a town hall in this world type
+tile.blockHutTownHall.messageTooClose=Too close to existing town hall
 
-tile.blockHutTownhall.messageMaxSize=Colony has reached max size
-tile.blockHutTownhall.messageColonistDead=A colonist has died!
-tile.blockHutTownhall.messagePlacedAlready=You have placed a Town Hall already
-tile.blockHutTownhall.messageInvalidWorld=You can't place a townhall in this world type
-tile.blockHutTownhall.messageTooClose=Too close to existing townhall
-
-tile.blockHut.messageTooFarFromTownhall=You need to be closer to your townhall!
-tile.blockHut.messageNoTownhall=You need to place a townhall first!
+tile.blockHut.messageTooFarFromTownHall=You need to be closer to your town hall!
+tile.blockHut.messageNoTownHall=You need to place a town hall first!
 
 item.minecolonies.supplyChestDeployer.name=Supply Chest
 item.minecolonies.scepterGold.name=Building Tool

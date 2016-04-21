@@ -1,5 +1,5 @@
 {
-    "parent":"minecolonies:block/blockHutTownhall",
+    "parent":"minecolonies:block/blockHutTownHall",
     "display": {
         "thirdperson": {
             "rotation": [ 10, -45, 170 ],
