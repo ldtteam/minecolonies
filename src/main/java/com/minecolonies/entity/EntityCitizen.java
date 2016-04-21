@@ -58,8 +58,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final String TAG_XP_TOTAL         = "xpTotal";
     private static final String TAG_COLONY_ID        = "colony";
     private static final String TAG_CITIZEN          = "citizen";
-    private static final String TAG_SLOT             = "slot";
-    private static final String TAG_INVENTORY        = "Inventory";
     private static final String TAG_HELD_ITEM_SLOT   = "HeldItemSlot";
     private static final String TAG_STATUS           = "status";
     private static Field navigatorField;
@@ -811,18 +809,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             compound.setInteger(TAG_CITIZEN, citizenData.getId());
         }
 
-        NBTTagList inventoryList = new NBTTagList();
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            if (inventory.getStackInSlot(i) != null)
-            {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setInteger(TAG_SLOT, i);
-                inventory.getStackInSlot(i).writeToNBT(tag);
-                inventoryList.appendTag(tag);
-            }
-        }
-        compound.setTag(TAG_INVENTORY, inventoryList);
+        inventory.writeToNBT(compound);
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
     }
 
@@ -835,14 +822,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         colonyId = compound.getInteger(TAG_COLONY_ID);
         citizenId = compound.getInteger(TAG_CITIZEN);
 
-        NBTTagList nbttaglist = compound.getTagList(TAG_INVENTORY, NBT.TAG_COMPOUND);
-        for (int i = 0; i < nbttaglist.tagCount(); i++)
-        {
-            NBTTagCompound tag       = nbttaglist.getCompoundTagAt(i);
-            int            slot      = tag.getInteger(TAG_SLOT);
-            ItemStack      itemstack = ItemStack.loadItemStackFromNBT(tag);
-            inventory.setInventorySlotContents(slot, itemstack);
-        }
+        inventory.readFromNBT(compound);
+
         inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
     }
 
