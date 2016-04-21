@@ -537,13 +537,23 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                     ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
                     if (returnStack == null)
                     {
-                        worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
+                        ItemStack removed = worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
+                        if(removed.stackSize < stack.stackSize)
+                        {
+                            Log.logger.warn("Dump Inventory: Tried to remove " + stack.stackSize +
+                                    " items, but only " + removed.stackSize + " were removed");
+                        }
                         return true;
                     }
-                    worker.getInventoryCitizen().decrStackSize(
+                    ItemStack removed = worker.getInventoryCitizen().decrStackSize(
                             i,
                             stack.stackSize
                             - returnStack.stackSize);
+                    if(removed.stackSize < stack.stackSize)
+                    {
+                        Log.logger.warn("Dump Inventory: Tried to remove " + stack.stackSize +
+                                " items, but only " + removed.stackSize + " were removed");
+                    }
                     //Check that we are not inserting
                     // into a
                     // full inventory.
