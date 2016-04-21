@@ -103,7 +103,7 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * Y position of the xpLabel
      */
-    private static final int                    XP_LABEL_Y                      = 30;
+    private static final int                    XP_LABEL_Y                      = 28;
 
 
     /**

@@ -60,7 +60,7 @@ public class ColonyManager
 
         coloniesByWorld.get(colony.getDimensionId()).add(colony);
 
-        String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayName());
+        String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
 
