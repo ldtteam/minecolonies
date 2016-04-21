@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -18,6 +19,11 @@ public class TextField extends Pane
         String filter(String s);
         boolean isAllowedCharacter(char c);
     }
+
+    /**
+     * Texture resource location
+     */
+    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
 
     //  Attributes
     protected int     maxTextLength     = 32;
@@ -155,6 +161,7 @@ public class TextField extends Pane
         if (visibleString.length() > 0)
         {
             String s1 = cursorVisible ? visibleString.substring(0, relativeCursorPosition) : visibleString;
+            mc.renderEngine.bindTexture(TEXTURE);
             textX = mc.fontRendererObj.drawString(s1, textX, drawY, color, shadow);
         }
 
@@ -172,6 +179,7 @@ public class TextField extends Pane
         //  Draw string after cursor
         if (visibleString.length() > 0 && cursorVisible && relativeCursorPosition < visibleString.length())
         {
+            mc.renderEngine.bindTexture(TEXTURE);
             mc.fontRendererObj.drawString(visibleString.substring(relativeCursorPosition), textX, drawY, color, shadow);
         }
 
@@ -184,6 +192,7 @@ public class TextField extends Pane
             }
             else
             {
+                mc.renderEngine.bindTexture(TEXTURE);
                 mc.fontRendererObj.drawString("_", cursorX, drawY, color, shadow);
             }
         }
