@@ -2,6 +2,7 @@ package com.minecolonies.inventory;
 
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
+import com.minecolonies.util.Log;
 import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
@@ -234,6 +235,11 @@ public class InventoryCitizen extends InventoryBasic
             super.setInventorySlotContents(slot, itemstack);
         }
         //TODO make sure materialStore isn't null here, might have to call updateColonyServer in EntityCitizen while reading
+        if(materialStore == null)
+        {
+            Log.logger.error("EntityCitizen inventory has a null MaterialStore (returning to avoid crash, but will probably crash later, I hope you don't see this).");
+            return;
+        }
         materialStore.readFromNBT(compound);
     }
 

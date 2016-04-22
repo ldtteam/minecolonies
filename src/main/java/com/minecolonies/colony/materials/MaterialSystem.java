@@ -145,7 +145,7 @@ public class MaterialSystem
         Integer count = materials.get(material);
         if(count == null || count < quantity)
         {
-            throw new MaterialException("Count too low: " + quantity);
+            throw new QuantityNotFound("MaterialSystem", material.getID(), count == null ? 0 : count, quantity);
         }
         else if(count == quantity)
         {
