@@ -824,7 +824,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if(isServerWorld())
         {
-            onLivingUpdate();
             updateColonyServer();
         }
         inventory.readFromNBT(compound);
