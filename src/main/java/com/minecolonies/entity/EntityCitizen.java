@@ -822,6 +822,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         colonyId = compound.getInteger(TAG_COLONY_ID);
         citizenId = compound.getInteger(TAG_CITIZEN);
 
+        if(isServerWorld())
+        {
+            onLivingUpdate();
+            updateColonyServer();
+        }
         inventory.readFromNBT(compound);
 
         inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
