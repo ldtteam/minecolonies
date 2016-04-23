@@ -72,7 +72,6 @@ public class Text extends Pane
 
     public int getStringWidth(String s) { return (int)(mc.fontRendererObj.getStringWidth(s) * scale); }
 
-    @SuppressWarnings("unchecked")
     public List<String> getFormattedText()
     {
         if (formattedText == null)
