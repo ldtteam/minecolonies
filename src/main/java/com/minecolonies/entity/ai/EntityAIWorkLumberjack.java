@@ -413,15 +413,15 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private BlockPos findNearLeaves()
     {
-        int playerX = (int) worker.posX;
-        int playerY = (int) (worker.posY + 1);
-        int playerZ = (int) worker.posZ;
+        int playerX = (int) worker.getPosition().getX();
+        int playerY = (int) (worker.getPosition().getY() + 1);
+        int playerZ = (int) worker.getPosition().getZ();
         int radius  = 3;
-        for (int x = -radius; x < playerX + radius; x++)
+        for (int x = playerX; x < playerX + radius; x++)
         {
-            for (int y = -radius; y < playerY + radius; y++)
+            for (int y = playerY; y < playerY + radius; y++)
             {
-                for (int z = -radius; z < playerZ + radius; z++)
+                for (int z = playerZ; z < playerZ + radius; z++)
                 {
                     BlockPos pos = new BlockPos(x,y,z);
                     if (world.getBlockState(pos).getBlock().isLeaves(world, pos))
