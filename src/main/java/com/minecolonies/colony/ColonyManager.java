@@ -50,7 +50,8 @@ public class ColonyManager
      */
     public static Colony createColony(World w, BlockPos pos, EntityPlayer player)
     {
-        Colony colony = new Colony(++topColonyId, w, pos);
+        ++topColonyId;
+        Colony colony = new Colony(topColonyId, w, pos);
         colonies.put(colony.getID(), colony);
 
         if (!coloniesByWorld.containsKey(colony.getDimensionId()))

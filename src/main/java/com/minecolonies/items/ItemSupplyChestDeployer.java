@@ -62,19 +62,19 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      */
     public EnumFacing canShipBePlaced(World world, BlockPos pos)
     {
-        if(check(world, pos.west(), true, true))
+        if(check(world, pos.west(), true, false))
         {
             return EnumFacing.WEST;
         }
-        else if(check(world, pos.east(), true, false))
+        else if(check(world, pos.east(), true, true))
         {
             return EnumFacing.EAST;
         }
-        else if(check(world, pos.south(), false, false))
+        else if(check(world, pos.south(), false, true))
         {
             return EnumFacing.SOUTH;
         }
-        else if(check(world, pos.north(), false, true))
+        else if(check(world, pos.north(), false, false))
         {
             return EnumFacing.NORTH;
         }
