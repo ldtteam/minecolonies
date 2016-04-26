@@ -173,22 +173,22 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
 
                 if (vec3.squareDistanceTo(new Vec3(theEntity.posX, vec3.yCoord, theEntity.posZ)) < 0.1)
                 {
-                    double newSpeed = this.speed;
-
+                    //This way he is less nervous and gets up the ladder
+                    double newSpeed = 0.2;
                     switch (pEx.ladderFacing)
                     {
                         //  Any of these values is climbing, so adjust our direction of travel towards the ladder
                         case NORTH:
-                            vec3.addVector(0,0,-1);
-                            break;
-                        case SOUTH:
                             vec3.addVector(0,0,1);
                             break;
+                        case SOUTH:
+                            vec3.addVector(0,0,-1);
+                            break;
                         case WEST:
-                            vec3.addVector(-1,0,0);
+                            vec3.addVector(1,0,0);
                             break;
                         case EAST:
-                            vec3.addVector(1,0,0);
+                            vec3.addVector(-1,0,0);
                             break;
                         //  Any other value is going down, so lets not move at all
                         default:
