@@ -14,6 +14,11 @@ import java.util.*;
 public class MaterialSystem
 {
     /**
+     * Temporary variable to disabled MaterialHandling until I have time to complete it - Colton
+     */
+    public static final boolean isEnabled = false;
+
+    /**
      * This Map contains keeps track of how many extra materials we have in the colony. (Materials that aren't needed)
      */
     private Map<Material, Integer> materials = new HashMap<>();

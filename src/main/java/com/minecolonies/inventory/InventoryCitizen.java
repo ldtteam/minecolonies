@@ -177,7 +177,10 @@ public class InventoryCitizen extends InventoryBasic
         }
         else if(stack.stackSize != returned.stackSize)
         {
-            materialStore.addMaterial(stack.getItem(), stack.stackSize - returned.stackSize);
+            if(MaterialSystem.isEnabled)
+            {
+                materialStore.addMaterial(stack.getItem(), stack.stackSize - returned.stackSize);
+            }
         }
 
         return returned;
@@ -198,7 +201,10 @@ public class InventoryCitizen extends InventoryBasic
     @Override
     public void clear()
     {
-        materialStore.clear();
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.clear();
+        }
 
         super.clear();
     }
@@ -209,7 +215,10 @@ public class InventoryCitizen extends InventoryBasic
             return;
         }
 
-        materialStore.addMaterial(stack.getItem(), stack.stackSize);
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.addMaterial(stack.getItem(), stack.stackSize);
+        }
     }
 
     private void removeStackFromMaterialStore(ItemStack stack)
@@ -218,7 +227,10 @@ public class InventoryCitizen extends InventoryBasic
             return;
         }
 
-        materialStore.removeMaterial(stack.getItem(), stack.stackSize);
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.removeMaterial(stack.getItem(), stack.stackSize);
+        }
     }
 
     private static final String TAG_INVENTORY = "Inventory";
@@ -234,13 +246,17 @@ public class InventoryCitizen extends InventoryBasic
             int slot = tag.getInteger(TAG_SLOT);
             super.setInventorySlotContents(slot, itemstack);
         }
-        //TODO make sure materialStore isn't null here, might have to call updateColonyServer in EntityCitizen while reading
-        if(materialStore == null)
+
+        if(MaterialSystem.isEnabled && materialStore == null)
         {
             Log.logger.error("EntityCitizen inventory has a null MaterialStore (returning to avoid crash, but will probably crash later, I hope you don't see this).");
             return;
         }
-        materialStore.readFromNBT(compound);
+
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.readFromNBT(compound);
+        }
     }
 
     public void writeToNBT(NBTTagCompound compound)
@@ -257,7 +273,10 @@ public class InventoryCitizen extends InventoryBasic
             }
         }
 
-        materialStore.writeToNBT(compound);
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.writeToNBT(compound);
+        }
 
         compound.setTag(TAG_INVENTORY, inventoryList);
     }
