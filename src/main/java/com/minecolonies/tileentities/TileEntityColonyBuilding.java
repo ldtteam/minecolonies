@@ -4,6 +4,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -272,7 +273,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if(stack == null){
             return;
         }
-        building.getMaterialStore().addMaterial(stack.getItem(), stack.stackSize);
+
+        if(MaterialSystem.isEnabled)
+        {
+            building.getMaterialStore().addMaterial(stack.getItem(), stack.stackSize);
+        }
     }
 
     private void removeStackFromMaterialStore(ItemStack stack)
@@ -280,6 +285,10 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if(stack == null){
             return;
         }
-        building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
+
+        if(MaterialSystem.isEnabled)
+        {
+            building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
+        }
     }
 }

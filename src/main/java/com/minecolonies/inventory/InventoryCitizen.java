@@ -2,9 +2,13 @@ package com.minecolonies.inventory;
 
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
+import com.minecolonies.util.Log;
 import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 
 /**
  * Basic inventory for the citizens
@@ -173,7 +177,10 @@ public class InventoryCitizen extends InventoryBasic
         }
         else if(stack.stackSize != returned.stackSize)
         {
-            materialStore.addMaterial(stack.getItem(), stack.stackSize - returned.stackSize);
+            if(MaterialSystem.isEnabled)
+            {
+                materialStore.addMaterial(stack.getItem(), stack.stackSize - returned.stackSize);
+            }
         }
 
         return returned;
@@ -194,7 +201,10 @@ public class InventoryCitizen extends InventoryBasic
     @Override
     public void clear()
     {
-        materialStore.clear();
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.clear();
+        }
 
         super.clear();
     }
@@ -204,8 +214,11 @@ public class InventoryCitizen extends InventoryBasic
         if(stack == null){
             return;
         }
-        //todo: colton reenable it
-        materialStore.addMaterial(stack.getItem(), stack.stackSize);
+
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.addMaterial(stack.getItem(), stack.stackSize);
+        }
     }
 
     private void removeStackFromMaterialStore(ItemStack stack)
@@ -213,7 +226,58 @@ public class InventoryCitizen extends InventoryBasic
         if(stack == null){
             return;
         }
-        //todo: colton reenable it
-        materialStore.removeMaterial(stack.getItem(), stack.stackSize);
+
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.removeMaterial(stack.getItem(), stack.stackSize);
+        }
+    }
+
+    private static final String TAG_INVENTORY = "Inventory";
+    private static final String TAG_SLOT      = "slot";
+
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        NBTTagList nbtTagList = compound.getTagList(TAG_INVENTORY, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < nbtTagList.tagCount(); i++)
+        {
+            NBTTagCompound tag = nbtTagList.getCompoundTagAt(i);
+            ItemStack itemstack = ItemStack.loadItemStackFromNBT(tag);
+            int slot = tag.getInteger(TAG_SLOT);
+            super.setInventorySlotContents(slot, itemstack);
+        }
+
+        if(MaterialSystem.isEnabled && materialStore == null)
+        {
+            Log.logger.error("EntityCitizen inventory has a null MaterialStore (returning to avoid crash, but will probably crash later, I hope you don't see this).");
+            return;
+        }
+
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.readFromNBT(compound);
+        }
+    }
+
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        NBTTagList inventoryList = new NBTTagList();
+        for (int i = 0; i < this.getSizeInventory(); i++)
+        {
+            if (this.getStackInSlot(i) != null)
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setInteger(TAG_SLOT, i);
+                super.getStackInSlot(i).writeToNBT(tag);
+                inventoryList.appendTag(tag);
+            }
+        }
+
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.writeToNBT(compound);
+        }
+
+        compound.setTag(TAG_INVENTORY, inventoryList);
     }
 }

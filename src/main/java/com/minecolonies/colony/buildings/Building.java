@@ -6,6 +6,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.materials.MaterialStore;
+import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.BlockPosUtil;
@@ -247,7 +248,10 @@ public abstract class Building
             style = "classic";
         }
 
-        materialStore.readFromNBT(compound);
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.readFromNBT(compound);
+        }
     }
 
     /**
@@ -274,7 +278,10 @@ public abstract class Building
         compound.setInteger(TAG_ROTATION, rotation);
         compound.setString(TAG_STYLE, style);
 
-        materialStore.writeToNBT(compound);
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.writeToNBT(compound);
+        }
     }
 
     /**
@@ -400,7 +407,10 @@ public abstract class Building
      */
     public void onDestroyed()
     {
-       materialStore.destroy();
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.destroy();
+        }
     }
 
     /**

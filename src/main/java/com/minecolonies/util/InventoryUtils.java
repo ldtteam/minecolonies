@@ -187,7 +187,7 @@ public class InventoryUtils {
     {
         if (stack != null)
         {
-            ItemStack returnStack = stack;
+            ItemStack returnStack = stack.copy();
             int slot;
             while((slot = containsPartialStack(inventory, stack)) != -1 && returnStack != null)
             {

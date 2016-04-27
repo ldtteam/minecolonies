@@ -95,8 +95,8 @@ public class Image extends Pane
     protected void drawSelf(int mx, int my)
     {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        mc.renderEngine.tick();
         mc.renderEngine.bindTexture(image);
-
         //Draw
         drawModalRectWithCustomSizedTexture(x, y,
                 imageOffsetX, imageOffsetY,

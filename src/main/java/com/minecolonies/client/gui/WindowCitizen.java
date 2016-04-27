@@ -99,11 +99,11 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * X position of the xpLabel
      */
-    private static final int                    XP_LABEL_X                      = 60;
+    private static final int                    XP_LABEL_X                      = -20;
     /**
      * Y position of the xpLabel
      */
-    private static final int                    XP_LABEL_Y                      = 30;
+    private static final int                    XP_LABEL_Y                      = 28;
 
 
     /**

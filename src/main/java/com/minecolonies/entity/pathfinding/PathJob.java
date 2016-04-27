@@ -572,6 +572,13 @@ public abstract class PathJob implements Callable<PathEntity>
             return -1;
         }
 
+        if(parent != null) {
+            Block here = world.getBlockState(parent.pos.down()).getBlock();
+            if (here.getMaterial().isLiquid() && !isPassable(pos)) {
+                return -1;
+            }
+        }
+
         //  Now check the block we want to move to
         Block target = world.getBlockState(pos).getBlock();
         if (!isPassable(target, pos))

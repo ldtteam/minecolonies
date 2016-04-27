@@ -31,16 +31,12 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import net.minecraft.world.pathfinder.WalkNodeProcessor;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.lang.reflect.Field;
 import java.util.*;
-
-import static net.minecraftforge.common.util.Constants.NBT;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
@@ -58,8 +54,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final String TAG_XP_TOTAL         = "xpTotal";
     private static final String TAG_COLONY_ID        = "colony";
     private static final String TAG_CITIZEN          = "citizen";
-    private static final String TAG_SLOT             = "slot";
-    private static final String TAG_INVENTORY        = "Inventory";
     private static final String TAG_HELD_ITEM_SLOT   = "HeldItemSlot";
     private static final String TAG_STATUS           = "status";
     private static Field navigatorField;
@@ -138,7 +132,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tasks.addTask(6, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
         this.tasks.addTask(7, new EntityAICitizenWander(this, 0.6D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
-
+        this.tasks.addTask(9, new EntityAIOpenFenceGate(this, true));
+        
         onJobChanged(getColonyJob());
     }
 
@@ -811,18 +806,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             compound.setInteger(TAG_CITIZEN, citizenData.getId());
         }
 
-        NBTTagList inventoryList = new NBTTagList();
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            if (inventory.getStackInSlot(i) != null)
-            {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setInteger(TAG_SLOT, i);
-                inventory.getStackInSlot(i).writeToNBT(tag);
-                inventoryList.appendTag(tag);
-            }
-        }
-        compound.setTag(TAG_INVENTORY, inventoryList);
+        inventory.writeToNBT(compound);
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
     }
 
@@ -835,14 +819,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         colonyId = compound.getInteger(TAG_COLONY_ID);
         citizenId = compound.getInteger(TAG_CITIZEN);
 
-        NBTTagList nbttaglist = compound.getTagList(TAG_INVENTORY, NBT.TAG_COMPOUND);
-        for (int i = 0; i < nbttaglist.tagCount(); i++)
+        if(isServerWorld())
         {
-            NBTTagCompound tag       = nbttaglist.getCompoundTagAt(i);
-            int            slot      = tag.getInteger(TAG_SLOT);
-            ItemStack      itemstack = ItemStack.loadItemStackFromNBT(tag);
-            inventory.setInventorySlotContents(slot, itemstack);
+            updateColonyServer();
         }
+        inventory.readFromNBT(compound);
+
         inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
     }
 

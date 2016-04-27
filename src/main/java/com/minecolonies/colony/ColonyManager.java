@@ -50,7 +50,8 @@ public class ColonyManager
      */
     public static Colony createColony(World w, BlockPos pos, EntityPlayer player)
     {
-        Colony colony = new Colony(++topColonyId, w, pos);
+        ++topColonyId;
+        Colony colony = new Colony(topColonyId, w, pos);
         colonies.put(colony.getID(), colony);
 
         if (!coloniesByWorld.containsKey(colony.getDimensionId()))
@@ -60,7 +61,7 @@ public class ColonyManager
 
         coloniesByWorld.get(colony.getDimensionId()).add(colony);
 
-        String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayName());
+        String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
 
@@ -83,9 +84,7 @@ public class ColonyManager
      * Get colony that contains a given coordinate
      *
      * @param w     World
-     * @param x     x-coordinate
-     * @param y     y-coordiante
-     * @param z     z-coordinate
+     * @param pos   coordinates
      * @return      Colony at the given location
      */
     public static Colony getColony(World w, BlockPos pos)
@@ -105,9 +104,7 @@ public class ColonyManager
      * Get closest colony by x,y,z
      *
      * @param w     World
-     * @param x     x-coordinate
-     * @param y     y-coordinate
-     * @param z     z-coordinate
+     * @param pos   coordinates
      * @return      Colony closest to coordinates
      */
     public static Colony getClosestColony(World w, BlockPos pos)
@@ -224,9 +221,7 @@ public class ColonyManager
      * Get Colony that contains a given (x, y, z)
      *
      * @param w         World
-     * @param x         x-coordinate
-     * @param y         y-coordinate
-     * @param z         z-coordinate
+     * @param pos       coordinates
      * @return          returns the view belonging to the colony at x, y, z,
      */
     public static ColonyView getColonyView(World w, BlockPos pos)
@@ -241,7 +236,7 @@ public class ColonyManager
 
     /**
      * Returns the closest view
-     * @see {@link #getColonyView(World, int, int, int)}
+     * @see {@link #getColonyView(World, BlockPos)}
      *
      * @param w     World
      * @param pos	Block Position
@@ -321,9 +316,7 @@ public class ColonyManager
      * @see {@link #getIColony(World, int)}
      *
      * @param w         World
-     * @param x         x-coordinate
-     * @param y         y-coordinate
-     * @param z         z-coordinate
+     * @param pos       coordinates
      * @return          View of colony or colony itself depending on side
      */
     public static IColony getIColony(World w, BlockPos pos)
@@ -332,7 +325,7 @@ public class ColonyManager
     }
 
     /**
-     * See {@link #getIColony(World, int)} and {@link #getClosestColony(World, int, int, int)}
+     * See {@link #getIColony(World, int)} and {@link #getClosestColony(World, BlockPos)}
      *
      * @param w         World
      * @param pos		Block position

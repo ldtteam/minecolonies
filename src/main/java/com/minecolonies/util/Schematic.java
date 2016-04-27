@@ -174,6 +174,10 @@ public final class Schematic
      */
     private void placeSchematic(BlockPos pos)
     {
+        x = pos.getX();
+        y = pos.getY();
+        z = pos.getZ();
+
         List<BlockPos> delayedBlocks = new ArrayList<>();
 
         for (int j = 0; j < schematicWorld.getHeight(); j++)
@@ -183,8 +187,8 @@ public final class Schematic
                 for (int i = 0; i < schematicWorld.getWidth(); i++)
                 {
 
-                    Block block    = this.schematicWorld.getBlock(i, j, k);
-                    IBlockState   metadata = this.schematicWorld.getBlockState(new BlockPos(i, j, k));
+                    Block       block    = this.schematicWorld.getBlock(i, j, k);
+                    IBlockState metadata = this.schematicWorld.getBlockState(new BlockPos(i, j, k));
 
                     if (block == Blocks.air && !world.getBlockState(new BlockPos(x+i, y+j, z+k)).getBlock().getMaterial().isSolid())
                     {
@@ -199,9 +203,9 @@ public final class Schematic
                             {
                                 world.setBlockState(new BlockPos(x + i, y + j, z + k), metadata, 0x03);
                             }
-                            //todo really needed?
-                            //Maybe the new BlockState may already update this
-                            //block.onPostBlockPlaced(world, x + i, y + j, z + k, metadata);
+                            //todo Is this the same?
+                            //block.onPostBlockPlaced(world,new BlockPos( x + i, y + j, z + k), metadata);
+                            block.onBlockAdded(world,new BlockPos( x + i, y + j, z + k), metadata);
                         }
                     }
                     else
@@ -232,8 +236,9 @@ public final class Schematic
                 {
                     world.setBlockState(newPos, metadata, 0x03);
                 }
-                //todo Again, really needed?
-                //block.onPostBlockPlaced(world, newPos, metadata);
+                //todo Is this the same?
+                //block.onPostBlockPlaced(world,new BlockPos( x + i, y + j, z + k), metadata);
+                block.onBlockAdded(world, newPos, metadata);
             }
         }
     }

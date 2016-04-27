@@ -3,6 +3,7 @@ package com.blockout.controls;
 import com.blockout.Alignment;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 
 public class Text extends Pane
 {
+    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
     protected String    text;
     protected List<String> formattedText;
     protected int       textHeight;
@@ -70,7 +72,6 @@ public class Text extends Pane
 
     public int getStringWidth(String s) { return (int)(mc.fontRendererObj.getStringWidth(s) * scale); }
 
-    @SuppressWarnings("unchecked")
     public List<String> getFormattedText()
     {
         if (formattedText == null)
@@ -141,6 +142,7 @@ public class Text extends Pane
             GL11.glPushMatrix();
             GL11.glTranslatef(getX() + offsetX, getY() + offsetY, 0);
             GL11.glScalef(scale, scale, scale);
+            mc.renderEngine.bindTexture(TEXTURE);
             mc.fontRendererObj.drawString(s, 0, 0, textColor, shadow);
             GL11.glPopMatrix();
 
