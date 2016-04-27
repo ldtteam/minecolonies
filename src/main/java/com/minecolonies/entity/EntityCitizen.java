@@ -31,16 +31,12 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import net.minecraft.world.pathfinder.WalkNodeProcessor;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.lang.reflect.Field;
 import java.util.*;
-
-import static net.minecraftforge.common.util.Constants.NBT;
 
 public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 {
@@ -136,7 +132,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.tasks.addTask(6, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
         this.tasks.addTask(7, new EntityAICitizenWander(this, 0.6D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
-
+        this.tasks.addTask(9, new EntityAIOpenFenceGate(this, true));
+        
         onJobChanged(getColonyJob());
     }
 
