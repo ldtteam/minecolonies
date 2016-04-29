@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
+import static com.minecolonies.entity.ai.AIState.*;
+
 /**
  * Miner AI class
  * Created: December 20, 2014
@@ -46,13 +48,79 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
     private Node workingNode = null;
 
 
+    /**
+     * Constructor for the Miner.
+     * Defines the tasks the miner executes.
+     *
+     * @param job a fisherman job to use.
+     */
     public EntityAIWorkMiner(JobMiner job)
     {
         super(job);
-        super.registerTargets(new AITarget(() -> {
-            workOnTask();
-            return AIState.START_WORKING;
-        }));
+        super.registerTargets(
+                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+                new AITarget(PREPARING, this::prepareForMining),
+                new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder),
+                new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder),
+                new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft),
+                new AITarget(MINER_MINING_SHAFT, this::doShaftMining),
+                new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding),
+                new AITarget(MINER_MINING_NODE, this::doNodeMining)
+        );
+    }
+
+    //Miner wants to work but is not at building
+    private AIState startWorkingAtOwnBuilding()
+    {
+        if (walkToBuilding())
+        {
+            return START_WORKING;
+        }
+        //Miner is at building
+        return PREPARING;
+    }
+
+    private AIState prepareForMining()
+    {
+        if (!getOwnBuilding().foundLadder)
+        {
+            return MINER_SEARCHING_LADDER;
+        }
+        return MINER_CHECK_MINESHAFT;
+    }
+
+    //Walking to the ladder to check out the mine
+    private AIState goToLadder()
+    {
+        if (walkToLadder())
+        {
+            return MINER_WALKING_TO_LADDER;
+        }
+        return MINER_CHECK_MINESHAFT;
+    }
+
+    private AIState checkMineShaft()
+    {
+        //TODO: check if mineshaft needs repairing!
+        //Check if we reached the mineshaft depth limit
+        if (getLastLadder(getOwnBuilding().ladderLocation) < getOwnBuilding().getDepthLimit())
+        {
+            getOwnBuilding().clearedShaft = true;
+            return MINER_MINING_NODE;
+        }
+        getOwnBuilding().clearedShaft = false;
+        return MINER_MINING_SHAFT;
+    }
+
+    /**
+     * This method will be overridden by AI implementations.
+     * It will serve as a tick function.
+     */
+    @Override
+    public void workOnTask()
+    {
+        //Migration to new system complete
     }
 
     @Override
@@ -90,7 +158,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         return Utils.isMiningTool(stack);
     }
 
-    private void lookForLadder()
+    private AIState lookForLadder()
     {
         BuildingMiner buildingMiner = getOwnBuilding();
 
@@ -99,8 +167,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         {
             if (world.getBlockState(buildingMiner.ladderLocation).getBlock() == Blocks.ladder)
             {
-                job.setStage(Stage.LADDER_FOUND);
-                return;
+                return MINER_WALKING_TO_LADDER;
             }
             else
             {
@@ -122,6 +189,8 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                 }
             }
         }
+
+        return MINER_SEARCHING_LADDER;
     }
 
     private void tryFindLadderAt(BlockPos pos)
@@ -179,34 +248,33 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         buildingMiner.foundLadder = true;
     }
 
-    private void doShaftMining()
+    private AIState doShaftMining()
     {
-
         currentWorkingLocation = getNextBlockInShaftToMine();
         if (currentWorkingLocation == null)
         {
-            advanceLadder();
-            return;
+            return advanceLadder(MINER_MINING_SHAFT);
         }
 
         //Note for future me:
         //we have to return; on false of this method
         //but omitted because end of method.
         mineBlock(currentWorkingLocation, currentStandingPosition);
+
+        return MINER_MINING_SHAFT;
     }
 
 
-    private void advanceLadder()
+    private AIState advanceLadder(AIState state)
     {
         if (getOwnBuilding().startingLevelShaft >= 5)
         {
-            job.setStage(Stage.BUILD_SHAFT);
-            return;
+            return MINER_BUILDING_SHAFT;
         }
 
         if (checkOrRequestItems(new ItemStack(Blocks.cobblestone, 2), new ItemStack(Blocks.ladder)))
         {
-            return;
+            return state;
         }
 
         BlockPos safeStand = new BlockPos(getOwnBuilding().ladderLocation.getX(),
@@ -234,7 +302,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                                                                  safeCobble.getZ() + z);
                 if (!secureBlock(curBlock, currentStandingPosition))
                 {
-                    return;
+                    return state;
                 }
             }
         }
@@ -243,7 +311,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         if (!mineBlock(nextCobble, safeStand) || !mineBlock(nextLadder, safeStand))
         {
             //waiting until blocks are mined
-            return;
+            return state;
         }
 
 
@@ -255,7 +323,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         //set ladder
         setBlockFromInventory(nextLadder, Blocks.ladder, metadata);
         getOwnBuilding().startingLevelShaft++;
-        job.setStage(Stage.CHECK_MINESHAFT);
+        return MINER_CHECK_MINESHAFT;
     }
 
     private IBlockState getBlockState(BlockPos pos)
@@ -476,31 +544,31 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         return false;
     }
 
-    private void doShaftBuilding()
+    private AIState doShaftBuilding()
     {
         if (walkToBuilding())
         {
-            return;
+            return MINER_BUILDING_SHAFT;
         }
         if (buildNextBlockInShaft())
         {
-            return;
+            return MINER_BUILDING_SHAFT;
         }
         getOwnBuilding().startingLevelShaft = 0;
-        job.setStage(Stage.START_WORKING);
+
+        return START_WORKING;
     }
 
-    private void doNodeMining()
+    private AIState doNodeMining()
     {
         Level currentLevel = getOwnBuilding().getCurrentLevel();
-        if (currentLevel == null)
-        {
+        if (currentLevel == null) {
             logger.warn("Current Level not set, resetting...");
             getOwnBuilding().currentLevel = getOwnBuilding().getLevels().size() - 1;
-            return;
+            return doNodeMining();
         }
-
-        mineAtLevel(currentLevel);
+            mineAtLevel(currentLevel);
+        return MINER_CHECK_MINESHAFT;
     }
 
     private void mineAtLevel(Level currentLevel)
@@ -941,20 +1009,20 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         return true;
     }
 
-    private boolean mineSideOfNode(Node minenode, int directon, BlockPos standingPosition)
+    private boolean mineSideOfNode(Node mineNode, int direction, BlockPos standingPosition)
     {
-        if (getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.LADDER)
+        if (getNodeStatusForDirection(mineNode, direction) == Node.NodeStatus.LADDER)
         {
             return true;
         }
 
-        if (getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.AVAILABLE)
+        if (getNodeStatusForDirection(mineNode, direction) == Node.NodeStatus.AVAILABLE)
         {
-            setNodeStatusForDirection(minenode, directon, Node.NodeStatus.IN_PROGRESS);
+            setNodeStatusForDirection(mineNode, direction, Node.NodeStatus.IN_PROGRESS);
         }
 
-        int xoffset = getXDistance(directon) / 2;
-        int zoffset = getZDistance(directon) / 2;
+        int xoffset = getXDistance(direction) / 2;
+        int zoffset = getZDistance(direction) / 2;
         int posx = 1;
         int negx = -1;
         int posz = 1;
@@ -988,16 +1056,16 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             {
                 for (int z = negz; z <= posz; z++)
                 {
-                    BlockPos curBlock = new BlockPos(minenode.getX() + x,
+                    BlockPos curBlock = new BlockPos(mineNode.getX() + x,
                                                                      standingPosition.getY() + y,
-                                                                     minenode.getZ() + z);
+                                                                     mineNode.getZ() + z);
                     if (getBlock(curBlock) == Blocks.torch
                         || getBlock(curBlock) == getOwnBuilding().floorBlock
                         || getBlock(curBlock) == getOwnBuilding().fenceBlock)
                     {
                         continue;
                     }
-                    if (getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.WALL)
+                    if (getNodeStatusForDirection(mineNode, direction) == Node.NodeStatus.WALL)
                     {
                         secureBlock(curBlock, standingPosition);
                     }
@@ -1008,9 +1076,9 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                 }
             }
         }
-        if (getNodeStatusForDirection(minenode, directon) == Node.NodeStatus.IN_PROGRESS)
+        if (getNodeStatusForDirection(mineNode, direction) == Node.NodeStatus.IN_PROGRESS)
         {
-            setNodeStatusForDirection(minenode, directon, Node.NodeStatus.COMPLETED);
+            setNodeStatusForDirection(mineNode, direction, Node.NodeStatus.COMPLETED);
         }
         return true;
     }
@@ -1214,92 +1282,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         return null;
     }
 
-
-    @Override
-    public void workOnTask()
-    {
-
-        //Miner wants to work but is not at building
-        if (job.getStage() == Stage.START_WORKING)
-        {
-            if (walkToBuilding())
-            {
-                return;
-            }
-            //Miner is at building
-            job.setStage(Stage.PREPARING);
-            return;
-        }
-
-        //Miner is at building and prepares for work
-        if (job.getStage() == Stage.PREPARING)
-        {
-            if (!getOwnBuilding().foundLadder)
-            {
-                job.setStage(Stage.SEARCHING_LADDER);
-                return;
-            }
-
-            job.setStage(Stage.CHECK_MINESHAFT);
-        }
-
-        //Looking for the ladder to walk to
-        if (job.getStage() == Stage.SEARCHING_LADDER)
-        {
-            lookForLadder();
-            return;
-        }
-
-        //Walking to the ladder to check out the mine
-        if (job.getStage() == Stage.LADDER_FOUND)
-        {
-            if (walkToLadder())
-            {
-                return;
-            }
-            job.setStage(Stage.CHECK_MINESHAFT);
-        }
-
-        //Standing on top of the ladder, checking out mine
-        if (job.getStage() == Stage.CHECK_MINESHAFT)
-        {
-            //TODO: check if mineshaft needs repairing!
-
-            //Check if we reached the mineshaft depth limit
-            if (getLastLadder(getOwnBuilding().ladderLocation) < getOwnBuilding().getDepthLimit())
-            {
-                job.setStage(Stage.MINING_NODE);
-                getOwnBuilding().clearedShaft = true;
-                return;
-            }
-            job.setStage(Stage.MINING_SHAFT);
-            getOwnBuilding().clearedShaft = false;
-            return;
-        }
-
-        if (job.getStage() == Stage.MINING_SHAFT)
-        {
-
-            doShaftMining();
-            return;
-        }
-
-        if (job.getStage() == Stage.BUILD_SHAFT)
-        {
-            doShaftBuilding();
-            return;
-        }
-
-        if (job.getStage() == Stage.MINING_NODE)
-        {
-            doNodeMining();
-            return;
-        }
-
-        logger.info("[" + job.getStage() + "] Stopping here, old code ahead...");
-        setDelay(100);
-    }
-
     @Override
     public boolean continueExecuting()
     {
@@ -1355,21 +1337,5 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         {
             return pos.getY() - 1;
         }
-    }
-
-    public enum Stage
-    {
-        INVENTORY_FULL,
-        SEARCHING_LADDER,
-        MINING_VEIN,
-        MINING_SHAFT,
-        START_WORKING,
-        MINING_NODE,
-        PREPARING,
-        START_MINING,
-        LADDER_FOUND,
-        CHECK_MINESHAFT,
-        BUILD_SHAFT,
-        FILL_VEIN
     }
 }

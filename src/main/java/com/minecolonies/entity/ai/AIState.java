@@ -64,7 +64,7 @@ public enum AIState
 ###Lumberjack###
      */
     /**
-     * The fisherman is looking for water
+     * The lumberjack is looking for trees
      */
     LUMBERJACK_SEARCHING_TREE,
     /**
@@ -80,5 +80,32 @@ public enum AIState
      */
     LUMBERJACK_NO_TREES_FOUND,
 
+    /*
+###Miner###
+     */
+    /**
+     * Check if there is a mineshaft
+     */
+    MINER_CHECK_MINESHAFT,
+    /**
+     * The Miner searches for the ladder
+     */
+    MINER_SEARCHING_LADDER,
+    /**
+     * The Miner walks to the ladder
+     */
+    MINER_WALKING_TO_LADDER,
+    /**
+     * The Miner mines his shaft
+     */
+    MINER_MINING_SHAFT,
+    /**
+     * The Miner builds his shaft
+     */
+    MINER_BUILDING_SHAFT,
+    /**
+     * The Miner mines one node
+     */
+    MINER_MINING_NODE,
 
 }

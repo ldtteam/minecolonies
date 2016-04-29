@@ -842,6 +842,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     protected final boolean mineBlock(BlockPos blockToMine, BlockPos safeStand)
     {
+        //todo partially replace with methods in EntitiyCitizen
         Block curBlock = world.getBlockState(blockToMine).getBlock();
         if (curBlock == null || curBlock == Blocks.air)
         {
@@ -875,9 +876,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             worker.getInventoryCitizen().setInventorySlotContents(worker.getInventoryCitizen().getHeldItemSlot(), null);
         }
 
-        //todo add meta data
         Utils.blockBreakSoundAndEffect(world, blockToMine, curBlock,
-                                       0);
+                                       curBlock.getMetaFromState(world.getBlockState(blockToMine)));
         //Don't drop bedrock but we want to mine bedrock in some cases...
         if (curBlock != Blocks.bedrock)
         {
