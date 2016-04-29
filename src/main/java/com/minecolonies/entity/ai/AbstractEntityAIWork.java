@@ -40,6 +40,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     protected        boolean          needsHoe                = false;
     protected        boolean          needsPickaxe            = false;
     protected        int              needsPickaxeLevel       = -1;
+    protected        int              blocksMined = 0;
+    
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -895,6 +897,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         }
 
         world.setBlockToAir(blockToMine);
+        blocksMined++;
         return true;
     }
 

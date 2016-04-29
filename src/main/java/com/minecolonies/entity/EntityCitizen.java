@@ -397,17 +397,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onLivingUpdate()
     {
-        if(citizenData!=null)
+        if (recentlyHit > 0)
         {
-            if (getOffsetTicks() % HEAL_CITIZENS_AFTER == 0 && getHealth() < getMaxHealth())
-            {
-                heal(1);
-                citizenData.markDirty();
-            }
-            if (recentlyHit > 0)
-            {
-                citizenData.markDirty();
-            }
+            citizenData.markDirty();
         }
         if (worldObj.isRemote)
         {
@@ -420,7 +412,23 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             updateColonyServer();
         }
 
+        checkHeal();
         super.onLivingUpdate();
+    }
+
+    /**
+     * Checks the citizens health status and heals the citizen if necessary
+     */
+    private void checkHeal()
+    {
+        if(citizenData!=null)
+        {
+            if (getOffsetTicks() % HEAL_CITIZENS_AFTER == 0 && getHealth() < getMaxHealth())
+            {
+                heal(1);
+                citizenData.markDirty();
+            }
+        }
     }
 
     private void updateColonyClient()

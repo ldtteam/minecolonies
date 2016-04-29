@@ -25,11 +25,16 @@ import static com.minecolonies.entity.ai.AIState.*;
  * @author Raycoms, Kostronor
  */
 
+//Todo liquid handling + dump inventory
 public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 {
 
     private static final String RENDER_META_TORCH = "Torch";
     private static final int NODE_DISTANCE = 7;
+    /**
+     * Return to chest after 5 stacks
+     */
+    private static final int MAX_BLOCKS_MINED = 64*5;
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
@@ -46,7 +51,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
     private BlockPos currentStandingPosition;
 
     private Node workingNode = null;
-
 
     /**
      * Constructor for the Miner.
@@ -90,7 +94,10 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         return MINER_CHECK_MINESHAFT;
     }
 
-    //Walking to the ladder to check out the mine
+    /**
+     * Walking to the ladder to check out the mine
+     * @return next AIState
+     */
     private AIState goToLadder()
     {
         if (walkToLadder())
@@ -98,6 +105,18 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             return MINER_WALKING_TO_LADDER;
         }
         return MINER_CHECK_MINESHAFT;
+    }
+
+
+    @Override
+    protected boolean wantInventoryDumped()
+    {
+        if (blocksMined > MAX_BLOCKS_MINED)
+        {
+            blocksMined = 0;
+            return true;
+        }
+        return false;
     }
 
     private AIState checkMineShaft()
@@ -267,7 +286,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
     private AIState advanceLadder(AIState state)
     {
-        if (getOwnBuilding().startingLevelShaft >= 5)
+        if (getOwnBuilding().startingLevelShaft >= 4)
         {
             return MINER_BUILDING_SHAFT;
         }
@@ -420,7 +439,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         {
             for (int z = -5 + zOffset; z <= 5 + zOffset; z++)
             {
-                for (int y = 5; y >= -7; y--)
+                for (int y = 4; y >= -7; y--)
                 {
                     if ((x == 0 && 0 == z) || lastLadder + y <= 1)
                     {
@@ -669,7 +688,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         {
             for (int z = -NODE_DISTANCE / 2; z <= NODE_DISTANCE / 2; z++)
             {
-                for (int y = 0; y <= 5; y++)
+                for (int y = 0; y <= 4; y++)
                 {
                     BlockPos curBlock = new BlockPos(minenode.getX() + x,
                                                                      standingPosition.getY() + y,
@@ -677,7 +696,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                     if (((Math.abs(x) >= 2) && (Math.abs(z) >= 2))
                         || (getBlock(curBlock) != Blocks.air)
                         || (y < 1)
-                        || (y > 4))
+                        || (y > 3))
                     {
                         if (!secureBlock(curBlock, standingPosition))
                         {
@@ -725,7 +744,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         if (minenode.getStatus() != Node.NodeStatus.COMPLETED)
         {
             //Mine middle
-            for (int y = 1; y <= 4; y++)
+            for (int y = 1; y <= 3; y++)
             {
                 for (int x = -1; x <= 1; x++)
                 {
@@ -807,7 +826,18 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             direction = 1;
         }
 
-        for (int y = 4; y >= 1; y--)
+        int directionX = 1;
+        if (mineNode.getDirectionPosX() == Node.NodeStatus.WALL)
+        {
+            directionX = 2;
+        }
+        int directionZ = 3;
+        if (mineNode.getDirectionPosZ() == Node.NodeStatus.WALL)
+        {
+            directionZ = 4;
+        }
+
+        for (int y = 3; y >= 1; y--)
         {
             for (int x = -2; x <= 2; x++)
             {
@@ -821,21 +851,21 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                     //Side pillars
                     if (Math.abs(x) == Math.abs(getXDistance(direction) / NODE_DISTANCE)
                         && Math.abs(z) == Math.abs(getZDistance(direction) / NODE_DISTANCE)
-                        && y < 4)
+                        && y < 3)
                     {
                         material = getOwnBuilding().fenceBlock;
                     }
                     //Planks topping
                     if ((x == 0 || Math.abs(x) == Math.abs(getXDistance(direction) / NODE_DISTANCE))
                         && (z == 0 || Math.abs(z) == Math.abs(getZDistance(direction) / NODE_DISTANCE))
-                        && y == 4)
+                        && y == 3)
                     {
                         material = getOwnBuilding().floorBlock;
                     }
                     //torches at sides
                     if (((Math.abs(x) == 1 && Math.abs(z) == 0 && direction == 3)
                          || (Math.abs(x) == 0 && Math.abs(z) == 1 && direction == 1))
-                        && y == 4
+                        && y == 3
                         && getBlock(new BlockPos(mineNode.getX(), standingPosition.getY() + y, mineNode.getZ()))
                            == getOwnBuilding().floorBlock
                         && getBlock(curBlock) != getOwnBuilding().floorBlock)
@@ -855,9 +885,19 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                         return false;
                     }
 
+                    //todo
                     if(material == Blocks.torch)
                     {
-                        setBlockFromInventory(curBlock, material, material.getStateFromMeta(direction));
+                        if(z==0)
+                        {
+                            int i = (directionX == 1) ? 2 : 1;
+                            setBlockFromInventory(curBlock, material, material.getStateFromMeta(i));
+                        }
+                        else
+                        {
+                            int i = (directionZ == 3) ? 4 : 3;
+                            setBlockFromInventory(curBlock, material, material.getStateFromMeta(i));
+                        }
                     }
                     else
                     {
@@ -884,7 +924,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             directionZ = 4;
         }
 
-        for (int y = 4; y >= 1; y--)
+        for (int y = 3; y >= 1; y--)
         {
             for (int x = -3; x <= 3; x++)
             {
@@ -898,14 +938,14 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                     //Side pillars for x
                     if (x == (getXDistance(directionX) * 2) / NODE_DISTANCE
                         && Math.abs(z) == 1
-                        && y < 4)
+                        && y < 3)
                     {
                         material = getOwnBuilding().fenceBlock;
                     }
                     //Side pillars for z
                     if (z == (getZDistance(directionZ) * 2) / NODE_DISTANCE
                         && Math.abs(x) == 1
-                        && y < 4)
+                        && y < 3)
                     {
                         material = getOwnBuilding().fenceBlock;
                     }
@@ -913,14 +953,14 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                     //Planks topping for x
                     if (x == (getXDistance(directionX) * 2) / NODE_DISTANCE
                         && Math.abs(z) <= 1
-                        && y == 4)
+                        && y == 3)
                     {
                         material = getOwnBuilding().floorBlock;
                     }
                     //Planks topping for z
                     if (z == (getZDistance(directionZ) * 2) / NODE_DISTANCE
                         && Math.abs(x) <= 1
-                        && y == 4)
+                        && y == 3)
                     {
                         material = getOwnBuilding().floorBlock;
                     }
@@ -928,7 +968,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                     //torches at sides
                     if ((x == (getXDistance(directionX)) / NODE_DISTANCE)
                         && z == 0
-                        && y == 4
+                        && y == 3
                         && getBlock(new BlockPos(
                             mineNode.getX() + (getXDistance(directionX) * 2) / NODE_DISTANCE,
                             standingPosition.getY() + y,
@@ -940,7 +980,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                     //torches at sides
                     if ((z == (getZDistance(directionZ)) / NODE_DISTANCE)
                         && x == 0
-                        && y == 4
+                        && y == 3
                         && getBlock(new BlockPos(
                             mineNode.getX(),
                             standingPosition.getY() + y,
@@ -986,7 +1026,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
     private boolean buildNodeCrossroadStructure(Node mineNode, BlockPos standingPosition)
     {
-        for (int y = 4; y >= 2; y--)
+        for (int y = 3; y >= 2; y--)
         {
             for (int x = -1; x <= 1; x++)
             {
@@ -996,11 +1036,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                                                                      standingPosition.getY() + y,
                                                                      mineNode.getZ() + z);
                     Block material = null;
-                    //Middle top block and side stands
-                    if (x == 0 && z == 0 && y == 4)
-                    {
-                        material = getOwnBuilding().fenceBlock;
-                    }
                     //Planks topping
                     if (x == 0 && z == 0 && y == 3)
                     {
@@ -1091,7 +1126,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
         //Mine side
         //TODO: make it look nicer!
-        for (int y = 1; y <= 4; y++)
+        for (int y = 1; y <= 3; y++)
         {
             for (int x = negx; x <= posx; x++)
             {
@@ -1367,7 +1402,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             return pos.getY() + 1;
         }
     }
-
 
     private int getFirstLadder(BlockPos pos)
     {
