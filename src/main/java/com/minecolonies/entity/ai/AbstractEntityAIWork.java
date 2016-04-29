@@ -452,7 +452,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     protected boolean checkForPickaxe(int minlevel)
     {
         //Check for a pickaxe
-        needsPickaxe = InventoryFunctions
+        needsPickaxe = !InventoryFunctions
                 .matchFirstInInventory(
                         worker.getInventoryCitizen(),
                         stack -> Utils.checkIfPickaxeQualifies(
@@ -460,7 +460,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                         InventoryFunctions::doNothing);
 
         delay += DELAY_RECHECK;
-        if (needsPickaxe && walkToBuilding())
+
+        if(walkToBuilding())
+        {
+            return false;
+        }
+
+        if (needsPickaxe)
         {
             if (isPickaxeInHut(minlevel))
             {

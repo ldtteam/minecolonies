@@ -48,10 +48,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int    DATA_CITIZEN_ID      = 17;
     private static final int    DATA_MODEL           = 18;
     private static final int    DATA_RENDER_METADATA = 19;
-    private static final int    LEVEL_CAP            = 10;
-    private static final String TAG_XP               = "xp";
-    private static final String TAG_XP_LEVEL         = "xpLevel";
-    private static final String TAG_XP_TOTAL         = "xpTotal";
+    /**
+     * Number of ticks to heal the citizens
+     */
+    private static final int    HEAL_CITIZENS_AFTER  = 200;
     private static final String TAG_COLONY_ID        = "colony";
     private static final String TAG_CITIZEN          = "citizen";
     private static final String TAG_HELD_ITEM_SLOT   = "HeldItemSlot";
@@ -397,9 +397,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onLivingUpdate()
     {
-        if(recentlyHit>0)
+        if(citizenData!=null)
         {
-            citizenData.markDirty();
+            if (getOffsetTicks() % HEAL_CITIZENS_AFTER == 0 && getHealth() < getMaxHealth())
+            {
+                heal(1);
+                citizenData.markDirty();
+            }
+            if (recentlyHit > 0)
+            {
+                citizenData.markDirty();
+            }
         }
         if (worldObj.isRemote)
         {
