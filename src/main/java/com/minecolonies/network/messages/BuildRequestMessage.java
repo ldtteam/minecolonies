@@ -3,12 +3,12 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.util.ChunkCoordUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
  * Adds a entry to the builderRequired map
@@ -18,7 +18,7 @@ import net.minecraft.util.ChunkCoordinates;
  */
 public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
 {
-    private             ChunkCoordinates buildingId;
+    private             BlockPos        buildingId;
     private             int              colonyId;
     private             int              mode;
 
@@ -46,7 +46,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(colonyId);
-        ChunkCoordUtils.writeToByteBuf(buf, buildingId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeInt(mode);
     }
 
@@ -54,7 +54,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
-        buildingId = ChunkCoordUtils.readFromByteBuf(buf);
+        buildingId = BlockPosUtil.readFromByteBuf(buf);
         mode = buf.readInt();
     }
 

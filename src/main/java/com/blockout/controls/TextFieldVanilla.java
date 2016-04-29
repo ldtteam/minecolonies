@@ -82,7 +82,7 @@ public class TextFieldVanilla extends TextField
 
     public static class FilterVanilla implements Filter {
         public String filter(String s) {
-            return ChatAllowedCharacters.filerAllowedCharacters(s);
+            return ChatAllowedCharacters.filterAllowedCharacters(s);
         }
 
         public boolean isAllowedCharacter(char c) {

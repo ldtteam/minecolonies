@@ -4,10 +4,8 @@ import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.configuration.Configurations;
 import com.schematica.world.SchematicWorld;
 import com.schematica.world.schematic.SchematicFormat;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
@@ -22,9 +20,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +52,7 @@ public final class Schematic
      * the anchor position this schematic will be
      * placed on in the minecraft world
      */
-    private ChunkCoordinates position;
+    private BlockPos        position;
     /**
      * the name this schematic has
      */
@@ -143,13 +144,11 @@ public final class Schematic
      * and place it in the right position and rotation
      *
      * @param worldObj  the world to load it in
-     * @param name      the schmetics name
-     * @param x         x coordinate
-     * @param y         y coordinate
-     * @param z         z coordinate
+     * @param name      the schematics name
+     * @param pos         coordinates
      * @param rotations number of times rotated
      */
-    public static void loadAndPlaceSchematicWithRotation(World worldObj, String name, int x, int y, int z, int rotations)
+    public static void loadAndPlaceSchematicWithRotation(World worldObj, String name, BlockPos pos, int rotations)
     {
         Schematic schematic;
         try
@@ -165,19 +164,21 @@ public final class Schematic
         {
             schematic.rotate();
         }
-        schematic.placeSchematic(x, y, z);
+        schematic.placeSchematic(pos);
     }
 
     /**
      * Place a schematic into the world.
      *
-     * @param x anchor x position
-     * @param y anchor y position
-     * @param z anchor z position
+     * @param pos coordinates
      */
-    private void placeSchematic(int x, int y, int z)
+    private void placeSchematic(BlockPos pos)
     {
-        List<ChunkCoordinates> delayedBlocks = new ArrayList<>();
+        x = pos.getX();
+        y = pos.getY();
+        z = pos.getZ();
+
+        List<BlockPos> delayedBlocks = new ArrayList<>();
 
         for (int j = 0; j < schematicWorld.getHeight(); j++)
         {
@@ -186,52 +187,58 @@ public final class Schematic
                 for (int i = 0; i < schematicWorld.getWidth(); i++)
                 {
 
-                    Block block    = this.schematicWorld.getBlock(i, j, k);
-                    int   metadata = this.schematicWorld.getBlockMetadata(i, j, k);
+                    Block       block    = this.schematicWorld.getBlock(i, j, k);
+                    IBlockState metadata = this.schematicWorld.getBlockState(new BlockPos(i, j, k));
 
-                    if (block == Blocks.air && !world.getBlock(x + i, y + j, z + k).getMaterial().isSolid())
+                    if (block == Blocks.air && !world.getBlockState(new BlockPos(x+i, y+j, z+k)).getBlock().getMaterial().isSolid())
                     {
-                        world.setBlockToAir(x + i, y + j, z + k);
+                        world.setBlockToAir(pos.add(i, j, k));
                     }
                     else if (block.getMaterial().isSolid())
                     {
-                        world.setBlock(x + i, y + j, z + k, block, metadata, 0x03);
-                        if (world.getBlock(x + i, y + j, z + k) == block)
+                        world.setBlockState(new BlockPos(x + i, y + j, z + k), metadata, 0x03);
+                        if (world.getBlockState(new BlockPos(x+i, y+j, z+k)).getBlock() == block)
                         {
-                            if (world.getBlockMetadata(x + i, y + j, z + k) != metadata)
+                            if (world.getBlockState(new BlockPos(x+i, y+j, z+k)) != metadata)
                             {
-                                world.setBlockMetadataWithNotify(x + i, y + j, z + k, metadata, 0x03);
+                                world.setBlockState(new BlockPos(x + i, y + j, z + k), metadata, 0x03);
                             }
-                            block.onPostBlockPlaced(world, x + i, y + j, z + k, metadata);
+                            //todo Is this the same?
+                            //block.onPostBlockPlaced(world,new BlockPos( x + i, y + j, z + k), metadata);
+                            block.onBlockAdded(world,new BlockPos( x + i, y + j, z + k), metadata);
                         }
                     }
                     else
                     {
-                        delayedBlocks.add(new ChunkCoordinates(i, j, k));
+                        delayedBlocks.add(new BlockPos(i, j, k));
                     }
-                    if (schematicWorld.getTileEntity(x, y, z) != null)
+                    if (schematicWorld.getTileEntity(pos) != null)
                     {
-                        world.setTileEntity(x + i, y + j, z + k, schematicWorld.getTileEntity(x, y, z));
+                        world.setTileEntity(pos.add(i, j, k), schematicWorld.getTileEntity(pos));
                     }
                 }
             }
         }
 
-        for (ChunkCoordinates coords : delayedBlocks)
+        for (BlockPos coords : delayedBlocks)
         {
-            int   i        = coords.posX;
-            int   j        = coords.posY;
-            int   k        = coords.posZ;
+            int   i        = coords.getX();
+            int   j        = coords.getY();
+            int   k        = coords.getZ();
             Block block    = this.schematicWorld.getBlock(i, j, k);
-            int   metadata = this.schematicWorld.getBlockMetadata(i, j, k);
-            world.setBlock(x + i, y + j, z + k, block, metadata, 0x03);
-            if (world.getBlock(x + i, y + j, z + k) == block)
+            IBlockState   metadata = this.schematicWorld.getBlockState(new BlockPos(i, j, k));
+            BlockPos newPos = new BlockPos(x + i, y + j, z + k);
+
+            world.setBlockState(newPos, metadata, 0x03);
+            if (world.getBlockState(newPos).getBlock() == block)
             {
-                if (world.getBlockMetadata(x + i, y + j, z + k) != metadata)
+                if (world.getBlockState(newPos) != metadata)
                 {
-                    world.setBlockMetadataWithNotify(x + i, y + j, z + k, metadata, 0x03);
+                    world.setBlockState(newPos, metadata, 0x03);
                 }
-                block.onPostBlockPlaced(world, x + i, y + j, z + k, metadata);
+                //todo Is this the same?
+                //block.onPostBlockPlaced(world,new BlockPos( x + i, y + j, z + k), metadata);
+                block.onBlockAdded(world, newPos, metadata);
             }
         }
     }
@@ -244,7 +251,7 @@ public final class Schematic
         schematicWorld.rotate();
     }
 
-    public static String saveSchematic(World world, ChunkCoordinates from, ChunkCoordinates to)
+    public static String saveSchematic(World world, BlockPos from, BlockPos to)
     {
         if (world == null || from == null || to == null)
         { throw new NullPointerException("Invalid method call, contact a developer."); }
@@ -287,24 +294,24 @@ public final class Schematic
         }
     }
 
-    private static SchematicWorld scanSchematic(World world, ChunkCoordinates from, ChunkCoordinates to, ItemStack icon)
+    private static SchematicWorld scanSchematic(World world, BlockPos from, BlockPos to, ItemStack icon)
     {
         //todo: split up this method
-        int   minX   = Math.min(from.posX, to.posX);
-        int   maxX   = Math.max(from.posX, to.posX);
-        int   minY   = Math.min(from.posY, to.posY);
-        int   maxY   = Math.max(from.posY, to.posY);
-        int   minZ   = Math.min(from.posZ, to.posZ);
-        int   maxZ   = Math.max(from.posZ, to.posZ);
+        int   minX   = Math.min(from.getX(), to.getX());
+        int   maxX   = Math.max(from.getX(), to.getX());
+        int   minY   = Math.min(from.getY(), to.getY());
+        int   maxY   = Math.max(from.getY(), to.getY());
+        int   minZ   = Math.min(from.getZ(), to.getZ());
+        int   maxZ   = Math.max(from.getZ(), to.getZ());
         short width  = (short) (Math.abs(maxX - minX) + 1);
         short height = (short) (Math.abs(maxY - minY) + 1);
         short length = (short) (Math.abs(maxZ - minZ) + 1);
 
-        short[][][]      blocks       = new short[width][height][length];
-        byte[][][]       metadata     = new byte[width][height][length];
-        List<TileEntity> tileEntities = new ArrayList<>();
-        TileEntity       tileEntity;
-        NBTTagCompound   tileEntityNBT;
+        short[][][]         blocks       = new short[width][height][length];
+        byte[][][]          metadata     = new byte[width][height][length];
+        List<TileEntity>    tileEntities = new ArrayList<>();
+        TileEntity          tileEntity;
+        NBTTagCompound      tileEntityNBT;
 
         int xOffset = 0, yOffset = 0, zOffset = 0;
 
@@ -314,10 +321,13 @@ public final class Schematic
             {
                 for (int z = minZ; z <= maxZ; z++)
                 {
-                    blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(world.getBlock(x, y, z));
-                    metadata[x - minX][y - minY][z - minZ] = (byte) world.getBlockMetadata(x, y, z);
+                    BlockPos pos = new BlockPos(x, y, z);
+                    IBlockState blockState = world.getBlockState(pos);
+                    Block block = blockState.getBlock();
+                    blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(block);
+                    metadata[x - minX][y - minY][z - minZ] = (byte) block.getMetaFromState(blockState);
 
-                    if (world.getBlock(x, y, z) instanceof AbstractBlockHut)
+                    if (block instanceof AbstractBlockHut)
                     {
                         if (xOffset == 0 && yOffset == 0 && zOffset == 0)
                         {
@@ -333,26 +343,23 @@ public final class Schematic
                         }
                     }
 
-                    tileEntity = world.getTileEntity(x, y, z);
+                    tileEntity = world.getTileEntity(pos);
                     if (tileEntity != null)//creates a new tileEntity and formats its data for saving
                     {                     //a new tileEntity is needed to prevent changes to the real one
                         tileEntityNBT = new NBTTagCompound();
                         tileEntity.writeToNBT(tileEntityNBT);
 
                         tileEntity = TileEntity.createAndLoadEntity(tileEntityNBT);
-                        tileEntity.xCoord -= minX;
-                        tileEntity.yCoord -= minY;
-                        tileEntity.zCoord -= minZ;
+                        BlockPos tPos = tileEntity.getPos();
+                        tileEntity.setPos(new BlockPos(tPos.getX() - minX, tPos.getY() - minY, tPos.getZ() - minZ));
                         tileEntities.add(tileEntity);
                     }
                 }
             }
         }
 
-        AxisAlignedBB region = AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
-        @SuppressWarnings("unchecked")
+        AxisAlignedBB region = AxisAlignedBB.fromBounds(minX, minY, minZ, maxX, maxY, maxZ);
         List<EntityHanging> entityHangings = world.getEntitiesWithinAABB(EntityHanging.class, region);
-        @SuppressWarnings("unchecked")
         List<EntityMinecart> entityMinecarts = world.getEntitiesWithinAABB(EntityMinecart.class, region);
         NBTTagList entityList = new NBTTagList();
 
@@ -362,9 +369,9 @@ public final class Schematic
             entityData.setString("id", EntityList.getEntityString(entity));
             entity.writeToNBT(entityData);
 
-            entityData.setTag("TileX", new NBTTagInt(entity.field_146063_b - minX));
-            entityData.setTag("TileY", new NBTTagInt(entity.field_146064_c - minY));
-            entityData.setTag("TileZ", new NBTTagInt(entity.field_146062_d - minZ));
+            entityData.setTag("TileX", new NBTTagInt(entity.getHangingPosition().getX() - minX));
+            entityData.setTag("TileY", new NBTTagInt(entity.getHangingPosition().getY() - minY));
+            entityData.setTag("TileZ", new NBTTagInt(entity.getHangingPosition().getZ() - minZ));
 
             entityList.appendTag(entityData);
         });
@@ -445,25 +452,25 @@ public final class Schematic
 
     public boolean doesSchematicBlockEqualWorldBlock()
     {
-        ChunkCoordinates pos = this.getBlockPosition();
+        BlockPos pos = this.getBlockPosition();
         //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        return pos.posY <= 0 || schematicWorld.getBlock(x, y, z) == ChunkCoordUtils.getBlock(world, pos) && schematicWorld.getBlockMetadata(x, y, z)
-                                                                                                            == ChunkCoordUtils.getBlockMetadata(world, pos);
+        return pos.getY() <= 0 || schematicWorld.getBlock(x, y, z) == BlockPosUtil.getBlock(world, pos) && schematicWorld.getBlockState(new BlockPos(x, y, z))
+                                                                                                            == BlockPosUtil.getBlockState(world, pos);
     }
 
-    public ChunkCoordinates getBlockPosition()
+    public BlockPos getBlockPosition()
     {
-        return ChunkCoordUtils.add(getOffsetPosition(), x, y, z);
+        return BlockPosUtil.add(getOffsetPosition(), x, y, z);
     }
 
-    public ChunkCoordinates getOffsetPosition()
+    public BlockPos getOffsetPosition()
     {
-        return ChunkCoordUtils.subtract(position, getOffset());
+        return BlockPosUtil.subtract(position, getOffset());
     }
 
-    public ChunkCoordinates getOffset()
+    public BlockPos getOffset()
     {
-        return new ChunkCoordinates(schematicWorld.getOffsetX(), schematicWorld.getOffsetY(), schematicWorld.getOffsetZ());
+        return new BlockPos(schematicWorld.getOffsetX(), schematicWorld.getOffsetY(), schematicWorld.getOffsetZ());
     }
 
     public boolean findNextBlockToClear()
@@ -480,7 +487,7 @@ public final class Schematic
 
         }
         //Check for air blocks and if blocks below the hut are different from the schematicWorld
-        while ((worldBlockAir() || (y <= getOffset().posY && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((worldBlockAir() || (y <= getOffset().getY() && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -498,7 +505,7 @@ public final class Schematic
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || (!schematicWorld.getBlock(x, y, z).getMaterial().isSolid() && !schematicWorld.isAirBlock(x, y, z)))
+        while ((doesSchematicBlockEqualWorldBlock() || (!schematicWorld.getBlock(x, y, z).getMaterial().isSolid() && !schematicWorld.isAirBlock(new BlockPos(x, y, z))))
                && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
@@ -517,7 +524,7 @@ public final class Schematic
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || (schematicWorld.getBlock(x, y, z).getMaterial().isSolid() || schematicWorld.isAirBlock(x, y, z)))
+        while ((doesSchematicBlockEqualWorldBlock() || (schematicWorld.getBlock(x, y, z).getMaterial().isSolid() || schematicWorld.isAirBlock(new BlockPos(x, y, z))))
                && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
@@ -554,9 +561,9 @@ public final class Schematic
 
     private boolean worldBlockAir()
     {
-        ChunkCoordinates pos = this.getBlockPosition();
+        BlockPos pos = this.getBlockPosition();
         //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        return pos.posY <= 0 || world.isAirBlock(pos.posX, pos.posY, pos.posZ);
+        return pos.getY() <= 0 || world.isAirBlock(pos);
     }
 
     public void rotate(int times)
@@ -576,13 +583,14 @@ public final class Schematic
         return this.schematicWorld.getBlock(x, y, z);
     }
 
-    public int getMetadata()
+    public IBlockState getMetadata()
     {
+        //todo why this x?
         if (x == -1)
         {
-            return 0;
+            return null;
         }
-        return this.schematicWorld.getBlockMetadata(x, y, z);
+        return this.schematicWorld.getBlockState(new BlockPos(x, y, z));
     }
 
     public TileEntity getTileEntity()
@@ -591,32 +599,32 @@ public final class Schematic
         {
             return null;
         }
-        return this.schematicWorld.getTileEntity(x, y, z);
+        return this.schematicWorld.getTileEntity(new BlockPos(x, y, z));
     }
 
-    public ChunkCoordinates getBlockPosition(int baseX, int baseY, int baseZ)
+    public BlockPos getBlockPosition(int baseX, int baseY, int baseZ)
     {
-        return new ChunkCoordinates(baseX + x, baseY + y, baseZ + z);
+        return new BlockPos(baseX + x, baseY + y, baseZ + z);
     }
 
-    public ChunkCoordinates getLocalPosition()
+    public BlockPos getLocalPosition()
     {
-        return new ChunkCoordinates(x, y, z);
+        return new BlockPos(x, y, z);
     }
 
-    public void setLocalPosition(ChunkCoordinates localPosition)
+    public void setLocalPosition(BlockPos localPosition)
     {
-        x = localPosition.posX;
-        y = localPosition.posY;
-        z = localPosition.posZ;
+        x = localPosition.getX();
+        y = localPosition.getY();
+        z = localPosition.getZ();
     }
 
-    public ChunkCoordinates getPosition()
+    public BlockPos getPosition()
     {
         return position;
     }
 
-    public void setPosition(ChunkCoordinates position)
+    public void setPosition(BlockPos position)
     {
         this.position = position;
     }
@@ -651,7 +659,6 @@ public final class Schematic
         return schematicWorld.getLength();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Entity> getEntities()
     {
         return schematicWorld.loadedEntityList;

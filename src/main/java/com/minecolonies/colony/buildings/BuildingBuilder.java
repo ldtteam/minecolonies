@@ -6,13 +6,13 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobBuilder;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public class BuildingBuilder extends BuildingWorker
 {
     private static final String BUILDER = "Builder";
     
-    public BuildingBuilder(Colony c, ChunkCoordinates l)
+    public BuildingBuilder(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -43,7 +43,7 @@ public class BuildingBuilder extends BuildingWorker
 
     public static class View extends BuildingWorker.View
     {
-        public View(ColonyView c, ChunkCoordinates l)
+        public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }

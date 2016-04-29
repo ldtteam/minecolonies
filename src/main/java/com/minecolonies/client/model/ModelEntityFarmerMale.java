@@ -208,9 +208,9 @@ public class ModelEntityFarmerMale extends ModelBiped
     }
 
     @Override
-    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity)
+    public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn)
     {
-        super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
+        super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z)

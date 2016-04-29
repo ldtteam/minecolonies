@@ -1,12 +1,15 @@
 package com.minecolonies.network.messages;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
  * Handles the server telling nearby clients to render a particle effect
@@ -33,17 +36,16 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
      * @param x         X-coordinate
      * @param y         Y-coordinate
      * @param z         Z-coordinate
-     * @param block     Block causing effect
-     * @param metadata  Meta data of the block causing effect
+     * @param state     Block State
      * @param side      Side of the block causing effect
      */
-    public BlockParticleEffectMessage(int x, int y, int z, Block block, int metadata, int side)
+    public BlockParticleEffectMessage(BlockPos pos, IBlockState state, int side)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.block = block;
-        this.metadata = metadata;
+    	this.x = pos.getX();
+    	this.y = pos.getY();
+    	this.z = pos.getZ();
+    	this.block = state.getBlock();
+    	this.metadata = state.getBlock().getMetaFromState(state);
         this.side = side;
     }
 
@@ -74,11 +76,11 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
     {
         if(message.side == BREAK_BLOCK)
         {
-            Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(message.x, message.y, message.z, message.block, message.metadata);
+            Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(new BlockPos(message.x, message.y, message.z), message.block.getDefaultState()); //todo check default state, mw, trans 1.7
         }
         else
         {
-            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(x, y, z, message.side);
+        	FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(new BlockPos(x, y, z), EnumFacing.getFront(side)); // TODO: test if this works
         }
         return null;
     }

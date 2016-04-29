@@ -1,13 +1,14 @@
 package com.minecolonies.client.render;
 
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
 
 /**
  * Renderer for a normal tile entity (Nothing special with rendering)
  */
-public class EmptyTileEntitySpecialRenderer extends TileEntitySpecialRenderer
+public class EmptyTileEntitySpecialRenderer extends TileEntitySpecialRenderer<TileEntityColonyBuilding>
 {
+    
     /**
      * {@inheritDoc}
      * Method is empty because there are no special ways required to render
@@ -16,11 +17,11 @@ public class EmptyTileEntitySpecialRenderer extends TileEntitySpecialRenderer
      * @param x                 X-coordinate
      * @param y                 Y-coordinate
      * @param z                 Z-coordinate
-     * @param rotation          Rotation of the entity
+     * @param partialTicks
+     * @param destroyStage
      */
-    @Override
-    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float rotation)
-    {
-
-    }
+	@Override
+	public void renderTileEntityAt(TileEntityColonyBuilding tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
+		
+	}
 }

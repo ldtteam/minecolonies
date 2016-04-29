@@ -3,13 +3,13 @@ package com.minecolonies.colony.permissions;
 import com.minecolonies.network.PacketUtils;
 import com.minecolonies.util.Utils;
 import com.mojang.authlib.GameProfile;
-import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -364,7 +364,7 @@ public class Permissions implements IPermissions
         }
         else
         {
-            GameProfile gameprofile = MinecraftServer.getServer().func_152358_ax().func_152652_a(id);
+            GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getProfileByUUID(id);
 
             return gameprofile != null && addPlayer(gameprofile, rank);
 
@@ -382,7 +382,7 @@ public class Permissions implements IPermissions
      */
     public boolean addPlayer(String player, Rank rank)
     {
-        GameProfile gameprofile = MinecraftServer.getServer().func_152358_ax().func_152655_a(player);
+        GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(player);
 
         return gameprofile != null && addPlayer(gameprofile, rank);
 

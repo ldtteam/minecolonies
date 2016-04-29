@@ -2,17 +2,16 @@ package com.blockout.controls;
 
 import com.blockout.Pane;
 import com.blockout.PaneParams;
-import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 public class ItemIcon extends Pane
 {
-    protected static RenderItem itemRender = new RenderItem();
-
     private ItemStack itemStack;
 
     public ItemIcon(){ super(); }
+
 
     public ItemIcon(PaneParams params)
     {
@@ -21,7 +20,7 @@ public class ItemIcon extends Pane
         String itemName = params.getStringAttribute("item", null);
         if (itemName != null)
         {
-            Item item = (Item)Item.itemRegistry.getObject(itemName);
+            Item item = (Item) Item.itemRegistry.getObject(new ResourceLocation(itemName));
             if (item != null)
             {
                 itemStack = new ItemStack(item, 1);
@@ -34,7 +33,7 @@ public class ItemIcon extends Pane
     @Override
     protected void drawSelf(int mx, int my)
     {
-        itemRender.renderItemAndEffectIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemStack, x, y);
-        itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemStack, x, y);
+        mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, x, y);
+        mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, itemStack, x, y, "");
     }
 }

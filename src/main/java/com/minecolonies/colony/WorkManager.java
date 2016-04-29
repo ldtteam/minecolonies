@@ -1,10 +1,10 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.colony.workorders.WorkOrder;
-import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -203,7 +203,7 @@ public class WorkManager
      * Process updates on the World Tick
      * Currently, does periodic Work Order cleanup
      *
-     * @param event         {@link cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent}
+     * @param event         {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {

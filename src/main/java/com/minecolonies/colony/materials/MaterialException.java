@@ -1,15 +1,27 @@
 package com.minecolonies.colony.materials;
 
+import net.minecraftforge.fml.common.registry.GameData;
+
 /**
  * Exception for material handling. If this exception is thrown then their is a problem with the Material System's counting.
  * Created: December 15, 2015
  *
  * @author Colton
  */
-public class MaterialException extends RuntimeException
+class MaterialException extends RuntimeException
 {
-    public MaterialException(String message)
+    MaterialException(String message)
     {
         super(message);
+    }
+}
+
+class QuantityNotFound extends MaterialException
+{
+    QuantityNotFound(String location, int id, int count, int quantity)
+    {
+        super(location + " doesn't contain enough items: " + count + " < " + quantity + ". For material: " + id
+                + " Block: " +  GameData.getBlockRegistry().getObjectById(id)
+                + " Item: " + GameData.getItemRegistry().getObjectById(id));
     }
 }

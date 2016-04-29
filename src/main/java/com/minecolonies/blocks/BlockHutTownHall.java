@@ -3,47 +3,48 @@ package com.minecolonies.blocks;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 /**
  * Hut for the town hall.
  * Sets the working range for the town hall in the constructor
  */
-public class BlockHutTownhall extends AbstractBlockHut
+public class BlockHutTownHall extends AbstractBlockHut
 {
-    protected BlockHutTownhall()
+    protected BlockHutTownHall()
     {
         super();
         //Sets the working range to whatever the config is set to
-        this.workingRange = Configurations.workingRangeTownhall;
+        this.workingRange = Configurations.workingRangeTownHall;
     }
 
     @Override
     public String getName()
     {
-        return "blockHutTownhall";
+        return "blockHutTownHall";
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack)
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
-        if(world.isRemote)
+        if(worldIn.isRemote)
         {
             return;
         }
-        TileEntity te = world.getTileEntity(x, y, z);
+        TileEntity te = worldIn.getTileEntity(pos);
 
-        if(entityLivingBase instanceof EntityPlayer && te instanceof TileEntityColonyBuilding && ColonyManager.getColony(world, x, y, z) == null)
+        if(placer instanceof EntityPlayer && te instanceof TileEntityColonyBuilding && ColonyManager.getColony(worldIn, pos) == null)
         {
-
-            EntityPlayer player = (EntityPlayer)entityLivingBase;
+            EntityPlayer player = (EntityPlayer)placer;
             TileEntityColonyBuilding hut = (TileEntityColonyBuilding) te;
-            ColonyManager.createColony(world, hut.getPosition(), player);
+            ColonyManager.createColony(worldIn, hut.getPosition(), player);
         }
-        super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
 }

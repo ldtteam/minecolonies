@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
@@ -39,7 +40,7 @@ public class EntityAICitizenWander extends EntityAIBase
             return false;
         }
 
-        vec3.yCoord = getValidHeight(vec3);
+        vec3 = new Vec3(vec3.xCoord, getValidHeight(vec3), vec3.zCoord);
 
         this.xPosition = vec3.xCoord;
         this.yPosition = vec3.yCoord;
@@ -61,12 +62,12 @@ public class EntityAICitizenWander extends EntityAIBase
             returnHeight= 0;
         }
 
-        while(returnHeight >= 1 && citizen.worldObj.isAirBlock(MathHelper.floor_double(position.xCoord), (int) returnHeight - 1, MathHelper.floor_double(position.zCoord)))
+        while(returnHeight >= 1 && citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight - 1, MathHelper.floor_double(position.zCoord))))
         {
             returnHeight -= 1.0D;
         }
 
-        while(!citizen.worldObj.isAirBlock(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord)))
+        while(!citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord))))
         {
             returnHeight += 1.0D;
         }

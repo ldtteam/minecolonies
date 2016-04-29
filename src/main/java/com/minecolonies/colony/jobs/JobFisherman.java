@@ -3,11 +3,11 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.EntityAIWorkFisherman;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class JobFisherman extends Job
      * The water the fisherman is currently fishing at
      * Contains the location of the water so that the fisherman can path to the fishing spot.
      */
-    private ChunkCoordinates water;
+    private BlockPos water;
     /**
      * Contains all possible fishing spots.
      * This list is filled during the execution of the fisherman.
@@ -41,7 +41,7 @@ public class JobFisherman extends Job
      * After the fisherman has visited an fixed amount of ponds the fisherman will choose a random pond
      * from this list as the next fishing spot.
      */
-    private ArrayList<ChunkCoordinates> ponds = new ArrayList<>();
+    private ArrayList<BlockPos> ponds = new ArrayList<>();
 
 
     /**
@@ -88,13 +88,13 @@ public class JobFisherman extends Job
         NBTTagCompound waterTag = new NBTTagCompound();
         if (water != null)
         {
-            ChunkCoordUtils.writeToNBT(waterTag,TAG_WATER,water);
+            BlockPosUtil.writeToNBT(waterTag,TAG_WATER,water);
         }
 
         NBTTagList lakes = new NBTTagList();
-        for (ChunkCoordinates pond : ponds)
+        for (BlockPos pond : ponds)
         {
-            ChunkCoordUtils.writeToNBTTagList(lakes, pond);
+            BlockPosUtil.writeToNBTTagList(lakes, pond);
         }
         compound.setTag(TAG_PONDS, lakes);
     }
@@ -111,14 +111,14 @@ public class JobFisherman extends Job
 
         if (compound.hasKey(TAG_WATER))
         {
-            water = ChunkCoordUtils.readFromNBT(compound,TAG_WATER);
+            water = BlockPosUtil.readFromNBT(compound,TAG_WATER);
         }
 
         ponds = new ArrayList<>();
         NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < listOfPonds.tagCount(); i++)
         {
-            ponds.add(ChunkCoordUtils.readFromNBTTagList(listOfPonds, i));
+            ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
         }
     }
 
@@ -136,7 +136,7 @@ public class JobFisherman extends Job
     /**
      * getter for current water
      */
-    public ChunkCoordinates getWater()
+    public BlockPos getWater()
     {
         return water;
     }
@@ -144,7 +144,7 @@ public class JobFisherman extends Job
     /**
      * Setter for current water
      */
-    public void setWater(ChunkCoordinates water)
+    public void setWater(BlockPos water)
     {
         this.water = water;
     }
@@ -154,7 +154,7 @@ public class JobFisherman extends Job
      *
      * @return a list of coordinates
      */
-    public List<ChunkCoordinates> getPonds()
+    public List<BlockPos> getPonds()
     {
         return new ArrayList<>(ponds);
     }
@@ -164,7 +164,7 @@ public class JobFisherman extends Job
      *
      * @param pond the pond to add
      */
-    public void addToPonds(ChunkCoordinates pond)
+    public void addToPonds(BlockPos pond)
     {
         this.ponds.add(pond);
     }
@@ -174,7 +174,7 @@ public class JobFisherman extends Job
      *
      * @param pond the coordinates matching one pond
      */
-    public void removeFromPonds(ChunkCoordinates pond)
+    public void removeFromPonds(BlockPos pond)
     {
         this.ponds.remove(pond);
     }

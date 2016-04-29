@@ -2,15 +2,16 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.jobs.JobFarmer;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.InventoryUtils;
-import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockCrops;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,15 +28,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 {
-    private static final    String                  TOOL_TYPE_HOE       = "hoe";
-    private static final    String                  TOOL_TYPE_SHOVEL    = "shovel";
-    private static final    String                  RENDER_META_SEEDS   = "Seeds";
-    private static          Logger                  logger              = LogManager.getLogger("Farmer");
-    private                 List<ChunkCoordinates>  farmAbleLand        = new ArrayList<>();
-    private                 List<ChunkCoordinates>  plowedLand          = new ArrayList<>();
-    private                 List<ChunkCoordinates>  crops               = new ArrayList<>();
-    private                 List<ChunkCoordinates>  crops2              = new ArrayList<>();
-    private                 ChunkCoordinates        currentFarmLand;
+    private static final    String                  TOOL_TYPE_HOE     = "hoe";
+    private static final    String                  TOOL_TYPE_SHOVEL  = "shovel";
+    private static final    String                  RENDER_META_SEEDS = "Seeds";
+    private static          Logger                  logger            = LogManager.getLogger("Farmer");
+    private                 List<BlockPos>          farmAbleLand      = new ArrayList<>();
+    private                 List<BlockPos>          plowedLand        = new ArrayList<>();
+    private                 List<BlockPos>          crops             = new ArrayList<>();
+    private                 List<BlockPos>          crops2            = new ArrayList<>();
+    private                 BlockPos                currentFarmLand;
     private                 int                     harvestCounter      = 0;
     private                 String                  needItem            = "";
     private                 double                  baseSpeed;
@@ -106,7 +107,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
     {
         if (job.isMissingNeededItem())
         {
-            if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+            if (BlockPosUtil.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
             {
                 List<ItemStack> l = new CopyOnWriteArrayList<>();
                 l.addAll(job.getItemsNeeded());
@@ -141,7 +142,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                 make_land();
                 break;
             case NEED_SEEDS:
-                if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+                if (BlockPosUtil.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
                 {
                     delay = 200;
                     logger.info("Need Seeds");
@@ -232,30 +233,30 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         BuildingFarmer b = (BuildingFarmer) (worker.getWorkBuilding());
         if (b == null){return;}
 
-        int buildingX = worker.getWorkBuilding().getLocation().posX;
-        int buildingY = worker.getWorkBuilding().getLocation().posY;
-        int buildingZ = worker.getWorkBuilding().getLocation().posZ;
+        int buildingX = worker.getWorkBuilding().getLocation().getX();
+        int buildingY = worker.getWorkBuilding().getLocation().getY();
+        int buildingZ = worker.getWorkBuilding().getLocation().getZ();
 
         for (int x = buildingX - b.getFarmRadius() - 1; x <= buildingX + b.getFarmRadius() + 1; x++)
         {
             for (int z = buildingZ - b.getFarmRadius() - 1; z <= buildingZ + b.getFarmRadius() + 1; z++)
             {
-                Block block = world.getBlock(x, buildingY - 1, z);
+                Block block = world.getBlockState(new BlockPos(x, buildingY - 1, z)).getBlock();
                 if (block == Blocks.dirt || block == Blocks.grass)
                 {
 
-                    if (world.isAirBlock(x, buildingY + 1, z))
+                    if (world.isAirBlock(new BlockPos(x, buildingY + 1, z)))
                     {
-                        if (farmAbleLand.size() == 0 || !farmAbleLand.contains(new ChunkCoordinates(x, buildingY, z)))
+                        if (farmAbleLand.size() == 0 || !farmAbleLand.contains(new BlockPos(x, buildingY, z)))
                         {
-                            farmAbleLand.add(new ChunkCoordinates(x, buildingY, z));
+                            farmAbleLand.add(new BlockPos(x, buildingY, z));
                         }
                     }
 
                 }
                 else if (block == Blocks.farmland)
                 {
-                    Block blockAbove = world.getBlock(x, buildingY, z);
+                    Block blockAbove = world.getBlockState(new BlockPos(x, buildingY, z)).getBlock();
 
                     if (blockAbove == Blocks.wheat
                         || blockAbove == Blocks.potatoes
@@ -265,14 +266,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                         || blockAbove == Blocks.pumpkin
                         || blockAbove == Blocks.pumpkin_stem)
                     {
-                        if (crops.size() == 0 || !crops.contains(new ChunkCoordinates(x, buildingY, z)))
+                        if (crops.size() == 0 || !crops.contains(new BlockPos(x, buildingY, z)))
                         {
-                            crops.add(new ChunkCoordinates(x, buildingY, z));
+                            crops.add(new BlockPos(x, buildingY, z));
                         }
                     }
-                    else if (plowedLand.size() == 0 || !plowedLand.contains(new ChunkCoordinates(x, buildingY, z)))
+                    else if (plowedLand.size() == 0 || !plowedLand.contains(new BlockPos(x, buildingY, z)))
                     {
-                        plowedLand.add(new ChunkCoordinates(x, buildingY, z));
+                        plowedLand.add(new BlockPos(x, buildingY, z));
                     }
                 }
             }
@@ -284,26 +285,26 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
     {
         if (!farmAbleLand.isEmpty())
         {
-            if (world.getBlock(farmAbleLand.get(0).posX, farmAbleLand.get(0).posY - 1, farmAbleLand.get(0).posZ)
+            if (world.getBlockState(new BlockPos(farmAbleLand.get(0).getX(), farmAbleLand.get(0).getY() - 1, farmAbleLand.get(0).getZ())).getBlock()
                 != Blocks.farmland)
             {
                 delay = 20;
-                world.setBlock(farmAbleLand.get(0).posX,
-                               farmAbleLand.get(0).posY - 1,
-                               farmAbleLand.get(0).posZ,
-                               Blocks.farmland);
-                currentFarmLand = new ChunkCoordinates(farmAbleLand.get(0).posX,
-                                                       farmAbleLand.get(0).posY - 1,
-                                                       farmAbleLand.get(0).posZ);
+                world.setBlockState(new BlockPos(farmAbleLand.get(0).getX(),
+                               farmAbleLand.get(0).getY() - 1,
+                               farmAbleLand.get(0).getZ()),
+                               Blocks.farmland.getDefaultState());
+                currentFarmLand = new BlockPos(farmAbleLand.get(0).getX(),
+                                                       farmAbleLand.get(0).getY() - 1,
+                                                       farmAbleLand.get(0).getZ());
             }
 
-            if (plowedLand.isEmpty() || !plowedLand.contains(new ChunkCoordinates(farmAbleLand.get(0).posX,
-                                                                                    farmAbleLand.get(0).posY,
-                                                                                    farmAbleLand.get(0).posZ)))
+            if (plowedLand.isEmpty() || !plowedLand.contains(new BlockPos(farmAbleLand.get(0).getX(),
+                                                                                    farmAbleLand.get(0).getY(),
+                                                                                    farmAbleLand.get(0).getZ())))
             {
-                plowedLand.add(new ChunkCoordinates(farmAbleLand.get(0).posX,
-                                                    farmAbleLand.get(0).posY,
-                                                    farmAbleLand.get(0).posZ));
+                plowedLand.add(new BlockPos(farmAbleLand.get(0).getX(),
+                                                    farmAbleLand.get(0).getY(),
+                                                    farmAbleLand.get(0).getZ()));
                 farmAbleLand.remove(0);
             }
         }
@@ -325,19 +326,15 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         //Only able to plant wheat, pumpkin and melon, Potatoe and carrot
         if (!plowedLand.isEmpty())
         {
-            if (world.getBlock(plowedLand.get(0).posX, plowedLand.get(0).posY - 1, plowedLand.get(0).posZ)
-                == Blocks.farmland)
+            if (world.getBlockState(plowedLand.get(0)).getBlock() == Blocks.farmland)
             {
-                if (world.isAirBlock(plowedLand.get(0).posX, plowedLand.get(0).posY, plowedLand.get(0).posZ))
+                if (world.isAirBlock(plowedLand.get(0)))
                 {
-                    world.setBlock(plowedLand.get(0).posX,
-                                   plowedLand.get(0).posY - 1,
-                                   plowedLand.get(0).posZ,
-                                   Blocks.farmland);
+                    world.setBlockState(plowedLand.get(0),Blocks.farmland.getDefaultState());
                     delay = 20;
-                    currentFarmLand = new ChunkCoordinates(plowedLand.get(0).posX,
-                                                           plowedLand.get(0).posY - 1,
-                                                           plowedLand.get(0).posZ);
+                    currentFarmLand = new BlockPos(plowedLand.get(0).getX(),
+                                                           plowedLand.get(0).getY() - 1,
+                                                           plowedLand.get(0).getZ());
 
                     int slot = getFirstSeed();
                     ItemStack seed = getInventory().getStackInSlot(slot);
@@ -349,47 +346,47 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 
                     if (seed.getItem() == Items.wheat_seeds)
                     {
-                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.wheat);
+                        BlockPosUtil.setBlock(world, plowedLand.get(0), Blocks.wheat);
                     }
                     else if (seed.getItem() == Items.pumpkin_seeds)
                     {
-                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.pumpkin_stem);
+                        BlockPosUtil.setBlock(world, plowedLand.get(0), Blocks.pumpkin_stem);
                     }
                     else if (seed.getItem() == Items.melon_seeds)
                     {
-                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.melon_stem);
+                        BlockPosUtil.setBlock(world, plowedLand.get(0), Blocks.melon_stem);
                     }
                     else if (seed.getItem() == Items.potato)
                     {
-                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.potatoes);
+                        BlockPosUtil.setBlock(world, plowedLand.get(0), Blocks.potatoes);
                     }
                     else if (seed.getItem() == Items.carrot)
                     {
-                        ChunkCoordUtils.setBlock(world, plowedLand.get(0), Blocks.carrots);
+                        BlockPosUtil.setBlock(world, plowedLand.get(0), Blocks.carrots);
                     }
                     getInventory().decrStackSize(slot, 1);
                     delay = 10;
                 }
 
-                if (crops.size() == 0 || !crops.contains(new ChunkCoordinates(plowedLand.get(0).posX,
-                                                                              plowedLand.get(0).posY,
-                                                                              plowedLand.get(0).posZ)))
+                if (crops.size() == 0 || !crops.contains(new BlockPos(plowedLand.get(0).getX(),
+                                                                              plowedLand.get(0).getY(),
+                                                                              plowedLand.get(0).getZ())))
                 {
-                    crops.add(new ChunkCoordinates(plowedLand.get(0).posX,
-                                                   plowedLand.get(0).posY,
-                                                   plowedLand.get(0).posZ));
+                    crops.add(new BlockPos(plowedLand.get(0).getX(),
+                                                   plowedLand.get(0).getY(),
+                                                   plowedLand.get(0).getZ()));
                     plowedLand.remove(0);
                 }
             }
             else
             {
-                if (farmAbleLand.isEmpty() || !farmAbleLand.contains(new ChunkCoordinates(plowedLand.get(0).posX,
-                                                                                            plowedLand.get(0).posY,
-                                                                                            plowedLand.get(0).posZ)))
+                if (farmAbleLand.isEmpty() || !farmAbleLand.contains(new BlockPos(plowedLand.get(0).getX(),
+                                                                                            plowedLand.get(0).getY(),
+                                                                                            plowedLand.get(0).getZ())))
                 {
-                    farmAbleLand.add(new ChunkCoordinates(plowedLand.get(0).posX,
-                                                          plowedLand.get(0).posY,
-                                                          plowedLand.get(0).posZ));
+                    farmAbleLand.add(new BlockPos(plowedLand.get(0).getX(),
+                                                          plowedLand.get(0).getY(),
+                                                          plowedLand.get(0).getZ()));
                     plowedLand.remove(0);
                 }
             }
@@ -413,16 +410,15 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         {
             delay = 10;
 
-            Block block = ChunkCoordUtils.getBlock(world, crops.get(0));
+            Block block = BlockPosUtil.getBlock(world, crops.get(0));
 
-            if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, crops.get(0)))
+            if (BlockPosUtil.isWorkerAtSiteWithMove(worker, crops.get(0)))
             {
-                if (block == Blocks.melon_block || block == Blocks.pumpkin || world.getBlockMetadata(crops.get(0).posX,
-                                                                                                     crops.get(0).posY,
-                                                                                                     crops.get(0).posZ)
+                //todo should be age, may be different!
+                if (block == Blocks.melon_block || block == Blocks.pumpkin || world.getBlockState(crops.get(0)).getValue(BlockCrops.AGE)
                                                                               == 0x7)
                 {
-                    List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, crops.get(0), 0);
+                    List<ItemStack> items = BlockPosUtil.getBlockDrops(world, crops.get(0), 0);
 
                     for (ItemStack item : items)
                     {
@@ -430,31 +426,19 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                     }
                     try
                     {
-                        //Crashes when called before Minecraft Client fully initialized
-                        FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(crops.get(0).posX,
-                                                                                                      crops.get(0).posY,
-                                                                                                      crops.get(0).posZ,
-                                                                                                      block,
-                                                                                                      world.getBlockMetadata(
-                                                                                                              crops.get(
-                                                                                                                      0).posX,
-                                                                                                              crops.get(
-                                                                                                                      0).posY,
-                                                                                                              crops.get(
-                                                                                                                      0).posZ));
+                        //Crashes when called before Minecraft Client fully initialized, crashes the server as well
+                        //FMLClientHandler.instance().getClient().effectRenderer.addBlockDestroyEffects(crops.get(0), world.getBlockState(crops.get(0)));
                     }
                     catch (Exception exp)
                     {
                         logger.info("Couldn't add effect", exp);
                     }
-                    world.setBlockToAir(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ);
+                    world.setBlockToAir(crops.get(0));
                     harvestCounter++;
 
-                    if (!plowedLand.contains(new ChunkCoordinates(crops.get(0).posX,
-                                                                  crops.get(0).posY,
-                                                                  crops.get(0).posZ)))
+                    if (!plowedLand.contains(crops.get(0)))
                     {
-                        plowedLand.add(new ChunkCoordinates(crops.get(0).posX, crops.get(0).posY, crops.get(0).posZ));
+                        plowedLand.add(new BlockPos(crops.get(0)));
                         crops.remove(0);
                     }
                 }
@@ -609,7 +593,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
 
     private void dumpInventory()
     {
-        if (ChunkCoordUtils.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
+        if (BlockPosUtil.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
         {
             for (int i = 0; i < getInventory().getSizeInventory(); i++)
             {

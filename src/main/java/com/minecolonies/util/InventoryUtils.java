@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -188,7 +187,7 @@ public class InventoryUtils {
     {
         if (stack != null)
         {
-            ItemStack returnStack = stack;
+            ItemStack returnStack = stack.copy();
             int slot;
             while((slot = containsPartialStack(inventory, stack)) != -1 && returnStack != null)
             {

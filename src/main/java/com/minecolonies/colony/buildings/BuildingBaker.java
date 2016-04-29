@@ -6,7 +6,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobPlaceholder;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public class BuildingBaker extends BuildingWorker
 {
@@ -14,7 +14,7 @@ public class BuildingBaker extends BuildingWorker
     private static final String BAKER           = "Baker";
     private static final String BAKER_HUT_NAME  = "bakerHut";
 
-    public BuildingBaker(Colony c, ChunkCoordinates l)
+    public BuildingBaker(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -45,7 +45,7 @@ public class BuildingBaker extends BuildingWorker
 
     public static class View extends BuildingWorker.View
     {
-        public View(ColonyView c, ChunkCoordinates l)
+        public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }

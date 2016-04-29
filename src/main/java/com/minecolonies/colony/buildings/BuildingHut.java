@@ -2,11 +2,11 @@ package com.minecolonies.colony.buildings;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public abstract class BuildingHut extends Building
 {
-    public BuildingHut(Colony c, ChunkCoordinates l)
+    public BuildingHut(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -23,7 +23,7 @@ public abstract class BuildingHut extends Building
 
     public static class View extends Building.View
     {
-        protected View(ColonyView c, ChunkCoordinates l)
+        protected View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }

@@ -4,6 +4,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -11,7 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public class TileEntityColonyBuilding extends TileEntityChest
 {
@@ -24,15 +25,15 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public TileEntityColonyBuilding(){}
 
     @Override
-    public void updateEntity()
+    public void update()
     {
-        super.updateEntity();
+        super.update();
 
         if (!worldObj.isRemote)
         {
             if (colonyId == 0)
             {
-                throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId", worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord));
+                throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId", worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
             }
         }
     }
@@ -51,7 +52,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
             else
             {
                 throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
-                        worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord));
+                        worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
             }
 //            else if (worldObj != null)
 //            {
@@ -93,7 +94,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if (!compound.hasKey(TAG_COLONY))
         {
             throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] missing COLONY tag.",
-                    worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord));
+                    worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
         }
         colonyId = compound.getInteger(TAG_COLONY);
         updateColonyReferences();
@@ -106,7 +107,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if (colonyId == 0)
         {
             throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId; %s colony reference.",
-                    worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord,
+                    worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(),
                     colony == null ? "NO" : "valid"));
         }
         compound.setInteger(TAG_COLONY, colonyId);
@@ -121,7 +122,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
     {
-        NBTTagCompound compound = packet.func_148857_g();
+        NBTTagCompound compound = packet.getNbtCompound();
         colonyId = compound.getInteger(TAG_COLONY);
     }
 
@@ -130,7 +131,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger(TAG_COLONY, colonyId);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, compound);
+        return new S35PacketUpdateTileEntity(this.getPosition(), 0, compound);
     }
 
     /**
@@ -213,11 +214,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * Returns the position of the tile entity
      *
-     * @return      Chunk Coordinates of the tile entity
+     * @return      Block Coordinates of the tile entity
      */
-    public ChunkCoordinates getPosition()
+    public BlockPos getPosition()
     {
-        return new ChunkCoordinates(xCoord, yCoord, zCoord);
+        return pos;
     }
 
     //-----------------------------Material Handling--------------------------------
@@ -247,9 +248,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int index)
+    public ItemStack removeStackFromSlot(int index)
     {
-        ItemStack removed = super.getStackInSlotOnClosing(index);
+        ItemStack removed = super.removeStackFromSlot(index);
 
         removeStackFromMaterialStore(removed);
 
@@ -272,7 +273,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if(stack == null){
             return;
         }
-        building.getMaterialStore().addMaterial(stack.getItem(), stack.stackSize);
+
+        if(MaterialSystem.isEnabled)
+        {
+            building.getMaterialStore().addMaterial(stack.getItem(), stack.stackSize);
+        }
     }
 
     private void removeStackFromMaterialStore(ItemStack stack)
@@ -280,6 +285,10 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if(stack == null){
             return;
         }
-        building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
+
+        if(MaterialSystem.isEnabled)
+        {
+            building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
+        }
     }
 }

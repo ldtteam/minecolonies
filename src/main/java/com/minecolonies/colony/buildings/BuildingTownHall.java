@@ -1,15 +1,15 @@
 package com.minecolonies.colony.buildings;
 
-import com.minecolonies.client.gui.WindowTownhall;
+import com.minecolonies.client.gui.WindowTownHall;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
-public class BuildingTownhall extends BuildingHut
+public class BuildingTownHall extends BuildingHut
 {
-    private static final String TOWNHALL = "Townhall";
+    private static final String TOWN_HALL = "TownHall";
 
-    public BuildingTownhall(Colony c, ChunkCoordinates l)
+    public BuildingTownHall(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -17,7 +17,7 @@ public class BuildingTownhall extends BuildingHut
     @Override
     public String getSchematicName()
     {
-        return TOWNHALL;
+        return TOWN_HALL;
     }
 
     @Override
@@ -28,14 +28,14 @@ public class BuildingTownhall extends BuildingHut
 
     public static class View extends BuildingHut.View
     {
-        public View(ColonyView c, ChunkCoordinates l)
+        public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }
 
         public com.blockout.views.Window getWindow()
         {
-            return new WindowTownhall(this);
+            return new WindowTownHall(this);
         }
     }
 }
