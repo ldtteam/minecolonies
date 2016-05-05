@@ -306,7 +306,6 @@ public final class Schematic
         short width  = (short) (Math.abs(maxX - minX) + 1);
         short height = (short) (Math.abs(maxY - minY) + 1);
         short length = (short) (Math.abs(maxZ - minZ) + 1);
-        boolean isHut = false;
 
         short[][][]         blocks       = new short[width][height][length];
         byte[][][]          metadata     = new byte[width][height][length];
@@ -330,7 +329,6 @@ public final class Schematic
 
                     if (block instanceof AbstractBlockHut)
                     {
-                        isHut = true;
                         if (xOffset == 0 && yOffset == 0 && zOffset == 0)
                         {
                             xOffset = x;
@@ -359,9 +357,8 @@ public final class Schematic
                 }
             }
         }
-        if(!isHut)
+        if (xOffset == 0 && yOffset == 0 && zOffset == 0)
         {
-            //todo test
             xOffset = (width/2)+1;
             zOffset = (length/2)+1;
         }
