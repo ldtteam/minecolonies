@@ -324,7 +324,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             {
                 Block block = ((ItemBlock) stack.getItem()).getBlock();
                 worker.setHeldItem(slot);
-                if (BlockPosUtil.setBlock(world, location, block.getDefaultState(), 0x02))
+                if (BlockPosUtil.setBlock(world, location, block.getStateFromMeta(stack.getMetadata()), 0x02))
                 {
                     worker.swingItem();
                     world.playSoundEffect((float) location.getX() + 0.5F,
