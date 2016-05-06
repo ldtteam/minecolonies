@@ -623,27 +623,27 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             workingNode = null;
             return;
         }
-        int xoffset = getXDistance(foundDirection) / 2;
-        int zoffset = getZDistance(foundDirection) / 2;
-        if (xoffset > 0)
+        int xOffSet = getXDistance(foundDirection) / 2;
+        int zOffSet = getZDistance(foundDirection) / 2;
+        if (xOffSet > 0)
         {
-            xoffset += 1;
+            xOffSet += 1;
         }
         else
         {
-            xoffset -= 1;
+            xOffSet -= 1;
         }
-        if (zoffset > 0)
+        if (zOffSet > 0)
         {
-            zoffset += 1;
+            zOffSet += 1;
         }
         else
         {
-            zoffset -= 1;
+            zOffSet -= 1;
         }
-        BlockPos standingPosition = new BlockPos(workingNode.getX() + xoffset,
+        BlockPos standingPosition = new BlockPos(workingNode.getX() + xOffSet,
                                                                  currentLevel.getDepth(),
-                                                                 workingNode.getZ() + zoffset);
+                                                                 workingNode.getZ() + zOffSet);
         currentStandingPosition = standingPosition;
         if (workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS
             || workingNode.getStatus() == Node.NodeStatus.COMPLETED
@@ -688,21 +688,33 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
     private void mineNodeFromStand(Node mineNode, BlockPos standingPosition, int direction)
     {
         //Preload schematics
-        if(job.getSchematic()==null)
-        {
-            if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
-            {
+        if(job.getSchematic()==null) {
+            if (mineNode.getStyle() == Node.NodeType.CROSSROAD) {
                 loadSchematic("classic/minerX4");
             }
-            if (mineNode.getStyle() == Node.NodeType.BEND)
-            {
+            if (mineNode.getStyle() == Node.NodeType.BEND) {
                 loadSchematic("classic/minerX2Right");
             }
             if (mineNode.getStyle() == Node.NodeType.TUNNEL) {
                 loadSchematic("classic/minerX2Top");
             }
-            job.getSchematic().setPosition(new BlockPos(mineNode.getX(),getOwnBuilding().getCurrentLevel().getDepth()+1, mineNode.getZ()));
-            //job.getSchematic().rotate(direction);
+            job.getSchematic().setPosition(new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ()));
+
+            int rotateDirection = 0;
+            if (mineNode.getDirectionPosX() == Node.NodeStatus.WALL)
+            {
+                rotateDirection = 2;
+            }
+            else
+            {
+                rotateDirection = 3;
+                if (mineNode.getDirectionPosZ() == Node.NodeStatus.WALL)
+                {
+                    rotateDirection = 4;
+                }
+            }
+
+            job.getSchematic().rotate(rotateDirection);
         }
 
         //Check for safe Node
@@ -739,29 +751,28 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             mineNode.setStatus(Node.NodeStatus.IN_PROGRESS);
         }
 
-        int xoffset = getXDistance(direction) / 2;
-        int zoffset = getZDistance(direction) / 2;
-        if (xoffset > 0)
+        int xOffSet = getXDistance(direction) / 2;
+        int zOffSet = getZDistance(direction) / 2;
+        if (xOffSet > 0)
         {
-            xoffset -= 1;
+            xOffSet -= 1;
         }
         else
         {
-            xoffset += 1;
+            xOffSet += 1;
         }
-        if (zoffset > 0)
+        if (zOffSet > 0)
         {
-            zoffset -= 1;
+            zOffSet -= 1;
         }
         else
         {
-            zoffset += 1;
+            zOffSet += 1;
         }
-        BlockPos newStandingPosition = new BlockPos(mineNode.getX() + xoffset,
+        BlockPos newStandingPosition = new BlockPos(mineNode.getX() + xOffSet,
                                                                     standingPosition.getY(),
-                                                                    mineNode.getZ() + zoffset);
+                                                                    mineNode.getZ() + zOffSet);
         currentStandingPosition = newStandingPosition;
-
 
         if (mineNode.getStatus() != Node.NodeStatus.COMPLETED)
         {
@@ -892,8 +903,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
     private boolean buildDecoration()
     {
-        setDelay(10);
-
         if(job.getSchematic().getBlock() == null || job.getSchematic().doesSchematicBlockEqualWorldBlock() || (job.getSchematic().getBlock()!=null && job.getSchematic().getBlock().getMaterial().isSolid()) || job.getSchematic().getBlock() == Blocks.air)
         {
             if(!findNextBlockNonSolid())
@@ -948,8 +957,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
     private boolean buildStructure()
     {
-        setDelay(10);
-
         if(job.getSchematic().getBlock() == null || job.getSchematic().doesSchematicBlockEqualWorldBlock() || (!job.getSchematic().getBlock().getMaterial().isSolid() && job.getSchematic().getBlock() != Blocks.air))
         {
             return !findNextBlockSolid();
@@ -1023,8 +1030,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         }
         return true;
     }
-
-
 
     private boolean mineSideOfNode(Node mineNode, int direction, BlockPos standingPosition)
     {
