@@ -688,33 +688,37 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
     private void mineNodeFromStand(Node mineNode, BlockPos standingPosition, int direction)
     {
         //Preload schematics
-        if(job.getSchematic()==null) {
-            if (mineNode.getStyle() == Node.NodeType.CROSSROAD) {
+        if(job.getSchematic()==null)
+        {
+            if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
+            {
                 loadSchematic("classic/minerX4");
             }
-            if (mineNode.getStyle() == Node.NodeType.BEND) {
+            if (mineNode.getStyle() == Node.NodeType.BEND)
+            {
                 loadSchematic("classic/minerX2Right");
             }
-            if (mineNode.getStyle() == Node.NodeType.TUNNEL) {
+            if (mineNode.getStyle() == Node.NodeType.TUNNEL)
+            {
                 loadSchematic("classic/minerX2Top");
             }
             job.getSchematic().setPosition(new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ()));
 
-            int rotateDirection = 0;
-            if (mineNode.getDirectionPosX() == Node.NodeStatus.WALL)
+            int rotateTimes = 3;
+            if (direction == 3)
             {
-                rotateDirection = 2;
+                rotateTimes = 1;
             }
-            else
+            else if(direction == 2)
             {
-                rotateDirection = 3;
-                if (mineNode.getDirectionPosZ() == Node.NodeStatus.WALL)
-                {
-                    rotateDirection = 4;
-                }
+                rotateTimes = 1;
+            }
+            else if(direction == 4)
+            {
+                rotateTimes = 2;
             }
 
-            job.getSchematic().rotate(rotateDirection);
+            job.getSchematic().rotate(rotateTimes);
         }
 
         //Check for safe Node
@@ -893,23 +897,14 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             return false;
         }
 
-        if(!buildDecoration())
-        {
-            return false;
-        }
-
-        return true;
+        return buildDecoration();
     }
 
     private boolean buildDecoration()
     {
         if(job.getSchematic().getBlock() == null || job.getSchematic().doesSchematicBlockEqualWorldBlock() || (job.getSchematic().getBlock()!=null && job.getSchematic().getBlock().getMaterial().isSolid()) || job.getSchematic().getBlock() == Blocks.air)
         {
-            if(!findNextBlockNonSolid())
-            {
-                return true;
-            }
-            return false;
+            return !findNextBlockNonSolid();
         }
 
         if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))

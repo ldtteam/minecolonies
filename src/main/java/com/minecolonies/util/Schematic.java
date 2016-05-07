@@ -359,8 +359,8 @@ public final class Schematic
         }
         if (xOffset == 0 && yOffset == 0 && zOffset == 0)
         {
-            xOffset = (width/2)+1;
-            zOffset = (length/2)+1;
+            xOffset = (width/2);
+            zOffset = (length/2);
         }
 
 
