@@ -16,7 +16,7 @@
             <label id="endurance" size="100% 11" color="black" />
             <label id="charisma" size="100% 11" color="black" />
             <label id="intelligence" size="100% 11" color="black" />
-            <label id="diligence" size="100% 11" color="black" />
+            <label id="dexterity" size="100% 11" color="black" />
         </group>
     </box>
     <button id="inventory"

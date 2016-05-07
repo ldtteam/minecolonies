@@ -77,6 +77,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                 new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding),
                 new AITarget(MINER_MINING_NODE, this::doNodeMining)
         );
+        worker.setSkillModifier(2*worker.getCitizenData().getStrength() + worker.getCitizenData().getEndurance());
     }
 
     //Miner wants to work but is not at building
@@ -130,6 +131,13 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         //Check if we reached the mineshaft depth limit
         if (getLastLadder(getOwnBuilding().ladderLocation) < getOwnBuilding().getDepthLimit())
         {
+            //If the miner hut has been placed too deep.
+            if(getOwnBuilding().getLevels().isEmpty())
+            {
+                chatSpamFilter.talkWithoutSpam("entity.miner.messageRequiresBetterHut");
+                getOwnBuilding().clearedShaft = false;
+                return IDLE;
+            }
             getOwnBuilding().clearedShaft = true;
             return MINER_MINING_NODE;
         }
@@ -687,6 +695,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
     private void mineNodeFromStand(Node mineNode, BlockPos standingPosition, int direction)
     {
+        //todo decide if bend right or left
         //Preload schematics
         if(job.getSchematic()==null)
         {
@@ -704,18 +713,18 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             }
             job.getSchematic().setPosition(new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ()));
 
-            int rotateTimes = 3;
+            int rotateTimes = 2;
             if (direction == 3)
             {
-                rotateTimes = 1;
+                rotateTimes = 3;
             }
             else if(direction == 2)
             {
-                rotateTimes = 1;
+                rotateTimes = 0;
             }
             else if(direction == 4)
             {
-                rotateTimes = 2;
+                rotateTimes = 1;
             }
 
             job.getSchematic().rotate(rotateTimes);
