@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.jobs.JobBuilder;
+import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
@@ -27,6 +28,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 
+import static com.minecolonies.entity.ai.AIState.*;
+
 /**
  * Performs builder work
  * Created: May 25, 2014
@@ -35,9 +38,64 @@ import net.minecraft.util.MathHelper;
  */
 public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 {
+    //todo use request item system
+    //todo use tools
+    //todo add floor under feet when removing floor.
     public EntityAIWorkBuilder(JobBuilder job)
     {
         super(job);
+        super.registerTargets(
+                new AITarget(this::checkIfExecute, () -> state),
+                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(PREPARING, this::preparing),
+                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+                new AITarget(BUILDER_GO_TO_CONSTRUCTION, this::goToConstructionSite),
+                new AITarget(BUILDER_CLEAR_STEP, this::clearStep),
+                new AITarget(BUILDER_REQUEST_MATERIALS, this::requestMaterials),
+                new AITarget(BUILDER_STRUCTURE_STEP, this::structureStep),
+                new AITarget(BUILDER_DECORATION_STEP, this::decorationStep),
+                new AITarget(BUILDER_COMPLETE_BUILD, this::completeBuild)
+        );
+    }
+
+    private AIState preparing()
+    {
+        if(needsSomething())
+        {
+            return AIState.PREPARING;
+        }
+        return AIState.BUILDER_CLEAR_STEP;
+    }
+
+    private boolean checkIfExecute()
+    {
+        setDelay(1);
+        WorkOrderBuild wo = job.getWorkOrder();
+        if(wo == null || job.getColony().getBuilding(wo.getBuildingId()) == null || !job.hasSchematic())
+        {
+            job.complete();
+            return true;
+        }
+        return false;
+    }
+
+    private AIState startWorkingAtOwnBuilding()
+    {
+        if (walkToBuilding())
+        {
+            return state;
+        }
+        return BUILDER_GO_TO_CONSTRUCTION;
+    }
+
+    /**
+     * This method will be overridden by AI implementations.
+     * It will serve as a tick function.
+     */
+    @Override
+    protected void workOnTask()
+    {
+        //Migration to new system complete
     }
 
     @Override
@@ -72,78 +130,23 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
             //Don't go through the CLEAR stage for repairs and upgrades
             if (building.getBuildingLevel() > 0) {
-                job.stage = JobBuilder.Stage.REQUEST_MATERIALS;
+                this.state = AIState.BUILDER_REQUEST_MATERIALS;
 
                 if (!job.hasSchematic() || !incrementBlock()) {
                     return;
                 }
             } else {
-                job.stage = JobBuilder.Stage.CLEAR;
+                this.state = AIState.BUILDER_CLEAR_STEP;
                 if (!job.hasSchematic() || !job.getSchematic().decrementBlock()) {
                     return;
                 }
             }
-
 
             LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", job.getSchematic().getName());
         }
         BlockPosUtil.tryMoveLivingToXYZ(worker, job.getSchematic().getPosition());
 
         worker.setStatus(EntityCitizen.Status.WORKING);
-    }
-
-    @Override
-    public void updateTask()
-    {
-        //Don't work every single tick
-        if(worker.getOffsetTicks() % job.getWorkInterval() != 0)
-        {
-            return;
-        }
-
-        WorkOrderBuild wo = job.getWorkOrder();
-        if(wo == null || job.getColony().getBuilding(wo.getBuildingId()) == null || !job.hasSchematic())
-        {
-            job.complete();
-            return;
-        }
-
-        //TODO: break this up to make it more readable
-        switch(job.stage)
-        {
-            case CLEAR:
-                clearStep();
-                break;
-            case REQUEST_MATERIALS:
-                if(!Configurations.builderInfiniteResources)
-                {
-                    requestMaterials();
-                }
-                job.stage = JobBuilder.Stage.STRUCTURE;
-                break;
-            case STRUCTURE:
-                structureStep();
-                break;
-            case DECORATIONS:
-                decorationStep();
-                break;
-            case ENTITIES:
-                //TODO use iterator to do this overtime
-                job.getSchematic().getEntities().forEach(this::spawnEntity);
-                completeBuild();
-                break;
-            default:
-                System.out.println("Case not implemented: " + job.stage.toString());
-        }
-    }
-
-    /**
-     * This method will be overridden by AI implementations
-     */
-    @Override
-    protected void workOnTask()
-    {
-        //TODO: rework the builder to use workOnTask eventually
     }
 
     @Override
@@ -159,32 +162,43 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         worker.setCurrentItemOrArmor(0, null);
     }
 
-    private void clearStep()
+    private AIState goToConstructionSite()
     {
-        if(worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS)
+        if(worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 5))
         {
-            if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
-            {
-                return;
-            }
-            worker.setStatus(EntityCitizen.Status.WORKING);
+            return AIState.BUILDER_CLEAR_STEP;
         }
 
-        BlockPos coords = job.getSchematic().getBlockPosition();
-        int      x      = coords.getX();
-        int      y      = coords.getY();
-        int      z      = coords.getZ();
+        return AIState.BUILDER_GO_TO_CONSTRUCTION;
+    }
 
-        Block worldBlock = world.getBlockState(coords).getBlock();
+    private AIState clearStep()
+    {
+        BlockPos coordinates = job.getSchematic().getBlockPosition();
 
-        if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock)
+        if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(),3))
         {
-            if(!Configurations.builderInfiniteResources)//We need to deal with materials
+            return AIState.BUILDER_CLEAR_STEP;
+        }
+
+        Block worldBlock = world.getBlockState(coordinates).getBlock();
+
+        if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && worldBlock != job.getSchematic().getBlock())
+        {
+            /*if(!Configurations.builderInfiniteResources)//We need to deal with materials
             {
-                if(!handleMaterials(Blocks.air, 0, worldBlock, world.getBlockState(coords))) return;
+                if(!handleMaterials(Blocks.air, 0, worldBlock, world.getBlockState(coordinates))) return;
+            }*/
+            if(!(coordinates.equals(worker.getPosition().down())))
+            {
+                if(!mineBlock(coordinates))
+                {
+                    //Worker running between his chest and working site, have to tweak this.
+                    return AIState.PREPARING;
+                }
             }
 
-            worker.setCurrentItemOrArmor(0, null);
+            /*worker.setCurrentItemOrArmor(0, null);
 
             if(!world.setBlockToAir(coords))
             {
@@ -192,60 +206,58 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 Log.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
                 //TODO handle - for now, just skipping
             }
-            worker.swingItem();
+            worker.swingItem();*/
         }
 
         if(!job.getSchematic().findNextBlockToClear())//method returns false if there is no next block (schematic finished)
         {
-            job.stage = JobBuilder.Stage.STRUCTURE;
+            job.getSchematic().reset();
+            incrementBlock();
+            return AIState.BUILDER_REQUEST_MATERIALS;
+        }
+        worker.swingItem();
+        return AIState.BUILDER_CLEAR_STEP;
+    }
+
+    private AIState requestMaterials()
+    {
+        if(!Configurations.builderInfiniteResources)//We need to deal with materials
+        {
+            //TODO thread this
+            while (job.getSchematic().findNextBlock()) {
+                if (job.getSchematic().doesSchematicBlockEqualWorldBlock()) {
+                    continue;
+                }
+
+                Block block = job.getSchematic().getBlock();
+                IBlockState metadata = job.getSchematic().getMetadata();
+                ItemStack itemstack = new ItemStack(block, 1);
+
+                Block worldBlock = BlockPosUtil.getBlock(world, job.getSchematic().getBlockPosition());
+
+                if (itemstack.getItem() != null && block != null && block != Blocks.air && worldBlock != Blocks.bedrock && !(worldBlock instanceof AbstractBlockHut) && !isBlockFree(block, 0)) {
+                    if (checkOrRequestItems(new ItemStack(block))) {
+                        job.getSchematic().reset();
+                        return AIState.BUILDER_REQUEST_MATERIALS;
+                    }
+                }
+            }
             job.getSchematic().reset();
             incrementBlock();
         }
-        worker.swingItem();
+        return AIState.BUILDER_STRUCTURE_STEP;
     }
 
-    private void requestMaterials()
-    {
-        //TODO thread this
-        while(job.getSchematic().findNextBlock())
-        {
-            if(job.getSchematic().doesSchematicBlockEqualWorldBlock())
-            {
-                continue;
-            }
-
-            Block block = job.getSchematic().getBlock();
-            IBlockState metadata = job.getSchematic().getMetadata();
-            ItemStack itemstack = new ItemStack(block, 1);
-
-            Block worldBlock = BlockPosUtil.getBlock(world, job.getSchematic().getBlockPosition());
-
-            if(itemstack.getItem() != null && block != null && block != Blocks.air && worldBlock != Blocks.bedrock && !(worldBlock instanceof AbstractBlockHut) && !isBlockFree(block, 0))
-            {
-                //TODO add item to prerequisites
-            }
-        }
-        job.getSchematic().reset();
-        incrementBlock();
-
-        //TODO maybe print needed items, depends on how system works
-    }
-
-    private void structureStep()
+    private AIState structureStep()
     {
         if(job.getSchematic().doesSchematicBlockEqualWorldBlock() || (!job.getSchematic().getBlock().getMaterial().isSolid() && job.getSchematic().getBlock() != Blocks.air))
         {
-            findNextBlockSolid();
-            return;//findNextBlock count was reached and we can ignore this block
+            return findNextBlockSolid();//findNextBlock count was reached and we can ignore this block
         }
 
-        if(worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS)
+        if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
         {
-            if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
-            {
-                return;
-            }
-            worker.setStatus(EntityCitizen.Status.WORKING);
+            return AIState.BUILDER_STRUCTURE_STEP;
         }
 
         Block block = job.getSchematic().getBlock();
@@ -264,18 +276,21 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             BlockPos local = job.getSchematic().getLocalPosition();
             Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockSolid();
-            return;
+            return AIState.BUILDER_STRUCTURE_STEP;
         }
         if(worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
                 block instanceof AbstractBlockHut)//don't overwrite huts or bedrock, nor place huts
         {
             findNextBlockSolid();
-            return;
+            return AIState.BUILDER_STRUCTURE_STEP;
         }
 
-        if(!Configurations.builderInfiniteResources)//We need to deal with materials
+        if(!Configurations.builderInfiniteResources)//We need to deal with materials if(!Configurations.builderInfiniteResources)//We need to deal with materials
         {
-            if(!handleMaterials(block,0, worldBlock, worldBlockMetadata)) return;
+            if(!handleMaterials(block,0, worldBlock, worldBlockMetadata))
+            {
+                return AIState.BUILDER_STRUCTURE_STEP;
+            }
         }
 
         if(block == Blocks.air)
@@ -303,26 +318,24 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 //TODO handle - for now, just skipping
             }
         }
-        findNextBlockSolid();
         worker.swingItem();
+
+        return findNextBlockSolid();
     }
 
-    private void decorationStep()
+    private AIState decorationStep()
     {
         if(job.getSchematic().doesSchematicBlockEqualWorldBlock() || job.getSchematic().getBlock().getMaterial().isSolid() || job.getSchematic().getBlock() == Blocks.air)
         {
-            findNextBlockNonSolid();
-            return;//findNextBlock count was reached and we can ignore this block
+            return findNextBlockNonSolid();//findNextBlock count was reached and we can ignore this block
         }
 
-        if(worker.getStatus() != EntityCitizen.Status.GETTING_ITEMS)
+        if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
         {
-            if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
-            {
-                return;
-            }
-            worker.setStatus(EntityCitizen.Status.WORKING);
+            return AIState.BUILDER_DECORATION_STEP;
         }
+        worker.setStatus(EntityCitizen.Status.WORKING);
+
 
         Block block = job.getSchematic().getBlock();
         IBlockState metadata = job.getSchematic().getMetadata();
@@ -340,18 +353,18 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             BlockPos local = job.getSchematic().getLocalPosition();
             Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockNonSolid();
-            return;
+            return AIState.BUILDER_DECORATION_STEP;
         }
         if(worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
                 block instanceof AbstractBlockHut)//don't overwrite huts or bedrock, nor place huts
         {
             findNextBlockNonSolid();
-            return;
+            return AIState.BUILDER_DECORATION_STEP;
         }
 
         if(!Configurations.builderInfiniteResources)//We need to deal with materials
         {
-            if(!handleMaterials(block, 0, worldBlock, worldBlockMetadata)) return;
+            if(!handleMaterials(block, 0, worldBlock, worldBlockMetadata)) return AIState.BUILDER_DECORATION_STEP;
         }
 
         Item item = Item.getItemFromBlock(block);
@@ -366,9 +379,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             Log.logger.error(String.format("Block place failure %s at %d, %d, %d", block.getUnlocalizedName(), x, y, z));
             //TODO handle - for now, just skipping
         }
-
-        findNextBlockNonSolid();
         worker.swingItem();
+
+        return findNextBlockNonSolid();
     }
 
     private void spawnEntity(Entity entity)//TODO handle resources
@@ -432,40 +445,17 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
             ItemStack material = new ItemStack(BlockInfo.getItemFromBlock(block), 1, metadata);
 
-            int slotID = InventoryUtils.containsStack(getInventory(), material);
-            if(slotID == -1)//inventory doesn't contain item
+
+            if (!checkOrRequestItems(new ItemStack(BlockInfo.getItemFromBlock(block), 1, metadata)))
             {
-                TileEntityColonyBuilding workBuildingTileEntity = worker.getWorkBuilding().getTileEntity();
-
-                if(workBuildingTileEntity == null)//Work Building is not loaded
-                {
-                    return false;
-                }
-
-                int chestSlotID = InventoryUtils.containsStack(workBuildingTileEntity, material);
-                if(chestSlotID != -1)//chest contains item
-                {
-                    if(worker.getWorkBuilding().getLocation().distanceSq(worker.getPosition()) < 16)//We are close to the chest
-                    {
-                        if(!InventoryUtils.takeStackInSlot(workBuildingTileEntity, getInventory(), chestSlotID, 1, true))
-                        {
-                            ItemStack chestItem = workBuildingTileEntity.getStackInSlot(chestSlotID);
-                            workBuildingTileEntity.setInventorySlotContents(chestSlotID, null);
-                            setStackInBuilder(chestItem, true);//TODO prevent the dropping of items
-                            worker.setStatus(EntityCitizen.Status.WORKING);
-                        }
-                    }
-                    else if(worker.getNavigator().noPath() || !BlockPosUtil.isPathingTo(worker, worker.getWorkBuilding().getLocation()))
-                    {
-                        BlockPosUtil.moveLivingToXYZ(worker, worker.getWorkBuilding().getLocation());
-                        worker.setStatus(EntityCitizen.Status.GETTING_ITEMS);
-                    }
-                }
-                return false;
+                return true;
             }
-            else
+
+            int slot = worker.findFirstSlotInInventoryWith(block);
+            if (slot != -1)
             {
-                getInventory().decrStackSize(slotID, 1);
+                getInventory().decrStackSize(slot, 1);
+                //Flag 1+2 is needed for updates
             }
         }
 
@@ -487,7 +477,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private boolean isBlockFree(Block block, int metadata)
     {
-        return BlockUtils.isWater(block.getDefaultState()) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && Utils.testFlag(metadata, 0x08)) || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08));
+        return BlockUtils.isWater(block.getDefaultState()) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && Utils.testFlag(metadata, 0x08)) || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08) || block == Blocks.grass || block == Blocks.dirt);
     }
 
     private void setStackInBuilder(ItemStack stack, boolean shouldUseForce)
@@ -599,24 +589,26 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
     }
 
-    private void findNextBlockSolid()
+    private AIState findNextBlockSolid()
     {
         if(!job.getSchematic().findNextBlockSolid())//method returns false if there is no next block (schematic finished)
         {
-            job.stage = JobBuilder.Stage.DECORATIONS;
             job.getSchematic().reset();
             incrementBlock();
+            return AIState.BUILDER_DECORATION_STEP;
         }
+        return AIState.BUILDER_STRUCTURE_STEP;
     }
 
-    private void findNextBlockNonSolid()
+    private AIState findNextBlockNonSolid()
     {
         if(!job.getSchematic().findNextBlockNonSolid())//method returns false if there is no next block (schematic finished)
         {
-            job.stage = JobBuilder.Stage.ENTITIES;
             job.getSchematic().reset();
             incrementBlock();
+            return AIState.BUILDER_COMPLETE_BUILD;
         }
+        return AIState.BUILDER_DECORATION_STEP;
     }
 
     private boolean incrementBlock()
@@ -660,8 +652,10 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         job.getSchematic().setPosition(pos);
     }
 
-    private void completeBuild()
+    private AIState completeBuild()
     {
+        job.getSchematic().getEntities().forEach(this::spawnEntity);
+
         String schematicName = job.getSchematic().getName();
         LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildComplete", schematicName);
 
@@ -685,5 +679,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         job.complete();
         resetTask();
+
+        return AIState.IDLE;
     }
 }

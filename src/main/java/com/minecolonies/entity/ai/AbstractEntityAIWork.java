@@ -201,6 +201,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         return lookForNeededItems();
     }
 
+    protected boolean needsSomething()
+    {
+        return !itemsCurrentlyNeeded.isEmpty() && !itemsNeeded.isEmpty() && !needsPickaxe && !needsAxe && !needsHoe && !needsShovel;
+    }
+
     /**
      * Utility method to search for items currently needed.
      * Poll this until all items are there.
@@ -767,7 +772,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private boolean checkMiningLocation(BlockPos blockToMine, BlockPos safeStand)
     {
-
         Block curBlock = world.getBlockState(blockToMine).getBlock();
 
         if (!holdEfficientTool(curBlock))
@@ -863,7 +867,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         }
 
         ItemStack tool = worker.getHeldItem();
-
 
         //calculate fortune enchantment
         int fortune = Utils.getFortuneOf(tool);

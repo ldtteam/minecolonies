@@ -19,7 +19,6 @@ public class JobBuilder extends Job
     protected               String              schematicName;
     protected               BlockPos            schematicPos;
     protected               BlockPos            schematicProgress;
-    public                  Stage               stage;
 
     private static final    String              TAG_WORK_ORDER = "workorder";
     private static final    String              TAG_SCHEMATIC  = "schematic";
@@ -60,7 +59,6 @@ public class JobBuilder extends Job
                 BlockPosUtil.writeToNBT(schematicTag, TAG_POSITION, schematic.getPosition());
                 BlockPosUtil.writeToNBT(schematicTag, TAG_PROGRESS, schematic.getLocalPosition());
                 compound.setTag(TAG_SCHEMATIC, schematicTag);
-                compound.setString(TAG_STAGE, stage.name());
             }
         }
     }
@@ -79,7 +77,6 @@ public class JobBuilder extends Job
                 schematicName = schematicTag.getString(TAG_NAME);
                 schematicPos = BlockPosUtil.readFromNBT(schematicTag, TAG_POSITION);
                 schematicProgress = BlockPosUtil.readFromNBT(schematicTag, TAG_PROGRESS);
-                stage = Stage.valueOf(compound.getString(TAG_STAGE));
             }
         }
     }
@@ -198,15 +195,4 @@ public class JobBuilder extends Job
         setSchematic(null);
     }
 
-    /**
-     * Stages of a building
-     */
-    public enum Stage
-    {
-        CLEAR,
-        REQUEST_MATERIALS,
-        STRUCTURE,
-        DECORATIONS,
-        ENTITIES
-    }
 }
