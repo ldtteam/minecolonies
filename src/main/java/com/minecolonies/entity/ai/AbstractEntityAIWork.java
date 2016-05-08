@@ -31,18 +31,16 @@ import static com.minecolonies.entity.ai.AIState.*;
  */
 public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkeleton<J>
 {
-    private static final int DEFAULT_RANGE_FOR_DELAY = 3;
-    private static final int DELAY_RECHECK           = 10;
-    private static final int DELAY_MODIFIER          = 50;
-
-    protected static Random           itemRand                = new Random();
-    protected        boolean          needsShovel             = false;
-    protected        boolean          needsAxe                = false;
-    protected        boolean          needsHoe                = false;
-    protected        boolean          needsPickaxe            = false;
-    protected        int              needsPickaxeLevel       = -1;
-    protected        int              blocksMined = 0;
-
+    private static final int             DEFAULT_RANGE_FOR_DELAY = 3;
+    private static final int             DELAY_RECHECK           = 10;
+    private static final int             DELAY_MODIFIER          = 50;
+    protected static     Random          itemRand                = new Random();
+    protected            boolean         needsShovel             = false;
+    protected            boolean         needsAxe                = false;
+    protected            boolean         needsHoe                = false;
+    protected            boolean         needsPickaxe            = false;
+    protected            int             needsPickaxeLevel       = -1;
+    protected            int             blocksMined             = 0;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -52,7 +50,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * <p>
      * Will be cleared on restart, be aware!
      */
-    private          List<ItemStack>  itemsCurrentlyNeeded    = new ArrayList<>();
+    private              List<ItemStack> itemsCurrentlyNeeded    = new ArrayList<>();
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -60,17 +58,17 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * <p>
      * Will be cleared on restart, be aware!
      */
-    private          List<ItemStack>  itemsNeeded             = new ArrayList<>();
-    private          BlockPos currentWorkingLocation  = null;
+    private              List<ItemStack> itemsNeeded             = new ArrayList<>();
+    private              BlockPos        currentWorkingLocation  = null;
     /**
      * The time in ticks until the next action is made
      */
-    private          int              delay                   = 0;
-    private          BlockPos currentStandingLocation = null;
+    private              int             delay                   = 0;
+    private              BlockPos        currentStandingLocation = null;
     /**
      * If we have waited one delay
      */
-    private          boolean          hasDelayed              = false;
+    private              boolean         hasDelayed              = false;
 
 
     /**
@@ -463,11 +461,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                         InventoryFunctions::doNothing);
 
         delay += DELAY_RECHECK;
-        
+
         if (needsPickaxe)
         {
             needsPickaxeLevel = minlevel;
-            if(walkToBuilding())
+            if (walkToBuilding())
             {
                 return false;
             }
@@ -517,7 +515,21 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
         }
+        //collect items that are nice to have if they are available
+        itemsNiceToHave().forEach(this::isInHut);
         return IDLE;
+    }
+
+    /**
+     * Can be overridden by implementations to specify items useful for the worker.
+     * When the workers inventory is full, he will try to keep these items.
+     * ItemStack amounts are ignored, the first stack found will be taken.
+     *
+     * @return a list with items nice to have for the worker
+     */
+    protected List<ItemStack> itemsNiceToHave()
+    {
+        return new ArrayList<>();
     }
 
     /**
@@ -547,10 +559,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                     if (returnStack == null)
                     {
                         ItemStack removed = worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
-                        if(removed.stackSize < stack.stackSize)
+                        if (removed.stackSize < stack.stackSize)
                         {
+                            //todo: this will never happen???
                             Log.logger.warn("Dump Inventory: Tried to remove " + stack.stackSize +
-                                    " items, but only " + removed.stackSize + " were removed");
+                                            " items, but only " + removed.stackSize + " were removed");
                         }
                         return true;
                     }
@@ -558,10 +571,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                             i,
                             stack.stackSize
                             - returnStack.stackSize);
-                    if(removed.stackSize < stack.stackSize)
+                    if (removed.stackSize < stack.stackSize)
                     {
                         Log.logger.warn("Dump Inventory: Tried to remove " + stack.stackSize +
-                                " items, but only " + removed.stackSize + " were removed");
+                                        " items, but only " + removed.stackSize + " were removed");
                     }
                     //Check that we are not inserting
                     // into a
@@ -716,11 +729,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * if not, it updates the needsTool falg
      * for said tool.
      *
-     * @param tool the tool needed
+     * @param tool     the tool needed
      * @param required the level needed (for pickaxe)
      */
-    private void updateToolFlag(String tool, int required){
-        switch (tool){
+    private void updateToolFlag(String tool, int required)
+    {
+        switch (tool)
+        {
             case Utils.AXE:
                 checkForAxe();
                 break;
@@ -734,7 +749,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                 checkForPickaxe(required);
                 break;
         }
-        Log.logger.error("Invalid tool "+tool+" not implemented as tool!");
+        Log.logger.error("Invalid tool " + tool + " not implemented as tool!");
     }
 
     /**
@@ -768,7 +783,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Calculate how long it takes to mine this block.
      *
      * @param block the block type
-     * @param pos  coordinate
+     * @param pos   coordinate
      * @return the delay in ticks
      */
     private int getBlockMiningDelay(Block block, BlockPos pos)
@@ -806,7 +821,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             //TODO: request lower tier tools
         }
 
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(world,blockToMine, tool) && curBlock != Blocks.bedrock)
+        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.bedrock)
         {
             Log.logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool + "\n"
                             + "Please report to MineColonies with this text to add support!");
