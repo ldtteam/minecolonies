@@ -460,14 +460,14 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                         InventoryFunctions::doNothing);
 
         delay += DELAY_RECHECK;
-
-        if(walkToBuilding())
-        {
-            return false;
-        }
-
+        
         if (needsPickaxe)
         {
+            needsPickaxeLevel = minlevel;
+            if(walkToBuilding())
+            {
+                return false;
+            }
             if (isPickaxeInHut(minlevel))
             {
                 return true;
