@@ -164,7 +164,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState goToConstructionSite()
     {
-        if(worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 5))
+        if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 5))
         {
             return AIState.BUILDER_CLEAR_STEP;
         }
