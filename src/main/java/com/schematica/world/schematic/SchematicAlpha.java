@@ -142,8 +142,6 @@ public class SchematicAlpha extends SchematicFormat
         boolean extra = false;
         NBTTagCompound mapping = new NBTTagCompound();
 
-        int xOffset = 0, yOffset = 0, zOffset = 0;
-
         for(int x = 0; x < world.getWidth(); x++)
         {
             for(int y = 0; y < world.getHeight(); y++)
@@ -164,13 +162,6 @@ public class SchematicAlpha extends SchematicFormat
                     if(!mapping.hasKey(name))
                     {
                         mapping.setShort(name, (short) blockId);
-                    }
-
-                    if(world.getBlock(x, y, z) instanceof AbstractBlockHut)
-                    {
-                        xOffset = x;
-                        yOffset = y;
-                        zOffset = z;
                     }
                 }
             }
@@ -237,9 +228,9 @@ public class SchematicAlpha extends SchematicFormat
         tagCompound.setTag(TILE_ENTITIES, tileEntitiesList);
         tagCompound.setTag(MAPPING_SCHEMATICA, mapping);
 
-        tagCompound.setShort(OFFSET_X, (short) xOffset);
-        tagCompound.setShort(OFFSET_Y, (short) yOffset);
-        tagCompound.setShort(OFFSET_Z, (short) zOffset);
+        tagCompound.setShort(OFFSET_X, (short) world.getOffsetX());
+        tagCompound.setShort(OFFSET_Y, (short) world.getOffsetY());
+        tagCompound.setShort(OFFSET_Z, (short) world.getOffsetZ());
 
         return true;
     }

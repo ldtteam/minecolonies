@@ -22,7 +22,11 @@ public class CitizenData
 {
     //  Attributes
     private final           int             id;
-    private static final    int             LEVEL_CAP               = 10;
+
+    /**
+     * Max level of an attribute a citizen may initially have.
+     */
+    private static final    int             LEVEL_CAP               = 5;
 
     private                 String          name;
     private                 boolean         isFemale;
@@ -39,14 +43,15 @@ public class CitizenData
     private                 EntityCitizen   entity;
 
     /**
-     *  Skills, which influence the workers behaviour.
+     *  Attributes, which influence the workers behaviour.
      *  May be added more later
     */
     private                 int             strength;
     private                 int             endurance;
     private                 int             charisma;
     private                 int             intelligence;
-    private                 int             diligence;
+    private                 int             dexterity;
+
     private                 float           health;
     private                 float           maxHealth;
 
@@ -71,7 +76,7 @@ public class CitizenData
     private static final    String          TAG_SKILL_STAMINA       = "endurance";
     private static final    String          TAG_SKILL_SPEED         = "charisma";
     private static final    String          TAG_SKILL_INTELLIGENCE  = "intelligence";
-    private static final    String          TAG_SKILL_DILIGENCE     = "diligence";
+    private static final    String          TAG_SKILL_DEXTERITY     = "dexterity";
 
     private static final    String          TAG_JOB                 = "job";
 
@@ -84,8 +89,7 @@ public class CitizenData
     * The total amount of experience the citizen has.
     * This also includes the amount of experience within their Experience Bar.
     */
-    private                 int     experience;
-
+    private                 double     experience;
 
     /**
      * Create a CitizenData given an ID
@@ -126,7 +130,7 @@ public class CitizenData
         charisma = random.nextInt(LEVEL_CAP - 1) + 1;
         strength = random.nextInt(LEVEL_CAP - 1) + 1;
         endurance = random.nextInt(LEVEL_CAP - 1) + 1;
-        diligence = random.nextInt(LEVEL_CAP - 1) + 1;
+        dexterity = random.nextInt(LEVEL_CAP - 1) + 1;
 
         markDirty();
     }
@@ -211,7 +215,7 @@ public class CitizenData
      *
      * @return     experience of the citizen
      */
-    public int getExperience()
+    public double getExperience()
     {
         return experience;
     }
@@ -219,7 +223,7 @@ public class CitizenData
     /**
      * Sets the experience of the citizen
      */
-    public void setExperience(int xp)
+    public void setExperience(double xp)
     {
         this.experience = xp;
     }
@@ -227,7 +231,7 @@ public class CitizenData
     /**
      * Adds experience of the citizen
      */
-    public void addExperience(int xp)
+    public void addExperience(double xp)
     {
         this.experience += xp;
     }
@@ -475,7 +479,7 @@ public class CitizenData
         nbtTagSkillsCompound.setInteger(TAG_SKILL_STAMINA, endurance);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_SPEED, charisma);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_DILIGENCE, diligence);
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_DEXTERITY, dexterity);
         compound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
 
         if(job != null)
@@ -509,7 +513,7 @@ public class CitizenData
         endurance = nbtTagSkillsCompound.getInteger("endurance");
         charisma = nbtTagSkillsCompound.getInteger("charisma");
         intelligence = nbtTagSkillsCompound.getInteger("intelligence");
-        diligence = nbtTagSkillsCompound.getInteger("diligence");
+        dexterity = nbtTagSkillsCompound.getInteger("dexterity");
 
         if(compound.hasKey("job"))
         {
@@ -597,12 +601,12 @@ public class CitizenData
     }
 
     /**
-     * Diligence getter
-     * @return citizen Diligence value
+     * Dexterity getter
+     * @return citizen Dexterity value
      */
-    public int getDiligence()
+    public int getDexterity()
     {
-        return diligence;
+        return dexterity;
     }
 
     /**
@@ -622,10 +626,10 @@ public class CitizenData
 
         //  Placeholder skills
         private       int       level;
-        private       int       experience;
+        private       double       experience;
         public        float     health;
         public        float     maxHealth;
-        public        int       strength, endurance, charisma, intelligence, diligence;
+        public        int       strength, endurance, charisma, intelligence, dexterity;
 
         /**
          * Job identifier
@@ -696,7 +700,7 @@ public class CitizenData
          * Entity experience getter
          * @return it's experience
          */
-        public int getExperience()
+        public double getExperience()
         {
             return experience;
         }
@@ -743,7 +747,7 @@ public class CitizenData
 
             //  Attributes
             level = buf.readInt();
-            experience = buf.readInt();
+            experience = buf.readDouble();
             health = buf.readFloat();
             maxHealth = buf.readFloat();
 
@@ -751,7 +755,7 @@ public class CitizenData
             endurance = buf.readInt();
             charisma = buf.readInt();
             intelligence = buf.readInt();
-            diligence = buf.readInt();
+            dexterity = buf.readInt();
 
             job = ByteBufUtils.readUTF8String(buf);
         }
@@ -784,7 +788,7 @@ public class CitizenData
 
         //  Attributes
         buf.writeInt(getLevel());
-        buf.writeInt(getExperience());
+        buf.writeDouble(getExperience());
 
         //If entity is null assume the standard values as health
         if(entity==null)
@@ -802,7 +806,7 @@ public class CitizenData
         buf.writeInt(getEndurance());
         buf.writeInt(getCharisma());
         buf.writeInt(getIntelligence());
-        buf.writeInt(getDiligence());
+        buf.writeInt(getDexterity());
 
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
     }

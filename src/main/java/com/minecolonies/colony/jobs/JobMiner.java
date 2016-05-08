@@ -4,6 +4,7 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.AIState;
 import com.minecolonies.entity.ai.EntityAIWorkMiner;
+import com.minecolonies.util.Schematic;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,6 +13,8 @@ import java.util.List;
 
 public class JobMiner extends Job
 {
+    protected Schematic schematic;
+
     public JobMiner(CitizenData entity)
     {
         super(entity);
@@ -62,5 +65,13 @@ public class JobMiner extends Job
             }
         }
         addItemNeeded(stack);
+    }
+
+    public void setSchematic(Schematic schematic) {
+        this.schematic = schematic;
+    }
+
+    public Schematic getSchematic() {
+        return schematic;
     }
 }

@@ -97,7 +97,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      * The fishingSkill which directly influences the fisherman's chance to throw his rod.
      * May in the future also influence his luck/charisma.
      */
-    private int fishingSkill      = worker.getIntelligence() * worker.getCharisma() * (worker.getExperienceLevel() + 1);
+    private int fishingSkill      = worker.getLevel();
+
     /**
      * Connects the citizen with the fishingHook.
      */
@@ -121,6 +122,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
                 new AITarget(FISHERMAN_START_FISHING, this::doFishing)
                              );
+        worker.setSkillModifier(2*worker.getCitizenData().getIntelligence() + worker.getCitizenData().getDexterity());
     }
 
     private AIState startWorkingAtOwnBuilding()
@@ -438,6 +440,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     private boolean testRandomChance()
     {
         //+1 since the level may be 0
+        setDelay(5);
         double chance = itemRand.nextInt(FISHING_DELAY) / (double) (fishingSkill + 1);
         return chance >= CHANCE;
     }
@@ -513,7 +516,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         worker.setCanPickUpLoot(true);
         worker.captureDrops = true;
         retrieveRod();
-        fishingSkill = worker.getIntelligence() * worker.getCharisma() * (worker.getExperienceLevel() + 1);
+        fishingSkill = worker.getLevel();
         fishesCaught++;
         return true;
     }

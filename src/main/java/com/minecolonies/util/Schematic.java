@@ -357,6 +357,12 @@ public final class Schematic
                 }
             }
         }
+        if (xOffset == 0 && yOffset == 0 && zOffset == 0)
+        {
+            xOffset = (width/2);
+            zOffset = (length/2);
+        }
+
 
         AxisAlignedBB region = AxisAlignedBB.fromBounds(minX, minY, minZ, maxX, maxY, maxZ);
         List<EntityHanging> entityHangings = world.getEntitiesWithinAABB(EntityHanging.class, region);
