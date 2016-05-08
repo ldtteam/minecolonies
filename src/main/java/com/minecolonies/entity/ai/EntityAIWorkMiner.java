@@ -1,13 +1,17 @@
 package com.minecolonies.entity.ai;
 
+import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
+import com.minecolonies.util.Log;
+import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -25,11 +29,16 @@ import static com.minecolonies.entity.ai.AIState.*;
  * @author Raycoms, Kostronor
  */
 
+//Todo liquid handling + dump inventory
 public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 {
 
     private static final String RENDER_META_TORCH = "Torch";
     private static final int NODE_DISTANCE = 7;
+    /**
+     * Return to chest after 5 stacks
+     */
+    private static final int MAX_BLOCKS_MINED = 64*5;
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
@@ -46,8 +55,8 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
     private BlockPos currentStandingPosition;
 
     private Node workingNode = null;
-
-
+    private boolean requestedBlock = false;
+    private boolean buildStructure = false;
     /**
      * Constructor for the Miner.
      * Defines the tasks the miner executes.
@@ -68,6 +77,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
                 new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding),
                 new AITarget(MINER_MINING_NODE, this::doNodeMining)
         );
+        worker.setSkillModifier(2*worker.getCitizenData().getStrength() + worker.getCitizenData().getEndurance());
     }
 
     //Miner wants to work but is not at building
@@ -90,7 +100,10 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         return MINER_CHECK_MINESHAFT;
     }
 
-    //Walking to the ladder to check out the mine
+    /**
+     * Walking to the ladder to check out the mine
+     * @return next AIState
+     */
     private AIState goToLadder()
     {
         if (walkToLadder())
@@ -100,12 +113,31 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         return MINER_CHECK_MINESHAFT;
     }
 
+
+    @Override
+    protected boolean wantInventoryDumped()
+    {
+        if (blocksMined > MAX_BLOCKS_MINED)
+        {
+            blocksMined = 0;
+            return true;
+        }
+        return false;
+    }
+
     private AIState checkMineShaft()
     {
         //TODO: check if mineshaft needs repairing!
         //Check if we reached the mineshaft depth limit
         if (getLastLadder(getOwnBuilding().ladderLocation) < getOwnBuilding().getDepthLimit())
         {
+            //If the miner hut has been placed too deep.
+            if(getOwnBuilding().getLevels().isEmpty())
+            {
+                chatSpamFilter.talkWithoutSpam("entity.miner.messageRequiresBetterHut");
+                getOwnBuilding().clearedShaft = false;
+                return IDLE;
+            }
             getOwnBuilding().clearedShaft = true;
             return MINER_MINING_NODE;
         }
@@ -155,7 +187,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
     @Override
     protected boolean neededForWorker(ItemStack stack)
     {
-        return Utils.isMiningTool(stack);
+        return Utils.isMiningTool(stack) || stack.isItemEqual(new ItemStack(Blocks.ladder));
     }
 
     private AIState lookForLadder()
@@ -267,7 +299,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
     private AIState advanceLadder(AIState state)
     {
-        if (getOwnBuilding().startingLevelShaft >= 5)
+        if (getOwnBuilding().startingLevelShaft >= 4)
         {
             return MINER_BUILDING_SHAFT;
         }
@@ -420,7 +452,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         {
             for (int z = -5 + zOffset; z <= 5 + zOffset; z++)
             {
-                for (int y = 5; y >= -7; y--)
+                for (int y = 4; y >= -7; y--)
                 {
                     if ((x == 0 && 0 == z) || lastLadder + y <= 1)
                     {
@@ -599,27 +631,27 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             workingNode = null;
             return;
         }
-        int xoffset = getXDistance(foundDirection) / 2;
-        int zoffset = getZDistance(foundDirection) / 2;
-        if (xoffset > 0)
+        int xOffSet = getXDistance(foundDirection) / 2;
+        int zOffSet = getZDistance(foundDirection) / 2;
+        if (xOffSet > 0)
         {
-            xoffset += 1;
+            xOffSet += 1;
         }
         else
         {
-            xoffset -= 1;
+            xOffSet -= 1;
         }
-        if (zoffset > 0)
+        if (zOffSet > 0)
         {
-            zoffset += 1;
+            zOffSet += 1;
         }
         else
         {
-            zoffset -= 1;
+            zOffSet -= 1;
         }
-        BlockPos standingPosition = new BlockPos(workingNode.getX() + xoffset,
+        BlockPos standingPosition = new BlockPos(workingNode.getX() + xOffSet,
                                                                  currentLevel.getDepth(),
-                                                                 workingNode.getZ() + zoffset);
+                                                                 workingNode.getZ() + zOffSet);
         currentStandingPosition = standingPosition;
         if (workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS
             || workingNode.getStatus() == Node.NodeStatus.COMPLETED
@@ -661,23 +693,57 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
     }
 
 
-    private void mineNodeFromStand(Node minenode, BlockPos standingPosition, int direction)
+    private void mineNodeFromStand(Node mineNode, BlockPos standingPosition, int direction)
     {
+        //todo decide if bend right or left
+        //Preload schematics
+        if(job.getSchematic()==null)
+        {
+            if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
+            {
+                loadSchematic("classic/minerX4");
+            }
+            if (mineNode.getStyle() == Node.NodeType.BEND)
+            {
+                loadSchematic("classic/minerX2Right");
+            }
+            if (mineNode.getStyle() == Node.NodeType.TUNNEL)
+            {
+                loadSchematic("classic/minerX2Top");
+            }
+            job.getSchematic().setPosition(new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ()));
+
+            int rotateTimes = 2;
+            if (direction == 3)
+            {
+                rotateTimes = 3;
+            }
+            else if(direction == 2)
+            {
+                rotateTimes = 0;
+            }
+            else if(direction == 4)
+            {
+                rotateTimes = 1;
+            }
+
+            job.getSchematic().rotate(rotateTimes);
+        }
 
         //Check for safe Node
         for (int x = -NODE_DISTANCE / 2; x <= NODE_DISTANCE / 2; x++)
         {
             for (int z = -NODE_DISTANCE / 2; z <= NODE_DISTANCE / 2; z++)
             {
-                for (int y = 0; y <= 5; y++)
+                for (int y = 0; y <= 4; y++)
                 {
-                    BlockPos curBlock = new BlockPos(minenode.getX() + x,
+                    BlockPos curBlock = new BlockPos(mineNode.getX() + x,
                                                                      standingPosition.getY() + y,
-                                                                     minenode.getZ() + z);
+                                                                     mineNode.getZ() + z);
                     if (((Math.abs(x) >= 2) && (Math.abs(z) >= 2))
                         || (getBlock(curBlock) != Blocks.air)
                         || (y < 1)
-                        || (y > 4))
+                        || (y > 3))
                     {
                         if (!secureBlock(curBlock, standingPosition))
                         {
@@ -688,52 +754,51 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             }
         }
 
-        if (!mineSideOfNode(minenode, direction, standingPosition))
+        if (!mineSideOfNode(mineNode, direction, standingPosition))
         {
             return;
         }
 
-        if (minenode.getStatus() == Node.NodeStatus.AVAILABLE)
+        if (mineNode.getStatus() == Node.NodeStatus.AVAILABLE)
         {
-            minenode.setStatus(Node.NodeStatus.IN_PROGRESS);
+            mineNode.setStatus(Node.NodeStatus.IN_PROGRESS);
         }
 
-        int xoffset = getXDistance(direction) / 2;
-        int zoffset = getZDistance(direction) / 2;
-        if (xoffset > 0)
+        int xOffSet = getXDistance(direction) / 2;
+        int zOffSet = getZDistance(direction) / 2;
+        if (xOffSet > 0)
         {
-            xoffset -= 1;
+            xOffSet -= 1;
         }
         else
         {
-            xoffset += 1;
+            xOffSet += 1;
         }
-        if (zoffset > 0)
+        if (zOffSet > 0)
         {
-            zoffset -= 1;
+            zOffSet -= 1;
         }
         else
         {
-            zoffset += 1;
+            zOffSet += 1;
         }
-        BlockPos newStandingPosition = new BlockPos(minenode.getX() + xoffset,
+        BlockPos newStandingPosition = new BlockPos(mineNode.getX() + xOffSet,
                                                                     standingPosition.getY(),
-                                                                    minenode.getZ() + zoffset);
+                                                                    mineNode.getZ() + zOffSet);
         currentStandingPosition = newStandingPosition;
 
-
-        if (minenode.getStatus() != Node.NodeStatus.COMPLETED)
+        if (mineNode.getStatus() != Node.NodeStatus.COMPLETED)
         {
             //Mine middle
-            for (int y = 1; y <= 4; y++)
+            for (int y = 1; y <= 3; y++)
             {
                 for (int x = -1; x <= 1; x++)
                 {
                     for (int z = -1; z <= 1; z++)
                     {
-                        BlockPos curBlock = new BlockPos(minenode.getX() + x,
+                        BlockPos curBlock = new BlockPos(mineNode.getX() + x,
                                                                          standingPosition.getY() + y,
-                                                                         minenode.getZ() + z);
+                                                                         mineNode.getZ() + z);
                         if (getBlock(curBlock) == Blocks.torch
                             || getBlock(curBlock) == getOwnBuilding().floorBlock
                             || getBlock(curBlock) == getOwnBuilding().fenceBlock)
@@ -752,11 +817,11 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         List<Integer> directions = Arrays.asList(1, 2, 3, 4);
         for (Integer dir : directions)
         {
-            BlockPos sideStandingPosition = new BlockPos(minenode.getX() + getXDistance(dir) / 3,
+            BlockPos sideStandingPosition = new BlockPos(mineNode.getX() + getXDistance(dir) / 3,
                                                                          standingPosition.getY(),
-                                                                         minenode.getZ() + getZDistance(dir) / 3);
+                                                                         mineNode.getZ() + getZDistance(dir) / 3);
             currentStandingPosition = sideStandingPosition;
-            if (!mineSideOfNode(minenode, dir, sideStandingPosition))
+            if (!mineSideOfNode(mineNode, dir, sideStandingPosition))
             {
                 return;
             }
@@ -764,288 +829,208 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
         //Build middle
         //TODO: make it look nicer!
-        if (!buildNodeSupportStructure(minenode, standingPosition))
+        if (!buildNodeSupportStructure(mineNode, standingPosition))
         {
             return;
         }
 
-        if (minenode.getStatus() == Node.NodeStatus.IN_PROGRESS)
+        if (mineNode.getStatus() == Node.NodeStatus.IN_PROGRESS)
         {
-            minenode.setStatus(Node.NodeStatus.COMPLETED);
+            mineNode.setStatus(Node.NodeStatus.COMPLETED);
         }
 
         workingNode = null;
     }
 
-    private boolean buildNodeSupportStructure(Node minenode, BlockPos standingPosition)
+    private boolean buildNodeSupportStructure(Node mineNode, BlockPos standingPosition)
     {
-        if (minenode.getStyle() == Node.NodeType.CROSSROAD)
+        if (mineNode.getStyle() == Node.NodeType.CROSSROAD || mineNode.getStyle() == Node.NodeType.BEND || mineNode.getStyle() == Node.NodeType.TUNNEL)
         {
-            return buildNodeCrossroadStructure(minenode, standingPosition);
+            return executeSchematicPlacement();
         }
-        if (minenode.getStyle() == Node.NodeType.BEND)
-        {
-            return buildNodeBendStructure(minenode, standingPosition);
-        }
-        if (minenode.getStyle() == Node.NodeType.TUNNEL)
-        {
-            return buildNodeTunnelStructure(minenode, standingPosition);
-        }
-        if (minenode.getStyle() == Node.NodeType.LADDER_BACK)
+        if (mineNode.getStyle() == Node.NodeType.LADDER_BACK)
         {
             return true; //already done
         }
-        logger.info("None of the above: " + minenode);
+        logger.info("None of the above: " + mineNode);
         return false;
     }
 
-    private boolean buildNodeTunnelStructure(final Node mineNode, final BlockPos standingPosition)
+    private boolean requestBlock()
     {
-        int direction = 3;
-        if (mineNode.getDirectionPosX() == Node.NodeStatus.WALL)
+        while(job.getSchematic().findNextBlock())
         {
-            direction = 1;
+            Block block = job.getSchematic().getBlock();
+
+            if(job.getSchematic().doesSchematicBlockEqualWorldBlock() || block == Blocks.stone || block ==  Blocks.air)
+            {
+                continue;
+            }
+
+            if (checkOrRequestItems(new ItemStack(block)))
+            {
+                job.getSchematic().reset();
+                return false;
+            }
+        }
+        job.getSchematic().reset();
+        requestedBlock = true;
+        buildStructure = false;
+        return true;
+    }
+
+    private void loadSchematic(String name)
+    {
+        requestedBlock = false;
+        buildStructure = false;
+        try
+        {
+            job.setSchematic(new Schematic(world, name));
+        }
+        catch (IllegalStateException e)
+        {
+            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
+            job.setSchematic(null);
+        }
+    }
+
+    private boolean executeSchematicPlacement()
+    {
+        if(!requestedBlock && !requestBlock())
+        {
+            return false;
         }
 
-        for (int y = 4; y >= 1; y--)
+        if(!buildStructure && !buildStructure())
         {
-            for (int x = -2; x <= 2; x++)
-            {
-                for (int z = -2; z <= 2; z++)
-                {
-                    BlockPos curBlock = new BlockPos(mineNode.getX() + x,
-                                                                     standingPosition.getY() + y,
-                                                                     mineNode.getZ() + z);
+            return false;
+        }
 
-                    Block material = null;
-                    //Side pillars
-                    if (Math.abs(x) == Math.abs(getXDistance(direction) / NODE_DISTANCE)
-                        && Math.abs(z) == Math.abs(getZDistance(direction) / NODE_DISTANCE)
-                        && y < 4)
-                    {
-                        material = getOwnBuilding().fenceBlock;
-                    }
-                    //Planks topping
-                    if ((x == 0 || Math.abs(x) == Math.abs(getXDistance(direction) / NODE_DISTANCE))
-                        && (z == 0 || Math.abs(z) == Math.abs(getZDistance(direction) / NODE_DISTANCE))
-                        && y == 4)
-                    {
-                        material = getOwnBuilding().floorBlock;
-                    }
-                    //torches at sides
-                    if (((Math.abs(x) == 1 && Math.abs(z) == 0 && direction == 3)
-                         || (Math.abs(x) == 0 && Math.abs(z) == 1 && direction == 1))
-                        && y == 4
-                        && getBlock(new BlockPos(mineNode.getX(), standingPosition.getY() + y, mineNode.getZ()))
-                           == getOwnBuilding().floorBlock
-                        && getBlock(curBlock) != getOwnBuilding().floorBlock)
-                    {
-                        material = Blocks.torch;
-                    }
-                    if (material == null || getBlock(curBlock) == material)
-                    {
-                        if (material == null || getBlock(curBlock) == material)
-                        {
-                            continue;
-                        }
-                    }
+        return buildDecoration();
+    }
 
-                    if (checkOrRequestItems(new ItemStack(material)))
-                    {
-                        return false;
-                    }
+    private boolean buildDecoration()
+    {
+        if(job.getSchematic().getBlock() == null || job.getSchematic().doesSchematicBlockEqualWorldBlock() || (job.getSchematic().getBlock()!=null && job.getSchematic().getBlock().getMaterial().isSolid()) || job.getSchematic().getBlock() == Blocks.air)
+        {
+            return !findNextBlockNonSolid();
+        }
 
-                    if(material == Blocks.torch)
-                    {
-                        setBlockFromInventory(curBlock, material, material.getStateFromMeta(direction));
-                    }
-                    else
-                    {
-                        setBlockFromInventory(curBlock, material);
-                    }
+        if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
+        {
+            return false;
+        }
 
-                    return false;
-                }
-            }
+        Block block = job.getSchematic().getBlock();
+        IBlockState metadata = job.getSchematic().getMetadata();
+
+        BlockPos coordinates = job.getSchematic().getBlockPosition();
+        int x = coordinates.getX();
+        int y = coordinates.getY();
+        int z = coordinates.getZ();
+
+        Block       worldBlock         = world.getBlockState(coordinates).getBlock();
+
+        if(block == null)//should never happen
+        {
+            BlockPos local = job.getSchematic().getLocalPosition();
+            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            findNextBlockNonSolid();
+            return false;
+        }
+        if(worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
+                block instanceof AbstractBlockHut)//don't overwrite huts or bedrock, nor place huts
+        {
+            findNextBlockNonSolid();
+            return false;
+        }
+        Item item = Item.getItemFromBlock(block);
+        worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1) : null);
+
+        setBlockFromInventory(new BlockPos(x,y,z),block,metadata);
+
+        if(findNextBlockNonSolid())
+        {
+            worker.swingItem();
+            return false;
+        }
+
+        job.setSchematic(null);
+        return true;
+    }
+
+    private boolean buildStructure()
+    {
+        if(job.getSchematic().getBlock() == null || job.getSchematic().doesSchematicBlockEqualWorldBlock() || (!job.getSchematic().getBlock().getMaterial().isSolid() && job.getSchematic().getBlock() != Blocks.air))
+        {
+            return !findNextBlockSolid();
+        }
+
+        if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
+        {
+            return false;
+        }
+
+        Block block = job.getSchematic().getBlock();
+        IBlockState metadata = job.getSchematic().getMetadata();
+
+        BlockPos coordinates = job.getSchematic().getBlockPosition();
+        int x = coordinates.getX();
+        int y = coordinates.getY();
+        int z = coordinates.getZ();
+
+        Block       worldBlock         = world.getBlockState(coordinates).getBlock();
+
+        if(block == null)//should never happen
+        {
+            BlockPos local = job.getSchematic().getLocalPosition();
+            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            findNextBlockSolid();
+            return false;
+        }
+        if(worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
+                block instanceof AbstractBlockHut || job.getSchematic().getBlock() == Blocks.stone )//don't overwrite huts or bedrock, nor place huts
+        {
+            findNextBlockSolid();
+            return false;
+        }
+
+        if(!(block == Blocks.air))
+        {
+            Item item = Item.getItemFromBlock(block);
+            worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1) : null);
+            setBlockFromInventory(new BlockPos(x,y,z),block,metadata);
+        }
+
+        if(findNextBlockSolid())
+        {
+            worker.swingItem();
+            return false;
+        }
+        job.getSchematic().reset();
+        buildStructure = true;
+        return true;
+    }
+
+    private boolean findNextBlockNonSolid()
+    {
+        if(!job.getSchematic().findNextBlockNonSolid())//method returns false if there is no next block (schematic finished)
+        {
+            job.getSchematic().incrementBlock();
+            job.getSchematic().reset();
+            return false;
         }
         return true;
     }
 
-    private boolean buildNodeBendStructure(final Node mineNode, final BlockPos standingPosition)
+    private boolean findNextBlockSolid()
     {
-        int directionX = 1;
-        if (mineNode.getDirectionPosX() == Node.NodeStatus.WALL)
+        if(!job.getSchematic().findNextBlockSolid())//method returns false if there is no next block (schematic finished)
         {
-            directionX = 2;
-        }
-        int directionZ = 3;
-        if (mineNode.getDirectionPosZ() == Node.NodeStatus.WALL)
-        {
-            directionZ = 4;
-        }
-
-        for (int y = 4; y >= 1; y--)
-        {
-            for (int x = -3; x <= 3; x++)
-            {
-                for (int z = -3; z <= 3; z++)
-                {
-                    BlockPos curBlock = new BlockPos(mineNode.getX() + x,
-                                                                     standingPosition.getY() + y,
-                                                                     mineNode.getZ() + z);
-
-                    Block material = null;
-                    //Side pillars for x
-                    if (x == (getXDistance(directionX) * 2) / NODE_DISTANCE
-                        && Math.abs(z) == 1
-                        && y < 4)
-                    {
-                        material = getOwnBuilding().fenceBlock;
-                    }
-                    //Side pillars for z
-                    if (z == (getZDistance(directionZ) * 2) / NODE_DISTANCE
-                        && Math.abs(x) == 1
-                        && y < 4)
-                    {
-                        material = getOwnBuilding().fenceBlock;
-                    }
-
-                    //Planks topping for x
-                    if (x == (getXDistance(directionX) * 2) / NODE_DISTANCE
-                        && Math.abs(z) <= 1
-                        && y == 4)
-                    {
-                        material = getOwnBuilding().floorBlock;
-                    }
-                    //Planks topping for z
-                    if (z == (getZDistance(directionZ) * 2) / NODE_DISTANCE
-                        && Math.abs(x) <= 1
-                        && y == 4)
-                    {
-                        material = getOwnBuilding().floorBlock;
-                    }
-
-                    //torches at sides
-                    if ((x == (getXDistance(directionX)) / NODE_DISTANCE)
-                        && z == 0
-                        && y == 4
-                        && getBlock(new BlockPos(
-                            mineNode.getX() + (getXDistance(directionX) * 2) / NODE_DISTANCE,
-                            standingPosition.getY() + y,
-                            mineNode.getZ()))
-                           == getOwnBuilding().floorBlock)
-                    {
-                        material = Blocks.torch;
-                    }
-                    //torches at sides
-                    if ((z == (getZDistance(directionZ)) / NODE_DISTANCE)
-                        && x == 0
-                        && y == 4
-                        && getBlock(new BlockPos(
-                            mineNode.getX(),
-                            standingPosition.getY() + y,
-                            mineNode.getZ() + (getZDistance(directionZ) * 2) / NODE_DISTANCE))
-                           == getOwnBuilding().floorBlock)
-                    {
-                        material = Blocks.torch;
-                    }
-
-                    if (material == null || getBlock(curBlock) == material)
-                    {
-                        continue;
-                    }
-
-                    if (checkOrRequestItems(new ItemStack(material)))
-                    {
-                        return false;
-                    }
-
-                    if(material == Blocks.torch)
-                    {
-                        if(z==0)
-                        {
-                            int i = (directionX == 1) ? 2 : 1;
-                            setBlockFromInventory(curBlock, material, material.getStateFromMeta(i));
-                        }
-                        else
-                        {
-                            int i = (directionZ == 3) ? 4 : 3;
-                            setBlockFromInventory(curBlock, material, material.getStateFromMeta(i));
-                        }
-                    }
-                    else
-                    {
-                        setBlockFromInventory(curBlock, material);
-                    }
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean buildNodeCrossroadStructure(Node mineNode, BlockPos standingPosition)
-    {
-        for (int y = 4; y >= 2; y--)
-        {
-            for (int x = -1; x <= 1; x++)
-            {
-                for (int z = -1; z <= 1; z++)
-                {
-                    BlockPos curBlock = new BlockPos(mineNode.getX() + x,
-                                                                     standingPosition.getY() + y,
-                                                                     mineNode.getZ() + z);
-                    Block material = null;
-                    //Middle top block and side stands
-                    if (x == 0 && z == 0 && y == 4)
-                    {
-                        material = getOwnBuilding().fenceBlock;
-                    }
-                    //Planks topping
-                    if (x == 0 && z == 0 && y == 3)
-                    {
-                        material = getOwnBuilding().floorBlock;
-                    }
-                    //torches at sides
-                    if (((Math.abs(x) == 1 && Math.abs(z) == 0) || (Math.abs(x) == 0 && Math.abs(z) == 1))
-                        && y == 3
-                        && getBlock(new BlockPos(mineNode.getX(), standingPosition.getY() + y, mineNode.getZ()))
-                           == getOwnBuilding().floorBlock)
-                    {
-                        material = Blocks.torch;
-                    }
-                    if (material == null || getBlock(curBlock) == material)
-                    {
-                        continue;
-                    }
-
-                    if (checkOrRequestItems(new ItemStack(material)))
-                    {
-                        return false;
-                    }
-
-                    if(material == Blocks.torch)
-                    {
-                        if(z==0)
-                        {
-                            int i = (x == -1) ? 2 : 1;
-                            setBlockFromInventory(curBlock, material, material.getStateFromMeta(i));
-                        }
-                        else
-                        {
-                            int i = (z == -1) ? 4 : 3;
-                            setBlockFromInventory(curBlock, material, material.getStateFromMeta(i));
-                        }
-                    }
-                    else
-                    {
-                        setBlockFromInventory(curBlock, material);
-                    }
-                    setBlockFromInventory(curBlock, material);
-
-                    return false;
-                }
-            }
+            job.getSchematic().incrementBlock();
+            job.getSchematic().reset();
+            buildStructure=true;
+            return false;
         }
         return true;
     }
@@ -1091,7 +1076,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
 
         //Mine side
         //TODO: make it look nicer!
-        for (int y = 1; y <= 4; y++)
+        for (int y = 1; y <= 3; y++)
         {
             for (int x = negx; x <= posx; x++)
             {
@@ -1367,7 +1352,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             return pos.getY() + 1;
         }
     }
-
 
     private int getFirstLadder(BlockPos pos)
     {

@@ -52,25 +52,38 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      * Number of ticks to heal the citizens
      */
     private static final int    HEAL_CITIZENS_AFTER  = 200;
+    /**
+     * Tag's to save data to NBT
+     */
     private static final String TAG_COLONY_ID        = "colony";
     private static final String TAG_CITIZEN          = "citizen";
     private static final String TAG_HELD_ITEM_SLOT   = "HeldItemSlot";
     private static final String TAG_STATUS           = "status";
-    private static Field navigatorField;
-    protected Status status = Status.IDLE;
-    private boolean isFemale;
+
     private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
-    private String           renderMetadata;
-    private ResourceLocation texture;
-    private InventoryCitizen inventory;
-    private int              colonyId;
-    private int citizenId = 0;
-    private Colony      colony;
-    private CitizenData citizenData;
+    private String                   renderMetadata;
+    private ResourceLocation         texture;
+
+    protected   Status           status = Status.IDLE;
+    private     InventoryCitizen inventory;
+
+    private int         colonyId;
+    private int         citizenId = 0;
     private int         level;
     private int         textureId;
+
+    /**
+     * Skill modifier defines how fast a citizen levels in a certain skill
+     */
+    private int         skillModifier = 0;
+    private boolean     isFemale;
+
+    private Colony      colony;
+    private CitizenData citizenData;
+
     private Map<String, Integer> statusMessages = new HashMap<>();
     private PathNavigate newNavigator;
+    private static       Field      navigatorField;
 
     /**
      * Citizen constructor.
@@ -333,10 +346,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      *
      * @param xp the amount of points added
      */
-    private void addExperience(int xp)
+    public void addExperience(double xp)
     {
-        int j       = Integer.MAX_VALUE - citizenData.getExperience();
-        int localXp = xp;
+        double j       = Integer.MAX_VALUE - citizenData.getExperience();
+        xp=xp*skillModifier;
+
+        double localXp = xp;
         if (localXp > j)
         {
             localXp = j;
@@ -397,17 +412,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onLivingUpdate()
     {
-        if(citizenData!=null)
+        if (recentlyHit > 0)
         {
-            if (getOffsetTicks() % HEAL_CITIZENS_AFTER == 0 && getHealth() < getMaxHealth())
-            {
-                heal(1);
-                citizenData.markDirty();
-            }
-            if (recentlyHit > 0)
-            {
-                citizenData.markDirty();
-            }
+            citizenData.markDirty();
         }
         if (worldObj.isRemote)
         {
@@ -420,7 +427,23 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             updateColonyServer();
         }
 
+        checkHeal();
         super.onLivingUpdate();
+    }
+
+    /**
+     * Checks the citizens health status and heals the citizen if necessary
+     */
+    private void checkHeal()
+    {
+        if(citizenData!=null)
+        {
+            if (getOffsetTicks() % HEAL_CITIZENS_AFTER == 0 && getHealth() < getMaxHealth())
+            {
+                heal(1);
+                citizenData.markDirty();
+            }
+        }
     }
 
     private void updateColonyClient()
@@ -692,7 +715,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.canDropLoot() && this.worldObj.getGameRules().getBoolean("doMobLoot"))
         {
-            experience = citizenData.getLevel()*100 + this.getExperiencePoints();
+            experience = (int)(citizenData.getLevel()*100 + this.getExperiencePoints());
 
             while (experience > 0)
             {
@@ -909,7 +932,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      *
      * @return the amount of xp this entity has
      */
-    public int getExperiencePoints()
+    public double getExperiencePoints()
     {
         return citizenData.getExperience();
     }
@@ -1140,20 +1163,30 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return citizenData.getEndurance();
     }
     /**
-     * Diligence getter
-     * @return citizen Diligence value
+     * Dexterity getter
+     * @return citizen Dexterity value
      */
-    public int getDiligence()
+    public int getDexterity()
     {
-        return citizenData.getDiligence();
+        return citizenData.getDexterity();
     }
+
+    /**
+     * Set the skill modifier which defines how fast a citizen levels in a certain skill
+     * @param modifier input modifier
+     */
+    public void setSkillModifier(int modifier)
+    {
+        skillModifier = modifier;
+    }
+
     /**
      * ExperienceLevel getter
      * @return citizen ExperienceLevel value
      */
     public int getExperienceLevel()
     {
-        return citizenData.getExperience();
+        return citizenData.getLevel();
     }
 
     public enum DesiredActivity

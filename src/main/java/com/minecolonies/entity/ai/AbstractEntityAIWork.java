@@ -33,6 +33,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
 {
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
     private static final int DELAY_RECHECK           = 10;
+    private static final int DELAY_MODIFIER          = 50;
 
     protected static Random           itemRand                = new Random();
     protected        boolean          needsShovel             = false;
@@ -40,6 +41,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     protected        boolean          needsHoe                = false;
     protected        boolean          needsPickaxe            = false;
     protected        int              needsPickaxeLevel       = -1;
+    protected        int              blocksMined = 0;
+
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -760,7 +763,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         {
             return (int) block.getBlockHardness(world, pos);
         }
-        return (int) (50 * block.getBlockHardness(world, pos)
+        return (int) ((DELAY_MODIFIER - worker.getLevel()) * block.getBlockHardness(world, pos)
                       / (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block.getDefaultState())));
     }
 
@@ -852,7 +855,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     protected final boolean mineBlock(BlockPos blockToMine, BlockPos safeStand)
     {
-        //todo partially replace with methods in EntitiyCitizen
+        //todo partially replace with methods in EntityCitizen
         Block curBlock = world.getBlockState(blockToMine).getBlock();
         if (curBlock == null || curBlock == Blocks.air)
         {
@@ -898,6 +901,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         }
 
         world.setBlockToAir(blockToMine);
+        worker.addExperience(0.01);
+        blocksMined++;
         return true;
     }
 
