@@ -10,18 +10,20 @@ import com.minecolonies.network.messages.*;
 import com.minecolonies.proxy.IProxy;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.RecipeHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, certificateFingerprint = Constants.FINGERPRINT)
+
+@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, certificateFingerprint = Constants.FINGERPRINT,
+		dependencies = Constants.FORGE_VERSION, acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
     private static          SimpleNetworkWrapper network;
@@ -59,6 +61,10 @@ public class MineColonies
         ModItems.init();
 
         proxy.registerKeyBindings();//Schematica
+        
+        proxy.registerEntities();
+
+        proxy.registerEntityRendering();
     }
 
     @Mod.EventHandler
@@ -81,7 +87,7 @@ public class MineColonies
         //  Colony Request messages
         getNetwork().registerMessage(BuildRequestMessage.class,              BuildRequestMessage.class,              20, Side.SERVER);
         getNetwork().registerMessage(OpenInventoryMessage.class,             OpenInventoryMessage.class,             21, Side.SERVER);
-        getNetwork().registerMessage(TownhallRenameMessage.class,            TownhallRenameMessage.class,            22, Side.SERVER);
+        getNetwork().registerMessage(TownHallRenameMessage.class,            TownHallRenameMessage.class,            22, Side.SERVER);
         getNetwork().registerMessage(MinerSetLevelMessage.class,             MinerSetLevelMessage.class,             23, Side.SERVER);
         getNetwork().registerMessage(FarmerCropTypeMessage.class,            FarmerCropTypeMessage.class,            24, Side.SERVER);
         getNetwork().registerMessage(RecallCitizenMessage.class,             RecallCitizenMessage.class,             25, Side.SERVER);
@@ -95,11 +101,9 @@ public class MineColonies
 
         proxy.registerEvents();
 
-        proxy.registerEntities();
-
-        proxy.registerEntityRendering();
-
         proxy.registerTileEntityRendering();
+        
+        proxy.registerRenderer();
 
         Schematics.init();
     }

@@ -3,11 +3,17 @@ package com.minecolonies.items;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
-import com.minecolonies.util.*;
+import com.minecolonies.util.BlockUtils;
+import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
+import com.minecolonies.util.Schematic;
+import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class ItemSupplyChestDeployer extends ItemMinecolonies
@@ -25,19 +31,19 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int face, float px, float py, float pz)
+    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        if(world == null || player == null || world.isRemote || stack.stackSize == 0 || !isFirstPlacing(player))
+        if(worldIn == null || playerIn == null || worldIn.isRemote || stack.stackSize == 0 || !isFirstPlacing(playerIn))
             return false;
 
-        int facing = canShipBePlaced(world, x, y, z);
-        if(facing != 0)
+        EnumFacing facing = canShipBePlaced(worldIn, pos);
+        if(facing != EnumFacing.DOWN)
         {
-            spawnShip(world, x, y, z, player, facing);
+            spawnShip(worldIn, pos, playerIn, facing);
             stack.stackSize--;
             return true;
         }
-        LanguageHandler.sendPlayerLocalizedMessage(player, "item.supplyChestDeployer.invalid");
+        LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.supplyChestDeployer.invalid");
         return false;
     }
 
@@ -51,44 +57,40 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      * 5: can be placed at east
      *
      * @param world world obj
-     * @param x     x coordinate clicked
-     * @param y     y coordinate clicked
-     * @param z     z coordinate clicked
-     * @return      facings it can be placed at (2-5)
+     * @param pos    coordinate clicked
+     * @return      facings it can be placed at
      */
-    public int canShipBePlaced(World world, int x, int y, int z)
+    public EnumFacing canShipBePlaced(World world, BlockPos pos)
     {
-        if(check(world, x + 1, y, z, true, true))
+        if(check(world, pos.west(), true, false))
         {
-            return 4;
+            return EnumFacing.WEST;
         }
-        else if(check(world, x - 1, y, z, true, false))
+        else if(check(world, pos.east(), true, true))
         {
-            return 5;
+            return EnumFacing.EAST;
         }
-        else if(check(world, x, y, z - 1, false, false))
+        else if(check(world, pos.south(), false, true))
         {
-            return 3;
+            return EnumFacing.SOUTH;
         }
-        else if(check(world, x, y, z + 1, false, true))
+        else if(check(world, pos.north(), false, false))
         {
-            return 2;
+            return EnumFacing.NORTH;
         }
-        return 0;
+        return EnumFacing.DOWN;
     }
 
     /**
      * Checks the area for the ship to be placed.
      *
      * @param world                  world obj
-     * @param x                      x coordinate clicked
-     * @param y                      y coordinate clicked
-     * @param z                      z coordinate clicked
+     * @param pos                    coordinate clicked
      * @param shouldCheckX           boolean whether the x-sides should be checks
      * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false)
      * @return                       whether the space in the I shape is free or not
      */
-    private boolean check(World world, int x, int y, int z, boolean shouldCheckX, boolean isCoordPositivelyAdded)
+    private boolean check(World world, BlockPos pos, boolean shouldCheckX, boolean isCoordPositivelyAdded)
     {
         int k = isCoordPositivelyAdded ? 1 : -1;
 
@@ -111,15 +113,15 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
             for(int i = 0; i < WIDTH; i++)
             {
                 int j = k * i;
-                if(!BlockUtils.isWater(world.getBlock(x + j, y, z)) ||
-                   !BlockUtils.isWater(world.getBlock(x + j, y, z + spaceRightK)) ||
-                   !BlockUtils.isWater(world.getBlock(x + j, y, z - spaceLeftK))) return false;
+                if(!BlockUtils.isWater(world.getBlockState(pos.add(j, 0, 0))) ||
+                   !BlockUtils.isWater(world.getBlockState(pos.add(j, 0, spaceRightK))) ||
+                   !BlockUtils.isWater(world.getBlockState(pos.add(j, 0, -spaceLeftK)))) return false;
             }
             for(int i = 0; i < LENGTH; i++)
             {
-                if(!BlockUtils.isWater(world.getBlock(x, y, z - horizontalX + i)) ||
-                   !BlockUtils.isWater(world.getBlock(x + widthKHalf, y, z - horizontalX + i)) ||
-                   !BlockUtils.isWater(world.getBlock(x + widthK, y, z - horizontalX + i))) return false;
+                if(!BlockUtils.isWater(world.getBlockState(pos.add(0, 0, -horizontalX + i))) ||
+                   !BlockUtils.isWater(world.getBlockState(pos.add(widthKHalf, 0, -horizontalX + i))) ||
+                   !BlockUtils.isWater(world.getBlockState(pos.add(widthK, 0, horizontalX + i)))) return false;
             }
         }
         else
@@ -127,16 +129,16 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
             for(int i = 0; i < WIDTH; i++)
             {
                 int j = k * i;
-                if(!BlockUtils.isWater(world.getBlock(x, y, z + j)) ||
-                   !BlockUtils.isWater(world.getBlock(x - spaceRightK, y, z + j)) ||
-                   !BlockUtils.isWater(world.getBlock(x + spaceLeftK, y, z + j))) return false;
+                if(!BlockUtils.isWater(world.getBlockState(pos.add(0, 0, j))) ||
+                   !BlockUtils.isWater(world.getBlockState(pos.add(-spaceRightK,0, j))) ||
+                   !BlockUtils.isWater(world.getBlockState(pos.add(spaceLeftK, 0, j)))) return false;
             }
 
             for(int i = 0; i < LENGTH; i++)
             {
-                if(!BlockUtils.isWater(world.getBlock(x - horizontalZ + i, y, z)) ||
-                   !BlockUtils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthKHalf)) ||
-                   !BlockUtils.isWater(world.getBlock(x - horizontalZ + i, y, z + widthK))) return false;
+                if(!BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, 0))) ||
+                   !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthKHalf))) ||
+                   !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthK)))) return false;
             }
         }
         return true;
@@ -160,38 +162,37 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
      * Spawns the ship and supply chest
      *
      * @param world        world obj
-     * @param x            x coordinate clicked
-     * @param y            y coordinate clicked
-     * @param z            z coordinate clicked
+     * @param pos          coordinate clicked
      * @param entityPlayer the player
      */
-    private void spawnShip(World world, int x, int y, int z, EntityPlayer entityPlayer, int chestFacing)
+    private void spawnShip(World world, BlockPos pos, EntityPlayer entityPlayer, EnumFacing chestFacing)
     {
-        world.setBlock(x, y + 1, z, Blocks.chest);
-        world.setBlockMetadataWithNotify(x, y + 1, z, chestFacing, 2);
+    	world.setBlockState(pos.up(), Blocks.chest.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
 
-        placeSupplyShip(world, x, y, z, chestFacing);
+        placeSupplyShip(world, pos, chestFacing);
 
-        fillChest((TileEntityChest) world.getTileEntity(x, y + 1, z));
+        fillChest((TileEntityChest) world.getTileEntity(pos.up()));
         PlayerProperties.get(entityPlayer).placeSupplyChest();
     }
 
-    private void placeSupplyShip(World world, int x, int y, int z, int direction)
+    private void placeSupplyShip(World world, BlockPos pos, EnumFacing direction)
     {
         switch(direction)
         {
-            case 2://North
-                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x - 11, y - 2, z + 5, 3);
+            case SOUTH://North 2
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(-11, -2, 5), 3);
                 break;
-            case 3://South
-                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x - 20, y - 2, z - 21, 1);
+            case NORTH://South 3
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(-20, -2, -21), 1);
                 break;
-            case 4://West
-                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x + 5, y - 2, z - 20, 2);
+            case EAST://West 4
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(5, -2, -20), 2);
                 break;
-            case 5://East
-                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", x - 21, y - 2, z - 11, 0);
+            case WEST://East 5
+                Schematic.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(-21, -2, -11), 0);
                 break;
+            default:
+            	break;
         }
     }
 
@@ -202,7 +203,7 @@ public class ItemSupplyChestDeployer extends ItemMinecolonies
             Log.logger.error("Supply chest tile entity was null.");
             return;
         }
-        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownhall));
+        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
         chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
     }
 }

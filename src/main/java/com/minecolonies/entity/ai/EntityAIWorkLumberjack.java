@@ -2,14 +2,14 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +101,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     /**
      * Positions of all items that have to be collected.
      */
-    private List<ChunkCoordinates>         items;
+    private List<BlockPos>                 items;
     /**
      * The active pathfinding job used to walk to trees
      */
@@ -201,7 +201,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private AIState findTree()
     {
-        if (pathResult == null)
+        if (pathResult == null || pathResult.treeLocation == null)
         {
             pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D);
             return state;
@@ -265,7 +265,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private AIState chopTree()
     {
-        ChunkCoordinates location = job.tree.getLocation();
+        BlockPos location = job.tree.getLocation();
         if (walkToBlock(location))
         {
             checkIfStuckOnLeaves(location);
@@ -283,7 +283,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         }
 
         //take first log from queue
-        ChunkCoordinates log = job.tree.peekNextLog();
+        BlockPos log = job.tree.peekNextLog();
         if (!mineBlock(log))
         {
             return state;
@@ -310,9 +310,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * @param location the location to plant the sapling at
      * @return true if a sapling was planted
      */
-    private boolean plantSapling(ChunkCoordinates location)
+    private boolean plantSapling(BlockPos location)
     {
-        if (ChunkCoordUtils.getBlock(world, location) != Blocks.air)
+        if (BlockPosUtil.getBlock(world, location) != Blocks.air)
         {
             return false;
         }
@@ -322,17 +322,17 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             ItemStack stack = getInventory().getStackInSlot(slot);
             if (isStackSapling(stack))
             {
-                Block block = ((ItemBlock) stack.getItem()).field_150939_a;
+                Block block = ((ItemBlock) stack.getItem()).getBlock();
                 worker.setHeldItem(slot);
-                if (ChunkCoordUtils.setBlock(world, location, block, stack.getItemDamage(), 0x02))
+                if (BlockPosUtil.setBlock(world, location, block.getStateFromMeta(stack.getMetadata()), 0x02))
                 {
                     worker.swingItem();
-                    world.playSoundEffect((float) location.posX + 0.5F,
-                                          (float) location.posY + 0.5F,
-                                          (float) location.posZ + 0.5F,
+                    world.playSoundEffect((float) location.getX() + 0.5F,
+                                          (float) location.getY() + 0.5F,
+                                          (float) location.getZ() + 0.5F,
                                           block.stepSound.getBreakSound(),
                                           block.stepSound.getVolume(),
-                                          block.stepSound.getPitch());
+                                          block.stepSound.getFrequency());
                     getInventory().decrStackSize(slot, 1);
                     setDelay(10);
                     return true;
@@ -351,7 +351,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private boolean isStackSapling(ItemStack stack)
     {
-        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a instanceof BlockSapling;
+        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockSapling;
     }
 
     /**
@@ -360,9 +360,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      *
      * @param location the block we want to go to
      */
-    private void checkIfStuckOnLeaves(final ChunkCoordinates location)
+    private void checkIfStuckOnLeaves(final BlockPos location)
     {
-        int distance = (int) ChunkCoordUtils.distanceSqrd(location, worker.getPosition());
+        int distance = (int) location.distanceSq(worker.getPosition());
         if (previousDistance != distance)
         {
             //something is moving, reset counters
@@ -388,11 +388,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private void tryGettingUnstuckFromLeaves()
     {
-        ChunkCoordinates nextLeaves = findNearLeaves();
+        BlockPos nextLeaves = findNearLeaves();
         //If the worker gets too stuck he moves around a bit
         if (nextLeaves == null || stillTicks > WALKING_BACK_WAIT_TIME)
         {
-            worker.getNavigator().moveAwayFromXYZ(worker.posX, worker.posY, worker.posZ, WALK_BACK_RANGE, WALK_BACK_SPEED);
+            worker.getNavigator().moveAwayFromXYZ(worker.getPosition(), WALK_BACK_RANGE, WALK_BACK_SPEED);
             stillTicks = 0;
             return;
         }
@@ -411,21 +411,22 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      *
      * @return a leaves block or null if none found
      */
-    private ChunkCoordinates findNearLeaves()
+    private BlockPos findNearLeaves()
     {
-        int playerX = (int) worker.posX;
-        int playerY = (int) (worker.posY + 1);
-        int playerZ = (int) worker.posZ;
+        int playerX =   worker.getPosition().getX();
+        int playerY =   worker.getPosition().getY() + 1;
+        int playerZ =   worker.getPosition().getZ();
         int radius  = 3;
-        for (int x = -radius; x < playerX + radius; x++)
+        for (int x = playerX - radius; x < playerX + radius; x++)
         {
-            for (int y = -radius; y < playerY + radius; y++)
+            for (int y = playerY - radius; y < playerY + radius; y++)
             {
-                for (int z = -radius; z < playerZ + radius; z++)
+                for (int z = playerZ - radius; z < playerZ + radius; z++)
                 {
-                    if (world.getBlock(x, y, z).isLeaves(world, x, y, z))
+                    BlockPos pos = new BlockPos(x,y,z);
+                    if (world.getBlockState(pos).getBlock().isLeaves(world, pos))
                     {
-                        return new ChunkCoordinates(x, y, z);
+                        return pos;
                     }
                 }
             }
@@ -460,9 +461,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private void searchForItems()
     {
-        items = new ArrayList<>();
+       items = new ArrayList<>();
         List<EntityItem> list = new ArrayList<>();
-        for (Object o : world.getEntitiesWithinAABB(EntityItem.class, worker.boundingBox.expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)))
+        for (Object o : world.getEntitiesWithinAABB(EntityItem.class, worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)))
         {
             if (o instanceof EntityItem)
             {
@@ -473,7 +474,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         //TODO check if sapling or apple (currently picks up all items, which may be okay)
         items = list.stream()
                     .filter(item -> item != null && !item.isDead)
-                    .map(ChunkCoordUtils::fromEntity)
+                    .map(BlockPosUtil::fromEntity)
                     .collect(Collectors.toList());
     }
 
@@ -482,9 +483,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private void gatherItems()
     {
+        worker.setCanPickUpLoot(true);
         if (worker.getNavigator().noPath())
         {
-            ChunkCoordinates pos = getAndRemoveClosestItem();
+            BlockPos pos = getAndRemoveClosestItem();
             worker.isWorkerAtSiteWithMove(pos, 3);
             return;
         }
@@ -517,14 +519,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      *
      * @return the closest item
      */
-    private ChunkCoordinates getAndRemoveClosestItem()
+    private BlockPos getAndRemoveClosestItem()
     {
         int   index    = 0;
-        float distance = Float.MAX_VALUE;
+        double distance = Double.MAX_VALUE;
 
         for (int i = 0; i < items.size(); i++)
         {
-            float tempDistance = ChunkCoordUtils.distanceSqrd(items.get(i), worker.getPosition());
+            double tempDistance = items.get(i).distanceSq(worker.getPosition());
             if (tempDistance < distance)
             {
                 index = i;
@@ -597,7 +599,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private boolean isStackLog(ItemStack stack)
     {
-        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a.isWood(null, 0, 0, 0);
+        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock().isWood(null,new BlockPos(0,0,0));
     }
 
     /**

@@ -2,17 +2,17 @@ package com.minecolonies.items;
 
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.Item;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public abstract class ItemMinecolonies extends Item
 {
     public ItemMinecolonies()
     {
-        setUnlocalizedName(getName());
+        setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + getName());
+        setRegistryName(getName());
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        GameRegistry.registerItem(this, getName());
+        GameRegistry.registerItem(this);
     }
 
     /**
@@ -21,10 +21,4 @@ public abstract class ItemMinecolonies extends Item
      * @return      Name of the item
      */
     public abstract String getName();
-
-    @Override
-    public void registerIcons(IIconRegister par1IconRegister)
-    {
-        this.itemIcon = par1IconRegister.registerIcon(Constants.MOD_ID + ":" + getName());
-    }
 }

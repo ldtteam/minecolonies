@@ -2,7 +2,9 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
+import com.minecolonies.entity.ai.AIState;
 import com.minecolonies.entity.ai.EntityAIWorkMiner;
+import com.minecolonies.util.Schematic;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,8 +13,7 @@ import java.util.List;
 
 public class JobMiner extends Job
 {
-    private static final String                  TAG_STAGE = "Stage";
-    private              EntityAIWorkMiner.Stage stage     = EntityAIWorkMiner.Stage.START_WORKING;
+    protected Schematic schematic;
 
     public JobMiner(CitizenData entity)
     {
@@ -32,40 +33,18 @@ public class JobMiner extends Job
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        compound.setString(TAG_STAGE, stage.name());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        stage = EntityAIWorkMiner.Stage.valueOf(compound.getString(TAG_STAGE));
     }
 
     @Override
     public void addTasks(EntityAITasks tasks)
     {
         tasks.addTask(3, new EntityAIWorkMiner(this));
-    }
-
-    /**
-    * Returns the stage of the worker
-     *
-    * @return           {@link com.minecolonies.entity.ai.EntityAIWorkMiner.Stage}
-    */
-    public EntityAIWorkMiner.Stage getStage()
-    {
-        return stage;
-    }
-
-    /**
-     * Sets the stage of the worker
-     *
-     * @param stage     {@link com.minecolonies.entity.ai.EntityAIWorkMiner.Stage} to set
-     */
-    public void setStage(EntityAIWorkMiner.Stage stage)
-    {
-        this.stage = stage;
     }
 
     /**
@@ -86,5 +65,13 @@ public class JobMiner extends Job
             }
         }
         addItemNeeded(stack);
+    }
+
+    public void setSchematic(Schematic schematic) {
+        this.schematic = schematic;
+    }
+
+    public Schematic getSchematic() {
+        return schematic;
     }
 }

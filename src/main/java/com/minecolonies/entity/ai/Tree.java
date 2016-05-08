@@ -1,12 +1,12 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -24,8 +24,8 @@ public class Tree
 
     private static final    int                             NUMBER_OF_LEAVES    = 3;
 
-    private                 ChunkCoordinates                location;
-    private                 LinkedList<ChunkCoordinates>    woodBlocks;
+    private BlockPos                     location;
+    private LinkedList<BlockPos> woodBlocks;
     private                 boolean                         isTree              = false;
 
     private Tree()
@@ -38,30 +38,30 @@ public class Tree
      * @param world
      * @param log
      */
-    public Tree(World world, ChunkCoordinates log)
+    public Tree(World world, BlockPos log)
     {
-        Block block = ChunkCoordUtils.getBlock(world, log);
-        if(block.isWood(world, log.posX, log.posY, log.posZ))
+        Block block = BlockPosUtil.getBlock(world, log);
+        if(block.isWood(world, log))
         {
-            location = getBaseLog(world, log.posX, log.posY, log.posZ);
+            location = getBaseLog(world, log);
             woodBlocks = new LinkedList<>();
 
-            checkTree(world, getTopLog(world, log.posX, log.posY, log.posZ));
+            checkTree(world, getTopLog(world, log));
         }
     }
 
     public void findLogs(World world)
     {
         addAndSearch(world, location);
-        Collections.sort(woodBlocks, (c1, c2) -> (int) (c1.getDistanceSquaredToChunkCoordinates(location) - c2.getDistanceSquaredToChunkCoordinates(location)));
+        Collections.sort(woodBlocks, (c1, c2) -> (int) (c1.distanceSq(location) - c2.distanceSq(location)));
     }
 
     public void addBaseLog()
     {
-        woodBlocks.add(new ChunkCoordinates(location));
+        woodBlocks.add(new BlockPos(location));
     }
 
-    private void addAndSearch(World world, ChunkCoordinates log)
+    private void addAndSearch(World world, BlockPos log)
     {
         woodBlocks.add(log);
         for(int y = -1; y <= 1; y++)
@@ -70,8 +70,8 @@ public class Tree
             {
                 for(int z = -1; z <= 1; z++)
                 {
-                    ChunkCoordinates temp = ChunkCoordUtils.add(log, x, y, z);
-                    if(ChunkCoordUtils.getBlock(world, temp).isWood(null,0,0,0) && !woodBlocks.contains(temp))//TODO reorder if more optimal
+                    BlockPos temp = BlockPosUtil.add(log, x, y, z);
+                    if(BlockPosUtil.getBlock(world, temp).isWood(null,new BlockPos(0,0,0)) && !woodBlocks.contains(temp))//TODO reorder if more optimal
                     {
                         addAndSearch(world, temp);
                     }
@@ -85,9 +85,9 @@ public class Tree
         return isTree;
     }
 
-    private void checkTree(World world, ChunkCoordinates topLog)
+    private void checkTree(World world, BlockPos topLog)
     {
-        if(!world.getBlock(location.posX, location.posY-1, location.posZ).getMaterial().isSolid())
+        if(!world.getBlockState(new BlockPos(location.getX(), location.getY()-1, location.getZ())).getBlock().getMaterial().isSolid())
         {
             return;
         }
@@ -98,7 +98,7 @@ public class Tree
             {
                 for(int y = -1; y <= 1; y++)
                 {
-                    if(world.getBlock(topLog.posX + x, topLog.posY + y, topLog.posZ + z).getMaterial().equals(Material.leaves))
+                    if(world.getBlockState(new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z)).getBlock().getMaterial().equals(Material.leaves))
                     {
                         leafCount++;
                         if(leafCount >= NUMBER_OF_LEAVES)
@@ -116,35 +116,33 @@ public class Tree
      * For use in PathJobFindTree
      *
      * @param world the world
-     * @param x log x coordinate
-     * @param y log y coordinate
-     * @param z log z coordinate
+     * @param pos The coordinates
      * @return true if the log is part of a tree
      */
-    public static boolean checkTree(IBlockAccess world, int x, int y, int z)
+    public static boolean checkTree(IBlockAccess world, BlockPos pos)
     {
         //Is the first block a log?
-        if(!world.getBlock(x, y, z).isWood(world, x, y, z))
+        if(!world.getBlockState(pos).getBlock().isWood(world, pos))
         {
             return false;
         }
 
         //Get base log, should already be base log
-        while(world.getBlock(x, y-1, z).isWood(world, x, y, z))
+        while(world.getBlockState(pos.down()).getBlock().isWood(world, pos))
         {
-            y--;
+            pos = pos.down();
         }
 
         //Make sure tree is on solid ground and tree is not build above cobblestone
-        if(!world.getBlock(x, y-1, z).getMaterial().isSolid() || world.getBlock(x, y-1, z) == Blocks.cobblestone)
+        if(!world.getBlockState(pos.down()).getBlock().getMaterial().isSolid() || world.getBlockState(pos.down()).getBlock() == Blocks.cobblestone)
         {
             return false;
         }
 
         //Get top log
-        while(world.getBlock(x, y+1, z).isWood(world, x, y, z))
+        while(world.getBlockState(pos.up()).getBlock().isWood(world, pos))
         {
-            y++;
+            pos = pos.up();
         }
 
         int leafCount = 0;
@@ -154,7 +152,7 @@ public class Tree
             {
                 for(int dy = -1; dy <= 1; dy++)
                 {
-                    if(world.getBlock(x + dx, y + dy, z + dz).getMaterial().equals(Material.leaves))
+                    if(world.getBlockState(pos.add(dx,dy,dz)).getBlock().getMaterial().equals(Material.leaves))
                     {
                         leafCount++;
                         if(leafCount >= NUMBER_OF_LEAVES)
@@ -168,30 +166,42 @@ public class Tree
         return false;
     }
 
-    private ChunkCoordinates getBaseLog(World world, int x, int y, int z)
+    /**
+     * Get's the base log of the tree
+     * @param world The entity world
+     * @param pos The coordinates
+     * @return the base log position
+     */
+    private BlockPos getBaseLog(World world, BlockPos pos)
     {
-        while(world.getBlock(x, y-1, z).isWood(world, x, y, z))
+        while(world.getBlockState(pos.down()).getBlock().isWood(world, pos))
         {
-            y--;
+            pos = pos.down();
         }
-        return new ChunkCoordinates(x, y, z);
+        return pos;
     }
 
-    private ChunkCoordinates getTopLog(World world, int x, int y, int z)
+    /**
+     * Get's the top log of the tree
+     * @param world The entity world
+     * @param pos The coordinates
+     * @return the top log position
+     */
+    private BlockPos getTopLog(World world, BlockPos pos)
     {
-        while(world.getBlock(x, y+1, z).isWood(world, x, y, z))
+        while(world.getBlockState(pos.up()).getBlock().isWood(world,pos.down()))
         {
-            y++;
+            pos = pos.up();
         }
-        return new ChunkCoordinates(x, y, z);
+        return pos;
     }
 
-    public ChunkCoordinates pollNextLog()
+    public BlockPos pollNextLog()
     {
         return woodBlocks.poll();
     }
 
-    public ChunkCoordinates peekNextLog()
+    public BlockPos peekNextLog()
     {
         return woodBlocks.peek();
     }
@@ -201,14 +211,14 @@ public class Tree
         return woodBlocks.size() > 0;
     }
 
-    public ChunkCoordinates getLocation()
+    public BlockPos getLocation()
     {
         return location;
     }
 
-    public float squareDistance(Tree other)
+    public double squareDistance(Tree other)
     {
-        return this.getLocation().getDistanceSquaredToChunkCoordinates(other.getLocation());
+        return this.getLocation().distanceSq(other.getLocation());
     }
 
     @Override
@@ -235,12 +245,12 @@ public class Tree
             return;
         }
 
-        ChunkCoordUtils.writeToNBT(compound, TAG_LOCATION, location);
+        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
 
         NBTTagList logs = new NBTTagList();
-        for(ChunkCoordinates log : woodBlocks)
+        for(BlockPos log : woodBlocks)
         {
-            ChunkCoordUtils.writeToNBTTagList(logs, log);
+            BlockPosUtil.writeToNBTTagList(logs, log);
         }
         compound.setTag(TAG_LOGS, logs);
     }
@@ -248,13 +258,13 @@ public class Tree
     public static Tree readFromNBT(NBTTagCompound compound)
     {
         Tree tree = new Tree();
-        tree.location = ChunkCoordUtils.readFromNBT(compound, TAG_LOCATION);
+        tree.location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
 
         tree.woodBlocks = new LinkedList<>();
         NBTTagList logs = compound.getTagList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
         for(int i = 0; i < logs.tagCount(); i++)
         {
-            tree.woodBlocks.add(ChunkCoordUtils.readFromNBTTagList(logs, i));
+            tree.woodBlocks.add(BlockPosUtil.readFromNBTTagList(logs, i));
         }
         return tree;
     }

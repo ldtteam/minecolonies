@@ -5,15 +5,16 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.Log;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
@@ -81,15 +82,17 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + message.hut);
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         World world = player.worldObj;
+        BlockPos pos = new BlockPos(message.x, message.y, message.z);
 
-        if(player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, message.x, message.y, message.z))
+        if(player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, pos))
         {
-            world.setBlock(message.x, message.y, message.z, block);
-            block.onBlockPlacedBy(world, message.x, message.y, message.z, player, null);
+            world.destroyBlock(pos, true);
+            world.setBlockState(pos, block.getDefaultState());
+            block.onBlockPlacedBy(world, pos, world.getBlockState(pos), player, null);
 
             player.inventory.consumeInventoryItem(Item.getItemFromBlock(block));
 
-            Building building = ColonyManager.getBuilding(world, message.x, message.y, message.z);
+            Building building = ColonyManager.getBuilding(world, pos);
 
             if(building != null)
             {

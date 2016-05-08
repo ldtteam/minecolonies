@@ -4,16 +4,16 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
-import com.minecolonies.util.ChunkCoordUtils;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.StringUtils;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInventoryMessage, IMessage>
 {
@@ -25,7 +25,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     private              int              inventoryType;
 
     private              int              entityID;
-    private              ChunkCoordinates tePos;
+    private              BlockPos         tePos;
 
     public OpenInventoryMessage(){}
 
@@ -65,7 +65,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 buf.writeInt(entityID);
                 break;
             case INVENTORY_CHEST:
-                ChunkCoordUtils.writeToByteBuf(buf, tePos);
+                BlockPosUtil.writeToByteBuf(buf, tePos);
                 break;
         }
     }
@@ -81,7 +81,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 entityID = buf.readInt();
                 break;
             case INVENTORY_CHEST:
-                tePos = ChunkCoordUtils.readFromByteBuf(buf);
+                tePos = BlockPosUtil.readFromByteBuf(buf);
                 break;
         }
     }
@@ -94,15 +94,15 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
         switch(message.inventoryType)
         {
             case INVENTORY_CITIZEN:
-                InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventory();
+                InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
                 if(!StringUtils.isNullOrEmpty(message.name))
-                    citizenInventory.func_110133_a(message.name);   //SetInventoryName
+                    citizenInventory.setCustomName(message.name);   //SetInventoryName
                 player.displayGUIChest(citizenInventory);
                 break;
             case INVENTORY_CHEST:
-                TileEntityChest chest = (TileEntityChest) ChunkCoordUtils.getTileEntity(player.worldObj, message.tePos);
+                TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
                 if(!StringUtils.isNullOrEmpty(message.name))
-                    chest.func_145976_a(message.name);              //SetInventoryName
+                    chest.setCustomName(message.name);              //SetInventoryName
                 player.displayGUIChest(chest);
                 break;
         }

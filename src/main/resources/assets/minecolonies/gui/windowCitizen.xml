@@ -5,7 +5,7 @@
     <group size="100% 50%" pos="20 10">
             <view id="healthBar" size="100% 11" />
             <view id="xpBar" size="100% 11" />
-            <label id="xpLabel" size="100% 11" color="black"/>
+            <label id="xpLabel" size="100% 11" color="black" textalign="Middle"/>
         </group>
     <label id="title" size="100% 11" pos="0 60"
            textalign="TopMiddle" color="black"
@@ -16,7 +16,7 @@
             <label id="endurance" size="100% 11" color="black" />
             <label id="charisma" size="100% 11" color="black" />
             <label id="intelligence" size="100% 11" color="black" />
-            <label id="diligence" size="100% 11" color="black" />
+            <label id="dexterity" size="100% 11" color="black" />
         </group>
     </box>
     <button id="inventory"

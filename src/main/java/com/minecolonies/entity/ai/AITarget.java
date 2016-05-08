@@ -16,12 +16,8 @@ import java.util.logging.Logger;
 public class AITarget
 {
 
-    /**
-     * Custom logger for the class.
-     */
-    private static final Logger log = Logger.getLogger(AITarget.class.getName());
-    private final AIState state;
-    private final BooleanSupplier predicate;
+    private final AIState           state;
+    private final BooleanSupplier   predicate;
     private final Supplier<AIState> action;
 
     /**

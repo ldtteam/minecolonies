@@ -252,7 +252,7 @@ public class MaterialStore
             {
                 if (countNeed == null || countNeed < quantity)
                 {
-                    throw new MaterialException("MaterialStore doesn't contain enough items: " + quantity);
+                    throw new QuantityNotFound("MaterialStore (haveNeed)", material.getID(), countNeed == null ? 0 : countNeed, quantity);
                 }
                 else
                 {
@@ -271,7 +271,7 @@ public class MaterialStore
                 int countToRemove = quantity - count;
                 if(countNeed == null || countNeed < countToRemove)
                 {
-                    throw new MaterialException("MaterialStore doesn't contain enough items: " + countToRemove);
+                    throw new QuantityNotFound("MaterialStore (dontNeed+haveNeed)", material.getID(), countNeed == null ? count : countNeed+count, quantity);
                 }
                 else
                 {
@@ -375,7 +375,7 @@ public class MaterialStore
         Integer count = need.get(material);
         if(count == null || count < quantity)
         {
-            throw new MaterialException("Count too low: " + quantity);
+            throw new QuantityNotFound("MaterialStore (need)", material.getID(), count == null ? 0 : count, quantity);
         }
         else if(count == quantity)
         {
@@ -388,14 +388,22 @@ public class MaterialStore
     }
 
     /**
-     * Removes all Materials from the system before the MaterialStore is destroyed
+     * Removes all the Materials from the store
      */
-    public void destroy()
+    public void clear()
     {
         for(Map.Entry<Material, Integer> entry : dontNeed.entrySet())
         {
             removeMaterialFromExternal(entry.getKey(), entry.getValue());
         }
+    }
+
+    /**
+     * Removes all Materials from the system before the MaterialStore is destroyed
+     */
+    public void destroy()
+    {
+        this.clear();
 
         system.removeStore(this);
     }

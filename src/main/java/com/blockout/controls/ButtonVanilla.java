@@ -48,13 +48,13 @@ public class ButtonVanilla extends Button
         }
 
         int textColor = enabled ? (isMouseOver ? 16777120 : 14737632) : 10526880;
-        drawCenteredString(mc.fontRenderer, label, x + width / 2, y + (height - 8) / 2, textColor);
+        drawCenteredString(mc.fontRendererObj, label, x + width / 2, y + (height - 8) / 2, textColor);
     }
 
     @Override
     public void handleClick(int mx, int my)
     {
-        mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+        mc.getSoundHandler().playSound(PositionedSoundRecord.create(soundClick, 1.0F));
         super.handleClick(mx, my);
     }
 }

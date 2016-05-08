@@ -2,7 +2,9 @@ package com.minecolonies.client.gui;
 
 import com.blockout.Alignment;
 import com.blockout.View;
-import com.blockout.controls.*;
+import com.blockout.controls.Button;
+import com.blockout.controls.Image;
+import com.blockout.controls.Label;
 import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
@@ -41,9 +43,9 @@ public class WindowCitizen extends Window implements Button.Handler
      */
     private static final  String                INTELLIGENCE                    = "intelligence";
     /**
-     * The label to find diligence in the gui
+     * The label to find dexterity in the gui
      */
-    private static final  String                DILIGENCE                       = "diligence";
+    private static final  String                DEXTERITY = "dexterity";
 
 
     /**
@@ -97,11 +99,11 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * X position of the xpLabel
      */
-    private static final int                    XP_LABEL_X                      = 60;
+    private static final int                    XP_LABEL_X                      = -20;
     /**
      * Y position of the xpLabel
      */
-    private static final int                    XP_LABEL_Y                      = 30;
+    private static final int                    XP_LABEL_Y                      = 28;
 
 
     /**
@@ -181,9 +183,9 @@ public class WindowCitizen extends Window implements Button.Handler
          * Calculates how much percent of the next level has been completed.
          * getExperience +1 in order to not get infinite if experience is zero
          */
-        int experienceRatio =
+        double experienceRatio =
                 citizen.getLevel() != 0 ?
-                (int) ((double) (citizen.getExperience() + 1) / ((citizen.getLevel() * citizen.getLevel()) * EXPERIENCE_MULTIPLIER) * 100) : (citizen.getExperience() / EXPERIENCE_MULTIPLIER) * PERCENT_MULTIPLIER;
+                (int) ((citizen.getExperience() + 1) / ((citizen.getLevel() * citizen.getLevel()) * EXPERIENCE_MULTIPLIER) * 100) : (citizen.getExperience() / EXPERIENCE_MULTIPLIER) * PERCENT_MULTIPLIER;
 
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabel("" + citizen.getLevel());
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X, XP_LABEL_Y);
@@ -202,7 +204,7 @@ public class WindowCitizen extends Window implements Button.Handler
         if (experienceRatio > 0)
         {
             Image xpBarFull = new Image();
-            xpBarFull.setImage(Gui.icons, XP_BAR_ICON_COLUMN, XP_BAR_FULL_ROW, experienceRatio, XP_HEIGHT);
+            xpBarFull.setImage(Gui.icons, XP_BAR_ICON_COLUMN, XP_BAR_FULL_ROW, (int)experienceRatio, XP_HEIGHT);
             xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
             findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBarFull);
         }
@@ -270,8 +272,8 @@ public class WindowCitizen extends Window implements Button.Handler
                 LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
         findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabel(
                 LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
-        findPaneOfTypeByID(DILIGENCE, Label.class).setLabel(
-                LanguageHandler.format("com.minecolonies.gui.citizen.skills.diligence", citizen.diligence));
+        findPaneOfTypeByID(DEXTERITY, Label.class).setLabel(
+                LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.dexterity));
     }
 
     /**

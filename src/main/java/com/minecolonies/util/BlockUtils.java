@@ -1,6 +1,6 @@
 package com.minecolonies.util;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 
 import java.util.Objects;
@@ -20,12 +20,12 @@ public final class BlockUtils
     /**
      * Checks if the block is water
      *
-     * @param block block to be checked
+     * @param iBlockState block state to be checked
      * @return true if is water.
      */
-    public static boolean isWater(Block block)
+    public static boolean isWater(IBlockState iBlockState)
     {
-        return Objects.equals(block, Blocks.water)
-               || Objects.equals(block, Blocks.flowing_water);
+        return Objects.equals(iBlockState, Blocks.water.getDefaultState())
+               || Objects.equals(iBlockState, Blocks.flowing_water.getDefaultState());
     }
 }

@@ -7,7 +7,7 @@ import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
 
 import java.util.ArrayList;
@@ -31,15 +31,16 @@ import static com.minecolonies.entity.ai.AIState.*;
  */
 public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkeleton<J>
 {
-    private static final int DEFAULT_RANGE_FOR_DELAY = 3;
-    private static final int DELAY_RECHECK           = 10;
-
-    protected static Random           itemRand                = new Random();
-    protected        boolean          needsShovel             = false;
-    protected        boolean          needsAxe                = false;
-    protected        boolean          needsHoe                = false;
-    protected        boolean          needsPickaxe            = false;
-    protected        int              needsPickaxeLevel       = -1;
+    private static final int             DEFAULT_RANGE_FOR_DELAY = 3;
+    private static final int             DELAY_RECHECK           = 10;
+    private static final int             DELAY_MODIFIER          = 50;
+    protected static     Random          itemRand                = new Random();
+    protected            boolean         needsShovel             = false;
+    protected            boolean         needsAxe                = false;
+    protected            boolean         needsHoe                = false;
+    protected            boolean         needsPickaxe            = false;
+    protected            int             needsPickaxeLevel       = -1;
+    protected            int             blocksMined             = 0;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -49,7 +50,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * <p>
      * Will be cleared on restart, be aware!
      */
-    private          List<ItemStack>  itemsCurrentlyNeeded    = new ArrayList<>();
+    private              List<ItemStack> itemsCurrentlyNeeded    = new ArrayList<>();
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -57,17 +58,17 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * <p>
      * Will be cleared on restart, be aware!
      */
-    private          List<ItemStack>  itemsNeeded             = new ArrayList<>();
-    private          ChunkCoordinates currentWorkingLocation  = null;
+    private              List<ItemStack> itemsNeeded             = new ArrayList<>();
+    private              BlockPos        currentWorkingLocation  = null;
     /**
      * The time in ticks until the next action is made
      */
-    private          int              delay                   = 0;
-    private          ChunkCoordinates currentStandingLocation = null;
+    private              int             delay                   = 0;
+    private              BlockPos        currentStandingLocation = null;
     /**
      * If we have waited one delay
      */
-    private          boolean          hasDelayed              = false;
+    private              boolean         hasDelayed              = false;
 
 
     /**
@@ -235,7 +236,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         job.clearItemsNeeded();
         itemsNeeded.forEach(job::addItemNeeded);
-        InventoryUtils.getInventoryAsList(worker.getInventory()).forEach(job::removeItemNeeded);
+        InventoryUtils.getInventoryAsList(worker.getInventoryCitizen()).forEach(job::removeItemNeeded);
         itemsCurrentlyNeeded = new ArrayList<>(job.getItemsNeeded());
     }
 
@@ -301,7 +302,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         boolean needsTool = !InventoryFunctions
                 .matchFirstInInventory(
-                        worker.getInventory(),
+                        worker.getInventoryCitizen(),
                         stack -> Utils.isTool(stack, tool),
                         InventoryFunctions::doNothing);
         if (!needsTool)
@@ -348,9 +349,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @param stand where to walk to
      */
-    protected final boolean walkToBlock(ChunkCoordinates stand)
+    protected final boolean walkToBlock(BlockPos stand)
     {
-        if (!EntityUtils.isWorkerAtSite(worker, stand.posX, stand.posY, stand.posZ, DEFAULT_RANGE_FOR_DELAY))
+        if (!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), DEFAULT_RANGE_FOR_DELAY))
         {
             workOnBlock(null, stand, 1);
             return true;
@@ -366,7 +367,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * @param stand   the block the worker will walk to
      * @param timeout the time in ticks to hit the block
      */
-    private void workOnBlock(ChunkCoordinates target, ChunkCoordinates stand, int timeout)
+    private void workOnBlock(BlockPos target, BlockPos stand, int timeout)
     {
         this.currentWorkingLocation = target;
         this.currentStandingLocation = stand;
@@ -452,16 +453,22 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     protected boolean checkForPickaxe(int minlevel)
     {
         //Check for a pickaxe
-        needsPickaxe = InventoryFunctions
+        needsPickaxe = !InventoryFunctions
                 .matchFirstInInventory(
-                        worker.getInventory(),
+                        worker.getInventoryCitizen(),
                         stack -> Utils.checkIfPickaxeQualifies(
                                 minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
                         InventoryFunctions::doNothing);
 
         delay += DELAY_RECHECK;
-        if (needsPickaxe && walkToBuilding())
+
+        if (needsPickaxe)
         {
+            needsPickaxeLevel = minlevel;
+            if (walkToBuilding())
+            {
+                return false;
+            }
             if (isPickaxeInHut(minlevel))
             {
                 return true;
@@ -508,7 +515,21 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
         }
+        //collect items that are nice to have if they are available
+        itemsNiceToHave().forEach(this::isInHut);
         return IDLE;
+    }
+
+    /**
+     * Can be overridden by implementations to specify items useful for the worker.
+     * When the workers inventory is full, he will try to keep these items.
+     * ItemStack amounts are ignored, the first stack found will be taken.
+     *
+     * @return a list with items nice to have for the worker
+     */
+    protected List<ItemStack> itemsNiceToHave()
+    {
+        return new ArrayList<>();
     }
 
     /**
@@ -532,18 +553,29 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
 
         return walkToBuilding()
                || InventoryFunctions.matchFirstInInventory(
-                worker.getInventory(), (i, stack) -> {
+                worker.getInventoryCitizen(), (i, stack) -> {
                     if (stack == null || keepIt.test(stack)){ return false; }
                     ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
                     if (returnStack == null)
                     {
-                        worker.getInventory().decrStackSize(i, stack.stackSize);
+                        ItemStack removed = worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
+                        if (removed.stackSize < stack.stackSize)
+                        {
+                            //todo: this will never happen???
+                            Log.logger.warn("Dump Inventory: Tried to remove " + stack.stackSize +
+                                            " items, but only " + removed.stackSize + " were removed");
+                        }
                         return true;
                     }
-                    worker.getInventory().decrStackSize(
+                    ItemStack removed = worker.getInventoryCitizen().decrStackSize(
                             i,
                             stack.stackSize
                             - returnStack.stackSize);
+                    if (removed.stackSize < stack.stackSize)
+                    {
+                        Log.logger.warn("Dump Inventory: Tried to remove " + stack.stackSize +
+                                        " items, but only " + removed.stackSize + " were removed");
+                    }
                     //Check that we are not inserting
                     // into a
                     // full inventory.
@@ -642,12 +674,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private void takeItemStackFromChest(int slot)
     {
-        InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventory(), slot);
+        InventoryUtils.takeStackInSlot(getOwnBuilding().getTileEntity(), worker.getInventoryCitizen(), slot);
     }
 
     protected InventoryCitizen getInventory()
     {
-        return worker.getInventory();
+        return worker.getInventoryCitizen();
     }
 
     /**
@@ -687,16 +719,37 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private void requestTool(Block target)
     {
-        String tool     = target.getHarvestTool(0);
-        int    required = target.getHarvestLevel(0);
-        if (Utils.PICKAXE.equalsIgnoreCase(tool))
+        String tool     = target.getHarvestTool(target.getDefaultState());
+        int    required = target.getHarvestLevel(target.getDefaultState());
+        updateToolFlag(tool, required);
+    }
+
+    /**
+     * checks if said tool of said level is usable.
+     * if not, it updates the needsTool falg
+     * for said tool.
+     *
+     * @param tool     the tool needed
+     * @param required the level needed (for pickaxe)
+     */
+    private void updateToolFlag(String tool, int required)
+    {
+        switch (tool)
         {
-            checkForPickaxe(required);
+            case Utils.AXE:
+                checkForAxe();
+                break;
+            case Utils.SHOVEL:
+                checkForShovel();
+                break;
+            case Utils.HOE:
+                checkForHoe();
+                break;
+            case Utils.PICKAXE:
+                checkForPickaxe(required);
+                break;
         }
-        else
-        {
-            checkForTool(tool);
-        }
+        Log.logger.error("Invalid tool " + tool + " not implemented as tool!");
     }
 
     /**
@@ -708,11 +761,11 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private int getMostEfficientTool(Block target)
     {
-        String           tool      = target.getHarvestTool(0);
-        int              required  = target.getHarvestLevel(0);
+        String           tool      = target.getHarvestTool(target.getDefaultState());
+        int              required  = target.getHarvestLevel(target.getDefaultState());
         int              bestSlot  = -1;
         int              bestLevel = Integer.MAX_VALUE;
-        InventoryCitizen inventory = worker.getInventory();
+        InventoryCitizen inventory = worker.getInventoryCitizen();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack item  = inventory.getStackInSlot(i);
@@ -730,31 +783,17 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Calculate how long it takes to mine this block.
      *
      * @param block the block type
-     * @param x     x coordinate
-     * @param y     y coordinate
-     * @param z     z coordinate
+     * @param pos   coordinate
      * @return the delay in ticks
      */
-    private int getBlockMiningDelay(Block block, int x, int y, int z)
+    private int getBlockMiningDelay(Block block, BlockPos pos)
     {
         if (worker.getHeldItem() == null)
         {
-            return (int) block.getBlockHardness(world, x, y, z);
+            return (int) block.getBlockHardness(world, pos);
         }
-        return (int) (50 * block.getBlockHardness(world, x, y, z)
-                      / (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block, 0)));
-    }
-
-    /**
-     * Calculate how long it takes to mine this block.
-     *
-     * @param block            the block type
-     * @param chunkCoordinates coordinates of the block
-     * @return the delay in ticks
-     */
-    private int getBlockMiningDelay(Block block, ChunkCoordinates chunkCoordinates)
-    {
-        return getBlockMiningDelay(block, chunkCoordinates.posX, chunkCoordinates.posY, chunkCoordinates.posZ);
+        return (int) ((DELAY_MODIFIER - worker.getLevel()) * block.getBlockHardness(world, pos)
+                      / (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block.getDefaultState())));
     }
 
     /**
@@ -763,10 +802,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * @param blockToMine the block to mine eventually
      * @param safeStand   a safe stand to mine from (AIR Block!)
      */
-    private boolean checkMiningLocation(ChunkCoordinates blockToMine, ChunkCoordinates safeStand)
+    private boolean checkMiningLocation(BlockPos blockToMine, BlockPos safeStand)
     {
 
-        Block curBlock = world.getBlock(blockToMine.posX, blockToMine.posY, blockToMine.posZ);
+        Block curBlock = world.getBlockState(blockToMine).getBlock();
 
         if (!holdEfficientTool(curBlock))
         {
@@ -776,13 +815,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
 
         ItemStack tool = worker.getHeldItem();
 
-        if (curBlock.getHarvestLevel(0) < Utils.getMiningLevel(tool, curBlock.getHarvestTool(0)))
+        if (curBlock.getHarvestLevel(curBlock.getDefaultState()) < Utils.getMiningLevel(tool, curBlock.getHarvestTool(curBlock.getDefaultState())))
         {
             //We have to high of a tool...
             //TODO: request lower tier tools
         }
 
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(curBlock, 0, tool) && curBlock != Blocks.bedrock)
+        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.bedrock)
         {
             Log.logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool + "\n"
                             + "Please report to MineColonies with this text to add support!");
@@ -825,29 +864,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * So make sure the code path up to this function is reachable a second time.
      * And make sure to immediately exit the update function when this returns false.
      *
-     * @param posX the x coordinate of the block that should be mined
-     * @param posY the y coordinate of the block that should be mined
-     * @param posZ the z coordinate of the block that should be mined
-     * @return true once we're done
-     */
-    protected final boolean mineBlock(int posX, int posY, int posZ)
-    {
-        return mineBlock(new ChunkCoordinates(posX, posY, posZ));
-    }
-
-    /**
-     * Will simulate mining a block with particles ItemDrop etc.
-     * Attention:
-     * Because it simulates delay, it has to be called 2 times.
-     * So make sure the code path up to this function is reachable a second time.
-     * And make sure to immediately exit the update function when this returns false.
-     *
      * @param blockToMine the block that should be mined
      * @return true once we're done
      */
-    protected final boolean mineBlock(ChunkCoordinates blockToMine)
+    protected final boolean mineBlock(BlockPos blockToMine)
     {
-        return mineBlock(blockToMine, new ChunkCoordinates((int) worker.posX, (int) worker.posY, (int) worker.posZ));
+        return mineBlock(blockToMine, new BlockPos((int) worker.posX, (int) worker.posY, (int) worker.posZ));
     }
 
     /**
@@ -861,9 +883,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * @param safeStand   the block we want to stand on to do that
      * @return true once we're done
      */
-    protected final boolean mineBlock(ChunkCoordinates blockToMine, ChunkCoordinates safeStand)
+    protected final boolean mineBlock(BlockPos blockToMine, BlockPos safeStand)
     {
-        Block curBlock = world.getBlock(blockToMine.posX, blockToMine.posY, blockToMine.posZ);
+        //todo partially replace with methods in EntityCitizen
+        Block curBlock = world.getBlockState(blockToMine).getBlock();
         if (curBlock == null || curBlock == Blocks.air)
         {
             //no need to mine block...
@@ -893,22 +916,24 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         if (tool != null && tool.stackSize < 1)
         {
             worker.setCurrentItemOrArmor(0, null);
-            worker.getInventory().setInventorySlotContents(worker.getInventory().getHeldItemSlot(), null);
+            worker.getInventoryCitizen().setInventorySlotContents(worker.getInventoryCitizen().getHeldItemSlot(), null);
         }
 
-        Utils.blockBreakSoundAndEffect(world, blockToMine.posX, blockToMine.posY, blockToMine.posZ, curBlock,
-                                       world.getBlockMetadata(blockToMine.posX, blockToMine.posY, blockToMine.posZ));
+        Utils.blockBreakSoundAndEffect(world, blockToMine, curBlock,
+                                       curBlock.getMetaFromState(world.getBlockState(blockToMine)));
         //Don't drop bedrock but we want to mine bedrock in some cases...
         if (curBlock != Blocks.bedrock)
         {
-            List<ItemStack> items = ChunkCoordUtils.getBlockDrops(world, blockToMine, fortune);
+            List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
             for (ItemStack item : items)
             {
-                InventoryUtils.setStack(worker.getInventory(), item);
+                InventoryUtils.setStack(worker.getInventoryCitizen(), item);
             }
         }
 
-        world.setBlockToAir(blockToMine.posX, blockToMine.posY, blockToMine.posZ);
+        world.setBlockToAir(blockToMine);
+        worker.addExperience(0.01);
+        blocksMined++;
         return true;
     }
 

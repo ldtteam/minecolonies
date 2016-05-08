@@ -2,9 +2,13 @@ package com.minecolonies.inventory;
 
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
+import com.minecolonies.util.Log;
 import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 
 /**
  * Basic inventory for the citizens
@@ -34,7 +38,7 @@ public class InventoryCitizen extends InventoryBasic
      */
     public void addIInvBasic(IInvBasic inventory)
     {
-        func_110134_a(inventory);
+        addInventoryChangeListener(inventory);
     }
 
     /**
@@ -44,7 +48,7 @@ public class InventoryCitizen extends InventoryBasic
      */
     public void removeIInvBasic(IInvBasic inventory)
     {
-        func_110132_b(inventory);
+        removeInventoryChangeListener(inventory);
     }
 
     /**
@@ -54,7 +58,7 @@ public class InventoryCitizen extends InventoryBasic
      */
     public void setInventoryName(String name)
     {
-        func_110133_a(name);
+        setCustomName(name);
     }
 
     /**
@@ -88,6 +92,11 @@ public class InventoryCitizen extends InventoryBasic
         return heldItem;
     }
 
+    public boolean isSlotEmpty(int index)
+    {
+        return super.getStackInSlot(index) == null;
+    }
+
     //-----------------------------Material Handling--------------------------------
 
     public void createMaterialStore(MaterialSystem system)
@@ -102,6 +111,19 @@ public class InventoryCitizen extends InventoryBasic
     {
         return materialStore;
     }
+
+    //todo missing now
+    /*
+    @Override
+    public ItemStack getStackInSlotOnClosing(int index)
+    {
+            ItemStack removed = super.getStackInSlotOnClosing(index);
+
+                    removeStackFromMaterialStore(removed);
+
+                    return removed;
+    }*/
+
 
     /**
      * Makes sure ItemStacks inside of the inventory aren't affected by changes to the returned stack.
@@ -128,16 +150,6 @@ public class InventoryCitizen extends InventoryBasic
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int index)
-    {
-        ItemStack removed = super.getStackInSlotOnClosing(index);
-
-        removeStackFromMaterialStore(removed);
-
-        return removed;
-    }
-
-    @Override
     public void setInventorySlotContents(int index, ItemStack stack)
     {
         ItemStack previous = getStackInSlot(index);
@@ -148,13 +160,65 @@ public class InventoryCitizen extends InventoryBasic
         addStackToMaterialStore(stack);
     }
 
+    /**
+     * Put stack in inventory.
+     *
+     * @param stack The {@link ItemStack} to put into the inventory
+     * @return null if successful, otherwise return whatever couldn't be put into the inventory
+     */
+    public ItemStack func_174894_a(ItemStack stack)
+    {
+        //Minecraft code makes a copy of stack and doesn't change it, so its safe for us to use later on
+        ItemStack returned = super.func_174894_a(stack);
+
+        if(returned == null)
+        {
+            addStackToMaterialStore(stack);
+        }
+        else if(stack.stackSize != returned.stackSize)
+        {
+            if(MaterialSystem.isEnabled)
+            {
+                materialStore.addMaterial(stack.getItem(), stack.stackSize - returned.stackSize);
+            }
+        }
+
+        return returned;
+    }
+
+    /**
+     * Removes a stack from the given slot and returns it.
+     */
+    @Override
+    public ItemStack removeStackFromSlot(int index)
+    {
+        ItemStack stack = super.removeStackFromSlot(index);
+        removeStackFromMaterialStore(stack);
+
+        return stack;
+    }
+
+    @Override
+    public void clear()
+    {
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.clear();
+        }
+
+        super.clear();
+    }
+
     private void addStackToMaterialStore(ItemStack stack)
     {
         if(stack == null){
             return;
         }
-        //todo: colton reenable it
-        //materialStore.addMaterial(stack.getItem(), stack.stackSize);
+
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.addMaterial(stack.getItem(), stack.stackSize);
+        }
     }
 
     private void removeStackFromMaterialStore(ItemStack stack)
@@ -162,7 +226,58 @@ public class InventoryCitizen extends InventoryBasic
         if(stack == null){
             return;
         }
-        //todo: colton reenable it
-        //materialStore.removeMaterial(stack.getItem(), stack.stackSize);
+
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.removeMaterial(stack.getItem(), stack.stackSize);
+        }
+    }
+
+    private static final String TAG_INVENTORY = "Inventory";
+    private static final String TAG_SLOT      = "slot";
+
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        NBTTagList nbtTagList = compound.getTagList(TAG_INVENTORY, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < nbtTagList.tagCount(); i++)
+        {
+            NBTTagCompound tag = nbtTagList.getCompoundTagAt(i);
+            ItemStack itemstack = ItemStack.loadItemStackFromNBT(tag);
+            int slot = tag.getInteger(TAG_SLOT);
+            super.setInventorySlotContents(slot, itemstack);
+        }
+
+        if(MaterialSystem.isEnabled && materialStore == null)
+        {
+            Log.logger.error("EntityCitizen inventory has a null MaterialStore (returning to avoid crash, but will probably crash later, I hope you don't see this).");
+            return;
+        }
+
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.readFromNBT(compound);
+        }
+    }
+
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        NBTTagList inventoryList = new NBTTagList();
+        for (int i = 0; i < this.getSizeInventory(); i++)
+        {
+            if (this.getStackInSlot(i) != null)
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setInteger(TAG_SLOT, i);
+                super.getStackInSlot(i).writeToNBT(tag);
+                inventoryList.appendTag(tag);
+            }
+        }
+
+        if(MaterialSystem.isEnabled)
+        {
+            materialStore.writeToNBT(compound);
+        }
+
+        compound.setTag(TAG_INVENTORY, inventoryList);
     }
 }

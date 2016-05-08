@@ -1,14 +1,17 @@
 package com.minecolonies.entity.pathfinding;
 
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 
 public class PathPointExtended extends PathPoint
 {
-    public boolean isOnLadder   = false;
-    public int     ladderFacing = 0;
+    public boolean    isOnLadder   = false;
+    //Should be instantiated to something he doesn't recognize as climbable.
+    public EnumFacing ladderFacing = EnumFacing.DOWN;
 
-    public PathPointExtended(int x, int y, int z)
+    public PathPointExtended(BlockPos pos)
     {
-        super(x, y, z);
+        super(pos.getX(), pos.getY(), pos.getZ());
     }
 }

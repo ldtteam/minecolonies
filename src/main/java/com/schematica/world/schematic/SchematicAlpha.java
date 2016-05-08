@@ -3,8 +3,9 @@ package com.schematica.world.schematic;
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.util.Log;
 import com.schematica.world.SchematicWorld;
-import cpw.mods.fml.common.registry.GameData;
+
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
@@ -12,7 +13,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.registry.GameData;
 
 import java.util.*;
 
@@ -68,10 +72,10 @@ public class SchematicAlpha extends SchematicFormat
         if(tagCompound.hasKey(MAPPING_SCHEMATICA))
         {
             NBTTagCompound mapping = tagCompound.getCompoundTag(MAPPING_SCHEMATICA);
-            Set<String> names = mapping.func_150296_c();
+            Set<String> names = mapping.getKeySet();
             for(String name : names)
             {
-                oldToNew.put(mapping.getShort(name), (short) GameData.getBlockRegistry().getId(name));
+                oldToNew.put(mapping.getShort(name), (short) GameData.getBlockRegistry().getId(new ResourceLocation(name)));
             }
         }
 
@@ -138,8 +142,6 @@ public class SchematicAlpha extends SchematicFormat
         boolean extra = false;
         NBTTagCompound mapping = new NBTTagCompound();
 
-        int xOffset = 0, yOffset = 0, zOffset = 0;
-
         for(int x = 0; x < world.getWidth(); x++)
         {
             for(int y = 0; y < world.getHeight(); y++)
@@ -149,23 +151,17 @@ public class SchematicAlpha extends SchematicFormat
                     int index = x + (y * world.getLength() + z) * world.getWidth();
                     int blockId = world.getBlockIdRaw(x, y, z);
                     localBlocks[index] = (byte) blockId;
-                    localMetadata[index] = (byte) world.getBlockMetadata(x, y, z);
+                    IBlockState blockState = world.getBlockState(new BlockPos(x,y,z));
+                    localMetadata[index] = (byte) blockState.getBlock().getMetaFromState(blockState);
                     if((extraBlocks[index] = (byte) (blockId >> 8)) > 0)
                     {
                         extra = true;
                     }
 
-                    String name = GameData.getBlockRegistry().getNameForObject(world.getBlockRaw(x, y, z));
+                    String name = GameData.getBlockRegistry().getNameForObject(world.getBlockRaw(x, y, z)).toString();
                     if(!mapping.hasKey(name))
                     {
                         mapping.setShort(name, (short) blockId);
-                    }
-
-                    if(world.getBlock(x, y, z) instanceof AbstractBlockHut)
-                    {
-                        xOffset = x;
-                        yOffset = y;
-                        zOffset = z;
                     }
                 }
             }
@@ -195,10 +191,11 @@ public class SchematicAlpha extends SchematicFormat
             }
             catch(Exception e)
             {
-                int pos = tileEntity.xCoord + (tileEntity.yCoord * world.getLength() + tileEntity.zCoord) * world.getWidth();
+                int pos = tileEntity.getPos().getX() + (tileEntity.getPos().getY() * world.getLength() + tileEntity.getPos().getZ()) * world.getWidth();
                 if(--count > 0)
                 {
-                    Block block = world.getBlockRaw(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+                    BlockPos tPos = tileEntity.getPos();
+                    Block block = world.getBlockRaw(tPos.getX(), tPos.getY(), tPos.getZ());
                     Log.logger.error(String.format("Block %s[%s] with TileEntity %s failed to save! Replacing with bedrock...", block, block != null ? GameData.getBlockRegistry().getNameForObject(block) : "?", tileEntity.getClass().getName()), e);
                 }
                 localBlocks[pos] = (byte) GameData.getBlockRegistry().getId(Blocks.bedrock);
@@ -231,9 +228,9 @@ public class SchematicAlpha extends SchematicFormat
         tagCompound.setTag(TILE_ENTITIES, tileEntitiesList);
         tagCompound.setTag(MAPPING_SCHEMATICA, mapping);
 
-        tagCompound.setShort(OFFSET_X, (short) xOffset);
-        tagCompound.setShort(OFFSET_Y, (short) yOffset);
-        tagCompound.setShort(OFFSET_Z, (short) zOffset);
+        tagCompound.setShort(OFFSET_X, (short) world.getOffsetX());
+        tagCompound.setShort(OFFSET_Y, (short) world.getOffsetY());
+        tagCompound.setShort(OFFSET_Z, (short) world.getOffsetZ());
 
         return true;
     }

@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
@@ -11,10 +11,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
-
 plugins {
     id "org.sonarqube" version "1.2"
 }
@@ -28,7 +27,12 @@ sonarqube {
     }
 }
 
-apply plugin: 'forge'
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+dependencies {
+    testCompile 'junit:junit:4.11'
+    testCompile "org.mockito:mockito-core:1.+"
+}
 
 ext.configFile = file "build.properties"
 
@@ -47,8 +51,11 @@ targetCompatibility = '1.8'
 
 minecraft {
 
-    version = config.forge_version + "-" + config.minecraft_version
+    version = config.minecraft_version + "-" + config.forge_version
     runDir = "run"
+	
+	mappings = "${config.minecolonies_mappings}"
+	
     replace "@VERSION@", project.version
     replaceIn "lib/Constants.java"
     if (project.hasProperty("signature"))
@@ -70,10 +77,10 @@ processResources {
     }
 }
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-    appendix = 'src'
-}
+//task sourceJar(type: Jar) {
+//    from sourceSets.main.allSource
+//    appendix = 'src'
+//}
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
