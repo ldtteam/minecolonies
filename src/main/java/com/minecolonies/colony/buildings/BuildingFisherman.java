@@ -8,11 +8,11 @@ import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobFisherman;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public class BuildingFisherman extends BuildingWorker
 {
-    public BuildingFisherman(Colony c, ChunkCoordinates l)
+    public BuildingFisherman(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -58,7 +58,7 @@ public class BuildingFisherman extends BuildingWorker
         public int[] levels;
         public int   current;
 
-        public View(ColonyView c, ChunkCoordinates l)
+        public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }

@@ -2,12 +2,12 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.util.ChunkCoordUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
  * Add or Update a ColonyView on the client
@@ -15,7 +15,7 @@ import net.minecraft.util.ChunkCoordinates;
 public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandler<ColonyViewRemoveBuildingMessage, IMessage>
 {
     private int              colonyId;
-    private ChunkCoordinates buildingId;
+    private BlockPos         buildingId;
 
     public ColonyViewRemoveBuildingMessage(){}
 
@@ -25,7 +25,7 @@ public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandle
      * @param colony        Colony the building is in
      * @param building      Building that is removed
      */
-    public ColonyViewRemoveBuildingMessage(Colony colony, ChunkCoordinates building)
+    public ColonyViewRemoveBuildingMessage(Colony colony, BlockPos building)
     {
         this.colonyId = colony.getID();
         this.buildingId = building;
@@ -35,14 +35,14 @@ public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandle
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(colonyId);
-        ChunkCoordUtils.writeToByteBuf(buf, buildingId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
-        buildingId = ChunkCoordUtils.readFromByteBuf(buf);
+        buildingId = BlockPosUtil.readFromByteBuf(buf);
     }
 
     @Override

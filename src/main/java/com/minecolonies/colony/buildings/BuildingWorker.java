@@ -5,10 +5,10 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
-import cpw.mods.fml.common.gameevent.TickEvent;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public abstract class BuildingWorker extends BuildingHut
 {
@@ -18,7 +18,7 @@ public abstract class BuildingWorker extends BuildingHut
     public abstract         String      getJobName();
     public abstract         Job         createJob(CitizenData citizen);
 
-    public BuildingWorker(Colony c, ChunkCoordinates l)
+    public BuildingWorker(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -171,7 +171,7 @@ public abstract class BuildingWorker extends BuildingHut
     {
         private int workerId;
 
-        public View(ColonyView c, ChunkCoordinates l)
+        public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }

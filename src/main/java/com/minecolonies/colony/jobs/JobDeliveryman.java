@@ -4,14 +4,14 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.entity.ai.EntityAIWorkDeliveryman;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public class JobDeliveryman extends Job
 {
-    private                 ChunkCoordinates    destination;
+    private                 BlockPos            destination;
 
     private static final    String              TAG_DESTINATION = "destination";
 
@@ -38,7 +38,7 @@ public class JobDeliveryman extends Job
         super.writeToNBT(compound);
         if (hasDestination())
         {
-            ChunkCoordUtils.writeToNBT(compound, TAG_DESTINATION, destination);
+            BlockPosUtil.writeToNBT(compound, TAG_DESTINATION, destination);
         }
     }
 
@@ -48,7 +48,7 @@ public class JobDeliveryman extends Job
         super.readFromNBT(compound);
         if(compound.hasKey(TAG_DESTINATION))
         {
-            destination = ChunkCoordUtils.readFromNBT(compound, TAG_DESTINATION);
+            destination = BlockPosUtil.readFromNBT(compound, TAG_DESTINATION);
         }
     }
 
@@ -75,11 +75,11 @@ public class JobDeliveryman extends Job
     }
 
     /**
-     * Returns the {@link ChunkCoordinates} of the destination
+     * Returns the {@link BlockPos} of the destination
      *
-     * @return          {@link ChunkCoordinates} of the destination
+     * @return          {@link BlockPos} of the destination
      */
-    public ChunkCoordinates getDestination()
+    public BlockPos getDestination()
     {
         return destination;
     }
@@ -87,9 +87,9 @@ public class JobDeliveryman extends Job
     /**
      * Sets the destination of the job
      *
-     * @param destination   {@link ChunkCoordinates} of the destination
+     * @param destination   {@link BlockPos} of the destination
      */
-    public void setDestination(ChunkCoordinates destination)
+    public void setDestination(BlockPos destination)
     {
         this.destination = destination;
     }

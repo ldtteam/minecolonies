@@ -34,7 +34,7 @@ public class ContainerHut extends Container //ContainerChest in future
     @Override
     public boolean canInteractWith(EntityPlayer player)
     {
-        assert !hut.getWorldObj().isRemote;
+        assert !hut.getWorld().isRemote;
 
         if (hut.isUseableByPlayer(player))
         {

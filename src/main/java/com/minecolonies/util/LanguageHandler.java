@@ -1,8 +1,8 @@
 package com.minecolonies.util;
 
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.fml.common.registry.LanguageRegistry;
 
 import java.util.List;
 

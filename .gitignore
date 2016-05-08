@@ -16,3 +16,9 @@ LICENSE-fml*
 *changelog.txt
 README.txt
 Thumbs.db
+/bin/
+*.classpath
+*.project
+.settings/org.eclipse.jdt.core.prefs
+minecolonies_Client.launch
+minecolonies_Server.launch

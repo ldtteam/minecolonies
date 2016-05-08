@@ -2,10 +2,11 @@ package com.schematica.world.schematic;
 
 import com.minecolonies.util.Log;
 import com.schematica.world.SchematicWorld;
-import cpw.mods.fml.relauncher.ReflectionHelper;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -89,7 +90,7 @@ public abstract class SchematicFormat
             try (DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file))))
             {
                 Method method = ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[] {
-                        "func_150298_a", "a" }, String.class, NBTBase.class, DataOutput.class);
+                        "writeEntry", "a" }, String.class, NBTBase.class, DataOutput.class);
                 method.invoke(null, "Schematic", tagCompound, dataOutputStream);
             }
 

@@ -4,13 +4,13 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.jobs.JobBuilder;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public class WorkOrderBuild extends WorkOrder
 {
-    protected               ChunkCoordinates    buildingId;
+    protected               BlockPos            buildingId;
     private                 int                 upgradeLevel;
     private                 String              upgradeName;
 
@@ -36,7 +36,7 @@ public class WorkOrderBuild extends WorkOrder
      *
      * @return      ID of the building
      */
-    public ChunkCoordinates getBuildingId()
+    public BlockPos getBuildingId()
     {
         return buildingId;
     }
@@ -65,7 +65,7 @@ public class WorkOrderBuild extends WorkOrder
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        ChunkCoordUtils.writeToNBT(compound, TAG_BUILDING, buildingId);
+        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingId);
         compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
         compound.setString(TAG_UPGRADE_NAME, upgradeName);
     }
@@ -74,7 +74,7 @@ public class WorkOrderBuild extends WorkOrder
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        buildingId = ChunkCoordUtils.readFromNBT(compound, TAG_BUILDING);
+        buildingId = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
         upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
     }
@@ -99,10 +99,10 @@ public class WorkOrderBuild extends WorkOrder
             //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
             //  - The Builder's Work Building is built
             //  - OR the WorkOrder is for the Builder's Work Building
-            //  - OR the WorkOrder is for the Townhall
+            //  - OR the WorkOrder is for the TownHall
             if (citizen.getWorkBuilding().getBuildingLevel() > 0 ||
                     citizen.getWorkBuilding().getID().equals(buildingId) ||
-                    (colony.hasTownhall() && colony.getTownhall().getID().equals(buildingId)))
+                    (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingId)))
             {
                 job.setWorkOrder(this);
                 setClaimedBy(citizen);

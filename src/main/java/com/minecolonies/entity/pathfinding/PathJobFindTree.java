@@ -2,7 +2,7 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.entity.ai.Tree;
 import net.minecraft.block.Block;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 /**
@@ -15,10 +15,10 @@ public class PathJobFindTree extends PathJob
 {
     public static class TreePathResult extends PathResult
     {
-        public ChunkCoordinates    treeLocation;
+        public BlockPos treeLocation;
     }
 
-    ChunkCoordinates hutLocation;
+    BlockPos hutLocation;
 
     /**
      * PathJob constructor
@@ -28,7 +28,7 @@ public class PathJobFindTree extends PathJob
      * @param home   the position of the workers hut
      * @param range maximum path range
      */
-    public PathJobFindTree(World world, ChunkCoordinates start, ChunkCoordinates home, int range)
+    public PathJobFindTree(World world, BlockPos start, BlockPos home, int range)
     {
         super(world, start, start, range, new TreePathResult());
 
@@ -39,11 +39,11 @@ public class PathJobFindTree extends PathJob
     public TreePathResult getResult() { return (TreePathResult)super.getResult(); }
 
     @Override
-    protected double computeHeuristic(int x, int y, int z)
+    protected double computeHeuristic(BlockPos pos)
     {
-        int dx = x - hutLocation.posX;
-        int dy = y - hutLocation.posY;
-        int dz = z - hutLocation.posZ;
+        int dx = pos.getX() - hutLocation.getX();
+        int dy = pos.getY() - hutLocation.getY();
+        int dz = pos.getZ() - hutLocation.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker - halved
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.501D ;
@@ -57,23 +57,23 @@ public class PathJobFindTree extends PathJob
             return false;
         }
 
-        if (n.x != n.parent.x)
+        if (n.pos.getX() != n.parent.pos.getX())
         {
-            int dx = n.x > n.parent.x ? 1 : -1;
-            return isTree(n.x+dx, n.y, n.z) || isTree(n.x, n.y, n.z-1) || isTree(n.x, n.y, n.z+1);
+            int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
+            return isTree(n.pos.add(-dx, 0, 0)) || isTree(n.pos.add(0, 0, -1)) || isTree(n.pos.add(0, 0, +1));
         }
         else//z
         {
-            int dz = n.z > n.parent.z ? 1 : -1;
-            return isTree(n.x, n.y, n.z+dz) || isTree(n.x-1, n.y, n.z) || isTree(n.x+1, n.y, n.z);
+            int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
+            return isTree(n.pos.add(0, 0, dz)) || isTree(n.pos.add(-1, 0, 0)) || isTree(n.pos.add(1, 0, 0));
         }
     }
 
-    private boolean isTree(int x, int y, int z)
+    private boolean isTree(BlockPos pos)
     {
-        if(Tree.checkTree(world, x, y, z))
+        if(Tree.checkTree(world, pos))
         {
-            getResult().treeLocation = new ChunkCoordinates(x, y, z);
+            getResult().treeLocation = pos;
             return true;
         }
 
@@ -87,8 +87,8 @@ public class PathJobFindTree extends PathJob
     }
 
     @Override
-    protected boolean isPassable(Block block, int x, int y, int z)
+    protected boolean isPassable(Block block, BlockPos pos)
     {
-        return super.isPassable(block, x, y, z) || block.isLeaves(world, x, y, z);
+        return super.isPassable(block, pos) || block.isLeaves(world, pos);
     }
 }

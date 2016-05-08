@@ -5,7 +5,6 @@ import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.lib.Literals;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
@@ -13,8 +12,9 @@ import com.minecolonies.util.Schematic;
 import com.schematica.Settings;
 import com.schematica.world.SchematicWorld;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 
 import java.util.ArrayList;
@@ -84,11 +84,9 @@ public class WindowBuildTool extends Window implements Button.Handler
      * If a schematic is active, recalculates the X Y Z with offset.
      * Otherwise the given parameters are used
      *
-     * @param x     x-coordinate
-     * @param y     y-coordinate
-     * @param z     z-coordinate
+     * @param pos     coordinate
      */
-    public WindowBuildTool(int x, int y, int z)
+    public WindowBuildTool(BlockPos pos)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
@@ -101,13 +99,13 @@ public class WindowBuildTool extends Window implements Button.Handler
         }
         else
         {
-            posX = x;
-            posY = y;
-            posZ = z;
+            posX = pos.getX();
+            posY = pos.getY();
+            posZ = pos.getZ();
         }
     }
 
-    @Override
+	@Override
     public void onOpened()
     {
         boolean inHutMode = true;
@@ -130,7 +128,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             Add possible huts (has item) to list, if it has a schematic, and player has the block
              */
         huts.addAll(Schematics.getHuts().stream().filter(hut -> inventory.hasItem(
-                Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, 0, 0, 0))
+                Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, new BlockPos(0, 0, 0)))
                                                                 && Schematics.getStylesForHut(hut) != null).collect(
                 Collectors.toList()));
 
@@ -247,15 +245,15 @@ public class WindowBuildTool extends Window implements Button.Handler
             break;
 
         case BUTTON_ROTATE_LEFT:
-            rotation = (rotation + Literals.LAST_INDEX_SIDES - Literals.FIRST_INDEX_SIDES - 1)
-                    % Literals.LAST_INDEX_SIDES - Literals.FIRST_INDEX_SIDES;
+            rotation = (rotation + 3) % 4;
+            //TODO make a reverse rotate
             MineColonies.proxy.getActiveSchematic().rotate();
             MineColonies.proxy.getActiveSchematic().rotate();
             MineColonies.proxy.getActiveSchematic().rotate();
             updatePosition();
             break;
         case BUTTON_ROTATE_RIGHT:
-            rotation = (rotation + 1) % Literals.LAST_INDEX_SIDES - Literals.FIRST_INDEX_SIDES;
+            rotation = (rotation + 1) % 4;
             MineColonies.proxy.getActiveSchematic().rotate();
             updatePosition();
             break;
@@ -367,7 +365,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             SchematicWorld schematic = new Schematic(this.mc.theWorld, style + '/' + hut + '1').getWorldForRender();
             MineColonies.proxy.setActiveSchematic(schematic);
 
-            Settings.instance.renderBlocks = new RenderBlocks(schematic);
+            Settings.instance.renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
             Settings.instance.createRendererSchematicChunk();
 
             updatePosition();

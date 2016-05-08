@@ -22,7 +22,7 @@ public class Log
      * @param clazz Class to generate logger for
      * @return Created {@link Logger}
      */
-    public static Logger generateLoggerForClass(Class clazz)
+    public static Logger generateLoggerForClass(Class<?> clazz)
     {
         return LogManager.getLogger(Constants.MOD_ID + "::" + clazz.getSimpleName());
     }

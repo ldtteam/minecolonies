@@ -1,9 +1,11 @@
 package com.minecolonies.entity.pathfinding;
 
+import net.minecraft.util.BlockPos;
+
 public class Node implements Comparable<Node>
 {
     public Node parent;
-    public final int x, y, z;
+    public final BlockPos pos;
     public final int hash;
 
     public int counterAdded;
@@ -20,30 +22,28 @@ public class Node implements Comparable<Node>
     /**
      * Create a Node that inherits from a parent, and has a Cost and Heuristic estimate
      * @param parent parent node arrives from
-     * @param x,y,z coordinate of node
+     * @param pos coordinate of node
      * @param cost
      * @param score
      */
-    public Node(Node parent, int x, int y, int z, double cost, double heuristic, double score)
+    public Node(Node parent, BlockPos pos, double cost, double heuristic, double score)
     {
         this.parent = parent;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
         this.steps = parent != null ? parent.steps + 1 : 0;
         this.cost = cost;
         this.heuristic = heuristic;
         this.score = score;
-        this.hash = x ^ (z << 12 | z >> 20) ^ (y << 24);
+        this.hash = pos.getX() ^ (pos.getZ() << 12 | pos.getZ() >> 20) ^ (pos.getY() << 24);
     }
 
     /**
      * Create initial Node
      * @param x,y,z coordinate of node
      */
-    public Node(int x, int y, int z, double heuristic)
+    public Node(BlockPos pos, double heuristic)
     {
-        this(null, x, y, z, 0, heuristic, heuristic);
+        this(null, pos, 0, heuristic, heuristic);
     }
 
     @Override
@@ -68,9 +68,9 @@ public class Node implements Comparable<Node>
         if (o instanceof Node)
         {
             Node other = (Node)o;
-            return x == other.x &&
-                    y == other.y &&
-                    z == other.z;
+            return pos.getX() == other.pos.getX() &&
+                    pos.getY() == other.pos.getY() &&
+                    pos.getZ() == other.pos.getZ();
         }
 
         return false;

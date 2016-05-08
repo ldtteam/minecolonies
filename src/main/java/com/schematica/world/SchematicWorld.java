@@ -3,10 +3,9 @@ package com.schematica.world;
 import com.minecolonies.util.Log;
 import com.schematica.config.BlockInfo;
 import com.schematica.world.storage.EmptySaveHandler;
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.*;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
@@ -19,14 +18,20 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntitySkull;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.File;
@@ -41,14 +46,22 @@ public class SchematicWorld extends World
 {
     // private static final AnvilSaveHandler SAVE_HANDLER = new AnvilSaveHandler(Minecraft.getMinecraft().mcDataDir, "tmp/com.github.lunatrius.schematica", false);
     private static final WorldSettings         WORLD_SETTINGS   = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
-    private static final Comparator<ItemStack> BLOCK_COMPARATOR = new Comparator<ItemStack>()
+    private static final WorldInfo             WORLD_INFO       = new WorldInfo(WORLD_SETTINGS, "Schematic");
+    private static final WorldProvider         WORLD_PROVIDER   = new WorldProvider()
     {
         @Override
-        public int compare(ItemStack itemStackA, ItemStack itemStackB)
+        public String getDimensionName()
         {
-            return itemStackA.getUnlocalizedName().compareTo(itemStackB.getUnlocalizedName());
+            return "Schematic";
+        }
+
+        @Override
+        public String getInternalNameSuffix()
+        {
+            return "schematic";
         }
     };
+    private static final Comparator<ItemStack> BLOCK_COMPARATOR = (itemStackA, itemStackB) -> itemStackA.getUnlocalizedName().compareTo(itemStackB.getUnlocalizedName());
 
     public static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.grass);
 
@@ -68,7 +81,7 @@ public class SchematicWorld extends World
 
     public SchematicWorld()
     {
-        super(new EmptySaveHandler(), "Schematica", WORLD_SETTINGS, null, null);
+        super(new EmptySaveHandler(), WORLD_INFO, WORLD_PROVIDER, null, false);
         this.icon = SchematicWorld.DEFAULT_ICON.copy();
         this.blocks = null;
         this.metadata = null;
@@ -158,13 +171,14 @@ public class SchematicWorld extends World
             }
         }
 
-        icon = new ItemStack(GameData.getBlockRegistry().getObject(name), 1, damage);
+        icon = new ItemStack(GameData.getBlockRegistry().getObject(new ResourceLocation(name)), 1, damage);
         if(icon.getItem() != null)
         {
             return icon;
         }
 
-        icon = new ItemStack(GameData.getItemRegistry().getObject(name), 1, damage);
+        //TODO verify we can just make this a ResourceLocation
+        icon = new ItemStack(GameData.getItemRegistry().getObject(new ResourceLocation(name)), 1, damage);
         if(icon.getItem() != null)
         {
             return icon;
@@ -211,7 +225,8 @@ public class SchematicWorld extends World
     {
         this.blockList.clear();
 
-        int x, y, z, itemDamage;
+        int x, y, z;
+        int itemDamage;
         Block block;
         Item item;
         ItemStack itemStack;
@@ -224,6 +239,7 @@ public class SchematicWorld extends World
                 {
                     block = this.getBlock(x, y, z);
                     item = Item.getItemFromBlock(block);
+                    //todo get damage value
                     itemDamage = this.metadata[x][y][z];
 
                     if(block == null || block == Blocks.air)
@@ -280,10 +296,10 @@ public class SchematicWorld extends World
 
                     if(item == Items.skull)
                     {
-                        TileEntity tileEntity = getTileEntity(x, y, z);
+                        TileEntity tileEntity = getTileEntity(new BlockPos(x, y, z));
                         if(tileEntity instanceof TileEntitySkull)
                         {
-                            itemDamage = ((TileEntitySkull) tileEntity).func_145904_a();
+                            itemDamage = ((TileEntitySkull) tileEntity).getSkullType();
                         }
                     }
 
@@ -335,18 +351,18 @@ public class SchematicWorld extends World
         return GameData.getBlockRegistry().getObjectById(getBlockIdRaw(x, y, z));
     }
 
-    @Override
+    //todo doesn't exist anymore in super class?
     public Block getBlock(int x, int y, int z)
     {
         return GameData.getBlockRegistry().getObjectById(getBlockId(x, y, z));
     }
 
     @Override
-    public TileEntity getTileEntity(int x, int y, int z)
+    public TileEntity getTileEntity(BlockPos pos)
     {
         for(TileEntity tileEntity : this.tileEntities)
         {
-            if(tileEntity.xCoord == x && tileEntity.yCoord == y && tileEntity.zCoord == z)
+            if(tileEntity.getPos() == pos)
             {
                 return tileEntity;
             }
@@ -354,63 +370,102 @@ public class SchematicWorld extends World
         return null;
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public int getSkyBlockTypeBrightness(EnumSkyBlock skyBlock, int x, int y, int z)
-    {
-        return 15;
-    }
-
-    @Override
-    public float getLightBrightness(int x, int y, int z)
-    {
-        return 1.0f;
-    }
-
-    @Override
-    public int getBlockMetadata(int x, int y, int z)
-    {
-        if(x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.length)
-        {
-            return 0;
-        }
-        return this.metadata[x][y][z];
-    }
-
-    @Override
-    public boolean isBlockNormalCubeDefault(int x, int y, int z, boolean _default)
-    {
-        Block block = getBlock(x, y, z);
-        if(block == null)
-        {
-            return false;
-        }
-        if(block.isNormalCube())
-        {
-            return true;
-        }
-        return _default;
-    }
-
+    /*
+    Has been the getRenderDistance previously
     @Override
     protected int func_152379_p()
     {
         return -1;//Render distance - view distance
     }
 
+    */
     @Override
-    public boolean isAirBlock(int x, int y, int z)
+    protected int getRenderDistanceChunks()
     {
-        Block block = getBlock(x, y, z);
+        return -1;
+    }
+
+    //todo doesn't exist anymore
+    /*
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getSkyBlockTypeBrightness(EnumSkyBlock skyBlock, int x, int y, int z)
+    {
+        return 15;
+    }*/
+
+    @Override
+    public float getLightBrightness(BlockPos pos)
+    {
+        return 1.0f;
+    }
+
+    @Override
+    public IBlockState getBlockState(final BlockPos pos)
+    {
+        Block block = getBlock(pos.getX(), pos.getY(), pos.getZ());
+        return block.getStateFromMeta(metadata[pos.getX()][pos.getY()][pos.getZ()]);
+    }
+
+    @Override
+    public boolean setBlockState(BlockPos pos, IBlockState state)
+    {
+        return this.setBlockState(pos, state, 3);
+    }
+
+    /**
+     * Sets the block state at a given location. Flag 1 will cause a block update. Flag 2 will send the change to
+     * clients (you almost always want this). Flag 4 prevents the block from being re-rendered, if this is a client
+     * world. Flags can be added together.
+     */
+    @Override
+    public boolean setBlockState(BlockPos pos, IBlockState state, int flags)
+    {
+        if (!this.isValid(pos))
+        {
+            return false;
+        }
+        else
+        {
+            Block block = state.getBlock();
+
+            blocks[pos.getX()][pos.getY()][pos.getZ()] = (short) GameData.getBlockRegistry().getIDForObject(block);
+            metadata[pos.getX()][pos.getY()][pos.getZ()] = (byte) block.getMetaFromState(state);
+
+            return true;
+        }
+    }
+
+    private boolean isValid(BlockPos pos)
+    {
+        return pos.getX() >= 0 && pos.getY() >= 0 && pos.getZ() >= 0 && pos.getX() < width && pos.getY() < height && pos.getZ() < length;
+    }
+
+    @Override
+    public boolean isBlockNormalCube(final BlockPos pos, final boolean _default)
+    {
+        Block block = getBlock(pos.getX(), pos.getY(), pos.getZ());
+        if (block == null)
+        {
+            return false;
+        }
+        return block.isNormalCube() || _default;
+    }
+
+
+    @Override
+    public boolean isAirBlock(BlockPos pos)
+    {
+        Block block = getBlockState(pos).getBlock();
         if(block == null)
         {
             return true;
         }
-        return block.isAir(this, x, y, z);
+        return block.isAir(this, pos);
     }
 
     @Override
-    public BiomeGenBase getBiomeGenForCoords(int x, int z)
+    public BiomeGenBase getBiomeGenForCoords(final BlockPos pos)
     {
         return BiomeGenBase.jungle;
     }
@@ -450,34 +505,36 @@ public class SchematicWorld extends World
         return null;
     }
 
-    @Override
+    //todo Doesn't seem to exist anymore
+    /*@Override
     public boolean blockExists(int x, int y, int z)
     {
         return false;
-    }
+    }*/
 
-    @Override
+    //Also does not exist anymore
+    /*@Override
     public boolean setBlockMetadataWithNotify(int x, int y, int z, int metadata, int flag)
     {
         this.metadata[x][y][z] = (byte) (metadata & 0xFF);
         return true;
+    }*/
+
+    @Override
+    public boolean isSideSolid(BlockPos pos, EnumFacing side)
+    {
+        return isSideSolid(pos, side, false);
     }
 
     @Override
-    public boolean isSideSolid(int x, int y, int z, ForgeDirection side)
+    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default)
     {
-        return isSideSolid(x, y, z, side, false);
-    }
-
-    @Override
-    public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default)
-    {
-        Block block = getBlock(x, y, z);
+        Block block = getBlock(pos.getX(),pos.getY(),pos.getZ());
         if(block == null)
         {
             return false;
         }
-        return block.isSideSolid(this, x, y, z, side);
+        return block.isSideSolid(this, pos, side);
     }
 
     public ItemStack getIcon()
@@ -566,46 +623,46 @@ public class SchematicWorld extends World
     {
         /*
         int tmp;
-		for (int x = 0; x < this.width; x++) {
-			for (int y = 0; y < this.height; y++) {
-				for (int z = 0; z < (this.length + 1) / 2; z++) {
-					tmp = this.blocks[x][y][z];
-					this.blocks[x][y][z] = this.blocks[x][y][this.length - 1 - z];
-					this.blocks[x][y][this.length - 1 - z] = tmp;
+        for (int x = 0; x < this.width; x++) {
+            for (int y = 0; y < this.height; y++) {
+                for (int z = 0; z < (this.length + 1) / 2; z++) {
+                    tmp = this.blocks[x][y][z];
+                    this.blocks[x][y][z] = this.blocks[x][y][this.length - 1 - z];
+                    this.blocks[x][y][this.length - 1 - z] = tmp;
 
-					if (z == this.length - 1 - z) {
-						this.metadata[x][y][z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][z], this.metadata[x][y][z]);
-					} else {
-						tmp = this.metadata[x][y][z];
-						this.metadata[x][y][z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][z], this.metadata[x][y][this.length - 1 - z]);
-						this.metadata[x][y][this.length - 1 - z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][this.length - 1 - z], tmp);
-					}
-				}
-			}
-		}
+                    if (z == this.length - 1 - z) {
+                        this.metadata[x][y][z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][z], this.metadata[x][y][z]);
+                    } else {
+                        tmp = this.metadata[x][y][z];
+                        this.metadata[x][y][z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][z], this.metadata[x][y][this.length - 1 - z]);
+                        this.metadata[x][y][this.length - 1 - z] = BlockInfo.getTransformedMetadataFlip(this.blocks[x][y][this.length - 1 - z], tmp);
+                    }
+                }
+            }
+        }
 
-		TileEntity tileEntity;
-		for (int i = 0; i < this.tileEntities.size(); i++) {
-			tileEntity = this.tileEntities.get(i);
-			tileEntity.zCoord = this.length - 1 - tileEntity.zCoord;
-			tileEntity.blockMetadata = this.metadata[tileEntity.xCoord][tileEntity.yCoord][tileEntity.zCoord];
+        TileEntity tileEntity;
+        for (int i = 0; i < this.tileEntities.size(); i++) {
+            tileEntity = this.tileEntities.get(i);
+            tileEntity.zCoord = this.length - 1 - tileEntity.zCoord;
+            tileEntity.blockMetadata = this.metadata[tileEntity.xCoord][tileEntity.yCoord][tileEntity.zCoord];
 
-			if (tileEntity instanceof TileEntitySkull && tileEntity.blockMetadata == 0x1) {
-				TileEntitySkull skullTileEntity = (TileEntitySkull) tileEntity;
-				int angle = skullTileEntity.func_82119_b();
-				int base = 0;
-				if (angle <= 7) {
-					base = 4;
-				} else {
-					base = 12;
-				}
+            if (tileEntity instanceof TileEntitySkull && tileEntity.blockMetadata == 0x1) {
+                TileEntitySkull skullTileEntity = (TileEntitySkull) tileEntity;
+                int angle = skullTileEntity.func_82119_b();
+                int base = 0;
+                if (angle <= 7) {
+                    base = 4;
+                } else {
+                    base = 12;
+                }
 
-				skullTileEntity.setSkullRotation((2 * base - angle) & 15);
-			}
-		}
+                skullTileEntity.setSkullRotation((2 * base - angle) & 15);
+            }
+        }
 
-		refreshChests();
-		*/
+        refreshChests();
+        */
     }
 
     public void rotate()
@@ -619,7 +676,22 @@ public class SchematicWorld extends World
             {
                 for(int x = 0; x < this.width; x++)
                 {
-                    getBlock(x, y, this.length - 1 - z).rotateBlock(this, x, y, this.length - 1 - z, ForgeDirection.UP);
+                    BlockPos pos = new BlockPos(x,y,this.length-1-z);
+                    IBlockState block = getBlockState(pos);
+
+                    if(block.getBlock().getValidRotations(this,pos) != null)
+                    {
+                        try
+                        {
+                            PropertyDirection facing = PropertyDirection.create("facing");
+                            setBlockState(pos, block.withProperty(facing, block.getValue(facing).rotateY()));
+                        }
+                        catch(IllegalStateException e)
+                        {
+                            //Ignore the error, just don't rotate that block
+                        }
+                    }
+
                     localBlocks[z][y][x] = this.blocks[x][y][this.length - 1 - z];
                     localMetadata[z][y][x] = this.metadata[x][y][this.length - 1 - z];
                 }
@@ -629,18 +701,17 @@ public class SchematicWorld extends World
         this.blocks = localBlocks;
         this.metadata = localMetadata;
 
-        int coord;
         for(TileEntity tileEntity : this.tileEntities)
         {
-            coord = tileEntity.zCoord;
-            tileEntity.zCoord = tileEntity.xCoord;
-            tileEntity.xCoord = this.length - 1 - coord;
-            tileEntity.blockMetadata = this.metadata[tileEntity.xCoord][tileEntity.yCoord][tileEntity.zCoord];
+            tileEntity.setPos(new BlockPos(this.length - 1 - tileEntity.getPos().getZ(),tileEntity.getPos().getY(),tileEntity.getPos().getX()));
 
-            if(tileEntity instanceof TileEntitySkull && tileEntity.blockMetadata == 0x1)
+            //todo there is no way anymore to set tileEntities metaData
+            //tileEntity.blockMetadata = this.metadata[tileEntity.xCoord][tileEntity.yCoord][tileEntity.zCoord];
+
+            if(tileEntity instanceof TileEntitySkull && tileEntity.getBlockMetadata() == 0x1)
             {
                 TileEntitySkull skullTileEntity = (TileEntitySkull) tileEntity;
-                skullTileEntity.func_145903_a((skullTileEntity.func_145906_b() + 12) & 15);
+                skullTileEntity.setSkullRotation((skullTileEntity.getSkullRotation() + 12) & 15);
             }
         }
 

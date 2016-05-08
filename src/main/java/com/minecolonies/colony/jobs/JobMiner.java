@@ -2,6 +2,7 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
+import com.minecolonies.entity.ai.AIState;
 import com.minecolonies.entity.ai.EntityAIWorkMiner;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
@@ -11,9 +12,6 @@ import java.util.List;
 
 public class JobMiner extends Job
 {
-    private static final String                  TAG_STAGE = "Stage";
-    private              EntityAIWorkMiner.Stage stage     = EntityAIWorkMiner.Stage.START_WORKING;
-
     public JobMiner(CitizenData entity)
     {
         super(entity);
@@ -32,40 +30,18 @@ public class JobMiner extends Job
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        compound.setString(TAG_STAGE, stage.name());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        stage = EntityAIWorkMiner.Stage.valueOf(compound.getString(TAG_STAGE));
     }
 
     @Override
     public void addTasks(EntityAITasks tasks)
     {
         tasks.addTask(3, new EntityAIWorkMiner(this));
-    }
-
-    /**
-    * Returns the stage of the worker
-     *
-    * @return           {@link com.minecolonies.entity.ai.EntityAIWorkMiner.Stage}
-    */
-    public EntityAIWorkMiner.Stage getStage()
-    {
-        return stage;
-    }
-
-    /**
-     * Sets the stage of the worker
-     *
-     * @param stage     {@link com.minecolonies.entity.ai.EntityAIWorkMiner.Stage} to set
-     */
-    public void setStage(EntityAIWorkMiner.Stage stage)
-    {
-        this.stage = stage;
     }
 
     /**

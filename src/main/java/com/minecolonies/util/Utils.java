@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Objects;
@@ -51,22 +51,22 @@ public final class Utils
      * @param blocks  Blocks to test for
      * @return the coordinates of the found block
      */
-    public static ChunkCoordinates scanForBlockNearPoint(World world, ChunkCoordinates point, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
+    public static BlockPos scanForBlockNearPoint(World world, BlockPos point, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
     {
-        ChunkCoordinates closestCoords = null;
+        BlockPos closestCoords = null;
         double           minDistance   = Double.MAX_VALUE;
 
-        for (int i = point.posX - radiusX; i <= point.posX + radiusX; i++)
+        for (int i = point.getX() - radiusX; i <= point.getX() + radiusX; i++)
         {
-            for (int j = point.posY - radiusY; j <= point.posY + radiusY; j++)
+            for (int j = point.getY() - radiusY; j <= point.getY() + radiusY; j++)
             {
-                for (int k = point.posZ - radiusZ; k <= point.posZ + radiusZ; k++)
+                for (int k = point.getZ() - radiusZ; k <= point.getZ() + radiusZ; k++)
                 {
                     if (checkHeight(world, i, j, k, height, blocks))
                     {
-                        ChunkCoordinates tempCoords = new ChunkCoordinates(i, j, k);
+                        BlockPos tempCoords = new BlockPos(i, j, k);
 
-                        double distance = tempCoords.getDistanceSquared(point.posX, point.posY, point.posZ);
+                        double distance = BlockPosUtil.getDistanceSquared(tempCoords, point);
                         if (closestCoords == null || distance < minDistance)
                         {
                             closestCoords = tempCoords;
@@ -94,7 +94,7 @@ public final class Utils
     {
         for (int dy = 0; dy < height; dy++)
         {
-            if (!arrayContains(blocks, world.getBlock(x, y + dy, z)))
+            if (!arrayContains(blocks, world.getBlockState(new BlockPos(x, y + dy, z)).getBlock()))
             {
                 return false;
             }
@@ -140,7 +140,7 @@ public final class Utils
             {
                 for (int y = posY - range; y < posY + range; y++)
                 {
-                    if (Objects.equals(world.getBlock(x, y, z), block))
+                    if (Objects.equals(world.getBlockState(new BlockPos(x, y, z)).getBlock(), block))
                     {
                         return true;
                     }
@@ -161,14 +161,14 @@ public final class Utils
     public static int findTopGround(World world, int x, int z)
     {
         int yHolder = 1;
-        while (!world.canBlockSeeTheSky(x, yHolder, z))
+        while (!world.canBlockSeeSky(new BlockPos(x, yHolder, z)))
         {
             yHolder++;
         }
-        while (!world.getBlock(x, yHolder, z).isOpaqueCube() ||
+        while (!world.getBlockState(new BlockPos(x, yHolder, z)).getBlock().isOpaqueCube() ||
                arrayContains(
                        new Block[]{Blocks.air, Blocks.leaves, Blocks.leaves2}
-                       , world.getBlock(x, yHolder, z)))
+                       , world.getBlockState(new BlockPos(x, yHolder, z)).getBlock()))
         {
             yHolder--;
         }
@@ -260,15 +260,13 @@ public final class Utils
      * Plays the block break effect at specific location
      *
      * @param world    World to play effect in
-     * @param x        x-coordinate
-     * @param y        y-coordinate
-     * @param z        z-coordinate
+     * @param pos      Coordinates
      * @param block    Block that makes the sound
      * @param metadata Metadata of the block that makes sound
      */
-    public static void blockBreakSoundAndEffect(World world, int x, int y, int z, Block block, int metadata)
+    public static void blockBreakSoundAndEffect(World world, BlockPos pos, Block block, int metadata)
     {
-        world.playAuxSFX(SOUND_EVENT_ID, x, y, z, Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
+        world.playAuxSFX(SOUND_EVENT_ID, pos , Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
     }
 
     /**

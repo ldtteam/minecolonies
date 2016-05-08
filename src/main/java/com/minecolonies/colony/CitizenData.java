@@ -6,12 +6,12 @@ import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.util.ChunkCoordUtils;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
-import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.util.Random;
 
@@ -635,8 +635,8 @@ public class CitizenData
         /**
          * Working and home position
          */
-        private ChunkCoordinates homeBuilding;
-        private ChunkCoordinates workBuilding;
+        private BlockPos homeBuilding;
+        private BlockPos workBuilding;
 
         /**
          * Set View id
@@ -714,7 +714,7 @@ public class CitizenData
          * Get the entities home building
          * @return the home coordinates
          */
-        public ChunkCoordinates getHomeBuilding()
+        public BlockPos getHomeBuilding()
         {
             return homeBuilding;
         }
@@ -723,7 +723,7 @@ public class CitizenData
          * Get the entities work building
          * @return the work coordinates
          */
-        public ChunkCoordinates getWorkBuilding()
+        public BlockPos getWorkBuilding()
         {
             return workBuilding;
         }
@@ -738,8 +738,8 @@ public class CitizenData
             isFemale = buf.readBoolean();
             entityId = buf.readInt();
 
-            homeBuilding = buf.readBoolean() ? ChunkCoordUtils.readFromByteBuf(buf) : null;
-            workBuilding = buf.readBoolean() ? ChunkCoordUtils.readFromByteBuf(buf) : null;
+            homeBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
+            workBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
 
             //  Attributes
             level = buf.readInt();
@@ -773,13 +773,13 @@ public class CitizenData
         buf.writeBoolean(homeBuilding != null);
         if(homeBuilding != null)
         {
-            ChunkCoordUtils.writeToByteBuf(buf, homeBuilding.getID());
+            BlockPosUtil.writeToByteBuf(buf, homeBuilding.getID());
         }
 
         buf.writeBoolean(workBuilding != null);
         if(workBuilding != null)
         {
-            ChunkCoordUtils.writeToByteBuf(buf, workBuilding.getID());
+            BlockPosUtil.writeToByteBuf(buf, workBuilding.getID());
         }
 
         //  Attributes

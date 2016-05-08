@@ -1,5 +1,8 @@
 package com.minecolonies.colony.materials;
 
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,7 +95,7 @@ public class Material
         Integer count = locations.get(store);
         if(count == null || count < quantity)
         {
-            throw new MaterialException("Count too low: " + quantity);
+            throw new QuantityNotFound("MaterialStore (Material)", getID(), count == null ? 0 : count, quantity);
         }
         else if(count == quantity)
         {

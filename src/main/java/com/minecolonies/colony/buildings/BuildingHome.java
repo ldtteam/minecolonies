@@ -4,10 +4,10 @@ import com.minecolonies.client.gui.WindowHomeBuilding;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import cpw.mods.fml.common.gameevent.TickEvent;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +20,7 @@ public class BuildingHome extends BuildingHut
     private static final String TAG_RESIDENTS   = "residents";
     private static final String CITIZEN         = "Citizen";
 
-    public BuildingHome(Colony c, ChunkCoordinates l)
+    public BuildingHome(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -167,7 +167,7 @@ public class BuildingHome extends BuildingHut
     {
         private List<Integer> residents = new ArrayList<>();
 
-        public View(ColonyView c, ChunkCoordinates l)
+        public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }

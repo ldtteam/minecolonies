@@ -3,6 +3,8 @@ package com.minecolonies.items;
 import com.minecolonies.MineColonies;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class ItemBuildTool extends ItemMinecolonies
@@ -20,36 +22,36 @@ public class ItemBuildTool extends ItemMinecolonies
     }
 
     @Override
-    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int face, float par8, float par9, float par10)
+    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        if(!world.isRemote)
+        if(!worldIn.isRemote)
         {
             return false;
         }
 
-        switch(face)
+        switch(side)
         {
-        case 0:
-            y--;
+        case DOWN:
+            pos.down();
             break;
-        case 1:
-            y++;
+        case UP:
+            pos.up();
             break;
-        case 2:
-            z--;
+        case NORTH:
+            pos.north();
             break;
-        case 3:
-            z++;
+        case SOUTH:
+            pos.south();
             break;
-        case 4:
-            x--;
+        case WEST:
+            pos.west();
             break;
-        case 5:
-            x++;
+        case EAST:
+            pos.east();
             break;
         }
 
-        MineColonies.proxy.openBuildToolWindow(x, y, z);
+        MineColonies.proxy.openBuildToolWindow(pos);
         return false;
     }
 }

@@ -6,7 +6,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobPlaceholder;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 public class BuildingStonemason extends BuildingWorker
 {
@@ -14,7 +14,7 @@ public class BuildingStonemason extends BuildingWorker
     private static final String STONEMASON          = "Stonemason";
     private static final String STONEMASON_HUT_NAME = "stonemasonHut";
 
-    public BuildingStonemason(Colony c, ChunkCoordinates l)
+    public BuildingStonemason(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -45,7 +45,7 @@ public class BuildingStonemason extends BuildingWorker
 
     public static class View extends BuildingWorker.View
     {
-        public View(ColonyView c, ChunkCoordinates l)
+        public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }

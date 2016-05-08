@@ -28,7 +28,8 @@ public class Screen extends GuiScreen
             super.drawDefaultBackground();
         }
 
-        scale = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
+        //Seems to work without the sides now
+        scale = new ScaledResolution(mc).getScaleFactor();
 
         GL11.glPushMatrix();
         GL11.glTranslatef(x, y, 0);
@@ -69,7 +70,8 @@ public class Screen extends GuiScreen
         }
     }
 
-    @Override
+    //todo, this method doesn't exist anymore, do we really need it?
+    /*@Override
     protected void mouseMovedOrUp(int mx, int my, int code)
     {
         if (code == 0)
@@ -77,7 +79,7 @@ public class Screen extends GuiScreen
             //  Adjust coordinate to origin of window
             window.onMouseReleased(mx - x, my - y);
         }
-    }
+    }*/
 
     @Override
     protected void mouseClickMove(int mx, int my, int buttons, long timeElapsed)
