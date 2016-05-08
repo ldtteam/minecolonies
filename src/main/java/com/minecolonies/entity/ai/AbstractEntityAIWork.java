@@ -517,7 +517,20 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
         }
+        //collect items that are nice to have if they are available
+        itemsNiceToHave().forEach(this::isInHut);
         return IDLE;
+    }
+
+    /**
+     * Can be overridden by implementations to specify items useful for the worker.
+     * When the workers inventory is full, he will try to keep these items.
+     * ItemStack amounts are ignored, the first stack found will be taken.
+     *
+     * @return a list with items nice to have for the worker
+     */
+    protected List<ItemStack> itemsNiceToHave(){
+        return new ArrayList<>();
     }
 
     /**
@@ -549,6 +562,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                         ItemStack removed = worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
                         if(removed.stackSize < stack.stackSize)
                         {
+                            //todo: this will never happen???
                             Log.logger.warn("Dump Inventory: Tried to remove " + stack.stackSize +
                                     " items, but only " + removed.stackSize + " were removed");
                         }

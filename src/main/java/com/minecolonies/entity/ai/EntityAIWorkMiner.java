@@ -187,7 +187,26 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
     @Override
     protected boolean neededForWorker(ItemStack stack)
     {
-        return Utils.isMiningTool(stack) || stack.isItemEqual(new ItemStack(Blocks.ladder));
+        return Utils.isMiningTool(stack);
+    }
+
+    /**
+     * Can be overridden by implementations to specify items useful for the worker.
+     * When the workers inventory is full, he will try to keep these items.
+     * ItemStack amounts are ignored, the first stack found will be taken.
+     *
+     * @return a list with items nice to have for the worker
+     */
+    @Override
+    protected List<ItemStack> itemsNiceToHave()
+    {
+        return Arrays.asList(
+                new ItemStack(Blocks.ladder),
+                new ItemStack(Blocks.planks),
+                new ItemStack(Blocks.oak_fence),
+                new ItemStack(Blocks.torch),
+                new ItemStack(Blocks.cobblestone)
+                            );
     }
 
     private AIState lookForLadder()
