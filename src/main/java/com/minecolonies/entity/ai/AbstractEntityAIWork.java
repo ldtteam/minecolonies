@@ -713,14 +713,33 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         String tool     = target.getHarvestTool(target.getDefaultState());
         int    required = target.getHarvestLevel(target.getDefaultState());
-        if (Utils.PICKAXE.equalsIgnoreCase(tool))
-        {
-            checkForPickaxe(required);
+        updateToolFlag(tool, required);
+    }
+
+    /**
+     * checks if said tool of said level is usable.
+     * if not, it updates the needsTool falg
+     * for said tool.
+     *
+     * @param tool the tool needed
+     * @param required the level needed (for pickaxe)
+     */
+    private void updateToolFlag(String tool, int required){
+        switch (tool){
+            case Utils.AXE:
+                checkForAxe();
+                break;
+            case Utils.SHOVEL:
+                checkForShovel();
+                break;
+            case Utils.HOE:
+                checkForHoe();
+                break;
+            case Utils.PICKAXE:
+                checkForPickaxe(required);
+                break;
         }
-        else
-        {
-            checkForTool(tool);
-        }
+        Log.logger.error("Invalid tool "+tool+" not implemented as tool!");
     }
 
     /**
