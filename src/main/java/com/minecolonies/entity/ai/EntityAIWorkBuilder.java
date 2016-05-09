@@ -56,6 +56,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 new AITarget(BUILDER_DECORATION_STEP, this::decorationStep),
                 new AITarget(BUILDER_COMPLETE_BUILD, this::completeBuild)
         );
+        worker.setSkillModifier(2*worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
     }
 
     private AIState preparing()
@@ -189,6 +190,10 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             {
                 if(!handleMaterials(Blocks.air, 0, worldBlock, world.getBlockState(coordinates))) return;
             }*/
+            if(worldBlock.getMaterial().isLiquid())
+            {
+                world.setBlockToAir(coordinates);
+            }
             if(!(coordinates.equals(worker.getPosition().down())))
             {
                 if(!mineBlock(coordinates))
@@ -446,9 +451,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             ItemStack material = new ItemStack(BlockInfo.getItemFromBlock(block), 1, metadata);
 
 
-            if (!checkOrRequestItems(new ItemStack(BlockInfo.getItemFromBlock(block), 1, metadata)))
+            if (checkOrRequestItems(new ItemStack(BlockInfo.getItemFromBlock(block), 1, metadata)))
             {
-                return true;
+                return false;
             }
 
             int slot = worker.findFirstSlotInInventoryWith(block);
