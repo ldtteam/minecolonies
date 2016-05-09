@@ -242,7 +242,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         worker.faceBlock(job.getSchematic().getBlockPosition());
         Block worldBlock = world.getBlockState(coordinates).getBlock();
 
-        if(!job.getSchematic().doesSchematicBlockEqualWorldBlock() || worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && worldBlock != job.getSchematic().getBlock())
+        if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && worldBlock != job.getSchematic().getBlock())
         {
             /*if(!Configurations.builderInfiniteResources)//We need to deal with materials
             {
