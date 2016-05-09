@@ -134,9 +134,5 @@ public enum AIState
      * Completes the building
      */
     BUILDER_COMPLETE_BUILD,
-    /**
-     * Builder goes to construction site
-     */
-    BUILDER_GO_TO_CONSTRUCTION,
 
 }

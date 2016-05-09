@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
@@ -337,7 +338,32 @@ public abstract class PathJob implements Callable<PathEntity>
                 if (nextInPath.pos.getY() > pos.getY())
                 {
                     //  We only care about facing if going up
-                    p.ladderFacing = world.getBlockState(pos).getValue(BlockLadder.FACING);
+                    //In the case of BlockVines (Which does not have EnumFacing) we have to check the metadata of the vines... bitwise...
+                    if(world.getBlockState(pos).getBlock() instanceof BlockVine)
+                    {
+                        int meta = world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos));
+
+                        if(((meta >>> 1) & 1) != 0)
+                        {
+                            p.ladderFacing = EnumFacing.SOUTH;
+                        }
+                        else if(((meta >>> 2) & 1) != 0)
+                        {
+                            p.ladderFacing = EnumFacing.WEST;
+                        }
+                            else if(((meta >>> 3) & 1) != 0)
+                        {
+                            p.ladderFacing = EnumFacing.NORTH;
+                        }
+                        else if(((meta >>> 4) & 1) != 0)
+                        {
+                            p.ladderFacing = EnumFacing.EAST;
+                        }
+                    }
+                    else
+                    {
+                        p.ladderFacing = world.getBlockState(pos).getValue(BlockLadder.FACING);
+                    }
                 }
             }
             else if (node.parent != null && node.parent.isLadder &&

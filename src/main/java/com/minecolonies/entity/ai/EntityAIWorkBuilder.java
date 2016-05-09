@@ -3,7 +3,6 @@ package com.minecolonies.entity.ai;
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.jobs.JobBuilder;
-import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
@@ -38,9 +37,10 @@ import static com.minecolonies.entity.ai.AIState.*;
  */
 public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 {
-    //todo use request item system
-    //todo use tools
-    //todo add floor under feet when removing floor.
+    /**
+     * Position where the Builders constructs from.
+     */
+    private BlockPos workFrom = null;
     public EntityAIWorkBuilder(JobBuilder job)
     {
         super(job);
@@ -49,7 +49,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 new AITarget(IDLE, () -> START_WORKING),
                 new AITarget(PREPARING, this::preparing),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-                new AITarget(BUILDER_GO_TO_CONSTRUCTION, this::goToConstructionSite),
                 new AITarget(BUILDER_CLEAR_STEP, this::clearStep),
                 new AITarget(BUILDER_REQUEST_MATERIALS, this::requestMaterials),
                 new AITarget(BUILDER_STRUCTURE_STEP, this::structureStep),
@@ -86,7 +85,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         {
             return state;
         }
-        return BUILDER_GO_TO_CONSTRUCTION;
+        return BUILDER_CLEAR_STEP;
     }
 
     /**
@@ -146,7 +145,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()), "entity.builder.messageBuildStart", job.getSchematic().getName());
         }
         BlockPosUtil.tryMoveLivingToXYZ(worker, job.getSchematic().getPosition());
-
+        workFrom = null;
         worker.setStatus(EntityCitizen.Status.WORKING);
     }
 
@@ -163,28 +162,87 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         worker.setCurrentItemOrArmor(0, null);
     }
 
-    private AIState goToConstructionSite()
+    /**
+     * Will lead the worker to a good position to construct.
+     * @return true if the position has been reached.
+     */
+    private boolean goToConstructionSite()
     {
-        if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 5))
+        if(workFrom == null)
         {
-            return AIState.BUILDER_CLEAR_STEP;
+            workFrom = getWorkingPosition();
         }
 
-        return AIState.BUILDER_GO_TO_CONSTRUCTION;
+        return !worker.isWorkerAtSiteWithMove(workFrom,3) || worker.getPosition().distanceSq(job.getSchematic().getPosition()) < 10;
+    }
+
+    /**
+     * Calculates the working position. Takes a min distance from width and length.
+     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     * @return BlockPos position to work from.
+     */
+    private BlockPos getWorkingPosition()
+    {
+        //get length or width either is larger.
+        int length = job.getSchematic().getLength();
+        int width = job.getSchematic().getWidth();
+        int distance = width > length? width : length;
+        EnumFacing[] directions = {EnumFacing.EAST,EnumFacing.WEST,EnumFacing.NORTH,EnumFacing.SOUTH};
+
+        //then get a solid place with two air spaces above it in any direction.
+        for(EnumFacing direction: directions)
+        {
+            BlockPos positionInDirection = getPositionInDirection(direction,distance);
+            if(world.isAirBlock(positionInDirection.up(2)))
+            {
+                return positionInDirection;
+            }
+        }
+        return job.getSchematic().getPosition();
+    }
+
+    /**
+     * Gets a floorPosition in a particular direction
+     * @param facing the direction
+     * @param distance the distance
+     * @return a BlockPos position.
+     */
+    private BlockPos getPositionInDirection(EnumFacing facing, int distance)
+    {
+        return getFloor(job.getSchematic().getPosition().offset(facing,distance));
+    }
+    /**
+     * Calculates the floor level
+     * @param position input position
+     * @return returns BlockPos position with air above
+     */
+    private BlockPos getFloor(BlockPos position)
+    {
+        if(world.isAirBlock(position.up()))
+        {
+            return position;
+        }
+        else
+        {
+            return getFloor(position.up());
+        }
     }
 
     private AIState clearStep()
     {
         BlockPos coordinates = job.getSchematic().getBlockPosition();
 
-        if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(),3))
+        //Fill workFrom with the position from where the builder should build.
+
+        if(goToConstructionSite())
         {
             return AIState.BUILDER_CLEAR_STEP;
         }
 
+        worker.faceBlock(job.getSchematic().getBlockPosition());
         Block worldBlock = world.getBlockState(coordinates).getBlock();
 
-        if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && worldBlock != job.getSchematic().getBlock())
+        if(!job.getSchematic().doesSchematicBlockEqualWorldBlock() || worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && worldBlock != job.getSchematic().getBlock())
         {
             /*if(!Configurations.builderInfiniteResources)//We need to deal with materials
             {
@@ -194,13 +252,10 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             {
                 world.setBlockToAir(coordinates);
             }
-            if(!(coordinates.equals(worker.getPosition().down())))
+            if(!mineBlock(coordinates))
             {
-                if(!mineBlock(coordinates))
-                {
-                    //Worker running between his chest and working site, have to tweak this.
-                    return AIState.PREPARING;
-                }
+                //Worker running between his chest and working site, have to tweak this.
+                return AIState.PREPARING;
             }
 
             /*worker.setCurrentItemOrArmor(0, null);
@@ -260,11 +315,12 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             return findNextBlockSolid();//findNextBlock count was reached and we can ignore this block
         }
 
-        if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
+        if(goToConstructionSite())
         {
             return AIState.BUILDER_STRUCTURE_STEP;
         }
 
+        worker.faceBlock(job.getSchematic().getBlockPosition());
         Block block = job.getSchematic().getBlock();
         IBlockState metadata = job.getSchematic().getMetadata();
 
@@ -335,13 +391,12 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             return findNextBlockNonSolid();//findNextBlock count was reached and we can ignore this block
         }
 
-        if(!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
+        if(goToConstructionSite())
         {
             return AIState.BUILDER_DECORATION_STEP;
         }
-        worker.setStatus(EntityCitizen.Status.WORKING);
 
-
+        worker.faceBlock(job.getSchematic().getBlockPosition());
         Block block = job.getSchematic().getBlock();
         IBlockState metadata = job.getSchematic().getMetadata();
 
@@ -450,7 +505,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
             ItemStack material = new ItemStack(BlockInfo.getItemFromBlock(block), 1, metadata);
 
-
             if (checkOrRequestItems(new ItemStack(BlockInfo.getItemFromBlock(block), 1, metadata)))
             {
                 return false;
@@ -480,6 +534,12 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         return true;
     }
 
+    /**
+     * Defines blocks that can be built for free
+     * @param block The block to check if it is free
+     * @param metadata The metadata of the block
+     * @return true or false
+     */
     private boolean isBlockFree(Block block, int metadata)
     {
         return BlockUtils.isWater(block.getDefaultState()) || block == Blocks.leaves || block == Blocks.leaves2 || (block == Blocks.double_plant && Utils.testFlag(metadata, 0x08)) || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08) || block == Blocks.grass || block == Blocks.dirt);
