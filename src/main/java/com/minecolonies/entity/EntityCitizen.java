@@ -371,7 +371,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 citizenData.setLevel(1);
             }
         }
-        else
+        else if(citizenData.getLevel() < 50)
         {
             if(citizenData.getExperience()>=(100*(citizenData.getLevel()*citizenData.getLevel())))
             {

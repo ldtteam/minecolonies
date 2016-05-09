@@ -242,8 +242,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         worker.faceBlock(job.getSchematic().getBlockPosition());
         Block worldBlock = world.getBlockState(coordinates).getBlock();
 
-        if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && worldBlock != job.getSchematic().getBlock())
+        if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && worldBlock != job.getSchematic().getBlock() && !(job.getSchematic().getBlock() == Blocks.dirt && worldBlock == Blocks.grass))
         {
+
             /*if(!Configurations.builderInfiniteResources)//We need to deal with materials
             {
                 if(!handleMaterials(Blocks.air, 0, worldBlock, world.getBlockState(coordinates))) return;
@@ -252,7 +253,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             {
                 world.setBlockToAir(coordinates);
             }
-            if(!mineBlock(coordinates))
+            else if(!mineBlock(coordinates))
             {
                 //Worker running between his chest and working site, have to tweak this.
                 return AIState.PREPARING;
