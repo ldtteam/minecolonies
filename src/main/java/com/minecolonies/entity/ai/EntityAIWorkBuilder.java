@@ -9,12 +9,8 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
 import com.schematica.config.BlockInfo;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockBed;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockDoublePlant;
+import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.item.EntityMinecart;
@@ -85,7 +81,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         {
             return state;
         }
-        return BUILDER_CLEAR_STEP;
+        return PREPARING;
     }
 
     /**
@@ -173,7 +169,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             workFrom = getWorkingPosition();
         }
 
-        return !worker.isWorkerAtSiteWithMove(workFrom,3) || worker.getPosition().distanceSq(job.getSchematic().getPosition()) < 10;
+        return walkToBlock(workFrom) || worker.getPosition().distanceSq(job.getSchematic().getPosition()) < 10;
     }
 
     /**
@@ -193,11 +189,13 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         for(EnumFacing direction: directions)
         {
             BlockPos positionInDirection = getPositionInDirection(direction,distance);
-            if(world.isAirBlock(positionInDirection.up(2)))
+            if(world.isAirBlock(positionInDirection.up(2)) && world.getBlockState(positionInDirection).getBlock().getMaterial().isSolid())
             {
                 return positionInDirection;
             }
         }
+
+        //if necessary we can could implement calling getWorkingPosition recursively and add some "offset" to the sides.
         return job.getSchematic().getPosition();
     }
 
@@ -231,20 +229,17 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     private AIState clearStep()
     {
         BlockPos coordinates = job.getSchematic().getBlockPosition();
-
-        //Fill workFrom with the position from where the builder should build.
-
-        if(goToConstructionSite())
-        {
-            return AIState.BUILDER_CLEAR_STEP;
-        }
-
-        worker.faceBlock(job.getSchematic().getBlockPosition());
         Block worldBlock = world.getBlockState(coordinates).getBlock();
 
         if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && worldBlock != job.getSchematic().getBlock() && !(job.getSchematic().getBlock() == Blocks.dirt && worldBlock == Blocks.grass))
         {
+            //Fill workFrom with the position from where the builder should build.
+            if(goToConstructionSite())
+            {
+                return AIState.BUILDER_CLEAR_STEP;
+            }
 
+            worker.faceBlock(coordinates);
             /*if(!Configurations.builderInfiniteResources)//We need to deal with materials
             {
                 if(!handleMaterials(Blocks.air, 0, worldBlock, world.getBlockState(coordinates))) return;
@@ -268,6 +263,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 //TODO handle - for now, just skipping
             }
             worker.swingItem();*/
+            worker.swingItem();
         }
 
         if(!job.getSchematic().findNextBlockToClear())//method returns false if there is no next block (schematic finished)
@@ -276,13 +272,12 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             incrementBlock();
             return AIState.BUILDER_REQUEST_MATERIALS;
         }
-        worker.swingItem();
         return AIState.BUILDER_CLEAR_STEP;
     }
 
     private AIState requestMaterials()
     {
-        if(!Configurations.builderInfiniteResources)//We need to deal with materials
+         if(!Configurations.builderInfiniteResources)//We need to deal with materials
         {
             //TODO thread this
             while (job.getSchematic().findNextBlock()) {
@@ -490,6 +485,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         {
             if(isBlockFree(block, metadata)) return true;
 
+            //todo cobblestone slabs
             //Modify metadata
             if(BlockInfo.BLOCK_LIST_IGNORE_METADATA.contains(block))
             {
@@ -510,16 +506,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             {
                 return false;
             }
-
-            int slot = worker.findFirstSlotInInventoryWith(block);
-            if (slot != -1)
-            {
-                getInventory().decrStackSize(slot, 1);
-                //Flag 1+2 is needed for updates
-            }
         }
 
-        if(worldBlock != Blocks.air)//Don't collect air blocks.
+        /*if(worldBlock != Blocks.air)//Don't collect air blocks.
         {
             int fortuneModifier = EnchantmentHelper.getFortuneModifier(worker);
             Item itemDropped = worldBlock.getItemDropped(worldBlockMetadata, world.rand, fortuneModifier);
@@ -530,8 +519,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             {
                 setStackInBuilder(new ItemStack(itemDropped, quantityDropped, damageDropped), false);
             }
-        }
-        worker.setStatus(EntityCitizen.Status.WORKING);
+        }*/
         return true;
     }
 
@@ -642,6 +630,19 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 }
                 //block.onPostBlockPlaced(world, x, y, z, metadata);
             }
+        }
+
+        //Workaround as long as we didn't rescan all of our buildings
+        if( world.getBlockState(pos).getBlock() instanceof BlockStairs && world.getBlockState(pos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING))
+        {
+            return true;
+        }
+
+        int slot = worker.findFirstSlotInInventoryWith(metadata.getBlock());
+        if (slot != -1)
+        {
+            getInventory().decrStackSize(slot, 1);
+            //Flag 1+2 is needed for updates
         }
         return true;
     }
