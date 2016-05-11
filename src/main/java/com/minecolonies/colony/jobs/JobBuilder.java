@@ -20,12 +20,18 @@ public class JobBuilder extends Job
     protected               BlockPos            schematicPos;
     protected               BlockPos            schematicProgress;
 
+    /**
+     * Has the building are been cleared
+     */
+    protected               boolean             cleared             = false;
+
     private static final    String              TAG_WORK_ORDER = "workorder";
     private static final    String              TAG_SCHEMATIC  = "schematic";
     private static final    String              TAG_NAME       = "name";
     private static final    String              TAG_POSITION   = "position";
     private static final    String              TAG_PROGRESS   = "progress";
     private static final    String              TAG_STAGE      = "stage";
+    private static final    String              TAG_CLEARED    = "cleared";
 
     public JobBuilder(CitizenData entity)
     {
@@ -51,6 +57,7 @@ public class JobBuilder extends Job
         if (workOrderId != 0)
         {
             compound.setInteger(TAG_WORK_ORDER, workOrderId);
+            compound.setBoolean(TAG_CLEARED,cleared);
 
             if (hasSchematic())
             {
@@ -70,6 +77,7 @@ public class JobBuilder extends Job
         if(compound.hasKey(TAG_WORK_ORDER))
         {
             workOrderId = compound.getInteger(TAG_WORK_ORDER);
+            cleared     = compound.getBoolean(TAG_CLEARED);
 
             if(compound.hasKey(TAG_SCHEMATIC))
             {
@@ -195,4 +203,21 @@ public class JobBuilder extends Job
         setSchematic(null);
     }
 
+    /**
+     * If the builder has cleared the current area already
+     * @return true if so
+     */
+    public boolean isCleared()
+    {
+        return cleared;
+    }
+
+    /**
+     * Sets if the building area has been cleared
+     * @param cleared true or false
+     */
+    public void setCleared(boolean cleared)
+    {
+        this.cleared = cleared;
+    }
 }
