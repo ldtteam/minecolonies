@@ -1,8 +1,6 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.util.Log;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -12,23 +10,32 @@ import java.util.Objects;
  */
 public class ChatSpamFilter
 {
-
     /**
-     * Custom logger for the class.
+     * The timeout in ticks to wait initially
      */
-    private static  final   Logger          LOGGER              = Log.generateLoggerForClass(ChatSpamFilter.class);
-    private         final   EntityCitizen   worker;
-    private                 int             speechDelay         = 0;
-    private                 String          speechDelayString   = "";
-    private                 int             speechRepeat        = 1;
+    private static final int BASE_TIMEOUT  = 10;
+    /**
+     * The number to multiply timeout with every time
+     */
+    private static final int POWER_TIMEOUT = 2;
+    /**
+     * The maximum delay to wait
+     */
+    private static final int MAX_TIMEOUT   = 1000;
+    private final EntityCitizen worker;
+    private int    speechDelay       = 0;
+    private String speechDelayString = "";
+    private int    speechRepeat      = 1;
 
-    public ChatSpamFilter(final EntityCitizen worker){
+    public ChatSpamFilter(final EntityCitizen worker)
+    {
         this.worker = worker;
     }
 
     /**
      * Request an Item without spamming the chat.
-     * @param chat      the Item Name
+     *
+     * @param chat the Item Name
      */
     public void requestWithoutSpam(String chat)
     {
@@ -39,8 +46,9 @@ public class ChatSpamFilter
      * Send a chat message as often as you like.
      * It will be shown in certain delays.
      * Helpful for requesting items.
-     * @param key       the translation key
-     * @param chat      the chat message
+     *
+     * @param key  the translation key
+     * @param chat the chat message
      */
     public void talkWithoutSpam(String key, String... chat)
     {
@@ -48,20 +56,19 @@ public class ChatSpamFilter
         if (Objects.equals(speechDelayString, curstring))
         {
             if (speechDelay > 0)
-            {speechDelay--;
+            {
+                speechDelay--;
                 return;
             }
             speechRepeat++;
         }
         else
         {
-
             speechDelay = 0;
             speechRepeat = 1;
         }
         worker.sendLocalizedChat(key, (Object[]) chat);
         speechDelayString = key + Arrays.toString(chat);
-
-        speechDelay = (int) Math.pow(30, speechRepeat);
+        speechDelay = Math.max((int) (BASE_TIMEOUT * Math.pow(POWER_TIMEOUT, speechRepeat)), MAX_TIMEOUT);
     }
 }

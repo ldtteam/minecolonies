@@ -767,8 +767,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             case Utils.PICKAXE:
                 checkForPickaxe(required);
                 break;
+            default:
+                Log.logger.error("Invalid tool " + tool + " not implemented as tool!");
         }
-        Log.logger.error("Invalid tool " + tool + " not implemented as tool!");
     }
 
     /**
