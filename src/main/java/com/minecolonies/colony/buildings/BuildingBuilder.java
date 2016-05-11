@@ -6,12 +6,20 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobBuilder;
+import com.minecolonies.util.BlockPosUtil;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
 public class BuildingBuilder extends BuildingWorker
 {
-    private static final String BUILDER = "Builder";
-    
+    private static final String TAG_CLEARED    = "cleared";
+    private static final String BUILDER        = "Builder";
+    /**
+     * Has the building are been cleared
+     */
+    protected boolean cleared = false;
+
+
     public BuildingBuilder(Colony c, BlockPos l)
     {
         super(c, l);
@@ -52,5 +60,37 @@ public class BuildingBuilder extends BuildingWorker
         {
             return new WindowHutBuilder(this);
         }
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        compound.setBoolean(TAG_CLEARED,cleared);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        cleared     = compound.getBoolean(TAG_CLEARED);
+    }
+
+    /**
+     * If the builder has cleared the current area already
+     * @return true if so
+     */
+    public boolean isCleared()
+    {
+        return cleared;
+    }
+
+    /**
+     * Sets if the building area has been cleared
+     * @param cleared true or false
+     */
+    public void setCleared(boolean cleared)
+    {
+        this.cleared = cleared;
     }
 }

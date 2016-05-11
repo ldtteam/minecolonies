@@ -224,11 +224,25 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         {
             delay += DELAY_RECHECK;
             ItemStack first = itemsCurrentlyNeeded.get(0);
+
+            if(first.getItem() == null)
+            {
+                itemsCurrentlyNeeded.remove(0);
+                if(itemsCurrentlyNeeded.isEmpty())
+                {
+                    itemsNeeded.clear();
+                    job.clearItemsNeeded();
+                    return IDLE;
+                }
+                return NEEDS_ITEM;
+            }
+
             //Takes one Stack from the hut if existent
             if (isInHut(first))
             {
                 return NEEDS_ITEM;
             }
+
             requestWithoutSpam(first.getDisplayName());
         }
         return NEEDS_ITEM;

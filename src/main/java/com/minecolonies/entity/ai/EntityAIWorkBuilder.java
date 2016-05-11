@@ -2,13 +2,12 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
-import com.schematica.config.BlockInfo;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -132,7 +131,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             if (building.getBuildingLevel() > 0)
             {
                 this.state = AIState.BUILDER_REQUEST_MATERIALS;
-                job.setCleared(true);
+                ((BuildingBuilder)getOwnBuilding()).setCleared(true);
                 if (!job.hasSchematic() || !incrementBlock())
                 {
                     return;
@@ -225,19 +224,22 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
      */
     private BlockPos getFloor(BlockPos position)
     {
+        //If the position is floating in Air go downwards
+        if(world.isAirBlock(position))
+        {
+            return getFloor(position.down());
+        }
+        //If there is no air above the block go upwards
         if(world.isAirBlock(position.up()))
         {
             return position;
         }
-        else
-        {
-            return getFloor(position.up());
-        }
+        return getFloor(position.up());
     }
 
     private AIState clearStep()
     {
-        if(job.isCleared())
+        if(((BuildingBuilder)getOwnBuilding()).isCleared())
         {
             return AIState.BUILDER_STRUCTURE_STEP;
         }
@@ -282,7 +284,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         {
             job.getSchematic().reset();
             incrementBlock();
-            job.setCleared(true);
+            ((BuildingBuilder)getOwnBuilding()).setCleared(true);
             return AIState.BUILDER_REQUEST_MATERIALS;
         }
         return AIState.BUILDER_CLEAR_STEP;
@@ -323,7 +325,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState structureStep()
     {
-        if(job.getSchematic().doesSchematicBlockEqualWorldBlock() || (!job.getSchematic().getBlock().getMaterial().isSolid() && job.getSchematic().getBlock() != Blocks.air))
+        if(job.getSchematic().getBlock() == null || job.getSchematic().doesSchematicBlockEqualWorldBlock() || (!job.getSchematic().getBlock().getMaterial().isSolid() && job.getSchematic().getBlock() != Blocks.air))
         {
             return findNextBlockSolid();//findNextBlock count was reached and we can ignore this block
         }
@@ -515,8 +517,15 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             {
                 metadata %= 8;
             }*/
+            ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
 
-            if (checkOrRequestItems(new ItemStack(metadata.getBlock(), 1)))
+            if(stack.getItem() == null)
+            {
+                stack = new ItemStack(block.getItem(job.getSchematic().getWorldForRender(),job.getSchematic().getPosition()));
+            }
+
+            //todo does this crash for flower pots?
+            if (checkOrRequestItems(stack))
             {
                 return false;
             }
@@ -598,12 +607,14 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
         }
 
-        int slot = worker.findFirstSlotInInventoryWith(Item.getItemFromBlock(block));
-        if(slot == -1)
+        ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
+
+        if(stack.getItem() == null)
         {
-            slot = worker.findFirstSlotInInventoryWith(block.getItem(world,pos));
+            stack = new ItemStack(block.getItem(job.getSchematic().getWorldForRender(),job.getSchematic().getPosition()));
         }
 
+        int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
         if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);
@@ -681,7 +692,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         job.getSchematic().rotate(building.getRotation());
         job.getSchematic().setPosition(pos);
-        job.setCleared(false);
+        ((BuildingBuilder)getOwnBuilding()).setCleared(false);
     }
 
     private AIState completeBuild()
