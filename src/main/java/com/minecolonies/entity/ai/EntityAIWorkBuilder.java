@@ -46,7 +46,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         super.registerTargets(
                 new AITarget(this::checkIfExecute, () -> state),
                 new AITarget(IDLE, () -> START_WORKING),
-                new AITarget(PREPARING, this::preparing),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(BUILDER_CLEAR_STEP, this::clearStep),
                 new AITarget(BUILDER_REQUEST_MATERIALS, this::requestMaterials),
@@ -57,14 +56,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         worker.setSkillModifier(2*worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
     }
 
-    private AIState preparing()
-    {
-        if(needsSomething())
-        {
-            return AIState.PREPARING;
-        }
-        return AIState.BUILDER_CLEAR_STEP;
-    }
 
     private boolean checkIfExecute()
     {
@@ -84,7 +75,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         {
             return state;
         }
-        return PREPARING;
+        return BUILDER_CLEAR_STEP;
     }
 
     /**
@@ -270,13 +261,15 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
             else
             {
+                //todo: wrong usage of mineBlock, you have to return with clear path on false... (dont change state then...)
                 if(!mineBlock(coordinates))
                 {
                     //Worker running between his chest and working site, have to tweak this.
-                    return AIState.PREPARING;
+                    //todo: return state; would be better
+                    return AIState.START_WORKING;
                 }
             }
-
+            //todo: not needed, mineBlock does that
             worker.swingItem();
         }
 

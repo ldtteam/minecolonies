@@ -35,12 +35,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     private static final int             DELAY_RECHECK           = 10;
     private static final int             DELAY_MODIFIER          = 50;
     protected static     Random          itemRand                = new Random();
-    protected            boolean         needsShovel             = false;
-    protected            boolean         needsAxe                = false;
-    protected            boolean         needsHoe                = false;
-    protected            boolean         needsPickaxe            = false;
-    protected            int             needsPickaxeLevel       = -1;
-    protected            int             blocksMined             = 0;
+    private              boolean         needsShovel             = false;
+    private              boolean         needsAxe                = false;
+    private              boolean         needsHoe                = false;
+    private              boolean         needsPickaxe            = false;
+    private              int             needsPickaxeLevel       = -1;
+    private              int             blocksMined             = 0;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -202,11 +202,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         return lookForNeededItems();
     }
 
-    protected boolean needsSomething()
-    {
-        return !itemsCurrentlyNeeded.isEmpty() && !itemsNeeded.isEmpty() && !needsPickaxe && !needsAxe && !needsHoe && !needsShovel;
-    }
-
     /**
      * Utility method to search for items currently needed.
      * Poll this until all items are there.
@@ -224,19 +219,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         {
             delay += DELAY_RECHECK;
             ItemStack first = itemsCurrentlyNeeded.get(0);
-
-            if(first.getItem() == null)
-            {
-                itemsCurrentlyNeeded.remove(0);
-                if(itemsCurrentlyNeeded.isEmpty())
-                {
-                    itemsNeeded.clear();
-                    job.clearItemsNeeded();
-                    return IDLE;
-                }
-                return NEEDS_ITEM;
-            }
-
             //Takes one Stack from the hut if existent
             if (isInHut(first))
             {
@@ -289,6 +271,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         chatSpamFilter.requestWithoutSpam(chat);
     }
+
 
     /**
      * Wait for a needed shovel.
@@ -577,27 +560,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                     ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
                     if (returnStack == null)
                     {
-                        ItemStack removed = worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
-                        if (removed.stackSize < stack.stackSize)
-                        {
-                            //todo: this will never happen???
-                            Log.logger.warn("Dump Inventory: Tried to remove " + stack.stackSize +
-                                            " items, but only " + removed.stackSize + " were removed");
-                        }
+                        worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
                         return true;
                     }
-                    ItemStack removed = worker.getInventoryCitizen().decrStackSize(
-                            i,
-                            stack.stackSize
-                            - returnStack.stackSize);
-                    if (removed.stackSize < stack.stackSize)
-                    {
-                        Log.logger.warn("Dump Inventory: Tried to remove " + stack.stackSize +
-                                        " items, but only " + removed.stackSize + " were removed");
-                    }
+                    worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize);
                     //Check that we are not inserting
-                    // into a
-                    // full inventory.
+                    // into a full inventory.
                     return stack.stackSize != returnStack.stackSize;
                 });
     }
@@ -629,6 +597,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         boolean allClear = true;
         for (ItemStack stack : items)
         {
+            if (stack == null || stack.getItem() == null)
+            {
+                continue;
+            }
             int countOfItem = worker.getItemCountInInventory(stack.getItem());
             if (countOfItem < stack.stackSize)
             {
@@ -955,4 +927,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         return true;
     }
 
+    public int getBlocksMined()
+    {
+        return blocksMined;
+    }
+
+    public void clearBlocksMined()
+    {
+        this.blocksMined = 0;
+    }
 }

@@ -128,9 +128,9 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
     @Override
     protected boolean wantInventoryDumped()
     {
-        if (blocksMined > MAX_BLOCKS_MINED)
+        if (getBlocksMined() > MAX_BLOCKS_MINED)
         {
-            blocksMined = 0;
+            clearBlocksMined();
             return true;
         }
         return false;
