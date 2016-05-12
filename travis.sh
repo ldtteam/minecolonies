@@ -1,6 +1,7 @@
 #!/bin/bash
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
+  ./gradlew setupDecompWorkspace --refresh-dependencies
   ./gradlew build
   ./gradlew sonarqube --stacktrace \
       -Dsonar.analysis.mode=issues \
