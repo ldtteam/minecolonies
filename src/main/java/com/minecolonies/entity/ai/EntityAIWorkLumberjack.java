@@ -602,13 +602,4 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock().isWood(null,new BlockPos(0,0,0));
     }
 
-    /**
-     * This method will be overridden by AI implementations.
-     * It will serve as a tick function.
-     */
-    @Override
-    protected void workOnTask()
-    {
-        //Migration to new system complete
-    }
 }

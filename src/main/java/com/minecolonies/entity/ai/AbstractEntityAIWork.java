@@ -97,7 +97,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                  * this keeps the current state
                  * (returning null would not stop execution)
                  */
-                new AITarget(this::waitingForSomething, () -> getState()),
+                new AITarget(this::waitingForSomething, this::getState),
                 /**
                  * Check if any items are needed.
                  * If yes, transition to NEEDS_ITEM.
@@ -570,20 +570,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                 });
     }
 
-    @Override
-    public void updateTask()
-    {
-        super.updateTask();
-
-        workOnTask();
-    }
-
-    /**
-     * This method will be overridden by AI implementations.
-     * It will serve as a tick function.
-     */
-    protected abstract void workOnTask();
-
     /**
      * Require that items are in the workers inventory.
      * This safegate ensurs you have said items before you execute a task.
@@ -927,12 +913,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         return true;
     }
 
-    public int getBlocksMined()
+    public final int getBlocksMined()
     {
         return blocksMined;
     }
 
-    public void clearBlocksMined()
+    public final void clearBlocksMined()
     {
         this.blocksMined = 0;
     }

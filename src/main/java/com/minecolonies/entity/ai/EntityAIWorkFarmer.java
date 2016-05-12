@@ -4,6 +4,7 @@ import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.jobs.JobFarmer;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.InventoryUtils;
+import javafx.stage.Stage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.init.Blocks;
@@ -183,7 +184,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                 break;
         }
     }
-
+    /*
     @Override
     public void updateTask()
     {
@@ -218,15 +219,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         }
         startWorking();
     }
-
-    /**
-     * This method will be overridden by AI implementations
-     */
-    @Override
-    protected void workOnTask()
-    {
-        //TODO: rework the farmer to use workOnTask eventually
-    }
+    */
 
     private void searchFarmableLand()
     {
@@ -654,18 +647,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         }
 
         return Hoe && Spade;
-    }
-
-    @Override
-    public boolean continueExecuting()
-    {
-        return super.continueExecuting();
-    }
-
-    @Override
-    public void resetTask()
-    {
-        super.resetTask();
     }
 
     private int inventoryContains(Item item)//???
