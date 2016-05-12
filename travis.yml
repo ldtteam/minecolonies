@@ -1,34 +1,5 @@
 language: java
 sudo: false
 install: true
-jdk: oraclejdk7
+jdk: oraclejdk8
 script: ./travis.sh
-
-env:
-  - TARGET=CI
-  - TARGET=IT IT_CATEGORY=Category1
-  - TARGET=IT IT_CATEGORY=Category2
-  - TARGET=IT IT_CATEGORY=Category3
-  - TARGET=IT IT_CATEGORY=Category4
-  - TARGET=IT IT_CATEGORY=Category5
-  - TARGET=WEB
-
-
-matrix:
-  fast_finish: true
-
-cache:
-  directories:
-    - $HOME/.m2/repository
-    - $HOME/.sonar
-    - 'server/sonar-web/node'
-    - 'server/sonar-web/node_modules'
-
-before_cache:
-  # remove all the artifacts (JAR, ZIP) that are installed in local repo because of mvn deploy
-  - rm -rf $HOME/.m2/repository/org/sonarsource/sonarqube
-
-notifications:
-  email: false
-  webhooks:
-    - secure: "CrwnSt40WNegJOkgDOaCwUwP9fCgx68pYQWtcZnj4+bRF7kFuFI+EUFuf7G29oPOf9CjmFVvZ+mS/ZJ9AqtjfWh/Q9f4Zsv9BBfOmTgUcidYp8+hQljeesEXwi2Mqfa2JeRysje4xu2p8b52h+apbbQ2Y2FQsP4uwmj1LEpP32U="
