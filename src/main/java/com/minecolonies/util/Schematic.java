@@ -5,6 +5,7 @@ import com.minecolonies.configuration.Configurations;
 import com.schematica.world.SchematicWorld;
 import com.schematica.world.schematic.SchematicFormat;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -331,9 +332,9 @@ public final class Schematic
                     {
                         if (xOffset == 0 && yOffset == 0 && zOffset == 0)
                         {
-                            xOffset = x;
-                            yOffset = y;
-                            zOffset = z;
+                            xOffset = x-minX;
+                            yOffset = y-minY;
+                            zOffset = z-minZ;
                         }
                         else
                         {
@@ -459,9 +460,14 @@ public final class Schematic
     public boolean doesSchematicBlockEqualWorldBlock()
     {
         BlockPos pos = this.getBlockPosition();
+
+        if(schematicWorld.getBlock(x,y,z) instanceof BlockDoor)
+        {
+            return schematicWorld.getBlock(x, y, z) == BlockPosUtil.getBlock(world, pos);
+        }
         //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
         return pos.getY() <= 0 || schematicWorld.getBlock(x, y, z) == BlockPosUtil.getBlock(world, pos) && schematicWorld.getBlockState(new BlockPos(x, y, z))
-                                                                                                            == BlockPosUtil.getBlockState(world, pos);
+                == BlockPosUtil.getBlockState(world, pos);
     }
 
     public BlockPos getBlockPosition()
