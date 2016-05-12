@@ -44,7 +44,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     {
         super(job);
         super.registerTargets(
-                new AITarget(this::checkIfExecute, () -> state),
+                new AITarget(this::checkIfExecute, () -> getState()),
                 new AITarget(IDLE, () -> START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(BUILDER_CLEAR_STEP, this::clearStep),
@@ -73,7 +73,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     {
         if (walkToBuilding())
         {
-            return state;
+            return getState();
         }
         return BUILDER_CLEAR_STEP;
     }

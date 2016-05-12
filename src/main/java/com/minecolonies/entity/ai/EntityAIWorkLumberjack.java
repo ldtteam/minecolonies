@@ -145,7 +145,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     {
         if (walkToBuilding())
         {
-            return state;
+            return getState();
         }
         return PREPARING;
     }
@@ -159,7 +159,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     {
         if (checkForAxe())
         {
-            return state;
+            return getState();
         }
         return LUMBERJACK_SEARCHING_TREE;
     }
@@ -175,7 +175,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     {
         if (hasNotDelayed(WAIT_BEFORE_SEARCH))
         {
-            return state;
+            return getState();
         }
         return LUMBERJACK_SEARCHING_TREE;
     }
@@ -204,7 +204,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         if (pathResult == null || pathResult.treeLocation == null)
         {
             pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D);
-            return state;
+            return getState();
         }
         if (pathResult.getPathReachesDestination())
         {
@@ -224,14 +224,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             }
             pathResult = null;
 
-            return state;
+            return getState();
         }
         if (pathResult.isCancelled())
         {
             pathResult = null;
             return LUMBERJACK_GATHERING;
         }
-        return state;
+        return getState();
     }
 
     /**
@@ -269,14 +269,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         if (walkToBlock(location))
         {
             checkIfStuckOnLeaves(location);
-            return state;
+            return getState();
         }
 
         if (!job.tree.hasLogs())
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
-                return state;
+                return getState();
             }
             plantSapling();
             return LUMBERJACK_GATHERING;
@@ -286,10 +286,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         BlockPos log = job.tree.peekNextLog();
         if (!mineBlock(log))
         {
-            return state;
+            return getState();
         }
         job.tree.pollNextLog();
-        return state;
+        return getState();
     }
 
     /**
@@ -449,7 +449,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         if (!items.isEmpty())
         {
             gatherItems();
-            return state;
+            return getState();
         }
         items = null;
         return LUMBERJACK_SEARCHING_TREE;

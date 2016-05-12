@@ -129,7 +129,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         if (walkToBuilding())
         {
-            return state;
+            return getState();
         }
         return PREPARING;
     }
@@ -143,7 +143,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     {
         if (checkOrRequestItems(new ItemStack(Items.fishing_rod)))
         {
-            return state;
+            return getState();
         }
         if (job.getWater() == null)
         {
@@ -226,7 +226,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         }
         if (walkToWater())
         {
-            return state;
+            return getState();
         }
         return FISHERMAN_CHECK_WATER;
     }
@@ -295,7 +295,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (pathResult == null)
         {
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
-            return state;
+            return getState();
         }
         if (pathResult.failedToReachDestination())
         {
@@ -317,7 +317,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             pathResult = null;
             return PREPARING;
         }
-        return state;
+        return getState();
     }
 
     /**
@@ -334,7 +334,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
             }
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
-            return state;
+            return getState();
         }
         job.setWater(job.getPonds().get(itemRand.nextInt(job.getPonds().size())));
 
@@ -383,7 +383,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
             //Only sometimes the fisherman gets to throw its Rod (depends on intelligence)
             if (testRandomChance())
             {
-                return state;
+                return getState();
             }
             throwRod();
         }
@@ -396,7 +396,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
                 return FISHERMAN_WALKING_TO_WATER;
             }
         }
-        return state;
+        return getState();
     }
 
     /**
@@ -474,7 +474,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
         if (worker.getHeldItem() == null || !worker.getHeldItem().getItem().equals(Items.fishing_rod))
         {
             equipRod();
-            return state;
+            return getState();
         }
         return null;
     }

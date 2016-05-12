@@ -97,7 +97,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                  * this keeps the current state
                  * (returning null would not stop execution)
                  */
-                new AITarget(this::waitingForSomething, () -> state),
+                new AITarget(this::waitingForSomething, () -> getState()),
                 /**
                  * Check if any items are needed.
                  * If yes, transition to NEEDS_ITEM.
@@ -173,7 +173,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     private AIState updateVisualState()
     {
         //Update the current state the worker is in.
-        job.setNameTag(this.state.toString());
+        job.setNameTag(this.getState().toString());
         //Update torch, seeds etc. in chestbelt etc.
         updateRenderMetaData();
         return null;
