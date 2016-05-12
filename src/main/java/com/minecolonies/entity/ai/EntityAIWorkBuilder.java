@@ -91,16 +91,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         return BUILDER_CLEAR_STEP;
     }
 
-    /**
-     * This method will be overridden by AI implementations.
-     * It will serve as a tick function.
-     */
-    @Override
-    protected void workOnTask()
-    {
-        //Migration to new system complete
-    }
-
     private AIState initiate()
     {
         if(!job.hasSchematic())//is build in progress
@@ -150,13 +140,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         BlockPosUtil.tryMoveLivingToXYZ(worker, job.getSchematic().getPosition());
 
         return AIState.IDLE;
-    }
-
-    @Override
-    public void resetTask()
-    {
-        super.resetTask();
-        worker.setCurrentItemOrArmor(0, null);
     }
 
     /**

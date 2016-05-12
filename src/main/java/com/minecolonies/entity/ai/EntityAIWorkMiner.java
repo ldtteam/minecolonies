@@ -156,16 +156,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         return MINER_MINING_SHAFT;
     }
 
-    /**
-     * This method will be overridden by AI implementations.
-     * It will serve as a tick function.
-     */
-    @Override
-    public void workOnTask()
-    {
-        //Migration to new system complete
-    }
-
     @Override
     protected void updateRenderMetaData()
     {
@@ -1332,18 +1322,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         }
 
         return null;
-    }
-
-    @Override
-    public boolean continueExecuting()
-    {
-        return super.continueExecuting();
-    }
-
-    @Override
-    public void resetTask()
-    {
-        super.resetTask();
     }
 
     private void setBlockFromInventory(BlockPos location, Block block)

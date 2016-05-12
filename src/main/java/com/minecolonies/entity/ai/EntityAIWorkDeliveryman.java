@@ -24,6 +24,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIWork<JobDeliveryman
         super(deliveryman);
     }
 
+    /*
+
     @Override
     public boolean shouldExecute()
     {
@@ -99,10 +101,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIWork<JobDeliveryman
         resetTask();
     }
 
-    /**
-     * {@inheritDoc}
-     * This method will be overridden by AI implementations
-     */
     @Override
     protected void workOnTask()
     {
@@ -114,4 +112,5 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIWork<JobDeliveryman
     {
         return super.continueExecuting() && job.hasDestination();
     }
+    */
 }

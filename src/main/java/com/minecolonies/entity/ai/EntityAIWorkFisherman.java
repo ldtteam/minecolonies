@@ -170,16 +170,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
     }
 
     /**
-     * This method will be overridden by AI implementations.
-     * It will serve as a tick function.
-     */
-    @Override
-    protected void workOnTask()
-    {
-        //Migration to new system complete
-    }
-
-    /**
      * Returns the fisherman's work building.
      * @return building instance
      */
