@@ -1,103 +1,122 @@
-com.minecolonies.error.supplyChestAlreadyPlaced=You have already placed a supply ship!
+com.minecolonies.error.supplyChestAlreadyPlaced=Du hast schon ein Versorgungsschiff!
 
-com.minecolonies.gui.townHall.build=Baue Rathaus
-com.minecolonies.gui.townHall.repair=Repariere Rathaus
-com.minecolonies.gui.townHall.recall=Rufe Bürger
-com.minecolonies.gui.townHall.togglespec=An/Aus Spezialisation
+com.minecolonies.gui.townHall.build=Rathaus bauen
+com.minecolonies.gui.townHall.repair=Rathaus reparieren
+com.minecolonies.gui.townHall.recall=Bürger zurückrufen
+com.minecolonies.gui.townHall.togglespec=Spezialisierung umschalten
 com.minecolonies.gui.townHall.currTownHallName=Name der Kolonie:
-com.minecolonies.gui.townHall.currentSpecialization=Derzeitige Spezialisation:
-com.minecolonies.gui.townHall.rename=Namensänderung
-com.minecolonies.gui.townHall.rename.title=Ändere den Namen deiner Kolonie
+com.minecolonies.gui.townHall.currentSpecialization=Derzeitige Spezialisierung:
+com.minecolonies.gui.townHall.rename=Kolonie umbenennen
+com.minecolonies.gui.townHall.rename.title=Bennene deine Kolonie um.
 com.minecolonies.gui.townHall.actions=Aktionen
-com.minecolonies.gui.townHall.defaultName=%s's Kolonie
+com.minecolonies.gui.townHall.defaultName=%s's Kolonie.
 com.minecolonies.gui.townHall.citizens=Bürger
-com.minecolonies.gui.townHall.permissions=Erlaubnisse
+com.minecolonies.gui.townHall.permissions=Berechtigungen
 
-com.minecolonies.gui.townHall.population.totalCitizens=Anzahl an Bürger: %d/%d
+com.minecolonies.gui.townHall.population.totalCitizens=Anzahl an Bürgern: %d/%d
 com.minecolonies.gui.townHall.population.unemployed=Arbeitslos: %d
 com.minecolonies.gui.townHall.population.builders=Bauarbeiter: %d
 com.minecolonies.gui.townHall.population.deliverymen=Lieferanten: %d
 
-com.minecolonies.gui.workerHuts.buildersHut=Bauarbeiterhütte
+com.minecolonies.gui.workerHuts.buildersHut=Bauarbeiter Hütte
 com.minecolonies.gui.workerHuts.warehouse=Lager
 com.minecolonies.gui.workerHuts.workerAssigned=Zugeteilte Arbeiter:
 com.minecolonies.gui.workerHuts.workerLevel=Level des Arbeiters: %s
 com.minecolonies.gui.workerHuts.hire=Arbeiter einstellen
 com.minecolonies.gui.workerHuts.fire=Arbeiter entlassen
-com.minecolonies.gui.workerHuts.recall=Arbeiter rufen
-com.minecolonies.gui.workerHuts.build=Baue Gebäude
-com.minecolonies.gui.workerHuts.upgrade=Verbessere Gebäude
-com.minecolonies.gui.workerHuts.upgradeUnavailable=Keine Verbesserung Verfügbar
+com.minecolonies.gui.workerHuts.recall=Arbeiter zurückrufen
+com.minecolonies.gui.workerHuts.build=Gebäude bauen
+com.minecolonies.gui.workerHuts.upgrade=Gebäude verbessern
+com.minecolonies.gui.workerHuts.upgradeUnavailable=Keine Verbesserung verfügbar
 com.minecolonies.gui.workerHuts.repair=Gebäude reparieren
 com.minecolonies.gui.workerHuts.buildType=Gebäudetyp:
-com.minecolonies.gui.workerHuts.information=Information
+com.minecolonies.gui.workerHuts.information=Informationen
 com.minecolonies.gui.workerHuts.settings=Einstellungen
-com.minecolonies.gui.workerHuts.minerHut = Stollen
+com.minecolonies.gui.workerHuts.minerHut=Bergmann
 com.minecolonies.gui.workerHuts.minerNode=Knoten
-com.minecolonies.gui.workerHuts.minerMineNode=Ebene abbauen
+com.minecolonies.gui.workerHuts.minerMineNode=Minen level
 com.minecolonies.gui.workerHuts.minerNodeList=Ebenen
+com.minecolonies.gui.workerHuts.homeHut=Bürgerhaus
+com.minecolonies.gui.workerHuts.fisherman=Fischerhütte
+com.minecolonies.gui.workerHuts.lumberjackHut=Holzfällerhütte
+com.minecolonies.gui.buildtool.nullHut=Kein Haus verfügbar
 
-com.minecolonies.gui.warehouse.toBlacksmith=An Schmied senden:
-com.minecolonies.gui.warehouse.toStonemason=An Steinmetz senden:
-com.minecolonies.gui.warehouse.toGuards=An Wachen senden:
+com.minecolonies.gui.warehouse.toBlacksmith=Zum Schmied bringen:
+com.minecolonies.gui.warehouse.toStonemason=Zum Steinmetz bringen:
+com.minecolonies.gui.warehouse.toGuards=Zu den Wachen bringen:
 com.minecolonies.gui.warehouse.visitCitizenChests=Bürgertruhen besuchen:
 
 com.minecolonies.gui.citizen.skills=Fähigkeiten
 com.minecolonies.gui.citizen.skills.strength=Stärke: %d
-com.minecolonies.gui.citizen.skills.stamina=Stamina: %d
-com.minecolonies.gui.citizen.skills.wisdom=Weisheit: %d
-com.minecolonies.gui.citizen.skills.intelligence=Intelligenz: %d
+com.minecolonies.gui.citizen.skills.endurance=Ausdauer: %d
 com.minecolonies.gui.citizen.skills.charisma=Charisma: %d
+com.minecolonies.gui.citizen.skills.intelligence=Intelligenz: %d
+com.minecolonies.gui.citizen.skills.dexterity=Geschicklichkeit: %d
 
-tile.blockHutCitizen.name=Bürgerhütte
-tile.blockHutBaker.name=Bäckerei
-tile.blockHutBlacksmith.name=Forge
-tile.blockHutBuilder.name=Bauarbeiterhütte
-tile.blockHutWarehouse.name=Lager
-tile.blockHutFarmer.name=Bauernhof
-tile.blockHutLumberjack.name=Sägewerk
-tile.blockHutMiner.name=Mine
-tile.blockHutStonemason.name=Steinbruch
-tile.blockHutTownHall.name=Rathaus
-tile.blockHut.messageNoPermission=Du hast keine Erlaubnis die Hütten in %s zu öffnen.
+com.minecolonies.gui.buildtool.nohut=Keine Häuser
+com.minecolonies.gui.buildtool.nodecoration=Keine Dekorationen
+com.minecolonies.gui.buildtool.hut=Häuser
+com.minecolonies.gui.buildtool.decoration=Dekorationen
 
-tile.blockHutTownHall.messageMaxSize=Die Kolonie hat ihre maximale Größe Erreicht
-tile.blockHutTownHall.messageColonistDead=Ein Kolonist starb!
-tile.blockHutTownHall.messagePlacedAlready=Du hast schon ein Rathaus plaziert
-tile.blockHutTownHall.messageInvalidWorld=Du kannst in diesem Welttyp kein Rathaus platzieren
-tile.blockHutTownHall.messageTooClose=Zu Nahe an existierendem Rathaus
+tile.minecolonies.blockHutCitizen.name=Bürgerhaus
+tile.minecolonies.blockHutBaker.name=Bäkerei
+tile.minecolonies.blockHutBlacksmith.name=Schmiede
+tile.minecolonies.blockHutBuilder.name=Bauarbeiterhütte
+tile.minecolonies.blockHutWarehouse.name=Lager
+tile.minecolonies.blockHutFarmer.name=Bauernhof
+tile.minecolonies.blockHutLumberjack.name=Sägewerk
+tile.minecolonies.blockHutFisherman.name=Fischer Hütte
+tile.minecolonies.blockHutMiner.name=Mine
+tile.minecolonies.blockHutStonemason.name=Steinmetz
+tile.minecolonies.blockHutTownHall.name=Rathaus
 
-tile.blockHut.messageTooFarFromTownHall=Du musst näher bei deinem Rathaus sein!
-tile.blockHut.messageNoTownHall=Du musst erst ein Rathaus platzieren!
+tile.blockHut.messageNoPermission=Du hast nicht die Berechtigungen in %s Häuser zu öffnen.
 
-item.supplyChestDeployer.name=Versorgungskiste
-item.scepterGold.name=Arbeiterwerkzeug
-item.scepterSteel.name=Scanwerkzeug
-item.caliper.name=Caliper
+com.minecolonies.job.Builder=Bauarbeiter
+com.minecolonies.job.Deliveryman=Lieferant
+com.minecolonies.job.Farmer=Bauer
+com.minecolonies.job.Lumberjack=Holzfäller
+com.minecolonies.job.Miner=Minenarbeiter
+com.minecolonies.job.Fisherman=Fischer
 
-item.supplyChestDeployer.invalid=Du musst nahe an einer großen Wasserquelle sein
+tile.blockHutTownHall.messageMaxSize=Die Kolonie hat die maximale Größe erreicht!
+tile.blockHutTownHall.messageColonistDead=Ein Bürger ist gestorben!
+tile.blockHutTownHall.messagePlacedAlready=Du hast schon ein Rathaus gesetzt.
+tile.blockHutTownHall.messageInvalidWorld=In diesem Welttyp kannst du keine Rathäuser setzen!
+tile.blockHutTownHall.messageTooClose=Zu nah an einem existierenden Rathaus.
 
-item.scepterSteel.point=Punkt 1 gespeichert
-item.scepterSteel.point2=Punkt zwei gespeichert, erneuter Rechtsklick zum speichern der Schematik
-item.scepterSteel.samePoint=Das ist der selbe Punkt
-item.scepterSteel.scanFormat=SCAN_%s-%s.schematik
-item.scepterSteel.scanSuccess=Scan erfolgreich als %s gespeichert
-item.scepterSteel.scanFailure=Scan nicht erfolgreich gespeichert
+tile.blockHut.messageTooFarFromTownHall=Du solltest näher an deinem Rathaus sein!
+tile.blockHut.messageNoTownHall=Du solltest erst ein Rathaus erstellen!
+
+item.minecolonies.supplyChestDeployer.name=Vorratskiste
+item.minecolonies.scepterGold.name=Bauwerkzeug
+item.minecolonies.scepterSteel.name=Scanwerkzeug
+item.minecolonies.caliper.name=Meterstab
+
+item.supplyChestDeployer.invalid=Du solltest in der nähe einer großen Wasserquelle sein.
+
+item.scepterSteel.point=Punkt eins gespeichert.
+item.scepterSteel.point2=Punkt zwei gespeichert, rechtsklicke um die Schematic zu speichern.
+item.scepterSteel.samePoint=Das ist der selbe Punkt, dummerchen.
+item.scepterSteel.scanFormat=SCAN_%s-%s.schematic
+item.scepterSteel.scanSuccess=Scan erfolgreich gespeichert unter %s
+item.scepterSteel.scanFailure=Scan konnte nicht gespeichert werden.
 
 item.caliper.message.same=Das ist der selbe Block.
-item.caliper.message.line=Das ist eine %d Blocklinie.
+item.caliper.message.line=Das ist eine %d block Linie.
 item.caliper.message.square=Das ist ein %d mal %d Quadrat.
-item.caliper.message.cube=Das ist ein %d by %d mal %d Würfel.
+item.caliper.message.cube=Das ist eine %d mal %d mal %d Würfel.
 
-itemGroup.minecolonies=MinenKolonien
+itemGroup.minecolonies=MineColonies
 
-entity.builder.messageBuildStart=Hat angefangen an %s zu arbeiten
-entity.builder.messageBuildComplete=Hat seine an %s Arbeit abgeschlossen
-entity.builder.messageNeedMaterial=I brauche %s (Anzahl: %d)
+entity.builder.messageBuildStart=Fange an %s zu bauen
+entity.builder.messageBuildComplete= %s fertiggestellt!
+entity.builder.messageNeedMaterial=Ich brauche %s (Anzahl: %d)
 
-entity.miner.messageNeedTools=Brauche Werkzeug %s!
-entity.miner.messageNeed=Ich brauche %s!
-entity.miner.messageNeedBetterTools=Ich brauche bessere Werkzeuge!
+entity.miner.messageNeedTools=Ich brauche folgendes Werkzeug: %s!
+entity.miner.messageNeedBlockAndItem=Ich brauche %s!
+entity.miner.messageNeedBetterTools=Ich brauche bessere werkzeuge!
 entity.miner.messageMoreBlocks=Ich brauche mehr %s!
+entity.miner.messageRequiresBetterHut=Bitte baue die Mine aus um tiefer zu graben.!
 
-entity.fisherman.messageWaterTooFar=Fischerhütter befindet sich zu weit weg von Wasser!
+entity.fisherman.messageWaterTooFar=Fischerhütte ist zu weit von dem Wasser entfernt!
