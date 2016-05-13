@@ -56,6 +56,11 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         worker.setSkillModifier(2*worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
     }
 
+    //todo remove pull request test code
+    public int test = 0;
+    public void x(){
+        
+    }
 
     private boolean checkIfExecute()
     {
