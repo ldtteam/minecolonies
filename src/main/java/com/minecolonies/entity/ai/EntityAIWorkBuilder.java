@@ -512,7 +512,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
 
         //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
-        if(metadata instanceof BlockStairs && world.getBlockState(pos).getBlock() instanceof BlockStairs && world.getBlockState(pos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING))
+        if(metadata.getBlock() instanceof BlockStairs && world.getBlockState(pos).getBlock() instanceof BlockStairs && world.getBlockState(pos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING))
         {
             return true;
         }
