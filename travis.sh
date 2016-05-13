@@ -2,7 +2,7 @@
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   ./gradlew setupDecompWorkspace --refresh-dependencies
-  ./gradlew build
+  ./gradlew build copyToLib
   ./gradlew sonarqube --stacktrace \
       -Dsonar.analysis.mode=issues \
       -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST \
@@ -13,6 +13,6 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
       -Dsonar.password=$SONAR_PASS \
       -Dsonar.sources=src/main/java \
       -Dsonar.java.binaries=build/classes/main \
-      -Dsonar.java.libraries=build/libs
+      -Dsonar.java.libraries=lib
 fi
 

@@ -109,3 +109,10 @@ idea {
     }
 }
 
+task copyToLib(type: Copy) {
+    // into "build/lib"
+    into "lib"
+    from configurations.runtime
+}
+
+
