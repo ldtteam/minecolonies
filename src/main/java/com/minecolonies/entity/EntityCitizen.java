@@ -64,6 +64,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private String                   renderMetadata;
     private ResourceLocation         texture;
 
+    public int test = 0;
+    public void x(){
+        
+    }
+
     protected   Status           status = Status.IDLE;
     private     InventoryCitizen inventory;
 
