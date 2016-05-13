@@ -16,14 +16,14 @@ buildscript {
 }
 plugins {
     id "org.sonarqube" version "2.0.1"
-}
+} 
+
 
 sonarqube {
     properties{
         property "sonar.host.url", "http://home.kk-sc.de:9000"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectName", "Minecolonies"
-        property "sonar.branch", System.getenv()['bamboo_repository_branch_name']
     }
 }
 
