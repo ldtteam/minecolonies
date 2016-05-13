@@ -10,6 +10,9 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
       -Dsonar.github.oauth=$GITHUB_TOKEN \
       -Dsonar.host.url=$SONAR_HOST_URL \
       -Dsonar.login=$SONAR_TOKEN \
-      -Dsonar.password=$SONAR_PASS
+      -Dsonar.password=$SONAR_PASS \
+      -Dsonar.sources=src/main/java \
+      -Dsonar.java.binaries=build/classes/main \
+      -Dsonar.java.libraries=build/libs
 fi
 
