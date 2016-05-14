@@ -22,6 +22,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 
+import java.util.List;
+
 import static com.minecolonies.entity.ai.AIState.*;
 
 /**
@@ -265,6 +267,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState requestMaterials()
     {
+        //todo as soon as material handling has been implemented this should be set to work!
          if(!Configurations.builderInfiniteResources)//We need to deal with materials
          {
             //TODO thread this
@@ -338,6 +341,15 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             if(!handleMaterials(block,metadata))
             {
                 return this.getState();
+            }
+
+            if(worldBlock != Blocks.air)
+            {
+                List<ItemStack> items = BlockPosUtil.getBlockDrops(world, new BlockPos(x,y,z),0);
+                for (ItemStack item : items)
+                {
+                    InventoryUtils.setStack(worker.getInventoryCitizen(), item);
+                }
             }
         }
 
