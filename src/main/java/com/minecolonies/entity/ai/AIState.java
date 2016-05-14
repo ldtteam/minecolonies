@@ -1,7 +1,5 @@
 package com.minecolonies.entity.ai;
 
-import static com.minecolonies.client.render.RenderBipedCitizen.Model.BUILDER;
-
 /**
  * Basic state enclosing states all ai's use.
  * Please extend this class with the states your ai needs.

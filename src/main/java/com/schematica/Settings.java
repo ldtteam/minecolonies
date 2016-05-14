@@ -3,9 +3,7 @@ package com.schematica;
 import com.minecolonies.MineColonies;
 import com.schematica.client.renderer.RendererSchematicChunk;
 import com.schematica.world.SchematicWorld;
-
 import net.minecraft.client.Minecraft;
-
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.util.EnumFacing;
 import org.lwjgl.util.vector.Vector3f;

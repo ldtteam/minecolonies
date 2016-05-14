@@ -22,6 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.minecolonies.entity.ai.AIState.*;
 
@@ -34,23 +35,23 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally)
      */
-    private static final double   XP_EACH_BUILDING         = 2.5;
+    private static final double XP_EACH_BUILDING         = 2.5;
     /**
      * How many blocks the builder needs to stand safe
      */
-    private static final int      AIR_SPACE_ABOVE_TO_CHECK = 2;
+    private static final int    AIR_SPACE_ABOVE_TO_CHECK = 2;
     /**
      * How often should intelligence factor into the builders skill modifier.
      */
-    private static final int      INTELLIGENCE_MULTIPLIER  = 2;
+    private static final int    INTELLIGENCE_MULTIPLIER  = 2;
     /**
      * How often should strength factor into the builders skill modifier.
      */
-    private static final int      STRENGTH_MULTIPLIER      = 1;
+    private static final int    STRENGTH_MULTIPLIER      = 1;
     /**
      * Position where the Builders constructs from.
      */
-    private              BlockPos workFrom                 = null;
+    private BlockPos workFrom;
 
     public EntityAIWorkBuilder(JobBuilder job)
     {
@@ -348,8 +349,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
                 if (itemstack.getItem() != null
                     && block != null
-                    && block != Blocks.air
-                    && worldBlock != Blocks.bedrock
+                    && !block.equals(Blocks.air)
+                    && !Objects.equals(worldBlock, Blocks.bedrock)
                     && !(worldBlock instanceof AbstractBlockHut)
                     && !isBlockFree(block, 0))
                 {
@@ -379,8 +380,10 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                || BlockUtils.isWater(block.getDefaultState())
                || block.equals(Blocks.leaves)
                || block.equals(Blocks.leaves2)
-               || block.equals(Blocks.double_plant) && Utils.testFlag(metadata, 0x08)
-               || block instanceof BlockDoor && Utils.testFlag(metadata, 0x08)
+               || (block.equals(Blocks.double_plant)
+                   && Utils.testFlag(metadata, 0x08))
+               || (block instanceof BlockDoor
+                   && Utils.testFlag(metadata, 0x08))
                || block.equals(Blocks.grass)
                || block.equals(Blocks.dirt);
     }
@@ -391,7 +394,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             || job.getSchematic().doesSchematicBlockEqualWorldBlock()
             || (!job.getSchematic().getBlock().getMaterial().isSolid() && job.getSchematic().getBlock() != Blocks.air))
         {
-            return findNextBlockSolid();//findNextBlock count was reached and we can ignore this block
+            //findNextBlock count was reached and we can ignore this block
+            return findNextBlockSolid();
         }
 
         if (goToConstructionSite())
@@ -408,38 +412,41 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         int      y           = coordinates.getY();
         int      z           = coordinates.getZ();
 
-        Block worldBlock = world.getBlockState(coordinates).getBlock();
-
-        if (block == null)//should never happen
+        //should never happen
+        if (block == null)
         {
             BlockPos local = job.getSchematic().getLocalPosition();
             Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockSolid();
             return this.getState();
         }
-        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
-            block instanceof AbstractBlockHut)//don't overwrite huts or bedrock, nor place huts
+
+        Block worldBlock = world.getBlockState(coordinates).getBlock();
+
+        //don't overwrite huts or bedrock, nor place huts
+        if (worldBlock instanceof AbstractBlockHut
+            || worldBlock == Blocks.bedrock
+            || block instanceof AbstractBlockHut)
         {
             findNextBlockSolid();
             return this.getState();
         }
 
-        if (!Configurations.builderInfiniteResources)//We need to deal with materials if(!Configurations.builderInfiniteResources)
+        //We need to deal with materials if(!Configurations.builderInfiniteResources)
+        if (!Configurations.builderInfiniteResources
+            && !handleMaterials(block, metadata))
         {
-            if (!handleMaterials(block, metadata))
-            {
-                return this.getState();
-            }
+            return this.getState();
         }
 
-        if (block == Blocks.air)
+        if (Objects.equals(block, Blocks.air))
         {
             worker.setCurrentItemOrArmor(0, null);
 
             if (!world.setBlockToAir(coordinates))
             {
                 Log.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
-                //TODO handle - for now, just skipping
+                //todo: handle - for now, just skipping
             }
         }
         else
@@ -454,7 +461,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             else
             {
                 Log.logger.error(String.format("Block place failure %s at %d, %d, %d", block.getUnlocalizedName(), x, y, z));
-                //TODO handle - for now, just skipping
+                //todo: handle - for now, just skipping
             }
             worker.swingItem();
         }
@@ -464,9 +471,13 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState decorationStep()
     {
-        if (job.getSchematic().doesSchematicBlockEqualWorldBlock() || job.getSchematic().getBlock().getMaterial().isSolid() || job.getSchematic().getBlock() == Blocks.air)
+        if (job.getSchematic().doesSchematicBlockEqualWorldBlock()
+            || job.getSchematic().getBlock().getMaterial().isSolid()
+            || Objects.equals(job.getSchematic().getBlock(),
+                              Blocks.air))
         {
-            return findNextBlockNonSolid();//findNextBlock count was reached and we can ignore this block
+            //findNextBlock count was reached and we can ignore this block
+            return findNextBlockNonSolid();
         }
 
         if (goToConstructionSite())
@@ -493,14 +504,18 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             findNextBlockNonSolid();
             return this.getState();
         }
-        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
-            block instanceof AbstractBlockHut)//don't overwrite huts or bedrock, nor place huts
+
+        //don't overwrite huts or bedrock, nor place huts
+        if (worldBlock instanceof AbstractBlockHut
+            || Objects.equals(worldBlock, Blocks.bedrock)
+            || block instanceof AbstractBlockHut)
         {
             findNextBlockNonSolid();
             return this.getState();
         }
 
-        if (!Configurations.builderInfiniteResources)//We need to deal with materials
+        //We need to deal with materials
+        if (!Configurations.builderInfiniteResources)
         {
             if (!handleMaterials(block, metadata))
             {
@@ -602,13 +617,16 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
         if (metadata.getBlock() instanceof BlockStairs
             && world.getBlockState(pos).getBlock() instanceof BlockStairs
-            && world.getBlockState(pos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING)
-            && metadata.getBlock() == world.getBlockState(pos).getBlock())
+            && Objects.equals(world.getBlockState(pos).getValue(BlockStairs.FACING),
+                              metadata.getValue(BlockStairs.FACING))
+            && Objects.equals(metadata.getBlock(),
+                              world.getBlockState(pos).getBlock()))
         {
             return true;
         }
 
-        if (world.getBlockState(pos).getBlock() != Blocks.air)
+        if (!Objects.equals(world.getBlockState(pos).getBlock(),
+                            Blocks.air))
         {
             List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
             for (ItemStack item : items)
@@ -617,7 +635,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
         }
 
-        if (block instanceof BlockDoor && metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
+        if (block instanceof BlockDoor
+            && Objects.equals(metadata.getValue(BlockDoor.HALF),
+                              BlockDoor.EnumDoorHalf.LOWER))
         {
             ItemDoor.placeDoor(world, pos, metadata.getValue(BlockDoor.FACING), block);
         }

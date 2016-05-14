@@ -18,7 +18,6 @@ public class JobBuilder extends Job
     private static final String TAG_NAME       = "name";
     private static final String TAG_POSITION   = "position";
     private static final String TAG_PROGRESS   = "progress";
-    private static final String TAG_STAGE      = "stage";
     protected Schematic schematic;
     //TODO save some of this in building
     private   int       workOrderId;
@@ -175,16 +174,6 @@ public class JobBuilder extends Job
     public void setSchematic(Schematic schematic)
     {
         this.schematic = schematic;
-    }
-
-    /**
-     * Returns the work interval of the worker //unfinished
-     *
-     * @return work interval
-     */
-    public int getWorkInterval()
-    {
-        return 1;//Constants.BUILDERWORKINTERFALL - this.getLevel();//TODO
     }
 
     /**
