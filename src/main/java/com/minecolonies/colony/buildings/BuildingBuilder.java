@@ -11,12 +11,12 @@ import net.minecraft.util.BlockPos;
 
 public class BuildingBuilder extends BuildingWorker
 {
-    private static final String  TAG_CLEARED = "cleared";
-    private static final String  BUILDER     = "Builder";
+    private static final String TAG_CLEARED = "cleared";
+    private static final String BUILDER     = "Builder";
     /**
      * Has the building are been cleared
      */
-    private              boolean cleared     = false;
+    private boolean cleared;
 
 
     public BuildingBuilder(Colony c, BlockPos l)
