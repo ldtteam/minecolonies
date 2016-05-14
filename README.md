@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/MinecoloniesDevs/Minecolonies.svg?branch=develop)](https://travis-ci.org/MinecoloniesDevs/Minecolonies)
+
 For Users
 --
 
