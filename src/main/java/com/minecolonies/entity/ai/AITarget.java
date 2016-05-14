@@ -2,7 +2,6 @@ package com.minecolonies.entity.ai;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 
 
 /**

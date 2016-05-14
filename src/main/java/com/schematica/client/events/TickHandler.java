@@ -5,12 +5,9 @@ import com.minecolonies.util.Log;
 import com.schematica.Settings;
 import com.schematica.client.renderer.RendererSchematicChunk;
 import com.schematica.world.SchematicWorld;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.util.AxisAlignedBB;
-
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;

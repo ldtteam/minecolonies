@@ -1,9 +1,7 @@
 package com.schematica.world.schematic;
 
-import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.util.Log;
 import com.schematica.world.SchematicWorld;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
