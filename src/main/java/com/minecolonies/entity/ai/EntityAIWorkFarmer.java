@@ -4,7 +4,6 @@ import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.jobs.JobFarmer;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.InventoryUtils;
-import javafx.stage.Stage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.init.Blocks;
@@ -12,7 +11,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
