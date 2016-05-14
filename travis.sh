@@ -16,7 +16,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
 fi
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-  ./gradlew setupDecompWorkspace
+  #./gradlew setupDecompWorkspace
   ./gradlew build
   if [ -n "${GITHUB_TOKEN:-}" ]; then
     ./gradlew sonarqube --stacktrace \
