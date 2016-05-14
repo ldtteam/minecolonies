@@ -3,7 +3,11 @@ sudo: false
 install: true
 jdk: oraclejdk8
 script: ./travis.sh
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
   directories:
   - $HOME/.m2
   - .gradle
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
