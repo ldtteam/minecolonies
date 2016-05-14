@@ -57,6 +57,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 new AITarget(BUILDER_COMPLETE_BUILD, this::completeBuild)
         );
         worker.setSkillModifier(2*worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
+        worker.setCanPickUpLoot(true);
     }
 
     //todo remove pull request test code
