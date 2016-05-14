@@ -26,7 +26,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
         -Dsonar.login=$SONAR_TOKEN \
         -Dsonar.password=$SONAR_PASS \
         -Dsonar.sources=src/main/java \
-        -Dsonar.bitbucket.branchName=$TRAVIS_BRANCH \
+        -Dsonar.branch=$TRAVIS_BRANCH \
         -Dsonar.java.binaries=build/classes/main
   fi
 fi
