@@ -15,6 +15,7 @@ import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBed;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -347,15 +348,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             {
                 return this.getState();
             }
-
-            if(worldBlock != Blocks.air)
-            {
-                List<ItemStack> items = BlockPosUtil.getBlockDrops(world, new BlockPos(x,y,z),0);
-                for (ItemStack item : items)
-                {
-                    InventoryUtils.setStack(worker.getInventoryCitizen(), item);
-                }
-            }
         }
 
         if(block == Blocks.air)
@@ -529,37 +521,29 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
 
         //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
-        if(metadata.getBlock() instanceof BlockStairs && world.getBlockState(pos).getBlock() instanceof BlockStairs && world.getBlockState(pos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING))
+        if(metadata.getBlock() instanceof BlockStairs && world.getBlockState(pos).getBlock() instanceof BlockStairs && world.getBlockState(pos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING) && metadata.getBlock() == world.getBlockState(pos).getBlock())
         {
             return true;
+        }
+
+        if(world.getBlockState(pos).getBlock() != Blocks.air)
+        {
+            List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos,0);
+            for (ItemStack item : items)
+            {
+                InventoryUtils.setStack(worker.getInventoryCitizen(), item);
+            }
         }
 
         if(block instanceof BlockDoor && metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
         {
             ItemDoor.placeDoor(world, pos, metadata.getValue(BlockDoor.FACING), block);
         }
-        else if(block instanceof BlockBed /*&& !Utils.testFlag(metadata, 0x8)*/)//TODO fix beds
+        else if(block instanceof BlockBed)
         {
             world.setBlockState(pos, metadata,0x03);
             EnumFacing meta = metadata.getValue(BlockBed.FACING);
-            int xOffset = 0, zOffset = 0;
-            if(meta == EnumFacing.NORTH)
-            {
-                zOffset = 1;
-            }
-            else if(meta == EnumFacing.SOUTH)
-            {
-                xOffset = -1;
-            }
-            else if(meta == EnumFacing.WEST)
-            {
-                zOffset = -1;
-            }
-            else if(meta == EnumFacing.EAST)
-            {
-                xOffset = 1;
-            }
-            world.setBlockState(pos.add(xOffset,0,zOffset), metadata, 0x03);
+            world.setBlockState(pos.offset(meta), metadata, 0x03);
         }
         else if(block instanceof BlockDoublePlant)
         {
