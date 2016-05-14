@@ -350,11 +350,24 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Sets the block the AI is currently walking to.
      *
      * @param stand where to walk to
+     * @return true while walking to the block
      */
     protected final boolean walkToBlock(BlockPos stand)
     {
-        if (!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), DEFAULT_RANGE_FOR_DELAY))
+        return walkToBlock(stand, DEFAULT_RANGE_FOR_DELAY);
+    }
+
+    /**
+     * Sets the block the AI is currently walking to.
+     *
+     * @param stand where to walk to
+     * @return true while walking to the block
+     */
+    protected final boolean walkToBlock(BlockPos stand, int range)
+    {
+        if (!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), range))
         {
+            //only walk to the block, work=null
             workOnBlock(null, stand, 1);
             return true;
         }
