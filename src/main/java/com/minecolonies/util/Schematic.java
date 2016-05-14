@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Interface for using the Schematica codebase
@@ -463,11 +464,15 @@ public final class Schematic
 
         if(schematicWorld.getBlock(x,y,z) instanceof BlockDoor)
         {
-            return schematicWorld.getBlock(x, y, z) == BlockPosUtil.getBlock(world, pos);
+            return Objects.equals(schematicWorld.getBlock(x, y, z),
+                                  BlockPosUtil.getBlock(world, pos));
         }
         //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        return pos.getY() <= 0 || schematicWorld.getBlock(x, y, z) == BlockPosUtil.getBlock(world, pos) && schematicWorld.getBlockState(new BlockPos(x, y, z))
-                == BlockPosUtil.getBlockState(world, pos);
+        return pos.getY() <= 0
+               || Objects.equals(schematicWorld.getBlock(x, y, z),
+                                 BlockPosUtil.getBlock(world, pos))
+                  && Objects.equals(schematicWorld.getBlockState(new BlockPos(x, y, z)),
+                                    BlockPosUtil.getBlockState(world, pos));
     }
 
     public BlockPos getBlockPosition()
