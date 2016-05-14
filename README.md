@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/MinecoloniesDevs/Minecolonies.svg?branch=develop)](https://travis-ci.org/MinecoloniesDevs/Minecolonies)
-
 For Users
 --
 
@@ -12,11 +10,11 @@ IMPORTANT: Please report any issues you have, there might be some problems with 
 ####Setup Java
 The Java JDK is used to compile MineColonies
 
-1. Download and install the Java JDK 8.
-    * [Windows/Mac download link](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).  Scroll down, accept the `Oracle Binary Code License Agreement for Java SE`, and download it (if you have a 64-bit OS, please download the 64-bit version).
-	* Linux: Installation methods for certain popular flavors of Linux are listed below.  If your distribution is not listed, follow the instructions specific to your package manager or install it manually [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+1. Download and install the Java JDK.
+    * [Windows/Mac download link](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).  Scroll down, accept the `Oracle Binary Code License Agreement for Java SE`, and download it (if you have a 64-bit OS, please download the 64-bit version).
+	* Linux: Installation methods for certain popular flavors of Linux are listed below.  If your distribution is not listed, follow the instructions specific to your package manager or install it manually [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
 		* Gentoo: `emerge dev-java/oracle-jdk-bin`
-		* Archlinux: `pacman -S jdk8-openjdk`
+		* Archlinux: `pacman -S jdk7-openjdk`
 		* Ubuntu/Debian: `apt-get install openjdk-7-jdk`
 		* Fedora: `yum install java-1.7.0-openjdk`
 2. Windows: Set environment variables for the JDK.
@@ -24,7 +22,7 @@ The Java JDK is used to compile MineColonies
     * Click on `Environment Variables`.
     * Under `System Variables`, click `New`.
     * For `Variable Name`, input `JAVA_HOME`.
-    * For `Variable Value`, input something similar to `C:\Program Files\Java\jdk1.8.0_45` exactly as shown (or wherever your Java JDK installation is), and click `OK`.
+    * For `Variable Value`, input something similar to `C:\Program Files\Java\jdk1.7.0_45` exactly as shown (or wherever your Java JDK installation is), and click `OK`.
     * Scroll down to a variable named `Path`, and double-click on it.
     * Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `OK`.  Make sure the location is correct; double-check just to make sure.
 3. Open up your command line and run `javac`.  If it spews out a bunch of possible options and the usage, then you're good to go.  If not, either try the steps again.
@@ -57,8 +55,8 @@ Git is used to clone MineColonies and update your local copy.
 This section assumes that you're using the command-line version of Git.
 
 1. Open up your command line.
-2. Navigate to a place where you want to download MineColonies source (eg `C:\Github\MineColonies\`) by executing `cd [folder location]`.  This location is known as `basefolder` from now on.
-3. Execute `git clone https://github.com/MinecoloniesDevs/Minecolonies.git`.  This will download MineColonies' source into `basefolder`.
+2. Navigate to a place where you want to download MineColonies source (eg `C:\BitBucket\MineColonies\`) by executing `cd [folder location]`.  This location is known as `basefolder` from now on.
+3. Execute `git clone https://bitbucket.org/cltnschlosser/minecolonies.git`.  This will download MineColonies' source into `basefolder`.
 4. Right now, you should have a directory that looks something like:
 
 ***
@@ -102,7 +100,7 @@ So you found a bug in our code?  Think you can make it more efficient?  Want to 
 MineColonies crashes every time?  Have a suggestion?  Found a bug?  Create an issue now!
 
 1. Make sure your issue hasn't already been answered or fixed.  Also think about whether your issue is a valid one before submitting it.
-2. Go to [the issues page](http://home.kk-sc.de:4480/secure/CreateIssue!default.jspa).
+2. Go to [the issues page](https://bitbucket.org/cltnschlosser/minecolonies/issues?status=new&status=open).
 3. Click `Create Issue`
 4. Fill in the form:
     * `Title`: Short summary of your issue
@@ -122,6 +120,5 @@ For Developers
 Do not push to the main branch anymore!
 Only PR's (pull requests) are acceptable for this branch.
 
-To do this, the easiest way is to download [sourcetree](http://www.sourcetreeapp.com/) or [gitkraken](https://www.gitkraken.com/). Install it, and add a repository (either clone, or select working directory)
-Then, click on branch, and create a new one. You can push to your own branch! Make sure your branch is selected, before you push! [Example](http://gyazo.com/4b453a55a8baf59f573bb1c4636a5ca2) So it should be big black. Once you are satisfied, go to [github](https://github.com/MinecoloniesDevs/Minecolonies/compare), and create a pull request.
-
+To do this, the easiest way is to download [sourcetree](http://www.sourcetreeapp.com/). Install it, and add a repository (either clone, or select working directory)
+Then, click on branch, and create a new one. You can push to your own branch! Make sure your branch is selected, before you push! [Example](http://gyazo.com/4b453a55a8baf59f573bb1c4636a5ca2) So it should be big black. Once you are satisfied, go to [bitbucket](https://bitbucket.org/cltnschlosser/minecolonies/pull-requests), and create a pull request.
