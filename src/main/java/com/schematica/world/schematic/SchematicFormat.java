@@ -3,6 +3,7 @@ package com.schematica.world.schematic;
 import com.minecolonies.util.Log;
 import com.schematica.world.SchematicWorld;
 
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -89,9 +90,22 @@ public abstract class SchematicFormat
 
             try (DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file))))
             {
-                Method method = ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[] {
-                        "writeEntry", "a" }, String.class, NBTBase.class, DataOutput.class);
-                method.invoke(null, "Schematic", tagCompound, dataOutputStream);
+                boolean inDev = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+                Method method = null;
+                if(inDev) 
+                {
+                    method = ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[] {
+                            "writeEntry", "a" }, String.class, NBTBase.class, DataOutput.class);
+                } 
+                else 
+                {
+                    method = ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[] {
+                            "func_150298_a", "a" }, String.class, NBTBase.class, DataOutput.class);
+                }
+                if(method != null)
+                    method.invoke(null, "Schematic", tagCompound, dataOutputStream);
+                else
+                    throw new NullPointerException("Something went wrong while detecting if we are in development environment or not.");
             }
 
             return true;
