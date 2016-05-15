@@ -1,5 +1,7 @@
 #!/bin/bash
 
+./gradlew build
+
 if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   #./gradlew setupDecompWorkspace --refresh-dependencies
   #./gradlew build
@@ -17,7 +19,6 @@ fi
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   #./gradlew setupDecompWorkspace
-  ./gradlew build
   if [ -n "${GITHUB_TOKEN:-}" ]; then
     ./gradlew sonarqube --stacktrace \
         -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
@@ -30,3 +31,5 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
         -Dsonar.java.binaries=build/classes/main
   fi
 fi
+
+./dropbox.sh
