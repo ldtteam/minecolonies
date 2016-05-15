@@ -129,16 +129,10 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         loadSchematic();
 
         WorkOrderBuild workOrder = job.getWorkOrder();
-        Building       building  = job.getColony().getBuilding(workOrder.getBuildingId());
 
         //Send a chat message that we start working
         talkStartBuilding();
 
-        //Don't go through the CLEAR stage for repairs and upgrades
-        if (building.getBuildingLevel() > 0)
-        {
-            ((BuildingBuilder) getOwnBuilding()).setCleared(true);
-        }
         //start this building by initializing the current work pointer
         incrementBlock();
     }
@@ -191,7 +185,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         //put the building into place
         job.getSchematic().rotate(building.getRotation());
         job.getSchematic().setPosition(pos);
-        ((BuildingBuilder) getOwnBuilding()).setCleared(false);
+        workOrder.setCleared(false);
     }
 
     /**

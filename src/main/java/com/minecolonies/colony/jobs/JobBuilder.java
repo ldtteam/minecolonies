@@ -14,16 +14,7 @@ import net.minecraft.util.BlockPos;
 public class JobBuilder extends Job
 {
     private static final String TAG_WORK_ORDER = "workorder";
-    private static final String TAG_SCHEMATIC  = "schematic";
-    private static final String TAG_NAME       = "name";
-    private static final String TAG_POSITION   = "position";
-    private static final String TAG_PROGRESS   = "progress";
-    protected Schematic schematic;
-    //TODO save some of this in building
-    private   int       workOrderId;
-    private   String    schematicName;
-    private   BlockPos  schematicPos;
-    private   BlockPos  schematicProgress;
+    private int       workOrderId;
 
     public JobBuilder(CitizenData entity)
     {
@@ -49,15 +40,6 @@ public class JobBuilder extends Job
         if (workOrderId != 0)
         {
             compound.setInteger(TAG_WORK_ORDER, workOrderId);
-
-            if (hasSchematic())
-            {
-                NBTTagCompound schematicTag = new NBTTagCompound();
-                schematicTag.setString(TAG_NAME, schematic.getName());
-                BlockPosUtil.writeToNBT(schematicTag, TAG_POSITION, schematic.getPosition());
-                BlockPosUtil.writeToNBT(schematicTag, TAG_PROGRESS, schematic.getLocalPosition());
-                compound.setTag(TAG_SCHEMATIC, schematicTag);
-            }
         }
     }
 
@@ -70,7 +52,7 @@ public class JobBuilder extends Job
      */
     public boolean hasSchematic()
     {
-        return schematic != null;
+        return getWorkOrder().hasSchematic();
     }
 
     @Override
@@ -80,38 +62,12 @@ public class JobBuilder extends Job
         if (compound.hasKey(TAG_WORK_ORDER))
         {
             workOrderId = compound.getInteger(TAG_WORK_ORDER);
-
-            if (compound.hasKey(TAG_SCHEMATIC))
-            {
-                NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
-                schematicName = schematicTag.getString(TAG_NAME);
-                schematicPos = BlockPosUtil.readFromNBT(schematicTag, TAG_POSITION);
-                schematicProgress = BlockPosUtil.readFromNBT(schematicTag, TAG_PROGRESS);
-            }
         }
     }
 
     @Override
     public void addTasks(EntityAITasks tasks)
     {
-        if (schematicName != null)
-        {
-            try
-            {
-                schematic = new Schematic(getCitizen().getColony().getWorld(), schematicName);
-                schematic.setPosition(schematicPos);
-                schematic.setLocalPosition(schematicProgress);
-            }
-            catch (IllegalStateException e)
-            {
-                Log.logger.error("Could not create schematic!", e);
-            }
-
-            schematicName = null;
-            schematicPos = null;
-            schematicProgress = null;
-        }
-
         tasks.addTask(3, new EntityAIWorkBuilder(this));
     }
 
@@ -163,7 +119,7 @@ public class JobBuilder extends Job
      */
     public Schematic getSchematic()
     {
-        return schematic;
+        return getWorkOrder().getSchematic();
     }
 
     /**
@@ -173,7 +129,7 @@ public class JobBuilder extends Job
      */
     public void setSchematic(Schematic schematic)
     {
-        this.schematic = schematic;
+        this.getWorkOrder().setSchematic(schematic);
     }
 
     /**

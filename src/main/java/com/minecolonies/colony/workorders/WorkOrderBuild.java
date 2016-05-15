@@ -5,18 +5,28 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.Schematic;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
 public class WorkOrderBuild extends WorkOrder
 {
-    protected               BlockPos            buildingId;
-    private                 int                 upgradeLevel;
-    private                 String              upgradeName;
-
-    private static final    String              TAG_BUILDING      = "building";
-    private static final    String              TAG_UPGRADE_LEVEL = "upgradeLevel";
-    private static final    String              TAG_UPGRADE_NAME  = "upgrade";
+    private static final String TAG_BUILDING      = "building";
+    private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
+    private static final String TAG_UPGRADE_NAME  = "upgrade";
+    private static final String TAG_IS_CLEARED    = "isCleared";
+    private static final String TAG_SCHEMATIC  = "schematic";
+    private static final String TAG_NAME       = "name";
+    private static final String TAG_POSITION   = "position";
+    private static final String TAG_PROGRESS   = "progress";
+    protected     BlockPos  buildingId;
+    private       int       upgradeLevel;
+    private       String    upgradeName;
+    private       boolean   isCleared;
+    protected Schematic schematic;
+    private       String    schematicName;
+    private       BlockPos  schematicPos;
+    private       BlockPos  schematicProgress;
 
     public WorkOrderBuild()
     {
@@ -29,12 +39,38 @@ public class WorkOrderBuild extends WorkOrder
         this.buildingId = building.getID();
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
+        if (level > 0)
+        {
+            this.isCleared = true;
+        }
+    }
+
+    /**
+     * Does this workorder have a loaded Schematic?
+     * <p>
+     * if a schematic is not null there exists a location for it
+     *
+     * @return true if there is a loaded schematic for this workorder
+     */
+    public boolean hasSchematic()
+    {
+        return schematic != null;
+    }
+
+    public boolean isCleared()
+    {
+        return isCleared;
+    }
+
+    public void setCleared(final boolean cleared)
+    {
+        isCleared = cleared;
     }
 
     /**
      * Returns the ID of the building (aka ChunkCoordinates)
      *
-     * @return      ID of the building
+     * @return ID of the building
      */
     public BlockPos getBuildingId()
     {
@@ -44,7 +80,7 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * Returns the level up level of the building
      *
-     * @return      Level after upgrade
+     * @return Level after upgrade
      */
     public int getUpgradeLevel()
     {
@@ -54,7 +90,7 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * Returns the name after upgrade
      *
-     * @return      Name after yograde
+     * @return Name after yograde
      */
     public String getUpgradeName()
     {
@@ -68,6 +104,16 @@ public class WorkOrderBuild extends WorkOrder
         BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingId);
         compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
         compound.setString(TAG_UPGRADE_NAME, upgradeName);
+        compound.setBoolean(TAG_IS_CLEARED, isCleared);
+
+        if (hasSchematic())
+        {
+            NBTTagCompound schematicTag = new NBTTagCompound();
+            schematicTag.setString(TAG_NAME, schematic.getName());
+            BlockPosUtil.writeToNBT(schematicTag, TAG_POSITION, schematic.getPosition());
+            BlockPosUtil.writeToNBT(schematicTag, TAG_PROGRESS, schematic.getLocalPosition());
+            compound.setTag(TAG_SCHEMATIC, schematicTag);
+        }
     }
 
     @Override
@@ -77,6 +123,15 @@ public class WorkOrderBuild extends WorkOrder
         buildingId = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
         upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        isCleared = compound.getBoolean(TAG_IS_CLEARED);
+
+        if (compound.hasKey(TAG_SCHEMATIC))
+        {
+            NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
+            schematicName = schematicTag.getString(TAG_NAME);
+            schematicPos = BlockPosUtil.readFromNBT(schematicTag, TAG_POSITION);
+            schematicProgress = BlockPosUtil.readFromNBT(schematicTag, TAG_PROGRESS);
+        }
     }
 
     @Override
@@ -101,13 +156,32 @@ public class WorkOrderBuild extends WorkOrder
             //  - OR the WorkOrder is for the Builder's Work Building
             //  - OR the WorkOrder is for the TownHall
             if (citizen.getWorkBuilding().getBuildingLevel() > 0 ||
-                    citizen.getWorkBuilding().getID().equals(buildingId) ||
-                    (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingId)))
+                citizen.getWorkBuilding().getID().equals(buildingId) ||
+                (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingId)))
             {
                 job.setWorkOrder(this);
-                setClaimedBy(citizen);
+                this.setClaimedBy(citizen);
                 return;
             }
         }
+    }
+
+    /**
+     * return the current schematic for this buildjob
+     * @return null if none set
+     */
+    public Schematic getSchematic()
+    {
+        return schematic;
+    }
+
+    /**
+     * set a new schematic for this build job
+     * todo: make obsolete
+     * @param schematic the new schematic to use
+     */
+    public void setSchematic(final Schematic schematic)
+    {
+        this.schematic = schematic;
     }
 }
