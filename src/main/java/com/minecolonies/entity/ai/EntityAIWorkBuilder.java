@@ -108,7 +108,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
 
         //create a schematic for a build if it not exist
-        if (!job.hasSchematic())
+        if (!workOrder.hasSchematic())
         {
             initializeWorkOrderSchematic();
         }
@@ -128,8 +128,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         workFrom = null;
         loadSchematic();
 
-        WorkOrderBuild workOrder = job.getWorkOrder();
-
         //Send a chat message that we start working
         talkStartBuilding();
 
@@ -146,7 +144,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         LanguageHandler.sendPlayersLocalizedMessage(
                 EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
                 "entity.builder.messageBuildStart",
-                job.getSchematic().getName());
+                job.getWorkOrder().getSchematic().getName());
     }
 
     /**
@@ -156,7 +154,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
      */
     private boolean incrementBlock()
     {
-        return job.getSchematic().incrementBlock();
+        return job.getWorkOrder().getSchematic().incrementBlock();
     }
 
     /**
@@ -173,18 +171,18 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         //failsafe for faulty schematic files
         try
         {
-            job.setSchematic(new Schematic(world, name));
+            workOrder.setSchematic(new Schematic(world, name));
         }
         catch (IllegalStateException e)
         {
             Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
-            job.setSchematic(null);
+            job.getWorkOrder().setSchematic(null);
             return;
         }
 
         //put the building into place
-        job.getSchematic().rotate(building.getRotation());
-        job.getSchematic().setPosition(pos);
+        job.getWorkOrder().getSchematic().rotate(building.getRotation());
+        job.getWorkOrder().getSchematic().setPosition(pos);
         workOrder.setCleared(false);
     }
 
@@ -225,8 +223,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     private BlockPos getWorkingPosition()
     {
         //get length or width either is larger.
-        int          length     = job.getSchematic().getLength();
-        int          width      = job.getSchematic().getWidth();
+        int          length     = job.getWorkOrder().getSchematic().getLength();
+        int          width      = job.getWorkOrder().getSchematic().getWidth();
         int          distance   = Math.max(width, length);
         EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
 
@@ -241,7 +239,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
 
         //if necessary we can could implement calling getWorkingPosition recursively and add some "offset" to the sides.
-        return job.getSchematic().getPosition();
+        return job.getWorkOrder().getSchematic().getPosition();
     }
 
     /**
@@ -253,7 +251,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
      */
     private BlockPos getPositionInDirection(EnumFacing facing, int distance)
     {
-        return getFloor(job.getSchematic().getPosition().offset(facing, distance));
+        return getFloor(job.getWorkOrder().getSchematic().getPosition().offset(facing, distance));
     }
 
     /**
@@ -284,7 +282,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             return AIState.BUILDER_STRUCTURE_STEP;
         }
 
-        BlockPos coordinates = job.getSchematic().getBlockPosition();
+        BlockPos coordinates = job.getWorkOrder().getSchematic().getBlockPosition();
         Block    worldBlock  = world.getBlockState(coordinates).getBlock();
 
         if (!Objects.equals(worldBlock, Blocks.air)
@@ -321,9 +319,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             }
         }
 
-        if (!job.getSchematic().findNextBlockToClear())//method returns false if there is no next block (schematic finished)
+        if (!job.getWorkOrder().getSchematic().findNextBlockToClear())//method returns false if there is no next block (schematic finished)
         {
-            job.getSchematic().reset();
+            job.getWorkOrder().getSchematic().reset();
             incrementBlock();
             ((BuildingBuilder) getOwnBuilding()).setCleared(true);
             return AIState.BUILDER_REQUEST_MATERIALS;
@@ -338,18 +336,18 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         if (!Configurations.builderInfiniteResources)
         {
             //TODO thread this
-            while (job.getSchematic().findNextBlock())
+            while (job.getWorkOrder().getSchematic().findNextBlock())
             {
-                if (job.getSchematic().doesSchematicBlockEqualWorldBlock())
+                if (job.getWorkOrder().getSchematic().doesSchematicBlockEqualWorldBlock())
                 {
                     continue;
                 }
 
-                Block       block     = job.getSchematic().getBlock();
-                IBlockState metadata  = job.getSchematic().getMetadata();
+                Block       block     = job.getWorkOrder().getSchematic().getBlock();
+                IBlockState metadata  = job.getWorkOrder().getSchematic().getMetadata();
                 ItemStack   itemstack = new ItemStack(block, 1);
 
-                Block worldBlock = BlockPosUtil.getBlock(world, job.getSchematic().getBlockPosition());
+                Block worldBlock = BlockPosUtil.getBlock(world, job.getWorkOrder().getSchematic().getBlockPosition());
 
                 if (itemstack.getItem() != null
                     && block != null
@@ -360,12 +358,12 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 {
                     if (checkOrRequestItems(new ItemStack(block)))
                     {
-                        job.getSchematic().reset();
+                        job.getWorkOrder().getSchematic().reset();
                         return this.getState();
                     }
                 }
             }
-            job.getSchematic().reset();
+            job.getWorkOrder().getSchematic().reset();
             incrementBlock();
         }
         return AIState.BUILDER_STRUCTURE_STEP;
@@ -394,9 +392,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState structureStep()
     {
-        if (job.getSchematic().getBlock() == null
-            || job.getSchematic().doesSchematicBlockEqualWorldBlock()
-            || (!job.getSchematic().getBlock().getMaterial().isSolid() && job.getSchematic().getBlock() != Blocks.air))
+        if (job.getWorkOrder().getSchematic().getBlock() == null
+            || job.getWorkOrder().getSchematic().doesSchematicBlockEqualWorldBlock()
+            || (!job.getWorkOrder().getSchematic().getBlock().getMaterial().isSolid() && job.getWorkOrder().getSchematic().getBlock() != Blocks.air))
         {
             //findNextBlock count was reached and we can ignore this block
             return findNextBlockSolid();
@@ -407,11 +405,11 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             return this.getState();
         }
 
-        worker.faceBlock(job.getSchematic().getBlockPosition());
-        Block       block    = job.getSchematic().getBlock();
-        IBlockState metadata = job.getSchematic().getMetadata();
+        worker.faceBlock(job.getWorkOrder().getSchematic().getBlockPosition());
+        Block       block    = job.getWorkOrder().getSchematic().getBlock();
+        IBlockState metadata = job.getWorkOrder().getSchematic().getMetadata();
 
-        BlockPos coordinates = job.getSchematic().getBlockPosition();
+        BlockPos coordinates = job.getWorkOrder().getSchematic().getBlockPosition();
         int      x           = coordinates.getX();
         int      y           = coordinates.getY();
         int      z           = coordinates.getZ();
@@ -419,7 +417,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         //should never happen
         if (block == null)
         {
-            BlockPos local = job.getSchematic().getLocalPosition();
+            BlockPos local = job.getWorkOrder().getSchematic().getLocalPosition();
             Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockSolid();
             return this.getState();
@@ -475,9 +473,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState decorationStep()
     {
-        if (job.getSchematic().doesSchematicBlockEqualWorldBlock()
-            || job.getSchematic().getBlock().getMaterial().isSolid()
-            || Objects.equals(job.getSchematic().getBlock(),
+        if (job.getWorkOrder().getSchematic().doesSchematicBlockEqualWorldBlock()
+            || job.getWorkOrder().getSchematic().getBlock().getMaterial().isSolid()
+            || Objects.equals(job.getWorkOrder().getSchematic().getBlock(),
                               Blocks.air))
         {
             //findNextBlock count was reached and we can ignore this block
@@ -489,11 +487,11 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             return this.getState();
         }
 
-        worker.faceBlock(job.getSchematic().getBlockPosition());
-        Block       block    = job.getSchematic().getBlock();
-        IBlockState metadata = job.getSchematic().getMetadata();
+        worker.faceBlock(job.getWorkOrder().getSchematic().getBlockPosition());
+        Block       block    = job.getWorkOrder().getSchematic().getBlock();
+        IBlockState metadata = job.getWorkOrder().getSchematic().getMetadata();
 
-        BlockPos coords = job.getSchematic().getBlockPosition();
+        BlockPos coords = job.getWorkOrder().getSchematic().getBlockPosition();
         int      x      = coords.getX();
         int      y      = coords.getY();
         int      z      = coords.getZ();
@@ -503,7 +501,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         if (block == null)//should never happen
         {
-            BlockPos local = job.getSchematic().getLocalPosition();
+            BlockPos local = job.getWorkOrder().getSchematic().getLocalPosition();
             Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockNonSolid();
             return this.getState();
@@ -548,7 +546,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     {
         if (entity != null)
         {
-            BlockPos pos = job.getSchematic().getOffsetPosition();
+            BlockPos pos = job.getWorkOrder().getSchematic().getOffsetPosition();
 
             if (entity instanceof EntityHanging)
             {
@@ -595,7 +593,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
             if (stack.getItem() == null)
             {
-                stack = new ItemStack(block.getItem(job.getSchematic().getWorldForRender(), job.getSchematic().getPosition()));
+                stack = new ItemStack(block.getItem(job.getWorkOrder().getSchematic().getWorldForRender(), job.getWorkOrder().getSchematic().getPosition()));
             }
 
             if (checkOrRequestItems(stack))
@@ -676,7 +674,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         if (stack.getItem() == null)
         {
-            stack = new ItemStack(block.getItem(job.getSchematic().getWorldForRender(), job.getSchematic().getPosition()));
+            stack = new ItemStack(block.getItem(job.getWorkOrder().getSchematic().getWorldForRender(), job.getWorkOrder().getSchematic().getPosition()));
         }
 
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
@@ -690,7 +688,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private void setTileEntity(BlockPos pos)
     {
-        TileEntity tileEntity = job.getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
+        TileEntity tileEntity = job.getWorkOrder().getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
         if (tileEntity != null && world.getTileEntity(pos) != null)
         {
             world.setTileEntity(pos, tileEntity);
@@ -699,9 +697,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState findNextBlockSolid()
     {
-        if (!job.getSchematic().findNextBlockSolid())//method returns false if there is no next block (schematic finished)
+        if (!job.getWorkOrder().getSchematic().findNextBlockSolid())//method returns false if there is no next block (schematic finished)
         {
-            job.getSchematic().reset();
+            job.getWorkOrder().getSchematic().reset();
             incrementBlock();
             return AIState.BUILDER_DECORATION_STEP;
         }
@@ -710,9 +708,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState findNextBlockNonSolid()
     {
-        if (!job.getSchematic().findNextBlockNonSolid())//method returns false if there is no next block (schematic finished)
+        if (!job.getWorkOrder().getSchematic().findNextBlockNonSolid())//method returns false if there is no next block (schematic finished)
         {
-            job.getSchematic().reset();
+            job.getWorkOrder().getSchematic().reset();
             incrementBlock();
             return AIState.BUILDER_COMPLETE_BUILD;
         }
@@ -721,9 +719,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState completeBuild()
     {
-        job.getSchematic().getEntities().forEach(this::spawnEntity);
+        job.getWorkOrder().getSchematic().getEntities().forEach(this::spawnEntity);
 
-        String schematicName = job.getSchematic().getName();
+        String schematicName = job.getWorkOrder().getSchematic().getName();
         LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
                                                     "entity.builder.messageBuildComplete",
                                                     schematicName);

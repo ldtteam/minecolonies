@@ -4,12 +4,8 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
-import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.Log;
-import com.minecolonies.util.Schematic;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 
 public class JobBuilder extends Job
 {
@@ -41,18 +37,6 @@ public class JobBuilder extends Job
         {
             compound.setInteger(TAG_WORK_ORDER, workOrderId);
         }
-    }
-
-    /**
-     * Does this job have a loaded Schematic?
-     * <p>
-     * if a schematic is not null there exists a location for it
-     *
-     * @return true if there is a loaded schematic for this Job
-     */
-    public boolean hasSchematic()
-    {
-        return getWorkOrder().hasSchematic();
     }
 
     @Override
@@ -113,33 +97,13 @@ public class JobBuilder extends Job
     }
 
     /**
-     * Get the Schematic loaded by the Job
-     *
-     * @return Schematic loaded by the Job
-     */
-    public Schematic getSchematic()
-    {
-        return getWorkOrder().getSchematic();
-    }
-
-    /**
-     * Set the schematic of builder's job
-     *
-     * @param schematic {@link Schematic} object
-     */
-    public void setSchematic(Schematic schematic)
-    {
-        this.getWorkOrder().setSchematic(schematic);
-    }
-
-    /**
      * Do final completion when the Job's current work is complete
      */
     public void complete()
     {
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
-        setSchematic(null);
+        this.getWorkOrder().setSchematic(null);
     }
 
 }

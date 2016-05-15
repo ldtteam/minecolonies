@@ -15,18 +15,11 @@ public class WorkOrderBuild extends WorkOrder
     private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
     private static final String TAG_UPGRADE_NAME  = "upgrade";
     private static final String TAG_IS_CLEARED    = "isCleared";
-    private static final String TAG_SCHEMATIC  = "schematic";
-    private static final String TAG_NAME       = "name";
-    private static final String TAG_POSITION   = "position";
-    private static final String TAG_PROGRESS   = "progress";
     protected     BlockPos  buildingId;
     private       int       upgradeLevel;
     private       String    upgradeName;
     private       boolean   isCleared;
     protected Schematic schematic;
-    private       String    schematicName;
-    private       BlockPos  schematicPos;
-    private       BlockPos  schematicProgress;
 
     public WorkOrderBuild()
     {
@@ -105,15 +98,6 @@ public class WorkOrderBuild extends WorkOrder
         compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
         compound.setString(TAG_UPGRADE_NAME, upgradeName);
         compound.setBoolean(TAG_IS_CLEARED, isCleared);
-
-        if (hasSchematic())
-        {
-            NBTTagCompound schematicTag = new NBTTagCompound();
-            schematicTag.setString(TAG_NAME, schematic.getName());
-            BlockPosUtil.writeToNBT(schematicTag, TAG_POSITION, schematic.getPosition());
-            BlockPosUtil.writeToNBT(schematicTag, TAG_PROGRESS, schematic.getLocalPosition());
-            compound.setTag(TAG_SCHEMATIC, schematicTag);
-        }
     }
 
     @Override
@@ -124,14 +108,6 @@ public class WorkOrderBuild extends WorkOrder
         upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
         isCleared = compound.getBoolean(TAG_IS_CLEARED);
-
-        if (compound.hasKey(TAG_SCHEMATIC))
-        {
-            NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
-            schematicName = schematicTag.getString(TAG_NAME);
-            schematicPos = BlockPosUtil.readFromNBT(schematicTag, TAG_POSITION);
-            schematicProgress = BlockPosUtil.readFromNBT(schematicTag, TAG_PROGRESS);
-        }
     }
 
     @Override
