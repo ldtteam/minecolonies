@@ -24,7 +24,7 @@ sonarqube {
         property "sonar.host.url", "http://home.kk-sc.de:9000"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectName", "Minecolonies"
-        property "sonar.branch", System.getenv()['TRAVIS_BRANCH']
+        property "sonar.branch", System.getenv()['TRAVIS_BRANCH'] != null ? System.getenv()['TRAVIS_BRANCH'] : System.getenv()['bamboo_repository_branch_name']
     }
 }
 
