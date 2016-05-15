@@ -1,7 +1,7 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.util.BlockPosUtil;
-import net.minecraft.block.Block;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,8 +11,12 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
+
+import static net.java.games.input.Component.Identifier.Key.O;
 
 /**
  * Custom class for Trees. Used by lumberjack
@@ -21,39 +25,61 @@ public class Tree
 {
     private static final    String                          TAG_LOCATION        = "Location";
     private static final    String                          TAG_LOGS            = "Logs";
-
     private static final    int                             NUMBER_OF_LEAVES    = 3;
 
-    private BlockPos                     location;
-    private LinkedList<BlockPos> woodBlocks;
-    private                 boolean                         isTree              = false;
-
+    private BlockPos                    location;
+    private LinkedList<BlockPos>        woodBlocks;
+    private boolean                     isTree;
+    private ArrayList<BlockPos>         stumpLocations;
+    private BlockPlanks.EnumType        variant;
     private Tree()
     {
         isTree = true;
     }
 
     /**
-     *
-     * @param world
-     * @param log
+     * Creates a new tree Object for the lumberjack
+     * @param world The world where the tree is in
+     * @param log the position of the found log.
      */
     public Tree(World world, BlockPos log)
     {
         Block block = BlockPosUtil.getBlock(world, log);
         if(block.isWood(world, log))
         {
+            variant = world.getBlockState(log).getValue(BlockNewLog.VARIANT);
             location = getBaseLog(world, log);
             woodBlocks = new LinkedList<>();
-
             checkTree(world, getTopLog(world, log));
+            stumpLocations = new ArrayList<>();
         }
     }
 
+    /**
+     * Searches all logs that belong to the tree.
+     * @param world The world where the blocks are in
+     */
     public void findLogs(World world)
     {
         addAndSearch(world, location);
         Collections.sort(woodBlocks, (c1, c2) -> (int) (c1.distanceSq(location) - c2.distanceSq(location)));
+    }
+
+    /**
+     * Checks if the tree has been planted from more than 1 saplings.
+     * Meaning that more than 1 log is on the lowest level.
+     * @param world The world where the tree is in
+     * @param yLevel The base y.
+     */
+    public void fillTreeStumps(World world, int yLevel)
+    {
+        for(BlockPos pos: woodBlocks)
+        {
+            if(pos.getY() == yLevel)
+            {
+                stumpLocations.add(getBaseLog(world,pos));
+            }
+        }
     }
 
     public void addBaseLog()
@@ -196,26 +222,66 @@ public class Tree
         return pos;
     }
 
+    /**
+     * Returns the next log block
+     * @return the position
+     */
     public BlockPos pollNextLog()
     {
         return woodBlocks.poll();
     }
 
+    /**
+     * Looks up the next log block
+     * @return the position
+     */
     public BlockPos peekNextLog()
     {
         return woodBlocks.peek();
     }
 
+    /**
+     * Check if the found tree has any logs
+     * @return true if size > 0
+     */
     public boolean hasLogs()
     {
         return woodBlocks.size() > 0;
     }
 
+    /**
+     * Returns the trees location
+     * @return the position
+     */
     public BlockPos getLocation()
     {
         return location;
     }
 
+    /**
+     * All stump positions of a tree (A tree may have been planted with different saplings)
+     * @return an Arraylist of the positions
+     */
+    public ArrayList<BlockPos> getStumpLocations()
+    {
+        return stumpLocations;
+    }
+
+    /**
+     * Get's the variant of a tree.
+     * A tree may only have 1 variant.
+     * @return the EnumType variant
+     */
+    public BlockPlanks.EnumType getVariant()
+    {
+        return variant;
+    }
+
+    /**
+     * Calculates the squareDistance to another Tree
+     * @param other the other tree
+     * @return the square distance in double
+     */
     public double squareDistance(Tree other)
     {
         return this.getLocation().distanceSq(other.getLocation());

@@ -123,6 +123,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * Return to chest after half a stack
      */
     private static final int        MAX_BLOCKS_MINED          = 32;
+    /**
+     * The nOOfStumps the current Tree has.
+     */
+    private BlockPos[] stumps;
 
     /**
      * Create a new LumberjackAI
@@ -140,7 +144,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood),
                 new AITarget(LUMBERJACK_GATHERING, this::gathering),
                 new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
-                             );
+        );
         worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                 + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());    }
 
@@ -290,6 +294,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             return LUMBERJACK_GATHERING;
         }
 
+        if(job.tree.getStumpLocations().isEmpty())
+        {
+            job.tree.fillTreeStumps(world,job.tree.getLocation().getY());
+        }
         //take first log from queue
         BlockPos log = job.tree.peekNextLog();
         if (!mineBlock(log))
@@ -312,9 +320,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 
     /**
      * Plant a sapling at said location.
-     * <p>
-     * todo: make sure to get the right sapling
-     *
      * @param location the location to plant the sapling at
      * @return true if a sapling was planted
      */
@@ -324,33 +329,46 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         {
             return false;
         }
-
+        int saplingSlot=-1;
         for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
         {
             ItemStack stack = getInventory().getStackInSlot(slot);
-            if (isStackSapling(stack))
+            if (isCorrectSapling(stack))
             {
-                Block block = ((ItemBlock) stack.getItem()).getBlock();
-                worker.setHeldItem(slot);
-                if (BlockPosUtil.setBlock(world, location, block.getStateFromMeta(stack.getMetadata()), 0x02))
+                saplingSlot = slot;
+            }
+        }
+
+        if(saplingSlot != -1)
+        {
+            ItemStack stack = getInventory().getStackInSlot(saplingSlot);
+            Block block = ((ItemBlock) stack.getItem()).getBlock();
+            worker.setHeldItem(saplingSlot);
+
+            for (BlockPos pos : job.tree.getStumpLocations())
+            {
+                if (BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
                 {
                     worker.swingItem();
                     world.playSoundEffect((float) location.getX() + 0.5F,
-                                          (float) location.getY() + 0.5F,
-                                          (float) location.getZ() + 0.5F,
-                                          block.stepSound.getBreakSound(),
-                                          block.stepSound.getVolume(),
-                                          block.stepSound.getFrequency());
-                    getInventory().decrStackSize(slot, 1);
-                    setDelay(10);
-                    return true;
+                            (float) location.getY() + 0.5F,
+                            (float) location.getZ() + 0.5F,
+                            block.stepSound.getBreakSound(),
+                            block.stepSound.getVolume(),
+                            block.stepSound.getFrequency());
+                    getInventory().decrStackSize(saplingSlot, 1);
                 }
-                break;
             }
+            setDelay(10);
+            return true;
         }
         return false;
     }
 
+    private boolean isCorrectSapling(ItemStack stack)
+    {
+        return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock)stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
+    }
     /**
      * Checks if a stack is a type of sapling
      *
@@ -469,7 +487,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private void searchForItems()
     {
-       items = new ArrayList<>();
+        items = new ArrayList<>();
         List<EntityItem> list = new ArrayList<>();
         for (Object o : world.getEntitiesWithinAABB(EntityItem.class, worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)))
         {
@@ -481,9 +499,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
 
         //TODO check if sapling or apple (currently picks up all items, which may be okay)
         items = list.stream()
-                    .filter(item -> item != null && !item.isDead)
-                    .map(BlockPosUtil::fromEntity)
-                    .collect(Collectors.toList());
+                .filter(item -> item != null && !item.isDead)
+                .map(BlockPosUtil::fromEntity)
+                .collect(Collectors.toList());
     }
 
     /**
