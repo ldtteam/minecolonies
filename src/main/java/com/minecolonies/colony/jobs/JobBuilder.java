@@ -24,6 +24,7 @@ public class JobBuilder extends Job
 
     /**
      * Initialize this job
+     *
      * @param entity the citizen doing the job
      */
     public JobBuilder(CitizenData entity)
@@ -34,7 +35,7 @@ public class JobBuilder extends Job
     /**
      * Return a Localization label for the Job
      *
-     * @return          localization label String
+     * @return localization label String
      */
     @Override
     public String getName()
@@ -56,7 +57,7 @@ public class JobBuilder extends Job
     /**
      * Save the Job to an NBTTagCompound
      *
-     * @param compound  NBTTagCompound to save the Job to
+     * @param compound NBTTagCompound to save the Job to
      */
     @Override
     public void writeToNBT(NBTTagCompound compound)
@@ -71,7 +72,7 @@ public class JobBuilder extends Job
     /**
      * Restore the Job from an NBTTagCompound
      *
-     * @param compound  NBTTagCompound containing saved Job data
+     * @param compound NBTTagCompound containing saved Job data
      */
     @Override
     public void readFromNBT(NBTTagCompound compound)
@@ -86,7 +87,7 @@ public class JobBuilder extends Job
     /**
      * Override to add Job-specific AI tasks to the given EntityAITask list
      *
-     * @param tasks         EntityAITasks list to add tasks to
+     * @param tasks EntityAITasks list to add tasks to
      */
     @Override
     public void addTasks(EntityAITasks tasks)

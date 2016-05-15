@@ -29,9 +29,9 @@ public final class BlockUtils
                     (block, iBlockState) -> block.equals(Blocks.leaves2),
                     (block, iBlockState) -> block.equals(Blocks.double_plant),
                     (block, iBlockState) -> block.equals(Blocks.grass),
-                    (block, iBlockState) -> (block instanceof BlockDoor
-                                             && iBlockState != null
-                                             && iBlockState.getValue(PropertyBool.create("upper")))
+                    (block, iBlockState) -> block instanceof BlockDoor
+                                            && iBlockState != null
+                                            && iBlockState.getValue(PropertyBool.create("upper"))
 
                          );
 
