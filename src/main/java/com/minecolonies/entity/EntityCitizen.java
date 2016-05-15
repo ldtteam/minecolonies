@@ -872,7 +872,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public boolean isInventoryFull()
     {
-        return InventoryUtils.getOpenSlot(getInventoryCitizen()) == -1;
+        return InventoryUtils.isInventoryFull(getInventoryCitizen());
     }
 
     public InventoryCitizen getInventoryCitizen()
