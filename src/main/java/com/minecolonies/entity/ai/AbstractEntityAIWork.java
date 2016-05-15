@@ -552,7 +552,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private boolean isInventoryAndChestFull()
     {
-        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen()) && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
+        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen()) 
+            && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
     }
 
     /**
