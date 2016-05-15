@@ -223,6 +223,16 @@ public class InventoryUtils {
     }
 
     /**
+     * Returns if the inventory is full
+     * @param inventory the inventory
+     * @return true if the inventory is full
+     */
+    public static boolean isInventoryFull(IInventory inventory)
+    {
+        return getOpenSlot(inventory) == -1;
+    }
+
+    /**
      * returns first open slot in the inventory
      *
      * @return      slot number or -1 if none found.
