@@ -877,7 +877,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         //todo partially replace with methods in EntityCitizen
         Block curBlock = world.getBlockState(blockToMine).getBlock();
-        if (curBlock == null || curBlock == Blocks.air)
+        if (curBlock == null || BlockUtils.shouldNeverBeMessedWith(curBlock))
         {
             //no need to mine block...
             return true;
@@ -910,15 +910,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
 
         Utils.blockBreakSoundAndEffect(world, blockToMine, curBlock,
                                        curBlock.getMetaFromState(world.getBlockState(blockToMine)));
-        //Don't drop bedrock but we want to mine bedrock in some cases...
-        if (curBlock != Blocks.bedrock)
+
+        List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
+        for (ItemStack item : items)
         {
-            List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
-            for (ItemStack item : items)
-            {
-                InventoryUtils.setStack(worker.getInventoryCitizen(), item);
-            }
+            InventoryUtils.setStack(worker.getInventoryCitizen(), item);
         }
+
 
         world.setBlockToAir(blockToMine);
         worker.addExperience(0.01);

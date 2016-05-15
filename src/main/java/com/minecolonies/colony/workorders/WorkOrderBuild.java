@@ -7,6 +7,8 @@ import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.Schematic;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -242,5 +244,72 @@ public class WorkOrderBuild extends WorkOrder
     public String getSchematicName()
     {
         return this.schematicName;
+    }
+
+    /**
+     * Returns the current block we are working on in this schematic
+     *
+     * @return a BlockPos of said block
+     */
+    public BlockPos getCurrentBlockPosition()
+    {
+        return this.schematic.getBlockPosition();
+    }
+
+    /**
+     * Returns the current block we are working on in this schematic
+     *
+     * @return a BlockPos of said block
+     */
+    public Block getCurrentBlock()
+    {
+        return this.schematic.getBlock();
+    }
+
+    /**
+     * Returns the current block we are working on in this schematic
+     *
+     * @return a BlockPos of said block
+     */
+    public IBlockState getCurrentBlockMetadata()
+    {
+        return this.schematic.getMetadata();
+    }
+
+    /**
+     * move on to the next schematic block
+     *
+     * @return true if one can be found
+     */
+    public boolean findNextBlockNotEqual()
+    {
+        boolean notDone = true;
+        while (notDone)
+        {
+            if (!this.schematic.findNextBlock())
+            {
+                return false;
+            }
+            notDone = this.schematic.doesSchematicBlockEqualWorldBlock();
+        }
+        return true;
+    }
+
+    /**
+     * Checks for the next block to clear
+     * and resets the schematic once done
+     *
+     * @return false once done with clearing
+     */
+    public boolean doneWithClear()
+    {
+        //method returns false if there is no next block (schematic finished)
+        if (!this.schematic.findNextBlockToClear())
+        {
+            this.schematic.reset();
+            this.schematic.incrementBlock();
+            return true;
+        }
+        return false;
     }
 }
