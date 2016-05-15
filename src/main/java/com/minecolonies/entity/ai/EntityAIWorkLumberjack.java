@@ -107,15 +107,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private PathJobFindTree.TreePathResult pathResult;
     /**
-     * Lumberjack woodcutting experience
-     * todo: enable usage of this
-     */
-    private int woodCuttingSkill = worker.getStrength() * worker.getCharisma() * (worker.getExperienceLevel() + 1);
-    /**
      * A counter by how much the tree search radius
      * has been increased by now.
      */
     private int searchIncrement  = 0;
+    /**
+     * Return to chest after half a stack
+     */
+    private static final int        MAX_BLOCKS_MINED          = 32;
 
     /**
      * Create a new LumberjackAI
@@ -134,6 +133,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 new AITarget(LUMBERJACK_GATHERING, this::gathering),
                 new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
                              );
+        worker.setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getCharisma());
     }
 
     /**
@@ -587,6 +587,21 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             {
                 return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     * Called to check when the InventoryShouldBeDumped
+     * @return true if the conditions are met
+     */
+    @Override
+    protected boolean wantInventoryDumped()
+    {
+        if (blocksMined > MAX_BLOCKS_MINED)
+        {
+            blocksMined = 0;
+            return true;
         }
         return false;
     }
