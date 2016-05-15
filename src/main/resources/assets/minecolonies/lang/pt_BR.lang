@@ -69,6 +69,7 @@ tile.minecolonies.blockHutFisherman.name=Rancho do pescador
 tile.minecolonies.blockHutMiner.name=Mina
 tile.minecolonies.blockHutStonemason.name=Casa do pedreiro
 tile.minecolonies.blockHutTownHall.name=Prefeitura
+tile.minecolonies.substitutionBlock.name=BlocoParaPreenchimento
 
 tile.blockHut.messageNoPermission=Você não tem permissão de abrir casas em %s.
 
@@ -108,6 +109,8 @@ item.caliper.message.square=Isso é um quadrado de %d vezes %d.
 item.caliper.message.cube=Isso é um cubo de %d vezes %d vezes %d.
 
 itemGroup.minecolonies=MineColonies
+
+entity.worker.inventoryFullChestFull=Por favor crie espaço na caixa de trabalho. Não consigo esvaziar meu inventário.
 
 entity.builder.messageBuildStart=Começou a construir %s
 entity.builder.messageBuildComplete=Terminou de construir %s

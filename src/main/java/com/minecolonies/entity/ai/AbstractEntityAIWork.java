@@ -515,6 +515,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
         }
+        if(isInventoryAndChestFull())
+        {
+            chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull");
+        }
         //collect items that are nice to have if they are available
         itemsNiceToHave().forEach(this::isInHut);
         return IDLE;
@@ -543,6 +547,15 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
+     * Checks if the worker inventory and his building chest are full
+     * @return true if both are full, else false
+     */
+    private boolean isInventoryAndChestFull()
+    {
+        return InventoryUtils.getOpenSlot(worker.getInventoryCitizen()) == -1 && InventoryUtils.getOpenSlot(worker.getWorkBuilding().getTileEntity()) == -1;
+    }
+
+    /**
      * Dumps one inventory slot into the building chest.
      *
      * @param keepIt used to test it that stack should be kept
@@ -550,7 +563,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
     {
-
         return walkToBuilding()
                || InventoryFunctions.matchFirstInInventory(
                 worker.getInventoryCitizen(), (i, stack) -> {
