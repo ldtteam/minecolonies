@@ -111,7 +111,6 @@ public class JobBuilder extends Job
     {
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
-        this.getWorkOrder().setSchematic(null);
     }
 
     /**
@@ -137,6 +136,7 @@ public class JobBuilder extends Job
     public void setWorkOrder(WorkOrderBuild order)
     {
         workOrderId = (order != null) ? order.getID() : 0;
+        this.workOrder = null;
     }
 
 }

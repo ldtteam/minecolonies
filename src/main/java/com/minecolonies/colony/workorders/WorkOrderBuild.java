@@ -9,9 +9,13 @@ import com.minecolonies.util.Log;
 import com.minecolonies.util.Schematic;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class WorkOrderBuild extends WorkOrder
 {
@@ -180,27 +184,6 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * return the current schematic for this buildjob
-     *
-     * @return null if none set
-     */
-    public Schematic getSchematic()
-    {
-        return schematic;
-    }
-
-    /**
-     * set a new schematic for this build job
-     * todo: make obsolete
-     *
-     * @param schematic the new schematic to use
-     */
-    public void setSchematic(final Schematic schematic)
-    {
-        this.schematic = schematic;
-    }
-
-    /**
      * Load the schematic for this building.
      *
      * @param world the world we want to place it
@@ -277,6 +260,16 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
+     * Checks if the world and the schematicworld match at the current block.
+     *
+     * @return true if both have the same block
+     */
+    public boolean doesSchematicBlockEqualWorldBlock()
+    {
+        return schematic.doesSchematicBlockEqualWorldBlock();
+    }
+
+    /**
      * move on to the next schematic block
      *
      * @return true if one can be found
@@ -311,5 +304,80 @@ public class WorkOrderBuild extends WorkOrder
             return true;
         }
         return false;
+    }
+
+    /**
+     * reset the schematic pointer
+     */
+    public void resetSchematic()
+    {
+        this.schematic.reset();
+        this.schematic.incrementBlock();
+    }
+
+    /**
+     * Gets the current tile entity from the schematic
+     *
+     * @return a tile entity mathcing the current block
+     */
+    public TileEntity getCurrentTileEntity()
+    {
+        return this.schematic.getTileEntity();
+    }
+
+    /**
+     * returns the length of the current schematic
+     *
+     * @return int length
+     */
+    public int getLength()
+    {
+        return this.schematic.getLength();
+    }
+
+
+    /**
+     * returns the width of the current schematic
+     *
+     * @return int width
+     */
+    public int getWidth()
+    {
+        return this.schematic.getWidth();
+    }
+
+    /**
+     * find next solid block
+     *
+     * @return true as long as there are blocks left
+     */
+    public boolean findNextBlockSolid()
+    {
+        return this.schematic.findNextBlockSolid();
+    }
+
+    /**
+     * find next non solid block
+     *
+     * @return true as long as there are blocks left
+     */
+    public boolean findNextBlockNonSolid()
+    {
+        return this.schematic.findNextBlockNonSolid();
+    }
+
+    /**
+     * The position of the schematic in the world
+     *
+     * @return a BlockPos for that location
+     */
+    public BlockPos getOffsetPosition()
+    {
+        return this.schematic.getOffsetPosition();
+    }
+
+    public List<Entity> getEntities()
+    {
+        return this.schematic.getEntities();
     }
 }

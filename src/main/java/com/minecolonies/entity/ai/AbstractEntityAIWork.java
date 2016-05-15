@@ -602,7 +602,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Please stop execution on false returned.
      *
      * @param items the items needed
-     * @return true if they are in inventory
+     * @return false if they are in inventory
      */
     protected boolean checkOrRequestItems(ItemStack... items)
     {
