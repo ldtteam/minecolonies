@@ -2,6 +2,7 @@ package com.minecolonies.util;
 
 import com.minecolonies.blocks.AbstractBlockHut;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 
@@ -42,14 +43,9 @@ public final class BlockUtils
      * @param block the block to check
      * @return true if we can just place it
      */
-    public static boolean freeToPlace(Block block)
+    public static boolean freeToPlace(final Block block)
     {
-        return block.getMaterial().isLiquid()
-               || BlockUtils.isWater(block.getDefaultState())
-               || block.equals(Blocks.leaves)
-               || block.equals(Blocks.leaves2)
-               || block.equals(Blocks.double_plant)
-               || block.equals(Blocks.grass);
+        return freeToPlace(block, 0);
     }
 
     /**
@@ -62,5 +58,17 @@ public final class BlockUtils
     {
         return Objects.equals(iBlockState, Blocks.water.getDefaultState())
                || Objects.equals(iBlockState, Blocks.flowing_water.getDefaultState());
+    }
+
+    public static boolean freeToPlace(final Block block, final int metadata)
+    {
+        return block.getMaterial().isLiquid()
+               || BlockUtils.isWater(block.getDefaultState())
+               || block.equals(Blocks.leaves)
+               || block.equals(Blocks.leaves2)
+               || block.equals(Blocks.double_plant)
+               || (block instanceof BlockDoor
+                   && Utils.testFlag(metadata, 0x08))
+               || block.equals(Blocks.grass);
     }
 }

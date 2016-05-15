@@ -293,7 +293,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 if (itemstack.getItem() != null
                     && block != null
                     && !BlockUtils.shouldNeverBeMessedWith(block)
-                    && !BlockUtils.freeToPlace(block))
+                    && !BlockUtils.freeToPlace(block, 0))
                 {
                     if (checkOrRequestItems(new ItemStack(block)))
                     {
@@ -512,7 +512,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     {
         if (block != Blocks.air)//Breaking blocks doesn't require taking materials from the citizens inventory
         {
-            if (BlockUtils.freeToPlace(block))
+            if (BlockUtils.freeToPlace(block, block.getMetaFromState(metadata)))
             {
                 return true;
             }
