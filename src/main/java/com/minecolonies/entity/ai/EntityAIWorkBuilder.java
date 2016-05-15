@@ -50,15 +50,19 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     /**
      * How often should strength factor into the builders skill modifier.
      */
-    private static final int    STRENGTH_MULTIPLIER                   = 1;
+    private static final int STRENGTH_MULTIPLIER = 1;
     /**
      * The time in ticks to wait until checking for new building tasks
      */
-    private static final int    IDLE_WAIT_TIME                        = 100;
+    private static final int IDLE_WAIT_TIME      = 100;
     /**
      * The amount of blocks away from his working position until the builder will build
      */
-    private static final int    BUILDING_WALK_RANGE                   = 10;
+    private static final int BUILDING_WALK_RANGE = 10;
+    /**
+     * Flags 1 and 2 to send update to client
+     */
+    private static final int BLOCK_PLACE_FLAGS   = 0x03;
     /**
      * Position where the Builders constructs from.
      */
@@ -276,7 +280,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState requestMaterials()
     {
-        //todo as soon as material handling has been implemented this should be set to work!
         //We need to deal with materials
         if (!Configurations.builderInfiniteResources)
         {
@@ -288,12 +291,10 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 IBlockState metadata  = job.getWorkOrder().getCurrentBlockMetadata();
                 ItemStack   itemstack = new ItemStack(block, 1);
 
-                Block worldBlock = BlockPosUtil.getBlock(world, job.getWorkOrder().getSchematic().getBlockPosition());
-
                 if (itemstack.getItem() != null
                     && block != null
                     && !BlockUtils.shouldNeverBeMessedWith(block)
-                    && !BlockUtils.freeToPlace(block, 0))
+                    && !BlockUtils.freeToPlace(block, metadata))
                 {
                     if (checkOrRequestItems(new ItemStack(block)))
                     {
@@ -364,7 +365,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         //We need to deal with materials if(!Configurations.builderInfiniteResources)
         if (!Configurations.builderInfiniteResources
-            && !handleMaterials(block, metadata))
+            && !hasMaterialsToPlace(block, metadata))
         {
             return this.getState();
         }
@@ -447,7 +448,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         //We need to deal with materials
         if (!Configurations.builderInfiniteResources)
         {
-            if (!handleMaterials(block, metadata))
+            if (!hasMaterialsToPlace(block, metadata))
             {
                 return this.getState();
             }
@@ -508,29 +509,23 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
     }
 
-    private boolean handleMaterials(Block block, IBlockState metadata)
+    /**
+     * Check if the worker has materials to place this block.
+     * <p>
+     * Will request the needed materials.
+     *
+     * @param block    the block to place
+     * @param metadata the metadata attached
+     * @return true once all conditions are satisfied
+     */
+    private boolean hasMaterialsToPlace(Block block, IBlockState metadata)
     {
-        if (block != Blocks.air)//Breaking blocks doesn't require taking materials from the citizens inventory
+        if (BlockUtils.freeToPlace(block, metadata))
         {
-            if (BlockUtils.freeToPlace(block, block.getMetaFromState(metadata)))
-            {
-                return true;
-            }
-
-            ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
-
-            if (stack.getItem() == null)
-            {
-                stack = new ItemStack(block.getItem(job.getWorkOrder().getSchematic().getWorldForRender(), job.getWorkOrder().getSchematic().getPosition()));
-            }
-
-            if (checkOrRequestItems(stack))
-            {
-                return false;
-            }
+            return true;
         }
-
-        return true;
+        ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
+        return checkOrRequestItems(stack);
     }
 
     private boolean placeBlock(BlockPos pos, Block block, IBlockState metadata)
@@ -573,18 +568,18 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
         else if (block instanceof BlockBed)
         {
-            world.setBlockState(pos, metadata, 0x03);
+            world.setBlockState(pos, metadata, BLOCK_PLACE_FLAGS);
             EnumFacing meta = metadata.getValue(BlockBed.FACING);
-            world.setBlockState(pos.offset(meta), metadata, 0x03);
+            world.setBlockState(pos.offset(meta), metadata, BLOCK_PLACE_FLAGS);
         }
         else if (block instanceof BlockDoublePlant)
         {
-            world.setBlockState(pos, metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 0x03);
-            world.setBlockState(pos.up(), metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 0x03);
+            world.setBlockState(pos, metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), BLOCK_PLACE_FLAGS);
+            world.setBlockState(pos.up(), metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), BLOCK_PLACE_FLAGS);
         }
         else
         {
-            if (!world.setBlockState(pos, metadata, 0x03))
+            if (!world.setBlockState(pos, metadata, BLOCK_PLACE_FLAGS))
             {
                 return false;
             }
@@ -592,9 +587,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             {
                 if (world.getBlockState(pos) != metadata)
                 {
-                    world.setBlockState(pos, metadata, 0x03);
+                    world.setBlockState(pos, metadata, BLOCK_PLACE_FLAGS);
                 }
-                //todo do we need this? block.onPostBlockPlaced(world, x, y, z, metadata);
             }
         }
 
@@ -609,7 +603,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);
-            //Flag 1+2 is needed for updates
         }
         return true;
     }
