@@ -32,25 +32,33 @@ import static com.minecolonies.entity.ai.AIState.*;
 public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 {
     /**
+     * The localization key for start building messages
+     */
+    private static final String ENTITY_BUILDER_MESSAGE_BUILD_START    = "entity.builder.messageBuildStart";
+    /**
+     * The localization key for finish building messages
+     */
+    private static final String ENTITY_BUILDER_MESSAGE_BUILD_COMPLETE = "entity.builder.messageBuildComplete";
+    /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally)
      */
-    private static final double XP_EACH_BUILDING        = 2.5;
+    private static final double XP_EACH_BUILDING                      = 2.5;
     /**
      * How often should intelligence factor into the builders skill modifier.
      */
-    private static final int    INTELLIGENCE_MULTIPLIER = 2;
+    private static final int    INTELLIGENCE_MULTIPLIER               = 2;
     /**
      * How often should strength factor into the builders skill modifier.
      */
-    private static final int    STRENGTH_MULTIPLIER     = 1;
+    private static final int    STRENGTH_MULTIPLIER                   = 1;
     /**
      * The time in ticks to wait until checking for new building tasks
      */
-    private static final int    IDLE_WAIT_TIME          = 100;
+    private static final int    IDLE_WAIT_TIME                        = 100;
     /**
      * The amount of blocks away from his working position until the builder will build
      */
-    private static final int    BUILDING_WALK_RANGE     = 10;
+    private static final int    BUILDING_WALK_RANGE                   = 10;
     /**
      * Position where the Builders constructs from.
      */
@@ -139,20 +147,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
      */
     private void talkStartBuilding()
     {
-        LanguageHandler.sendPlayersLocalizedMessage(
-                EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
-                "entity.builder.messageBuildStart",
-                job.getWorkOrder().getSchematic().getName());
-    }
-
-    /**
-     * Increments the current working block in the schematic world.
-     *
-     * @return false if the schematic is done
-     */
-    private boolean incrementBlock()
-    {
-        return job.getWorkOrder().getSchematic().incrementBlock();
+        worker.sendLocalizedChat(ENTITY_BUILDER_MESSAGE_BUILD_START, job.getWorkOrder().getSchematicName());
     }
 
     /**
@@ -322,6 +317,16 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             incrementBlock();
         }
         return AIState.BUILDER_STRUCTURE_STEP;
+    }
+
+    /**
+     * Increments the current working block in the schematic world.
+     *
+     * @return false if the schematic is done
+     */
+    private boolean incrementBlock()
+    {
+        return job.getWorkOrder().getSchematic().incrementBlock();
     }
 
     /**
@@ -679,10 +684,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     {
         job.getWorkOrder().getSchematic().getEntities().forEach(this::spawnEntity);
 
-        String schematicName = job.getWorkOrder().getSchematic().getName();
-        LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
-                                                    "entity.builder.messageBuildComplete",
-                                                    schematicName);
+        worker.sendLocalizedChat(ENTITY_BUILDER_MESSAGE_BUILD_COMPLETE, job.getWorkOrder().getSchematicName());
 
         WorkOrderBuild wo = job.getWorkOrder();
         if (wo != null)
@@ -692,24 +694,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             {
                 building.setBuildingLevel(wo.getUpgradeLevel());
             }
-            else
-            {
-                Log.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                                               worker.getColony().getID(),
-                                               worker.getCitizenData().getId(),
-                                               wo.getBuildingId()));
-            }
-        }
-        else
-        {
-            Log.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
-                                           worker.getColony().getID(),
-                                           worker.getCitizenData().getId(),
-                                           job.getWorkOrderId()));
         }
 
         job.complete();
-        resetTask();
         worker.addExperience(XP_EACH_BUILDING);
 
         return AIState.IDLE;

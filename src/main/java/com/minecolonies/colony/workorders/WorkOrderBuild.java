@@ -13,16 +13,16 @@ import net.minecraft.world.World;
 
 public class WorkOrderBuild extends WorkOrder
 {
-    private static final String TAG_BUILDING      = "building";
-    private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
-    private static final String TAG_UPGRADE_NAME  = "upgrade";
-    private static final String TAG_IS_CLEARED    = "cleared";
-    private static final String TAG_SCHEMATIC_NAME   = "schematicName";
-    private static final String TAG_BUILDING_ROTATION    = "buildingRotation";
-    private   int       buildingRotation;
-    private   String    schematicName;
+    private static final String TAG_BUILDING          = "building";
+    private static final String TAG_UPGRADE_LEVEL     = "upgradeLevel";
+    private static final String TAG_UPGRADE_NAME      = "upgrade";
+    private static final String TAG_IS_CLEARED        = "cleared";
+    private static final String TAG_SCHEMATIC_NAME    = "schematicName";
+    private static final String TAG_BUILDING_ROTATION = "buildingRotation";
     protected BlockPos  buildingId;
     protected Schematic schematic;
+    private   int       buildingRotation;
+    private   String    schematicName;
     private   int       upgradeLevel;
     private   String    upgradeName;
     private   boolean   cleared;
@@ -44,6 +44,16 @@ public class WorkOrderBuild extends WorkOrder
         {
             this.cleared = true;
         }
+    }
+
+    /**
+     * Returns the name after upgrade
+     *
+     * @return Name after upgrade
+     */
+    private String getUpgradeName()
+    {
+        return upgradeName;
     }
 
     /**
@@ -191,8 +201,7 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * Load the schematic for this building.
      *
-     * @param world    the world we want to place it
-     *
+     * @param world the world we want to place it
      */
     public void loadSchematic(World world)
     {
@@ -226,12 +235,12 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * Returns the name after upgrade
+     * Get the name the schematic for this workorder.
      *
-     * @return Name after upgrade
+     * @return the internal string for this schematic
      */
-    private String getUpgradeName()
+    public String getSchematicName()
     {
-        return upgradeName;
+        return this.schematicName;
     }
 }
