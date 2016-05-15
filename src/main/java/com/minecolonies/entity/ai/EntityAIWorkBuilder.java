@@ -2,7 +2,6 @@ package com.minecolonies.entity.ai;
 
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
@@ -67,8 +66,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         super(job);
         super.registerTargets(
                 new AITarget(this::checkIfExecute),
-                new AITarget(IDLE, () -> START_WORKING),
-                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+                new AITarget(IDLE, () -> BUILDER_CLEAR_STEP),
                 new AITarget(BUILDER_CLEAR_STEP, this::clearStep),
                 new AITarget(BUILDER_REQUEST_MATERIALS, this::requestMaterials),
                 new AITarget(BUILDER_STRUCTURE_STEP, this::structureStep),
@@ -126,13 +124,13 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     {
 
         workFrom = null;
-        loadSchematic();
+
+        WorkOrderBuild workOrder = job.getWorkOrder();
+        //Load the appropriate schematic into the work order
+        workOrder.loadSchematic(world, worker.getColony().getBuilding(workOrder.getBuildingId()));
 
         //Send a chat message that we start working
         talkStartBuilding();
-
-        //start this building by initializing the current work pointer
-        incrementBlock();
     }
 
     /**
@@ -155,49 +153,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     private boolean incrementBlock()
     {
         return job.getWorkOrder().getSchematic().incrementBlock();
-    }
-
-    /**
-     * load a schematic from the work order and make this our current schematic world.
-     */
-    private void loadSchematic()
-    {
-        WorkOrderBuild workOrder = job.getWorkOrder();
-
-        BlockPos pos      = workOrder.getBuildingId();
-        Building building = worker.getColony().getBuilding(pos);
-        String   name     = building.getStyle() + '/' + workOrder.getUpgradeName();
-
-        //failsafe for faulty schematic files
-        try
-        {
-            workOrder.setSchematic(new Schematic(world, name));
-        }
-        catch (IllegalStateException e)
-        {
-            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
-            job.getWorkOrder().setSchematic(null);
-            return;
-        }
-
-        //put the building into place
-        job.getWorkOrder().getSchematic().rotate(building.getRotation());
-        job.getWorkOrder().getSchematic().setPosition(pos);
-        workOrder.setCleared(false);
-    }
-
-    /**
-     * Walk to own building to start clearing there.
-     *
-     * @return the current stage or CLEAR_STEP once at own building
-     */
-    private AIState startWorkingAtOwnBuilding()
-    {
-        if (walkToBuilding())
-        {
-            return getState();
-        }
-        return BUILDER_CLEAR_STEP;
     }
 
     /**
@@ -277,7 +232,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState clearStep()
     {
-        if (((BuildingBuilder) getOwnBuilding()).isCleared())
+        if (job.getWorkOrder().isCleared())
         {
             return AIState.BUILDER_STRUCTURE_STEP;
         }
@@ -323,7 +278,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         {
             job.getWorkOrder().getSchematic().reset();
             incrementBlock();
-            ((BuildingBuilder) getOwnBuilding()).setCleared(true);
+            job.getWorkOrder().setCleared(true);
             return AIState.BUILDER_REQUEST_MATERIALS;
         }
         return this.getState();
@@ -708,7 +663,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState findNextBlockNonSolid()
     {
-        if (!job.getWorkOrder().getSchematic().findNextBlockNonSolid())//method returns false if there is no next block (schematic finished)
+        //method returns false if there is no next block (schematic finished)
+        if (!job.getWorkOrder().getSchematic().findNextBlockNonSolid())
         {
             job.getWorkOrder().getSchematic().reset();
             incrementBlock();

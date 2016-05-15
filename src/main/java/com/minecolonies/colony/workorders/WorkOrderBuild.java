@@ -5,21 +5,23 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.Schematic;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 
 public class WorkOrderBuild extends WorkOrder
 {
     private static final String TAG_BUILDING      = "building";
     private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
     private static final String TAG_UPGRADE_NAME  = "upgrade";
-    private static final String TAG_IS_CLEARED    = "isCleared";
-    protected     BlockPos  buildingId;
-    private       int       upgradeLevel;
-    private       String    upgradeName;
-    private       boolean   isCleared;
+    private static final String TAG_IS_CLEARED    = "cleared";
+    protected BlockPos  buildingId;
     protected Schematic schematic;
+    private   int       upgradeLevel;
+    private   String    upgradeName;
+    private   boolean   cleared;
 
     public WorkOrderBuild()
     {
@@ -34,7 +36,7 @@ public class WorkOrderBuild extends WorkOrder
         this.upgradeName = building.getSchematicName() + level;
         if (level > 0)
         {
-            this.isCleared = true;
+            this.cleared = true;
         }
     }
 
@@ -52,22 +54,12 @@ public class WorkOrderBuild extends WorkOrder
 
     public boolean isCleared()
     {
-        return isCleared;
+        return cleared;
     }
 
     public void setCleared(final boolean cleared)
     {
-        isCleared = cleared;
-    }
-
-    /**
-     * Returns the ID of the building (aka ChunkCoordinates)
-     *
-     * @return ID of the building
-     */
-    public BlockPos getBuildingId()
-    {
-        return buildingId;
+        this.cleared = cleared;
     }
 
     /**
@@ -80,16 +72,6 @@ public class WorkOrderBuild extends WorkOrder
         return upgradeLevel;
     }
 
-    /**
-     * Returns the name after upgrade
-     *
-     * @return Name after yograde
-     */
-    public String getUpgradeName()
-    {
-        return upgradeName;
-    }
-
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
@@ -97,7 +79,7 @@ public class WorkOrderBuild extends WorkOrder
         BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingId);
         compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
         compound.setString(TAG_UPGRADE_NAME, upgradeName);
-        compound.setBoolean(TAG_IS_CLEARED, isCleared);
+        compound.setBoolean(TAG_IS_CLEARED, cleared);
     }
 
     @Override
@@ -107,7 +89,7 @@ public class WorkOrderBuild extends WorkOrder
         buildingId = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
         upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
-        isCleared = compound.getBoolean(TAG_IS_CLEARED);
+        cleared = compound.getBoolean(TAG_IS_CLEARED);
     }
 
     @Override
@@ -144,6 +126,7 @@ public class WorkOrderBuild extends WorkOrder
 
     /**
      * return the current schematic for this buildjob
+     *
      * @return null if none set
      */
     public Schematic getSchematic()
@@ -154,10 +137,54 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * set a new schematic for this build job
      * todo: make obsolete
+     *
      * @param schematic the new schematic to use
      */
     public void setSchematic(final Schematic schematic)
     {
         this.schematic = schematic;
+    }
+
+    public void loadSchematic(World world, Building building)
+    {
+        String name = building.getStyle() + '/' + this.getUpgradeName();
+
+        //failsafe for faulty schematic files
+        try
+        {
+            this.schematic = new Schematic(world, name);
+        }
+        catch (IllegalStateException e)
+        {
+            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
+            this.schematic = null;
+            return;
+        }
+
+        //put the building into place
+        this.schematic.rotate(building.getRotation());
+        this.schematic.setPosition(this.getBuildingId());
+        //start this building by initializing the current work pointer
+        this.schematic.incrementBlock();
+    }
+
+    /**
+     * Returns the ID of the building (aka ChunkCoordinates)
+     *
+     * @return ID of the building
+     */
+    public BlockPos getBuildingId()
+    {
+        return buildingId;
+    }
+
+    /**
+     * Returns the name after upgrade
+     *
+     * @return Name after yograde
+     */
+    public String getUpgradeName()
+    {
+        return upgradeName;
     }
 }
