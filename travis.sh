@@ -32,4 +32,5 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   fi
 fi
 
+chmod +x ./dropbox.sh
 ./dropbox.sh
