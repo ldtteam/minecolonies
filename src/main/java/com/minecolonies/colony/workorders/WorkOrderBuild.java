@@ -17,6 +17,10 @@ public class WorkOrderBuild extends WorkOrder
     private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
     private static final String TAG_UPGRADE_NAME  = "upgrade";
     private static final String TAG_IS_CLEARED    = "cleared";
+    private static final String TAG_SCHEMATIC_NAME   = "schematicName";
+    private static final String TAG_BUILDING_ROTATION    = "buildingRotation";
+    private   int       buildingRotation;
+    private   String    schematicName;
     protected BlockPos  buildingId;
     protected Schematic schematic;
     private   int       upgradeLevel;
@@ -34,6 +38,8 @@ public class WorkOrderBuild extends WorkOrder
         this.buildingId = building.getID();
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
+        this.schematicName = building.getStyle() + '/' + this.getUpgradeName();
+        this.buildingRotation = building.getRotation();
         if (level > 0)
         {
             this.cleared = true;
@@ -52,14 +58,23 @@ public class WorkOrderBuild extends WorkOrder
         return schematic != null;
     }
 
+    /**
+     * Tells if this workorder is cleared already.
+     * If not, we have to clear the site of water etc.
+     *
+     * @return true if cleared already
+     */
     public boolean isCleared()
     {
         return cleared;
     }
 
-    public void setCleared(final boolean cleared)
+    /**
+     * declare this workorder as cleared
+     */
+    public void setCleared()
     {
-        this.cleared = cleared;
+        this.cleared = true;
     }
 
     /**
@@ -72,6 +87,11 @@ public class WorkOrderBuild extends WorkOrder
         return upgradeLevel;
     }
 
+    /**
+     * Save the Work Order to an NBTTagCompound
+     *
+     * @param compound NBT tag compount
+     */
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
@@ -80,8 +100,15 @@ public class WorkOrderBuild extends WorkOrder
         compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
         compound.setString(TAG_UPGRADE_NAME, upgradeName);
         compound.setBoolean(TAG_IS_CLEARED, cleared);
+        compound.setString(TAG_SCHEMATIC_NAME, schematicName);
+        compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
     }
 
+    /**
+     * Read the WorkOrder data from the NBTTagCompound
+     *
+     * @param compound NBT Tag compound
+     */
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -90,14 +117,30 @@ public class WorkOrderBuild extends WorkOrder
         upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
         cleared = compound.getBoolean(TAG_IS_CLEARED);
+        schematicName = compound.getString(TAG_SCHEMATIC_NAME);
+        buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
     }
 
+    /**
+     * Is this WorkOrder still valid?  If not, it will be deleted.
+     *
+     * @param colony The colony that owns the Work Order
+     * @return True if the building for this workorder still exists
+     */
     @Override
     public boolean isValid(Colony colony)
     {
         return colony.getBuilding(buildingId) != null;
     }
 
+    /**
+     * Attempt to fulfill the Work Order.
+     * Override this with an implementation for the Work Order to find a Citizen to perform the job
+     * <p>
+     * finds the first suitable builder for this job
+     *
+     * @param colony The colony that owns the Work Order
+     */
     @Override
     public void attemptToFulfill(Colony colony)
     {
@@ -145,24 +188,28 @@ public class WorkOrderBuild extends WorkOrder
         this.schematic = schematic;
     }
 
-    public void loadSchematic(World world, Building building)
+    /**
+     * Load the schematic for this building.
+     *
+     * @param world    the world we want to place it
+     *
+     */
+    public void loadSchematic(World world)
     {
-        String name = building.getStyle() + '/' + this.getUpgradeName();
-
         //failsafe for faulty schematic files
         try
         {
-            this.schematic = new Schematic(world, name);
+            this.schematic = new Schematic(world, this.schematicName);
         }
         catch (IllegalStateException e)
         {
-            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
+            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", this.schematicName), e);
             this.schematic = null;
             return;
         }
 
         //put the building into place
-        this.schematic.rotate(building.getRotation());
+        this.schematic.rotate(this.buildingRotation);
         this.schematic.setPosition(this.getBuildingId());
         //start this building by initializing the current work pointer
         this.schematic.incrementBlock();
@@ -181,9 +228,9 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * Returns the name after upgrade
      *
-     * @return Name after yograde
+     * @return Name after upgrade
      */
-    public String getUpgradeName()
+    private String getUpgradeName()
     {
         return upgradeName;
     }

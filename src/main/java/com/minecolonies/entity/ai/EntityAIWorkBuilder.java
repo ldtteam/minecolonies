@@ -127,7 +127,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         WorkOrderBuild workOrder = job.getWorkOrder();
         //Load the appropriate schematic into the work order
-        workOrder.loadSchematic(world, worker.getColony().getBuilding(workOrder.getBuildingId()));
+        workOrder.loadSchematic(world);
 
         //Send a chat message that we start working
         talkStartBuilding();
@@ -278,7 +278,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         {
             job.getWorkOrder().getSchematic().reset();
             incrementBlock();
-            job.getWorkOrder().setCleared(true);
+            job.getWorkOrder().setCleared();
             return AIState.BUILDER_REQUEST_MATERIALS;
         }
         return this.getState();
@@ -643,7 +643,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private void setTileEntity(BlockPos pos)
     {
-        TileEntity tileEntity = job.getWorkOrder().getSchematic().getTileEntity();//TODO do we need to load TileEntities when building?
+        //TODO do we need to load TileEntities when building?
+        TileEntity tileEntity = job.getWorkOrder().getSchematic().getTileEntity();
         if (tileEntity != null && world.getTileEntity(pos) != null)
         {
             world.setTileEntity(pos, tileEntity);
@@ -652,7 +653,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
     private AIState findNextBlockSolid()
     {
-        if (!job.getWorkOrder().getSchematic().findNextBlockSolid())//method returns false if there is no next block (schematic finished)
+        //method returns false if there is no next block (schematic finished)
+        if (!job.getWorkOrder().getSchematic().findNextBlockSolid())
         {
             job.getWorkOrder().getSchematic().reset();
             incrementBlock();
