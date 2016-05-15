@@ -85,6 +85,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private static final float  RANGE_VERTICAL_PICKUP   = 15.0F;
     /**
+     * How often should strength factor into the lumberjacks skill modifier.
+     */
+    private static final int STRENGTH_MULTIPLIER = 2;
+    /**
+     * How often should charisma factor into the lumberjacks skill modifier.
+     */
+    private static final int CHARISMA_MULTIPLIER = 1;
+    /**
      * Number of ticks the lumberjack is standing still
      */
     private              int    stillTicks              = 0;
@@ -133,8 +141,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 new AITarget(LUMBERJACK_GATHERING, this::gathering),
                 new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
                              );
-        worker.setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getCharisma());
-    }
+        worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
+                + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());    }
 
     /**
      * Walk to own building to check for tools.
