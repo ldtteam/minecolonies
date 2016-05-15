@@ -77,6 +77,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                              );
         worker.setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                 + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
+        //enable vanilla mc item pickup
         worker.setCanPickUpLoot(true);
     }
 
@@ -127,20 +128,31 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         workFrom = null;
         loadSchematic();
 
-        WorkOrderBuild wo       = job.getWorkOrder();
-        Building       building = job.getColony().getBuilding(wo.getBuildingId());
+        WorkOrderBuild workOrder = job.getWorkOrder();
+        Building       building  = job.getColony().getBuilding(workOrder.getBuildingId());
 
-        LanguageHandler.sendPlayersLocalizedMessage(
-                EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
-                "entity.builder.messageBuildStart",
-                job.getSchematic().getName());
+        //Send a chat message that we start working
+        talkStartBuilding();
 
         //Don't go through the CLEAR stage for repairs and upgrades
         if (building.getBuildingLevel() > 0)
         {
             ((BuildingBuilder) getOwnBuilding()).setCleared(true);
         }
+        //start this building by initializing the current work pointer
         incrementBlock();
+    }
+
+    /**
+     * Send a chat message telling that the current building is started
+     * Will rely on having a current job
+     */
+    private void talkStartBuilding()
+    {
+        LanguageHandler.sendPlayersLocalizedMessage(
+                EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
+                "entity.builder.messageBuildStart",
+                job.getSchematic().getName());
     }
 
     /**
@@ -164,6 +176,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         Building building = worker.getColony().getBuilding(pos);
         String   name     = building.getStyle() + '/' + workOrder.getUpgradeName();
 
+        //failsafe for faulty schematic files
         try
         {
             job.setSchematic(new Schematic(world, name));
@@ -175,6 +188,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             return;
         }
 
+        //put the building into place
         job.getSchematic().rotate(building.getRotation());
         job.getSchematic().setPosition(pos);
         ((BuildingBuilder) getOwnBuilding()).setCleared(false);
