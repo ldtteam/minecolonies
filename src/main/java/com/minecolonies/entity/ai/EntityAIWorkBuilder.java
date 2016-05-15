@@ -44,9 +44,9 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
      */
     private static final double XP_EACH_BUILDING                      = 2.5;
     /**
-     * How often should intelligence factor into the builders skill modifier.
+     * How often should dexterity factor into the builders skill modifier.
      */
-    private static final int    INTELLIGENCE_MULTIPLIER               = 2;
+    private static final int    DEXTERITY_MULTIPLIER                  = 2;
     /**
      * How often should strength factor into the builders skill modifier.
      */
@@ -81,7 +81,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 new AITarget(BUILDER_DECORATION_STEP, this::decorationStep),
                 new AITarget(BUILDER_COMPLETE_BUILD, this::completeBuild)
                              );
-        worker.setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
+        worker.setSkillModifier(DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity()
                                 + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         //enable vanilla mc item pickup
         worker.setCanPickUpLoot(true);
