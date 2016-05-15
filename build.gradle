@@ -45,7 +45,8 @@ configFile.withReader {
 }
 
 group = "com.minecolonies"
-version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.minecolonies_build}"
+buildnumber = System.getenv()['TRAVIS_BUILD_NUMBER'] != null ? System.getenv()['TRAVIS_BUILD_NUMBER'] : "${config.minecolonies_build}"
+version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${buildnumber}"
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
