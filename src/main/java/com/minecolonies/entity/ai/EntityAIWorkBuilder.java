@@ -119,7 +119,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         //cleanup dead jobs
         if (workOrder == null
-            || job.getColony().getBuilding(workOrder.getBuildingId())) == null
+            || job.getColony().getBuilding(workOrder.getBuildingId()) == null)
         {
             job.complete();
             return this.getState();
@@ -191,6 +191,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
      * Calculates the working position. Takes a min distance from width and length.
      * Then finds the floor level at that distance and then check if it does contain two air levels.
      *
+     * @param offset the extra distance to apply away from the building
      * @return BlockPos position to work from.
      */
     private BlockPos getWorkingPosition(int offset)
