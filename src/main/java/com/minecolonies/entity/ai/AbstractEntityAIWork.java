@@ -31,16 +31,16 @@ import static com.minecolonies.entity.ai.AIState.*;
  */
 public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkeleton<J>
 {
-    private static final int             DEFAULT_RANGE_FOR_DELAY = 3;
-    private static final int             DELAY_RECHECK           = 10;
-    private static final int             DELAY_MODIFIER          = 50;
-    protected static     Random          itemRand                = new Random();
-    private              boolean         needsShovel             = false;
-    private              boolean         needsAxe                = false;
-    private              boolean         needsHoe                = false;
-    private              boolean         needsPickaxe            = false;
-    private              int             needsPickaxeLevel       = -1;
-    private              int             blocksMined             = 0;
+    private static final int    DEFAULT_RANGE_FOR_DELAY = 3;
+    private static final int    DELAY_RECHECK           = 10;
+    private static final int    DELAY_MODIFIER          = 50;
+    protected static     Random itemRand                = new Random();
+    private boolean needsShovel;
+    private boolean needsAxe;
+    private boolean needsHoe;
+    private boolean needsPickaxe;
+    private int needsPickaxeLevel = -1;
+    private int blocksMined;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -50,7 +50,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * <p>
      * Will be cleared on restart, be aware!
      */
-    private              List<ItemStack> itemsCurrentlyNeeded    = new ArrayList<>();
+    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -58,17 +58,17 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * <p>
      * Will be cleared on restart, be aware!
      */
-    private              List<ItemStack> itemsNeeded             = new ArrayList<>();
-    private              BlockPos        currentWorkingLocation  = null;
+    private List<ItemStack> itemsNeeded          = new ArrayList<>();
+    private BlockPos currentWorkingLocation;
     /**
      * The time in ticks until the next action is made
      */
-    private              int             delay                   = 0;
-    private              BlockPos        currentStandingLocation = null;
+    private int      delay;
+    private BlockPos currentStandingLocation;
     /**
      * If we have waited one delay
      */
-    private              boolean         hasDelayed              = false;
+    private boolean  hasDelayed;
 
 
     /**
@@ -572,7 +572,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         return walkToBuilding()
                || InventoryFunctions.matchFirstInInventory(
                 worker.getInventoryCitizen(), (i, stack) -> {
-                    if (stack == null || keepIt.test(stack)){ return false; }
+                    if (stack == null || keepIt.test(stack))
+                    {
+                        return false;
+                    }
                     ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
                     if (returnStack == null)
                     {

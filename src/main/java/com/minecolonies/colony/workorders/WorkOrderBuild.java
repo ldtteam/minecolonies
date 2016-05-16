@@ -17,6 +17,10 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
+/**
+ * Represents one building order to complete.
+ * Has his onw schematic for the building.
+ */
 public class WorkOrderBuild extends WorkOrder
 {
     private static final String TAG_BUILDING          = "building";
@@ -33,11 +37,20 @@ public class WorkOrderBuild extends WorkOrder
     private   String    upgradeName;
     private   boolean   cleared;
 
+    /**
+     * unused constructor for reflection
+     */
     public WorkOrderBuild()
     {
         super();
     }
 
+    /**
+     * create a new WorkOrder
+     *
+     * @param building the building to build
+     * @param level    the level it should have
+     */
     public WorkOrderBuild(Building building, int level)
     {
         super();
@@ -374,6 +387,11 @@ public class WorkOrderBuild extends WorkOrder
         return this.schematic.getOffsetPosition();
     }
 
+    /**
+     * Get all entities in the current schematic
+     *
+     * @return a list of entities
+     */
     public List<Entity> getEntities()
     {
         return this.schematic.getEntities();
