@@ -530,7 +530,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
         }
-        if(isInventoryAndChestFull())
+        if (isInventoryAndChestFull())
         {
             chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull");
         }
@@ -562,16 +562,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
-     * Checks if the worker inventory and his building chest are full
-     * @return true if both are full, else false
-     */
-    private boolean isInventoryAndChestFull()
-    {
-        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen()) 
-            && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
-    }
-
-    /**
      * Dumps one inventory slot into the building chest.
      *
      * @param keepIt used to test it that stack should be kept
@@ -594,6 +584,17 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                     // into a full inventory.
                     return stack.stackSize != returnStack.stackSize;
                 });
+    }
+
+    /**
+     * Checks if the worker inventory and his building chest are full
+     *
+     * @return true if both are full, else false
+     */
+    private boolean isInventoryAndChestFull()
+    {
+        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
+               && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
     }
 
     /**
@@ -896,7 +897,8 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             return true;
         }
 
-        if(BlockUtils.shouldNeverBeMessedWith(curBlock)){
+        if (BlockUtils.shouldNeverBeMessedWith(curBlock))
+        {
             Log.logger.warn("Trying to mine block " + curBlock + " which is not allowed!");
             //This will endlessly loop... If this warning comes up, check your blocks first...
             return false;
