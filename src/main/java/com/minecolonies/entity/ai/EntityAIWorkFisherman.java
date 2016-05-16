@@ -36,11 +36,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
      * The delay is calculated using the CHANCE anf fishingSkill variables. A higher FISHING_DELAY will lead
      * to a longer delay.
      */
-    private static final int    FISHING_DELAY         = 500;
+    private static final int    FISHING_DELAY         = 300;
     /**
      * The chance the fisherman has to throw his rod. Directly connected with delay.
      */
-    private static final int    CHANCE                = 2;
+    private static final int    CHANCE                = 3;
     /**
      * The minimum distance in blocks to the water which is required for the fisherman to throw his rod.
      */
