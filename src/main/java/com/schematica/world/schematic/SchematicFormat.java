@@ -88,8 +88,8 @@ public abstract class SchematicFormat
 
             try (DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file))))
             {
-                Method method = ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[] {
-                        "writeEntry", "a" }, String.class, NBTBase.class, DataOutput.class);
+                Method method =  ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[] 
+                        {"writeEntry", "func_150298_a" }, String.class, NBTBase.class, DataOutput.class);
                 method.invoke(null, "Schematic", tagCompound, dataOutputStream);
             }
 

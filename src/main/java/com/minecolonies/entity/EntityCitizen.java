@@ -872,7 +872,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public boolean isInventoryFull()
     {
-        return InventoryUtils.getOpenSlot(getInventoryCitizen()) == -1;
+        return InventoryUtils.isInventoryFull(getInventoryCitizen());
     }
 
     public InventoryCitizen getInventoryCitizen()
@@ -1123,7 +1123,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         sendChat(LanguageHandler.format(key, args));
     }
 
-    public void sendChat(String msg)
+    private void sendChat(String msg)
     {
         if (msg == null || msg.length() == 0 || statusMessages.containsKey(msg))
         {
@@ -1132,8 +1132,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         statusMessages.put(msg, ticksExisted);
 
-        LanguageHandler.sendPlayersMessage(EntityUtils.getPlayersFromUUID(worldObj, getColony().getPermissions().getMessagePlayers()),
-                                           LanguageHandler.format(this.getColonyJob().getName()) + " " + this.getCustomNameTag() + ": " + msg);
+        LanguageHandler.sendPlayersMessage(
+                EntityUtils.getPlayersFromUUID(worldObj, getColony().getPermissions().getMessagePlayers()),
+                LanguageHandler.format(this.getColonyJob().getName()) + " " + this.getCustomNameTag() + ": " + msg);
     }
 
     /**

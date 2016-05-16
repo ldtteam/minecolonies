@@ -497,14 +497,17 @@ public final class Schematic
         do
         {
             count++;
-            if (!decrementBlock())
+            if (!incrementBlock())
             {
                 return false;
             }
 
         }
         //Check for air blocks and if blocks below the hut are different from the schematicWorld
-        while ((worldBlockAir() || (y <= getOffset().getY() && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((worldBlockAir()
+                || (y <= getOffset().getY()
+                    && doesSchematicBlockEqualWorldBlock()))
+               && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -522,7 +525,9 @@ public final class Schematic
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || (!schematicWorld.getBlock(x, y, z).getMaterial().isSolid() && !schematicWorld.isAirBlock(new BlockPos(x, y, z))))
+        while ((doesSchematicBlockEqualWorldBlock()
+                || (!schematicWorld.getBlock(x, y, z).getMaterial().isSolid()
+                    && !schematicWorld.isAirBlock(new BlockPos(x, y, z))))
                && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
@@ -541,7 +546,10 @@ public final class Schematic
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || (schematicWorld.getBlock(x, y, z).getMaterial().isSolid() || schematicWorld.isAirBlock(new BlockPos(x, y, z))))
+        while ((doesSchematicBlockEqualWorldBlock()
+                || (schematicWorld.getBlock(x, y, z).getMaterial().isSolid()
+                    || schematicWorld.isAirBlock(new BlockPos(x, y, z))
+                ))
                && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
