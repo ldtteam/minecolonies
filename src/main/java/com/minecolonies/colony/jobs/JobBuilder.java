@@ -7,6 +7,12 @@ import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 
+/**
+ * The Job a builder has.
+ *
+ * Manages his current workorder
+ * and persists between restarts
+ */
 public class JobBuilder extends Job
 {
     /**
