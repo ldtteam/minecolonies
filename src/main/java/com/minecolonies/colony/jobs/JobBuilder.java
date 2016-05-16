@@ -4,44 +4,61 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
-import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.Log;
-import com.minecolonies.util.Schematic;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 
 public class JobBuilder extends Job
 {
+    /**
+     * NBT Tag for workOrderId
+     */
     private static final String TAG_WORK_ORDER = "workorder";
-    private static final String TAG_SCHEMATIC  = "schematic";
-    private static final String TAG_NAME       = "name";
-    private static final String TAG_POSITION   = "position";
-    private static final String TAG_PROGRESS   = "progress";
-    protected Schematic schematic;
-    //TODO save some of this in building
-    private   int       workOrderId;
-    private   String    schematicName;
-    private   BlockPos  schematicPos;
-    private   BlockPos  schematicProgress;
+    /**
+     * the id of the workorder currently working on
+     */
+    private int            workOrderId;
+    /**
+     * Cache for workOrder queries
+     */
+    private WorkOrderBuild workOrder;
 
+    /**
+     * Initialize this job
+     *
+     * @param entity the citizen doing the job
+     */
     public JobBuilder(CitizenData entity)
     {
         super(entity);
     }
 
+    /**
+     * Return a Localization label for the Job
+     *
+     * @return localization label String
+     */
     @Override
     public String getName()
     {
         return "com.minecolonies.job.Builder";
     }
 
+    /**
+     * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
+     *
+     * @return Model of the citizen
+     */
     @Override
     public RenderBipedCitizen.Model getModel()
     {
         return RenderBipedCitizen.Model.BUILDER;
     }
 
+    /**
+     * Save the Job to an NBTTagCompound
+     *
+     * @param compound NBTTagCompound to save the Job to
+     */
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
@@ -49,30 +66,14 @@ public class JobBuilder extends Job
         if (workOrderId != 0)
         {
             compound.setInteger(TAG_WORK_ORDER, workOrderId);
-
-            if (hasSchematic())
-            {
-                NBTTagCompound schematicTag = new NBTTagCompound();
-                schematicTag.setString(TAG_NAME, schematic.getName());
-                BlockPosUtil.writeToNBT(schematicTag, TAG_POSITION, schematic.getPosition());
-                BlockPosUtil.writeToNBT(schematicTag, TAG_PROGRESS, schematic.getLocalPosition());
-                compound.setTag(TAG_SCHEMATIC, schematicTag);
-            }
         }
     }
 
     /**
-     * Does this job have a loaded Schematic?
-     * <p>
-     * if a schematic is not null there exists a location for it
+     * Restore the Job from an NBTTagCompound
      *
-     * @return true if there is a loaded schematic for this Job
+     * @param compound NBTTagCompound containing saved Job data
      */
-    public boolean hasSchematic()
-    {
-        return schematic != null;
-    }
-
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -80,70 +81,18 @@ public class JobBuilder extends Job
         if (compound.hasKey(TAG_WORK_ORDER))
         {
             workOrderId = compound.getInteger(TAG_WORK_ORDER);
-
-            if (compound.hasKey(TAG_SCHEMATIC))
-            {
-                NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
-                schematicName = schematicTag.getString(TAG_NAME);
-                schematicPos = BlockPosUtil.readFromNBT(schematicTag, TAG_POSITION);
-                schematicProgress = BlockPosUtil.readFromNBT(schematicTag, TAG_PROGRESS);
-            }
         }
     }
 
+    /**
+     * Override to add Job-specific AI tasks to the given EntityAITask list
+     *
+     * @param tasks EntityAITasks list to add tasks to
+     */
     @Override
     public void addTasks(EntityAITasks tasks)
     {
-        if (schematicName != null)
-        {
-            try
-            {
-                schematic = new Schematic(getCitizen().getColony().getWorld(), schematicName);
-                schematic.setPosition(schematicPos);
-                schematic.setLocalPosition(schematicProgress);
-            }
-            catch (IllegalStateException e)
-            {
-                Log.logger.error("Could not create schematic!", e);
-            }
-
-            schematicName = null;
-            schematicPos = null;
-            schematicProgress = null;
-        }
-
         tasks.addTask(3, new EntityAIWorkBuilder(this));
-    }
-
-    /**
-     * Get the Work Order ID for this Job
-     *
-     * @return UUID of the Work Order claimed by this Job, or null
-     */
-    public int getWorkOrderId()
-    {
-        return workOrderId;
-    }
-
-    /**
-     * Get the Work Order for the Job
-     * Warning: WorkOrder is not cached
-     *
-     * @return WorkOrderBuild for the Build
-     */
-    public WorkOrderBuild getWorkOrder()
-    {
-        return getColony().getWorkManager().getWorkOrder(workOrderId, WorkOrderBuild.class);
-    }
-
-    /**
-     * Set a Work Order for this Job
-     *
-     * @param order Work Order to associate with this job, or null
-     */
-    public void setWorkOrder(WorkOrderBuild order)
-    {
-        workOrderId = (order != null) ? order.getID() : 0;
     }
 
     /**
@@ -157,33 +106,38 @@ public class JobBuilder extends Job
     }
 
     /**
-     * Get the Schematic loaded by the Job
-     *
-     * @return Schematic loaded by the Job
-     */
-    public Schematic getSchematic()
-    {
-        return schematic;
-    }
-
-    /**
-     * Set the schematic of builder's job
-     *
-     * @param schematic {@link Schematic} object
-     */
-    public void setSchematic(Schematic schematic)
-    {
-        this.schematic = schematic;
-    }
-
-    /**
      * Do final completion when the Job's current work is complete
      */
     public void complete()
     {
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
-        setSchematic(null);
+    }
+
+    /**
+     * Get the Work Order for the Job
+     * Warning: WorkOrder is not cached
+     *
+     * @return WorkOrderBuild for the Build
+     */
+    public WorkOrderBuild getWorkOrder()
+    {
+        if (this.workOrder == null)
+        {
+            this.workOrder = getColony().getWorkManager().getWorkOrder(workOrderId, WorkOrderBuild.class);
+        }
+        return workOrder;
+    }
+
+    /**
+     * Set a Work Order for this Job
+     *
+     * @param order Work Order to associate with this job, or null
+     */
+    public void setWorkOrder(WorkOrderBuild order)
+    {
+        workOrderId = (order != null) ? order.getID() : 0;
+        this.workOrder = null;
     }
 
 }
