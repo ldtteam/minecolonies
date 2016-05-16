@@ -637,9 +637,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
     @Override
     protected boolean wantInventoryDumped()
     {
-        if (blocksMined > MAX_BLOCKS_MINED)
+        if (getBlocksMined() > MAX_BLOCKS_MINED)
         {
-            blocksMined = 0;
+            clearBlocksMined();
             return true;
         }
         return false;
