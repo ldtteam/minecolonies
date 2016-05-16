@@ -118,8 +118,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         WorkOrderBuild workOrder = job.getWorkOrder();
 
         //cleanup dead jobs
-        if (null == workOrder
-            || null == job.getColony().getBuilding(workOrder.getBuildingId()))
+        if (workOrder == null
+            || job.getColony().getBuilding(workOrder.getBuildingId())) == null
         {
             job.complete();
             return this.getState();
