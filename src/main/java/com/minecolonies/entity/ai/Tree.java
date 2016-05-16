@@ -14,24 +14,50 @@ import net.minecraftforge.common.util.Constants;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
-
-import static net.java.games.input.Component.Identifier.Key.O;
 
 /**
  * Custom class for Trees. Used by lumberjack
  */
 public class Tree
 {
+    /**
+     * Tag to save the location to nbt
+     */
     private static final    String                          TAG_LOCATION        = "Location";
+    /**
+     * Tag to save the log list to nbt
+     */
     private static final    String                          TAG_LOGS            = "Logs";
+    /**
+     * Number of leaves necessary for a tree to be recognized
+     */
     private static final    int                             NUMBER_OF_LEAVES    = 3;
 
+    /**
+     * The location of the tree stump
+     */
     private BlockPos                    location;
+    /**
+     * All wood blocks connected to the tree
+     */
     private LinkedList<BlockPos>        woodBlocks;
+    /**
+     * Is the tree a tree?
+     */
     private boolean                     isTree;
+    /**
+     * The locations of the stumps (Some trees are connected to dirt by 4 logs)
+     */
     private ArrayList<BlockPos>         stumpLocations;
+    /**
+     * The wood variant (Oak, jungle, dark oak...)
+     */
     private BlockPlanks.EnumType        variant;
+
+    /**
+     * Private constructor of the tree.
+     * Used by the equals and createFromNBt method.
+     */
     private Tree()
     {
         isTree = true;
@@ -82,11 +108,19 @@ public class Tree
         }
     }
 
+    /**
+     * Adds the baseLog of the tree
+     */
     public void addBaseLog()
     {
         woodBlocks.add(new BlockPos(location));
     }
 
+    /**
+     * Adds a log and searches for further logs(Breadth first search)
+     * @param world The world the log is in
+     * @param log the log to add
+     */
     private void addAndSearch(World world, BlockPos log)
     {
         woodBlocks.add(log);
@@ -106,11 +140,11 @@ public class Tree
         }
     }
 
-    public boolean isTree()
-    {
-        return isTree;
-    }
-
+    /**
+     * Checks if the found log is part of a tree
+     * @param world The world the tree is in
+     * @param topLog The most upper log of the tree
+     */
     private void checkTree(World world, BlockPos topLog)
     {
         if(!world.getBlockState(new BlockPos(location.getX(), location.getY()-1, location.getZ())).getBlock().getMaterial().isSolid())
@@ -287,6 +321,11 @@ public class Tree
         return this.getLocation().distanceSq(other.getLocation());
     }
 
+    /**
+     * Overridden equals method checks if the location of the both trees are equal.
+     * @param o the object to compare
+     * @return true if equal or false if not
+     */
     @Override
     public boolean equals(Object o)
     {
@@ -298,12 +337,20 @@ public class Tree
         return false;
     }
 
+    /**
+     * Needed for the equals method.
+     * @return the hash code of the location
+     */
     @Override
     public int hashCode()
     {
         return location.hashCode();
     }
 
+    /**
+     * Writes the tree Object to NBT
+     * @param compound the compound of the tree
+     */
     public void writeToNBT(NBTTagCompound compound)
     {
         if(!isTree)
@@ -321,6 +368,11 @@ public class Tree
         compound.setTag(TAG_LOGS, logs);
     }
 
+    /**
+     * Reads the tree object from NBT
+     * @param compound the compound of the tree
+     * @return a new tree object
+     */
     public static Tree readFromNBT(NBTTagCompound compound)
     {
         Tree tree = new Tree();

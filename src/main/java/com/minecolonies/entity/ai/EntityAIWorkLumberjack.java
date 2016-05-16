@@ -146,7 +146,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
         );
         worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
-                + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());    }
+                + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
+    }
 
     /**
      * Walk to own building to check for tools.
