@@ -34,43 +34,53 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     /**
      * The localization key for start building messages
      */
-    private static final String ENTITY_BUILDER_MESSAGE_BUILD_START    = "entity.builder.messageBuildStart";
+    private static final String ENTITY_BUILDER_MESSAGE_BUILD_START = "entity.builder.messageBuildStart";
+
     /**
      * The localization key for finish building messages
      */
     private static final String ENTITY_BUILDER_MESSAGE_BUILD_COMPLETE = "entity.builder.messageBuildComplete";
+
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally)
      */
-    private static final double XP_EACH_BUILDING                      = 2.5;
+    private static final double XP_EACH_BUILDING = 2.5;
+
     /**
      * How often should dexterity factor into the builders skill modifier.
      */
-    private static final int    DEXTERITY_MULTIPLIER                  = 2;
+    private static final int DEXTERITY_MULTIPLIER = 2;
+
     /**
      * How often should strength factor into the builders skill modifier.
      */
-    private static final int    STRENGTH_MULTIPLIER                   = 1;
+    private static final int STRENGTH_MULTIPLIER = 1;
+
     /**
      * The time in ticks to wait until checking for new building tasks
      */
-    private static final int    IDLE_WAIT_TIME                        = 100;
+    private static final int IDLE_WAIT_TIME = 100;
+
     /**
      * The amount of blocks away from his working position until the builder will build
      */
-    private static final int    BUILDING_WALK_RANGE                   = 10;
+    private static final int BUILDING_WALK_RANGE = 10;
+
     /**
      * Flags 1 and 2 to send update to client
      */
-    private static final int    BLOCK_PLACE_FLAGS                     = 0x03;
+    private static final int BLOCK_PLACE_FLAGS = 0x03;
+
     /**
      * The minimum range to keep from the current building place
      */
-    private static final int    MIN_ADDITIONAL_RANGE_TO_BUILD         = 3;
+    private static final int MIN_ADDITIONAL_RANGE_TO_BUILD = 3;
+
     /**
      * The maximum range to keep from the current building place
      */
-    private static final int    MAX_ADDITIONAL_RANGE_TO_BUILD         = 25;
+    private static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
+    
     /**
      * Position where the Builders constructs from.
      */
@@ -102,7 +112,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     /**
      * Performs some cleanup to ensure that the builder always is in a good state.
      *
-     * @return false if all is good to go
+     * @return null if all is good to go
      */
     private AIState checkIfExecute()
     {
