@@ -13,6 +13,7 @@ import net.minecraft.util.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.entity.ai.AIState.*;
@@ -62,6 +63,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * Is used to collect falling saplings from the ground.
      */
     private static final int    WAIT_BEFORE_SAPLING     = 50;
+    /**
+     * Time in ticks to wait before placing a sapling.
+     * Is used to collect falling saplings from the ground.
+     */
+    private static final int    MAX_WAITING_TIME     = 500;
+    /**
+     * The time in ticks the lumberjack has waited already.
+     * Directly connected with the MAX_WAITING_TIME.
+     */
+    private int timeWaited = 0;
     /**
      * Time in ticks to wait before rechecking
      * if there are trees in the
@@ -123,10 +134,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * Return to chest after half a stack
      */
     private static final int        MAX_BLOCKS_MINED          = 32;
-    /**
-     * The numberOfStumps the current Tree has.
-     */
-    private BlockPos[] stumps;
 
     /**
      * Create a new LumberjackAI
@@ -289,6 +296,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
+                timeWaited += WAIT_BEFORE_SAPLING;
                 return state;
             }
             plantSapling();
@@ -352,7 +360,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 BlockPos pos = job.tree.getStumpLocations().get(0);
 
                 if ((BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
-                        || world.getBlockState(pos) == block.getStateFromMeta(stack.getMetadata()))
+                        || Objects.equals(world.getBlockState(pos),block.getStateFromMeta(stack.getMetadata())))
                 {
                     worker.swingItem();
                     world.playSoundEffect((float) location.getX() + 0.5F,
@@ -370,8 +378,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 }
             }
         }
-        if(job.tree.getStumpLocations().isEmpty())
+        if(job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
         {
+            timeWaited = 0;
             setDelay(10);
             return true;
         }

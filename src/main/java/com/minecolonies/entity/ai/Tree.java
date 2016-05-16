@@ -14,6 +14,7 @@ import net.minecraftforge.common.util.Constants;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Custom class for Trees. Used by lumberjack
@@ -296,9 +297,9 @@ public class Tree
      * All stump positions of a tree (A tree may have been planted with different saplings)
      * @return an Arraylist of the positions
      */
-    public ArrayList<BlockPos> getStumpLocations()
+    public List<BlockPos> getStumpLocations()
     {
-        return stumpLocations;
+        return new ArrayList<>(stumpLocations);
     }
 
     /**
