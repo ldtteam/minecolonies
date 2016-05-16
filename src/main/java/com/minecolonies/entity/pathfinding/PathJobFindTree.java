@@ -46,7 +46,7 @@ public class PathJobFindTree extends PathJob
         int dz = pos.getZ() - hutLocation.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker - halved
-        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.501D ;
+        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.951D ;
     }
 
     @Override
