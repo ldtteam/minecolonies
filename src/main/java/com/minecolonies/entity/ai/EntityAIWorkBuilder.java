@@ -8,6 +8,7 @@ import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.EntityUtils;
 import com.minecolonies.util.InventoryUtils;
+import jline.internal.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -255,8 +256,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
             worker.faceBlock(coordinates);
             //We need to deal with materials
-            if (Configurations.builderInfiniteResources
-                || BlockUtils.freeToPlace(worldBlock))
+            if (Configurations.builderInfiniteResources)
             {
                 worker.setCurrentItemOrArmor(0, null);
 
@@ -273,7 +273,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
 
         //If we are done with clearing, move on to the next phase
-        if (!job.getWorkOrder().doneWithClear())
+        if (job.getWorkOrder().doneWithClear())
         {
             job.getWorkOrder().setCleared();
             return AIState.BUILDER_REQUEST_MATERIALS;

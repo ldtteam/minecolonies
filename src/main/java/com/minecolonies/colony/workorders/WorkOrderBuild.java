@@ -46,10 +46,8 @@ public class WorkOrderBuild extends WorkOrder
         this.upgradeName = building.getSchematicName() + level;
         this.schematicName = building.getStyle() + '/' + this.getUpgradeName();
         this.buildingRotation = building.getRotation();
-        if (level > 0)
-        {
-            this.cleared = true;
-        }
+        this.cleared = level > 1;
+
     }
 
     /**

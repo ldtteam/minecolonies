@@ -497,14 +497,17 @@ public final class Schematic
         do
         {
             count++;
-            if (!decrementBlock())
+            if (!incrementBlock())
             {
                 return false;
             }
 
         }
         //Check for air blocks and if blocks below the hut are different from the schematicWorld
-        while ((worldBlockAir() || (y <= getOffset().getY() && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((worldBlockAir()
+                || (y <= getOffset().getY()
+                    && doesSchematicBlockEqualWorldBlock()))
+               && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
