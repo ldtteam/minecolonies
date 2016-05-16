@@ -890,10 +890,16 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         //todo partially replace with methods in EntityCitizen
         Block curBlock = world.getBlockState(blockToMine).getBlock();
-        if (curBlock == null || BlockUtils.shouldNeverBeMessedWith(curBlock))
+        if (curBlock == null || curBlock.equals(Blocks.air))
         {
             //no need to mine block...
             return true;
+        }
+
+        if(BlockUtils.shouldNeverBeMessedWith(curBlock)){
+            Log.logger.warn("Trying to mine block " + curBlock + " which is not allowed!");
+            //This will endlessly loop... If this warning comes up, check your blocks first...
+            return false;
         }
 
         if (checkMiningLocation(blockToMine, safeStand))

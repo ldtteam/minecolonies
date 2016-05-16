@@ -8,7 +8,7 @@ import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.EntityUtils;
 import com.minecolonies.util.InventoryUtils;
-import jline.internal.Log;
+import com.minecolonies.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -321,7 +321,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
     private Supplier<AIState> stepProducer(Supplier<AIState> finalCallback, boolean shouldBeSolid)
     {
         return () -> {
-            AIState intermediate = checkAndSetBlock(shouldBeSolid);
+            AIState intermediate = checkAndSetBlock(finalCallback, shouldBeSolid);
             if (intermediate != null)
             {
                 return intermediate;
@@ -340,14 +340,15 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
      * @param shouldBeSolid if the block we place should be solid
      * @return null if placed ok
      */
-    private AIState checkAndSetBlock(boolean shouldBeSolid)
+    private AIState checkAndSetBlock(Supplier<AIState> finalCallback, boolean shouldBeSolid)
     {
         WorkOrderBuild workOrder = job.getWorkOrder();
         if (workOrder.doesSchematicBlockEqualWorldBlock()
             || shouldBeSolid != workOrder.getCurrentBlock().getMaterial().isSolid())
         {
+            Log.logger.info("ingnored: " + workOrder.getCurrentBlock());
             //we can ignore this block, to the next
-            return findNextBlockSolid();
+            return finalCallback.get();
         }
 
         if (walkToConstructionSite())
@@ -359,10 +360,11 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         worker.faceBlock(coordinates);
 
         Block worldBlock = world.getBlockState(coordinates).getBlock();
-
+        Log.logger.info("placing: " + workOrder.getCurrentBlock() + " on "+worldBlock);
         //don't overwrite huts or bedrock, nor place huts
         if (BlockUtils.shouldNeverBeMessedWith(worldBlock))
         {
+            Log.logger.info("\tnot messing with: " + workOrder.getCurrentBlock() + " on "+worldBlock);
             findNextBlockSolid();
             return this.getState();
         }
@@ -574,6 +576,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
      */
     private AIState findNextBlockNonSolid()
     {
+        Log.logger.info("findNextNonSolid");
         //method returns false if there is no next block (schematic finished)
         if (!job.getWorkOrder().findNextBlockNonSolid())
         {

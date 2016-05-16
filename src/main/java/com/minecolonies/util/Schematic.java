@@ -525,7 +525,9 @@ public final class Schematic
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || (!schematicWorld.getBlock(x, y, z).getMaterial().isSolid() && !schematicWorld.isAirBlock(new BlockPos(x, y, z))))
+        while ((doesSchematicBlockEqualWorldBlock()
+                || (!schematicWorld.getBlock(x, y, z).getMaterial().isSolid()
+                    && !schematicWorld.isAirBlock(new BlockPos(x, y, z))))
                && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
@@ -544,7 +546,10 @@ public final class Schematic
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || (schematicWorld.getBlock(x, y, z).getMaterial().isSolid() || schematicWorld.isAirBlock(new BlockPos(x, y, z))))
+        while ((doesSchematicBlockEqualWorldBlock()
+                || (schematicWorld.getBlock(x, y, z).getMaterial().isSolid()
+                    //|| schematicWorld.isAirBlock(new BlockPos(x, y, z))
+                ))
                && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;

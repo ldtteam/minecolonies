@@ -53,8 +53,7 @@ public final class BlockUtils
      */
     public static boolean shouldNeverBeMessedWith(Block block)
     {
-        return Objects.equals(block, Blocks.air)
-               || block instanceof AbstractBlockHut
+        return block instanceof AbstractBlockHut
                || Objects.equals(block, Blocks.bedrock);
     }
 
