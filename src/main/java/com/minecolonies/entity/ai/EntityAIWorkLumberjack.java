@@ -61,7 +61,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      * Time in ticks to wait before placing a sapling.
      * Is used to collect falling saplings from the ground.
      */
-    private static final int    WAIT_BEFORE_SAPLING     = 200;
+    private static final int    WAIT_BEFORE_SAPLING     = 50;
     /**
      * Time in ticks to wait before rechecking
      * if there are trees in the
@@ -314,9 +314,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private void plantSapling()
     {
-        //TODO place correct sapling
-        plantSapling(job.tree.getLocation());
-        job.tree = null;
+        if(plantSapling(job.tree.getLocation()))
+        {
+            job.tree = null;
+        }
     }
 
     /**
@@ -346,8 +347,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             Block block = ((ItemBlock) stack.getItem()).getBlock();
             worker.setHeldItem(saplingSlot);
 
-            for (BlockPos pos : job.tree.getStumpLocations())
+            while(!job.tree.getStumpLocations().isEmpty())
             {
+                BlockPos pos = job.tree.getStumpLocations().get(0);
+
                 if (BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
                 {
                     worker.swingItem();
@@ -358,8 +361,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                             block.stepSound.getVolume(),
                             block.stepSound.getFrequency());
                     getInventory().decrStackSize(saplingSlot, 1);
+                    job.tree.getStumpLocations().remove(pos);
                 }
             }
+        }
+        if(job.tree.getStumpLocations().isEmpty())
+        {
             setDelay(10);
             return true;
         }
