@@ -22,38 +22,41 @@ import java.util.List;
 public class Tree
 {
     /**
-     * Tag to save the location to nbt
+     * Tag to save the location to NBT.
      */
-    private static final    String                          TAG_LOCATION        = "Location";
+    private static final String TAG_LOCATION = "Location";
     /**
-     * Tag to save the log list to nbt
+     * Tag to save the log list to NBT.
      */
-    private static final    String                          TAG_LOGS            = "Logs";
+    private static final String TAG_LOGS = "Logs";
     /**
-     * Number of leaves necessary for a tree to be recognized
+     * Tage to save the stump list to NBT.
      */
-    private static final    int                             NUMBER_OF_LEAVES    = 3;
-
+    private static final String TAG_STUMPS = "Stumps";
     /**
-     * The location of the tree stump
+     * Number of leaves necessary for a tree to be recognized.
      */
-    private BlockPos                    location;
+    private static final int NUMBER_OF_LEAVES = 3;
     /**
-     * All wood blocks connected to the tree
+     * The location of the tree stump.
      */
-    private LinkedList<BlockPos>        woodBlocks;
+    private BlockPos location;
+    /**
+     * All wood blocks connected to the tree.
+     */
+    private LinkedList<BlockPos> woodBlocks;
     /**
      * Is the tree a tree?
      */
-    private boolean                     isTree;
+    private boolean isTree;
     /**
-     * The locations of the stumps (Some trees are connected to dirt by 4 logs)
+     * The locations of the stumps (Some trees are connected to dirt by 4 logs).
      */
-    private ArrayList<BlockPos>         stumpLocations;
+    private ArrayList<BlockPos> stumpLocations;
     /**
-     * The wood variant (Oak, jungle, dark oak...)
+     * The wood variant (Oak, jungle, dark oak...).
      */
-    private BlockPlanks.EnumType        variant;
+    private BlockPlanks.EnumType variant;
 
     /**
      * Private constructor of the tree.
@@ -90,6 +93,10 @@ public class Tree
     {
         addAndSearch(world, location);
         Collections.sort(woodBlocks, (c1, c2) -> (int) (c1.distanceSq(location) - c2.distanceSq(location)));
+        if(getStumpLocations().isEmpty())
+        {
+            fillTreeStumps(world,location.getY());
+        }
     }
 
     /**
@@ -367,6 +374,15 @@ public class Tree
             BlockPosUtil.writeToNBTTagList(logs, log);
         }
         compound.setTag(TAG_LOGS, logs);
+
+        NBTTagList stumps = new NBTTagList();
+        for(BlockPos stump : stumpLocations)
+        {
+            BlockPosUtil.writeToNBTTagList(stumps, stump);
+        }
+        compound.setTag(TAG_STUMPS, stumps);
+
+
     }
 
     /**
@@ -384,6 +400,13 @@ public class Tree
         for(int i = 0; i < logs.tagCount(); i++)
         {
             tree.woodBlocks.add(BlockPosUtil.readFromNBTTagList(logs, i));
+        }
+
+        tree.stumpLocations = new ArrayList<>();
+        NBTTagList stumps = compound.getTagList(TAG_STUMPS, Constants.NBT.TAG_COMPOUND);
+        for(int i = 0; i < stumps.tagCount(); i++)
+        {
+            tree.stumpLocations.add(BlockPosUtil.readFromNBTTagList(stumps, i));
         }
         return tree;
     }

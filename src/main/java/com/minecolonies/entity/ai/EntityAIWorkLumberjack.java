@@ -303,10 +303,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             return LUMBERJACK_GATHERING;
         }
 
-        if(job.tree.getStumpLocations().isEmpty())
-        {
-            job.tree.fillTreeStumps(world,job.tree.getLocation().getY());
-        }
         //take first log from queue
         BlockPos log = job.tree.peekNextLog();
         if (!mineBlock(log))
