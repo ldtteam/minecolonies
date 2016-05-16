@@ -552,7 +552,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private boolean isInventoryAndChestFull()
     {
-        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen()) 
+        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
             && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
     }
 
@@ -948,6 +948,27 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         worker.addExperience(0.01);
         blocksMined++;
         return true;
+    }
+
+    /**
+     * Will return the number of blocks mined.
+     * Counting from the last time dumping inventory.
+     * Useful for calculating when to return to chest.
+     *
+     * @return the number of blocks mined
+     */
+    public final int getBlocksMined()
+    {
+        return blocksMined;
+    }
+
+    /**
+     * Clear the amount of blocks mined.
+     * Call this when dumping into the chest.
+     */
+    public final void clearBlocksMined()
+    {
+        this.blocksMined = 0;
     }
 
 }
