@@ -80,7 +80,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
      * The maximum range to keep from the current building place
      */
     private static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
-    
+
     /**
      * Position where the Builders constructs from.
      */
@@ -139,6 +139,11 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         if (!workOrder.hasSchematic())
         {
             initializeWorkOrderSchematic();
+            if(!workOrder.hasSchematic()){
+                //there was an error loading the schematic, remove the job
+                job.complete();
+            }
+
         }
 
         //all systems go, continue executing
@@ -408,14 +413,11 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
             return this.getState();
         }
 
-        int  x    = coordinates.getX();
-        int  y    = coordinates.getY();
-        int  z    = coordinates.getZ();
         Item item = Item.getItemFromBlock(block);
         //set visual effect held item
         worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1) : null);
         //try to place item
-        if (placeBlock(new BlockPos(x, y, z), block, metadata))
+        if (placeBlock(coordinates, block, metadata))
         {
             setTileEntity();
         }
