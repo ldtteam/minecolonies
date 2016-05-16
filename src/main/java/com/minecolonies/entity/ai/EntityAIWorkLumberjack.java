@@ -363,6 +363,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                     getInventory().decrStackSize(saplingSlot, 1);
                     job.tree.getStumpLocations().remove(pos);
                 }
+                else
+                {
+                    break;
+                }
             }
         }
         if(job.tree.getStumpLocations().isEmpty())
