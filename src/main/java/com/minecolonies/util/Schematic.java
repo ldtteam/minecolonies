@@ -548,7 +548,7 @@ public final class Schematic
         }
         while ((doesSchematicBlockEqualWorldBlock()
                 || (schematicWorld.getBlock(x, y, z).getMaterial().isSolid()
-                    //|| schematicWorld.isAirBlock(new BlockPos(x, y, z))
+                    || schematicWorld.isAirBlock(new BlockPos(x, y, z))
                 ))
                && count < Configurations.maxBlocksCheckedByBuilder);
 

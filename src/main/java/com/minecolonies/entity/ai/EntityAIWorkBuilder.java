@@ -4,11 +4,7 @@ import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.BlockUtils;
-import com.minecolonies.util.EntityUtils;
-import com.minecolonies.util.InventoryUtils;
-import com.minecolonies.util.Log;
+import com.minecolonies.util.*;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -67,6 +63,14 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
      * Flags 1 and 2 to send update to client
      */
     private static final int    BLOCK_PLACE_FLAGS                     = 0x03;
+    /**
+     * The minimum range to keep from the current building place
+     */
+    private static final int    MIN_ADDITIONAL_RANGE_TO_BUILD         = 3;
+    /**
+     * The maximum range to keep from the current building place
+     */
+    private static final int    MAX_ADDITIONAL_RANGE_TO_BUILD         = 25;
     /**
      * Position where the Builders constructs from.
      */
@@ -180,10 +184,25 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
      */
     private BlockPos getWorkingPosition()
     {
+        return getWorkingPosition(0);
+    }
+
+    /**
+     * Calculates the working position. Takes a min distance from width and length.
+     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     *
+     * @return BlockPos position to work from.
+     */
+    private BlockPos getWorkingPosition(int offset)
+    {
+        if (offset > MAX_ADDITIONAL_RANGE_TO_BUILD)
+        {
+            return job.getWorkOrder().getCurrentBlockPosition();
+        }
         //get length or width either is larger.
         int          length     = job.getWorkOrder().getLength();
         int          width      = job.getWorkOrder().getWidth();
-        int          distance   = Math.max(width, length);
+        int          distance   = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD + offset;
         EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
 
         //then get a solid place with two air spaces above it in any direction.
@@ -197,7 +216,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         }
 
         //if necessary we can could implement calling getWorkingPosition recursively and add some "offset" to the sides.
-        return job.getWorkOrder().getCurrentBlockPosition();
+        return getWorkingPosition(offset + 1);
     }
 
     /**
@@ -360,11 +379,11 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         worker.faceBlock(coordinates);
 
         Block worldBlock = world.getBlockState(coordinates).getBlock();
-        Log.logger.info("placing: " + workOrder.getCurrentBlock() + " on "+worldBlock);
+        Log.logger.info("placing: " + workOrder.getCurrentBlock() + " on " + worldBlock);
         //don't overwrite huts or bedrock, nor place huts
         if (BlockUtils.shouldNeverBeMessedWith(worldBlock))
         {
-            Log.logger.info("\tnot messing with: " + workOrder.getCurrentBlock() + " on "+worldBlock);
+            Log.logger.info("\tnot messing with: " + workOrder.getCurrentBlock() + " on " + worldBlock);
             findNextBlockSolid();
             return this.getState();
         }
