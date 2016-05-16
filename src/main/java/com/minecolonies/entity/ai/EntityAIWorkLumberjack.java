@@ -351,7 +351,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             {
                 BlockPos pos = job.tree.getStumpLocations().get(0);
 
-                if (BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
+                if ((BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
+                        || world.getBlockState(pos) == block.getStateFromMeta(stack.getMetadata()))
                 {
                     worker.swingItem();
                     world.playSoundEffect((float) location.getX() + 0.5F,
