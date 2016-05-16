@@ -14,7 +14,7 @@ public class BuildingBuilder extends BuildingWorker
     private static final String TAG_CLEARED = "cleared";
     private static final String BUILDER     = "Builder";
     /**
-     * Has the building are been cleared
+     * Has the building area been cleared
      */
     private boolean cleared;
 
