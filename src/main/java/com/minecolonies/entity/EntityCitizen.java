@@ -48,10 +48,20 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int    DATA_CITIZEN_ID      = 17;
     private static final int    DATA_MODEL           = 18;
     private static final int    DATA_RENDER_METADATA = 19;
+
+    /**
+     * The movement speed for the citizen to run away.
+     */
+    private static final int MOVE_AWAY_SPEED = 2;
+    /**
+     * The range for the citizen to move away.
+     */
+    private static final int MOVE_AWAY_RANGE = 6;
     /**
      * Number of ticks to heal the citizens
      */
     private static final int    HEAL_CITIZENS_AFTER  = 200;
+
     /**
      * Tag's to save data to NBT
      */
@@ -433,12 +443,27 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             updateColonyServer();
         }
 
+        if(isCitizenSuffocating())
+        {
+            getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
+        }
+
         checkHeal();
         super.onLivingUpdate();
     }
 
     /**
-     * Checks the citizens health status and heals the citizen if necessary
+     * Checks if the citizen is suffocating (If at his body or head position is a block).
+     * @return true if there is a block at his position.
+     */
+    private boolean isCitizenSuffocating()
+    {
+        return worldObj.getBlockState(this.getPosition()).getBlock().getMaterial().isSolid()
+                || worldObj.getBlockState(this.getPosition().up()).getBlock().getMaterial().isSolid();
+    }
+
+    /**
+     * Checks the citizens health status and heals the citizen if necessary.
      */
     private void checkHeal()
     {
