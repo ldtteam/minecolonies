@@ -69,6 +69,6 @@ public class ChatSpamFilter
         }
         worker.sendLocalizedChat(key, (Object[]) chat);
         speechDelayString = key + Arrays.toString(chat);
-        speechDelay = Math.max((int) (BASE_TIMEOUT * Math.pow(POWER_TIMEOUT, speechRepeat)), MAX_TIMEOUT);
+        speechDelay = Math.min((int) (BASE_TIMEOUT * Math.pow(POWER_TIMEOUT, speechRepeat)), MAX_TIMEOUT);
     }
 }
