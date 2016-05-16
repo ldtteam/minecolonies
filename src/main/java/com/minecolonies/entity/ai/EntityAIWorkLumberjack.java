@@ -124,7 +124,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
      */
     private static final int        MAX_BLOCKS_MINED          = 32;
     /**
-     * The nOOfStumps the current Tree has.
+     * The numberOfStumps the current Tree has.
      */
     private BlockPos[] stumps;
 
