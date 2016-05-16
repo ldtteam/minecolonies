@@ -346,6 +346,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             if (isCorrectSapling(stack))
             {
                 saplingSlot = slot;
+                break;
             }
         }
 
@@ -362,13 +363,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                 if ((BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
                         || Objects.equals(world.getBlockState(pos),block.getStateFromMeta(stack.getMetadata())))
                 {
-                    worker.swingItem();
-                    world.playSoundEffect((float) location.getX() + 0.5F,
-                            (float) location.getY() + 0.5F,
-                            (float) location.getZ() + 0.5F,
-                            block.stepSound.getBreakSound(),
-                            block.stepSound.getVolume(),
-                            block.stepSound.getFrequency());
+
                     getInventory().decrStackSize(saplingSlot, 1);
                     job.tree.getStumpLocations().remove(pos);
                 }
@@ -377,6 +372,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
                     break;
                 }
             }
+            world.playSoundEffect((float) location.getX() + 0.5F,
+                    (float) location.getY() + 0.5F,
+                    (float) location.getZ() + 0.5F,
+                    block.stepSound.getBreakSound(),
+                    block.stepSound.getVolume(),
+                    block.stepSound.getFrequency());
+            worker.swingItem();
         }
         if(job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
         {
