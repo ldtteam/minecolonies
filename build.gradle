@@ -102,7 +102,7 @@ task incrementBuildNumber() {
 
 jar {
     appendix = 'universal'
-    archiveName = "minecolonies-universal-"+config.minecraft_version + "-" + config.forge_version+".jar"
+    archiveName = "minecolonies-universal-" + config.minecraft_version + "-" + project.version + ".jar"
 }
 
 apply plugin: 'idea'
