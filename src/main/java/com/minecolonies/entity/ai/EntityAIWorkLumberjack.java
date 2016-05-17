@@ -297,7 +297,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
                 timeWaited += WAIT_BEFORE_SAPLING;
-                return state;
+                return getState();
             }
             plantSapling();
             return LUMBERJACK_GATHERING;

@@ -600,17 +600,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
-     * Checks if the worker inventory and his building chest are full
-     *
-     * @return true if both are full, else false
-     */
-    private boolean isInventoryAndChestFull()
-    {
-        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
-               && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
-    }
-
-    /**
      * Require that items are in the workers inventory.
      * This safegate ensurs you have said items before you execute a task.
      * Please stop execution on false returned.
