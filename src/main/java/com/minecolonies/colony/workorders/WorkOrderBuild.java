@@ -201,23 +201,39 @@ public class WorkOrderBuild extends WorkOrder
      */
     public void loadSchematic(World world)
     {
-        //failsafe for faulty schematic files
-        try
-        {
-            this.schematic = new Schematic(world, this.schematicName);
-        }
-        catch (IllegalStateException e)
-        {
-            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", this.schematicName), e);
-            this.schematic = null;
-            return;
-        }
+        loadSchematic(world, null);
+    }
 
-        //put the building into place
-        this.schematic.rotate(this.buildingRotation);
-        this.schematic.setPosition(this.getBuildingId());
-        //start this building by initializing the current work pointer
-        this.schematic.incrementBlock();
+    /**
+     * Load the schematic for this building.
+     *
+     * @param world the world we want to place it
+     */
+    private void loadSchematic(World world, BlockPos progress)
+    {
+        if(schematic == null)
+        {
+            //failsafe for faulty schematic files
+            try
+            {
+                this.schematic = new Schematic(world, this.schematicName);
+            }
+            catch (IllegalStateException e)
+            {
+                Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", this.schematicName), e);
+                this.schematic = null;
+                return;
+            }
+
+            //put the building into place
+            this.schematic.rotate(this.buildingRotation);
+            this.schematic.setPosition(this.getBuildingId());
+            //start this building by initializing the current work pointer
+            this.schematic.incrementBlock();
+            if(progress != null){
+                this.schematic.setLocalPosition(progress);
+            }
+        }
     }
 
     /**
