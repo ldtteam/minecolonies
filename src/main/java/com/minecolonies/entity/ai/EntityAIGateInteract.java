@@ -10,16 +10,11 @@ import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
 
+/**
+ * Used for gate interaction for the citizens.
+ */
 public class EntityAIGateInteract extends EntityAIBase
 {
-    /**
-     * The min distance the gate has to be from the citizen
-     */
-    private final static double MIN_DISTANCE = 2.25D;
-    /**
-     * Number of heights to check for the fence gate.
-     */
-    private final static int HEIGHTS_TO_CHECK = 2;
     /**
      * The length of half a block.
      */
@@ -48,6 +43,14 @@ public class EntityAIGateInteract extends EntityAIBase
      * The entities z position.
      */
     private double entityPositionZ;
+    /**
+     * The min distance the gate has to be from the citizen
+     */
+    private final static double MIN_DISTANCE = 2.25D;
+    /**
+     * Number of heights to check for the fence gate.
+     */
+    private final static int HEIGHTS_TO_CHECK = 2;
 
     /**
      * Constructor called to register the AI class with an entity

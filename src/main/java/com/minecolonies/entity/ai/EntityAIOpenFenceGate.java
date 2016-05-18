@@ -3,16 +3,12 @@ package com.minecolonies.entity.ai;
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
 
-import static com.ibm.icu.lang.UCharacter.GraphemeClusterBreak.T;
-
+/**
+ * Used for automatic gate open/close.
+ */
 public class EntityAIOpenFenceGate extends EntityAIGateInteract
 {
-    /**
-     * Close door after ... ticks.
-     */
-    private static final int TIME_TO_CLOSE_DOOR = 20;
     /**
      * Checks if the gate should be closed
      */
@@ -21,6 +17,18 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      * Ticks until the gate should be closed
      */
     private int closeDoorTemporisation;
+    /**
+     * Close door after ... ticks.
+     */
+    private static final int TIME_TO_CLOSE_DOOR = 20;
+    /**
+     * Sound played to open the gate.
+     */
+    private static final int OPEN_SOUND = 1003;
+    /**
+     * Sound played to close the gate.
+     */
+    private static final int CLOSE_SOUND= 1006;
 
     /**
      * Constructor called to register the AI class with an entity
@@ -73,13 +81,10 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     private void toggleDoor(boolean open)
     {
         IBlockState iblockstate = this.theEntity.worldObj.getBlockState(this.gatePosition);
-        if (iblockstate.getBlock() == this.gateBlock)
+        if (iblockstate.getBlock() == this.gateBlock && (iblockstate.getValue(BlockFenceGate.OPEN)) != open)
         {
-            if ((iblockstate.getValue(BlockFenceGate.OPEN)) != open)
-            {
-                this.theEntity.worldObj.setBlockState(this.gatePosition, iblockstate.withProperty(BlockFenceGate.OPEN, open), 2);
-                this.theEntity.worldObj.playAuxSFXAtEntity(null, open ? 1003 : 1006, this.gatePosition, 0);
-            }
+            this.theEntity.worldObj.setBlockState(this.gatePosition, iblockstate.withProperty(BlockFenceGate.OPEN, open), 2);
+            this.theEntity.worldObj.playAuxSFXAtEntity(null, open ? OPEN_SOUND : CLOSE_SOUND, this.gatePosition, 0);
         }
     }
 
