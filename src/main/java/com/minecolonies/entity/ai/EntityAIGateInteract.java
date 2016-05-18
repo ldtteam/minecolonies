@@ -133,6 +133,11 @@ public class EntityAIGateInteract extends EntityAIBase {
     private BlockFenceGate getBlockFence(BlockPos pos)
     {
         Block block  = this.theEntity.worldObj.getBlockState(pos).getBlock();
+        if(!(block instanceof BlockFenceGate && block.getMaterial() == Material.wood))
+        {
+            block = this.theEntity.worldObj.getBlockState(this.theEntity.getPosition()).getBlock();
+            gatePosition = this.theEntity.getPosition();
+        }
         return (block instanceof BlockFenceGate && block.getMaterial() == Material.wood ? (BlockFenceGate) block : null);
     }
 }
