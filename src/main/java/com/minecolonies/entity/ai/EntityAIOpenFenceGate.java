@@ -5,8 +5,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class EntityAIOpenFenceGate extends EntityAIGateInteract {
+import static com.ibm.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
+public class EntityAIOpenFenceGate extends EntityAIGateInteract
+{
+    /**
+     * Close door after ... ticks.
+     */
+    private static final int TIME_TO_CLOSE_DOOR = 20;
     /**
      * Checks if the gate should be closed
      */
@@ -21,7 +27,8 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract {
      * @param entityLivingIn the registering entity
      * @param shouldClose should the entity close the gate?
      */
-    public EntityAIOpenFenceGate(EntityLiving entityLivingIn, boolean shouldClose) {
+    public EntityAIOpenFenceGate(EntityLiving entityLivingIn, boolean shouldClose)
+    {
         super(entityLivingIn);
         this.theEntity = entityLivingIn;
         this.closeDoor = shouldClose;
@@ -31,23 +38,30 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract {
      * Should the AI continue to execute?
      * @return true or false
      */
-    public boolean continueExecuting() {
+    @Override
+    public boolean continueExecuting()
+    {
         return this.closeDoor && this.closeDoorTemporisation > 0 && super.continueExecuting();
     }
 
     /**
      * Start the execution
      */
-    public void startExecuting() {
-        this.closeDoorTemporisation = 20;
+    @Override
+    public void startExecuting()
+    {
+        this.closeDoorTemporisation = TIME_TO_CLOSE_DOOR;
         toggleDoor(true);
     }
 
     /**
      * Reset the action
      */
-    public void resetTask() {
-        if (this.closeDoor) {
+    @Override
+    public void resetTask()
+    {
+        if (this.closeDoor)
+        {
             toggleDoor(false);
         }
     }
@@ -56,12 +70,15 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract {
      * Toggles the door(Opens or closes)
      * @param open if open or close
      */
-    private void toggleDoor(boolean open) {
+    private void toggleDoor(boolean open)
+    {
         IBlockState iblockstate = this.theEntity.worldObj.getBlockState(this.gatePosition);
-        if (iblockstate.getBlock() == this.gateBlock) {
-            if ((iblockstate.getValue(BlockFenceGate.OPEN)) != open) {
+        if (iblockstate.getBlock() == this.gateBlock)
+        {
+            if ((iblockstate.getValue(BlockFenceGate.OPEN)) != open)
+            {
                 this.theEntity.worldObj.setBlockState(this.gatePosition, iblockstate.withProperty(BlockFenceGate.OPEN, open), 2);
-                this.theEntity.worldObj.playAuxSFXAtEntity((EntityPlayer) null, open ? 1003 : 1006, this.gatePosition, 0);
+                this.theEntity.worldObj.playAuxSFXAtEntity(null, open ? 1003 : 1006, this.gatePosition, 0);
             }
         }
     }
@@ -69,7 +86,9 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract {
     /**
      * Updates the task.
      */
-    public void updateTask() {
+    @Override
+    public void updateTask()
+    {
         --this.closeDoorTemporisation;
         super.updateTask();
     }
