@@ -10,8 +10,20 @@ import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
 
-public class EntityAIGateInteract extends EntityAIBase {
-
+public class EntityAIGateInteract extends EntityAIBase
+{
+    /**
+     * The min distance the gate has to be from the citizen
+     */
+    private final static double MIN_DISTANCE = 2.25D;
+    /**
+     * Number of heights to check for the fence gate.
+     */
+    private final static int HEIGHTS_TO_CHECK = 2;
+    /**
+     * The length of half a block.
+     */
+    private final static double HALF_BLOCK = 0.5D;
     /**
      * Our citizen.
      */
@@ -31,15 +43,12 @@ public class EntityAIGateInteract extends EntityAIBase {
     /**
      * The entities x position.
      */
-    private float entityPositionX;
+    private double entityPositionX;
     /**
      * The entities z position.
      */
-    private float entityPositionZ;
-    /**
-     * The min distance the gate has to be from the citizen
-     */
-    private static double MIN_DISTANCE = 2.25D;
+    private double entityPositionZ;
+
     /**
      * Constructor called to register the AI class with an entity
      * @param entityIn the registering entity
@@ -61,14 +70,7 @@ public class EntityAIGateInteract extends EntityAIBase {
     @Override
     public boolean shouldExecute()
     {
-        if (!this.theEntity.isCollidedHorizontally)
-        {
-            return false;
-        }
-        else
-        {
-            return checkPathEntity();
-        }
+        return this.theEntity.isCollidedHorizontally && checkPathEntity();
     }
 
     /**
@@ -92,7 +94,7 @@ public class EntityAIGateInteract extends EntityAIBase {
         for (int i = 0; i < Math.min(pathentity.getCurrentPathIndex() + 2, pathentity.getCurrentPathLength()); ++i)
         {
             PathPoint pathpoint = pathentity.getPathPointFromIndex(i);
-            for(int j=0;j<2;j++)
+            for(int j=0;j<HEIGHTS_TO_CHECK;j++)
             {
                 this.gatePosition = new BlockPos(pathpoint.xCoord, pathpoint.yCoord + j, pathpoint.zCoord);
                 if (this.theEntity.getDistanceSq((double) this.gatePosition.getX(), this.theEntity.posY, (double) this.gatePosition.getZ()) <= MIN_DISTANCE)
@@ -110,6 +112,7 @@ public class EntityAIGateInteract extends EntityAIBase {
         this.gateBlock = this.getBlockFence(this.gatePosition);
         return this.gateBlock != null;
     }
+
     /**
      * Checks if the execution is still ongoing
      * @return true or false
@@ -127,8 +130,8 @@ public class EntityAIGateInteract extends EntityAIBase {
     public void startExecuting()
     {
         this.hasStoppedFenceInteraction = false;
-        this.entityPositionX = (float) ((double) ((float) this.gatePosition.getX() + 0.5D) - this.theEntity.posX);
-        this.entityPositionZ = (float) ((double) ((float) this.gatePosition.getZ() + 0.5D) - this.theEntity.posZ);
+        this.entityPositionX = this.gatePosition.getX() + HALF_BLOCK - this.theEntity.posX;
+        this.entityPositionZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.posZ;
     }
 
     /**
@@ -137,8 +140,8 @@ public class EntityAIGateInteract extends EntityAIBase {
     @Override
     public void updateTask()
     {
-        double entityDistX =  this.gatePosition.getX() + 0.5D - this.theEntity.posX;
-        double entityDistZ = this.gatePosition.getZ() + 0.5D - this.theEntity.posZ;
+        double entityDistX =  this.gatePosition.getX() + HALF_BLOCK - this.theEntity.posX;
+        double entityDistZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.posZ;
         double totalDist = this.entityPositionX * entityDistX + this.entityPositionZ * entityDistZ;
         if (totalDist < 0.0D)
         {
