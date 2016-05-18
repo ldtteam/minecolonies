@@ -92,7 +92,7 @@ public class EntityAIGateInteract extends EntityAIBase {
         for (int i = 0; i < Math.min(pathentity.getCurrentPathIndex() + 2, pathentity.getCurrentPathLength()); ++i)
         {
             PathPoint pathpoint = pathentity.getPathPointFromIndex(i);
-            for(int j=0;i<2;i++)
+            for(int j=0;j<2;j++)
             {
                 this.gatePosition = new BlockPos(pathpoint.xCoord, pathpoint.yCoord + j, pathpoint.zCoord);
                 if (this.theEntity.getDistanceSq((double) this.gatePosition.getX(), this.theEntity.posY, (double) this.gatePosition.getZ()) <= MIN_DISTANCE)
@@ -127,8 +127,8 @@ public class EntityAIGateInteract extends EntityAIBase {
     public void startExecuting()
     {
         this.hasStoppedFenceInteraction = false;
-        this.entityPositionX = (float) ((double) ((float) this.gatePosition.getX() + 0.5F) - this.theEntity.posX);
-        this.entityPositionZ = (float) ((double) ((float) this.gatePosition.getZ() + 0.5F) - this.theEntity.posZ);
+        this.entityPositionX = (float) ((double) ((float) this.gatePosition.getX() + 0.5D) - this.theEntity.posX);
+        this.entityPositionZ = (float) ((double) ((float) this.gatePosition.getZ() + 0.5D) - this.theEntity.posZ);
     }
 
     /**
