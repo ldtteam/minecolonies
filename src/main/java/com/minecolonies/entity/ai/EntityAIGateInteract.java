@@ -42,15 +42,15 @@ public class EntityAIGateInteract extends EntityAIBase
     /**
      * Number of heights to check for the fence gate.
      */
-    private final static int HEIGHTS_TO_CHECK = 2;
+    private static final int HEIGHTS_TO_CHECK = 2;
     /**
      * The length of half a block.
      */
-    private final static double HALF_BLOCK = 0.5D;
+    private static final double HALF_BLOCK = 0.5D;
     /**
      * The min distance the gate has to be from the citizen
      */
-    private final static double MIN_DISTANCE = 2.25D;
+    private static final double MIN_DISTANCE = 2.25D;
     
     /**
      * Constructor called to register the AI class with an entity
