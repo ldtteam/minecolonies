@@ -18,16 +18,16 @@ import java.util.List;
  */
 public class Level
 {
-    private static final    String              TAG_DEPTH   = "Depth";
-    private static final    String              TAG_NODES   = "Nodes";
-    private static final    String              TAG_LADDERX = "LadderX";
-    private static final    String              TAG_LADDERZ = "LadderZ";
+    private static final String TAG_DEPTH   = "Depth";
+    private static final String TAG_NODES   = "Nodes";
+    private static final String TAG_LADDERX = "LadderX";
+    private static final String TAG_LADDERZ = "LadderZ";
     /**
      * The depth of the level stored as the y coordinate
      */
-    private                 int                 depth;
-    private                 List<Node>          nodes      = new ArrayList<>();
-    private                 Node                ladderNode = null;
+    private int depth;
+    private List<Node> nodes      = new ArrayList<>();
+    private Node       ladderNode = null;
 
     //TODO document class
     private Level()
@@ -35,7 +35,6 @@ public class Level
     }
 
     /**
-     *
      * @param buildingMiner
      * @param depth
      */
@@ -49,7 +48,7 @@ public class Level
         int cobbleZ = buildingMiner.cobbleLocation.getZ();
 
         //check for orientation
-        BlockPos         cobbleCenter = new BlockPos(cobbleX - (buildingMiner.vectorX * 3), depth, cobbleZ - (buildingMiner.vectorZ * 3));
+        BlockPos cobbleCenter = new BlockPos(cobbleX - (buildingMiner.vectorX * 3), depth, cobbleZ - (buildingMiner.vectorZ * 3));
         BlockPos ladderCenter = new BlockPos(cobbleX + (buildingMiner.vectorX * 4), depth, cobbleZ + (buildingMiner.vectorZ * 4));
         //TODO: let them know they are ladder and cobble (they are handled different)
         Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getZ());

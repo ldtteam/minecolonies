@@ -39,7 +39,7 @@ public class EntityAIGoHome extends EntityAIBase
             return;
         }
 
-        citizen.getNavigator().tryMoveToXYZ((double)pos.getX() + 0.5D, (double)pos.getY(), (double)pos.getZ() + 0.5D, 1.0D);
+        citizen.getNavigator().tryMoveToXYZ((double) pos.getX() + 0.5D, (double) pos.getY(), (double) pos.getZ() + 0.5D, 1.0D);
     }
 
     @Override

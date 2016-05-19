@@ -97,17 +97,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
     public EntityAIWorkBuilder(JobBuilder job)
     {
         super(job);
-        super.registerTargets(
-                new AITarget(this::checkIfExecute),
-                new AITarget(IDLE, () -> BUILDER_CLEAR_STEP),
-                new AITarget(BUILDER_CLEAR_STEP, this::clearStep),
-                new AITarget(BUILDER_REQUEST_MATERIALS, this::requestMaterials),
-                new AITarget(BUILDER_STRUCTURE_STEP, stepProducer(this::findNextBlockSolid, true)),
-                new AITarget(BUILDER_DECORATION_STEP, stepProducer(this::findNextBlockNonSolid, false)),
-                new AITarget(BUILDER_COMPLETE_BUILD, this::completeBuild)
-                             );
-        worker.setSkillModifier(DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity()
-                                + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
+        super.registerTargets(new AITarget(this::checkIfExecute), new AITarget(IDLE, () -> BUILDER_CLEAR_STEP), new AITarget(BUILDER_CLEAR_STEP, this::clearStep), new AITarget(BUILDER_REQUEST_MATERIALS, this::requestMaterials), new AITarget(BUILDER_STRUCTURE_STEP, stepProducer(this::findNextBlockSolid, true)), new AITarget(BUILDER_DECORATION_STEP, stepProducer(this::findNextBlockNonSolid, false)), new AITarget(BUILDER_COMPLETE_BUILD, this::completeBuild));
+        worker.setSkillModifier(DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity() + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         //enable vanilla mc item pickup
         worker.setCanPickUpLoot(true);
     }
@@ -122,7 +113,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
         setDelay(1);
 
         //If we are idle, wait for some time
-        if (!job.hasWorkOrder())
+        if(!job.hasWorkOrder())
         {
             setDelay(IDLE_WAIT_TIME);
             return this.getState();
@@ -131,18 +122,18 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
         WorkOrderBuild workOrder = job.getWorkOrder();
 
         //cleanup dead jobs
-        if (workOrder == null
-            || job.getColony().getBuilding(workOrder.getBuildingId()) == null)
+        if(workOrder == null || job.getColony().getBuilding(workOrder.getBuildingId()) == null)
         {
             job.complete();
             return this.getState();
         }
 
         //create a schematic for a build if it not exist
-        if (!workOrder.hasSchematic())
+        if(!workOrder.hasSchematic())
         {
             initializeWorkOrderSchematic();
-            if(!workOrder.hasSchematic()){
+            if(!workOrder.hasSchematic())
+            {
                 //there was an error loading the schematic, remove the job
                 job.complete();
             }
@@ -187,7 +178,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
      */
     private boolean walkToConstructionSite()
     {
-        if (workFrom == null)
+        if(workFrom == null)
         {
             workFrom = getWorkingPosition();
         }
@@ -214,21 +205,21 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
      */
     private BlockPos getWorkingPosition(int offset)
     {
-        if (offset > MAX_ADDITIONAL_RANGE_TO_BUILD)
+        if(offset > MAX_ADDITIONAL_RANGE_TO_BUILD)
         {
             return job.getWorkOrder().getCurrentBlockPosition();
         }
         //get length or width either is larger.
-        int          length     = job.getWorkOrder().getLength();
-        int          width      = job.getWorkOrder().getWidth();
-        int          distance   = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD + offset;
+        int length = job.getWorkOrder().getLength();
+        int width = job.getWorkOrder().getWidth();
+        int distance = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD + offset;
         EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
 
         //then get a solid place with two air spaces above it in any direction.
-        for (EnumFacing direction : directions)
+        for(EnumFacing direction : directions)
         {
             BlockPos positionInDirection = getPositionInDirection(direction, distance);
-            if (EntityUtils.checkForFreeSpace(world, positionInDirection))
+            if(EntityUtils.checkForFreeSpace(world, positionInDirection))
             {
                 return positionInDirection;
             }
@@ -259,12 +250,12 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
     private BlockPos getFloor(BlockPos position)
     {
         //If the position is floating in Air go downwards
-        if (!EntityUtils.solidOrLiquid(world, position))
+        if(!EntityUtils.solidOrLiquid(world, position))
         {
             return getFloor(position.down());
         }
         //If there is no air above the block go upwards
-        if (!EntityUtils.solidOrLiquid(world, position.up()))
+        if(!EntityUtils.solidOrLiquid(world, position.up()))
         {
             return position;
         }
@@ -273,28 +264,28 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
 
     private AIState clearStep()
     {
-        if (job.getWorkOrder().isCleared())
+        if(job.getWorkOrder().isCleared())
         {
             return AIState.BUILDER_STRUCTURE_STEP;
         }
 
         //get the current working position and block
         BlockPos coordinates = job.getWorkOrder().getCurrentBlockPosition();
-        Block    worldBlock  = world.getBlockState(coordinates).getBlock();
+        Block worldBlock = world.getBlockState(coordinates).getBlock();
 
         //Don't break bedrock etc.
-        if (!BlockUtils.shouldNeverBeMessedWith(worldBlock))
+        if(!BlockUtils.shouldNeverBeMessedWith(worldBlock))
         {
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position
-            if (walkToConstructionSite())
+            if(walkToConstructionSite())
             {
                 return this.getState();
             }
 
             worker.faceBlock(coordinates);
             //We need to deal with materials
-            if (Configurations.builderInfiniteResources)
+            if(Configurations.builderInfiniteResources)
             {
                 worker.setCurrentItemOrArmor(0, null);
 
@@ -303,7 +294,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
             }
             else
             {
-                if (!mineBlock(coordinates))
+                if(!mineBlock(coordinates))
                 {
                     return this.getState();
                 }
@@ -311,7 +302,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
         }
 
         //If we are done with clearing, move on to the next phase
-        if (job.getWorkOrder().doneWithClear())
+        if(job.getWorkOrder().doneWithClear())
         {
             job.getWorkOrder().setCleared();
             return AIState.BUILDER_REQUEST_MATERIALS;
@@ -322,21 +313,19 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
     private AIState requestMaterials()
     {
         //We need to deal with materials
-        if (!Configurations.builderInfiniteResources)
+        if(!Configurations.builderInfiniteResources)
         {
             //TODO thread this
-            while (job.getWorkOrder().findNextBlockNotEqual())
+            while(job.getWorkOrder().findNextBlockNotEqual())
             {
 
-                Block       block     = job.getWorkOrder().getCurrentBlock();
-                IBlockState metadata  = job.getWorkOrder().getCurrentBlockMetadata();
-                ItemStack   itemstack = new ItemStack(block, 1);
+                Block block = job.getWorkOrder().getCurrentBlock();
+                IBlockState metadata = job.getWorkOrder().getCurrentBlockMetadata();
+                ItemStack itemstack = new ItemStack(block, 1);
 
-                if (itemstack.getItem() != null
-                    && !BlockUtils.shouldNeverBeMessedWith(block)
-                    && !BlockUtils.freeToPlace(block, metadata))
+                if(itemstack.getItem() != null && !BlockUtils.shouldNeverBeMessedWith(block) && !BlockUtils.freeToPlace(block, metadata))
                 {
-                    if (checkOrRequestItems(new ItemStack(block)))
+                    if(checkOrRequestItems(new ItemStack(block)))
                     {
                         job.getWorkOrder().resetSchematic();
                         return this.getState();
@@ -360,7 +349,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
     {
         return () -> {
             AIState intermediate = checkAndSetBlock(finalCallback, shouldBeSolid);
-            if (intermediate != null)
+            if(intermediate != null)
             {
                 return intermediate;
             }
@@ -381,15 +370,14 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
     private AIState checkAndSetBlock(Supplier<AIState> finalCallback, boolean shouldBeSolid)
     {
         WorkOrderBuild workOrder = job.getWorkOrder();
-        if (workOrder.doesSchematicBlockEqualWorldBlock()
-            || shouldBeSolid != workOrder.getCurrentBlock().getMaterial().isSolid())
+        if(workOrder.doesSchematicBlockEqualWorldBlock() || shouldBeSolid != workOrder.getCurrentBlock().getMaterial().isSolid())
         {
             Log.logger.info("ingnored: " + workOrder.getCurrentBlock());
             //we can ignore this block, to the next
             return finalCallback.get();
         }
 
-        if (walkToConstructionSite())
+        if(walkToConstructionSite())
         {
             return this.getState();
         }
@@ -400,18 +388,17 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
         Block worldBlock = world.getBlockState(coordinates).getBlock();
         Log.logger.info("placing: " + workOrder.getCurrentBlock() + " on " + worldBlock);
         //don't overwrite huts or bedrock, nor place huts
-        if (BlockUtils.shouldNeverBeMessedWith(worldBlock))
+        if(BlockUtils.shouldNeverBeMessedWith(worldBlock))
         {
             Log.logger.info("\tnot messing with: " + workOrder.getCurrentBlock() + " on " + worldBlock);
             findNextBlockSolid();
             return this.getState();
         }
 
-        Block       block    = workOrder.getCurrentBlock();
+        Block block = workOrder.getCurrentBlock();
         IBlockState metadata = workOrder.getCurrentBlockMetadata();
         //We need to deal with materials if(!Configurations.builderInfiniteResources)
-        if (!Configurations.builderInfiniteResources
-            && !hasMaterialsToPlace(block, metadata))
+        if(!Configurations.builderInfiniteResources && !hasMaterialsToPlace(block, metadata))
         {
             return this.getState();
         }
@@ -420,7 +407,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
         //set visual effect held item
         worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1) : null);
         //try to place item
-        if (placeBlock(coordinates, block, metadata))
+        if(placeBlock(coordinates, block, metadata))
         {
             setTileEntity();
         }
@@ -437,11 +424,11 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
      */
     private void spawnEntity(Entity entity)
     {
-        if (entity != null)
+        if(entity != null)
         {
             BlockPos pos = job.getWorkOrder().getOffsetPosition();
 
-            if (entity instanceof EntityHanging)
+            if(entity instanceof EntityHanging)
             {
                 EntityHanging entityHanging = (EntityHanging) entity;
 
@@ -449,16 +436,14 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
                 entityHanging.posY += pos.getY();
                 entityHanging.posZ += pos.getZ();
                 //also sets position based on tile
-                entityHanging.setPosition(entityHanging.getHangingPosition().getX(),
-                                          entityHanging.getHangingPosition().getY(),
-                                          entityHanging.getHangingPosition().getZ());
+                entityHanging.setPosition(entityHanging.getHangingPosition().getX(), entityHanging.getHangingPosition().getY(), entityHanging.getHangingPosition().getZ());
 
                 entityHanging.setWorld(world);
                 entityHanging.dimension = world.provider.getDimensionId();
 
                 world.spawnEntityInWorld(entityHanging);
             }
-            else if (entity instanceof EntityMinecart)
+            else if(entity instanceof EntityMinecart)
             {
                 EntityMinecart minecart = (EntityMinecart) entity;
                 minecart.riddenByEntity = null;
@@ -485,7 +470,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
      */
     private boolean hasMaterialsToPlace(Block block, IBlockState metadata)
     {
-        if (BlockUtils.freeToPlace(block, metadata))
+        if(BlockUtils.freeToPlace(block, metadata))
         {
             return true;
         }
@@ -504,61 +489,50 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
     private boolean placeBlock(BlockPos pos, Block block, IBlockState metadata)
     {
         //Move out of the way when placing blocks
-        if (MathHelper.floor_double(worker.posX) == pos.getX()
-            && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1
-            && MathHelper.floor_double(worker.posZ) == pos.getZ()
-            && worker.getNavigator().noPath())
+        if(MathHelper.floor_double(worker.posX) == pos.getX() && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1 && MathHelper.floor_double(worker.posZ) == pos.getZ() && worker.getNavigator().noPath())
         {
             worker.getNavigator().moveAwayFromXYZ(pos, 4.1, 1.0);
         }
 
         //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
-        if (metadata.getBlock() instanceof BlockStairs
-            && world.getBlockState(pos).getBlock() instanceof BlockStairs
-            && Objects.equals(world.getBlockState(pos).getValue(BlockStairs.FACING),
-                              metadata.getValue(BlockStairs.FACING))
-            && Objects.equals(metadata.getBlock(),
-                              world.getBlockState(pos).getBlock()))
+        if(metadata.getBlock() instanceof BlockStairs && world.getBlockState(pos).getBlock() instanceof BlockStairs && Objects.equals(world.getBlockState(pos).getValue(BlockStairs.FACING), metadata.getValue(BlockStairs.FACING)) && Objects.equals(metadata.getBlock(), world.getBlockState(pos).getBlock()))
         {
             return true;
         }
 
-        if (!Objects.equals(world.getBlockState(pos).getBlock(),
-                            Blocks.air))
+        if(!Objects.equals(world.getBlockState(pos).getBlock(), Blocks.air))
         {
             List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
-            for (ItemStack item : items)
+            for(ItemStack item : items)
             {
                 InventoryUtils.setStack(worker.getInventoryCitizen(), item);
             }
         }
 
-        if (block instanceof BlockDoor
-            && Objects.equals(metadata.getValue(BlockDoor.HALF),
-                              BlockDoor.EnumDoorHalf.LOWER))
+        if(block instanceof BlockDoor && Objects.equals(metadata.getValue(BlockDoor.HALF), BlockDoor.EnumDoorHalf.LOWER))
         {
             ItemDoor.placeDoor(world, pos, metadata.getValue(BlockDoor.FACING), block);
         }
-        else if (block instanceof BlockBed)
+        else if(block instanceof BlockBed)
         {
             world.setBlockState(pos, metadata, BLOCK_PLACE_FLAGS);
             EnumFacing meta = metadata.getValue(BlockBed.FACING);
             world.setBlockState(pos.offset(meta), metadata, BLOCK_PLACE_FLAGS);
         }
-        else if (block instanceof BlockDoublePlant)
+        else if(block instanceof BlockDoublePlant)
         {
             world.setBlockState(pos, metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), BLOCK_PLACE_FLAGS);
             world.setBlockState(pos.up(), metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), BLOCK_PLACE_FLAGS);
         }
         else
         {
-            if (!world.setBlockState(pos, metadata, BLOCK_PLACE_FLAGS))
+            if(!world.setBlockState(pos, metadata, BLOCK_PLACE_FLAGS))
             {
                 return false;
             }
-            if (world.getBlockState(pos).getBlock() == block)
+            if(world.getBlockState(pos).getBlock() == block)
             {
-                if (world.getBlockState(pos) != metadata)
+                if(world.getBlockState(pos) != metadata)
                 {
                     world.setBlockState(pos, metadata, BLOCK_PLACE_FLAGS);
                 }
@@ -568,7 +542,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
         ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
 
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
-        if (slot != -1)
+        if(slot != -1)
         {
             getInventory().decrStackSize(slot, 1);
         }
@@ -581,8 +555,8 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
     private void setTileEntity()
     {
         TileEntity tileEntity = job.getWorkOrder().getCurrentTileEntity();
-        BlockPos   pos        = job.getWorkOrder().getCurrentBlockPosition();
-        if (tileEntity != null && world.getTileEntity(pos) != null)
+        BlockPos pos = job.getWorkOrder().getCurrentBlockPosition();
+        if(tileEntity != null && world.getTileEntity(pos) != null)
         {
             world.setTileEntity(pos, tileEntity);
         }
@@ -596,7 +570,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
     private AIState findNextBlockSolid()
     {
         //method returns false if there is no next block (schematic finished)
-        if (!job.getWorkOrder().findNextBlockSolid())
+        if(!job.getWorkOrder().findNextBlockSolid())
         {
             job.getWorkOrder().resetSchematic();
             return AIState.BUILDER_DECORATION_STEP;
@@ -613,7 +587,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
     {
         Log.logger.info("findNextNonSolid");
         //method returns false if there is no next block (schematic finished)
-        if (!job.getWorkOrder().findNextBlockNonSolid())
+        if(!job.getWorkOrder().findNextBlockNonSolid())
         {
             job.getWorkOrder().resetSchematic();
             return AIState.BUILDER_COMPLETE_BUILD;
@@ -634,10 +608,10 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
         worker.sendLocalizedChat(ENTITY_BUILDER_MESSAGE_BUILD_COMPLETE, job.getWorkOrder().getSchematicName());
 
         WorkOrderBuild wo = job.getWorkOrder();
-        if (wo != null)
+        if(wo != null)
         {
             Building building = job.getColony().getBuilding(wo.getBuildingId());
-            if (building != null)
+            if(building != null)
             {
                 building.setBuildingLevel(wo.getUpgradeLevel());
             }

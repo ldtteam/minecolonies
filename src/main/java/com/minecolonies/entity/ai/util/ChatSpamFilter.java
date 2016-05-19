@@ -53,9 +53,9 @@ public class ChatSpamFilter
     public void talkWithoutSpam(String key, String... chat)
     {
         String curstring = key + Arrays.toString(chat);
-        if (Objects.equals(speechDelayString, curstring))
+        if(Objects.equals(speechDelayString, curstring))
         {
-            if (speechDelay > 0)
+            if(speechDelay > 0)
             {
                 speechDelay--;
                 return;

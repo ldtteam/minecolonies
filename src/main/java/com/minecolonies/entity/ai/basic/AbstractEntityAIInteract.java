@@ -105,15 +105,11 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-                new AITarget(() -> !itemsCurrentlyNeeded.isEmpty(),
-                             this::waitForNeededItems),
+                new AITarget(() -> !itemsCurrentlyNeeded.isEmpty(), this::waitForNeededItems),
                 /**
                  * Wait for different tools.
                  */
-                new AITarget(() -> this.needsShovel, this::waitForShovel),
-                new AITarget(() -> this.needsAxe, this::waitForAxe),
-                new AITarget(() -> this.needsHoe, this::waitForHoe),
-                new AITarget(() -> this.needsPickaxe, this::waitForPickaxe),
+                new AITarget(() -> this.needsShovel, this::waitForShovel), new AITarget(() -> this.needsAxe, this::waitForAxe), new AITarget(() -> this.needsHoe, this::waitForHoe), new AITarget(() -> this.needsPickaxe, this::waitForPickaxe),
                 /**
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
@@ -123,9 +119,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
                 /**
                  * Check if inventory has to be dumped.
                  */
-                new AITarget(() -> worker.isInventoryFull() || wantInventoryDumped(),
-                             () -> INVENTORY_FULL)
-                             );
+                new AITarget(() -> worker.isInventoryFull() || wantInventoryDumped(), () -> INVENTORY_FULL));
     }
 
     /**
@@ -147,7 +141,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     private AIState initSafetyChecks()
     {
         //Something fatally wrong? Wait for re-init...
-        if (null == getOwnBuilding())
+        if(null == getOwnBuilding())
         {
             //TODO: perhaps destroy this task? will see...
             return INIT;
@@ -211,18 +205,18 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     private AIState lookForNeededItems()
     {
         syncNeededItemsWithInventory();
-        if (itemsCurrentlyNeeded.isEmpty())
+        if(itemsCurrentlyNeeded.isEmpty())
         {
             itemsNeeded.clear();
             job.clearItemsNeeded();
             return IDLE;
         }
-        if (worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
+        if(worker.isWorkerAtSiteWithMove(getOwnBuilding().getLocation(), DEFAULT_RANGE_FOR_DELAY))
         {
             delay += DELAY_RECHECK;
             ItemStack first = itemsCurrentlyNeeded.get(0);
             //Takes one Stack from the hut if existent
-            if (isInHut(first))
+            if(isInHut(first))
             {
                 return NEEDS_ITEM;
             }
@@ -255,13 +249,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     private boolean isInHut(final ItemStack is)
     {
         final BuildingWorker buildingMiner = getOwnBuilding();
-        return is != null &&
-               InventoryFunctions
-                       .matchFirstInInventory(
-                               buildingMiner.getTileEntity(),
-                               stack -> stack != null && is.isItemEqual(stack),
-                               this::takeItemStackFromChest
-                                             );
+        return is != null && InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(), stack -> stack != null && is.isItemEqual(stack), this::takeItemStackFromChest);
     }
 
     /**
@@ -282,7 +270,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     private AIState waitForShovel()
     {
-        if (checkForShovel())
+        if(checkForShovel())
         {
             delay += DELAY_RECHECK;
             return NEEDS_SHOVEL;
@@ -304,21 +292,17 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
 
     private boolean checkForTool(String tool)
     {
-        boolean needsTool = !InventoryFunctions
-                .matchFirstInInventory(
-                        worker.getInventoryCitizen(),
-                        stack -> Utils.isTool(stack, tool),
-                        InventoryFunctions::doNothing);
-        if (!needsTool)
+        boolean needsTool = !InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(), stack -> Utils.isTool(stack, tool), InventoryFunctions::doNothing);
+        if(!needsTool)
         {
             return false;
         }
         delay += DELAY_RECHECK;
-        if (walkToBuilding())
+        if(walkToBuilding())
         {
             return true;
         }
-        if (isToolInHut(tool))
+        if(isToolInHut(tool))
         {
             return false;
         }
@@ -329,11 +313,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     private boolean isToolInHut(String tool)
     {
         BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        stack -> Utils.isTool(stack, tool),
-                        this::takeItemStackFromChest);
+        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(), stack -> Utils.isTool(stack, tool), this::takeItemStackFromChest);
 
     }
 
@@ -367,7 +347,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     protected final boolean walkToBlock(BlockPos stand, int range)
     {
-        if (!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), range))
+        if(!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), range))
         {
             //only walk to the block, work=null
             workOnBlock(null, stand, 1);
@@ -398,7 +378,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     private AIState waitForAxe()
     {
-        if (checkForAxe())
+        if(checkForAxe())
         {
             delay += DELAY_RECHECK;
             return NEEDS_AXE;
@@ -425,7 +405,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     private AIState waitForHoe()
     {
-        if (checkForHoe())
+        if(checkForHoe())
         {
             delay += DELAY_RECHECK;
             return NEEDS_HOE;
@@ -452,7 +432,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     private AIState waitForPickaxe()
     {
-        if (checkForPickaxe(needsPickaxeLevel))
+        if(checkForPickaxe(needsPickaxeLevel))
         {
             delay += DELAY_RECHECK;
             return NEEDS_PICKAXE;
@@ -470,23 +450,18 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     protected boolean checkForPickaxe(int minlevel)
     {
         //Check for a pickaxe
-        needsPickaxe = !InventoryFunctions
-                .matchFirstInInventory(
-                        worker.getInventoryCitizen(),
-                        stack -> Utils.checkIfPickaxeQualifies(
-                                minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
-                        InventoryFunctions::doNothing);
+        needsPickaxe = !InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(), stack -> Utils.checkIfPickaxeQualifies(minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)), InventoryFunctions::doNothing);
 
         delay += DELAY_RECHECK;
 
-        if (needsPickaxe)
+        if(needsPickaxe)
         {
             needsPickaxeLevel = minlevel;
-            if (walkToBuilding())
+            if(walkToBuilding())
             {
                 return false;
             }
-            if (isPickaxeInHut(minlevel))
+            if(isPickaxeInHut(minlevel))
             {
                 return true;
             }
@@ -507,15 +482,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     private boolean isPickaxeInHut(int minlevel)
     {
         BuildingWorker buildingMiner = getOwnBuilding();
-        return InventoryFunctions
-                .matchFirstInInventory(
-                        buildingMiner.getTileEntity(),
-                        stack -> Utils.checkIfPickaxeQualifies(
-                                minlevel,
-                                Utils.getMiningLevel(
-                                        stack,
-                                        Utils.PICKAXE)),
-                        this::takeItemStackFromChest);
+        return InventoryFunctions.matchFirstInInventory(buildingMiner.getTileEntity(), stack -> Utils.checkIfPickaxeQualifies(minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)), this::takeItemStackFromChest);
     }
 
     /**
@@ -527,12 +494,12 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     private AIState dumpInventory()
     {
-        if (dumpOneMoreSlot())
+        if(dumpOneMoreSlot())
         {
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
         }
-        if (isInventoryAndChestFull())
+        if(isInventoryAndChestFull())
         {
             chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull");
         }
@@ -565,12 +532,12 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
 
     /**
      * Checks if the worker inventory and his building chest are full
+     *
      * @return true if both are full, else false
      */
     private boolean isInventoryAndChestFull()
     {
-        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
-            && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
+        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen()) && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
     }
 
     /**
@@ -581,24 +548,22 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     private boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
     {
-        return walkToBuilding()
-               || InventoryFunctions.matchFirstInInventory(
-                worker.getInventoryCitizen(), (i, stack) -> {
-                    if (stack == null || keepIt.test(stack))
-                    {
-                        return false;
-                    }
-                    ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
-                    if (returnStack == null)
-                    {
-                        worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
-                        return true;
-                    }
-                    worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize);
-                    //Check that we are not inserting
-                    // into a full inventory.
-                    return stack.stackSize != returnStack.stackSize;
-                });
+        return walkToBuilding() || InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(), (i, stack) -> {
+            if(stack == null || keepIt.test(stack))
+            {
+                return false;
+            }
+            ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
+            if(returnStack == null)
+            {
+                worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
+                return true;
+            }
+            worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+            //Check that we are not inserting
+            // into a full inventory.
+            return stack.stackSize != returnStack.stackSize;
+        });
     }
 
     /**
@@ -612,22 +577,22 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     protected boolean checkOrRequestItems(ItemStack... items)
     {
         boolean allClear = true;
-        for (ItemStack stack : items)
+        for(ItemStack stack : items)
         {
-            if (stack == null || stack.getItem() == null)
+            if(stack == null || stack.getItem() == null)
             {
                 continue;
             }
             int countOfItem = worker.getItemCountInInventory(stack.getItem());
-            if (countOfItem < stack.stackSize)
+            if(countOfItem < stack.stackSize)
             {
-                int       itemsLeft     = stack.stackSize - countOfItem;
+                int itemsLeft = stack.stackSize - countOfItem;
                 ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
                 itemsCurrentlyNeeded.add(requiredStack);
                 allClear = false;
             }
         }
-        if (allClear)
+        if(allClear)
         {
             return false;
         }
@@ -648,10 +613,9 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     private boolean waitingForSomething()
     {
-        if (delay > 0)
+        if(delay > 0)
         {
-            if (currentStandingLocation != null &&
-                !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
+            if(currentStandingLocation != null && !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
             {
                 //Don't decrease delay as we are just walking...
                 return true;
@@ -711,7 +675,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     protected final boolean holdEfficientTool(Block target)
     {
         int bestSlot = getMostEfficientTool(target);
-        if (bestSlot >= 0)
+        if(bestSlot >= 0)
         {
             worker.setHeldItem(bestSlot);
             return true;
@@ -727,8 +691,8 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     private void requestTool(Block target)
     {
-        String tool     = target.getHarvestTool(target.getDefaultState());
-        int    required = target.getHarvestLevel(target.getDefaultState());
+        String tool = target.getHarvestTool(target.getDefaultState());
+        int required = target.getHarvestLevel(target.getDefaultState());
         updateToolFlag(tool, required);
     }
 
@@ -742,7 +706,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     private void updateToolFlag(String tool, int required)
     {
-        switch (tool)
+        switch(tool)
         {
             case Utils.AXE:
                 checkForAxe();
@@ -770,16 +734,16 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     private int getMostEfficientTool(Block target)
     {
-        String           tool      = target.getHarvestTool(target.getDefaultState());
-        int              required  = target.getHarvestLevel(target.getDefaultState());
-        int              bestSlot  = -1;
-        int              bestLevel = Integer.MAX_VALUE;
+        String tool = target.getHarvestTool(target.getDefaultState());
+        int required = target.getHarvestLevel(target.getDefaultState());
+        int bestSlot = -1;
+        int bestLevel = Integer.MAX_VALUE;
         InventoryCitizen inventory = worker.getInventoryCitizen();
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        for(int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            ItemStack item  = inventory.getStackInSlot(i);
-            int       level = Utils.getMiningLevel(item, tool);
-            if (level >= required && level < bestLevel)
+            ItemStack item = inventory.getStackInSlot(i);
+            int level = Utils.getMiningLevel(item, tool);
+            if(level >= required && level < bestLevel)
             {
                 bestSlot = i;
                 bestLevel = level;
@@ -797,12 +761,11 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     private int getBlockMiningDelay(Block block, BlockPos pos)
     {
-        if (worker.getHeldItem() == null)
+        if(worker.getHeldItem() == null)
         {
             return (int) block.getBlockHardness(world, pos);
         }
-        return (int) ((DELAY_MODIFIER - worker.getLevel()) * block.getBlockHardness(world, pos)
-                      / (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block.getDefaultState())));
+        return (int) ((DELAY_MODIFIER - worker.getLevel()) * block.getBlockHardness(world, pos) / (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block.getDefaultState())));
     }
 
     /**
@@ -815,7 +778,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     {
         Block curBlock = world.getBlockState(blockToMine).getBlock();
 
-        if (!holdEfficientTool(curBlock))
+        if(!holdEfficientTool(curBlock))
         {
             //We are missing a tool to harvest this block...
             return true;
@@ -823,19 +786,18 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
 
         ItemStack tool = worker.getHeldItem();
 
-        if (curBlock.getHarvestLevel(curBlock.getDefaultState()) < Utils.getMiningLevel(tool, curBlock.getHarvestTool(curBlock.getDefaultState())))
+        if(curBlock.getHarvestLevel(curBlock.getDefaultState()) < Utils.getMiningLevel(tool, curBlock.getHarvestTool(curBlock.getDefaultState())))
         {
             //We have to high of a tool...
             //TODO: request lower tier tools
         }
 
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.bedrock)
+        if(tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.bedrock)
         {
-            Log.logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool + "\n"
-                            + "Please report to MineColonies with this text to add support!");
+            Log.logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool + "\n" + "Please report to MineColonies with this text to add support!");
         }
 
-        if (walkToBlock(safeStand))
+        if(walkToBlock(safeStand))
         {
             return true;
         }
@@ -855,7 +817,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      */
     protected final boolean hasNotDelayed(int time)
     {
-        if (!hasDelayed)
+        if(!hasDelayed)
         {
             setDelay(time);
             hasDelayed = true;
@@ -895,20 +857,20 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     {
         //todo partially replace with methods in EntityCitizen
         Block curBlock = world.getBlockState(blockToMine).getBlock();
-        if (curBlock == null || curBlock.equals(Blocks.air))
+        if(curBlock == null || curBlock.equals(Blocks.air))
         {
             //no need to mine block...
             return true;
         }
 
-        if (BlockUtils.shouldNeverBeMessedWith(curBlock))
+        if(BlockUtils.shouldNeverBeMessedWith(curBlock))
         {
             Log.logger.warn("Trying to mine block " + curBlock + " which is not allowed!");
             //This will endlessly loop... If this warning comes up, check your blocks first...
             return false;
         }
 
-        if (checkMiningLocation(blockToMine, safeStand))
+        if(checkMiningLocation(blockToMine, safeStand))
         {
             //we have to wait for delay
             return false;
@@ -919,7 +881,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
         //calculate fortune enchantment
         int fortune = Utils.getFortuneOf(tool);
 
-        if (tool != null)
+        if(tool != null)
         {
             //Reduce durability if not using hand
             //todo: maybe merge with worker methods, have to find a clean way for this later
@@ -927,17 +889,16 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
         }
 
         //if Tool breaks
-        if (tool != null && tool.stackSize < 1)
+        if(tool != null && tool.stackSize < 1)
         {
             worker.setCurrentItemOrArmor(0, null);
             worker.getInventoryCitizen().setInventorySlotContents(worker.getInventoryCitizen().getHeldItemSlot(), null);
         }
 
-        Utils.blockBreakSoundAndEffect(world, blockToMine, curBlock,
-                                       curBlock.getMetaFromState(world.getBlockState(blockToMine)));
+        Utils.blockBreakSoundAndEffect(world, blockToMine, curBlock, curBlock.getMetaFromState(world.getBlockState(blockToMine)));
 
         List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
-        for (ItemStack item : items)
+        for(ItemStack item : items)
         {
             InventoryUtils.setStack(worker.getInventoryCitizen(), item);
         }

@@ -51,15 +51,16 @@ public class EntityAICitizenWander extends EntityAIBase
 
     /**
      * Returns the right height for the given position (ground block)
-     * @param position      Current position of the entity
-     * @return              Ground level at (position.x, position.z)
+     *
+     * @param position Current position of the entity
+     * @return Ground level at (position.x, position.z)
      */
     private double getValidHeight(Vec3 position)
     {
         double returnHeight = position.yCoord;
         if(position.yCoord < 0)
         {
-            returnHeight= 0;
+            returnHeight = 0;
         }
 
         while(returnHeight >= 1 && citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight - 1, MathHelper.floor_double(position.zCoord))))
@@ -78,7 +79,7 @@ public class EntityAICitizenWander extends EntityAIBase
      * Returns whether or not the citizen is too old to wander
      * True when age >= 100;
      *
-     * @return      True when age => 100, otherwise false
+     * @return True when age => 100, otherwise false
      */
     private boolean isToOld()
     {

@@ -73,7 +73,7 @@ public abstract class Job
         }
         catch(NoSuchMethodException exception)
         {
-            throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Job class mapping");
+            throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Job class mapping", exception);
         }
     }
 
@@ -110,9 +110,10 @@ public abstract class Job
             {
                 job.readFromNBT(compound);
             }
-            catch(Exception ex)
+            catch(RuntimeException ex)
             {
-                Log.logger.error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report " + "this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
+                Log.logger.error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                        compound.getString(TAG_TYPE), oclass.getName()), ex);
                 job = null;
             }
         }
