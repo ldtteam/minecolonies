@@ -1,11 +1,20 @@
 package com.minecolonies.entity.ai.util;
 
+import com.minecolonies.configuration.Configurations;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Schematic;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static com.minecolonies.entity.ai.util.Structure.Stage.DECORATE;
+import static com.minecolonies.entity.ai.util.Structure.Stage.SPAWN;
 
 /**
  * Represents a build task for the Structure AI.
@@ -19,6 +28,10 @@ public class Structure
      * The internal schematic loaded.
      */
     private final Schematic schematic;
+    /**
+     * the targetWorld to build the structure in.
+     */
+    private final World     targetWorld;
 
     /**
      * Create a new building task.
@@ -49,12 +62,13 @@ public class Structure
     {
         this.schematic = loadSchematic(targetWorld, buildingLocation, schematicFileName, rotation, stageProgress, blockProgress);
         this.stage = stageProgress;
+        this.targetWorld = targetWorld;
     }
 
     /**
      * Load the schematic for this building.
      *
-     * @param targetWorld       the targetWorld we want to place it
+     * @param targetWorld       the world we want to place it
      * @param buildingLocation  the location where we should place the schematic
      * @param schematicFileName the filename of the schematic we should load
      * @param rotation          The rotation this schematic should be in
@@ -111,6 +125,11 @@ public class Structure
         return this.schematic.getBlockPosition();
     }
 
+    /**
+     * Gather all information needed to evaluate one block.
+     *
+     * @return a SchematicBlock having all information for the current block.
+     */
     public SchematicBlock getCurrentBlock()
     {
         //initialize schematic if needed
@@ -122,22 +141,70 @@ public class Structure
                 this.schematic.getBlock(),
                 this.schematic.getBlockPosition(),
                 this.schematic.getMetadata(),
-                this.schematic.getItem()
+                this.schematic.getItem(),
+                BlockPosUtil.getBlock(targetWorld, this.schematic.getBlockPosition()),
+                BlockPosUtil.getBlockState(targetWorld, this.schematic.getBlockPosition())
         );
     }
 
+    /**
+     * Advance one block in the Schematic.
+     * <p>
+     * Will skip blocks not relevant.
+     *
+     * @return true when it found a block, false if at the end of the schematic and null when at block-scan-limit.
+     */
     public Boolean advanceBlock()
     {
-        if (this.stage == Stage.CLEAR)
+        switch (this.stage)
         {
-            //todo: check if there is a better method for it
-            return this.schematic.decrementBlock();
+            case CLEAR:
+                return advanceBlocks(this.schematic::decrementBlock,
+                                     (schematicBlock) -> schematicBlock.blockPosition.getX() <= 0
+                                                         || this.targetWorld.isAirBlock(schematicBlock.blockPosition));
+            case BUILD:
+                return advanceBlocks(this.schematic::incrementBlock, (schematicBlock) -> true);
+            case DECORATE:
+                return advanceBlocks(this.schematic::incrementBlock, (schematicBlock) -> true);
+            default:
+                return true;
         }
-        else
+    }
+
+    /**
+     * Advance many blocks until either moveOneBlock or checkIfApplies return false
+     * or if we reached the maximum of iterations in maxBlocksCheckedByBuilder.
+     *
+     * @param moveOneBlock this will be called to advance the schematic one block.
+     * @param checkIfApplies  this will be evaluated to check if we should skip a block.
+     * @return true when it found a block, false if at the end of the schematic and null when at block-scan-limit.
+     */
+    private Boolean advanceBlocks(Supplier<Boolean> moveOneBlock, Function<SchematicBlock, Boolean> checkIfApplies)
+    {
+        for (int i = 0; i < Configurations.maxBlocksCheckedByBuilder; i++)
         {
-            //todo: check if there is a better method for it
-            return this.schematic.incrementBlock();
+            if (!moveOneBlock.get())
+            {
+                return false;
+            }
+            if (!checkIfApplies.apply(getCurrentBlock()))
+            {
+                return true;
+            }
         }
+        return null;
+    }
+
+    /**
+     * Check if the worldBlock equals the schematicBlock
+     *
+     * @param blocksToTest the blocks to test
+     * @return true if they are the same
+     */
+    private boolean checkBlocksEqual(SchematicBlock blocksToTest)
+    {
+        return blocksToTest.block == blocksToTest.worldBlock
+               && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);
     }
 
     /**
@@ -175,7 +242,7 @@ public class Structure
     /**
      * This exception get's thrown when a Schematic file could not be loaded.
      */
-    public static class StructureException extends Exception
+    public static final class StructureException extends Exception
     {
         /**
          * Create this exception to throw a previously catched one.
@@ -206,6 +273,8 @@ public class Structure
         public final BlockPos    blockPosition;
         public final IBlockState metadata;
         public final Item        item;
+        public final Block       worldBlock;
+        public final IBlockState worldMetadata;
 
         /**
          * Create one immutable Block containing all information needed.
@@ -214,13 +283,17 @@ public class Structure
          * @param blockPosition the BlockPos this block has.
          * @param metadata      the metadata this block has.
          * @param item          the item needed to place this block
+         * @param worldBlock    the block to be replaced with the schematic block
+         * @param worldMetadata the metadata of the world block
          */
-        public SchematicBlock(final Block block, final BlockPos blockPosition, final IBlockState metadata, final Item item)
+        public SchematicBlock(final Block block, final BlockPos blockPosition, final IBlockState metadata, final Item item, final Block worldBlock, final IBlockState worldMetadata)
         {
             this.block = block;
             this.blockPosition = blockPosition;
             this.metadata = metadata;
             this.item = item;
+            this.worldBlock = worldBlock;
+            this.worldMetadata = worldMetadata;
         }
     }
 }

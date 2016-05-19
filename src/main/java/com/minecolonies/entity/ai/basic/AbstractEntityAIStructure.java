@@ -41,6 +41,10 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
      */
     private static final int BUILDING_WALK_RANGE           = 10;
     /**
+     * The amount of ticks to wait when not needing any tools to break blocks.
+     */
+    private static final int UNLIMITED_RESOURCES_TIMEOUT   = 5;
+    /**
      * The current structure task to be build.
      */
     private Structure currentStructure;
@@ -72,7 +76,7 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
                  * Clear out the building area
                  * todo: implement
                  */
-                new AITarget(AIState.CLEAR_STEP, this::clearStep),
+                new AITarget(AIState.CLEAR_STEP, generateSchematicIterator(this::clearStep,AIState.BUILDER_STRUCTURE_STEP)),
                 /**
                  * Build the structure and foundation of the building
                  * todo: implement
@@ -196,43 +200,38 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
      *
      * @return the next step once done
      */
-    private AIState clearStep()
+    private boolean clearStep(Structure.SchematicBlock currentBlock)
     {
 
-
-        //get the current working position and block
-        BlockPos coordinates = currentStructure.getCurrentBlockPosition();
-        Block    worldBlock  = world.getBlockState(coordinates).getBlock();
-
         //Don't break bedrock etc.
-        if (!BlockUtils.shouldNeverBeMessedWith(worldBlock))
+        if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock))
         {
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position
             if (walkToConstructionSite())
             {
-                return this.getState();
+                return false;
             }
 
-            worker.faceBlock(coordinates);
+            worker.faceBlock(currentBlock.blockPosition);
             //We need to deal with materials
             if (Configurations.builderInfiniteResources)
             {
                 worker.setCurrentItemOrArmor(0, null);
-
-                world.setBlockToAir(coordinates);
+                world.setBlockToAir(currentBlock.blockPosition);
                 worker.swingItem();
+                setDelay(UNLIMITED_RESOURCES_TIMEOUT);
             }
             else
             {
-                if (!mineBlock(coordinates))
+                if (!mineBlock(currentBlock.blockPosition))
                 {
-                    return this.getState();
+                    return false;
                 }
             }
         }
 
-        return this.getState();
+        return true;
     }
 
     /**
