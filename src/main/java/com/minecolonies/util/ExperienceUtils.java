@@ -1,10 +1,5 @@
 package com.minecolonies.util;
 
-import static io.netty.util.ResourceLeakDetector.getLevel;
-
-/**
- * Created by ray on 19.05.16.
- */
 public final class ExperienceUtils
 {
     /**
@@ -13,8 +8,16 @@ public final class ExperienceUtils
     private static final int EXPERIENCE_MULTIPLIER = 100;
 
     /**
+     * Private constructor to hide the public one
+     */
+    private ExperienceUtils()
+    {
+    }
+
+    /**
      * Calculates the xp needed for the next level
-     * @return the xp in double
+     * @param currentLevel the currentLevel of the citizen
+     * @return the xp in int
      */
     public static int getXPNeededForNextLevel(int currentLevel)
     {

@@ -48,7 +48,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int    DATA_CITIZEN_ID      = 17;
     private static final int    DATA_MODEL           = 18;
     private static final int    DATA_RENDER_METADATA = 19;
-   
+
     /**
      * Number of ticks to heal the citizens
      */
