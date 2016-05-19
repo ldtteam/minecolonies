@@ -1,6 +1,9 @@
 package com.minecolonies.entity.ai.basic;
 
 import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.entity.ai.util.AIState;
+import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.entity.ai.util.Structure;
 
 /**
  * This base ai class is used by ai's who need to build entire structures.
@@ -17,6 +20,11 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
 {
 
     /**
+     * The current structure task to be build.
+     */
+    private Structure currentStructure;
+
+    /**
      * Creates this ai base class and set's up important things.
      * <p>
      * Always use this constructor!
@@ -27,8 +35,73 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
     {
         super(job);
         this.registerTargets(
-            //none jet
+                /**
+                 * Check if we have to build something.
+                 */
+                new AITarget(this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
+                /**
+                 * Select the appropriate State to do next.
+                 */
+                new AITarget(AIState.START_BUILDING, this::startBuilding),
+                /**
+                 * Clear out the building area
+                 * todo: implement
+                 */
+                new AITarget(AIState.CLEAR_STEP, () -> AIState.IDLE),
+                /**
+                 * Build the structure and foundation of the building
+                 * todo: implement
+                 */
+                new AITarget(AIState.BUILDING_STEP, () -> AIState.IDLE),
+                /**
+                 * Decorate the Building with torches etc.
+                 * todo: implement
+                 */
+                new AITarget(AIState.DECORATION_STEP, () -> AIState.IDLE),
+                /**
+                 * Spawn entities on the structure
+                 * todo: implement
+                 */
+                new AITarget(AIState.SPAWN_STEP, () -> AIState.IDLE),
+                /**
+                 * Finalize the building and give back control to the ai.
+                 * todo: implement
+                 */
+                new AITarget(AIState.COMPLETE_BUILD, () -> AIState.IDLE)
         );
+    }
 
+    /**
+     * Check if there is a Structure to be build.
+     *
+     * @return true if we should start building.
+     */
+    private boolean isThereAStructureToBuild()
+    {
+        return currentStructure != null;
+    }
+
+    /**
+     * Start building this Structure.
+     * <p>
+     * Will determine where to start.
+     *
+     * @return the new State to start in.
+     */
+    private AIState startBuilding()
+    {
+        switch(currentStructure.getStage()){
+            case CLEAR:
+                return AIState.CLEAR_STEP;
+            case BUILD:
+                return AIState.BUILDING_STEP;
+            case DECORATE:
+                return AIState.DECORATION_STEP;
+            case SPAWN:
+                return AIState.SPAWN_STEP;
+            case COMPLETE:
+                return AIState.COMPLETE_BUILD;
+        }
+        return AIState.COMPLETE_BUILD;
     }
 }

@@ -45,7 +45,34 @@ public enum AIState
      * The ai needs some items it is waiting for.
      */
     NEEDS_ITEM,
-
+    /**
+     * Start building a Structure.
+     */
+    START_BUILDING,
+    /**
+     * Clears the building area
+     */
+    CLEAR_STEP,
+    /**
+     * Requests materials
+     */
+    REQUEST_MATERIALS,
+    /**
+     * Creates the solid structure
+     */
+    BUILDING_STEP,
+    /**
+     * Sets decorative blocks
+     */
+    DECORATION_STEP,
+    /**
+     * Spawns all entities
+     */
+    SPAWN_STEP,
+    /**
+     * Completes the building
+     */
+    COMPLETE_BUILD,
     /*
 ###FISHERMAN###
      */

@@ -25,7 +25,7 @@ public class Structure
      * @param schematicFileName the schematic file to load it from
      * @param rotation          the rotation it should have
      * @param stageProgress     the stage is should start with
-     * @param blockProgress     the block it scould start with
+     * @param blockProgress     the block it should start with
      * @throws StructureException when there is an error loading the schematic file
      */
     public Structure(World targetWorld, BlockPos buildingLocation, String schematicFileName, int rotation) throws StructureException
@@ -41,13 +41,33 @@ public class Structure
      * @param schematicFileName the schematic file to load it from
      * @param rotation          the rotation it should have
      * @param stageProgress     the stage is should start with
-     * @param blockProgress     the block it scould start with
+     * @param blockProgress     the block it should start with
      * @throws StructureException when there is an error loading the schematic file
      */
     public Structure(World targetWorld, BlockPos buildingLocation, String schematicFileName, int rotation, Stage stageProgress, BlockPos blockProgress) throws StructureException
     {
         this.schematic = loadSchematic(targetWorld, buildingLocation, schematicFileName, rotation, stageProgress, blockProgress);
         this.stage = stageProgress;
+    }
+
+    /**
+     * Get the current stage we're in.
+     *
+     * @return the current Stage.
+     */
+    public Stage getStage()
+    {
+        return stage;
+    }
+
+    /**
+     * Get the schematic for this Structure.
+     *
+     * @return the schematic.
+     */
+    public Schematic getSchematic()
+    {
+        return schematic;
     }
 
     /**
@@ -69,11 +89,11 @@ public class Structure
             throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
                     targetWorld, buildingLocation, schematicFileName));
         }
-        Schematic schematic = null;
+        Schematic tempSchematic = null;
         //failsafe for faulty schematic files
         try
         {
-            schematic = new Schematic(targetWorld, schematicFileName);
+            tempSchematic = new Schematic(targetWorld, schematicFileName);
         }
         catch(IllegalStateException e)
         {
@@ -81,22 +101,22 @@ public class Structure
         }
 
         //put the building into place
-        schematic.rotate(rotation);
-        schematic.setPosition(buildingLocation);
+        tempSchematic.rotate(rotation);
+        tempSchematic.setPosition(buildingLocation);
         //start this building by initializing the current work pointer
         if(stageProgress == Stage.CLEAR)
         {
-            schematic.decrementBlock();
+            tempSchematic.decrementBlock();
         }
         else
         {
-            schematic.incrementBlock();
+            tempSchematic.incrementBlock();
         }
         if(blockProgress != null)
         {
-            schematic.setLocalPosition(blockProgress);
+            tempSchematic.setLocalPosition(blockProgress);
         }
-        return schematic;
+        return tempSchematic;
     }
 
     /**
@@ -108,12 +128,13 @@ public class Structure
         BUILD,
         DECORATE,
         SPAWN,
+        COMPLETE
     }
 
     /**
      * This exception get's thrown when a Schematic file could not be loaded.
      */
-    public class StructureException extends Exception
+    public static class StructureException extends Exception
     {
         /**
          * Create this exception to throw a previously catched one.
