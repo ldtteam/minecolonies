@@ -77,11 +77,11 @@ public class WindowCitizen extends Window implements Button.Handler
      */
     private static final int                    XP_BAR_ICON_END_OFFSET          = 90;
     /**
-     * The number to calculate the experienceLevel of the citizen
+     * The number to create a percentage from another number (ex. 100*0.25 = 25)
      */
     private static final int                    PERCENT_MULTIPLIER              = 100;
     /**
-     * The number to create a percentage from another number (ex. 100*0.25 = 25)
+     * The number to calculate the experienceLevel of the citizen
      */
     private static final int                    EXPERIENCE_MULTIPLIER           = 100;
     /**

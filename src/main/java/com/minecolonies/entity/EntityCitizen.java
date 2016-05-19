@@ -49,9 +49,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int    DATA_MODEL           = 18;
     private static final int    DATA_RENDER_METADATA = 19;
     /**
+     * The number to calculate the experienceLevel of the citizen
+     */
+    private static final int EXPERIENCE_MULTIPLIER = 100;
+    /**
      * Number of ticks to heal the citizens
      */
-    private static final int    HEAL_CITIZENS_AFTER  = 200;
+    private static final int HEAL_CITIZENS_AFTER = 200;
     /**
      * Tag's to save data to NBT
      */
@@ -357,14 +361,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             localXp = j;
         }
         citizenData.addExperience(localXp);
-        //todo: meaningful constants
-        //todo: what about levels > 50 ?
 
-
-        while (100 * (citizenData.getLevel()+1) * (citizenData.getLevel()+1) < citizenData.getExperience())
+        while (EXPERIENCE_MULTIPLIER * (citizenData.getLevel()+1) * (citizenData.getLevel()+1) < citizenData.getExperience())
         {
             citizenData.increaseLevel();
         }
+
+        //todo maybe cap the level.
+
         citizenData.markDirty();
     }
 

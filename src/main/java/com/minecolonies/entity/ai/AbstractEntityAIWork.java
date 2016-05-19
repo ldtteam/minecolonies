@@ -34,6 +34,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     private static final int             DEFAULT_RANGE_FOR_DELAY = 3;
     private static final int             DELAY_RECHECK           = 10;
     private static final int             DELAY_MODIFIER          = 50;
+    /**
+     * The amount of xp the entity gains per block mined.
+     */
+    private static final double XP_PER_BLOCK = 0.5;
     protected static     Random          itemRand                = new Random();
     protected            boolean         needsShovel             = false;
     protected            boolean         needsAxe                = false;
@@ -69,7 +73,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * If we have waited one delay
      */
     private              boolean         hasDelayed              = false;
-
 
     /**
      * Creates the abstract part of the AI.
@@ -945,7 +948,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         }
 
         world.setBlockToAir(blockToMine);
-        worker.addExperience(0.05);
+        worker.addExperience(XP_PER_BLOCK);
         blocksMined++;
         return true;
     }
