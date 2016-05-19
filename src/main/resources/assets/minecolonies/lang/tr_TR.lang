@@ -80,7 +80,7 @@ com.minecolonies.job.Lumberjack=Oduncu
 com.minecolonies.job.Miner=Madenci
 com.minecolonies.job.Fisherman=Balıkçı
 
-tile.blockHutTownHall.messageMaxSize=Kolonin maksimum seviyeye ulaştı!
+tile.blockHutTownHall.messageMaxSize=Kolonin maksimum büyüklüğe ulaştı.
 tile.blockHutTownHall.messageColonistDead=Bir kolonist öldü!
 tile.blockHutTownHall.messagePlacedAlready=Zaten şehir merkezi koydun!
 tile.blockHutTownHall.messageInvalidWorld=Bu dünyada şehir merkezi koyamazsın.

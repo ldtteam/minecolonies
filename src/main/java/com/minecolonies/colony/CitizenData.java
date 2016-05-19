@@ -78,8 +78,6 @@ public class CitizenData
     private static final    String          TAG_SKILL_INTELLIGENCE  = "intelligence";
     private static final    String          TAG_SKILL_DEXTERITY     = "dexterity";
 
-    private static final    String          TAG_JOB                 = "job";
-
     /**
     * The current experience level the citizen is on.
     */
@@ -149,6 +147,7 @@ public class CitizenData
         citizen.readFromNBT(compound);
         return citizen;
     }
+
 
     /**
      * Returns the id of the citizen

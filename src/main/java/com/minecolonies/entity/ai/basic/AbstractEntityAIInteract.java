@@ -33,16 +33,20 @@ import static com.minecolonies.entity.ai.util.AIState.*;
  */
 public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEntityAICrafting<J>
 {
-    private static final int    DEFAULT_RANGE_FOR_DELAY = 3;
-    private static final int    DELAY_RECHECK           = 10;
-    private static final int    DELAY_MODIFIER          = 50;
-    protected static     Random itemRand                = new Random();
-    private boolean needsShovel;
-    private boolean needsAxe;
-    private boolean needsHoe;
-    private boolean needsPickaxe;
-    private int needsPickaxeLevel = -1;
-    private int blocksMined;
+    private static final int             DEFAULT_RANGE_FOR_DELAY = 3;
+    private static final int             DELAY_RECHECK           = 10;
+    private static final int             DELAY_MODIFIER          = 50;
+    /**
+     * The amount of xp the entity gains per block mined.
+     */
+    private static final double          XP_PER_BLOCK            = 0.05;
+    protected static     Random          itemRand                = new Random();
+    private              boolean         needsShovel             = false;
+    private              boolean         needsAxe                = false;
+    private              boolean         needsHoe                = false;
+    private              boolean         needsPickaxe            = false;
+    private              int             needsPickaxeLevel       = -1;
+    private              int             blocksMined             = 0;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -52,7 +56,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      * <p>
      * Will be cleared on restart, be aware!
      */
-    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
+    private              List<ItemStack> itemsCurrentlyNeeded    = new ArrayList<>();
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -60,17 +64,17 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      * <p>
      * Will be cleared on restart, be aware!
      */
-    private List<ItemStack> itemsNeeded          = new ArrayList<>();
-    private BlockPos currentWorkingLocation;
+    private              List<ItemStack> itemsNeeded             = new ArrayList<>();
+    private              BlockPos        currentWorkingLocation  = null;
     /**
      * The time in ticks until the next action is made
      */
-    private int      delay;
-    private BlockPos currentStandingLocation;
+    private              int             delay                   = 0;
+    private              BlockPos        currentStandingLocation = null;
     /**
      * If we have waited one delay
      */
-    private boolean  hasDelayed;
+    private              boolean         hasDelayed              = false;
 
 
     /**
@@ -945,7 +949,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
 
 
         world.setBlockToAir(blockToMine);
-        worker.addExperience(0.01);
+        worker.addExperience(XP_PER_BLOCK);
         blocksMined++;
         return true;
     }

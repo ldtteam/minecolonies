@@ -61,8 +61,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     /**
      * Number of ticks to heal the citizens
      */
-    private static final int    HEAL_CITIZENS_AFTER  = 200;
-
+    private static final int HEAL_CITIZENS_AFTER = 200;
     /**
      * Tag's to save data to NBT
      */
@@ -364,33 +363,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public void addExperience(double xp)
     {
-        double j       = Integer.MAX_VALUE - citizenData.getExperience();
+        double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
         xp=xp*skillModifier;
 
         double localXp = xp;
-        if (localXp > j)
+        if (localXp > maxValue)
         {
-            localXp = j;
+            localXp = maxValue;
         }
         citizenData.addExperience(localXp);
-        //todo: meaningful constants
-        //todo: what about levels > 50 ?
-        if(citizenData.getLevel()==0)
+
+        while (ExperienceUtils.getXPNeededForNextLevel(citizenData.getLevel()) < citizenData.getExperience())
         {
-            if(citizenData.getExperience()>=100)
-            {
-                citizenData.addExperience(-100);
-                citizenData.setLevel(1);
-            }
+            citizenData.increaseLevel();
         }
-        else if(citizenData.getLevel() < 50)
-        {
-            if(citizenData.getExperience()>=(100*(citizenData.getLevel()*citizenData.getLevel())))
-            {
-                citizenData.addExperience(-100*(citizenData.getLevel()*citizenData.getLevel()));
-                citizenData.increaseLevel();
-            }
-        }
+
         citizenData.markDirty();
     }
 
