@@ -119,7 +119,8 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
                 /**
                  * Check if inventory has to be dumped.
                  */
-                new AITarget(() -> worker.isInventoryFull() || wantInventoryDumped(), () -> INVENTORY_FULL));
+                new AITarget(() -> worker.isInventoryFull() || wantInventoryDumped(), () -> INVENTORY_FULL)
+        );
     }
 
     /**
