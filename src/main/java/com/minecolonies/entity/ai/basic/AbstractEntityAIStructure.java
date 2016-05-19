@@ -90,7 +90,8 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
      */
     private AIState startBuilding()
     {
-        switch(currentStructure.getStage()){
+        switch(currentStructure.getStage())
+        {
             case CLEAR:
                 return AIState.CLEAR_STEP;
             case BUILD:
@@ -99,8 +100,6 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
                 return AIState.DECORATION_STEP;
             case SPAWN:
                 return AIState.SPAWN_STEP;
-            case COMPLETE:
-                return AIState.COMPLETE_BUILD;
         }
         return AIState.COMPLETE_BUILD;
     }

@@ -81,7 +81,7 @@ public class Structure
      * @param blockProgress     the progress we have made so far
      * @throws StructureException when there is an error loading the schematic file
      */
-    private Schematic loadSchematic(World targetWorld, BlockPos buildingLocation, String schematicFileName, int rotation, Stage stageProgress, BlockPos blockProgress)
+    private static Schematic loadSchematic(World targetWorld, BlockPos buildingLocation, String schematicFileName, int rotation, Stage stageProgress, BlockPos blockProgress)
             throws StructureException
     {
         if(targetWorld == null || buildingLocation == null || schematicFileName == null)
