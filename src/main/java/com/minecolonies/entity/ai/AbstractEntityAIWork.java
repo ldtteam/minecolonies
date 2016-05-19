@@ -932,7 +932,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         }
 
         world.setBlockToAir(blockToMine);
-        worker.addExperience(0.05);
+        worker.addExperience(0.01);
         blocksMined++;
         return true;
     }
