@@ -730,23 +730,27 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
             {
                 loadSchematic("classic/minerX2Top");
             }
-            job.getSchematic().setPosition(new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ()));
 
-            int rotateTimes = 2;
-            if (direction == 3)
+            if(job.getSchematic()!=null)
             {
-                rotateTimes = 3;
-            }
-            else if (direction == 2)
-            {
-                rotateTimes = 0;
-            }
-            else if (direction == 4)
-            {
-                rotateTimes = 1;
-            }
+                job.getSchematic().setPosition(new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ()));
 
-            job.getSchematic().rotate(rotateTimes);
+                int rotateTimes = 2;
+                if (direction == 3)
+                {
+                    rotateTimes = 3;
+                }
+                else if (direction == 2)
+                {
+                    rotateTimes = 0;
+                }
+                else if (direction == 4)
+                {
+                    rotateTimes = 1;
+                }
+
+                job.getSchematic().rotate(rotateTimes);
+            }
         }
 
         //Check for safe Node

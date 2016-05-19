@@ -10,6 +10,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.OpenInventoryMessage;
+import com.minecolonies.util.ExperienceUtils;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.Gui;
 
@@ -76,14 +77,6 @@ public class WindowCitizen extends Window implements Button.Handler
      * The offset where the end should be placed in the GUI
      */
     private static final int                    XP_BAR_ICON_END_OFFSET          = 90;
-    /**
-     * The number to calculate the experienceLevel of the citizen
-     */
-    private static final int                    PERCENT_MULTIPLIER              = 100;
-    /**
-     * The number to create a percentage from another number (ex. 100*0.25 = 25)
-     */
-    private static final int                    EXPERIENCE_MULTIPLIER           = 100;
     /**
      * The width of the xpBar (Original width is halved to fit in the gui)
      */
@@ -179,13 +172,8 @@ public class WindowCitizen extends Window implements Button.Handler
      */
     private void createXpBar()
     {
-        /*
-         * Calculates how much percent of the next level has been completed.
-         * getExperience +1 in order to not get infinite if experience is zero
-         */
-        double experienceRatio =
-                citizen.getLevel() != 0 ?
-                (int) ((citizen.getExperience() + 1) / ((citizen.getLevel() * citizen.getLevel()) * EXPERIENCE_MULTIPLIER) * 100) : (citizen.getExperience() / EXPERIENCE_MULTIPLIER) * PERCENT_MULTIPLIER;
+        //Calculates how much percent of the next level has been completed.
+        double experienceRatio = ExperienceUtils.getPercentOfLevelCompleted(citizen.getExperience(),citizen.getLevel());
 
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabel("" + citizen.getLevel());
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X, XP_LABEL_Y);

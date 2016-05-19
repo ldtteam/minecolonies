@@ -40,9 +40,13 @@ public class EntityAIGateInteract extends EntityAIBase
      */
     private double entityPositionZ;
     /**
-     * Number of heights to check for the fence gate.
+     * Number of blocks to check for the fence gate - height.
      */
-    private static final int HEIGHTS_TO_CHECK = 2;
+    private static final int HEIGHT_TO_CHECK = 2;
+    /**
+     * Number of blocks to check for the fence gate - length.
+     */
+    private static final int LENGTH_TO_CHECK = 2;
     /**
      * The length of half a block.
      */
@@ -94,12 +98,13 @@ public class EntityAIGateInteract extends EntityAIBase
      */
     private boolean checkFenceGate(PathEntity pathentity)
     {
-        for (int i = 0; i < Math.min(pathentity.getCurrentPathIndex() + 2, pathentity.getCurrentPathLength()); ++i)
+        int maxLengthToCheck = Math.min(pathentity.getCurrentPathIndex() + LENGTH_TO_CHECK, pathentity.getCurrentPathLength());
+        for (int i = 0; i < maxLengthToCheck; ++i)
         {
             PathPoint pathpoint = pathentity.getPathPointFromIndex(i);
-            for(int j=0;j<HEIGHTS_TO_CHECK;j++)
+            for(int level = 0; level< HEIGHT_TO_CHECK; level++)
             {
-                this.gatePosition = new BlockPos(pathpoint.xCoord, pathpoint.yCoord + j, pathpoint.zCoord);
+                this.gatePosition = new BlockPos(pathpoint.xCoord, pathpoint.yCoord + level, pathpoint.zCoord);
                 if (this.theEntity.getDistanceSq((double) this.gatePosition.getX(), this.theEntity.posY, (double) this.gatePosition.getZ()) <= MIN_DISTANCE)
                 {
                     this.gateBlock = this.getBlockFence(this.gatePosition);
