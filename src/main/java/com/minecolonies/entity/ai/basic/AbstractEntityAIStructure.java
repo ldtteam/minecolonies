@@ -100,7 +100,8 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
                 return AIState.DECORATION_STEP;
             case SPAWN:
                 return AIState.SPAWN_STEP;
+            default:
+                return AIState.COMPLETE_BUILD;
         }
-        return AIState.COMPLETE_BUILD;
     }
 }
