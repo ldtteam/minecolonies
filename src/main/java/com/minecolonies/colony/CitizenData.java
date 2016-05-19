@@ -79,7 +79,10 @@ public class CitizenData
     private static final    String          TAG_SKILL_DEXTERITY     = "dexterity";
 
     private static final    String          TAG_JOB                 = "job";
-
+    /**
+     * The number to calculate the experienceLevel of the citizen
+     */
+    private static final int EXPERIENCE_MULTIPLIER = 100;
     /**
     * The current experience level the citizen is on.
     */
@@ -150,6 +153,14 @@ public class CitizenData
         return citizen;
     }
 
+    /**
+     * Calculates the xp needed for the next level
+     * @return the xp in double
+     */
+    public double getXpForNextLvl()
+    {
+        return EXPERIENCE_MULTIPLIER * (getLevel()+1) * (getLevel()+1);
+    }
     /**
      * Returns the id of the citizen
      *
@@ -703,6 +714,15 @@ public class CitizenData
         public double getExperience()
         {
             return experience;
+        }
+
+        /**
+         * Calculates the xp needed for the next level
+         * @return the xp in double
+         */
+        public double getXpForNextLvl()
+        {
+            return EXPERIENCE_MULTIPLIER * (getLevel()+1) * (getLevel()+1);
         }
 
         /**

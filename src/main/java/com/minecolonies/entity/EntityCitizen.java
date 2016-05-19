@@ -362,13 +362,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         citizenData.addExperience(localXp);
 
-        while (EXPERIENCE_MULTIPLIER * (citizenData.getLevel()+1) * (citizenData.getLevel()+1) < citizenData.getExperience())
+        while (citizenData.getXpForNextLvl() < citizenData.getExperience())
         {
             citizenData.increaseLevel();
         }
-
-        //todo maybe cap the level.
-
+        
         citizenData.markDirty();
     }
 

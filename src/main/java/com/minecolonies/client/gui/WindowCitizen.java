@@ -184,7 +184,7 @@ public class WindowCitizen extends Window implements Button.Handler
          * getExperience +1 in order to not get infinite if experience is zero
          */
         double experienceRatio = ((citizen.getExperience() - (EXPERIENCE_MULTIPLIER * citizen.getLevel())*(citizen.getLevel()))
-                / ((citizen.getLevel()+1)*(citizen.getLevel()+1)*EXPERIENCE_MULTIPLIER)) * PERCENT_MULTIPLIER;
+                / citizen.getXpForNextLvl()) * PERCENT_MULTIPLIER;
 
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabel("" + citizen.getLevel());
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X, XP_LABEL_Y);

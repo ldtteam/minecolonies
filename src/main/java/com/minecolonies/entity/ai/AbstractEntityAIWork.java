@@ -37,7 +37,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     /**
      * The amount of xp the entity gains per block mined.
      */
-    private static final double XP_PER_BLOCK = 0.5;
+    private static final double XP_PER_BLOCK = 0.05;
     protected static     Random          itemRand                = new Random();
     protected            boolean         needsShovel             = false;
     protected            boolean         needsAxe                = false;
