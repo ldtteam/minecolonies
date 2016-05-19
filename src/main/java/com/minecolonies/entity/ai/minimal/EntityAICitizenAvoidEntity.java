@@ -11,7 +11,9 @@ import java.util.stream.Collectors;
 public class EntityAICitizenAvoidEntity extends EntityAIBase
 {
 
-    /** The entity we are attached to */
+    /**
+     * The entity we are attached to
+     */
     private EntityCitizen theEntity;
     private double        farSpeed;
     private double        nearSpeed;
@@ -40,6 +42,36 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     }
 
     /**
+     * Returns the closest entity to avoid
+     * //todo: is this what we want? do we want to get the closest entity, and run away from that, or from enemies?
+     *
+     * @return Entity to avoid
+     */
+    private Entity getClosestToAvoid()
+    {
+        if (targetEntityClass == EntityPlayer.class)
+        {
+            return theEntity.worldObj.getClosestPlayerToEntity(theEntity, (double) distanceFromEntity);
+        }
+        else
+        {
+            List<Entity> list = theEntity.worldObj.getEntitiesInAABBexcluding(
+                    theEntity, theEntity.getEntityBoundingBox().expand((double) distanceFromEntity, 3.0D, (double) distanceFromEntity),
+                    (target) -> target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target));
+
+            list = list.stream().filter(entity -> targetEntityClass.isInstance(entity)).collect(Collectors.toList());
+
+            if (list.isEmpty())
+            {
+                return null;
+            }
+
+
+            return list.get(0);
+        }
+    }
+
+    /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     @Override
@@ -55,6 +87,14 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     public void startExecuting()
     {
         performMoveAway();
+    }
+
+    /**
+     * Makes entity move away from {@link #closestLivingEntity}
+     */
+    private void performMoveAway()
+    {
+        theEntity.getNavigator().moveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2, nearSpeed);
     }
 
     /**
@@ -88,43 +128,5 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         {
             theEntity.getNavigator().setSpeed(farSpeed);
         }
-    }
-
-    /**
-     * Returns the closest entity to avoid
-     * //todo: is this what we want? do we want to get the closest entity, and run away from that, or from enemies?
-     *
-     * @return  Entity to avoid
-     */
-    private Entity getClosestToAvoid()
-    {
-        if (targetEntityClass == EntityPlayer.class)
-        {
-            return theEntity.worldObj.getClosestPlayerToEntity(theEntity, (double) distanceFromEntity);
-        }
-        else
-        {
-            List<Entity> list = theEntity.worldObj.getEntitiesInAABBexcluding(
-                    theEntity, theEntity.getEntityBoundingBox().expand((double)distanceFromEntity, 3.0D, (double)distanceFromEntity),
-                    ( target) -> target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target));
-
-            list = list.stream().filter(entity -> targetEntityClass.isInstance(entity)).collect(Collectors.toList());
-
-            if (list.isEmpty())
-            {
-                return null;
-            }
-
-
-            return list.get(0);
-        }
-    }
-
-    /**
-     * Makes entity move away from {@link #closestLivingEntity}
-     */
-    private void performMoveAway()
-    {
-        theEntity.getNavigator().moveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2, nearSpeed);
     }
 }

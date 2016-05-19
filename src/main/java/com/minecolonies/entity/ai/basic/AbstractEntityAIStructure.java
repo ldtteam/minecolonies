@@ -68,7 +68,7 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
                  * todo: implement
                  */
                 new AITarget(AIState.COMPLETE_BUILD, () -> AIState.IDLE)
-        );
+                            );
     }
 
     /**
@@ -90,7 +90,7 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
      */
     private AIState startBuilding()
     {
-        switch(currentStructure.getStage())
+        switch (currentStructure.getStage())
         {
             case CLEAR:
                 return AIState.CLEAR_STEP;

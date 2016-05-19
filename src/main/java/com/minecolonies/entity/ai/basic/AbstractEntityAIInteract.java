@@ -564,16 +564,6 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     }
 
     /**
-     * Checks if the worker inventory and his building chest are full
-     * @return true if both are full, else false
-     */
-    private boolean isInventoryAndChestFull()
-    {
-        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
-            && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
-    }
-
-    /**
      * Dumps one inventory slot into the building chest.
      *
      * @param keepIt used to test it that stack should be kept
@@ -599,6 +589,17 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
                     // into a full inventory.
                     return stack.stackSize != returnStack.stackSize;
                 });
+    }
+
+    /**
+     * Checks if the worker inventory and his building chest are full
+     *
+     * @return true if both are full, else false
+     */
+    private boolean isInventoryAndChestFull()
+    {
+        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
+               && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
     }
 
     /**

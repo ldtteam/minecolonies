@@ -51,6 +51,55 @@ public class Structure
     }
 
     /**
+     * Load the schematic for this building.
+     *
+     * @param targetWorld       the targetWorld we want to place it
+     * @param buildingLocation  the location where we should place the schematic
+     * @param schematicFileName the filename of the schematic we should load
+     * @param rotation          The rotation this schematic should be in
+     * @param stageProgress     the stage we are in
+     * @param blockProgress     the progress we have made so far
+     * @throws StructureException when there is an error loading the schematic file
+     */
+    private static Schematic loadSchematic(World targetWorld, BlockPos buildingLocation, String schematicFileName, int rotation, Stage stageProgress, BlockPos blockProgress)
+            throws StructureException
+    {
+        if (targetWorld == null || buildingLocation == null || schematicFileName == null)
+        {
+            throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
+                                                       targetWorld, buildingLocation, schematicFileName));
+        }
+        Schematic tempSchematic = null;
+        //failsafe for faulty schematic files
+        try
+        {
+            tempSchematic = new Schematic(targetWorld, schematicFileName);
+        }
+        catch (IllegalStateException e)
+        {
+            throw new StructureException("failed to load schematic file!", e);
+        }
+
+        //put the building into place
+        tempSchematic.rotate(rotation);
+        tempSchematic.setPosition(buildingLocation);
+        //start this building by initializing the current work pointer
+        if (stageProgress == Stage.CLEAR)
+        {
+            tempSchematic.decrementBlock();
+        }
+        else
+        {
+            tempSchematic.incrementBlock();
+        }
+        if (blockProgress != null)
+        {
+            tempSchematic.setLocalPosition(blockProgress);
+        }
+        return tempSchematic;
+    }
+
+    /**
      * Get the current stage we're in.
      *
      * @return the current Stage.
@@ -68,55 +117,6 @@ public class Structure
     public Schematic getSchematic()
     {
         return schematic;
-    }
-
-    /**
-     * Load the schematic for this building.
-     *
-     * @param targetWorld       the targetWorld we want to place it
-     * @param buildingLocation  the location where we should place the schematic
-     * @param schematicFileName the filename of the schematic we should load
-     * @param rotation          The rotation this schematic should be in
-     * @param stageProgress     the stage we are in
-     * @param blockProgress     the progress we have made so far
-     * @throws StructureException when there is an error loading the schematic file
-     */
-    private static Schematic loadSchematic(World targetWorld, BlockPos buildingLocation, String schematicFileName, int rotation, Stage stageProgress, BlockPos blockProgress)
-            throws StructureException
-    {
-        if(targetWorld == null || buildingLocation == null || schematicFileName == null)
-        {
-            throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
-                    targetWorld, buildingLocation, schematicFileName));
-        }
-        Schematic tempSchematic = null;
-        //failsafe for faulty schematic files
-        try
-        {
-            tempSchematic = new Schematic(targetWorld, schematicFileName);
-        }
-        catch(IllegalStateException e)
-        {
-            throw new StructureException("failed to load schematic file!", e);
-        }
-
-        //put the building into place
-        tempSchematic.rotate(rotation);
-        tempSchematic.setPosition(buildingLocation);
-        //start this building by initializing the current work pointer
-        if(stageProgress == Stage.CLEAR)
-        {
-            tempSchematic.decrementBlock();
-        }
-        else
-        {
-            tempSchematic.incrementBlock();
-        }
-        if(blockProgress != null)
-        {
-            tempSchematic.setLocalPosition(blockProgress);
-        }
-        return tempSchematic;
     }
 
     /**

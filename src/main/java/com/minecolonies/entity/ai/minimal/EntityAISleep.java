@@ -22,7 +22,7 @@ public class EntityAISleep extends EntityAIBase
     public boolean shouldExecute()
     {
         return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP &&
-                citizen.isAtHome();
+               citizen.isAtHome();
     }
 
     @Override
