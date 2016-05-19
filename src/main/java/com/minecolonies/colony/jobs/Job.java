@@ -16,7 +16,7 @@ import java.util.*;
 
 public abstract class Job
 {
-    private static final String TAG_TYPE         = "type";
+    private static final String TAG_TYPE = "type";
     private static final String TAG_ITEMS_NEEDED = "itemsNeeded";
 
     private static final String MAPPING_PLACEHOLDER = "Placeholder";
@@ -26,6 +26,10 @@ public abstract class Job
     private static final String MAPPING_LUMBERJACK  = "Lumberjack";
     private static final String MAPPING_FARMER      = "Farmer";
     private static final String MAPPING_FISHERMAN   = "Fisherman";
+    /**
+     * The priority assigned with every main AI job.
+     */
+    private static final int    TASK_PRIORITY       = 3;
 
     //  Job and View Class Mapping
     private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<>();
@@ -283,7 +287,7 @@ public abstract class Job
         AbstractAISkeleton aiTask = generateAI();
         if(aiTask != null)
         {
-            tasks.addTask(aiTask.getMutexMask(), aiTask);
+            tasks.addTask(TASK_PRIORITY, aiTask);
         }
     }
 

@@ -68,16 +68,6 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
     }
 
     /**
-     * Get the mutex mask this AI task should have.
-     *
-     * @return
-     */
-    public final int getMutexMask()
-    {
-        return MUTEX_MASK;
-    }
-
-    /**
      * Register one target.
      *
      * @param target the target to register

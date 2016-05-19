@@ -110,13 +110,33 @@ public class Structure
     }
 
     /**
-     * Get the schematic for this Structure.
+     * Calculates the position of the block we are working on.
      *
-     * @return the schematic.
+     * @return a BlockPos of that position.
      */
-    public Schematic getSchematic()
+    public BlockPos getCurrentBlockPosition()
     {
-        return schematic;
+        return this.schematic.getBlockPosition();
+    }
+
+    /**
+     * Calculates the width of this structure.
+     *
+     * @return the width as an int
+     */
+    public int getWidth()
+    {
+        return this.schematic.getWidth();
+    }
+
+    /**
+     * Calculates the length of this structure.
+     *
+     * @return the length as an int
+     */
+    public int getLength()
+    {
+        return this.schematic.getLength();
     }
 
     /**
