@@ -183,9 +183,11 @@ public class WindowCitizen extends Window implements Button.Handler
          * Calculates how much percent of the next level has been completed.
          * getExperience +1 in order to not get infinite if experience is zero
          */
-        double experienceRatio =
-                citizen.getLevel() != 0 ?
-                (int) ((citizen.getExperience() + 1) / ((citizen.getLevel() * citizen.getLevel()) * EXPERIENCE_MULTIPLIER) * 100) : (citizen.getExperience() / EXPERIENCE_MULTIPLIER) * PERCENT_MULTIPLIER;
+        double experienceRatio = (citizen.getExperience() - (EXPERIENCE_MULTIPLIER * citizen.getLevel())*(citizen.getLevel()))  / ((citizen.getLevel()+1)*(citizen.getLevel()+1)*EXPERIENCE_MULTIPLIER) * PERCENT_MULTIPLIER;
+
+        /*citizen.getLevel() != 0 ?
+        (int) ((citizen.getExperience() + 1) / ((citizen.getLevel() * citizen.getLevel()) * EXPERIENCE_MULTIPLIER) * 100) :
+        (citizen.getExperience() / EXPERIENCE_MULTIPLIER) * PERCENT_MULTIPLIER;*/
 
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabel("" + citizen.getLevel());
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X, XP_LABEL_Y);

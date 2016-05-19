@@ -348,7 +348,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public void addExperience(double xp)
     {
-        double j       = Integer.MAX_VALUE - citizenData.getExperience();
+        double j = Integer.MAX_VALUE - citizenData.getExperience();
         xp=xp*skillModifier;
 
         double localXp = xp;
@@ -357,22 +357,13 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             localXp = j;
         }
         citizenData.addExperience(localXp);
+        //todo: meaningful constants
+        //todo: what about levels > 50 ?
 
-        if(citizenData.getLevel()==0)
+
+        while (100 * (citizenData.getLevel()+1) * (citizenData.getLevel()+1) < citizenData.getExperience())
         {
-            if(citizenData.getExperience()>=100)
-            {
-                citizenData.addExperience(-100);
-                citizenData.setLevel(1);
-            }
-        }
-        else
-        {
-            if(citizenData.getExperience()>=(100*(citizenData.getLevel()*citizenData.getLevel())))
-            {
-                citizenData.addExperience(-100*(citizenData.getLevel()*citizenData.getLevel()));
-                citizenData.increaseLevel();
-            }
+            citizenData.increaseLevel();
         }
         citizenData.markDirty();
     }
