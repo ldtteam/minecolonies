@@ -92,7 +92,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
 
     /**
      * Returns the closest entity to avoid
-     * //TODO is this what we want? do we want to get the closest entity, and run away from that, or from enemies?
+     * //todo: is this what we want? do we want to get the closest entity, and run away from that, or from enemies?
      *
      * @return  Entity to avoid
      */

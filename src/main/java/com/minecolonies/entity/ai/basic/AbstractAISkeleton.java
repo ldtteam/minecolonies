@@ -55,6 +55,15 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
     }
 
     /**
+     * Get the mutex mask this AI task should have.
+     * @return
+     */
+    public final int getMutexMask()
+    {
+        return MUTEX_MASK;
+    }
+
+    /**
      * Made final to preserve behaviour:
      * Sets a bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it
      * yields zero, the two tasks may run concurrently, if not - they must run exclusively from each other.

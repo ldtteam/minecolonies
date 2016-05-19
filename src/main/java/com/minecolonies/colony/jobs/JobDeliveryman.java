@@ -3,17 +3,16 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
+import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.util.BlockPosUtil;
-import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
 public class JobDeliveryman extends Job
 {
-    private                 BlockPos            destination;
-
-    private static final    String              TAG_DESTINATION = "destination";
+    private static final String TAG_DESTINATION = "destination";
+    private BlockPos destination;
 
     public JobDeliveryman(CitizenData entity)
     {
@@ -36,7 +35,7 @@ public class JobDeliveryman extends Job
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if (hasDestination())
+        if(hasDestination())
         {
             BlockPosUtil.writeToNBT(compound, TAG_DESTINATION, destination);
         }
@@ -58,16 +57,21 @@ public class JobDeliveryman extends Job
         return colony != null && !colony.getDeliverymanRequired().isEmpty();
     }
 
+    /**
+     * Generate your AI class to register.
+     *
+     * @return your personal AI instance.
+     */
     @Override
-    public void addTasks(EntityAITasks tasks)
+    public AbstractAISkeleton generateAI()
     {
-        tasks.addTask(3, new EntityAIWorkDeliveryman(this));
+        return new EntityAIWorkDeliveryman(this);
     }
 
     /**
      * Returns whether or not the job has a destination
      *
-     * @return          true if has destination, otherwise false
+     * @return true if has destination, otherwise false
      */
     public boolean hasDestination()
     {
@@ -77,7 +81,7 @@ public class JobDeliveryman extends Job
     /**
      * Returns the {@link BlockPos} of the destination
      *
-     * @return          {@link BlockPos} of the destination
+     * @return {@link BlockPos} of the destination
      */
     public BlockPos getDestination()
     {
@@ -87,7 +91,7 @@ public class JobDeliveryman extends Job
     /**
      * Sets the destination of the job
      *
-     * @param destination   {@link BlockPos} of the destination
+     * @param destination {@link BlockPos} of the destination
      */
     public void setDestination(BlockPos destination)
     {

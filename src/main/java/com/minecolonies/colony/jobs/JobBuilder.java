@@ -3,13 +3,13 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
+import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.builder.EntityAIWorkBuilder;
-import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * The Job a builder has.
- *
+ * <p>
  * Manages his current workorder
  * and persists between restarts
  */
@@ -69,7 +69,7 @@ public class JobBuilder extends Job
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if (workOrderId != 0)
+        if(workOrderId != 0)
         {
             compound.setInteger(TAG_WORK_ORDER, workOrderId);
         }
@@ -84,21 +84,21 @@ public class JobBuilder extends Job
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        if (compound.hasKey(TAG_WORK_ORDER))
+        if(compound.hasKey(TAG_WORK_ORDER))
         {
             workOrderId = compound.getInteger(TAG_WORK_ORDER);
         }
     }
 
     /**
-     * Override to add Job-specific AI tasks to the given EntityAITask list
+     * Generate your AI class to register.
      *
-     * @param tasks EntityAITasks list to add tasks to
+     * @return your personal AI instance.
      */
     @Override
-    public void addTasks(EntityAITasks tasks)
+    public AbstractAISkeleton generateAI()
     {
-        tasks.addTask(3, new EntityAIWorkBuilder(this));
+        return new EntityAIWorkBuilder(this);
     }
 
     /**
@@ -128,7 +128,7 @@ public class JobBuilder extends Job
      */
     public WorkOrderBuild getWorkOrder()
     {
-        if (this.workOrder == null)
+        if(this.workOrder == null)
         {
             this.workOrder = getColony().getWorkManager().getWorkOrder(workOrderId, WorkOrderBuild.class);
         }
