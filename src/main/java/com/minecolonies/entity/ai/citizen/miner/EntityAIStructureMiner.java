@@ -4,6 +4,7 @@ import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.Log;
@@ -33,7 +34,7 @@ import static com.minecolonies.entity.ai.util.AIState.*;
  */
 
 //Todo liquid handling + dump inventory
-public class EntityAIWorkMiner extends AbstractEntityAIInteract<JobMiner>
+public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 {
 
     private static final String     RENDER_META_TORCH         = "Torch";
@@ -61,7 +62,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIInteract<JobMiner>
      *
      * @param job a fisherman job to use.
      */
-    public EntityAIWorkMiner(JobMiner job)
+    public EntityAIStructureMiner(JobMiner job)
     {
         super(job);
         super.registerTargets(new AITarget(IDLE, () -> START_WORKING), new AITarget(START_WORKING, this::startWorkingAtOwnBuilding), new AITarget(PREPARING, this::prepareForMining), new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder), new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder), new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft), new AITarget(MINER_MINING_SHAFT, this::doShaftMining), new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding), new AITarget(MINER_MINING_NODE, this::doNodeMining));

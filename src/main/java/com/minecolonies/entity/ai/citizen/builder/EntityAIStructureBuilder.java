@@ -5,6 +5,7 @@ import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.*;
@@ -32,7 +33,7 @@ import static com.minecolonies.entity.ai.util.AIState.*;
  * AI class for the builder.
  * Manages building and repairing buildings.
  */
-public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
+public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuilder>
 {
     /**
      * The localization key for start building messages
@@ -94,7 +95,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
      *
      * @param job the job to execute this ai on
      */
-    public EntityAIWorkBuilder(JobBuilder job)
+    public EntityAIStructureBuilder(JobBuilder job)
     {
         super(job);
         super.registerTargets(new AITarget(this::checkIfExecute), new AITarget(IDLE, () -> BUILDER_CLEAR_STEP), new AITarget(BUILDER_CLEAR_STEP, this::clearStep), new AITarget(BUILDER_REQUEST_MATERIALS, this::requestMaterials), new AITarget(BUILDER_STRUCTURE_STEP, stepProducer(this::findNextBlockSolid, true)), new AITarget(BUILDER_DECORATION_STEP, stepProducer(this::findNextBlockNonSolid, false)), new AITarget(BUILDER_COMPLETE_BUILD, this::completeBuild));

@@ -4,7 +4,7 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.entity.ai.citizen.builder.EntityAIWorkBuilder;
+import com.minecolonies.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
@@ -98,7 +98,7 @@ public class JobBuilder extends Job
     @Override
     public AbstractAISkeleton generateAI()
     {
-        return new EntityAIWorkBuilder(this);
+        return new EntityAIStructureBuilder(this);
     }
 
     /**
