@@ -11,6 +11,9 @@ import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 /**
  * This base ai class is used by ai's who need to build entire structures.
  * These structures have to be supplied as schematics files.
@@ -157,6 +160,35 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
 
         //if necessary we can could implement calling getWorkingPosition recursively and add some "offset" to the sides.
         return getWorkingPosition(offset + 1);
+    }
+
+    /**
+     * Generate a function that will iterate over a schematic.
+     * <p>
+     * It will pass the current block (with all infos) to the evaluation function.
+     *
+     * @param evaluationFunction the function to be called each block.
+     * @param nextState          the next state to change to once done iterating.
+     * @return the new state this AI will be in after one pass
+     */
+    private Supplier<AIState> generateSchematicIterator(Function<Structure.SchematicBlock, Boolean> evaluationFunction, AIState nextState)
+    {
+        // do not replace with method reference, this one stays the same on changing reference for currentStructure
+        Supplier<Structure.SchematicBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
+        Supplier<Boolean>                  advanceBlock    = () -> currentStructure.advanceBlock();
+        return () -> {
+            Structure.SchematicBlock currentBlock    = getCurrentBlock.get();
+            boolean                  isDoneWithBlock = evaluationFunction.apply(currentBlock);
+            if (isDoneWithBlock)
+            {
+                boolean isAtEnd = advanceBlock.get();
+                if (isAtEnd)
+                {
+                    return nextState;
+                }
+            }
+            return getState();
+        };
     }
 
     /**

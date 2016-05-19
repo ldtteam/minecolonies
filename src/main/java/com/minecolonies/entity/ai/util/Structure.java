@@ -1,6 +1,9 @@
 package com.minecolonies.entity.ai.util;
 
 import com.minecolonies.util.Schematic;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
@@ -24,8 +27,6 @@ public class Structure
      * @param buildingLocation  the location where we should build this Structure
      * @param schematicFileName the schematic file to load it from
      * @param rotation          the rotation it should have
-     * @param stageProgress     the stage is should start with
-     * @param blockProgress     the block it should start with
      * @throws StructureException when there is an error loading the schematic file
      */
     public Structure(World targetWorld, BlockPos buildingLocation, String schematicFileName, int rotation) throws StructureException
@@ -83,15 +84,6 @@ public class Structure
         //put the building into place
         tempSchematic.rotate(rotation);
         tempSchematic.setPosition(buildingLocation);
-        //start this building by initializing the current work pointer
-        if (stageProgress == Stage.CLEAR)
-        {
-            tempSchematic.decrementBlock();
-        }
-        else
-        {
-            tempSchematic.incrementBlock();
-        }
         if (blockProgress != null)
         {
             tempSchematic.setLocalPosition(blockProgress);
@@ -117,6 +109,35 @@ public class Structure
     public BlockPos getCurrentBlockPosition()
     {
         return this.schematic.getBlockPosition();
+    }
+
+    public SchematicBlock getCurrentBlock()
+    {
+        //initialize schematic if needed
+        if (this.schematic.getBlock() == null)
+        {
+            advanceBlock();
+        }
+        return new SchematicBlock(
+                this.schematic.getBlock(),
+                this.schematic.getBlockPosition(),
+                this.schematic.getMetadata(),
+                this.schematic.getItem()
+        );
+    }
+
+    public Boolean advanceBlock()
+    {
+        if (this.stage == Stage.CLEAR)
+        {
+            //todo: check if there is a better method for it
+            return this.schematic.decrementBlock();
+        }
+        else
+        {
+            //todo: check if there is a better method for it
+            return this.schematic.incrementBlock();
+        }
     }
 
     /**
@@ -175,6 +196,31 @@ public class Structure
         public StructureException(String message)
         {
             super(message);
+        }
+    }
+
+    public static final class SchematicBlock
+    {
+
+        public final Block       block;
+        public final BlockPos    blockPosition;
+        public final IBlockState metadata;
+        public final Item        item;
+
+        /**
+         * Create one immutable Block containing all information needed.
+         *
+         * @param block         the minecraft block this block has.
+         * @param blockPosition the BlockPos this block has.
+         * @param metadata      the metadata this block has.
+         * @param item          the item needed to place this block
+         */
+        public SchematicBlock(final Block block, final BlockPos blockPosition, final IBlockState metadata, final Item item)
+        {
+            this.block = block;
+            this.blockPosition = blockPosition;
+            this.metadata = metadata;
+            this.item = item;
         }
     }
 }

@@ -13,6 +13,7 @@ import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
@@ -45,20 +46,20 @@ public final class Schematic
     /**
      * The minecraft world this schematic is displayed in
      */
-    private World            world;
+    private World          world;
     /**
      * the schematic world this schematic comes from
      */
-    private SchematicWorld   schematicWorld;
+    private SchematicWorld schematicWorld;
     /**
      * the anchor position this schematic will be
      * placed on in the minecraft world
      */
-    private BlockPos        position;
+    private BlockPos       position;
     /**
      * the name this schematic has
      */
-    private String           name;
+    private String         name;
 
     /**
      * North-West corner
@@ -147,7 +148,7 @@ public final class Schematic
      *
      * @param worldObj  the world to load it in
      * @param name      the schematics name
-     * @param pos         coordinates
+     * @param pos       coordinates
      * @param rotations number of times rotated
      */
     public static void loadAndPlaceSchematicWithRotation(World worldObj, String name, BlockPos pos, int rotations)
@@ -192,22 +193,22 @@ public final class Schematic
                     Block       block    = this.schematicWorld.getBlock(i, j, k);
                     IBlockState metadata = this.schematicWorld.getBlockState(new BlockPos(i, j, k));
 
-                    if (block == Blocks.air && !world.getBlockState(new BlockPos(x+i, y+j, z+k)).getBlock().getMaterial().isSolid())
+                    if (block == Blocks.air && !world.getBlockState(new BlockPos(x + i, y + j, z + k)).getBlock().getMaterial().isSolid())
                     {
                         world.setBlockToAir(pos.add(i, j, k));
                     }
                     else if (block.getMaterial().isSolid())
                     {
                         world.setBlockState(new BlockPos(x + i, y + j, z + k), metadata, 0x03);
-                        if (world.getBlockState(new BlockPos(x+i, y+j, z+k)).getBlock() == block)
+                        if (world.getBlockState(new BlockPos(x + i, y + j, z + k)).getBlock() == block)
                         {
-                            if (world.getBlockState(new BlockPos(x+i, y+j, z+k)) != metadata)
+                            if (world.getBlockState(new BlockPos(x + i, y + j, z + k)) != metadata)
                             {
                                 world.setBlockState(new BlockPos(x + i, y + j, z + k), metadata, 0x03);
                             }
                             //todo Is this the same?
                             //block.onPostBlockPlaced(world,new BlockPos( x + i, y + j, z + k), metadata);
-                            block.onBlockAdded(world,new BlockPos( x + i, y + j, z + k), metadata);
+                            block.onBlockAdded(world, new BlockPos(x + i, y + j, z + k), metadata);
                         }
                     }
                     else
@@ -224,12 +225,12 @@ public final class Schematic
 
         for (BlockPos coords : delayedBlocks)
         {
-            int   i        = coords.getX();
-            int   j        = coords.getY();
-            int   k        = coords.getZ();
-            Block block    = this.schematicWorld.getBlock(i, j, k);
-            IBlockState   metadata = this.schematicWorld.getBlockState(new BlockPos(i, j, k));
-            BlockPos newPos = new BlockPos(x + i, y + j, z + k);
+            int         i        = coords.getX();
+            int         j        = coords.getY();
+            int         k        = coords.getZ();
+            Block       block    = this.schematicWorld.getBlock(i, j, k);
+            IBlockState metadata = this.schematicWorld.getBlockState(new BlockPos(i, j, k));
+            BlockPos    newPos   = new BlockPos(x + i, y + j, z + k);
 
             world.setBlockState(newPos, metadata, 0x03);
             if (world.getBlockState(newPos).getBlock() == block)
@@ -309,11 +310,11 @@ public final class Schematic
         short height = (short) (Math.abs(maxY - minY) + 1);
         short length = (short) (Math.abs(maxZ - minZ) + 1);
 
-        short[][][]         blocks       = new short[width][height][length];
-        byte[][][]          metadata     = new byte[width][height][length];
-        List<TileEntity>    tileEntities = new ArrayList<>();
-        TileEntity          tileEntity;
-        NBTTagCompound      tileEntityNBT;
+        short[][][]      blocks       = new short[width][height][length];
+        byte[][][]       metadata     = new byte[width][height][length];
+        List<TileEntity> tileEntities = new ArrayList<>();
+        TileEntity       tileEntity;
+        NBTTagCompound   tileEntityNBT;
 
         int xOffset = 0, yOffset = 0, zOffset = 0;
 
@@ -323,9 +324,9 @@ public final class Schematic
             {
                 for (int z = minZ; z <= maxZ; z++)
                 {
-                    BlockPos pos = new BlockPos(x, y, z);
+                    BlockPos    pos        = new BlockPos(x, y, z);
                     IBlockState blockState = world.getBlockState(pos);
-                    Block block = blockState.getBlock();
+                    Block       block      = blockState.getBlock();
                     blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(block);
                     metadata[x - minX][y - minY][z - minZ] = (byte) block.getMetaFromState(blockState);
 
@@ -333,9 +334,9 @@ public final class Schematic
                     {
                         if (xOffset == 0 && yOffset == 0 && zOffset == 0)
                         {
-                            xOffset = x-minX;
-                            yOffset = y-minY;
-                            zOffset = z-minZ;
+                            xOffset = x - minX;
+                            yOffset = y - minY;
+                            zOffset = z - minZ;
                         }
                         else
                         {
@@ -361,15 +362,15 @@ public final class Schematic
         }
         if (xOffset == 0 && yOffset == 0 && zOffset == 0)
         {
-            xOffset = (width/2);
-            zOffset = (length/2);
+            xOffset = (width / 2);
+            zOffset = (length / 2);
         }
 
 
-        AxisAlignedBB region = AxisAlignedBB.fromBounds(minX, minY, minZ, maxX, maxY, maxZ);
-        List<EntityHanging> entityHangings = world.getEntitiesWithinAABB(EntityHanging.class, region);
+        AxisAlignedBB        region          = AxisAlignedBB.fromBounds(minX, minY, minZ, maxX, maxY, maxZ);
+        List<EntityHanging>  entityHangings  = world.getEntitiesWithinAABB(EntityHanging.class, region);
         List<EntityMinecart> entityMinecarts = world.getEntitiesWithinAABB(EntityMinecart.class, region);
-        NBTTagList entityList = new NBTTagList();
+        NBTTagList           entityList      = new NBTTagList();
 
         entityHangings.stream().filter(entity -> entity != null).forEach(entity -> {
             NBTTagCompound entityData = new NBTTagCompound();
@@ -462,7 +463,7 @@ public final class Schematic
     {
         BlockPos pos = this.getBlockPosition();
 
-        if(schematicWorld.getBlock(x,y,z) instanceof BlockDoor)
+        if (schematicWorld.getBlock(x, y, z) instanceof BlockDoor)
         {
             return Objects.equals(schematicWorld.getBlock(x, y, z),
                                   BlockPosUtil.getBlock(world, pos));
@@ -599,25 +600,6 @@ public final class Schematic
         }
     }
 
-    public Block getBlock()
-    {
-        if (x == -1)
-        {
-            return null;
-        }
-        return this.schematicWorld.getBlock(x, y, z);
-    }
-
-    public IBlockState getMetadata()
-    {
-        //todo why this x?
-        if (x == -1)
-        {
-            return null;
-        }
-        return this.schematicWorld.getBlockState(new BlockPos(x, y, z));
-    }
-
     public TileEntity getTileEntity()
     {
         if (x == -1)
@@ -652,6 +634,43 @@ public final class Schematic
     public void setPosition(BlockPos position)
     {
         this.position = position;
+    }
+
+    public Item getItem()
+    {
+        Block       block    = this.getBlock();
+        IBlockState metadata = this.getMetadata();
+        if (block == null || metadata == null)
+        {
+            return null;
+        }
+        ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
+
+        //In some cases getItemFromBlock returns null. We then have to get the item the saver way.
+        if (stack.getItem() == null)
+        {
+            stack = new ItemStack(block.getItem(this.schematicWorld, this.getBlockPosition()));
+        }
+        return stack.getItem();
+    }
+
+    public Block getBlock()
+    {
+        if (x == -1)
+        {
+            return null;
+        }
+        return this.schematicWorld.getBlock(x, y, z);
+    }
+
+    public IBlockState getMetadata()
+    {
+        //todo why this x?
+        if (x == -1)
+        {
+            return null;
+        }
+        return this.schematicWorld.getBlockState(new BlockPos(x, y, z));
     }
 
     public String getName()
