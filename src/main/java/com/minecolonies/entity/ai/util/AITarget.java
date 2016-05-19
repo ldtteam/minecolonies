@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.util;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;

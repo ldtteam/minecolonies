@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.util;
 
 /**
  * Basic state enclosing states all ai's use.

@@ -1,9 +1,12 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.citizen.builder;
 
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.util.AIState;
+import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.*;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
@@ -23,13 +26,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import static com.minecolonies.entity.ai.AIState.*;
+import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * AI class for the builder.
  * Manages building and repairing buildings.
  */
-public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
+public class EntityAIWorkBuilder extends AbstractEntityAIInteract<JobBuilder>
 {
     /**
      * The localization key for start building messages

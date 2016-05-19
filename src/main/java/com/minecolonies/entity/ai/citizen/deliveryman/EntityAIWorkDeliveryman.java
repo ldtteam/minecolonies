@@ -1,6 +1,7 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.citizen.deliveryman;
 
 import com.minecolonies.colony.jobs.JobDeliveryman;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 
 /**
  * Performs deliveryman work
@@ -8,7 +9,7 @@ import com.minecolonies.colony.jobs.JobDeliveryman;
  *
  * @author MrIbby
  */
-public class EntityAIWorkDeliveryman extends AbstractEntityAIWork<JobDeliveryman>
+public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliveryman>
 {
     public EntityAIWorkDeliveryman(JobDeliveryman deliveryman)
     {

@@ -1,9 +1,12 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.citizen.fisherman;
 
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.util.AIState;
+import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
@@ -11,7 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-import static com.minecolonies.entity.ai.AIState.*;
+import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * Fisherman AI class
@@ -23,7 +26,7 @@ import static com.minecolonies.entity.ai.AIState.*;
  *
  * @author Raycoms, Kostronor
  */
-public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
+public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman>
 {
 
     /**

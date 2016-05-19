@@ -1,8 +1,11 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.citizen.miner;
 
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.util.AIState;
+import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.Schematic;
 import com.minecolonies.util.Utils;
@@ -20,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-import static com.minecolonies.entity.ai.AIState.*;
+import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * Miner AI class
@@ -30,7 +33,7 @@ import static com.minecolonies.entity.ai.AIState.*;
  */
 
 //Todo liquid handling + dump inventory
-public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
+public class EntityAIWorkMiner extends AbstractEntityAIInteract<JobMiner>
 {
 
     private static final String     RENDER_META_TORCH         = "Torch";

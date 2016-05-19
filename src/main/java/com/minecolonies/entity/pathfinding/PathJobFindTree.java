@@ -1,6 +1,6 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.minecolonies.entity.ai.Tree;
+import com.minecolonies.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;

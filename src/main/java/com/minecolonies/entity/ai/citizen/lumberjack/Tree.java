@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.*;

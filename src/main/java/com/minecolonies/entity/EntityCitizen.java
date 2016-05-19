@@ -10,7 +10,8 @@ import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.ai.*;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.minimal.*;
 import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
@@ -194,7 +195,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         Object currentTasks[] = this.tasks.taskEntries.toArray();
         for (Object task : currentTasks)
         {
-            if (((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIWork)
+            if (((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIInteract)
             {
                 this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry) task).action);
             }

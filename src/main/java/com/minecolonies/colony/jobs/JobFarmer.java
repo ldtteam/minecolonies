@@ -2,7 +2,7 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.entity.ai.EntityAIWorkFarmer;
+import com.minecolonies.entity.ai.citizen.farmer.EntityAIWorkFarmer;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -52,7 +52,7 @@ public class JobFarmer extends Job
     /**
      * Sets the stage of the worker
      *
-     * @param stage     {@link com.minecolonies.entity.ai.EntityAIWorkFarmer.Stage} to set
+     * @param stage     {@link EntityAIWorkFarmer.Stage} to set
      */
     public void setStage(EntityAIWorkFarmer.Stage stage)
     {
@@ -62,7 +62,7 @@ public class JobFarmer extends Job
     /**
      * Returns the stage of the worker
      *
-     * @return          {@link com.minecolonies.entity.ai.EntityAIWorkFarmer.Stage}
+     * @return          {@link EntityAIWorkFarmer.Stage}
      */
     public EntityAIWorkFarmer.Stage getStage()
     {

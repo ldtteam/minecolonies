@@ -2,7 +2,7 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.entity.ai.EntityAIWorkMiner;
+import com.minecolonies.entity.ai.citizen.miner.EntityAIWorkMiner;
 import com.minecolonies.util.Schematic;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;

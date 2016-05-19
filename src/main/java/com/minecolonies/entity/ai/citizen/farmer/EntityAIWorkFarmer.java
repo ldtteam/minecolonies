@@ -1,7 +1,8 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.citizen.farmer;
 
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.jobs.JobFarmer;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.block.Block;
@@ -25,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Raycoms, Kostronor
  */
 
-public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
+public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 {
     private static final    String                  TOOL_TYPE_HOE     = "hoe";
     private static final    String                  TOOL_TYPE_SHOVEL  = "shovel";

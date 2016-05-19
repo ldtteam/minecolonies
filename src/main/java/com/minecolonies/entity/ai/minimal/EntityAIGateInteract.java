@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.minimal;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFenceGate;

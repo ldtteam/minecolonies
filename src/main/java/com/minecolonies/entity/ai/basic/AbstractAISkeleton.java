@@ -1,7 +1,10 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.basic;
 
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.ai.util.AIState;
+import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
@@ -15,7 +18,7 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
  * Skeleton class for worker ai.
  * Here general target execution will be handled.
  * No utility on this level!
- * That's what {@link AbstractEntityAIWork} is for.
+ * That's what {@link AbstractEntityAIInteract} is for.
  *
  * @param <J> the job this ai will have
  */

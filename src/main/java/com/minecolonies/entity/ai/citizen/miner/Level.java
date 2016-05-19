@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.citizen.miner;
 
 import com.minecolonies.colony.buildings.BuildingMiner;
 import net.minecraft.nbt.NBTTagCompound;

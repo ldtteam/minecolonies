@@ -1,7 +1,9 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.basic;
 
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.entity.ai.util.AIState;
+import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
@@ -16,7 +18,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import static com.minecolonies.entity.ai.AIState.*;
+import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * This is the base class of all worker AIs.
@@ -29,7 +31,7 @@ import static com.minecolonies.entity.ai.AIState.*;
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkeleton<J>
+public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEntityAICrafting<J>
 {
     private static final int    DEFAULT_RANGE_FOR_DELAY = 3;
     private static final int    DELAY_RECHECK           = 10;
@@ -77,7 +79,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      *
      * @param job the job to fulfill
      */
-    public AbstractEntityAIWork(J job)
+    public AbstractEntityAIInteract(J job)
     {
         super(job);
         super.registerTargets(

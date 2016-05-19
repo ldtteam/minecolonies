@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.minimal;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Log;

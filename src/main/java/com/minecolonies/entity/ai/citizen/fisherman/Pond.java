@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.citizen.fisherman;
 
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.init.Blocks;
