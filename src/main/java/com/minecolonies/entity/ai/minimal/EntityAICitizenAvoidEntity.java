@@ -11,9 +11,7 @@ import java.util.stream.Collectors;
 public class EntityAICitizenAvoidEntity extends EntityAIBase
 {
 
-    /**
-     * The entity we are attached to
-     */
+    /** The entity we are attached to */
     private EntityCitizen theEntity;
     private double        farSpeed;
     private double        nearSpeed;
@@ -75,14 +73,14 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     public void updateTask()
     {
         Entity newClosest = getClosestToAvoid();
-        if(newClosest != null && newClosest != closestLivingEntity)
+        if (newClosest != null && newClosest != closestLivingEntity)
         {
             closestLivingEntity = newClosest;
             performMoveAway();
             return;
         }
 
-        if(theEntity.getDistanceSqToEntity(closestLivingEntity) < 49.0D)
+        if (theEntity.getDistanceSqToEntity(closestLivingEntity) < 49.0D)
         {
             theEntity.getNavigator().setSpeed(nearSpeed);
         }
@@ -96,21 +94,23 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      * Returns the closest entity to avoid
      * //todo: is this what we want? do we want to get the closest entity, and run away from that, or from enemies?
      *
-     * @return Entity to avoid
+     * @return  Entity to avoid
      */
     private Entity getClosestToAvoid()
     {
-        if(targetEntityClass == EntityPlayer.class)
+        if (targetEntityClass == EntityPlayer.class)
         {
             return theEntity.worldObj.getClosestPlayerToEntity(theEntity, (double) distanceFromEntity);
         }
         else
         {
-            List<Entity> list = theEntity.worldObj.getEntitiesInAABBexcluding(theEntity, theEntity.getEntityBoundingBox().expand((double) distanceFromEntity, 3.0D, (double) distanceFromEntity), (target) -> target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target));
+            List<Entity> list = theEntity.worldObj.getEntitiesInAABBexcluding(
+                    theEntity, theEntity.getEntityBoundingBox().expand((double)distanceFromEntity, 3.0D, (double)distanceFromEntity),
+                    ( target) -> target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target));
 
             list = list.stream().filter(entity -> targetEntityClass.isInstance(entity)).collect(Collectors.toList());
 
-            if(list.isEmpty())
+            if (list.isEmpty())
             {
                 return null;
             }

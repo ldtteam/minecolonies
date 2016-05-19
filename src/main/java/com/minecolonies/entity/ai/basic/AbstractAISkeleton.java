@@ -25,7 +25,7 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
 public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
 {
 
-    private static final int MUTEX_MASK = 3;
+    private static final int    MUTEX_MASK = 3;
     protected final J                   job;
     protected final EntityCitizen       worker;
     protected final World               world;
@@ -56,7 +56,6 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
 
     /**
      * Get the mutex mask this AI task should have.
-     *
      * @return
      */
     public final int getMutexMask()
@@ -79,7 +78,6 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
 
     /**
      * Register one target.
-     *
      * @param target the target to register
      */
     private void registerTarget(AITarget target)
@@ -161,18 +159,18 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      */
     private boolean checkOnTarget(AITarget target)
     {
-        if(state != target.getState() && target.getState() != null)
+        if (state != target.getState() && target.getState() != null)
         {
             return false;
         }
         try
         {
-            if(!target.test())
+            if (!target.test())
             {
                 return false;
             }
         }
-        catch(RuntimeException e)
+        catch (Exception e)
         {
             Log.logger.warn("Condition check for target " + target + " threw an exception:", e);
             return false;
@@ -196,12 +194,12 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         {
             newState = target.apply();
         }
-        catch(RuntimeException e)
+        catch (Exception e)
         {
             Log.logger.warn("Action for target " + target + " threw an exception:", e);
             return false;
         }
-        if(newState != null)
+        if (newState != null)
         {
             state = newState;
             return true;
