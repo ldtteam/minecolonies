@@ -10,6 +10,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.OpenInventoryMessage;
+import com.minecolonies.util.ExperienceUtils;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.Gui;
 
@@ -183,8 +184,8 @@ public class WindowCitizen extends Window implements Button.Handler
          * Calculates how much percent of the next level has been completed.
          * getExperience +1 in order to not get infinite if experience is zero
          */
-        double experienceRatio = ((citizen.getExperience() - (EXPERIENCE_MULTIPLIER * citizen.getLevel())*(citizen.getLevel()))
-                / citizen.getXpForNextLvl()) * PERCENT_MULTIPLIER;
+        double experienceRatio = ((citizen.getExperience() - ExperienceUtils.getXPNeededForNextLevel(citizen.getLevel()+1))
+                / ExperienceUtils.getXPNeededForNextLevel(citizen.getLevel())) * PERCENT_MULTIPLIER;
 
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabel("" + citizen.getLevel());
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X, XP_LABEL_Y);
