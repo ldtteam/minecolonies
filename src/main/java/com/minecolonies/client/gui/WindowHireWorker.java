@@ -3,17 +3,14 @@ package com.minecolonies.client.gui;
 import com.blockout.Pane;
 import com.blockout.controls.Button;
 import com.blockout.controls.Label;
-import com.blockout.controls.TextField;
 import com.blockout.views.ScrollingList;
 import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.HireFireMessage;
-import com.minecolonies.network.messages.ToggleJobMessage;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.util.BlockPos;
 
@@ -21,22 +18,58 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Window for a town hall name entry
+ * Window for the hiring or firing of a worker.
  */
 public class WindowHireWorker extends Window implements Button.Handler
 {
+    /**
+     * Id of the done button in the GUI.
+     */
     private static final    String      BUTTON_DONE                     = "done";
+
+    /**
+     * Id of the cancel button in the GUI.
+     */
     private static final    String      BUTTON_CANCEL                   = "cancel";
+
+    /**
+     * Id of the citizen name in the GUI.
+     */
     private static final    String      CITIZEN_LABEL                   = "citizen";
+
+    /**
+     * Id of the id label in the GUI.
+     */
     private static final    String      ID_LABEL                        = "id";
+
+    /**
+     * Id of the citizen list in the GUI.
+     */
     private static final    String      CITIZEN_LIST                    = "unemployed";
+
+    /**
+     * Id of the attributes label in the GUI..
+     */
     private static final    String      ATTRIBUTES_LABEL                = "attributes";
-    private static final    String      TOWNHALL_NAME_RESOURCE_SUFFIX   = ":gui/windowHireWorker.xml";
-    private ScrollingList citizenList;
+
+    /**
+     * Link to the xml file.
+     */
+    private static final    String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowHireWorker.xml";
+
+    /**
+     * Contains all the citizens.
+     */
     private List<CitizenData.View> citizens    = new ArrayList<>();
+
+    /**
+     * The id of the current building.
+     */
     Building.View building;
 
-    //todo documentation
+    /**
+     * The colony.
+     */
     private                 ColonyView  colony;
 
     /**
@@ -46,14 +79,14 @@ public class WindowHireWorker extends Window implements Button.Handler
      */
     public WindowHireWorker(ColonyView c, BlockPos buildingId)
     {
-        super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
+        super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.colony = c;
         building = colony.getBuilding(buildingId);
         updateCitizens();
     }
 
     /**
-     * Clears and resets all citizens
+     * Clears and resets/updates all citizens
      */
     private void updateCitizens()
     {
@@ -69,12 +102,15 @@ public class WindowHireWorker extends Window implements Button.Handler
         }
     }
 
+    /**
+     * Called when the GUI has been opened.
+     * Will fill the fields and lists.
+     */
     @Override
     public void onOpened()
     {
-        //todo show attributes in the list.
         updateCitizens();
-        citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
+        ScrollingList citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -86,7 +122,6 @@ public class WindowHireWorker extends Window implements Button.Handler
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-
                 CitizenData.View citizen = citizens.get(index);
 
                 String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength",citizen.getStrength()) + " " +
@@ -98,11 +133,14 @@ public class WindowHireWorker extends Window implements Button.Handler
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabel(citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabel(attributes);
                 rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabel("" + citizen.getID());
-
             }
         });
     }
 
+    /**
+     * Called when any button has been clicked.
+     * @param button the clicked button.
+     */
     @Override
     public void onButtonClicked(Button button)
     {

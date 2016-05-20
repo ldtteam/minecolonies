@@ -1,12 +1,11 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.client.gui.AbstractWindowWorkerBuilding;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingWorker;
-import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -21,7 +20,7 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
     /**
      * The Colony ID;
      */
-    private int              colonyId;
+    private int colonyId;
 
     /**
      * The buildings position.
@@ -39,6 +38,9 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
     private int citizenID;
 
 
+    /**
+     * Empty public constructor
+     */
     public HireFireMessage(){}
 
     /**
@@ -55,18 +57,28 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
         this.citizenID = citizenID;
     }
 
+    /**
+     * Transfomration to a byteStream.
+     * @param buf the used byteBuffer.
+     */
     @Override
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(colonyId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeBoolean(hire);
         buf.writeInt(citizenID);
     }
 
+    /**
+     * Transformation from a byteStream to the variables.
+     * @param buf the used byteBuffer.
+     */
     @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
+        buildingId = BlockPosUtil.readFromByteBuf(buf);
         hire   = buf.readBoolean();
         citizenID = buf.readInt();
     }

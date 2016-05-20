@@ -85,7 +85,7 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
         registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_RECALL,this::doNothing);
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
-        registerButton(BUTTON_TOGGLE_JOB, this::toggleJobAllocation);
+        registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
 
     }
 
@@ -200,12 +200,11 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
         return townHall.getColony().getName();
     }
 
-
     /**
-     * Toggles the allocation of a certain job.
+     * Toggles the allocation of a certain job. Manual or automatic.
      * @param button the pressed button
      */
-    private void toggleJobAllocation(Button button)
+    private void toggleHiring(Button button)
     {
         boolean toggle;
         if(button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
@@ -219,8 +218,8 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
             toggle = false;
         }
         MineColonies.getNetwork().sendToServer(new ToggleJobMessage(this.building,toggle));
-
     }
+
     /**
      * Sets the clicked tab
      *

@@ -116,7 +116,7 @@
             </list>
         </view>
         <view id="pageSettings">
-            <label id="assignCitizens" label="Assign jobs manually:" pos="10 12" size="80 11" textalign="MiddleLeft" color="black"/>
+            <label id="assignCitizens" label="$(com.minecolonies.gui.townHall.jobHiring)" pos="10 12" size="80 11" textalign="MiddleLeft" color="black"/>
             <button id="toggleJob" size="22 20" pos="130 8" label="$(com.minecolonies.gui.hiring.off)"/><!-- todo set label to a lang string-->
         </view>
     </switch>

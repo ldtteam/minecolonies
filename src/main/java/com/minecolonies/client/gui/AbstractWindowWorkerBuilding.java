@@ -16,13 +16,31 @@ import com.minecolonies.util.LanguageHandler;
  */
 public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View> extends AbstractWindowSkeleton<B> implements Button.Handler
 {
-
+    //todo redraw after changes
+    /**
+     * Id of the hire/fire button in the GUI.
+     */
     private static final String BUTTON_HIRE        = "hire";
-    private static final String BUTTON_RECALL      = "recall";
-    private static final String LABEL_BUILDINGTYPE = "type";
-    private static final String LABEL_WORKERNAME   = "workerName";
-    private static final String LABEL_WORKERLEVEL  = "workerLevel";
 
+    /**
+     * Id of the recall button in the GUI.
+     */
+    private static final String BUTTON_RECALL      = "recall";
+
+    /**
+     * Id of the type label in the GUI.
+     */
+    private static final String LABEL_BUILDINGTYPE = "type";
+
+    /**
+     * Id of the name label in the GUI.
+     */
+    private static final String LABEL_WORKERNAME   = "workerName";
+
+    /**
+     * Id of the level label in the GUI.
+     */
+    private static final String LABEL_WORKERLEVEL  = "workerLevel";
 
     /**
      * Constructor for the window of the worker building
@@ -36,18 +54,19 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
 
         super.registerButton(BUTTON_HIRE, this::hireClicked);
         super.registerButton(BUTTON_RECALL, this::recallClicked);
-
     }
 
     /**
      * Action when a hire button is clicked.
+     * If there is no worker (worker.Id == 0) => Contract someone.
+     * Else => Fire the current worker.
      *
      * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     *                  This method does not.
      */
     private void hireClicked(Button ignored)
     {
-        if(building.getWorkerId()!=0)
+        if(building.getWorkerId()==0)
         {
             WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
             window.open();
@@ -55,7 +74,9 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
         else
         {
             MineColonies.getNetwork().sendToServer(new HireFireMessage(building,false,0));
+            findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"));
         }
+
     }
 
     /**
@@ -69,7 +90,9 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
         MineColonies.getNetwork().sendToServer(new RecallCitizenMessage(building));
     }
 
-
+    /**
+     * Called when the GUI has been opened.
+     */
     @Override
     public void onOpened()
     {
@@ -85,16 +108,17 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
                 workerName = worker.getName();
                 workerLevel = String.format("%d", worker.getLevel());
             }
+            findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.fire"));
+        }
+        else
+        {
+            findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"));
         }
 
         findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabel(workerName);
-        findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class).setLabel(
-                LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel",
-                                       workerLevel));
-
+        findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
+                .setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", workerLevel));
 
         findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabel("xxxxxxxx");
-
-
     }
 }
