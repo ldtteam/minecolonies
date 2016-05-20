@@ -636,6 +636,11 @@ public final class Schematic
         this.position = position;
     }
 
+    /**
+     * Calculate the item needed to place the current block in the schematic
+     *
+     * @return an item or null if not initialized
+     */
     public Item getItem()
     {
         Block       block    = this.getBlock();
@@ -646,7 +651,7 @@ public final class Schematic
         }
         ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
 
-        //In some cases getItemFromBlock returns null. We then have to get the item the saver way.
+        //In some cases getItemFromBlock returns null. We then have to get the item the safer way.
         if (stack.getItem() == null)
         {
             stack = new ItemStack(block.getItem(this.schematicWorld, this.getBlockPosition()));
@@ -654,6 +659,11 @@ public final class Schematic
         return stack.getItem();
     }
 
+    /**
+     * Calculate the current block in the schematic
+     *
+     * @return the current block or null if not initialized
+     */
     public Block getBlock()
     {
         if (x == -1)
@@ -663,9 +673,13 @@ public final class Schematic
         return this.schematicWorld.getBlock(x, y, z);
     }
 
+    /**
+     * Calculate the current block's metadata in the schematic
+     *
+     * @return the current block's metadata or null if not initialized
+     */
     public IBlockState getMetadata()
     {
-        //todo why this x?
         if (x == -1)
         {
             return null;

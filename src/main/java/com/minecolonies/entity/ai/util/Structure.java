@@ -13,9 +13,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.minecolonies.entity.ai.util.Structure.Stage.DECORATE;
-import static com.minecolonies.entity.ai.util.Structure.Stage.SPAWN;
-
 /**
  * Represents a build task for the Structure AI.
  * <p>
@@ -132,11 +129,6 @@ public class Structure
      */
     public SchematicBlock getCurrentBlock()
     {
-        //initialize schematic if needed
-        if (this.schematic.getBlock() == null)
-        {
-            advanceBlock();
-        }
         return new SchematicBlock(
                 this.schematic.getBlock(),
                 this.schematic.getBlockPosition(),
@@ -152,22 +144,22 @@ public class Structure
      * <p>
      * Will skip blocks not relevant.
      *
-     * @return true when it found a block, false if at the end of the schematic and null when at block-scan-limit.
+     * @return a Result enum specifying the result
      */
-    public Boolean advanceBlock()
+    public Result advanceBlock()
     {
         switch (this.stage)
         {
             case CLEAR:
                 return advanceBlocks(this.schematic::decrementBlock,
-                                     (schematicBlock) -> schematicBlock.blockPosition.getX() <= 0
-                                                         || this.targetWorld.isAirBlock(schematicBlock.blockPosition));
+                                     schematicBlock -> schematicBlock.blockPosition.getX() <= 0
+                                                       || this.targetWorld.isAirBlock(schematicBlock.blockPosition));
             case BUILD:
-                return advanceBlocks(this.schematic::incrementBlock, (schematicBlock) -> true);
+                return advanceBlocks(this.schematic::incrementBlock, schematicBlock -> false);
             case DECORATE:
-                return advanceBlocks(this.schematic::incrementBlock, (schematicBlock) -> true);
+                return advanceBlocks(this.schematic::incrementBlock, schematicBlock -> false);
             default:
-                return true;
+                return Result.NEW_BLOCK;
         }
     }
 
@@ -175,24 +167,24 @@ public class Structure
      * Advance many blocks until either moveOneBlock or checkIfApplies return false
      * or if we reached the maximum of iterations in maxBlocksCheckedByBuilder.
      *
-     * @param moveOneBlock this will be called to advance the schematic one block.
-     * @param checkIfApplies  this will be evaluated to check if we should skip a block.
-     * @return true when it found a block, false if at the end of the schematic and null when at block-scan-limit.
+     * @param moveOneBlock   this will be called to advance the schematic one block.
+     * @param checkIfApplies this will be evaluated to check if we should skip a block.
+     * @return a Result enum specifying the result
      */
-    private Boolean advanceBlocks(Supplier<Boolean> moveOneBlock, Function<SchematicBlock, Boolean> checkIfApplies)
+    private Result advanceBlocks(Supplier<Boolean> moveOneBlock, Function<SchematicBlock, Boolean> checkIfApplies)
     {
         for (int i = 0; i < Configurations.maxBlocksCheckedByBuilder; i++)
         {
             if (!moveOneBlock.get())
             {
-                return false;
+                return Result.AT_END;
             }
             if (!checkIfApplies.apply(getCurrentBlock()))
             {
-                return true;
+                return Result.NEW_BLOCK;
             }
         }
-        return null;
+        return Result.CONFIG_LIMIT;
     }
 
     /**
@@ -225,6 +217,16 @@ public class Structure
     public int getLength()
     {
         return this.schematic.getLength();
+    }
+
+    /**
+     * The different results when advancing the structure.
+     */
+    public enum Result
+    {
+        NEW_BLOCK,
+        AT_END,
+        CONFIG_LIMIT
     }
 
     /**

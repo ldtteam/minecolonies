@@ -7,7 +7,6 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.ai.util.Structure;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.EntityUtils;
-import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
@@ -76,7 +75,7 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
                  * Clear out the building area
                  * todo: implement
                  */
-                new AITarget(AIState.CLEAR_STEP, generateSchematicIterator(this::clearStep,AIState.BUILDER_STRUCTURE_STEP)),
+                new AITarget(AIState.CLEAR_STEP, generateSchematicIterator(this::clearStep, AIState.BUILDER_STRUCTURE_STEP)),
                 /**
                  * Build the structure and foundation of the building
                  * todo: implement
@@ -98,6 +97,45 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
                  */
                 new AITarget(AIState.COMPLETE_BUILD, () -> AIState.IDLE)
                             );
+    }
+
+    /**
+     * Generate a function that will iterate over a schematic.
+     * <p>
+     * It will pass the current block (with all infos) to the evaluation function.
+     *
+     * @param evaluationFunction the function to be called each block.
+     * @param nextState          the next state to change to once done iterating.
+     * @return the new state this AI will be in after one pass
+     */
+    private Supplier<AIState> generateSchematicIterator(Function<Structure.SchematicBlock, Boolean> evaluationFunction, AIState nextState)
+    {
+        // do not replace with method reference, this one stays the same on changing reference for currentStructure
+        Supplier<Structure.SchematicBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
+        Supplier<Structure.Result>         advanceBlock    = () -> currentStructure.advanceBlock();
+
+        return () -> {
+            Structure.SchematicBlock currentBlock = getCurrentBlock.get();
+            /*
+            check if we have not found a block (when block == null
+            if we have a block, apply the eval function
+            (which changes stuff, so only execute on valid block!)
+            */
+            if (currentBlock.block == null
+                || evaluationFunction.apply(currentBlock))
+            {
+                Structure.Result result = advanceBlock.get();
+                if (result == Structure.Result.AT_END)
+                {
+                    return nextState;
+                }
+                if (result == Structure.Result.CONFIG_LIMIT)
+                {
+                    return getState();
+                }
+            }
+            return getState();
+        };
     }
 
     /**
@@ -164,35 +202,6 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
 
         //if necessary we can could implement calling getWorkingPosition recursively and add some "offset" to the sides.
         return getWorkingPosition(offset + 1);
-    }
-
-    /**
-     * Generate a function that will iterate over a schematic.
-     * <p>
-     * It will pass the current block (with all infos) to the evaluation function.
-     *
-     * @param evaluationFunction the function to be called each block.
-     * @param nextState          the next state to change to once done iterating.
-     * @return the new state this AI will be in after one pass
-     */
-    private Supplier<AIState> generateSchematicIterator(Function<Structure.SchematicBlock, Boolean> evaluationFunction, AIState nextState)
-    {
-        // do not replace with method reference, this one stays the same on changing reference for currentStructure
-        Supplier<Structure.SchematicBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
-        Supplier<Boolean>                  advanceBlock    = () -> currentStructure.advanceBlock();
-        return () -> {
-            Structure.SchematicBlock currentBlock    = getCurrentBlock.get();
-            boolean                  isDoneWithBlock = evaluationFunction.apply(currentBlock);
-            if (isDoneWithBlock)
-            {
-                boolean isAtEnd = advanceBlock.get();
-                if (isAtEnd)
-                {
-                    return nextState;
-                }
-            }
-            return getState();
-        };
     }
 
     /**
