@@ -92,6 +92,8 @@ public class MineColonies
         getNetwork().registerMessage(FarmerCropTypeMessage.class,            FarmerCropTypeMessage.class,            24, Side.SERVER);
         getNetwork().registerMessage(RecallCitizenMessage.class,             RecallCitizenMessage.class,             25, Side.SERVER);
         getNetwork().registerMessage(BuildToolPlaceMessage.class,            BuildToolPlaceMessage.class,            26, Side.SERVER);
+        getNetwork().registerMessage(ToggleJobMessage.class,                 ToggleJobMessage.class,                 27, Side.SERVER);
+
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class,       BlockParticleEffectMessage.class,       50, Side.CLIENT);
 

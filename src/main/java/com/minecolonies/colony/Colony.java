@@ -36,6 +36,7 @@ public class Colony implements IColony
     private                 boolean                         isDirty                         = false;
     private                 boolean                         isCitizensDirty                 = false;
     private                 boolean                         isBuildingsDirty                = false;
+    private                 boolean                         manuallyAllocateJobs            = false;
 
     //  General Attributes
     private                 String                          name                            = "ERROR(Wasn't placed by player)";
@@ -826,6 +827,24 @@ public class Colony implements IColony
         calculateMaxCitizens();
 
         ColonyManager.markDirty();
+    }
+
+    /**
+     * Getter which checks if jobs should be manually allocated.
+     * @return true of false.
+     */
+    public boolean isManuallyAllocateJobs()
+    {
+        return manuallyAllocateJobs;
+    }
+
+    /**
+     * Setter to set the job allocation manual or automatic.
+     * @param manuallyAllocateJobs true if manual, false if automatic.
+     */
+    public void setManuallyAllocateJobs(boolean manuallyAllocateJobs)
+    {
+        this.manuallyAllocateJobs = manuallyAllocateJobs;
     }
 
     /*

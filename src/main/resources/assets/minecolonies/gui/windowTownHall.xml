@@ -116,7 +116,8 @@
             </list>
         </view>
         <view id="pageSettings">
-            <!-- TODO -->
+            <label id="assignCitizens" label="Assign jobs manually:" pos="10 12" size="80 11" textalign="MiddleLeft" color="black"/>
+            <button id="toggleJob" size="22 20" pos="130 8" label="Off"/>
         </view>
     </switch>
 </window>

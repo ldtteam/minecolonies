@@ -33,9 +33,21 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
     {
         super(building, resource);
 
-        super.registerButton(BUTTON_HIRE, this::doNothing);
+        super.registerButton(BUTTON_HIRE, this::hireClicked);
         super.registerButton(BUTTON_RECALL, this::recallClicked);
 
+    }
+
+    /**
+     * Action when a hire button is clicked.
+     *
+     * @param ignored   Parameter is ignored, since some actions require a button.
+     *                  This method does not
+     */
+    private void hireClicked(Button ignored)
+    {
+        WindowHireWorker window = new WindowHireWorker(building.getColony(),building.getLocation());
+        window.open();
     }
 
     /**
