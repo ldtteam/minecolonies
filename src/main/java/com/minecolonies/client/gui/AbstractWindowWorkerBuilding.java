@@ -5,6 +5,7 @@ import com.blockout.controls.Label;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.network.messages.HireFireMessage;
 import com.minecolonies.network.messages.RecallCitizenMessage;
 import com.minecolonies.util.LanguageHandler;
 
@@ -46,8 +47,15 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
      */
     private void hireClicked(Button ignored)
     {
-        WindowHireWorker window = new WindowHireWorker(building.getColony(),building.getLocation());
-        window.open();
+        if(building.getWorkerId()!=0)
+        {
+            WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
+            window.open();
+        }
+        else
+        {
+            MineColonies.getNetwork().sendToServer(new HireFireMessage(building,false,0));
+        }
     }
 
     /**

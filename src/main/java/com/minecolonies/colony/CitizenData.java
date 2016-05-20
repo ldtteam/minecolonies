@@ -733,6 +733,51 @@ public class CitizenData
         }
 
         /**
+         * Strength getter
+         * @return citizen Strength value
+         */
+        public int getStrength()
+        {
+            return strength;
+        }
+
+        /**
+         * Endurance getter
+         * @return citizen Endurance value
+         */
+        public int getEndurance()
+        {
+            return endurance;
+        }
+
+        /**
+         * Charisma getter
+         * @return citizen Charisma value
+         */
+        public int getCharisma()
+        {
+            return charisma;
+        }
+
+        /**
+         * Intelligence getter
+         * @return citizen Intelligence value
+         */
+        public int getIntelligence()
+        {
+            return intelligence;
+        }
+
+        /**
+         * Dexterity getter
+         * @return citizen Dexterity value
+         */
+        public int getDexterity()
+        {
+            return dexterity;
+        }
+
+        /**
          * Deserialize the attributes and variables from transition
          * @param buf Byte buffer to deserialize
          */
