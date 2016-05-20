@@ -66,17 +66,19 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
      */
     private void hireClicked(Button ignored)
     {
-        if(building.getWorkerId()==0)
+        if(building.getColony().isManualHiring())
         {
-            WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
-            window.open();
+            if (building.getWorkerId() == 0)
+            {
+                WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
+                window.open();
+            }
+            else
+            {
+                MineColonies.getNetwork().sendToServer(new HireFireMessage(building, false, 0));
+                findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"));
+            }
         }
-        else
-        {
-            MineColonies.getNetwork().sendToServer(new HireFireMessage(building,false,0));
-            findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"));
-        }
-
     }
 
     /**
