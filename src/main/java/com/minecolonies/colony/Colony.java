@@ -36,7 +36,7 @@ public class Colony implements IColony
     private                 boolean                         isDirty                         = false;
     private                 boolean                         isCitizensDirty                 = false;
     private                 boolean                         isBuildingsDirty                = false;
-    private                 boolean                         manuallyAllocateJobs            = false;
+    private                 boolean                         manualHiring                    = false;
 
     //  General Attributes
     private                 String                          name                            = "ERROR(Wasn't placed by player)";
@@ -74,6 +74,7 @@ public class Colony implements IColony
     private static  final   String                          TAG_CITIZENS                    = "citizens";
     private static  final   String                          TAG_WORK                        = "work";
     private static  final   String                          TAG_AUTO_HOSTILE                = "autoHostile";
+    private static  final   String                          TAG_MANUAL_HIRING               = "manualHiring";
 
     /**
      * Constructor for a newly created Colony.
@@ -141,6 +142,7 @@ public class Colony implements IColony
         name = compound.getString(TAG_NAME);
         center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
 
+        manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 
         // Permissions
@@ -189,6 +191,7 @@ public class Colony implements IColony
         compound.setString(TAG_NAME, name);
         BlockPosUtil.writeToNBT(compound, TAG_CENTER, center);
 
+        compound.setBoolean(TAG_MANUAL_HIRING,manualHiring);
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
         // Permissions
@@ -304,7 +307,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public float getDistanceSquared(BlockPos pos) //todo why do we pass in y, if we dont use it
+    public float getDistanceSquared(BlockPos pos)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ()));
@@ -833,18 +836,19 @@ public class Colony implements IColony
      * Getter which checks if jobs should be manually allocated.
      * @return true of false.
      */
-    public boolean isManuallyAllocateJobs()
+    public boolean isManualHiring()
     {
-        return manuallyAllocateJobs;
+        return manualHiring;
     }
 
     /**
      * Setter to set the job allocation manual or automatic.
-     * @param manuallyAllocateJobs true if manual, false if automatic.
+     * @param manualHiring true if manual, false if automatic.
      */
-    public void setManuallyAllocateJobs(boolean manuallyAllocateJobs)
+    public void setManualHiring(boolean manualHiring)
     {
-        this.manuallyAllocateJobs = manuallyAllocateJobs;
+        this.manualHiring = manualHiring;
+        markDirty();
     }
 
     /*

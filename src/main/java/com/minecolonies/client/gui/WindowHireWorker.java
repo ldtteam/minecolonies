@@ -23,7 +23,9 @@ public class WindowHireWorker extends Window implements Button.Handler
 {
     private static final    String      BUTTON_DONE                     = "done";
     private static final    String      BUTTON_CANCEL                   = "cancel";
-    private static final    String      INPUT_NAME                      = "name";
+    private static final    String      CITIZEN_LABEL                   = "citizen";
+    private static final    String      CITIZEN_LIST                    = "unemployed";
+
     private static final    String      TOWNHALL_NAME_RESOURCE_SUFFIX   = ":gui/windowHireWorker.xml";
     private ScrollingList citizenList;
     private List<CitizenData.View> citizens    = new ArrayList<>();
@@ -67,7 +69,7 @@ public class WindowHireWorker extends Window implements Button.Handler
     {
         //todo show attributes in the list.
         updateCitizens();
-        citizenList = findPaneOfTypeByID("unemployed", ScrollingList.class);
+        citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -82,7 +84,7 @@ public class WindowHireWorker extends Window implements Button.Handler
 
                 CitizenData.View citizen = citizens.get(index);
 
-                rowPane.findPaneOfTypeByID("stuff", Label.class).setLabel(citizen.getName());
+                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabel(citizen.getName());
 
             }
         });
@@ -94,12 +96,10 @@ public class WindowHireWorker extends Window implements Button.Handler
         if (button.getID().equals(BUTTON_DONE))
         {
             //todo check which citizen has been chosen and assign him to the job.
-            Label lname = button.getParent().getChildren().get(0);
-            String name = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
-            if(!name.isEmpty())
-            {
-                colony.setName(name);
-            }
+            Label lname = (Label)button.getParent().getChildren().get(0);
+
+            //todo send message to server
+            //setWorker(joblessCitizen);
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
         {

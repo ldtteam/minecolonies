@@ -3,10 +3,7 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingMiner;
-import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -65,7 +62,7 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
-            colony.setManuallyAllocateJobs(message.toggle);
+            colony.setManualHiring(message.toggle);
         }
         return null;
     }

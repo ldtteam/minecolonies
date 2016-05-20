@@ -182,6 +182,11 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
 
             }
         });
+
+        if(townHall.getColony().isManualHiring())
+        {
+            findPaneOfTypeByID("toggleJob", Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
+        }
     }
 
     /**
@@ -198,19 +203,19 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
 
     /**
      * Toggles the allocation of a certain job.
-     * @param button
+     * @param button the pressed button
      */
     private void toggleJobAllocation(Button button)
     {
         boolean toggle;
-        if(button.getLabel().equals("Off"))
+        if(button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
         {
-            button.setLabel("On");
+            button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
             toggle = true;
         }
         else
         {
-            button.setLabel("Off");
+            button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.off"));
             toggle = false;
         }
         MineColonies.getNetwork().sendToServer(new ToggleJobMessage(this.building,toggle));
