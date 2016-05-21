@@ -99,6 +99,8 @@ public class WindowHireWorker extends Window implements Button.Handler
         citizens.clear();
         citizens.addAll(colony.getCitizens().values());
         ArrayList<CitizenData.View> list = new ArrayList<>(citizens);
+
+        //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
                 .filter(citizen -> citizen.getWorkBuilding()!=null)
                 .collect(Collectors.toList());
