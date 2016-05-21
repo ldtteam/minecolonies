@@ -58,6 +58,13 @@ com.minecolonies.gui.buildtool.nodecoration=No Decorations
 com.minecolonies.gui.buildtool.hut=Huts
 com.minecolonies.gui.buildtool.decoration=Decorations
 
+com.minecolonies.gui.hiring.on=On
+com.minecolonies.gui.hiring.off=Off
+com.minecolonies.gui.hiring.buttonHire=Hire
+com.minecolonies.gui.hiring.description=Choose a worker for the job.
+com.minecolonies.gui.townHall.addPlayer=Add Player:
+com.minecolonies.gui.townHall.jobHiring=Hire workers manually.
+
 tile.minecolonies.blockHutCitizen.name=Citizen's Hut
 tile.minecolonies.blockHutBaker.name=Bakery
 tile.minecolonies.blockHutBlacksmith.name=Forge

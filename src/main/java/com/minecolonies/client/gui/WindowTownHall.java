@@ -12,6 +12,7 @@ import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.PermissionsMessage;
+import com.minecolonies.network.messages.ToggleJobMessage;
 import com.minecolonies.util.LanguageHandler;
 
 import java.util.*;
@@ -30,6 +31,7 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
     private static final String BUTTON_CHANGE_SPEC   = "changeSpec";
     private static final String BUTTON_RENAME        = "rename";
     private static final String BUTTON_ADD_PLAYER    = "addPlayer";
+    private static final String BUTTON_TOGGLE_JOB    = "toggleJob";
     private static final String INPUT_ADDPLAYER_NAME = "addPlayerName";
     private static final String BUTTON_REMOVE_PLAYER = "removePlayer";
     private static final String BUTTON_PROMOTE       = "promote";
@@ -83,7 +85,10 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
         registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_RECALL,this::doNothing);
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
+        registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
+
     }
+
 
     /**
      * Clears and resets all users
@@ -177,6 +182,11 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
 
             }
         });
+
+        if(townHall.getColony().isManualHiring())
+        {
+            findPaneOfTypeByID("toggleJob", Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
+        }
     }
 
     /**
@@ -188,6 +198,26 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
     public String getBuildingName()
     {
         return townHall.getColony().getName();
+    }
+
+    /**
+     * Toggles the allocation of a certain job. Manual or automatic.
+     * @param button the pressed button
+     */
+    private void toggleHiring(Button button)
+    {
+        boolean toggle;
+        if(button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
+        {
+            button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
+            toggle = true;
+        }
+        else
+        {
+            button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.off"));
+            toggle = false;
+        }
+        MineColonies.getNetwork().sendToServer(new ToggleJobMessage(this.building,toggle));
     }
 
     /**
