@@ -3,8 +3,8 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
 
     <label size="100% 11" pos="0 50" textalign="TopMiddle" color="white" label="$(com.minecolonies.gui.hiring.description)"/>
-    <list id="unemployed" size="100% 100%" pos="110 70" align="TopMiddle">
-        <view size="100% 30">
+    <list id="unemployed" size="100% 120" pos="110 70" align="TopMiddle">
+        <view size="70% 30">
             <label id="citizen" size="60 12" pos="5 4" textalign="MiddleLeft" color="yellow"/>
             <button id="done" size="45 15" pos="125 3" label="$(com.minecolonies.gui.hiring.buttonHire)"/>
             <label id="attributes" size="140 12" pos="5 16" textalign="MiddleLeft" color="white" textscale="0.8"/>
