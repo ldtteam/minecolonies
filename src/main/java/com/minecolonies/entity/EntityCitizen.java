@@ -17,6 +17,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -422,7 +423,18 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     }
 
     /**
-     * Checks the citizens health status and heals the citizen if necessary
+     * Checks if the citizen is suffocating (If at his body or head position is a block).
+     * We will probably have to discover which blocks are solid but citizens still can stand in. (Like doors)
+     * @return true if there is a block at his position.
+     */
+    private boolean isCitizenSuffocating()
+    {
+        return !(worldObj.getBlockState(this.getPosition()).getBlock() instanceof BlockDoor) &&
+                (worldObj.getBlockState(this.getPosition()).getBlock().getMaterial().isSolid() || worldObj.getBlockState(this.getPosition().up()).getBlock().getMaterial().isSolid());
+    }
+
+    /**
+     * Checks the citizens health status and heals the citizen if necessary.
      */
     private void checkHeal()
     {

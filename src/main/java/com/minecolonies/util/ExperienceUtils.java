@@ -38,7 +38,7 @@ public final class ExperienceUtils
      */
     public static double getPercentOfLevelCompleted(double experience, int level)
     {
-        return (experience - getXPNeededForNextLevel(level+1) / getXPNeededForNextLevel(level)) * PERCENT_MULTIPLIER;
+        return PERCENT_MULTIPLIER-((getXPNeededForNextLevel(level) - experience) / getXPNeededForNextLevel(level)) * PERCENT_MULTIPLIER;
     }
 
 
