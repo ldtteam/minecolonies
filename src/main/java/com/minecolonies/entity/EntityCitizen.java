@@ -417,6 +417,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             cleanupChatMessages();
             updateColonyServer();
         }
+        if(isCitizenSuffocating())
+        {
+            getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
+        }
 
         checkHeal();
         super.onLivingUpdate();
