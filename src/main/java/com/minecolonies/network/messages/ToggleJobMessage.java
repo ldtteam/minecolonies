@@ -2,6 +2,7 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.Building;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -35,12 +36,12 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
     /**
      * Creates object for the player to turn manual allocation or or off.
      *
-     * @param building       View of the building to read data from
-     * @param toggle         toggle the job to manually or automatically
+     * @param colony view of the colony to read data from
+     * @param toggle toggle the job to manually or automatically
      */
-    public ToggleJobMessage(Building.View building, boolean toggle)
+    public ToggleJobMessage(ColonyView colony, boolean toggle)
     {
-        this.colonyId = building.getColony().getID();
+        this.colonyId = colony.getID();
         this.toggle   = toggle;
     }
 

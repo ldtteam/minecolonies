@@ -354,7 +354,7 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
             button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.off"));
             toggle = false;
         }
-        MineColonies.getNetwork().sendToServer(new ToggleJobMessage(this.building,toggle));
+        MineColonies.getNetwork().sendToServer(new ToggleJobMessage(this.building.getColony(),toggle));
     }
 
     /**
