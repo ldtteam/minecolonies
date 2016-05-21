@@ -16,7 +16,6 @@ import com.minecolonies.util.LanguageHandler;
  */
 public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View> extends AbstractWindowSkeleton<B>
 {
-    //todo redraw after changes
     /**
      * Id of the hire/fire button in the GUI.
      */
@@ -61,10 +60,9 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
      * If there is no worker (worker.Id == 0) => Contract someone.
      * Else => Fire the current worker.
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not.
+     * @param button the clicked button.
      */
-    private void hireClicked(Button ignored)
+    private void hireClicked(Button button)
     {
         if(building.getColony().isManualHiring())
         {
@@ -76,7 +74,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
             else
             {
                 MineColonies.getNetwork().sendToServer(new HireFireMessage(building, false, 0));
-                findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"));
+                button.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"));
             }
         }
     }
