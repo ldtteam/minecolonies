@@ -20,42 +20,176 @@ import java.util.*;
 /**
  * Window for the town hall
  */
-public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View> implements Button.Handler
+public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View>
 {
-    private static final String BUTTON_INFO          = "info";
-    private static final String BUTTON_ACTIONS       = "actions";
-    private static final String BUTTON_SETTINGS      = "settings";
-    private static final String BUTTON_PERMISSIONS   = "permissions";
-    private static final String BUTTON_CITIZENS      = "citizens";
-    private static final String BUTTON_RECALL        = "recall";
-    private static final String BUTTON_CHANGE_SPEC   = "changeSpec";
-    private static final String BUTTON_RENAME        = "rename";
-    private static final String BUTTON_ADD_PLAYER    = "addPlayer";
-    private static final String BUTTON_TOGGLE_JOB    = "toggleJob";
-    private static final String INPUT_ADDPLAYER_NAME = "addPlayerName";
+    /**
+     * Id of the info button in the GUI.
+     */
+    private static final String BUTTON_INFO = "info";
+
+    /**
+     * Id of the action button in the GUI.
+     */
+    private static final String BUTTON_ACTIONS = "actions";
+
+    /**
+     * Id of the settings button in the GUI.
+     */
+    private static final String BUTTON_SETTINGS = "settings";
+
+    /**
+     * Id of the permissions button in the GUI.
+     */
+    private static final String BUTTON_PERMISSIONS = "permissions";
+
+    /**
+     * Id of the citizens button in the GUI.
+     */
+    private static final String BUTTON_CITIZENS = "citizens";
+
+    /**
+     * Id of the recall button in the GUI.
+     */
+    private static final String BUTTON_RECALL = "recall";
+
+    /**
+     * Id of the change specialization button in the GUI.
+     */
+    private static final String BUTTON_CHANGE_SPEC = "changeSpec";
+
+    /**
+     * Id of the rename button in the GUI.
+     */
+    private static final String BUTTON_RENAME = "rename";
+
+    /**
+     * Id of the add player button in the GUI.
+     */
+    private static final String BUTTON_ADD_PLAYER = "addPlayer";
+
+    /**
+     * Id of the toggle job button in the GUI.
+     */
+    private static final String BUTTON_TOGGLE_JOB = "toggleJob";
+
+    /**
+     * Id of the remove player button in the GUI..
+     */
     private static final String BUTTON_REMOVE_PLAYER = "removePlayer";
-    private static final String BUTTON_PROMOTE       = "promote";
-    private static final String BUTTON_DEMOTE        = "demote";
-    private static final String VIEW_PAGES           = "pages";
-    private static final String PAGE_INFO            = "pageInfo";
-    private static final String PAGE_ACTIONS         = "pageActions";
-    private static final String PAGE_SETTINGS            = "pageSettings";
-    private static final String PAGE_PERMISSIONS         = "pagePermissions";
-    private static final String PAGE_CITIZENS            = "pageCitizens";
-    private static final String LIST_USERS               = "users";
-    private static final String LIST_CITIZENS            = "citizenList";
-    private static final String CURRENT_SPEC             = "currentSpec";
-    private static final String TOTAL_CITIZENS           = "totalCitizens";
-    private static final String UNEMP_CITIZENS           = "unemployedCitizens";
-    private static final String BUILDERS                 = "builders";
-    private static final String DELIVERY_MAN             = "deliverymen";
+
+    /**
+     * Id of the promote player button in the GUI..
+     */
+    private static final String BUTTON_PROMOTE = "promote";
+
+    /**
+     * Id of the demote player button in the GUI..
+     */
+    private static final String BUTTON_DEMOTE = "demote";
+
+    /**
+     * Id of the input bar to add players. in the GUI.
+     */
+    private static final String INPUT_ADDPLAYER_NAME = "addPlayerName";
+
+    /**
+     * Id of the page view in the GUI.
+     */
+    private static final String VIEW_PAGES = "pages";
+
+    /**
+     * Id of the info page in the GUI.
+     */
+    private static final String PAGE_INFO = "pageInfo";
+
+    /**
+     * Id of the actions page in the GUI.
+     */
+    private static final String PAGE_ACTIONS = "pageActions";
+
+    /**
+     * Id of the settings page in the GUI.
+     */
+    private static final String PAGE_SETTINGS = "pageSettings";
+
+    /**
+     * Id of the permissions page in the GUI.
+     */
+    private static final String PAGE_PERMISSIONS = "pagePermissions";
+
+    /**
+     * Id of the citizens page in the GUI.
+     */
+    private static final String PAGE_CITIZENS = "pageCitizens";
+
+    /**
+     * Id of the user list in the GUI.
+     */
+    private static final String LIST_USERS = "users";
+
+    /**
+     * Id of the citizens list in the GUI.
+     */
+    private static final String LIST_CITIZENS = "citizenList";
+
+    /**
+     * Id of the current specializations label in the GUI.
+     */
+    private static final String CURRENT_SPEC_LABEL = "currentSpec";
+
+    /**
+     * Id of the total citizens label in the GUI.
+     */
+    private static final String TOTAL_CITIZENS_LABEL = "totalCitizens";
+
+    /**
+     * Id of the unemployed citizens label in the GUI.
+     */
+    private static final String UNEMP_CITIZENS_LABEL = "unemployedCitizens";
+
+    /**
+     * Id of the total builders label in the GUI.
+     */
+    private static final String BUILDERS_LABEL = "builders";
+
+    /**
+     * Id of the total deliverymen label in the GUI.
+     */
+    private static final String DELIVERY_MAN_LABEL = "deliverymen";
+
+    /**
+     * Link to the xml file of the window.
+     */
     private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownHall.xml";
+
+    /**
+     * The view of the current building.
+     */
     private BuildingTownHall.View townHall;
+
+    /**
+     * List of added users.
+     */
     private List<Permissions.Player> users       = new ArrayList<>();
+
+    /**
+     * List of citizens.
+     */
     private List<CitizenData.View>   citizens    = new ArrayList<>();
+
+    /**
+     * Map of the pages.
+     */
     private Map<String, String>      tabsToPages = new HashMap<>();
+
+    /**
+     * The button f the last tab -> will be filled later on.
+     */
     private Button        lastTabButton;
-    private ScrollingList citizenList;
+
+    /**
+     * The ScrollingList of the users.
+     */
     private ScrollingList userList;
 
     /**
@@ -129,11 +263,11 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
         String numberOfBuilders    = LanguageHandler.format("com.minecolonies.gui.townHall.population.builders", builders);
         String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townHall.population.deliverymen", deliverymen);
 
-        findPaneOfTypeByID(CURRENT_SPEC, Label.class).setLabel("<Industrial>");
-        findPaneOfTypeByID(TOTAL_CITIZENS, Label.class).setLabel(numberOfCitizens);
-        findPaneOfTypeByID(UNEMP_CITIZENS, Label.class).setLabel(numberOfUnemployed);
-        findPaneOfTypeByID(BUILDERS, Label.class).setLabel(numberOfBuilders);
-        findPaneOfTypeByID(DELIVERY_MAN, Label.class).setLabel(numberOfDeliverymen);
+        findPaneOfTypeByID(CURRENT_SPEC_LABEL, Label.class).setLabel("<Industrial>");
+        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabel(numberOfCitizens);
+        findPaneOfTypeByID(UNEMP_CITIZENS_LABEL, Label.class).setLabel(numberOfUnemployed);
+        findPaneOfTypeByID(BUILDERS_LABEL, Label.class).setLabel(numberOfBuilders);
+        findPaneOfTypeByID(DELIVERY_MAN_LABEL, Label.class).setLabel(numberOfDeliverymen);
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
 
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
@@ -162,7 +296,10 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
         });
 
 
-        citizenList = findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class);
+        /*
+      The ScrollingList of the cit
+     */
+        ScrollingList citizenList = findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class);
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override

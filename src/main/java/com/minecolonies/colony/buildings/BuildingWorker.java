@@ -10,18 +10,36 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+/**
+ * The abstract class for each worker building.
+ */
 public abstract class BuildingWorker extends BuildingHut
 {
     private static final    String      TAG_WORKER = "worker";
     private                 CitizenData worker;
 
-    public abstract         String      getJobName();
-    public abstract         Job         createJob(CitizenData citizen);
-
+    /**
+     * The abstract constructor of the building.
+     * @param c the colony
+     * @param l the position
+     */
     public BuildingWorker(Colony c, BlockPos l)
     {
         super(c, l);
     }
+
+    /**
+     * The abstract method which returns the name of the job.
+     * @return the job name.
+     */
+    public abstract         String      getJobName();
+
+    /**
+     * The abstract method which creates a job for the building.
+     * @param citizen the citizen to take the job.
+     * @return the Job.
+     */
+    public abstract         Job         createJob(CitizenData citizen);
 
     @Override
     public void onDestroyed()
@@ -153,17 +171,14 @@ public abstract class BuildingWorker extends BuildingHut
 
         //  If we have no active worker, grab one from the Colony
         //  TODO Maybe the Colony should assign jobs out, instead?
-        if (!hasWorker() &&
-                (getBuildingLevel() > 0 || this instanceof BuildingBuilder))
+        if (!hasWorker() && (getBuildingLevel() > 0 || this instanceof BuildingBuilder) && !this.getColony().isManualHiring())
         {
-            if(!this.getColony().isManualHiring())
+            CitizenData joblessCitizen = getColony().getJoblessCitizen();
+            if (joblessCitizen != null)
             {
-                CitizenData joblessCitizen = getColony().getJoblessCitizen();
-                if (joblessCitizen != null)
-                {
-                    setWorker(joblessCitizen);
-                }
+                setWorker(joblessCitizen);
             }
+
         }
     }
 
@@ -174,12 +189,24 @@ public abstract class BuildingWorker extends BuildingHut
     {
         private int workerId;
 
+        /**
+         * Creates the view representation of the building.
+         * @param c the colony.
+         * @param l the location.
+         */
         public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }
 
-        public int getWorkerId() { return workerId; }
+        /**
+         * Returns the id of the worker.
+         * @return 0 if there is no worker else the correct citizen id.
+         */
+        public int getWorkerId()
+        {
+            return workerId;
+        }
 
         @Override
         public void deserialize(ByteBuf buf)

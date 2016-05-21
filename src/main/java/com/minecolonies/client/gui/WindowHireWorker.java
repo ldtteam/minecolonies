@@ -16,6 +16,7 @@ import net.minecraft.util.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Window for the hiring or firing of a worker.
@@ -25,47 +26,52 @@ public class WindowHireWorker extends Window implements Button.Handler
     /**
      * Id of the done button in the GUI.
      */
-    private static final    String      BUTTON_DONE                     = "done";
+    private static final String BUTTON_DONE = "done";
 
     /**
      * Id of the cancel button in the GUI.
      */
-    private static final    String      BUTTON_CANCEL                   = "cancel";
+    private static final String BUTTON_CANCEL = "cancel";
 
     /**
      * Id of the citizen name in the GUI.
      */
-    private static final    String      CITIZEN_LABEL                   = "citizen";
+    private static final String CITIZEN_LABEL = "citizen";
 
     /**
      * Id of the id label in the GUI.
      */
-    private static final    String      ID_LABEL                        = "id";
+    private static final String ID_LABEL = "id";
 
     /**
      * Id of the citizen list in the GUI.
      */
-    private static final    String      CITIZEN_LIST                    = "unemployed";
+    private static final String CITIZEN_LIST = "unemployed";
 
     /**
      * Id of the attributes label in the GUI..
      */
-    private static final    String      ATTRIBUTES_LABEL                = "attributes";
+    private static final String ATTRIBUTES_LABEL = "attributes";
 
     /**
-     * Link to the xml file.
+     * Link to the xml file of the window.
      */
-    private static final    String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowHireWorker.xml";
+    private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowHireWorker.xml";
+
+    /**
+     * Position of the id label of each citizen in the list.
+     */
+    private static final int CITIZEN_ID_LABEL_POSITION = 3;
 
     /**
      * Contains all the citizens.
      */
-    private List<CitizenData.View> citizens    = new ArrayList<>();
+    private List<CitizenData.View> citizens = new ArrayList<>();
 
     /**
-     * The id of the current building.
+     * The view of the current building.
      */
-    Building.View building;
+    private Building.View building;
 
     /**
      * The colony.
@@ -73,9 +79,9 @@ public class WindowHireWorker extends Window implements Button.Handler
     private                 ColonyView  colony;
 
     /**
-     * Constructor for a town hall rename entry window
-     *
-     * @param c         {@link ColonyView}
+     * Constructor for the window when the player wants to hire a worker for a certain job.
+     * @param c the colony view
+     * @param buildingId the building position
      */
     public WindowHireWorker(ColonyView c, BlockPos buildingId)
     {
@@ -93,13 +99,9 @@ public class WindowHireWorker extends Window implements Button.Handler
         citizens.clear();
         citizens.addAll(colony.getCitizens().values());
         ArrayList<CitizenData.View> list = new ArrayList<>(citizens);
-        for(CitizenData.View citizen: list)
-        {
-            if(citizen.getWorkBuilding()!=null)
-            {
-                citizens.remove(citizen);
-            }
-        }
+        citizens = colony.getCitizens().values().stream()
+                .filter(citizen -> citizen.getWorkBuilding()!=null)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -111,19 +113,31 @@ public class WindowHireWorker extends Window implements Button.Handler
     {
         updateCitizens();
         ScrollingList citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
+
+        //Creates a dataProvider for the unemployed citizenList.
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
+            /**
+             * The number of rows of the list.
+             * @return the number.
+             */
             @Override
             public int getElementCount()
             {
                 return citizens.size();
             }
 
+            /**
+             * Inserts the elements into each row.
+             * @param index the index of the row/list element
+             * @param rowPane the parent Pane for the row, containing the elements to update
+             */
             @Override
             public void updateElement(int index, Pane rowPane)
             {
                 CitizenData.View citizen = citizens.get(index);
 
+                //Creates the list of attributes for each citizen
                 String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength",citizen.getStrength()) + " " +
                         LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma",citizen.getCharisma()) + " " +
                         LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity",citizen.getDexterity()) + " " +
@@ -132,7 +146,9 @@ public class WindowHireWorker extends Window implements Button.Handler
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabel(citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabel(attributes);
-                rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabel("" + citizen.getID());
+
+                //Invisible id label.
+                rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabel(Integer.toString(citizen.getID()));
             }
         });
     }
@@ -146,7 +162,7 @@ public class WindowHireWorker extends Window implements Button.Handler
     {
         if (button.getID().equals(BUTTON_DONE))
         {
-            Label id = (Label)button.getParent().getChildren().get(3);
+            Label id = (Label)button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
             MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building,true, Integer.parseInt(id.getLabel())));
         }
         else if (!button.getID().equals(BUTTON_CANCEL))

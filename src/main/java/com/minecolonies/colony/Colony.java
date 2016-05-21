@@ -56,9 +56,8 @@ public class Colony implements IColony
     private                 int                             topCitizenId                    = 0;
     private                 int                             maxCitizens                     = Configurations.maxCitizens;
 
-
     //  Settings
-    private static  final   int                             CITIZEN_CLEANUP_TICK_INCREMENT  = /*60*/ 5 * 20;   //  Once a minute
+    private static  final   int                             CITIZEN_CLEANUP_TICK_INCREMENT  = /*60*/ 5 * 20;   //Once a minute
 
     //  Workload and Jobs
     private         final   WorkManager                     workManager                     = new WorkManager(this);
@@ -256,7 +255,10 @@ public class Colony implements IColony
     }
 
     @Override
-    public String getName() { return name; }
+    public String getName()
+    {
+        return name;
+    }
 
     /**
      * Sets the name of the colony
@@ -275,22 +277,34 @@ public class Colony implements IColony
      *
      * @return      Chunk Coordinates of the center of the colony
      */
-    public BlockPos getCenter() { return center; }
+    public BlockPos getCenter()
+    {
+        return center;
+    }
 
     /**
      * Marks the instance dirty
      */
-    private void markDirty() { isDirty = true; }
+    private void markDirty()
+    {
+        isDirty = true;
+    }
 
     /**
      * Marks citizen data dirty
      */
-    public void markCitizensDirty() { isCitizensDirty = true; }
+    public void markCitizensDirty()
+    {
+        isCitizensDirty = true;
+    }
 
     /**
      * Marks building data dirty
      */
-    public void markBuildingsDirty() { isBuildingsDirty = true; }
+    public void markBuildingsDirty()
+    {
+        isBuildingsDirty = true;
+    }
 
     @Override
     public Permissions getPermissions()
@@ -897,7 +911,10 @@ public class Colony implements IColony
      *
      * @return          Map of citizens in the colony, with as key the citizen ID, and as value the citiizen data
      */
-    public Map<Integer, CitizenData> getCitizens() { return Collections.unmodifiableMap(citizens); }
+    public Map<Integer, CitizenData> getCitizens()
+    {
+        return Collections.unmodifiableMap(citizens);
+    }
 
     public List<EntityCitizen> getActiveCitizenEntities()
     {

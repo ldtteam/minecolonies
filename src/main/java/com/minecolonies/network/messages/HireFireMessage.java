@@ -37,17 +37,21 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
      */
     private int citizenID;
 
-
     /**
      * Empty public constructor
      */
-    public HireFireMessage(){}
+    public HireFireMessage()
+    {
+        /**
+         * Intentionally left empty.
+         */
+    }
 
     /**
-     * Creates object for the player to hire or fire a citizen..
-     *
-     * @param building       View of the building to read data from
-     * @param hire         Hire or fire the citizens
+     * Creates object for the player to hire or fire a citizen.
+     * @param building view of the building to read data from
+     * @param hire hire or fire the citizens
+     * @param citizenID the id of the citizen to fill the job.
      */
     public HireFireMessage(Building.View building, boolean hire, int citizenID)
     {
@@ -58,7 +62,7 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
     }
 
     /**
-     * Transfomration to a byteStream.
+     * Transformation to a byteStream.
      * @param buf the used byteBuffer.
      */
     @Override

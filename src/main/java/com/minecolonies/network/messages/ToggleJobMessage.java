@@ -22,7 +22,15 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
      */
     private boolean          toggle;
 
-    public ToggleJobMessage(){}
+    /**
+     * Empty public constructor
+     */
+    public ToggleJobMessage()
+    {
+        /**
+         * Intentionally left empty.
+         */
+    }
 
     /**
      * Creates object for the player to turn manual allocation or or off.
@@ -36,6 +44,10 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
         this.toggle   = toggle;
     }
 
+    /**
+     * Transformation to a byteStream.
+     * @param buf the used byteBuffer.
+     */
     @Override
     public void toBytes(ByteBuf buf)
     {
@@ -43,6 +55,10 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
         buf.writeBoolean(toggle);
     }
 
+    /**
+     * Transformation from a byteStream.
+     * @param buf the used byteBuffer.
+     */
     @Override
     public void fromBytes(ByteBuf buf)
     {

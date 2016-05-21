@@ -14,7 +14,7 @@ import com.minecolonies.util.LanguageHandler;
  *
  * @param <B> Class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
  */
-public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View> extends AbstractWindowSkeleton<B> implements Button.Handler
+public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View> extends AbstractWindowSkeleton<B>
 {
     //todo redraw after changes
     /**
