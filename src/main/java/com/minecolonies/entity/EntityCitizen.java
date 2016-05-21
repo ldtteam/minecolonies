@@ -51,9 +51,20 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int    DATA_RENDER_METADATA = 19;
 
     /**
+     * The movement speed for the citizen to run away.
+     */
+    private static final int MOVE_AWAY_SPEED = 2;
+
+    /**
+     * The range for the citizen to move away.
+     */
+    private static final int MOVE_AWAY_RANGE = 6;
+
+    /**
      * Number of ticks to heal the citizens
      */
     private static final int HEAL_CITIZENS_AFTER = 200;
+    
     /**
      * Tag's to save data to NBT
      */
