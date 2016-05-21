@@ -102,7 +102,7 @@ public class WindowHireWorker extends Window implements Button.Handler
 
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
-                .filter(citizen -> citizen.getWorkBuilding()!=null)
+                .filter(citizen -> citizen.getWorkBuilding()==null)
                 .collect(Collectors.toList());
     }
 

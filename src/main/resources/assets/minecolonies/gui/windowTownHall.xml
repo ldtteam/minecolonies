@@ -117,7 +117,7 @@
         </view>
         <view id="pageSettings">
             <label id="assignCitizens" label="$(com.minecolonies.gui.townHall.jobHiring)" pos="10 12" size="80 11" textalign="MiddleLeft" color="black"/>
-            <button id="toggleJob" size="22 20" pos="130 8" label="$(com.minecolonies.gui.hiring.off)"/>
+            <button id="toggleJob" size="40 20" pos="120 8" label="$(com.minecolonies.gui.hiring.off)"/>
         </view>
     </switch>
 </window>
