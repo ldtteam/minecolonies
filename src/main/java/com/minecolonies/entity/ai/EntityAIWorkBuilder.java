@@ -731,6 +731,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         job.complete();
         resetTask();
         worker.addExperience(XP_EACH_BUILDING);
+        workFrom = null;
 
         return AIState.IDLE;
     }
