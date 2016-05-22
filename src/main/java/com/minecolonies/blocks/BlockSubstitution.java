@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class BlockSubstitution extends Block {
 
-	private final String BLOCKNAME = "blockSubstitution";
+	private final String BLOCK_NAME = "blockSubstitution";
 	
 	/**
      * Constructor for the Substitution block.
@@ -23,10 +23,10 @@ public class BlockSubstitution extends Block {
 	}
 
 	private void initBlock() {
-		setRegistryName(BLOCKNAME);
-		setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + BLOCKNAME);
+		setRegistryName(BLOCK_NAME);
+		setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + BLOCK_NAME);
 		setCreativeTab(ModCreativeTabs.MINECOLONIES);
-		GameRegistry.registerBlock(this, BLOCKNAME);
+		GameRegistry.registerBlock(this, BLOCK_NAME);
 		setHardness(5f);
 
 	}
