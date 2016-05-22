@@ -10,6 +10,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.OpenInventoryMessage;
+import com.minecolonies.util.ExperienceUtils;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.Gui;
 
@@ -76,14 +77,6 @@ public class WindowCitizen extends Window implements Button.Handler
      * The offset where the end should be placed in the GUI
      */
     private static final int                    XP_BAR_ICON_END_OFFSET          = 90;
-    /**
-     * The number to calculate the experienceLevel of the citizen
-     */
-    private static final int                    PERCENT_MULTIPLIER              = 100;
-    /**
-     * The number to create a percentage from another number (ex. 100*0.25 = 25)
-     */
-    private static final int                    EXPERIENCE_MULTIPLIER           = 100;
     /**
      * The width of the xpBar (Original width is halved to fit in the gui)
      */
@@ -179,13 +172,8 @@ public class WindowCitizen extends Window implements Button.Handler
      */
     private void createXpBar()
     {
-        /*
-         * Calculates how much percent of the next level has been completed.
-         * getExperience +1 in order to not get infinite if experience is zero
-         */
-        double experienceRatio =
-                citizen.getLevel() != 0 ?
-                (int) ((citizen.getExperience() + 1) / ((citizen.getLevel() * citizen.getLevel()) * EXPERIENCE_MULTIPLIER) * 100) : (citizen.getExperience() / EXPERIENCE_MULTIPLIER) * PERCENT_MULTIPLIER;
+        //Calculates how much percent of the next level has been completed.
+        double experienceRatio = ExperienceUtils.getPercentOfLevelCompleted(citizen.getExperience(),citizen.getLevel());
 
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabel("" + citizen.getLevel());
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X, XP_LABEL_Y);
@@ -218,7 +206,7 @@ public class WindowCitizen extends Window implements Button.Handler
         findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).setAlignment(Alignment.MiddleRight);
 
         //MaxHealth (Black hearts)
-        for(int i=0;i<citizen.maxHealth/2;i++)
+        for(int i=0;i<citizen.getMaxHealth()/2;i++)
         {
             Image heart = new Image();
             heart.setImage(Gui.icons, EMPTY_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
@@ -228,7 +216,7 @@ public class WindowCitizen extends Window implements Button.Handler
 
         //Current health (Red hearts)
         int heartPos;
-        for(heartPos=0;heartPos<((int)citizen.health/2);heartPos++)
+        for(heartPos=0;heartPos<((int)citizen.getHealth()/2);heartPos++)
         {
             Image heart = new Image();
             heart.setImage(Gui.icons, FULL_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
@@ -237,7 +225,7 @@ public class WindowCitizen extends Window implements Button.Handler
         }
 
         //Half hearts
-        if(citizen.health/2%1!=0)
+        if(citizen.getHealth()/2%1!=0)
         {
             Image heart = new Image();
             heart.setImage(Gui.icons, HALF_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
@@ -265,15 +253,15 @@ public class WindowCitizen extends Window implements Button.Handler
     private void createSkillContent()
     {
         findPaneOfTypeByID(STRENGTH, Label.class).setLabel(
-                LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength));
+                LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()));
         findPaneOfTypeByID(ENDURANCE, Label.class).setLabel(
-                LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.endurance));
+                LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.getEndurance()));
         findPaneOfTypeByID(CHARISMA, Label.class).setLabel(
-                LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
+                LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.getCharisma()));
         findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabel(
-                LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
+                LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.getIntelligence()));
         findPaneOfTypeByID(DEXTERITY, Label.class).setLabel(
-                LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.dexterity));
+                LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.getDexterity()));
     }
 
     /**

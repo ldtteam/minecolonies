@@ -17,6 +17,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -48,10 +49,22 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final int    DATA_CITIZEN_ID      = 17;
     private static final int    DATA_MODEL           = 18;
     private static final int    DATA_RENDER_METADATA = 19;
+
+    /**
+     * The movement speed for the citizen to run away.
+     */
+    private static final int MOVE_AWAY_SPEED = 2;
+
+    /**
+     * The range for the citizen to move away.
+     */
+    private static final int MOVE_AWAY_RANGE = 6;
+
     /**
      * Number of ticks to heal the citizens
      */
-    private static final int    HEAL_CITIZENS_AFTER  = 200;
+    private static final int HEAL_CITIZENS_AFTER = 200;
+    
     /**
      * Tag's to save data to NBT
      */
@@ -353,33 +366,21 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public void addExperience(double xp)
     {
-        double j       = Integer.MAX_VALUE - citizenData.getExperience();
+        double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
         xp=xp*skillModifier;
 
         double localXp = xp;
-        if (localXp > j)
+        if (localXp > maxValue)
         {
-            localXp = j;
+            localXp = maxValue;
         }
         citizenData.addExperience(localXp);
-        //todo: meaningful constants
-        //todo: what about levels > 50 ?
-        if(citizenData.getLevel()==0)
+
+        while (ExperienceUtils.getXPNeededForNextLevel(citizenData.getLevel()) < citizenData.getExperience())
         {
-            if(citizenData.getExperience()>=100)
-            {
-                citizenData.addExperience(-100);
-                citizenData.setLevel(1);
-            }
+            citizenData.increaseLevel();
         }
-        else if(citizenData.getLevel() < 50)
-        {
-            if(citizenData.getExperience()>=(100*(citizenData.getLevel()*citizenData.getLevel())))
-            {
-                citizenData.addExperience(-100*(citizenData.getLevel()*citizenData.getLevel()));
-                citizenData.increaseLevel();
-            }
-        }
+
         citizenData.markDirty();
     }
 
@@ -432,13 +433,28 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             cleanupChatMessages();
             updateColonyServer();
         }
+        if(isCitizenSuffocating())
+        {
+            getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
+        }
 
         checkHeal();
         super.onLivingUpdate();
     }
 
     /**
-     * Checks the citizens health status and heals the citizen if necessary
+     * Checks if the citizen is suffocating (If at his body or head position is a block).
+     * We will probably have to discover which blocks are solid but citizens still can stand in. (Like doors)
+     * @return true if there is a block at his position.
+     */
+    private boolean isCitizenSuffocating()
+    {
+        return !(worldObj.getBlockState(this.getPosition()).getBlock() instanceof BlockDoor) &&
+                (worldObj.getBlockState(this.getPosition()).getBlock().getMaterial().isSolid() || worldObj.getBlockState(this.getPosition().up()).getBlock().getMaterial().isSolid());
+    }
+
+    /**
+     * Checks the citizens health status and heals the citizen if necessary.
      */
     private void checkHeal()
     {
@@ -872,7 +888,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public boolean isInventoryFull()
     {
-        return InventoryUtils.getOpenSlot(getInventoryCitizen()) == -1;
+        return InventoryUtils.isInventoryFull(getInventoryCitizen());
     }
 
     public InventoryCitizen getInventoryCitizen()

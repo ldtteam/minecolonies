@@ -20,26 +20,29 @@ import java.util.Random;
  */
 public class CitizenData
 {
-    //  Attributes
-    private final           int             id;
+    /**
+     * The unique citizen id.
+     */
+    private final int id;
 
     /**
      * Max level of an attribute a citizen may initially have.
      */
-    private static final    int             LEVEL_CAP               = 5;
+    private static final int LEVEL_CAP = 5;
+
+    private static final int LETTERS_IN_THE_ALPHABET = 26;
 
     private                 String          name;
-    private                 boolean         isFemale;
+    private                 boolean         female;
     private                 int             textureId;
-
     private                 Colony          colony;
     private                 BuildingHome    homeBuilding;
     private                 BuildingWorker  workBuilding;
     private                 Job             job;
 
-    private                 boolean         isDirty;
+    private                 boolean         dirty;
 
-    //  Citizen
+    //Citizen
     private                 EntityCitizen   entity;
 
     /**
@@ -52,8 +55,8 @@ public class CitizenData
     private                 int             intelligence;
     private                 int             dexterity;
 
-    private                 float           health;
-    private                 float           maxHealth;
+    private                 double           health;
+    private                 double           maxHealth;
 
     /**
      * Tags
@@ -67,18 +70,12 @@ public class CitizenData
     private static final    String          TAG_HEALTH              = "health";
     private static final    String          TAG_MAX_HEALTH          = "maxHealth";
 
-    private static final    String          TAG_ENTITY_ID           = "entity";
-    private static final    String          TAG_HOME_BUILDING       = "homeBuilding";
-    private static final    String          TAG_WORK_BUILDING       = "workBuilding";
-
     private static final    String          TAG_SKILLS              = "skills";
     private static final    String          TAG_SKILL_STRENGTH      = "strength";
     private static final    String          TAG_SKILL_STAMINA       = "endurance";
     private static final    String          TAG_SKILL_SPEED         = "charisma";
     private static final    String          TAG_SKILL_INTELLIGENCE  = "intelligence";
     private static final    String          TAG_SKILL_DEXTERITY     = "dexterity";
-
-    private static final    String          TAG_JOB                 = "job";
 
     /**
     * The current experience level the citizen is on.
@@ -115,7 +112,8 @@ public class CitizenData
 
         this.entity = entity;
 
-        isFemale = rand.nextBoolean();   //  Gender before name
+        //Assign the gender before name
+        female = rand.nextBoolean();
         name = generateName(rand);
 
         textureId = entity.worldObj.rand.nextInt(Integer.MAX_VALUE);
@@ -150,10 +148,11 @@ public class CitizenData
         return citizen;
     }
 
+
     /**
-     * Returns the id of the citizen
+     * Returns the id of the citizen.
      *
-     * @return      id of the citizen
+     * @return id of the citizen
      */
     public int getId()
     {
@@ -161,9 +160,9 @@ public class CitizenData
     }
 
     /**
-     * Returns the colony of the citizen
+     * Returns the colony of the citizen.
      *
-     * @return      colony of the citizen
+     * @return colony of the citizen
      */
     public Colony getColony()
     {
@@ -171,9 +170,9 @@ public class CitizenData
     }
 
     /**
-     * Returns the name of the citizen
+     * Returns the name of the citizen.
      *
-     * @return      name of the citizen
+     * @return name of the citizen
      */
     public String getName()
     {
@@ -181,19 +180,19 @@ public class CitizenData
     }
 
     /**
-     * Returns true if citizen is female, false for male
+     * Returns true if citizen is female, false for male.
      *
-     * @return      true for female, false for male
+     * @return true for female, false for male
      */
     public boolean isFemale()
     {
-        return isFemale;
+        return female;
     }
 
     /**
-     * Returns the texture id for the citizen
+     * Returns the texture id for the citizen.
      *
-     * @return     texture ID
+     * @return texture ID
      */
     public int getTextureId()
     {
@@ -201,9 +200,9 @@ public class CitizenData
     }
 
     /**
-     * Returns the level of the citizen
+     * Returns the level of the citizen.
      *
-     * @return     level of the citizen
+     * @return level of the citizen.
      */
     public int getLevel()
     {
@@ -211,9 +210,9 @@ public class CitizenData
     }
 
     /**
-     * Returns the experience of the citizen
+     * Returns the experience of the citizen.
      *
-     * @return     experience of the citizen
+     * @return experience of the citizen.
      */
     public double getExperience()
     {
@@ -221,7 +220,7 @@ public class CitizenData
     }
 
     /**
-     * Sets the experience of the citizen
+     * Sets the experience of the citizen.
      */
     public void setExperience(double xp)
     {
@@ -229,7 +228,8 @@ public class CitizenData
     }
 
     /**
-     * Adds experience of the citizen
+     * Adds experience of the citizen.
+     * @param xp the amount of xp to add.
      */
     public void addExperience(double xp)
     {
@@ -255,11 +255,11 @@ public class CitizenData
     /**
      * Returns whether or not the instance is dirty
      *
-     * @return      true when dirty, otherwise false
+     * @return true when dirty, otherwise false
      */
     public boolean isDirty()
     {
-        return isDirty;
+        return dirty;
     }
 
     /**
@@ -267,7 +267,7 @@ public class CitizenData
      */
     public void markDirty()
     {
-        isDirty = true;
+        dirty = true;
         colony.markCitizensDirty();
     }
 
@@ -276,7 +276,7 @@ public class CitizenData
      */
     public void clearDirty()
     {
-        isDirty = false;
+        dirty = false;
     }
 
     /**
@@ -299,7 +299,8 @@ public class CitizenData
         if(homeBuilding != null && building != null && homeBuilding != building)
         {
             throw new IllegalStateException("CitizenData.setHomeBuilding() - already assigned a home building when setting a new home building");
-        } else if(homeBuilding != building)
+        }
+        else if(homeBuilding != building)
         {
             homeBuilding = building;
             markDirty();
@@ -311,7 +312,10 @@ public class CitizenData
      *
      * @return      home building of a citizen
      */
-    public BuildingWorker getWorkBuilding(){ return workBuilding; }
+    public BuildingWorker getWorkBuilding()
+    {
+        return workBuilding;
+    }
 
     //TODO: inspect if we can use this to make worker buildings nicer
     public <BUILDING extends BuildingWorker> BUILDING getWorkBuilding(Class<BUILDING> type)
@@ -336,7 +340,8 @@ public class CitizenData
         if(workBuilding != null && building != null && workBuilding != building)
         {
             throw new IllegalStateException("CitizenData.setWorkBuilding() - already assigned a work building when setting a new work building");
-        } else if(workBuilding != building)
+        }
+        else if(workBuilding != building)
         {
             workBuilding = building;
 
@@ -349,7 +354,8 @@ public class CitizenData
                     setJob(workBuilding.createJob(this));
                     colony.getWorkManager().clearWorkForCitizen(this);
                 }
-            } else if(job != null)
+            }
+            else if(job != null)
             {
                 //  No place of employment, get rid of our job
                 setJob(null);
@@ -446,10 +452,10 @@ public class CitizenData
     {
         this.job = job;
 
-        EntityCitizen entity = getCitizenEntity();
-        if(entity != null)
+        EntityCitizen localEntity = getCitizenEntity();
+        if(localEntity != null)
         {
-            entity.onJobChanged(job);
+            localEntity.onJobChanged(job);
         }
 
         markDirty();
@@ -464,14 +470,14 @@ public class CitizenData
     {
         compound.setInteger(TAG_ID, id);
         compound.setString(TAG_NAME, name);
-        compound.setBoolean(TAG_FEMALE, isFemale);
+        compound.setBoolean(TAG_FEMALE, female);
         compound.setInteger(TAG_TEXTURE, textureId);
 
         //  Attributes
         compound.setInteger(TAG_LEVEL, level);
         compound.setDouble(TAG_EXPERIENCE, experience);
-        compound.setFloat(TAG_HEALTH, health);
-        compound.setFloat(TAG_MAX_HEALTH, maxHealth);
+        compound.setDouble(TAG_HEALTH, health);
+        compound.setDouble(TAG_MAX_HEALTH, maxHealth);
 
 
         NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
@@ -498,7 +504,7 @@ public class CitizenData
     public void readFromNBT(NBTTagCompound compound)
     {
         name = compound.getString(TAG_NAME);
-        isFemale = compound.getBoolean(TAG_FEMALE);
+        female = compound.getBoolean(TAG_FEMALE);
         textureId = compound.getInteger(TAG_TEXTURE);
 
         //  Attributes
@@ -530,7 +536,7 @@ public class CitizenData
     private String generateName(Random rand)
     {
         String firstName;
-        if(!isFemale)
+        if(!female)
         {
             firstName = getRandomElement(rand, Configurations.maleFirstNames);
         }
@@ -548,7 +554,7 @@ public class CitizenData
      * @param array     Array to select from
      * @return          Random element from array
      */
-    private String getRandomElement(Random rand, String[] array)
+    private static String getRandomElement(Random rand, String[] array)
     {
         return array[rand.nextInt(array.length)];
     }
@@ -559,9 +565,9 @@ public class CitizenData
      * @param rand      Random object
      * @return          Random capital letter
      */
-    private char getRandomLetter(Random rand)
+    private static char getRandomLetter(Random rand)
     {
-        return (char) (rand.nextInt(26) + 'A');
+        return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
     }
 
     /**
@@ -622,29 +628,29 @@ public class CitizenData
         private final int       id;
         private       int       entityId;
         private       String    name;
-        private       boolean   isFemale;
+        private       boolean female;
 
         //  Placeholder skills
         private       int       level;
-        private       double       experience;
-        public        float     health;
-        public        float     maxHealth;
-        public        int       strength, endurance, charisma, intelligence, dexterity;
+        private       double    experience;
+        private       double    health;
+        private       double    maxHealth;
+        private       int       strength, endurance, charisma, intelligence, dexterity;
 
         /**
-         * Job identifier
+         * Job identifier.
          */
         private String job;
 
         /**
-         * Working and home position
+         * Working and home position.
          */
         private BlockPos homeBuilding;
         private BlockPos workBuilding;
 
         /**
-         * Set View id
-         * @param id the id to set
+         * Set View id.
+         * @param id the id to set.
          */
         protected View(int id)
         {
@@ -652,8 +658,8 @@ public class CitizenData
         }
 
         /**
-         * Id getter
-         * @return view Id
+         * Id getter.
+         * @return view Id.
          */
         public int getID()
         {
@@ -661,8 +667,8 @@ public class CitizenData
         }
 
         /**
-         * Entity Id getter
-         * @return entity id
+         * Entity Id getter.
+         * @return entity id.
          */
         public int getEntityId()
         {
@@ -670,8 +676,8 @@ public class CitizenData
         }
 
         /**
-         * Entity name getter
-         * @return entity name
+         * Entity name getter.
+         * @return entity name.
          */
         public String getName()
         {
@@ -679,17 +685,17 @@ public class CitizenData
         }
 
         /**
-         * Check entity sex
-         * @return true if entity is female
+         * Check entity sex.
+         * @return true if entity is female.
          */
         public boolean isFemale()
         {
-            return isFemale;
+            return female;
         }
 
         /**
-         * Entity level getter
-         * @return the citizens level
+         * Entity level getter.
+         * @return the citizens level.
          */
         public int getLevel()
         {
@@ -697,8 +703,8 @@ public class CitizenData
         }
 
         /**
-         * Entity experience getter
-         * @return it's experience
+         * Entity experience getter.
+         * @return it's experience.
          */
         public double getExperience()
         {
@@ -706,8 +712,8 @@ public class CitizenData
         }
 
         /**
-         * Entity job getter
-         * @return the job as a string
+         * Entity job getter.
+         * @return the job as a string.
          */
         public String getJob()
         {
@@ -715,8 +721,8 @@ public class CitizenData
         }
 
         /**
-         * Get the entities home building
-         * @return the home coordinates
+         * Get the entities home building.
+         * @return the home coordinates.
          */
         public BlockPos getHomeBuilding()
         {
@@ -724,12 +730,75 @@ public class CitizenData
         }
 
         /**
-         * Get the entities work building
-         * @return the work coordinates
+         * Get the entities work building.
+         * @return the work coordinates.
          */
         public BlockPos getWorkBuilding()
         {
             return workBuilding;
+        }
+
+        /**
+         * Strength getter.
+         * @return citizen Strength value.
+         */
+        public int getStrength()
+        {
+            return strength;
+        }
+
+        /**
+         * Endurance getter.
+         * @return citizen Endurance value.
+         */
+        public int getEndurance()
+        {
+            return endurance;
+        }
+
+        /**
+         * Charisma getter.
+         * @return citizen Charisma value.
+         */
+        public int getCharisma()
+        {
+            return charisma;
+        }
+
+        /**
+         * Intelligence getter.
+         * @return citizen Intelligence value.
+         */
+        public int getIntelligence()
+        {
+            return intelligence;
+        }
+
+        /**
+         * Dexterity getter.
+         * @return citizen Dexterity value.
+         */
+        public int getDexterity()
+        {
+            return dexterity;
+        }
+
+        /**
+         * Health getter.
+         * @return citizen Dexterity value
+         */
+        public double getHealth()
+        {
+            return health;
+        }
+
+        /**
+         * Max health getter.
+         * @return citizen Dexterity value.
+         */
+        public double getMaxHealth()
+        {
+            return maxHealth;
         }
 
         /**
@@ -739,7 +808,7 @@ public class CitizenData
         public void deserialize(ByteBuf buf)
         {
             name = ByteBufUtils.readUTF8String(buf);
-            isFemale = buf.readBoolean();
+            female = buf.readBoolean();
             entityId = buf.readInt();
 
             homeBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
@@ -769,7 +838,7 @@ public class CitizenData
     public void serializeViewNetworkData(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
-        buf.writeBoolean(isFemale);
+        buf.writeBoolean(female);
 
         EntityCitizen entity = getCitizenEntity();
         buf.writeInt(entity != null ? entity.getEntityId() : -1);

@@ -31,9 +31,9 @@ public class WindowTestGui extends Window implements Button.Handler
     {
         try
         {
-            findPaneOfTypeByID("strength", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.strength));
-            findPaneOfTypeByID("endurance", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.endurance));
-            findPaneOfTypeByID("charisma", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.charisma));
+            findPaneOfTypeByID("strength", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()));
+            findPaneOfTypeByID("endurance", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.getEndurance()));
+            findPaneOfTypeByID("charisma", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.getCharisma()));
             //findPaneOfTypeByID("intelligence", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.intelligence));
             //findPaneOfTypeByID("dexterity", Label.class).setLabel(LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.dexterity));
 

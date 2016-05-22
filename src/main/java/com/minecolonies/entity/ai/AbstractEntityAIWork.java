@@ -34,6 +34,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     private static final int             DEFAULT_RANGE_FOR_DELAY = 3;
     private static final int             DELAY_RECHECK           = 10;
     private static final int             DELAY_MODIFIER          = 50;
+    /**
+     * The amount of xp the entity gains per block mined.
+     */
+    private static final double XP_PER_BLOCK = 0.05;
     protected static     Random          itemRand                = new Random();
     private              boolean         needsShovel             = false;
     private              boolean         needsAxe                = false;
@@ -69,7 +73,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * If we have waited one delay
      */
     private              boolean         hasDelayed              = false;
-
 
     /**
      * Creates the abstract part of the AI.
@@ -517,6 +520,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
         }
+        if(isInventoryAndChestFull())
+        {
+            chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull");
+        }
         //collect items that are nice to have if they are available
         itemsNiceToHave().forEach(this::isInHut);
         return IDLE;
@@ -545,6 +552,16 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
+     * Checks if the worker inventory and his building chest are full
+     * @return true if both are full, else false
+     */
+    private boolean isInventoryAndChestFull()
+    {
+        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
+            && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
+    }
+
+    /**
      * Dumps one inventory slot into the building chest.
      *
      * @param keepIt used to test it that stack should be kept
@@ -552,7 +569,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
     {
-
         return walkToBuilding()
                || InventoryFunctions.matchFirstInInventory(
                 worker.getInventoryCitizen(), (i, stack) -> {
@@ -908,7 +924,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         }
 
         world.setBlockToAir(blockToMine);
-        worker.addExperience(0.01);
+        worker.addExperience(XP_PER_BLOCK);
         blocksMined++;
         return true;
     }
@@ -933,4 +949,5 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         this.blocksMined = 0;
     }
+
 }
