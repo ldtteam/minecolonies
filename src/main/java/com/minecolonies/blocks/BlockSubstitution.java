@@ -3,52 +3,60 @@ package com.minecolonies.blocks;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-public class BlockSubstitution extends Block implements ITileEntityProvider {
+public class BlockSubstitution extends Block {
 
-	private final String blockName = "blockSubstitution";
-
+	private final String BLOCKNAME = "blockSubstitution";
+	
+	/**
+     * Constructor for the Substitution block.
+     * sets the creative tab, as well as the resistance and the hardness.
+     */
 	public BlockSubstitution() {
 		super(Material.wood);
 		initBlock();
 	}
 
 	private void initBlock() {
-		setRegistryName(blockName);
-		setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + blockName);
-		System.out.println(Constants.MOD_ID.toLowerCase() + "." + blockName);
+		setRegistryName(BLOCKNAME);
+		setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + BLOCKNAME);
 		setCreativeTab(ModCreativeTabs.MINECOLONIES);
-		GameRegistry.registerBlock(this, blockName);
+		GameRegistry.registerBlock(this, BLOCKNAME);
 		setHardness(5f);
-		
+
 	}
 
+	
+	/**
+	 * 
+	 * @return true
+	 */
 	@Override
 	public boolean isOpaqueCube() {
 		return true;
 	}
-
+	/**
+	 *Constructor for Registering the Substitution Block
+	 * 
+	 * {@link #registerRender(Block)}
+	 */
 	public static void registerRenders() {
 		registerRender(ModBlocks.blockSubstitution);
 	}
-
+	
+	/**
+	 * Register a block
+	 * @param block
+	 */
 	public static void registerRender(Block block) {
 		Item item = Item.getItemFromBlock(block);
-		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation(
-				Constants.MOD_ID + ":" + item.getUnlocalizedName().substring(5), "inventory"));
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation(Constants.MOD_ID + ":" + item.getUnlocalizedName().substring(5), "inventory"));
 	}
-
-	@Override
-	public TileEntity createNewTileEntity(World arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
+	
 }
