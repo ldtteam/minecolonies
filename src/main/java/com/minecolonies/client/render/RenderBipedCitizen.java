@@ -61,7 +61,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToMaleModelMap.put    (Model.DELIVERYMAN,     new ModelEntityDeliverymanMale());
         idToMaleModelMap.put    (Model.LUMBERJACK,      new ModelEntityLumberjackMale());
         idToMaleModelMap.put    (Model.FARMER,          new ModelEntityFarmerMale());
-        idToMaleModelMap.put    (Model.FISHERMAN,       new ModelBiped());
+        idToMaleModelMap.put    (Model.FISHERMAN,       new ModelEntityFishermanMale());
 
         idToFemaleModelMap.put  (Model.NOBLE,           new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put  (Model.ARISTOCRAT,      new ModelEntityCitizenFemaleAristocrat());
@@ -70,7 +70,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToFemaleModelMap.put  (Model.MINER,           new ModelEntityMinerFemale());
         idToFemaleModelMap.put  (Model.LUMBERJACK,      new ModelEntityLumberjackFemale());
         idToFemaleModelMap.put  (Model.FARMER,          new ModelEntityFarmerFemale());
-        idToFemaleModelMap.put  (Model.FISHERMAN,       new ModelEntityCitizenFemaleCitizen());
+        idToFemaleModelMap.put  (Model.FISHERMAN,       new ModelEntityFishermanFemale());
 
     }
 
