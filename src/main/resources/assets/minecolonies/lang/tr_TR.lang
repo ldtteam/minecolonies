@@ -58,6 +58,13 @@ com.minecolonies.gui.buildtool.nodecoration=Dekorasyon Yok
 com.minecolonies.gui.buildtool.hut=Evler
 com.minecolonies.gui.buildtool.decoration=Dekorasyonlar
 
+com.minecolonies.gui.hiring.on=Elle
+com.minecolonies.gui.hiring.off=Otomatik
+com.minecolonies.gui.hiring.buttonHire=İşçi Ata
+com.minecolonies.gui.hiring.description=İş için bir işçi seç.
+com.minecolonies.gui.townHall.addPlayer=Oyuncu Ekle:
+com.minecolonies.gui.townHall.jobHiring=İşçi Atama Modu:
+
 tile.minecolonies.blockHutCitizen.name=Vatandaş Evi
 tile.minecolonies.blockHutBaker.name=Fırıncı
 tile.minecolonies.blockHutBlacksmith.name=Demirci
