@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
@@ -18,6 +19,10 @@ import java.util.concurrent.Callable;
 
 public abstract class PathJob implements Callable<PathEntity>
 {
+    public static final int SHIFT_SOUTH = 1;
+    public static final int SHIFT_WEST = 2;
+    public static final int SHIFT_NORTH = 3;
+    public static final int SHIFT_EAST = 4;
     protected final BlockPos start;
     protected final int      maxRange;
 
@@ -35,7 +40,7 @@ public abstract class PathJob implements Callable<PathEntity>
     //  Debug Output
     protected static final int DEBUG_VERBOSITY_NONE  = 0;
     protected static final int DEBUG_VERBOSITY_BASIC = 1;
-    protected static final int DEBUG_VERBOSITY_FULL  = 2;
+    protected static final int DEBUG_VERBOSITY_FULL = 2;
     protected              int totalNodesAdded       = 0;
     protected              int totalNodesVisited     = 0;
 
@@ -292,7 +297,7 @@ public abstract class PathJob implements Callable<PathEntity>
      * @param targetNode
      * @return
      */
-    PathEntity finalizePath(Node targetNode)
+    private PathEntity finalizePath(Node targetNode)
     {
         //  Compute length of path, since we need to allocate an array.  This is cheaper/faster than building a List
         //  and converting it.  Yes, we have targetNode.steps, but I do not want to rely on that being accurate (I might
@@ -337,7 +342,32 @@ public abstract class PathJob implements Callable<PathEntity>
                 if (nextInPath.pos.getY() > pos.getY())
                 {
                     //  We only care about facing if going up
-                    p.ladderFacing = world.getBlockState(pos).getValue(BlockLadder.FACING);
+                    //In the case of BlockVines (Which does not have EnumFacing) we have to check the metadata of the vines... bitwise...
+                    if(world.getBlockState(pos).getBlock() instanceof BlockVine)
+                    {
+                        int meta = world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos));
+
+                        if(((meta >>> SHIFT_SOUTH) & 1) != 0)
+                        {
+                            p.ladderFacing = EnumFacing.SOUTH;
+                        }
+                        else if(((meta >>> SHIFT_WEST) & 1) != 0)
+                        {
+                            p.ladderFacing = EnumFacing.WEST;
+                        }
+                            else if(((meta >>> SHIFT_NORTH) & 1) != 0)
+                        {
+                            p.ladderFacing = EnumFacing.NORTH;
+                        }
+                        else if(((meta >>> SHIFT_EAST) & 1) != 0)
+                        {
+                            p.ladderFacing = EnumFacing.EAST;
+                        }
+                    }
+                    else
+                    {
+                        p.ladderFacing = world.getBlockState(pos).getValue(BlockLadder.FACING);
+                    }
                 }
             }
             else if (node.parent != null && node.parent.isLadder &&

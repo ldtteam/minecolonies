@@ -1,5 +1,7 @@
 package com.minecolonies.entity.ai;
 
+import static com.minecolonies.client.render.RenderBipedCitizen.Model.BUILDER;
+
 /**
  * Basic state enclosing states all ai's use.
  * Please extend this class with the states your ai needs.
@@ -107,5 +109,30 @@ public enum AIState
      * The Miner mines one node
      */
     MINER_MINING_NODE,
+
+/*
+###Builder###
+     */
+
+    /**
+     * Clears the building area
+     */
+    BUILDER_CLEAR_STEP,
+    /**
+     * Requests materials
+     */
+    BUILDER_REQUEST_MATERIALS,
+    /**
+     * Creates the building structure
+     */
+    BUILDER_STRUCTURE_STEP,
+    /**
+     * Sets decorative blocks
+     */
+    BUILDER_DECORATION_STEP,
+    /**
+     * Completes the building
+     */
+    BUILDER_COMPLETE_BUILD,
 
 }

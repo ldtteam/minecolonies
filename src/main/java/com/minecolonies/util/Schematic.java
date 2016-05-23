@@ -5,6 +5,9 @@ import com.minecolonies.configuration.Configurations;
 import com.schematica.world.SchematicWorld;
 import com.schematica.world.schematic.SchematicFormat;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockFlowerPot;
+import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -32,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Interface for using the Schematica codebase
@@ -331,9 +335,9 @@ public final class Schematic
                     {
                         if (xOffset == 0 && yOffset == 0 && zOffset == 0)
                         {
-                            xOffset = x;
-                            yOffset = y;
-                            zOffset = z;
+                            xOffset = x-minX;
+                            yOffset = y-minY;
+                            zOffset = z-minZ;
                         }
                         else
                         {
@@ -458,10 +462,35 @@ public final class Schematic
 
     public boolean doesSchematicBlockEqualWorldBlock()
     {
-        BlockPos pos = this.getBlockPosition();
+        BlockPos worldPos = this.getBlockPosition();
+        IBlockState metadata = schematicWorld.getBlockState(this.getLocalPosition());
+
+        //For the time being any flower pot is equal to each other.
+        if(metadata.getBlock() instanceof BlockFlowerPot && world.getBlockState(worldPos).getBlock() instanceof BlockFlowerPot)
+        {
+            return true;
+        }
+
+        //Stairs facing the same direction are the same stairs they just didn't adapt to close ones.
+        if (metadata.getBlock() instanceof BlockStairs
+                && world.getBlockState(worldPos).getBlock() instanceof BlockStairs
+                && world.getBlockState(worldPos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING)
+                && metadata == world.getBlockState(worldPos).getBlock())
+        {
+            return true;
+        }
+
+        if(metadata.getBlock() instanceof BlockDoor)
+        {
+            return Objects.equals(metadata.getBlock(),
+                                  BlockPosUtil.getBlock(world, worldPos));
+        }
         //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        return pos.getY() <= 0 || schematicWorld.getBlock(x, y, z) == BlockPosUtil.getBlock(world, pos) && schematicWorld.getBlockState(new BlockPos(x, y, z))
-                                                                                                            == BlockPosUtil.getBlockState(world, pos);
+        return worldPos.getY() <= 0
+               || Objects.equals(metadata.getBlock(),
+                                 BlockPosUtil.getBlock(world, worldPos))
+                  && Objects.equals(metadata,
+                                    BlockPosUtil.getBlockState(world, worldPos));
     }
 
     public BlockPos getBlockPosition()

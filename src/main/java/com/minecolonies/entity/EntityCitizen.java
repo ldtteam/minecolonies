@@ -305,6 +305,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public void faceBlock(BlockPos block)
     {
+        if(block == null)
+        {
+            return;
+        }
+
         double xDifference = block.getX() - this.posX;
         double zDifference = block.getZ() - this.posZ;
         double yDifference = block.getY() - (this.posY + (double) this.getEyeHeight());

@@ -32,7 +32,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      * The current state the ai is in.
      * Used to compare to state matching targets.
      */
-    protected       AIState             state;
+    private         AIState             state;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -91,7 +91,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      * @return true if execution is wanted
      */
     @Override
-    public boolean shouldExecute()
+    public final boolean shouldExecute()
     {
         return worker.getDesiredActivity() == EntityCitizen.DesiredActivity.WORK;
     }
@@ -100,7 +100,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      * Resets the task
      */
     @Override
-    public void resetTask()
+    public final void resetTask()
     {
         worker.setStatus(IDLE);
     }
@@ -109,17 +109,26 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      * Execute a one shot task or start executing a continuous task
      */
     @Override
-    public void startExecuting()
+    public final void startExecuting()
     {
         worker.setStatus(EntityCitizen.Status.WORKING);
         Log.logger.info("Starting AI job " + job.getName());
     }
 
     /**
+     * Returns whether an in-progress EntityAIBase should continue executing
+     */
+    @Override
+    public final boolean continueExecuting()
+    {
+        return super.continueExecuting();
+    }
+
+    /**
      * Updates the task
      */
     @Override
-    public void updateTask()
+    public final void updateTask()
     {
         targetList.stream().anyMatch(this::checkOnTarget);
     }
@@ -186,4 +195,11 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         return false;
     }
 
+    /**
+     * Get the current state the ai is in.
+     */
+    public final AIState getState()
+    {
+        return state;
+    }
 }

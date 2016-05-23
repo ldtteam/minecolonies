@@ -11,7 +11,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -183,7 +182,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                 break;
         }
     }
-
+    /*
     @Override
     public void updateTask()
     {
@@ -218,15 +217,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         }
         startWorking();
     }
-
-    /**
-     * This method will be overridden by AI implementations
-     */
-    @Override
-    protected void workOnTask()
-    {
-        //TODO: rework the farmer to use workOnTask eventually
-    }
+    */
 
     private void searchFarmableLand()
     {
@@ -654,18 +645,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         }
 
         return Hoe && Spade;
-    }
-
-    @Override
-    public boolean continueExecuting()
-    {
-        return super.continueExecuting();
-    }
-
-    @Override
-    public void resetTask()
-    {
-        super.resetTask();
     }
 
     private int inventoryContains(Item item)//???

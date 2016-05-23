@@ -128,9 +128,9 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
     @Override
     protected boolean wantInventoryDumped()
     {
-        if (blocksMined > MAX_BLOCKS_MINED)
+        if (getBlocksMined() > MAX_BLOCKS_MINED)
         {
-            blocksMined = 0;
+            clearBlocksMined();
             return true;
         }
         return false;
@@ -154,16 +154,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         }
         getOwnBuilding().clearedShaft = false;
         return MINER_MINING_SHAFT;
-    }
-
-    /**
-     * This method will be overridden by AI implementations.
-     * It will serve as a tick function.
-     */
-    @Override
-    public void workOnTask()
-    {
-        //Migration to new system complete
     }
 
     @Override
@@ -1336,18 +1326,6 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         }
 
         return null;
-    }
-
-    @Override
-    public boolean continueExecuting()
-    {
-        return super.continueExecuting();
-    }
-
-    @Override
-    public void resetTask()
-    {
-        super.resetTask();
     }
 
     private void setBlockFromInventory(BlockPos location, Block block)

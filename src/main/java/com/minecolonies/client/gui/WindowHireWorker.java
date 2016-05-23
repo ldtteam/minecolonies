@@ -115,7 +115,8 @@ public class WindowHireWorker extends Window implements Button.Handler
     {
         updateCitizens();
         ScrollingList citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
-
+        citizenList.enable();
+        citizenList.show();
         //Creates a dataProvider for the unemployed citizenList.
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {

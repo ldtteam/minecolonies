@@ -39,12 +39,12 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private static final double XP_PER_BLOCK = 0.05;
     protected static     Random          itemRand                = new Random();
-    protected            boolean         needsShovel             = false;
-    protected            boolean         needsAxe                = false;
-    protected            boolean         needsHoe                = false;
-    protected            boolean         needsPickaxe            = false;
-    protected            int             needsPickaxeLevel       = -1;
-    protected            int             blocksMined             = 0;
+    private              boolean         needsShovel             = false;
+    private              boolean         needsAxe                = false;
+    private              boolean         needsHoe                = false;
+    private              boolean         needsPickaxe            = false;
+    private              int             needsPickaxeLevel       = -1;
+    private              int             blocksMined             = 0;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -100,7 +100,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                  * this keeps the current state
                  * (returning null would not stop execution)
                  */
-                new AITarget(this::waitingForSomething, () -> state),
+                new AITarget(this::waitingForSomething, this::getState),
                 /**
                  * Check if any items are needed.
                  * If yes, transition to NEEDS_ITEM.
@@ -176,7 +176,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     private AIState updateVisualState()
     {
         //Update the current state the worker is in.
-        job.setNameTag(this.state.toString());
+        job.setNameTag(this.getState().toString());
         //Update torch, seeds etc. in chestbelt etc.
         updateRenderMetaData();
         return null;
@@ -227,6 +227,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             {
                 return NEEDS_ITEM;
             }
+
             requestWithoutSpam(first.getDisplayName());
         }
         return NEEDS_ITEM;
@@ -273,6 +274,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         chatSpamFilter.requestWithoutSpam(chat);
     }
+
 
     /**
      * Wait for a needed shovel.
@@ -574,44 +576,15 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
                     ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
                     if (returnStack == null)
                     {
-                        ItemStack removed = worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
-                        if (removed.stackSize < stack.stackSize)
-                        {
-                            //todo: this will never happen???
-                            Log.logger.warn("Dump Inventory: Tried to remove " + stack.stackSize +
-                                            " items, but only " + removed.stackSize + " were removed");
-                        }
+                        worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
                         return true;
                     }
-                    ItemStack removed = worker.getInventoryCitizen().decrStackSize(
-                            i,
-                            stack.stackSize
-                            - returnStack.stackSize);
-                    if (removed.stackSize < stack.stackSize)
-                    {
-                        Log.logger.warn("Dump Inventory: Tried to remove " + stack.stackSize +
-                                        " items, but only " + removed.stackSize + " were removed");
-                    }
+                    worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize);
                     //Check that we are not inserting
-                    // into a
-                    // full inventory.
+                    // into a full inventory.
                     return stack.stackSize != returnStack.stackSize;
                 });
     }
-
-    @Override
-    public void updateTask()
-    {
-        super.updateTask();
-
-        workOnTask();
-    }
-
-    /**
-     * This method will be overridden by AI implementations.
-     * It will serve as a tick function.
-     */
-    protected abstract void workOnTask();
 
     /**
      * Require that items are in the workers inventory.
@@ -626,6 +599,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         boolean allClear = true;
         for (ItemStack stack : items)
         {
+            if (stack == null || stack.getItem() == null)
+            {
+                continue;
+            }
             int countOfItem = worker.getItemCountInInventory(stack.getItem());
             if (countOfItem < stack.stackSize)
             {
@@ -764,8 +741,9 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             case Utils.PICKAXE:
                 checkForPickaxe(required);
                 break;
+            default:
+                Log.logger.error("Invalid tool " + tool + " not implemented as tool!");
         }
-        Log.logger.error("Invalid tool " + tool + " not implemented as tool!");
     }
 
     /**
@@ -820,7 +798,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private boolean checkMiningLocation(BlockPos blockToMine, BlockPos safeStand)
     {
-
         Block curBlock = world.getBlockState(blockToMine).getBlock();
 
         if (!holdEfficientTool(curBlock))
@@ -916,7 +893,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         }
 
         ItemStack tool = worker.getHeldItem();
-
 
         //calculate fortune enchantment
         int fortune = Utils.getFortuneOf(tool);

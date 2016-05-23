@@ -98,7 +98,7 @@
                 </box>
             </list>
 
-            <label size="100 11" pos="15 170" textalign="TopLeft" color="black" label="$(com.minecolonies.gui.townhall.addPlayer)"/>
+            <label size="100 11" pos="15 170" textalign="TopLeft" color="black" label="$(com.minecolonies.gui.townHall.addPlayer)"/>
             <input id="addPlayerName"
                    size="120 20" pos="15 185" maxlength="32"/>
             <button id="addPlayer"
