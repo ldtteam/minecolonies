@@ -76,7 +76,7 @@ tile.minecolonies.blockHutFisherman.name=Balıkçının Evi
 tile.minecolonies.blockHutMiner.name=Maden
 tile.minecolonies.blockHutStonemason.name=Taş Ocağı
 tile.minecolonies.blockHutTownHall.name=Şehir Merkezi
-tile.minecolonies.substitutionBlock.name= ŞematikYerTutucu
+tile.minecolonies.blockSubstitution.name=ŞematikYerTutucu
 
 tile.blockHut.messageNoPermission=Evleri açman için yetkin yok %s.
 

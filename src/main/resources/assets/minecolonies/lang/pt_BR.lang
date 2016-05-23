@@ -76,7 +76,7 @@ tile.minecolonies.blockHutFisherman.name=Rancho do pescador
 tile.minecolonies.blockHutMiner.name=Mina
 tile.minecolonies.blockHutStonemason.name=Casa do pedreiro
 tile.minecolonies.blockHutTownHall.name=Prefeitura
-tile.minecolonies.substitutionBlock.name=BlocoParaPreenchimento
+tile.minecolonies.blockSubstitution.name=BlocoParaPreenchimento
 
 tile.blockHut.messageNoPermission=Você não tem permissão de abrir casas em %s.
 

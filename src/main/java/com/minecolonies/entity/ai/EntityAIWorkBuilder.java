@@ -287,7 +287,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         BlockPos coordinates = job.getSchematic().getBlockPosition();
         Block    worldBlock  = world.getBlockState(coordinates).getBlock();
 
-        if (worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock)
+        if (worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock &&  !(job.getSchematic().getBlock() instanceof BlockSubstitution))
         {
             //Fill workFrom with the position from where the builder should build.
             if (goToConstructionSite())
@@ -442,10 +442,6 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 Log.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
                 //TODO handle - for now, just skipping
             }
-        }
-        else if(block instanceof BlockSubstitution)
-        {
-            worker.setCurrentItemOrArmor(0, null);
         }
         else
         {

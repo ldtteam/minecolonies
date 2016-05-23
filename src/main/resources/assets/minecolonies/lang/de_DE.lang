@@ -76,7 +76,7 @@ tile.minecolonies.blockHutFisherman.name=Fischer Hütte
 tile.minecolonies.blockHutMiner.name=Mine
 tile.minecolonies.blockHutStonemason.name=Steinmetz
 tile.minecolonies.blockHutTownHall.name=Rathaus
-tile.minecolonies.substitutionBlock.name= SchematikPlatzhalter
+tile.minecolonies.blockSubstitution.name=SchematikPlatzhalter
 
 tile.blockHut.messageNoPermission=Du hast nicht die Berechtigungen in %s Häuser zu öffnen.
 

@@ -69,7 +69,7 @@ tile.minecolonies.blockHutFisherman.name=Vissers Hut
 tile.minecolonies.blockHutMiner.name=Mijn
 tile.minecolonies.blockHutStonemason.name=Steengroeve
 tile.minecolonies.blockHutTownHall.name=Stadhuis
-tile.minecolonies.substitutionBlock.name= Schemavervanger.
+tile.minecolonies.blockSubstitution.name=Schemavervanger.
 
 tile.blockHut.messageNoPermission=Je hebt geen rechtem om hutten te openen in %s.
 
