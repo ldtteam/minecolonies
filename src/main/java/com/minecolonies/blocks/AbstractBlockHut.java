@@ -32,9 +32,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
 {
-    protected               int     workingRange;
-    private   static final  float   RESISTANCE      = 10F;
-    
+
+    protected int workingRange;
+    private static final float HARDNESS   = 10F;
+    private static final float RESISTANCE = (float) Integer.MAX_VALUE;
+
 	public static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
 
     /**
@@ -53,9 +55,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + getName());
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         //Blast resistance for creepers etc. makes them explosion proof
-        setResistance((float)Integer.MAX_VALUE);
+        setResistance(RESISTANCE);
         //Hardness of 10 takes a long time to mine to not loose progress
-        setHardness(RESISTANCE);
+        setHardness(HARDNESS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         GameRegistry.registerBlock(this);
     }
