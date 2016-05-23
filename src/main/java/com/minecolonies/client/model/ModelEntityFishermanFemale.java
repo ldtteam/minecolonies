@@ -133,6 +133,7 @@ public class ModelEntityFishermanFemale extends ModelBiped
         LeftArm.setTextureSize(256, 128);
         LeftArm.mirror = true;
         setRotation(LeftArm, 0F, 0F, 0F);
+        bipedLeftArm.mirror = false;
 
         Chest = new ModelRenderer(this, 25, 32);
         Chest.addBox(-3.5F, 3.5F, 0F, 7, 3, 3);
@@ -154,6 +155,7 @@ public class ModelEntityFishermanFemale extends ModelBiped
         LeftLeg.setTextureSize(256, 128);
         LeftLeg.mirror = true;
         setRotation(LeftLeg, 0F, 0F, 0F);
+        bipedLeftLeg.mirror = false;
 
         Head = new ModelRenderer(this, 0, 0);
         Head.addBox(-4F, -8F, -4F, 8, 8, 8);

@@ -287,7 +287,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         BlockPos coordinates = job.getSchematic().getBlockPosition();
         Block    worldBlock  = world.getBlockState(coordinates).getBlock();
 
-        if (worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && !(job.getSchematic().getBlock() instanceof BlockSubstitution))
+        if (worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock)
         {
             //Fill workFrom with the position from where the builder should build.
             if (goToConstructionSite())

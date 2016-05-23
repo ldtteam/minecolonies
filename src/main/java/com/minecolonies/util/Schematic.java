@@ -1,6 +1,7 @@
 package com.minecolonies.util;
 
 import com.minecolonies.blocks.AbstractBlockHut;
+import com.minecolonies.blocks.BlockSubstitution;
 import com.minecolonies.configuration.Configurations;
 import com.schematica.world.SchematicWorld;
 import com.schematica.world.schematic.SchematicFormat;
@@ -464,6 +465,12 @@ public final class Schematic
     {
         BlockPos worldPos = this.getBlockPosition();
         IBlockState metadata = schematicWorld.getBlockState(this.getLocalPosition());
+
+        //All worldBlocks are equal the substitution block
+        if(metadata.getBlock() instanceof BlockSubstitution)
+        {
+            return true;
+        }
 
         //For the time being any flower pot is equal to each other.
         if(metadata.getBlock() instanceof BlockFlowerPot && world.getBlockState(worldPos).getBlock() instanceof BlockFlowerPot)
