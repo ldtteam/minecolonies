@@ -462,20 +462,20 @@ public final class Schematic
 
     public boolean doesSchematicBlockEqualWorldBlock()
     {
-        BlockPos pos = this.getBlockPosition();
-        IBlockState metadata = schematicWorld.getBlockState(new BlockPos(x,y,z));
+        BlockPos worldPos = this.getBlockPosition();
+        IBlockState metadata = schematicWorld.getBlockState(this.getLocalPosition());
 
         //For the time being any flower pot is equal to each other.
-        if(metadata.getBlock() instanceof BlockFlowerPot && world.getBlockState(pos).getBlock() instanceof BlockFlowerPot)
+        if(metadata.getBlock() instanceof BlockFlowerPot && world.getBlockState(worldPos).getBlock() instanceof BlockFlowerPot)
         {
             return true;
         }
 
         //Stairs facing the same direction are the same stairs they just didn't adapt to close ones.
         if (metadata.getBlock() instanceof BlockStairs
-                && world.getBlockState(pos).getBlock() instanceof BlockStairs
-                && world.getBlockState(pos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING)
-                && metadata == world.getBlockState(pos).getBlock())
+                && world.getBlockState(worldPos).getBlock() instanceof BlockStairs
+                && world.getBlockState(worldPos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING)
+                && metadata == world.getBlockState(worldPos).getBlock())
         {
             return true;
         }
@@ -483,14 +483,14 @@ public final class Schematic
         if(metadata.getBlock() instanceof BlockDoor)
         {
             return Objects.equals(metadata.getBlock(),
-                                  BlockPosUtil.getBlock(world, pos));
+                                  BlockPosUtil.getBlock(world, worldPos));
         }
         //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
-        return pos.getY() <= 0
+        return worldPos.getY() <= 0
                || Objects.equals(metadata.getBlock(),
-                                 BlockPosUtil.getBlock(world, pos))
+                                 BlockPosUtil.getBlock(world, worldPos))
                   && Objects.equals(metadata,
-                                    BlockPosUtil.getBlockState(world, pos));
+                                    BlockPosUtil.getBlockState(world, worldPos));
     }
 
     public BlockPos getBlockPosition()
