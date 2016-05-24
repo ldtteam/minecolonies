@@ -310,6 +310,14 @@ public class Tree
     }
 
     /**
+     * Removes a stump from the stump list.
+     * @param pos the position of the stump.
+     */
+    public void removeStump(BlockPos pos)
+    {
+        stumpLocations.remove(pos);
+    }
+    /**
      * Get's the variant of a tree.
      * A tree may only have 1 variant.
      * @return the EnumType variant
