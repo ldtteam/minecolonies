@@ -1,7 +1,7 @@
 {
     "parent": "block/cube_all",
     "textures": {
-        "particle": "blocks/planks",
+        "particle": "blocks/planks_birch",
         "down": "blocks/planks_birch",
         "up": "blocks/planks_birch",
         "north": "minecolonies:blocks/blockSubstitution",
