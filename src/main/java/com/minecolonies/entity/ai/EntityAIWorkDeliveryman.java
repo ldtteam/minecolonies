@@ -1,116 +1,154 @@
 package com.minecolonies.entity.ai;
 
-import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.JobDeliveryman;
-import com.minecolonies.configuration.Configurations;
-import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.colony.materials.Material;
+import com.minecolonies.colony.materials.MaterialStore;
+import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.util.InventoryUtils;
-import net.minecraft.item.ItemStack;
 
-import static com.minecolonies.entity.EntityCitizen.Status.WORKING;
+import java.util.Map;
+
+import static com.minecolonies.entity.ai.AIState.*;
 
 /**
  * Performs deliveryman work
- * Created: July 18, 2014
- *
- * @author MrIbby
  */
 public class EntityAIWorkDeliveryman extends AbstractEntityAIWork<JobDeliveryman>
 {
+    private MaterialStore supplyStore;
+    private MaterialStore targetStore;
+    private Material      targetMaterial;
+    private int           targetQuantity;
+    private int           targetQuantityLeft;
+
     public EntityAIWorkDeliveryman(JobDeliveryman deliveryman)
     {
         super(deliveryman);
+        super.registerTargets(
+                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(START_WORKING, this::searchItems),
+                new AITarget(DMAN_GET_MATERIAL, this::getMaterial),
+                new AITarget(DMAN_FIND_MORE, this::findMore),
+                new AITarget(DMAN_DELIVER_MATERIAL, this::deliverMaterial)
+        );
     }
 
-    /*
-
-    @Override
-    public boolean shouldExecute()
+    private AIState searchItems()
     {
-        return super.shouldExecute() && (job.hasDestination() || job.isNeeded());
-    }
+        MaterialSystem system = this.getOwnBuilding().getColony().getMaterialSystem();
 
-    @Override
-    public void startExecuting()
-    {
-        if(!job.hasDestination())
+        for (MaterialStore store : system.getStores())
         {
-            job.setDestination(worker.getColony().getDeliverymanRequired().get(0));
-        }
-        BlockPosUtil.tryMoveLivingToXYZ(worker, job.getDestination());
-    }
-
-    @Override
-    public void updateTask()
-    {
-        if(!BlockPosUtil.isWorkerAtSiteWithMove(worker, job.getDestination()))
-        {
-            return;
-        }
-
-        worker.setStatus(WORKING);
-
-        //  TODO - Actually know the Building, not the ID of it
-        BuildingWorker destinationBuilding = worker.getColony().getBuilding(job.getDestination(), BuildingWorker.class);
-        if(destinationBuilding == null)
-        {
-            return;
-        }
-
-        CitizenData targetCitizen = destinationBuilding.getWorker();
-        if(targetCitizen == null || targetCitizen.getJob() == null)
-        {
-            return;
-        }
-
-        TileEntityColonyBuilding destinationTileEntity = destinationBuilding.getTileEntity();
-        if(destinationTileEntity == null)
-        {
-            //  The recipient or their building's TE aren't loaded currently.  Maybe do something else?
-            return;
-        }
-
-        for(int i = 0; i < targetCitizen.getJob().getItemsNeeded().size(); i++)
-        {
-            ItemStack itemstack = targetCitizen.getJob().getItemsNeeded().get(i);
-            int amount = itemstack.stackSize;
-            for(int j = 0; j < destinationTileEntity.getSizeInventory(); j++)
+            Map<Material, Integer> need = store.getNeed();
+            if(!need.isEmpty())
             {
-                ItemStack hutItem = destinationTileEntity.getStackInSlot(j);
-                if(hutItem != null && hutItem.isItemEqual(itemstack))
+                for(Material material : need.keySet())
                 {
-                    amount -= hutItem.stackSize;
-                    if(amount <= 0) break;
+                    Integer count = system.getMaterials().get(material);
+                    if(count != null)
+                    {
+                        int needCount = need.get(material);
+
+                        Map.Entry<MaterialStore, Integer> largest = null;
+                        for(Map.Entry<MaterialStore, Integer> entry : material.getLocationsStored().entrySet())
+                        {
+                            if(entry.getValue() >= needCount)
+                            {
+                                this.supplyStore = entry.getKey();
+                                this.targetStore = store;
+                                this.targetMaterial = material;
+                                this.targetQuantityLeft = this.targetQuantity = needCount;
+                                return DMAN_GET_MATERIAL;
+                            }
+
+                            if(largest == null || entry.getValue() > largest.getValue())
+                            {
+                                largest = entry;
+                            }
+                        }
+
+                        if(largest != null)
+                        {
+                            this.supplyStore = largest.getKey();
+                            this.targetStore = store;
+                            this.targetMaterial = material;
+                            this.targetQuantityLeft = this.targetQuantity = needCount;
+                            return DMAN_GET_MATERIAL;
+                        }
+                    }
                 }
             }
-            if(amount > 0)
-            {
-                if(!Configurations.deliverymanInfiniteResources)
-                {
-                    //TODO: resource handling
-                }
-                InventoryUtils.setStack(destinationTileEntity, new ItemStack(itemstack.getItem(), amount, itemstack.getItemDamage()));
-            }
-            targetCitizen.getJob().removeItemNeeded(itemstack);
-            i--;
         }
 
-        job.setDestination(null);
-        resetTask();
+        return this.getState();
     }
 
-    @Override
-    protected void workOnTask()
+    private AIState getMaterial()
     {
-        //TODO: rework the deliveryman to use workOnTask eventually
+        if(walkToBlock(supplyStore.getLocation()))
+        {
+            return this.getState();
+        }
+
+        int countLeft = InventoryUtils.transfer(supplyStore.getInventory(), this.getInventory(), targetMaterial.getItem(), targetQuantityLeft);
+
+        if(countLeft != 0)
+        {
+            targetQuantityLeft = countLeft;
+            return DMAN_FIND_MORE;
+        }
+
+        return DMAN_DELIVER_MATERIAL;
     }
 
-    @Override
-    public boolean continueExecuting()
+    private AIState findMore()
     {
-        return super.continueExecuting() && job.hasDestination();
+        MaterialSystem system = this.getOwnBuilding().getColony().getMaterialSystem();
+
+        Integer count = system.getMaterials().get(targetMaterial);
+        if(count != null)
+        {
+            Map.Entry<MaterialStore, Integer> largest = null;
+            for(Map.Entry<MaterialStore, Integer> entry : targetMaterial.getLocationsStored().entrySet())
+            {
+                if(entry.getValue() >= targetQuantityLeft)
+                {
+                    this.supplyStore = entry.getKey();
+                    return DMAN_GET_MATERIAL;
+                }
+
+                if(largest == null || entry.getValue() > largest.getValue())
+                {
+                    largest = entry;
+                }
+            }
+
+            if(largest != null)
+            {
+                this.supplyStore = largest.getKey();
+                return DMAN_GET_MATERIAL;
+            }
+        }
+
+        //We don't have any more, deliver what we have for now
+        return DMAN_DELIVER_MATERIAL;
     }
-    */
+
+    private AIState deliverMaterial()
+    {
+        if(walkToBlock(targetStore.getLocation()))
+        {
+            return this.getState();
+        }
+
+        int countLeft = InventoryUtils.transfer(this.getInventory(), targetStore.getInventory(), targetMaterial.getItem(), targetQuantity);
+
+        if(countLeft != 0)
+        {
+            //worker inventory full
+            return getState();//wait until it isn't
+        }
+
+        return START_WORKING;
+    }
 }

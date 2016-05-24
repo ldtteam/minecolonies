@@ -1,9 +1,13 @@
 package com.minecolonies.colony.materials;
 
+import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.BuildingWorker;
 import net.minecraft.block.Block;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.Collections;
@@ -46,18 +50,55 @@ public class MaterialStore
     private Type type;
     private MaterialSystem system;
 
+    private Building building;
+
     /**
      * Constructor for MaterialStore
      *
      * @param type What kind of inventory, Entity(INVENTORY) or Building(CHEST)
      * @param system The MaterialSystem associated with the colony
      */
-    public MaterialStore(Type type, MaterialSystem system)
+    public MaterialStore(Type type, MaterialSystem system, Building building)
     {
         this.type = type;
         this.system = system;
+        this.building = building;
 
         system.addStore(this);
+    }
+
+    /**
+     * Return the current location of the Chest or Citizen.
+     *
+     * @return BlockPos where this inventory is.
+     */
+    public BlockPos getLocation()
+    {
+        if(type == Type.CHEST)
+        {
+            return building.getLocation();
+        }
+        else
+        {
+            return ((BuildingWorker) building).getWorkerEntity().getPosition();
+        }
+    }
+
+    /**
+     * Gets the inventory associated with the MaterialStore.
+     *
+     * @return Inventory.
+     */
+    public IInventory getInventory()
+    {
+        if(type == Type.CHEST)
+        {
+            return building.getTileEntity();
+        }
+        else
+        {
+            return ((BuildingWorker) building).getWorkerEntity().getInventoryCitizen();
+        }
     }
 
     /**
@@ -415,8 +456,19 @@ public class MaterialStore
     private static final String TAG_ID = "ID";
     private static final String TAG_QUANTITY = "quantity";
 
-    public void readFromNBT(NBTTagCompound nbtTagCompound)
+    /**
+     * Load material store from NBT.
+     *
+     * @param nbtTagCompound Parent {@link NBTTagCompound}
+     * @return true if succesful.
+     */
+    public boolean readFromNBT(NBTTagCompound nbtTagCompound)
     {
+        if(!nbtTagCompound.hasKey(TAG_MATERIAL_STORE))
+        {
+            return false;
+        }
+
         NBTTagCompound compound = nbtTagCompound.getCompoundTag(TAG_MATERIAL_STORE);
 
         NBTTagList list = compound.getTagList(TAG_DONT_NEED, Constants.NBT.TAG_COMPOUND);
@@ -435,6 +487,8 @@ public class MaterialStore
 
         NBTTagList listNeed = compound.getTagList(TAG_NEED, Constants.NBT.TAG_COMPOUND);
         readMapFromNBT(listNeed, need);
+
+        return true;
     }
 
     public void writeToNBT(NBTTagCompound nbtTagCompound)

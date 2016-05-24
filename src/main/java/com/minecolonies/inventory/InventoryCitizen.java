@@ -1,5 +1,6 @@
 package com.minecolonies.inventory;
 
+import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.util.Log;
@@ -99,11 +100,11 @@ public class InventoryCitizen extends InventoryBasic
 
     //-----------------------------Material Handling--------------------------------
 
-    public void createMaterialStore(MaterialSystem system)
+    public void createMaterialStore(MaterialSystem system, Building building)
     {
         if(materialStore == null)
         {
-            materialStore = new MaterialStore(MaterialStore.Type.INVENTORY, system);
+            materialStore = new MaterialStore(MaterialStore.Type.INVENTORY, system, building);
         }
     }
 
@@ -255,7 +256,14 @@ public class InventoryCitizen extends InventoryBasic
 
         if(MaterialSystem.isEnabled)
         {
-            materialStore.readFromNBT(compound);
+            //If we can't load it, we should initialize with the current inventory
+            if(!materialStore.readFromNBT(compound))
+            {
+                for(int slot = 0; slot < this.getSizeInventory(); slot++)
+                {
+                    this.addStackToMaterialStore(this.getStackInSlot(slot));
+                }
+            }
         }
     }
 

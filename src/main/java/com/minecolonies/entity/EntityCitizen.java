@@ -615,7 +615,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         onJobChanged(getColonyJob());
 
-        inventory.createMaterialStore(c.getMaterialSystem());
+        inventory.createMaterialStore(c.getMaterialSystem(), this.getWorkBuilding());
     }
 
     private void updateLevel()

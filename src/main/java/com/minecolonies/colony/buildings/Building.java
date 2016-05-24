@@ -138,7 +138,7 @@ public abstract class Building
     {
         location = pos;
         this.colony = colony;
-        materialStore = new MaterialStore(MaterialStore.Type.CHEST, colony.getMaterialSystem());
+        materialStore = new MaterialStore(MaterialStore.Type.CHEST, colony.getMaterialSystem(), this);
     }
 
 
@@ -250,7 +250,10 @@ public abstract class Building
 
         if(MaterialSystem.isEnabled)
         {
-            materialStore.readFromNBT(compound);
+            if(!materialStore.readFromNBT(compound))
+            {
+                this.getTileEntity().initMaterialStoreFromInventory();
+            }
         }
     }
 

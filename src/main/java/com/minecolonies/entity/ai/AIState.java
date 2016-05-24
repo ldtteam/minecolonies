@@ -110,7 +110,7 @@ public enum AIState
      */
     MINER_MINING_NODE,
 
-/*
+    /*
 ###Builder###
      */
 
@@ -135,4 +135,20 @@ public enum AIState
      */
     BUILDER_COMPLETE_BUILD,
 
+    /*
+###Deliveryman###
+     */
+
+    /**
+     * Go pickup material from somewhere.
+     */
+    DMAN_GET_MATERIAL,
+    /**
+     * Go deliver material.
+     */
+    DMAN_DELIVER_MATERIAL,
+    /**
+     * Find more of the target material.
+     */
+    DMAN_FIND_MORE,
 }

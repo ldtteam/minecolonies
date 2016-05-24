@@ -291,4 +291,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
             building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
         }
     }
+
+    public void initMaterialStoreFromInventory()
+    {
+        for(int slot = 0; slot < this.getSizeInventory(); slot++)
+        {
+            this.addStackToMaterialStore(this.getStackInSlot(slot));
+        }
+    }
 }

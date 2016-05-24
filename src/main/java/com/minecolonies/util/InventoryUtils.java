@@ -599,4 +599,29 @@ public class InventoryUtils {
 
         return -1;
     }
+
+    public static int transfer(IInventory source, IInventory destination, Item item, int count)
+    {
+        int sourceTotalCount = getItemCountInInventory(source, item);
+        int transferredCount = 0;
+
+        while(transferredCount < sourceTotalCount || transferredCount < count)
+        {
+            int sourceSlot = findFirstSlotInInventoryWith(source, item);
+            int sourceCount = source.getStackInSlot(sourceSlot).stackSize;
+
+            int transferAmount = Math.min(sourceCount, count - transferredCount);
+
+            ItemStack removedStack = source.decrStackSize(sourceSlot, transferAmount);
+            if(!addItemStackToInventory(destination, removedStack))//TODO This should return a stack, not a boolean
+            {
+                //TODO don't use addItemStackToInventory, or make it more safe.
+                Log.logger.error("Destination inventory was full (you lost items): " + destination.getDisplayName());
+            }
+
+            transferredCount += transferAmount;
+        }
+
+        return count - transferredCount;
+    }
 }

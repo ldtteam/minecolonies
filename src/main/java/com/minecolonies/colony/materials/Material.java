@@ -1,5 +1,7 @@
 package com.minecolonies.colony.materials;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -110,5 +112,15 @@ public class Material
     void remove(MaterialStore store)
     {
         locations.remove(store);
+    }
+
+    /**
+     * Get the item associated with this material.
+     *
+     * @return Item.
+     */
+    public Item getItem()
+    {
+        return Item.getItemById(id);
     }
 }
