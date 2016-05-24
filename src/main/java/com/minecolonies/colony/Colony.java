@@ -50,6 +50,7 @@ public class Colony implements IColony
     //  Buildings
     private BuildingTownHall                                townHall;
     private                 Map<BlockPos, Building>         buildings                       = new HashMap<>();
+    private                 Map<BlockPos, Building>         fields                          = new HashMap<>();
 
     //  Citizenry
     private                 Map<Integer, CitizenData>       citizens                        = new HashMap<>();
@@ -771,6 +772,53 @@ public class Colony implements IColony
                 townHall = (BuildingTownHall) building;
             }
         }
+    }
+
+    /**
+     * Add a Building to the Colony
+     *
+     * @param field      Field to add to the colony
+     */
+    private void addField(Field field)
+    {
+        fields.put(field.getID(), field);
+        field.markDirty();
+    }
+
+    /**
+     * Creates a field from a tile entity and adds it to the colony
+     *
+     * @param tileEntity Tile entity to build a building from
+     */
+    public void addNewField(TileEntityColonyBuilding tileEntity)
+    {
+        tileEntity.setColony(this);
+
+        //todo create field
+        //Building field = Building.create(this, tileEntity);
+        if (field != null)
+        {
+            addField(field);
+            tileEntity.setBuilding(field);
+
+            Log.logger.info(String.format("Colony %d - new Building for %s at %s",
+                    getID(),
+                    tileEntity.getBlockType().getClass(),
+                    tileEntity.getPosition()));
+        }
+        else
+        {
+            Log.logger.error(String.format("Colony %d unable to create Building for %s at %s",
+                    getID(),
+                    tileEntity.getBlockType().getClass(),
+                    tileEntity.getPosition()));
+        }
+
+        calculateMaxCitizens();
+
+        ColonyManager.markDirty();
+
+        //return building;
     }
 
     /**
