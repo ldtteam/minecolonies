@@ -1,5 +1,6 @@
 package com.minecolonies.blocks;
 
+import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.state.IBlockState;
@@ -25,13 +26,22 @@ public class BlockHutField extends AbstractBlockHut
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
+        /*
+        Only work on server side
+        */
         if(worldIn.isRemote)
         {
             return;
         }
-        TileEntity te = worldIn.getTileEntity(pos);
 
+        if(placer instanceof EntityPlayer)
+        {
+            Colony colony = ColonyManager.getColony(worldIn, pos);
 
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+            if (colony != null)
+            {
+                colony.addNewField(pos);
+            }
+        }
     }
 }

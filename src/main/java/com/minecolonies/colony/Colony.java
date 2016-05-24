@@ -50,7 +50,7 @@ public class Colony implements IColony
     //  Buildings
     private BuildingTownHall                                townHall;
     private                 Map<BlockPos, Building>         buildings                       = new HashMap<>();
-    private                 Map<BlockPos, Building>         fields                          = new HashMap<>();
+    private                 Map<BlockPos, Field>            fields                          = new HashMap<>();
 
     //  Citizenry
     private                 Map<Integer, CitizenData>       citizens                        = new HashMap<>();
@@ -775,50 +775,25 @@ public class Colony implements IColony
     }
 
     /**
-     * Add a Building to the Colony
+     * Add a Building to the Colony.
      *
-     * @param field      Field to add to the colony
+     * @param field      Field to add to the colony.
      */
     private void addField(Field field)
     {
         fields.put(field.getID(), field);
-        field.markDirty();
     }
 
     /**
-     * Creates a field from a tile entity and adds it to the colony
+     * Creates a field from a tile entity and adds it to the colony.
      *
-     * @param tileEntity Tile entity to build a building from
+     * @param pos Position where the field has been placed.
      */
-    public void addNewField(TileEntityColonyBuilding tileEntity)
+    public void addNewField(BlockPos pos)
     {
-        tileEntity.setColony(this);
-
-        //todo create field
-        //Building field = Building.create(this, tileEntity);
-        if (field != null)
-        {
-            addField(field);
-            tileEntity.setBuilding(field);
-
-            Log.logger.info(String.format("Colony %d - new Building for %s at %s",
-                    getID(),
-                    tileEntity.getBlockType().getClass(),
-                    tileEntity.getPosition()));
-        }
-        else
-        {
-            Log.logger.error(String.format("Colony %d unable to create Building for %s at %s",
-                    getID(),
-                    tileEntity.getBlockType().getClass(),
-                    tileEntity.getPosition()));
-        }
-
-        calculateMaxCitizens();
-
+        Field field = new Field(this, pos);
+        addField(field);
         ColonyManager.markDirty();
-
-        //return building;
     }
 
     /**

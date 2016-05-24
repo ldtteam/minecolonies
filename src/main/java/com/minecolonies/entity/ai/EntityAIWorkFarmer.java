@@ -32,11 +32,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         super.registerTargets(
                 new AITarget(IDLE, () -> START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-                new AITarget(PREPARING, this::prepareForFishing),
-                new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
-                new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
-                new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
-                new AITarget(FISHERMAN_START_FISHING, this::doFishing)
+                new AITarget(PREPARING, this::prepareForFishing)
+                //new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
+                //new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
+                //new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
+                //new AITarget(FISHERMAN_START_FISHING, this::doFishing)
         );
         worker.setSkillModifier(2*worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
     }
@@ -67,11 +67,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         {
             return getState();
         }
-        if (job.getWater() == null)
+        //if (job.getWater() == null)
         {
             return FISHERMAN_SEARCHING_WATER;
         }
-        return FISHERMAN_WALKING_TO_WATER;
+        //return FISHERMAN_WALKING_TO_WATER;
     }
 
     //todo after crop count.
@@ -82,13 +82,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
     @Override
     protected boolean wantInventoryDumped()
     {
-        if (fishesCaught > MAX_FISHES_IN_INV)
+        /*if (fishesCaught > MAX_FISHES_IN_INV)
         {
             fishesCaught = 0;
             job.setWater(null);
 
             return true;
-        }
+        }*/
         return false;
     }
 
@@ -137,7 +137,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
      */
     private boolean walkToWater()
     {
-        return !(job.getWater() == null || job.getWater() == null) && walkToBlock(job.getWater());
+        return true /*!(job.getWater() == null || job.getWater() == null) && walkToBlock(job.getWater());*/;
     }
 
     //todo equip shovel/hoe
@@ -156,7 +156,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
      */
     private int getRodSlot()
     {
-        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
+        return -1;//return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
     }
 
 
