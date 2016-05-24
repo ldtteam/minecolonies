@@ -626,7 +626,15 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         {
             world.setBlockState(pos, metadata, 0x03);
             EnumFacing meta = metadata.getValue(BlockBed.FACING);
-            world.setBlockState(pos.offset(meta), metadata, 0x03);
+
+            if(metadata.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
+            {
+                world.setBlockState(pos.offset(meta), metadata.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
+            }
+            else
+            {
+                world.setBlockState(pos.offset(meta), metadata.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
+            }
         }
         else if (block instanceof BlockDoublePlant)
         {
