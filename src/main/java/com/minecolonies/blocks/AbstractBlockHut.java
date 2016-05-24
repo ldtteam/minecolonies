@@ -33,11 +33,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
 {
 
-    protected int workingRange;
+    int workingRange;
+    
     private static final float HARDNESS   = 10F;
-    private static final float RESISTANCE = (float) Integer.MAX_VALUE;
+    private static final float RESISTANCE = Float.POSITIVE_INFINITY;
 
-	public static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
+	private static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
 
     /**
      * Constructor for a block using the minecolonies mod.
@@ -151,7 +152,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     
     @Override
     protected BlockState createBlockState() {
-    	return new BlockState(this, new IProperty[]{FACING});
+    	return new BlockState(this, FACING);
     }
     
     // =======================================================================
