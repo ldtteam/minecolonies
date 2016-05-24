@@ -279,6 +279,17 @@ public class BlockPosUtil
     }
 
     /**
+     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.BlockPos.MutableBlockPos#set(int, int, int)}.
+     *
+     * @param pos {@link net.minecraft.util.BlockPos.MutableBlockPos}.
+     * @param newPos The new position to set.
+     */
+    public static void set(BlockPos.MutableBlockPos pos, BlockPos newPos)
+    {
+        pos.set(newPos.getX(), newPos.getY(), newPos.getZ());
+    }
+
+    /**
      * Returns whether a chunk coordinate is equals to (x, y, z)
      *
      * @param coords Chunk Coordinate    (point 1)
@@ -290,32 +301,6 @@ public class BlockPosUtil
     public static boolean equals(BlockPos coords, int x, int y, int z)
     {
         return coords.getX() == x && coords.getY() == y && coords.getZ() == z;
-    }
-
-    /**
-     * Substract two coordinates, and returns the result
-     *
-     * @param coords1 Chunk Coordinate (point 1)
-     * @param coords2 Chunk Coordinate (point 2)
-     * @return coordinates with the result of {@code coords1} minus {@code coords2}
-     */
-    public static BlockPos subtract(BlockPos coords1, BlockPos coords2)
-    {
-        return new BlockPos(coords1.getX() - coords2.getX(), coords1.getY() - coords2.getY(), coords1.getZ() - coords2.getZ());
-    }
-
-    /**
-     * Add two coordinates, and returns the result
-     *
-     * @param coords Chunk Coordinate (point 1)
-     * @param x      x-coordinate (point 2)
-     * @param y      y-coordinate (point 2)
-     * @param z      z-coordinate (point 2)
-     * @return the result of {@code x},{@code y},{@code z} added to {@code coords}
-     */
-    public static BlockPos add(BlockPos coords, int x, int y, int z)
-    {
-        return new BlockPos(coords.getX() + x, coords.getY() + y, coords.getZ() + z);
     }
 
     /**

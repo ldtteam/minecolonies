@@ -138,7 +138,7 @@ public class Tree
             {
                 for(int z = -1; z <= 1; z++)
                 {
-                    BlockPos temp = BlockPosUtil.add(log, x, y, z);
+                    BlockPos temp = log.add(x, y, z);
                     if(BlockPosUtil.getBlock(world, temp).isWood(null,new BlockPos(0,0,0)) && !woodBlocks.contains(temp))//TODO reorder if more optimal
                     {
                         addAndSearch(world, temp);
@@ -309,6 +309,14 @@ public class Tree
         return new ArrayList<>(stumpLocations);
     }
 
+    /**
+     * Removes a stump from the stump list.
+     * @param pos the position of the stump.
+     */
+    public void removeStump(BlockPos pos)
+    {
+        stumpLocations.remove(pos);
+    }
     /**
      * Get's the variant of a tree.
      * A tree may only have 1 variant.

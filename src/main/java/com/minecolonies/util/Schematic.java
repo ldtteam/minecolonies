@@ -1,6 +1,8 @@
 package com.minecolonies.util;
 
 import com.minecolonies.blocks.AbstractBlockHut;
+import com.minecolonies.blocks.BlockSubstitution;
+import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.schematica.world.SchematicWorld;
 import com.schematica.world.schematic.SchematicFormat;
@@ -45,32 +47,35 @@ import java.util.Objects;
 public final class Schematic
 {
     /**
-     * The minecraft world this schematic is displayed in
+     * The minecraft world this schematic is displayed in.
      */
     private World            world;
     /**
-     * the schematic world this schematic comes from
+     * The schematic world this schematic comes from.
      */
     private SchematicWorld   schematicWorld;
     /**
-     * the anchor position this schematic will be
-     * placed on in the minecraft world
+     * The anchor position this schematic will be
+     * placed on in the minecraft world.
      */
     private BlockPos        position;
     /**
-     * the name this schematic has
+     * The name this schematic has.
      */
     private String           name;
 
     /**
-     * North-West corner
+     * The position we use as our uninitialized value.
      */
-    private int x = -1;
-    private int y = -1;
-    private int z = -1;
+    private static final BlockPos NULL_POS = new BlockPos(-1, -1, -1);
 
     /**
-     * Load a schematic into this world
+     * The SchematicWorld position we are at.
+     */
+    private final BlockPos.MutableBlockPos progressPos = new BlockPos.MutableBlockPos(-1, -1, -1);//NULL_POS
+
+    /**
+     * Load a schematic into this world.
      *
      * @param worldObj the world to load in
      * @param name     the schematics name
@@ -81,7 +86,7 @@ public final class Schematic
     }
 
     /**
-     * Load a schematic into this world
+     * Load a schematic into this world.
      *
      * @param worldObj the world to load in
      * @param res      the resource location of this schematic
@@ -93,7 +98,7 @@ public final class Schematic
     }
 
     /**
-     * Create a new Schematic
+     * Create a new Schematic.
      *
      * @param worldObj       the world to show it in
      * @param schematicWorld the SchematicWorld it comes from
@@ -107,7 +112,7 @@ public final class Schematic
     }
 
     /**
-     * Generate the stream from a resource location
+     * Generate the stream from a resource location.
      *
      * @param res the location to pull the stream from
      * @return a stream from this location
@@ -133,7 +138,7 @@ public final class Schematic
     }
 
     /**
-     * Generate a resource location from a schematics name
+     * Generate a resource location from a schematics name.
      *
      * @param name the schematics name
      * @return the resource location pointing towards the schematic
@@ -145,7 +150,7 @@ public final class Schematic
 
     /**
      * Load a schematic into this world
-     * and place it in the right position and rotation
+     * and place it in the right position and rotation.
      *
      * @param worldObj  the world to load it in
      * @param name      the schematics name
@@ -178,9 +183,7 @@ public final class Schematic
      */
     private void placeSchematic(BlockPos pos)
     {
-        x = pos.getX();
-        y = pos.getY();
-        z = pos.getZ();
+        setLocalPosition(pos);
 
         List<BlockPos> delayedBlocks = new ArrayList<>();
 
@@ -190,35 +193,44 @@ public final class Schematic
             {
                 for (int i = 0; i < schematicWorld.getWidth(); i++)
                 {
+                    BlockPos    localPos      = new BlockPos(i, j, k);
+                    IBlockState localState    = this.schematicWorld.getBlockState(localPos);
+                    Block       localBlock    = localState.getBlock();
 
-                    Block       block    = this.schematicWorld.getBlock(i, j, k);
-                    IBlockState metadata = this.schematicWorld.getBlockState(new BlockPos(i, j, k));
+                    BlockPos worldPos = pos.add(localPos);
+                    IBlockState worldState = world.getBlockState(worldPos);
 
-                    if (block == Blocks.air && !world.getBlockState(new BlockPos(x+i, y+j, z+k)).getBlock().getMaterial().isSolid())
+                    if (localBlock == ModBlocks.blockSubstitution)
                     {
-                        world.setBlockToAir(pos.add(i, j, k));
+                        continue;
                     }
-                    else if (block.getMaterial().isSolid())
+                    else if (localBlock == Blocks.air && !worldState.getBlock().getMaterial().isSolid())
                     {
-                        world.setBlockState(new BlockPos(x + i, y + j, z + k), metadata, 0x03);
-                        if (world.getBlockState(new BlockPos(x+i, y+j, z+k)).getBlock() == block)
+                        world.setBlockToAir(worldPos);
+                    }
+                    else if (localBlock.getMaterial().isSolid())
+                    {
+                        world.setBlockState(worldPos, localState, 0x03);
+                        worldState = world.getBlockState(worldPos);
+
+                        if (worldState.getBlock() == localBlock)
                         {
-                            if (world.getBlockState(new BlockPos(x+i, y+j, z+k)) != metadata)
+                            if (worldState != localState)
                             {
-                                world.setBlockState(new BlockPos(x + i, y + j, z + k), metadata, 0x03);
+                                world.setBlockState(worldPos, localState, 0x03);
                             }
-                            //todo Is this the same?
-                            //block.onPostBlockPlaced(world,new BlockPos( x + i, y + j, z + k), metadata);
-                            block.onBlockAdded(world,new BlockPos( x + i, y + j, z + k), metadata);
+                            localBlock.onBlockAdded(world, worldPos, localState);
                         }
                     }
                     else
                     {
-                        delayedBlocks.add(new BlockPos(i, j, k));
+                        delayedBlocks.add(localPos);
                     }
-                    if (schematicWorld.getTileEntity(pos) != null)
+
+                    TileEntity tileEntity = schematicWorld.getTileEntity(localPos);
+                    if (tileEntity != null)
                     {
-                        world.setTileEntity(pos.add(i, j, k), schematicWorld.getTileEntity(pos));
+                        world.setTileEntity(worldPos, tileEntity);
                     }
                 }
             }
@@ -226,29 +238,24 @@ public final class Schematic
 
         for (BlockPos coords : delayedBlocks)
         {
-            int   i        = coords.getX();
-            int   j        = coords.getY();
-            int   k        = coords.getZ();
-            Block block    = this.schematicWorld.getBlock(i, j, k);
-            IBlockState   metadata = this.schematicWorld.getBlockState(new BlockPos(i, j, k));
-            BlockPos newPos = new BlockPos(x + i, y + j, z + k);
+            IBlockState localState = this.schematicWorld.getBlockState(coords);
+            Block localBlock = localState.getBlock();
+            BlockPos newWorldPos = pos.add(coords);
 
-            world.setBlockState(newPos, metadata, 0x03);
-            if (world.getBlockState(newPos).getBlock() == block)
+            world.setBlockState(newWorldPos, localState, 0x03);
+            if (world.getBlockState(newWorldPos).getBlock() == localBlock)
             {
-                if (world.getBlockState(newPos) != metadata)
+                if (world.getBlockState(newWorldPos) != localState)
                 {
-                    world.setBlockState(newPos, metadata, 0x03);
+                    world.setBlockState(newWorldPos, localState, 0x03);
                 }
-                //todo Is this the same?
-                //block.onPostBlockPlaced(world,new BlockPos( x + i, y + j, z + k), metadata);
-                block.onBlockAdded(world, newPos, metadata);
+                localBlock.onBlockAdded(world, newWorldPos, localState);
             }
         }
     }
 
     /**
-     * Rotate this schematic
+     * Rotate this schematic.
      */
     private void rotate()
     {
@@ -412,7 +419,7 @@ public final class Schematic
     }
 
     /**
-     * Find the next block that doesn't already exist in the world
+     * Find the next block that doesn't already exist in the world.
      *
      * @return true if a new block is found and false if there is no next block.
      */
@@ -435,23 +442,21 @@ public final class Schematic
 
     public boolean incrementBlock()
     {
-        if (x == -1)
+        if (this.progressPos.equals(NULL_POS))
         {
-            y = z = 0;
+            this.progressPos.set(-1, 0, 0);
         }
 
-        x++;
-        if (x == schematicWorld.getWidth())
+        this.progressPos.set(this.progressPos.getX() + 1, this.progressPos.getY(), this.progressPos.getZ());
+        if (this.progressPos.getX() == schematicWorld.getWidth())
         {
-            x = 0;
-            z++;
-            if (z == schematicWorld.getLength())
+            this.progressPos.set(0, this.progressPos.getY(), this.progressPos.getZ() + 1);
+            if (this.progressPos.getZ() == schematicWorld.getLength())
             {
-                z = 0;
-                y++;
-                if (y == schematicWorld.getHeight())
+                this.progressPos.set(this.progressPos.getX(), this.progressPos.getY() + 1, 0);
+                if (this.progressPos.getY() == schematicWorld.getHeight())
                 {
-                    x = y = z = -1;
+                    reset();
                     return false;
                 }
             }
@@ -464,6 +469,12 @@ public final class Schematic
     {
         BlockPos worldPos = this.getBlockPosition();
         IBlockState metadata = schematicWorld.getBlockState(this.getLocalPosition());
+
+        //All worldBlocks are equal the substitution block
+        if(metadata.getBlock() == ModBlocks.blockSubstitution)
+        {
+            return true;
+        }
 
         //For the time being any flower pot is equal to each other.
         if(metadata.getBlock() instanceof BlockFlowerPot && world.getBlockState(worldPos).getBlock() instanceof BlockFlowerPot)
@@ -495,12 +506,12 @@ public final class Schematic
 
     public BlockPos getBlockPosition()
     {
-        return BlockPosUtil.add(getOffsetPosition(), x, y, z);
+        return this.progressPos.add(getOffsetPosition());
     }
 
     public BlockPos getOffsetPosition()
     {
-        return BlockPosUtil.subtract(position, getOffset());
+        return position.subtract(getOffset());
     }
 
     public BlockPos getOffset()
@@ -522,7 +533,7 @@ public final class Schematic
 
         }
         //Check for air blocks and if blocks below the hut are different from the schematicWorld
-        while ((worldBlockAir() || (y <= getOffset().getY() && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((worldBlockAir() || (progressPos.getY() <= getOffset().getY() && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -540,7 +551,7 @@ public final class Schematic
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || (!schematicWorld.getBlock(x, y, z).getMaterial().isSolid() && !schematicWorld.isAirBlock(new BlockPos(x, y, z))))
+        while ((doesSchematicBlockEqualWorldBlock() || (getBlock() != null && !getBlock().getMaterial().isSolid() && !schematicWorld.isAirBlock(this.progressPos)))
                && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
@@ -559,7 +570,7 @@ public final class Schematic
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || (schematicWorld.getBlock(x, y, z).getMaterial().isSolid() || schematicWorld.isAirBlock(new BlockPos(x, y, z))))
+        while ((doesSchematicBlockEqualWorldBlock() || (getBlock() != null && getBlock().getMaterial().isSolid() || schematicWorld.isAirBlock(this.progressPos)))
                && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
@@ -567,25 +578,21 @@ public final class Schematic
 
     public boolean decrementBlock()
     {
-        if (x == -1 && y == -1 && z == -1)
+        if (this.progressPos.equals(NULL_POS))
         {
-            x = schematicWorld.getWidth();
-            y = schematicWorld.getHeight() - 1;
-            z = schematicWorld.getLength() - 1;
+            this.progressPos.set(schematicWorld.getWidth(), schematicWorld.getHeight() - 1, schematicWorld.getLength() - 1);
         }
 
-        x--;
-        if (x == -1)
+        this.progressPos.set(this.progressPos.getX() - 1, this.progressPos.getY(), this.progressPos.getZ());
+        if (this.progressPos.getX() == -1)
         {
-            x = schematicWorld.getWidth() - 1;
-            z--;
-            if (z == -1)
+            this.progressPos.set(schematicWorld.getWidth() - 1, this.progressPos.getY(), this.progressPos.getZ() - 1);
+            if (this.progressPos.getZ() == -1)
             {
-                z = schematicWorld.getLength() - 1;
-                y--;
-                if (y == -1)
+                this.progressPos.set(this.progressPos.getX(), this.progressPos.getY() - 1, schematicWorld.getLength() - 1);
+                if (this.progressPos.getY() == -1)
                 {
-                    x = y = z = -1;
+                    reset();
                     return false;
                 }
             }
@@ -611,47 +618,45 @@ public final class Schematic
 
     public Block getBlock()
     {
-        if (x == -1)
+        IBlockState state = getBlockState();
+        if(state == null)
         {
             return null;
         }
-        return this.schematicWorld.getBlock(x, y, z);
+        return state.getBlock();
     }
 
-    public IBlockState getMetadata()
+    public IBlockState getBlockState()
     {
-        //todo why this x?
-        if (x == -1)
+        if (this.progressPos.equals(NULL_POS))
         {
             return null;
         }
-        return this.schematicWorld.getBlockState(new BlockPos(x, y, z));
+        return this.schematicWorld.getBlockState(this.progressPos);
     }
 
     public TileEntity getTileEntity()
     {
-        if (x == -1)
+        if (this.progressPos.equals(NULL_POS))
         {
             return null;
         }
-        return this.schematicWorld.getTileEntity(new BlockPos(x, y, z));
+        return this.schematicWorld.getTileEntity(this.progressPos);
     }
 
     public BlockPos getBlockPosition(int baseX, int baseY, int baseZ)
     {
-        return new BlockPos(baseX + x, baseY + y, baseZ + z);
+        return this.progressPos.add(baseX, baseY, baseZ);
     }
 
     public BlockPos getLocalPosition()
     {
-        return new BlockPos(x, y, z);
+        return this.progressPos.getImmutable();
     }
 
     public void setLocalPosition(BlockPos localPosition)
     {
-        x = localPosition.getX();
-        y = localPosition.getY();
-        z = localPosition.getZ();
+        BlockPosUtil.set(this.progressPos, localPosition);
     }
 
     public BlockPos getPosition()
@@ -701,20 +706,11 @@ public final class Schematic
 
     public void reset()
     {
-        x = -1;
-        y = -1;
-        z = -1;
+        BlockPosUtil.set(this.progressPos, NULL_POS);
     }
 
     public SchematicWorld getWorldForRender()
     {
         return schematicWorld;
     }
-
-    //TODO rendering
-//    public void refreshSchematic() {
-//        for (RendererSchematicChunk renderer : this.sortedRendererSchematicChunk) {
-//            renderer.setDirty();
-//        }
-//    }
 }

@@ -1,6 +1,8 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.blocks.AbstractBlockHut;
+import com.minecolonies.blocks.BlockSubstitution;
+import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.colony.jobs.JobBuilder;
@@ -286,7 +288,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         BlockPos coordinates = job.getSchematic().getBlockPosition();
         Block    worldBlock  = world.getBlockState(coordinates).getBlock();
 
-        if (worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock)
+        if (worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock &&  !(job.getSchematic().getBlock() == ModBlocks.blockSubstitution))
         {
             //Fill workFrom with the position from where the builder should build.
             if (goToConstructionSite())
@@ -341,7 +343,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
                 }
 
                 Block       block     = job.getSchematic().getBlock();
-                IBlockState metadata  = job.getSchematic().getMetadata();
+                IBlockState metadata  = job.getSchematic().getBlockState();
                 ItemStack   itemstack = new ItemStack(block, 1);
 
                 Block worldBlock = BlockPosUtil.getBlock(world, job.getSchematic().getBlockPosition());
@@ -401,7 +403,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         worker.faceBlock(job.getSchematic().getBlockPosition());
         Block       block    = job.getSchematic().getBlock();
-        IBlockState metadata = job.getSchematic().getMetadata();
+        IBlockState metadata = job.getSchematic().getBlockState();
 
         BlockPos coordinates = job.getSchematic().getBlockPosition();
         int      x           = coordinates.getX();
@@ -476,7 +478,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         worker.faceBlock(job.getSchematic().getBlockPosition());
         Block       block    = job.getSchematic().getBlock();
-        IBlockState metadata = job.getSchematic().getMetadata();
+        IBlockState metadata = job.getSchematic().getBlockState();
 
         BlockPos coords = job.getSchematic().getBlockPosition();
         int      x      = coords.getX();
@@ -624,8 +626,18 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
         else if (block instanceof BlockBed)
         {
             world.setBlockState(pos, metadata, 0x03);
-            EnumFacing meta = metadata.getValue(BlockBed.FACING);
-            world.setBlockState(pos.offset(meta), metadata, 0x03);
+            EnumFacing facing = metadata.getValue(BlockBed.FACING);
+
+            //Set other part of the bed, to the opposite PartType
+            if(metadata.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
+            {
+                //pos.offset(facing) will get the other part of the bed
+                world.setBlockState(pos.offset(facing), metadata.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
+            }
+            else
+            {
+                world.setBlockState(pos.offset(facing), metadata.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
+            }
         }
         else if (block instanceof BlockDoublePlant)
         {
