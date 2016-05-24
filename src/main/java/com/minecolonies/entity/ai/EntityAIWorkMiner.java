@@ -941,7 +941,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         }
 
         Block       block    = job.getSchematic().getBlock();
-        IBlockState metadata = job.getSchematic().getMetadata();
+        IBlockState metadata = job.getSchematic().getBlockState();
 
         BlockPos coordinates = job.getSchematic().getBlockPosition();
         int      x           = coordinates.getX();
@@ -992,7 +992,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         }
 
         Block       block    = job.getSchematic().getBlock();
-        IBlockState metadata = job.getSchematic().getMetadata();
+        IBlockState metadata = job.getSchematic().getBlockState();
 
         BlockPos coordinates = job.getSchematic().getBlockPosition();
         int      x           = coordinates.getX();
