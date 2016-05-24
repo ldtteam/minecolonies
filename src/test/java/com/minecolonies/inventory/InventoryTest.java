@@ -28,8 +28,8 @@ public class InventoryTest
     {
         this.materialSystem = new MaterialSystem();
         TileEntityColonyBuilding colonyBuilding = new TileEntityColonyBuilding();
-        this.materialStore = new MaterialStore(MaterialStore.Type.CHEST, materialSystem);
         Building mockBuilding = mock(Building.class);
+        this.materialStore = new MaterialStore(MaterialStore.Type.CHEST, materialSystem, mockBuilding);
         when(mockBuilding.getMaterialStore()).thenReturn(this.materialStore);
         colonyBuilding.setBuilding(mockBuilding);
         this.inventory = colonyBuilding;
