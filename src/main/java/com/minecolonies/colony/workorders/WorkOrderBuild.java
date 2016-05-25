@@ -8,43 +8,65 @@ import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
+/**
+ * Represents one building order to complete.
+ * Has his onw schematic for the building.
+ */
 public class WorkOrderBuild extends WorkOrder
 {
-    protected               BlockPos            buildingId;
-    private                 int                 upgradeLevel;
-    private                 String              upgradeName;
+    private static final String TAG_BUILDING          = "building";
+    private static final String TAG_UPGRADE_LEVEL     = "upgradeLevel";
+    private static final String TAG_UPGRADE_NAME      = "upgrade";
+    private static final String TAG_IS_CLEARED        = "cleared";
+    private static final String TAG_SCHEMATIC_NAME    = "schematicName";
+    private static final String TAG_BUILDING_ROTATION = "buildingRotation";
+    protected BlockPos  buildingId;
+    private   int       buildingRotation;
+    private   String    schematicName;
+    private   int       upgradeLevel;
+    private   String    upgradeName;
+    private   boolean   cleared;
 
-    private static final    String              TAG_BUILDING      = "building";
-    private static final    String              TAG_UPGRADE_LEVEL = "upgradeLevel";
-    private static final    String              TAG_UPGRADE_NAME  = "upgrade";
-
+    /**
+     * unused constructor for reflection
+     */
     public WorkOrderBuild()
     {
         super();
     }
 
+    /**
+     * create a new WorkOrder
+     *
+     * @param building the building to build
+     * @param level    the level it should have
+     */
     public WorkOrderBuild(Building building, int level)
     {
         super();
         this.buildingId = building.getID();
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
+        this.schematicName = building.getStyle() + '/' + this.getUpgradeName();
+        this.buildingRotation = building.getRotation();
+        this.cleared = level > 1;
+
     }
 
     /**
-     * Returns the ID of the building (aka ChunkCoordinates)
+     * Returns the name after upgrade
      *
-     * @return      ID of the building
+     * @return Name after upgrade
      */
-    public BlockPos getBuildingId()
+    public String getUpgradeName()
     {
-        return buildingId;
+        return upgradeName;
     }
 
     /**
      * Returns the level up level of the building
      *
-     * @return      Level after upgrade
+     * @return Level after upgrade
      */
     public int getUpgradeLevel()
     {
@@ -52,15 +74,10 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * Returns the name after upgrade
+     * Save the Work Order to an NBTTagCompound
      *
-     * @return      Name after yograde
+     * @param compound NBT tag compount
      */
-    public String getUpgradeName()
-    {
-        return upgradeName;
-    }
-
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
@@ -68,8 +85,16 @@ public class WorkOrderBuild extends WorkOrder
         BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingId);
         compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
         compound.setString(TAG_UPGRADE_NAME, upgradeName);
+        compound.setBoolean(TAG_IS_CLEARED, cleared);
+        compound.setString(TAG_SCHEMATIC_NAME, schematicName);
+        compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
     }
 
+    /**
+     * Read the WorkOrder data from the NBTTagCompound
+     *
+     * @param compound NBT Tag compound
+     */
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -77,14 +102,31 @@ public class WorkOrderBuild extends WorkOrder
         buildingId = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
         upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        cleared = compound.getBoolean(TAG_IS_CLEARED);
+        schematicName = compound.getString(TAG_SCHEMATIC_NAME);
+        buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
     }
 
+    /**
+     * Is this WorkOrder still valid?  If not, it will be deleted.
+     *
+     * @param colony The colony that owns the Work Order
+     * @return True if the building for this workorder still exists
+     */
     @Override
     public boolean isValid(Colony colony)
     {
         return colony.getBuilding(buildingId) != null;
     }
 
+    /**
+     * Attempt to fulfill the Work Order.
+     * Override this with an implementation for the Work Order to find a Citizen to perform the job
+     * <p>
+     * finds the first suitable builder for this job
+     *
+     * @param colony The colony that owns the Work Order
+     */
     @Override
     public void attemptToFulfill(Colony colony)
     {
@@ -101,13 +143,34 @@ public class WorkOrderBuild extends WorkOrder
             //  - OR the WorkOrder is for the Builder's Work Building
             //  - OR the WorkOrder is for the TownHall
             if (citizen.getWorkBuilding().getBuildingLevel() > 0 ||
-                    citizen.getWorkBuilding().getID().equals(buildingId) ||
-                    (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingId)))
+                citizen.getWorkBuilding().getID().equals(buildingId) ||
+                (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingId)))
             {
                 job.setWorkOrder(this);
-                setClaimedBy(citizen);
+                this.setClaimedBy(citizen);
                 return;
             }
         }
     }
+
+    /**
+     * Returns the ID of the building (aka ChunkCoordinates)
+     *
+     * @return ID of the building
+     */
+    public BlockPos getBuildingId()
+    {
+        return buildingId;
+    }
+
+    /**
+     * Get the name the schematic for this workorder.
+     *
+     * @return the internal string for this schematic
+     */
+    public String getSchematicName()
+    {
+        return this.schematicName;
+    }
+
 }

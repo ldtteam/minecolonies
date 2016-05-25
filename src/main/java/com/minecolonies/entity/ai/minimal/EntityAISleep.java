@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.minimal;
 
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -22,7 +22,7 @@ public class EntityAISleep extends EntityAIBase
     public boolean shouldExecute()
     {
         return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP &&
-                citizen.isAtHome();
+               citizen.isAtHome();
     }
 
     @Override

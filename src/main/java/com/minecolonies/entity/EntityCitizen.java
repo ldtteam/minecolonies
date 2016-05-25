@@ -10,7 +10,8 @@ import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.ai.*;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.minimal.*;
 import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
@@ -66,7 +67,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      * Number of ticks to heal the citizens
      */
     private static final int HEAL_CITIZENS_AFTER = 200;
-    
+
     /**
      * Tag's to save data to NBT
      */
@@ -199,7 +200,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         Object currentTasks[] = this.tasks.taskEntries.toArray();
         for (Object task : currentTasks)
         {
-            if (((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIWork)
+            if (((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIInteract)
             {
                 this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry) task).action);
             }
@@ -435,6 +436,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             cleanupChatMessages();
             updateColonyServer();
         }
+        if(isCitizenSuffocating())
+        {
+            getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
+        }
+
         if(isCitizenSuffocating())
         {
             getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
@@ -1143,7 +1149,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         sendChat(LanguageHandler.format(key, args));
     }
 
-    public void sendChat(String msg)
+    private void sendChat(String msg)
     {
         if (msg == null || msg.length() == 0 || statusMessages.containsKey(msg))
         {
@@ -1152,8 +1158,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         statusMessages.put(msg, ticksExisted);
 
-        LanguageHandler.sendPlayersMessage(EntityUtils.getPlayersFromUUID(worldObj, getColony().getPermissions().getMessagePlayers()),
-                                           LanguageHandler.format(this.getColonyJob().getName()) + " " + this.getCustomNameTag() + ": " + msg);
+        LanguageHandler.sendPlayersMessage(
+                EntityUtils.getPlayersFromUUID(worldObj, getColony().getPermissions().getMessagePlayers()),
+                LanguageHandler.format(this.getColonyJob().getName()) + " " + this.getCustomNameTag() + ": " + msg);
     }
 
     /**

@@ -41,8 +41,8 @@ public class JobFarmer extends Job
      * @param tasks EntityAITasks list to add tasks to
      */
     @Override
-    public void addTasks(EntityAITasks tasks)
+    public AbstractAISkeleton generateAI()
     {
-        tasks.addTask(3, new EntityAIWorkFarmer(this));
+        return new EntityAIWorkFarmer(this);
     }
 }

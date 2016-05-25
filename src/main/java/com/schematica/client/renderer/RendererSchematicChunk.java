@@ -4,7 +4,6 @@ import com.minecolonies.util.Log;
 import com.schematica.Settings;
 import com.schematica.config.Config;
 import com.schematica.world.SchematicWorld;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -24,7 +23,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 

@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.util;
 
 import com.minecolonies.entity.EntityCitizen;
 
@@ -23,7 +23,7 @@ public class ChatSpamFilter
      */
     private static final int MAX_TIMEOUT   = 1000;
     private final EntityCitizen worker;
-    private int    speechDelay       = 0;
+    private       int           speechDelay;
     private String speechDelayString = "";
     private int    speechRepeat      = 1;
 
@@ -69,6 +69,6 @@ public class ChatSpamFilter
         }
         worker.sendLocalizedChat(key, (Object[]) chat);
         speechDelayString = key + Arrays.toString(chat);
-        speechDelay = Math.max((int) (BASE_TIMEOUT * Math.pow(POWER_TIMEOUT, speechRepeat)), MAX_TIMEOUT);
+        speechDelay = Math.min((int) (BASE_TIMEOUT * Math.pow(POWER_TIMEOUT, speechRepeat)), MAX_TIMEOUT);
     }
 }

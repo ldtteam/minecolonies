@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.minimal;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Log;
@@ -25,21 +25,21 @@ public class EntityAIGoHome extends EntityAIBase
     public boolean shouldExecute()
     {
         return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP &&
-                !citizen.isAtHome() &&
-                citizen.getNavigator().noPath();
+               !citizen.isAtHome() &&
+               citizen.getNavigator().noPath();
     }
 
     @Override
     public void startExecuting()
     {
         BlockPos pos = citizen.getHomePosition();
-        if(pos == null)
+        if (pos == null)
         {
             Log.logger.error("EntityCitizen has null townHall (And no home)");
             return;
         }
 
-        citizen.getNavigator().tryMoveToXYZ((double)pos.getX() + 0.5D, (double)pos.getY(), (double)pos.getZ() + 0.5D, 1.0D);
+        citizen.getNavigator().tryMoveToXYZ((double) pos.getX() + 0.5D, (double) pos.getY(), (double) pos.getZ() + 0.5D, 1.0D);
     }
 
     @Override
