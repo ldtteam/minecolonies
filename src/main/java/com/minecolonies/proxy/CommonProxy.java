@@ -9,6 +9,7 @@ import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.schematica.world.SchematicWorld;
+import com.schematica.world.storage.Schematic;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
@@ -104,12 +105,12 @@ public class CommonProxy implements IProxy
 
     //Schematica
     @Override
-    public void setActiveSchematic(SchematicWorld world)
+    public void setActiveSchematic(Schematic schematic)
     {
     }
 
     @Override
-    public SchematicWorld getActiveSchematic()
+    public Schematic getActiveSchematic()
     {
         return null;
     }

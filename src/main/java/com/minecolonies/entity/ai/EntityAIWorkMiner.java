@@ -4,7 +4,7 @@ import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.util.Log;
-import com.minecolonies.util.Schematic;
+import com.minecolonies.util.SchematicWrapper;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
@@ -898,7 +898,7 @@ public class EntityAIWorkMiner extends AbstractEntityAIWork<JobMiner>
         buildStructure = false;
         try
         {
-            job.setSchematic(new Schematic(world, name));
+            job.setSchematic(new SchematicWrapper(world, name));
         }
         catch (IllegalStateException e)
         {

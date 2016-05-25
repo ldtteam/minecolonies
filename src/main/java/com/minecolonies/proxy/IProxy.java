@@ -1,7 +1,7 @@
 package com.minecolonies.proxy;
 
 import com.minecolonies.colony.CitizenData;
-import com.schematica.world.SchematicWorld;
+import com.schematica.world.storage.Schematic;
 import net.minecraft.util.BlockPos;
 
 public interface IProxy
@@ -61,18 +61,18 @@ public interface IProxy
 
     /**
      * Sets the active schematica.
-     * The current {@link SchematicWorld} os given
+     * The current {@link Schematic} is given
      *
-     * @param world     {@link SchematicWorld}
+     * @param schematic     {@link Schematic}
      */
-    void setActiveSchematic(SchematicWorld world);
+    void setActiveSchematic(Schematic schematic);
 
     /**
-     * Returns the active schematica
+     * Returns the active schematica.
      *
-     * @return          {@link SchematicWorld}
+     * @return          {@link Schematic}
      */
-    SchematicWorld getActiveSchematic();
+    Schematic getActiveSchematic();
     
     /**
      * Registers all block and item renderers.

@@ -12,9 +12,13 @@ import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.event.ClientEventHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.schematica.client.events.TickHandler;
-import com.schematica.client.renderer.RendererSchematicGlobal;
-import com.schematica.world.SchematicWorld;
+import com.schematica.Settings;
+import com.schematica.client.renderer.RenderSchematic;
+import com.schematica.client.world.SchematicWorld;
+import com.schematica.handler.client.RenderTickHandler;
+import com.schematica.handler.client.TickHandler;
+import com.schematica.handler.client.WorldHandler;
+import com.schematica.world.storage.Schematic;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -25,8 +29,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy extends CommonProxy
 {
-    private RendererSchematicGlobal rendererSchematicGlobal;
-    private SchematicWorld          schematicWorld          = null;
+    private Schematic schematic = null;
 
     @Override
     public boolean isClient()
@@ -51,9 +54,10 @@ public class ClientProxy extends CommonProxy
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 
         //Schematica
-        MinecraftForge.EVENT_BUS.register(new TickHandler());
-        this.rendererSchematicGlobal = new RendererSchematicGlobal();
-        MinecraftForge.EVENT_BUS.register(this.rendererSchematicGlobal);
+        MinecraftForge.EVENT_BUS.register(RenderSchematic.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(RenderTickHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(TickHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(new WorldHandler());
     }
 
     @Override
@@ -86,17 +90,31 @@ public class ClientProxy extends CommonProxy
 
     //Schematica
     @Override
-    public void setActiveSchematic(SchematicWorld world)
+    public void setActiveSchematic(Schematic schematic)
     {
-        this.schematicWorld = world;
+        this.schematic = schematic;
+
+        if(schematic != null)
+        {
+            final SchematicWorld world = new SchematicWorld(schematic);
+            Settings.instance.schematic = world;
+
+            RenderSchematic.INSTANCE.setWorldAndLoadRenderers(world);
+            world.isRendering = true;
+        }
+        else
+        {
+            Settings.instance.schematic = null;
+            RenderSchematic.INSTANCE.setWorldAndLoadRenderers(null);
+        }
     }
 
     @Override
-    public SchematicWorld getActiveSchematic()
+    public Schematic getActiveSchematic()
     {
-        return this.schematicWorld;
+        return this.schematic;
     }
-    
+
     @Override
     public void registerRenderer() {
     	super.registerRenderer();

@@ -1,62 +1,35 @@
 package com.schematica.world.schematic;
 
-import com.minecolonies.util.Log;
-import com.schematica.world.SchematicWorld;
-
+import com.schematica.api.event.PostSchematicCaptureEvent;
+import com.schematica.reference.Names;
+import com.schematica.reference.Reference;
+import com.schematica.world.storage.Schematic;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.common.MinecraftForge;
 
-import java.io.*;
-import java.lang.reflect.Method;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
-public abstract class SchematicFormat
-{
-    public static final Map<String, SchematicFormat> FORMATS      = new HashMap<>();
-    public static final String                       MATERIALS    = "Materials";
-    public static final String                       FORMAT_ALPHA = "Alpha";
+public abstract class SchematicFormat {
+    public static final Map<String, SchematicFormat> FORMATS = new HashMap<String, SchematicFormat>();
     public static String FORMAT_DEFAULT;
 
-    public abstract SchematicWorld readFromNBT(NBTTagCompound tagCompound);
+    public abstract Schematic readFromNBT(NBTTagCompound tagCompound);
 
-    public abstract boolean writeToNBT(NBTTagCompound tagCompound, SchematicWorld world);
+    public abstract boolean writeToNBT(NBTTagCompound tagCompound, Schematic schematic);
 
-    public static SchematicWorld readFromFile(File file)
-    {
-        try
-        {
-            InputStream stream = new FileInputStream(file);
-            NBTTagCompound tagCompound = CompressedStreamTools.readCompressed(stream);
-            String format = tagCompound.getString(MATERIALS);
-            SchematicFormat schematicFormat = FORMATS.get(format);
-
-            if(schematicFormat == null)
-            {
-                throw new UnsupportedFormatException(format);
-            }
-
-            return schematicFormat.readFromNBT(tagCompound);
-        }
-        catch(Exception ex)
-        {
-            Log.logger.error("Failed to read schematic!", ex);
-        }
-
-        return null;
-    }
-
-    //Minecolonies start
-
-    public static SchematicWorld readFromStream(InputStream stream)
+    public static Schematic readFromStream(InputStream stream)
     {
         try
         {
             NBTTagCompound tagCompound = CompressedStreamTools.readCompressed(stream);
-            String format = tagCompound.getString(MATERIALS);
+            String format = tagCompound.getString(Names.NBT.MATERIALS);
             SchematicFormat schematicFormat = FORMATS.get(format);
 
             if(schematicFormat == null)
@@ -72,47 +45,30 @@ public abstract class SchematicFormat
         }
     }
 
-    //Minecolonies end
+    public static boolean writeToFile(final File file, final Schematic schematic) {
+        try {
+            final PostSchematicCaptureEvent event = new PostSchematicCaptureEvent(schematic);
+            MinecraftForge.EVENT_BUS.post(event);
 
-    public static SchematicWorld readFromFile(String directory, String filename)
-    {
-        return readFromFile(new File(directory, filename));
-    }
+            final NBTTagCompound tagCompound = new NBTTagCompound();
 
-    public static boolean writeToFile(File file, SchematicWorld world)
-    {
-        try
-        {
-            NBTTagCompound tagCompound = new NBTTagCompound();
+            FORMATS.get(FORMAT_DEFAULT).writeToNBT(tagCompound, schematic);
 
-            FORMATS.get(FORMAT_DEFAULT).writeToNBT(tagCompound, world);
-
-            try (DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file))))
-            {
-                Method method =  ReflectionHelper.findMethod(NBTTagCompound.class, null, new String[] 
-                        {"writeEntry", "func_150298_a" }, String.class, NBTBase.class, DataOutput.class);
-                method.invoke(null, "Schematic", tagCompound, dataOutputStream);
+            try (final DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file)))) {
+                NBTTagCompound.writeEntry(Names.NBT.ROOT, tagCompound, dataOutputStream);
             }
 
             return true;
-        }
-        catch(Exception ex)
-        {
-            Log.logger.error("Failed to write schematic!", ex);
+        } catch (final Exception ex) {
+            Reference.logger.error("Failed to write schematic!", ex);
         }
 
         return false;
     }
 
-    public static boolean writeToFile(File directory, String filename, SchematicWorld world)
-    {
-        return writeToFile(new File(directory, filename), world);
-    }
+    static {
+        FORMATS.put(Names.NBT.FORMAT_ALPHA, new SchematicAlpha());
 
-    static
-    {
-        FORMATS.put(FORMAT_ALPHA, new SchematicAlpha());
-
-        FORMAT_DEFAULT = FORMAT_ALPHA;
+        FORMAT_DEFAULT = Names.NBT.FORMAT_ALPHA;
     }
 }

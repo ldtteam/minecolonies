@@ -1,7 +1,6 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.blocks.AbstractBlockHut;
-import com.minecolonies.blocks.BlockSubstitution;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingBuilder;
@@ -177,7 +176,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         try
         {
-            job.setSchematic(new Schematic(world, name));
+            job.setSchematic(new SchematicWrapper(world, name));
         }
         catch (IllegalStateException e)
         {
@@ -578,7 +577,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
             if (stack.getItem() == null)
             {
-                stack = new ItemStack(block.getItem(job.getSchematic().getWorldForRender(), job.getSchematic().getPosition()));
+                stack = new ItemStack(block.getItem(world, job.getSchematic().getPosition()));
             }
 
             if (checkOrRequestItems(stack))
@@ -664,7 +663,7 @@ public class EntityAIWorkBuilder extends AbstractEntityAIWork<JobBuilder>
 
         if (stack.getItem() == null)
         {
-            stack = new ItemStack(block.getItem(job.getSchematic().getWorldForRender(), job.getSchematic().getPosition()));
+            stack = new ItemStack(block.getItem(world, job.getSchematic().getPosition()));
         }
 
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());

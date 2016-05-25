@@ -6,7 +6,7 @@ import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.EntityAIWorkBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
-import com.minecolonies.util.Schematic;
+import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -19,7 +19,7 @@ public class JobBuilder extends Job
     private static final String TAG_POSITION   = "position";
     private static final String TAG_PROGRESS   = "progress";
     private static final String TAG_STAGE      = "stage";
-    protected Schematic schematic;
+    protected SchematicWrapper schematic;
     //TODO save some of this in building
     private   int       workOrderId;
     private   String    schematicName;
@@ -99,7 +99,7 @@ public class JobBuilder extends Job
         {
             try
             {
-                schematic = new Schematic(getCitizen().getColony().getWorld(), schematicName);
+                schematic = new SchematicWrapper(getCitizen().getColony().getWorld(), schematicName);
                 schematic.setPosition(schematicPos);
                 schematic.setLocalPosition(schematicProgress);
             }
@@ -162,7 +162,7 @@ public class JobBuilder extends Job
      *
      * @return Schematic loaded by the Job
      */
-    public Schematic getSchematic()
+    public SchematicWrapper getSchematic()
     {
         return schematic;
     }
@@ -170,9 +170,9 @@ public class JobBuilder extends Job
     /**
      * Set the schematic of builder's job
      *
-     * @param schematic {@link Schematic} object
+     * @param schematic {@link SchematicWrapper} object
      */
-    public void setSchematic(Schematic schematic)
+    public void setSchematic(SchematicWrapper schematic)
     {
         this.schematic = schematic;
     }
