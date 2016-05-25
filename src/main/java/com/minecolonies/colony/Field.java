@@ -1,18 +1,36 @@
 package com.minecolonies.colony;
 
-import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
 public class Field
 {
+
+    /**
+     * Tag to store the location.
+     */
     private static final String TAG_LOCATION = "location";
 
-    private         final       BlockPos                    location;
-    private         final       Colony                      colony;
+    /**
+     * Tag to store if the field has been taken.
+     */
+    private static final String TAG_TAKEN = "taken";
 
+    /**
+     * The fields location.
+     */
+    private final BlockPos location;
+
+    /**
+     * The colony of the field.
+     */
+    private final Colony colony;
+
+    /**
+     * Has the field be taken by any worker?
+     */
+    private boolean free = true;
 
     public Field(Colony colony, BlockPos location)
     {
@@ -50,7 +68,10 @@ public class Field
     public static Field createFromNBT(Colony colony, NBTTagCompound compound)
     {
         BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
-        return new Field(colony,pos);
+        Boolean free = compound.getBoolean(TAG_TAKEN);
+        Field field = new Field(colony,pos);
+        field.setFree(free);
+        return field;
     }
 
     /**
