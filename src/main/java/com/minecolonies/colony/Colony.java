@@ -20,7 +20,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import scala.annotation.meta.field;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -745,6 +744,35 @@ public class Colony implements IColony
 
     @Override
     public boolean hasTownHall() { return townHall != null; }
+
+
+    /**
+     * Get field in Colony by ID
+     *
+     * @param fieldId    ID (coordinates) of the field to get
+     * @return              Fuilding belonging to the given ID
+     */
+    public Field getField(BlockPos fieldId)
+    {
+        return fields.get(fieldId);
+    }
+
+    /**
+     * Returns a field which has not been taken yet.
+     * @return a field if there is one available, else null.
+     */
+    public Field getFreeField()
+    {
+        for(Field field: fields.values())
+        {
+            if(!field.isTaken())
+            {
+                field.setTaken(true);
+                return field;
+            }
+        }
+        return null;
+    }
 
     /**
      * Get building in Colony by ID

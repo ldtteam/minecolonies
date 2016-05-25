@@ -30,7 +30,12 @@ public class Field
     /**
      * Has the field be taken by any worker?
      */
-    private boolean free = true;
+    private boolean taken = false;
+
+    /**
+     * Checks if the field needsWork (Hoeig, Seedings, Farming etc)
+     */
+    private boolean needsWork = false;
 
     public Field(Colony colony, BlockPos location)
     {
@@ -70,7 +75,7 @@ public class Field
         BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
         Boolean free = compound.getBoolean(TAG_TAKEN);
         Field field = new Field(colony,pos);
-        field.setFree(free);
+        field.setTaken(free);
         return field;
     }
 
@@ -85,11 +90,11 @@ public class Field
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
     }
 
-    public boolean isFree() {
-        return free;
+    public boolean isTaken() {
+        return taken;
     }
 
-    public void setFree(boolean free) {
-        this.free = free;
+    public void setTaken(boolean taken) {
+        this.taken = taken;
     }
 }
