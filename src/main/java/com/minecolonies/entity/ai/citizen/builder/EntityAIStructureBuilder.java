@@ -56,6 +56,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      */
     private static final int      MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
 
+    /**
+     * Initialize the builder and add all his tasks.
+     *
+     * @param job the job he has.
+     */
     public EntityAIStructureBuilder(JobBuilder job)
     {
         super(job);
@@ -304,7 +309,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         BlockPos coordinates = job.getSchematic().getBlockPosition();
         Block worldBlock = world.getBlockState(coordinates).getBlock();
 
-        if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && !(job.getSchematic().getBlock() == ModBlocks.blockSubstitution))
+        if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && job.getSchematic().getBlock() != ModBlocks.blockSubstitution)
         {
             //Fill workFrom with the position from where the builder should build.
             if(goToConstructionSite())
