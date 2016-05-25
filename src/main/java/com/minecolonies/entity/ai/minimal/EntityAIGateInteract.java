@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.minimal;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFenceGate;
@@ -16,13 +16,29 @@ import net.minecraft.util.BlockPos;
 public class EntityAIGateInteract extends EntityAIBase
 {
     /**
+     * Number of blocks to check for the fence gate - height.
+     */
+    private static final int    HEIGHT_TO_CHECK = 2;
+    /**
+     * Number of blocks to check for the fence gate - length.
+     */
+    private static final int    LENGTH_TO_CHECK = 2;
+    /**
+     * The length of half a block.
+     */
+    private static final double HALF_BLOCK      = 0.5D;
+    /**
+     * The min distance the gate has to be from the citizen
+     */
+    private static final double MIN_DISTANCE    = 2.25D;
+    /**
      * Our citizen.
      */
-    protected EntityLiving theEntity;
+    protected EntityLiving   theEntity;
     /**
      * The gate position.
      */
-    protected BlockPos gatePosition;
+    protected BlockPos       gatePosition;
     /**
      * The gate block.
      */
@@ -30,34 +46,19 @@ public class EntityAIGateInteract extends EntityAIBase
     /**
      * Check if the interaction with the fenceGate stopped already.
      */
-    private boolean hasStoppedFenceInteraction;
+    private   boolean        hasStoppedFenceInteraction;
     /**
      * The entities x position.
      */
-    private double entityPositionX;
+    private   double         entityPositionX;
     /**
      * The entities z position.
      */
-    private double entityPositionZ;
-    /**
-     * Number of blocks to check for the fence gate - height.
-     */
-    private static final int HEIGHT_TO_CHECK = 2;
-    /**
-     * Number of blocks to check for the fence gate - length.
-     */
-    private static final int LENGTH_TO_CHECK = 2;
-    /**
-     * The length of half a block.
-     */
-    private static final double HALF_BLOCK = 0.5D;
-    /**
-     * The min distance the gate has to be from the citizen
-     */
-    private static final double MIN_DISTANCE = 2.25D;
-    
+    private   double         entityPositionZ;
+
     /**
      * Constructor called to register the AI class with an entity
+     *
      * @param entityIn the registering entity
      */
     public EntityAIGateInteract(EntityLiving entityIn)
@@ -72,6 +73,7 @@ public class EntityAIGateInteract extends EntityAIBase
 
     /**
      * Checks if the Interaction should be executed
+     *
      * @return true or false depending on the conditions
      */
     @Override
@@ -82,19 +84,21 @@ public class EntityAIGateInteract extends EntityAIBase
 
     /**
      * Checks if there exists a path..
+     *
      * @return true if the fence gate can be passed.
      */
     private boolean checkPathEntity()
     {
         PathNavigateGround pathnavigateground = (PathNavigateGround) this.theEntity.getNavigator();
-        PathEntity pathentity = pathnavigateground.getPath();
+        PathEntity         pathentity         = pathnavigateground.getPath();
         return pathentity != null && !pathentity.isFinished() && pathnavigateground.getEnterDoors() && checkFenceGate(pathentity);
     }
 
     /**
      * Checks if the citizen is close enough to an existing fence gate.
+     *
      * @param pathentity the path through the fence.
-     * @return  true if the gate can be passed
+     * @return true if the gate can be passed
      */
     private boolean checkFenceGate(PathEntity pathentity)
     {
@@ -102,7 +106,7 @@ public class EntityAIGateInteract extends EntityAIBase
         for (int i = 0; i < maxLengthToCheck; ++i)
         {
             PathPoint pathpoint = pathentity.getPathPointFromIndex(i);
-            for(int level = 0; level< HEIGHT_TO_CHECK; level++)
+            for (int level = 0; level < HEIGHT_TO_CHECK; level++)
             {
                 this.gatePosition = new BlockPos(pathpoint.xCoord, pathpoint.yCoord + level, pathpoint.zCoord);
                 if (this.theEntity.getDistanceSq((double) this.gatePosition.getX(), this.theEntity.posY, (double) this.gatePosition.getZ()) <= MIN_DISTANCE)
@@ -122,7 +126,25 @@ public class EntityAIGateInteract extends EntityAIBase
     }
 
     /**
+     * Returns a fenceBlock if available
+     *
+     * @param pos the position to be searched
+     * @return fenceBlock or null
+     */
+    private BlockFenceGate getBlockFence(BlockPos pos)
+    {
+        Block block = this.theEntity.worldObj.getBlockState(pos).getBlock();
+        if (!(block instanceof BlockFenceGate && block.getMaterial() == Material.wood))
+        {
+            block = this.theEntity.worldObj.getBlockState(this.theEntity.getPosition()).getBlock();
+            gatePosition = this.theEntity.getPosition();
+        }
+        return block instanceof BlockFenceGate && block.getMaterial() == Material.wood ? (BlockFenceGate) block : null;
+    }
+
+    /**
      * Checks if the execution is still ongoing
+     *
      * @return true or false
      */
     @Override
@@ -148,28 +170,12 @@ public class EntityAIGateInteract extends EntityAIBase
     @Override
     public void updateTask()
     {
-        double entityDistX =  this.gatePosition.getX() + HALF_BLOCK - this.theEntity.posX;
+        double entityDistX = this.gatePosition.getX() + HALF_BLOCK - this.theEntity.posX;
         double entityDistZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.posZ;
-        double totalDist = this.entityPositionX * entityDistX + this.entityPositionZ * entityDistZ;
+        double totalDist   = this.entityPositionX * entityDistX + this.entityPositionZ * entityDistZ;
         if (totalDist < 0.0D)
         {
             this.hasStoppedFenceInteraction = true;
         }
-    }
-
-    /**
-     * Returns a fenceBlock if available
-     * @param pos the position to be searched
-     * @return fenceBlock or null
-     */
-    private BlockFenceGate getBlockFence(BlockPos pos)
-    {
-        Block block  = this.theEntity.worldObj.getBlockState(pos).getBlock();
-        if(!(block instanceof BlockFenceGate && block.getMaterial() == Material.wood))
-        {
-            block = this.theEntity.worldObj.getBlockState(this.theEntity.getPosition()).getBlock();
-            gatePosition = this.theEntity.getPosition();
-        }
-        return block instanceof BlockFenceGate && block.getMaterial() == Material.wood ? (BlockFenceGate) block : null;
     }
 }

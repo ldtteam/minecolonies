@@ -1,7 +1,9 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.basic;
 
 import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.entity.ai.util.AIState;
+import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
@@ -16,7 +18,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import static com.minecolonies.entity.ai.AIState.*;
+import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * This is the base class of all worker AIs.
@@ -29,7 +31,7 @@ import static com.minecolonies.entity.ai.AIState.*;
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkeleton<J>
+public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEntityAICrafting<J>
 {
     private static final int             DEFAULT_RANGE_FOR_DELAY = 3;
     private static final int             DELAY_RECHECK           = 10;
@@ -37,7 +39,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     /**
      * The amount of xp the entity gains per block mined.
      */
-    private static final double XP_PER_BLOCK = 0.05;
+    private static final double          XP_PER_BLOCK            = 0.05;
     protected static     Random          itemRand                = new Random();
     private              boolean         needsShovel             = false;
     private              boolean         needsAxe                = false;
@@ -74,13 +76,14 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      */
     private              boolean         hasDelayed              = false;
 
+
     /**
      * Creates the abstract part of the AI.
      * Always use this constructor!
      *
      * @param job the job to fulfill
      */
-    public AbstractEntityAIWork(J job)
+    public AbstractEntityAIInteract(J job)
     {
         super(job);
         super.registerTargets(
@@ -353,11 +356,24 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
      * Sets the block the AI is currently walking to.
      *
      * @param stand where to walk to
+     * @return true while walking to the block
      */
     protected final boolean walkToBlock(BlockPos stand)
     {
-        if (!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), DEFAULT_RANGE_FOR_DELAY))
+        return walkToBlock(stand, DEFAULT_RANGE_FOR_DELAY);
+    }
+
+    /**
+     * Sets the block the AI is currently walking to.
+     *
+     * @param stand where to walk to
+     * @return true while walking to the block
+     */
+    protected final boolean walkToBlock(BlockPos stand, int range)
+    {
+        if (!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), range))
         {
+            //only walk to the block, work=null
             workOnBlock(null, stand, 1);
             return true;
         }
@@ -520,7 +536,7 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
         }
-        if(isInventoryAndChestFull())
+        if (isInventoryAndChestFull())
         {
             chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull");
         }
@@ -552,16 +568,6 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
-     * Checks if the worker inventory and his building chest are full
-     * @return true if both are full, else false
-     */
-    private boolean isInventoryAndChestFull()
-    {
-        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
-            && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
-    }
-
-    /**
      * Dumps one inventory slot into the building chest.
      *
      * @param keepIt used to test it that stack should be kept
@@ -572,7 +578,10 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
         return walkToBuilding()
                || InventoryFunctions.matchFirstInInventory(
                 worker.getInventoryCitizen(), (i, stack) -> {
-                    if (stack == null || keepIt.test(stack)){ return false; }
+                    if (stack == null || keepIt.test(stack))
+                    {
+                        return false;
+                    }
                     ItemStack returnStack = InventoryUtils.setStack(getOwnBuilding().getTileEntity(), stack);
                     if (returnStack == null)
                     {
@@ -587,12 +596,23 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     }
 
     /**
+     * Checks if the worker inventory and his building chest are full
+     *
+     * @return true if both are full, else false
+     */
+    private boolean isInventoryAndChestFull()
+    {
+        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
+               && InventoryUtils.isInventoryFull(worker.getWorkBuilding().getTileEntity());
+    }
+
+    /**
      * Require that items are in the workers inventory.
      * This safegate ensurs you have said items before you execute a task.
      * Please stop execution on false returned.
      *
      * @param items the items needed
-     * @return true if they are in inventory
+     * @return false if they are in inventory
      */
     protected boolean checkOrRequestItems(ItemStack... items)
     {
@@ -880,10 +900,17 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
     {
         //todo partially replace with methods in EntityCitizen
         Block curBlock = world.getBlockState(blockToMine).getBlock();
-        if (curBlock == null || curBlock == Blocks.air)
+        if (curBlock == null || curBlock.equals(Blocks.air))
         {
             //no need to mine block...
             return true;
+        }
+
+        if (BlockUtils.shouldNeverBeMessedWith(curBlock))
+        {
+            Log.logger.warn("Trying to mine block " + curBlock + " which is not allowed!");
+            //This will endlessly loop... If this warning comes up, check your blocks first...
+            return false;
         }
 
         if (checkMiningLocation(blockToMine, safeStand))
@@ -913,15 +940,13 @@ public abstract class AbstractEntityAIWork<J extends Job> extends AbstractAISkel
 
         Utils.blockBreakSoundAndEffect(world, blockToMine, curBlock,
                                        curBlock.getMetaFromState(world.getBlockState(blockToMine)));
-        //Don't drop bedrock but we want to mine bedrock in some cases...
-        if (curBlock != Blocks.bedrock)
+
+        List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
+        for (ItemStack item : items)
         {
-            List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
-            for (ItemStack item : items)
-            {
-                InventoryUtils.setStack(worker.getInventoryCitizen(), item);
-            }
+            InventoryUtils.setStack(worker.getInventoryCitizen(), item);
         }
+
 
         world.setBlockToAir(blockToMine);
         worker.addExperience(XP_PER_BLOCK);

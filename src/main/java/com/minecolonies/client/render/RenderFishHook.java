@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
-import scala.tools.nsc.transform.patmat.Solving;
 
 /**
  * Determines how the fish hook is rendered.

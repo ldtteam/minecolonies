@@ -16,9 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
-public abstract class SchematicFormat {
-    public static final Map<String, SchematicFormat> FORMATS = new HashMap<String, SchematicFormat>();
-    public static String FORMAT_DEFAULT;
+public abstract class SchematicFormat
+{
+    private static final Map<String, SchematicFormat> FORMATS = new HashMap<String, SchematicFormat>();
+    private static String FORMAT_DEFAULT;
 
     public abstract Schematic readFromNBT(NBTTagCompound tagCompound);
 

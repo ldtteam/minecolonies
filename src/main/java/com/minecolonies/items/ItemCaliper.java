@@ -1,7 +1,6 @@
 package com.minecolonies.items;
 
 import com.minecolonies.util.LanguageHandler;
-
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;

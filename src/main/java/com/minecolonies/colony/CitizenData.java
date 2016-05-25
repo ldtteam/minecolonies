@@ -32,61 +32,61 @@ public class CitizenData
 
     private static final int LETTERS_IN_THE_ALPHABET = 26;
 
-    private                 String          name;
-    private                 boolean         female;
-    private                 int             textureId;
-    private                 Colony          colony;
-    private                 BuildingHome    homeBuilding;
-    private                 BuildingWorker  workBuilding;
-    private                 Job             job;
+    private String         name;
+    private boolean        female;
+    private int            textureId;
+    private Colony         colony;
+    private BuildingHome   homeBuilding;
+    private BuildingWorker workBuilding;
+    private Job            job;
 
-    private                 boolean         dirty;
+    private boolean dirty;
 
     //Citizen
-    private                 EntityCitizen   entity;
+    private EntityCitizen entity;
 
     /**
-     *  Attributes, which influence the workers behaviour.
-     *  May be added more later
-    */
-    private                 int             strength;
-    private                 int             endurance;
-    private                 int             charisma;
-    private                 int             intelligence;
-    private                 int             dexterity;
+     * Attributes, which influence the workers behaviour.
+     * May be added more later
+     */
+    private int strength;
+    private int endurance;
+    private int charisma;
+    private int intelligence;
+    private int dexterity;
 
-    private                 double           health;
-    private                 double           maxHealth;
+    private double health;
+    private double maxHealth;
 
     /**
      * Tags
      */
-    private static final    String          TAG_ID                  = "id";
-    private static final    String          TAG_NAME                = "name";
-    private static final    String          TAG_FEMALE              = "female";
-    private static final    String          TAG_TEXTURE             = "texture";
-    private static final    String          TAG_LEVEL               = "level";
-    private static final    String          TAG_EXPERIENCE          = "experience";
-    private static final    String          TAG_HEALTH              = "health";
-    private static final    String          TAG_MAX_HEALTH          = "maxHealth";
+    private static final String TAG_ID         = "id";
+    private static final String TAG_NAME       = "name";
+    private static final String TAG_FEMALE     = "female";
+    private static final String TAG_TEXTURE    = "texture";
+    private static final String TAG_LEVEL      = "level";
+    private static final String TAG_EXPERIENCE = "experience";
+    private static final String TAG_HEALTH     = "health";
+    private static final String TAG_MAX_HEALTH = "maxHealth";
 
-    private static final    String          TAG_SKILLS              = "skills";
-    private static final    String          TAG_SKILL_STRENGTH      = "strength";
-    private static final    String          TAG_SKILL_STAMINA       = "endurance";
-    private static final    String          TAG_SKILL_SPEED         = "charisma";
-    private static final    String          TAG_SKILL_INTELLIGENCE  = "intelligence";
-    private static final    String          TAG_SKILL_DEXTERITY     = "dexterity";
-
-    /**
-    * The current experience level the citizen is on.
-    */
-    private                 int     level                           = 0;
+    private static final String TAG_SKILLS             = "skills";
+    private static final String TAG_SKILL_STRENGTH     = "strength";
+    private static final String TAG_SKILL_STAMINA      = "endurance";
+    private static final String TAG_SKILL_SPEED        = "charisma";
+    private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
+    private static final String TAG_SKILL_DEXTERITY    = "dexterity";
 
     /**
-    * The total amount of experience the citizen has.
-    * This also includes the amount of experience within their Experience Bar.
-    */
-    private                 double     experience;
+     * The current experience level the citizen is on.
+     */
+    private int level = 0;
+
+    /**
+     * The total amount of experience the citizen has.
+     * This also includes the amount of experience within their Experience Bar.
+     */
+    private double experience;
 
     /**
      * Create a CitizenData given an ID
@@ -104,7 +104,7 @@ public class CitizenData
     /**
      * Create a CitizenData given a CitizenEntity
      *
-     * @param entity   Entity to initialize from
+     * @param entity Entity to initialize from
      */
     public void initializeFromEntity(EntityCitizen entity)
     {
@@ -136,9 +136,9 @@ public class CitizenData
     /**
      * Creates CitizenData from tag compound
      *
-     * @param compound  NBT compound to build from
-     * @param colony    Colony of the citizen
-     * @return          CitizenData
+     * @param compound NBT compound to build from
+     * @param colony   Colony of the citizen
+     * @return CitizenData
      */
     public static CitizenData createFromNBT(NBTTagCompound compound, Colony colony)
     {
@@ -229,6 +229,7 @@ public class CitizenData
 
     /**
      * Adds experience of the citizen.
+     *
      * @param xp the amount of xp to add.
      */
     public void addExperience(double xp)
@@ -249,7 +250,7 @@ public class CitizenData
      */
     public void increaseLevel()
     {
-        this.level+=1;
+        this.level += 1;
     }
 
     /**
@@ -282,7 +283,7 @@ public class CitizenData
     /**
      * Returns the home building of the citizen
      *
-     * @return      home building
+     * @return home building
      */
     public BuildingHome getHomeBuilding()
     {
@@ -292,7 +293,7 @@ public class CitizenData
     /**
      * Sets the home of the citizen
      *
-     * @param building  home building
+     * @param building home building
      */
     public void setHomeBuilding(BuildingHome building)
     {
@@ -310,7 +311,7 @@ public class CitizenData
     /**
      * Returns the work building of a citizen
      *
-     * @return      home building of a citizen
+     * @return home building of a citizen
      */
     public BuildingWorker getWorkBuilding()
     {
@@ -333,7 +334,7 @@ public class CitizenData
     /**
      * Sets the work building of a citizen
      *
-     * @param building  work building
+     * @param building work building
      */
     public void setWorkBuilding(BuildingWorker building)
     {
@@ -388,7 +389,7 @@ public class CitizenData
     /**
      * return the entity instance of the citizen data
      *
-     * @return          {@link EntityCitizen} of the citizen data
+     * @return {@link EntityCitizen} of the citizen data
      */
     public EntityCitizen getCitizenEntity()
     {
@@ -398,7 +399,7 @@ public class CitizenData
     /**
      * Sets the entity of the citizen data
      *
-     * @param citizen   {@link EntityCitizen} instance of the citizen data
+     * @param citizen {@link EntityCitizen} instance of the citizen data
      */
     public void setCitizenEntity(EntityCitizen citizen)
     {
@@ -417,7 +418,7 @@ public class CitizenData
     /**
      * Returns the job of the citizen
      *
-     * @return          Job of the citizen
+     * @return Job of the citizen
      */
     public Job getJob()
     {
@@ -427,7 +428,8 @@ public class CitizenData
 
     /**
      * Returns the job subclass needed. Returns null on type mismatch.
-     * @param type the type of job wanted.
+     *
+     * @param type  the type of job wanted.
      * @param <JOB> The job type returned
      * @return the job this citizen has
      */
@@ -446,7 +448,7 @@ public class CitizenData
     /**
      * Sets the job of this citizen
      *
-     * @param job   Job of the citizen
+     * @param job Job of the citizen
      */
     public void setJob(Job job)
     {
@@ -464,7 +466,7 @@ public class CitizenData
     /**
      * Writes the citiizen data to an NBT-compound
      *
-     * @param compound  NBT-Tag compound
+     * @param compound NBT-Tag compound
      */
     public void writeToNBT(NBTTagCompound compound)
     {
@@ -499,7 +501,7 @@ public class CitizenData
     /**
      * Reads data from NBT-tag compound
      *
-     * @param compound  NBT-Tag compound
+     * @param compound NBT-Tag compound
      */
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -530,8 +532,8 @@ public class CitizenData
     /**
      * Generates a random name from a set of names
      *
-     * @param rand  Random object
-     * @return      Name of the citizen
+     * @param rand Random object
+     * @return Name of the citizen
      */
     private String generateName(Random rand)
     {
@@ -550,9 +552,9 @@ public class CitizenData
     /**
      * Returns a random element in a list
      *
-     * @param rand      Random object
-     * @param array     Array to select from
-     * @return          Random element from array
+     * @param rand  Random object
+     * @param array Array to select from
+     * @return Random element from array
      */
     private static String getRandomElement(Random rand, String[] array)
     {
@@ -562,8 +564,8 @@ public class CitizenData
     /**
      * Returns a random capital letter from the alphabet
      *
-     * @param rand      Random object
-     * @return          Random capital letter
+     * @param rand Random object
+     * @return Random capital letter
      */
     private static char getRandomLetter(Random rand)
     {
@@ -572,6 +574,7 @@ public class CitizenData
 
     /**
      * Strength getter
+     *
      * @return citizen Strength value
      */
     public int getStrength()
@@ -581,6 +584,7 @@ public class CitizenData
 
     /**
      * Endurance getter
+     *
      * @return citizen Endurance value
      */
     public int getEndurance()
@@ -590,6 +594,7 @@ public class CitizenData
 
     /**
      * Charisma getter
+     *
      * @return citizen Charisma value
      */
     public int getCharisma()
@@ -599,6 +604,7 @@ public class CitizenData
 
     /**
      * Intelligence getter
+     *
      * @return citizen Intelligence value
      */
     public int getIntelligence()
@@ -608,6 +614,7 @@ public class CitizenData
 
     /**
      * Dexterity getter
+     *
      * @return citizen Dexterity value
      */
     public int getDexterity()
@@ -625,17 +632,21 @@ public class CitizenData
         /**
          * Attributes
          */
-        private final int       id;
-        private       int       entityId;
-        private       String    name;
+        private final int     id;
+        private       int     entityId;
+        private       String  name;
         private       boolean female;
 
         //  Placeholder skills
-        private       int       level;
-        private       double    experience;
-        private       double    health;
-        private       double    maxHealth;
-        private       int       strength, endurance, charisma, intelligence, dexterity;
+        private int    level;
+        private double experience;
+        private double health;
+        private double maxHealth;
+        private int    strength;
+        private int    endurance;
+        private int    charisma;
+        private int    intelligence;
+        private int    dexterity;
 
         /**
          * Job identifier.
@@ -650,6 +661,7 @@ public class CitizenData
 
         /**
          * Set View id.
+         *
          * @param id the id to set.
          */
         protected View(int id)
@@ -659,6 +671,7 @@ public class CitizenData
 
         /**
          * Id getter.
+         *
          * @return view Id.
          */
         public int getID()
@@ -668,6 +681,7 @@ public class CitizenData
 
         /**
          * Entity Id getter.
+         *
          * @return entity id.
          */
         public int getEntityId()
@@ -677,6 +691,7 @@ public class CitizenData
 
         /**
          * Entity name getter.
+         *
          * @return entity name.
          */
         public String getName()
@@ -686,6 +701,7 @@ public class CitizenData
 
         /**
          * Check entity sex.
+         *
          * @return true if entity is female.
          */
         public boolean isFemale()
@@ -695,6 +711,7 @@ public class CitizenData
 
         /**
          * Entity level getter.
+         *
          * @return the citizens level.
          */
         public int getLevel()
@@ -704,6 +721,7 @@ public class CitizenData
 
         /**
          * Entity experience getter.
+         *
          * @return it's experience.
          */
         public double getExperience()
@@ -713,6 +731,7 @@ public class CitizenData
 
         /**
          * Entity job getter.
+         *
          * @return the job as a string.
          */
         public String getJob()
@@ -722,6 +741,7 @@ public class CitizenData
 
         /**
          * Get the entities home building.
+         *
          * @return the home coordinates.
          */
         public BlockPos getHomeBuilding()
@@ -731,6 +751,7 @@ public class CitizenData
 
         /**
          * Get the entities work building.
+         *
          * @return the work coordinates.
          */
         public BlockPos getWorkBuilding()
@@ -740,6 +761,7 @@ public class CitizenData
 
         /**
          * Strength getter.
+         *
          * @return citizen Strength value.
          */
         public int getStrength()
@@ -749,6 +771,7 @@ public class CitizenData
 
         /**
          * Endurance getter.
+         *
          * @return citizen Endurance value.
          */
         public int getEndurance()
@@ -758,6 +781,7 @@ public class CitizenData
 
         /**
          * Charisma getter.
+         *
          * @return citizen Charisma value.
          */
         public int getCharisma()
@@ -767,6 +791,7 @@ public class CitizenData
 
         /**
          * Intelligence getter.
+         *
          * @return citizen Intelligence value.
          */
         public int getIntelligence()
@@ -776,6 +801,7 @@ public class CitizenData
 
         /**
          * Dexterity getter.
+         *
          * @return citizen Dexterity value.
          */
         public int getDexterity()
@@ -785,6 +811,7 @@ public class CitizenData
 
         /**
          * Health getter.
+         *
          * @return citizen Dexterity value
          */
         public double getHealth()
@@ -794,6 +821,7 @@ public class CitizenData
 
         /**
          * Max health getter.
+         *
          * @return citizen Dexterity value.
          */
         public double getMaxHealth()
@@ -803,6 +831,7 @@ public class CitizenData
 
         /**
          * Deserialize the attributes and variables from transition
+         *
          * @param buf Byte buffer to deserialize
          */
         public void deserialize(ByteBuf buf)
@@ -833,7 +862,7 @@ public class CitizenData
     /**
      * Writes the citizen data to a byte buf for transition.
      *
-     * @param buf   Buffer to write to
+     * @param buf Buffer to write to
      */
     public void serializeViewNetworkData(ByteBuf buf)
     {
@@ -860,7 +889,7 @@ public class CitizenData
         buf.writeDouble(getExperience());
 
         //If entity is null assume the standard values as health
-        if(entity==null)
+        if(entity == null)
         {
             buf.writeFloat(20.0F);
             buf.writeFloat(20.0F);
@@ -883,9 +912,9 @@ public class CitizenData
     /**
      * Create a CitizenData View given it's saved NBTTagCompound
      *
-     * @param id    The citizen's id
-     * @param buf   The network data
-     * @return      View object of the citizen
+     * @param id  The citizen's id
+     * @param buf The network data
+     * @return View object of the citizen
      */
     public static View createCitizenDataView(int id, ByteBuf buf)
     {
@@ -897,7 +926,8 @@ public class CitizenData
         }
         catch(Exception ex)
         {
-            Log.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author", view.getID()), ex);
+            Log.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author", view
+                    .getID()), ex);
             view = null;
         }
 
