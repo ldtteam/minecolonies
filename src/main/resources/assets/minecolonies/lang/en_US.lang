@@ -78,6 +78,11 @@ tile.minecolonies.blockHutStonemason.name=Quarry
 tile.minecolonies.blockHutTownHall.name=Town Hall
 tile.minecolonies.blockSubstitution.name=SchematicPlaceholder.
 
+
+tile.minecolonies.blockHutField.name=Field
+com.minecolonies.gui.workerHuts.Farmer=Farmer
+
+
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
 
 com.minecolonies.job.Builder=Builder

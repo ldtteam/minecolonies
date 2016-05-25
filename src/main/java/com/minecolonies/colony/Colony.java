@@ -20,6 +20,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import scala.annotation.meta.field;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -75,7 +76,7 @@ public class Colony implements IColony
     private static  final   String                          TAG_WORK                        = "work";
     private static  final   String                          TAG_AUTO_HOSTILE                = "autoHostile";
     private static  final   String                          TAG_MANUAL_HIRING               = "manualHiring";
-
+    private static  final   String                          TAG_FIELDS                      = "fields";
     /**
      * Constructor for a newly created Colony.
      *
@@ -170,6 +171,18 @@ public class Colony implements IColony
             }
         }
 
+        // Fields
+        NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, NBT.TAG_COMPOUND);
+        for (int i = 0; i < fieldTagList.tagCount(); ++i)
+        {
+            NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
+            Field f = Field.createFromNBT(this, fieldCompound);
+            if (f != null)
+            {
+                addField(f);
+            }
+        }
+
         //  Workload
         workManager.readFromNBT(compound.getCompoundTag(TAG_WORK));
 
@@ -206,6 +219,16 @@ public class Colony implements IColony
             buildingTagList.appendTag(buildingCompound);
         }
         compound.setTag(TAG_BUILDINGS, buildingTagList);
+
+        // Fields
+        NBTTagList fieldTagList = new NBTTagList();
+        for (Field f : fields.values())
+        {
+            NBTTagCompound fieldCompound = new NBTTagCompound();
+            f.writeToNBT(fieldCompound);
+            buildingTagList.appendTag(fieldCompound);
+        }
+        compound.setTag(TAG_FIELDS, fieldTagList);
 
         //  Citizens
         NBTTagList citizenTagList = new NBTTagList();
