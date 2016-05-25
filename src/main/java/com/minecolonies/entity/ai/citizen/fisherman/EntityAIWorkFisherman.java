@@ -1,20 +1,18 @@
-package com.minecolonies.entity.ai.citizen.fisherman;
+package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
-import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.entity.ai.util.AIState;
-import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
 
-import static com.minecolonies.entity.ai.util.AIState.*;
+import static com.minecolonies.entity.ai.AIState.*;
 
 /**
  * Fisherman AI class
@@ -26,76 +24,107 @@ import static com.minecolonies.entity.ai.util.AIState.*;
  *
  * @author Raycoms, Kostronor
  */
-public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman>
+public class EntityAIWorkFisherman extends AbstractEntityAIWork<JobFisherman>
 {
+
+    /**
+     * The render name to render logs
+     */
+    private static final String RENDER_META_FISH = "Fish";
+
+    /**
+     * The render name to render logs
+     */
+    private static final String RENDER_META_FISHANDROD = "RodFish";
+
+    /**
+     * The render name to render logs
+     */
+    private static final String RENDER_META_ROD = "Rod";
 
     /**
      * The maximum number of ponds to remember at one time.
      */
-    private static final int    MAX_PONDS                     = 20;
+    private static final int MAX_PONDS = 20;
+
     /**
      * Variable to calculate the delay the fisherman needs to throw his rod.
      * The delay will be calculated randomly. The FISHING_DELAY defines the upper limit.
      * The delay is calculated using the CHANCE anf fishingSkill variables. A higher FISHING_DELAY will lead
      * to a longer delay.
      */
-    private static final int    FISHING_DELAY                 = 300;
+    private static final int FISHING_DELAY = 500;
+
     /**
      * The chance the fisherman has to throw his rod. Directly connected with delay.
      */
-    private static final int    CHANCE                        = 3;
+    private static final int CHANCE = 2;
+
     /**
      * The minimum distance in blocks to the water which is required for the fisherman to throw his rod.
      */
-    private static final int    MIN_DISTANCE_TO_WATER         = 3;
+    private static final int MIN_DISTANCE_TO_WATER = 3;
+
     /**
      * The amount of catches until the fisherman empties his inventory.
      */
-    private static final int    MAX_FISHES_IN_INV             = 10;
+    private static final int MAX_FISHES_IN_INV = 10;
+
     /**
      * The maximum amount of adjusts of his rotation until the fisherman discards a fishing location.
      */
-    private static final int    MAX_ROTATIONS                 = 6;
-    /**
-     * The tool used by the fisherman.
-     */
-    private static final String TOOL_TYPE_ROD                 = "rod";
-    /**
-     * The range in which the fisherman searches water.
-     */
-    private static final int    SEARCH_RANGE                  = 50;
-    /**
-     * The volume in percent which shall be played for the entity sounds
-     */
-    private static final float  VOLUME                        = 0.5F;
-    /**
-     * The upper limit for the frequency of the played sounds
-     */
-    private static final float  FREQUENCY_UPPER_LIMIT_DIVIDER = 1.2F;
-    /**
-     * The lower limit for the frequency of the played sounds
-     */
-    private static final float  FREQUENCY_LOWER_LIMIT_DIVIDER = 0.8F;
-    /**
-     * The frequency should be around this value
-     */
-    private static final float  FREQUENCY_BOUND_VALUE         = 0.4F;
+    private static final int MAX_ROTATIONS = 6;
+
     /**
      * The number of executed adjusts of the fisherman's rotation.
      */
-    private              int    executedRotations             = 0;
+    private int executedRotations = 0;
+
+    /**
+     * The tool used by the fisherman.
+     */
+    private static final String TOOL_TYPE_ROD = "rod";
+
+    /**
+     * The range in which the fisherman searches water.
+     */
+    private static final int SEARCH_RANGE = 50;
+
+    /**
+     * The volume in percent which shall be played for the entity sounds
+     */
+    private static final float VOLUME = 0.5F;
+
+    /**
+     * The upper limit for the frequency of the played sounds
+     */
+    private static final float FREQUENCY_UPPER_LIMIT_DIVIDER = 1.2F;
+
+    /**
+     * The lower limit for the frequency of the played sounds
+     */
+    private static final float FREQUENCY_LOWER_LIMIT_DIVIDER = 0.8F;
+
+    /**
+     * The frequency should be around this value
+     */
+    private static final float FREQUENCY_BOUND_VALUE = 0.4F;
+
     /**
      * The number of fishes/stuff the fisherman caught.
      */
-    private              int    fishesCaught                  = 0;
+    private int fishesCaught = 0;
+
     /**
      * The PathResult when the fisherman searches water.
      */
     private PathJobFindWater.WaterPathResult pathResult;
+
     /**
      * The Previous PathResult when the fisherman already found water.
      */
     private PathJobFindWater.WaterPathResult lastPathResult;
+
     /**
      * The fishingSkill which directly influences the fisherman's chance to throw his rod.
      * May in the future also influence his luck/charisma.
@@ -125,9 +154,53 @@ public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman
                 new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
                 new AITarget(FISHERMAN_START_FISHING, this::doFishing)
                              );
-        worker.setSkillModifier(2 * worker.getCitizenData().getIntelligence() + worker.getCitizenData().getDexterity());
+        worker.setSkillModifier(2*worker.getCitizenData().getIntelligence() + worker.getCitizenData().getDexterity());
     }
 
+    /**
+     * Can be overridden in implementations.
+     * <p>
+     * Here the AI can check if the fishes or rods have to be re rendered and do it.
+     */
+    @Override
+    protected void updateRenderMetaData()
+    {
+        if(hasFish() && hasRodButNotEquipped())
+        {
+            worker.setRenderMetadata(RENDER_META_FISHANDROD);
+        }
+        else if(hasRodButNotEquipped() && !hasFish())
+        {
+            worker.setRenderMetadata(RENDER_META_ROD);
+        }
+        else
+        {
+            worker.setRenderMetadata(hasFish() ? RENDER_META_FISH : "");
+        }
+    }
+
+    /**
+     * Checks if the fisherman has fish in his inventory.
+     * @return true if so.
+     */
+    private boolean hasFish()
+    {
+        return InventoryUtils.hasitemInInventory(getInventory(),Items.fish);
+    }
+
+    /**
+     * Checks if the fisherman has a rod in his inventory but if he did not equip it.
+     * @return true if so.
+     */
+    private boolean hasRodButNotEquipped()
+    {
+        return worker.hasItemInInventory(Items.fishing_rod) && !(worker.getHeldItem().getItem() instanceof ItemFishingRod);
+    }
+
+    /**
+     * Redirects the fisherman to his building.
+     * @return the next state.
+     */
     private AIState startWorkingAtOwnBuilding()
     {
         if (walkToBuilding())
@@ -140,7 +213,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman
     /**
      * Prepares the fisherman for fishing and
      * requests fishingRod and checks if the fisherman already had found a pond.
-     *
      * @return the next AIState
      */
     private AIState prepareForFishing()
@@ -158,7 +230,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman
 
     /**
      * After the fisherman has caught 10 fishes -> dump inventory.
-     *
      * @return true if the inventory should be dumped
      */
     @Override
@@ -176,7 +247,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman
 
     /**
      * Returns the fisherman's work building.
-     *
      * @return building instance
      */
     @Override
@@ -201,7 +271,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman
 
     /**
      * Checks if a given stack equals a fishingRod.
-     *
      * @param stack the stack to decide on
      * @return if the stack matches
      */
@@ -245,7 +314,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman
      */
     private AIState tryDifferentAngles()
     {
-        if (job.getWater() == null)
+        if(job.getWater() == null)
         {
             return FISHERMAN_SEARCHING_WATER;
         }
@@ -320,14 +389,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman
     /**
      * If the fisherman can't find 20 ponds or already has found 20, the fisherman should randomly choose a fishing spot
      * from the previously found ones.
-     *
      * @return the next AIState.
      */
     private AIState setRandomWater()
     {
         if (job.getPonds().isEmpty())
         {
-            if (lastPathResult != null && lastPathResult.isEmpty && !lastPathResult.isCancelled())
+            if(lastPathResult !=null && lastPathResult.isEmpty && !lastPathResult.isCancelled())
             {
                 chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
             }
@@ -408,8 +476,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman
             world.playSoundAtEntity(worker,
                                     "random.bow",
                                     VOLUME,
-                                    (float) (FREQUENCY_BOUND_VALUE / (itemRand.nextDouble() * (FREQUENCY_UPPER_LIMIT_DIVIDER - FREQUENCY_LOWER_LIMIT_DIVIDER)
-                                                                      + FREQUENCY_LOWER_LIMIT_DIVIDER)));
+                                    (float) (FREQUENCY_BOUND_VALUE / (itemRand.nextDouble() * (FREQUENCY_UPPER_LIMIT_DIVIDER - FREQUENCY_LOWER_LIMIT_DIVIDER) + FREQUENCY_LOWER_LIMIT_DIVIDER)));
             this.entityFishHook = new EntityFishHook(world, this.getCitizen());
             world.spawnEntityInWorld(this.entityFishHook);
         }
@@ -457,7 +524,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman
             return PREPARING;
         }
 
-        if (world.getBlockState(worker.getPosition()).getBlock() == Blocks.water)
+        if(world.getBlockState(worker.getPosition()).getBlock() == Blocks.water)
         {
             job.removeFromPonds(job.getWater());
             job.setWater(null);
@@ -488,7 +555,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman
 
     /**
      * Get's the slot in which the rod is in.
-     *
      * @return slot number
      */
     private int getRodSlot()
@@ -535,7 +601,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAIInteract<JobFisherman
 
     /**
      * Returns the fisherman's worker instance. Called from outside this class.
-     *
      * @return citizen object
      */
     public EntityCitizen getCitizen()

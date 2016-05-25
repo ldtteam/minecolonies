@@ -36,6 +36,7 @@ public class Colony implements IColony
     private                 boolean                         isDirty                         = false;
     private                 boolean                         isCitizensDirty                 = false;
     private                 boolean                         isBuildingsDirty                = false;
+    private                 boolean                         manualHiring                    = false;
 
     //  General Attributes
     private                 String                          name                            = "ERROR(Wasn't placed by player)";
@@ -55,9 +56,8 @@ public class Colony implements IColony
     private                 int                             topCitizenId                    = 0;
     private                 int                             maxCitizens                     = Configurations.maxCitizens;
 
-
     //  Settings
-    private static  final   int                             CITIZEN_CLEANUP_TICK_INCREMENT  = /*60*/ 5 * 20;   //  Once a minute
+    private static  final   int                             CITIZEN_CLEANUP_TICK_INCREMENT  = /*60*/ 5 * 20;   //Once a minute
 
     //  Workload and Jobs
     private         final   WorkManager                     workManager                     = new WorkManager(this);
@@ -73,6 +73,7 @@ public class Colony implements IColony
     private static  final   String                          TAG_CITIZENS                    = "citizens";
     private static  final   String                          TAG_WORK                        = "work";
     private static  final   String                          TAG_AUTO_HOSTILE                = "autoHostile";
+    private static  final   String                          TAG_MANUAL_HIRING               = "manualHiring";
 
     /**
      * Constructor for a newly created Colony.
@@ -140,6 +141,7 @@ public class Colony implements IColony
         name = compound.getString(TAG_NAME);
         center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
 
+        manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 
         // Permissions
@@ -188,6 +190,7 @@ public class Colony implements IColony
         compound.setString(TAG_NAME, name);
         BlockPosUtil.writeToNBT(compound, TAG_CENTER, center);
 
+        compound.setBoolean(TAG_MANUAL_HIRING,manualHiring);
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
         // Permissions
@@ -252,7 +255,10 @@ public class Colony implements IColony
     }
 
     @Override
-    public String getName() { return name; }
+    public String getName()
+    {
+        return name;
+    }
 
     /**
      * Sets the name of the colony
@@ -271,22 +277,34 @@ public class Colony implements IColony
      *
      * @return      Chunk Coordinates of the center of the colony
      */
-    public BlockPos getCenter() { return center; }
+    public BlockPos getCenter()
+    {
+        return center;
+    }
 
     /**
      * Marks the instance dirty
      */
-    private void markDirty() { isDirty = true; }
+    private void markDirty()
+    {
+        isDirty = true;
+    }
 
     /**
      * Marks citizen data dirty
      */
-    public void markCitizensDirty() { isCitizensDirty = true; }
+    public void markCitizensDirty()
+    {
+        isCitizensDirty = true;
+    }
 
     /**
      * Marks building data dirty
      */
-    public void markBuildingsDirty() { isBuildingsDirty = true; }
+    public void markBuildingsDirty()
+    {
+        isBuildingsDirty = true;
+    }
 
     @Override
     public Permissions getPermissions()
@@ -303,7 +321,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public float getDistanceSquared(BlockPos pos) //todo why do we pass in y, if we dont use it
+    public float getDistanceSquared(BlockPos pos)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ()));
@@ -828,6 +846,25 @@ public class Colony implements IColony
         ColonyManager.markDirty();
     }
 
+    /**
+     * Getter which checks if jobs should be manually allocated.
+     * @return true of false.
+     */
+    public boolean isManualHiring()
+    {
+        return manualHiring;
+    }
+
+    /**
+     * Setter to set the job allocation manual or automatic.
+     * @param manualHiring true if manual, false if automatic.
+     */
+    public void setManualHiring(boolean manualHiring)
+    {
+        this.manualHiring = manualHiring;
+        markDirty();
+    }
+
     /*
      *
      * CITIZENS
@@ -874,7 +911,10 @@ public class Colony implements IColony
      *
      * @return          Map of citizens in the colony, with as key the citizen ID, and as value the citiizen data
      */
-    public Map<Integer, CitizenData> getCitizens() { return Collections.unmodifiableMap(citizens); }
+    public Map<Integer, CitizenData> getCitizens()
+    {
+        return Collections.unmodifiableMap(citizens);
+    }
 
     public List<EntityCitizen> getActiveCitizenEntities()
     {

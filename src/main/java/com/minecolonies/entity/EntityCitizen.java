@@ -18,6 +18,9 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockFence;
+import net.minecraft.block.BlockFenceGate;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -54,14 +57,17 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      * The movement speed for the citizen to run away.
      */
     private static final int MOVE_AWAY_SPEED = 2;
+
     /**
      * The range for the citizen to move away.
      */
     private static final int MOVE_AWAY_RANGE = 6;
+
     /**
      * Number of ticks to heal the citizens
      */
     private static final int HEAL_CITIZENS_AFTER = 200;
+
     /**
      * Tag's to save data to NBT
      */
@@ -430,6 +436,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             cleanupChatMessages();
             updateColonyServer();
         }
+        if(isCitizenSuffocating())
+        {
+            getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
+        }
 
         if(isCitizenSuffocating())
         {
@@ -442,12 +452,15 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     /**
      * Checks if the citizen is suffocating (If at his body or head position is a block).
+     * We will probably have to discover which blocks are solid but citizens still can stand in. (Like doors, fences, fenceGates)
      * @return true if there is a block at his position.
      */
     private boolean isCitizenSuffocating()
     {
-        return worldObj.getBlockState(this.getPosition()).getBlock().getMaterial().isSolid()
-                || worldObj.getBlockState(this.getPosition().up()).getBlock().getMaterial().isSolid();
+        return !(worldObj.getBlockState(this.getPosition()).getBlock() instanceof BlockDoor) &&
+               !(worldObj.getBlockState(this.getPosition()).getBlock() instanceof BlockFenceGate) &&
+               !(worldObj.getBlockState(this.getPosition()).getBlock() instanceof BlockFence) &&
+                (worldObj.getBlockState(this.getPosition()).getBlock().getMaterial().isSolid() || worldObj.getBlockState(this.getPosition().up()).getBlock().getMaterial().isSolid());
     }
 
     /**

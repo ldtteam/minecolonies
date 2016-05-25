@@ -28,6 +28,11 @@ public class ColonyView implements IColony
     private         int                                     dimensionId;
     private         BlockPos                                center;
 
+    /**
+     * Defines if workers are hired manually or automatically.
+     */
+    private         boolean                                 manualHiring = false;
+
     //  Administration/permissions
     private         Permissions.View                        permissions     = new Permissions.View();
     //private int autoHostile = 0;//Off
@@ -89,11 +94,29 @@ public class ColonyView implements IColony
         MineColonies.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
     }
 
-    /*
-     * Get the town hall View for this ColonyView
-     *
-     * @return      {@link BuildingTownHall.View} of the colony
+    /**
+     * Getter for the manual hiring or not.
+     * @return the boolean true or false.
      */
+    public boolean isManualHiring()
+    {
+        return manualHiring;
+    }
+
+    /**
+     * Sets if workers should be hired manually
+     * @param manualHiring true if manually.
+     */
+    public void setManualHiring(boolean manualHiring)
+    {
+        this.manualHiring = manualHiring;
+    }
+
+    /*
+         * Get the town hall View for this ColonyView
+         *
+         * @return      {@link BuildingTownHall.View} of the colony
+         */
     public BuildingTownHall.View getTownHall() {
         return townHall;
     }
@@ -213,7 +236,7 @@ public class ColonyView implements IColony
         ByteBufUtils.writeUTF8String(buf, colony.getName());
         buf.writeInt(colony.getDimensionId());
         BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
-
+        buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
         buf.writeInt(colony.getMaxCitizens());
         //  Citizens are sent as a separate packet
@@ -233,7 +256,7 @@ public class ColonyView implements IColony
         name = ByteBufUtils.readUTF8String(buf);
         dimensionId = buf.readInt();
         center = BlockPosUtil.readFromByteBuf(buf);
-
+        manualHiring = buf.readBoolean();
         //  Citizenry
         maxCitizens = buf.readInt();
 

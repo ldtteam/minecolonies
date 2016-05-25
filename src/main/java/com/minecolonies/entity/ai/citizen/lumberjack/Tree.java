@@ -89,6 +89,69 @@ public class Tree
     }
 
     /**
+     * Searches all logs that belong to the tree.
+     * @param world The world where the blocks are in
+     */
+    public void findLogs(World world)
+    {
+        addAndSearch(world, location);
+        Collections.sort(woodBlocks, (c1, c2) -> (int) (c1.distanceSq(location) - c2.distanceSq(location)));
+        if(getStumpLocations().isEmpty())
+        {
+            fillTreeStumps(world,location.getY());
+        }
+    }
+
+    /**
+     * Checks if the tree has been planted from more than 1 saplings.
+     * Meaning that more than 1 log is on the lowest level.
+     * @param world The world where the tree is in
+     * @param yLevel The base y.
+     */
+    public void fillTreeStumps(World world, int yLevel)
+    {
+        for(BlockPos pos: woodBlocks)
+        {
+            if(pos.getY() == yLevel)
+            {
+                stumpLocations.add(getBaseLog(world,pos));
+            }
+        }
+    }
+
+    /**
+     * Adds the baseLog of the tree
+     */
+    public void addBaseLog()
+    {
+        woodBlocks.add(new BlockPos(location));
+    }
+
+    /**
+     * Adds a log and searches for further logs(Breadth first search)
+     * @param world The world the log is in
+     * @param log the log to add
+     */
+    private void addAndSearch(World world, BlockPos log)
+    {
+        woodBlocks.add(log);
+        for(int y = -1; y <= 1; y++)
+        {
+            for(int x = -1; x <= 1; x++)
+            {
+                for(int z = -1; z <= 1; z++)
+                {
+                    BlockPos temp = log.add(x, y, z);
+                    if(BlockPosUtil.getBlock(world, temp).isWood(null,new BlockPos(0,0,0)) && !woodBlocks.contains(temp))//TODO reorder if more optimal
+                    {
+                        addAndSearch(world, temp);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Checks if the found log is part of a tree
      *
      * @param world  The world the tree is in
@@ -340,6 +403,14 @@ public class Tree
         return new ArrayList<>(stumpLocations);
     }
 
+    /**
+     * Removes a stump from the stump list.
+     * @param pos the position of the stump.
+     */
+    public void removeStump(BlockPos pos)
+    {
+        stumpLocations.remove(pos);
+    }
     /**
      * Get's the variant of a tree.
      * A tree may only have 1 variant.

@@ -58,6 +58,13 @@ com.minecolonies.gui.buildtool.nodecoration=Nenhuma decoração
 com.minecolonies.gui.buildtool.hut=Casas
 com.minecolonies.gui.buildtool.decoration=Decorações
 
+com.minecolonies.gui.hiring.on=Manual
+com.minecolonies.gui.hiring.off=Automático
+com.minecolonies.gui.hiring.buttonHire=Contratar
+com.minecolonies.gui.hiring.description=Escolha um cidadão para o emprego.
+com.minecolonies.gui.townHall.addPlayer=Adicione jogador:
+com.minecolonies.gui.townHall.jobHiring=Modo de contratar:
+
 tile.minecolonies.blockHutCitizen.name=Casa do cidadão
 tile.minecolonies.blockHutBaker.name=Paderia
 tile.minecolonies.blockHutBlacksmith.name=Metalúrgica
@@ -69,7 +76,7 @@ tile.minecolonies.blockHutFisherman.name=Rancho do pescador
 tile.minecolonies.blockHutMiner.name=Mina
 tile.minecolonies.blockHutStonemason.name=Casa do pedreiro
 tile.minecolonies.blockHutTownHall.name=Prefeitura
-tile.minecolonies.substitutionBlock.name= BlocoParaPreenchimento
+tile.minecolonies.blockSubstitution.name=BlocoParaPreenchimento
 
 tile.blockHut.messageNoPermission=Você não tem permissão de abrir casas em %s.
 

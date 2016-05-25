@@ -69,6 +69,7 @@ tile.minecolonies.blockHutFisherman.name=Neyst
 tile.minecolonies.blockHutMiner.name=Nám
 tile.minecolonies.blockHutStonemason.name=Grótbrot
 tile.minecolonies.blockHutTownHall.name=Ráðhús
+tile.minecolonies.blockSubstitution.name=SchematicPlaceholder.
 
 tile.blockHut.messageNoPermission=Tú hevur ikki heimild at opna smáttur í %s.
 
@@ -82,7 +83,6 @@ com.minecolonies.job.Fisherman=Útróðrarmaður
 tile.blockHutTownHall.messageMaxSize=Niðursetubygdin kann ikki gerast størri
 tile.blockHutTownHall.messageColonistDead=Eitt niðursetufólk doyði!
 tile.blockHutTownHall.messagePlacedAlready=Tú hevur longu sett eitt ráðhús
-
 tile.blockHutTownHall.messageInvalidWorld=Tú kann ikki seta eini ráðhús her
 tile.blockHutTownHall.messageTooClose=Ov nær einum øðrum ráðhúsi
 
@@ -110,6 +110,8 @@ item.caliper.message.cube=Hatta er ein terningur %d langur %d breiður %d høgur
 
 itemGroup.minecolonies=MineColonies
 
+entity.worker.inventoryFullChestFull=Please make space in my building chest. I am not able to dump my inventory.
+
 entity.builder.messageBuildStart=Farin undir at byggja %s
 entity.builder.messageBuildComplete=Eri liðugur at byggja %s
 entity.builder.messageNeedMaterial=Mær tørvar %s (Nøgd: %d)
@@ -119,3 +121,5 @@ entity.miner.messageNeedBlockAndItem=Mær tørvar %s!
 entity.miner.messageNeedBetterTools=Mær tørvar betri amboð!
 entity.miner.messageMoreBlocks=Mær tørvar fleiri %s!
 entity.miner.messageRequiresBetterHut=Uppstiga smáttuna, so eg kann grava longur!
+
+entity.fisherman.messageWaterTooFar=Fisherman's hut is too far from water!

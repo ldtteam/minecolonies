@@ -98,7 +98,7 @@
                 </box>
             </list>
 
-            <label size="100 11" pos="15 170" textalign="TopLeft" color="black" label="Add Player:"/>
+            <label size="100 11" pos="15 170" textalign="TopLeft" color="black" label="$(com.minecolonies.gui.townHall.addPlayer)"/>
             <input id="addPlayerName"
                    size="120 20" pos="15 185" maxlength="32"/>
             <button id="addPlayer"
@@ -116,7 +116,8 @@
             </list>
         </view>
         <view id="pageSettings">
-            <!-- TODO -->
+            <label id="assignCitizens" label="$(com.minecolonies.gui.townHall.jobHiring)" pos="40 12" size="80 11" textalign="MiddleLeft" color="black"/>
+            <button id="toggleJob" size="50 20" pos="60 25" label="$(com.minecolonies.gui.hiring.off)"/>
         </view>
     </switch>
 </window>

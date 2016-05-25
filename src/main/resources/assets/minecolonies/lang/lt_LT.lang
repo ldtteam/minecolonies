@@ -69,7 +69,7 @@ tile.minecolonies.blockHutFisherman.name=Žvejo trobelė
 tile.minecolonies.blockHutMiner.name=Kasykla
 tile.minecolonies.blockHutStonemason.name=Karjeras
 tile.minecolonies.blockHutTownHall.name=Rotušė
-tile.minecolonies.substitutionBlock.name= SchemosVieta.
+tile.minecolonies.blockSubstitution.name=SchemosVieta.
 
 tile.blockHut.messageNoPermission=Jūs neturite leidimo atidaryti trobelių %s.
 
