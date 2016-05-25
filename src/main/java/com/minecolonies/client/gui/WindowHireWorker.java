@@ -4,6 +4,7 @@ import com.blockout.Pane;
 import com.blockout.controls.Button;
 import com.blockout.controls.Label;
 import com.blockout.views.ScrollingList;
+import com.blockout.views.SwitchView;
 import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
@@ -154,6 +155,13 @@ public class WindowHireWorker extends Window implements Button.Handler
                 rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabel(Integer.toString(citizen.getID()));
             }
         });
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        updateCitizens();
+        window.findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class).refreshElementPanes();
     }
 
     /**
