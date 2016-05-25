@@ -2,7 +2,6 @@ package com.schematica.world.schematic;
 
 import com.minecolonies.util.Log;
 import com.schematica.world.SchematicWorld;
-
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;

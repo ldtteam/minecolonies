@@ -1,7 +1,8 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.citizen.farmer;
 
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.jobs.JobFarmer;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.block.Block;
@@ -25,21 +26,21 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Raycoms, Kostronor
  */
 
-public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
+public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 {
-    private static final    String                  TOOL_TYPE_HOE     = "hoe";
-    private static final    String                  TOOL_TYPE_SHOVEL  = "shovel";
-    private static final    String                  RENDER_META_SEEDS = "Seeds";
-    private static          Logger                  logger            = LogManager.getLogger("Farmer");
-    private                 List<BlockPos>          farmAbleLand      = new ArrayList<>();
-    private                 List<BlockPos>          plowedLand        = new ArrayList<>();
-    private                 List<BlockPos>          crops             = new ArrayList<>();
-    private                 List<BlockPos>          crops2            = new ArrayList<>();
-    private                 BlockPos                currentFarmLand;
-    private                 int                     harvestCounter      = 0;
-    private                 String                  needItem            = "";
-    private                 double                  baseSpeed;
-    private                 int                     delay               = 0;
+    private static final String         TOOL_TYPE_HOE     = "hoe";
+    private static final String         TOOL_TYPE_SHOVEL  = "shovel";
+    private static final String         RENDER_META_SEEDS = "Seeds";
+    private static       Logger         logger            = LogManager.getLogger("Farmer");
+    private              List<BlockPos> farmAbleLand      = new ArrayList<>();
+    private              List<BlockPos> plowedLand        = new ArrayList<>();
+    private              List<BlockPos> crops             = new ArrayList<>();
+    private              List<BlockPos> crops2            = new ArrayList<>();
+    private BlockPos currentFarmLand;
+    private int    harvestCounter = 0;
+    private String needItem       = "";
+    private double baseSpeed;
+    private int delay = 0;
 
     //TODO Check for duplicates
     public EntityAIWorkFarmer(JobFarmer job)
@@ -68,8 +69,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         }
     }
 
+    @Override
+    protected void updateRenderMetaData()
+    {
+        String renderMetaData = getRenderMetaSeeds();
+        //TODO: Merge this into worker
+        worker.setRenderMetadata(renderMetaData);
+    }
+
     /**
-     * @return          String for seeds renderer if farmer has seeds, otherwise empty string
+     * @return String for seeds renderer if farmer has seeds, otherwise empty string
      */
     private String getRenderMetaSeeds()
     {
@@ -80,12 +89,30 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         return "";
     }
 
-    @Override
-    protected void updateRenderMetaData()
+    private boolean hasSeed()
     {
-        String renderMetaData = getRenderMetaSeeds();
-        //TODO: Merge this into worker
-        worker.setRenderMetadata(renderMetaData);
+        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
+        {
+            ItemStack stack = getInventory().getStackInSlot(slot);
+
+            if (stack != null && stack.getItem() != null)
+            {
+                Item content = stack.getItem();
+                if (isSeed(content))
+                {
+                    return true;
+                }
+            }
+        }
+
+        job.setStage(Stage.NEED_SEEDS);
+        return false;
+    }
+
+    private boolean isSeed(Item item)
+    {
+        return item.toString().contains("Seed") || item.toString().contains("potatoe") || item.toString().contains(
+                "carrot");
     }
 
     private boolean waitingForSomething()
@@ -101,6 +128,42 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         }
         return false;
     }
+    /*
+    @Override
+    public void updateTask()
+    {
+        BuildingFarmer buildingFarmer = getOwnBuilding();
+        if (buildingFarmer == null)
+        {
+            return;
+        }
+
+        updateRenderMetaData();
+
+        //TODO: check what this does, add comments
+        //Seems to transition crop locations somewhere???
+        checkForCrops();
+
+        if (waitingForSomething())
+        {
+            return;
+        }
+
+
+
+        //Old Code since here
+        if (itemsAreMissing())
+        {
+            return;
+        }
+
+        if (!hasAllTheTools())
+        {
+            return;
+        }
+        startWorking();
+    }
+    */
 
     private boolean itemsAreMissing()
     {
@@ -125,6 +188,103 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
             return true;
         }
         return false;
+    }
+
+    private boolean isInHut(Item item)
+    {
+        if (worker.getWorkBuilding().getTileEntity() == null)
+        {
+            return false;
+        }
+
+        int size = worker.getWorkBuilding().getTileEntity().getSizeInventory();
+
+        for (int i = 0; i < size; i++)
+        {
+            ItemStack stack = worker.getWorkBuilding().getTileEntity().getStackInSlot(i);
+            if (stack != null)
+            {
+                Item content = stack.getItem();
+                if (content.equals(item)
+                    || content.getToolClasses(stack).contains(needItem)
+                    || stack.getUnlocalizedName().contains(needItem))
+                {
+                    ItemStack returnStack = InventoryUtils.setStack(getInventory(), stack);
+
+                    if (returnStack == null)
+                    {
+                        worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize);
+                    }
+                    else
+                    {
+                        worker.getWorkBuilding().getTileEntity().decrStackSize(i,
+                                                                               stack.stackSize - returnStack.stackSize);
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean hasAllTheTools()
+    {
+        boolean hasHoeInHand;
+        boolean hasSpadeInHand;
+
+        if (worker.getHeldItem() == null)
+        {
+            hasHoeInHand = false;
+            hasSpadeInHand = false;
+        }
+        else
+        {
+            hasHoeInHand = worker.getHeldItem().getUnlocalizedName().contains(TOOL_TYPE_HOE);
+            hasSpadeInHand = worker.getHeldItem().getItem().getToolClasses(worker.getHeldItem()).contains(
+                    TOOL_TYPE_SHOVEL);
+        }
+
+        int hasSpade = InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_SHOVEL);
+        int hasHoe   = InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_HOE);
+
+        boolean Spade = hasSpade > -1 || hasSpadeInHand;
+        boolean Hoe   = hasHoeInHand || hasHoe > -1;
+
+        if (!Spade)
+        {
+            job.addItemNeededIfNotAlready(new ItemStack(Items.iron_shovel));
+            needItem = TOOL_TYPE_SHOVEL;
+        }
+        else if (!Hoe)
+        {
+            job.addItemNeededIfNotAlready(new ItemStack(Items.iron_hoe));
+            needItem = TOOL_TYPE_HOE;
+        }
+
+        return Hoe && Spade;
+    }
+
+    private int inventoryContains(Item item)//???
+    {
+        if (item == null)
+        {
+            return -1;
+        }
+
+        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
+        {
+            ItemStack stack = getInventory().getStackInSlot(slot);
+
+            if (stack != null && stack.getItem() != null)
+            {
+                Item content = stack.getItem();
+                if (content.equals(item))
+                {
+                    return slot;
+                }
+            }
+        }
+        return -1;
     }
 
     private void startWorking()
@@ -182,42 +342,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                 break;
         }
     }
-    /*
-    @Override
-    public void updateTask()
-    {
-        BuildingFarmer buildingFarmer = getOwnBuilding();
-        if (buildingFarmer == null)
-        {
-            return;
-        }
-
-        updateRenderMetaData();
-
-        //TODO: check what this does, add comments
-        //Seems to transition crop locations somewhere???
-        checkForCrops();
-
-        if (waitingForSomething())
-        {
-            return;
-        }
-
-
-
-        //Old Code since here
-        if (itemsAreMissing())
-        {
-            return;
-        }
-
-        if (!hasAllTheTools())
-        {
-            return;
-        }
-        startWorking();
-    }
-    */
 
     private void searchFarmableLand()
     {
@@ -281,21 +405,21 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
             {
                 delay = 20;
                 world.setBlockState(new BlockPos(farmAbleLand.get(0).getX(),
-                               farmAbleLand.get(0).getY() - 1,
-                               farmAbleLand.get(0).getZ()),
-                               Blocks.farmland.getDefaultState());
+                                                 farmAbleLand.get(0).getY() - 1,
+                                                 farmAbleLand.get(0).getZ()),
+                                    Blocks.farmland.getDefaultState());
                 currentFarmLand = new BlockPos(farmAbleLand.get(0).getX(),
-                                                       farmAbleLand.get(0).getY() - 1,
-                                                       farmAbleLand.get(0).getZ());
+                                               farmAbleLand.get(0).getY() - 1,
+                                               farmAbleLand.get(0).getZ());
             }
 
             if (plowedLand.isEmpty() || !plowedLand.contains(new BlockPos(farmAbleLand.get(0).getX(),
-                                                                                    farmAbleLand.get(0).getY(),
-                                                                                    farmAbleLand.get(0).getZ())))
+                                                                          farmAbleLand.get(0).getY(),
+                                                                          farmAbleLand.get(0).getZ())))
             {
                 plowedLand.add(new BlockPos(farmAbleLand.get(0).getX(),
-                                                    farmAbleLand.get(0).getY(),
-                                                    farmAbleLand.get(0).getZ()));
+                                            farmAbleLand.get(0).getY(),
+                                            farmAbleLand.get(0).getZ()));
                 farmAbleLand.remove(0);
             }
         }
@@ -321,13 +445,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
             {
                 if (world.isAirBlock(plowedLand.get(0)))
                 {
-                    world.setBlockState(plowedLand.get(0),Blocks.farmland.getDefaultState());
+                    world.setBlockState(plowedLand.get(0), Blocks.farmland.getDefaultState());
                     delay = 20;
                     currentFarmLand = new BlockPos(plowedLand.get(0).getX(),
-                                                           plowedLand.get(0).getY() - 1,
-                                                           plowedLand.get(0).getZ());
+                                                   plowedLand.get(0).getY() - 1,
+                                                   plowedLand.get(0).getZ());
 
-                    int slot = getFirstSeed();
+                    int       slot = getFirstSeed();
                     ItemStack seed = getInventory().getStackInSlot(slot);
                     if (seed == null)
                     {
@@ -360,24 +484,24 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                 }
 
                 if (crops.size() == 0 || !crops.contains(new BlockPos(plowedLand.get(0).getX(),
-                                                                              plowedLand.get(0).getY(),
-                                                                              plowedLand.get(0).getZ())))
+                                                                      plowedLand.get(0).getY(),
+                                                                      plowedLand.get(0).getZ())))
                 {
                     crops.add(new BlockPos(plowedLand.get(0).getX(),
-                                                   plowedLand.get(0).getY(),
-                                                   plowedLand.get(0).getZ()));
+                                           plowedLand.get(0).getY(),
+                                           plowedLand.get(0).getZ()));
                     plowedLand.remove(0);
                 }
             }
             else
             {
                 if (farmAbleLand.isEmpty() || !farmAbleLand.contains(new BlockPos(plowedLand.get(0).getX(),
-                                                                                            plowedLand.get(0).getY(),
-                                                                                            plowedLand.get(0).getZ())))
+                                                                                  plowedLand.get(0).getY(),
+                                                                                  plowedLand.get(0).getZ())))
                 {
                     farmAbleLand.add(new BlockPos(plowedLand.get(0).getX(),
-                                                          plowedLand.get(0).getY(),
-                                                          plowedLand.get(0).getZ()));
+                                                  plowedLand.get(0).getY(),
+                                                  plowedLand.get(0).getZ()));
                     plowedLand.remove(0);
                 }
             }
@@ -393,6 +517,24 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
                 job.setStage(Stage.WORKING);
             }
         }
+    }
+
+    private int getFirstSeed()
+    {
+        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
+        {
+            ItemStack stack = getInventory().getStackInSlot(slot);
+
+            if (stack != null && stack.getItem() != null)
+            {
+                Item content = stack.getItem();
+                if (isSeed(content))
+                {
+                    return slot;
+                }
+            }
+        }
+        return -1;
     }
 
     private void harvesting()
@@ -459,50 +601,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         }
     }
 
-    private int getFirstSeed()
-    {
-        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = getInventory().getStackInSlot(slot);
-
-            if (stack != null && stack.getItem() != null)
-            {
-                Item content = stack.getItem();
-                if (isSeed(content))
-                {
-                    return slot;
-                }
-            }
-        }
-        return -1;
-    }
-
-    private boolean isSeed(Item item)
-    {
-        return item.toString().contains("Seed") || item.toString().contains("potatoe") || item.toString().contains(
-                "carrot");
-    }
-
-    private boolean hasSeed()
-    {
-        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = getInventory().getStackInSlot(slot);
-
-            if (stack != null && stack.getItem() != null)
-            {
-                Item content = stack.getItem();
-                if (isSeed(content))
-                {
-                    return true;
-                }
-            }
-        }
-
-        job.setStage(Stage.NEED_SEEDS);
-        return false;
-    }
-
     private boolean hasSeedInHut()
     {
         if (worker.getWorkBuilding().getTileEntity() == null)
@@ -539,49 +637,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         return false;
     }
 
-    private boolean isStackTool(ItemStack stack)
-    {
-        return stack != null && (stack.getUnlocalizedName().contains(TOOL_TYPE_HOE) || stack.getItem().getToolClasses(
-                stack).contains(TOOL_TYPE_SHOVEL));
-    }
-
-    private boolean isInHut(Item item)
-    {
-        if (worker.getWorkBuilding().getTileEntity() == null)
-        {
-            return false;
-        }
-
-        int size = worker.getWorkBuilding().getTileEntity().getSizeInventory();
-
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = worker.getWorkBuilding().getTileEntity().getStackInSlot(i);
-            if (stack != null)
-            {
-                Item content = stack.getItem();
-                if (content.equals(item)
-                    || content.getToolClasses(stack).contains(needItem)
-                    || stack.getUnlocalizedName().contains(needItem))
-                {
-                    ItemStack returnStack = InventoryUtils.setStack(getInventory(), stack);
-
-                    if (returnStack == null)
-                    {
-                        worker.getWorkBuilding().getTileEntity().decrStackSize(i, stack.stackSize);
-                    }
-                    else
-                    {
-                        worker.getWorkBuilding().getTileEntity().decrStackSize(i,
-                                                                               stack.stackSize - returnStack.stackSize);
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     private void dumpInventory()
     {
         if (BlockPosUtil.isWorkerAtSiteWithMove(worker, worker.getWorkBuilding().getLocation()))
@@ -610,64 +665,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIWork<JobFarmer>
         }
     }
 
-    private boolean hasAllTheTools()
+    private boolean isStackTool(ItemStack stack)
     {
-        boolean hasHoeInHand;
-        boolean hasSpadeInHand;
-
-        if (worker.getHeldItem() == null)
-        {
-            hasHoeInHand = false;
-            hasSpadeInHand = false;
-        }
-        else
-        {
-            hasHoeInHand = worker.getHeldItem().getUnlocalizedName().contains(TOOL_TYPE_HOE);
-            hasSpadeInHand = worker.getHeldItem().getItem().getToolClasses(worker.getHeldItem()).contains(
-                    TOOL_TYPE_SHOVEL);
-        }
-
-        int hasSpade = InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_SHOVEL);
-        int hasHoe = InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_HOE);
-
-        boolean Spade = hasSpade > -1 || hasSpadeInHand;
-        boolean Hoe = hasHoeInHand || hasHoe > -1;
-
-        if (!Spade)
-        {
-            job.addItemNeededIfNotAlready(new ItemStack(Items.iron_shovel));
-            needItem = TOOL_TYPE_SHOVEL;
-        }
-        else if (!Hoe)
-        {
-            job.addItemNeededIfNotAlready(new ItemStack(Items.iron_hoe));
-            needItem = TOOL_TYPE_HOE;
-        }
-
-        return Hoe && Spade;
-    }
-
-    private int inventoryContains(Item item)//???
-    {
-        if (item == null)
-        {
-            return -1;
-        }
-
-        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = getInventory().getStackInSlot(slot);
-
-            if (stack != null && stack.getItem() != null)
-            {
-                Item content = stack.getItem();
-                if (content.equals(item))
-                {
-                    return slot;
-                }
-            }
-        }
-        return -1;
+        return stack != null && (stack.getUnlocalizedName().contains(TOOL_TYPE_HOE) || stack.getItem().getToolClasses(
+                stack).contains(TOOL_TYPE_SHOVEL));
     }
 
     public enum Stage

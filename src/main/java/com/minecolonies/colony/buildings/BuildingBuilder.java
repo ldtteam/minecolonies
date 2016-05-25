@@ -9,6 +9,9 @@ import com.minecolonies.colony.jobs.JobBuilder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
+/**
+ * The builders building.
+ */
 public class BuildingBuilder extends BuildingWorker
 {
     private static final String TAG_CLEARED = "cleared";
