@@ -85,4 +85,11 @@ public class Field
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
     }
 
+    public boolean isFree() {
+        return free;
+    }
+
+    public void setFree(boolean free) {
+        this.free = free;
+    }
 }
