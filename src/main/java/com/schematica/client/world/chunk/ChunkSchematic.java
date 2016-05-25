@@ -6,7 +6,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-public class ChunkSchematic extends Chunk {
+class ChunkSchematic extends Chunk {
     private final World world;
 
     public ChunkSchematic(final World world, final int x, final int z) {

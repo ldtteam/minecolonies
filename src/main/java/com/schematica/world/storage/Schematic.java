@@ -24,8 +24,8 @@ public class Schematic implements ISchematic {
     private ItemStack icon;
     private final short[][][] blocks;
     private final byte[][][] metadata;
-    private final List<TileEntity> tileEntities = new ArrayList<TileEntity>();
-    private final List<Entity> entities = new ArrayList<Entity>();
+    private final List<TileEntity> tileEntities = new ArrayList<>();
+    private final List<Entity> entities = new ArrayList<>();
     private final int width;
     private final int height;
     private final int length;
@@ -75,7 +75,7 @@ public class Schematic implements ISchematic {
 
     @Override
     public IBlockState getBlockState(final BlockPos pos) {
-        if (!isValid(pos)) {
+        if (isInvalid(pos)) {
             return Blocks.air.getDefaultState();
         }
 
@@ -89,7 +89,7 @@ public class Schematic implements ISchematic {
 
     @Override
     public boolean setBlockState(final BlockPos pos, final IBlockState blockState) {
-        if (!isValid(pos)) {
+        if (isInvalid(pos)) {
             return false;
         }
 
@@ -127,7 +127,7 @@ public class Schematic implements ISchematic {
 
     @Override
     public void setTileEntity(final BlockPos pos, final TileEntity tileEntity) {
-        if (!isValid(pos)) {
+        if (isInvalid(pos)) {
             return;
         }
 
@@ -214,11 +214,11 @@ public class Schematic implements ISchematic {
         return this.height;
     }
 
-    private boolean isValid(final BlockPos pos) {
+    private boolean isInvalid(final BlockPos pos) {
         final int x = pos.getX();
         final int y = pos.getY();
         final int z = pos.getZ();
 
-        return !(x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.length);
+        return (x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.length);
     }
 }

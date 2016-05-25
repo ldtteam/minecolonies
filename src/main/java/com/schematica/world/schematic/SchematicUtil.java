@@ -5,8 +5,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public final class SchematicUtil {
-    public static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.grass);
+final class SchematicUtil {
+    private static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.grass);
 
     public static ItemStack getIconFromNBT(final NBTTagCompound tagCompound) {
         ItemStack icon = DEFAULT_ICON.copy();

@@ -16,7 +16,6 @@ import com.schematica.client.renderer.shader.ShaderProgram;
 import com.schematica.client.world.SchematicWorld;
 import com.schematica.core.client.renderer.GeometryMasks;
 import com.schematica.core.client.renderer.GeometryTessellator;
-import com.schematica.core.util.vector.Vector3d;
 import com.schematica.handler.ConfigurationHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -59,13 +58,13 @@ public class RenderSchematic extends RenderGlobal {
     private static final int PASS = 2;
 
     private static final ShaderProgram SHADER_ALPHA = new ShaderProgram("minecolonies", null, "shaders/alpha.frag");
-    private static final Vector3d PLAYER_POSITION_OFFSET = new Vector3d();
+    private static Vec3 PLAYER_POSITION_OFFSET = new Vec3(0, 0, 0);
     private final Minecraft mc;
     private final Profiler profiler;
     private final RenderManager renderManager;
     private SchematicWorld world;
     private Set<RenderChunk> chunksToUpdate = Sets.newLinkedHashSet();
-    private Set<RenderOverlay> overlaysToUpdate = Sets.newLinkedHashSet();
+    private final Set<RenderOverlay> overlaysToUpdate = Sets.newLinkedHashSet();
     private List<ContainerLocalRenderInformation> renderInfos = Lists.newArrayListWithCapacity(CHUNKS);
     private ViewFrustumOverlay viewFrustum;
     private double frustumUpdatePosX = Double.MIN_VALUE;
@@ -92,7 +91,7 @@ public class RenderSchematic extends RenderGlobal {
     private double prevRenderSortZ;
     private boolean displayListEntitiesDirty = true;
     private int frameCount = 0;
-    private BlockPos.MutableBlockPos tmp = new BlockPos.MutableBlockPos();
+    private final BlockPos.MutableBlockPos tmp = new BlockPos.MutableBlockPos();
 
     private RenderSchematic(final Minecraft minecraft) {
         super(minecraft);
@@ -216,9 +215,7 @@ public class RenderSchematic extends RenderGlobal {
 
             loadRenderers();
         }
-
-        PLAYER_POSITION_OFFSET.set(this.mc.thePlayer.posX, this.mc.thePlayer.posY, this.mc.thePlayer.posZ)
-                              .sub(this.world.position.getX(), this.world.position.getY(), this.world.position.getZ());
+        PLAYER_POSITION_OFFSET = this.mc.thePlayer.getPositionVector().subtract(this.world.position.getX(), this.world.position.getY(), this.world.position.getZ());
 
         if (OpenGlHelper.shadersSupported && ConfigurationHandler.enableAlpha) {
             GL20.glUseProgram(SHADER_ALPHA.getProgram());
@@ -277,9 +274,9 @@ public class RenderSchematic extends RenderGlobal {
         final Frustum frustum = new Frustum();
         final Entity entity = this.mc.getRenderViewEntity();
 
-        final double x = PLAYER_POSITION_OFFSET.x;
-        final double y = PLAYER_POSITION_OFFSET.y;
-        final double z = PLAYER_POSITION_OFFSET.z;
+        final double x = PLAYER_POSITION_OFFSET.xCoord;
+        final double y = PLAYER_POSITION_OFFSET.yCoord;
+        final double z = PLAYER_POSITION_OFFSET.zCoord;
         frustum.setPosition(x, y, z);
 
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
@@ -376,8 +373,8 @@ public class RenderSchematic extends RenderGlobal {
             stopChunkUpdates();
             this.viewFrustum = new ViewFrustumOverlay(this.world, this.renderDistanceChunks, this, this.renderChunkFactory);
 
-            final double posX = PLAYER_POSITION_OFFSET.x;
-            final double posZ = PLAYER_POSITION_OFFSET.z;
+            final double posX = PLAYER_POSITION_OFFSET.xCoord;
+            final double posZ = PLAYER_POSITION_OFFSET.zCoord;
             this.viewFrustum.updateChunkPositions(posX, posZ);
         }
     }
@@ -404,9 +401,9 @@ public class RenderSchematic extends RenderGlobal {
         this.countEntitiesTotal = 0;
         this.countEntitiesRendered = 0;
 
-        final double x = PLAYER_POSITION_OFFSET.x;
-        final double y = PLAYER_POSITION_OFFSET.y;
-        final double z = PLAYER_POSITION_OFFSET.z;
+        final double x = PLAYER_POSITION_OFFSET.xCoord;
+        final double y = PLAYER_POSITION_OFFSET.yCoord;
+        final double z = PLAYER_POSITION_OFFSET.zCoord;
 
         TileEntityRendererDispatcher.staticPlayerX = x;
         TileEntityRendererDispatcher.staticPlayerY = y;
@@ -470,9 +467,9 @@ public class RenderSchematic extends RenderGlobal {
         }
 
         this.profiler.startSection("camera");
-        final double posX = PLAYER_POSITION_OFFSET.x;
-        final double posY = PLAYER_POSITION_OFFSET.y;
-        final double posZ = PLAYER_POSITION_OFFSET.z;
+        final double posX = PLAYER_POSITION_OFFSET.xCoord;
+        final double posY = PLAYER_POSITION_OFFSET.yCoord;
+        final double posZ = PLAYER_POSITION_OFFSET.zCoord;
 
         final double deltaX = posX - this.frustumUpdatePosX;
         final double deltaY = posY - this.frustumUpdatePosY;
@@ -660,9 +657,9 @@ public class RenderSchematic extends RenderGlobal {
 
         if (layer == EnumWorldBlockLayer.TRANSLUCENT) {
             this.profiler.startSection("translucent_sort");
-            final double posX = PLAYER_POSITION_OFFSET.x;
-            final double posY = PLAYER_POSITION_OFFSET.y;
-            final double posZ = PLAYER_POSITION_OFFSET.z;
+            final double posX = PLAYER_POSITION_OFFSET.xCoord;
+            final double posY = PLAYER_POSITION_OFFSET.yCoord;
+            final double posZ = PLAYER_POSITION_OFFSET.zCoord;
 
             final double deltaX = posX - this.prevRenderSortX;
             final double deltaY = posY - this.prevRenderSortY;

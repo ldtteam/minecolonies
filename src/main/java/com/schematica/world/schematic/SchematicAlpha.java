@@ -1,6 +1,5 @@
 package com.schematica.world.schematic;
 
-import com.schematica.api.event.PreSchematicSaveEvent;
 import com.schematica.nbt.NBTHelper;
 import com.schematica.reference.Names;
 import com.schematica.reference.Reference;
@@ -15,7 +14,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
@@ -122,7 +120,7 @@ class SchematicAlpha extends SchematicFormat {
     }
 
     @Override
-    public boolean writeToNBT(final NBTTagCompound tagCompound, final Schematic schematic) {
+    public void writeToNBT(final NBTTagCompound tagCompound, final Schematic schematic) {
         final NBTTagCompound tagCompoundIcon = new NBTTagCompound();
         final ItemStack icon = schematic.getIcon();
         icon.writeToNBT(tagCompoundIcon);
@@ -203,9 +201,6 @@ class SchematicAlpha extends SchematicFormat {
             }
         }
 
-        final PreSchematicSaveEvent event = new PreSchematicSaveEvent(schematic, mappings);
-        MinecraftForge.EVENT_BUS.post(event);
-
         final NBTTagCompound nbtMapping = new NBTTagCompound();
         for (final Map.Entry<String, Short> entry : mappings.entrySet()) {
             nbtMapping.setShort(entry.getKey(), entry.getValue());
@@ -220,15 +215,10 @@ class SchematicAlpha extends SchematicFormat {
         tagCompound.setTag(Names.NBT.ENTITIES, entityList);
         tagCompound.setTag(Names.NBT.TILE_ENTITIES, tileEntitiesList);
         tagCompound.setTag(Names.NBT.MAPPING_SCHEMATICA, nbtMapping);
-        final NBTTagCompound extendedMetadata = event.extendedMetadata;
-        if (!extendedMetadata.hasNoTags()) {
-            tagCompound.setTag(Names.NBT.EXTENDED_METADATA, extendedMetadata);
-        }
 
         tagCompound.setShort(OFFSET_X, (short) schematic.getOffset().getX());
         tagCompound.setShort(OFFSET_Y, (short) schematic.getOffset().getY());
         tagCompound.setShort(OFFSET_Z, (short) schematic.getOffset().getZ());
 
-        return true;
     }
 }

@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.ChunkRenderContainer;
 import java.util.List;
 
 public abstract class SchematicChunkRenderContainer extends ChunkRenderContainer {
-    protected List<RenderOverlay> renderOverlays = Lists.newArrayListWithCapacity(16 * 33 * 33);
+    final List<RenderOverlay> renderOverlays = Lists.newArrayListWithCapacity(16 * 33 * 33);
 
     @Override
     public void initialize(final double viewEntityX, final double viewEntityY, final double viewEntityZ) {

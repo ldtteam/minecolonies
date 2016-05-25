@@ -20,8 +20,6 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
-
 public class SchematicWorld extends WorldClient {
     private static final WorldSettings WORLD_SETTINGS = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
 
@@ -29,16 +27,14 @@ public class SchematicWorld extends WorldClient {
 
     public final BlockPos.MutableBlockPos position = new BlockPos.MutableBlockPos();
     public boolean isRendering;
-    public boolean isRenderingLayer;
-    public int renderingLayer;
+    public final boolean isRenderingLayer;
+    public final int renderingLayer;
 
     public SchematicWorld(final Schematic schematic) {
         super(null, WORLD_SETTINGS, 0, EnumDifficulty.PEACEFUL, Minecraft.getMinecraft().mcProfiler);
         this.schematic = schematic;
 
-        for (final TileEntity tileEntity : schematic.getTileEntities()) {
-            initializeTileEntity(tileEntity);
-        }
+        schematic.getTileEntities().forEach(this::initializeTileEntity);
 
         this.isRendering = false;
         this.isRenderingLayer = false;

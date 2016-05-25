@@ -11,15 +11,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class ViewFrustumOverlay extends ViewFrustum {
-    public RenderOverlay[] renderOverlays;
+class ViewFrustumOverlay extends ViewFrustum {
+    private RenderOverlay[] renderOverlays;
 
-    public ViewFrustumOverlay(final World world, final int renderDistanceChunks, final RenderGlobal renderGlobal, final ISchematicRenderChunkFactory renderChunkFactory) {
+    ViewFrustumOverlay(final World world, final int renderDistanceChunks, final RenderGlobal renderGlobal, final ISchematicRenderChunkFactory renderChunkFactory) {
         super(world, renderDistanceChunks, renderGlobal, renderChunkFactory);
         createRenderOverlays(renderChunkFactory);
     }
 
-    protected void createRenderOverlays(final ISchematicRenderChunkFactory renderChunkFactory) {
+    private void createRenderOverlays(final ISchematicRenderChunkFactory renderChunkFactory) {
         final int amount = this.countChunksX * this.countChunksY * this.countChunksZ;
         this.renderOverlays = new RenderOverlay[amount];
         int count = 0;
@@ -122,7 +122,7 @@ public class ViewFrustumOverlay extends ViewFrustum {
         }
     }
 
-    public RenderOverlay getRenderOverlay(final BlockPos pos) {
+    RenderOverlay getRenderOverlay(final BlockPos pos) {
         int x = MathHelper.bucketInt(pos.getX(), 16);
         final int y = MathHelper.bucketInt(pos.getY(), 16);
         int z = MathHelper.bucketInt(pos.getZ(), 16);

@@ -19,7 +19,7 @@ public class Settings {
 
     public MovingObjectPosition movingObjectPosition = null;
 
-    public BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos();
+    public final BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos();
 
     public int rotation = 0;
     public String hut = "";

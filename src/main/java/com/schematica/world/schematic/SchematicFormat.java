@@ -1,12 +1,10 @@
 package com.schematica.world.schematic;
 
-import com.schematica.api.event.PostSchematicCaptureEvent;
 import com.schematica.reference.Names;
 import com.schematica.reference.Reference;
 import com.schematica.world.storage.Schematic;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.MinecraftForge;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -18,12 +16,12 @@ import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicFormat
 {
-    private static final Map<String, SchematicFormat> FORMATS = new HashMap<String, SchematicFormat>();
-    private static String FORMAT_DEFAULT;
+    private static final Map<String, SchematicFormat> FORMATS = new HashMap<>();
+    private static final String FORMAT_DEFAULT;
 
-    public abstract Schematic readFromNBT(NBTTagCompound tagCompound);
+    protected abstract Schematic readFromNBT(NBTTagCompound tagCompound);
 
-    public abstract boolean writeToNBT(NBTTagCompound tagCompound, Schematic schematic);
+    protected abstract void writeToNBT(NBTTagCompound tagCompound, Schematic schematic);
 
     public static Schematic readFromStream(InputStream stream)
     {
@@ -47,10 +45,8 @@ public abstract class SchematicFormat
     }
 
     public static boolean writeToFile(final File file, final Schematic schematic) {
-        try {
-            final PostSchematicCaptureEvent event = new PostSchematicCaptureEvent(schematic);
-            MinecraftForge.EVENT_BUS.post(event);
-
+        try
+        {
             final NBTTagCompound tagCompound = new NBTTagCompound();
 
             FORMATS.get(FORMAT_DEFAULT).writeToNBT(tagCompound, schematic);

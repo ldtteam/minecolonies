@@ -19,6 +19,5 @@ public final class Names {
         public static final String MAPPING_SCHEMATICA = "SchematicaMapping";
         public static final String TILE_ENTITIES = "TileEntities";
         public static final String ENTITIES = "Entities";
-        public static final String EXTENDED_METADATA = "ExtendedMetadata";
     }
 }

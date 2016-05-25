@@ -12,12 +12,8 @@ public class GeometryTessellator extends Tessellator {
     private static double deltaS = 0;
     private double delta = 0;
 
-    public GeometryTessellator() {
-        this(0x200000);
-    }
-
-    public GeometryTessellator(final int size) {
-        super(size);
+    private GeometryTessellator() {
+        super(0x200000);
     }
 
     public static GeometryTessellator getInstance() {
@@ -40,13 +36,8 @@ public class GeometryTessellator extends Tessellator {
         begin(GL11.GL_LINES);
     }
 
-    public void begin(final int mode) {
+    private void begin(final int mode) {
         getWorldRenderer().begin(mode, DefaultVertexFormats.POSITION_COLOR);
-    }
-
-    @Override
-    public void draw() {
-        super.draw();
     }
 
     public void setDelta(final double delta) {
@@ -69,7 +60,7 @@ public class GeometryTessellator extends Tessellator {
         drawCuboid(worldRenderer, pos, pos, sides, argb);
     }
 
-    public static void drawCuboid(final WorldRenderer worldRenderer, final BlockPos begin, final BlockPos end, final int sides, final int argb) {
+    private static void drawCuboid(final WorldRenderer worldRenderer, final BlockPos begin, final BlockPos end, final int sides, final int argb) {
         drawCuboid(worldRenderer, begin, end, sides, argb, GeometryTessellator.deltaS);
     }
 
@@ -99,7 +90,7 @@ public class GeometryTessellator extends Tessellator {
         }
     }
 
-    public static void drawQuads(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0, final double x1, final double y1, final double z1, final int sides, final int argb) {
+    private static void drawQuads(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0, final double x1, final double y1, final double z1, final int sides, final int argb) {
         final int a = (argb >>> 24) & 0xFF;
         final int r = (argb >>> 16) & 0xFF;
         final int g = (argb >>> 8) & 0xFF;
@@ -108,7 +99,7 @@ public class GeometryTessellator extends Tessellator {
         drawQuads(worldRenderer, x0, y0, z0, x1, y1, z1, sides, a, r, g, b);
     }
 
-    public static void drawQuads(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0, final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b) {
+    private static void drawQuads(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0, final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b) {
         if ((sides & GeometryMasks.Quad.DOWN) != 0) {
             worldRenderer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
             worldRenderer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
@@ -152,7 +143,7 @@ public class GeometryTessellator extends Tessellator {
         }
     }
 
-    public static void drawLines(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0, final double x1, final double y1, final double z1, final int sides, final int argb) {
+    private static void drawLines(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0, final double x1, final double y1, final double z1, final int sides, final int argb) {
         final int a = (argb >>> 24) & 0xFF;
         final int r = (argb >>> 16) & 0xFF;
         final int g = (argb >>> 8) & 0xFF;
@@ -161,7 +152,7 @@ public class GeometryTessellator extends Tessellator {
         drawLines(worldRenderer, x0, y0, z0, x1, y1, z1, sides, a, r, g, b);
     }
 
-    public static void drawLines(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0, final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b) {
+    private static void drawLines(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0, final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b) {
         if ((sides & GeometryMasks.Line.DOWN_WEST) != 0) {
             worldRenderer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
             worldRenderer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
