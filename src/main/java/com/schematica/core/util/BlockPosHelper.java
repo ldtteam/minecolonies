@@ -5,30 +5,27 @@ import net.minecraft.util.BlockPos;
 
 import java.util.Iterator;
 
-public class BlockPosHelper {
-    public static Iterable<MBlockPos> getAllInBox(final BlockPos from, final BlockPos to) {
-        return getAllInBox(from.getX(), from.getY(), from.getZ(), to.getX(), to.getY(), to.getZ());
-    }
-
-    public static Iterable<MBlockPos> getAllInBox(final int fromX, final int fromY, final int fromZ, final int toX, final int toY, final int toZ) {
+public class BlockPosHelper
+{
+    public static Iterable<BlockPos> getAllInBox(final int fromX, final int fromY, final int fromZ, final int toX, final int toY, final int toZ) {
         final BlockPos posMin = new BlockPos(Math.min(fromX, toX), Math.min(fromY, toY), Math.min(fromZ, toZ));
         final BlockPos posMax = new BlockPos(Math.max(fromX, toX), Math.max(fromY, toY), Math.max(fromZ, toZ));
-        return new Iterable<MBlockPos>() {
+        return new Iterable<BlockPos>() {
             @Override
-            public Iterator<MBlockPos> iterator() {
-                return new AbstractIterator<MBlockPos>() {
-                    private MBlockPos pos = null;
+            public Iterator<BlockPos> iterator() {
+                return new AbstractIterator<BlockPos>() {
+                    private BlockPos pos = null;
                     private int x;
                     private int y;
                     private int z;
 
                     @Override
-                    protected MBlockPos computeNext() {
+                    protected BlockPos computeNext() {
                         if (this.pos == null) {
                             this.x = posMin.getX();
                             this.y = posMin.getY();
                             this.z = posMin.getZ();
-                            this.pos = new MBlockPos(this.x, this.y, this.z);
+                            this.pos = new BlockPos(this.x, this.y, this.z);
                             return this.pos;
                         }
 
@@ -47,9 +44,7 @@ public class BlockPosHelper {
                             this.z++;
                         }
 
-                        this.pos.x = this.x;
-                        this.pos.y = this.y;
-                        this.pos.z = this.z;
+                        this.pos = new BlockPos(this.x, this.y, this.z);
                         return this.pos;
                     }
                 };

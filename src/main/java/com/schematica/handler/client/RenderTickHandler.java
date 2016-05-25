@@ -35,9 +35,9 @@ public class RenderTickHandler {
         final double posY = renderViewEntity.posY;
         final double posZ = renderViewEntity.posZ;
 
-        renderViewEntity.posX -= schematic.position.x;
-        renderViewEntity.posY -= schematic.position.y;
-        renderViewEntity.posZ -= schematic.position.z;
+        renderViewEntity.posX -= schematic.position.getX();
+        renderViewEntity.posY -= schematic.position.getY();
+        renderViewEntity.posZ -= schematic.position.getZ();
 
         final Vec3 vecPosition = renderViewEntity.getPositionEyes(partialTicks);
         final Vec3 vecLook = renderViewEntity.getLook(partialTicks);

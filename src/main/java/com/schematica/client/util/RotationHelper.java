@@ -1,10 +1,7 @@
 package com.schematica.client.util;
 
-import com.schematica.core.util.BlockPosHelper;
-import com.schematica.core.util.MBlockPos;
-import com.schematica.api.ISchematic;
 import com.schematica.block.state.BlockStateHelper;
-import com.schematica.client.world.SchematicWorld;
+import com.schematica.core.util.BlockPosHelper;
 import com.schematica.reference.Reference;
 import com.schematica.world.storage.Schematic;
 import net.minecraft.block.Block;
@@ -36,9 +33,9 @@ public class RotationHelper {
     public Schematic rotate(final Schematic schematic, final EnumFacing axis, final boolean forced) throws RotationException {
         final Vec3i dimensionsRotated = rotateDimensions(axis, schematic.getWidth(), schematic.getHeight(), schematic.getLength());
         final Schematic schematicRotated = new Schematic(schematic.getIcon(), dimensionsRotated.getX(), dimensionsRotated.getY(), dimensionsRotated.getZ());
-        final MBlockPos tmp = new MBlockPos();
+        final BlockPos.MutableBlockPos tmp = new BlockPos.MutableBlockPos();
 
-        for (final MBlockPos pos : BlockPosHelper.getAllInBox(0, 0, 0, schematic.getWidth() - 1, schematic.getHeight() - 1, schematic.getLength() - 1)) {
+        for (final BlockPos pos : BlockPosHelper.getAllInBox(0, 0, 0, schematic.getWidth() - 1, schematic.getHeight() - 1, schematic.getLength() - 1)) {
             final IBlockState blockState = schematic.getBlockState(pos);
             final IBlockState blockStateRotated = rotateBlock(blockState, axis, forced);
             schematicRotated.setBlockState(rotatePos(pos, axis, dimensionsRotated, tmp), blockStateRotated);
@@ -74,7 +71,7 @@ public class RotationHelper {
         throw new RotationException("'%s' is not a valid axis!", axis.getName());
     }
 
-    private BlockPos rotatePos(final BlockPos pos, final EnumFacing axis, final Vec3i dimensions, final MBlockPos rotated) throws RotationException {
+    private BlockPos rotatePos(final BlockPos pos, final EnumFacing axis, final Vec3i dimensions, final BlockPos.MutableBlockPos rotated) throws RotationException {
         switch (axis) {
         case DOWN:
             return rotated.set(pos.getZ(), pos.getY(), dimensions.getZ() - 1 - pos.getX());

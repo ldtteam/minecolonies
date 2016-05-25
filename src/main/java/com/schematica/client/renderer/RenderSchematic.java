@@ -1,10 +1,8 @@
 package com.schematica.client.renderer;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.schematica.Settings;
-import com.schematica.core.client.renderer.GeometryMasks;
-import com.schematica.core.client.renderer.GeometryTessellator;
-import com.schematica.core.util.MBlockPos;
-import com.schematica.core.util.vector.Vector3d;
 import com.schematica.client.renderer.chunk.OverlayRenderDispatcher;
 import com.schematica.client.renderer.chunk.container.SchematicChunkRenderContainer;
 import com.schematica.client.renderer.chunk.container.SchematicChunkRenderContainerList;
@@ -16,18 +14,14 @@ import com.schematica.client.renderer.chunk.proxy.SchematicRenderChunkList;
 import com.schematica.client.renderer.chunk.proxy.SchematicRenderChunkVbo;
 import com.schematica.client.renderer.shader.ShaderProgram;
 import com.schematica.client.world.SchematicWorld;
+import com.schematica.core.client.renderer.GeometryMasks;
+import com.schematica.core.client.renderer.GeometryTessellator;
+import com.schematica.core.util.vector.Vector3d;
 import com.schematica.handler.ConfigurationHandler;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.chunk.RenderChunk;
@@ -42,12 +36,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -57,28 +46,23 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Vector3f;
 
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @SideOnly(Side.CLIENT)
 public class RenderSchematic extends RenderGlobal {
     public static final RenderSchematic INSTANCE = new RenderSchematic(Minecraft.getMinecraft());
 
-    public static final int RENDER_DISTANCE = 32;
-    public static final int CHUNKS_XZ = (RENDER_DISTANCE + 1) * 2;
-    public static final int CHUNKS_Y = 16;
-    public static final int CHUNKS = CHUNKS_XZ * CHUNKS_XZ * CHUNKS_Y;
-    public static final int PASS = 2;
+    private static final int RENDER_DISTANCE = 32;
+    private static final int CHUNKS_XZ = (RENDER_DISTANCE + 1) * 2;
+    private static final int CHUNKS_Y = 16;
+    private static final int CHUNKS = CHUNKS_XZ * CHUNKS_XZ * CHUNKS_Y;
+    private static final int PASS = 2;
 
     private static final ShaderProgram SHADER_ALPHA = new ShaderProgram("minecolonies", null, "shaders/alpha.frag");
     private static final Vector3d PLAYER_POSITION_OFFSET = new Vector3d();
     private final Minecraft mc;
     private final Profiler profiler;
     private final RenderManager renderManager;
-    private final MBlockPos tmp = new MBlockPos();
     private SchematicWorld world;
     private Set<RenderChunk> chunksToUpdate = Sets.newLinkedHashSet();
     private Set<RenderOverlay> overlaysToUpdate = Sets.newLinkedHashSet();
@@ -101,8 +85,6 @@ public class RenderSchematic extends RenderGlobal {
     private int renderDistanceChunks = -1;
     private int countEntitiesTotal;
     private int countEntitiesRendered;
-    private int countTileEntitiesTotal;
-    private int countTileEntitiesRendered;
     private boolean vboEnabled = false;
     private ISchematicRenderChunkFactory renderChunkFactory;
     private double prevRenderSortX;
@@ -110,8 +92,9 @@ public class RenderSchematic extends RenderGlobal {
     private double prevRenderSortZ;
     private boolean displayListEntitiesDirty = true;
     private int frameCount = 0;
+    private BlockPos.MutableBlockPos tmp = new BlockPos.MutableBlockPos();
 
-    public RenderSchematic(final Minecraft minecraft) {
+    private RenderSchematic(final Minecraft minecraft) {
         super(minecraft);
         this.mc = minecraft;
         this.profiler = minecraft.mcProfiler;
@@ -234,7 +217,8 @@ public class RenderSchematic extends RenderGlobal {
             loadRenderers();
         }
 
-        PLAYER_POSITION_OFFSET.set(this.mc.thePlayer.posX, this.mc.thePlayer.posY, this.mc.thePlayer.posZ).sub(this.world.position.x, this.world.position.y, this.world.position.z);
+        PLAYER_POSITION_OFFSET.set(this.mc.thePlayer.posX, this.mc.thePlayer.posY, this.mc.thePlayer.posZ)
+                              .sub(this.world.position.getX(), this.world.position.getY(), this.world.position.getZ());
 
         if (OpenGlHelper.shadersSupported && ConfigurationHandler.enableAlpha) {
             GL20.glUseProgram(SHADER_ALPHA.getProgram());
@@ -273,7 +257,7 @@ public class RenderSchematic extends RenderGlobal {
             tessellator.drawCuboid(Settings.instance.pointMin, Settings.instance.pointMax, GeometryMasks.Line.ALL, 0x7F00BF00);
         }
         if (isRenderingSchematic) {
-            this.tmp.set(schematic.position.x + schematic.getWidth() - 1, schematic.position.y + schematic.getHeight() - 1, schematic.position.z + schematic.getLength() - 1);
+            this.tmp.set(schematic.position.getX() + schematic.getWidth() - 1, schematic.position.getY() + schematic.getHeight() - 1, schematic.position.getZ() + schematic.getLength() - 1);
             tessellator.drawCuboid(schematic.position, this.tmp, GeometryMasks.Line.ALL, 0x7FBF00BF);
         }
         tessellator.draw();
@@ -420,9 +404,6 @@ public class RenderSchematic extends RenderGlobal {
         this.countEntitiesTotal = 0;
         this.countEntitiesRendered = 0;
 
-        this.countTileEntitiesTotal = 0;
-        this.countTileEntitiesRendered = 0;
-
         final double x = PLAYER_POSITION_OFFSET.x;
         final double y = PLAYER_POSITION_OFFSET.y;
         final double z = PLAYER_POSITION_OFFSET.z;
@@ -445,7 +426,6 @@ public class RenderSchematic extends RenderGlobal {
             for (final TileEntity tileEntity : renderInfo.renderChunk.getCompiledChunk().getTileEntities()) {
                 final AxisAlignedBB renderBB = tileEntity.getRenderBoundingBox();
 
-                this.countTileEntitiesTotal++;
                 if (!tileEntity.shouldRenderInPass(entityPass) || !camera.isBoundingBoxInFrustum(renderBB)) {
                     continue;
                 }
@@ -455,7 +435,6 @@ public class RenderSchematic extends RenderGlobal {
                 }
 
                 TileEntityRendererDispatcher.instance.renderTileEntity(tileEntity, partialTicks, -1);
-                this.countTileEntitiesRendered++;
             }
         }
 
@@ -482,10 +461,6 @@ public class RenderSchematic extends RenderGlobal {
     @Override
     public String getDebugInfoEntities() {
         return String.format("E: %d/%d", this.countEntitiesRendered, this.countEntitiesTotal);
-    }
-
-    public String getDebugInfoTileEntities() {
-        return String.format("TE: %d/%d", this.countTileEntitiesRendered, this.countTileEntitiesTotal);
     }
 
     @Override
@@ -829,8 +804,8 @@ public class RenderSchematic extends RenderGlobal {
             return;
         }
 
-        final MBlockPos position = this.world.position;
-        this.viewFrustum.markBlocksForUpdate(x1 - position.x, y1 - position.y, z1 - position.z, x2 - position.x, y2 - position.y, z2 - position.z);
+        final BlockPos.MutableBlockPos position = this.world.position;
+        this.viewFrustum.markBlocksForUpdate(x1 - position.getX(), y1 - position.getY(), z1 - position.getZ(), x2 - position.getX(), y2 - position.getY(), z2 - position.getZ());
     }
 
     @Override
@@ -869,7 +844,7 @@ public class RenderSchematic extends RenderGlobal {
     }
 
     @SideOnly(Side.CLIENT)
-    class ContainerLocalRenderInformation {
+    private class ContainerLocalRenderInformation {
         final RenderChunk renderChunk;
         final RenderOverlay renderOverlay;
         final EnumFacing facing;

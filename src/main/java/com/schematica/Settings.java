@@ -20,6 +20,7 @@ public class Settings {
     public MovingObjectPosition movingObjectPosition = null;
 
     public BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos();
+
     public int rotation = 0;
     public String hut = "";
     public String style = "";
@@ -52,6 +53,6 @@ public class Settings {
     public void moveTo(BlockPos pos)
     {
         BlockPosUtil.set(offset, pos.subtract(MineColonies.proxy.getActiveSchematic().getOffset()));
-        schematic.position.set(offset);
+        BlockPosUtil.set(schematic.position, offset);
     }
 }

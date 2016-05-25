@@ -1,20 +1,13 @@
 package com.schematica.client.world;
 
-import com.schematica.core.util.BlockPosHelper;
-import com.schematica.core.util.MBlockPos;
-import com.schematica.api.ISchematic;
-import com.schematica.block.state.pattern.BlockStateReplacer;
 import com.schematica.client.world.chunk.ChunkProviderSchematic;
 import com.schematica.reference.Reference;
 import com.schematica.world.storage.Schematic;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.block.state.pattern.BlockStateHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -28,14 +21,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
-import java.util.Map;
 
 public class SchematicWorld extends WorldClient {
     private static final WorldSettings WORLD_SETTINGS = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
 
     private Schematic schematic;
 
-    public final MBlockPos position = new MBlockPos();
+    public final BlockPos.MutableBlockPos position = new BlockPos.MutableBlockPos();
     public boolean isRendering;
     public boolean isRenderingLayer;
     public int renderingLayer;
@@ -174,7 +166,7 @@ public class SchematicWorld extends WorldClient {
         return this.schematic;
     }
 
-    public void initializeTileEntity(final TileEntity tileEntity) {
+    private void initializeTileEntity(final TileEntity tileEntity) {
         tileEntity.setWorldObj(this);
         tileEntity.getBlockType();
         try {
@@ -183,57 +175,6 @@ public class SchematicWorld extends WorldClient {
         } catch (final Exception e) {
             Reference.logger.error("TileEntity validation for {} failed!", tileEntity.getClass(), e);
         }
-    }
-
-    public void setIcon(final ItemStack icon) {
-        this.schematic.setIcon(icon);
-    }
-
-    public ItemStack getIcon() {
-        return this.schematic.getIcon();
-    }
-
-    public List<TileEntity> getTileEntities() {
-        return this.schematic.getTileEntities();
-    }
-
-    public boolean toggleRendering() {
-        this.isRendering = !this.isRendering;
-        return this.isRendering;
-    }
-
-    public String getDebugDimensions() {
-        return "WHL: " + getWidth() + " / " + getHeight() + " / " + getLength();
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public int replaceBlock(final BlockStateHelper matcher, final BlockStateReplacer replacer, final Map<IProperty, Comparable> properties) {
-        int count = 0;
-
-        for (final MBlockPos pos : BlockPosHelper.getAllInBox(0, 0, 0, getWidth(), getHeight(), getLength())) {
-            final IBlockState blockState = this.schematic.getBlockState(pos);
-
-            // TODO: add support for tile entities?
-            if (blockState.getBlock().hasTileEntity(blockState)) {
-                continue;
-            }
-
-            if (matcher.apply(blockState)) {
-                final IBlockState replacement = replacer.getReplacement(blockState, properties);
-
-                // TODO: add support for tile entities?
-                if (replacement.getBlock().hasTileEntity(replacement)) {
-                    continue;
-                }
-
-                if (this.schematic.setBlockState(pos, replacement)) {
-                    markBlockForUpdate(pos.add(this.position));
-                    count++;
-                }
-            }
-        }
-
-        return count;
     }
 
     public boolean isInside(final BlockPos pos) {

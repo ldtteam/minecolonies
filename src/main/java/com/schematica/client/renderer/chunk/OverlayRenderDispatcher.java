@@ -1,8 +1,8 @@
 package com.schematica.client.renderer.chunk;
 
-import com.schematica.client.renderer.chunk.overlay.RenderOverlayList;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.schematica.client.renderer.chunk.overlay.RenderOverlayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.WorldRenderer;

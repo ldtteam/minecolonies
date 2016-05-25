@@ -13,10 +13,6 @@ public class Vector2d {
         this(vec.x, vec.y);
     }
 
-    public Vector2d(final double num) {
-        this(num, num);
-    }
-
     public Vector2d(final double x, final double y) {
         this.x = x;
         this.y = y;
@@ -56,37 +52,6 @@ public class Vector2d {
         return this.x * this.x + this.y * this.y;
     }
 
-    public final double lengthTo(final Vector2d vec) {
-        return Math.sqrt(lengthSquaredTo(vec));
-    }
-
-    public double lengthSquaredTo(final Vector2d vec) {
-        return pow2(this.x - vec.x) + pow2(this.y - vec.y);
-    }
-
-    protected final double pow2(final double num) {
-        return num * num;
-    }
-
-    public final Vector2d normalize() {
-        final double len = length();
-        if (len != 0.0) {
-            return scale(1.0 / len);
-        }
-
-        return this;
-    }
-
-    public Vector2d negate() {
-        this.x = -this.x;
-        this.y = -this.y;
-        return this;
-    }
-
-    public double dot(final Vector2d vec) {
-        return this.x * vec.x + this.y * vec.y;
-    }
-
     public Vector2d scale(final double scale) {
         this.x *= scale;
         this.y *= scale;
@@ -103,34 +68,6 @@ public class Vector2d {
         this.x += x;
         this.y += y;
         return this;
-    }
-
-    public Vector2d sub(final Vector2d vec) {
-        this.x -= vec.x;
-        this.y -= vec.y;
-        return this;
-    }
-
-    public Vector2d sub(final double x, final double y) {
-        this.x -= x;
-        this.y -= y;
-        return this;
-    }
-
-    public Vector2i toVector2i() {
-        return new Vector2i((int) Math.floor(this.x), (int) Math.floor(this.y));
-    }
-
-    public Vector2i toVector2i(final Vector2i vec) {
-        return vec.set((int) Math.floor(this.x), (int) Math.floor(this.y));
-    }
-
-    public Vector2f toVector2f() {
-        return new Vector2f((float) Math.floor(this.x), (float) Math.floor(this.y));
-    }
-
-    public Vector2f toVector2f(final Vector2f vec) {
-        return vec.set((float) Math.floor(this.x), (float) Math.floor(this.y));
     }
 
     @Override

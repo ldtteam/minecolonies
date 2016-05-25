@@ -374,7 +374,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, style + '/' + hut + '1');
             MineColonies.proxy.setActiveSchematic(schematic.getSchematic());
 
-            updatePosition();
+            Settings.instance.moveTo(pos);
         }
     }
 
@@ -384,6 +384,6 @@ public class WindowBuildTool extends Window implements Button.Handler
     private void updatePosition()
     {
         Settings.instance.moveTo(pos);
-        RenderSchematic.INSTANCE.loadRenderers();//TODO maybe find a better way to update stuff - mark dirty didn't work
+        RenderSchematic.INSTANCE.refresh();
     }
 }

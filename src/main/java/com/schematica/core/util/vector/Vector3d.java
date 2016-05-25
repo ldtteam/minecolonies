@@ -11,10 +11,6 @@ public class Vector3d extends Vector2d {
         this(vec.x, vec.y, vec.z);
     }
 
-    public Vector3d(final double num) {
-        this(num, num, num);
-    }
-
     public Vector3d(final double x, final double y, final double z) {
         super(x, y);
         this.z = z;
@@ -44,26 +40,6 @@ public class Vector3d extends Vector2d {
         return this.x * this.x + this.y * this.y + this.z * this.z;
     }
 
-    public final double lengthTo(final Vector3d vec) {
-        return Math.sqrt(lengthSquaredTo(vec));
-    }
-
-    public double lengthSquaredTo(final Vector3d vec) {
-        return pow2(this.x - vec.x) + pow2(this.y - vec.y) + pow2(this.z - vec.z);
-    }
-
-    @Override
-    public Vector3d negate() {
-        this.x = -this.x;
-        this.y = -this.y;
-        this.z = -this.z;
-        return this;
-    }
-
-    public double dot(final Vector3d vec) {
-        return this.x * vec.x + this.y * vec.y + this.z * vec.z;
-    }
-
     @Override
     public Vector3d scale(final double scale) {
         this.x *= scale;
@@ -86,34 +62,11 @@ public class Vector3d extends Vector2d {
         return this;
     }
 
-    public Vector3d sub(final Vector3d vec) {
-        this.x -= vec.x;
-        this.y -= vec.y;
-        this.z -= vec.z;
-        return this;
-    }
-
     public Vector3d sub(final double x, final double y, final double z) {
         this.x -= x;
         this.y -= y;
         this.z -= z;
         return this;
-    }
-
-    public Vector3i toVector3i() {
-        return new Vector3i((int) Math.floor(this.x), (int) Math.floor(this.y), (int) Math.floor(this.z));
-    }
-
-    public Vector3i toVector3i(final Vector3i vec) {
-        return vec.set((int) Math.floor(this.x), (int) Math.floor(this.y), (int) Math.floor(this.z));
-    }
-
-    public Vector3f toVector3f() {
-        return new Vector3f((float) Math.floor(this.x), (float) Math.floor(this.y), (float) Math.floor(this.z));
-    }
-
-    public Vector3f toVector3f(final Vector3f vec) {
-        return vec.set((float) Math.floor(this.x), (float) Math.floor(this.y), (float) Math.floor(this.z));
     }
 
     @Override

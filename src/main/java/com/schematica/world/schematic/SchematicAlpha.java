@@ -1,7 +1,5 @@
 package com.schematica.world.schematic;
 
-import com.schematica.core.util.MBlockPos;
-import com.schematica.api.ISchematic;
 import com.schematica.api.event.PreSchematicSaveEvent;
 import com.schematica.nbt.NBTHelper;
 import com.schematica.reference.Names;
@@ -63,7 +61,7 @@ class SchematicAlpha extends SchematicFormat {
         final short height = tagCompound.getShort(Names.NBT.HEIGHT);
 
         Short id = null;
-        final Map<Short, Short> oldToNew = new HashMap<Short, Short>();
+        final Map<Short, Short> oldToNew = new HashMap<>();
         if (tagCompound.hasKey(Names.NBT.MAPPING_SCHEMATICA)) {
             final NBTTagCompound mapping = tagCompound.getCompoundTag(Names.NBT.MAPPING_SCHEMATICA);
             final Set<String> names = mapping.getKeySet();
@@ -72,7 +70,7 @@ class SchematicAlpha extends SchematicFormat {
             }
         }
 
-        final MBlockPos pos = new MBlockPos();
+        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         final Schematic schematic = new Schematic(icon, width, height, length);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -141,8 +139,8 @@ class SchematicAlpha extends SchematicFormat {
         final byte[] extraBlocksNibble = new byte[(int) Math.ceil(size / 2.0)];
         boolean extra = false;
 
-        final MBlockPos pos = new MBlockPos();
-        final Map<String, Short> mappings = new HashMap<String, Short>();
+        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        final Map<String, Short> mappings = new HashMap<>();
         for (int x = 0; x < schematic.getWidth(); x++) {
             for (int y = 0; y < schematic.getHeight(); y++) {
                 for (int z = 0; z < schematic.getLength(); z++) {

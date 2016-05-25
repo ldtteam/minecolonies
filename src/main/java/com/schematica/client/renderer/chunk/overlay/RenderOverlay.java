@@ -1,9 +1,9 @@
 package com.schematica.client.renderer.chunk.overlay;
 
-import com.schematica.core.client.renderer.GeometryMasks;
-import com.schematica.core.client.renderer.GeometryTessellator;
 import com.schematica.client.renderer.chunk.CompiledOverlay;
 import com.schematica.client.world.SchematicWorld;
+import com.schematica.core.client.renderer.GeometryMasks;
+import com.schematica.core.client.renderer.GeometryTessellator;
 import com.schematica.handler.ConfigurationHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;

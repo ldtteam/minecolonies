@@ -1,7 +1,7 @@
 package com.schematica.client.renderer.chunk.container;
 
-import com.schematica.client.renderer.chunk.overlay.RenderOverlay;
 import com.google.common.collect.Lists;
+import com.schematica.client.renderer.chunk.overlay.RenderOverlay;
 import net.minecraft.client.renderer.ChunkRenderContainer;
 
 import java.util.List;
