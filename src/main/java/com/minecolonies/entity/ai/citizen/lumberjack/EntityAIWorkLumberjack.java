@@ -1,6 +1,10 @@
 package com.minecolonies.entity.ai;
 
 import com.minecolonies.colony.jobs.JobLumberjack;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.citizen.lumberjack.Tree;
+import com.minecolonies.entity.ai.util.AIState;
+import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
@@ -16,12 +20,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.entity.ai.AIState.*;
+import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * The lumberjack AI class
  */
-public class EntityAIWorkLumberjack extends AbstractEntityAIWork<JobLumberjack>
+public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberjack>
 {
     private static final String TOOL_TYPE_AXE           = "axe";
     /**

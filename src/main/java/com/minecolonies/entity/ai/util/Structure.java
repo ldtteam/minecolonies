@@ -132,7 +132,7 @@ public class Structure
         return new SchematicBlock(
                 this.schematic.getBlock(),
                 this.schematic.getBlockPosition(),
-                this.schematic.getMetadata(),
+                this.schematic.getBlockState(),
                 this.schematic.getItem(),
                 BlockPosUtil.getBlock(targetWorld, this.schematic.getBlockPosition()),
                 BlockPosUtil.getBlockState(targetWorld, this.schematic.getBlockPosition())

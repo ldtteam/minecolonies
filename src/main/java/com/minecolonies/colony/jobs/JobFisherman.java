@@ -2,8 +2,8 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
+import com.minecolonies.entity.ai.EntityAIWorkFisherman;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
