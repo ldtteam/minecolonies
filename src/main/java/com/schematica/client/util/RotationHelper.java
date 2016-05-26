@@ -23,16 +23,21 @@ import net.minecraftforge.fml.common.registry.GameData;
 
 import java.util.List;
 
-public class RotationHelper {
-    public static final RotationHelper INSTANCE = new RotationHelper();
-
+public class RotationHelper
+{
     private static final FMLControlledNamespacedRegistry<Block> BLOCK_REGISTRY = GameData.getBlockRegistry();
     private static final EnumFacing[][] FACINGS = new EnumFacing[EnumFacing.VALUES.length][];
     private static final EnumFacing.Axis[][] AXISES = new EnumFacing.Axis[EnumFacing.Axis.values().length][];
     private static final BlockLog.EnumAxis[][] AXISES_LOG = new BlockLog.EnumAxis[EnumFacing.Axis.values().length][];
     private static final BlockQuartz.EnumType[][] AXISES_QUARTZ = new BlockQuartz.EnumType[EnumFacing.Axis.values().length][];
 
-    public boolean rotate(final SchematicWorld world, final EnumFacing axis, final boolean forced) {
+    /**
+     * Singleton constructor
+     */
+    private RotationHelper() {}
+
+    public static boolean rotate(final SchematicWorld world, final EnumFacing axis, final boolean forced)
+    {
         if (world == null) {
             return false;
         }
@@ -56,7 +61,7 @@ public class RotationHelper {
         return false;
     }
 
-    private void updatePosition(final SchematicWorld world, final EnumFacing axis) {
+    private static void updatePosition(final SchematicWorld world, final EnumFacing axis) {
         switch (axis) {
             case DOWN:
             case UP: {
@@ -81,7 +86,7 @@ public class RotationHelper {
         }
     }
 
-    public Schematic rotate(final Schematic schematic, final EnumFacing axis, final boolean forced) throws RotationException {
+    public static Schematic rotate(final Schematic schematic, final EnumFacing axis, final boolean forced) throws RotationException {
         final Vec3i dimensionsRotated = rotateDimensions(axis, schematic.getWidth(), schematic.getHeight(), schematic.getLength());
         final Schematic schematicRotated = new Schematic(schematic.getIcon(), dimensionsRotated.getX(), dimensionsRotated.getY(), dimensionsRotated.getZ());
         final BlockPos.MutableBlockPos tmp = new BlockPos.MutableBlockPos();
@@ -104,7 +109,7 @@ public class RotationHelper {
         return schematicRotated;
     }
 
-    private Vec3i rotateDimensions(final EnumFacing axis, final int width, final int height, final int length) throws RotationException {
+    private static Vec3i rotateDimensions(final EnumFacing axis, final int width, final int height, final int length) throws RotationException {
         switch (axis) {
         case DOWN:
         case UP:
@@ -122,7 +127,7 @@ public class RotationHelper {
         throw new RotationException("'%s' is not a valid axis!", axis.getName());
     }
 
-    private BlockPos rotatePos(final BlockPos pos, final EnumFacing axis, final Vec3i dimensions, final BlockPos.MutableBlockPos rotated) throws RotationException {
+    private static BlockPos rotatePos(final BlockPos pos, final EnumFacing axis, final Vec3i dimensions, final BlockPos.MutableBlockPos rotated) throws RotationException {
         switch (axis) {
         case DOWN:
             return rotated.set(pos.getZ(), pos.getY(), dimensions.getZ() - 1 - pos.getX());
@@ -147,7 +152,7 @@ public class RotationHelper {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private IBlockState rotateBlock(final IBlockState blockState, final EnumFacing axisRotation, final boolean forced) throws RotationException {
+    private static IBlockState rotateBlock(final IBlockState blockState, final EnumFacing axisRotation, final boolean forced) throws RotationException {
         final IProperty propertyFacing = BlockStateHelper.getProperty(blockState, "facing");
         if (propertyFacing instanceof PropertyDirection) {
             final Comparable value = blockState.getValue(propertyFacing);
@@ -294,7 +299,7 @@ public class RotationHelper {
     }
 
     public static class RotationException extends Exception {
-        public RotationException(final String message, final Object... args) {
+        RotationException(final String message, final Object... args) {
             super(String.format(message, args));
         }
     }

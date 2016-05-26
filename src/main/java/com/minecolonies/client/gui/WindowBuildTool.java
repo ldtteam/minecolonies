@@ -242,12 +242,12 @@ public class WindowBuildTool extends Window implements Button.Handler
 
         case BUTTON_ROTATE_LEFT:
             rotation = (rotation + 3) % 4;
-            RotationHelper.INSTANCE.rotate(Settings.instance.schematic, EnumFacing.DOWN, true);
+            RotationHelper.rotate(Settings.instance.schematic, EnumFacing.DOWN, true);
             updatePosition();
             break;
         case BUTTON_ROTATE_RIGHT:
             rotation = (rotation + 1) % 4;
-            RotationHelper.INSTANCE.rotate(Settings.instance.schematic, EnumFacing.UP, true);
+            RotationHelper.rotate(Settings.instance.schematic, EnumFacing.UP, true);
             updatePosition();
             break;
 

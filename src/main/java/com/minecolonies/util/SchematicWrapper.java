@@ -3,7 +3,6 @@ package com.minecolonies.util;
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
-import com.schematica.api.ISchematic;
 import com.schematica.client.util.RotationHelper;
 import com.schematica.world.schematic.SchematicFormat;
 import com.schematica.world.storage.Schematic;
@@ -15,15 +14,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -32,7 +27,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
@@ -267,7 +261,7 @@ public final class SchematicWrapper
     {
         try
         {
-            schematicWorld = RotationHelper.INSTANCE.rotate(schematicWorld, EnumFacing.UP, true);
+            schematicWorld = RotationHelper.rotate(schematicWorld, EnumFacing.UP, true);
         }
         catch (RotationHelper.RotationException e)
         {
@@ -616,11 +610,6 @@ public final class SchematicWrapper
     public List<Entity> getEntities()
     {
         return schematicWorld.getEntities();
-    }
-
-    public BlockPos getBlockPosition(int baseX, int baseY, int baseZ)
-    {
-        return this.progressPos.add(baseX, baseY, baseZ);
     }
 
     public BlockPos getLocalPosition()
