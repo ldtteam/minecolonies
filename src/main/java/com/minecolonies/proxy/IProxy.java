@@ -1,7 +1,6 @@
 package com.minecolonies.proxy;
 
 import com.minecolonies.colony.CitizenData;
-import com.schematica.world.storage.Schematic;
 import net.minecraft.util.BlockPos;
 
 public interface IProxy
