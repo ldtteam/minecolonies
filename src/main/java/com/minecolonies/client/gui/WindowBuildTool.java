@@ -13,7 +13,6 @@ import com.minecolonies.util.SchematicWrapper;
 import com.schematica.Settings;
 import com.schematica.client.renderer.RenderSchematic;
 import com.schematica.client.util.RotationHelper;
-import com.schematica.client.world.SchematicWorld;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.BlockPos;
@@ -91,9 +90,9 @@ public class WindowBuildTool extends Window implements Button.Handler
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
-        if(MineColonies.proxy.getActiveSchematic() != null)
+        if(Settings.instance.getActiveSchematic() != null)
         {
-            BlockPosUtil.set(this.pos, Settings.instance.offset.add(MineColonies.proxy.getActiveSchematic().getOffset()));
+            BlockPosUtil.set(this.pos, Settings.instance.offset.add(Settings.instance.getActiveSchematic().getOffset()));
             rotation = Settings.instance.rotation;
         }
         else
@@ -131,7 +130,7 @@ public class WindowBuildTool extends Window implements Button.Handler
 
         if (!huts.isEmpty())
         {
-            if (MineColonies.proxy.getActiveSchematic() != null)
+            if (Settings.instance.getActiveSchematic() != null)
             {
                 hutDecIndex = Math.max(0, huts.indexOf(Settings.instance.hut));
                 styleIndex = Math.max(0, Schematics.getStylesForHut(huts.get(hutDecIndex)).indexOf(Settings.instance.style));
@@ -152,7 +151,7 @@ public class WindowBuildTool extends Window implements Button.Handler
 
 
             //Render stuff
-            if (MineColonies.proxy.getActiveSchematic() == null)
+            if (Settings.instance.getActiveSchematic() == null)
             {
                 changeSchematic();
             }
@@ -164,14 +163,14 @@ public class WindowBuildTool extends Window implements Button.Handler
             hut.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.nullHut"));
             hut.setEnabled(false);
 
-            MineColonies.proxy.setActiveSchematic(null);
+            Settings.instance.setActiveSchematic(null);
         }
     }
 
     @Override
     public void onClosed()
     {
-        if(MineColonies.proxy.getActiveSchematic() != null)
+        if(Settings.instance.getActiveSchematic() != null)
         {
             Settings.instance.rotation = rotation;
 
@@ -219,11 +218,11 @@ public class WindowBuildTool extends Window implements Button.Handler
         case BUTTON_CONFIRM:
             MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(huts.get(hutDecIndex),
                     Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex), this.pos, rotation));
-            MineColonies.proxy.setActiveSchematic(null);
+            Settings.instance.setActiveSchematic(null);
             close();
             break;
         case BUTTON_CANCEL:
-            MineColonies.proxy.setActiveSchematic(null);
+            Settings.instance.setActiveSchematic(null);
             close();
             break;
         case BUTTON_LEFT:
@@ -243,32 +242,17 @@ public class WindowBuildTool extends Window implements Button.Handler
 
         case BUTTON_ROTATE_LEFT:
             rotation = (rotation + 3) % 4;
-            //TODO make a reverse rotate - test using EnumFacing.DOWN
-            rotate();
-            rotate();
-            rotate();
+            RotationHelper.INSTANCE.rotate(Settings.instance.schematic, EnumFacing.DOWN, true);
             updatePosition();
             break;
         case BUTTON_ROTATE_RIGHT:
             rotation = (rotation + 1) % 4;
-            rotate();
+            RotationHelper.INSTANCE.rotate(Settings.instance.schematic, EnumFacing.UP, true);
             updatePosition();
             break;
 
         default:
             Log.logger.warn("WindowBuildTool: Unhandled Button ID:" + button.getID());
-        }
-    }
-
-    private void rotate()
-    {
-        try
-        {
-            MineColonies.proxy.setActiveSchematic(RotationHelper.INSTANCE.rotate(MineColonies.proxy.getActiveSchematic(), EnumFacing.UP, true));
-        }
-        catch (RotationHelper.RotationException e)
-        {
-            Log.logger.debug(e);
         }
     }
 
@@ -363,19 +347,19 @@ public class WindowBuildTool extends Window implements Button.Handler
      */
     private void changeSchematic()
     {
-        if(MineColonies.isClient())
-        {
-            String hut;
-            String style;
+        String hut;
+        String style;
 
-            hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
-            style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+        hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
+        style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
-            SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, style + '/' + hut + '1');
-            MineColonies.proxy.setActiveSchematic(schematic.getSchematic());
+        rotation = 0;
 
-            Settings.instance.moveTo(pos);
-        }
+        SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, style + '/' + hut + '1');
+
+        Settings.instance.setActiveSchematic(schematic.getSchematic());
+
+        Settings.instance.moveTo(pos);
     }
 
     /**

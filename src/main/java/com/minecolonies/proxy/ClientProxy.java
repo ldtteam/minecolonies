@@ -88,33 +88,6 @@ public class ClientProxy extends CommonProxy
         window.open();
     }
 
-    //Schematica
-    @Override
-    public void setActiveSchematic(Schematic schematic)
-    {
-        this.schematic = schematic;
-
-        if(schematic != null)
-        {
-            final SchematicWorld world = new SchematicWorld(schematic);
-            Settings.instance.schematic = world;
-
-            RenderSchematic.INSTANCE.setWorldAndLoadRenderers(world);
-            world.isRendering = true;
-        }
-        else
-        {
-            Settings.instance.schematic = null;
-            RenderSchematic.INSTANCE.setWorldAndLoadRenderers(null);
-        }
-    }
-
-    @Override
-    public Schematic getActiveSchematic()
-    {
-        return this.schematic;
-    }
-
     @Override
     public void registerRenderer() {
     	super.registerRenderer();

@@ -1,6 +1,8 @@
 package com.schematica.client.util;
 
+import com.minecolonies.util.BlockPosUtil;
 import com.schematica.block.state.BlockStateHelper;
+import com.schematica.client.world.SchematicWorld;
 import com.schematica.core.util.BlockPosHelper;
 import com.schematica.reference.Reference;
 import com.schematica.world.storage.Schematic;
@@ -29,6 +31,55 @@ public class RotationHelper {
     private static final EnumFacing.Axis[][] AXISES = new EnumFacing.Axis[EnumFacing.Axis.values().length][];
     private static final BlockLog.EnumAxis[][] AXISES_LOG = new BlockLog.EnumAxis[EnumFacing.Axis.values().length][];
     private static final BlockQuartz.EnumType[][] AXISES_QUARTZ = new BlockQuartz.EnumType[EnumFacing.Axis.values().length][];
+
+    public boolean rotate(final SchematicWorld world, final EnumFacing axis, final boolean forced) {
+        if (world == null) {
+            return false;
+        }
+
+        try {
+            final Schematic schematicRotated = rotate(world.getSchematic(), axis, forced);
+
+            updatePosition(world, axis);
+
+            world.setSchematic(schematicRotated);
+
+            world.getTileEntities().forEach(world::initializeTileEntity);
+
+            return true;
+        } catch (final RotationException re) {
+            Reference.logger.error(re.getMessage());
+        } catch (final Exception e) {
+            Reference.logger.fatal("Something went wrong!", e);
+        }
+
+        return false;
+    }
+
+    private void updatePosition(final SchematicWorld world, final EnumFacing axis) {
+        switch (axis) {
+            case DOWN:
+            case UP: {
+                final int offset = (world.getWidth() - world.getLength()) / 2;
+                BlockPosUtil.set(world.position, world.position.add(offset, 0, -offset));
+                break;
+            }
+
+            case NORTH:
+            case SOUTH: {
+                final int offset = (world.getWidth() - world.getHeight()) / 2;
+                BlockPosUtil.set(world.position, world.position.add(offset, -offset, 0));
+                break;
+            }
+
+            case WEST:
+            case EAST: {
+                final int offset = (world.getHeight() - world.getLength()) / 2;
+                BlockPosUtil.set(world.position, world.position.add(0, offset, -offset));
+                break;
+            }
+        }
+    }
 
     public Schematic rotate(final Schematic schematic, final EnumFacing axis, final boolean forced) throws RotationException {
         final Vec3i dimensionsRotated = rotateDimensions(axis, schematic.getWidth(), schematic.getHeight(), schematic.getLength());

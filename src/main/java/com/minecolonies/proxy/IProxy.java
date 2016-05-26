@@ -56,23 +56,6 @@ public interface IProxy
      * @param pos     coordinates
      */
     void openBuildToolWindow(BlockPos pos);
-
-    //Schematica
-
-    /**
-     * Sets the active schematica.
-     * The current {@link Schematic} is given
-     *
-     * @param schematic     {@link Schematic}
-     */
-    void setActiveSchematic(Schematic schematic);
-
-    /**
-     * Returns the active schematica.
-     *
-     * @return          {@link Schematic}
-     */
-    Schematic getActiveSchematic();
     
     /**
      * Registers all block and item renderers.

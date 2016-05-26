@@ -1,9 +1,9 @@
 package com.schematica;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.util.BlockPosUtil;
 import com.schematica.client.renderer.RenderSchematic;
 import com.schematica.client.world.SchematicWorld;
+import com.schematica.world.storage.Schematic;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 
@@ -35,7 +35,6 @@ public class Settings {
     public void reset() {
         this.isRenderingGuide = false;
 
-        MineColonies.proxy.setActiveSchematic(null);
         schematic = null;
         RenderSchematic.INSTANCE.setWorldAndLoadRenderers(null);
 
@@ -52,7 +51,27 @@ public class Settings {
 
     public void moveTo(BlockPos pos)
     {
-        BlockPosUtil.set(offset, pos.subtract(MineColonies.proxy.getActiveSchematic().getOffset()));
+        BlockPosUtil.set(offset, pos.subtract(getActiveSchematic().getOffset()));
         BlockPosUtil.set(schematic.position, offset);
+    }
+
+    public void setActiveSchematic(Schematic schematic)
+    {
+        if(schematic != null)
+        {
+            this.schematic = new SchematicWorld(schematic);
+
+            RenderSchematic.INSTANCE.setWorldAndLoadRenderers(this.schematic);
+            this.schematic.isRendering = true;
+        }
+        else
+        {
+            reset();
+        }
+    }
+
+    public Schematic getActiveSchematic()
+    {
+        return this.schematic == null ? null : this.schematic.getSchematic();
     }
 }

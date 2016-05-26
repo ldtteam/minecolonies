@@ -102,18 +102,6 @@ public class CommonProxy implements IProxy
     @Override
     public void openBuildToolWindow(BlockPos pos) {}
 
-    //Schematica
-    @Override
-    public void setActiveSchematic(Schematic schematic)
-    {
-    }
-
-    @Override
-    public Schematic getActiveSchematic()
-    {
-        return null;
-    }
-
     /**
      * Used for entity IDs, starts at 0 & increments for each call
      */

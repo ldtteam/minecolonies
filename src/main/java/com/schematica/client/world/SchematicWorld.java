@@ -20,6 +20,8 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.List;
+
 public class SchematicWorld extends WorldClient {
     private static final WorldSettings WORLD_SETTINGS = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
 
@@ -162,7 +164,12 @@ public class SchematicWorld extends WorldClient {
         return this.schematic;
     }
 
-    private void initializeTileEntity(final TileEntity tileEntity) {
+    public List<TileEntity> getTileEntities()
+    {
+        return schematic.getTileEntities();
+    }
+
+    public void initializeTileEntity(final TileEntity tileEntity) {
         tileEntity.setWorldObj(this);
         tileEntity.getBlockType();
         try {
