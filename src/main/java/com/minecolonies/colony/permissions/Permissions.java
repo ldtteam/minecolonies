@@ -86,15 +86,40 @@ public class Permissions implements IPermissions
      */
     public static class Player
     {
+        private UUID id;
+        private String name;
+        private Rank rank;
+
         public Player(UUID id, String name, Rank rank)
         {
             this.id = id;
             this.name = name;
             this.rank = rank;
         }
-        public UUID id;
-        public String name;
-        public Rank rank;
+
+        /**
+         * @return The UUID of the player.
+         */
+        public UUID getID()
+        {
+            return id;
+        }
+
+        /**
+         * @return The player's current name.
+         */
+        public String getName()
+        {
+            return name;
+        }
+
+        /**
+         * @return The player's current rank.
+         */
+        public Rank getRank()
+        {
+            return rank;
+        }
     }
 
     private static final String TAG_OWNERS = "owners";

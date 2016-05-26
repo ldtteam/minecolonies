@@ -231,7 +231,7 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
     {
         users.clear();
         users.addAll(townHall.getColony().getPlayers().values());
-        Collections.sort(users, (o1, o2) -> o1.rank.compareTo(o2.rank));
+        Collections.sort(users, (player1, player2) -> player1.getRank().compareTo(player2.getRank()));
     }
 
     /**
@@ -286,9 +286,9 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
             public void updateElement(int index, Pane rowPane)
             {
                 Permissions.Player player = users.get(index);
-                String rank = player.rank.name();
+                String rank = player.getRank().name();
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.name);
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.getName());
                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
             }
         });
@@ -423,9 +423,9 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
         if (row >= 0 && row < users.size())
         {
             Permissions.Player user = users.get(row);
-            if (user.rank != Permissions.Rank.OWNER)
+            if (user.getRank() != Permissions.Rank.OWNER)
             {
-                MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.id));
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
             }
         }
     }
@@ -446,16 +446,16 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
 
             if (button.getID().equals(BUTTON_PROMOTE))
             {
-                newRank = Permissions.getPromotionRank(user.rank);
+                newRank = Permissions.getPromotionRank(user.getRank());
             }
             else
             {
-                newRank = Permissions.getDemotionRank(user.rank);
+                newRank = Permissions.getDemotionRank(user.getRank());
             }
 
-            if (newRank != user.rank)
+            if (newRank != user.getRank())
             {
-                MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townHall.getColony(), user.id, newRank));
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townHall.getColony(), user.getID(), newRank));
             }
         }
     }

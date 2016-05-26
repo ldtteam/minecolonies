@@ -129,13 +129,13 @@ public class PermissionsMessage
             switch (message.type)
             {
             case SET_PERMISSION:
-                colony.getPermissions().setPermission(message.rank, message.action);
+                colony.getPermissions().setPermission(message.rank, message.action);//TODO some more verification
                 break;
             case REMOVE_PERMISSION:
-                colony.getPermissions().removePermission(message.rank, message.action);
+                colony.getPermissions().removePermission(message.rank, message.action);//TODO some more verification
                 break;
             case TOGGLE_PERMISSION:
-                colony.getPermissions().togglePermission(message.rank, message.action);
+                colony.getPermissions().togglePermission(message.rank, message.action);//TODO some more verification
                 break;
             default:
                 Log.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
@@ -188,7 +188,7 @@ public class PermissionsMessage
 
             if (colony != null)
             {
-                colony.getPermissions().addPlayer(message.playerName, Permissions.Rank.NEUTRAL);
+                colony.getPermissions().addPlayer(message.playerName, Permissions.Rank.NEUTRAL);//TODO some more verification
             }
             else
             {
@@ -247,7 +247,7 @@ public class PermissionsMessage
 
             if (colony != null)
             {
-                colony.getPermissions().setPlayerRank(message.playerID, message.rank);
+                colony.getPermissions().setPlayerRank(message.playerID, message.rank);//TODO some more verification
             }
             else
             {
@@ -301,7 +301,7 @@ public class PermissionsMessage
 
             if (colony != null)
             {
-                colony.getPermissions().removePlayer(message.playerID);
+                colony.getPermissions().removePlayer(message.playerID);//TODO some more verification
             }
             else
             {

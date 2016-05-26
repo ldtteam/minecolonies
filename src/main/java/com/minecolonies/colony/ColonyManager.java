@@ -287,7 +287,7 @@ public class ColonyManager
         for (ColonyView c : colonyViews.values())
         {
             Permissions.Player p = c.getPlayers().get(owner);
-            if (p != null && p.rank.equals(Permissions.Rank.OWNER))
+            if (p != null && p.getRank().equals(Permissions.Rank.OWNER))
             {
                 results.add(c);
             }
