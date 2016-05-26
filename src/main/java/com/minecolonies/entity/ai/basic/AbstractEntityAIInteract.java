@@ -33,7 +33,6 @@ import static com.minecolonies.entity.ai.util.AIState.*;
  */
 public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEntityAICrafting<J>
 {
-    private static final int             DEFAULT_RANGE_FOR_DELAY = 3;
     private static final int             DELAY_RECHECK           = 10;
     private static final int             DELAY_MODIFIER          = 50;
     /**
@@ -65,12 +64,6 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      * Will be cleared on restart, be aware!
      */
     private              List<ItemStack> itemsNeeded             = new ArrayList<>();
-    private              BlockPos        currentWorkingLocation  = null;
-    /**
-     * The time in ticks until the next action is made
-     */
-    private              int             delay                   = 0;
-    private              BlockPos        currentStandingLocation = null;
     /**
      * If we have waited one delay
      */
@@ -87,23 +80,6 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     {
         super(job);
         super.registerTargets(
-                /**
-                 * Init safety checks and transition to IDLE
-                 */
-                new AITarget(INIT, this::initSafetyChecks),
-                /**
-                 * Update chestbelt and nametag
-                 * Will be executed every time
-                 * and does not stop execution
-                 */
-                new AITarget(this::updateVisualState),
-                /**
-                 * If waitingForSomething returns true
-                 * stop execution to wait for it.
-                 * this keeps the current state
-                 * (returning null would not stop execution)
-                 */
-                new AITarget(this::waitingForSomething, this::getState),
                 /**
                  * Check if any items are needed.
                  * If yes, transition to NEEDS_ITEM.
@@ -141,58 +117,6 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
     protected boolean wantInventoryDumped()
     {
         return false;
-    }
-
-    /**
-     * Check for null on important variables to prevent crashes.
-     *
-     * @return IDLE if all ready, else stay in INIT
-     */
-    private AIState initSafetyChecks()
-    {
-        //Something fatally wrong? Wait for re-init...
-        if (null == getOwnBuilding())
-        {
-            //TODO: perhaps destroy this task? will see...
-            return INIT;
-        }
-        return IDLE;
-    }
-
-    /**
-     * Can be overridden in implementations to return the exact building type.
-     *
-     * @return the building associated with this AI's worker.
-     */
-    protected BuildingWorker getOwnBuilding()
-    {
-        return worker.getWorkBuilding();
-    }
-
-    /**
-     * Updates the visual state of the worker.
-     * Updates render meta data.
-     * Updates the current state on the nametag.
-     *
-     * @return null to execute more targets.
-     */
-    private AIState updateVisualState()
-    {
-        //Update the current state the worker is in.
-        job.setNameTag(this.getState().toString());
-        //Update torch, seeds etc. in chestbelt etc.
-        updateRenderMetaData();
-        return null;
-    }
-
-    /**
-     * Can be overridden in implementations.
-     * <p>
-     * Here the AI can check if the chestBelt has to be re rendered and do it.
-     */
-    protected void updateRenderMetaData()
-    {
-        worker.setRenderMetadata("");
     }
 
     /**
@@ -639,44 +563,6 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
         itemsNeeded.clear();
         Collections.addAll(itemsNeeded, items);
         return true;
-    }
-
-    /**
-     * This method will return true if the AI is waiting for something.
-     * In that case, don't execute any more AI code, until it returns false.
-     * Call this exactly once per tick to get the delay right.
-     * The worker will move and animate correctly while he waits.
-     *
-     * @return true if we have to wait for something
-     * @see #currentStandingLocation @see #currentWorkingLocation
-     * @see #DEFAULT_RANGE_FOR_DELAY @see #delay
-     */
-    private boolean waitingForSomething()
-    {
-        if (delay > 0)
-        {
-            if (currentStandingLocation != null &&
-                !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
-            {
-                //Don't decrease delay as we are just walking...
-                return true;
-            }
-            worker.hitBlockWithToolInHand(currentWorkingLocation);
-            delay--;
-            return true;
-        }
-        clearWorkTarget();
-        return false;
-    }
-
-    /**
-     * Remove the current working block and it's delay.
-     */
-    protected final void clearWorkTarget()
-    {
-        this.currentStandingLocation = null;
-        this.currentWorkingLocation = null;
-        this.delay = 0;
     }
 
     /**

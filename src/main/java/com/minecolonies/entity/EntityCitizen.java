@@ -38,6 +38,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -257,6 +258,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return level;
     }
 
+    /**
+     * calculate this workers building.
+     * @return the building or null if none present.
+     */
+    @Nullable
     public BuildingWorker getWorkBuilding()
     {
         return (citizenData != null) ? citizenData.getWorkBuilding() : null;
