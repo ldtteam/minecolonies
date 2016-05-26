@@ -14,9 +14,6 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.ToggleJobMessage;
 import com.minecolonies.util.LanguageHandler;
-import com.mojang.authlib.GameProfile;
-
-import net.minecraft.server.MinecraftServer;
 
 import java.util.*;
 
@@ -288,14 +285,11 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-
                 Permissions.Player player = users.get(index);
                 String rank = player.rank.name();
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
-                GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getProfileByUUID(player.id);
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(gameprofile.getName());
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.name);
                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
-
             }
         });
 
@@ -315,12 +309,10 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-
                 CitizenData.View citizen = citizens.get(index);
 
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabel(citizen.getName());
                 //rowPane.findPaneOfTypeByID("job", Label.class).setLabel("" /* Not working yet */);
-
             }
         });
 

@@ -86,7 +86,6 @@ public class Permissions implements IPermissions
      */
     public static class Player
     {
-
         public Player(UUID id, String name, Rank rank)
         {
             this.id = id;
@@ -100,7 +99,6 @@ public class Permissions implements IPermissions
 
     private static final String TAG_OWNERS = "owners";
     private static final String TAG_ID = "id";
-    private static final String TAG_NAME = "name";
     private static final String TAG_RANK = "rank";
     private static final String TAG_PERMISSIONS = "permissions";
     private static final String TAG_FLAGS = "flags";
@@ -150,9 +148,11 @@ public class Permissions implements IPermissions
         {
             NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
             UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
-            String name = ownerCompound.getString(TAG_NAME);
             Rank rank = Rank.valueOf(ownerCompound.getString(TAG_RANK));
-            players.put(id, new Player(id, name, rank));
+
+            GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getProfileByUUID(id);
+
+            players.put(id, new Player(id, gameprofile.getName(), rank));
         }
 
         //Permissions
@@ -185,7 +185,6 @@ public class Permissions implements IPermissions
         {
             NBTTagCompound ownersCompound = new NBTTagCompound();
             ownersCompound.setString(TAG_ID, player.id.toString());
-            ownersCompound.setString(TAG_NAME, player.name);
             ownersCompound.setString(TAG_RANK, player.rank.name());
             ownerTagList.appendTag(ownersCompound);
         }
@@ -211,7 +210,6 @@ public class Permissions implements IPermissions
             permissionsTagList.appendTag(permissionsCompound);
         }
         compound.setTag(TAG_PERMISSIONS, permissionsTagList);
-
     }
 
 
