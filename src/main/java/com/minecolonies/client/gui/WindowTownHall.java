@@ -231,7 +231,7 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
     {
         users.clear();
         users.addAll(townHall.getColony().getPlayers().values());
-        Collections.sort(users, (o1, o2) -> o1.rank.compareTo(o2.rank));
+        Collections.sort(users, (player1, player2) -> player1.getRank().compareTo(player2.getRank()));
     }
 
     /**
@@ -285,13 +285,11 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-
                 Permissions.Player player = users.get(index);
-                String rank = player.rank.name();
+                String rank = player.getRank().name();
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.name);
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.getName());
                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
-
             }
         });
 
@@ -311,12 +309,10 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-
                 CitizenData.View citizen = citizens.get(index);
 
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabel(citizen.getName());
                 //rowPane.findPaneOfTypeByID("job", Label.class).setLabel("" /* Not working yet */);
-
             }
         });
 
@@ -427,16 +423,16 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
         if (row >= 0 && row < users.size())
         {
             Permissions.Player user = users.get(row);
-            if (user.rank != Permissions.Rank.OWNER)
+            if (user.getRank() != Permissions.Rank.OWNER)
             {
-                MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.id));
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
             }
         }
     }
 
 
     /**
-     * Action performed when popato button is clicked
+     * Action performed when promote or demote button is clicked
      *
      * @param button    Button that holds the  user clicked on
      */
@@ -446,20 +442,14 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
         if (row >= 0 && row < users.size())
         {
             Permissions.Player user = users.get(row);
-            Permissions.Rank   newRank;
 
             if (button.getID().equals(BUTTON_PROMOTE))
             {
-                newRank = Permissions.getPromotionRank(user.rank);
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.PROMOTE));
             }
             else
             {
-                newRank = Permissions.getDemotionRank(user.rank);
-            }
-
-            if (newRank != user.rank)
-            {
-                MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townHall.getColony(), user.id, newRank));
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
             }
         }
     }
