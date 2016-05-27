@@ -2,7 +2,7 @@ package com.minecolonies.entity.ai.util;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.Schematic;
+import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
@@ -24,7 +24,7 @@ public class Structure
     /**
      * The internal schematic loaded.
      */
-    private final Schematic schematic;
+    private final SchematicWrapper schematic;
     /**
      * the targetWorld to build the structure in.
      */
@@ -73,7 +73,7 @@ public class Structure
      * @param blockProgress     the progress we have made so far
      * @throws StructureException when there is an error loading the schematic file
      */
-    private static Schematic loadSchematic(World targetWorld, BlockPos buildingLocation, String schematicFileName, int rotation, Stage stageProgress, BlockPos blockProgress)
+    private static SchematicWrapper loadSchematic(World targetWorld, BlockPos buildingLocation, String schematicFileName, int rotation, Stage stageProgress, BlockPos blockProgress)
             throws StructureException
     {
         if (targetWorld == null || buildingLocation == null || schematicFileName == null)
@@ -81,11 +81,11 @@ public class Structure
             throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
                                                        targetWorld, buildingLocation, schematicFileName));
         }
-        Schematic tempSchematic = null;
+        SchematicWrapper tempSchematic = null;
         //failsafe for faulty schematic files
         try
         {
-            tempSchematic = new Schematic(targetWorld, schematicFileName);
+            tempSchematic = new SchematicWrapper(targetWorld, schematicFileName);
         }
         catch (IllegalStateException e)
         {
