@@ -59,7 +59,8 @@ public class Permissions implements IPermissions
         BREAK_HUTS(3),
         CAN_PROMOTE(4),
         CAN_DEMOTE(5),
-        SEND_MESSAGES(6);
+        SEND_MESSAGES(6),
+        EDIT_PERMISSIONS(7);
 
         //todo: grief control?
 
@@ -144,6 +145,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.CAN_PROMOTE);
         this.setPermission(Rank.OWNER, Action.CAN_DEMOTE);
         this.setPermission(Rank.OWNER, Action.SEND_MESSAGES);
+        this.setPermission(Rank.OWNER, Action.EDIT_PERMISSIONS);
         //Officer
         permissions.put(Rank.OFFICER, 0);
         this.setPermission(Rank.OFFICER, Action.ACCESS_HUTS);
@@ -407,7 +409,8 @@ public class Permissions implements IPermissions
     {
         GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(player);
 
-        return gameprofile != null && addPlayer(gameprofile, rank);
+        //Check if the player already exists so that their rank isn't overridden
+        return gameprofile != null && players.get(gameprofile.getId()) != null && addPlayer(gameprofile, rank);
 
     }
 
@@ -436,7 +439,8 @@ public class Permissions implements IPermissions
      */
     public boolean removePlayer(UUID id)
     {
-        if (players.remove(id) != null)
+        Player player = players.get(id);
+        if(player != null && player.getRank() != Rank.OWNER && players.remove(id) != null)
         {
             markDirty();
             return true;

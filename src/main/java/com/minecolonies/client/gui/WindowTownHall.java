@@ -432,7 +432,7 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
 
 
     /**
-     * Action performed when popato button is clicked
+     * Action performed when promote or demote button is clicked
      *
      * @param button    Button that holds the  user clicked on
      */
@@ -442,20 +442,14 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
         if (row >= 0 && row < users.size())
         {
             Permissions.Player user = users.get(row);
-            Permissions.Rank   newRank;
 
             if (button.getID().equals(BUTTON_PROMOTE))
             {
-                newRank = Permissions.getPromotionRank(user.getRank());
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.PROMOTE));
             }
             else
             {
-                newRank = Permissions.getDemotionRank(user.getRank());
-            }
-
-            if (newRank != user.getRank())
-            {
-                MineColonies.getNetwork().sendToServer(new PermissionsMessage.SetPlayerRank(townHall.getColony(), user.getID(), newRank));
+                MineColonies.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
             }
         }
     }
