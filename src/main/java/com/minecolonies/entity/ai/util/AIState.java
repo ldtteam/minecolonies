@@ -1,5 +1,7 @@
 package com.minecolonies.entity.ai.util;
 
+import static com.minecolonies.client.render.RenderBipedCitizen.Model.FARMER;
+
 /**
  * Basic state enclosing states all ai's use.
  * Please extend this class with the states your ai needs.
@@ -160,4 +162,27 @@ public enum AIState
      */
     BUILDER_COMPLETE_BUILD,
 
+    /*
+###FARMER###
+    */
+
+    /**
+     * Check if the fields need any work
+     */
+    FARMER_CHECK_FIELDS,
+
+    /**
+     * Hoe the field.
+     */
+    FARMER_HOE,
+
+    /**
+     * Plant the seeds
+     */
+    FARMER_PLANT,
+
+    /**
+     * Harvest the crops.
+     */
+    FARMER_HARVEST,
 }

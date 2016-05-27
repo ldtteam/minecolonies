@@ -840,9 +840,9 @@ public class Colony implements IColony
      *
      * @param pos Position where the field has been placed.
      */
-    public void addNewField(BlockPos pos)
+    public void addNewField(BlockPos pos, int width, int length)
     {
-        Field field = new Field(this, pos);
+        Field field = new Field(this, pos, width, length);
         addField(field);
         ColonyManager.markDirty();
     }

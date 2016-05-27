@@ -4,14 +4,19 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
@@ -20,7 +25,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockHutField extends Block
+public class BlockHutField extends Block implements ITileEntityProvider
 {
 
     private static final float HARDNESS   = 10F;
@@ -50,7 +55,6 @@ public class BlockHutField extends Block
         GameRegistry.registerBlock(this);
     }
 
-
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
@@ -68,9 +72,34 @@ public class BlockHutField extends Block
 
             if (colony != null)
             {
-                colony.addNewField(pos);
+                int width = calculateWidth(0,worldIn);
+                int length = calculateLength(0,worldIn);
+                colony.addNewField(pos,width,length);
             }
         }
+    }
+
+    /**
+     * Calculates recursively the length of the field until a certain point.
+     * @param start the start offset.
+     * @param world the world the field is in.
+     * @return the length.
+     */
+    private int calculateLength(int start, World world)
+    {
+        //IBlockState blockAtOffset =  world.getBlockState(location.down().north(start));
+        return 0;
+    }
+
+    /**
+     * Calculates recursively the width of the field until a certain point.
+     * @param start the start offset.
+     * @param world the world the field is in.
+     * @return the width.
+     */
+    private int calculateWidth(int start, World world)
+    {
+        return 0;
     }
 
     /**
@@ -117,6 +146,11 @@ public class BlockHutField extends Block
     @Override
     protected BlockState createBlockState() {
         return new BlockState(this, FACING);
+    }
+
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return new ScarecrowTileEntity();
     }
     // =======================================================================
     // ===================== END of Rendering & Meta-Data ====================

@@ -68,6 +68,7 @@ public class ClientProxy extends CommonProxy
     public void registerTileEntityRendering()
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityScarecrow.class, new TileEntityScarecrowRenderer());
     }
 
     @Override
