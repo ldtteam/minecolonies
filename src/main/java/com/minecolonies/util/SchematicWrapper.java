@@ -3,8 +3,9 @@ package com.minecolonies.util;
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
-import com.schematica.world.SchematicWorld;
+import com.schematica.client.util.RotationHelper;
 import com.schematica.world.schematic.SchematicFormat;
+import com.schematica.world.storage.Schematic;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockFlowerPot;
@@ -13,23 +14,19 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
@@ -44,25 +41,28 @@ import java.util.Objects;
  *
  * @author Colton
  */
-public final class Schematic
+public final class SchematicWrapper
 {
     /**
      * The minecraft world this schematic is displayed in.
      */
-    private World          world;
+    private World world;
+
     /**
      * The schematic world this schematic comes from.
      */
-    private SchematicWorld schematicWorld;
+    private Schematic schematicWorld;
+
     /**
      * The anchor position this schematic will be
      * placed on in the minecraft world.
      */
-    private BlockPos       position;
+    private BlockPos position;
+
     /**
      * The name this schematic has.
      */
-    private String         name;
+    private String name;
 
     /**
      * The position we use as our uninitialized value.
@@ -80,7 +80,7 @@ public final class Schematic
      * @param worldObj the world to load in
      * @param name     the schematics name
      */
-    public Schematic(World worldObj, String name)
+    public SchematicWrapper(World worldObj, String name)
     {
         this(worldObj, getResourceLocation(name), name);
     }
@@ -92,7 +92,7 @@ public final class Schematic
      * @param res      the resource location of this schematic
      * @param name     the schematics name
      */
-    private Schematic(World worldObj, ResourceLocation res, String name)
+    private SchematicWrapper(World worldObj, ResourceLocation res, String name)
     {
         this(worldObj, SchematicFormat.readFromStream(getStream(res)), name);
     }
@@ -104,7 +104,7 @@ public final class Schematic
      * @param schematicWorld the SchematicWorld it comes from
      * @param name           the name this schematic has
      */
-    private Schematic(World worldObj, SchematicWorld schematicWorld, String name)
+    private SchematicWrapper(World worldObj, Schematic schematicWorld, String name)
     {
         world = worldObj;
         this.schematicWorld = schematicWorld;
@@ -128,7 +128,7 @@ public final class Schematic
             else
             {
                 //todo: add more checks here
-                return Schematic.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
+                return SchematicWrapper.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
             }
         }
         catch(IOException e)
@@ -159,10 +159,10 @@ public final class Schematic
      */
     public static void loadAndPlaceSchematicWithRotation(World worldObj, String name, BlockPos pos, int rotations)
     {
-        Schematic schematic;
+        SchematicWrapper schematic;
         try
         {
-            schematic = new Schematic(worldObj, name);
+            schematic = new SchematicWrapper(worldObj, name);
         }
         catch(IllegalStateException e)
         {
@@ -259,7 +259,14 @@ public final class Schematic
      */
     private void rotate()
     {
-        schematicWorld.rotate();
+        try
+        {
+            schematicWorld = RotationHelper.rotate(schematicWorld, EnumFacing.UP, true);
+        }
+        catch (RotationHelper.RotationException e)
+        {
+            Log.logger.debug(e);
+        }
     }
 
     public static String saveSchematic(World world, BlockPos from, BlockPos to)
@@ -267,7 +274,7 @@ public final class Schematic
         if(world == null || from == null || to == null)
         { throw new NullPointerException("Invalid method call, contact a developer."); }
 
-        SchematicWorld schematic = scanSchematic(world, from, to, new ItemStack(Blocks.red_flower));
+        Schematic schematic = scanSchematic(world, from, to);
 
         String fileName = LanguageHandler.format("item.scepterSteel.scanFormat", schematic.getType(), System.currentTimeMillis());
         File file = new File(getScanDirectory(world), fileName);
@@ -305,7 +312,7 @@ public final class Schematic
         }
     }
 
-    private static SchematicWorld scanSchematic(World world, BlockPos from, BlockPos to, ItemStack icon)
+    private static Schematic scanSchematic(World world, BlockPos from, BlockPos to)
     {
         //todo: split up this method
         int minX = Math.min(from.getX(), to.getX());
@@ -318,13 +325,11 @@ public final class Schematic
         short height = (short) (Math.abs(maxY - minY) + 1);
         short length = (short) (Math.abs(maxZ - minZ) + 1);
 
-        short[][][] blocks = new short[width][height][length];
-        byte[][][] metadata = new byte[width][height][length];
-        List<TileEntity> tileEntities = new ArrayList<>();
-        TileEntity tileEntity;
-        NBTTagCompound tileEntityNBT;
+        BlockPos minPos = new BlockPos(minX, minY, minZ);
 
-        int xOffset = 0, yOffset = 0, zOffset = 0;
+        Schematic schematic = new Schematic(new ItemStack(Blocks.red_mushroom), width, height, length);
+
+        BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos(0, 0, 0);
 
         for(int x = minX; x <= maxX; x++)
         {
@@ -332,90 +337,54 @@ public final class Schematic
             {
                 for(int z = minZ; z <= maxZ; z++)
                 {
-                    BlockPos pos = new BlockPos(x, y, z);
-                    IBlockState blockState = world.getBlockState(pos);
-                    Block block = blockState.getBlock();
-                    blocks[x - minX][y - minY][z - minZ] = (short) GameData.getBlockRegistry().getId(block);
-                    metadata[x - minX][y - minY][z - minZ] = (byte) block.getMetaFromState(blockState);
+                    BlockPos worldPos = new BlockPos(x, y, z);
+                    BlockPos localPos = worldPos.subtract(minPos);
 
-                    if(block instanceof AbstractBlockHut)
+                    IBlockState blockState = world.getBlockState(worldPos);
+                    schematic.setBlockState(localPos, blockState);
+
+                    if (blockState.getBlock() instanceof AbstractBlockHut)
                     {
-                        if(xOffset == 0 && yOffset == 0 && zOffset == 0)
+                        if (BlockPosUtil.equals(offset, 0, 0, 0))
                         {
-                            xOffset = x - minX;
-                            yOffset = y - minY;
-                            zOffset = z - minZ;
+                            BlockPosUtil.set(offset, localPos);
                         }
                         else
                         {
+                            schematic.setBlockState(localPos, Blocks.air.getDefaultState());
                             Log.logger.warn("Scan contained multiple AbstractBlockHut's ignoring this one");
-                            blocks[x - minX][y - minY][z - minZ] = 0;
-                            metadata[x - minX][y - minY][z - minZ] = 0;
                         }
                     }
 
-                    tileEntity = world.getTileEntity(pos);
-                    if(tileEntity != null)//creates a new tileEntity and formats its data for saving
+                    TileEntity tileEntity = world.getTileEntity(worldPos);
+                    if (tileEntity != null)//creates a new tileEntity and formats its data for saving
                     {                     //a new tileEntity is needed to prevent changes to the real one
-                        tileEntityNBT = new NBTTagCompound();
+                        NBTTagCompound tileEntityNBT = new NBTTagCompound();
                         tileEntity.writeToNBT(tileEntityNBT);
 
                         tileEntity = TileEntity.createAndLoadEntity(tileEntityNBT);
-                        BlockPos tPos = tileEntity.getPos();
-                        tileEntity.setPos(new BlockPos(tPos.getX() - minX, tPos.getY() - minY, tPos.getZ() - minZ));
-                        tileEntities.add(tileEntity);
+                        tileEntity.setPos(tileEntity.getPos().subtract(minPos));
+                        schematic.setTileEntity(tileEntity.getPos(),tileEntity);
                     }
                 }
             }
         }
-        if(xOffset == 0 && yOffset == 0 && zOffset == 0)
+        if (BlockPosUtil.equals(offset, 0, 0, 0))
         {
-            xOffset = (width / 2);
-            zOffset = (length / 2);
+            offset.set(width/2, 0, length/2);
         }
+
+        schematic.setOffset(offset);
 
 
         AxisAlignedBB region = AxisAlignedBB.fromBounds(minX, minY, minZ, maxX, maxY, maxZ);
         List<EntityHanging> entityHangings = world.getEntitiesWithinAABB(EntityHanging.class, region);
         List<EntityMinecart> entityMinecarts = world.getEntitiesWithinAABB(EntityMinecart.class, region);
-        NBTTagList entityList = new NBTTagList();
 
-        entityHangings.stream().filter(entity -> entity != null).forEach(entity -> {
-            NBTTagCompound entityData = new NBTTagCompound();
+        entityHangings.stream().filter(entity -> entity != null).forEach(schematic::addEntity);
+        entityMinecarts.stream().filter(minecart -> minecart != null).forEach(schematic::addEntity);
 
-            entityData.setString("id", EntityList.getEntityString(entity));
-            entity.writeToNBT(entityData);
-
-            entityData.setTag("TileX", new NBTTagInt(entity.getHangingPosition().getX() - minX));
-            entityData.setTag("TileY", new NBTTagInt(entity.getHangingPosition().getY() - minY));
-            entityData.setTag("TileZ", new NBTTagInt(entity.getHangingPosition().getZ() - minZ));
-
-            entityList.appendTag(entityData);
-        });
-        entityMinecarts.stream().filter(minecart -> minecart != null).forEach(minecart -> {
-
-            NBTTagCompound entityData = new NBTTagCompound();
-
-            entityData.setString("id", EntityList.getEntityString(minecart));
-            minecart.writeToNBT(entityData);
-
-            NBTTagList pos = new NBTTagList();
-            pos.appendTag(new NBTTagDouble(minecart.posX - minX));
-            pos.appendTag(new NBTTagDouble(minecart.posY - minY));
-            pos.appendTag(new NBTTagDouble(minecart.posZ - minZ));
-            entityData.setTag("Pos", pos);
-
-            entityList.appendTag(entityData);
-        });
-
-        if(icon != null)
-        {
-            return new SchematicWorld(icon, blocks, metadata, tileEntities, entityList, width, height, length, xOffset, yOffset, zOffset);
-        }
-        else
-        {
-            return new SchematicWorld(new ItemStack(Blocks.red_mushroom), blocks, metadata, tileEntities, entityList, width, height, length, xOffset, yOffset, zOffset);
-        }
+        return schematic;
     }
 
     /**
@@ -516,7 +485,7 @@ public final class Schematic
 
     public BlockPos getOffset()
     {
-        return new BlockPos(schematicWorld.getOffsetX(), schematicWorld.getOffsetY(), schematicWorld.getOffsetZ());
+        return schematicWorld.getOffset();
     }
 
     public boolean findNextBlockToClear()
@@ -538,9 +507,13 @@ public final class Schematic
         return true;
     }
 
+    private boolean isAirBlock()
+    {
+        return schematicWorld.getBlockState(this.progressPos).getBlock() == Blocks.air;
+    }
+
     public boolean findNextBlockSolid()
     {
-
         int count = 0;
         do
         {
@@ -551,15 +524,14 @@ public final class Schematic
             }
 
         }
-        while((doesSchematicBlockEqualWorldBlock() || (getBlock() != null && !getBlock().getMaterial().isSolid() && !schematicWorld.isAirBlock(this.progressPos)))
-                && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((doesSchematicBlockEqualWorldBlock() || (getBlock() != null && !getBlock().getMaterial().isSolid() && !isAirBlock()))
+               && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
 
     public boolean findNextBlockNonSolid()
     {
-
         int count = 0;
         do
         {
@@ -570,8 +542,8 @@ public final class Schematic
             }
 
         }
-        while((doesSchematicBlockEqualWorldBlock() || (getBlock() != null && getBlock().getMaterial().isSolid() || schematicWorld.isAirBlock(this.progressPos)))
-                && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((doesSchematicBlockEqualWorldBlock() || (getBlock() != null && getBlock().getMaterial().isSolid() || isAirBlock()))
+               && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -635,9 +607,9 @@ public final class Schematic
         return this.schematicWorld.getTileEntity(this.progressPos);
     }
 
-    public BlockPos getBlockPosition(int baseX, int baseY, int baseZ)
+    public List<Entity> getEntities()
     {
-        return this.progressPos.add(baseX, baseY, baseZ);
+        return schematicWorld.getEntities();
     }
 
     public BlockPos getLocalPosition()
@@ -678,7 +650,7 @@ public final class Schematic
         //In some cases getItemFromBlock returns null. We then have to get the item the safer way.
         if(stack.getItem() == null)
         {
-            stack = new ItemStack(block.getItem(this.schematicWorld, this.getBlockPosition()));
+            stack = new ItemStack(block.getItem(this.world, this.getBlockPosition()));
         }
         return stack.getItem();
     }
@@ -713,16 +685,6 @@ public final class Schematic
         return name;
     }
 
-    public List<ItemStack> getMaterials()
-    {
-        return schematicWorld.getBlockList();
-    }
-
-    public void useMaterial(ItemStack stack)
-    {
-        schematicWorld.removeFromBlockList(stack);
-    }
-
     public int getHeight()
     {
         return schematicWorld.getHeight();
@@ -738,17 +700,12 @@ public final class Schematic
         return schematicWorld.getLength();
     }
 
-    public List<Entity> getEntities()
-    {
-        return schematicWorld.loadedEntityList;
-    }
-
     public void reset()
     {
         BlockPosUtil.set(this.progressPos, NULL_POS);
     }
 
-    public SchematicWorld getWorldForRender()
+    public Schematic getSchematic()
     {
         return schematicWorld;
     }

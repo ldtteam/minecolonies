@@ -184,7 +184,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         try
         {
-            job.setSchematic(new Schematic(world, name));
+            job.setSchematic(new SchematicWrapper(world, name));
         }
         catch(IllegalStateException e)
         {
@@ -599,7 +599,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if(stack.getItem() == null)
             {
-                stack = new ItemStack(block.getItem(job.getSchematic().getWorldForRender(), job.getSchematic().getPosition()));
+                stack = new ItemStack(block.getItem(world, job.getSchematic().getPosition()));
             }
 
             if(checkOrRequestItems(stack))
@@ -685,7 +685,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if(stack.getItem() == null)
         {
-            stack = new ItemStack(block.getItem(job.getSchematic().getWorldForRender(), job.getSchematic().getPosition()));
+            stack = new ItemStack(block.getItem(world, job.getSchematic().getPosition()));
         }
 
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());

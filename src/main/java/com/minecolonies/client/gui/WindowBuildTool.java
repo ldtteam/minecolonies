@@ -6,15 +6,17 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
-import com.minecolonies.util.Schematic;
+import com.minecolonies.util.SchematicWrapper;
 import com.schematica.Settings;
-import com.schematica.world.SchematicWorld;
+import com.schematica.client.renderer.RenderSchematic;
+import com.schematica.client.util.RotationHelper;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 
 import java.util.ArrayList;
@@ -73,9 +75,7 @@ public class WindowBuildTool extends Window implements Button.Handler
     private                 int             styleIndex                  = 0;
 
     //Position and rotation for the tool
-    private                 int             posX;
-    private                 int             posY;
-    private                 int             posZ;
+    private BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(0, 0, 0);
     private                 int             rotation                    = 0;
 
     /**
@@ -90,18 +90,14 @@ public class WindowBuildTool extends Window implements Button.Handler
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
-        if(MineColonies.proxy.getActiveSchematic() != null)
+        if(Settings.instance.getActiveSchematic() != null)
         {
-            posX = (int) Settings.instance.offset.x + MineColonies.proxy.getActiveSchematic().getOffsetX();
-            posY = (int) Settings.instance.offset.y + MineColonies.proxy.getActiveSchematic().getOffsetY();
-            posZ = (int) Settings.instance.offset.z + MineColonies.proxy.getActiveSchematic().getOffsetZ();
+            BlockPosUtil.set(this.pos, Settings.instance.offset.add(Settings.instance.getActiveSchematic().getOffset()));
             rotation = Settings.instance.rotation;
         }
         else
         {
-            posX = pos.getX();
-            posY = pos.getY();
-            posZ = pos.getZ();
+            BlockPosUtil.set(this.pos, pos);
         }
     }
 
@@ -134,7 +130,7 @@ public class WindowBuildTool extends Window implements Button.Handler
 
         if (!huts.isEmpty())
         {
-            if (MineColonies.proxy.getActiveSchematic() != null)
+            if (Settings.instance.getActiveSchematic() != null)
             {
                 hutDecIndex = Math.max(0, huts.indexOf(Settings.instance.hut));
                 styleIndex = Math.max(0, Schematics.getStylesForHut(huts.get(hutDecIndex)).indexOf(Settings.instance.style));
@@ -155,7 +151,7 @@ public class WindowBuildTool extends Window implements Button.Handler
 
 
             //Render stuff
-            if (MineColonies.proxy.getActiveSchematic() == null)
+            if (Settings.instance.getActiveSchematic() == null)
             {
                 changeSchematic();
             }
@@ -167,14 +163,14 @@ public class WindowBuildTool extends Window implements Button.Handler
             hut.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.nullHut"));
             hut.setEnabled(false);
 
-            MineColonies.proxy.setActiveSchematic(null);
+            Settings.instance.setActiveSchematic(null);
         }
     }
 
     @Override
     public void onClosed()
     {
-        if(MineColonies.proxy.getActiveSchematic() != null)
+        if(Settings.instance.getActiveSchematic() != null)
         {
             Settings.instance.rotation = rotation;
 
@@ -221,12 +217,12 @@ public class WindowBuildTool extends Window implements Button.Handler
 
         case BUTTON_CONFIRM:
             MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(huts.get(hutDecIndex),
-                    Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex), posX, posY, posZ, rotation));
-            MineColonies.proxy.setActiveSchematic(null);
+                    Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex), this.pos, rotation));
+            Settings.instance.setActiveSchematic(null);
             close();
             break;
         case BUTTON_CANCEL:
-            MineColonies.proxy.setActiveSchematic(null);
+            Settings.instance.setActiveSchematic(null);
             close();
             break;
         case BUTTON_LEFT:
@@ -236,25 +232,22 @@ public class WindowBuildTool extends Window implements Button.Handler
             moveArrow(button.getID());
             break;
         case BUTTON_UP:
-            posY++;
+            BlockPosUtil.set(pos, pos.up());
             updatePosition();
             break;
         case BUTTON_DOWN:
-            posY--;
+            BlockPosUtil.set(pos, pos.down());
             updatePosition();
             break;
 
         case BUTTON_ROTATE_LEFT:
             rotation = (rotation + 3) % 4;
-            //TODO make a reverse rotate
-            MineColonies.proxy.getActiveSchematic().rotate();
-            MineColonies.proxy.getActiveSchematic().rotate();
-            MineColonies.proxy.getActiveSchematic().rotate();
+            RotationHelper.rotate(Settings.instance.schematic, EnumFacing.DOWN, true);
             updatePosition();
             break;
         case BUTTON_ROTATE_RIGHT:
             rotation = (rotation + 1) % 4;
-            MineColonies.proxy.getActiveSchematic().rotate();
+            RotationHelper.rotate(Settings.instance.schematic, EnumFacing.UP, true);
             updatePosition();
             break;
 
@@ -278,16 +271,16 @@ public class WindowBuildTool extends Window implements Button.Handler
             switch (facing)
             {
             case 0:
-                posX++;
+                BlockPosUtil.set(pos, pos.east());
                 break;
             case 1:
-                posZ++;
+                BlockPosUtil.set(pos, pos.south());
                 break;
             case 2:
-                posX--;
+                BlockPosUtil.set(pos, pos.west());
                 break;
             case 3:
-                posZ--;
+                BlockPosUtil.set(pos, pos.north());
                 break;
             }
             break;
@@ -295,16 +288,16 @@ public class WindowBuildTool extends Window implements Button.Handler
             switch (facing)
             {
             case 0:
-                posX--;
+                BlockPosUtil.set(pos, pos.west());
                 break;
             case 1:
-                posZ--;
+                BlockPosUtil.set(pos, pos.north());
                 break;
             case 2:
-                posX++;
+                BlockPosUtil.set(pos, pos.east());
                 break;
             case 3:
-                posZ++;
+                BlockPosUtil.set(pos, pos.south());
                 break;
             }
             break;
@@ -312,16 +305,16 @@ public class WindowBuildTool extends Window implements Button.Handler
             switch (facing)
             {
             case 0:
-                posZ++;
+                BlockPosUtil.set(pos, pos.south());
                 break;
             case 1:
-                posX--;
+                BlockPosUtil.set(pos, pos.west());
                 break;
             case 2:
-                posZ--;
+                BlockPosUtil.set(pos, pos.north());
                 break;
             case 3:
-                posX++;
+                BlockPosUtil.set(pos, pos.east());
                 break;
                 default:
                     break;
@@ -331,16 +324,16 @@ public class WindowBuildTool extends Window implements Button.Handler
             switch (facing)
             {
             case 0:
-                posZ--;
+                BlockPosUtil.set(pos, pos.north());
                 break;
             case 1:
-                posX++;
+                BlockPosUtil.set(pos, pos.east());
                 break;
             case 2:
-                posZ++;
+                BlockPosUtil.set(pos, pos.south());
                 break;
             case 3:
-                posX--;
+                BlockPosUtil.set(pos, pos.west());
                 break;
             }
             break;
@@ -354,24 +347,19 @@ public class WindowBuildTool extends Window implements Button.Handler
      */
     private void changeSchematic()
     {
-        if(MineColonies.isClient())
-        {
-            String hut;
-            String style;
+        String hut;
+        String style;
 
-            hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
-            style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+        hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
+        style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
-            SchematicWorld schematic = new Schematic(this.mc.theWorld, style + '/' + hut + '1').getWorldForRender();
-            MineColonies.proxy.setActiveSchematic(schematic);
+        rotation = 0;
 
-            Settings.instance.renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
-            Settings.instance.createRendererSchematicChunk();
+        SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, style + '/' + hut + '1');
 
-            updatePosition();
+        Settings.instance.setActiveSchematic(schematic.getSchematic());
 
-            schematic.setRendering(true);
-        }
+        Settings.instance.moveTo(pos);
     }
 
     /**
@@ -379,6 +367,7 @@ public class WindowBuildTool extends Window implements Button.Handler
      */
     private void updatePosition()
     {
-        Settings.instance.moveTo(posX, posY, posZ);
+        Settings.instance.moveTo(pos);
+        RenderSchematic.INSTANCE.refresh();
     }
 }

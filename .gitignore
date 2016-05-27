@@ -22,3 +22,4 @@ Thumbs.db
 .settings/org.eclipse.jdt.core.prefs
 minecolonies_Client.launch
 minecolonies_Server.launch
+*.hprof
