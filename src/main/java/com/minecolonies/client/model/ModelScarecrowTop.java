@@ -4,7 +4,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 
-public class ModeScarecrowTop extends ModelBase {
+public class ModelScarecrowTop extends ModelBase {
     //fields
     private ModelRenderer Head;
     private ModelRenderer LeftArmPeg;
@@ -13,7 +13,7 @@ public class ModeScarecrowTop extends ModelBase {
     private ModelRenderer LeftArm;
     private ModelRenderer RightArm;
 
-    public ModeScarecrowTop()
+    public ModelScarecrowTop()
     {
         textureWidth = 128;
         textureHeight = 64;

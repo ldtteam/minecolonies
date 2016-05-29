@@ -30,7 +30,7 @@ public class BlockHutField extends Block implements ITileEntityProvider
 
     private static final float HARDNESS   = 10F;
     private static final float RESISTANCE = 10F;
-    private static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
+    public static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
 
     public BlockHutField()
     {
