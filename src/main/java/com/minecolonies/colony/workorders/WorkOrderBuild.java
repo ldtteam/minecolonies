@@ -20,12 +20,13 @@ public class WorkOrderBuild extends WorkOrder
     private static final String TAG_IS_CLEARED        = "cleared";
     private static final String TAG_SCHEMATIC_NAME    = "schematicName";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
-    protected BlockPos  buildingId;
-    private   int       buildingRotation;
-    private   String    schematicName;
-    private   int       upgradeLevel;
-    private   String    upgradeName;
-    private   boolean   cleared;
+
+    BlockPos buildingLocation;
+    int      buildingRotation;
+    String   schematicName;
+    private   int      upgradeLevel;
+    private   String   upgradeName;
+    boolean  cleared;
 
     /**
      * unused constructor for reflection
@@ -44,7 +45,7 @@ public class WorkOrderBuild extends WorkOrder
     public WorkOrderBuild(Building building, int level)
     {
         super();
-        this.buildingId = building.getID();
+        this.buildingLocation = building.getID();
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
         this.schematicName = building.getStyle() + '/' + this.getUpgradeName();
@@ -57,7 +58,7 @@ public class WorkOrderBuild extends WorkOrder
      *
      * @return Name after upgrade
      */
-    public String getUpgradeName()
+    private String getUpgradeName()
     {
         return upgradeName;
     }
@@ -75,15 +76,18 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * Save the Work Order to an NBTTagCompound
      *
-     * @param compound NBT tag compount
+     * @param compound NBT tag compound
      */
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingId);
-        compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
-        compound.setString(TAG_UPGRADE_NAME, upgradeName);
+        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingLocation);
+        if(!(this instanceof WorkOrderBuildDecoration))
+        {
+            compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
+            compound.setString(TAG_UPGRADE_NAME, upgradeName);
+        }
         compound.setBoolean(TAG_IS_CLEARED, cleared);
         compound.setString(TAG_SCHEMATIC_NAME, schematicName);
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
@@ -98,9 +102,12 @@ public class WorkOrderBuild extends WorkOrder
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        buildingId = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
-        upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
-        upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
+        if(!(this instanceof WorkOrderBuildDecoration))
+        {
+            upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
+            upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        }
         cleared = compound.getBoolean(TAG_IS_CLEARED);
         schematicName = compound.getString(TAG_SCHEMATIC_NAME);
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
@@ -115,7 +122,7 @@ public class WorkOrderBuild extends WorkOrder
     @Override
     public boolean isValid(Colony colony)
     {
-        return colony.getBuilding(buildingId) != null;
+        return colony.getBuilding(buildingLocation) != null;
     }
 
     /**
@@ -142,8 +149,8 @@ public class WorkOrderBuild extends WorkOrder
             //  - OR the WorkOrder is for the Builder's Work Building
             //  - OR the WorkOrder is for the TownHall
             if (citizen.getWorkBuilding().getBuildingLevel() > 0 ||
-                citizen.getWorkBuilding().getID().equals(buildingId) ||
-                (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingId)))
+                citizen.getWorkBuilding().getID().equals(buildingLocation) ||
+                (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingLocation)))
             {
                 job.setWorkOrder(this);
                 this.setClaimedBy(citizen);
@@ -157,13 +164,13 @@ public class WorkOrderBuild extends WorkOrder
      *
      * @return ID of the building
      */
-    public BlockPos getBuildingId()
+    public BlockPos getBuildingLocation()
     {
-        return buildingId;
+        return buildingLocation;
     }
 
     /**
-     * Get the name the schematic for this workorder.
+     * Get the name the schematic for this work order.
      *
      * @return the internal string for this schematic
      */
@@ -172,4 +179,23 @@ public class WorkOrderBuild extends WorkOrder
         return this.schematicName;
     }
 
+    /**
+     * Gets how many times this schematic should be rotated.
+     *
+     * @return building rotation
+     */
+    public int getRotation()
+    {
+        return buildingRotation;
+    }
+
+    public void setCleared(boolean cleared)
+    {
+        this.cleared = cleared;
+    }
+
+    public boolean isCleared()
+    {
+        return cleared;
+    }
 }

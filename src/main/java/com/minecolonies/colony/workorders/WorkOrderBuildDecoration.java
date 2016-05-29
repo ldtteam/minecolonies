@@ -1,5 +1,6 @@
 package com.minecolonies.colony.workorders;
 
+import com.minecolonies.colony.Colony;
 import net.minecraft.util.BlockPos;
 
 /**
@@ -7,9 +8,25 @@ import net.minecraft.util.BlockPos;
  */
 public class WorkOrderBuildDecoration extends WorkOrderBuild
 {
-    //TODO
-    public WorkOrderBuildDecoration(String decoration, String style, BlockPos location)
+    /**
+     * unused constructor for reflection
+     */
+    public WorkOrderBuildDecoration()
     {
+        super();
+    }
 
+    public WorkOrderBuildDecoration(String decoration, String style, int rotation, BlockPos location)
+    {
+        this.schematicName = style + '/' + decoration;
+        this.buildingRotation = rotation;
+        this.buildingLocation = location;
+        this.cleared = false;
+    }
+
+    @Override
+    public boolean isValid(Colony colony)
+    {
+        return true;
     }
 }

@@ -14,12 +14,10 @@ import java.util.stream.Collectors;
 
 public class WorkManager
 {
-    protected       final   Colony                  colony;
-    protected               Map<Integer, WorkOrder> workOrders                      = new HashMap<>();
-    protected               int                     topWorkOrderId                  = 0;
+    protected final Colony colony;
 
-//    protected final List<WorkOrder>      unclaimedOrders = new ArrayList<WorkOrder>();
-//    protected final List<WorkOrder>      claimedOrders   = new ArrayList<WorkOrder>();
+    private Map<Integer, WorkOrder> workOrders      = new HashMap<>();
+    private int                     topWorkOrderId = 0;
 
     private static  final   String                  TAG_WORK_ORDERS                 = "workOrders";
 
@@ -43,15 +41,6 @@ public class WorkManager
         }
 
         workOrders.put(order.getID(), order);
-
-//        if (order.isClaimed())
-//        {
-//            claimedOrders.add(order);
-//        }
-//        else
-//        {
-//            unclaimedOrders.add(order);
-//        }
     }
 
     /**
@@ -61,12 +50,7 @@ public class WorkManager
      */
     public void removeWorkOrder(int orderId)
     {
-        WorkOrder order = workOrders.remove(orderId);
-        if (order != null)
-        {
-//            claimedOrders.remove(order);
-//            unclaimedOrders.remove(order);
-        }
+        workOrders.remove(orderId);
     }
 
     /**
@@ -76,9 +60,7 @@ public class WorkManager
      */
     public void removeWorkOrder(WorkOrder order)
     {
-        workOrders.remove(order.getID());
-//        claimedOrders.remove(order);
-//        unclaimedOrders.remove(order);
+        removeWorkOrder(order.getID());
     }
 
     /**

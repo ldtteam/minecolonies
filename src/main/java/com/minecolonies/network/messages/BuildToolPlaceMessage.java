@@ -2,6 +2,7 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.Schematics;
 import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
@@ -92,6 +93,12 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         BlockPos pos = message.pos;
         if (message.isHut)
         {
+            if(Schematics.getStylesForHut(message.hutDec) == null)
+            {
+                Log.logger.error("No record of hut: " + message.hutDec);
+                return null;
+            }
+
             Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + message.hutDec);
 
             if (player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, pos))
@@ -117,10 +124,16 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         }
         else
         {
+            if(Schematics.getStylesForDecoration(message.hutDec) == null)
+            {
+                Log.logger.error("No record of decoration: " + message.hutDec);
+                return null;
+            }
+
             Colony colony = ColonyManager.getColony(world, pos);
             if(colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
             {
-                colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(message.hutDec, message.style, pos));
+                colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(message.hutDec, message.style, message.rotation, pos));
                 LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.workOrderAdded");
             }
         }

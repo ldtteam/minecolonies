@@ -452,9 +452,8 @@ public abstract class Building
     private void requestWorkOrder(int level)
     {
         for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
-
         {
-            if (o.getBuildingId().equals(getID()))
+            if (o.getBuildingLocation().equals(getID()))
             {
                 return;
             }
