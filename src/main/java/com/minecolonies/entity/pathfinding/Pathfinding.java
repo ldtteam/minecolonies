@@ -9,6 +9,9 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ConcurrentModificationException;
@@ -20,6 +23,8 @@ public class Pathfinding
     static private ThreadPoolExecutor executor;
     static private final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<>();
 
+    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
+
     static
     {
         executor = new ThreadPoolExecutor(1, Configurations.pathfindingMaxThreadCount, 10, TimeUnit.SECONDS, jobQueue);
@@ -30,7 +35,7 @@ public class Pathfinding
         return executor.submit(job);
     }
 
-    //todo may be clientSideOnly
+    @SideOnly(Side.CLIENT)
     public static void debugDrawNode(Node n, byte r, byte g, byte b)
     {
         GL11.glPushMatrix();
@@ -78,6 +83,8 @@ public class Pathfinding
             worldrenderer.pos((double) (i + 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
             tessellator.draw();
             GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glEnable(GL11.GL_BLEND);
+            Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
             GL11.glDepthMask(true);
             GL11.glTranslatef(0.0F, -5F, 0.0F);
             fontrenderer.drawString(s1, -fontrenderer.getStringWidth(s1) / 2, 0, 553648127);
@@ -160,6 +167,7 @@ public class Pathfinding
         GL11.glPopMatrix();
     }
 
+    @SideOnly(Side.CLIENT)
     public static void debugDraw(double frame)
     {
         if (PathJob.lastDebugNodesNotVisited == null)

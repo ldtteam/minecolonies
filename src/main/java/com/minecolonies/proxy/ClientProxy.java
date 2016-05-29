@@ -14,9 +14,11 @@ import com.minecolonies.event.ClientEventHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.schematica.client.events.TickHandler;
-import com.schematica.client.renderer.RendererSchematicGlobal;
-import com.schematica.world.SchematicWorld;
+import com.schematica.client.renderer.RenderSchematic;
+import com.schematica.handler.client.RenderTickHandler;
+import com.schematica.handler.client.TickHandler;
+import com.schematica.handler.client.WorldHandler;
+import com.schematica.world.storage.Schematic;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -28,8 +30,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy extends CommonProxy
 {
-    private RendererSchematicGlobal rendererSchematicGlobal;
-    private SchematicWorld          schematicWorld          = null;
+    private Schematic schematic = null;
 
     @Override
     public boolean isClient()
@@ -54,9 +55,10 @@ public class ClientProxy extends CommonProxy
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 
         //Schematica
-        MinecraftForge.EVENT_BUS.register(new TickHandler());
-        this.rendererSchematicGlobal = new RendererSchematicGlobal();
-        MinecraftForge.EVENT_BUS.register(this.rendererSchematicGlobal);
+        MinecraftForge.EVENT_BUS.register(RenderSchematic.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(RenderTickHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(TickHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(new WorldHandler());
     }
 
     @Override
@@ -88,19 +90,6 @@ public class ClientProxy extends CommonProxy
         window.open();
     }
 
-    //Schematica
-    @Override
-    public void setActiveSchematic(SchematicWorld world)
-    {
-        this.schematicWorld = world;
-    }
-
-    @Override
-    public SchematicWorld getActiveSchematic()
-    {
-        return this.schematicWorld;
-    }
-    
     @Override
     public void registerRenderer() {
     	super.registerRenderer();

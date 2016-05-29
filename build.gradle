@@ -103,6 +103,10 @@ task incrementBuildNumber() {
 jar {
     appendix = 'universal'
     archiveName = "minecolonies-universal-" + config.minecraft_version + "-" + project.version + ".jar"
+
+    manifest {
+        attributes 'FMLAT': "minecolonies_at.cfg"
+    }
 }
 
 apply plugin: 'idea'
