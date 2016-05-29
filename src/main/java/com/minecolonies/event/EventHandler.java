@@ -53,7 +53,7 @@ public class EventHandler
     }
 
     /**
-     * Event when a placker right clicks a block, or right clicks with an item
+     * Event when a player right clicks a block, or right clicks with an item
      * Event gets cancelled when player has no permission
      * Event gets cancelled when the player has no permission to place a hut, and tried it
      *
@@ -119,12 +119,10 @@ public class EventHandler
      * @param world  The world the player is in
      * @param player The player
      * @param block  The block type the player is placing
-     * @param x      The x coordinate of the block
-     * @param y      The y coordinate of the block
-     * @param z      The z coordinate of the block
+     * @param pos    The location of the block
      * @return       false to cancel the event
      */
-    public static boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, BlockPos pos)//TODO use permissions
+    public static boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, BlockPos pos)
     {
         //  Check if this Hut Block can be placed
         if (block instanceof BlockHutTownHall)
@@ -137,7 +135,7 @@ public class EventHandler
                 {
                     if (colony.hasTownHall())
                     {
-                        //  Placing in a colony which already has a town halfal
+                        //  Placing in a colony which already has a town hall
                         LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
                         return false;
                     }
@@ -178,12 +176,6 @@ public class EventHandler
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoTownHall");
                 return false;
             }
-//            else if (!colony.isCoordInColony(world, x, y, z))
-//            {
-//                //  Not close enough to colony
-//                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageTooFarFromTownHall");
-//                return false;
-//            }
             else if (!colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
             {
                 //  No permission to place hut in colony

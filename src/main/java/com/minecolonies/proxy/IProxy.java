@@ -18,11 +18,6 @@ public interface IProxy
     void registerTileEntities();
 
     /**
-     * Method to register Key Bindings in
-     */
-    void registerKeyBindings();
-
-    /**
      * Method to register events in
      */
     void registerEvents();

@@ -22,17 +22,17 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
 
-@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, certificateFingerprint = Constants.FINGERPRINT,
+@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
 		dependencies = Constants.FORGE_VERSION, acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
-    private static          SimpleNetworkWrapper network;
+    private static SimpleNetworkWrapper network;
 
     @Mod.Instance(Constants.MOD_ID)
-    public static           MineColonies         instance;
+    public static MineColonies instance;
 
     @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
-    public static           IProxy               proxy;
+    public static IProxy proxy;
 
     public static SimpleNetworkWrapper getNetwork()
     {
@@ -40,27 +40,9 @@ public class MineColonies
     }
 
     @Mod.EventHandler
-    public void invalidFingerprint(FMLFingerprintViolationEvent event)
-    {
-        if(Constants.FINGERPRINT.equals("@FINGERPRINT@"))
-        {
-            Log.logger.error("No Fingerprint. Might not be a valid version!");
-        }
-    }
-
-    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        //not needed, code already in init
-        //logger = event.getModLog();
-
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
-
-        ModBlocks.init();
-
-        ModItems.init();
-
-        proxy.registerKeyBindings();//Schematica
         
         proxy.registerEntities();
 
