@@ -8,22 +8,35 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStylesMessage, IMessage>
 {
     private Map<String, List<String>> hutStyleMap;
+    private Map<String, List<String>> decorationStyleMap;
 
     public ColonyStylesMessage(){}
 
     @Override
     public void toBytes(ByteBuf buf)
     {
-        Set<String> huts = Schematics.getHuts();
+        writeStyleMapToByteBuf(buf, Schematics.getHuts(), Schematics::getStylesForHut);
+        writeStyleMapToByteBuf(buf, Schematics.getDecorations(), Schematics::getStylesForDecoration);
+    }
 
-        buf.writeInt(huts.size());
-        for(String hut : huts)
+    @Override
+    public void fromBytes(ByteBuf buf)
+    {
+        hutStyleMap = readStyleMapFromByteBuf(buf);
+        decorationStyleMap = readStyleMapFromByteBuf(buf);
+    }
+
+    private void writeStyleMapToByteBuf(ByteBuf buf, Set<String> objects, Function<String, List<String>> getStyles)
+    {
+        buf.writeInt(objects.size());
+        for(String object : objects)
         {
-            List<String> styles = Schematics.getStylesForHut(hut);
+            List<String> styles = getStyles.apply(object);
 
             buf.writeInt(styles.size());
             for(String style : styles)
@@ -31,17 +44,16 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
                 ByteBufUtils.writeUTF8String(buf, style);
             }
 
-            ByteBufUtils.writeUTF8String(buf, hut);
+            ByteBufUtils.writeUTF8String(buf, object);
         }
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf)
+    private Map<String, List<String>> readStyleMapFromByteBuf(ByteBuf buf)
     {
-        hutStyleMap = new HashMap<>();
+        Map<String, List<String>> map = new HashMap<>();
 
-        int numHuts = buf.readInt();
-        for(int i = 0; i < numHuts; i++)
+        int count = buf.readInt();
+        for(int i = 0; i < count; i++)
         {
             List<String> styles = new ArrayList<>();
             int numStyles = buf.readInt();
@@ -50,8 +62,9 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
                 styles.add(ByteBufUtils.readUTF8String(buf));
             }
 
-            hutStyleMap.put(ByteBufUtils.readUTF8String(buf), styles);
+            map.put(ByteBufUtils.readUTF8String(buf), styles);
         }
+        return map;
     }
 
     /**
@@ -66,7 +79,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public IMessage onMessage(ColonyStylesMessage message, MessageContext ctx)
     {
-        Schematics.setStyles(message.hutStyleMap);
+        Schematics.setStyles(message.hutStyleMap, message.decorationStyleMap);
         return null;
     }
 }

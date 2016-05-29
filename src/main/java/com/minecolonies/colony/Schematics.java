@@ -22,22 +22,23 @@ import java.util.stream.Stream;
  */
 public class Schematics
 {
-    private static Map<String, List<String>> hutStyleMap = new HashMap<>();//Hut,Styles
+    private static Map<String, List<String>> hutStyleMap        = new HashMap<>();//Hut, Styles
+    private static Map<String, List<String>> decorationStyleMap = new HashMap<>();//Decoration, Style
 
     /**
-     * Calls {@link #loadHutStyleMap()}
+     * Calls {@link #loadStyleMaps()}
      */
     public static void init()
     {
-        loadHutStyleMap();
+        loadStyleMaps();
     }
 
     /**
      * Loads all styles saved in ["/assets/minecolonies/schematics/"]
-     * Puts these in {@link #hutStyleMap}, with key being the name of the hut (E.G. Lumberjack)
-     * and the value is a list of styles
+     * Puts these in {@link #hutStyleMap}, with key being the name of the hutDec (E.G. Lumberjack)
+     * and the value is a list of styles. Puts decorations in {@link #decorationStyleMap}.
      */
-    private static void loadHutStyleMap()
+    private static void loadStyleMaps()
     {
         try
         {
@@ -55,32 +56,44 @@ public class Schematics
             }
             try (Stream<Path> walk = Files.walk(basePath))
             {
-
                 Iterator<Path> it = walk.iterator();
 
                 while (it.hasNext())
                 {
                     Path path = it.next();
 
-                    if (path.toString().endsWith("1.schematic"))
+                    //Don't treat generic schematics as decorations or huts - ex: supply ship
+                    if(path.getParent().getFileName().toString().equals("schematics"))
                     {
-                        String hutpath = path.getFileName().toString();
-                        String hut     = hutpath.substring(0, hutpath.length() - 11);
-                        String style   = path.getParent().getFileName().toString();
+                        continue;
+                    }
 
-                        if (Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut) == null)
-                        {
-                            Log.logger.warn(String.format("Malformed schematic name: %s/%s ignoring file",
-                                                          style,
-                                                          hut));
-                            continue;
-                        }
+                    if (path.toString().endsWith(".schematic"))
+                    {
+                        String filename = path.getFileName().toString().split("\\.schematic")[0];
+                        String hut      = filename.split("\\d+")[0];
+                        String style    = path.getParent().getFileName().toString();
 
-                        if (!hutStyleMap.containsKey(hut))
+                        if (isSchematicHut(hut))
                         {
-                            hutStyleMap.put(hut, new ArrayList<>());
+                            if (!hutStyleMap.containsKey(hut))
+                            {
+                                hutStyleMap.put(hut, new ArrayList<>());
+                            }
+
+                            if(!hutStyleMap.get(hut).contains(style))
+                            {
+                                hutStyleMap.get(hut).add(style);
+                            }
                         }
-                        hutStyleMap.get(hut).add(style);
+                        else //style
+                        {
+                            if (!decorationStyleMap.containsKey(filename))
+                            {
+                                decorationStyleMap.put(filename, new ArrayList<>());
+                            }
+                            decorationStyleMap.get(filename).add(style);
+                        }
                     }
                 }
             }
@@ -90,6 +103,11 @@ public class Schematics
         {
             Log.logger.error("Error loading Schematic directory. Things will break!");
         }
+    }
+
+    private static boolean isSchematicHut(String name)
+    {
+        return Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + name) != null;
     }
 
     /**
@@ -104,7 +122,7 @@ public class Schematics
     }
 
     /**
-     * Returns a lst of styles for one specific hut
+     * Returns a lst of styles for one specific hutDec
      *
      * @param hut Hut to get styles for
      * @return List of styles
@@ -115,13 +133,37 @@ public class Schematics
     }
 
     /**
+     * Returns a set of decorations.
+     * This is the key set of {@link #decorationStyleMap}
+     *
+     * @return Set of decorations with a schematic
+     */
+    public static Set<String> getDecorations()
+    {
+        return decorationStyleMap.keySet();
+    }
+
+    /**
+     * Returns a lst of styles for one specific decoration
+     *
+     * @param decoration Decoration to get styles for
+     * @return List of styles
+     */
+    public static List<String> getStylesForDecoration(String decoration)
+    {
+        return decorationStyleMap.get(decoration);
+    }
+
+    /**
      * For use on client side by the ColonyStylesMessage
      *
-     * @param stylesMap new hutStyleMap
+     * @param hutStyleMap        new hutStyleMap
+     * @param decorationStyleMap new decorationStyleMap
      */
     @SideOnly(Side.CLIENT)
-    public static void setStyles(Map<String, List<String>> stylesMap)
+    public static void setStyles(Map<String, List<String>> hutStyleMap, Map<String, List<String>> decorationStyleMap)
     {
-        hutStyleMap = stylesMap;
+        Schematics.hutStyleMap = hutStyleMap;
+        Schematics.decorationStyleMap = decorationStyleMap;
     }
 }

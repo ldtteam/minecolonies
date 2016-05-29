@@ -10,6 +10,8 @@ import net.minecraft.util.MovingObjectPosition;
 public class Settings {
     public static final Settings instance = new Settings();
 
+    public boolean inHutMode = true;
+
     public SchematicWorld schematic = null;
 
     public final BlockPos.MutableBlockPos pointA = new BlockPos.MutableBlockPos();
@@ -22,7 +24,7 @@ public class Settings {
     public final BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos();
 
     public int rotation = 0;
-    public String hut = "";
+    public String hutDec = "";
     public String style = "";
 
     public boolean isRenderingGuide = false;
