@@ -183,8 +183,11 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
         {
             return (int) block.getBlockHardness(world, pos);
         }
-        return (int) ((DELAY_MODIFIER - worker.getLevel()) * block.getBlockHardness(world, pos)
-                      / (worker.getHeldItem().getItem().getDigSpeed(worker.getHeldItem(), block.getDefaultState())));
+        return (int) ((DELAY_MODIFIER - worker.getLevel())
+                      * (double) block.getBlockHardness(world, pos)
+                      / (double) (worker.getHeldItem().getItem()
+                                        .getDigSpeed(worker.getHeldItem(),
+                                                     block.getDefaultState())));
     }
 
     /**

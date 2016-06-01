@@ -146,7 +146,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(IDLE, START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(PREPARING, this::prepareForFishing),
                 new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),

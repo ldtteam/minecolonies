@@ -67,7 +67,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(IDLE, START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(PREPARING, this::prepareForMining),
                 new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder),

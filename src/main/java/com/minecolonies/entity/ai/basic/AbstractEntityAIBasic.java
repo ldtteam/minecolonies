@@ -123,8 +123,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-                new AITarget(() -> !itemsCurrentlyNeeded.isEmpty(),
-                             this::waitForNeededItems),
+                new AITarget(() -> !itemsCurrentlyNeeded.isEmpty(), this::waitForNeededItems),
                 /**
                  * Wait for different tools.
                  */
@@ -141,11 +140,24 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
                 /**
                  * Check if inventory has to be dumped.
                  */
-                new AITarget(() -> worker.isInventoryFull() || wantInventoryDumped(),
-                             () -> INVENTORY_FULL)
+                new AITarget(this::inventoryNeedsDump, INVENTORY_FULL)
                              );
     }
 
+    /**
+     * Check if we need to dump the workers inventory.
+     * <p>
+     * This will also ask the implementing ai
+     * if we need to dump on custom reasons.
+     * {@see wantInventoryDumped}
+     *
+     * @return true if we need to dump the inventory.
+     */
+    private boolean inventoryNeedsDump()
+    {
+        return worker.isInventoryFull()
+               || wantInventoryDumped();
+    }
 
     /**
      * Has to be overridden by classes to specify when to dump inventory.
@@ -168,7 +180,6 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
         //Something fatally wrong? Wait for re-init...
         if (null == getOwnBuilding())
         {
-            //TODO: perhaps destroy this task? will see...
             return INIT;
         }
         return IDLE;
@@ -399,7 +410,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
      */
     private void takeItemStackFromChest(final int slot)
     {
-        final @Nullable BuildingWorker ownBuilding = getOwnBuilding();
+        @Nullable final BuildingWorker ownBuilding = getOwnBuilding();
         if (ownBuilding == null)
         {
             return;

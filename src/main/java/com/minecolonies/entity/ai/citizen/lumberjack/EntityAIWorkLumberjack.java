@@ -149,7 +149,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(IDLE, START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(PREPARING, this::prepareForWoodcutting),
                 new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
