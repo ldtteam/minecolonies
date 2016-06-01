@@ -73,10 +73,29 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     /**
      * Tag's to save data to NBT
      */
-    private static final String TAG_COLONY_ID        = "colony";
-    private static final String TAG_CITIZEN          = "citizen";
-    private static final String TAG_HELD_ITEM_SLOT   = "HeldItemSlot";
-    private static final String TAG_STATUS           = "status";
+    private static final String TAG_COLONY_ID           = "colony";
+    private static final String TAG_CITIZEN             = "citizen";
+    private static final String TAG_HELD_ITEM_SLOT       = "HeldItemSlot";
+    private static final String TAG_STATUS               = "status";
+    /**
+     * The delta yaw value for looking at things.
+     */
+    private static final float  FACING_DELTA_YAW         = 10F;
+    /**
+     * The range in which we can hear a block break sound.
+     */
+    private static final double BLOCK_BREAK_SOUND_RANGE  = 16.0D;
+    /**
+     * Modifier to lower the sound of block breaks.
+     * <p>
+     * Decrease this to make sounds louder.
+     */
+    private static final double BLOCK_BREAK_SOUND_DAMPER = 8.0D;
+    /**
+     * The height of half a block.
+     */
+    private static final double HALF_BLOCK               = 0.5D;
+
 
     private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
     private String                   renderMetadata;
@@ -1080,7 +1099,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     public void hitBlockWithToolInHand(@Nullable BlockPos blockPos)
     {
-        if (blockPos == null){ return; }
+        if (blockPos == null)
+        {
+            return;
+        }
         hitBlockWithToolInHand(blockPos, false);
     }
 
@@ -1095,9 +1117,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     private void hitBlockWithToolInHand(@Nullable final BlockPos blockPos, final boolean breakBlock)
     {
-        if (blockPos == null){ return; }
+        if (blockPos == null)
+        {
+            return;
+        }
         //todo: this is not optimal but works
-        getLookHelper().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 10f, getVerticalFaceSpeed());
+        getLookHelper().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, getVerticalFaceSpeed());
 
         this.swingItem();
 
@@ -1108,11 +1133,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             {
                 MineColonies.getNetwork().sendToAllAround(
                         new BlockParticleEffectMessage(blockPos, worldObj.getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
-                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), 16.0D));
+                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
             }
-            worldObj.playSoundEffect((float) (blockPos.getX() + 0.5D),
-                                     (float) (blockPos.getY() + 0.5D),
-                                     (float) (blockPos.getZ() + 0.5D),
+            worldObj.playSoundEffect((float) (blockPos.getX() + HALF_BLOCK),
+                                     (float) (blockPos.getY() + HALF_BLOCK),
+                                     (float) (blockPos.getZ() + HALF_BLOCK),
                                      block.stepSound.getBreakSound(),
                                      block.stepSound.getVolume(),
                                      block.stepSound.getFrequency());
@@ -1122,16 +1147,20 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
         else
         {
-            if (!worldObj.isRemote)//TODO might remove this
+            //todo: might remove this
+            if (!worldObj.isRemote)
             {
                 MineColonies.getNetwork().sendToAllAround(
-                        new BlockParticleEffectMessage(blockPos, worldObj.getBlockState(blockPos), 1),//TODO correct side
-                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), 16.0D));
+                        //todo: correct side
+                        new BlockParticleEffectMessage(blockPos, worldObj.getBlockState(blockPos), 1),
+                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
             }
-            worldObj.playSoundEffect((float) (blockPos.getX() + 0.5D), (float) (blockPos.getY() + 0.5D), (float) (blockPos.getZ() + 0.5D), block.stepSound.getStepSound(),
-
-                                     (float) ((block.stepSound.getVolume() + 1.0D) / 8.0D),
-                                     (float) (block.stepSound.getFrequency() * 0.5D));
+            worldObj.playSoundEffect((float) (blockPos.getX() + HALF_BLOCK),
+                                     (float) (blockPos.getY() + HALF_BLOCK),
+                                     (float) (blockPos.getZ() + HALF_BLOCK),
+                                     block.stepSound.getStepSound(),
+                                     (float) ((block.stepSound.getVolume() + 1.0D) / BLOCK_BREAK_SOUND_DAMPER),
+                                     (float) (block.stepSound.getFrequency() * HALF_BLOCK));
         }
     }
 

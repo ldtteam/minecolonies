@@ -131,6 +131,16 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private int fishingSkill = worker.getLevel();
 
     /**
+     * How often should intelligence factor into the fisherman's skill modifier.
+     */
+    private static final int      INTELLIGENCE_MULTIPLIER       = 2;
+
+    /**
+     * How often should dexterity factor into the fisherman's skill modifier.
+     */
+    private static final int      DEXTERITY_MULTIPLIER           = 1;
+
+    /**
      * Connects the citizen with the fishingHook.
      */
     private EntityFishHook entityFishHook;
@@ -154,7 +164,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
                 new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
                 new AITarget(FISHERMAN_START_FISHING, this::doFishing)
                              );
-        worker.setSkillModifier(2 * worker.getCitizenData().getIntelligence() + worker.getCitizenData().getDexterity());
+        worker.setSkillModifier(
+                INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
+                + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
     }
 
     /**
