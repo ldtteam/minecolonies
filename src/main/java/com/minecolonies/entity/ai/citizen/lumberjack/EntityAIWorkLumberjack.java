@@ -14,6 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -595,7 +596,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @return true if the stack should remain in inventory
      */
     @Override
-    protected boolean neededForWorker(ItemStack stack)
+    protected boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return isStackAxe(stack) || isStackSapling(stack);
     }

@@ -38,6 +38,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -907,6 +908,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return InventoryUtils.isInventoryFull(getInventoryCitizen());
     }
 
+    /**
+     * Return this citizens inventory.
+     *
+     * @return the inventory this citizen has.
+     */
+    @NotNull
     public InventoryCitizen getInventoryCitizen()
     {
         return inventory;

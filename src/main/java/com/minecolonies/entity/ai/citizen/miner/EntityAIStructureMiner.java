@@ -20,6 +20,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -174,7 +176,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     @Override
-    protected boolean neededForWorker(ItemStack stack)
+    protected boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return Utils.isMiningTool(stack);
     }
@@ -186,6 +188,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      *
      * @return a list with items nice to have for the worker
      */
+    @NotNull
     @Override
     protected List<ItemStack> itemsNiceToHave()
     {
