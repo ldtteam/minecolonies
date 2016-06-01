@@ -1,9 +1,10 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.citizen.fisherman;
 
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
