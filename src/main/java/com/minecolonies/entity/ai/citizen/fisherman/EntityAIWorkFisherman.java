@@ -96,15 +96,15 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * The upper limit for the frequency of the played sounds
      */
-    private static final float FREQUENCY_UPPER_LIMIT_DIVIDER = 1.2F;
+    private static final double FREQUENCY_UPPER_LIMIT_DIVIDER = 1.2D;
     /**
      * The lower limit for the frequency of the played sounds
      */
-    private static final float FREQUENCY_LOWER_LIMIT_DIVIDER = 0.8F;
+    private static final double FREQUENCY_LOWER_LIMIT_DIVIDER = 0.8D;
     /**
      * The frequency should be around this value
      */
-    private static final float FREQUENCY_BOUND_VALUE = 0.4F;
+    private static final double FREQUENCY_BOUND_VALUE = 0.4D;
     /**
      * The number of executed adjusts of the fisherman's rotation.
      */
@@ -481,11 +481,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         if (!world.isRemote)
         {
             worker.faceBlock(job.getWater());
-            world.playSoundAtEntity(worker,
-                                    "random.bow",
-                                    VOLUME,
-                                    (float) (FREQUENCY_BOUND_VALUE / (itemRand.nextDouble() * (FREQUENCY_UPPER_LIMIT_DIVIDER - FREQUENCY_LOWER_LIMIT_DIVIDER)
-                                                                      + FREQUENCY_LOWER_LIMIT_DIVIDER)));
+            world.playSoundAtEntity(
+                    worker, "random.bow", VOLUME,
+                    (float) (FREQUENCY_BOUND_VALUE
+                             / (itemRand.nextDouble()
+                                * (FREQUENCY_UPPER_LIMIT_DIVIDER
+                                   - FREQUENCY_LOWER_LIMIT_DIVIDER)
+                                + FREQUENCY_LOWER_LIMIT_DIVIDER)));
             this.entityFishHook = new EntityFishHook(world, this.getCitizen());
             world.spawnEntityInWorld(this.entityFishHook);
         }
