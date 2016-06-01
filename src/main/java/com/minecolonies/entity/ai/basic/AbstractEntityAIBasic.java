@@ -36,17 +36,25 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
     private static final int DEFAULT_RANGE_FOR_DELAY = 3;
 
     /**
+     * The number of actions done before item dump.
+     */
+    private static final int ACTIONS_UNTIL_DUMP = 32;
+
+    /**
      * The block the ai is currently working at or wants to work.
      */
-    protected BlockPos        currentWorkingLocation  = null;
+    protected BlockPos currentWorkingLocation = null;
+
     /**
      * The block the ai is currently standing at or wants to stand.
      */
-    protected BlockPos        currentStandingLocation = null;
+    protected BlockPos currentStandingLocation = null;
+
     /**
      * The time in ticks until the next action is made
      */
-    private   int             delay                   = 0;
+    private int delay = 0;
+
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -56,7 +64,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
      * <p>
      * Will be cleared on restart, be aware!
      */
-    private   List<ItemStack> itemsCurrentlyNeeded    = new ArrayList<>();
+    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
 
     /**
      * The list of all items and their quantity that were requested by the worker.
@@ -65,32 +73,42 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
      * <p>
      * Will be cleared on restart, be aware!
      */
-    private List<ItemStack> itemsNeeded       = new ArrayList<>();
+    private List<ItemStack> itemsNeeded = new ArrayList<>();
+
     /**
      * This flag tells if we need a shovel, will be set on tool needs.
      */
-    private boolean         needsShovel       = false;
+    private boolean needsShovel = false;
+
     /**
      * This flag tells if we need an axe, will be set on tool needs.
      */
-    private boolean         needsAxe          = false;
+    private boolean needsAxe = false;
+
     /**
      * This flag tells if we need a hoe, will be set on tool needs.
      */
-    private boolean         needsHoe          = false;
+    private boolean needsHoe = false;
+
     /**
      * This flag tells if we need a pickaxe, will be set on tool needs.
      */
-    private boolean         needsPickaxe      = false;
+    private boolean needsPickaxe = false;
+
     /**
      * The minimum pickaxe level we need to fulfill the tool request.
      */
-    private int             needsPickaxeLevel = -1;
+    private int needsPickaxeLevel = -1;
+
     /**
      * If we have waited one delay
      */
-    private boolean         hasDelayed        = false;
+    private boolean hasDelayed = false;
 
+    /**
+     * A counter to dump the inventory after x actions.
+     */
+    private int actionsDone = 0;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -156,6 +174,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
     private boolean inventoryNeedsDump()
     {
         return worker.isInventoryFull()
+               || actionsDone >= getActionsDoneUntilDumping()
                || wantInventoryDumped();
     }
 
@@ -624,7 +643,9 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
             chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull");
         }
         //collect items that are nice to have if they are available
-        itemsNiceToHave().forEach(this::isInHut);
+        this.itemsNiceToHave().forEach(this::isInHut);
+        // we dumped the inventory, reset actions done
+        this.clearActionsDone();
         return IDLE;
     }
 
@@ -871,5 +892,41 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
     protected final void setDelay(final int timeout)
     {
         this.delay = timeout;
+    }
+
+    /**
+     * Tell the ai that you have done one more action.
+     * <p>
+     * if the actions exceed a certain number,
+     * the ai will dump it's inventory.
+     * <p>
+     * For example:
+     * <p>
+     * After x blocks, bring everything back.
+     */
+    protected final void incrementActionsDone()
+    {
+        actionsDone++;
+    }
+
+    /**
+     * Clear the amount of blocks mined.
+     * Call this when dumping into the chest.
+     */
+    private void clearActionsDone()
+    {
+        this.actionsDone = 0;
+    }
+
+    /**
+     * Calculates after how many actions the ai should dump it's inventory.
+     * <p>
+     * Override this to change the value.
+     *
+     * @return the number of actions done before item dump.
+     */
+    protected int getActionsDoneUntilDumping()
+    {
+        return ACTIONS_UNTIL_DUMP;
     }
 }

@@ -642,18 +642,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Called to check when the InventoryShouldBeDumped
-     * @return true if the conditions are met
+     * Calculates after how many actions the ai should dump it's inventory.
+     * <p>
+     * Override this to change the value.
+     *
+     * @return the number of actions done before item dump.
      */
     @Override
-    protected boolean wantInventoryDumped()
+    protected int getActionsDoneUntilDumping()
     {
-        if (getBlocksMined() > MAX_BLOCKS_MINED)
-        {
-            clearBlocksMined();
-            return true;
-        }
-        return false;
+        return MAX_BLOCKS_MINED;
     }
 
     /**

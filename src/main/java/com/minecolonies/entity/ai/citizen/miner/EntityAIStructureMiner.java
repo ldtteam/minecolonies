@@ -127,15 +127,17 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return walkToBlock(getOwnBuilding().ladderLocation);
     }
 
+    /**
+     * Calculates after how many actions the ai should dump it's inventory.
+     * <p>
+     * Override this to change the value.
+     *
+     * @return the number of actions done before item dump.
+     */
     @Override
-    protected boolean wantInventoryDumped()
+    protected int getActionsDoneUntilDumping()
     {
-        if (getBlocksMined() > MAX_BLOCKS_MINED)
-        {
-            clearBlocksMined();
-            return true;
-        }
-        return false;
+        return MAX_BLOCKS_MINED;
     }
 
     private AIState checkMineShaft()

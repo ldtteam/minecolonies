@@ -24,12 +24,15 @@ import java.util.List;
  */
 public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEntityAICrafting<J>
 {
-    private static final int    DELAY_MODIFIER = 50;
+    private static final int    DELAY_MODIFIER = 100;
     /**
      * The amount of xp the entity gains per block mined.
      */
     private static final double XP_PER_BLOCK   = 0.05;
-    private              int    blocksMined    = 0;
+    /**
+     * The percentage of time needed if we are one level higher.
+     */
+    private static final double LEVEL_MODIFIER = 0.95D;
 
 
     /**
@@ -107,7 +110,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
         }
 
         worker.addExperience(XP_PER_BLOCK);
-        blocksMined++;
+        this.incrementActionsDone();
         return true;
     }
 
@@ -161,32 +164,11 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
         {
             return (int) block.getBlockHardness(world, pos);
         }
-        return (int) ((DELAY_MODIFIER - worker.getLevel())
+        return (int) ((DELAY_MODIFIER * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
                       * (double) block.getBlockHardness(world, pos)
                       / (double) (worker.getHeldItem().getItem()
                                         .getDigSpeed(worker.getHeldItem(),
                                                      block.getDefaultState())));
-    }
-
-    /**
-     * Will return the number of blocks mined.
-     * Counting from the last time dumping inventory.
-     * Useful for calculating when to return to chest.
-     *
-     * @return the number of blocks mined
-     */
-    protected final int getBlocksMined()
-    {
-        return blocksMined;
-    }
-
-    /**
-     * Clear the amount of blocks mined.
-     * Call this when dumping into the chest.
-     */
-    protected final void clearBlocksMined()
-    {
-        this.blocksMined = 0;
     }
 
 }

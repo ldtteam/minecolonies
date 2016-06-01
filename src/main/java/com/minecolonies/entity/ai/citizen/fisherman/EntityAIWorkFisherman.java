@@ -92,7 +92,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * The volume in percent which shall be played for the entity sounds
      */
-    private static final float VOLUME = 0.5F;
+    private static final float  VOLUME                        = 0.5F;
     /**
      * The upper limit for the frequency of the played sounds
      */
@@ -104,15 +104,15 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * The frequency should be around this value
      */
-    private static final double FREQUENCY_BOUND_VALUE = 0.4D;
+    private static final double FREQUENCY_BOUND_VALUE         = 0.4D;
+    /**
+     * The percentage of times where the fisherman will check out a new pond.
+     */
+    private static final double CHANCE_NEW_POND               = 0.05D;
     /**
      * The number of executed adjusts of the fisherman's rotation.
      */
-    private int executedRotations = 0;
-    /**
-     * The number of fishes/stuff the fisherman caught.
-     */
-    private int fishesCaught = 0;
+    private              int    executedRotations             = 0;
 
     /**
      * The PathResult when the fisherman searches water.
@@ -144,7 +144,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * Connects the citizen with the fishingHook.
      */
     private EntityFishHook entityFishHook;
-    private Random itemRand = new Random();
+    private Random random = new Random();
 
     /**
      * Constructor for the Fisherman.
@@ -245,21 +245,16 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * After the fisherman has caught 10 fishes -> dump inventory.
+     * Calculates after how many actions the ai should dump it's inventory.
+     * <p>
+     * Override this to change the value.
      *
-     * @return true if the inventory should be dumped
+     * @return the number of actions done before item dump.
      */
     @Override
-    protected boolean wantInventoryDumped()
+    protected int getActionsDoneUntilDumping()
     {
-        if (fishesCaught > MAX_FISHES_IN_INV)
-        {
-            fishesCaught = 0;
-            job.setWater(null);
-
-            return true;
-        }
-        return false;
+        return MAX_FISHES_IN_INV;
     }
 
     /**
@@ -422,7 +417,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
             return getState();
         }
-        job.setWater(job.getPonds().get(itemRand.nextInt(job.getPonds().size())));
+        job.setWater(job.getPonds().get(random.nextInt(job.getPonds().size())));
 
         return FISHERMAN_CHECK_WATER;
     }
@@ -445,8 +440,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
         if (caughtFish())
         {
-            if (fishesCaught >= MAX_FISHES_IN_INV)
-            {
+            if(random.nextDouble() < CHANCE_NEW_POND){
                 job.setWater(null);
                 return FISHERMAN_SEARCHING_WATER;
             }
@@ -496,7 +490,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             world.playSoundAtEntity(
                     worker, "random.bow", VOLUME,
                     (float) (FREQUENCY_BOUND_VALUE
-                             / (itemRand.nextDouble()
+                             / (random.nextDouble()
                                 * (FREQUENCY_UPPER_LIMIT_DIVIDER
                                    - FREQUENCY_LOWER_LIMIT_DIVIDER)
                                 + FREQUENCY_LOWER_LIMIT_DIVIDER)));
@@ -530,7 +524,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         //+1 since the level may be 0
         setDelay(5);
-        double chance = itemRand.nextInt(FISHING_DELAY) / (double) (fishingSkill + 1);
+        double chance = random.nextInt(FISHING_DELAY) / (double) (fishingSkill + 1);
         return chance >= CHANCE;
     }
 
@@ -607,7 +601,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         worker.captureDrops = true;
         retrieveRod();
         fishingSkill = worker.getLevel();
-        fishesCaught++;
+        this.incrementActionsDone();
         return true;
     }
 
