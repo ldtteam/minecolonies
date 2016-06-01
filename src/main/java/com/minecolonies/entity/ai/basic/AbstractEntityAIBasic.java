@@ -97,7 +97,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
      *
      * @param job the job class
      */
-    protected AbstractEntityAIBasic(final J job)
+    protected AbstractEntityAIBasic(@NotNull final J job)
     {
         super(job);
         super.registerTargets(

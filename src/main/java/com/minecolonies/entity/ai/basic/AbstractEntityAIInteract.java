@@ -7,6 +7,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      *
      * @param job the job to fulfill
      */
-    public AbstractEntityAIInteract(J job)
+    public AbstractEntityAIInteract(@NotNull final J job)
     {
         super(job);
         super.registerTargets(
@@ -55,7 +56,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      * @param blockToMine the block that should be mined
      * @return true once we're done
      */
-    protected final boolean mineBlock(BlockPos blockToMine)
+    protected final boolean mineBlock(@NotNull final BlockPos blockToMine)
     {
         return mineBlock(blockToMine, new BlockPos((int) worker.posX, (int) worker.posY, (int) worker.posZ));
     }
@@ -71,21 +72,15 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      * @param safeStand   the block we want to stand on to do that
      * @return true once we're done
      */
-    protected final boolean mineBlock(BlockPos blockToMine, BlockPos safeStand)
+    protected final boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
-        //todo partially replace with methods in EntityCitizen
         Block curBlock = world.getBlockState(blockToMine).getBlock();
-        if (curBlock == null || curBlock.equals(Blocks.air))
+        if (curBlock == null
+            || curBlock.equals(Blocks.air)
+            || BlockUtils.shouldNeverBeMessedWith(curBlock))
         {
             //no need to mine block...
             return true;
-        }
-
-        if (BlockUtils.shouldNeverBeMessedWith(curBlock))
-        {
-            Log.logger.warn("Trying to mine block " + curBlock + " which is not allowed!");
-            //This will endlessly loop... If this warning comes up, check your blocks first...
-            return false;
         }
 
         if (checkMiningLocation(blockToMine, safeStand))
@@ -94,36 +89,23 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
             return false;
         }
 
-        ItemStack tool = worker.getHeldItem();
+        final ItemStack tool = worker.getHeldItem();
 
         //calculate fortune enchantment
         int fortune = Utils.getFortuneOf(tool);
 
-        if (tool != null)
-        {
-            //Reduce durability if not using hand
-            //todo: maybe merge with worker methods, have to find a clean way for this later
-            worker.damageItemInHand(1);
-        }
-
-        //if Tool breaks
-        if (tool != null && tool.stackSize < 1)
-        {
-            worker.setCurrentItemOrArmor(0, null);
-            worker.getInventoryCitizen().setInventorySlotContents(worker.getInventoryCitizen().getHeldItemSlot(), null);
-        }
-
-        Utils.blockBreakSoundAndEffect(world, blockToMine, curBlock,
-                                       curBlock.getMetaFromState(world.getBlockState(blockToMine)));
-
+        //get all item drops
         List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
+
+        //Break the block
+        worker.breakBlockWithToolInHand(blockToMine);
+
+        //add the drops to the citizen
         for (ItemStack item : items)
         {
             InventoryUtils.setStack(worker.getInventoryCitizen(), item);
         }
 
-
-        world.setBlockToAir(blockToMine);
         worker.addExperience(XP_PER_BLOCK);
         blocksMined++;
         return true;
@@ -135,7 +117,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      * @param blockToMine the block to mine eventually
      * @param safeStand   a safe stand to mine from (AIR Block!)
      */
-    private boolean checkMiningLocation(BlockPos blockToMine, BlockPos safeStand)
+    private boolean checkMiningLocation(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
         Block curBlock = world.getBlockState(blockToMine).getBlock();
 
@@ -147,16 +129,12 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
 
         ItemStack tool = worker.getHeldItem();
 
-        if (curBlock.getHarvestLevel(curBlock.getDefaultState()) < Utils.getMiningLevel(tool, curBlock.getHarvestTool(curBlock.getDefaultState())))
-        {
-            //We have to high of a tool...
-            //TODO: request lower tier tools
-        }
-
         if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.bedrock)
         {
-            Log.logger.info("ForgeHook not in sync with EfficientTool for " + curBlock + " and " + tool + "\n"
-                            + "Please report to MineColonies with this text to add support!");
+            Log.logger.info(String.format(
+                    "ForgeHook not in sync with EfficientTool for %s and %s\n"
+                    + "Please report to MineColonies with this text to add support!",
+                    curBlock, tool));
         }
 
         if (walkToBlock(safeStand))
@@ -177,7 +155,7 @@ public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEn
      * @param pos   coordinate
      * @return the delay in ticks
      */
-    private int getBlockMiningDelay(Block block, BlockPos pos)
+    private int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         if (worker.getHeldItem() == null)
         {
