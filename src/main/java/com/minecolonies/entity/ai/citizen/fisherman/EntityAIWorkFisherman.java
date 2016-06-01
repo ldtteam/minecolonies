@@ -80,15 +80,15 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * The maximum amount of adjusts of his rotation until the fisherman discards a fishing location.
      */
-    private static final int MAX_ROTATIONS = 6;
+    private static final int    MAX_ROTATIONS                 = 6;
     /**
      * The tool used by the fisherman.
      */
-    private static final String TOOL_TYPE_ROD = "rod";
+    private static final String TOOL_TYPE_ROD                 = "rod";
     /**
      * The range in which the fisherman searches water.
      */
-    private static final int SEARCH_RANGE = 50;
+    private static final int    SEARCH_RANGE                  = 50;
     /**
      * The volume in percent which shall be played for the entity sounds
      */
@@ -110,36 +110,30 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private static final double CHANCE_NEW_POND               = 0.05D;
     /**
+     * How often should intelligence factor into the fisherman's skill modifier.
+     */
+    private static final int INTELLIGENCE_MULTIPLIER = 2;
+    /**
+     * How often should dexterity factor into the fisherman's skill modifier.
+     */
+    private static final int DEXTERITY_MULTIPLIER = 1;
+    /**
      * The number of executed adjusts of the fisherman's rotation.
      */
     private              int    executedRotations             = 0;
-
     /**
      * The PathResult when the fisherman searches water.
      */
     private PathJobFindWater.WaterPathResult pathResult;
-
     /**
      * The Previous PathResult when the fisherman already found water.
      */
     private PathJobFindWater.WaterPathResult lastPathResult;
-
     /**
      * The fishingSkill which directly influences the fisherman's chance to throw his rod.
      * May in the future also influence his luck/charisma.
      */
     private int fishingSkill = worker.getLevel();
-
-    /**
-     * How often should intelligence factor into the fisherman's skill modifier.
-     */
-    private static final int      INTELLIGENCE_MULTIPLIER       = 2;
-
-    /**
-     * How often should dexterity factor into the fisherman's skill modifier.
-     */
-    private static final int      DEXTERITY_MULTIPLIER           = 1;
-
     /**
      * Connects the citizen with the fishingHook.
      */
@@ -440,7 +434,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
         if (caughtFish())
         {
-            if(random.nextDouble() < CHANCE_NEW_POND){
+            if (random.nextDouble() < CHANCE_NEW_POND)
+            {
                 job.setWater(null);
                 return FISHERMAN_SEARCHING_WATER;
             }
