@@ -38,6 +38,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -71,10 +73,29 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     /**
      * Tag's to save data to NBT
      */
-    private static final String TAG_COLONY_ID        = "colony";
-    private static final String TAG_CITIZEN          = "citizen";
-    private static final String TAG_HELD_ITEM_SLOT   = "HeldItemSlot";
-    private static final String TAG_STATUS           = "status";
+    private static final String TAG_COLONY_ID           = "colony";
+    private static final String TAG_CITIZEN             = "citizen";
+    private static final String TAG_HELD_ITEM_SLOT       = "HeldItemSlot";
+    private static final String TAG_STATUS               = "status";
+    /**
+     * The delta yaw value for looking at things.
+     */
+    private static final float  FACING_DELTA_YAW         = 10F;
+    /**
+     * The range in which we can hear a block break sound.
+     */
+    private static final double BLOCK_BREAK_SOUND_RANGE  = 16.0D;
+    /**
+     * Modifier to lower the sound of block breaks.
+     * <p>
+     * Decrease this to make sounds louder.
+     */
+    private static final double BLOCK_BREAK_SOUND_DAMPER = 8.0D;
+    /**
+     * The height of half a block.
+     */
+    private static final double HALF_BLOCK               = 0.5D;
+
 
     private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
     private String                   renderMetadata;
@@ -257,6 +278,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return level;
     }
 
+    /**
+     * calculate this workers building.
+     * @return the building or null if none present.
+     */
+    @Nullable
     public BuildingWorker getWorkBuilding()
     {
         return (citizenData != null) ? citizenData.getWorkBuilding() : null;
@@ -901,6 +927,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return InventoryUtils.isInventoryFull(getInventoryCitizen());
     }
 
+    /**
+     * Return this citizens inventory.
+     *
+     * @return the inventory this citizen has.
+     */
+    @NotNull
     public InventoryCitizen getInventoryCitizen()
     {
         return inventory;
@@ -1058,64 +1090,86 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         setCurrentItemOrArmor(0, inventory.getStackInSlot(slot));
     }
 
-    public void hitBlockWithToolInHand(BlockPos block)
+    /**
+     * Swing entity arm, create sound and particle effects.
+     *
+     * Will not break the block.
+     *
+     * @param blockPos Block position
+     */
+    public void hitBlockWithToolInHand(@Nullable BlockPos blockPos)
     {
-        if (block == null){ return; }
-        hitBlockWithToolInHand(block, false);
+        if (blockPos == null)
+        {
+            return;
+        }
+        hitBlockWithToolInHand(blockPos, false);
     }
 
     /**
-     * Swing entity arm, create sound and particle effects. if breakBlock is true then it will break the block (different sound and particles),
+     * Swing entity arm, create sound and particle effects.
+     * <p>
+     * If breakBlock is true then it will break the block (different sound and particles),
      * and damage the tool in the citizens hand.
      *
-     * @param pos Block position
+     * @param blockPos   Block position
+     * @param breakBlock if we want to break this block
      */
-    private void hitBlockWithToolInHand(BlockPos pos, boolean breakBlock)
+    private void hitBlockWithToolInHand(@Nullable final BlockPos blockPos, final boolean breakBlock)
     {
+        if (blockPos == null)
+        {
+            return;
+        }
         //todo: this is not optimal but works
-        getLookHelper().setLookPosition(pos.getX(), pos.getY(), pos.getZ(), 10f, getVerticalFaceSpeed());
+        getLookHelper().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, getVerticalFaceSpeed());
 
         this.swingItem();
 
-        Block block = worldObj.getBlockState(pos).getBlock();
+        Block block = worldObj.getBlockState(blockPos).getBlock();
         if (breakBlock)
         {
             if (!worldObj.isRemote)
             {
                 MineColonies.getNetwork().sendToAllAround(
-                        new BlockParticleEffectMessage(pos, worldObj.getBlockState(pos), BlockParticleEffectMessage.BREAK_BLOCK),
-                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), pos.getX(), pos.getY(), pos.getZ(), 16.0D));
+                        new BlockParticleEffectMessage(blockPos, worldObj.getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
+                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
             }
-            worldObj.playSoundEffect((float) (pos.getX() + 0.5D),
-                                     (float) (pos.getY() + 0.5D),
-                                     (float) (pos.getZ() + 0.5D),
+            worldObj.playSoundEffect((float) (blockPos.getX() + HALF_BLOCK),
+                                     (float) (blockPos.getY() + HALF_BLOCK),
+                                     (float) (blockPos.getZ() + HALF_BLOCK),
                                      block.stepSound.getBreakSound(),
                                      block.stepSound.getVolume(),
                                      block.stepSound.getFrequency());
-            worldObj.setBlockToAir(pos);
+            worldObj.setBlockToAir(blockPos);
 
             damageItemInHand(1);
         }
         else
         {
-            if (!worldObj.isRemote)//TODO might remove this
+            //todo: might remove this
+            if (!worldObj.isRemote)
             {
                 MineColonies.getNetwork().sendToAllAround(
-                        new BlockParticleEffectMessage(pos, worldObj.getBlockState(pos), 1),//TODO correct side
-                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), pos.getX(), pos.getY(), pos.getZ(), 16.0D));
+                        //todo: correct side
+                        new BlockParticleEffectMessage(blockPos, worldObj.getBlockState(blockPos), 1),
+                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
             }
-            worldObj.playSoundEffect((float) (pos.getX() + 0.5D), (float) (pos.getY() + 0.5D), (float) (pos.getZ() + 0.5D), block.stepSound.getStepSound(),
-
-                                     (float) ((block.stepSound.getVolume() + 1.0D) / 8.0D),
-                                     (float) (block.stepSound.getFrequency() * 0.5D));
+            worldObj.playSoundEffect((float) (blockPos.getX() + HALF_BLOCK),
+                                     (float) (blockPos.getY() + HALF_BLOCK),
+                                     (float) (blockPos.getZ() + HALF_BLOCK),
+                                     block.stepSound.getStepSound(),
+                                     (float) ((block.stepSound.getVolume() + 1.0D) / BLOCK_BREAK_SOUND_DAMPER),
+                                     (float) (block.stepSound.getFrequency() * HALF_BLOCK));
         }
     }
 
     /**
-     * Damage the current held item
+     * Damage the current held item.
+     *
      * @param damage amount of damage
      */
-    public void damageItemInHand(int damage)
+    public void damageItemInHand(final int damage)
     {
         final ItemStack heldItem = getInventoryCitizen().getHeldItem();
         //If we hit with bare hands, ignore
@@ -1128,20 +1182,26 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         //check if tool breaks
         if (heldItem.stackSize < 1)
         {
-            this.setCurrentItemOrArmor(0, null);
             getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), null);
+            this.setCurrentItemOrArmor(0, null);
         }
     }
 
-    public void hitBlockWithToolInHand(int x, int y, int z) // TODO: why do we need here a boolean and for what is this boolean?
+    /**
+     * Swing entity arm, create sound and particle effects.
+     * <p>
+     * This will break the block (different sound and particles),
+     * and damage the tool in the citizens hand.
+     *
+     * @param blockPos   Block position
+     */
+    public void breakBlockWithToolInHand(@Nullable final BlockPos blockPos)
     {
-        hitBlockWithToolInHand(new BlockPos(x,y,z), false);
-    }
-
-    public void breakBlockWithToolInHand(BlockPos pos)
-    {
-        if (pos == null){ return; }
-        hitBlockWithToolInHand(pos, true);
+        if (blockPos == null)
+        {
+            return;
+        }
+        hitBlockWithToolInHand(blockPos, true);
     }
 
     public void sendLocalizedChat(String key, Object... args)

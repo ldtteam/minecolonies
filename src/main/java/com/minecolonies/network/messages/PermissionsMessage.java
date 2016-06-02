@@ -155,8 +155,8 @@ public class PermissionsMessage
      */
     public static class AddPlayer implements IMessage, IMessageHandler<AddPlayer, IMessage>
     {
-        int colonyID;
-        String playerName;
+        private int    colonyID;
+        private String playerName;
 
         public AddPlayer() {}
 
@@ -209,9 +209,9 @@ public class PermissionsMessage
      */
     public static class ChangePlayerRank implements IMessage, IMessageHandler<ChangePlayerRank, IMessage>
     {
-        int colonyID;
-        UUID playerID;
-        Type type;
+        private int  colonyID;
+        private UUID playerID;
+        private Type type;
 
         public enum Type
         {
@@ -280,8 +280,8 @@ public class PermissionsMessage
      */
     public static class RemovePlayer implements IMessage, IMessageHandler<RemovePlayer, IMessage>
     {
-        int colonyID;
-        UUID playerID;
+        private int  colonyID;
+        private UUID playerID;
 
         public RemovePlayer() {}
 
