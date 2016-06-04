@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai;
+package com.minecolonies.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
@@ -14,6 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,7 +149,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(IDLE, START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(PREPARING, this::prepareForWoodcutting),
                 new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
@@ -595,7 +596,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @return true if the stack should remain in inventory
      */
     @Override
-    protected boolean neededForWorker(ItemStack stack)
+    protected boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return isStackAxe(stack) || isStackSapling(stack);
     }
@@ -641,18 +642,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Called to check when the InventoryShouldBeDumped
-     * @return true if the conditions are met
+     * Calculates after how many actions the ai should dump it's inventory.
+     * <p>
+     * Override this to change the value.
+     *
+     * @return the number of actions done before item dump.
      */
     @Override
-    protected boolean wantInventoryDumped()
+    protected int getActionsDoneUntilDumping()
     {
-        if (getBlocksMined() > MAX_BLOCKS_MINED)
-        {
-            clearBlocksMined();
-            return true;
-        }
-        return false;
+        return MAX_BLOCKS_MINED;
     }
 
     /**

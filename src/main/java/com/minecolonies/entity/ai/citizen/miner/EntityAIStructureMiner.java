@@ -20,6 +20,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -65,7 +67,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(IDLE, START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(PREPARING, this::prepareForMining),
                 new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder),
@@ -125,15 +127,17 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return walkToBlock(getOwnBuilding().ladderLocation);
     }
 
+    /**
+     * Calculates after how many actions the ai should dump it's inventory.
+     * <p>
+     * Override this to change the value.
+     *
+     * @return the number of actions done before item dump.
+     */
     @Override
-    protected boolean wantInventoryDumped()
+    protected int getActionsDoneUntilDumping()
     {
-        if (getBlocksMined() > MAX_BLOCKS_MINED)
-        {
-            clearBlocksMined();
-            return true;
-        }
-        return false;
+        return MAX_BLOCKS_MINED;
     }
 
     private AIState checkMineShaft()
@@ -174,7 +178,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     @Override
-    protected boolean neededForWorker(ItemStack stack)
+    protected boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return Utils.isMiningTool(stack);
     }
@@ -186,6 +190,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      *
      * @return a list with items nice to have for the worker
      */
+    @NotNull
     @Override
     protected List<ItemStack> itemsNiceToHave()
     {
