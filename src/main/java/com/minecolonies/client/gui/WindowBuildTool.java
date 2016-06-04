@@ -96,7 +96,7 @@ public class WindowBuildTool extends Window implements Button.Handler
         if(Settings.instance.getActiveSchematic() != null)
         {
             BlockPosUtil.set(this.pos, Settings.instance.offset.add(Settings.instance.getActiveSchematic().getOffset()));
-            rotation = Settings.instance.rotation;
+            rotation = Settings.instance.getRotation();
         }
         else
         {
@@ -107,7 +107,7 @@ public class WindowBuildTool extends Window implements Button.Handler
 	@Override
     public void onOpened()
     {
-        if (Settings.instance.inHutMode)
+        if (Settings.instance.isInHutMode())
         {
             loadHutMode();
         }
@@ -145,7 +145,7 @@ public class WindowBuildTool extends Window implements Button.Handler
         if(hutDec.isEmpty())
         {
             Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
-            buttonHutDec.setLabel(LanguageHandler.getString(Settings.instance.inHutMode ? "com.minecolonies.gui.buildtool.nohut" : "com.minecolonies.gui.buildtool.nodecoration"));
+            buttonHutDec.setLabel(LanguageHandler.getString(Settings.instance.isInHutMode() ? "com.minecolonies.gui.buildtool.nohut" : "com.minecolonies.gui.buildtool.nodecoration"));
             buttonHutDec.setEnabled(false);
 
             Settings.instance.setActiveSchematic(null);
@@ -154,8 +154,8 @@ public class WindowBuildTool extends Window implements Button.Handler
         {
             if (Settings.instance.getActiveSchematic() != null)
             {
-                hutDecIndex = Math.max(0, hutDec.indexOf(Settings.instance.hutDec));
-                styleIndex = Math.max(0, getStyles().indexOf(Settings.instance.style));
+                hutDecIndex = Math.max(0, hutDec.indexOf(Settings.instance.getHutDec()));
+                styleIndex = Math.max(0, getStyles().indexOf(Settings.instance.getStyle()));
             }
 
             Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
@@ -174,7 +174,7 @@ public class WindowBuildTool extends Window implements Button.Handler
         }
     }
 
-    private boolean inventoryHasHut(InventoryPlayer inventory, String hut)
+    private static boolean inventoryHasHut(InventoryPlayer inventory, String hut)
     {
         return inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, DEFAULT_POS));
     }
@@ -184,17 +184,16 @@ public class WindowBuildTool extends Window implements Button.Handler
     {
         if(Settings.instance.getActiveSchematic() != null)
         {
-            Settings.instance.rotation = rotation;
-
-            Settings.instance.hutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
-            Settings.instance.style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
-
+            Settings.instance.setSchematicInfo(
+                    findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel(),
+                    findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel(),
+                    rotation);
         }
     }
 
     private List<String> getStyles()
     {
-        if(Settings.instance.inHutMode)
+        if(Settings.instance.isInHutMode())
         {
             return Schematics.getStylesForHut(hutDec.get(hutDecIndex));
         }
@@ -215,14 +214,14 @@ public class WindowBuildTool extends Window implements Button.Handler
             hutDecIndex = 0;
             styleIndex = 0;
 
-            if(Settings.instance.inHutMode)
+            if(Settings.instance.isInHutMode())
             {
-                Settings.instance.inHutMode = false;
+                Settings.instance.setInHutMode(false);
                 loadDecorationMode();
             }
             else
             {
-                Settings.instance.inHutMode = true;
+                Settings.instance.setInHutMode(true);
                 loadHutMode();
             }
             break;
@@ -232,11 +231,7 @@ public class WindowBuildTool extends Window implements Button.Handler
                 break;
             }
 
-            hutDecIndex = (hutDecIndex + 1) % hutDec.size();
-            styleIndex = 0;
-
-            button.setLabel(hutDec.get(hutDecIndex));
-            findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyles().get(styleIndex));
+            increaseHutDecIndex(button);
 
             changeSchematic();
             break;
@@ -256,7 +251,7 @@ public class WindowBuildTool extends Window implements Button.Handler
             break;
         case BUTTON_CONFIRM:
             MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(hutDec.get(hutDecIndex),
-                    getStyles().get(styleIndex), this.pos, rotation, Settings.instance.inHutMode));
+                    getStyles().get(styleIndex), this.pos, rotation, Settings.instance.isInHutMode()));
             Settings.instance.setActiveSchematic(null);
             close();
             break;
@@ -292,6 +287,15 @@ public class WindowBuildTool extends Window implements Button.Handler
         default:
             Log.logger.warn("WindowBuildTool: Unhandled Button ID:" + button.getID());
         }
+    }
+
+    private void increaseHutDecIndex(Button hutDecButton)
+    {
+        hutDecIndex = (hutDecIndex + 1) % hutDec.size();
+        styleIndex = 0;
+
+        hutDecButton.setLabel(hutDec.get(hutDecIndex));
+        findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyles().get(styleIndex));
     }
 
     /**
@@ -393,7 +397,7 @@ public class WindowBuildTool extends Window implements Button.Handler
 
         rotation = 0;
 
-        SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.inHutMode ? '1' : ""));
+        SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? '1' : ""));
 
         Settings.instance.setActiveSchematic(schematic.getSchematic());
 

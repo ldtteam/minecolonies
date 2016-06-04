@@ -10,12 +10,12 @@ import net.minecraft.util.MovingObjectPosition;
 public class Settings {
     public static final Settings instance = new Settings();
 
-    public boolean inHutMode = true;
+    private boolean inHutMode = true;
 
     public SchematicWorld schematic = null;
 
-    public final BlockPos.MutableBlockPos pointA = new BlockPos.MutableBlockPos();
-    public final BlockPos.MutableBlockPos pointB = new BlockPos.MutableBlockPos();
+    public final BlockPos.MutableBlockPos pointA   = new BlockPos.MutableBlockPos();
+    public final BlockPos.MutableBlockPos pointB   = new BlockPos.MutableBlockPos();
     public final BlockPos.MutableBlockPos pointMin = new BlockPos.MutableBlockPos();
     public final BlockPos.MutableBlockPos pointMax = new BlockPos.MutableBlockPos();
 
@@ -23,9 +23,9 @@ public class Settings {
 
     public final BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos();
 
-    public int rotation = 0;
-    public String hutDec = "";
-    public String style = "";
+    private int    rotation = 0;
+    private String hutDec   = "";
+    private String style    = "";
 
     public boolean isRenderingGuide = false;
 
@@ -75,5 +75,59 @@ public class Settings {
     public Schematic getActiveSchematic()
     {
         return this.schematic == null ? null : this.schematic.getSchematic();
+    }
+
+    /**
+     * @return true if the client is in hut mode.
+     */
+    public boolean isInHutMode()
+    {
+        return inHutMode;
+    }
+
+    /**
+     * @param mode true if in hut mode, false if in decoration mode.
+     */
+    public void setInHutMode(boolean mode)
+    {
+        inHutMode = mode;
+    }
+
+    /**
+     * Saves the schematic info when the client closes the build tool window.
+     *
+     * @param hutDec hut/decoration name.
+     * @param style building style.
+     * @param rotation the number of times the building is rotated.
+     */
+    public void setSchematicInfo(String hutDec, String style, int rotation)
+    {
+        this.hutDec   = hutDec;
+        this.style    = style;
+        this.rotation = rotation;
+    }
+
+    /**
+     * @return The name of the hut/decoration.
+     */
+    public String getHutDec()
+    {
+        return hutDec;
+    }
+
+    /**
+     * @return The name of the style.
+     */
+    public String getStyle()
+    {
+        return style;
+    }
+
+    /**
+     * @return The number of times the schematic is rotated.
+     */
+    public int getRotation()
+    {
+        return rotation;
     }
 }

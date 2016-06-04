@@ -31,7 +31,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         decorationStyleMap = readStyleMapFromByteBuf(buf);
     }
 
-    private void writeStyleMapToByteBuf(ByteBuf buf, Set<String> objects, Function<String, List<String>> getStyles)
+    private static void writeStyleMapToByteBuf(ByteBuf buf, Set<String> objects, Function<String, List<String>> getStyles)
     {
         buf.writeInt(objects.size());
         for(String object : objects)
@@ -48,7 +48,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         }
     }
 
-    private Map<String, List<String>> readStyleMapFromByteBuf(ByteBuf buf)
+    private static Map<String, List<String>> readStyleMapFromByteBuf(ByteBuf buf)
     {
         Map<String, List<String>> map = new HashMap<>();
 

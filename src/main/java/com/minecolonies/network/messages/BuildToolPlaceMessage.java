@@ -29,7 +29,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToolPlaceMessage, IMessage>
 {
-    private String hutDec, style;
+    private String hutDec;
+    private String style;
     private int rotation;
 
     private BlockPos pos;

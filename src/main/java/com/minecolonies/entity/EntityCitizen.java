@@ -77,24 +77,38 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     private static final String TAG_CITIZEN             = "citizen";
     private static final String TAG_HELD_ITEM_SLOT       = "HeldItemSlot";
     private static final String TAG_STATUS               = "status";
+
     /**
      * The delta yaw value for looking at things.
      */
-    private static final float  FACING_DELTA_YAW         = 10F;
+    private static final float FACING_DELTA_YAW = 10F;
+
     /**
      * The range in which we can hear a block break sound.
      */
-    private static final double BLOCK_BREAK_SOUND_RANGE  = 16.0D;
+    private static final double BLOCK_BREAK_SOUND_RANGE = 16.0D;
+
     /**
      * Modifier to lower the sound of block breaks.
      * <p>
      * Decrease this to make sounds louder.
      */
     private static final double BLOCK_BREAK_SOUND_DAMPER = 8.0D;
+
     /**
      * The height of half a block.
      */
-    private static final double HALF_BLOCK               = 0.5D;
+    private static final double HALF_BLOCK = 0.5D;
+
+    /**
+     * Modifier for sound frequency when breaking blocks.
+     */
+    private static final double SOUND_FREQ_MODIFIER = 0.5D;
+
+    /**
+     * The range in which someone will see the particles from a block breaking.
+     */
+    private static final double BLOCK_BREAK_PARTICLE_RANGE = 16.0D;
 
 
     private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
@@ -1097,7 +1111,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      *
      * @param blockPos Block position
      */
-    public void hitBlockWithToolInHand(@Nullable BlockPos blockPos)
+    public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos)
     {
         if (blockPos == null)
         {
@@ -1122,7 +1136,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             return;
         }
         //todo: this is not optimal but works
-        getLookHelper().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, getVerticalFaceSpeed());
+        this.getLookHelper().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, getVerticalFaceSpeed());
 
         this.swingItem();
 
@@ -1153,14 +1167,14 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 MineColonies.getNetwork().sendToAllAround(
                         //todo: correct side
                         new BlockParticleEffectMessage(blockPos, worldObj.getBlockState(blockPos), 1),
-                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
+                        new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
             }
             worldObj.playSoundEffect((float) (blockPos.getX() + HALF_BLOCK),
                                      (float) (blockPos.getY() + HALF_BLOCK),
                                      (float) (blockPos.getZ() + HALF_BLOCK),
                                      block.stepSound.getStepSound(),
                                      (float) ((block.stepSound.getVolume() + 1.0D) / BLOCK_BREAK_SOUND_DAMPER),
-                                     (float) (block.stepSound.getFrequency() * HALF_BLOCK));
+                                     (float) (block.stepSound.getFrequency() * SOUND_FREQ_MODIFIER));
         }
     }
 

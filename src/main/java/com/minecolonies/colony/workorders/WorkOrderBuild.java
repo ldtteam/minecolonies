@@ -21,12 +21,12 @@ public class WorkOrderBuild extends WorkOrder
     private static final String TAG_SCHEMATIC_NAME    = "schematicName";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
 
-    BlockPos buildingLocation;
-    int      buildingRotation;
-    String   schematicName;
+    protected BlockPos buildingLocation;
+    protected int      buildingRotation;
+    protected String   schematicName;
     private   int      upgradeLevel;
     private   String   upgradeName;
-    boolean  cleared;
+    protected boolean  cleared;
 
     /**
      * unused constructor for reflection

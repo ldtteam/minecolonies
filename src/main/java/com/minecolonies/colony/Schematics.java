@@ -22,8 +22,15 @@ import java.util.stream.Stream;
  */
 public class Schematics
 {
-    private static Map<String, List<String>> hutStyleMap        = new HashMap<>();//Hut, Styles
-    private static Map<String, List<String>> decorationStyleMap = new HashMap<>();//Decoration, Style
+    //Hut, Styles
+    private static Map<String, List<String>> hutStyleMap = new HashMap<>();
+
+    //Decoration, Style
+    private static Map<String, List<String>> decorationStyleMap = new HashMap<>();
+
+    private static final String NULL_STYLE            = "schematics";
+    private static final String SCHEMATIC_EXTENSION   = ".schematic";
+    private static final String SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
 
     /**
      * Calls {@link #loadStyleMaps()}
@@ -42,67 +49,83 @@ public class Schematics
     {
         try
         {
-            URI  uri = ColonyManager.class.getResource("/assets/minecolonies/schematics/").toURI();
+            URI  uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
             Path basePath;
 
             if (uri.getScheme().equals("jar"))
             {
-                basePath = FileSystems.newFileSystem(uri, Collections.emptyMap()).getPath(
-                        "/assets/minecolonies/schematics/");
+                basePath = FileSystems.newFileSystem(uri, Collections.emptyMap()).getPath(SCHEMATICS_ASSET_PATH);
             }
             else
             {
                 basePath = Paths.get(uri);
             }
-            try (Stream<Path> walk = Files.walk(basePath))
-            {
-                Iterator<Path> it = walk.iterator();
 
-                while (it.hasNext())
-                {
-                    Path path = it.next();
-
-                    //Don't treat generic schematics as decorations or huts - ex: supply ship
-                    if(path.getParent().getFileName().toString().equals("schematics"))
-                    {
-                        continue;
-                    }
-
-                    if (path.toString().endsWith(".schematic"))
-                    {
-                        String filename = path.getFileName().toString().split("\\.schematic")[0];
-                        String hut      = filename.split("\\d+")[0];
-                        String style    = path.getParent().getFileName().toString();
-
-                        if (isSchematicHut(hut))
-                        {
-                            if (!hutStyleMap.containsKey(hut))
-                            {
-                                hutStyleMap.put(hut, new ArrayList<>());
-                            }
-
-                            if(!hutStyleMap.get(hut).contains(style))
-                            {
-                                hutStyleMap.get(hut).add(style);
-                            }
-                        }
-                        else //style
-                        {
-                            if (!decorationStyleMap.containsKey(filename))
-                            {
-                                decorationStyleMap.put(filename, new ArrayList<>());
-                            }
-                            decorationStyleMap.get(filename).add(style);
-                        }
-                    }
-                }
-            }
+            loadStyleMaps(basePath);
 
         }
         catch (IOException | URISyntaxException e)
         {
             Log.logger.error("Error loading Schematic directory. Things will break!");
         }
+    }
+
+    private static void loadStyleMaps(Path basePath) throws IOException
+    {
+        try (Stream<Path> walk = Files.walk(basePath))
+        {
+            Iterator<Path> it = walk.iterator();
+
+            while (it.hasNext())
+            {
+                Path path = it.next();
+
+                String style = path.getParent().getFileName().toString();
+
+                //Don't treat generic schematics as decorations or huts - ex: supply ship
+                if(NULL_STYLE.equals(style))
+                {
+                    continue;
+                }
+
+                if (path.toString().endsWith(SCHEMATIC_EXTENSION))
+                {
+                    String filename = path.getFileName().toString().split("\\.schematic")[0];
+                    String hut      = filename.split("\\d+")[0];
+
+                    if (isSchematicHut(hut))
+                    {
+                        addHutStyle(hut, style);
+                    }
+                    else
+                    {
+                        addDecorationStyle(filename, style);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void addHutStyle(String hut, String style)
+    {
+        if (!hutStyleMap.containsKey(hut))
+        {
+            hutStyleMap.put(hut, new ArrayList<>());
+        }
+
+        if(!hutStyleMap.get(hut).contains(style))
+        {
+            hutStyleMap.get(hut).add(style);
+        }
+    }
+
+    private static void addDecorationStyle(String decoration, String style)
+    {
+        if (!decorationStyleMap.containsKey(decoration))
+        {
+            decorationStyleMap.put(decoration, new ArrayList<>());
+        }
+        decorationStyleMap.get(decoration).add(style);
     }
 
     private static boolean isSchematicHut(String name)
@@ -122,7 +145,7 @@ public class Schematics
     }
 
     /**
-     * Returns a lst of styles for one specific hutDec
+     * Returns a list of styles for one specific hut
      *
      * @param hut Hut to get styles for
      * @return List of styles
@@ -144,7 +167,7 @@ public class Schematics
     }
 
     /**
-     * Returns a lst of styles for one specific decoration
+     * Returns a list of styles for one specific decoration
      *
      * @param decoration Decoration to get styles for
      * @return List of styles

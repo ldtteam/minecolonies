@@ -16,6 +16,14 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
         super();
     }
 
+    /**
+     * Create a new work order telling the building to build a decoration.
+     *
+     * @param decoration The name of the decoration.
+     * @param style The style of the decoration.
+     * @param rotation The number of times the decoration was rotated.
+     * @param location The location where the decoration should be built.
+     */
     public WorkOrderBuildDecoration(String decoration, String style, int rotation, BlockPos location)
     {
         this.schematicName = style + '/' + decoration;
