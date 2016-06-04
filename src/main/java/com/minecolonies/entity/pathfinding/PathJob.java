@@ -51,7 +51,7 @@ public abstract class PathJob implements Callable<PathEntity>
     protected Set<Node> debugNodesNotVisited = null;
     protected Set<Node> debugNodesPath       = null;
 
-    static public Object debugNodeMonitor = new Object();
+    static final public Object debugNodeMonitor = new Object();
     static public Set<Node> lastDebugNodesVisited;
     static public Set<Node> lastDebugNodesNotVisited;
     static public Set<Node> lastDebugNodesPath;

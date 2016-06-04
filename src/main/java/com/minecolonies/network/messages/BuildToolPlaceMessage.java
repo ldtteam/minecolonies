@@ -7,6 +7,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockCocoa;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
@@ -25,7 +26,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToolPlaceMessage, IMessage>
 {
     private String hut, style;
-    private int x, y, z, rotation;
+    private int rotation;
+
+    private BlockPos pos;
 
     public BuildToolPlaceMessage() {}
 
@@ -35,18 +38,14 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      *
      * @param hut       String representation of sort of hut that made the request
      * @param style     String representation of style that was requested
-     * @param x         x-coordinate
-     * @param y         y-coordinate
-     * @param z         z-coordinate
+     * @param pos       BlockPos
      * @param rotation  int representation of the rotation
      */
-    public BuildToolPlaceMessage(String hut, String style, int x, int y, int z, int rotation)
+    public BuildToolPlaceMessage(String hut, String style, BlockPos pos, int rotation)
     {
         this.hut = hut;
         this.style = style;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
         this.rotation = rotation;
     }
 
@@ -56,9 +55,9 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         ByteBufUtils.writeUTF8String(buf, hut);
         ByteBufUtils.writeUTF8String(buf, style);
 
-        buf.writeInt(x);
-        buf.writeInt(y);
-        buf.writeInt(z);
+        buf.writeInt(pos.getX());
+        buf.writeInt(pos.getY());
+        buf.writeInt(pos.getZ());
 
         buf.writeInt(rotation);
     }
@@ -69,9 +68,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         hut = ByteBufUtils.readUTF8String(buf);
         style = ByteBufUtils.readUTF8String(buf);
 
-        x = buf.readInt();
-        y = buf.readInt();
-        z = buf.readInt();
+        pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
 
         rotation = buf.readInt();
     }
@@ -82,7 +79,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + message.hut);
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         World world = player.worldObj;
-        BlockPos pos = new BlockPos(message.x, message.y, message.z);
+        BlockPos pos = message.pos;
 
         if(player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, pos))
         {

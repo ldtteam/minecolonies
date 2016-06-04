@@ -8,7 +8,6 @@ import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.schematica.world.SchematicWorld;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
@@ -101,18 +100,6 @@ public class CommonProxy implements IProxy
 
     @Override
     public void openBuildToolWindow(BlockPos pos) {}
-
-    //Schematica
-    @Override
-    public void setActiveSchematic(SchematicWorld world)
-    {
-    }
-
-    @Override
-    public SchematicWorld getActiveSchematic()
-    {
-        return null;
-    }
 
     /**
      * Used for entity IDs, starts at 0 & increments for each call

@@ -3,11 +3,11 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
-import com.minecolonies.entity.ai.EntityAIWorkBuilder;
+import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
-import com.minecolonies.util.Schematic;
-import net.minecraft.entity.ai.EntityAITasks;
+import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
@@ -19,7 +19,7 @@ public class JobBuilder extends Job
     private static final String TAG_POSITION   = "position";
     private static final String TAG_PROGRESS   = "progress";
     private static final String TAG_STAGE      = "stage";
-    protected Schematic schematic;
+    protected SchematicWrapper schematic;
     //TODO save some of this in building
     private   int       workOrderId;
     private   String    schematicName;
@@ -93,27 +93,9 @@ public class JobBuilder extends Job
     }
 
     @Override
-    public void addTasks(EntityAITasks tasks)
+    public AbstractAISkeleton generateAI()
     {
-        if (schematicName != null)
-        {
-            try
-            {
-                schematic = new Schematic(getCitizen().getColony().getWorld(), schematicName);
-                schematic.setPosition(schematicPos);
-                schematic.setLocalPosition(schematicProgress);
-            }
-            catch (IllegalStateException e)
-            {
-                Log.logger.error("Could not create schematic!", e);
-            }
-
-            schematicName = null;
-            schematicPos = null;
-            schematicProgress = null;
-        }
-
-        tasks.addTask(3, new EntityAIWorkBuilder(this));
+        return new EntityAIStructureBuilder(this);
     }
 
     /**
@@ -162,7 +144,7 @@ public class JobBuilder extends Job
      *
      * @return Schematic loaded by the Job
      */
-    public Schematic getSchematic()
+    public SchematicWrapper getSchematic()
     {
         return schematic;
     }
@@ -170,9 +152,9 @@ public class JobBuilder extends Job
     /**
      * Set the schematic of builder's job
      *
-     * @param schematic {@link Schematic} object
+     * @param schematic {@link SchematicWrapper} object
      */
-    public void setSchematic(Schematic schematic)
+    public void setSchematic(SchematicWrapper schematic)
     {
         this.schematic = schematic;
     }
