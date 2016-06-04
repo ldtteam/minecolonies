@@ -145,7 +145,8 @@ public class WindowBuildTool extends Window implements Button.Handler
         if(hutDec.isEmpty())
         {
             Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
-            buttonHutDec.setLabel(LanguageHandler.getString(Settings.instance.isInHutMode() ? "com.minecolonies.gui.buildtool.nohut" : "com.minecolonies.gui.buildtool.nodecoration"));
+            buttonHutDec.setLabel(LanguageHandler.getString(
+                    Settings.instance.isInHutMode() ? "com.minecolonies.gui.buildtool.nohut" : "com.minecolonies.gui.buildtool.nodecoration"));
             buttonHutDec.setEnabled(false);
 
             Settings.instance.setActiveSchematic(null);
@@ -226,13 +227,9 @@ public class WindowBuildTool extends Window implements Button.Handler
             }
             break;
         case BUTTON_HUT_DEC_ID:
-            if(hutDec.size() == 1)
-            {
-                break;
-            }
+            if(hutDec.size() == 1) break;
 
             increaseHutDecIndex(button);
-
             changeSchematic();
             break;
         case BUTTON_STYLE_ID:

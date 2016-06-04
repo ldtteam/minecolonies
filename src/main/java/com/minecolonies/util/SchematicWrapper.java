@@ -72,9 +72,13 @@ public final class SchematicWrapper
     private static final BlockPos NULL_POS = new BlockPos(-1, -1, -1);
 
     /**
-     * The SchematicWorld position we are at.
+     * The SchematicWorld position we are at. Defaulted to NULL_POS.
      */
-    private final BlockPos.MutableBlockPos progressPos = new BlockPos.MutableBlockPos(-1, -1, -1);//NULL_POS
+    private final BlockPos.MutableBlockPos progressPos = new BlockPos.MutableBlockPos(-1, -1, -1);
+
+    private static final int NUMBER_OF_ROTATIONS = 4;
+
+    private static final int REVERSE_ROTATION = 3;
 
     /**
      * Load a schematic into this world.
@@ -270,7 +274,12 @@ public final class SchematicWrapper
      */
     public void rotate(int times)
     {
-        if(times % 4 <= 2)
+        if(times % NUMBER_OF_ROTATIONS == REVERSE_ROTATION)
+        {
+            //reverse rotate
+            rotate(EnumFacing.DOWN);
+        }
+        else
         {
             for (int i = 0; i < times; i++)
             {
@@ -278,18 +287,13 @@ public final class SchematicWrapper
                 rotate(EnumFacing.UP);
             }
         }
-        else
-        {
-            //reverse rotate
-            rotate(EnumFacing.DOWN);
-        }
     }
 
     public static String saveSchematic(World world, BlockPos from, BlockPos to)
     {
         if(world == null || from == null || to == null)
         {
-            throw new NullPointerException("Invalid method call, contact a developer.");
+            throw new IllegalArgumentException("Invalid method call, arguments can't be null. Contact a developer.");
         }
 
         Schematic schematic = scanSchematic(world, from, to);
@@ -324,12 +328,9 @@ public final class SchematicWrapper
 
     private static void checkDirectory(File directory)
     {
-        if(!directory.exists())
+        if(!directory.exists() && !directory.mkdirs())
         {
-            if(!directory.mkdirs())
-            {
-                Log.logger.error("Directory doesn't exist and failed to be created: " + directory.toString());
-            }
+            Log.logger.error("Directory doesn't exist and failed to be created: " + directory.toString());
         }
     }
 

@@ -7,15 +7,16 @@ import com.schematica.world.storage.Schematic;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 
-public class Settings {
+public class Settings
+{
     public static final Settings instance = new Settings();
 
     private boolean inHutMode = true;
 
     public SchematicWorld schematic = null;
 
-    public final BlockPos.MutableBlockPos pointA   = new BlockPos.MutableBlockPos();
-    public final BlockPos.MutableBlockPos pointB   = new BlockPos.MutableBlockPos();
+    public final BlockPos.MutableBlockPos pointA  = new BlockPos.MutableBlockPos();
+    public final BlockPos.MutableBlockPos pointB  = new BlockPos.MutableBlockPos();
     public final BlockPos.MutableBlockPos pointMin = new BlockPos.MutableBlockPos();
     public final BlockPos.MutableBlockPos pointMax = new BlockPos.MutableBlockPos();
 
@@ -34,6 +35,9 @@ public class Settings {
     private Settings() {
     }
 
+    /**
+     * Reset the schematic rendering.
+     */
     public void reset() {
         this.isRenderingGuide = false;
 
@@ -51,12 +55,22 @@ public class Settings {
         pointMax.set(Math.max(pointA.getX(), pointB.getX()), Math.max(pointA.getY(), pointB.getY()), Math.max(pointA.getZ(), pointB.getZ()));
     }
 
+    /**
+     * Set location to render current schematic.
+     *
+     * @param pos location to render.
+     */
     public void moveTo(BlockPos pos)
     {
         BlockPosUtil.set(offset, pos.subtract(getActiveSchematic().getOffset()));
         BlockPosUtil.set(schematic.position, offset);
     }
 
+    /**
+     * Set a schematic to render.
+     *
+     * @param schematic schematic to render.
+     */
     public void setActiveSchematic(Schematic schematic)
     {
         if(schematic != null)
@@ -72,6 +86,9 @@ public class Settings {
         }
     }
 
+    /**
+     * @return The schematic we are currently rendering.
+     */
     public Schematic getActiveSchematic()
     {
         return this.schematic == null ? null : this.schematic.getSchematic();

@@ -66,7 +66,7 @@ public class Schematics
         }
         catch (IOException | URISyntaxException e)
         {
-            Log.logger.error("Error loading Schematic directory. Things will break!");
+            Log.logger.error("Error loading Schematic directory. Things will break!", e);
         }
     }
 
