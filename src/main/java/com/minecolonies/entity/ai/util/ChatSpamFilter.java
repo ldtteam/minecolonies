@@ -1,6 +1,7 @@
 package com.minecolonies.entity.ai.util;
 
 import com.minecolonies.entity.EntityCitizen;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -37,7 +38,7 @@ public class ChatSpamFilter
      *
      * @param chat the Item Name
      */
-    public void requestWithoutSpam(String chat)
+    public void requestWithoutSpam(@NotNull String chat)
     {
         talkWithoutSpam("entity.miner.messageNeedBlockAndItem", chat);
     }

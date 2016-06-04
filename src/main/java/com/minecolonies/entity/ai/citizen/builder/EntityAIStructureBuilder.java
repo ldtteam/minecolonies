@@ -67,16 +67,16 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         super(job);
         super.registerTargets(
                 new AITarget(this::checkIfExecute, this::getState),
-                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(IDLE, START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(BUILDER_CLEAR_STEP, this::clearStep),
                 new AITarget(BUILDER_REQUEST_MATERIALS, this::requestMaterials),
                 new AITarget(BUILDER_STRUCTURE_STEP, this::structureStep),
                 new AITarget(BUILDER_DECORATION_STEP, this::decorationStep),
                 new AITarget(BUILDER_COMPLETE_BUILD, this::completeBuild)
-        );
+                             );
         worker.setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
-                + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
+                                + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
     }
 

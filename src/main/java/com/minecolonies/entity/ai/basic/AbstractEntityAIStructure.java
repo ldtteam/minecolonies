@@ -9,6 +9,7 @@ import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.EntityUtils;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -59,7 +60,7 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
      *
      * @param job the job class of the ai using this base class
      */
-    protected AbstractEntityAIStructure(J job)
+    protected AbstractEntityAIStructure(@NotNull final J job)
     {
         super(job);
         this.registerTargets(

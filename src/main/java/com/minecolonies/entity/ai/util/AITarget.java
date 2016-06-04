@@ -1,5 +1,8 @@
 package com.minecolonies.entity.ai.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -20,34 +23,34 @@ public class AITarget
     private final Supplier<AIState> action;
 
     /**
-     * Construct a traget.
+     * Construct a target.
      *
      * @param action the action to apply
      */
-    public AITarget(Supplier<AIState> action)
+    public AITarget(@NotNull final Supplier<AIState> action)
     {
         this(() -> true, action);
     }
 
     /**
-     * Construct a traget.
+     * Construct a target.
      *
      * @param predicate the predicate for execution
      * @param action    the action to apply
      */
-    public AITarget(BooleanSupplier predicate, Supplier<AIState> action)
+    public AITarget(@NotNull final BooleanSupplier predicate, @NotNull final Supplier<AIState> action)
     {
         this(null, predicate, action);
     }
 
     /**
-     * Construct a traget.
+     * Construct a target.
      *
      * @param state     the state it needs to be | null
      * @param predicate the predicate for execution
      * @param action    the action to apply
      */
-    public AITarget(AIState state, BooleanSupplier predicate, Supplier<AIState> action)
+    public AITarget(@Nullable final AIState state, @NotNull final BooleanSupplier predicate, @NotNull final Supplier<AIState> action)
     {
         this.state = state;
         this.predicate = predicate;
@@ -55,12 +58,34 @@ public class AITarget
     }
 
     /**
-     * Construct a traget.
+     * Construct a target.
+     *
+     * @param predicate the predicate for execution
+     * @param state     the state to switch to
+     */
+    public AITarget(@NotNull final BooleanSupplier predicate, @Nullable final AIState state)
+    {
+        this(null, predicate, () -> state);
+    }
+
+    /**
+     * Construct a target.
+     *
+     * @param predicateState the state it needs to be | null
+     * @param state          the state to switch to
+     */
+    public AITarget(@NotNull final AIState predicateState, @Nullable final AIState state)
+    {
+        this(predicateState, () -> state);
+    }
+
+    /**
+     * Construct a target.
      *
      * @param state  the state it needs to be | null
      * @param action the action to apply
      */
-    public AITarget(AIState state, Supplier<AIState> action)
+    public AITarget(@Nullable final AIState state, @NotNull final Supplier<AIState> action)
     {
         this(state, () -> true, action);
     }
