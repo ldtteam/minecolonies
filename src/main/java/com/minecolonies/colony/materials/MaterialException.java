@@ -18,10 +18,8 @@ class MaterialException extends RuntimeException
 
 class QuantityNotFound extends MaterialException
 {
-    QuantityNotFound(String location, int id, int count, int quantity)
+    QuantityNotFound(String location, Material material, int count, int quantity)
     {
-        super(location + " doesn't contain enough items: " + count + " < " + quantity + ". For material: " + id
-                + " Block: " +  GameData.getBlockRegistry().getObjectById(id)
-                + " Item: " + GameData.getItemRegistry().getObjectById(id));
+        super(location + " doesn't contain enough items: " + count + " < " + quantity + ". For material: " + material.toString());
     }
 }

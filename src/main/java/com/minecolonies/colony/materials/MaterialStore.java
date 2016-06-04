@@ -5,6 +5,7 @@ import com.minecolonies.colony.buildings.BuildingWorker;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
@@ -146,6 +147,17 @@ public class MaterialStore
      * Add a Material to this inventory. First check if we need that item and act accordingly. Then put any extra
      * in the dontNeed map.
      *
+     * @param stack ItemStack that is being added to the MaterialStore
+     */
+    public void addMaterial(ItemStack stack)
+    {
+        addMaterial(system.getMaterial(stack), stack.stackSize);
+    }
+
+    /**
+     * Add a Material to this inventory. First check if we need that item and act accordingly. Then put any extra
+     * in the dontNeed map.
+     *
      * @param item Item that is being added to the MaterialStore
      * @param quantity How much of item is being added
      */
@@ -164,6 +176,17 @@ public class MaterialStore
     public void addMaterial(Block block, int quantity)
     {
         addMaterial(system.getMaterial(block), quantity);
+    }
+
+    /**
+     * Remove a material from this inventory. First remove from dontNeed, then remove from haveNeed. If material was removed
+     * from haveNeed, then request that quantity in need.
+     *
+     * @param stack ItemStack that is being removed from the MaterialStore
+     */
+    public void removeMaterial(ItemStack stack)
+    {
+        removeMaterial(system.getMaterial(stack), stack.stackSize);
     }
 
     /**
@@ -293,7 +316,7 @@ public class MaterialStore
             {
                 if (countNeed == null || countNeed < quantity)
                 {
-                    throw new QuantityNotFound("MaterialStore (haveNeed)", material.getID(), countNeed == null ? 0 : countNeed, quantity);
+                    throw new QuantityNotFound("MaterialStore (haveNeed)", material, countNeed == null ? 0 : countNeed, quantity);
                 }
                 else
                 {
@@ -312,7 +335,7 @@ public class MaterialStore
                 int countToRemove = quantity - count;
                 if(countNeed == null || countNeed < countToRemove)
                 {
-                    throw new QuantityNotFound("MaterialStore (dontNeed+haveNeed)", material.getID(), countNeed == null ? count : countNeed+count, quantity);
+                    throw new QuantityNotFound("MaterialStore (dontNeed+haveNeed)", material, countNeed == null ? count : countNeed+count, quantity);
                 }
                 else
                 {
@@ -416,7 +439,7 @@ public class MaterialStore
         Integer count = need.get(material);
         if(count == null || count < quantity)
         {
-            throw new QuantityNotFound("MaterialStore (need)", material.getID(), count == null ? 0 : count, quantity);
+            throw new QuantityNotFound("MaterialStore (need)", material, count == null ? 0 : count, quantity);
         }
         else if(count == quantity)
         {

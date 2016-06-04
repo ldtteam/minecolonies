@@ -2,6 +2,7 @@ package com.minecolonies.colony.materials;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 import java.util.*;
 
@@ -32,6 +33,8 @@ public class MaterialSystem
      * So that we only have one Material reference per material inside of the system.
      */
     private Map<Integer, Material> materialCache = new HashMap<>();
+
+    private static final int METADATA_SHIFT = 4;
 
     /**
      * @return An unmodifiable version of the materials map
@@ -101,23 +104,34 @@ public class MaterialSystem
         return material;
     }
 
+    Material getMaterial(ItemStack stack)
+    {
+        if(stack == null) return null;
+
+        Item item = stack.getItem();
+        // If the item is damageable then we want the default meta
+        int metadata = item.isDamageable() ? 0 : stack.getMetadata();
+        return getMaterial((Item.getIdFromItem(item) << METADATA_SHIFT) + metadata);
+    }
+
     Material getMaterial(Item item)
     {
         if(item == null) return null;
 
-        return getMaterial(Item.getIdFromItem(item));
+        return getMaterial(Item.getIdFromItem(item) << METADATA_SHIFT);
     }
 
     Material getMaterial(Block block)
     {
         if(block == null) return null;
 
-        return getMaterial(Block.getIdFromBlock(block));
+        return getMaterial(Block.getIdFromBlock(block) << METADATA_SHIFT);
     }
 
     private void removeItemFromCache(Material material)
     {
-        materialCache.remove(material.getID());
+        //We use hashCode because it is the same as the ID, and I don't want a public getID.
+        materialCache.remove(material.hashCode());
     }
 
     /**
@@ -150,7 +164,7 @@ public class MaterialSystem
         Integer count = materials.get(material);
         if(count == null || count < quantity)
         {
-            throw new QuantityNotFound("MaterialSystem", material.getID(), count == null ? 0 : count, quantity);
+            throw new QuantityNotFound("MaterialSystem", material, count == null ? 0 : count, quantity);
         }
         else if(count == quantity)
         {
@@ -166,7 +180,7 @@ public class MaterialSystem
     /**
      * Adds a MaterialStore to the stores set. Called inside of the MaterialStore constructor.
      *
-     * @param store
+     * @param store MaterialStore being added to the system.
      */
     void addStore(MaterialStore store)
     {
@@ -176,7 +190,7 @@ public class MaterialSystem
     /**
      * Removes a MaterialStore from the store set. This should be called when a building is destroyed(removed from colony).
      *
-     * @param store
+     * @param store MaterialStore being removed from the system.
      */
     void removeStore(MaterialStore store)
     {
