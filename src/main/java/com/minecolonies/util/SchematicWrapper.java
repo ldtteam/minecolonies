@@ -555,7 +555,7 @@ public final class SchematicWrapper
 
     private boolean isAirBlock()
     {
-        return schematicWorld.getBlockState(this.progressPos).getBlock() == Blocks.air;
+        return getBlock() == Blocks.air;
     }
 
     /**
@@ -609,7 +609,7 @@ public final class SchematicWrapper
 
     private boolean isBlockSolidOrAir()
     {
-        return getBlock() != null && getBlock().getMaterial().isSolid() || isAirBlock();
+        return getBlock() != null && (getBlock().getMaterial().isSolid() || isAirBlock());
     }
 
     /**
