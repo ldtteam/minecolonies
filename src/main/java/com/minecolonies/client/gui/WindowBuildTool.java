@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * BuildTool Window
+ * BuildTool window.
  *
  * @author Colton
  */
@@ -31,32 +31,81 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /*
     All buttons for the GUI
      */
-    // Navigation buttons (selecting options)
-    private static final    String          BUTTON_TYPE_ID              = "buildingType";
-    private static final    String          BUTTON_HUT_DEC_ID           = "hutDec";
-    private static final    String          BUTTON_STYLE_ID             = "style";
 
-    // Navigation buttons (confirm, cancel)
-    private static final    String          BUTTON_CONFIRM              = "confirm";
-    private static final    String          BUTTON_CANCEL               = "cancel";
+    /**
+     * This button is used to set whether the window is in hut mode or decoration mode.
+     */
+    private static final String BUTTON_TYPE_ID = "buildingType";
 
-    //Rotating buttons (left, right)
-    private static final    String          BUTTON_ROTATE_LEFT          = "rotateLeft";
-    private static final    String          BUTTON_ROTATE_RIGHT         = "rotateRight";
+    /**
+     * This button is used to choose which hut or decoration should be built.
+     */
+    private static final String BUTTON_HUT_DEC_ID = "hutDec";
 
-    //Directional buttons (x, y, z)
-    private static final    String          BUTTON_UP                   = "up";
-    private static final    String          BUTTON_DOWN                 = "down";
-    private static final    String          BUTTON_FORWARD              = "forward";
-    private static final    String          BUTTON_BACK                 = "back";
-    private static final    String          BUTTON_LEFT                 = "left";
-    private static final    String          BUTTON_RIGHT                = "right";
+    /**
+     * This button is used to choose which style should be used.
+     */
+    private static final String BUTTON_STYLE_ID = "style";
 
-    /*
-    Resource suffix and hutDec prefix
-    */
-    private static final    String          BUILD_TOOL_RESOURCE_SUFFIX  = ":gui/windowBuildTool.xml";
-    private static final    String          HUT_PREFIX                  = ":blockHut";
+    /**
+     * This button will send a packet to the server telling it to place this hut/decoration.
+     */
+    private static final String BUTTON_CONFIRM = "confirm";
+
+    /**
+     * This button will remove the currently rendered schematic.
+     */
+    private static final String BUTTON_CANCEL = "cancel";
+
+    /**
+     * This button will rotate the schematic counterclockwise.
+     */
+    private static final String BUTTON_ROTATE_LEFT = "rotateLeft";
+
+    /**
+     * This button will rotated the schematic clockwise.
+     */
+    private static final String BUTTON_ROTATE_RIGHT = "rotateRight";
+
+    /**
+     * Move the schematic preview up.
+     */
+    private static final String BUTTON_UP = "up";
+
+    /**
+     * Move the schematic preview down.
+     */
+    private static final String BUTTON_DOWN = "down";
+
+    /**
+     * Move the schematic preview forward.
+     */
+    private static final String BUTTON_FORWARD = "forward";
+
+    /**
+     * Move the schematic preview back.
+     */
+    private static final String BUTTON_BACK = "back";
+
+    /**
+     * Move the schematic preview left.
+     */
+    private static final String BUTTON_LEFT = "left";
+
+    /**
+     * Move the schematic preview right.
+     */
+    private static final String BUTTON_RIGHT = "right";
+
+    /**
+     * Resource suffix.
+     */
+    private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowBuildTool.xml";
+
+    /**
+     * Hut prefix.
+     */
+    private static final String HUT_PREFIX = ":blockHut";
 
     private static final BlockPos DEFAULT_POS = new BlockPos(0, 0, 0);
 
@@ -79,8 +128,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private int styleIndex = 0;
 
-    //Position and rotation for the tool
+    /**
+     * Current position the hut/decoration is rendered at.
+     */
     private BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(0, 0, 0);
+
+    /**
+     * Current rotation of the hut/decoration.
+     */
     private int rotation = 0;
 
     /**
@@ -121,7 +176,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
     }
 
-	@Override
+    /**
+     * Called when the window is opened.
+     * Sets up the buttons for either hut mode or decoration mode.
+     */
+    @Override
     public void onOpened()
     {
         if (Settings.instance.isInHutMode())
@@ -197,6 +256,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         return inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, DEFAULT_POS));
     }
 
+    /**
+     * Called when the window is closed.
+     * If there is a current schematic, its information is stored in {@link Settings}.
+     */
     @Override
     public void onClosed()
     {
@@ -255,6 +318,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * ---------------- Button Handling -----------------
      */
 
+    /**
+     * Change placement modes. Hut or Decoration.
+     *
+     * @param button required parameter.
+     */
     private void placementModeClicked(Button button)
     {
         Settings.instance.setActiveSchematic(null);
@@ -274,6 +342,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
+    /**
+     * Change to the next hut/decoration.
+     *
+     * @param button required parameter.
+     */
     private void hutDecClicked(Button button)
     {
         if(hutDec.size() == 1)
@@ -290,6 +363,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         changeSchematic();
     }
 
+    /**
+     * Change to the next style.
+     *
+     * @param button required parameter.
+     */
     private void styleClicked(Button button)
     {
         List<String> styles = getStyles();
@@ -306,6 +384,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         changeSchematic();
     }
 
+    /**
+     * Send a packet telling the server to place the current schematic.
+     *
+     * @param button required parameter.
+     */
     private void confirmClicked(Button button)
     {
         MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(hutDec.get(hutDecIndex),
@@ -314,48 +397,88 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         close();
     }
 
+    /**
+     * Cancel the current schematic.
+     *
+     * @param button required parameter.
+     */
     private void cancelClicked(Button button)
     {
         Settings.instance.setActiveSchematic(null);
         close();
     }
 
+    /**
+     * Move the schematic left.
+     *
+     * @param button required parameter.
+     */
     private void moveLeftClicked(Button button)
     {
         BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
         updatePosition();
     }
 
+    /**
+     * Move the schematic right.
+     *
+     * @param button required parameter.
+     */
     private void moveRightClicked(Button button)
     {
         BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
         updatePosition();
     }
 
+    /**
+     * Move the schematic forward.
+     *
+     * @param button required parameter.
+     */
     private void moveForwardClicked(Button button)
     {
         BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing()));
         updatePosition();
     }
 
+    /**
+     * Move the schematic back.
+     *
+     * @param button required parameter.
+     */
     private void moveBackClicked(Button button)
     {
         BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
         updatePosition();
     }
 
+    /**
+     * Move the schmatic up.
+     *
+     * @param button required parameter.
+     */
     private void moveUpClicked(Button button)
     {
         BlockPosUtil.set(pos, pos.up());
         updatePosition();
     }
 
+    /**
+     * Move the schematic down.
+     *
+     * @param button required parameter.
+     */
     private void moveDownClicked(Button button)
     {
         BlockPosUtil.set(pos, pos.down());
         updatePosition();
     }
 
+    /**
+     * Rotate the schematic clockwise.
+     *
+     * @param button required parameter.
+     */
     private void rotateRightClicked(Button button)
     {
         rotation = (rotation + ROTATE_RIGHT) % POSSIBLE_ROTATIONS;
@@ -363,6 +486,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         updatePosition();
     }
 
+    /**
+     * Rotate the schematic counter clockwise.
+     *
+     * @param button required parameter.
+     */
     private void rotateLeftClicked(Button button)
     {
         rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;

@@ -29,7 +29,7 @@ public class WorkOrderBuild extends WorkOrder
     protected boolean  cleared;
 
     /**
-     * unused constructor for reflection
+     * Unused constructor for reflection.
      */
     public WorkOrderBuild()
     {
@@ -37,10 +37,10 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * create a new WorkOrder
+     * Create a new WorkOrder.
      *
-     * @param building the building to build
-     * @param level    the level it should have
+     * @param building the building to build.
+     * @param level    the level it should have.
      */
     public WorkOrderBuild(Building building, int level)
     {
@@ -54,9 +54,9 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * Returns the name after upgrade
+     * Returns the name after upgrade.
      *
-     * @return Name after upgrade
+     * @return Name after upgrade.
      */
     private String getUpgradeName()
     {
@@ -64,9 +64,9 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * Returns the level up level of the building
+     * Returns the level up level of the building.
      *
-     * @return Level after upgrade
+     * @return Level after upgrade.
      */
     public int getUpgradeLevel()
     {
@@ -74,9 +74,9 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * Save the Work Order to an NBTTagCompound
+     * Save the Work Order to an NBTTagCompound.
      *
-     * @param compound NBT tag compound
+     * @param compound NBT tag compound.
      */
     @Override
     public void writeToNBT(NBTTagCompound compound)
@@ -94,9 +94,9 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * Read the WorkOrder data from the NBTTagCompound
+     * Read the WorkOrder data from the NBTTagCompound.
      *
-     * @param compound NBT Tag compound
+     * @param compound NBT Tag compound.
      */
     @Override
     public void readFromNBT(NBTTagCompound compound)
@@ -116,8 +116,8 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
      *
-     * @param colony The colony that owns the Work Order
-     * @return True if the building for this workorder still exists
+     * @param colony The colony that owns the Work Order.
+     * @return True if the building for this work order still exists.
      */
     @Override
     public boolean isValid(Colony colony)
@@ -129,9 +129,9 @@ public class WorkOrderBuild extends WorkOrder
      * Attempt to fulfill the Work Order.
      * Override this with an implementation for the Work Order to find a Citizen to perform the job
      * <p>
-     * finds the first suitable builder for this job
+     * finds the first suitable builder for this job.
      *
-     * @param colony The colony that owns the Work Order
+     * @param colony The colony that owns the Work Order.
      */
     @Override
     public void attemptToFulfill(Colony colony)
@@ -160,9 +160,9 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * Returns the ID of the building (aka ChunkCoordinates)
+     * Returns the ID of the building (aka ChunkCoordinates).
      *
-     * @return ID of the building
+     * @return ID of the building.
      */
     public BlockPos getBuildingLocation()
     {
@@ -172,7 +172,7 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * Get the name the schematic for this work order.
      *
-     * @return the internal string for this schematic
+     * @return the internal string for this schematic.
      */
     public String getSchematicName()
     {
@@ -182,18 +182,28 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * Gets how many times this schematic should be rotated.
      *
-     * @return building rotation
+     * @return building rotation.
      */
     public int getRotation()
     {
         return buildingRotation;
     }
 
+    /**
+     * Set whether or not the building has been cleared.
+     *
+     * @param cleared true if the building has been cleared.
+     */
     public void setCleared(boolean cleared)
     {
         this.cleared = cleared;
     }
 
+    /**
+     * Gets whether or not the building has been cleared.
+     *
+     * @return true if the building has been cleared.
+     */
     public boolean isCleared()
     {
         return cleared;

@@ -251,7 +251,9 @@ public class RenderSchematic extends RenderGlobal {
         tessellator.setDelta(ConfigurationHandler.blockDelta);
 
         tessellator.beginLines();
-        this.tmp.set(schematic.position.getX() + schematic.getWidth() - 1, schematic.position.getY() + schematic.getHeight() - 1, schematic.position.getZ() + schematic.getLength() - 1);
+        this.tmp.set(schematic.position.getX() + schematic.getWidth() - 1,
+                schematic.position.getY() + schematic.getHeight() - 1,
+                schematic.position.getZ() + schematic.getLength() - 1);
         tessellator.drawCuboid(schematic.position, this.tmp, GeometryMasks.Line.ALL, 0x7FBF00BF);
         tessellator.draw();
 
