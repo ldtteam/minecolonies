@@ -8,16 +8,28 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class SchematicRenderCache extends RegionRenderCache {
+/**
+ * RenderCache for schematics.
+ */
+public class SchematicRenderCache extends RegionRenderCache
+{
     private final Minecraft minecraft = Minecraft.getMinecraft();
 
-    public SchematicRenderCache(final World world, final BlockPos from, final BlockPos to, final int subtract) {
+    /**
+     * Create a RenderCache for a schematic.
+     */
+    public SchematicRenderCache(final World world, final BlockPos from, final BlockPos to, final int subtract)
+    {
         super(world, from, to, subtract);
     }
 
     @Override
-    public IBlockState getBlockState(final BlockPos pos) {
-        final BlockPos realPos = pos.add(Settings.instance.schematic.position);
+    /**
+     * Return the cached block state.
+     */
+    public IBlockState getBlockState(final BlockPos pos)
+    {
+        final BlockPos realPos = pos.add(Settings.instance.getSchematicWorld().position);
         final World world = this.minecraft.theWorld;
 
         if (!world.isAirBlock(realPos)) {

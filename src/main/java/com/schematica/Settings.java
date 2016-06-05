@@ -5,54 +5,44 @@ import com.schematica.client.renderer.RenderSchematic;
 import com.schematica.client.world.SchematicWorld;
 import com.schematica.world.storage.Schematic;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class Settings
+/**
+ * Class used to store
+ */
+public final class Settings
 {
+    /**
+     * Single instance of this class.
+     */
     public static final Settings instance = new Settings();
 
     private boolean inHutMode = true;
 
-    public SchematicWorld schematic = null;
+    private SchematicWorld schematic = null;
 
-    public final BlockPos.MutableBlockPos pointA  = new BlockPos.MutableBlockPos();
-    public final BlockPos.MutableBlockPos pointB  = new BlockPos.MutableBlockPos();
-    public final BlockPos.MutableBlockPos pointMin = new BlockPos.MutableBlockPos();
-    public final BlockPos.MutableBlockPos pointMax = new BlockPos.MutableBlockPos();
-
-    public MovingObjectPosition movingObjectPosition = null;
-
-    public final BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos();
+    private final BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos();
 
     private int    rotation = 0;
     private String hutDec   = "";
     private String style    = "";
 
-    public boolean isRenderingGuide = false;
+    private boolean isPendingReset = false;
 
-    public boolean isPendingReset = false;
-
-    private Settings() {
+    private Settings()
+    {
     }
 
     /**
      * Reset the schematic rendering.
      */
-    public void reset() {
-        this.isRenderingGuide = false;
-
+    public void reset()
+    {
         schematic = null;
         RenderSchematic.INSTANCE.setWorldAndLoadRenderers(null);
 
-        pointA.set(0, 0, 0);
-        pointB.set(0, 0, 0);
-        updatePoints();
-    }
-
-    private void updatePoints()
-    {
-        pointMin.set(Math.min(pointA.getX(), pointB.getX()), Math.min(pointA.getY(), pointB.getY()), Math.min(pointA.getZ(), pointB.getZ()));
-        pointMax.set(Math.max(pointA.getX(), pointB.getX()), Math.max(pointA.getY(), pointB.getY()), Math.max(pointA.getZ(), pointB.getZ()));
+        isPendingReset = false;
     }
 
     /**
@@ -62,7 +52,12 @@ public class Settings
      */
     public void moveTo(BlockPos pos)
     {
-        BlockPosUtil.set(offset, pos.subtract(getActiveSchematic().getOffset()));
+        if(this.schematic == null)
+        {
+            return;
+        }
+
+        BlockPosUtil.set(offset, pos.subtract(schematic.getSchematic().getOffset()));
         BlockPosUtil.set(schematic.position, offset);
     }
 
@@ -89,9 +84,18 @@ public class Settings
     /**
      * @return The schematic we are currently rendering.
      */
+    @Nullable
     public Schematic getActiveSchematic()
     {
         return this.schematic == null ? null : this.schematic.getSchematic();
+    }
+
+    /**
+     * @return The schematic world we are currently rendering. null if not currently rendering anything.
+     */
+    public SchematicWorld getSchematicWorld()
+    {
+        return schematic;
     }
 
     /**
@@ -146,5 +150,30 @@ public class Settings
     public int getRotation()
     {
         return rotation;
+    }
+
+    /**
+     * Call reset next tick.
+     */
+    public void markDirty()
+    {
+        isPendingReset = true;
+    }
+
+    /**
+     * @return true if Settings should be reset.
+     */
+    public boolean isDirty()
+    {
+        return isPendingReset;
+    }
+
+    /**
+     * @return offset
+     */
+    @NotNull
+    public BlockPos getOffset()
+    {
+        return offset.getImmutable();
     }
 }

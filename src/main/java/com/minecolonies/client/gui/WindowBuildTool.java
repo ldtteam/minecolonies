@@ -13,6 +13,7 @@ import com.minecolonies.util.SchematicWrapper;
 import com.schematica.Settings;
 import com.schematica.client.renderer.RenderSchematic;
 import com.schematica.client.util.RotationHelper;
+import com.schematica.world.storage.Schematic;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.BlockPos;
@@ -93,9 +94,10 @@ public class WindowBuildTool extends Window implements Button.Handler
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
-        if(Settings.instance.getActiveSchematic() != null)
+        Schematic schematic = Settings.instance.getActiveSchematic();
+        if(schematic != null)
         {
-            BlockPosUtil.set(this.pos, Settings.instance.offset.add(Settings.instance.getActiveSchematic().getOffset()));
+            BlockPosUtil.set(this.pos, Settings.instance.getOffset().add(schematic.getOffset()));
             rotation = Settings.instance.getRotation();
         }
         else
@@ -227,7 +229,10 @@ public class WindowBuildTool extends Window implements Button.Handler
             }
             break;
         case BUTTON_HUT_DEC_ID:
-            if(hutDec.size() == 1) break;
+            if(hutDec.size() == 1)
+            {
+                break;
+            }
 
             increaseHutDecIndex(button);
             changeSchematic();
@@ -272,12 +277,12 @@ public class WindowBuildTool extends Window implements Button.Handler
             break;
         case BUTTON_ROTATE_LEFT:
             rotation = (rotation + 3) % 4;
-            RotationHelper.rotate(Settings.instance.schematic, EnumFacing.DOWN, true);
+            RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
             updatePosition();
             break;
         case BUTTON_ROTATE_RIGHT:
             rotation = (rotation + 1) % 4;
-            RotationHelper.rotate(Settings.instance.schematic, EnumFacing.UP, true);
+            RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
             updatePosition();
             break;
 

@@ -12,7 +12,7 @@ public class WorldHandler {
     @SubscribeEvent
     public void onLoad(final WorldEvent.Load event) {
         if (event.world.isRemote && !(event.world instanceof SchematicWorld)) {
-            RenderSchematic.INSTANCE.setWorldAndLoadRenderers(Settings.instance.schematic);
+            RenderSchematic.INSTANCE.setWorldAndLoadRenderers(Settings.instance.getSchematicWorld());
             addWorldAccess(event.world, RenderSchematic.INSTANCE);
         }
     }

@@ -188,19 +188,19 @@ public class RenderSchematic extends RenderGlobal {
         final EntityPlayerSP player = this.mc.thePlayer;
         if (player != null) {
             this.profiler.startSection("schematica");
-            final boolean isRenderingSchematic = Settings.instance.schematic != null && Settings.instance.schematic.isRendering;
+            final boolean isRenderingSchematic = Settings.instance.getActiveSchematic() != null && Settings.instance.getSchematicWorld().isRendering;
 
             this.profiler.startSection("schematic");
             if (isRenderingSchematic) {
                 GlStateManager.pushMatrix();
-                renderSchematic(Settings.instance.schematic, event.partialTicks);
+                renderSchematic(Settings.instance.getSchematicWorld(), event.partialTicks);
                 GlStateManager.popMatrix();
             }
 
             this.profiler.endStartSection("guide");
-            if (Settings.instance.isRenderingGuide || isRenderingSchematic) {
+            if (isRenderingSchematic) {
                 GlStateManager.pushMatrix();
-                renderOverlay(Settings.instance.schematic, isRenderingSchematic);
+                renderOverlay(Settings.instance.getSchematicWorld(), true);
                 GlStateManager.popMatrix();
             }
 
@@ -240,19 +240,7 @@ public class RenderSchematic extends RenderGlobal {
         tessellator.setTranslation(-this.mc.thePlayer.posX, -this.mc.thePlayer.posY, -this.mc.thePlayer.posZ);
         tessellator.setDelta(ConfigurationHandler.blockDelta);
 
-        if (Settings.instance.isRenderingGuide) {
-            tessellator.beginQuads();
-            tessellator.drawCuboid(Settings.instance.pointA, GeometryMasks.Quad.ALL, 0x3FBF0000);
-            tessellator.drawCuboid(Settings.instance.pointB, GeometryMasks.Quad.ALL, 0x3F0000BF);
-            tessellator.draw();
-        }
-
         tessellator.beginLines();
-        if (Settings.instance.isRenderingGuide) {
-            tessellator.drawCuboid(Settings.instance.pointA, GeometryMasks.Line.ALL, 0x3FBF0000);
-            tessellator.drawCuboid(Settings.instance.pointB, GeometryMasks.Line.ALL, 0x3F0000BF);
-            tessellator.drawCuboid(Settings.instance.pointMin, Settings.instance.pointMax, GeometryMasks.Line.ALL, 0x7F00BF00);
-        }
         if (isRenderingSchematic) {
             this.tmp.set(schematic.position.getX() + schematic.getWidth() - 1, schematic.position.getY() + schematic.getHeight() - 1, schematic.position.getZ() + schematic.getLength() - 1);
             tessellator.drawCuboid(schematic.position, this.tmp, GeometryMasks.Line.ALL, 0x7FBF00BF);

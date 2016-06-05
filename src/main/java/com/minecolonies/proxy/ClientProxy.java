@@ -13,7 +13,6 @@ import com.minecolonies.event.ClientEventHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.schematica.client.renderer.RenderSchematic;
-import com.schematica.handler.client.RenderTickHandler;
 import com.schematica.handler.client.TickHandler;
 import com.schematica.handler.client.WorldHandler;
 import net.minecraft.client.Minecraft;
@@ -41,7 +40,6 @@ public class ClientProxy extends CommonProxy
 
         //Schematica
         MinecraftForge.EVENT_BUS.register(RenderSchematic.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(RenderTickHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(TickHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(new WorldHandler());
     }
