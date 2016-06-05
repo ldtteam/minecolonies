@@ -196,8 +196,8 @@ class SchematicAlpha extends SchematicFormat {
                 if (entityCompound != null) {
                     entityList.appendTag(entityCompound);
                 }
-            } catch (final Throwable t) {
-                Reference.logger.error("Entity {} failed to save, skipping!", entity, t);
+            } catch (final Exception e) {
+                Reference.logger.error("Entity {} failed to save, skipping!", entity, e);
             }
         }
 
