@@ -2,15 +2,11 @@ package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
 import com.blockout.controls.Label;
-import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.BuildingHut;
 import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
-
-import java.util.HashMap;
-import java.util.function.Consumer;
 
 /**
  * Manage windows associated with Buildings.

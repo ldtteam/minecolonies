@@ -16,7 +16,6 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,10 +111,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_STYLE_ID, this::styleClicked);
         registerButton(BUTTON_CONFIRM, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
-        registerButton(BUTTON_LEFT, this::moveArrow);
-        registerButton(BUTTON_RIGHT, this::moveArrow);
-        registerButton(BUTTON_BACK, this::moveArrow);
-        registerButton(BUTTON_FORWARD, this::moveArrow);
+        registerButton(BUTTON_LEFT, this::moveLeftClicked);
+        registerButton(BUTTON_RIGHT, this::moveRightClicked);
+        registerButton(BUTTON_BACK, this::moveBackClicked);
+        registerButton(BUTTON_FORWARD, this::moveForwardClicked);
         registerButton(BUTTON_UP, this::moveUpClicked);
         registerButton(BUTTON_DOWN, this::moveDownClicked);
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
@@ -321,88 +320,27 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         close();
     }
 
-    /**
-     * Moves the pointer to a new position.
-     *
-     * @param button    The button that was pressed.
-     */
-    private void moveArrow(Button button)
+    private void moveLeftClicked(Button button)
     {
-        int facing = MathHelper.floor_double((double) (this.mc.thePlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
+        updatePosition();
+    }
 
-        switch(button.getID())
-        {
-            case BUTTON_LEFT:
-                switch (facing)
-                {
-                    case 0:
-                        BlockPosUtil.set(pos, pos.east());
-                        break;
-                    case 1:
-                        BlockPosUtil.set(pos, pos.south());
-                        break;
-                    case 2:
-                        BlockPosUtil.set(pos, pos.west());
-                        break;
-                    case 3:
-                        BlockPosUtil.set(pos, pos.north());
-                        break;
-                }
-                break;
-            case BUTTON_RIGHT:
-                switch (facing)
-                {
-                    case 0:
-                        BlockPosUtil.set(pos, pos.west());
-                        break;
-                    case 1:
-                        BlockPosUtil.set(pos, pos.north());
-                        break;
-                    case 2:
-                        BlockPosUtil.set(pos, pos.east());
-                        break;
-                    case 3:
-                        BlockPosUtil.set(pos, pos.south());
-                        break;
-                }
-                break;
-            case BUTTON_FORWARD:
-                switch (facing)
-                {
-                    case 0:
-                        BlockPosUtil.set(pos, pos.south());
-                        break;
-                    case 1:
-                        BlockPosUtil.set(pos, pos.west());
-                        break;
-                    case 2:
-                        BlockPosUtil.set(pos, pos.north());
-                        break;
-                    case 3:
-                        BlockPosUtil.set(pos, pos.east());
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case BUTTON_BACK:
-                switch (facing)
-                {
-                    case 0:
-                        BlockPosUtil.set(pos, pos.north());
-                        break;
-                    case 1:
-                        BlockPosUtil.set(pos, pos.east());
-                        break;
-                    case 2:
-                        BlockPosUtil.set(pos, pos.south());
-                        break;
-                    case 3:
-                        BlockPosUtil.set(pos, pos.west());
-                        break;
-                }
-                break;
-        }
+    private void moveRightClicked(Button button)
+    {
+        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
+        updatePosition();
+    }
+
+    private void moveForwardClicked(Button button)
+    {
+        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing()));
+        updatePosition();
+    }
+
+    private void moveBackClicked(Button button)
+    {
+        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
         updatePosition();
     }
 

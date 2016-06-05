@@ -1,13 +1,12 @@
 package com.minecolonies.client.gui;
 
-import com.blockout.controls.Button;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.lib.Constants;
 
 /**
  * Window for the home building
  */
-public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View> implements Button.Handler
+public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View>
 {
     private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowHutHome.xml";
 
