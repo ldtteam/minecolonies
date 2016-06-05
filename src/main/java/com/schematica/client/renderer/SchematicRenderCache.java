@@ -17,16 +17,23 @@ public class SchematicRenderCache extends RegionRenderCache
 
     /**
      * Create a RenderCache for a schematic.
+     *
+     * @param world passed to super.
+     * @param from passed to super.
+     * @param to passed to super.
+     * @param subtract passed to super.
      */
     public SchematicRenderCache(final World world, final BlockPos from, final BlockPos to, final int subtract)
     {
         super(world, from, to, subtract);
     }
 
-    @Override
     /**
      * Return the cached block state.
+     *
+     * @param pos position of block in SchematicWorld
      */
+    @Override
     public IBlockState getBlockState(final BlockPos pos)
     {
         final BlockPos realPos = pos.add(Settings.instance.getSchematicWorld().position);

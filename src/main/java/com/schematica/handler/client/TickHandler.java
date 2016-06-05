@@ -9,20 +9,32 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 /**
  * Settings TickHandler for schematic rendering.
  */
-public class TickHandler
+public final class TickHandler
 {
     public static final TickHandler INSTANCE = new TickHandler();
 
     private final Minecraft minecraft = Minecraft.getMinecraft();
 
-    private TickHandler() {}
+    private TickHandler()
+    {
+    }
 
+    /**
+     * Mark dirty when a client disconnects.
+     *
+     * @param event Forge event.
+     */
     @SubscribeEvent
     public void onClientDisconnect(final FMLNetworkEvent.ClientDisconnectionFromServerEvent event)
     {
         Settings.instance.markDirty();
     }
 
+    /**
+     * Call {@link Settings#reset()} if dirty.
+     *
+     * @param event Forge event.
+     */
     @SubscribeEvent
     public void onClientTick(final TickEvent.ClientTickEvent event)
     {

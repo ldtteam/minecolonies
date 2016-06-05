@@ -1,6 +1,9 @@
 package com.schematica.handler;
 
-public class ConfigurationHandler
+/**
+ * Stores static config for schematic rendering.
+ */
+public final class ConfigurationHandler
 {
     public static final boolean enableAlpha = false;
     public static final float alpha = 0.5F;
