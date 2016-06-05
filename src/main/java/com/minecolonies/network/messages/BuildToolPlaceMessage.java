@@ -136,7 +136,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param rotation The number of times the schematic should be rotated.
      * @param buildPos The location the hut is being placed.
      */
-    private void handleHut(World world, EntityPlayer player, String hut, String style, int rotation, BlockPos buildPos)
+    private static void handleHut(World world, EntityPlayer player, String hut, String style, int rotation, BlockPos buildPos)
     {
         if(Schematics.getStylesForHut(hut) == null)
         {
@@ -178,7 +178,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param rotation The number of times the decoration is rotated.
      * @param buildPos The location the decoration will be built.
      */
-    private void handleDecoration(World world, EntityPlayer player, String decoration, String style, int rotation, BlockPos buildPos)
+    private static void handleDecoration(World world, EntityPlayer player, String decoration, String style, int rotation, BlockPos buildPos)
     {
         if(Schematics.getStylesForDecoration(decoration) == null)
         {
