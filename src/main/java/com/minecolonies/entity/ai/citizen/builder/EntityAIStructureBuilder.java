@@ -39,23 +39,27 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally)
      */
-    private static final double   XP_EACH_BUILDING              = 2.5;
+    private static final double XP_EACH_BUILDING = 2.5;
+
     /**
      * How often should intelligence factor into the builders skill modifier.
      */
-    private static final int      INTELLIGENCE_MULTIPLIER       = 2;
+    private static final int INTELLIGENCE_MULTIPLIER = 2;
+
     /**
      * How often should strength factor into the builders skill modifier.
      */
-    private static final int      STRENGTH_MULTIPLIER           = 1;
+    private static final int STRENGTH_MULTIPLIER = 1;
+
     /**
      * Position where the Builders constructs from.
      */
-    private              BlockPos workFrom                      = null;
+    private BlockPos workFrom = null;
+
     /**
      * The maximum range to keep from the current building place
      */
-    private static final int      MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
+    private static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -104,6 +108,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return false;
     }
 
+    //todo why does this return AIState if it isn't used.
     private AIState initiate()
     {
         if(!job.hasSchematic())//is build in progress

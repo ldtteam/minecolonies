@@ -512,12 +512,12 @@ public final class SchematicWrapper
 
     public boolean findNextBlockToClear()
     {
-
         int count = 0;
         do
         {
             count++;
-            if(!incrementBlock())
+            //decrement because we clear from top to bottom.
+            if(!decrementBlock())
             {
                 return false;
             }
