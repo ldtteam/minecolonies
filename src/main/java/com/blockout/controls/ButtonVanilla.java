@@ -1,24 +1,49 @@
 package com.blockout.controls;
 
 import com.blockout.PaneParams;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+/**
+ * BlockOut implementation of a Vanilla Button.
+ */
 public class ButtonVanilla extends Button
 {
-    private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
 
-    public ButtonVanilla(){ setSize(200, 20); }
+    /**
+     * Default constructor.
+     */
+    public ButtonVanilla()
+    {
+        setSize(200, 20);
+    }
+
+    /**
+     * Constructor called when loaded from xml.
+     *
+     * @param params PaneParams from xml file.
+     */
     public ButtonVanilla(PaneParams params)
     {
         super(params);
-        if (getWidth() == 0)    width = 200;
-        if (getHeight() == 0)   height = 20;
+        if (getWidth() == 0)
+        {
+            width = 200;
+        }
+        if (getHeight() == 0)
+        {
+            height = 20;
+        }
     }
 
+    /**
+     * Draws a vanilla button.
+     *
+     * @param mx Mouse x (relative to parent)
+     * @param my Mouse y (relative to parent)
+     */
     @Override
     public void drawSelf(int mx, int my)
     {
@@ -49,12 +74,5 @@ public class ButtonVanilla extends Button
 
         int textColor = enabled ? (isMouseOver ? 16777120 : 14737632) : 10526880;
         drawCenteredString(mc.fontRendererObj, label, x + width / 2, y + (height - 8) / 2, textColor);
-    }
-
-    @Override
-    public void handleClick(int mx, int my)
-    {
-        mc.getSoundHandler().playSound(PositionedSoundRecord.create(soundClick, 1.0F));
-        super.handleClick(mx, my);
     }
 }
