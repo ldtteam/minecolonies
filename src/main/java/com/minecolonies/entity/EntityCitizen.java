@@ -462,12 +462,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             cleanupChatMessages();
             updateColonyServer();
         }
-        if(isCitizenSuffocating())
-        {
-            getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
-        }
-
-        if(isCitizenSuffocating())
+        if(isEntityInsideOpaqueBlock())
         {
             getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
         }
@@ -475,20 +470,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         checkHeal();
         super.onLivingUpdate();
     }
-
-    /**
-     * Checks if the citizen is suffocating (If at his body or head position is a block).
-     * We will probably have to discover which blocks are solid but citizens still can stand in. (Like doors, fences, fenceGates)
-     * @return true if there is a block at his position.
-     */
-    private boolean isCitizenSuffocating()
-    {
-        return !(worldObj.getBlockState(this.getPosition()).getBlock() instanceof BlockDoor) &&
-               !(worldObj.getBlockState(this.getPosition()).getBlock() instanceof BlockFenceGate) &&
-               !(worldObj.getBlockState(this.getPosition()).getBlock() instanceof BlockFence) &&
-                (worldObj.getBlockState(this.getPosition()).getBlock().getMaterial().isSolid() || worldObj.getBlockState(this.getPosition().up()).getBlock().getMaterial().isSolid());
-    }
-
+    
     /**
      * Checks the citizens health status and heals the citizen if necessary.
      */
