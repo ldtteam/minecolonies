@@ -7,7 +7,7 @@ import com.minecolonies.lib.Constants;
 /**
  * Window for the home building
  */
-public class WindowHomeBuilding extends AbstractWindowSkeleton<BuildingHome.View> implements Button.Handler
+public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View> implements Button.Handler
 {
     private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowHutHome.xml";
 

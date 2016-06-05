@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * Window for the town hall
  */
-public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View>
+public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View>
 {
     /**
      * Id of the info button in the GUI.

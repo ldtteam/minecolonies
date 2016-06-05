@@ -1,14 +1,12 @@
 package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
-import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Log;
 import com.minecolonies.util.SchematicWrapper;
 import com.schematica.Settings;
 import com.schematica.client.renderer.RenderSchematic;
@@ -29,7 +27,7 @@ import java.util.stream.Collectors;
  *
  * @author Colton
  */
-public class WindowBuildTool extends Window implements Button.Handler
+public class WindowBuildTool extends AbstractWindowSkeleton
 {
     /*
     All buttons for the GUI
@@ -62,6 +60,10 @@ public class WindowBuildTool extends Window implements Button.Handler
     private static final    String          HUT_PREFIX                  = ":blockHut";
 
     private static final BlockPos DEFAULT_POS = new BlockPos(0, 0, 0);
+
+    private static final int POSSIBLE_ROTATIONS = 4;
+    private static final int ROTATE_RIGHT       = 1;
+    private static final int ROTATE_LEFT        = 3;
 
     /**
      * List of huts or decorations possible to make.
@@ -104,6 +106,20 @@ public class WindowBuildTool extends Window implements Button.Handler
         {
             BlockPosUtil.set(this.pos, pos);
         }
+
+        registerButton(BUTTON_TYPE_ID, this::placementModeClicked);
+        registerButton(BUTTON_HUT_DEC_ID, this::hutDecClicked);
+        registerButton(BUTTON_STYLE_ID, this::styleClicked);
+        registerButton(BUTTON_CONFIRM, this::confirmClicked);
+        registerButton(BUTTON_CANCEL, this::cancelClicked);
+        registerButton(BUTTON_LEFT, this::moveArrow);
+        registerButton(BUTTON_RIGHT, this::moveArrow);
+        registerButton(BUTTON_BACK, this::moveArrow);
+        registerButton(BUTTON_FORWARD, this::moveArrow);
+        registerButton(BUTTON_UP, this::moveUpClicked);
+        registerButton(BUTTON_DOWN, this::moveDownClicked);
+        registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
+        registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
     }
 
 	@Override
@@ -206,185 +222,6 @@ public class WindowBuildTool extends Window implements Button.Handler
         }
     }
 
-    @Override
-    public void onButtonClicked(Button button)
-    {
-        switch (button.getID())
-        {
-        case BUTTON_TYPE_ID:
-            Settings.instance.setActiveSchematic(null);
-            hutDec.clear();
-            hutDecIndex = 0;
-            styleIndex = 0;
-
-            if(Settings.instance.isInHutMode())
-            {
-                Settings.instance.setInHutMode(false);
-                loadDecorationMode();
-            }
-            else
-            {
-                Settings.instance.setInHutMode(true);
-                loadHutMode();
-            }
-            break;
-        case BUTTON_HUT_DEC_ID:
-            if(hutDec.size() == 1)
-            {
-                break;
-            }
-
-            increaseHutDecIndex(button);
-            changeSchematic();
-            break;
-        case BUTTON_STYLE_ID:
-            List<String> styles = getStyles();
-
-            if(styles.size() == 1)
-            {
-                break;
-            }
-
-            styleIndex = (styleIndex + 1) % styles.size();
-
-            button.setLabel(styles.get(styleIndex));
-
-            changeSchematic();
-            break;
-        case BUTTON_CONFIRM:
-            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(hutDec.get(hutDecIndex),
-                    getStyles().get(styleIndex), this.pos, rotation, Settings.instance.isInHutMode()));
-            Settings.instance.setActiveSchematic(null);
-            close();
-            break;
-        case BUTTON_CANCEL:
-            Settings.instance.setActiveSchematic(null);
-            close();
-            break;
-        case BUTTON_LEFT:
-        case BUTTON_RIGHT:
-        case BUTTON_FORWARD:
-        case BUTTON_BACK:
-            moveArrow(button.getID());
-            break;
-        case BUTTON_UP:
-            BlockPosUtil.set(pos, pos.up());
-            updatePosition();
-            break;
-        case BUTTON_DOWN:
-            BlockPosUtil.set(pos, pos.down());
-            updatePosition();
-            break;
-        case BUTTON_ROTATE_LEFT:
-            rotation = (rotation + 3) % 4;
-            RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
-            updatePosition();
-            break;
-        case BUTTON_ROTATE_RIGHT:
-            rotation = (rotation + 1) % 4;
-            RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
-            updatePosition();
-            break;
-
-        default:
-            Log.logger.warn("WindowBuildTool: Unhandled Button ID:" + button.getID());
-        }
-    }
-
-    private void increaseHutDecIndex(Button hutDecButton)
-    {
-        hutDecIndex = (hutDecIndex + 1) % hutDec.size();
-        styleIndex = 0;
-
-        hutDecButton.setLabel(hutDec.get(hutDecIndex));
-        findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyles().get(styleIndex));
-    }
-
-    /**
-     * Moves the pointer to a new position
-     *
-     * @param id    Button ID
-     */
-    private void moveArrow(String id)
-    {
-        int facing = MathHelper.floor_double((double) (this.mc.thePlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-
-        switch(id)
-        {
-        case BUTTON_LEFT:
-            switch (facing)
-            {
-            case 0:
-                BlockPosUtil.set(pos, pos.east());
-                break;
-            case 1:
-                BlockPosUtil.set(pos, pos.south());
-                break;
-            case 2:
-                BlockPosUtil.set(pos, pos.west());
-                break;
-            case 3:
-                BlockPosUtil.set(pos, pos.north());
-                break;
-            }
-            break;
-        case BUTTON_RIGHT:
-            switch (facing)
-            {
-            case 0:
-                BlockPosUtil.set(pos, pos.west());
-                break;
-            case 1:
-                BlockPosUtil.set(pos, pos.north());
-                break;
-            case 2:
-                BlockPosUtil.set(pos, pos.east());
-                break;
-            case 3:
-                BlockPosUtil.set(pos, pos.south());
-                break;
-            }
-            break;
-        case BUTTON_FORWARD:
-            switch (facing)
-            {
-            case 0:
-                BlockPosUtil.set(pos, pos.south());
-                break;
-            case 1:
-                BlockPosUtil.set(pos, pos.west());
-                break;
-            case 2:
-                BlockPosUtil.set(pos, pos.north());
-                break;
-            case 3:
-                BlockPosUtil.set(pos, pos.east());
-                break;
-                default:
-                    break;
-            }
-            break;
-        case BUTTON_BACK:
-            switch (facing)
-            {
-            case 0:
-                BlockPosUtil.set(pos, pos.north());
-                break;
-            case 1:
-                BlockPosUtil.set(pos, pos.east());
-                break;
-            case 2:
-                BlockPosUtil.set(pos, pos.south());
-                break;
-            case 3:
-                BlockPosUtil.set(pos, pos.west());
-                break;
-            }
-            break;
-        }
-        updatePosition();
-    }
-
     /**
      * Changes the current schematic.
      * Set to button position at that time
@@ -413,5 +250,185 @@ public class WindowBuildTool extends Window implements Button.Handler
     {
         Settings.instance.moveTo(pos);
         RenderSchematic.INSTANCE.refresh();
+    }
+
+    /*
+     * ---------------- Button Handling -----------------
+     */
+
+    private void placementModeClicked(Button button)
+    {
+        Settings.instance.setActiveSchematic(null);
+        hutDec.clear();
+        hutDecIndex = 0;
+        styleIndex = 0;
+
+        if(Settings.instance.isInHutMode())
+        {
+            Settings.instance.setInHutMode(false);
+            loadDecorationMode();
+        }
+        else
+        {
+            Settings.instance.setInHutMode(true);
+            loadHutMode();
+        }
+    }
+
+    private void hutDecClicked(Button button)
+    {
+        if(hutDec.size() == 1)
+        {
+            return;
+        }
+
+        hutDecIndex = (hutDecIndex + 1) % hutDec.size();
+        styleIndex = 0;
+
+        button.setLabel(hutDec.get(hutDecIndex));
+        findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyles().get(styleIndex));
+
+        changeSchematic();
+    }
+
+    private void styleClicked(Button button)
+    {
+        List<String> styles = getStyles();
+
+        if(styles.size() == 1)
+        {
+            return;
+        }
+
+        styleIndex = (styleIndex + 1) % styles.size();
+
+        button.setLabel(styles.get(styleIndex));
+
+        changeSchematic();
+    }
+
+    private void confirmClicked(Button button)
+    {
+        MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(hutDec.get(hutDecIndex),
+                getStyles().get(styleIndex), this.pos, rotation, Settings.instance.isInHutMode()));
+        Settings.instance.setActiveSchematic(null);
+        close();
+    }
+
+    private void cancelClicked(Button button)
+    {
+        Settings.instance.setActiveSchematic(null);
+        close();
+    }
+
+    /**
+     * Moves the pointer to a new position.
+     *
+     * @param button    The button that was pressed.
+     */
+    private void moveArrow(Button button)
+    {
+        int facing = MathHelper.floor_double((double) (this.mc.thePlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+
+        switch(button.getID())
+        {
+            case BUTTON_LEFT:
+                switch (facing)
+                {
+                    case 0:
+                        BlockPosUtil.set(pos, pos.east());
+                        break;
+                    case 1:
+                        BlockPosUtil.set(pos, pos.south());
+                        break;
+                    case 2:
+                        BlockPosUtil.set(pos, pos.west());
+                        break;
+                    case 3:
+                        BlockPosUtil.set(pos, pos.north());
+                        break;
+                }
+                break;
+            case BUTTON_RIGHT:
+                switch (facing)
+                {
+                    case 0:
+                        BlockPosUtil.set(pos, pos.west());
+                        break;
+                    case 1:
+                        BlockPosUtil.set(pos, pos.north());
+                        break;
+                    case 2:
+                        BlockPosUtil.set(pos, pos.east());
+                        break;
+                    case 3:
+                        BlockPosUtil.set(pos, pos.south());
+                        break;
+                }
+                break;
+            case BUTTON_FORWARD:
+                switch (facing)
+                {
+                    case 0:
+                        BlockPosUtil.set(pos, pos.south());
+                        break;
+                    case 1:
+                        BlockPosUtil.set(pos, pos.west());
+                        break;
+                    case 2:
+                        BlockPosUtil.set(pos, pos.north());
+                        break;
+                    case 3:
+                        BlockPosUtil.set(pos, pos.east());
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case BUTTON_BACK:
+                switch (facing)
+                {
+                    case 0:
+                        BlockPosUtil.set(pos, pos.north());
+                        break;
+                    case 1:
+                        BlockPosUtil.set(pos, pos.east());
+                        break;
+                    case 2:
+                        BlockPosUtil.set(pos, pos.south());
+                        break;
+                    case 3:
+                        BlockPosUtil.set(pos, pos.west());
+                        break;
+                }
+                break;
+        }
+        updatePosition();
+    }
+
+    private void moveUpClicked(Button button)
+    {
+        BlockPosUtil.set(pos, pos.up());
+        updatePosition();
+    }
+
+    private void moveDownClicked(Button button)
+    {
+        BlockPosUtil.set(pos, pos.down());
+        updatePosition();
+    }
+
+    private void rotateRightClicked(Button button)
+    {
+        rotation = (rotation + ROTATE_RIGHT) % POSSIBLE_ROTATIONS;
+        RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
+        updatePosition();
+    }
+
+    private void rotateLeftClicked(Button button)
+    {
+        rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
+        RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
+        updatePosition();
     }
 }

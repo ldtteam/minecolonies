@@ -14,7 +14,7 @@ import com.minecolonies.util.LanguageHandler;
  *
  * @param <B> Class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
  */
-public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View> extends AbstractWindowSkeleton<B>
+public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View> extends AbstractWindowBuilding<B>
 {
     /**
      * Id of the hire/fire button in the GUI.
