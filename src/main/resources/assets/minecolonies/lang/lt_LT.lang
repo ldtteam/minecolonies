@@ -58,6 +58,13 @@ com.minecolonies.gui.buildtool.nodecoration=Nėra dekoracijų
 com.minecolonies.gui.buildtool.hut=Trobelės
 com.minecolonies.gui.buildtool.decoration=Dekoracijos
 
+com.minecolonies.gui.hiring.on=Rankinis
+com.minecolonies.gui.hiring.off=Automatinis
+com.minecolonies.gui.hiring.buttonHire=Samdyti
+com.minecolonies.gui.hiring.description=Pasirinkti darbininką.
+com.minecolonies.gui.townHall.addPlayer=Pridėti žaidėją:
+com.minecolonies.gui.townHall.jobHiring=Samdymo režimas:
+
 tile.minecolonies.blockHutCitizen.name=Gyventojo trobelė
 tile.minecolonies.blockHutBaker.name=Kepyklėlė
 tile.minecolonies.blockHutBlacksmith.name=Kalvė
