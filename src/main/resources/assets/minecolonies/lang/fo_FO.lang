@@ -58,6 +58,13 @@ com.minecolonies.gui.buildtool.nodecoration=Eingin prýði
 com.minecolonies.gui.buildtool.hut=Smáttur
 com.minecolonies.gui.buildtool.decoration=Prýði
 
+com.minecolonies.gui.hiring.on=Vel sjálvur
+com.minecolonies.gui.hiring.off=Sjálvvirkandi
+com.minecolonies.gui.hiring.buttonHire=Set í starv
+com.minecolonies.gui.hiring.description=Vel ein arbeiðara til starvið.
+com.minecolonies.gui.townHall.addPlayer=Legg spælara afturat:
+com.minecolonies.gui.townHall.jobHiring=Háttur at seta í starv:
+
 tile.minecolonies.blockHutCitizen.name=Sethús
 tile.minecolonies.blockHutBaker.name=Bakarí
 tile.minecolonies.blockHutBlacksmith.name=Smiðja
