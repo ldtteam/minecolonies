@@ -130,7 +130,7 @@ public abstract class AbstractBuilding
             }
             catch (NoSuchMethodException exception)
             {
-                throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding AbstractBuilding class mapping");
+                throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding AbstractBuilding class mapping", exception);
             }
         }
 
@@ -176,15 +176,14 @@ public abstract class AbstractBuilding
 
             if (oclass != null)
             {
-                //UUID id = UUID.fromString(compound.getString("id"));
                 BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
                 Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
                 building = (AbstractBuilding)constructor.newInstance(colony, pos);
             }
         }
-        catch (Exception exception)
+        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
-            exception.printStackTrace();
+            Log.logger.error(exception);
         }
 
         if (building != null)
@@ -193,23 +192,23 @@ public abstract class AbstractBuilding
             {
                 building.readFromNBT(compound);
             }
-            catch (Exception ex)
+            catch (RuntimeException ex)
             {
-                Log.logger.error(String.format("A AbstractBuilding %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                Log.logger.error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
                                         compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
                 building = null;
             }
         }
         else
         {
-            Log.logger.warn(String.format("Unknown AbstractBuilding type '%s' or missing constructor of proper format.", compound.getString(TAG_BUILDING_TYPE)));
+            Log.logger.warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_BUILDING_TYPE)));
         }
 
         return building;
     }
 
     /**
-     * Create a AbstractBuilding given it's TileEntity
+     * Create a Building given it's TileEntity
      *
      * @param colony    The owning colony
      * @param parent    The Tile Entity the building belongs to.
@@ -226,20 +225,18 @@ public abstract class AbstractBuilding
 
             if (oclass != null)
             {
-                //UUID id = UUID.fromString(compound.getString("id"));
                 BlockPos loc = parent.getPosition();
                 Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
                 building = (AbstractBuilding)constructor.newInstance(colony, loc);
             }
             else
             {
-                Log.logger.error(String.format("TileEntity %s does not have an associated AbstractBuilding.", parent.getClass().getName()));
+                Log.logger.error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
             }
         }
-        catch (Exception exception)
+        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
-            exception.printStackTrace();
-            Log.logger.error(String.format("Unknown AbstractBuilding type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
+            Log.logger.error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
         return building;
@@ -257,7 +254,7 @@ public abstract class AbstractBuilding
 
         rotation = compound.getInteger(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
-        if(style.equals(""))
+        if("".equals(style))
         {
             Log.logger.warn("Loaded empty style, setting to classic");
             style = "classic";
@@ -281,7 +278,7 @@ public abstract class AbstractBuilding
 
         if (s == null)
         {
-            throw new RuntimeException(this.getClass() + " is missing a mapping! This is a bug!");
+            throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
         }
         else
         {
@@ -316,7 +313,8 @@ public abstract class AbstractBuilding
      */
     public BlockPos getID()
     {
-        return location; //  Location doubles as ID
+        // Location doubles as ID
+        return location;
     }
 
     /**
@@ -738,8 +736,9 @@ public abstract class AbstractBuilding
             }
             catch (IndexOutOfBoundsException ex)
             {
-                Log.logger.error(String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
-                        oclass.getName()), ex);
+                Log.logger.error(
+                        String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
+                                oclass.getName()), ex);
                 view = null;
             }
         }
