@@ -18,16 +18,16 @@ com.minecolonies.gui.townHall.population.unemployed=Bedarbiai: %d
 com.minecolonies.gui.townHall.population.builders=Statybininkai: %d
 com.minecolonies.gui.townHall.population.deliverymen=Kurjeris: %d
 
-com.minecolonies.gui.workerHuts.buildersHut=Statybininko trobelė
+com.minecolonies.gui.workerHuts.buildersHut=Statybininko namelis
 com.minecolonies.gui.workerHuts.warehouse=Sandėlis
-com.minecolonies.gui.workerHuts.workerAssigned=Darbininkas:
+com.minecolonies.gui.workerHuts.workerAssigned=Paskirtas darbuotojas:
 com.minecolonies.gui.workerHuts.workerLevel=Darbininko lygis: %s
 com.minecolonies.gui.workerHuts.hire=Samdyti darbuotoją
 com.minecolonies.gui.workerHuts.fire=Atleisti darbuotoją
 com.minecolonies.gui.workerHuts.recall=Sugrąžinti darbininką
 com.minecolonies.gui.workerHuts.build=Statyti pastatą
 com.minecolonies.gui.workerHuts.upgrade=Patobulinti pastatą
-com.minecolonies.gui.workerHuts.upgradeUnavailable=Negalima patobulinti
+com.minecolonies.gui.workerHuts.upgradeUnavailable=Patobulinimas negalimas
 com.minecolonies.gui.workerHuts.repair=Remontuoti pastatą
 com.minecolonies.gui.workerHuts.buildType=Statybos tipas:
 com.minecolonies.gui.workerHuts.information=Informacija
@@ -36,10 +36,10 @@ com.minecolonies.gui.workerHuts.minerHut=Šachtininkas
 com.minecolonies.gui.workerHuts.minerNode=Mazgas
 com.minecolonies.gui.workerHuts.minerMineNode=Kasyklos lygis
 com.minecolonies.gui.workerHuts.minerNodeList=Lygiai
-com.minecolonies.gui.workerHuts.homeHut=Gyventojo trobelė
-com.minecolonies.gui.workerHuts.fisherman=Žvejo trobelė
-com.minecolonies.gui.workerHuts.lumberjackHut=Medkirčio trobelė
-com.minecolonies.gui.buildtool.nullHut=Nėra trobelės
+com.minecolonies.gui.workerHuts.homeHut=Gyventojo namelis
+com.minecolonies.gui.workerHuts.fisherman=Žvejo namelis
+com.minecolonies.gui.workerHuts.lumberjackHut=Medkirčio namelis
+com.minecolonies.gui.buildtool.nullHut=Nėra namelio
 
 com.minecolonies.gui.warehouse.toBlacksmith=Pristatyti kalviui:
 com.minecolonies.gui.warehouse.toStonemason=Pristatyti mūrininkui:
@@ -53,9 +53,9 @@ com.minecolonies.gui.citizen.skills.charisma=Charizma: %d
 com.minecolonies.gui.citizen.skills.intelligence=Protas: %d
 com.minecolonies.gui.citizen.skills.dexterity=Miklumas: %d
 
-com.minecolonies.gui.buildtool.nohut=Nėra trobelių
+com.minecolonies.gui.buildtool.nohut=Nėra pastatų
 com.minecolonies.gui.buildtool.nodecoration=Nėra dekoracijų
-com.minecolonies.gui.buildtool.hut=Trobelės
+com.minecolonies.gui.buildtool.hut=Pastatai
 com.minecolonies.gui.buildtool.decoration=Dekoracijos
 
 com.minecolonies.gui.hiring.on=Rankinis
@@ -65,14 +65,14 @@ com.minecolonies.gui.hiring.description=Pasirinkti darbininką.
 com.minecolonies.gui.townHall.addPlayer=Pridėti žaidėją:
 com.minecolonies.gui.townHall.jobHiring=Samdymo režimas:
 
-tile.minecolonies.blockHutCitizen.name=Gyventojo trobelė
+tile.minecolonies.blockHutCitizen.name=Gyventojo namelis
 tile.minecolonies.blockHutBaker.name=Kepyklėlė
 tile.minecolonies.blockHutBlacksmith.name=Kalvė
-tile.minecolonies.blockHutBuilder.name=Statybininko trobelė
+tile.minecolonies.blockHutBuilder.name=Statybininko namelis
 tile.minecolonies.blockHutWarehouse.name=Sandėlis
 tile.minecolonies.blockHutFarmer.name=Ūkis
 tile.minecolonies.blockHutLumberjack.name=Lentpjūvė
-tile.minecolonies.blockHutFisherman.name=Žvejo trobelė
+tile.minecolonies.blockHutFisherman.name=Žvejo namelis
 tile.minecolonies.blockHutMiner.name=Kasykla
 tile.minecolonies.blockHutStonemason.name=Karjeras
 tile.minecolonies.blockHutTownHall.name=Rotušė
@@ -92,6 +92,7 @@ tile.blockHutTownHall.messageColonistDead=Kolonistas mirė!
 tile.blockHutTownHall.messagePlacedAlready=Rotušė jau yra
 tile.blockHutTownHall.messageInvalidWorld=Rotušės negali būti šiame pasaulio tipe
 tile.blockHutTownHall.messageTooClose=Per arti jau egzistuojančios Rotušės
+
 tile.blockHut.messageTooFarFromTownHall=Jūs turite būti arčiau Rotušės!
 tile.blockHut.messageNoTownHall=Jūs turite pirmiau pastatyti Rotušę!
 
@@ -101,12 +102,13 @@ item.minecolonies.scepterSteel.name=Skenavimo įrankis
 item.minecolonies.caliper.name=Slankmatis
 
 item.supplyChestDeployer.invalid=Jūs turite būti šalia didelio vandens telkinio
+
 item.scepterSteel.point=Pirmas taškas išsaugotas
 item.scepterSteel.point2=Antras taškas išsaugotas, dar kartą spustelėkite dešinį mygtuką, kad išsaugoti schemą
 item.scepterSteel.samePoint=Tai buvo tas pats taškas
 item.scepterSteel.scanFormat=SCAN_%s-%s.schematic
-item.scepterSteel.scanSuccess=Nuskaitymas sėkmingai išsaugotas kaip %s
-item.scepterSteel.scanFailure=Nepavyko išsaugoti nuskaitymo
+item.scepterSteel.scanSuccess=Nuskaitymas sėkmingas, išsaugota kaip %s
+item.scepterSteel.scanFailure=Nuskaityti nepavyko
 
 item.caliper.message.same=Tai tas pats blokas.
 item.caliper.message.line=Tai yra %d bloko linija.
@@ -115,7 +117,7 @@ item.caliper.message.cube=Tai yra %d ant %d ant %d kubas.
 
 itemGroup.minecolonies=MineKolonijos
 
-entity.worker.inventoryFullChestFull: Prašau padaryti laisvos vietos mano skrynioje. Aš negaliu ten sudėti savo daiktų iš inventoriaus.
+entity.worker.inventoryFullChestFull: Prašau padaryti laisvos vietos mano skrynioje. Aš negaliu ten sudėti savo daiktų.
 
 entity.builder.messageBuildStart=Pradėta statyti %s
 entity.builder.messageBuildComplete=Baigta statyti %s
@@ -125,6 +127,8 @@ entity.miner.messageNeedTools=Reikia %s!
 entity.miner.messageNeedBlockAndItem=Man reikia %s!
 entity.miner.messageNeedBetterTools=Man reikia geresnių įrankių!
 entity.miner.messageMoreBlocks=Man reikia daugiau %s!
-entity.miner.messageRequiresBetterHut=Prašau patobulinti mano trobelę, kad galėčiau kasti giliau!
+entity.miner.messageRequiresBetterHut=Prašau patobulinti mano šachta, kad galėčiau kasti giliau!
 
-entity.fisherman.messageWaterTooFar=Žvejo trobelė yra per toli nuo vandens!
+entity.fisherman.messageWaterTooFar=Žvejo namelis yra per toli nuo vandens!
+
+com.minecolonies.workOrderAdded=Pastato statybos prašymas sukurtas!
