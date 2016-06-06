@@ -4,7 +4,6 @@ import com.blockout.Alignment;
 import com.blockout.PaneParams;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import org.lwjgl.opengl.GL11;

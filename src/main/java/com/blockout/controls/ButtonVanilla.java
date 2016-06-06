@@ -65,7 +65,7 @@ public class ButtonVanilla extends Button
         boolean isMouseOver = isPointInPane(mx, my);
 
         int u = 0;
-        int v = enabled ? (isMouseOver ? HOVER_TEXTURE_V : ENABLED_TEXTURE_V) : DISABLED_TEXTURE_V;
+        int v = this.enabled ? (isMouseOver ? HOVER_TEXTURE_V : ENABLED_TEXTURE_V) : DISABLED_TEXTURE_V;
 
 
         GlStateManager.enableBlend();
@@ -79,13 +79,13 @@ public class ButtonVanilla extends Button
         }
         else
         {
-            drawTexturedModalRect(x, y, u, v, width/2, height/2);
-            drawTexturedModalRect(x+width/2, y, u + DEFAULT_BUTTON_WIDTH - width /2, v, width/2, height/2);
-            drawTexturedModalRect(x, y+height/2, u, v + DEFAULT_BUTTON_HEIGHT - height/2, width/2, height/2);
-            drawTexturedModalRect(x+width/2, y+height/2, u + DEFAULT_BUTTON_WIDTH - width/2, v + DEFAULT_BUTTON_HEIGHT - height/2, width/2, height/2);
+            drawTexturedModalRect(x, y, u, v, width / 2, height / 2);
+            drawTexturedModalRect(x + width / 2, y, u + DEFAULT_BUTTON_WIDTH - width / 2, v, width / 2, height / 2);
+            drawTexturedModalRect(x, y + height / 2, u, v + DEFAULT_BUTTON_HEIGHT - height / 2, width / 2, height / 2);
+            drawTexturedModalRect(x + width / 2, y + height / 2, u + DEFAULT_BUTTON_WIDTH - width / 2, v + DEFAULT_BUTTON_HEIGHT - height / 2, width / 2, height / 2);
         }
 
-        int textColor = enabled ? (isMouseOver ? HOVER_COLOR : ENABLED_COLOR) : DISABLED_COLOR;
-        drawCenteredString(mc.fontRendererObj, label, x + width / 2, y + (height - 8) / 2, textColor);
+        int textColor = this.enabled ? (isMouseOver ? HOVER_COLOR : ENABLED_COLOR) : DISABLED_COLOR;
+        drawCenteredString(this.mc.fontRendererObj, label, x + width / 2, y + (height - this.mc.fontRendererObj.FONT_HEIGHT) / 2, textColor);
     }
 }
