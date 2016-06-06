@@ -1,7 +1,7 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -39,7 +39,7 @@ public class ColonyView implements IColony
 
     //  Buildings
     private         BuildingTownHall.View                   townHall;
-    private         Map<BlockPos, Building.View>            buildings       = new HashMap<>();
+    private         Map<BlockPos, AbstractBuilding.View>            buildings       = new HashMap<>();
 
     //  Citizenry
     private         Map<Integer, CitizenData.View>          citizens        = new HashMap<>();
@@ -122,25 +122,25 @@ public class ColonyView implements IColony
     }
 
     /**
-     * Get a Building.View for a given building (by coordinate-id) using raw x,y,z
+     * Get a AbstractBuilding.View for a given building (by coordinate-id) using raw x,y,z
      *
      * @param x     x-coordinate
      * @param y     y-coordinate
      * @param z     z-coordinate
-     * @return      {@link com.minecolonies.colony.buildings.Building.View} of a Building for the given Coordinates/ID, or null
+     * @return      {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null
      */
-    public Building.View getBuilding(int x, int y, int z)
+    public AbstractBuilding.View getBuilding(int x, int y, int z)
     {
         return getBuilding(new BlockPos(x, y, z));
     }
 
     /**
-     * Get a Building.View for a given building (by coordinate-id) using ChunkCoordinates
+     * Get a AbstractBuilding.View for a given building (by coordinate-id) using ChunkCoordinates
      *
-     * @param buildingId        Coordinates/ID of the Building
-     * @return                  {@link com.minecolonies.colony.buildings.Building.View} of a Building for the given Coordinates/ID, or null
+     * @param buildingId        Coordinates/ID of the AbstractBuilding
+     * @return                  {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null
      */
-    public Building.View getBuilding(BlockPos buildingId)
+    public AbstractBuilding.View getBuilding(BlockPos buildingId)
     {
         return buildings.get(buildingId);
     }
@@ -329,7 +329,7 @@ public class ColonyView implements IColony
      */
     public IMessage handleColonyViewRemoveBuildingMessage(BlockPos buildingId)
     {
-        Building.View building = buildings.remove(buildingId);
+        AbstractBuilding.View building = buildings.remove(buildingId);
         if (townHall == building)
         {
             townHall = null;
@@ -346,7 +346,7 @@ public class ColonyView implements IColony
      */
     public IMessage handleColonyBuildingViewMessage(BlockPos buildingId, ByteBuf buf)
     {
-        Building.View building = Building.createBuildingView(this, buildingId, buf);
+        AbstractBuilding.View building = AbstractBuilding.createBuildingView(this, buildingId, buf);
         if (building != null)
         {
             buildings.put(building.getID(), building);

@@ -8,7 +8,7 @@ import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobLumberjack;
 import net.minecraft.util.BlockPos;
 
-public class BuildingLumberjack extends BuildingWorker
+public class BuildingLumberjack extends AbstractBuildingWorker
 {
     private static final String LUMBERJACK          = "Lumberjack";
     private static final String LUMBERJACK_HUT_NAME = "lumberjackHut";
@@ -42,7 +42,7 @@ public class BuildingLumberjack extends BuildingWorker
         return new JobLumberjack(citizen);
     }
 
-    public static class View extends BuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
         public View(ColonyView c, BlockPos l)
         {

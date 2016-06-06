@@ -11,7 +11,7 @@ import net.minecraft.util.BlockPos;
 /**
  * The builders building.
  */
-public class BuildingBuilder extends BuildingWorker
+public class BuildingBuilder extends AbstractBuildingWorker
 {
     private static final String BUILDER     = "Builder";
 
@@ -44,7 +44,7 @@ public class BuildingBuilder extends BuildingWorker
         return new JobBuilder(citizen);
     }
 
-    public static class View extends BuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
         public View(ColonyView c, BlockPos l)
         {

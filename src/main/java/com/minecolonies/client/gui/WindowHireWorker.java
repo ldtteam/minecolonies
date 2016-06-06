@@ -8,7 +8,7 @@ import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.HireFireMessage;
 import com.minecolonies.util.LanguageHandler;
@@ -71,7 +71,7 @@ public class WindowHireWorker extends Window implements Button.Handler
     /**
      * The view of the current building.
      */
-    private Building.View building;
+    private AbstractBuilding.View building;
 
     /**
      * The colony.

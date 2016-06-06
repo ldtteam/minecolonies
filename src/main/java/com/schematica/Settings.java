@@ -119,8 +119,8 @@ public final class Settings
      * Saves the schematic info when the client closes the build tool window.
      *
      * @param hutDec Hut/decoration name.
-     * @param style Building style.
-     * @param level Building level.
+     * @param style AbstractBuilding style.
+     * @param level AbstractBuilding level.
      * @param rotation The number of times the building is rotated.
      */
     public void setSchematicInfo(String hutDec, String style, int level, int rotation)

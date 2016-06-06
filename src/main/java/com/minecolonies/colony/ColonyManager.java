@@ -1,6 +1,6 @@
 package com.minecolonies.colony;
 
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
@@ -148,30 +148,30 @@ public class ColonyManager
     }
 
     /**
-     * Get a Building by a World and coordinates
+     * Get a AbstractBuilding by a World and coordinates
      *
      * @param w     World
      * @param pos	Block position
-     * @return      Building at the given location
+     * @return      AbstractBuilding at the given location
      */
-    public static Building getBuilding(World w, BlockPos pos)
+    public static AbstractBuilding getBuilding(World w, BlockPos pos)
     {
         Colony colony = getColony(w, pos);
         if (colony != null)
         {
-            Building building = colony.getBuilding(pos);
+            AbstractBuilding building = colony.getBuilding(pos);
             if (building != null)
             {
                 return building;
             }
         }
 
-        //  Fallback - there might be a Building for this block, but it's outside of it's owning colony's radius
+        //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius
         if (coloniesByWorld.containsKey(w.provider.getDimensionId()))
         {
             for (Colony otherColony : coloniesByWorld.get(w.provider.getDimensionId()))
             {
-                Building building = otherColony.getBuilding(pos);
+                AbstractBuilding building = otherColony.getBuilding(pos);
                 if (building != null)
                 {
                     return building;
@@ -183,19 +183,19 @@ public class ColonyManager
     }
 
     /**
-     * Get a Building by a World and coordinates
+     * Get a AbstractBuilding by a World and coordinates
      *
      * @param w     World
      * @param pos	Block position
      * @return      Returns the view belonging to the building at (x, y, z)
      */
-    public static Building.View getBuildingView(World w, BlockPos pos)
+    public static AbstractBuilding.View getBuildingView(World w, BlockPos pos)
     //todo why do we have a world object if we dont use it
     {
         //  On client we will just check all known views
         for (ColonyView colony : colonyViews.values())
         {
-            Building.View building = colony.getBuilding(pos);
+            AbstractBuilding.View building = colony.getBuilding(pos);
             if (building != null)
             {
                 return building;

@@ -3,7 +3,7 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.Schematics;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.event.EventHandler;
@@ -154,7 +154,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
             player.inventory.consumeInventoryItem(Item.getItemFromBlock(block));
 
-            Building building = ColonyManager.getBuilding(world, buildPos);
+            AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
 
             if (building != null)
             {

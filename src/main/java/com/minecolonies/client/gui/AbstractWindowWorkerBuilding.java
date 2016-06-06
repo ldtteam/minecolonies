@@ -4,7 +4,7 @@ import com.blockout.controls.Button;
 import com.blockout.controls.Label;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.network.messages.HireFireMessage;
 import com.minecolonies.network.messages.RecallCitizenMessage;
 import com.minecolonies.util.LanguageHandler;
@@ -12,9 +12,9 @@ import com.minecolonies.util.LanguageHandler;
 /**
  * Abstract class for window for worker building
  *
- * @param <B> Class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
+ * @param <B> Class extending {@link AbstractBuildingWorker.View}
  */
-public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View> extends AbstractWindowBuilding<B>
+public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWorker.View> extends AbstractWindowBuilding<B>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -44,7 +44,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
     /**
      * Constructor for the window of the worker building
      *
-     * @param building class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
+     * @param building class extending {@link AbstractBuildingWorker.View}
      * @param resource Resource of the window
      */
     AbstractWindowWorkerBuilding(B building, String resource)

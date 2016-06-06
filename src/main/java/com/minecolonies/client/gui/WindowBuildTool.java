@@ -324,14 +324,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
         String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
-        SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? level + 1 : ""));
+        SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""));
 
         Settings.instance.setActiveSchematic(schematic.getSchematic());
 
         Settings.instance.moveTo(this.pos);
 
         //Catch up on rotations, makes it so going up a level or changing style doesn't reset rotation.
-        if(this.rotation == 3)
+        if(this.rotation == ROTATE_LEFT)
         {
             RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
         }

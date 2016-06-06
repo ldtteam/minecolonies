@@ -2,8 +2,7 @@ package com.minecolonies.entity.ai.citizen.builder;
 
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.ModBlocks;
-import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingBuilder;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
@@ -140,7 +139,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
             else
             {
-                Building building = job.getColony().getBuilding(wo.getBuildingLocation());
+                AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
                 if (building == null)
                 {
                     Log.logger.error(
@@ -196,7 +195,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if (!(workOrder instanceof WorkOrderBuildDecoration) && worker.getColony().getBuilding(pos) == null)
         {
-            Log.logger.warn("Building does not exist - removing build request");
+            Log.logger.warn("AbstractBuilding does not exist - removing build request");
             worker.getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
         }
@@ -762,7 +761,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             if(!(wo instanceof WorkOrderBuildDecoration))
             {
-                Building building = job.getColony().getBuilding(wo.getBuildingLocation());
+                AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
                 if(building != null)
                 {
                     building.setBuildingLevel(wo.getUpgradeLevel());

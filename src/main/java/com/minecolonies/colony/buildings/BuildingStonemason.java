@@ -8,7 +8,7 @@ import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobPlaceholder;
 import net.minecraft.util.BlockPos;
 
-public class BuildingStonemason extends BuildingWorker
+public class BuildingStonemason extends AbstractBuildingWorker
 {
 
     private static final String STONEMASON          = "Stonemason";
@@ -43,7 +43,7 @@ public class BuildingStonemason extends BuildingWorker
         return new JobPlaceholder(citizen); //TODO Implement Later
     }
 
-    public static class View extends BuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
         public View(ColonyView c, BlockPos l)
         {

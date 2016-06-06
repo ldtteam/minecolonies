@@ -3,8 +3,8 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
@@ -53,7 +53,7 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
      * @param hire hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(Building.View building, boolean hire, int citizenID)
+    public HireFireMessage(AbstractBuilding.View building, boolean hire, int citizenID)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -102,11 +102,11 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
             if(message.hire)
             {
                 CitizenData citizen = colony.getCitizen(message.citizenID);
-                ((BuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);
+                ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);
             }
             else
             {
-                ((BuildingWorker) colony.getBuilding(message.buildingId)).setWorker(null);
+                ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(null);
             }
         }
         return null;

@@ -3,7 +3,8 @@ package com.minecolonies.client.gui;
 import com.blockout.controls.Button;
 import com.blockout.controls.Label;
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.buildings.BuildingHut;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.colony.buildings.AbstractBuildingHut;
 import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
@@ -11,9 +12,9 @@ import com.minecolonies.util.LanguageHandler;
 /**
  * Manage windows associated with Buildings.
  *
- * @param <B>   Class extending {@link com.minecolonies.colony.buildings.BuildingHut.View}.
+ * @param <B>   Class extending {@link AbstractBuildingHut.View}.
  */
-public abstract class AbstractWindowBuilding<B extends BuildingHut.View> extends AbstractWindowSkeleton
+public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View> extends AbstractWindowSkeleton
 {
     private static final String BUTTON_BUILD        = "build";
     private static final String BUTTON_REPAIR       = "repair";
@@ -21,14 +22,14 @@ public abstract class AbstractWindowBuilding<B extends BuildingHut.View> extends
     private static final String LABEL_BUILDING_NAME = "name";
 
     /**
-     * Type B is a class that extends {@link com.minecolonies.colony.buildings.BuildingWorker.View}.
+     * Type B is a class that extends {@link AbstractBuildingWorker.View}.
      */
     protected final B building;
 
     /**
      * Constructor for the windows that are associated with buildings.
      *
-     * @param building      Class extending {@link com.minecolonies.colony.buildings.BuildingHut.View}.
+     * @param building      Class extending {@link AbstractBuildingHut.View}.
      * @param resource      Resource location string.
      */
     public AbstractWindowBuilding(final B building, final String resource)

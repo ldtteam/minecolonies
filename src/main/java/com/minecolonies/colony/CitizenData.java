@@ -1,8 +1,8 @@
 package com.minecolonies.colony;
 
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.BuildingHome;
-import com.minecolonies.colony.buildings.BuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
@@ -37,7 +37,7 @@ public class CitizenData
     private int            textureId;
     private Colony         colony;
     private BuildingHome   homeBuilding;
-    private BuildingWorker workBuilding;
+    private AbstractBuildingWorker workBuilding;
     private Job            job;
 
     private boolean dirty;
@@ -313,13 +313,13 @@ public class CitizenData
      *
      * @return home building of a citizen
      */
-    public BuildingWorker getWorkBuilding()
+    public AbstractBuildingWorker getWorkBuilding()
     {
         return workBuilding;
     }
 
     //TODO: inspect if we can use this to make worker buildings nicer
-    public <BUILDING extends BuildingWorker> BUILDING getWorkBuilding(Class<BUILDING> type)
+    public <BUILDING extends AbstractBuildingWorker> BUILDING getWorkBuilding(Class<BUILDING> type)
     {
         try
         {
@@ -336,7 +336,7 @@ public class CitizenData
      *
      * @param building work building
      */
-    public void setWorkBuilding(BuildingWorker building)
+    public void setWorkBuilding(AbstractBuildingWorker building)
     {
         if(workBuilding != null && building != null && workBuilding != building)
         {
@@ -369,11 +369,11 @@ public class CitizenData
 
     /**
      * When a building is destroyed, inform the citizen so it can do any cleanup of associations that the building's
-     * own Building.onDestroyed did not do.
+     * own AbstractBuilding.onDestroyed did not do.
      *
      * @param building building that is destroyed
      */
-    public void onRemoveBuilding(Building building)
+    public void onRemoveBuilding(AbstractBuilding building)
     {
         if(getHomeBuilding() == building)
         {

@@ -20,7 +20,7 @@ import java.util.stream.Stream;
  * Created by chris on 10/19/15.
  * Schematic class
  */
-public class Schematics
+public final class Schematics
 {
     //Hut, Styles
     private static Map<String, List<String>> hutStyleMap = new HashMap<>();
@@ -34,6 +34,14 @@ public class Schematics
     private static final String NULL_STYLE            = "schematics";
     private static final String SCHEMATIC_EXTENSION   = ".schematic";
     private static final String SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
+
+    /**
+     * Private constructor so Schematics objects can't be made.
+     */
+    private Schematics()
+    {
+        //Hide implicit public constructor.
+    }
 
     /**
      * Calls {@link #loadStyleMaps()}
@@ -55,7 +63,7 @@ public class Schematics
             URI  uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
             Path basePath;
 
-            if (uri.getScheme().equals("jar"))
+            if ("jar".equals(uri.getScheme()))
             {
                 basePath = FileSystems.newFileSystem(uri, Collections.emptyMap()).getPath(SCHEMATICS_ASSET_PATH);
             }

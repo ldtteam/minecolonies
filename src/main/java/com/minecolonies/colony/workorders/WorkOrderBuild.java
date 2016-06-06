@@ -2,7 +2,7 @@ package com.minecolonies.colony.workorders;
 
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,7 +42,7 @@ public class WorkOrderBuild extends WorkOrder
      * @param building the building to build.
      * @param level    the level it should have.
      */
-    public WorkOrderBuild(Building building, int level)
+    public WorkOrderBuild(AbstractBuilding building, int level)
     {
         super();
         this.buildingLocation = building.getID();
@@ -145,8 +145,8 @@ public class WorkOrderBuild extends WorkOrder
             }
 
             //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
-            //  - The Builder's Work Building is built
-            //  - OR the WorkOrder is for the Builder's Work Building
+            //  - The Builder's Work AbstractBuilding is built
+            //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
             //  - OR the WorkOrder is for the TownHall
             if (citizen.getWorkBuilding().getBuildingLevel() > 0 ||
                 citizen.getWorkBuilding().getID().equals(buildingLocation) ||

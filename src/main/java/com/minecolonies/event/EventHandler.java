@@ -4,7 +4,7 @@ import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.BlockHutTownHall;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.IColony;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.util.LanguageHandler;
@@ -36,7 +36,7 @@ public class EventHandler
 
         if(!world.isRemote && event.state.getBlock() instanceof AbstractBlockHut)
         {
-            Building building = ColonyManager.getBuilding(world, event.pos);
+            AbstractBuilding building = ColonyManager.getBuilding(world, event.pos);
             if (building == null)
             {
                 return;
