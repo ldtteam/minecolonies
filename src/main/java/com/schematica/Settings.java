@@ -27,6 +27,7 @@ public final class Settings
     private int    rotation = 0;
     private String hutDec   = "";
     private String style    = "";
+    private int    level    = 0;
 
     private boolean isPendingReset = false;
 
@@ -117,14 +118,16 @@ public final class Settings
     /**
      * Saves the schematic info when the client closes the build tool window.
      *
-     * @param hutDec hut/decoration name.
-     * @param style building style.
-     * @param rotation the number of times the building is rotated.
+     * @param hutDec Hut/decoration name.
+     * @param style Building style.
+     * @param level Building level.
+     * @param rotation The number of times the building is rotated.
      */
-    public void setSchematicInfo(String hutDec, String style, int rotation)
+    public void setSchematicInfo(String hutDec, String style, int level, int rotation)
     {
         this.hutDec   = hutDec;
         this.style    = style;
+        this.level    = level;
         this.rotation = rotation;
     }
 
@@ -142,6 +145,14 @@ public final class Settings
     public String getStyle()
     {
         return style;
+    }
+
+    /**
+     * @return The current level (minus 1) of the hut being rendered.
+     */
+    public int getLevel()
+    {
+        return level;
     }
 
     /**

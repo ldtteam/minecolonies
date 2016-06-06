@@ -25,6 +25,9 @@ public class Schematics
     //Hut, Styles
     private static Map<String, List<String>> hutStyleMap = new HashMap<>();
 
+    //Hut, Levels
+    private static Map<String, Integer> hutLevelsMap = new HashMap<>();
+
     //Decoration, Style
     private static Map<String, List<String>> decorationStyleMap = new HashMap<>();
 
@@ -96,6 +99,7 @@ public class Schematics
                     if (isSchematicHut(hut))
                     {
                         addHutStyle(hut, style);
+                        incrementHutMaxLevel(hut);
                     }
                     else
                     {
@@ -128,6 +132,18 @@ public class Schematics
         decorationStyleMap.get(decoration).add(style);
     }
 
+    private static void incrementHutMaxLevel(String hut)
+    {
+        //Only count the number of huts in 1 style.
+        if(getStylesForHut(hut).size() > 1)
+        {
+            return;
+        }
+
+        Integer level = hutLevelsMap.getOrDefault(hut, 0);
+        hutLevelsMap.put(hut, level + 1);
+    }
+
     private static boolean isSchematicHut(String name)
     {
         return Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + name) != null;
@@ -135,9 +151,9 @@ public class Schematics
 
     /**
      * Returns a set of huts.
-     * This is the key set of {@link #hutStyleMap}
+     * This is the key set of {@link #hutStyleMap}.
      *
-     * @return Set of huts with a schematic
+     * @return Set of huts with a schematic.
      */
     public static Set<String> getHuts()
     {
@@ -145,14 +161,25 @@ public class Schematics
     }
 
     /**
-     * Returns a list of styles for one specific hut
+     * Returns a list of styles for one specific hut.
      *
-     * @param hut Hut to get styles for
-     * @return List of styles
+     * @param hut Hut to get styles for.
+     * @return List of styles.
      */
     public static List<String> getStylesForHut(String hut)
     {
         return hutStyleMap.get(hut);
+    }
+
+    /**
+     * Returns the max level for the provided hut.
+     *
+     * @param hut Hut to get max level for.
+     * @return Max level of hut.
+     */
+    public static int getMaxLevelForHut(String hut)
+    {
+        return hutLevelsMap.getOrDefault(hut, 0);
     }
 
     /**

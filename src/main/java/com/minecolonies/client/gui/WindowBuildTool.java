@@ -48,6 +48,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final String BUTTON_STYLE_ID = "style";
 
     /**
+     * This button is used to cycle through different hut levels.
+     */
+    private static final String BUTTON_LEVEL_ID = "level";
+
+    /**
      * This button will send a packet to the server telling it to place this hut/decoration.
      */
     private static final String BUTTON_CONFIRM = "confirm";
@@ -139,6 +144,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private int rotation = 0;
 
     /**
+     * Current hut level that is being rendered.
+     * This stores the level minus 1, because its easier and cooperates with modulus better.
+     */
+    private int level = 0;
+
+    /**
      * Creates a window build tool
      * This requires X, Y and Z coordinates
      * If a schematic is active, recalculates the X Y Z with offset.
@@ -155,6 +166,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             BlockPosUtil.set(this.pos, Settings.instance.getOffset().add(schematic.getOffset()));
             rotation = Settings.instance.getRotation();
+            level = Settings.instance.getLevel();
         }
         else
         {
@@ -164,6 +176,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_TYPE_ID, this::placementModeClicked);
         registerButton(BUTTON_HUT_DEC_ID, this::hutDecClicked);
         registerButton(BUTTON_STYLE_ID, this::styleClicked);
+        registerButton(BUTTON_LEVEL_ID, this::levelClicked);
         registerButton(BUTTON_CONFIRM, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_LEFT, this::moveLeftClicked);
@@ -243,11 +256,28 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             buttonStyle.setVisible(true);
             buttonStyle.setLabel(getStyles().get(styleIndex));
 
-            //Render stuff
             if (Settings.instance.getActiveSchematic() == null)
             {
+                rotation = 0;
+                level = 0;
                 changeSchematic();
             }
+
+            updateLevelButton();
+        }
+    }
+
+    private void updateLevelButton()
+    {
+        Button buttonLevel = findPaneOfTypeByID(BUTTON_LEVEL_ID, Button.class);
+        if (Settings.instance.isInHutMode())
+        {
+            buttonLevel.setVisible(true);
+            buttonLevel.setLabel("Level: " + (level + 1));
+        }
+        else
+        {
+            buttonLevel.setVisible(false);
         }
     }
 
@@ -263,18 +293,19 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     @Override
     public void onClosed()
     {
-        if(Settings.instance.getActiveSchematic() != null)
+        if (Settings.instance.getActiveSchematic() != null)
         {
             Settings.instance.setSchematicInfo(
                     findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel(),
                     findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel(),
+                    level,
                     rotation);
         }
     }
 
     private List<String> getStyles()
     {
-        if(Settings.instance.isInHutMode())
+        if (Settings.instance.isInHutMode())
         {
             return Schematics.getStylesForHut(hutDec.get(hutDecIndex));
         }
@@ -290,19 +321,28 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void changeSchematic()
     {
-        String labelHutDec;
-        String labelHutStyle;
+        String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
+        String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
-        labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
-        labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
-
-        rotation = 0;
-
-        SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? '1' : ""));
+        SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? level + 1 : ""));
 
         Settings.instance.setActiveSchematic(schematic.getSchematic());
 
-        Settings.instance.moveTo(pos);
+        Settings.instance.moveTo(this.pos);
+
+        //Catch up on rotations, makes it so going up a level or changing style doesn't reset rotation.
+        if(this.rotation == 3)
+        {
+            RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
+        }
+        else
+        {
+            //Runs 0, 1, or 2 times.
+            for(int times = 0; times < rotation; times++)
+            {
+                RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
+            }
+        }
     }
 
     /**
@@ -330,7 +370,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         hutDecIndex = 0;
         styleIndex = 0;
 
-        if(Settings.instance.isInHutMode())
+        if (Settings.instance.isInHutMode())
         {
             Settings.instance.setInHutMode(false);
             loadDecorationMode();
@@ -349,7 +389,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void hutDecClicked(Button button)
     {
-        if(hutDec.size() == 1)
+        if (hutDec.size() == 1)
         {
             return;
         }
@@ -360,6 +400,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         button.setLabel(hutDec.get(hutDecIndex));
         findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyles().get(styleIndex));
 
+        //TODO: Should we reset rotation here? Do we want rotation to be reset when switching hut types.
+        rotation = 0;
+        level = 0;
         changeSchematic();
     }
 
@@ -372,7 +415,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         List<String> styles = getStyles();
 
-        if(styles.size() == 1)
+        if (styles.size() == 1)
         {
             return;
         }
@@ -382,6 +425,23 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         button.setLabel(styles.get(styleIndex));
 
         changeSchematic();
+    }
+
+    /**
+     * Change to the next level building.
+     *
+     * @param button required parameter.
+     */
+    private void levelClicked(Button button)
+    {
+        int maxLevel = Schematics.getMaxLevelForHut(hutDec.get(hutDecIndex));
+        if (maxLevel > 1)
+        {
+            level = (level + 1) % maxLevel;
+            updateLevelButton();
+
+            changeSchematic();
+        }
     }
 
     /**
