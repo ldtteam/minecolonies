@@ -3,8 +3,8 @@ package com.blockout.controls;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -143,9 +143,12 @@ public class Image extends Pane
     @Override
     protected void drawSelf(int mx, int my)
     {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.tick();
-        mc.renderEngine.bindTexture(image);
+        // Some other texture must need to be ticked, I tried ticking the current one.
+        // This fixes the problem, even if you put it after the draw call. So I guess I'll keep it.
+        this.mc.getTextureManager().tick();
+        this.mc.getTextureManager().bindTexture(image);
+
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         //Draw
         drawModalRectWithCustomSizedTexture(x, y,
                 imageOffsetX, imageOffsetY,

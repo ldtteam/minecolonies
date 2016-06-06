@@ -70,16 +70,15 @@ public class Screen extends GuiScreen
         }
     }
 
-    //todo, this method doesn't exist anymore, do we really need it?
-    /*@Override
-    protected void mouseMovedOrUp(int mx, int my, int code)
+    @Override
+    protected void mouseReleased(int mx, int my, int code)
     {
         if (code == 0)
         {
             //  Adjust coordinate to origin of window
             window.onMouseReleased(mx - x, my - y);
         }
-    }*/
+    }
 
     @Override
     protected void mouseClickMove(int mx, int my, int buttons, long timeElapsed)
