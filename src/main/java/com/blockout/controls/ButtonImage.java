@@ -4,13 +4,16 @@ import com.blockout.Alignment;
 import com.blockout.PaneParams;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Iterator;
 
 /**
@@ -22,19 +25,35 @@ public class ButtonImage extends Button
     protected ResourceLocation imageHighlight;
     protected ResourceLocation imageDisabled;
 
-    protected int imageOffsetX = 0, imageOffsetY = 0, imageWidth = 0, imageHeight = 0;
-    protected int imageMapWidth = 256, imageMapHeight = 256;
-    protected int highlightOffsetX = 0, highlightOffsetY = 0, highlightWidth = 0, highlightHeight = 0;
-    protected int highlightMapWidth = 256, highlightMapHeight = 256;
-    protected int disabledOffsetX = 0, disabledOffsetY = 0, disabledWidth = 0, disabledHeight = 0;
-    protected int disabledMapWidth = 256, disabledMapHeight = 256;
-    protected float textScale = 1.0f;
+    protected int imageOffsetX = 0;
+    protected int imageOffsetY = 0;
+    protected int imageWidth = 0;
+    protected int imageHeight = 0;
+    protected int imageMapWidth = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int imageMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+
+    protected int highlightOffsetX = 0;
+    protected int highlightOffsetY = 0;
+    protected int highlightWidth = 0;
+    protected int highlightHeight = 0;
+    protected int highlightMapWidth = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int highlightMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+
+    protected int disabledOffsetX = 0;
+    protected int disabledOffsetY = 0;
+    protected int disabledWidth = 0;
+    protected int disabledHeight = 0;
+    protected int disabledMapWidth = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int disabledMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+
+    protected float textScale = 1.0F;
     protected Alignment textAlignment = Alignment.Middle;
     protected int textColor = 0xffffff;
     protected int textHoverColor = 0xffffff;
     protected int textDisabledColor = 0xffffff;
     protected boolean shadow = false;
-    protected int textOffsetX = 0, textOffsetY = 0;
+    protected int textOffsetX = 0;
+    protected int textOffsetY = 0;
 
     /**
      * Default constructor. Makes a small square button.
@@ -57,7 +76,8 @@ public class ButtonImage extends Button
         String path = params.getStringAttribute("source", null);
         if (path != null)
         {
-            setImage(path);
+            image = new ResourceLocation(path);
+            loadImageDimensions();
         }
 
         PaneParams.SizePair size = params.getSizePairAttribute("imageoffset", null, null);
@@ -77,7 +97,8 @@ public class ButtonImage extends Button
         path = params.getStringAttribute("highlight", null);
         if (path != null)
         {
-            setImageHighlight(path);
+            imageHighlight = new ResourceLocation(path);
+            loadImageHighlightDimensions();
         }
 
         size = params.getSizePairAttribute("highlightoffset", null, null);
@@ -97,7 +118,8 @@ public class ButtonImage extends Button
         path = params.getStringAttribute("disabled", null);
         if (path != null)
         {
-            setImageDisabled(path);
+            imageDisabled = new ResourceLocation(path);
+            loadImageDisabledDimensions();
         }
 
         size = params.getSizePairAttribute("disabledoffset", null, null);
@@ -182,24 +204,14 @@ public class ButtonImage extends Button
         imageHeight = w;
         imageWidth = h;
 
-        //Get file dimension
-        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
-        if (it.hasNext())
-        {
-            ImageReader reader = it.next();
-            try (ImageInputStream stream = ImageIO.createImageInputStream(Minecraft.getMinecraft().getResourceManager().getResource(image).getInputStream()))
-            {
-                reader.setInput(stream);
-                imageMapWidth = reader.getWidth(reader.getMinIndex());
-                imageMapHeight = reader.getHeight(reader.getMinIndex());
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            } finally
-            {
-                reader.dispose();
-            }
-        }
+        loadImageDimensions();
+    }
+
+    private void loadImageDimensions()
+    {
+        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(image);
+        imageMapWidth = dimensions.getFirst();
+        imageMapHeight = dimensions.getSecond();
     }
 
     /**
@@ -253,24 +265,14 @@ public class ButtonImage extends Button
         highlightHeight = w;
         highlightWidth = h;
 
-        //Get file dimension
-        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
-        if (it.hasNext())
-        {
-            ImageReader reader = it.next();
-            try (ImageInputStream stream = ImageIO.createImageInputStream(Minecraft.getMinecraft().getResourceManager().getResource(image).getInputStream()))
-            {
-                reader.setInput(stream);
-                highlightMapWidth = reader.getWidth(reader.getMinIndex());
-                highlightMapHeight = reader.getHeight(reader.getMinIndex());
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            } finally
-            {
-                reader.dispose();
-            }
-        }
+        loadImageHighlightDimensions();
+    }
+
+    private void loadImageHighlightDimensions()
+    {
+        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageHighlight);
+        highlightMapWidth = dimensions.getFirst();
+        highlightMapHeight = dimensions.getSecond();
     }
 
     /**
@@ -342,6 +344,13 @@ public class ButtonImage extends Button
                 reader.dispose();
             }
         }
+    }
+
+    private void loadImageDisabledDimensions()
+    {
+        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageDisabled);
+        disabledMapWidth = dimensions.getFirst();
+        disabledMapHeight = dimensions.getSecond();
     }
 
     /**
@@ -453,7 +462,7 @@ public class ButtonImage extends Button
      */
     public int getTextHeight()
     {
-        return (int) (mc.fontRendererObj.FONT_HEIGHT * textScale);
+        return BigDecimal.valueOf(mc.fontRendererObj.FONT_HEIGHT).multiply(BigDecimal.valueOf(textScale)).intValue();
     }
 
     /**
@@ -463,7 +472,7 @@ public class ButtonImage extends Button
      */
     public int getStringWidth()
     {
-        return (int) (mc.fontRendererObj.getStringWidth(label) * textScale);
+        return BigDecimal.valueOf(mc.fontRendererObj.getStringWidth(label)).multiply(BigDecimal.valueOf(textScale)).intValue();
     }
 
     /**
@@ -497,7 +506,8 @@ public class ButtonImage extends Button
                 mapWidth = disabledMapWidth;
                 mapHeight = disabledMapHeight;
             }
-        } else if (mouseOver && imageHighlight != null)
+        }
+        else if (mouseOver && imageHighlight != null)
         {
             bind = imageHighlight;
             offsetX = highlightOffsetX;
@@ -521,7 +531,8 @@ public class ButtonImage extends Button
         if (enabled || imageDisabled != null)
         {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        } else
+        }
+        else
         {
             GL11.glColor4f(0.5F, 0.5F, 0.5F, 1.0F);
         }
@@ -544,7 +555,8 @@ public class ButtonImage extends Button
             if (textAlignment.rightAligned)
             {
                 offsetX += (getWidth() - getStringWidth());
-            } else if (textAlignment.horizontalCentered)
+            }
+            else if (textAlignment.horizontalCentered)
             {
                 offsetX += (getWidth() - getStringWidth()) / 2;
             }
@@ -552,7 +564,8 @@ public class ButtonImage extends Button
             if (textAlignment.bottomAligned)
             {
                 offsetY += (getHeight() - getTextHeight());
-            } else if (textAlignment.verticalCentered)
+            }
+            else if (textAlignment.verticalCentered)
             {
                 offsetY += (getHeight() - getTextHeight()) / 2;
             }

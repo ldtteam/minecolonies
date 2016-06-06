@@ -2,9 +2,11 @@ package com.blockout.controls;
 
 import com.blockout.Pane;
 import com.blockout.PaneParams;
+import com.minecolonies.util.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -17,12 +19,15 @@ import java.util.Iterator;
  */
 public class Image extends Pane
 {
+    public static final int MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE = 256;
+
     protected ResourceLocation image;
     protected int imageOffsetX = 0;
     protected int imageOffsetY = 0;
     protected int imageWidth = 0;
     protected int imageHeight = 0;
-    protected int mapWidth = 256, mapHeight = 256;
+    protected int mapWidth = MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int mapHeight = MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
 
     /**
      * Default Constructor.
@@ -43,7 +48,8 @@ public class Image extends Pane
         String source = params.getStringAttribute("source", null);
         if (source != null)
         {
-            setImage(source);
+            image = new ResourceLocation(source);
+            loadMapDimensions();
         }
 
         PaneParams.SizePair size = params.getSizePairAttribute("imageoffset", null, null);
@@ -112,26 +118,7 @@ public class Image extends Pane
         imageWidth = w;
         imageHeight = h;
 
-        //Get file dimension
-        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
-        if (it.hasNext())
-        {
-            ImageReader reader = it.next();
-            try (ImageInputStream stream = ImageIO.createImageInputStream(Minecraft.getMinecraft().getResourceManager().getResource(loc).getInputStream()))
-            {
-                reader.setInput(stream);
-                mapWidth = reader.getWidth(reader.getMinIndex());
-                mapHeight = reader.getHeight(reader.getMinIndex());
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            finally
-            {
-                reader.dispose();
-            }
-        }
+        loadMapDimensions();
     }
 
     /**
@@ -155,5 +142,46 @@ public class Image extends Pane
                 imageWidth != 0 ? imageWidth : getWidth(),
                 imageHeight != 0 ? imageHeight : getHeight(),
                 mapWidth, mapHeight);
+    }
+
+    private void loadMapDimensions()
+    {
+        Tuple<Integer, Integer> dimensions = getImageDimensions(image);
+        mapWidth = dimensions.getFirst();
+        mapHeight = dimensions.getSecond();
+    }
+
+    /**
+     * Load and image from a {@link ResourceLocation} and return a {@link Tuple} containing its width and height.
+     *
+     * @param resourceLocation The {@link ResourceLocation} pointing to the image.
+     * @return Width and height.
+     */
+    public static Tuple<Integer, Integer> getImageDimensions(ResourceLocation resourceLocation)
+    {
+        int width = 0;
+        int height = 0;
+
+        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
+        if (it.hasNext())
+        {
+            ImageReader reader = it.next();
+            try (ImageInputStream stream = ImageIO.createImageInputStream(Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream()))
+            {
+                reader.setInput(stream);
+                width = reader.getWidth(reader.getMinIndex());
+                height = reader.getHeight(reader.getMinIndex());
+            }
+            catch (IOException e)
+            {
+                Log.logger.error(e);
+            }
+            finally
+            {
+                reader.dispose();
+            }
+        }
+
+        return new Tuple<>(width, height);
     }
 }
