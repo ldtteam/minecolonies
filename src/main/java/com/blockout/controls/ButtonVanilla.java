@@ -10,6 +10,9 @@ import org.lwjgl.opengl.GL11;
  */
 public class ButtonVanilla extends Button
 {
+    /**
+     * Texture map that contains the button texture.
+     */
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
 
     private static final int DEFAULT_BUTTON_WIDTH = 200;

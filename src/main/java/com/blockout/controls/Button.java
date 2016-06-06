@@ -6,16 +6,24 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * Base button class. Has a handler for when the button is clicked.
+ * Base button class.
+ * Has a handler for when the button is clicked.
  */
 public class Button extends Pane
 {
     private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
 
     /**
-     * onButtonClicked will be called in the window if a button is clicked.
+     * Used for windows that have buttons and want to respond to clicks.
      */
-    public interface Handler {
+    @FunctionalInterface
+    public interface Handler
+    {
+        /**
+         * Called when a button is clicked.
+         *
+         * @param button
+         */
         void onButtonClicked(Button button);
     }
 

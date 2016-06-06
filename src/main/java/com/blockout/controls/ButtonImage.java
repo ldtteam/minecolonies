@@ -2,18 +2,12 @@ package com.blockout.controls;
 
 import com.blockout.Alignment;
 import com.blockout.PaneParams;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import org.lwjgl.opengl.GL11;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Iterator;
 
 /**
  * Clickable image.
@@ -55,12 +49,19 @@ public class ButtonImage extends Button
     protected int textOffsetY = 0;
 
     /**
+     * Default size is a small square button.
+     */
+    private static final int DEFAULT_BUTTON_SIZE = 20;
+
+    /**
      * Default constructor. Makes a small square button.
      */
     public ButtonImage()
     {
         super();
-        setSize(20, 20);
+
+        width = DEFAULT_BUTTON_SIZE;
+        height = DEFAULT_BUTTON_SIZE;
     }
 
     /**
@@ -72,6 +73,20 @@ public class ButtonImage extends Button
     {
         super(params);
 
+        loadImageInfo(params);
+        loadHighlightInfo(params);
+        loadDisabledInfo(params);
+
+        loadTextInfo(params);
+    }
+
+    /**
+     * Loads the parameters for the normal image.
+     *
+     * @param params PaneParams provided in the xml.
+     */
+    private void loadImageInfo(PaneParams params)
+    {
         String path = params.getStringAttribute("source", null);
         if (path != null)
         {
@@ -92,15 +107,23 @@ public class ButtonImage extends Button
             imageWidth = size.x;
             imageHeight = size.y;
         }
+    }
 
-        path = params.getStringAttribute("highlight", null);
+    /**
+     * Loads the parameters for the hover image.
+     *
+     * @param params PaneParams provided in the xml.
+     */
+    private void loadHighlightInfo(PaneParams params)
+    {
+        String path = params.getStringAttribute("highlight", null);
         if (path != null)
         {
             imageHighlight = new ResourceLocation(path);
             loadImageHighlightDimensions();
         }
 
-        size = params.getSizePairAttribute("highlightoffset", null, null);
+        PaneParams.SizePair size = params.getSizePairAttribute("highlightoffset", null, null);
         if (size != null)
         {
             highlightOffsetX = size.x;
@@ -113,15 +136,23 @@ public class ButtonImage extends Button
             highlightWidth = size.x;
             highlightHeight = size.y;
         }
+    }
 
-        path = params.getStringAttribute("disabled", null);
+    /**
+     * Loads the parameters for the disabled image.
+     *
+     * @param params PaneParams provided in the xml.
+     */
+    private void loadDisabledInfo(PaneParams params)
+    {
+        String path = params.getStringAttribute("disabled", null);
         if (path != null)
         {
             imageDisabled = new ResourceLocation(path);
             loadImageDisabledDimensions();
         }
 
-        size = params.getSizePairAttribute("disabledoffset", null, null);
+        PaneParams.SizePair size = params.getSizePairAttribute("disabledoffset", null, null);
         if (size != null)
         {
             disabledOffsetX = size.x;
@@ -134,7 +165,15 @@ public class ButtonImage extends Button
             disabledWidth = size.x;
             disabledHeight = size.y;
         }
+    }
 
+    /**
+     * Loads the parameters for the button label.
+     *
+     * @param params PaneParams provided in the xml.
+     */
+    private void loadTextInfo(PaneParams params)
+    {
         textScale = params.getFloatAttribute("scale", textScale);
         textAlignment = params.getEnumAttribute("textalign", textAlignment);
         textColor = params.getColorAttribute("textcolor", textColor);
@@ -144,7 +183,7 @@ public class ButtonImage extends Button
         textDisabledColor = params.getColorAttribute("textdisabledcolor", textColor);
         shadow = params.getBooleanAttribute("shadow", shadow);
 
-        size = params.getSizePairAttribute("textoffset", null, null);
+        PaneParams.SizePair size = params.getSizePairAttribute("textoffset", null, null);
         if (size != null)
         {
             textOffsetX = size.x;
@@ -206,6 +245,9 @@ public class ButtonImage extends Button
         loadImageDimensions();
     }
 
+    /**
+     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of image texture.
+     */
     private void loadImageDimensions()
     {
         Tuple<Integer, Integer> dimensions = Image.getImageDimensions(image);
@@ -267,6 +309,9 @@ public class ButtonImage extends Button
         loadImageHighlightDimensions();
     }
 
+    /**
+     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of hover image texture.
+     */
     private void loadImageHighlightDimensions()
     {
         Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageHighlight);
@@ -325,26 +370,12 @@ public class ButtonImage extends Button
         disabledHeight = w;
         disabledWidth = h;
 
-        //Get file dimension
-        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
-        if (it.hasNext())
-        {
-            ImageReader reader = it.next();
-            try (ImageInputStream stream = ImageIO.createImageInputStream(Minecraft.getMinecraft().getResourceManager().getResource(image).getInputStream()))
-            {
-                reader.setInput(stream);
-                disabledMapWidth = reader.getWidth(reader.getMinIndex());
-                disabledMapHeight = reader.getHeight(reader.getMinIndex());
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            } finally
-            {
-                reader.dispose();
-            }
-        }
+        loadImageDisabledDimensions();
     }
 
+    /**
+     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of disabled image texture.
+     */
     private void loadImageDisabledDimensions()
     {
         Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageDisabled);
@@ -475,13 +506,27 @@ public class ButtonImage extends Button
     }
 
     /**
-     * Draw the button. Decide what image to use, and possibly draw label.
+     * Draw the button.
+     * Decide what image to use, and possibly draw label.
      *
      * @param mx Mouse x (relative to parent)
      * @param my Mouse y (relative to parent)
      */
     @Override
     protected void drawSelf(int mx, int my)
+    {
+        boolean mouseOver = isPointInPane(mx, my);
+
+        drawImage(mouseOver);
+        drawlabel(mouseOver);
+    }
+
+    /**
+     * Draw the correct image.
+     *
+     * @param mouseOver Is the mouse hovering over the button.
+     */
+    private void drawImage(boolean mouseOver)
     {
         ResourceLocation bind = image;
         int offsetX = imageOffsetX;
@@ -490,8 +535,6 @@ public class ButtonImage extends Button
         int h = imageHeight;
         int mapWidth = imageMapWidth;
         int mapHeight = imageMapHeight;
-
-        boolean mouseOver = isPointInPane(mx, my);
 
         if (!enabled)
         {
@@ -526,8 +569,21 @@ public class ButtonImage extends Button
             h = getHeight();
         }
 
-        mc.renderEngine.bindTexture(bind);
-        if (enabled || imageDisabled != null)
+        setupOpenGL(bind);
+
+        //Draw
+        drawModalRectWithCustomSizedTexture(x, y, offsetX, offsetY, w, h, mapWidth, mapHeight);
+    }
+
+    /**
+     * Bind texture, set color, and enable blending.
+     *
+     * @param texture The texture to bind.
+     */
+    private void setupOpenGL(ResourceLocation texture)
+    {
+        this.mc.getTextureManager().bindTexture(texture);
+        if (this.enabled || this.imageDisabled != null)
         {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         }
@@ -537,19 +593,23 @@ public class ButtonImage extends Button
         }
 
         GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
 
-        //Draw
-        drawModalRectWithCustomSizedTexture(x, y, offsetX, offsetY, w, h, mapWidth, mapHeight);
-
-        //  Label, if any
+    /**
+     * Draw the label if there is one.
+     *
+     * @param mouseOver If the mouse hovering over the button.
+     */
+    private void drawlabel(boolean mouseOver)
+    {
         if (label != null)
         {
             int color = enabled ? (mouseOver ? textHoverColor : textColor) : textDisabledColor;
 
-            offsetX = textOffsetX;
-            offsetY = textOffsetY;
+            int offsetX = textOffsetX;
+            int offsetY = textOffsetY;
 
             if (textAlignment.rightAligned)
             {
@@ -571,7 +631,7 @@ public class ButtonImage extends Button
 
             GL11.glPushMatrix();
             GL11.glTranslatef(textScale, textScale, textScale);
-            mc.fontRendererObj.drawString(label, getX() + offsetX, getY() + offsetY, color, shadow);
+            mc.fontRendererObj.drawString(label, (float) getX() + offsetX, (float) getY() + offsetY, color, shadow);
             GL11.glPopMatrix();
         }
     }
