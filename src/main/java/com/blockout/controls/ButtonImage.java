@@ -631,7 +631,8 @@ public class ButtonImage extends Button
 
             GL11.glPushMatrix();
             GL11.glTranslatef(textScale, textScale, textScale);
-            mc.fontRendererObj.drawString(label, (float) getX() + offsetX, (float) getY() + offsetY, color, shadow);
+            mc.fontRendererObj.drawString(label, BigDecimal.valueOf(getX()).add(BigDecimal.valueOf(offsetX)).floatValue(),
+                    BigDecimal.valueOf(getY()).add(BigDecimal.valueOf(offsetY)).floatValue(), color, shadow);
             GL11.glPopMatrix();
         }
     }
