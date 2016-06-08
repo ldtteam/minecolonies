@@ -450,7 +450,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return this.getState();
         }
 
-        //We need to deal with materials if(!Configurations.builderInfiniteResources)
+        //We need to deal with materials
         if(!Configurations.builderInfiniteResources)
         {
             if(!handleMaterials(block, metadata))
@@ -635,6 +635,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return true;
         }
 
+        //We need to deal with materials
         if (!Configurations.builderInfiniteResources && world.getBlockState(pos).getBlock() != Blocks.air)
         {
             List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
