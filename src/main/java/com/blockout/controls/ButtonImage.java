@@ -7,8 +7,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import org.lwjgl.opengl.GL11;
 
-import java.math.BigDecimal;
-
 /**
  * Clickable image.
  */
@@ -492,7 +490,7 @@ public class ButtonImage extends Button
      */
     public int getTextHeight()
     {
-        return BigDecimal.valueOf(mc.fontRendererObj.FONT_HEIGHT).multiply(BigDecimal.valueOf(textScale)).intValue();
+        return (int) (mc.fontRendererObj.FONT_HEIGHT * textScale);
     }
 
     /**
@@ -502,7 +500,7 @@ public class ButtonImage extends Button
      */
     public int getStringWidth()
     {
-        return BigDecimal.valueOf(mc.fontRendererObj.getStringWidth(label)).multiply(BigDecimal.valueOf(textScale)).intValue();
+        return (int) (mc.fontRendererObj.getStringWidth(label) * textScale);
     }
 
     /**
@@ -631,8 +629,7 @@ public class ButtonImage extends Button
 
             GL11.glPushMatrix();
             GL11.glTranslatef(textScale, textScale, textScale);
-            mc.fontRendererObj.drawString(label, BigDecimal.valueOf(getX()).add(BigDecimal.valueOf(offsetX)).floatValue(),
-                    BigDecimal.valueOf(getY()).add(BigDecimal.valueOf(offsetY)).floatValue(), color, shadow);
+            mc.fontRendererObj.drawString(label, (float) (getX()+ offsetX), (float) (getY() + offsetY), color, shadow);
             GL11.glPopMatrix();
         }
     }
