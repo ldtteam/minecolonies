@@ -433,21 +433,25 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         Block worldBlock = world.getBlockState(coordinates).getBlock();
 
-        if(block == null)//should never happen
+        //should never happen
+        if(block == null)
         {
             BlockPos local = job.getSchematic().getLocalPosition();
             Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockSolid();
             return this.getState();
         }
+
+        //don't overwrite huts or bedrock, nor place huts
         if(worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
-                block instanceof AbstractBlockHut)//don't overwrite huts or bedrock, nor place huts
+                block instanceof AbstractBlockHut)
         {
             findNextBlockSolid();
             return this.getState();
         }
 
-        if(!Configurations.builderInfiniteResources)//We need to deal with materials if(!Configurations.builderInfiniteResources)
+        //We need to deal with materials
+        if(!Configurations.builderInfiniteResources)
         {
             if(!handleMaterials(block, metadata))
             {
@@ -599,7 +603,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if(stack.getItem() == null)
             {
-                stack = new ItemStack(block.getItem(world, job.getSchematic().getPosition()));
+                stack = new ItemStack(block);
             }
 
             if(checkOrRequestItems(stack))
@@ -631,10 +635,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return true;
         }
 
-        if(world.getBlockState(pos).getBlock() != Blocks.air)
+        //We need to deal with materials
+        if (!Configurations.builderInfiniteResources && world.getBlockState(pos).getBlock() != Blocks.air)
         {
             List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
-            for(ItemStack item : items)
+            for (ItemStack item : items)
             {
                 InventoryUtils.setStack(worker.getInventoryCitizen(), item);
             }
@@ -685,7 +690,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if(stack.getItem() == null)
         {
-            stack = new ItemStack(block.getItem(world, job.getSchematic().getPosition()));
+            stack = new ItemStack(block);
         }
 
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
