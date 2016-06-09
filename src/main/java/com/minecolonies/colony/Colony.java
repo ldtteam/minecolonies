@@ -1,7 +1,7 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.materials.MaterialSystem;
@@ -49,7 +49,7 @@ public class Colony implements IColony
 
     //  Buildings
     private BuildingTownHall                                townHall;
-    private                 Map<BlockPos, Building>         buildings                       = new HashMap<>();
+    private                 Map<BlockPos, AbstractBuilding>         buildings                       = new HashMap<>();
 
     //  Citizenry
     private                 Map<Integer, CitizenData>       citizens                        = new HashMap<>();
@@ -162,7 +162,7 @@ public class Colony implements IColony
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
         {
             NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
-            Building b = Building.createFromNBT(this, buildingCompound);
+            AbstractBuilding b = AbstractBuilding.createFromNBT(this, buildingCompound);
             if (b != null)
             {
                 addBuilding(b);
@@ -198,7 +198,7 @@ public class Colony implements IColony
 
         //  Buildings
         NBTTagList buildingTagList = new NBTTagList();
-        for (Building b : buildings.values())
+        for (AbstractBuilding b : buildings.values())
         {
             NBTTagCompound buildingCompound = new NBTTagCompound();
             b.writeToNBT(buildingCompound);
@@ -362,7 +362,7 @@ public class Colony implements IColony
      */
     public void onServerTick(TickEvent.ServerTickEvent event)
     {
-        for (Building b : buildings.values())
+        for (AbstractBuilding b : buildings.values())
         {
             b.onServerTick(event);
         }
@@ -445,9 +445,9 @@ public class Colony implements IColony
         //  Cleanup Buildings whose Blocks have gone AWOL
         if (event.phase == TickEvent.Phase.START)
         {
-            List<Building> removedBuildings = null;
+            List<AbstractBuilding> removedBuildings = null;
 
-            for (Building building : buildings.values())
+            for (AbstractBuilding building : buildings.values())
             {
                 BlockPos loc = building.getLocation();
                 if (event.world.isBlockLoaded(loc) &&
@@ -464,7 +464,7 @@ public class Colony implements IColony
 
             if (removedBuildings != null)
             {
-                removedBuildings.forEach(Building::destroy);
+                removedBuildings.forEach(AbstractBuilding::destroy);
             }
         }
 
@@ -485,7 +485,7 @@ public class Colony implements IColony
         }
 
         //  Tick Buildings
-        for (Building building : buildings.values())
+        for (AbstractBuilding building : buildings.values())
         {
             building.onWorldTick(event);
         }
@@ -495,7 +495,7 @@ public class Colony implements IColony
 
 
     /**
-     * Update Subscribers with Colony, Citizen, and Building Views
+     * Update Subscribers with Colony, Citizen, and AbstractBuilding Views
      */
     public void updateSubscribers()
     {
@@ -608,7 +608,7 @@ public class Colony implements IColony
             //  Buildings
             if (isBuildingsDirty || hasNewSubscribers)
             {
-                for (Building building : buildings.values())
+                for (AbstractBuilding building : buildings.values())
                 {
                     if (building.isDirty() || hasNewSubscribers)
                     {
@@ -635,7 +635,7 @@ public class Colony implements IColony
         isBuildingsDirty = false;
         permissions.clearDirty();
 
-        buildings.values().forEach(Building::clearDirty);
+        buildings.values().forEach(AbstractBuilding::clearDirty);
         citizens.values().forEach(CitizenData::clearDirty);
     }
 
@@ -704,7 +704,7 @@ public class Colony implements IColony
      *
      * @return      Map with ID (coordinates) as key, and buildings as value
      */
-    public Map<BlockPos, Building> getBuildings()
+    public Map<BlockPos, AbstractBuilding> getBuildings()
     {
         return Collections.unmodifiableMap(buildings);
     }
@@ -726,9 +726,9 @@ public class Colony implements IColony
      * Get building in Colony by ID
      *
      * @param buildingId    ID (coordinates) of the building to get
-     * @return              Building belonging to the given ID
+     * @return              AbstractBuilding belonging to the given ID
      */
-    public Building getBuilding(BlockPos buildingId)
+    public AbstractBuilding getBuilding(BlockPos buildingId)
     {
         return buildings.get(buildingId);
     }
@@ -742,7 +742,7 @@ public class Colony implements IColony
      * @param <BUILDING>
      * @return
      */
-    public <BUILDING extends Building> BUILDING getBuilding(BlockPos buildingId, Class<BUILDING> type)
+    public <BUILDING extends AbstractBuilding> BUILDING getBuilding(BlockPos buildingId, Class<BUILDING> type)
     {
         try
         {
@@ -754,11 +754,11 @@ public class Colony implements IColony
     }
 
     /**
-     * Add a Building to the Colony
+     * Add a AbstractBuilding to the Colony
      *
-     * @param building      Building to add to the colony
+     * @param building      AbstractBuilding to add to the colony
      */
-    private void addBuilding(Building building)
+    private void addBuilding(AbstractBuilding building)
     {
         buildings.put(building.getID(), building);
         building.markDirty();
@@ -777,26 +777,26 @@ public class Colony implements IColony
      * Creates a building from a tile entity and adds it to the colony
      *
      * @param tileEntity    Tile entity to build a building from
-     * @return              Building that was created and added
+     * @return              AbstractBuilding that was created and added
      */
-    public Building addNewBuilding(TileEntityColonyBuilding tileEntity)
+    public AbstractBuilding addNewBuilding(TileEntityColonyBuilding tileEntity)
     {
         tileEntity.setColony(this);
 
-        Building building = Building.create(this, tileEntity);
+        AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
         if (building != null)
         {
             addBuilding(building);
             tileEntity.setBuilding(building);
 
-            Log.logger.info(String.format("Colony %d - new Building for %s at %s",
+            Log.logger.info(String.format("Colony %d - new AbstractBuilding for %s at %s",
                                           getID(),
                                           tileEntity.getBlockType().getClass(),
                                           tileEntity.getPosition()));
         }
         else
         {
-            Log.logger.error(String.format("Colony %d unable to create Building for %s at %s",
+            Log.logger.error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
                                            getID(),
                                            tileEntity.getBlockType().getClass(),
                                            tileEntity.getPosition()));
@@ -810,11 +810,11 @@ public class Colony implements IColony
     }
 
     /**
-     * Remove a Building from the Colony (when it is destroyed)
+     * Remove a AbstractBuilding from the Colony (when it is destroyed)
      *
-     * @param building          Building to remove
+     * @param building          AbstractBuilding to remove
      */
-    public void removeBuilding(Building building)
+    public void removeBuilding(AbstractBuilding building)
     {
         if (buildings.remove(building.getID()) != null)
         {
@@ -824,7 +824,7 @@ public class Colony implements IColony
                 MineColonies.getNetwork().sendTo(msg, player);
             }
 
-            Log.logger.info(String.format("Colony %d - removed Building %s of type %s",
+            Log.logger.info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
                                           getID(),
                                           building.getID(),
                                           building.getSchematicName()));
@@ -835,7 +835,7 @@ public class Colony implements IColony
             townHall = null;
         }
 
-        //  Allow Citizens to fix up any data that wasn't fixed up by the Building's own onDestroyed
+        //  Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
         for (CitizenData citizen : citizens.values())
         {
             citizen.onRemoveBuilding(building);
@@ -889,7 +889,7 @@ public class Colony implements IColony
     {
         int newMaxCitizens = Configurations.maxCitizens;
 
-        for (Building b : buildings.values())
+        for (AbstractBuilding b : buildings.values())
         {
             if (b instanceof BuildingHome &&
                     b.getBuildingLevel() > 0)
@@ -942,7 +942,7 @@ public class Colony implements IColony
         //  Remove the Citizen
         citizens.remove(citizen.getId());
 
-        for (Building building : buildings.values())
+        for (AbstractBuilding building : buildings.values())
         {
             building.removeCitizen(citizen);
         }

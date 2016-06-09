@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 /**
  * The abstract class for each worker building.
  */
-public abstract class BuildingWorker extends BuildingHut
+public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 {
     private static final    String      TAG_WORKER = "worker";
     private                 CitizenData worker;
@@ -23,7 +23,7 @@ public abstract class BuildingWorker extends BuildingHut
      * @param c the colony
      * @param l the position
      */
-    public BuildingWorker(Colony c, BlockPos l)
+    public AbstractBuildingWorker(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -184,9 +184,9 @@ public abstract class BuildingWorker extends BuildingHut
     }
 
     /**
-     * BuildingWorker View for clients
+     * AbstractBuildingWorker View for clients
      */
-    public static class View extends BuildingHut.View
+    public static class View extends AbstractBuildingHut.View
     {
         private int workerId;
 

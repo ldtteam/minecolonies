@@ -19,10 +19,14 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Building
+/**
+ * Base building class, has all the foundation for what a building stores and does.
+ */
+public abstract class AbstractBuilding
 {
     private         final       BlockPos                    location;
     private         final       Colony                      colony;
@@ -31,44 +35,84 @@ public abstract class Building
 
     private TileEntityColonyBuilding tileEntity;
 
-    //  Attributes
+    // Attributes
     private                     int                         buildingLevel                   = 0;
     private                     int                         rotation                        = 0;
     private                     String                      style                           = "classic";
 
     //  State
-    private                     boolean                     isDirty                         = false;
+    private                     boolean dirty = false;
 
-    //  Building and View Class Mapping
+    // AbstractBuilding and View Class Mapping
     private static              Map<String,      Class<?>>  nameToClassMap                  = new HashMap<>();
     private static              Map<Class<?>,    String>    classToNameMap                  = new HashMap<>();
     private static              Map<Class<?>,    Class<?>>  blockClassToBuildingClassMap    = new HashMap<>();
     private static              Map<Integer,     Class<?>>  classNameHashToClassMap         = new HashMap<>();
 
     private static  final       String                      TAG_BUILDING_TYPE               = "type";
-    //    pr         ivate final static String TAG_ID              = "id";      //  CJJ - We are using the Location as the Id as it is unique enough
-    private static  final       String                      TAG_LOCATION                    = "location";  //  Location is unique (within a Colony) and so can double as the Id
+    // Location is unique (within a Colony) and so can double as the Id
+    private static  final       String                      TAG_LOCATION                    = "location";
     private static  final       String                      TAG_BUILDING_LEVEL              = "level";
     private static  final       String                      TAG_ROTATION                    = "rotation";
     private static  final       String                      TAG_STYLE                       = "style";
 
-    public abstract             String                      getSchematicName();
-    public abstract             int                         getMaxBuildingLevel();
+    static
+    {
+        addMapping("Baker",         BuildingBaker.class,         BlockHutBaker.class);
+        addMapping("Blacksmith",    BuildingBlacksmith.class,    BlockHutBlacksmith.class);
+        addMapping("Builder",       BuildingBuilder.class,       BlockHutBuilder.class);
+        addMapping("Home",          BuildingHome.class,          BlockHutCitizen.class);
+        addMapping("Farmer",        BuildingFarmer.class,        BlockHutFarmer.class);
+        addMapping("Lumberjack",    BuildingLumberjack.class,    BlockHutLumberjack.class);
+        addMapping("Miner",         BuildingMiner.class,         BlockHutMiner.class);
+        addMapping("Stonemason",    BuildingStonemason.class,    BlockHutStonemason.class);
+        addMapping("TownHall",      BuildingTownHall.class,      BlockHutTownHall.class);
+        addMapping("Warehouse",     BuildingWarehouse.class,     BlockHutWarehouse.class);
+        addMapping("Fisherman",     BuildingFisherman.class,     BlockHutFisherman.class);
+
+    }
+
+    /**
+     * Constructor for a AbstractBuilding.
+     *
+     * @param colony            Colony the building belongs to
+     * @param pos  Location of the building (it's Hut Block)
+     */
+    protected AbstractBuilding(Colony colony, BlockPos pos)
+    {
+        location = pos;
+        this.colony = colony;
+        materialStore = new MaterialStore(MaterialStore.Type.CHEST, colony.getMaterialSystem());
+    }
+
+    /**
+     * Children must return the name of their schematic.
+     *
+     * @return Schematic name.
+     */
+    public abstract String getSchematicName();
+
+    /**
+     * Children must return their max building level.
+     *
+     * @return Max building level.
+     */
+    public abstract int getMaxBuildingLevel();
 
     /**
      * Add build to a mapping.
-     * <code>buildingClass</code> needs to extend {@link com.minecolonies.colony.buildings.Building}
+     * <code>buildingClass</code> needs to extend {@link AbstractBuilding}
      * <code>parentBlock</code> needs to extend {@link AbstractBlockHut}
      *
      * @param name              name of building.
-     * @param buildingClass     subclass of Building, located in {@link com.minecolonies.colony.buildings}
+     * @param buildingClass     subclass of AbstractBuilding, located in {@link com.minecolonies.colony.buildings}
      * @param parentBlock       subclass of Block, located in {@link com.minecolonies.blocks}
      */
-    private static void addMapping(String name, Class<? extends Building> buildingClass, Class<? extends AbstractBlockHut> parentBlock)
+    private static void addMapping(String name, Class<? extends AbstractBuilding> buildingClass, Class<? extends AbstractBlockHut> parentBlock)
     {
         if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(buildingClass.getName().hashCode()))
         {
-            throw new IllegalArgumentException("Duplicate type '" + name + "' when adding Building class mapping");
+            throw new IllegalArgumentException("Duplicate type '" + name + "' when adding AbstractBuilding class mapping");
         }
         else
         {
@@ -86,13 +130,13 @@ public abstract class Building
             }
             catch (NoSuchMethodException exception)
             {
-                throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Building class mapping");
+                throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding AbstractBuilding class mapping", exception);
             }
         }
 
         if (blockClassToBuildingClassMap.containsKey(parentBlock))
         {
-            throw new IllegalArgumentException("Building type '" + name + "' uses TileEntity '" + parentBlock.getClass().getName() + "' which is already in use.");
+            throw new IllegalArgumentException("AbstractBuilding type '" + name + "' uses TileEntity '" + parentBlock.getClass().getName() + "' which is already in use.");
         }
         else
         {
@@ -112,47 +156,18 @@ public abstract class Building
         return getClass().equals(c);
     }
 
-    static
-    {
-        addMapping("Baker",         BuildingBaker.class,         BlockHutBaker.class);
-        addMapping("Blacksmith",    BuildingBlacksmith.class,    BlockHutBlacksmith.class);
-        addMapping("Builder",       BuildingBuilder.class,       BlockHutBuilder.class);
-        addMapping("Home",          BuildingHome.class,          BlockHutCitizen.class);
-        addMapping("Farmer",        BuildingFarmer.class,        BlockHutFarmer.class);
-        addMapping("Lumberjack",    BuildingLumberjack.class,    BlockHutLumberjack.class);
-        addMapping("Miner",         BuildingMiner.class,         BlockHutMiner.class);
-        addMapping("Stonemason",    BuildingStonemason.class,    BlockHutStonemason.class);
-        addMapping("TownHall",      BuildingTownHall.class,      BlockHutTownHall.class);
-        addMapping("Warehouse",     BuildingWarehouse.class,     BlockHutWarehouse.class);
-        addMapping("Fisherman",     BuildingFisherman.class,     BlockHutFisherman.class);
-
-    }
 
     /**
-     * Constructor for a Building.
-     *
-     * @param colony            Colony the building belongs to
-     * @param pos  Location of the building (it's Hut Block)
-     */
-    protected Building(Colony colony, BlockPos pos)
-    {
-        location = pos;
-        this.colony = colony;
-        materialStore = new MaterialStore(MaterialStore.Type.CHEST, colony.getMaterialSystem());
-    }
-
-
-    /**
-     * Create and load a Building given it's saved NBTTagCompound
+     * Create and load a AbstractBuilding given it's saved NBTTagCompound
      * Calls {@link #readFromNBT(net.minecraft.nbt.NBTTagCompound)}
      *
      * @param colony    The owning colony
      * @param compound  The saved data
-     * @return          {@link com.minecolonies.colony.buildings.Building} created from the compound.
+     * @return          {@link AbstractBuilding} created from the compound.
      */
-    public static Building createFromNBT(Colony colony, NBTTagCompound compound)
+    public static AbstractBuilding createFromNBT(Colony colony, NBTTagCompound compound)
     {
-        Building building = null;
+        AbstractBuilding building = null;
         Class<?> oclass = null;
 
         try
@@ -161,15 +176,14 @@ public abstract class Building
 
             if (oclass != null)
             {
-                //UUID id = UUID.fromString(compound.getString("id"));
                 BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
                 Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
-                building = (Building)constructor.newInstance(colony, pos);
+                building = (AbstractBuilding)constructor.newInstance(colony, pos);
             }
         }
-        catch (Exception exception)
+        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
-            exception.printStackTrace();
+            Log.logger.error(exception);
         }
 
         if (building != null)
@@ -178,7 +192,7 @@ public abstract class Building
             {
                 building.readFromNBT(compound);
             }
-            catch (Exception ex)
+            catch (RuntimeException ex)
             {
                 Log.logger.error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
                                         compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
@@ -198,11 +212,11 @@ public abstract class Building
      *
      * @param colony    The owning colony
      * @param parent    The Tile Entity the building belongs to.
-     * @return          {@link com.minecolonies.colony.buildings.Building} instance, without NBTTags applied.
+     * @return          {@link AbstractBuilding} instance, without NBTTags applied.
      */
-    public static Building create(Colony colony, TileEntityColonyBuilding parent)
+    public static AbstractBuilding create(Colony colony, TileEntityColonyBuilding parent)
     {
-        Building building = null;
+        AbstractBuilding building = null;
         Class<?> oclass;
 
         try
@@ -211,19 +225,17 @@ public abstract class Building
 
             if (oclass != null)
             {
-                //UUID id = UUID.fromString(compound.getString("id"));
                 BlockPos loc = parent.getPosition();
                 Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
-                building = (Building)constructor.newInstance(colony, loc);
+                building = (AbstractBuilding)constructor.newInstance(colony, loc);
             }
             else
             {
                 Log.logger.error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
             }
         }
-        catch (Exception exception)
+        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
-            exception.printStackTrace();
             Log.logger.error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
@@ -242,7 +254,7 @@ public abstract class Building
 
         rotation = compound.getInteger(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
-        if(style.equals(""))
+        if("".equals(style))
         {
             Log.logger.warn("Loaded empty style, setting to classic");
             style = "classic";
@@ -266,7 +278,7 @@ public abstract class Building
 
         if (s == null)
         {
-            throw new RuntimeException(this.getClass() + " is missing a mapping! This is a bug!");
+            throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
         }
         else
         {
@@ -301,7 +313,8 @@ public abstract class Building
      */
     public BlockPos getID()
     {
-        return location; //  Location doubles as ID
+        // Location doubles as ID
+        return location;
     }
 
     /**
@@ -330,8 +343,12 @@ public abstract class Building
      * @param level     Level of the building
      */
     public void setBuildingLevel(int level)
-    //todo: Since this is public, dont we want to do some security checks? mw
     {
+        if(level > getMaxBuildingLevel())
+        {
+            return;
+        }
+
         buildingLevel = level;
         markDirty();
         ColonyManager.markDirty();
@@ -354,20 +371,16 @@ public abstract class Building
      */
     public TileEntityColonyBuilding getTileEntity()
     {
-        if (tileEntity == null)
+        if (tileEntity == null && colony.getWorld().getBlockState(location).getBlock() != null)
         {
-            //  Lazy evaluation
-            if (colony.getWorld().getBlockState(location).getBlock() != null) //todo check (mw, transsition 1.8)
+            TileEntity te = getColony().getWorld().getTileEntity(location);
+            if (te instanceof TileEntityColonyBuilding)
             {
-                TileEntity te = getColony().getWorld().getTileEntity(location);
-                if (te instanceof TileEntityColonyBuilding)
+                tileEntity = (TileEntityColonyBuilding) te;
+                if (tileEntity.getBuilding() == null)
                 {
-                    tileEntity = (TileEntityColonyBuilding)te;
-                    if (tileEntity.getBuilding() == null)
-                    {
-                        tileEntity.setColony(colony);
-                        tileEntity.setBuilding(this);
-                    }
+                    tileEntity.setColony(colony);
+                    tileEntity.setBuilding(this);
                 }
             }
         }
@@ -382,15 +395,15 @@ public abstract class Building
      */
     public final boolean isDirty()
     {
-        return isDirty;
+        return dirty;
     }
 
     /**
-     * Sets {@link #isDirty} to false, meaning that the instance is up to date
+     * Sets {@link #dirty} to false, meaning that the instance is up to date
      */
     public final void clearDirty()
     {
-        isDirty = false;
+        dirty = false;
     }
 
     /**
@@ -398,7 +411,7 @@ public abstract class Building
      */
     public final void markDirty()
     {
-        isDirty = true;
+        dirty = true;
         colony.markBuildingsDirty();
     }
 
@@ -428,21 +441,30 @@ public abstract class Building
      *
      * @param citizen       Citizen to be removed
      */
-    public void removeCitizen(CitizenData citizen) {}
+    public void removeCitizen(CitizenData citizen)
+    {
+        // Can be overridden by other buildings.
+    }
 
     /**
      * On tick of the server
      *
      * @param event         {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
-    public void onServerTick(TickEvent.ServerTickEvent event) {}
+    public void onServerTick(TickEvent.ServerTickEvent event)
+    {
+        // Can be overridden by other buildings.
+    }
 
     /**
      * On tick of the world
      *
      * @param event         {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
-    public void onWorldTick(TickEvent.WorldTickEvent event) {}
+    public void onWorldTick(TickEvent.WorldTickEvent event)
+    {
+        // Can be overridden by other buildings.
+    }
 
     /**
      * Adds work orders to the {@link Colony#workManager}
@@ -452,9 +474,8 @@ public abstract class Building
     private void requestWorkOrder(int level)
     {
         for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
-
         {
-            if (o.getBuildingId().equals(getID()))
+            if (o.getBuildingLocation().equals(getID()))
             {
                 return;
             }
@@ -485,7 +506,6 @@ public abstract class Building
         }
     }
 
-    //todo 0 north, 1 east .. ?
     /**
      * Sets the rotation of the current building
      *
@@ -506,7 +526,6 @@ public abstract class Building
         return rotation;
     }
 
-    //todo possible values?
     /**
      * Sets the style of the building
      *
@@ -527,14 +546,19 @@ public abstract class Building
         return style;
     }
 
+    /**
+     * Gets the MaterialStore for this building.
+     *
+     * @return The MaterialStore that tracks this building's inventory.
+     */
     public MaterialStore getMaterialStore()
     {
         return materialStore;
     }
 
     /**
-     * The Building View is the client-side representation of a Building.
-     * Views contain the Building's data that is relevant to a Client, in a more client-friendly form
+     * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
+     * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form
      * Mutable operations on a View result in a message to the server to perform the operation
      */
     public static class View
@@ -545,42 +569,82 @@ public abstract class Building
         private int     buildingLevel       = 0;
         private int     buildingMaxLevel    = 0;
 
+        /**
+         * Creates a building view.
+         *
+         * @param c ColonyView the building is in.
+         * @param l The location of the building.
+         */
         protected View(ColonyView c, BlockPos l)
         {
             colony = c;
             location = new BlockPos(l);
         }
 
+        /**
+         * Gets the id for this building.
+         *
+         * @return A BlockPos because the building ID is its location.
+         */
         public BlockPos getID()
         {
-            return location; //  Location doubles as ID
+            // Location doubles as ID
+            return location;
         }
 
+        /**
+         * Gets the location of this building.
+         *
+         * @return A BlockPos, where this building is.
+         */
         public BlockPos getLocation()
         {
             return location;
         }
 
+        /**
+         * Gets the ColonyView that this building belongs to.
+         *
+         * @return ColonyView, client side interpretations of Colony.
+         */
         public ColonyView getColony()
         {
             return colony;
         }
 
+        /**
+         * Get the current level of the building.
+         *
+         * @return AbstractBuilding current level.
+         */
         public int getBuildingLevel()
         {
             return buildingLevel;
         }
 
+        /**
+         * Get the max level of the building.
+         *
+         * @return AbstractBuilding max level.
+         */
         public int getBuildingMaxLevel()
         {
             return buildingMaxLevel;
         }
 
+        /**
+         * Checks if this building is at its max level.
+         *
+         * @return true if the building is at its max level.
+         */
         public boolean isBuildingMaxLevel()
         {
             return buildingLevel >= buildingMaxLevel;
         }
 
+        /**
+         * Open the associated BlockOut window for this building.
+         */
         public void openGui()
         {
             com.blockout.views.Window window = getWindow();
@@ -590,11 +654,21 @@ public abstract class Building
             }
         }
 
+        /**
+         * Will return the window if this building has an associated BlockOut window.
+         *
+         * @return BlockOut window.
+         */
         public com.blockout.views.Window getWindow()
         {
             return null;
         }
 
+        /**
+         * Read this view from a {@link ByteBuf}.
+         *
+         * @param buf The buffer to read this view from.
+         */
         public void deserialize(ByteBuf buf)
         {
             buildingLevel = buf.readInt();
@@ -619,12 +693,12 @@ public abstract class Building
     }
 
     /**
-     * Create a Building View given it's saved NBTTagCompound
+     * Create a AbstractBuilding View given it's saved NBTTagCompound
      *
      * @param       colony The owning colony
      * @param       id     Chunk coordinate of the block a view is created for.
      * @param       buf    The network data
-     * @return      {@link com.minecolonies.colony.buildings.Building.View} created from reading the buf
+     * @return      {@link AbstractBuilding.View} created from reading the buf
      */
     public static View createBuildingView(ColonyView colony, BlockPos id, ByteBuf buf)
     {
@@ -649,9 +723,9 @@ public abstract class Building
                 }
             }
         }
-        catch (Exception exception)
+        catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
         {
-            exception.printStackTrace();
+            Log.logger.error(exception);
         }
 
         if (view != null)
@@ -660,15 +734,17 @@ public abstract class Building
             {
                 view.deserialize(buf);
             }
-            catch (Exception ex)
+            catch (IndexOutOfBoundsException ex)
             {
-                Log.logger.error(String.format("A Building View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author", oclass.getName()), ex);
+                Log.logger.error(
+                        String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
+                                oclass.getName()), ex);
                 view = null;
             }
         }
         else
         {
-            Log.logger.warn("Unknown Building type, missing View subclass, or missing constructor of proper format.");
+            Log.logger.warn("Unknown AbstractBuilding type, missing View subclass, or missing constructor of proper format.");
         }
 
         return view;

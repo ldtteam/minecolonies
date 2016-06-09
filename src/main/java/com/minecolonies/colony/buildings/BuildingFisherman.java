@@ -10,7 +10,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
-public class BuildingFisherman extends BuildingWorker
+public class BuildingFisherman extends AbstractBuildingWorker
 {
     public BuildingFisherman(Colony c, BlockPos l)
     {
@@ -53,7 +53,7 @@ public class BuildingFisherman extends BuildingWorker
         super.readFromNBT(compound);
     }
 
-    public static class View extends BuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
         public int[] levels;
         public int   current;

@@ -183,24 +183,29 @@ public class RenderSchematic extends RenderGlobal {
         }
     }
 
+    /**
+     * Render the schematic and colored overlay.
+     *
+     * @param event Forge event.
+     */
     @SubscribeEvent
-    public void onRenderWorldLast(final RenderWorldLastEvent event) {
+    public void onRenderWorldLast(final RenderWorldLastEvent event)
+    {
         final EntityPlayerSP player = this.mc.thePlayer;
-        if (player != null) {
+        if (player != null)
+        {
             this.profiler.startSection("schematica");
-            final boolean isRenderingSchematic = Settings.instance.schematic != null && Settings.instance.schematic.isRendering;
+            final boolean isRenderingSchematic = Settings.instance.getActiveSchematic() != null && Settings.instance.getSchematicWorld().isRendering;
 
             this.profiler.startSection("schematic");
-            if (isRenderingSchematic) {
+            if (isRenderingSchematic)
+            {
                 GlStateManager.pushMatrix();
-                renderSchematic(Settings.instance.schematic, event.partialTicks);
+                renderSchematic(Settings.instance.getSchematicWorld(), event.partialTicks);
                 GlStateManager.popMatrix();
-            }
 
-            this.profiler.endStartSection("guide");
-            if (Settings.instance.isRenderingGuide || isRenderingSchematic) {
                 GlStateManager.pushMatrix();
-                renderOverlay(Settings.instance.schematic, isRenderingSchematic);
+                renderOverlay(Settings.instance.getSchematicWorld());
                 GlStateManager.popMatrix();
             }
 
@@ -209,15 +214,18 @@ public class RenderSchematic extends RenderGlobal {
         }
     }
 
-    private void renderSchematic(final SchematicWorld schematic, final float partialTicks) {
-        if (this.world != schematic) {
+    private void renderSchematic(final SchematicWorld schematic, final float partialTicks)
+    {
+        if (this.world != schematic)
+        {
             this.world = schematic;
 
             loadRenderers();
         }
         PLAYER_POSITION_OFFSET = this.mc.thePlayer.getPositionVector().subtract(this.world.position.getX(), this.world.position.getY(), this.world.position.getZ());
 
-        if (OpenGlHelper.shadersSupported && ConfigurationHandler.enableAlpha) {
+        if (OpenGlHelper.shadersSupported && ConfigurationHandler.enableAlpha)
+        {
             GL20.glUseProgram(SHADER_ALPHA.getProgram());
             GL20.glUniform1f(GL20.glGetUniformLocation(SHADER_ALPHA.getProgram(), "alpha_multiplier"), ConfigurationHandler.alpha);
         }
@@ -225,12 +233,14 @@ public class RenderSchematic extends RenderGlobal {
         final int fps = Math.max(Minecraft.getDebugFPS(), 30);
         renderWorld(partialTicks, System.nanoTime() + 1000000000 / fps);
 
-        if (OpenGlHelper.shadersSupported && ConfigurationHandler.enableAlpha) {
+        if (OpenGlHelper.shadersSupported && ConfigurationHandler.enableAlpha)
+        {
             GL20.glUseProgram(0);
         }
     }
 
-    private void renderOverlay(final SchematicWorld schematic, final boolean isRenderingSchematic) {
+    private void renderOverlay(final SchematicWorld schematic)
+    {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
@@ -240,23 +250,11 @@ public class RenderSchematic extends RenderGlobal {
         tessellator.setTranslation(-this.mc.thePlayer.posX, -this.mc.thePlayer.posY, -this.mc.thePlayer.posZ);
         tessellator.setDelta(ConfigurationHandler.blockDelta);
 
-        if (Settings.instance.isRenderingGuide) {
-            tessellator.beginQuads();
-            tessellator.drawCuboid(Settings.instance.pointA, GeometryMasks.Quad.ALL, 0x3FBF0000);
-            tessellator.drawCuboid(Settings.instance.pointB, GeometryMasks.Quad.ALL, 0x3F0000BF);
-            tessellator.draw();
-        }
-
         tessellator.beginLines();
-        if (Settings.instance.isRenderingGuide) {
-            tessellator.drawCuboid(Settings.instance.pointA, GeometryMasks.Line.ALL, 0x3FBF0000);
-            tessellator.drawCuboid(Settings.instance.pointB, GeometryMasks.Line.ALL, 0x3F0000BF);
-            tessellator.drawCuboid(Settings.instance.pointMin, Settings.instance.pointMax, GeometryMasks.Line.ALL, 0x7F00BF00);
-        }
-        if (isRenderingSchematic) {
-            this.tmp.set(schematic.position.getX() + schematic.getWidth() - 1, schematic.position.getY() + schematic.getHeight() - 1, schematic.position.getZ() + schematic.getLength() - 1);
-            tessellator.drawCuboid(schematic.position, this.tmp, GeometryMasks.Line.ALL, 0x7FBF00BF);
-        }
+        this.tmp.set(schematic.position.getX() + schematic.getWidth() - 1,
+                schematic.position.getY() + schematic.getHeight() - 1,
+                schematic.position.getZ() + schematic.getLength() - 1);
+        tessellator.drawCuboid(schematic.position, this.tmp, GeometryMasks.Line.ALL, 0x7FBF00BF);
         tessellator.draw();
 
         GlStateManager.depthMask(false);
@@ -268,7 +266,8 @@ public class RenderSchematic extends RenderGlobal {
         GlStateManager.enableTexture2D();
     }
 
-    private void renderWorld(final float partialTicks, final long finishTimeNano) {
+    private void renderWorld(final float partialTicks, final long finishTimeNano)
+    {
         GlStateManager.enableCull();
         this.profiler.endStartSection("culling");
         final Frustum frustum = new Frustum();

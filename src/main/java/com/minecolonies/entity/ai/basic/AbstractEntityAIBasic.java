@@ -1,6 +1,6 @@
 package com.minecolonies.entity.ai.basic;
 
-import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
@@ -210,7 +210,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
      * @return the building associated with this AI's worker.
      */
     @Nullable
-    protected BuildingWorker getOwnBuilding()
+    protected AbstractBuildingWorker getOwnBuilding()
     {
         return worker.getWorkBuilding();
     }
@@ -343,7 +343,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
      */
     private boolean isInHut(@Nullable final ItemStack is)
     {
-        @Nullable final BuildingWorker buildingMiner = getOwnBuilding();
+        @Nullable final AbstractBuildingWorker buildingMiner = getOwnBuilding();
         return buildingMiner != null &&
                is != null &&
                InventoryFunctions
@@ -372,7 +372,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
      */
     protected final boolean walkToBuilding()
     {
-        @Nullable final BuildingWorker ownBuilding = getOwnBuilding();
+        @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
         //Return true if the building is null to stall the worker
         return ownBuilding == null
                || walkToBlock(ownBuilding.getLocation());
@@ -429,7 +429,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
      */
     private void takeItemStackFromChest(final int slot)
     {
-        @Nullable final BuildingWorker ownBuilding = getOwnBuilding();
+        @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
         if (ownBuilding == null)
         {
             return;
@@ -490,7 +490,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
 
     private boolean isToolInHut(String tool)
     {
-        @Nullable final BuildingWorker buildingWorker = getOwnBuilding();
+        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return buildingWorker != null
                && InventoryFunctions.matchFirstInInventory(
                 buildingWorker.getTileEntity(),
@@ -614,7 +614,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
      */
     private boolean isPickaxeInHut(int minlevel)
     {
-        @Nullable final BuildingWorker buildingWorker = getOwnBuilding();
+        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return buildingWorker != null
                && InventoryFunctions.matchFirstInInventory(
                 buildingWorker.getTileEntity(),
@@ -680,7 +680,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
      */
     private boolean dumpOneMoreSlot(Predicate<ItemStack> keepIt)
     {
-        @Nullable final BuildingWorker buildingWorker = getOwnBuilding();
+        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return walkToBuilding()
                || InventoryFunctions.matchFirstInInventory(
                 worker.getInventoryCitizen(), (i, stack) -> {
@@ -709,7 +709,7 @@ public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISke
      */
     private boolean isInventoryAndChestFull()
     {
-        @Nullable final BuildingWorker buildingWorker = getOwnBuilding();
+        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
                && (buildingWorker != null
                    && InventoryUtils.isInventoryFull(buildingWorker.getTileEntity()));

@@ -1,6 +1,6 @@
 package com.minecolonies.inventory;
 
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
@@ -29,7 +29,7 @@ public class InventoryTest
         this.materialSystem = new MaterialSystem();
         TileEntityColonyBuilding colonyBuilding = new TileEntityColonyBuilding();
         this.materialStore = new MaterialStore(MaterialStore.Type.CHEST, materialSystem);
-        Building mockBuilding = mock(Building.class);
+        AbstractBuilding mockBuilding = mock(AbstractBuilding.class);
         when(mockBuilding.getMaterialStore()).thenReturn(this.materialStore);
         colonyBuilding.setBuilding(mockBuilding);
         this.inventory = colonyBuilding;

@@ -75,8 +75,6 @@ public class CommonProxy implements IProxy
         // See EntityTracker.addEntityToTracker for more default values
         EntityRegistry.registerModEntity(EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
         EntityRegistry.registerModEntity(EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
-
-
     }
 
     @Override
@@ -91,9 +89,6 @@ public class CommonProxy implements IProxy
 
     @Override
     public void registerTileEntityRendering(){}
-
-    @Override
-    public void registerKeyBindings(){}
 
     @Override
     public void showCitizenWindow(CitizenData.View citizen) {}

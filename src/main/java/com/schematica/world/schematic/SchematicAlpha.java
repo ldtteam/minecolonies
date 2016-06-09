@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
@@ -190,14 +191,19 @@ class SchematicAlpha extends SchematicFormat {
 
         final NBTTagList entityList = new NBTTagList();
         final List<Entity> entities = schematic.getEntities();
-        for (final Entity entity : entities) {
-            try {
+        for (final Entity entity : entities)
+        {
+            try
+            {
                 final NBTTagCompound entityCompound = NBTHelper.writeEntityToCompound(entity);
-                if (entityCompound != null) {
+                if (entityCompound != null)
+                {
                     entityList.appendTag(entityCompound);
                 }
-            } catch (final Throwable t) {
-                Reference.logger.error("Entity {} failed to save, skipping!", entity, t);
+            }
+            catch (final ReportedException e)
+            {
+                Reference.logger.error("Entity {} failed to save, skipping!", entity, e);
             }
         }
 

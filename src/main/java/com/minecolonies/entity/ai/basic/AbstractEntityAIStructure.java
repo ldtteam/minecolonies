@@ -83,7 +83,7 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
                  */
                 new AITarget(AIState.BUILDING_STEP, () -> AIState.IDLE),
                 /**
-                 * Decorate the Building with torches etc.
+                 * Decorate the AbstractBuilding with torches etc.
                  * todo: implement
                  */
                 new AITarget(AIState.DECORATION_STEP, () -> AIState.IDLE),

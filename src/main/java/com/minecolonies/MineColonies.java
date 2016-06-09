@@ -1,19 +1,15 @@
 package com.minecolonies;
 
-import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.proxy.IProxy;
-import com.minecolonies.util.Log;
 import com.minecolonies.util.RecipeHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -22,17 +18,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
 
-@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, certificateFingerprint = Constants.FINGERPRINT,
+@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
 		dependencies = Constants.FORGE_VERSION, acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
-    private static          SimpleNetworkWrapper network;
+    private static SimpleNetworkWrapper network;
 
+    /**
+     * Forge created instance of the Mod.
+     */
     @Mod.Instance(Constants.MOD_ID)
-    public static           MineColonies         instance;
+    public static MineColonies instance;
 
+    /**
+     * Access to the proxy associated with your current side. Variable updated by forge.
+     */
     @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
-    public static           IProxy               proxy;
+    public static IProxy proxy;
 
     public static SimpleNetworkWrapper getNetwork()
     {
@@ -40,27 +42,9 @@ public class MineColonies
     }
 
     @Mod.EventHandler
-    public void invalidFingerprint(FMLFingerprintViolationEvent event)
-    {
-        if(Constants.FINGERPRINT.equals("@FINGERPRINT@"))
-        {
-            Log.logger.error("No Fingerprint. Might not be a valid version!");
-        }
-    }
-
-    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        //not needed, code already in init
-        //logger = event.getModLog();
-
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
-
-        ModBlocks.init();
-
-        ModItems.init();
-
-        proxy.registerKeyBindings();//Schematica
         
         proxy.registerEntities();
 

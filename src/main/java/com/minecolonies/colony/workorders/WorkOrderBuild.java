@@ -2,7 +2,7 @@ package com.minecolonies.colony.workorders;
 
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,15 +20,16 @@ public class WorkOrderBuild extends WorkOrder
     private static final String TAG_IS_CLEARED        = "cleared";
     private static final String TAG_SCHEMATIC_NAME    = "schematicName";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
-    protected BlockPos  buildingId;
-    private   int       buildingRotation;
-    private   String    schematicName;
-    private   int       upgradeLevel;
-    private   String    upgradeName;
-    private   boolean   cleared;
+
+    protected BlockPos buildingLocation;
+    protected int      buildingRotation;
+    protected String   schematicName;
+    private   int      upgradeLevel;
+    private   String   upgradeName;
+    protected boolean  cleared;
 
     /**
-     * unused constructor for reflection
+     * Unused constructor for reflection.
      */
     public WorkOrderBuild()
     {
@@ -36,37 +37,36 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * create a new WorkOrder
+     * Create a new WorkOrder.
      *
-     * @param building the building to build
-     * @param level    the level it should have
+     * @param building the building to build.
+     * @param level    the level it should have.
      */
-    public WorkOrderBuild(Building building, int level)
+    public WorkOrderBuild(AbstractBuilding building, int level)
     {
         super();
-        this.buildingId = building.getID();
+        this.buildingLocation = building.getID();
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
         this.schematicName = building.getStyle() + '/' + this.getUpgradeName();
         this.buildingRotation = building.getRotation();
         this.cleared = level > 1;
-
     }
 
     /**
-     * Returns the name after upgrade
+     * Returns the name after upgrade.
      *
-     * @return Name after upgrade
+     * @return Name after upgrade.
      */
-    public String getUpgradeName()
+    private String getUpgradeName()
     {
         return upgradeName;
     }
 
     /**
-     * Returns the level up level of the building
+     * Returns the level up level of the building.
      *
-     * @return Level after upgrade
+     * @return Level after upgrade.
      */
     public int getUpgradeLevel()
     {
@@ -74,34 +74,40 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * Save the Work Order to an NBTTagCompound
+     * Save the Work Order to an NBTTagCompound.
      *
-     * @param compound NBT tag compount
+     * @param compound NBT tag compound.
      */
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingId);
-        compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
-        compound.setString(TAG_UPGRADE_NAME, upgradeName);
+        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingLocation);
+        if(!(this instanceof WorkOrderBuildDecoration))
+        {
+            compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
+            compound.setString(TAG_UPGRADE_NAME, upgradeName);
+        }
         compound.setBoolean(TAG_IS_CLEARED, cleared);
         compound.setString(TAG_SCHEMATIC_NAME, schematicName);
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
     }
 
     /**
-     * Read the WorkOrder data from the NBTTagCompound
+     * Read the WorkOrder data from the NBTTagCompound.
      *
-     * @param compound NBT Tag compound
+     * @param compound NBT Tag compound.
      */
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        buildingId = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
-        upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
-        upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
+        if(!(this instanceof WorkOrderBuildDecoration))
+        {
+            upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
+            upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        }
         cleared = compound.getBoolean(TAG_IS_CLEARED);
         schematicName = compound.getString(TAG_SCHEMATIC_NAME);
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
@@ -110,22 +116,22 @@ public class WorkOrderBuild extends WorkOrder
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
      *
-     * @param colony The colony that owns the Work Order
-     * @return True if the building for this workorder still exists
+     * @param colony The colony that owns the Work Order.
+     * @return True if the building for this work order still exists.
      */
     @Override
     public boolean isValid(Colony colony)
     {
-        return colony.getBuilding(buildingId) != null;
+        return colony.getBuilding(buildingLocation) != null;
     }
 
     /**
      * Attempt to fulfill the Work Order.
      * Override this with an implementation for the Work Order to find a Citizen to perform the job
      * <p>
-     * finds the first suitable builder for this job
+     * finds the first suitable builder for this job.
      *
-     * @param colony The colony that owns the Work Order
+     * @param colony The colony that owns the Work Order.
      */
     @Override
     public void attemptToFulfill(Colony colony)
@@ -139,12 +145,12 @@ public class WorkOrderBuild extends WorkOrder
             }
 
             //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
-            //  - The Builder's Work Building is built
-            //  - OR the WorkOrder is for the Builder's Work Building
+            //  - The Builder's Work AbstractBuilding is built
+            //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
             //  - OR the WorkOrder is for the TownHall
             if (citizen.getWorkBuilding().getBuildingLevel() > 0 ||
-                citizen.getWorkBuilding().getID().equals(buildingId) ||
-                (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingId)))
+                citizen.getWorkBuilding().getID().equals(buildingLocation) ||
+                (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingLocation)))
             {
                 job.setWorkOrder(this);
                 this.setClaimedBy(citizen);
@@ -154,23 +160,52 @@ public class WorkOrderBuild extends WorkOrder
     }
 
     /**
-     * Returns the ID of the building (aka ChunkCoordinates)
+     * Returns the ID of the building (aka ChunkCoordinates).
      *
-     * @return ID of the building
+     * @return ID of the building.
      */
-    public BlockPos getBuildingId()
+    public BlockPos getBuildingLocation()
     {
-        return buildingId;
+        return buildingLocation;
     }
 
     /**
-     * Get the name the schematic for this workorder.
+     * Get the name the schematic for this work order.
      *
-     * @return the internal string for this schematic
+     * @return the internal string for this schematic.
      */
     public String getSchematicName()
     {
         return this.schematicName;
     }
 
+    /**
+     * Gets how many times this schematic should be rotated.
+     *
+     * @return building rotation.
+     */
+    public int getRotation()
+    {
+        return buildingRotation;
+    }
+
+    /**
+     * Set whether or not the building has been cleared.
+     *
+     * @param cleared true if the building has been cleared.
+     */
+    public void setCleared(boolean cleared)
+    {
+        this.cleared = cleared;
+    }
+
+    /**
+     * Gets whether or not the building has been cleared.
+     *
+     * @return true if the building has been cleared.
+     */
+    public boolean isCleared()
+    {
+        return cleared;
+    }
 }

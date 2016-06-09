@@ -2,10 +2,10 @@ package com.minecolonies.entity.ai.citizen.builder;
 
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.ModBlocks;
-import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingBuilder;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
+import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.entity.ai.util.AIState;
@@ -38,23 +38,27 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally)
      */
-    private static final double   XP_EACH_BUILDING              = 2.5;
+    private static final double XP_EACH_BUILDING = 2.5;
+
     /**
      * How often should intelligence factor into the builders skill modifier.
      */
-    private static final int      INTELLIGENCE_MULTIPLIER       = 2;
+    private static final int INTELLIGENCE_MULTIPLIER = 2;
+
     /**
      * How often should strength factor into the builders skill modifier.
      */
-    private static final int      STRENGTH_MULTIPLIER           = 1;
+    private static final int STRENGTH_MULTIPLIER = 1;
+
     /**
      * Position where the Builders constructs from.
      */
-    private              BlockPos workFrom                      = null;
+    private BlockPos workFrom = null;
+
     /**
      * The maximum range to keep from the current building place
      */
-    private static final int      MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
+    private static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -89,9 +93,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         WorkOrderBuild wo = job.getWorkOrder();
-        if(wo == null || job.getColony().getBuilding(wo.getBuildingId()) == null)
+        if(wo == null || (job.getColony().getBuilding(wo.getBuildingLocation()) == null && !(wo instanceof WorkOrderBuildDecoration)))
         {
-
             job.complete();
             return true;
         }
@@ -104,6 +107,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return false;
     }
 
+    //todo why does this return AIState if it isn't used.
     private AIState initiate()
     {
         if(!job.hasSchematic())//is build in progress
@@ -112,7 +116,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             loadSchematic();
 
             WorkOrderBuild wo = job.getWorkOrder();
-            if(wo == null)
+            if (wo == null)
             {
                 Log.logger.error(
                         String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)",
@@ -120,38 +124,55 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                                 worker.getCitizenData().getId(), job.getWorkOrderId()));
                 return this.getState();
             }
-            Building building = job.getColony().getBuilding(wo.getBuildingId());
-            if(building == null)
-            {
-                Log.logger.error(
-                        String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)",
-                                worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingId()));
-                return this.getState();
-            }
 
-            LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
-                    "entity.builder.messageBuildStart",
-                    job.getSchematic().getName());
+            if (wo instanceof WorkOrderBuildDecoration)
+            {
+                LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
+                        "entity.builder.messageBuildStart",
+                        job.getSchematic().getName());
 
-            //Don't go through the CLEAR stage for repairs and upgrades
-            if(building.getBuildingLevel() > 0)
-            {
-                ((BuildingBuilder) getOwnBuilding()).setCleared(true);
-                if(!job.hasSchematic() || !incrementBlock())
-                {
-                    return this.getState();
-                }
-                return AIState.BUILDER_REQUEST_MATERIALS;
-            }
-            else
-            {
-                if(!job.hasSchematic() || !job.getSchematic().decrementBlock())
+                if (!job.hasSchematic() || !job.getSchematic().decrementBlock())
                 {
                     return this.getState();
                 }
                 return AIState.START_WORKING;
             }
+            else
+            {
+                AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
+                if (building == null)
+                {
+                    Log.logger.error(
+                            String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)",
+                                    worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()));
+                    return this.getState();
+                }
+
+                LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
+                        "entity.builder.messageBuildStart",
+                        job.getSchematic().getName());
+
+                //Don't go through the CLEAR stage for repairs and upgrades
+                if (building.getBuildingLevel() > 0)
+                {
+                    wo.setCleared(true);
+                    if (!job.hasSchematic() || !incrementBlock())
+                    {
+                        return this.getState();
+                    }
+                    return AIState.BUILDER_REQUEST_MATERIALS;
+                }
+                else
+                {
+                    if (!job.hasSchematic() || !job.getSchematic().decrementBlock())
+                    {
+                        return this.getState();
+                    }
+                    return AIState.START_WORKING;
+                }
+            }
         }
+
         BlockPosUtil.tryMoveLivingToXYZ(worker, job.getSchematic().getPosition());
 
         return AIState.IDLE;
@@ -170,32 +191,29 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return;
         }
 
-        BlockPos pos = workOrder.getBuildingId();
-        Building building = worker.getColony().getBuilding(pos);
+        BlockPos pos = workOrder.getBuildingLocation();
 
-        if(building == null)
+        if (!(workOrder instanceof WorkOrderBuildDecoration) && worker.getColony().getBuilding(pos) == null)
         {
-            Log.logger.warn("Building does not exist - removing build request");
+            Log.logger.warn("AbstractBuilding does not exist - removing build request");
             worker.getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
         }
 
-        String name = building.getStyle() + '/' + workOrder.getUpgradeName();
-
         try
         {
-            job.setSchematic(new SchematicWrapper(world, name));
+            job.setSchematic(new SchematicWrapper(world, workOrder.getSchematicName()));
         }
         catch(IllegalStateException e)
         {
-            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
+            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", workOrder.getSchematicName()), e);
             job.setSchematic(null);
             return;
         }
 
-        job.getSchematic().rotate(building.getRotation());
+        job.getSchematic().rotate(workOrder.getRotation());
         job.getSchematic().setPosition(pos);
-        ((BuildingBuilder) getOwnBuilding()).setCleared(false);
+        workOrder.setCleared(false);
     }
 
     private AIState startWorkingAtOwnBuilding()
@@ -301,7 +319,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState clearStep()
     {
-        if(((BuildingBuilder) getOwnBuilding()).isCleared())
+        WorkOrderBuild wo = job.getWorkOrder();
+        if(wo.isCleared())
         {
             return AIState.BUILDER_STRUCTURE_STEP;
         }
@@ -343,7 +362,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             job.getSchematic().reset();
             incrementBlock();
-            ((BuildingBuilder) getOwnBuilding()).setCleared(true);
+            wo.setCleared(true);
             return AIState.BUILDER_REQUEST_MATERIALS;
         }
         return this.getState();
@@ -745,17 +764,20 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         WorkOrderBuild wo = job.getWorkOrder();
         if(wo != null)
         {
-            Building building = job.getColony().getBuilding(wo.getBuildingId());
-            if(building != null)
+            if(!(wo instanceof WorkOrderBuildDecoration))
             {
-                building.setBuildingLevel(wo.getUpgradeLevel());
-            }
-            else
-            {
-                Log.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                        worker.getColony().getID(),
-                        worker.getCitizenData().getId(),
-                        wo.getBuildingId()));
+                AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
+                if(building != null)
+                {
+                    building.setBuildingLevel(wo.getUpgradeLevel());
+                }
+                else
+                {
+                    Log.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
+                            worker.getColony().getID(),
+                            worker.getCitizenData().getId(),
+                            wo.getBuildingLocation()));
+                }
             }
         }
         else
