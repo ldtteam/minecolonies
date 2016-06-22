@@ -13,6 +13,7 @@ import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.ExperienceUtils;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.util.MathHelper;
 
 /**
  * Window for the citizen
@@ -175,7 +176,7 @@ public class WindowCitizen extends Window implements Button.Handler
         //Calculates how much percent of the next level has been completed.
         double experienceRatio = ExperienceUtils.getPercentOfLevelCompleted(citizen.getExperience(),citizen.getLevel());
 
-        findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setText("" + citizen.getLevel());
+        findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setText(Integer.toString(citizen.getLevel()));
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X, XP_LABEL_Y);
 
         Image xpBar = new Image();
@@ -206,7 +207,7 @@ public class WindowCitizen extends Window implements Button.Handler
         findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).setAlignment(Alignment.MiddleRight);
 
         //MaxHealth (Black hearts)
-        for(int i=0;i<citizen.getMaxHealth()/2;i++)
+        for(int i=0; i < MathHelper.floor_double(citizen.getHealth() / 2); i++)
         {
             Image heart = new Image();
             heart.setImage(Gui.icons, EMPTY_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
@@ -216,7 +217,7 @@ public class WindowCitizen extends Window implements Button.Handler
 
         //Current health (Red hearts)
         int heartPos;
-        for(heartPos=0;heartPos<((int)citizen.getHealth()/2);heartPos++)
+        for(heartPos=0; heartPos < MathHelper.floor_double(citizen.getHealth() / 2); heartPos++)
         {
             Image heart = new Image();
             heart.setImage(Gui.icons, FULL_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
@@ -225,7 +226,7 @@ public class WindowCitizen extends Window implements Button.Handler
         }
 
         //Half hearts
-        if(citizen.getHealth()/2%1!=0)
+        if((MathHelper.floor_double(citizen.getHealth() / 2) % 2) != 0)
         {
             Image heart = new Image();
             heart.setImage(Gui.icons, HALF_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
