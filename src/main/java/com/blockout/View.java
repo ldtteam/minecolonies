@@ -78,11 +78,11 @@ public class View extends Pane
         }
 
         //  Adjust for horizontal alignment
-        if (child.alignment.rightAligned)
+        if (child.alignment.isRightAligned())
         {
             childX = (getInteriorWidth() - childWidth) - childX;
         }
-        else if (child.alignment.horizontalCentered)
+        else if (child.alignment.isHorizontalCentered())
         {
             childX = ((getInteriorWidth() - childWidth) / 2) + childX;
         }
@@ -94,11 +94,11 @@ public class View extends Pane
         }
 
         //  Adjust for vertical alignment
-        if (child.alignment.bottomAligned)
+        if (child.alignment.isBottomAligned())
         {
             childY = (getInteriorHeight() - childHeight) - childY;
         }
-        else if (child.alignment.verticalCentered)
+        else if (child.alignment.isVerticalCentered())
         {
             childY = ((getInteriorHeight() - childHeight) / 2) + childY;
         }

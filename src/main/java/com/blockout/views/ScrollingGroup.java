@@ -3,7 +3,7 @@ package com.blockout.views;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
 
-/*
+/**
  * A Group is a View which enforces the position of children to be
  * a Y-sorted list in the order they are added.
  *
@@ -11,8 +11,19 @@ import com.blockout.PaneParams;
  */
 public class ScrollingGroup extends ScrollingView
 {
-    public ScrollingGroup(){ super(); }
+    /**
+     * Required default constructor.
+     */
+    public ScrollingGroup()
+    {
+        super();
+    }
 
+    /**
+     * Load from xml.
+     *
+     * @param params xml parameters.
+     */
     public ScrollingGroup(PaneParams params)
     {
         super(params);

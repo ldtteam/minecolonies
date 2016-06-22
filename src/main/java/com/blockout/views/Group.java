@@ -4,7 +4,7 @@ import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
 
-/*
+/**
  * A Group is a View which enforces the position of children to be
  * a Y-sorted list in the order they are added.
  *
@@ -12,9 +12,15 @@ import com.blockout.View;
  */
 public class Group extends View
 {
-    int spacing = 0;
+    private int spacing = 0;
 
-    public Group(){ super(); }
+    /**
+     * Required default constructor.
+     */
+    public Group()
+    {
+        super();
+    }
 
     /**
      * Constructs a View from PaneParams
@@ -30,29 +36,31 @@ public class Group extends View
     @Override
     public void adjustChild(Pane child)
     {
-        int childX = child.getX(),
-            childY = 0;
-        int childWidth = child.getWidth(),
-            childHeight = child.getHeight();
+        int childX = child.getX();
+        int childY = spacing;
+        int childWidth = child.getWidth();
+        int childHeight = child.getHeight();
 
         //  Adjust for horizontal size and alignment
         if (childWidth < 0)
         {
             childWidth = getInteriorWidth();
         }
-        else if (child.getAlignment().rightAligned)
+        else if (child.getAlignment().isRightAligned())
         {
             childX = (getInteriorWidth() - childWidth) - childX;
         }
-        else if (child.getAlignment().horizontalCentered)
+        else if (child.getAlignment().isHorizontalCentered())
         {
             childX = ((getInteriorWidth() - childWidth) / 2) + childX;
         }
 
-        childY = spacing;
         for (Pane c : children)
         {
-            if (c == child) break;
+            if (c == child)
+            {
+                break;
+            }
             childY = c.getY() + c.getHeight() + spacing;
         }
 

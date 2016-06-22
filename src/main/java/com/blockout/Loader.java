@@ -23,9 +23,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Loader
+/**
+ * Utilities to load xml files.
+ */
+public final class Loader
 {
-    public static Logger logger = LogManager.getLogger("BlockOut");
+    private static final Logger logger = LogManager.getLogger("BlockOut");
 
     private static Map<String, Constructor<? extends Pane>> paneConstructorMap = new HashMap<>();
 
@@ -44,6 +47,11 @@ public class Loader
         register("box", Box.class);
         register("itemicon", ItemIcon.class);
         register("switch", SwitchView.class);
+    }
+
+    private Loader()
+    {
+        // Hides default constructor.
     }
 
     private static String makeFactoryKey(String name, String style)
@@ -71,7 +79,7 @@ public class Loader
         catch (NoSuchMethodException exception)
         {
             throw new IllegalArgumentException("Missing (XMLNode) constructor for type '"
-                                               + name + "' when adding Pane class mapping for " + paneClass.getName());
+                                               + name + "' when adding Pane class mapping for " + paneClass.getName(), exception);
         }
     }
 
@@ -112,9 +120,16 @@ public class Loader
         return null;
     }
 
+    /**
+     * Create a pane from its xml parameters.
+     *
+     * @param params xml parameters.
+     * @param parent parent view.
+     * @return the new pane.
+     */
     public static Pane createFromPaneParams(PaneParams params, View parent)
     {
-        if (params.getType().equalsIgnoreCase("layout"))
+        if ("layout".equalsIgnoreCase(params.getType()))
         {
             String resource = params.getStringAttribute("source", null);
             if (resource != null)
@@ -139,8 +154,8 @@ public class Loader
 
     /**
      * Parse an XML Document into contents for a View
-     * @param doc
-     * @param parent
+     * @param doc xml document.
+     * @param parent parent view.
      */
     private static void createFromXML(Document doc, View parent)
     {
@@ -161,8 +176,8 @@ public class Loader
     /**
      * Parse XML from an InputSource into contents for a View
      *
-     * @param input
-     * @param parent
+     * @param input xml file.
+     * @param parent parent view.
      */
     private static void createFromXML(InputSource input, View parent)
     {

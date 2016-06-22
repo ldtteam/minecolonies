@@ -455,7 +455,10 @@ public class Pane extends Gui
         return visible && enabled && isPointInPane(mx, my);
     }
 
-    public boolean onKeyTyped(char ch, int key) { return false; }
+    public boolean onKeyTyped(char ch, int key)
+    {
+        return false;
+    }
 
     public void onUpdate()
     {

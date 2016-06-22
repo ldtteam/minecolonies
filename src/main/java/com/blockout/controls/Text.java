@@ -172,7 +172,7 @@ public class Text extends Pane
         int scaledLinespace = (int)(linespace * scale);
         int offsetY = 0;
 
-        if (textAlignment.bottomAligned || textAlignment.verticalCentered)
+        if (textAlignment.isBottomAligned() || textAlignment.isVerticalCentered())
         {
             int maxVisibleLines = (getHeight() + scaledLinespace) / (getLineHeight() + scaledLinespace);
             int maxVisibleSize = (maxVisibleLines * (getLineHeight() + scaledLinespace)) - scaledLinespace;
@@ -184,7 +184,7 @@ public class Text extends Pane
 
             offsetY = Math.max(0, getHeight() - maxVisibleSize);
 
-            if (textAlignment.verticalCentered)
+            if (textAlignment.isVerticalCentered())
             {
                 offsetY = offsetY / 2;
             }
@@ -193,11 +193,11 @@ public class Text extends Pane
         for (String s : getFormattedText())
         {
             int offsetX = 0;
-            if (textAlignment.rightAligned || textAlignment.horizontalCentered)
+            if (textAlignment.isRightAligned() || textAlignment.isHorizontalCentered())
             {
                 offsetX = getWidth() - getStringWidth(s);
 
-                if (textAlignment.horizontalCentered)
+                if (textAlignment.isHorizontalCentered())
                 {
                     offsetX /= 2;
                 }

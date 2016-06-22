@@ -4,11 +4,20 @@ import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
 
+/**
+ * Tabbed view.
+ */
 public class SwitchView extends View
 {
-    Pane currentView;
+    private Pane currentView;
 
-    public SwitchView() { super(); }
+    /**
+     * Required default constructor.
+     */
+    public SwitchView()
+    {
+        super();
+    }
 
     /**
      * Constructs a View from PaneParams
@@ -20,6 +29,7 @@ public class SwitchView extends View
         super(params);
     }
 
+    @Override
     public void parseChildren(PaneParams params)
     {
         super.parseChildren(params);
@@ -59,6 +69,9 @@ public class SwitchView extends View
         }
     }
 
+    /**
+     * Get the next tab/view.
+     */
     public void nextView()
     {
         if (children.isEmpty())
@@ -75,6 +88,9 @@ public class SwitchView extends View
         setCurrentView(children.get(index));
     }
 
+    /**
+     * Get the last tab/view.
+     */
     public void previousView()
     {
         if (children.isEmpty())

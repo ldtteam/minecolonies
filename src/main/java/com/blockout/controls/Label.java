@@ -131,20 +131,20 @@ public class Label extends Pane
         int offsetX = 0;
         int offsetY = 0;
 
-        if (textAlignment.rightAligned)
+        if (textAlignment.isRightAligned())
         {
             offsetX = getWidth() - getStringWidth();
         }
-        else if (textAlignment.horizontalCentered)
+        else if (textAlignment.isHorizontalCentered())
         {
             offsetX = (getWidth() - getStringWidth()) / 2;
         }
 
-        if (textAlignment.bottomAligned)
+        if (textAlignment.isBottomAligned())
         {
             offsetY = getHeight() - getTextHeight();
         }
-        else if (textAlignment.verticalCentered)
+        else if (textAlignment.isVerticalCentered())
         {
             offsetY = (getHeight() - getTextHeight()) / 2;
         }
