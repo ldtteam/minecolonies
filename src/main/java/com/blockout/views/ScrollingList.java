@@ -5,25 +5,28 @@ import com.blockout.PaneParams;
 
 import java.util.List;
 
-/*
+/**
  * A ScrollingList is a View which can contain 0 or more children of a specific Pane or View type
- * and are ordered sequentially
+ * and are ordered sequentially.
  *
- * All children are set to a Top version of their alignment, and have their Y coordinates overwritten
+ * All children are set to a Top version of their alignment, and have their Y coordinates overwritten.
  */
 public class ScrollingList extends ScrollingView
 {
+    /**
+     * Interface for a data provider that updates pane scrolling list pane info.
+     */
     public interface DataProvider
     {
         /**
-         * Override this to provide the number of rows
+         * Override this to provide the number of rows.
          *
          * @return number of rows in the list
          */
         int getElementCount();
 
         /**
-         * Override this to update the Panes for a given row
+         * Override this to update the Panes for a given row.
          *
          * @param index the index of the row/list element
          * @param rowPane the parent Pane for the row, containing the elements to update
@@ -35,10 +38,16 @@ public class ScrollingList extends ScrollingView
     protected DataProvider dataProvider;
     private PaneParams     listNodeParams;
 
-    public ScrollingList() { super(); }
+    /**
+     * Default constructor required by Blockout.
+     */
+    public ScrollingList()
+    {
+        super();
+    }
 
     /**
-     * Constructs a ScrollingList from PaneParams
+     * Constructs a ScrollingList from PaneParams.
      *
      * @param params Params for the ScrollingList
      */
@@ -53,9 +62,12 @@ public class ScrollingList extends ScrollingView
         refreshElementPanes();
     }
 
+    /**
+     * Use the data provider to update all the element panes.
+     */
     public void refreshElementPanes()
     {
-        ((ScrollingListContainer)container).refreshElementPanes(dataProvider, listNodeParams);
+        ((ScrollingListContainer) container).refreshElementPanes(dataProvider, listNodeParams);
     }
 
     @Override
@@ -68,13 +80,22 @@ public class ScrollingList extends ScrollingView
     public void parseChildren(PaneParams params)
     {
         List<PaneParams> childNodes = params.getChildren();
-        if (childNodes == null) return;
+        if (childNodes == null)
+        {
+            return;
+        }
 
         //  Get the PaneParams for this child, because we'll need it in the future
         //  to create more nodes
         listNodeParams = childNodes.get(0);
     }
 
+    /**
+     * Get the element list index for the provided pane.
+     *
+     * @param pane the pane to find the index of.
+     * @return the index.
+     */
     public int getListElementIndexByPane(Pane pane)
     {
         return ((ScrollingListContainer)container).getListElementIndexByPane(pane);

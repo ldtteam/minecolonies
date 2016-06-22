@@ -124,7 +124,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      * Skill modifier defines how fast a citizen levels in a certain skill
      */
     private int         skillModifier = 0;
-    private boolean     isFemale;
+    private boolean     female;
 
     private Colony      colony;
     private CitizenData citizenData;
@@ -142,7 +142,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         super(world);
         setSize(0.6F, 1.8F);
-        this.enablePersistence();//Set persistenceRequired = true;
+        this.enablePersistence();
         this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
         this.inventory.addIInvBasic(this);
@@ -150,6 +150,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.renderDistanceWeight = 2.0D;
         this.newNavigator = new PathNavigate(this, world);
 
+        updateNavigatorField();
+
+        this.newNavigator.setCanSwim(true);
+        this.newNavigator.setEnterDoors(true);
+
+        initTasks();
+    }
+
+    private synchronized void updateNavigatorField()
+    {
         if (navigatorField == null)
         {
             Field[] fields = EntityLiving.class.getDeclaredFields();
@@ -164,6 +174,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
         }
 
+        if (navigatorField == null)
+        {
+            throw new IllegalStateException("Navigator field should not be null, contact developers.");
+        }
+
         try
         {
             navigatorField.set(this, this.newNavigator);
@@ -172,11 +187,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             Log.logger.error("Navigator error", e);
         }
-
-        this.getNavigator().setCanSwim(true);
-        this.getNavigator().setEnterDoors(true);
-
-        initTasks();
     }
 
     /**
@@ -209,9 +219,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             switch (getLevel())
             {
-                default:
-                    modelId = RenderBipedCitizen.Model.SETTLER;
-                    break;
                 case 1:
                     modelId = RenderBipedCitizen.Model.CITIZEN;
                     break;
@@ -220,6 +227,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                     break;
                 case 3:
                     modelId = RenderBipedCitizen.Model.ARISTOCRAT;
+                    break;
+                default:
+                    modelId = RenderBipedCitizen.Model.SETTLER;
                     break;
             }
         }
@@ -333,7 +343,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.addObject(DATA_RENDER_METADATA, "");
     }
 
-    public <JOB extends Job> JOB getColonyJob(Class<JOB> type)
+    public <J extends Job> J getColonyJob(Class<J> type)
     {
         return citizenData != null ? citizenData.getJob(type) : null;
     }
@@ -356,7 +366,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         double squareDifference      = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
         double intendedRotationYaw   = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
-        double intendedRotationPitch = (-(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI));
+        double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
         this.setRotation((float)updateRotation(this.rotationYaw, intendedRotationYaw, 30),(float)updateRotation(this.rotationPitch, intendedRotationPitch, 30));
     }
 
@@ -368,7 +378,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      * @param maxIncrement     the 'movement speed'
      * @return a rotation value he should move
      */
-    private double updateRotation(double currentRotation, double intendedRotation, double maxIncrement)
+    private static double updateRotation(double currentRotation, double intendedRotation, double maxIncrement)
     {
         double wrappedAngle = MathHelper.wrapAngleTo180_double(intendedRotation - currentRotation);
 
@@ -407,9 +417,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     public void addExperience(double xp)
     {
         double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
-        xp=xp*skillModifier;
 
-        double localXp = xp;
+        double localXp = xp * skillModifier;
         if (localXp > maxValue)
         {
             localXp = maxValue;
@@ -431,16 +440,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     private List<EntityXPOrb> getXPOrbsOnGrid()
     {
-        //todo should be fromBounds.
         AxisAlignedBB bb = AxisAlignedBB.fromBounds(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
-        List<EntityXPOrb> retList = new ArrayList<>();
-        //I know streams look better but they are flawed in type erasure
-        for (Object o : worldObj.getEntitiesWithinAABB(EntityXPOrb.class, bb)){
-            if(o instanceof EntityXPOrb){
-                retList.add((EntityXPOrb) o);
-            }
-        }
-        return retList;
+
+        return worldObj.getEntitiesWithinAABB(EntityXPOrb.class, bb);
     }
 
     /**
@@ -487,13 +489,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      */
     private void checkHeal()
     {
-        if(citizenData!=null)
+        if (citizenData != null && getOffsetTicks() % HEAL_CITIZENS_AFTER == 0 && getHealth() < getMaxHealth())
         {
-            if (getOffsetTicks() % HEAL_CITIZENS_AFTER == 0 && getHealth() < getMaxHealth())
-            {
-                heal(1);
-                citizenData.markDirty();
-            }
+            heal(1);
+            citizenData.markDirty();
         }
     }
 
@@ -511,7 +510,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 citizenId = dataWatcher.getWatchableObjectInt(DATA_CITIZEN_ID);
             }
 
-            isFemale = dataWatcher.getWatchableObjectInt(DATA_IS_FEMALE) != 0;
+            female = dataWatcher.getWatchableObjectInt(DATA_IS_FEMALE) != 0;
             level = dataWatcher.getWatchableObjectInt(DATA_LEVEL);
             modelId = RenderBipedCitizen.Model.valueOf(dataWatcher.getWatchableObjectString(DATA_MODEL));
             textureId = dataWatcher.getWatchableObjectInt(DATA_TEXTURE);
@@ -519,7 +518,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
             setTexture();
 
-            dataWatcher.func_111144_e(); // clear hasChanges
+            // clear hasChanges
+            dataWatcher.func_111144_e();
         }
 
         updateArmSwingProgress();
@@ -539,7 +539,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         String textureBase = "textures/entity/";
         textureBase += model.textureBase;
-        textureBase += isFemale ? "Female" : "Male";
+        textureBase += female ? "Female" : "Male";
 
         int moddedTextureId = (textureId % model.numTextures) + 1;
         texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
@@ -627,12 +627,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         setCustomNameTag(citizenData.getName());
 
-        isFemale = citizenData.isFemale();
+        female = citizenData.isFemale();
         textureId = citizenData.getTextureId();
 
         dataWatcher.updateObject(DATA_COLONY_ID, colonyId);
         dataWatcher.updateObject(DATA_CITIZEN_ID, citizenId);
-        dataWatcher.updateObject(DATA_IS_FEMALE, isFemale ? 1 : 0);
+        dataWatcher.updateObject(DATA_IS_FEMALE, female ? 1 : 0);
         dataWatcher.updateObject(DATA_TEXTURE, textureId);
         updateLevel();
 
@@ -651,7 +651,8 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     private void cleanupChatMessages()
     {
-        if (statusMessages.size() > 0 && ticksExisted % 20 == 0)//Only check if there are messages and once a second
+        //Only check if there are messages and once a second
+        if (statusMessages.size() > 0 && ticksExisted % 20 == 0)
         {
             Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
             while (it.hasNext())
@@ -720,7 +721,9 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         super.applyEntityAttributes();
         getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0D);
         getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3D);
-        getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(100);//path finding search range
+
+        //path finding search range
+        getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(100);
     }
 
 
@@ -764,7 +767,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         int experience;
 
-        if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.canDropLoot() && this.worldObj.getGameRules().getBoolean("doMobLoot"))
+        if (!this.worldObj.isRemote && this.recentlyHit > 0 && this.canDropLoot() && this.worldObj.getGameRules().getBoolean("doMobLoot"))
         {
             experience = (int)(citizenData.getLevel()*100 + this.getExperiencePoints());
 
@@ -823,7 +826,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
     public boolean isFemale()
     {
-        return isFemale;
+        return female;
     }
 
     public void clearColony()
@@ -841,6 +844,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
      * Returns the home position of each citizen (His house or town hall)
      * @return location
      */
+    @Override
     public BlockPos getHomePosition()
     {
         BuildingHome homeBuilding = getHomeBuilding();
@@ -872,6 +876,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return (citizenData != null) ? citizenData.getHomeBuilding() : null;
     }
 
+    @Override
     public BlockPos getPosition()
     {
         return new BlockPos(posX,posY,posZ);
@@ -978,14 +983,12 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     @Override
     public void onInventoryChanged(InventoryBasic inventoryBasic)
     {
-        //TODO use in future for lumberjack rendering logs, etc
         setCurrentItemOrArmor(0, inventory.getHeldItem());
     }
 
     /**
      * Get the experience points the entity currently has.
      * <p>
-     * todo: seems flawed and unused
      *
      * @return the amount of xp this entity has
      */
@@ -1039,7 +1042,10 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 }
                 else
                 {
-                    if (itemstack != null){ leftOvers.add(itemstack); }
+                    if (itemstack != null)
+                    {
+                        leftOvers.add(itemstack);
+                    }
                 }
             }
             inventory = newInventory;
@@ -1061,11 +1067,11 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             }
 
             ItemStack itemStack = entityItem.getEntityItem();
-            int       i         = itemStack.stackSize;
 
+            int i = itemStack.stackSize;
             if (i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventoryCitizen(), itemStack))
             {
-                this.worldObj.playSoundAtEntity(this, "random.pop", 0.2f,
+                this.worldObj.playSoundAtEntity(this, "random.pop", 0.2F,
                                                 (float) (((this.rand.nextDouble() - this.rand.nextDouble()) * 0.7D + 1.0D) * 2.0D));
                 this.onItemPickup(this, i);
 
@@ -1114,7 +1120,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         {
             return;
         }
-        //todo: this is not optimal but works
+
         this.getLookHelper().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, getVerticalFaceSpeed());
 
         this.swingItem();
