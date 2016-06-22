@@ -4,37 +4,72 @@ import com.blockout.PaneParams;
 import net.minecraft.util.ChatAllowedCharacters;
 import org.lwjgl.opengl.GL11;
 
+/**
+ * Mimics Vanilla text fields.
+ */
 public class TextFieldVanilla extends TextField
 {
     protected boolean backgroundEnabled    = true;
     protected int     backgroundOuterColor = 0xFFA0A0A0;
     protected int     backgroundInnerColor = 0xFF000000;
 
+    /**
+     * Required defualt constructor.
+     */
     public TextFieldVanilla()
     {
-        setFilter(new FilterVanilla());
+        filter = new FilterVanilla();
     }
 
+    /**
+     * Constructor called when creating an object from xml.
+     *
+     * @param params xml parameters.
+     */
     public TextFieldVanilla(PaneParams params)
     {
         super(params);
         backgroundEnabled    = params.getBooleanAttribute("background", backgroundEnabled);
         backgroundOuterColor = params.getColorAttribute("backgroundOuter", backgroundOuterColor);
         backgroundInnerColor = params.getColorAttribute("backgroundInner", backgroundInnerColor);
-        setFilter(new FilterVanilla());
+        filter = new FilterVanilla();
     }
 
-    public boolean getBackgroundEnabled() { return backgroundEnabled; }
-    public void setBackgroundEnabled(boolean e) { backgroundEnabled = e; }
+    public boolean getBackgroundEnabled()
+    {
+        return backgroundEnabled;
+    }
 
-    public int getBackgroundOuterColor() { return backgroundOuterColor; }
-    public void setBackgroundOuterColor(int c) { backgroundOuterColor = c; }
+    public void setBackgroundEnabled(boolean e)
+    {
+        backgroundEnabled = e;
+    }
 
-    public int getBackgroundInnerColor() { return backgroundInnerColor; }
-    public void setBackgroundInnerColor(int c) { backgroundInnerColor = c; }
+    public int getBackgroundOuterColor()
+    {
+        return backgroundOuterColor;
+    }
+
+    public void setBackgroundOuterColor(int c)
+    {
+        backgroundOuterColor = c;
+    }
+
+    public int getBackgroundInnerColor()
+    {
+        return backgroundInnerColor;
+    }
+
+    public void setBackgroundInnerColor(int c)
+    {
+        backgroundInnerColor = c;
+    }
 
     @Override
-    public int getInternalWidth() { return backgroundEnabled ? getWidth() - 8 : getWidth(); }
+    public int getInternalWidth()
+    {
+        return backgroundEnabled ? (getWidth() - 8) : getWidth();
+    }
 
     @Override
     public void drawSelf(int mx, int my)
@@ -46,7 +81,7 @@ public class TextFieldVanilla extends TextField
             drawRect(x, y, x + width, y + height, backgroundInnerColor);
 
             GL11.glPushMatrix();
-            GL11.glTranslatef(4, (height - 8) / 2, 0);
+            GL11.glTranslatef(4, (float) ((height - 8) / 2.0), 0);
         }
 
         super.drawSelf(mx, my);
@@ -60,32 +95,50 @@ public class TextFieldVanilla extends TextField
     @Override
     public void handleClick(int mx, int my)
     {
+        int mouseX = mx;
+
         if (backgroundEnabled)
         {
-            mx -= 4;
+            mouseX -= 4;
         }
 
-        super.handleClick(mx, my);
+        super.handleClick(mouseX, my);
     }
 
-    public static class FilterNumeric implements Filter {
-        public String filter(String s) {
+    private static class FilterNumeric implements Filter
+    {
+        @Override
+        public String filter(String s)
+        {
             StringBuilder sb = new StringBuilder();
             for (char c : s.toCharArray())
+            {
                 if (isAllowedCharacter(c))
+                {
                     sb.append(c);
+                }
+            }
             return sb.toString();
         }
 
-        public boolean isAllowedCharacter(char c) { return Character.isDigit(c); }
+        @Override
+        public boolean isAllowedCharacter(char c)
+        {
+            return Character.isDigit(c);
+        }
     }
 
-    public static class FilterVanilla implements Filter {
-        public String filter(String s) {
+    private static class FilterVanilla implements Filter
+    {
+        @Override
+        public String filter(String s)
+        {
             return ChatAllowedCharacters.filterAllowedCharacters(s);
         }
 
-        public boolean isAllowedCharacter(char c) {
+        @Override
+        public boolean isAllowedCharacter(char c)
+        {
             return ChatAllowedCharacters.isAllowedCharacter(c);
         }
     }

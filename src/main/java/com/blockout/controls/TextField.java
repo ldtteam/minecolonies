@@ -49,14 +49,25 @@ public class TextField extends Pane
         textColor            = params.getColorAttribute("color", textColor);
         textColorDisabled    = params.getColorAttribute("colordisabled", textColorDisabled);
         shadow               = params.getBooleanAttribute("shadow", shadow);
-        text                 = params.getLocalizedStringAttribute("text", text);
+        text                 = params.getLocalizedStringAttribute("textContent", text);
         tabNextPaneID = params.getStringAttribute("tab", null);
     }
 
-    public Filter getFilter() { return filter; }
-    public void setFilter(Filter f) { filter = f; }
+    public Filter getFilter()
+    {
+        return filter;
+    }
 
-    public String getText() { return text; }
+    public void setFilter(Filter f)
+    {
+        filter = f;
+    }
+
+    public String getText()
+    {
+        return text;
+    }
+
     public void setText(String s)
     {
         text = (s.length() <= maxTextLength ? s : s.substring(0, maxTextLength));
@@ -81,7 +92,7 @@ public class TextField extends Pane
         setSelectionEnd(cursorPosition);
     }
 //    public void setCursorPositionZero() { setCursorPosition(0); }
-//    public void setCursorPositionEnd() { setCursorPosition(text.length()); }
+//    public void setCursorPositionEnd() { setCursorPosition(textContent.length()); }
     public void moveCursorBy(int offset) { setCursorPosition(selectionEnd + offset); }
 
     public int getSelectionEnd() { return selectionEnd; }

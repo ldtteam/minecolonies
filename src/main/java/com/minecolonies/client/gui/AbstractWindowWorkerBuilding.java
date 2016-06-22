@@ -115,10 +115,10 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
             findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"));
         }
 
-        findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabel(workerName);
+        findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setText(workerName);
         findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
-                .setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", workerLevel));
+                .setText(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", workerLevel));
 
-        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabel("xxxxxxxx");
+        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setText("xxxxxxxx");
     }
 }

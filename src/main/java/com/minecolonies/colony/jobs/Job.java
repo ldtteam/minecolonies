@@ -145,9 +145,9 @@ public abstract class Job
     }
 
     /**
-     * Return a Localization label for the Job
+     * Return a Localization textContent for the Job
      *
-     * @return localization label String
+     * @return localization textContent String
      */
     public abstract String getName();
 

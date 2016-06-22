@@ -51,9 +51,9 @@ public class JobFisherman extends Job
     }
 
     /**
-     * Return a Localization label for the Job
+     * Return a Localization textContent for the Job
      *
-     * @return localization label String
+     * @return localization textContent String
      */
     @Override
     public String getName()

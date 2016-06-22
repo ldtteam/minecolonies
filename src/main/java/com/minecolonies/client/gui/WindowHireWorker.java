@@ -146,11 +146,11 @@ public class WindowHireWorker extends Window implements Button.Handler
                         LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance",citizen.getEndurance()) + " " +
                         LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence",citizen.getIntelligence());
 
-                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabel(citizen.getName());
-                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabel(attributes);
+                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setText(citizen.getName());
+                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setText(attributes);
 
-                //Invisible id label.
-                rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabel(Integer.toString(citizen.getID()));
+                //Invisible id textContent.
+                rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setText(Integer.toString(citizen.getID()));
             }
         });
     }
@@ -172,7 +172,7 @@ public class WindowHireWorker extends Window implements Button.Handler
         if (button.getID().equals(BUTTON_DONE))
         {
             Label id = (Label)button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
-            MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building,true, Integer.parseInt(id.getLabel())));
+            MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building,true, Integer.parseInt(id.getText())));
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
         {

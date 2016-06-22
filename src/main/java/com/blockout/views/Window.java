@@ -4,24 +4,31 @@ import com.blockout.Loader;
 import com.blockout.PaneParams;
 import com.blockout.Screen;
 import com.blockout.View;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Keyboard;
 
+/**
+ * Blockout window, high level root pane.
+ */
 public class Window extends View
 {
-    protected Minecraft mc = Minecraft.getMinecraft();
+    private static final int DEFAULT_WIDTH = 420;
+    private static final int DEFAULT_HEIGHT = 240;
+
     protected Screen screen;
 
     protected boolean windowPausesGame = true;
-    protected boolean hasLightbox      = true;
+    protected boolean lightbox         = true;
 
+    /**
+     * Make default sized window.
+     */
     public Window()
     {
-        this(420, 240);
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
     /**
@@ -32,23 +39,40 @@ public class Window extends View
      */
     public Window(int w, int h)
     {
-        setSize(w, h);
+        width = w;
+        height = h;
+        
         screen = new Screen(this);
         window = this;
     }
 
+    /**
+     * Create a window from an xml file.
+     *
+     * @param resource ResourceLocation to get file from.
+     */
     public Window(ResourceLocation resource)
     {
         this();
         Loader.createFromXMLFile(resource, this);
     }
 
+    /**
+     * Create a window from an xml file.
+     *
+     * @param resource location to get file from.
+     */
     public Window(String resource)
     {
         this();
         Loader.createFromXMLFile(resource, this);
     }
 
+    /**
+     * Load the xml parameters.
+     *
+     * @param params xml parameters.
+     */
     public void loadParams(PaneParams params)
     {
         String inherit = params.getStringAttribute("inherit", null);
@@ -60,7 +84,7 @@ public class Window extends View
         PaneParams.SizePair size = params.getSizePairAttribute("size", null, null);
         if (size != null)
         {
-            setSize(size.x, size.y);
+            setSize(size.getX(), size.getY());
         }
         else
         {
@@ -69,53 +93,60 @@ public class Window extends View
             setSize(w, h);
         }
 
-        hasLightbox = params.getBooleanAttribute("lightbox", hasLightbox);
+        lightbox = params.getBooleanAttribute("lightbox", lightbox);
         windowPausesGame = params.getBooleanAttribute("pause", windowPausesGame);
     }
 
     @Override
-    public void parseChildren(PaneParams params) {}
+    public void parseChildren(PaneParams params)
+    {
+        // Can be overridden
+    }
 
     @Override
     protected void drawSelf(int mx, int my)
     {
-        debugging = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) &&
-                Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) &&
-                Keyboard.isKeyDown(Keyboard.KEY_LMENU);
+        updateDebugging();
 
         super.drawSelf(mx, my);
     }
 
-    /**
-     * Window constructor to create a Window that occupies the entirety of the screen
-     */
-//    public Window()
-//    {
-//        this(0, 0);
-//    }
+    private static void updateDebugging()
+    {
+        debugging = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) &&
+                Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) &&
+                Keyboard.isKeyDown(Keyboard.KEY_LMENU);
+    }
 
     /**
      * Windows wrap a GuiScreen
      *
      * @return The current GuiScreen
      */
-    public GuiScreen getScreen() { return screen; }
-
-    //public void onInitGui() {}
+    public GuiScreen getScreen()
+    {
+        return screen;
+    }
 
     /**
      * Return <tt>true</tt> if the 'lightbox' (default dark background) should be displayed
      *
      * @return <tt>true</tt> if the 'lightbox' should be displayed
      */
-    public boolean hasLightbox() { return hasLightbox; }
+    public boolean hasLightbox()
+    {
+        return lightbox;
+    }
 
     /**
      * Return <tt>true</tt> if the game should be paused when the Window is displayed
      *
      * @return <tt>true</tt> if the game should be paused when the Window is displayed
      */
-    public boolean doesWindowPauseGame() { return windowPausesGame; }
+    public boolean doesWindowPauseGame()
+    {
+        return windowPausesGame;
+    }
 
     /**
      * Open the window
@@ -145,7 +176,10 @@ public class Window extends View
      * @param mx Mouse X position
      * @param my Mouse Y position
      */
-    public void onMouseReleased(int mx, int my) {}
+    public void onMouseReleased(int mx, int my)
+    {
+        // Can be overridden
+    }
 
     /**
      * Key input handler.  Directs keystrokes to focused Pane, or to onUnhandledKeyTyped() if no
@@ -190,10 +224,16 @@ public class Window extends View
     /**
      * Called when the Window is displayed.
      */
-    public void onOpened() {}
+    public void onOpened()
+    {
+        // Can be overridden
+    }
 
     /**
      * Called when the Window is closed.
      */
-    public void onClosed() {}
+    public void onClosed()
+    {
+        // Can be overridden
+    }
 }

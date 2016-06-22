@@ -263,11 +263,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         String numberOfBuilders    = LanguageHandler.format("com.minecolonies.gui.townHall.population.builders", builders);
         String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townHall.population.deliverymen", deliverymen);
 
-        findPaneOfTypeByID(CURRENT_SPEC_LABEL, Label.class).setLabel("<Industrial>");
-        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabel(numberOfCitizens);
-        findPaneOfTypeByID(UNEMP_CITIZENS_LABEL, Label.class).setLabel(numberOfUnemployed);
-        findPaneOfTypeByID(BUILDERS_LABEL, Label.class).setLabel(numberOfBuilders);
-        findPaneOfTypeByID(DELIVERY_MAN_LABEL, Label.class).setLabel(numberOfDeliverymen);
+        findPaneOfTypeByID(CURRENT_SPEC_LABEL, Label.class).setText("<Industrial>");
+        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setText(numberOfCitizens);
+        findPaneOfTypeByID(UNEMP_CITIZENS_LABEL, Label.class).setText(numberOfUnemployed);
+        findPaneOfTypeByID(BUILDERS_LABEL, Label.class).setText(numberOfBuilders);
+        findPaneOfTypeByID(DELIVERY_MAN_LABEL, Label.class).setText(numberOfDeliverymen);
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
 
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
@@ -288,8 +288,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 Permissions.Player player = users.get(index);
                 String rank = player.getRank().name();
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.getName());
-                rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
+                rowPane.findPaneOfTypeByID("name", Label.class).setText(player.getName());
+                rowPane.findPaneOfTypeByID("rank", Label.class).setText(rank);
             }
         });
 
@@ -311,8 +311,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             {
                 CitizenData.View citizen = citizens.get(index);
 
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(citizen.getName());
-                //rowPane.findPaneOfTypeByID("job", Label.class).setLabel("" /* Not working yet */);
+                rowPane.findPaneOfTypeByID("name", Label.class).setText(citizen.getName());
+                //rowPane.findPaneOfTypeByID("job", Label.class).setlabel("" /* Not working yet */);
             }
         });
 
