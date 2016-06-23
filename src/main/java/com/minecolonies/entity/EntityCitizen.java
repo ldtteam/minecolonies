@@ -563,48 +563,58 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
 
         if (colony == null)
         {
-            Colony c = ColonyManager.getColony(colonyId);
+            handleNullColony();
+        }
+    }
 
-            if (c == null)
-            {
-                Log.logger.warn(String.format("EntityCitizen '%s' unable to find Colony #%d", getUniqueID(), colonyId));
-                setDead();
-                return;
-            }
+    private void handleNullColony()
+    {
+        Colony c = ColonyManager.getColony(colonyId);
 
-            CitizenData data = c.getCitizen(citizenId);
-            if (data == null)
-            {
-                //  Citizen does not exist in the Colony
-                Log.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen %d, but not known to colony",
-                                              getUniqueID(),
-                                              colonyId,
-                                              citizenId));
-                setDead();
-                return;
-            }
+        if (c == null)
+        {
+            Log.logger.warn(String.format("EntityCitizen '%s' unable to find Colony #%d", getUniqueID(), colonyId));
+            setDead();
+            return;
+        }
 
-            EntityCitizen existingCitizen = data.getCitizenEntity();
-            if (existingCitizen != null && existingCitizen != this)
-            {
-                // This Citizen already has a different Entity registered to it
-                Log.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
-                                              getUniqueID(),
-                                              colonyId,
-                                              citizenId,
-                                              existingCitizen.getUniqueID()));
-                if (!existingCitizen.getUniqueID().equals(this.getUniqueID()))
-                {
-                    setDead();
-                }
-                else
-                {
-                    data.setCitizenEntity(this);
-                }
-                return;
-            }
+        CitizenData data = c.getCitizen(citizenId);
+        if (data == null)
+        {
+            //  Citizen does not exist in the Colony
+            Log.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen %d, but not known to colony",
+                                          getUniqueID(),
+                                          colonyId,
+                                          citizenId));
+            setDead();
+            return;
+        }
 
-            setColony(c, data);
+        EntityCitizen existingCitizen = data.getCitizenEntity();
+        if (existingCitizen != null && existingCitizen != this)
+        {
+            // This Citizen already has a different Entity registered to it
+            handleExistingCitizen(data, existingCitizen);
+            return;
+        }
+
+        setColony(c, data);
+    }
+
+    private void handleExistingCitizen(CitizenData data, EntityCitizen existingCitizen)
+    {
+        Log.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
+                                      getUniqueID(),
+                                      colonyId,
+                                      citizenId,
+                                      existingCitizen.getUniqueID()));
+        if (!existingCitizen.getUniqueID().equals(this.getUniqueID()))
+        {
+            setDead();
+        }
+        else
+        {
+            data.setCitizenEntity(this);
         }
     }
 
@@ -1071,8 +1081,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
             int i = itemStack.stackSize;
             if (i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventoryCitizen(), itemStack))
             {
-                this.worldObj.playSoundAtEntity(this, "random.pop", 0.2F,
-                                                (float) (((this.rand.nextDouble() - this.rand.nextDouble()) * 0.7D + 1.0D) * 2.0D));
+                this.worldObj.playSoundAtEntity(this, "random.pop", 0.2F, (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
                 this.onItemPickup(this, i);
 
                 if (itemStack.stackSize <= 0)

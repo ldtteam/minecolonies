@@ -11,7 +11,7 @@ import net.minecraft.world.World;
  *
  * @author Colton
  */
-public class PathJobFindTree extends PathJob
+public class PathJobFindTree extends AbstractPathJob
 {
     public static class TreePathResult extends PathResult
     {
@@ -21,7 +21,7 @@ public class PathJobFindTree extends PathJob
     BlockPos hutLocation;
 
     /**
-     * PathJob constructor
+     * AbstractPathJob constructor
      *
      * @param world the world within which to path
      * @param start the start position from which to path from

@@ -564,7 +564,7 @@ public final class EntityFishHook extends Entity
     private void showFishBiteAnimation(final WorldServer worldServer)
     {
         this.motionY -= 0.20000000298023224D;
-        this.playSound("random.splash", ENTITY_SIZE, (float) (1.0D + (this.rand.nextDouble() - this.rand.nextDouble()) * 0.4D));
+        this.playSound("random.splash", ENTITY_SIZE, (float) (1.0D + this.rand.nextGaussian() * 0.4D));
         double bubbleY = Math.floor(this.getEntityBoundingBox().minY);
         worldServer.spawnParticle(WATER_BUBBLE,
                                   this.posX,
@@ -699,9 +699,9 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Spawns a random loot from the loottable
+     * Spawns a random loot from the loot table
      * and some exp orbs.
-     * Should be calles when retrieving a hook.
+     * Should be called when retrieving a hook.
      * todo: Perhaps streamline this and directly add the items?
      *
      * @param citizen the fisherman getting the loot

@@ -30,7 +30,7 @@ public class Pathfinding
         executor = new ThreadPoolExecutor(1, Configurations.pathfindingMaxThreadCount, 10, TimeUnit.SECONDS, jobQueue);
     }
 
-    public static Future<PathEntity> enqueue(PathJob job)
+    public static Future<PathEntity> enqueue(AbstractPathJob job)
     {
         return executor.submit(job);
     }
@@ -170,7 +170,7 @@ public class Pathfinding
     @SideOnly(Side.CLIENT)
     public static void debugDraw(double frame)
     {
-        if (PathJob.lastDebugNodesNotVisited == null)
+        if (AbstractPathJob.lastDebugNodesNotVisited == null)
         {
             return;
         }
@@ -194,11 +194,11 @@ public class Pathfinding
         Set<Node> debugNodesVisited;
         Set<Node> debugNodesPath;
 
-        synchronized (PathJob.debugNodeMonitor)
+        synchronized (AbstractPathJob.debugNodeMonitor)
         {
-            debugNodesNotVisited = PathJob.lastDebugNodesNotVisited;
-            debugNodesVisited = PathJob.lastDebugNodesVisited;
-            debugNodesPath = PathJob.lastDebugNodesPath;
+            debugNodesNotVisited = AbstractPathJob.lastDebugNodesNotVisited;
+            debugNodesVisited = AbstractPathJob.lastDebugNodesVisited;
+            debugNodesPath = AbstractPathJob.lastDebugNodesPath;
         }
 
         try

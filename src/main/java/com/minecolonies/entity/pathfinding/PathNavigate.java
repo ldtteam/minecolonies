@@ -85,7 +85,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
             return pathResult;
         }
 
-        BlockPos start = PathJob.prepareStart(theEntity);
+        BlockPos start = AbstractPathJob.prepareStart(theEntity);
         BlockPos dest = new BlockPos(newX, newY, newZ);
 
         return setPathJob(
@@ -95,7 +95,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
 
     public PathResult moveAwayFromXYZ(BlockPos avoid, double range, double speed)
     {
-        BlockPos start = PathJob.prepareStart(theEntity);
+        BlockPos start = AbstractPathJob.prepareStart(theEntity);
 
         return setPathJob(
                 new PathJobMoveAwayFromLocation(theEntity.worldObj, start, avoid, (int)range, (int)getPathSearchRange()),
@@ -104,13 +104,13 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
 
     public PathJobFindTree.TreePathResult moveToTree(int range, double speed)
     {
-        BlockPos start = PathJob.prepareStart(theEntity);
+        BlockPos start = AbstractPathJob.prepareStart(theEntity);
         return (PathJobFindTree.TreePathResult) setPathJob(new PathJobFindTree(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range), null, speed);
     }
 
     public PathJobFindWater.WaterPathResult moveToWater(int range, double speed, List<BlockPos> ponds)
     {
-        BlockPos start = PathJob.prepareStart(theEntity);
+        BlockPos start = AbstractPathJob.prepareStart(theEntity);
         return (PathJobFindWater.WaterPathResult) setPathJob(new PathJobFindWater(theEntity.worldObj, start, ((EntityCitizen)theEntity).getWorkBuilding().getLocation(), range, ponds), null, speed);
     }
 
@@ -151,7 +151,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
                 if (p != null && destination == null)
                 {
                     destination = new BlockPos(p.xCoord, p.yCoord, p.zCoord);
-                    pathResult.setPathReachesDestination(true);    //  PathJob with no destination, did reach it's destination
+                    pathResult.setPathReachesDestination(true);    //  AbstractPathJob with no destination, did reach it's destination
                 }
             }
             catch (Exception e) {}
@@ -309,7 +309,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         return super.setPath(path, speed);
     }
 
-    private PathResult setPathJob(PathJob job, BlockPos dest, double speed)
+    private PathResult setPathJob(AbstractPathJob job, BlockPos dest, double speed)
     {
         clearPathEntity();
 

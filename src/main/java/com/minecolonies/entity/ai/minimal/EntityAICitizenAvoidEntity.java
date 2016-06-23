@@ -5,12 +5,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
+/**
+ * AI task to avoid an Entity class.
+ */
 public class EntityAICitizenAvoidEntity extends EntityAIBase
 {
-
     /**
      * The entity we are attached to
      */
@@ -21,6 +22,15 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     private float         distanceFromEntity;
     private Class         targetEntityClass;
 
+    /**
+     * Constructor.
+     *
+     * @param entity current entity.
+     * @param targetEntityClass entity class we want to avoid.
+     * @param distanceFromEntity how far we want to stay away.
+     * @param farSpeed how fast we should move when we are far away.
+     * @param nearSpeed how fast we should move when we are close.
+     */
     public EntityAICitizenAvoidEntity(EntityCitizen entity, Class targetEntityClass, float distanceFromEntity, double farSpeed, double nearSpeed)
     {
         this.theEntity = entity;
@@ -28,7 +38,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         this.distanceFromEntity = distanceFromEntity;
         this.farSpeed = farSpeed;
         this.nearSpeed = nearSpeed;
-        setMutexBits(1);
+        super.setMutexBits(1);
     }
 
     /**
@@ -43,7 +53,6 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
 
     /**
      * Returns the closest entity to avoid
-     * //todo: is this what we want? do we want to get the closest entity, and run away from that, or from enemies?
      *
      * @return Entity to avoid
      */
@@ -55,19 +64,18 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         }
         else
         {
-            List<Entity> list = theEntity.worldObj.getEntitiesInAABBexcluding(
-                    theEntity, theEntity.getEntityBoundingBox().expand((double) distanceFromEntity, 3.0D, (double) distanceFromEntity),
-                    (target) -> target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target));
+            Optional<Entity> entityOptional = theEntity.worldObj.getEntitiesInAABBexcluding(
+                    theEntity,
+                    theEntity.getEntityBoundingBox().expand(
+                            (double) distanceFromEntity,
+                            3.0D,
+                            (double) distanceFromEntity),
+                    target -> target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target))
+                    .stream()
+                    .filter(targetEntityClass::isInstance)
+                    .findFirst();
 
-            list = list.stream().filter(entity -> targetEntityClass.isInstance(entity)).collect(Collectors.toList());
-
-            if (list.isEmpty())
-            {
-                return null;
-            }
-
-
-            return list.get(0);
+            return entityOptional.isPresent() ? entityOptional.get() : null;
         }
     }
 
@@ -94,7 +102,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      */
     private void performMoveAway()
     {
-        theEntity.getNavigator().moveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2, nearSpeed);
+        theEntity.getNavigator().moveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2D, nearSpeed);
     }
 
     /**

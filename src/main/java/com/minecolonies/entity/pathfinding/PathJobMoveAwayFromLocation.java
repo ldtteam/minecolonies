@@ -6,7 +6,7 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class PathJobMoveAwayFromLocation extends PathJob
+public class PathJobMoveAwayFromLocation extends AbstractPathJob
 {
     protected final BlockPos         avoid;
     protected final BlockPos heuristicPoint;

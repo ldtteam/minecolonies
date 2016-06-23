@@ -6,7 +6,7 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class PathJobMoveToLocation extends PathJob
+public class PathJobMoveToLocation extends AbstractPathJob
 {
     protected final BlockPos destination;
 

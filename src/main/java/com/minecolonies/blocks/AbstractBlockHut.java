@@ -101,7 +101,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
          */
         if(worldIn.isRemote)
         {
-            AbstractBuilding.View building = ColonyManager.getBuildingView(worldIn, pos);
+            AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
 
             if(building != null)
             {
