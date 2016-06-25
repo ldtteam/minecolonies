@@ -58,6 +58,13 @@ com.minecolonies.gui.buildtool.nodecoration=No hay Decoraciones
 com.minecolonies.gui.buildtool.hut=Cabañas
 com.minecolonies.gui.buildtool.decoration=Decoraciones
 
+com.minecolonies.gui.hiring.on=Manual
+com.minecolonies.gui.hiring.off=Automático
+com.minecolonies.gui.hiring.buttonHire=Contratar
+com.minecolonies.gui.hiring.description=Elige un trabajador para el trabajo.
+com.minecolonies.gui.townHall.addPlayer=Añadir jugador:
+com.minecolonies.gui.townHall.jobHiring=Modo de contratación del trabajador:
+
 tile.minecolonies.blockHutCitizen.name=Colonos
 tile.minecolonies.blockHutBaker.name=Panadería
 tile.minecolonies.blockHutBlacksmith.name=Forja
@@ -109,6 +116,8 @@ item.caliper.message.square=That's a %d by %d square.
 item.caliper.message.cube=That's a %d by %d by %d cube.
 
 itemGroup.minecolonies=MineColonies
+
+entity.worker.inventoryFullChestFull=Por favor, haz espacio en el cofre de mi edificio. No soy capaz de guardar en mi inventario.
 
 entity.builder.messageBuildStart=Se ha empezado a construir %s
 entity.builder.messageBuildComplete=Se ha terminado de construir %s
