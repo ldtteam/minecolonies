@@ -1,7 +1,6 @@
 package com.blockout;
 
 import com.blockout.views.Window;
-import com.minecolonies.util.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import org.lwjgl.BufferUtils;
@@ -348,9 +347,8 @@ public class Pane extends Gui
         }
         catch (ClassCastException e)
         {
-            Log.logger.warn("Pane had wrong type: ", e);
+            throw new IllegalArgumentException(String.format("No pane with id %s and type %s was found.", id, type), e);
         }
-        throw new IllegalArgumentException(String.format("No pane with id %s and type %s was found.", id, type));
     }
 
     /**
