@@ -1,50 +1,50 @@
-com.minecolonies.error.supplyChestAlreadyPlaced=Ya han colocado una nave dela fuente!
+com.minecolonies.error.supplyChestAlreadyPlaced=¡Ya has colocado un barco de suministros!
 
-com.minecolonies.gui.townHall.build=Construir Ayuntamiento
-com.minecolonies.gui.townHall.repair=Reparar Ayuntamiento
-com.minecolonies.gui.townHall.recall=Devolver Ciudadanos
-com.minecolonies.gui.townHall.togglespec=Cambiar Especialización
-com.minecolonies.gui.townHall.currTownHallName=Nombre Colonia:
-com.minecolonies.gui.townHall.currentSpecialization=Corriente Especialización:
-com.minecolonies.gui.townHall.rename=Renombrar Colonia
-com.minecolonies.gui.townHall.rename.title=Renombras tu Colonia
-com.minecolonies.gui.townHall.actions=acción
-com.minecolonies.gui.townHall.defaultName=%s's Colonia
+com.minecolonies.gui.townHall.build=Construir ayuntamiento
+com.minecolonies.gui.townHall.repair=Reparar ayuntamiento
+com.minecolonies.gui.townHall.recall=Llamar colonos
+com.minecolonies.gui.townHall.togglespec=Cambiar especialización
+com.minecolonies.gui.townHall.currTownHallName=Nombre de la colonia:
+com.minecolonies.gui.townHall.currentSpecialization=Especialización actual:
+com.minecolonies.gui.townHall.rename=Renombrar colonia
+com.minecolonies.gui.townHall.rename.title=Cambiar el nombre de tu colonia
+com.minecolonies.gui.townHall.actions=Acciones
+com.minecolonies.gui.townHall.defaultName=La colonia de %s
 com.minecolonies.gui.townHall.citizens=Ciudadanos
-com.minecolonies.gui.townHall.permissions=permiso
+com.minecolonies.gui.townHall.permissions=Permisos
 
-com.minecolonies.gui.townHall.population.totalCitizens=Número de ciudadanos: %d/%d
-com.minecolonies.gui.townHall.population.unemployed=desempleado: %d
+com.minecolonies.gui.townHall.population.totalCitizens=Número de colonos: %d/%d
+com.minecolonies.gui.townHall.population.unemployed=Desempleados: %d
 com.minecolonies.gui.townHall.population.builders=Constructores: %d
-com.minecolonies.gui.townHall.population.deliverymen=Repartidor: %d
+com.minecolonies.gui.townHall.population.deliverymen=Repartidores: %d
 
-com.minecolonies.gui.workerHuts.buildersHut=Cabañas Del constructor
+com.minecolonies.gui.workerHuts.buildersHut=Cabaña del constructor
 com.minecolonies.gui.workerHuts.warehouse=Almacén
 com.minecolonies.gui.workerHuts.workerAssigned=Trabajador asignado:
 com.minecolonies.gui.workerHuts.workerLevel=Nivel del trabajador: %s
-com.minecolonies.gui.workerHuts.hire=Contratar a trabajador
-com.minecolonies.gui.workerHuts.fire=Quitar trabajador
-com.minecolonies.gui.workerHuts.recall=Devolver trabajador
-com.minecolonies.gui.workerHuts.build=Construya edificio
-com.minecolonies.gui.workerHuts.upgrade=Actualización edificio
-com.minecolonies.gui.workerHuts.upgradeUnavailable=No hay actualización disponible
-com.minecolonies.gui.workerHuts.repair=Reparación edificio
-com.minecolonies.gui.workerHuts.buildType=Construir el tipo:
-com.minecolonies.gui.workerHuts.information=información
-com.minecolonies.gui.workerHuts.settings=Configuración
-com.minecolonies.gui.workerHuts.minerHut=Minero
-com.minecolonies.gui.workerHuts.minerNode=Node
-com.minecolonies.gui.workerHuts.minerMineNode=Mina Niveles
+com.minecolonies.gui.workerHuts.hire=Contratar trabajador
+com.minecolonies.gui.workerHuts.fire=Despedir trabajador
+com.minecolonies.gui.workerHuts.recall=Llamar trabajador
+com.minecolonies.gui.workerHuts.build=Construir edificio
+com.minecolonies.gui.workerHuts.upgrade=Mejorar edificio
+com.minecolonies.gui.workerHuts.upgradeUnavailable=Mejora no disponible
+com.minecolonies.gui.workerHuts.repair=Reparar edificio
+com.minecolonies.gui.workerHuts.buildType=Tipo de construcción:
+com.minecolonies.gui.workerHuts.information=Información
+com.minecolonies.gui.workerHuts.settings=Ajustes
+com.minecolonies.gui.workerHuts.minerHut=Mina
+com.minecolonies.gui.workerHuts.minerNode=Nodo
+com.minecolonies.gui.workerHuts.minerMineNode=Nivel de mina
 com.minecolonies.gui.workerHuts.minerNodeList=Niveles
-com.minecolonies.gui.workerHuts.homeHut=Cabaña de los ciudadanos
-com.minecolonies.gui.workerHuts.fisherman=Cabaña del pescador
-com.minecolonies.gui.workerHuts.lumberjackHut=Cabaña de leñador
-com.minecolonies.gui.buildtool.nullHut=No hay cabaña disponible
+com.minecolonies.gui.workerHuts.homeHut=Colonos
+com.minecolonies.gui.workerHuts.fisherman=Pescador
+com.minecolonies.gui.workerHuts.lumberjackHut=Leñador
+com.minecolonies.gui.buildtool.nullHut=No hay cabañas disponibles
 
-com.minecolonies.gui.warehouse.toBlacksmith= Entregar al Herrero:
-com.minecolonies.gui.warehouse.toStonemason= Entregar a Cantero:
+com.minecolonies.gui.warehouse.toBlacksmith=Entregar al herrero:
+com.minecolonies.gui.warehouse.toStonemason=Entregar al cantero:
 com.minecolonies.gui.warehouse.toGuards=Entregar a los guardias:
-com.minecolonies.gui.warehouse.visitCitizenChests=Visita Citizenchests:
+com.minecolonies.gui.warehouse.visitCitizenChests=Visitar colonos:
 
 com.minecolonies.gui.citizen.skills=Habilidades
 com.minecolonies.gui.citizen.skills.strength=Fuerza: %d
@@ -53,32 +53,25 @@ com.minecolonies.gui.citizen.skills.charisma=Carisma: %d
 com.minecolonies.gui.citizen.skills.intelligence=Inteligencia: %d
 com.minecolonies.gui.citizen.skills.dexterity=Destreza: %d
 
-com.minecolonies.gui.buildtool.nohut=No Cabañas
-com.minecolonies.gui.buildtool.nodecoration=No Decoraciones
+com.minecolonies.gui.buildtool.nohut=No hay cabañas
+com.minecolonies.gui.buildtool.nodecoration=No hay Decoraciones
 com.minecolonies.gui.buildtool.hut=Cabañas
 com.minecolonies.gui.buildtool.decoration=Decoraciones
 
-com.minecolonies.gui.hiring.on=Manual
-com.minecolonies.gui.hiring.off=Automatic
-com.minecolonies.gui.hiring.buttonHire=Hire
-com.minecolonies.gui.hiring.description=Choose a worker for the job.
-com.minecolonies.gui.townHall.addPlayer=Add Player:
-com.minecolonies.gui.townHall.jobHiring=Worker Hiring Mode:
-
-tile.minecolonies.blockHutCitizen.name=Cabañas de los ciudadanos
+tile.minecolonies.blockHutCitizen.name=Colonos
 tile.minecolonies.blockHutBaker.name=Panadería
-tile.minecolonies.blockHutBlacksmith.name=Herrería
-tile.minecolonies.blockHutBuilder.name=Cabañas Del Constructor
+tile.minecolonies.blockHutBlacksmith.name=Forja
+tile.minecolonies.blockHutBuilder.name=Constructor
 tile.minecolonies.blockHutWarehouse.name=Almacén
 tile.minecolonies.blockHutFarmer.name=Granja
 tile.minecolonies.blockHutLumberjack.name=Aserradero
-tile.minecolonies.blockHutFisherman.name=Cabañas del pescador
-tile.minecolonies.blockHutMiner.name=Mío
+tile.minecolonies.blockHutFisherman.name=Pescador
+tile.minecolonies.blockHutMiner.name=Mina
 tile.minecolonies.blockHutStonemason.name=Cantera
 tile.minecolonies.blockHutTownHall.name=Ayuntamiento
-tile.minecolonies.blockSubstitution.name=SchematicPlaceholder.
+tile.minecolonies.blockHutTownHall.name=Ayuntamiento
 
-tile.blockHut.messageNoPermission=Usted no tiene permiso para abrir cabañas en %s.
+tile.blockHut.messageNoPermission=No tienes permiso para abrir cabañas en %s.
 
 com.minecolonies.job.Builder=Constructor
 com.minecolonies.job.Deliveryman=Repartidor
@@ -87,46 +80,44 @@ com.minecolonies.job.Lumberjack=Leñador
 com.minecolonies.job.Miner=Minero
 com.minecolonies.job.Fisherman=Pescador
 
-tile.blockHutTownHall.messageMaxSize=Colonia ha alcanzado el tamaño máximo
-tile.blockHutTownHall.messageColonistDead=¡Ha muerto un colono!
-tile.blockHutTownHall.messagePlacedAlready=Han colocado un Ayuntamiento ya
-tile.blockHutTownHall.messageInvalidWorld=No se puede poner un Ayuntamiento en este tipo de mundo
-tile.blockHutTownHall.messageTooClose=Demasiado al actual Ayuntamiento
+tile.blockHutTownHall.messageMaxSize=La colonia ha alcanzado su tamaño máximo
+tile.blockHutTownHall.messageColonistDead=¡Un colono ha muerto!
+tile.blockHutTownHall.messagePlacedAlready=Ya has colocado un ayuntamiento
+tile.blockHutTownHall.messageInvalidWorld=No se puede colocar un ayuntamiento en este tipo de mundo
+tile.blockHutTownHall.messageTooClose=Demasiado cerca del ayuntamiento existente
 
-tile.blockHut.messageTooFarFromTownHall=¡Necesita estar más cerca de su ayuntamiento!
-tile.blockHut.messageNoTownHall=¡Tienes que colocar un ayuntamiento!
+tile.blockHut.messageTooFarFromTownHall=¡Necesita estar mas cerca del ayuntamiento!
+tile.blockHut.messageNoTownHall=¡Necesitas colocar un ayuntamiento primero!
 
-item.minecolonies.supplyChestDeployer.name=Supply Chest
-item.minecolonies.scepterGold.name=Herramienta de Construcción
-item.minecolonies.scepterSteel.name=Herramienta de Análisis
-item.minecolonies.caliper.name=Caliper
+item.minecolonies.supplyChestDeployer.name=Barco de suministros
+item.minecolonies.scepterGold.name=Herramienta de construcción
+item.minecolonies.scepterSteel.name=Herramienta de análisis
+item.minecolonies.caliper.name=Calibre
 
-item.supplyChestDeployer.invalid=Debe ser cerca de una gran superficie de agua
+item.supplyChestDeployer.invalid=Debe estar cerca de un gran charco de agua
 
-item.scepterSteel.point=Salvó uno punto
-item.scepterSteel.point2=Punto segundo salvado, Haga clic otra vez para guardar el esquema
-item.scepterSteel.samePoint=Fue el mismo punto
+item.scepterSteel.point=Punto uno guardado
+item.scepterSteel.point2=Punto dos guardado, haga clic derecho de nuevo para guardar el esquema
+item.scepterSteel.samePoint=Ese fue el mismo punto
 item.scepterSteel.scanFormat=SCAN_%s-%s.schematic
-item.scepterSteel.scanSuccess=Escanear salvado con éxito como %s
-item.scepterSteel.scanFailure=Análisis no se pudo guardar
+item.scepterSteel.scanSuccess=Análisis guardado con éxito como %s
+item.scepterSteel.scanFailure=Error al guardar el análisis
 
-item.caliper.message.same=Es el mismo bloque
+item.caliper.message.same=Ese es el mismo bloque.
 item.caliper.message.line=That's a %d block line.
-item.caliper.message.square=Es un %d por %d cuadrados
-item.caliper.message.cube=Es un %d por %d por %d cubo
+item.caliper.message.square=That's a %d by %d square.
+item.caliper.message.cube=That's a %d by %d by %d cube.
 
 itemGroup.minecolonies=MineColonies
 
-entity.worker.inventoryFullChestFull=Please make space in my building chest. I am not able to dump my inventory.
+entity.builder.messageBuildStart=Se ha empezado a construir %s
+entity.builder.messageBuildComplete=Se ha terminado de construir %s
+entity.builder.messageNeedMaterial=Necesito %s (Amount: %d)
 
-entity.builder.messageBuildStart=Comenzó a construir %s
-entity.builder.messageBuildComplete=Edificio terminado %s
-entity.builder.messageNeedMaterial=Yo necesito %s (Cantidad: %d)
+entity.miner.messageNeedTools=¡Necesito herramientas %s!
+entity.miner.messageNeedBlockAndItem=¡Necesito %s!
+entity.miner.messageNeedBetterTools=¡Necesito mejores herramientas!
+entity.miner.messageMoreBlocks=¡Necesito mas %s!
+entity.miner.messageRequiresBetterHut=Por favor, ¡actualiza mi cabaña para cavar más profundo!
 
-entity.miner.messageNeedTools=¡necesidad herramienta %s!
-entity.miner.messageNeedBlockAndItem=¡Yo necesito %s!
-entity.miner.messageNeedBetterTools=¡Necesito herramientas más fuertes!
-entity.miner.messageMoreBlocks=¡Necesito más %s!
-entity.miner.messageRequiresBetterHut=¡Por favor actualizar mi Cabañas a cavar más profundo!
-
-entity.fisherman.messageWaterTooFar=¡Cabaña de pescadores es demasiado lejos del agua!
+entity.fisherman.messageWaterTooFar=¡La cabaña del pescador esta demasiado lejos del agua!
