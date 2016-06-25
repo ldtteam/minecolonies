@@ -80,7 +80,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
 
         if (!noPath() &&
                 destination != null &&
-                BlockPosUtil.equals(destination, newX, newY, newZ))
+                BlockPosUtil.isEqual(destination, newX, newY, newZ))
         {
             return pathResult;
         }

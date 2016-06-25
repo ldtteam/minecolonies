@@ -6,15 +6,32 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
+/**
+ * Job that handles moving to a location.
+ */
 public class PathJobMoveToLocation extends AbstractPathJob
 {
-    protected final BlockPos destination;
+    private final BlockPos destination;
 
-    protected static final float DESTINATION_SLACK_NONE     = 0;
-    protected static final float DESTINATION_SLACK_ADJACENT = 3.1F;    // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
-    protected              float destinationSlack           = DESTINATION_SLACK_NONE; //  0 = exact match
+    private static final float DESTINATION_SLACK_NONE = 0.1F;
+
+    // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
+    private static final float DESTINATION_SLACK_ADJACENT = 3.1F;
+
+    // 0 = exact match
+    private float destinationSlack = DESTINATION_SLACK_NONE;
+
+    private static final double TIE_BREAKER = 1.001D;
 
 
+    /**
+     * Prepares the PathJob for the path finding system.
+     *
+     * @param world world the entity is in.
+     * @param start starting location.
+     * @param end target location.
+     * @param range max search range.
+     */
     public PathJobMoveToLocation(World world, BlockPos start, BlockPos end, int range)
     {
         super(world, start, end, range);
@@ -32,7 +49,8 @@ public class PathJobMoveToLocation extends AbstractPathJob
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
-            Log.logger.info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]", start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ()));
+            Log.logger.info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
+                    start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ()));
         }
 
         //  Compute destination slack - if the destination point cannot be stood in
@@ -52,13 +70,13 @@ public class PathJobMoveToLocation extends AbstractPathJob
         int dz = pos.getZ() - destination.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker
-        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 1.001D;
+        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
     }
 
     @Override
     protected boolean isAtDestination(Node n)
     {
-        if (destinationSlack == DESTINATION_SLACK_NONE)
+        if (destinationSlack <= DESTINATION_SLACK_NONE)
         {
             return n.pos.getX() == destination.getX() &&
                     n.pos.getY() == destination.getY() &&

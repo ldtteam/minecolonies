@@ -59,7 +59,7 @@ public class Schematic implements ISchematic {
 
     private boolean hasOffset()
     {
-        return !BlockPosUtil.equals(offset, 0, 0, 0);
+        return !BlockPosUtil.isEqual(offset, 0, 0, 0);
     }
 
     public String getType()
