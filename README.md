@@ -1,4 +1,8 @@
-[![Build Status](https://travis-ci.org/MinecoloniesDevs/Minecolonies.svg?branch=develop)](https://travis-ci.org/MinecoloniesDevs/Minecolonies)
+[![Build Status](https://travis-ci.org/MinecoloniesDevs/Minecolonies.svg?branch=develop)](https://travis-ci.org/MinecoloniesDevs/Minecolonies) 
+[![Quality Gate](http://home.kk-sc.de:9000/api/badges/gate?key=com.minecolonies:MINECOL-JAR35-JOB1:develop/&blinking=true)](http://home.kk-sc.de:9000/overview?id=com.minecolonies:MINECOL-JAR35-JOB1:develop/)
+[![Quality Gate](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies:MINECOL-JAR35-JOB1:develop/&blinking=true&metric=comment_lines_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies:MINECOL-JAR35-JOB1:develop/)
+[![Quality Gate](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies:MINECOL-JAR35-JOB1:develop/&blinking=true&metric=public_documented_api_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies:MINECOL-JAR35-JOB1:develop/)
+[![Quality Gate](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies:MINECOL-JAR35-JOB1:develop/&blinking=true&metric=ncloc)](http://home.kk-sc.de:9000/overview?id=com.minecolonies:MINECOL-JAR35-JOB1:develop/)
 
 For Users
 --
