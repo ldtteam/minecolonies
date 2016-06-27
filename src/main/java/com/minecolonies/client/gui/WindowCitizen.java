@@ -7,7 +7,7 @@ import com.blockout.controls.Image;
 import com.blockout.controls.Label;
 import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.ExperienceUtils;
@@ -154,13 +154,13 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * The citizenData.View object
      */
-    private              CitizenData.View       citizen;
+    private CitizenDataView citizen;
 
     /**
      * Constructor to initiate the citizen windows
      * @param citizen citizen to bind the window to
      */
-    public WindowCitizen(CitizenData.View citizen)
+    public WindowCitizen(CitizenDataView citizen)
     {
         super(Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX);
         this.citizen = citizen;

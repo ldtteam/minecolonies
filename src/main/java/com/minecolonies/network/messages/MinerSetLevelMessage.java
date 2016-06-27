@@ -56,9 +56,9 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
             BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
             if (building != null)
             {
-                if(message.level >= 0 && message.level < building.getLevels().size())
+                if(message.level >= 0 && message.level < building.getNumberOfLevels())
                 {
-                    building.currentLevel = message.level;
+                    building.setCurrentLevel(message.level);
                 }
             }
         }

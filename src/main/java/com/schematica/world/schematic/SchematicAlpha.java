@@ -101,7 +101,7 @@ class SchematicAlpha extends SchematicFormat
                         final IBlockState blockState = block.getStateFromMeta(meta);
                         schematic.setBlockState(pos, blockState);
                     }
-                    catch (final Exception e)
+                    catch (final RuntimeException e)
                     {
                         Reference.logger.error("Could not set block state at {} to {} with metadata {}", pos, BLOCK_REGISTRY.getNameForObject(block), meta, e);
                     }
@@ -121,7 +121,7 @@ class SchematicAlpha extends SchematicFormat
                     schematic.setTileEntity(tileEntity.getPos(), tileEntity);
                 }
             }
-            catch (final Exception e)
+            catch (final RuntimeException e)
             {
                 Reference.logger.error("TileEntity failed to load properly!", e);
             }
@@ -196,7 +196,7 @@ class SchematicAlpha extends SchematicFormat
                 final NBTTagCompound tileEntityTagCompound = NBTHelper.writeTileEntityToCompound(tileEntity);
                 tileEntitiesList.appendTag(tileEntityTagCompound);
             }
-            catch (final Exception e)
+            catch (final RuntimeException e)
             {
                 final BlockPos tePos = tileEntity.getPos();
                 final int index = tePos.getX() + (tePos.getY() * schematic.getLength() + tePos.getZ()) * schematic.getWidth();

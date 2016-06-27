@@ -17,7 +17,7 @@ import java.util.List;
  * The fisherman's job class,
  * implements some useful things for him.
  */
-public class JobFisherman extends Job
+public class JobFisherman extends AbstractJob
 {
     /**
      * Final strings to save and retrieve the current water location and pond list.

@@ -6,7 +6,7 @@ import com.blockout.controls.Label;
 import com.blockout.views.ScrollingList;
 import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.lib.Constants;
@@ -66,7 +66,7 @@ public class WindowHireWorker extends Window implements Button.Handler
     /**
      * Contains all the citizens.
      */
-    private List<CitizenData.View> citizens = new ArrayList<>();
+    private List<CitizenDataView> citizens = new ArrayList<>();
 
     /**
      * The view of the current building.
@@ -137,7 +137,7 @@ public class WindowHireWorker extends Window implements Button.Handler
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-                CitizenData.View citizen = citizens.get(index);
+                CitizenDataView citizen = citizens.get(index);
 
                 //Creates the list of attributes for each citizen
                 String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength",citizen.getStrength()) + " " +

@@ -2,13 +2,10 @@ package com.minecolonies.entity;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.render.RenderBipedCitizen;
-import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.Colony;
-import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.*;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingHome;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.minimal.*;
@@ -208,7 +205,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         onJobChanged(getColonyJob());
     }
 
-    public void onJobChanged(Job job)
+    public void onJobChanged(AbstractJob job)
     {
         //  Model
         if (job != null)
@@ -279,7 +276,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         }
     }
 
-    private Job getColonyJob()
+    private AbstractJob getColonyJob()
     {
         return citizenData != null ? citizenData.getJob() : null;
     }
@@ -343,7 +340,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         dataWatcher.addObject(DATA_RENDER_METADATA, "");
     }
 
-    public <J extends Job> J getColonyJob(Class<J> type)
+    public <J extends AbstractJob> J getColonyJob(Class<J> type)
     {
         return citizenData != null ? citizenData.getJob(type) : null;
     }
@@ -747,16 +744,16 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
     {
         if (worldObj.isRemote)
         {
-            CitizenData.View view = getCitizenDataView();
-            if (view != null)
+            CitizenDataView citizenDataView = getCitizenDataView();
+            if (citizenDataView != null)
             {
-                MineColonies.proxy.showCitizenWindow(view);
+                MineColonies.proxy.showCitizenWindow(citizenDataView);
             }
         }
         return true;
     }
 
-    private CitizenData.View getCitizenDataView()
+    private CitizenDataView getCitizenDataView()
     {
         if (colonyId != 0 && citizenId != 0)
         {

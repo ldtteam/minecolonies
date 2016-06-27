@@ -9,7 +9,7 @@ import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
-public class JobDeliveryman extends Job
+public class JobDeliveryman extends AbstractJob
 {
     private static final String TAG_DESTINATION = "destination";
     private BlockPos destination;

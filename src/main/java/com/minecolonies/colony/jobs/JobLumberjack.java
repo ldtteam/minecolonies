@@ -10,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 /**
  * The Lumberjack job class
  */
-public class JobLumberjack extends Job
+public class JobLumberjack extends AbstractJob
 {
     private static final String TAG_TREE = "Tree";
     /**

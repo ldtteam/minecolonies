@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.schematica.Settings;
 import com.schematica.client.renderer.chunk.OverlayRenderDispatcher;
-import com.schematica.client.renderer.chunk.container.SchematicChunkRenderContainer;
+import com.schematica.client.renderer.chunk.container.AbstractSchematicChunkRenderContainer;
 import com.schematica.client.renderer.chunk.container.SchematicChunkRenderContainerList;
 import com.schematica.client.renderer.chunk.container.SchematicChunkRenderContainerVbo;
 import com.schematica.client.renderer.chunk.overlay.ISchematicRenderChunkFactory;
@@ -82,7 +82,7 @@ public final class RenderSchematic extends RenderGlobal
     private double lastViewEntityYaw = Double.MIN_VALUE;
     private final ChunkRenderDispatcher renderDispatcher = new ChunkRenderDispatcher();
     private final OverlayRenderDispatcher renderDispatcherOverlay = new OverlayRenderDispatcher();
-    private SchematicChunkRenderContainer renderContainer;
+    private AbstractSchematicChunkRenderContainer renderContainer;
     private int renderDistanceChunks = -1;
     private int countEntitiesTotal;
     private int countEntitiesRendered;

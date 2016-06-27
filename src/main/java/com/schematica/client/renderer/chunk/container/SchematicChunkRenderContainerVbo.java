@@ -12,7 +12,8 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-public class SchematicChunkRenderContainerVbo extends SchematicChunkRenderContainer {
+public class SchematicChunkRenderContainerVbo extends AbstractSchematicChunkRenderContainer
+{
     @Override
     public void renderChunkLayer(final EnumWorldBlockLayer layer) {
         preRenderChunk();

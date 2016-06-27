@@ -7,7 +7,7 @@ import com.blockout.controls.TextField;
 import com.blockout.views.ScrollingList;
 import com.blockout.views.SwitchView;
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.lib.Constants;
@@ -175,7 +175,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * List of citizens.
      */
-    private List<CitizenData.View>   citizens    = new ArrayList<>();
+    private List<CitizenDataView>   citizens    = new ArrayList<>();
 
     /**
      * Map of the pages.
@@ -309,10 +309,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-                CitizenData.View citizen = citizens.get(index);
+                CitizenDataView citizen = citizens.get(index);
 
                 rowPane.findPaneOfTypeByID("name", Label.class).setText(citizen.getName());
-                //rowPane.findPaneOfTypeByID("job", Label.class).setlabel("" /* Not working yet */);
             }
         });
 

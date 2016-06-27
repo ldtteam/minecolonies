@@ -1,7 +1,7 @@
 package com.minecolonies.entity.ai.basic;
 
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.inventory.InventoryCitizen;
@@ -22,7 +22,7 @@ import static com.minecolonies.entity.ai.util.AIState.*;
 /**
  * This class provides basic ai functionality.
  */
-public abstract class AbstractEntityAIBasic<J extends Job> extends AbstractAISkeleton<J>
+public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends AbstractAISkeleton<J>
 {
 
     /**

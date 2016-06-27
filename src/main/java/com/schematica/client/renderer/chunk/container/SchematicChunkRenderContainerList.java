@@ -8,7 +8,8 @@ import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.util.EnumWorldBlockLayer;
 import org.lwjgl.opengl.GL11;
 
-public class SchematicChunkRenderContainerList extends SchematicChunkRenderContainer {
+public class SchematicChunkRenderContainerList extends AbstractSchematicChunkRenderContainer
+{
     @Override
     public void renderChunkLayer(final EnumWorldBlockLayer layer) {
         if (this.initialized) {

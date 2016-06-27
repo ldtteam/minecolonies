@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.List;
 
-public class JobFarmer extends Job
+public class JobFarmer extends AbstractJob
 {
     private static final String TAG_STAGE = "Stage";
 

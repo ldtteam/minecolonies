@@ -4,10 +4,9 @@ import com.minecolonies.client.gui.WindowHutMiner;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.ai.citizen.miner.Level;
-import com.minecolonies.entity.ai.citizen.miner.Node;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -22,7 +21,7 @@ import java.util.List;
 
 public class BuildingMiner extends AbstractBuildingWorker
 {
-    private static final    String              TAG_FLOOR_BLOCK         = "floorBlock";//TODO: is this something that needs to be saved? id say yea mw
+    private static final    String              TAG_FLOOR_BLOCK         = "floorBlock";
     private static final    String              TAG_FENCE_BLOCK         = "fenceBlock";
     private static final    String              TAG_STARTING_LEVEL      = "startingLevelShaft";
     private static final    String              TAG_LEVELS              = "levels";
@@ -37,44 +36,59 @@ public class BuildingMiner extends AbstractBuildingWorker
     private static final    String              TAG_LLOCATION           = "ladderlocation";
     private static final    String              TAG_LADDER              = "found_ladder";
 
-    public                  Block               floorBlock              = Blocks.planks;
-    public                  Block               fenceBlock              = Blocks.oak_fence; //todo this changed, mw, transition 1.8
+    private Block floorBlock = Blocks.planks;
+    private Block fenceBlock = Blocks.oak_fence;
 
-    public                  Node                activeNode;
     /**
      * Here we can detect multiples of 5
      */
-    public                  int                 startingLevelShaft      = 0;
+    private int startingLevelShaft = 0;
+
     /**
      * The location of the topmost cobblestone the ladder starts at
      */
-    public                  BlockPos            cobbleLocation;
+    private BlockPos cobbleLocation;
+
     /**
      * True if shaft is at bottom limit
      */
     public                  boolean             clearedShaft            = false;
-    public                  int                 startingLevelNode       = 0; //Save in hut
-    public                  int                 active                  = 0;
-    public                  int                 currentLevel            = 0;
-    public                  BlockPos            shaftStart;
+
+    //Save in hut
+    private int startingLevelNode = 0;
+    private int active = 0;
+    private int currentLevel = 0;
+    private BlockPos shaftStart;
+
     /**
      * Ladder orientation in x
      */
-    public                  int                vectorX                  = 1;
+    private int vectorX = 1;
+
     /**
      * Ladder orientation in y
      */
-    public                  int                 vectorZ                 = 1;
+    private int vectorZ = 1;
+
     /**
      * The location of the topmost ladder in the shaft
      */
-    public                  BlockPos            ladderLocation;
+    private BlockPos ladderLocation;
+
     /**
      * True if a ladder is found
      */
-    public                  boolean             foundLadder             = false;
-    private                 List<Level>         levels                  = new ArrayList<>();     //Stores the levels of the miners mine. This could be a map<depth,level>
+    private boolean foundLadder = false;
 
+    //Stores the levels of the miners mine. This could be a map<depth,level>
+    private List<Level> levels = new ArrayList<>();
+
+    /**
+     * Required constructor.
+     *
+     * @param c colony containing the building.
+     * @param l location of the building.
+     */
     public BuildingMiner(Colony c, BlockPos l)
     {
         super(c, l);
@@ -99,7 +113,7 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     @Override
-    public Job createJob(CitizenData citizen)
+    public AbstractJob createJob(CitizenData citizen)
     {
         return new JobMiner(citizen);
     }
@@ -111,15 +125,17 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     public void addLevel(Level currentLevel)
     {
-        getLevels().add(currentLevel);
+        levels.add(currentLevel);
     }
 
     /**
-     * A list of all shaft levels that are cleared
+     * The number of levels in the mine.
+     *
+     * @return levels size.
      */
-    public List<Level> getLevels()
+    public int getNumberOfLevels()
     {
-        return levels;
+        return levels.size();
     }
 
     /**
@@ -141,11 +157,11 @@ public class BuildingMiner extends AbstractBuildingWorker
     {
         super.serializeToView(buf);
         buf.writeInt(currentLevel);
-        buf.writeInt(getLevels().size());
+        buf.writeInt(levels.size());
 
-        for(Level level : getLevels())
+        for(Level level : levels)
         {
-            buf.writeInt(level.getNodes().size());
+            buf.writeInt(level.getNumberOfNodes());
         }
     }
 
@@ -176,13 +192,98 @@ public class BuildingMiner extends AbstractBuildingWorker
         return 70;
     }
 
+    public BlockPos getLadderLocation()
+    {
+        return ladderLocation;
+    }
+
+    public void setLadderLocation(BlockPos ladderLocation)
+    {
+        this.ladderLocation = ladderLocation;
+    }
+
+    public boolean hasFoundLadder()
+    {
+        return foundLadder;
+    }
+
+    public void setFoundLadder(boolean foundLadder)
+    {
+        this.foundLadder = foundLadder;
+    }
+
+    public int getVectorX()
+    {
+        return vectorX;
+    }
+
+    public int getVectorZ()
+    {
+        return vectorZ;
+    }
+
+    public void setVectorX(int vectorX)
+    {
+        this.vectorX = vectorX;
+    }
+
+    public void setVectorZ(int vectorZ)
+    {
+        this.vectorZ = vectorZ;
+    }
+
+    public BlockPos getCobbleLocation()
+    {
+        return cobbleLocation;
+    }
+
+    public void setCobbleLocation(BlockPos pos)
+    {
+        this.cobbleLocation = pos;
+    }
+
+    public void setShaftStart(BlockPos pos)
+    {
+        this.shaftStart = pos;
+    }
+
+    public int getStartingLevelShaft()
+    {
+        return startingLevelShaft;
+    }
+
+    public void resetStartingLevelShaft()
+    {
+        this.startingLevelShaft = 0;
+    }
+
+    public void increamentStartingLevelShaft()
+    {
+        this.startingLevelShaft++;
+    }
+
+    public void setCurrentLevel(int currentLevel)
+    {
+        this.currentLevel = currentLevel;
+    }
+
+    public Block getFloorBlock()
+    {
+        return floorBlock;
+    }
+
+    public Block getFenceBlock()
+    {
+        return fenceBlock;
+    }
+
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
-       compound.setString(TAG_FLOOR_BLOCK, Block.blockRegistry.getNameForObject(floorBlock).toString());
-       compound.setString(TAG_FENCE_BLOCK, Block.blockRegistry.getNameForObject(fenceBlock).toString());
+        compound.setString(TAG_FLOOR_BLOCK, Block.blockRegistry.getNameForObject(floorBlock).toString());
+        compound.setString(TAG_FENCE_BLOCK, Block.blockRegistry.getNameForObject(fenceBlock).toString());
         compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.setBoolean(TAG_CLEARED, clearedShaft);
         compound.setInteger(TAG_VECTORX, vectorX);
@@ -204,7 +305,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         }
 
         NBTTagList levelTagList = new NBTTagList();
-        for(Level level : getLevels())
+        for(Level level : levels)
         {
             NBTTagCompound levelCompound = new NBTTagCompound();
             level.writeToNBT(levelCompound);
@@ -249,12 +350,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         for(int i = 0; i < levelTagList.tagCount(); i++)
         {
             Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
-            getLevels().add(level);
-        }
-
-        if(currentLevel >= 0 && currentLevel < getLevels().size() && active < getLevels().get(currentLevel).getNodes().size())
-        {
-            activeNode = getLevels().get(currentLevel).getNodes().get(active);
+            this.levels.add(level);
         }
     }
 
@@ -268,6 +364,7 @@ public class BuildingMiner extends AbstractBuildingWorker
             super(c, l);
         }
 
+        @Override
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutMiner(this);

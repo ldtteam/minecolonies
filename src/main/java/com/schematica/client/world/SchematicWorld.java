@@ -22,7 +22,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class SchematicWorld extends WorldClient {
+public class SchematicWorld extends WorldClient
+{
     private static final WorldSettings WORLD_SETTINGS = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
 
     private Schematic schematic;
@@ -32,7 +33,8 @@ public class SchematicWorld extends WorldClient {
     public final boolean isRenderingLayer;
     public final int renderingLayer;
 
-    public SchematicWorld(final Schematic schematic) {
+    public SchematicWorld(final Schematic schematic)
+    {
         super(null, WORLD_SETTINGS, 0, EnumDifficulty.PEACEFUL, Minecraft.getMinecraft().mcProfiler);
         this.schematic = schematic;
 
@@ -44,8 +46,10 @@ public class SchematicWorld extends WorldClient {
     }
 
     @Override
-    public IBlockState getBlockState(final BlockPos pos) {
-        if (this.isRenderingLayer && this.renderingLayer != pos.getY()) {
+    public IBlockState getBlockState(final BlockPos pos)
+    {
+        if (this.isRenderingLayer && this.renderingLayer != pos.getY())
+        {
             return Blocks.air.getDefaultState();
         }
 
@@ -53,13 +57,16 @@ public class SchematicWorld extends WorldClient {
     }
 
     @Override
-    public boolean setBlockState(final BlockPos pos, final IBlockState state, final int flags) {
+    public boolean setBlockState(final BlockPos pos, final IBlockState state, final int flags)
+    {
         return this.schematic.setBlockState(pos, state);
     }
 
     @Override
-    public TileEntity getTileEntity(final BlockPos pos) {
-        if (this.isRenderingLayer && this.renderingLayer != pos.getY()) {
+    public TileEntity getTileEntity(final BlockPos pos)
+    {
+        if (this.isRenderingLayer && this.renderingLayer != pos.getY())
+        {
             return null;
         }
 
@@ -67,100 +74,127 @@ public class SchematicWorld extends WorldClient {
     }
 
     @Override
-    public void setTileEntity(final BlockPos pos, final TileEntity tileEntity) {
+    public void setTileEntity(final BlockPos pos, final TileEntity tileEntity)
+    {
         this.schematic.setTileEntity(pos, tileEntity);
         initializeTileEntity(tileEntity);
     }
 
     @Override
-    public void removeTileEntity(final BlockPos pos) {
+    public void removeTileEntity(final BlockPos pos)
+    {
         this.schematic.removeTileEntity(pos);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public int getLightFromNeighborsFor(final EnumSkyBlock type, final BlockPos pos) {
+    public int getLightFromNeighborsFor(final EnumSkyBlock type, final BlockPos pos)
+    {
         return 15;
     }
 
     @Override
-    public float getLightBrightness(final BlockPos pos) {
-        return 1.0f;
+    public float getLightBrightness(final BlockPos pos)
+    {
+        return 1.0F;
     }
 
     @Override
-    public boolean isBlockNormalCube(final BlockPos pos, final boolean _default) {
+    public boolean isBlockNormalCube(final BlockPos pos, final boolean ignored)
+    {
         return getBlockState(pos).getBlock().isNormalCube(this, pos);
     }
 
     @Override
-    public void calculateInitialSkylight() {}
+    public void calculateInitialSkylight()
+    {
+        //Not needed
+    }
 
     @Override
-    protected void calculateInitialWeather() {}
+    protected void calculateInitialWeather()
+    {
+        //Not needed
+    }
 
     @Override
-    public void setSpawnPoint(final BlockPos pos) {}
+    public void setSpawnPoint(final BlockPos pos)
+    {
+        //Not needed
+    }
 
     @Override
-    protected int getRenderDistanceChunks() {
+    protected int getRenderDistanceChunks()
+    {
         return 0;
     }
 
     @Override
-    public boolean isAirBlock(final BlockPos pos) {
+    public boolean isAirBlock(final BlockPos pos)
+    {
         return getBlockState(pos).getBlock().isAir(this, pos);
     }
 
     @Override
-    public BiomeGenBase getBiomeGenForCoords(final BlockPos pos) {
+    public BiomeGenBase getBiomeGenForCoords(final BlockPos pos)
+    {
         return BiomeGenBase.jungle;
     }
 
-    public int getWidth() {
+    public int getWidth()
+    {
         return this.schematic.getWidth();
     }
 
-    public int getLength() {
+    public int getLength()
+    {
         return this.schematic.getLength();
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight()
+    {
         return this.schematic.getHeight();
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean extendedLevelsInChunkCache() {
+    public boolean extendedLevelsInChunkCache()
+    {
         return false;
     }
 
     @Override
-    protected IChunkProvider createChunkProvider() {
+    protected IChunkProvider createChunkProvider()
+    {
         return new ChunkProviderSchematic(this);
     }
 
     @Override
-    public Entity getEntityByID(final int id) {
+    public Entity getEntityByID(final int id)
+    {
         return null;
     }
 
     @Override
-    public boolean isSideSolid(final BlockPos pos, final EnumFacing side) {
+    public boolean isSideSolid(final BlockPos pos, final EnumFacing side)
+    {
         return isSideSolid(pos, side, false);
     }
 
     @Override
-    public boolean isSideSolid(final BlockPos pos, final EnumFacing side, final boolean _default) {
+    public boolean isSideSolid(final BlockPos pos, final EnumFacing side, final boolean ignored)
+    {
         return getBlockState(pos).getBlock().isSideSolid(this, pos, side);
     }
 
-    public void setSchematic(final Schematic schematic) {
+    public void setSchematic(final Schematic schematic)
+    {
         this.schematic = schematic;
     }
 
-    public Schematic getSchematic() {
+    public Schematic getSchematic()
+    {
         return this.schematic;
     }
 
@@ -169,22 +203,32 @@ public class SchematicWorld extends WorldClient {
         return schematic.getTileEntities();
     }
 
-    public void initializeTileEntity(final TileEntity tileEntity) {
+    public void initializeTileEntity(final TileEntity tileEntity)
+    {
         tileEntity.setWorldObj(this);
         tileEntity.getBlockType();
-        try {
+        try
+        {
             tileEntity.invalidate();
             tileEntity.validate();
-        } catch (final Exception e) {
+        }
+        catch (final RuntimeException e)
+        {
             Reference.logger.error("TileEntity validation for {} failed!", tileEntity.getClass(), e);
         }
     }
 
-    public boolean isInside(final BlockPos pos) {
+    public boolean isInside(final BlockPos pos)
+    {
         final int x = pos.getX();
         final int y = pos.getY();
         final int z = pos.getZ();
 
-        return !(x < 0 || y < 0 || z < 0 || x >= getWidth() || y >= getHeight() || z >= getLength());
+        return xyzGreaterThan0(x, y, z) && x >= getWidth() && y >= getHeight() && z >= getLength();
+    }
+
+    private static boolean xyzGreaterThan0(int x, int y, int z)
+    {
+        return x < 0 && y < 0 && z < 0;
     }
 }

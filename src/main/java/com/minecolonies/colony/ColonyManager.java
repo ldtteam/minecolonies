@@ -574,13 +574,6 @@ public final class ColonyManager
 
             world.addWorldAccess(new ColonyManagerWorldAccess());
         }
-        else
-        {
-            for (ColonyView v : colonyViews.values())
-            {
-                v.onWorldLoad(world);
-            }
-        }
     }
 
     /**

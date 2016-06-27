@@ -3,7 +3,7 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +39,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @param citizen the citizen to take the job.
      * @return the Job.
      */
-    public abstract         Job         createJob(CitizenData citizen);
+    public abstract AbstractJob createJob(CitizenData citizen);
 
     @Override
     public void onDestroyed()
