@@ -7,7 +7,7 @@ import com.blockout.View;
 /**
  * A Group is a View which enforces the position of children to be
  * a Y-sorted list in the order they are added.
- *
+ * <p>
  * All children are set to a Top version of their alignment, and have their Y coordinates overwritten
  */
 public class Group extends View

@@ -24,10 +24,10 @@ public final class Render
     /**
      * {@link Render#drawOutlineRect(int, int, int, int, float, int)}.
      *
-     * @param x1 lower x
-     * @param y1 lower y
-     * @param x2 upper x
-     * @param y2 upper y
+     * @param x1    lower x
+     * @param y1    lower y
+     * @param x2    upper x
+     * @param y2    upper y
      * @param color color
      */
     public static void drawOutlineRect(int x1, int y1, int x2, int y2, int color)
@@ -38,12 +38,12 @@ public final class Render
     /**
      * Draw an outlined untextured rectangle.
      *
-     * @param x1 lower x
-     * @param y1 lower y
-     * @param x2 upper x
-     * @param y2 upper y
+     * @param x1        lower x
+     * @param y1        lower y
+     * @param x2        upper x
+     * @param y2        upper y
      * @param lineWidth line thickness, default of 1.0
-     * @param color color
+     * @param color     color
      */
     public static void drawOutlineRect(int x1, int y1, int x2, int y2, float lineWidth, int color)
     {

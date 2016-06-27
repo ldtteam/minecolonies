@@ -66,9 +66,9 @@ public final class Loader
         if (paneConstructorMap.containsKey(key))
         {
             throw new IllegalArgumentException("Duplicate pane type '"
-                                               + name + "' of style '"
-                                               + style + "' when registering Pane class mapping for "
-                                               + paneClass.getName());
+                    + name + "' of style '"
+                    + style + "' when registering Pane class mapping for "
+                    + paneClass.getName());
         }
 
         try
@@ -79,7 +79,7 @@ public final class Loader
         catch (NoSuchMethodException exception)
         {
             throw new IllegalArgumentException("Missing (XMLNode) constructor for type '"
-                                               + name + "' when adding Pane class mapping for " + paneClass.getName(), exception);
+                    + name + "' when adding Pane class mapping for " + paneClass.getName(), exception);
         }
     }
 
@@ -154,7 +154,8 @@ public final class Loader
 
     /**
      * Parse an XML Document into contents for a View
-     * @param doc xml document.
+     *
+     * @param doc    xml document.
      * @param parent parent view.
      */
     private static void createFromXML(Document doc, View parent)
@@ -164,7 +165,7 @@ public final class Loader
         PaneParams root = new PaneParams(doc.getDocumentElement());
         if (parent instanceof Window)
         {
-            ((Window)parent).loadParams(root);
+            ((Window) parent).loadParams(root);
         }
 
         for (PaneParams child : root.getChildren())
@@ -176,7 +177,7 @@ public final class Loader
     /**
      * Parse XML from an InputSource into contents for a View
      *
-     * @param input xml file.
+     * @param input  xml file.
      * @param parent parent view.
      */
     private static void createFromXML(InputSource input, View parent)
@@ -238,7 +239,7 @@ public final class Loader
     {
         try
         {
-            if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
             {
                 return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
             }
@@ -247,7 +248,7 @@ public final class Loader
                 return Loader.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
             }
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             logger.error("IOException Loader.java", e);
         }

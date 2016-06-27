@@ -9,9 +9,9 @@ import org.lwjgl.opengl.GL11;
  */
 public class TextFieldVanilla extends TextField
 {
-    protected boolean backgroundEnabled    = true;
-    protected int     backgroundOuterColor = 0xFFA0A0A0;
-    protected int     backgroundInnerColor = 0xFF000000;
+    protected boolean backgroundEnabled = true;
+    protected int backgroundOuterColor = 0xFFA0A0A0;
+    protected int backgroundInnerColor = 0xFF000000;
 
     /**
      * Required defualt constructor.
@@ -29,7 +29,7 @@ public class TextFieldVanilla extends TextField
     public TextFieldVanilla(PaneParams params)
     {
         super(params);
-        backgroundEnabled    = params.getBooleanAttribute("background", backgroundEnabled);
+        backgroundEnabled = params.getBooleanAttribute("background", backgroundEnabled);
         backgroundOuterColor = params.getColorAttribute("backgroundOuter", backgroundOuterColor);
         backgroundInnerColor = params.getColorAttribute("backgroundInner", backgroundInnerColor);
         filter = new FilterVanilla();

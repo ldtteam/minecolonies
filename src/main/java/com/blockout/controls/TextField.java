@@ -17,6 +17,7 @@ public class TextField extends Pane
     public interface Filter
     {
         String filter(String s);
+
         boolean isAllowedCharacter(char c);
     }
 
@@ -26,30 +27,32 @@ public class TextField extends Pane
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
 
     //  Attributes
-    protected int     maxTextLength     = 32;
-    protected int     textColor         = 0xE0E0E0;
-    protected int     textColorDisabled = 0x707070;
-    protected boolean shadow            = true;
-    protected String  tabNextPaneID     = null;
+    protected int maxTextLength = 32;
+    protected int textColor = 0xE0E0E0;
+    protected int textColorDisabled = 0x707070;
+    protected boolean shadow = true;
+    protected String tabNextPaneID = null;
 
     //  Runtime
     protected String text = "";
     protected Filter filter;
-    protected int cursorPosition     = 0;
-    protected int scrollOffset       = 0;
-    protected int selectionEnd       = 0;
+    protected int cursorPosition = 0;
+    protected int scrollOffset = 0;
+    protected int selectionEnd = 0;
     protected int cursorBlinkCounter = 0;
 
-    public TextField(){}
+    public TextField()
+    {
+    }
 
     public TextField(PaneParams params)
     {
         super(params);
-        maxTextLength        = params.getIntegerAttribute("maxlength", maxTextLength);
-        textColor            = params.getColorAttribute("color", textColor);
-        textColorDisabled    = params.getColorAttribute("colordisabled", textColorDisabled);
-        shadow               = params.getBooleanAttribute("shadow", shadow);
-        text                 = params.getLocalizedStringAttribute("textContent", text);
+        maxTextLength = params.getIntegerAttribute("maxlength", maxTextLength);
+        textColor = params.getColorAttribute("color", textColor);
+        textColorDisabled = params.getColorAttribute("colordisabled", textColorDisabled);
+        shadow = params.getBooleanAttribute("shadow", shadow);
+        text = params.getLocalizedStringAttribute("textContent", text);
         tabNextPaneID = params.getStringAttribute("tab", null);
     }
 
@@ -74,28 +77,69 @@ public class TextField extends Pane
         setCursorPosition(text.length());
     }
 
-    public int getMaxTextLength() { return maxTextLength; }
-    public void setMaxTextLength(int m) { maxTextLength = m; }
+    public int getMaxTextLength()
+    {
+        return maxTextLength;
+    }
 
-    public int getTextColor() { return textColor; }
-    public int getTextColorDisabled() { return textColorDisabled; }
-    public void setTextColor(int c) { textColor = c; }
-    public void setTextColorDisabled(int c) { textColorDisabled = c; }
+    public void setMaxTextLength(int m)
+    {
+        maxTextLength = m;
+    }
 
-    public String getTabNextPaneID() { return tabNextPaneID; }
-    public void setTabNextPaneID(String nextID) { tabNextPaneID = nextID; }
+    public int getTextColor()
+    {
+        return textColor;
+    }
 
-    public int getCursorPosition() { return cursorPosition; }
+    public int getTextColorDisabled()
+    {
+        return textColorDisabled;
+    }
+
+    public void setTextColor(int c)
+    {
+        textColor = c;
+    }
+
+    public void setTextColorDisabled(int c)
+    {
+        textColorDisabled = c;
+    }
+
+    public String getTabNextPaneID()
+    {
+        return tabNextPaneID;
+    }
+
+    public void setTabNextPaneID(String nextID)
+    {
+        tabNextPaneID = nextID;
+    }
+
+    public int getCursorPosition()
+    {
+        return cursorPosition;
+    }
+
     public void setCursorPosition(int pos)
     {
         cursorPosition = MathHelper.clamp_int(pos, 0, text.length());
         setSelectionEnd(cursorPosition);
     }
-//    public void setCursorPositionZero() { setCursorPosition(0); }
-//    public void setCursorPositionEnd() { setCursorPosition(textContent.length()); }
-    public void moveCursorBy(int offset) { setCursorPosition(selectionEnd + offset); }
 
-    public int getSelectionEnd() { return selectionEnd; }
+    //    public void setCursorPositionZero() { setCursorPosition(0); }
+//    public void setCursorPositionEnd() { setCursorPosition(textContent.length()); }
+    public void moveCursorBy(int offset)
+    {
+        setCursorPosition(selectionEnd + offset);
+    }
+
+    public int getSelectionEnd()
+    {
+        return selectionEnd;
+    }
+
     public void setSelectionEnd(int pos)
     {
         selectionEnd = MathHelper.clamp_int(pos, 0, text.length());
@@ -136,7 +180,10 @@ public class TextField extends Pane
         return text.substring(start, end);
     }
 
-    public int getInternalWidth() { return getWidth(); }
+    public int getInternalWidth()
+    {
+        return getWidth();
+    }
 
     @Override
     public void putInside(View view)
@@ -239,10 +286,10 @@ public class TextField extends Pane
             worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
             //Since our points do not have any u,v this seems to be the correct code
-            worldrenderer.pos((double)selectionStartX, (double)drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
-            worldrenderer.pos((double)selectionEndX, (double)drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
-            worldrenderer.pos((double)selectionEndX, (double)drawY - 1, 0.0D).endVertex();
-            worldrenderer.pos((double)selectionStartX, (double)drawY - 1, 0.0D).endVertex();
+            worldrenderer.pos((double) selectionStartX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            worldrenderer.pos((double) selectionEndX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            worldrenderer.pos((double) selectionEndX, (double) drawY - 1, 0.0D).endVertex();
+            worldrenderer.pos((double) selectionStartX, (double) drawY - 1, 0.0D).endVertex();
             tessellator.draw();
             GL11.glDisable(GL11.GL_COLOR_LOGIC_OP);
             GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -451,9 +498,9 @@ public class TextField extends Pane
         else
         {
             boolean backwards = count < 0;
-            int     start = backwards ? this.cursorPosition + count : this.cursorPosition;
-            int     end   = backwards ? this.cursorPosition : this.cursorPosition + count;
-            String  result = "";
+            int start = backwards ? this.cursorPosition + count : this.cursorPosition;
+            int end = backwards ? this.cursorPosition : this.cursorPosition + count;
+            String result = "";
 
             if (start > 0)
             {
@@ -483,17 +530,29 @@ public class TextField extends Pane
         {
             if (reverse)
             {
-                while (pos > 0 && text.charAt(pos - 1) == ' ') { --pos; }
-                while (pos > 0 && text.charAt(pos - 1) != ' ') { --pos; }
+                while (pos > 0 && text.charAt(pos - 1) == ' ')
+                {
+                    --pos;
+                }
+                while (pos > 0 && text.charAt(pos - 1) != ' ')
+                {
+                    --pos;
+                }
             }
             else
             {
                 pos = text.indexOf(' ', pos);
 
-                if (pos == -1) { pos = text.length(); }
+                if (pos == -1)
+                {
+                    pos = text.length();
+                }
                 else
                 {
-                    while (pos < text.length() && text.charAt(pos) == ' ') { ++pos; }
+                    while (pos < text.length() && text.charAt(pos) == ' ')
+                    {
+                        ++pos;
+                    }
                 }
             }
         }

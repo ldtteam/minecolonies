@@ -14,8 +14,8 @@ public class ScrollingContainer extends View
     private static final int PERCENT_FULL = 100;
 
     protected ScrollingView owner;
-    protected int           scrollY       = 0;
-    protected int           contentHeight = 0;
+    protected int scrollY = 0;
+    protected int contentHeight = 0;
 
     ScrollingContainer(ScrollingView owner)
     {

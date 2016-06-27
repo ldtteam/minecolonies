@@ -20,12 +20,12 @@ public class Text extends Pane
 
     protected String textContent;
     protected List<String> formattedText;
-    protected int       textHeight;
-    protected int       linespace     = 0;
-    protected double    scale         = 1.0;
+    protected int textHeight;
+    protected int linespace = 0;
+    protected double scale = 1.0;
     protected Alignment textAlignment = Alignment.TopLeft;
-    protected int       textColor     = 0xffffff;
-    protected boolean   shadow        = false;
+    protected int textColor = 0xffffff;
+    protected boolean shadow = false;
 
     public Text()
     {
@@ -41,12 +41,12 @@ public class Text extends Pane
     {
         super(params);
 
-        textContent   = params.getLocalizedText();
-        linespace     = params.getIntegerAttribute("linespace", linespace);
-        scale         = params.getDoubleAttribute("textscale", scale);
+        textContent = params.getLocalizedText();
+        linespace = params.getIntegerAttribute("linespace", linespace);
+        scale = params.getDoubleAttribute("textscale", scale);
         textAlignment = params.getEnumAttribute("textalign", Alignment.class, textAlignment);
-        textColor     = params.getColorAttribute("color", textColor);
-        shadow        = params.getBooleanAttribute("shadow", shadow);
+        textColor = params.getColorAttribute("color", textColor);
+        shadow = params.getBooleanAttribute("shadow", shadow);
     }
 
     public String getTextContent()
@@ -154,7 +154,7 @@ public class Text extends Pane
             int numLines = formattedText.size();
             if (numLines > 0)
             {
-                int scaledLinespace = (int)(linespace * scale);
+                int scaledLinespace = (int) (linespace * scale);
                 textHeight = (numLines * (getLineHeight() + scaledLinespace)) - scaledLinespace;
             }
             else
@@ -169,7 +169,7 @@ public class Text extends Pane
     @Override
     public void drawSelf(int mx, int my)
     {
-        int scaledLinespace = (int)(linespace * scale);
+        int scaledLinespace = (int) (linespace * scale);
         int offsetY = 0;
 
         if (textAlignment.isBottomAligned() || textAlignment.isVerticalCentered())

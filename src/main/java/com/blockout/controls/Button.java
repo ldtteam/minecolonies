@@ -99,7 +99,7 @@ public class Button extends Pane
             {
                 if (p instanceof Handler)
                 {
-                    delegatedHandler = (Handler)p;
+                    delegatedHandler = (Handler) p;
                     break;
                 }
             }

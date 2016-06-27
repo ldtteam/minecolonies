@@ -6,34 +6,41 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-class ChunkSchematic extends Chunk {
+class ChunkSchematic extends Chunk
+{
     private final World world;
 
-    public ChunkSchematic(final World world, final int x, final int z) {
+    public ChunkSchematic(final World world, final int x, final int z)
+    {
         super(world, x, z);
         this.world = world;
     }
 
     @Override
-    protected void generateHeightMap() {
+    protected void generateHeightMap()
+    {
     }
 
     @Override
-    public void generateSkylightMap() {
+    public void generateSkylightMap()
+    {
     }
 
     @Override
-    public IBlockState getBlockState(final BlockPos pos) {
+    public IBlockState getBlockState(final BlockPos pos)
+    {
         return this.world.getBlockState(pos);
     }
 
     @Override
-    public boolean getAreLevelsEmpty(final int startY, final int endY) {
+    public boolean getAreLevelsEmpty(final int startY, final int endY)
+    {
         return false;
     }
 
     @Override
-    public TileEntity getTileEntity(final BlockPos pos, final EnumCreateEntityType createEntityType) {
+    public TileEntity getTileEntity(final BlockPos pos, final EnumCreateEntityType createEntityType)
+    {
         return this.world.getTileEntity(pos);
     }
 }

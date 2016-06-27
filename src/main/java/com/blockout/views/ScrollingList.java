@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * A ScrollingList is a View which can contain 0 or more children of a specific Pane or View type
  * and are ordered sequentially.
- *
+ * <p>
  * All children are set to a Top version of their alignment, and have their Y coordinates overwritten.
  */
 public class ScrollingList extends ScrollingView
@@ -28,7 +28,7 @@ public class ScrollingList extends ScrollingView
         /**
          * Override this to update the Panes for a given row.
          *
-         * @param index the index of the row/list element
+         * @param index   the index of the row/list element
          * @param rowPane the parent Pane for the row, containing the elements to update
          */
         void updateElement(int index, Pane rowPane);
@@ -36,7 +36,7 @@ public class ScrollingList extends ScrollingView
 
     //  Runtime
     protected DataProvider dataProvider;
-    private PaneParams     listNodeParams;
+    private PaneParams listNodeParams;
 
     /**
      * Default constructor required by Blockout.
@@ -98,6 +98,6 @@ public class ScrollingList extends ScrollingView
      */
     public int getListElementIndexByPane(Pane pane)
     {
-        return ((ScrollingListContainer)container).getListElementIndexByPane(pane);
+        return ((ScrollingListContainer) container).getListElementIndexByPane(pane);
     }
 }

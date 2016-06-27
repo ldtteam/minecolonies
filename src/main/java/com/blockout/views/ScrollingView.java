@@ -17,7 +17,7 @@ public class ScrollingView extends View
 
     //  Runtime
     protected ScrollingContainer container;
-    protected Scrollbar          scrollbar;
+    protected Scrollbar scrollbar;
 
     /**
      * Required defualt constructor.

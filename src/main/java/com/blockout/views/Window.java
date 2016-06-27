@@ -21,7 +21,7 @@ public class Window extends View
     protected Screen screen;
 
     protected boolean windowPausesGame = true;
-    protected boolean lightbox         = true;
+    protected boolean lightbox = true;
 
     /**
      * Make default sized window.
@@ -41,7 +41,7 @@ public class Window extends View
     {
         width = w;
         height = h;
-        
+
         screen = new Screen(this);
         window = this;
     }
@@ -153,7 +153,7 @@ public class Window extends View
      */
     public void open()
     {
-        if(FMLCommonHandler.instance().getSide().equals(Side.CLIENT))
+        if (FMLCommonHandler.instance().getSide().equals(Side.CLIENT))
         {
             FMLCommonHandler.instance().showGuiScreen(getScreen());
         }
@@ -170,7 +170,7 @@ public class Window extends View
 
     /**
      * Mouse click released handler.
-     *
+     * <p>
      * Currently does nothing.
      *
      * @param mx Mouse X position
@@ -184,12 +184,11 @@ public class Window extends View
     /**
      * Key input handler.  Directs keystrokes to focused Pane, or to onUnhandledKeyTyped() if no
      * Pane handles the keystroke.
-     *
+     * <p>
      * It is advised not to override this method.
      *
-     * @param ch Character of key pressed
+     * @param ch  Character of key pressed
      * @param key Keycode of key pressed
-     *
      * @return <tt>true</tt> if the key was handled by a Pane
      */
     @Override
@@ -207,10 +206,10 @@ public class Window extends View
 
     /**
      * Key input handler when a focused pane did not handle the key.
-     *
+     * <p>
      * Override this to handle key input at the Window level.
      *
-     * @param ch Character of key pressed
+     * @param ch  Character of key pressed
      * @param key Keycode of key pressed
      */
     public void onUnhandledKeyTyped(int ch, int key)

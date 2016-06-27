@@ -713,7 +713,7 @@ public final class RenderSchematic extends RenderGlobal
     private static boolean doubleEquals(double d1, double d2)
     {
         // Calculate the difference.
-        double diff = Math.abs(d1- d2);
+        double diff = Math.abs(d1 - d2);
         double nd1 = Math.abs(d1);
         double nd2 = Math.abs(d2);
         // Find the largest

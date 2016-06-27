@@ -9,7 +9,7 @@ import com.blockout.PaneParams;
  */
 public class ScrollingListContainer extends ScrollingContainer
 {
-    private int            listElementHeight = 0;
+    private int listElementHeight = 0;
 
     ScrollingListContainer(ScrollingList owner)
     {
@@ -18,7 +18,8 @@ public class ScrollingListContainer extends ScrollingContainer
 
     /**
      * Creates, deletes, and updates existing Panes for elements in the list based on the DataProvider.
-     * @param dataProvider data provider object, shouldn't be null.
+     *
+     * @param dataProvider   data provider object, shouldn't be null.
      * @param listNodeParams the xml parameters for this pane.
      */
     public void refreshElementPanes(ScrollingList.DataProvider dataProvider, PaneParams listNodeParams)
@@ -84,7 +85,6 @@ public class ScrollingListContainer extends ScrollingContainer
 
     /**
      * This is an optimized version that relies on the fixed size and order of children to quickly determine
-     *
      *
      * @param mx Mouse X, relative to the top-left of this Pane
      * @param my Mouse Y, relative to the top-left of this Pane
