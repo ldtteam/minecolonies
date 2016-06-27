@@ -1,9 +1,6 @@
 package com.blockout.controls;
 
-import com.blockout.Alignment;
-import com.blockout.Pane;
 import com.blockout.PaneParams;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -14,18 +11,13 @@ import java.util.stream.Collectors;
 /**
  * Formatted larger textContent area.
  */
-public class Text extends Pane
+public class Text extends AbstractTextElement
 {
-    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
-
     protected String textContent;
     protected List<String> formattedText;
+
     protected int textHeight;
     protected int linespace = 0;
-    protected double scale = 1.0;
-    protected Alignment textAlignment = Alignment.TopLeft;
-    protected int textColor = 0xffffff;
-    protected boolean shadow = false;
 
     public Text()
     {
@@ -43,10 +35,13 @@ public class Text extends Pane
 
         textContent = params.getLocalizedText();
         linespace = params.getIntegerAttribute("linespace", linespace);
-        scale = params.getDoubleAttribute("textscale", scale);
-        textAlignment = params.getEnumAttribute("textalign", Alignment.class, textAlignment);
-        textColor = params.getColorAttribute("color", textColor);
-        shadow = params.getBooleanAttribute("shadow", shadow);
+    }
+
+    @Override
+    public void setScale(float s)
+    {
+        super.setScale(s);
+        formattedText = null;
     }
 
     public String getTextContent()
@@ -68,47 +63,6 @@ public class Text extends Pane
     public void setLineSpace(int l)
     {
         linespace = l;
-    }
-
-    public int getColor()
-    {
-        return textColor;
-    }
-
-    public void setColor(int c)
-    {
-        textColor = c;
-    }
-
-    public boolean getShadow()
-    {
-        return shadow;
-    }
-
-    public void setShadow(boolean s)
-    {
-        shadow = s;
-    }
-
-    public Alignment getTextAlignment()
-    {
-        return textAlignment;
-    }
-
-    public void setTextAlignment(Alignment align)
-    {
-        textAlignment = align;
-    }
-
-    public double getScale()
-    {
-        return scale;
-    }
-
-    public void setScale(float s)
-    {
-        scale = s;
-        formattedText = null;
     }
 
     public int getLineHeight()

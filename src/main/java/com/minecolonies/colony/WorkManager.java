@@ -1,6 +1,7 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -12,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Handles work orders for a colony.
+ */
 public class WorkManager
 {
     protected final Colony colony;
@@ -21,8 +25,14 @@ public class WorkManager
 
     private static  final   String                  TAG_WORK_ORDERS                 = "workOrders";
 
-    private static  final   int                     WORK_ORDER_FULFILL_INCREMENT    = 1 * 20;   //  Once a second
+    //  Once a second
+    private static  final   int                     WORK_ORDER_FULFILL_INCREMENT    = 1 * 20;
 
+    /**
+     * Constructor, saves reference to the colony.
+     *
+     * @param c Colony the work manager is for.
+     */
     public WorkManager(Colony c)
     {
         colony = c;
@@ -37,7 +47,8 @@ public class WorkManager
     {
         if (order.getID() == 0)
         {
-            order.setID(++topWorkOrderId);
+            topWorkOrderId++;
+            order.setID(topWorkOrderId);
         }
 
         workOrders.put(order.getID(), order);
@@ -81,14 +92,16 @@ public class WorkManager
      * @param type      the class of the expected type of the work order
      * @return          the work order of the specified id, or null if it was not found or is of an incompatible type
      */
-    public <ORDER extends AbstractWorkOrder> ORDER getWorkOrder(int id, Class<ORDER> type)
+    public <W extends AbstractWorkOrder> W getWorkOrder(int id, Class<W> type)
     {
         try
         {
             return type.cast(getWorkOrder(id));
         }
         catch (ClassCastException exc)
-        {}
+        {
+            Log.logger.catching(exc);
+        }
 
         return null;
     }
@@ -99,7 +112,7 @@ public class WorkManager
      * @param type      the class of the type of work order to find
      * @return          an unclaimed work order of the given type, or null if no unclaimed work order of the type was found
      */
-    public <ORDER extends AbstractWorkOrder> ORDER getUnassignedWorkOrder(Class<ORDER> type)
+    public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(Class<W> type)
     {
         for (AbstractWorkOrder o : workOrders.values())
         {
@@ -118,7 +131,7 @@ public class WorkManager
      * @param type the class of the type of work order to find
      * @return a list of all work orders of the given type
      */
-    public <ORDER extends AbstractWorkOrder> List<ORDER> getWorkOrdersOfType(Class<ORDER> type)
+    public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(Class<W> type)
     {
         return workOrders.values().stream().filter(o -> type.isAssignableFrom(o.getClass())).map(type::cast).collect(Collectors.toList());
     }

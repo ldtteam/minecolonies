@@ -43,6 +43,7 @@ public class TextField extends Pane
 
     public TextField()
     {
+        //Required
     }
 
     public TextField(PaneParams params)
@@ -73,7 +74,7 @@ public class TextField extends Pane
 
     public void setText(String s)
     {
-        text = (s.length() <= maxTextLength ? s : s.substring(0, maxTextLength));
+        text = s.length() <= maxTextLength ? s : s.substring(0, maxTextLength);
         setCursorPosition(text.length());
     }
 
@@ -128,8 +129,6 @@ public class TextField extends Pane
         setSelectionEnd(cursorPosition);
     }
 
-    //    public void setCursorPositionZero() { setCursorPosition(0); }
-//    public void setCursorPositionEnd() { setCursorPosition(textContent.length()); }
     public void moveCursorBy(int offset)
     {
         setCursorPosition(selectionEnd + offset);
@@ -189,7 +188,9 @@ public class TextField extends Pane
     public void putInside(View view)
     {
         super.putInside(view);
-        setSelectionEnd(selectionEnd);  //  Recompute scroll offset
+
+        //  Recompute scroll offset
+        setSelectionEnd(selectionEnd);
     }
 
     @Override
@@ -205,7 +206,7 @@ public class TextField extends Pane
 
         int relativeCursorPosition = cursorPosition - scrollOffset;
         int relativeSelectionEnd = selectionEnd - scrollOffset;
-        boolean cursorVisible = (relativeCursorPosition >= 0 && relativeCursorPosition <= visibleString.length());
+        boolean cursorVisible = relativeCursorPosition >= 0 && relativeCursorPosition <= visibleString.length();
         boolean cursorBeforeEnd = cursorPosition < text.length() || text.length() >= maxTextLength;
 
         //  Enforce selection to the length limit of the visible string
@@ -226,11 +227,14 @@ public class TextField extends Pane
         int cursorX = textX;
         if (!cursorVisible)
         {
-            cursorX = (relativeCursorPosition > 0 ? drawX + width : drawX);
+            cursorX = relativeCursorPosition > 0 ? (drawX + width) : drawX;
         }
         else if (cursorBeforeEnd)
         {
-            if (shadow) textX -= 1;
+            if (shadow)
+            {
+                textX -= 1;
+            }
             cursorX = textX;
         }
 
@@ -259,19 +263,18 @@ public class TextField extends Pane
         if (relativeSelectionEnd != relativeCursorPosition)
         {
             int selectedDrawX = drawX + mc.fontRendererObj.getStringWidth(visibleString.substring(0, relativeSelectionEnd));
-            //this.drawCursorVertical(drawX3, drawY - 1, selectedDrawWidth - 1, drawY + 1 + mc.fontRenderer.FONT_HEIGHT);
 
             int selectionStartX = Math.min(cursorX, selectedDrawX - 1);
             int selectionEndX = Math.max(cursorX, selectedDrawX - 1);
 
             if (selectionStartX > (x + width))
             {
-                selectionStartX = (x + width);
+                selectionStartX = x + width;
             }
 
             if (selectionEndX > (x + width))
             {
-                selectionEndX = (x + width);
+                selectionEndX = x + width;
             }
 
             Tessellator tessellator = Tessellator.getInstance();
@@ -299,7 +302,10 @@ public class TextField extends Pane
     @Override
     public void handleClick(int mx, int my)
     {
-        if (mx < 0) return;
+        if (mx < 0)
+        {
+            return;
+        }
 
         String visibleString = mc.fontRendererObj.trimStringToWidth(text.substring(scrollOffset), getInternalWidth());
         String trimmedString = mc.fontRendererObj.trimStringToWidth(visibleString, mx);
@@ -336,92 +342,112 @@ public class TextField extends Pane
                 return true;
 
             default:
-                switch (key)
-                {
-                    case Keyboard.KEY_BACK:
-                    case Keyboard.KEY_DELETE:
-                    {
-                        int direction = (key == Keyboard.KEY_BACK) ? -1 : 1;
+                return handleKey(c, key);
+        }
+    }
 
-                        if (GuiScreen.isCtrlKeyDown())
-                        {
-                            deleteWords(direction);
-                        }
-                        else
-                        {
-                            deleteFromCursor(direction);
-                        }
+    private boolean handleKey(char c, int key)
+    {
+        switch (key)
+        {
+            case Keyboard.KEY_BACK:
+            case Keyboard.KEY_DELETE:
+                return handleDelete(key);
 
-                        return true;
-                    }
+            case Keyboard.KEY_HOME:
+            case Keyboard.KEY_END:
+                return handleHomeEnd(key);
 
-                    case Keyboard.KEY_HOME:
-                    case Keyboard.KEY_END:
-                    {
-                        int position = (key == Keyboard.KEY_HOME) ? 0 : text.length();
+            case Keyboard.KEY_LEFT:
+            case Keyboard.KEY_RIGHT:
+                return handleArrowKeys(key);
 
-                        if (GuiScreen.isShiftKeyDown())
-                        {
-                            setSelectionEnd(position);
-                        }
-                        else
-                        {
-                            setCursorPosition(position);
-                        }
-                        return true;
-                    }
+            case Keyboard.KEY_TAB:
+                return handleTab();
 
-                    case Keyboard.KEY_LEFT:
-                    case Keyboard.KEY_RIGHT:
-                    {
-                        int direction = (key == Keyboard.KEY_LEFT) ? -1 : 1;
+            default:
+                return handleChar(c);
+        }
+    }
 
-                        if (GuiScreen.isShiftKeyDown())
-                        {
-                            if (GuiScreen.isCtrlKeyDown())
-                            {
-                                setSelectionEnd(getNthWordFromPos(direction, getSelectionEnd()));
-                            }
-                            else
-                            {
-                                setSelectionEnd(getSelectionEnd() + direction);
-                            }
-                        }
-                        else if (GuiScreen.isCtrlKeyDown())
-                        {
-                            setCursorPosition(getNthWordFromCursor(direction));
-                        }
-                        else
-                        {
-                            moveCursorBy(direction);
-                        }
-                        return true;
-                    }
+    private boolean handleChar(char c)
+    {
+        if (filter.isAllowedCharacter(c))
+        {
+            writeText(Character.toString(c));
+            return true;
+        }
+        return false;
+    }
 
-                    case Keyboard.KEY_TAB:
-                    {
-                        if (tabNextPaneID != null)
-                        {
-                            Pane next = getWindow().findPaneByID(tabNextPaneID);
-                            if (next != null)
-                            {
-                                next.setFocus();
-                            }
-                        }
-                        return true;
-                    }
+    private boolean handleTab()
+    {
+        if (tabNextPaneID != null)
+        {
+            Pane next = getWindow().findPaneByID(tabNextPaneID);
+            if (next != null)
+            {
+                next.setFocus();
+            }
+        }
+        return true;
+    }
 
-                    default:
-                        if (filter.isAllowedCharacter(c))
-                        {
-                            writeText(Character.toString(c));
-                            return true;
-                        }
-                        break;
-                }
+    private boolean handleArrowKeys(int key)
+    {
+        int direction = (key == Keyboard.KEY_LEFT) ? -1 : 1;
+
+        if (GuiScreen.isShiftKeyDown())
+        {
+            if (GuiScreen.isCtrlKeyDown())
+            {
+                setSelectionEnd(getNthWordFromPos(direction, getSelectionEnd()));
+            }
+            else
+            {
+                setSelectionEnd(getSelectionEnd() + direction);
+            }
+        }
+        else if (GuiScreen.isCtrlKeyDown())
+        {
+            setCursorPosition(getNthWordFromCursor(direction));
+        }
+        else
+        {
+            moveCursorBy(direction);
+        }
+        return true;
+    }
+
+    private boolean handleHomeEnd(int key)
+    {
+        int position = (key == Keyboard.KEY_HOME) ? 0 : text.length();
+
+        if (GuiScreen.isShiftKeyDown())
+        {
+            setSelectionEnd(position);
+        }
+        else
+        {
+            setCursorPosition(position);
+        }
+        return true;
+    }
+
+    private boolean handleDelete(int key)
+    {
+        int direction = (key == Keyboard.KEY_BACK) ? -1 : 1;
+
+        if (GuiScreen.isCtrlKeyDown())
+        {
+            deleteWords(direction);
+        }
+        else
+        {
+            deleteFromCursor(direction);
         }
 
-        return false;
+        return true;
     }
 
     @Override
@@ -439,7 +465,7 @@ public class TextField extends Pane
 
     public void writeText(String str)
     {
-        str = filter.filter(str);
+        String filteredStr = filter.filter(str);
 
         int insertAt = Math.min(cursorPosition, selectionEnd);
         int insertEnd = Math.max(cursorPosition, selectionEnd);
@@ -452,15 +478,15 @@ public class TextField extends Pane
         }
 
         int insertedLength;
-        if (availableChars < str.length())
+        if (availableChars < filteredStr.length())
         {
-            result = result + str.substring(0, availableChars);
+            result = result + filteredStr.substring(0, availableChars);
             insertedLength = availableChars;
         }
         else
         {
-            result = result + str;
-            insertedLength = str.length();
+            result = result + filteredStr;
+            insertedLength = filteredStr.length();
         }
 
         if (text.length() > 0 && insertEnd < text.length())
@@ -489,7 +515,10 @@ public class TextField extends Pane
 
     public void deleteFromCursor(int count)
     {
-        if (text.length() == 0) return;
+        if (text.length() == 0)
+        {
+            return;
+        }
 
         if (selectionEnd != cursorPosition)
         {
@@ -498,8 +527,8 @@ public class TextField extends Pane
         else
         {
             boolean backwards = count < 0;
-            int start = backwards ? this.cursorPosition + count : this.cursorPosition;
-            int end = backwards ? this.cursorPosition : this.cursorPosition + count;
+            int start = backwards ? (this.cursorPosition + count) : this.cursorPosition;
+            int end = backwards ? this.cursorPosition : (this.cursorPosition + count);
             String result = "";
 
             if (start > 0)
@@ -524,40 +553,40 @@ public class TextField extends Pane
     public int getNthWordFromPos(int count, int pos)
     {
         boolean reverse = count < 0;
-        count = Math.abs(count);
+        int position = pos;
 
-        for (int i1 = 0; i1 < count; ++i1)
+        for (int i1 = 0; i1 < Math.abs(count); ++i1)
         {
             if (reverse)
             {
-                while (pos > 0 && text.charAt(pos - 1) == ' ')
+                while (position > 0 && text.charAt(position - 1) == ' ')
                 {
-                    --pos;
+                    --position;
                 }
-                while (pos > 0 && text.charAt(pos - 1) != ' ')
+                while (position > 0 && text.charAt(position - 1) != ' ')
                 {
-                    --pos;
+                    --position;
                 }
             }
             else
             {
-                pos = text.indexOf(' ', pos);
+                position = text.indexOf(' ', position);
 
-                if (pos == -1)
+                if (position == -1)
                 {
-                    pos = text.length();
+                    position = text.length();
                 }
                 else
                 {
-                    while (pos < text.length() && text.charAt(pos) == ' ')
+                    while (position < text.length() && text.charAt(position) == ' ')
                     {
-                        ++pos;
+                        ++position;
                     }
                 }
             }
         }
 
-        return pos;
+        return position;
     }
 
     public int getNthWordFromCursor(int count)

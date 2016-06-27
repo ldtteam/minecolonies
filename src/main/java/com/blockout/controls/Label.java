@@ -1,23 +1,16 @@
 package com.blockout.controls;
 
-import com.blockout.Alignment;
-import com.blockout.Pane;
 import com.blockout.PaneParams;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 /**
- * BlockOut label pane. Used to render a piece of textContent.
+ * BlockOut label pane. Used to render a piece of text.
  */
-public class Label extends Pane
+public class Label extends AbstractTextElement
 {
     protected String text;
-    protected double     scale         = 1.0;
-    protected Alignment textAlignment = Alignment.MiddleLeft;
-    protected int       textColor     = 0xffffff;
-    protected int       hoverColor    = 0xffffff;
-    protected boolean   shadow        = false;
-    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
+
+    protected int hoverColor = 0xffffff;
 
     public Label()
     {
@@ -32,14 +25,10 @@ public class Label extends Pane
     public Label(PaneParams params)
     {
         super(params);
-        text = params.getLocalizedStringAttribute("textContent", text);
-        scale         = params.getDoubleAttribute("textscale", scale);
-        textAlignment = params.getEnumAttribute("textalign", Alignment.class, textAlignment);
-        textColor     = params.getColorAttribute("color", textColor);
+        text = params.getLocalizedStringAttribute("label", text);
 
         //  match textColor by default
         hoverColor    = params.getColorAttribute("hovercolor", textColor);
-        shadow        = params.getBooleanAttribute("shadow", shadow);
 
         if (width == 0)
         {
@@ -57,19 +46,9 @@ public class Label extends Pane
         text = s;
     }
 
-    public int getColor()
-    {
-        return textColor;
-    }
-
     public int getHoverColor()
     {
         return hoverColor;
-    }
-
-    public void setColor(int c)
-    {
-        setColor(c, c);
     }
 
     /**
@@ -79,38 +58,8 @@ public class Label extends Pane
      */
     public void setColor(int c, int h)
     {
-        textColor = c;
+        setColor(c);
         hoverColor = h;
-    }
-
-    public boolean getShadow()
-    {
-        return shadow;
-    }
-
-    public void setShadow(boolean s)
-    {
-        shadow = s;
-    }
-
-    public Alignment getTextAlignment()
-    {
-        return textAlignment;
-    }
-
-    public void setTextAlignment(Alignment align)
-    {
-        textAlignment = align;
-    }
-
-    public double getScale()
-    {
-        return scale;
-    }
-
-    public void setScale(float s)
-    {
-        scale = s;
     }
 
     public int getTextHeight()

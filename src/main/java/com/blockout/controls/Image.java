@@ -21,7 +21,7 @@ public class Image extends Pane
 {
     public static final int MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE = 256;
 
-    protected ResourceLocation image;
+    protected ResourceLocation resourceLocation;
     protected int imageOffsetX = 0;
     protected int imageOffsetY = 0;
     protected int imageWidth = 0;
@@ -48,7 +48,7 @@ public class Image extends Pane
         String source = params.getStringAttribute("source", null);
         if (source != null)
         {
-            image = new ResourceLocation(source);
+            resourceLocation = new ResourceLocation(source);
             loadMapDimensions();
         }
 
@@ -112,7 +112,7 @@ public class Image extends Pane
      */
     public void setImage(ResourceLocation loc, int offsetX, int offsetY, int w, int h)
     {
-        image = loc;
+        resourceLocation = loc;
         imageOffsetX = offsetX;
         imageOffsetY = offsetY;
         imageWidth = w;
@@ -133,7 +133,7 @@ public class Image extends Pane
         // Some other texture must need to be ticked, I tried ticking the current one.
         // This fixes the problem, even if you put it after the draw call. So I guess I'll keep it.
         this.mc.getTextureManager().tick();
-        this.mc.getTextureManager().bindTexture(image);
+        this.mc.getTextureManager().bindTexture(resourceLocation);
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         //Draw
@@ -146,7 +146,7 @@ public class Image extends Pane
 
     private void loadMapDimensions()
     {
-        Tuple<Integer, Integer> dimensions = getImageDimensions(image);
+        Tuple<Integer, Integer> dimensions = getImageDimensions(resourceLocation);
         mapWidth = dimensions.getFirst();
         mapHeight = dimensions.getSecond();
     }

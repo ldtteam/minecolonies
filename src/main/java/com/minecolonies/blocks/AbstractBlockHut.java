@@ -143,7 +143,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     {
         EnumFacing facing = EnumFacing.getFront(meta);
         if(facing.getAxis() == EnumFacing.Axis.Y)
+        {
             facing = EnumFacing.NORTH;
+        }
         return this.getDefaultState().withProperty(FACING, facing);
     }
 
