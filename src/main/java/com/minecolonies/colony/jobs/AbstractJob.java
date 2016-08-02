@@ -12,9 +12,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public abstract class Job
+/**
+ * Basic job information.
+ */
+public abstract class AbstractJob
 {
     private static final String TAG_TYPE = "type";
     private static final String TAG_ITEMS_NEEDED = "itemsNeeded";
@@ -32,8 +36,8 @@ public abstract class Job
     private static final int    TASK_PRIORITY       = 3;
 
     //  Job and View Class Mapping
-    private static Map<String, Class<? extends Job>> nameToClassMap = new HashMap<>();
-    private static Map<Class<? extends Job>, String> classToNameMap = new HashMap<>();
+    private static Map<String, Class<? extends AbstractJob>> nameToClassMap = new HashMap<>();
+    private static Map<Class<? extends AbstractJob>, String> classToNameMap = new HashMap<>();
 
     static
     {
@@ -50,7 +54,12 @@ public abstract class Job
     private List<ItemStack> itemsNeeded = new ArrayList<>();
     private String          nameTag     = "";
 
-    public Job(CitizenData entity)
+    /**
+     * Initialize citizen data.
+     *
+     * @param entity the citizen data.
+     */
+    public AbstractJob(CitizenData entity)
     {
         citizen = entity;
     }
@@ -61,7 +70,7 @@ public abstract class Job
      * @param name     name of job class
      * @param jobClass class of job
      */
-    private static void addMapping(String name, Class<? extends Job> jobClass)
+    private static void addMapping(String name, Class<? extends AbstractJob> jobClass)
     {
         if(nameToClassMap.containsKey(name))
         {
@@ -88,10 +97,10 @@ public abstract class Job
      * @param compound The NBTTagCompound containing the saved Job data
      * @return New Job created from the data, or null
      */
-    public static Job createFromNBT(CitizenData citizen, NBTTagCompound compound)
+    public static AbstractJob createFromNBT(CitizenData citizen, NBTTagCompound compound)
     {
-        Job job = null;
-        Class<? extends Job> oclass = null;
+        AbstractJob job = null;
+        Class<? extends AbstractJob> oclass = null;
 
         try
         {
@@ -100,12 +109,12 @@ public abstract class Job
             if(oclass != null)
             {
                 Constructor<?> constructor = oclass.getDeclaredConstructor(CitizenData.class);
-                job = (Job) constructor.newInstance(citizen);
+                job = (AbstractJob) constructor.newInstance(citizen);
             }
         }
-        catch(Exception exception)
+        catch(NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e)
         {
-            exception.printStackTrace();
+            Log.logger.trace(e);
         }
 
         if(job != null)
@@ -145,9 +154,9 @@ public abstract class Job
     }
 
     /**
-     * Return a Localization label for the Job
+     * Return a Localization textContent for the Job
      *
-     * @return localization label String
+     * @return localization textContent String
      */
     public abstract String getName();
 
@@ -166,14 +175,20 @@ public abstract class Job
      *
      * @return CitizenData that owns this Job
      */
-    public CitizenData getCitizen(){ return citizen; }
+    public CitizenData getCitizen()
+    {
+        return citizen;
+    }
 
     /**
      * Get the Colony that this Job is associated with (shortcut for getCitizen().getColony())
      *
      * @return {@link Colony} of the citizen
      */
-    public Colony getColony(){ return citizen.getColony(); }
+    public Colony getColony()
+    {
+        return citizen.getColony();
+    }
 
     /**
      * Save the Job to an NBTTagCompound
@@ -186,7 +201,7 @@ public abstract class Job
 
         if(s == null)
         {
-            throw new RuntimeException(this.getClass() + " is missing a mapping! This is a bug!");
+            throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
         }
 
         compound.setString(TAG_TYPE, s);
@@ -224,9 +239,12 @@ public abstract class Job
         return Collections.unmodifiableList(itemsNeeded);
     }
 
+    /**
+     * Reset the items needed.
+     */
     public void clearItemsNeeded()
     {
-        itemsNeeded = new ArrayList<>();
+        itemsNeeded.clear();
     }
 
     /**

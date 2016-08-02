@@ -4,7 +4,7 @@ import com.minecolonies.client.gui.WindowHutWarehouse;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobDeliveryman;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -64,7 +64,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
     }
 
     @Override
-    public Job createJob(CitizenData citizen)
+    public AbstractJob createJob(CitizenData citizen)
     {
         return new JobDeliveryman(citizen);
     }

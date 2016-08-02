@@ -10,7 +10,7 @@ import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
-public class JobBuilder extends Job
+public class JobBuilder extends AbstractJob
 {
     private static final String TAG_WORK_ORDER = "workorder";
     private static final String TAG_SCHEMATIC  = "schematic";

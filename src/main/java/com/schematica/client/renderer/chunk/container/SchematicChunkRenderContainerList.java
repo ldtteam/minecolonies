@@ -8,11 +8,15 @@ import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.util.EnumWorldBlockLayer;
 import org.lwjgl.opengl.GL11;
 
-public class SchematicChunkRenderContainerList extends SchematicChunkRenderContainer {
+public class SchematicChunkRenderContainerList extends AbstractSchematicChunkRenderContainer
+{
     @Override
-    public void renderChunkLayer(final EnumWorldBlockLayer layer) {
-        if (this.initialized) {
-            for (final RenderChunk renderchunk : this.renderChunks) {
+    public void renderChunkLayer(final EnumWorldBlockLayer layer)
+    {
+        if (this.initialized)
+        {
+            for (final RenderChunk renderchunk : this.renderChunks)
+            {
                 final ListedRenderChunk listedRenderChunk = (ListedRenderChunk) renderchunk;
                 GlStateManager.pushMatrix();
                 preRenderChunk(renderchunk);
@@ -26,9 +30,12 @@ public class SchematicChunkRenderContainerList extends SchematicChunkRenderConta
     }
 
     @Override
-    public void renderOverlay() {
-        if (this.initialized) {
-            for (final RenderOverlay renderOverlay : this.renderOverlays) {
+    public void renderOverlay()
+    {
+        if (this.initialized)
+        {
+            for (final RenderOverlay renderOverlay : this.renderOverlays)
+            {
                 final RenderOverlayList renderOverlayList = (RenderOverlayList) renderOverlay;
                 GlStateManager.pushMatrix();
                 preRenderChunk(renderOverlay);

@@ -6,7 +6,7 @@ import com.blockout.controls.Label;
 import com.blockout.views.ScrollingList;
 import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.lib.Constants;
@@ -66,7 +66,7 @@ public class WindowHireWorker extends Window implements Button.Handler
     /**
      * Contains all the citizens.
      */
-    private List<CitizenData.View> citizens = new ArrayList<>();
+    private List<CitizenDataView> citizens = new ArrayList<>();
 
     /**
      * The view of the current building.
@@ -137,7 +137,7 @@ public class WindowHireWorker extends Window implements Button.Handler
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-                CitizenData.View citizen = citizens.get(index);
+                CitizenDataView citizen = citizens.get(index);
 
                 //Creates the list of attributes for each citizen
                 String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength",citizen.getStrength()) + " " +
@@ -146,11 +146,11 @@ public class WindowHireWorker extends Window implements Button.Handler
                         LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance",citizen.getEndurance()) + " " +
                         LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence",citizen.getIntelligence());
 
-                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabel(citizen.getName());
-                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabel(attributes);
+                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setText(citizen.getName());
+                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setText(attributes);
 
-                //Invisible id label.
-                rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabel(Integer.toString(citizen.getID()));
+                //Invisible id textContent.
+                rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setText(Integer.toString(citizen.getID()));
             }
         });
     }
@@ -172,7 +172,7 @@ public class WindowHireWorker extends Window implements Button.Handler
         if (button.getID().equals(BUTTON_DONE))
         {
             Label id = (Label)button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
-            MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building,true, Integer.parseInt(id.getLabel())));
+            MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building,true, Integer.parseInt(id.getText())));
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
         {

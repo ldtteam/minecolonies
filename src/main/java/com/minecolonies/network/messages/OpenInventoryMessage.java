@@ -1,6 +1,6 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
@@ -32,9 +32,9 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     /**
      * Creates an open inventory message for a citizen
      *
-     * @param citizen       {@link com.minecolonies.colony.CitizenData.View}
+     * @param citizen       {@link CitizenDataView}
      */
-    public OpenInventoryMessage(CitizenData.View citizen)
+    public OpenInventoryMessage(CitizenDataView citizen)
     {
         inventoryType = INVENTORY_CITIZEN;
         name = citizen.getName();

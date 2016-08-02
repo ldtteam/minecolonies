@@ -80,64 +80,81 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * The maximum amount of adjusts of his rotation until the fisherman discards a fishing location.
      */
-    private static final int    MAX_ROTATIONS                 = 6;
+    private static final int MAX_ROTATIONS = 6;
+
     /**
      * The tool used by the fisherman.
      */
-    private static final String TOOL_TYPE_ROD                 = "rod";
+    private static final String TOOL_TYPE_ROD = "rod";
+
     /**
      * The range in which the fisherman searches water.
      */
-    private static final int    SEARCH_RANGE                  = 50;
+    private static final int SEARCH_RANGE = 50;
+
     /**
      * The volume in percent which shall be played for the entity sounds
      */
-    private static final float  VOLUME                        = 0.5F;
+    private static final float VOLUME = 0.5F;
+
     /**
      * The upper limit for the frequency of the played sounds
      */
     private static final double FREQUENCY_UPPER_LIMIT_DIVIDER = 1.2D;
+
     /**
      * The lower limit for the frequency of the played sounds
      */
     private static final double FREQUENCY_LOWER_LIMIT_DIVIDER = 0.8D;
+
     /**
      * The frequency should be around this value
      */
-    private static final double FREQUENCY_BOUND_VALUE         = 0.4D;
+    private static final double FREQUENCY_BOUND_VALUE = 0.4D;
+
     /**
      * The percentage of times where the fisherman will check out a new pond.
      */
-    private static final double CHANCE_NEW_POND               = 0.05D;
+    private static final double CHANCE_NEW_POND = 0.05D;
+
     /**
      * How often should intelligence factor into the fisherman's skill modifier.
      */
     private static final int INTELLIGENCE_MULTIPLIER = 2;
+
     /**
      * How often should dexterity factor into the fisherman's skill modifier.
      */
     private static final int DEXTERITY_MULTIPLIER = 1;
+
+    private static final int FISHING_TIMEOUT = 5;
+
     /**
      * The number of executed adjusts of the fisherman's rotation.
      */
-    private              int    executedRotations             = 0;
+    private int executedRotations = 0;
+
     /**
      * The PathResult when the fisherman searches water.
      */
     private PathJobFindWater.WaterPathResult pathResult;
+
     /**
      * The Previous PathResult when the fisherman already found water.
      */
     private PathJobFindWater.WaterPathResult lastPathResult;
+
     /**
      * The fishingSkill which directly influences the fisherman's chance to throw his rod.
      * May in the future also influence his luck/charisma.
      */
     private int fishingSkill = worker.getLevel();
+
     /**
      * Connects the citizen with the fishingHook.
      */
     private EntityFishHook entityFishHook;
+
     private Random random = new Random();
 
     /**
@@ -312,7 +329,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean walkToWater()
     {
-        return !(job.getWater() == null || job.getWater() == null) && walkToBlock(job.getWater());
+        return job.getWater() != null && walkToBlock(job.getWater());
     }
 
     /**
@@ -504,7 +521,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean isFishHookStuck()
     {
-        return (!entityFishHook.isInWater() && (entityFishHook.onGround || entityFishHook.fishHookIsOverTimeToLive()) || entityFishHook.isDead);
+        return (!entityFishHook.isInWater() && (entityFishHook.onGround || entityFishHook.fishHookIsOverTimeToLive())) || entityFishHook.isDead;
     }
 
     /**
@@ -518,7 +535,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private boolean testRandomChance()
     {
         //+1 since the level may be 0
-        setDelay(5);
+        setDelay(FISHING_TIMEOUT);
         double chance = random.nextInt(FISHING_DELAY) / (double) (fishingSkill + 1);
         return chance >= CHANCE;
     }

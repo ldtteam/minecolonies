@@ -8,7 +8,8 @@ import net.minecraft.util.BlockPos;
 
 import java.util.List;
 
-public interface ISchematic {
+public interface ISchematic
+{
     /**
      * Gets a block state at a given location within the schematic. Requesting a block state outside of those bounds
      * returns the default block state for air.

@@ -7,6 +7,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,12 +45,12 @@ public class Level
         //TODO: Store in HashMap for faster access
         nodes = new ArrayList<>();
 
-        int cobbleX = buildingMiner.cobbleLocation.getX();
-        int cobbleZ = buildingMiner.cobbleLocation.getZ();
+        int cobbleX = buildingMiner.getCobbleLocation().getX();
+        int cobbleZ = buildingMiner.getCobbleLocation().getZ();
 
         //check for orientation
-        BlockPos cobbleCenter = new BlockPos(cobbleX - (buildingMiner.vectorX * 3), depth, cobbleZ - (buildingMiner.vectorZ * 3));
-        BlockPos ladderCenter = new BlockPos(cobbleX + (buildingMiner.vectorX * 4), depth, cobbleZ + (buildingMiner.vectorZ * 4));
+        BlockPos cobbleCenter = new BlockPos(cobbleX - (buildingMiner.getVectorX() * 3), depth, cobbleZ - (buildingMiner.getVectorZ() * 3));
+        BlockPos ladderCenter = new BlockPos(cobbleX + (buildingMiner.getVectorX() * 4), depth, cobbleZ + (buildingMiner.getVectorZ() * 4));
         //TODO: let them know they are ladder and cobble (they are handled different)
         Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getZ());
         cobbleNode.setStyle(Node.NodeType.LADDER_BACK);
@@ -60,22 +61,22 @@ public class Level
         ladderNode.setDirectionPosX(Node.NodeStatus.COMPLETED);
         ladderNode.setDirectionNegZ(Node.NodeStatus.COMPLETED);
         ladderNode.setDirectionPosZ(Node.NodeStatus.COMPLETED);
-        if (buildingMiner.vectorX > 0)
+        if (buildingMiner.getVectorX() > 0)
         {
             ladderNode.setDirectionNegX(Node.NodeStatus.LADDER);
             cobbleNode.setDirectionPosX(Node.NodeStatus.LADDER);
         }
-        else if (buildingMiner.vectorX < 0)
+        else if (buildingMiner.getVectorX() < 0)
         {
             ladderNode.setDirectionPosX(Node.NodeStatus.LADDER);
             cobbleNode.setDirectionNegX(Node.NodeStatus.LADDER);
         }
-        else if (buildingMiner.vectorZ > 0)
+        else if (buildingMiner.getVectorZ() > 0)
         {
             ladderNode.setDirectionNegZ(Node.NodeStatus.LADDER);
             cobbleNode.setDirectionPosZ(Node.NodeStatus.LADDER);
         }
-        else if (buildingMiner.vectorZ < 0)
+        else if (buildingMiner.getVectorZ() < 0)
         {
             ladderNode.setDirectionPosZ(Node.NodeStatus.LADDER);
             cobbleNode.setDirectionNegZ(Node.NodeStatus.LADDER);
@@ -99,7 +100,7 @@ public class Level
         int ladderx = compound.getInteger(TAG_LADDERX);
         int ladderz = compound.getInteger(TAG_LADDERZ);
 
-        level.ladderNode = level.nodes.stream().filter(node -> node.getX() == ladderx && node.getZ() == ladderz).findFirst().get(); //TODO .isPresent()
+        level.ladderNode = level.nodes.stream().filter(node -> node.getX() == ladderx && node.getZ() == ladderz).findFirst().get();
 
         return level;
     }
@@ -134,7 +135,12 @@ public class Level
 
     public List<Node> getNodes()
     {
-        return nodes;
+        return Collections.unmodifiableList(nodes);
+    }
+
+    public int getNumberOfNodes()
+    {
+        return nodes.size();
     }
 
     public int getDepth()

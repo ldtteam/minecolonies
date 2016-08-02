@@ -3,18 +3,15 @@ package com.minecolonies.colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
-import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -26,7 +23,10 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ColonyManager
+/**
+ * Singleton class that links colonies to minecraft.
+ */
+public final class ColonyManager
 {
     private static          Map<Integer, Colony>       colonies                     = new HashMap<>();
     private static          Map<Integer, List<Colony>> coloniesByWorld              = new HashMap<>();
@@ -34,18 +34,25 @@ public class ColonyManager
 
     private static          Map<Integer, ColonyView>   colonyViews                  = new HashMap<>();
 
-    private static          int                         numWorldsLoaded;    //  Used to trigger loading/unloading colonies
+    // Used to trigger loading/unloading colonies
+    private static          int                         numWorldsLoaded;
     private static          boolean                     saveNeeded;
 
     private static final    String                      FILENAME_MINECOLONIES_PATH  = "minecolonies";
     private static final    String                      FILENAME_MINECOLONIES       = "colonies.dat";
     private static final    String                      TAG_COLONIES                = "colonies";
 
+    private ColonyManager()
+    {
+        //Hides default constructor.
+    }
+
     /**
-     * Create a new Colony in the given world and at that location
+     * Create a new Colony in the given world and at that location.
      *
      * @param w         World of the colony
-     * @param pos     Coordinate of the center of the colony
+     * @param pos       Coordinate of the center of the colony
+     * @param player    the player that creates the colony - owner.
      * @return          The created colony
      */
     public static Colony createColony(World w, BlockPos pos, EntityPlayer player)
@@ -76,9 +83,12 @@ public class ColonyManager
      * Get Colony by UUID
      *
      * @param id    ID of colony
-     * @return      Colony with given ID
+     * @return Colony with given ID
      */
-    public static Colony getColony(int id) { return colonies.get(id); }
+    public static Colony getColony(int id)
+    {
+        return colonies.get(id);
+    }
 
     /**
      * Get colony that contains a given coordinate
@@ -90,11 +100,17 @@ public class ColonyManager
     public static Colony getColony(World w, BlockPos pos)
     {
         List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
-        if (coloniesInWorld == null) return null;
+        if (coloniesInWorld == null)
+        {
+            return null;
+        }
 
         for (Colony c : coloniesInWorld)
         {
-            if (c.isCoordInColony(w, pos)) return c;
+            if (c.isCoordInColony(w, pos))
+            {
+                return c;
+            }
         }
 
         return null;
@@ -107,10 +123,13 @@ public class ColonyManager
      * @param pos   coordinates
      * @return      Colony closest to coordinates
      */
-    public static Colony getClosestColony(World w, BlockPos pos)
+    private static Colony getClosestColony(World w, BlockPos pos)
     {
         List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
-        if (coloniesInWorld == null) return null;
+        if (coloniesInWorld == null)
+        {
+            return null;
+        }
 
         Colony closestColony = null;
         float closestDist = Float.MAX_VALUE;
@@ -137,11 +156,8 @@ public class ColonyManager
      * @param owner     UUID of the owner
      * @return          List of colonies that belong to given owner UUID
      */
-    public static List<Colony> getColoniesByOwner(UUID owner)
+    private static List<IColony> getColoniesByOwner(UUID owner)
     {
-
-        //TODO is this what we want? Also improve
-
         return colonies.values().stream()
                        .filter(c -> c.getPermissions().getOwner().equals(owner))
                        .collect(Collectors.toList());
@@ -151,7 +167,7 @@ public class ColonyManager
      * Get a AbstractBuilding by a World and coordinates
      *
      * @param w     World
-     * @param pos	Block position
+     * @param pos   Block position
      * @return      AbstractBuilding at the given location
      */
     public static AbstractBuilding getBuilding(World w, BlockPos pos)
@@ -183,14 +199,12 @@ public class ColonyManager
     }
 
     /**
-     * Get a AbstractBuilding by a World and coordinates
+     * Get a AbstractBuilding by position.
      *
-     * @param w     World
-     * @param pos	Block position
+     * @param pos    Block position
      * @return      Returns the view belonging to the building at (x, y, z)
      */
-    public static AbstractBuilding.View getBuildingView(World w, BlockPos pos)
-    //todo why do we have a world object if we dont use it
+    public static AbstractBuilding.View getBuildingView(BlockPos pos)
     {
         //  On client we will just check all known views
         for (ColonyView colony : colonyViews.values())
@@ -224,11 +238,14 @@ public class ColonyManager
      * @param pos       coordinates
      * @return          returns the view belonging to the colony at x, y, z,
      */
-    public static ColonyView getColonyView(World w, BlockPos pos)
+    private static ColonyView getColonyView(World w, BlockPos pos)
     {
         for (ColonyView c : colonyViews.values())
         {
-            if (c.isCoordInColony(w, pos)) return c;
+            if (c.isCoordInColony(w, pos))
+            {
+                return c;
+            }
         }
 
         return null;
@@ -239,7 +256,7 @@ public class ColonyManager
      * @see {@link #getColonyView(World, BlockPos)}
      *
      * @param w     World
-     * @param pos	Block Position
+     * @param pos    Block Position
      * @return      View of the closest colony
      */
     public static ColonyView getClosestColonyView(World w, BlockPos pos)
@@ -264,25 +281,14 @@ public class ColonyManager
     }
 
     /**
-     * Returns list of views of colony with specific owner
-     *
-     * @param player        EntityPlayer
-     * @return              List of colony views
-     */
-    public static List<ColonyView> getColonyViewsByOwner(EntityPlayer player)
-    {
-        return getColonyViewsByOwner(player.getGameProfile().getId());
-    }
-
-    /**
      * Returns a list of views of colonies with specific owner
      *
      * @param owner     UUID of the owner
      * @return          List of colony views
      */
-    public static List<ColonyView> getColonyViewsByOwner(UUID owner)
+    private static List<IColony> getColonyViewsByOwner(UUID owner)
     {
-        List<ColonyView> results = new ArrayList<>();
+        List<IColony> results = new ArrayList<>();
 
         for (ColonyView c : colonyViews.values())
         {
@@ -296,24 +302,10 @@ public class ColonyManager
         return results;
     }
 
-    //  IColony Side-neutral
-
     /**
-     * Side netural method to get colony.
+     * Side neutral method to get colony.
      * On clients it returns the view.
      * On servers it returns the colony itself
-     *
-     * @param world     World object
-     * @param id        ID of the colony
-     * @return          View of colony or colony itself depending on side
-     */
-    public static IColony getIColony(World world, int id)
-    {
-        return world.isRemote ? getColonyView(id) : getColony(id);
-    }
-
-    /**
-     * @see {@link #getIColony(World, int)}
      *
      * @param w         World
      * @param pos       coordinates
@@ -325,10 +317,14 @@ public class ColonyManager
     }
 
     /**
-     * See {@link #getIColony(World, int)} and {@link #getClosestColony(World, BlockPos)}
+     * Side neutral method to get colony.
+     * On clients it returns the view.
+     * On servers it returns the colony itself
+     *
+     * @see {@link #getClosestColony(World, BlockPos)}
      *
      * @param w         World
-     * @param pos		Block position
+     * @param pos        Block position
      * @return          View of colony or colony itself depending on side, closest to coordinates
      */
     public static IColony getClosestIColony(World w, BlockPos pos)
@@ -337,27 +333,33 @@ public class ColonyManager
     }
 
     /**
-     * @see {@link #getIColony(World, int)}
+     * Side neutral method to get colony.
+     * On clients it returns the view.
+     * On servers it returns the colony itself
+     *
      * Returns a list of colonies or views with given Player as owner
      *
      * @param w         World
      * @param owner     Entity Player
      * @return          List of IColonies belonging to specific player
      */
-    public static List<? extends IColony> getIColoniesByOwner(World w, EntityPlayer owner)
+    public static List<IColony> getIColoniesByOwner(World w, EntityPlayer owner)
     {
         return getIColoniesByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
     }
 
     /**
-     * @see {@link #getIColony(World, int)}
+     * Side neutral method to get colony.
+     * On clients it returns the view.
+     * On servers it returns the colony itself
+     *
      * Returns a list of colonies or views with given Player as owner
      *
      * @param w         World
      * @param owner     UUID of the owner
      * @return          List of IColonies belonging to specific player
      */
-    public static List<? extends IColony> getIColoniesByOwner(World w, UUID owner)
+    public static List<IColony> getIColoniesByOwner(World w, UUID owner)
     {
         return w.isRemote ? getColonyViewsByOwner(owner) : getColoniesByOwner(owner);
     }
@@ -370,7 +372,7 @@ public class ColonyManager
     public static double getMinimumDistanceBetweenTownHalls()
     {
         //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
-        return (2 * Configurations.workingRangeTownHall) + Configurations.townHallPadding;
+        return (2D * Configurations.workingRangeTownHall) + Configurations.townHallPadding;
     }
 
     /**
@@ -399,13 +401,10 @@ public class ColonyManager
      */
     public static void onClientTick(TickEvent.ClientTickEvent event)
     {
-        if (event.phase == TickEvent.Phase.END)
+        if (event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().theWorld == null && !colonyViews.isEmpty())
         {
-            if (Minecraft.getMinecraft().theWorld == null && !colonyViews.isEmpty())
-            {
-                //  Player has left the game, clear the Colony View cache
-                colonyViews.clear();
-            }
+            //  Player has left the game, clear the Colony View cache
+            colonyViews.clear();
         }
     }
 
@@ -490,9 +489,9 @@ public class ColonyManager
             if (file != null && file.exists())
             {
                 return CompressedStreamTools.read(file);
-                //return CompressedStreamTools.readCompressed(new FileInputStream(file));
             }
-        } catch (IOException exception)
+        }
+        catch (IOException exception)
         {
             Log.logger.error("Exception when loading ColonyManger", exception);
         }
@@ -513,18 +512,9 @@ public class ColonyManager
             {
                 file.getParentFile().mkdir();
                 CompressedStreamTools.safeWrite(compound, file);
-
-                /*
-                File tempFile = new File(file.getAbsolutePath() + "_tmp");
-                tempFile.delete();
-
-                CompressedStreamTools.writeCompressed(compound, new DataOutputStream(new FileOutputStream(tempFile)));
-
-                file.delete();
-                tempFile.renameTo(file);
-                */
             }
-        } catch (IOException exception)
+        }
+        catch (IOException exception)
         {
             Log.logger.error("Exception when saving ColonyManager", exception);
         }
@@ -544,6 +534,9 @@ public class ColonyManager
         saveNeeded = false;
     }
 
+    /**
+     * Specify that colonies should be saved.
+     */
     public static void markDirty()
     {
         saveNeeded = true;
@@ -581,13 +574,6 @@ public class ColonyManager
 
             world.addWorldAccess(new ColonyManagerWorldAccess());
         }
-        else
-        {
-            for (ColonyView v : colonyViews.values())
-            {
-                v.onWorldLoad(world);
-            }
-        }
     }
 
     /**
@@ -597,8 +583,8 @@ public class ColonyManager
      */
     public static void onWorldSave(World world)
     {
-        if (!world.isRemote &&
-            world.provider.getDimensionId() == 0)    //  For now, save when 0 saves...
+        //We save when the first dimension is saved.
+        if (!world.isRemote && world.provider.getDimensionId() == 0)
         {
             saveColonies();
         }
@@ -638,6 +624,7 @@ public class ColonyManager
      * @param colonyId          ID of the colony
      * @param colonyData        {@link ByteBuf} with colony data
      * @param isNewSubscription whether this is a new subscription or not
+     * @return the response message.
      */
     public static IMessage handleColonyViewMessage(int colonyId, ByteBuf colonyData, boolean isNewSubscription)
     {
@@ -723,7 +710,7 @@ public class ColonyManager
      * @param buf           {@link ByteBuf} with colony data
      * @return              result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos, ByteBuf)} or null
      */
-    static public IMessage handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, ByteBuf buf)
+    public static IMessage handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, ByteBuf buf)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
@@ -745,7 +732,7 @@ public class ColonyManager
      * @param buildingId    ID of the building
      * @return              result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)}  or null
      */
-    static public IMessage handleColonyViewRemoveBuildingMessage(int colonyId, BlockPos buildingId)
+    public static IMessage handleColonyViewRemoveBuildingMessage(int colonyId, BlockPos buildingId)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
@@ -756,74 +743,5 @@ public class ColonyManager
         }
 
         return null;
-    }
-
-    public static class ColonyManagerWorldAccess implements IWorldAccess
-    {
-        @Override
-        public void markBlockForUpdate(BlockPos pos) {
-
-        }
-
-        @Override
-        public void notifyLightSet(BlockPos pos) {
-
-        }
-
-        @Override
-        public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2){
-
-        }
-
-        @Override
-        public void playSound(String soundName, double x, double y, double z, float volume, float pitch) {}
-
-        @Override
-        public void playSoundToNearExcept(EntityPlayer except, String soundName, double x, double y, double z, float volume, float pitch){}
-
-        @Override
-        public void spawnParticle(int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset, int... parameters) {
-
-        }
-
-        @Override
-        public void onEntityAdded(Entity entity) {
-            if (entity instanceof EntityCitizen)
-            {
-                ((EntityCitizen) entity).updateColonyServer();
-            }
-        }
-
-        @Override
-        public void onEntityRemoved(Entity entity) {
-            if (entity instanceof EntityCitizen)
-            {
-                CitizenData citizen = ((EntityCitizen) entity).getCitizenData();
-                if (citizen != null)
-                {
-                    citizen.setCitizenEntity(null);
-                }
-            }
-        }
-
-        @Override
-        public void playRecord(String recordName, BlockPos blockPosIn) {
-
-        }
-
-        @Override
-        public void broadcastSound(int soundID, BlockPos pos, int data) {
-
-        }
-
-        @Override
-        public void playAuxSFX(EntityPlayer player, int sfxType, BlockPos blockPosIn, int data) {
-
-        }
-
-        @Override
-        public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {
-
-        }
     }
 }

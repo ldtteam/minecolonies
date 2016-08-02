@@ -81,7 +81,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     @Override
     public void onOpened()
     {
-        findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class).setLabel(LanguageHandler.getString(getBuildingName()));
+        findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class).setText(LanguageHandler.getString(getBuildingName()));
 
         if (building.getBuildingLevel() == 0)
         {

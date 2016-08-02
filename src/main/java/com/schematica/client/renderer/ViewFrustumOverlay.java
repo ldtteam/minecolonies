@@ -11,22 +11,28 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-class ViewFrustumOverlay extends ViewFrustum {
+class ViewFrustumOverlay extends ViewFrustum
+{
     private RenderOverlay[] renderOverlays;
 
-    ViewFrustumOverlay(final World world, final int renderDistanceChunks, final RenderGlobal renderGlobal, final ISchematicRenderChunkFactory renderChunkFactory) {
+    ViewFrustumOverlay(final World world, final int renderDistanceChunks, final RenderGlobal renderGlobal, final ISchematicRenderChunkFactory renderChunkFactory)
+    {
         super(world, renderDistanceChunks, renderGlobal, renderChunkFactory);
         createRenderOverlays(renderChunkFactory);
     }
 
-    private void createRenderOverlays(final ISchematicRenderChunkFactory renderChunkFactory) {
+    private void createRenderOverlays(final ISchematicRenderChunkFactory renderChunkFactory)
+    {
         final int amount = this.countChunksX * this.countChunksY * this.countChunksZ;
         this.renderOverlays = new RenderOverlay[amount];
         int count = 0;
 
-        for (int x = 0; x < this.countChunksX; x++) {
-            for (int y = 0; y < this.countChunksY; y++) {
-                for (int z = 0; z < this.countChunksZ; z++) {
+        for (int x = 0; x < this.countChunksX; x++)
+        {
+            for (int y = 0; y < this.countChunksY; y++)
+            {
+                for (int z = 0; z < this.countChunksZ; z++)
+                {
                     final int index = (z * this.countChunksY + y) * this.countChunksX + x;
                     final BlockPos pos = new BlockPos(x * 16, y * 16, z * 16);
                     this.renderOverlays[index] = renderChunkFactory.makeRenderOverlay(this.world, this.renderGlobal, pos, count++);
@@ -36,34 +42,41 @@ class ViewFrustumOverlay extends ViewFrustum {
     }
 
     @Override
-    public void deleteGlResources() {
+    public void deleteGlResources()
+    {
         super.deleteGlResources();
 
-        for (final RenderOverlay renderOverlay : this.renderOverlays) {
+        for (final RenderOverlay renderOverlay : this.renderOverlays)
+        {
             renderOverlay.deleteGlResources();
         }
     }
 
     @Override
-    public void updateChunkPositions(final double viewEntityX, final double viewEntityZ) {
+    public void updateChunkPositions(final double viewEntityX, final double viewEntityZ)
+    {
         super.updateChunkPositions(viewEntityX, viewEntityZ);
 
         final int xx = MathHelper.floor_double(viewEntityX) - 8;
         final int zz = MathHelper.floor_double(viewEntityZ) - 8;
         final int yy = this.countChunksX * 16;
 
-        for (int chunkX = 0; chunkX < this.countChunksX; chunkX++) {
+        for (int chunkX = 0; chunkX < this.countChunksX; chunkX++)
+        {
             final int x = getPosition(xx, yy, chunkX);
 
-            for (int chunkZ = 0; chunkZ < this.countChunksZ; chunkZ++) {
+            for (int chunkZ = 0; chunkZ < this.countChunksZ; chunkZ++)
+            {
                 final int z = getPosition(zz, yy, chunkZ);
 
-                for (int chunkY = 0; chunkY < this.countChunksY; chunkY++) {
+                for (int chunkY = 0; chunkY < this.countChunksY; chunkY++)
+                {
                     final int y = chunkY * 16;
                     final RenderOverlay renderOverlay = this.renderOverlays[(chunkZ * this.countChunksY + chunkY) * this.countChunksX + chunkX];
                     final BlockPos blockpos = new BlockPos(x, y, z);
 
-                    if (!blockpos.equals(renderOverlay.getPosition())) {
+                    if (!blockpos.equals(renderOverlay.getPosition()))
+                    {
                         renderOverlay.setPosition(blockpos);
                     }
                 }
@@ -71,11 +84,13 @@ class ViewFrustumOverlay extends ViewFrustum {
         }
     }
 
-    private int getPosition(final int xz, final int y, final int chunk) {
+    private int getPosition(final int xz, final int y, final int chunk)
+    {
         final int chunks = chunk * 16;
         int i = chunks - xz + y / 2;
 
-        if (i < 0) {
+        if (i < 0)
+        {
             i -= y - 1;
         }
 
@@ -83,7 +98,8 @@ class ViewFrustumOverlay extends ViewFrustum {
     }
 
     @Override
-    public void markBlocksForUpdate(final int fromX, final int fromY, final int fromZ, final int toX, final int toY, final int toZ) {
+    public void markBlocksForUpdate(final int fromX, final int fromY, final int fromZ, final int toX, final int toY, final int toZ)
+    {
         super.markBlocksForUpdate(fromX, fromY, fromZ, toX, toY, toZ);
 
         final int x0 = MathHelper.bucketInt(fromX, 16);
@@ -93,24 +109,30 @@ class ViewFrustumOverlay extends ViewFrustum {
         final int y1 = MathHelper.bucketInt(toY, 16);
         final int z1 = MathHelper.bucketInt(toZ, 16);
 
-        for (int xi = x0; xi <= x1; ++xi) {
+        for (int xi = x0; xi <= x1; ++xi)
+        {
             int x = xi % this.countChunksX;
 
-            if (x < 0) {
+            if (x < 0)
+            {
                 x += this.countChunksX;
             }
 
-            for (int yi = y0; yi <= y1; ++yi) {
+            for (int yi = y0; yi <= y1; ++yi)
+            {
                 int y = yi % this.countChunksY;
 
-                if (y < 0) {
+                if (y < 0)
+                {
                     y += this.countChunksY;
                 }
 
-                for (int zi = z0; zi <= z1; ++zi) {
+                for (int zi = z0; zi <= z1; ++zi)
+                {
                     int z = zi % this.countChunksZ;
 
-                    if (z < 0) {
+                    if (z < 0)
+                    {
                         z += this.countChunksZ;
                     }
 
@@ -122,27 +144,33 @@ class ViewFrustumOverlay extends ViewFrustum {
         }
     }
 
-    RenderOverlay getRenderOverlay(final BlockPos pos) {
+    RenderOverlay getRenderOverlay(final BlockPos pos)
+    {
         int x = MathHelper.bucketInt(pos.getX(), 16);
         final int y = MathHelper.bucketInt(pos.getY(), 16);
         int z = MathHelper.bucketInt(pos.getZ(), 16);
 
-        if (y >= 0 && y < this.countChunksY) {
+        if (y >= 0 && y < this.countChunksY)
+        {
             x %= this.countChunksX;
 
-            if (x < 0) {
+            if (x < 0)
+            {
                 x += this.countChunksX;
             }
 
             z %= this.countChunksZ;
 
-            if (z < 0) {
+            if (z < 0)
+            {
                 z += this.countChunksZ;
             }
 
             final int index = (z * this.countChunksY + y) * this.countChunksX + x;
             return this.renderOverlays[index];
-        } else {
+        }
+        else
+        {
             return null;
         }
     }

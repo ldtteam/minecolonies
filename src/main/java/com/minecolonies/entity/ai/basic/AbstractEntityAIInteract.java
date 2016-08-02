@@ -1,6 +1,6 @@
 package com.minecolonies.entity.ai.basic;
 
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIInteract<J extends Job> extends AbstractEntityAICrafting<J>
+public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends AbstractEntityAICrafting<J>
 {
     private static final int    DELAY_MODIFIER = 100;
     /**

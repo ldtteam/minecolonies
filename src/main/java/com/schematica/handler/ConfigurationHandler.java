@@ -12,5 +12,7 @@ public final class ConfigurationHandler
     public static final double blockDelta = 0.005;
     public static final int renderDistance = 8;
 
-    private ConfigurationHandler() {}
+    private ConfigurationHandler()
+    {
+    }
 }

@@ -1,6 +1,6 @@
 package com.minecolonies.entity.ai.basic;
 
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
@@ -23,7 +23,7 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
  *
  * @param <J> the job this ai will have
  */
-public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
+public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAIBase
 {
 
     private static final int MUTEX_MASK = 3;
@@ -163,7 +163,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
                 return false;
             }
         }
-        catch (Exception e)
+        catch (RuntimeException e)
         {
             Log.logger.warn("Condition check for target " + target + " threw an exception:", e);
             return false;
@@ -187,7 +187,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         {
             newState = target.apply();
         }
-        catch (Exception e)
+        catch (RuntimeException e)
         {
             Log.logger.warn("Action for target " + target + " threw an exception:", e);
             return false;

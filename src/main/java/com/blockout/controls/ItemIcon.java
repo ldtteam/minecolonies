@@ -10,7 +10,10 @@ public class ItemIcon extends Pane
 {
     private ItemStack itemStack;
 
-    public ItemIcon(){ super(); }
+    public ItemIcon()
+    {
+        super();
+    }
 
 
     public ItemIcon(PaneParams params)
@@ -28,7 +31,10 @@ public class ItemIcon extends Pane
         }
     }
 
-    public void setItem(ItemStack itemStack) { this.itemStack = itemStack; }
+    public void setItem(ItemStack itemStack)
+    {
+        this.itemStack = itemStack;
+    }
 
     @Override
     protected void drawSelf(int mx, int my)

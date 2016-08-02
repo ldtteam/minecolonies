@@ -24,10 +24,10 @@ public final class Settings
 
     private final BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos();
 
-    private int    rotation = 0;
-    private String hutDec   = "";
-    private String style    = "";
-    private int    level    = 0;
+    private int rotation = 0;
+    private String hutDec = "";
+    private String style = "";
+    private int level = 0;
 
     private boolean isPendingReset = false;
 
@@ -53,7 +53,7 @@ public final class Settings
      */
     public void moveTo(BlockPos pos)
     {
-        if(this.schematic == null)
+        if (this.schematic == null)
         {
             return;
         }
@@ -69,7 +69,7 @@ public final class Settings
      */
     public void setActiveSchematic(Schematic schematic)
     {
-        if(schematic != null)
+        if (schematic != null)
         {
             this.schematic = new SchematicWorld(schematic);
 
@@ -118,16 +118,16 @@ public final class Settings
     /**
      * Saves the schematic info when the client closes the build tool window.
      *
-     * @param hutDec Hut/decoration name.
-     * @param style AbstractBuilding style.
-     * @param level AbstractBuilding level.
+     * @param hutDec   Hut/decoration name.
+     * @param style    AbstractBuilding style.
+     * @param level    AbstractBuilding level.
      * @param rotation The number of times the building is rotated.
      */
     public void setSchematicInfo(String hutDec, String style, int level, int rotation)
     {
-        this.hutDec   = hutDec;
-        this.style    = style;
-        this.level    = level;
+        this.hutDec = hutDec;
+        this.style = style;
+        this.level = level;
         this.rotation = rotation;
     }
 

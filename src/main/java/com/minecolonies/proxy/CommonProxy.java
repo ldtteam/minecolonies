@@ -1,7 +1,7 @@
 package com.minecolonies.proxy;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.event.EventHandler;
@@ -91,7 +91,7 @@ public class CommonProxy implements IProxy
     public void registerTileEntityRendering(){}
 
     @Override
-    public void showCitizenWindow(CitizenData.View citizen) {}
+    public void showCitizenWindow(CitizenDataView citizen) {}
 
     @Override
     public void openBuildToolWindow(BlockPos pos) {}

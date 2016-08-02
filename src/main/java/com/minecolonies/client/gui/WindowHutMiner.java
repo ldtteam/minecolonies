@@ -88,8 +88,8 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
                     rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.BLACK.getRGB());
                 }
 
-                rowPane.findPaneOfTypeByID("lvl", Label.class).setLabel(Integer.toString(index));
-                rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + levels[index]);
+                rowPane.findPaneOfTypeByID("lvl", Label.class).setText(Integer.toString(index));
+                rowPane.findPaneOfTypeByID("nONodes", Label.class).setText(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + levels[index]);
 
             }
         });

@@ -367,7 +367,7 @@ public final class SchematicWrapper
 
                     if (blockState.getBlock() instanceof AbstractBlockHut)
                     {
-                        if (BlockPosUtil.equals(offset, 0, 0, 0))
+                        if (BlockPosUtil.isEqual(offset, 0, 0, 0))
                         {
                             BlockPosUtil.set(offset, localPos);
                         }
@@ -383,7 +383,7 @@ public final class SchematicWrapper
                 }
             }
         }
-        if (BlockPosUtil.equals(offset, 0, 0, 0))
+        if (BlockPosUtil.isEqual(offset, 0, 0, 0))
         {
             offset.set(width / TWO_FOR_HALVING, 0, length / TWO_FOR_HALVING);
         }

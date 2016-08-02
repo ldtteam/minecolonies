@@ -9,6 +9,8 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.FarmerCropTypeMessage;
 import com.minecolonies.util.Log;
 
+import java.util.Random;
+
 /**
  * Window for the farmer hut
  */
@@ -33,6 +35,8 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
     private Button buttonPrevPage;
     private Button buttonNextPage;
+
+    private Random random = new Random();
 
     /**
      * Constructor for the window of the farmer
@@ -67,7 +71,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         while (sum() > MAX_AMOUNT)
         {
             final int numberOfProducts = 5;
-            int       rand             = (int) (Math.random() * numberOfProducts);
+            int rand = random.nextInt() * numberOfProducts;
 
             if (building.potato != 0 && !s.equals(POTATO) && rand == 0)
             {
@@ -222,7 +226,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             findPaneOfTypeByID(BUTTON_PUMPKIN, ButtonVanilla.class).setLabel(Integer.toString(building.pumpkin));
 
         }
-        catch (NullPointerException exc)
+        catch (RuntimeException exc)
         {
             Log.logger.error("findPane error, report to mod authors", exc);
         }

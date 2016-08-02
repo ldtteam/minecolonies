@@ -1,24 +1,43 @@
 package com.blockout;
 
 import com.blockout.views.Window;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+/**
+ * Wraps MineCrafts GuiScreen for BlockOut's Window
+ */
 public class Screen extends GuiScreen
 {
     protected Window window;
-    protected int x = 0, y = 0;
+    protected int x = 0;
+    protected int y = 0;
 
     protected static int scale = 0;
 
+    /**
+     * Create a GuiScreen from a BlockOut window.
+     *
+     * @param w blockout window.
+     */
     public Screen(Window w)
     {
         window = w;
     }
 
-    public static int getScale(){ return scale; }
+    private static void setScale(Minecraft mc)
+    {
+        //Seems to work without the sides now
+        scale = new ScaledResolution(mc).getScaleFactor();
+    }
+
+    public static int getScale()
+    {
+        return scale;
+    }
 
     @Override
     public void drawScreen(int mx, int my, float f)
@@ -28,8 +47,7 @@ public class Screen extends GuiScreen
             super.drawDefaultBackground();
         }
 
-        //Seems to work without the sides now
-        scale = new ScaledResolution(mc).getScaleFactor();
+        setScale(mc);
 
         GL11.glPushMatrix();
         GL11.glTranslatef(x, y, 0);
@@ -56,17 +74,10 @@ public class Screen extends GuiScreen
     @Override
     protected void mouseClicked(int mx, int my, int code)
     {
-        try
+        if (code == 0)
         {
-            if (code == 0)
-            {
-                //  Adjust coordinate to origin of window
-                window.click(mx - x, my - y);
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+            //  Adjust coordinate to origin of window
+            window.click(mx - x, my - y);
         }
     }
 
@@ -83,6 +94,7 @@ public class Screen extends GuiScreen
     @Override
     protected void mouseClickMove(int mx, int my, int buttons, long timeElapsed)
     {
+        // Can be overridden
     }
 
     @Override
@@ -108,11 +120,5 @@ public class Screen extends GuiScreen
         window.onClosed();
         Window.clearFocus();
         Keyboard.enableRepeatEvents(false);
-    }
-
-    @Override
-    public void drawDefaultBackground()
-    {
-        super.drawDefaultBackground();
     }
 }

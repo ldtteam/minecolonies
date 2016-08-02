@@ -3,7 +3,7 @@ package com.minecolonies.client.gui;
 import com.blockout.controls.Button;
 import com.blockout.controls.Label;
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.network.messages.HireFireMessage;
 import com.minecolonies.network.messages.RecallCitizenMessage;
@@ -102,7 +102,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
         if (building.getWorkerId() != 0)
         {
-            CitizenData.View worker = building.getColony().getCitizen(building.getWorkerId());
+            CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId());
             if (worker != null)
             {
                 workerName = worker.getName();
@@ -115,10 +115,10 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
             findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"));
         }
 
-        findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabel(workerName);
+        findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setText(workerName);
         findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
-                .setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", workerLevel));
+                .setText(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", workerLevel));
 
-        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabel("xxxxxxxx");
+        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setText("xxxxxxxx");
     }
 }

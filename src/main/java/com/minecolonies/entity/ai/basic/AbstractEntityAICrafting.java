@@ -1,12 +1,12 @@
 package com.minecolonies.entity.ai.basic;
 
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by marvin on 19.05.16.
  */
-public abstract class AbstractEntityAICrafting<J extends Job> extends AbstractEntityAISkill<J>
+public abstract class AbstractEntityAICrafting<J extends AbstractJob> extends AbstractEntityAISkill<J>
 {
 
     /**

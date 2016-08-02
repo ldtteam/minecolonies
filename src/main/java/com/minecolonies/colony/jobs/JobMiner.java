@@ -2,15 +2,15 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.util.SchematicWrapper;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.miner.EntityAIStructureMiner;
+import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.List;
 
-public class JobMiner extends Job
+public class JobMiner extends AbstractJob
 {
     protected SchematicWrapper schematic;
 

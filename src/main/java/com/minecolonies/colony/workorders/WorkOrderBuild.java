@@ -12,7 +12,7 @@ import net.minecraft.util.BlockPos;
  * Represents one building order to complete.
  * Has his onw schematic for the building.
  */
-public class WorkOrderBuild extends WorkOrder
+public class WorkOrderBuild extends AbstractWorkOrder
 {
     private static final String TAG_BUILDING          = "building";
     private static final String TAG_UPGRADE_LEVEL     = "upgradeLevel";
