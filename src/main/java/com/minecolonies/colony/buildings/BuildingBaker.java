@@ -8,48 +8,94 @@ import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobPlaceholder;
 import net.minecraft.util.BlockPos;
 
-public class BuildingBaker extends BuildingWorker
+/**
+ * Building for the baker.
+ */
+public class BuildingBaker extends AbstractBuildingWorker
 {
 
     private static final String BAKER           = "Baker";
     private static final String BAKER_HUT_NAME  = "bakerHut";
 
+    private static final int BAKER_HUT_MAX_LEVEL = 3;
+
+    /**
+     * Constructor for the baker building.
+     *
+     * @param c Colony the building is in.
+     * @param l Location of the building.
+     */
     public BuildingBaker(Colony c, BlockPos l)
     {
         super(c, l);
     }
 
+    /**
+     * Gets the name of the schematic.
+     *
+     * @return Baker schematic name.
+     */
     @Override
     public String getSchematicName()
     {
         return BAKER;
     }
 
+    /**
+     * Gets the max level of the baker's hut.
+     *
+     * @return The max level of the baker's hut.
+     */
     @Override
     public int getMaxBuildingLevel()
     {
-        return 3;
+        return BAKER_HUT_MAX_LEVEL;
     }
 
+    /**
+     * The name of the baker's job.
+     *
+     * @return The name of the baker's job.
+     */
     @Override
     public String getJobName()
     {
         return BAKER;
     }
 
+    /**
+     * Create a Baker job.
+     *
+     * @param citizen the citizen to take the job.
+     * @return The new Baker job.
+     */
     @Override
     public Job createJob(CitizenData citizen)
     {
         return new JobPlaceholder(citizen); //TODO Implement Later
     }
 
-    public static class View extends BuildingWorker.View
+    /**
+     * The client view for the baker building.
+     */
+    public static class View extends AbstractBuildingWorker.View
     {
+        /**
+         * The client view constructor for the baker building.
+         *
+         * @param c The ColonyView the building is in.
+         * @param l The location of the building.
+         */
         public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }
 
+        /**
+         * Creates a new window for the building.
+         *
+         * @return A BlockOut window.
+         */
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, BAKER_HUT_NAME);

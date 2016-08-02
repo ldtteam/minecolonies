@@ -2,7 +2,6 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.buildings.Building;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
@@ -25,7 +24,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
      * @param building       View of the building to read data from
      * @param level          Level of the miner
      */
-    public MinerSetLevelMessage(Building.View building, int level)  //TODO don't we want BuildingMiner.View ?
+    public MinerSetLevelMessage(BuildingMiner.View building, int level)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();

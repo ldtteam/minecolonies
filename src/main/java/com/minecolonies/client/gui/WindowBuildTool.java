@@ -1,82 +1,153 @@
 package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
-import com.blockout.views.Window;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Log;
-import com.minecolonies.util.Schematic;
+import com.minecolonies.util.SchematicWrapper;
 import com.schematica.Settings;
-import com.schematica.world.SchematicWorld;
+import com.schematica.client.renderer.RenderSchematic;
+import com.schematica.client.util.RotationHelper;
+import com.schematica.world.storage.Schematic;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.EnumFacing;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * BuildTool Window
+ * BuildTool window.
  *
  * @author Colton
  */
-public class WindowBuildTool extends Window implements Button.Handler
+public class WindowBuildTool extends AbstractWindowSkeleton
 {
     /*
     All buttons for the GUI
      */
-    // Navigation buttons (selecting options)
-    private static final    String          BUTTON_TYPE_ID              = "buildingType";
-    private static final    String          BUTTON_HUT_ID               = "hut";
-    private static final    String          BUTTON_STYLE_ID             = "style";
-    private static final    String          BUTTON_DECORATION_ID        = "decoration";
 
-    // Navigation buttons (confirm, cancel)
-    private static final    String          BUTTON_CONFIRM              = "confirm";
-    private static final    String          BUTTON_CANCEL               = "cancel";
-
-    //Rotating buttons (left, right)
-    private static final    String          BUTTON_ROTATE_LEFT          = "rotateLeft";
-    private static final    String          BUTTON_ROTATE_RIGHT         = "rotateRight";
-
-    //Directional buttons (x, y, z)
-    private static final    String          BUTTON_UP                   = "up";
-    private static final    String          BUTTON_DOWN                 = "down";
-    private static final    String          BUTTON_FORWARD              = "forward";
-    private static final    String          BUTTON_BACK                 = "back";
-    private static final    String          BUTTON_LEFT                 = "left";
-    private static final    String          BUTTON_RIGHT                = "right";
-
-    /*
-    Resource suffix and hut prefix
-    */
-    private static final    String          BUILD_TOOL_RESOURCE_SUFFIX  = ":gui/windowBuildTool.xml";
-    private static final    String          HUT_PREFIX                  = ":blockHut";
-
-    /*
-    List of buildings possible to make
+    /**
+     * This button is used to set whether the window is in hut mode or decoration mode.
      */
-    private                 List<String>    huts                        = new ArrayList<>();
-    /*
-    Index of the rendered hut
-     */
-    private                 int             hutDecIndex                 = 0;
-    /*
-    Index of                 the             current style
-     */
-    private                 int             styleIndex                  = 0;
+    private static final String BUTTON_TYPE_ID = "buildingType";
 
-    //Position and rotation for the tool
-    private                 int             posX;
-    private                 int             posY;
-    private                 int             posZ;
-    private                 int             rotation                    = 0;
+    /**
+     * This button is used to choose which hut or decoration should be built.
+     */
+    private static final String BUTTON_HUT_DEC_ID = "hutDec";
+
+    /**
+     * This button is used to choose which style should be used.
+     */
+    private static final String BUTTON_STYLE_ID = "style";
+
+    /**
+     * This button is used to cycle through different hut levels.
+     */
+    private static final String BUTTON_LEVEL_ID = "level";
+
+    /**
+     * This button will send a packet to the server telling it to place this hut/decoration.
+     */
+    private static final String BUTTON_CONFIRM = "confirm";
+
+    /**
+     * This button will remove the currently rendered schematic.
+     */
+    private static final String BUTTON_CANCEL = "cancel";
+
+    /**
+     * This button will rotate the schematic counterclockwise.
+     */
+    private static final String BUTTON_ROTATE_LEFT = "rotateLeft";
+
+    /**
+     * This button will rotated the schematic clockwise.
+     */
+    private static final String BUTTON_ROTATE_RIGHT = "rotateRight";
+
+    /**
+     * Move the schematic preview up.
+     */
+    private static final String BUTTON_UP = "up";
+
+    /**
+     * Move the schematic preview down.
+     */
+    private static final String BUTTON_DOWN = "down";
+
+    /**
+     * Move the schematic preview forward.
+     */
+    private static final String BUTTON_FORWARD = "forward";
+
+    /**
+     * Move the schematic preview back.
+     */
+    private static final String BUTTON_BACK = "back";
+
+    /**
+     * Move the schematic preview left.
+     */
+    private static final String BUTTON_LEFT = "left";
+
+    /**
+     * Move the schematic preview right.
+     */
+    private static final String BUTTON_RIGHT = "right";
+
+    /**
+     * Resource suffix.
+     */
+    private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowBuildTool.xml";
+
+    /**
+     * Hut prefix.
+     */
+    private static final String HUT_PREFIX = ":blockHut";
+
+    private static final BlockPos DEFAULT_POS = new BlockPos(0, 0, 0);
+
+    private static final int POSSIBLE_ROTATIONS = 4;
+    private static final int ROTATE_RIGHT       = 1;
+    private static final int ROTATE_LEFT        = 3;
+
+    /**
+     * List of huts or decorations possible to make.
+     */
+    private List<String> hutDec = new ArrayList<>();
+
+    /**
+     * Index of the rendered hutDec/decoration.
+     */
+    private int hutDecIndex = 0;
+
+    /**
+     * Index of the current style.
+     */
+    private int styleIndex = 0;
+
+    /**
+     * Current position the hut/decoration is rendered at.
+     */
+    private BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(0, 0, 0);
+
+    /**
+     * Current rotation of the hut/decoration.
+     */
+    private int rotation = 0;
+
+    /**
+     * Current hut level that is being rendered.
+     * This stores the level minus 1, because its easier and cooperates with modulus better.
+     */
+    private int level = 0;
 
     /**
      * Creates a window build tool
@@ -90,262 +161,158 @@ public class WindowBuildTool extends Window implements Button.Handler
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
-        if(MineColonies.proxy.getActiveSchematic() != null)
+        Schematic schematic = Settings.instance.getActiveSchematic();
+        if(schematic != null)
         {
-            posX = (int) Settings.instance.offset.x + MineColonies.proxy.getActiveSchematic().getOffsetX();
-            posY = (int) Settings.instance.offset.y + MineColonies.proxy.getActiveSchematic().getOffsetY();
-            posZ = (int) Settings.instance.offset.z + MineColonies.proxy.getActiveSchematic().getOffsetZ();
-            rotation = Settings.instance.rotation;
+            BlockPosUtil.set(this.pos, Settings.instance.getOffset().add(schematic.getOffset()));
+            rotation = Settings.instance.getRotation();
+            level = Settings.instance.getLevel();
         }
         else
         {
-            posX = pos.getX();
-            posY = pos.getY();
-            posZ = pos.getZ();
-        }
-    }
-
-	@Override
-    public void onOpened()
-    {
-        boolean inHutMode = true;
-        if (!inHutMode)
-        {
-            Button type = findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class);
-            type.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.decoration"));
-            type.setEnabled(false);
-
-            //TODO do stuff with decoration button
-            return;
+            BlockPosUtil.set(this.pos, pos);
         }
 
-        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
-
-
-        InventoryPlayer inventory = this.mc.thePlayer.inventory;
-
-            /*
-            Add possible huts (has item) to list, if it has a schematic, and player has the block
-             */
-        huts.addAll(Schematics.getHuts().stream().filter(hut -> inventory.hasItem(
-                Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, new BlockPos(0, 0, 0)))
-                                                                && Schematics.getStylesForHut(hut) != null).collect(
-                Collectors.toList()));
-
-        if (!huts.isEmpty())
-        {
-            if (MineColonies.proxy.getActiveSchematic() != null)
-            {
-                hutDecIndex = Math.max(0, huts.indexOf(Settings.instance.hut));
-                styleIndex = Math.max(0, Schematics.getStylesForHut(huts.get(hutDecIndex)).indexOf(Settings.instance.style));
-            }
-
-            Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
-
-
-            hut.setLabel(huts.get(hutDecIndex));
-            hut.setEnabled(true);
-
-
-            Button style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
-
-
-            style.setVisible(true);
-            style.setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
-
-
-            //Render stuff
-            if (MineColonies.proxy.getActiveSchematic() == null)
-            {
-                changeSchematic();
-            }
-        }
-        else
-        {
-            Button hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class);
-
-            hut.setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.nullHut"));
-            hut.setEnabled(false);
-
-            MineColonies.proxy.setActiveSchematic(null);
-        }
-    }
-
-    @Override
-    public void onClosed()
-    {
-        if(MineColonies.proxy.getActiveSchematic() != null)
-        {
-            Settings.instance.rotation = rotation;
-
-            Settings.instance.hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
-            Settings.instance.style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
-
-        }
-    }
-
-    @Override
-    public void onButtonClicked(Button button)
-    {
-        switch (button.getID())
-        {
-        case BUTTON_TYPE_ID:
-            //TODO
-            break;
-        case BUTTON_HUT_ID:
-            hutDecIndex = (hutDecIndex + 1) % huts.size();
-            styleIndex = 0;
-
-            findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).setLabel(huts.get(hutDecIndex));
-            findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex));
-
-
-            changeSchematic();
-            break;
-        case BUTTON_STYLE_ID:
-            List<String> styles = Schematics.getStylesForHut(huts.get(hutDecIndex));
-            styleIndex = (styleIndex + 1) % styles.size();
-            try
-            {
-                findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(styles.get(styleIndex));
-            }
-            catch (NullPointerException e)
-            {
-                Log.logger.error("findPane error, report to mod authors", e);
-            }
-            changeSchematic();
-            break;
-        case BUTTON_DECORATION_ID:
-            //TODO
-            break;
-
-        case BUTTON_CONFIRM:
-            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(huts.get(hutDecIndex),
-                    Schematics.getStylesForHut(huts.get(hutDecIndex)).get(styleIndex), posX, posY, posZ, rotation));
-            MineColonies.proxy.setActiveSchematic(null);
-            close();
-            break;
-        case BUTTON_CANCEL:
-            MineColonies.proxy.setActiveSchematic(null);
-            close();
-            break;
-        case BUTTON_LEFT:
-        case BUTTON_RIGHT:
-        case BUTTON_FORWARD:
-        case BUTTON_BACK:
-            moveArrow(button.getID());
-            break;
-        case BUTTON_UP:
-            posY++;
-            updatePosition();
-            break;
-        case BUTTON_DOWN:
-            posY--;
-            updatePosition();
-            break;
-
-        case BUTTON_ROTATE_LEFT:
-            rotation = (rotation + 3) % 4;
-            //TODO make a reverse rotate
-            MineColonies.proxy.getActiveSchematic().rotate();
-            MineColonies.proxy.getActiveSchematic().rotate();
-            MineColonies.proxy.getActiveSchematic().rotate();
-            updatePosition();
-            break;
-        case BUTTON_ROTATE_RIGHT:
-            rotation = (rotation + 1) % 4;
-            MineColonies.proxy.getActiveSchematic().rotate();
-            updatePosition();
-            break;
-
-        default:
-            Log.logger.warn("WindowBuildTool: Unhandled Button ID:" + button.getID());
-        }
+        registerButton(BUTTON_TYPE_ID, this::placementModeClicked);
+        registerButton(BUTTON_HUT_DEC_ID, this::hutDecClicked);
+        registerButton(BUTTON_STYLE_ID, this::styleClicked);
+        registerButton(BUTTON_LEVEL_ID, this::levelClicked);
+        registerButton(BUTTON_CONFIRM, this::confirmClicked);
+        registerButton(BUTTON_CANCEL, this::cancelClicked);
+        registerButton(BUTTON_LEFT, this::moveLeftClicked);
+        registerButton(BUTTON_RIGHT, this::moveRightClicked);
+        registerButton(BUTTON_BACK, this::moveBackClicked);
+        registerButton(BUTTON_FORWARD, this::moveForwardClicked);
+        registerButton(BUTTON_UP, this::moveUpClicked);
+        registerButton(BUTTON_DOWN, this::moveDownClicked);
+        registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
+        registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
     }
 
     /**
-     * Moves the pointer to a new position
-     *
-     * @param id    Button ID
+     * Called when the window is opened.
+     * Sets up the buttons for either hut mode or decoration mode.
      */
-    private void moveArrow(String id)
+    @Override
+    public void onOpened()
     {
-        int facing = MathHelper.floor_double((double) (this.mc.thePlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-
-        switch(id)
+        if (Settings.instance.isInHutMode())
         {
-        case BUTTON_LEFT:
-            switch (facing)
-            {
-            case 0:
-                posX++;
-                break;
-            case 1:
-                posZ++;
-                break;
-            case 2:
-                posX--;
-                break;
-            case 3:
-                posZ--;
-                break;
-            }
-            break;
-        case BUTTON_RIGHT:
-            switch (facing)
-            {
-            case 0:
-                posX--;
-                break;
-            case 1:
-                posZ--;
-                break;
-            case 2:
-                posX++;
-                break;
-            case 3:
-                posZ++;
-                break;
-            }
-            break;
-        case BUTTON_FORWARD:
-            switch (facing)
-            {
-            case 0:
-                posZ++;
-                break;
-            case 1:
-                posX--;
-                break;
-            case 2:
-                posZ--;
-                break;
-            case 3:
-                posX++;
-                break;
-                default:
-                    break;
-            }
-            break;
-        case BUTTON_BACK:
-            switch (facing)
-            {
-            case 0:
-                posZ--;
-                break;
-            case 1:
-                posX++;
-                break;
-            case 2:
-                posZ++;
-                break;
-            case 3:
-                posX--;
-                break;
-            }
-            break;
+            loadHutMode();
         }
-        updatePosition();
+        else
+        {
+            loadDecorationMode();
+        }
+    }
+
+    private void loadDecorationMode()
+    {
+        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.decoration"));
+
+        hutDec.addAll(Schematics.getDecorations());
+
+        setupButtons();
+    }
+
+    private void loadHutMode()
+    {
+        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
+
+        InventoryPlayer inventory = this.mc.thePlayer.inventory;
+
+        //Add possible hutDec (has item) to list, if it has a schematic, and player has the block
+        hutDec.addAll(Schematics.getHuts().stream()
+                                .filter(hut -> inventoryHasHut(inventory, hut) && Schematics.getStylesForHut(hut) != null)
+                                .collect(Collectors.toList()));
+
+        setupButtons();
+    }
+
+    private void setupButtons()
+    {
+        if(hutDec.isEmpty())
+        {
+            Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
+            buttonHutDec.setLabel(LanguageHandler.getString(
+                    Settings.instance.isInHutMode() ? "com.minecolonies.gui.buildtool.nohut" : "com.minecolonies.gui.buildtool.nodecoration"));
+            buttonHutDec.setEnabled(false);
+
+            Settings.instance.setActiveSchematic(null);
+        }
+        else
+        {
+            if (Settings.instance.getActiveSchematic() != null)
+            {
+                hutDecIndex = Math.max(0, hutDec.indexOf(Settings.instance.getHutDec()));
+                styleIndex = Math.max(0, getStyles().indexOf(Settings.instance.getStyle()));
+            }
+
+            Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
+            buttonHutDec.setLabel(hutDec.get(hutDecIndex));
+            buttonHutDec.setEnabled(true);
+
+            Button buttonStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
+            buttonStyle.setVisible(true);
+            buttonStyle.setLabel(getStyles().get(styleIndex));
+
+            if (Settings.instance.getActiveSchematic() == null)
+            {
+                rotation = 0;
+                level = 0;
+                changeSchematic();
+            }
+
+            updateLevelButton();
+        }
+    }
+
+    private void updateLevelButton()
+    {
+        Button buttonLevel = findPaneOfTypeByID(BUTTON_LEVEL_ID, Button.class);
+        if (Settings.instance.isInHutMode())
+        {
+            buttonLevel.setVisible(true);
+            buttonLevel.setLabel("Level: " + (level + 1));
+        }
+        else
+        {
+            buttonLevel.setVisible(false);
+        }
+    }
+
+    private static boolean inventoryHasHut(InventoryPlayer inventory, String hut)
+    {
+        return inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, DEFAULT_POS));
+    }
+
+    /**
+     * Called when the window is closed.
+     * If there is a current schematic, its information is stored in {@link Settings}.
+     */
+    @Override
+    public void onClosed()
+    {
+        if (Settings.instance.getActiveSchematic() != null)
+        {
+            Settings.instance.setSchematicInfo(
+                    findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel(),
+                    findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel(),
+                    level,
+                    rotation);
+        }
+    }
+
+    private List<String> getStyles()
+    {
+        if (Settings.instance.isInHutMode())
+        {
+            return Schematics.getStylesForHut(hutDec.get(hutDecIndex));
+        }
+        else
+        {
+            return Schematics.getStylesForDecoration(hutDec.get(hutDecIndex));
+        }
     }
 
     /**
@@ -354,23 +321,27 @@ public class WindowBuildTool extends Window implements Button.Handler
      */
     private void changeSchematic()
     {
-        if(MineColonies.isClient())
+        String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
+        String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+
+        SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""));
+
+        Settings.instance.setActiveSchematic(schematic.getSchematic());
+
+        Settings.instance.moveTo(this.pos);
+
+        //Catch up on rotations, makes it so going up a level or changing style doesn't reset rotation.
+        if(this.rotation == ROTATE_LEFT)
         {
-            String hut;
-            String style;
-
-            hut = findPaneOfTypeByID(BUTTON_HUT_ID, Button.class).getLabel();
-            style = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
-
-            SchematicWorld schematic = new Schematic(this.mc.theWorld, style + '/' + hut + '1').getWorldForRender();
-            MineColonies.proxy.setActiveSchematic(schematic);
-
-            Settings.instance.renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
-            Settings.instance.createRendererSchematicChunk();
-
-            updatePosition();
-
-            schematic.setRendering(true);
+            RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
+        }
+        else
+        {
+            //Runs 0, 1, or 2 times.
+            for(int times = 0; times < rotation; times++)
+            {
+                RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
+            }
         }
     }
 
@@ -379,6 +350,211 @@ public class WindowBuildTool extends Window implements Button.Handler
      */
     private void updatePosition()
     {
-        Settings.instance.moveTo(posX, posY, posZ);
+        Settings.instance.moveTo(pos);
+        RenderSchematic.INSTANCE.refresh();
+    }
+
+    /*
+     * ---------------- Button Handling -----------------
+     */
+
+    /**
+     * Change placement modes. Hut or Decoration.
+     *
+     * @param button required parameter.
+     */
+    private void placementModeClicked(Button button)
+    {
+        Settings.instance.setActiveSchematic(null);
+        hutDec.clear();
+        hutDecIndex = 0;
+        styleIndex = 0;
+
+        if (Settings.instance.isInHutMode())
+        {
+            Settings.instance.setInHutMode(false);
+            loadDecorationMode();
+        }
+        else
+        {
+            Settings.instance.setInHutMode(true);
+            loadHutMode();
+        }
+    }
+
+    /**
+     * Change to the next hut/decoration.
+     *
+     * @param button required parameter.
+     */
+    private void hutDecClicked(Button button)
+    {
+        if (hutDec.size() == 1)
+        {
+            return;
+        }
+
+        hutDecIndex = (hutDecIndex + 1) % hutDec.size();
+        styleIndex = 0;
+
+        button.setLabel(hutDec.get(hutDecIndex));
+        findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyles().get(styleIndex));
+
+        //TODO: Should we reset rotation here? Do we want rotation to be reset when switching hut types.
+        rotation = 0;
+        level = 0;
+        changeSchematic();
+    }
+
+    /**
+     * Change to the next style.
+     *
+     * @param button required parameter.
+     */
+    private void styleClicked(Button button)
+    {
+        List<String> styles = getStyles();
+
+        if (styles.size() == 1)
+        {
+            return;
+        }
+
+        styleIndex = (styleIndex + 1) % styles.size();
+
+        button.setLabel(styles.get(styleIndex));
+
+        changeSchematic();
+    }
+
+    /**
+     * Change to the next level building.
+     *
+     * @param button required parameter.
+     */
+    private void levelClicked(Button button)
+    {
+        int maxLevel = Schematics.getMaxLevelForHut(hutDec.get(hutDecIndex));
+        if (maxLevel > 1)
+        {
+            level = (level + 1) % maxLevel;
+            updateLevelButton();
+
+            changeSchematic();
+        }
+    }
+
+    /**
+     * Send a packet telling the server to place the current schematic.
+     *
+     * @param button required parameter.
+     */
+    private void confirmClicked(Button button)
+    {
+        MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(hutDec.get(hutDecIndex),
+                getStyles().get(styleIndex), this.pos, rotation, Settings.instance.isInHutMode()));
+        Settings.instance.setActiveSchematic(null);
+        close();
+    }
+
+    /**
+     * Cancel the current schematic.
+     *
+     * @param button required parameter.
+     */
+    private void cancelClicked(Button button)
+    {
+        Settings.instance.setActiveSchematic(null);
+        close();
+    }
+
+    /**
+     * Move the schematic left.
+     *
+     * @param button required parameter.
+     */
+    private void moveLeftClicked(Button button)
+    {
+        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
+        updatePosition();
+    }
+
+    /**
+     * Move the schematic right.
+     *
+     * @param button required parameter.
+     */
+    private void moveRightClicked(Button button)
+    {
+        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
+        updatePosition();
+    }
+
+    /**
+     * Move the schematic forward.
+     *
+     * @param button required parameter.
+     */
+    private void moveForwardClicked(Button button)
+    {
+        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing()));
+        updatePosition();
+    }
+
+    /**
+     * Move the schematic back.
+     *
+     * @param button required parameter.
+     */
+    private void moveBackClicked(Button button)
+    {
+        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
+        updatePosition();
+    }
+
+    /**
+     * Move the schmatic up.
+     *
+     * @param button required parameter.
+     */
+    private void moveUpClicked(Button button)
+    {
+        BlockPosUtil.set(pos, pos.up());
+        updatePosition();
+    }
+
+    /**
+     * Move the schematic down.
+     *
+     * @param button required parameter.
+     */
+    private void moveDownClicked(Button button)
+    {
+        BlockPosUtil.set(pos, pos.down());
+        updatePosition();
+    }
+
+    /**
+     * Rotate the schematic clockwise.
+     *
+     * @param button required parameter.
+     */
+    private void rotateRightClicked(Button button)
+    {
+        rotation = (rotation + ROTATE_RIGHT) % POSSIBLE_ROTATIONS;
+        RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
+        updatePosition();
+    }
+
+    /**
+     * Rotate the schematic counter clockwise.
+     *
+     * @param button required parameter.
+     */
+    private void rotateLeftClicked(Button button)
+    {
+        rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
+        RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
+        updatePosition();
     }
 }

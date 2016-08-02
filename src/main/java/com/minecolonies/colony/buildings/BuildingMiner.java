@@ -6,8 +6,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobMiner;
-import com.minecolonies.entity.ai.Level;
-import com.minecolonies.entity.ai.Node;
+import com.minecolonies.entity.ai.citizen.miner.Level;
+import com.minecolonies.entity.ai.citizen.miner.Node;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -20,7 +20,7 @@ import net.minecraftforge.common.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuildingMiner extends BuildingWorker
+public class BuildingMiner extends AbstractBuildingWorker
 {
     private static final    String              TAG_FLOOR_BLOCK         = "floorBlock";//TODO: is this something that needs to be saved? id say yea mw
     private static final    String              TAG_FENCE_BLOCK         = "fenceBlock";
@@ -258,7 +258,7 @@ public class BuildingMiner extends BuildingWorker
         }
     }
 
-    public static class View extends BuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
         public int[] levels;
         public int   current;

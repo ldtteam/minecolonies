@@ -2,7 +2,7 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
@@ -32,10 +32,10 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     /**
      * Creates a build request message
      *
-     * @param building      Building of the request
+     * @param building      AbstractBuilding of the request
      * @param mode          Mode of the request, 1 is repair, 0 is build
      */
-    public BuildRequestMessage(Building.View building, int mode)
+    public BuildRequestMessage(AbstractBuilding.View building, int mode)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -67,7 +67,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
             return null;
         }
 
-        Building building = colony.getBuilding(message.buildingId);
+        AbstractBuilding building = colony.getBuilding(message.buildingId);
         if (building == null)
         {
             return null;

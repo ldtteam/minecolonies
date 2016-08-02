@@ -1,6 +1,6 @@
 package com.schematica.world.schematic;
 
-public class UnsupportedFormatException extends Exception
+class UnsupportedFormatException extends Exception
 {
     public UnsupportedFormatException(String format)
     {

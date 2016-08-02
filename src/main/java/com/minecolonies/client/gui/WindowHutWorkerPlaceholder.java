@@ -1,14 +1,14 @@
 package com.minecolonies.client.gui;
 
-import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.lib.Constants;
 
 /**
  * Window for worker.
  * Placeholder for many different jobs
- * @param <B>        Object extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
+ * @param <B>        Object extending {@link AbstractBuildingWorker.View}
  */
-public class WindowHutWorkerPlaceholder<B extends BuildingWorker.View> extends AbstractWindowWorkerBuilding<B>
+public class WindowHutWorkerPlaceholder<B extends AbstractBuildingWorker.View> extends AbstractWindowWorkerBuilding<B>
 {
     private                 String name;
     private static final    String WORKER_PLACEHOLDER_RESOURCE_SUFFIX = ":gui/windowHutWorkerPlaceholder.xml";
@@ -17,7 +17,7 @@ public class WindowHutWorkerPlaceholder<B extends BuildingWorker.View> extends A
      * Window for worker placeholder.
      * Used by Baker, Blacksmith, Lumberjack ans Stonemason
      *
-     * @param building      Building extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
+     * @param building      AbstractBuilding extending {@link AbstractBuildingWorker.View}
      * @param name          Name of the the view (resource)
      */
     public WindowHutWorkerPlaceholder(B building, String name)

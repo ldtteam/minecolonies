@@ -1,0 +1,2 @@
+Manifest-Version: 1.0
+FMLAT: "minecolonies_at.cfg"

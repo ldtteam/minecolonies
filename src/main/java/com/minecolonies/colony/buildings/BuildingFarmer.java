@@ -10,7 +10,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
-public class BuildingFarmer extends BuildingWorker
+public class BuildingFarmer extends AbstractBuildingWorker
 {
 
     public                  int     wheat    = 100;
@@ -78,7 +78,7 @@ public class BuildingFarmer extends BuildingWorker
         compound.setTag(TAG_FARMER, farmerCompound);
     }
 
-    public static class View extends BuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
         public int wheat = 100,
                 potato = 0,

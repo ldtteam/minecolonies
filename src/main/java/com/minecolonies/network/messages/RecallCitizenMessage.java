@@ -2,7 +2,7 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Utils;
@@ -32,7 +32,7 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
      *
      * @param building      View of the building the citizen is working in
      */
-    public RecallCitizenMessage(BuildingWorker.View building)
+    public RecallCitizenMessage(AbstractBuildingWorker.View building)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -58,7 +58,7 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
-            BuildingWorker building = colony.getBuilding(message.buildingId, BuildingWorker.class);
+            AbstractBuildingWorker building = colony.getBuilding(message.buildingId, AbstractBuildingWorker.class);
             if (building != null)
             {
                 BlockPos loc = building.getLocation();
