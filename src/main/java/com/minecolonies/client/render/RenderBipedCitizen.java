@@ -61,16 +61,16 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToMaleModelMap.put    (Model.DELIVERYMAN,     new ModelEntityDeliverymanMale());
         idToMaleModelMap.put    (Model.LUMBERJACK,      new ModelEntityLumberjackMale());
         idToMaleModelMap.put    (Model.FARMER,          new ModelEntityFarmerMale());
-        idToMaleModelMap.put    (Model.FISHERMAN,       new ModelBiped());
+        idToMaleModelMap.put    (Model.FISHERMAN,       new ModelEntityFishermanMale());
 
         idToFemaleModelMap.put  (Model.NOBLE,           new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put  (Model.ARISTOCRAT,      new ModelEntityCitizenFemaleAristocrat());
         idToFemaleModelMap.put  (Model.BUILDER,         new ModelEntityBuilderFemale());
-        idToFemaleModelMap.put  (Model.DELIVERYMAN,     new ModelEntityDeliverymanMale());
+        idToFemaleModelMap.put  (Model.DELIVERYMAN,     new ModelEntityDeliverymanFemale());
         idToFemaleModelMap.put  (Model.MINER,           new ModelEntityMinerFemale());
         idToFemaleModelMap.put  (Model.LUMBERJACK,      new ModelEntityLumberjackFemale());
         idToFemaleModelMap.put  (Model.FARMER,          new ModelEntityFarmerFemale());
-        idToFemaleModelMap.put  (Model.FISHERMAN,       new ModelEntityCitizenFemaleCitizen());
+        idToFemaleModelMap.put  (Model.FISHERMAN,       new ModelEntityFishermanFemale());
 
     }
 
@@ -83,24 +83,20 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     }
 
     @Override
-    public void doRender(EntityCitizen entity, double d, double d1, double d2, float f, float f1)
+    public void doRender(EntityCitizen citizen, double d, double d1, double d2, float f, float f1)
     {
-        if (entity instanceof EntityCitizen)
+        modelBipedMain = citizen.isFemale() ?
+                idToFemaleModelMap.get(citizen.getModelID()) :
+                idToMaleModelMap.get(citizen.getModelID());
+
+        if (modelBipedMain == null)
         {
-            EntityCitizen citizen = (EntityCitizen) entity;
-
-            modelBipedMain = citizen.isFemale() ?
-                    idToFemaleModelMap.get(citizen.getModelID()) :
-                    idToMaleModelMap.get(citizen.getModelID());
-
-            if (modelBipedMain == null)
-            {
-                modelBipedMain = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
-            }
-
-            mainModel = modelBipedMain;
+            modelBipedMain = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
         }
-        super.doRender(entity, d, d1, d2, f, f1);
+
+        mainModel = modelBipedMain;
+
+        super.doRender(citizen, d, d1, d2, f, f1);
     }
 
     @Override

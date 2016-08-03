@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 import java.nio.FloatBuffer;
 import java.util.Stack;
 
-/*
+/**
  * A Pane is the root of all UI objects
  */
 public class Pane extends Gui
@@ -37,6 +37,7 @@ public class Pane extends Gui
      */
     public Pane()
     {
+        //Required for panes.
     }
 
     /**

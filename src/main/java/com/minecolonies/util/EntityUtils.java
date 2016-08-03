@@ -1,10 +1,12 @@
 package com.minecolonies.util;
 
 import com.minecolonies.entity.EntityCitizen;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3i;
 import net.minecraft.world.World;
 
@@ -22,7 +24,11 @@ public final class EntityUtils
     /**
      * Default range for moving to something until we stop
      */
-    private static final int DEFAULT_MOVE_RANGE = 3;
+    private static final int DEFAULT_MOVE_RANGE       = 3;
+    /**
+     * How many blocks the citizen needs to stand safe
+     */
+    private static final int AIR_SPACE_ABOVE_TO_CHECK = 2;
 
     /**
      * Private constructor to hide the implicit public one
@@ -245,5 +251,43 @@ public final class EntityUtils
     {
         PathPoint pathpoint = citizen.getNavigator().getPath().getFinalPathPoint();
         return pathpoint != null && pathpoint.xCoord == x && pathpoint.zCoord == z;
+    }
+
+    /**
+     * Check for free space AIR_SPACE_ABOVE_TO_CHECK blocks high.
+     * <p>
+     * And ensure a solid ground
+     *
+     * @param world          the world to look in
+     * @param groundPosition the position to maybe stand on
+     * @return true if a suitable Place to walk to
+     */
+    public static boolean checkForFreeSpace(World world, BlockPos groundPosition)
+    {
+        for (int i = 1; i < AIR_SPACE_ABOVE_TO_CHECK; i++)
+        {
+            if (solidOrLiquid(world, groundPosition.up(i)))
+            {
+                return false;
+            }
+        }
+        return world.getBlockState(groundPosition).getBlock().getMaterial().isSolid();
+    }
+
+    /**
+     * Checks if a blockPos in a world is solid or liquid.
+     * <p>
+     * Useful to find a suitable Place to stand.
+     * (avoid these blocks to find one)
+     *
+     * @param world    the world to look in
+     * @param blockPos the blocks position
+     * @return true if solid or liquid
+     */
+    public static boolean solidOrLiquid(World world, BlockPos blockPos)
+    {
+        final Material material = world.getBlockState(blockPos).getBlock().getMaterial();
+        return material.isSolid()
+               || material.isLiquid();
     }
 }

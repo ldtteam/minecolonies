@@ -1,0 +1,132 @@
+com.minecolonies.error.supplyChestAlreadyPlaced=Du har allerede placeret et forsyningsskib
+
+com.minecolonies.gui.townHall.build=Byg Rådhus
+com.minecolonies.gui.townHall.repair=Reparere Rådhus
+com.minecolonies.gui.townHall.recall=Tilbagekald Indbygger
+com.minecolonies.gui.townHall.togglespec=Vælg Specilation
+com.minecolonies.gui.townHall.currTownHallName=Koloni Navn:
+com.minecolonies.gui.townHall.currentSpecialization=Nuværende Specilation:
+com.minecolonies.gui.townHall.rename=Omdøb Koloni
+com.minecolonies.gui.townHall.rename.title=Omdøb Din Koloni
+com.minecolonies.gui.townHall.actions=Handlinger
+com.minecolonies.gui.townHall.defaultName=%s's Koloni
+com.minecolonies.gui.townHall.citizens=Indbygger
+com.minecolonies.gui.townHall.permissions=Tilladelser
+
+com.minecolonies.gui.townHall.population.totalCitizens=Indbygger Antal: %d/%d
+com.minecolonies.gui.townHall.population.unemployed=Arbejdsløse: %d
+com.minecolonies.gui.townHall.population.builders=Håndværkere: %d
+com.minecolonies.gui.townHall.population.deliverymen=Fragtman: %d
+
+com.minecolonies.gui.workerHuts.buildersHut=Håndværker's Hus
+com.minecolonies.gui.workerHuts.warehouse=Varehus
+com.minecolonies.gui.workerHuts.workerAssigned=Ansatte Arbejdere:
+com.minecolonies.gui.workerHuts.workerLevel=Arbejder Level: %s
+com.minecolonies.gui.workerHuts.hire=Ansæt Arbejder
+com.minecolonies.gui.workerHuts.fire=Fyr Arbejder
+com.minecolonies.gui.workerHuts.recall=Tilbagekald Arbejder
+com.minecolonies.gui.workerHuts.build=Byg Bygning
+com.minecolonies.gui.workerHuts.upgrade=Upgradere Bygning
+com.minecolonies.gui.workerHuts.upgradeUnavailable=Ingen Opgradering Tilgængelig
+com.minecolonies.gui.workerHuts.repair=Reparere Bygning
+com.minecolonies.gui.workerHuts.buildType=Bygnings Type:
+com.minecolonies.gui.workerHuts.information=Information
+com.minecolonies.gui.workerHuts.settings=Indstillinger
+com.minecolonies.gui.workerHuts.minerHut=Minearbejder
+com.minecolonies.gui.workerHuts.minerNode=Notat
+com.minecolonies.gui.workerHuts.minerMineNode=Mine Level
+com.minecolonies.gui.workerHuts.minerNodeList=Levels
+com.minecolonies.gui.workerHuts.homeHut=Indbyggernes Hus
+com.minecolonies.gui.workerHuts.fisherman=Fiskernes Hus
+com.minecolonies.gui.workerHuts.lumberjackHut=Skovhuggernes Hus
+com.minecolonies.gui.buildtool.nullHut=Ingen Hus Tilgængelige
+
+com.minecolonies.gui.warehouse.toBlacksmith=Levere Til Smed:
+com.minecolonies.gui.warehouse.toStonemason=Levere Til Stenbrud:
+com.minecolonies.gui.warehouse.toGuards=Levere Til Vagterne:
+com.minecolonies.gui.warehouse.visitCitizenChests=Besøg Indbyggernes Kister:
+
+com.minecolonies.gui.citizen.skills=kompentancer
+com.minecolonies.gui.citizen.skills.strength=Styrke: %d
+com.minecolonies.gui.citizen.skills.endurance=Udholdenhed: %d
+com.minecolonies.gui.citizen.skills.charisma=Karisme: %d
+com.minecolonies.gui.citizen.skills.intelligence=Indtelligents: %d
+com.minecolonies.gui.citizen.skills.dexterity=Dexterity: %d
+
+com.minecolonies.gui.buildtool.nohut=Ingen Bygninger
+com.minecolonies.gui.buildtool.nodecoration=Ingen Dekorationer
+com.minecolonies.gui.buildtool.hut=Bygninger
+com.minecolonies.gui.buildtool.decoration=Dekorationer
+
+com.minecolonies.gui.hiring.on=Manual
+com.minecolonies.gui.hiring.off=Auotomatisk
+com.minecolonies.gui.hiring.buttonHire=Ansæt
+com.minecolonies.gui.hiring.description=Vælg en arbejder til jobbet.
+com.minecolonies.gui.townHall.addPlayer=Tilføj spiller:
+com.minecolonies.gui.townHall.jobHiring= Arbejder ansættelses Mode:
+
+tile.minecolonies.blockHutCitizen.name=Indbyggernes Hus
+tile.minecolonies.blockHutBaker.name=Bager
+tile.minecolonies.blockHutBlacksmith.name=Smede
+tile.minecolonies.blockHutBuilder.name=Håndværkerens Hus
+tile.minecolonies.blockHutWarehouse.name=Varehus
+tile.minecolonies.blockHutFarmer.name=Gård
+tile.minecolonies.blockHutLumberjack.name=Savværk
+tile.minecolonies.blockHutFisherman.name=Fiskerhus
+tile.minecolonies.blockHutMiner.name=Mine
+tile.minecolonies.blockHutStonemason.name=Stenbrud
+tile.minecolonies.blockHutTownHall.name=Rådhus
+tile.minecolonies.substitutionBlock.name= SchematicHolder
+
+tile.blockHut.messageNoPermission=Du har ikke nogen tilladelse til at åbne huse i %s.
+
+com.minecolonies.job.Builder=Håndværker
+com.minecolonies.job.Deliveryman=Fragtmand
+com.minecolonies.job.Farmer=Landmand
+com.minecolonies.job.Lumberjack=Skovhugger
+com.minecolonies.job.Miner=Miner
+com.minecolonies.job.Fisherman=Fisker
+
+tile.blockHutTownHall.messageMaxSize=Max Indbygger Antal Nået
+tile.blockHutTownHall.messageColonistDead=En Indbygger Har Stillet Træskoene!
+tile.blockHutTownHall.messagePlacedAlready=Du Har Allerede Placeret Et Rådhus
+tile.blockHutTownHall.messageInvalidWorld=Du kan ikke placere at rådhus i denne type verden
+tile.blockHutTownHall.messageTooClose=For tæt på rådhuset (gå længere væk fra rådhuset)
+
+tile.blockHut.messageTooFarFromTownHall=Du skal være tættere på rådhuset
+tile.blockHut.messageNoTownHall=Du skal først placere et rådhus
+
+item.minecolonies.supplyChestDeployer.name=Forsygningsskib's kiste
+item.minecolonies.scepterGold.name=Akitekt Værktøj
+item.minecolonies.scepterSteel.name=Scannings Værktøj
+item.minecolonies.caliper.name=Caliper
+
+item.supplyChestDeployer.invalid=Du skal være i nærheden af et større vandområde for at kunne placere kisten
+
+item.scepterSteel.point=Punkt Et Gemt
+item.scepterSteel.point2=Punkt To Gemt, Højre Click Igen For At Gemme Konstruktionen
+item.scepterSteel.samePoint=Det Var Det Samme Punkt
+item.scepterSteel.scanFormat=SCAN_%s-%s.Konstruktion
+item.scepterSteel.scanSuccess=Succes Konstruktionen Er Gemt Som %s
+item.scepterSteel.scanFailure=Scanningen Kunne IKKE Gemmes
+
+item.caliper.message.same=Det Er Den Samme Block.
+item.caliper.message.line=Det er en %d block linje.
+item.caliper.message.square=Det er en %d by %d Firkant.
+item.caliper.message.cube=Det er en %d by %d by %d Kasse.
+
+itemGroup.minecolonies=MineKoloni
+
+entity.worker.inventoryFullChestFull=der er ikke mere plads i min kiste. Vil du gerne lave plads i kisten, så jeg kan komme af med mine ting?
+
+entity.builder.messageBuildStart=Begyndt at Bygge %s
+entity.builder.messageBuildComplete=Blev Færdig Med At Bygge %s
+entity.builder.messageNeedMaterial=Jeg mangler %s (Amount: %d)
+
+entity.miner.messageNeedTools=Mangler Værktøj %s!
+entity.miner.messageNeedBlockAndItem=Jeg mangler %s!
+entity.miner.messageNeedBetterTools=Jeg mangler bedre værktøj!
+entity.miner.messageMoreBlocks=Jeg skal ha flere %s!
+entity.miner.messageRequiresBetterHut=Upgradere mit hus så jeg kan komme længere ned!
+
+entity.fisherman.messageWaterTooFar=Fiskerhuset er for langt væk fra vandet!

@@ -1,7 +1,7 @@
 package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
- * Add or Update a Building.View to a ColonyView on the client
+ * Add or Update a AbstractBuilding.View to a ColonyView on the client
  */
 public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<ColonyViewBuildingViewMessage, IMessage>
 {
@@ -23,9 +23,9 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
 
     /**
      * Creates a
-     * @param building      Building to add or update a view for
+     * @param building      AbstractBuilding to add or update a view for
      */
-    public ColonyViewBuildingViewMessage(Building building)
+    public ColonyViewBuildingViewMessage(AbstractBuilding building)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();

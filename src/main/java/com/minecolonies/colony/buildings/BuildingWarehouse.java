@@ -10,7 +10,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
-public class BuildingWarehouse extends BuildingWorker
+public class BuildingWarehouse extends AbstractBuildingWorker
 {
 
     private static final    String  WAREHOUSE               = "Warehouse";
@@ -133,7 +133,7 @@ public class BuildingWarehouse extends BuildingWorker
     /**
      * BuildingWarehouse View
      */
-    public static class View extends BuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
         public boolean blacksmithGold = false;
         public boolean blacksmithDiamond = false;

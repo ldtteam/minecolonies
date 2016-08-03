@@ -4,13 +4,11 @@ import com.minecolonies.lib.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 /**
  * Logging utility class
  */
 public class Log
 {
-
     /**
      * Mod logger
      */

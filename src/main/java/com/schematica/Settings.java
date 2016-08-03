@@ -1,109 +1,190 @@
 package com.schematica;
 
-import com.minecolonies.MineColonies;
-import com.schematica.client.renderer.RendererSchematicChunk;
-import com.schematica.world.SchematicWorld;
+import com.minecolonies.util.BlockPosUtil;
+import com.schematica.client.renderer.RenderSchematic;
+import com.schematica.client.world.SchematicWorld;
+import com.schematica.world.storage.Schematic;
+import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.client.Minecraft;
-
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.util.EnumFacing;
-import org.lwjgl.util.vector.Vector3f;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class Settings {
+/**
+ * Class used to store
+ */
+public final class Settings
+{
+    /**
+     * Single instance of this class.
+     */
     public static final Settings instance = new Settings();
 
-    private final Vector3f translationVector = new Vector3f();
-    public Minecraft minecraft = Minecraft.getMinecraft();
-    public Vector3f playerPosition = new Vector3f();
-    public final List<RendererSchematicChunk> sortedRendererSchematicChunk = new ArrayList<>();
-    public BlockRendererDispatcher renderBlocks = null;
-    public Vector3f pointA = new Vector3f();
-    public Vector3f pointB = new Vector3f();
-    public Vector3f pointMin = new Vector3f();
-    public Vector3f pointMax = new Vector3f();
-    public int rotationRender = 0;
-    public EnumFacing orientation = EnumFacing.NORTH;
-    public Vector3f offset = new Vector3f();
-    public int rotation = 0;
-    public String hut = "";
-    public String style = "";
+    private boolean inHutMode = true;
 
-    public boolean isRenderingGuide = false;
-    public int chatLines = 0;
-    public boolean isSaveEnabled = true;
-    public boolean isLoadEnabled = true;
-    public boolean isPendingReset = false;
+    private SchematicWorld schematic = null;
 
-    private Settings() {
-    }
+    private final BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos();
 
-    public void reset() {
-        this.chatLines = 0;
-        this.isSaveEnabled = true;
-        this.isLoadEnabled = true;
-        this.isRenderingGuide = false;
-        MineColonies.proxy.setActiveSchematic(null);
-        this.renderBlocks = null;
-        while (this.sortedRendererSchematicChunk.size() > 0) {
-            this.sortedRendererSchematicChunk.remove(0).delete();
-        }
-    }
+    private int    rotation = 0;
+    private String hutDec   = "";
+    private String style    = "";
+    private int    level    = 0;
 
-    public void createRendererSchematicChunk() {
-        SchematicWorld schematic = MineColonies.proxy.getActiveSchematic();
-        int width = (schematic.getWidth() - 1) / RendererSchematicChunk.CHUNK_WIDTH + 1;
-        int height = (schematic.getHeight() - 1) / RendererSchematicChunk.CHUNK_HEIGHT + 1;
-        int length = (schematic.getLength() - 1) / RendererSchematicChunk.CHUNK_LENGTH + 1;
+    private boolean isPendingReset = false;
 
-        while (this.sortedRendererSchematicChunk.size() > 0) {
-            this.sortedRendererSchematicChunk.remove(0).delete();
-        }
-
-        int x, y, z;
-        for (x = 0; x < width; x++) {
-            for (y = 0; y < height; y++) {
-                for (z = 0; z < length; z++) {
-                    this.sortedRendererSchematicChunk.add(new RendererSchematicChunk(schematic, x, y, z));
-                }
-            }
-        }
-    }
-
-    public Vector3f getTranslationVector() {
-        Vector3f.sub(this.playerPosition, this.offset, this.translationVector);
-        return this.translationVector;
-    }
-
-    public float getTranslationX() {
-        return this.playerPosition.x - this.offset.x;
-    }
-
-    public float getTranslationY() {
-        return this.playerPosition.y - this.offset.y;
-    }
-
-    public float getTranslationZ() {
-        return this.playerPosition.z - this.offset.z;
-    }
-
-    public void refreshSchematic() {
-        for (RendererSchematicChunk renderer : this.sortedRendererSchematicChunk) {
-            renderer.setDirty();
-        }
-    }
-
-    public void moveTo(int x, int y, int z)
+    private Settings()
     {
-        SchematicWorld schematic = MineColonies.proxy.getActiveSchematic();
+    }
 
-        this.offset.x = x - schematic.getOffsetX();
-        this.offset.y = y - schematic.getOffsetY();
-        this.offset.z = z - schematic.getOffsetZ();
+    /**
+     * Reset the schematic rendering.
+     */
+    public void reset()
+    {
+        schematic = null;
+        RenderSchematic.INSTANCE.setWorldAndLoadRenderers(null);
 
-        refreshSchematic();
+        isPendingReset = false;
+    }
+
+    /**
+     * Set location to render current schematic.
+     *
+     * @param pos location to render.
+     */
+    public void moveTo(BlockPos pos)
+    {
+        if(this.schematic == null)
+        {
+            return;
+        }
+
+        BlockPosUtil.set(offset, pos.subtract(schematic.getSchematic().getOffset()));
+        BlockPosUtil.set(schematic.position, offset);
+    }
+
+    /**
+     * Set a schematic to render.
+     *
+     * @param schematic schematic to render.
+     */
+    public void setActiveSchematic(Schematic schematic)
+    {
+        if(schematic != null)
+        {
+            this.schematic = new SchematicWorld(schematic);
+
+            RenderSchematic.INSTANCE.setWorldAndLoadRenderers(this.schematic);
+            this.schematic.isRendering = true;
+        }
+        else
+        {
+            reset();
+        }
+    }
+
+    /**
+     * @return The schematic we are currently rendering.
+     */
+    @Nullable
+    public Schematic getActiveSchematic()
+    {
+        return this.schematic == null ? null : this.schematic.getSchematic();
+    }
+
+    /**
+     * @return The schematic world we are currently rendering. null if not currently rendering anything.
+     */
+    public SchematicWorld getSchematicWorld()
+    {
+        return schematic;
+    }
+
+    /**
+     * @return true if the client is in hut mode.
+     */
+    public boolean isInHutMode()
+    {
+        return inHutMode;
+    }
+
+    /**
+     * @param mode true if in hut mode, false if in decoration mode.
+     */
+    public void setInHutMode(boolean mode)
+    {
+        inHutMode = mode;
+    }
+
+    /**
+     * Saves the schematic info when the client closes the build tool window.
+     *
+     * @param hutDec Hut/decoration name.
+     * @param style AbstractBuilding style.
+     * @param level AbstractBuilding level.
+     * @param rotation The number of times the building is rotated.
+     */
+    public void setSchematicInfo(String hutDec, String style, int level, int rotation)
+    {
+        this.hutDec   = hutDec;
+        this.style    = style;
+        this.level    = level;
+        this.rotation = rotation;
+    }
+
+    /**
+     * @return The name of the hut/decoration.
+     */
+    public String getHutDec()
+    {
+        return hutDec;
+    }
+
+    /**
+     * @return The name of the style.
+     */
+    public String getStyle()
+    {
+        return style;
+    }
+
+    /**
+     * @return The current level (minus 1) of the hut being rendered.
+     */
+    public int getLevel()
+    {
+        return level;
+    }
+
+    /**
+     * @return The number of times the schematic is rotated.
+     */
+    public int getRotation()
+    {
+        return rotation;
+    }
+
+    /**
+     * Call reset next tick.
+     */
+    public void markDirty()
+    {
+        isPendingReset = true;
+    }
+
+    /**
+     * @return true if Settings should be reset.
+     */
+    public boolean isDirty()
+    {
+        return isPendingReset;
+    }
+
+    /**
+     * @return offset
+     */
+    @NotNull
+    public BlockPos getOffset()
+    {
+        return offset.getImmutable();
     }
 }

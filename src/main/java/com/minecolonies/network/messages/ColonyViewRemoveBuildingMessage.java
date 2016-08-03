@@ -23,7 +23,7 @@ public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandle
      * Creates an object for the building remove message
      *
      * @param colony        Colony the building is in
-     * @param building      Building that is removed
+     * @param building      AbstractBuilding that is removed
      */
     public ColonyViewRemoveBuildingMessage(Colony colony, BlockPos building)
     {

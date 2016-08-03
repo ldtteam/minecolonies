@@ -8,7 +8,7 @@ import com.minecolonies.colony.jobs.Job;
 import com.minecolonies.colony.jobs.JobPlaceholder;
 import net.minecraft.util.BlockPos;
 
-public class BuildingBlacksmith extends BuildingWorker
+public class BuildingBlacksmith extends AbstractBuildingWorker
 {
     private static final String BLACKSMITH          = "Blacksmith";
     private static final String BLACKSMITH_HUT_NAME = "blacksmithHut";
@@ -42,7 +42,7 @@ public class BuildingBlacksmith extends BuildingWorker
         return new JobPlaceholder(citizen); //TODO Implement Later
     }
 
-    public static class View extends BuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
         public View(ColonyView c, BlockPos l)
         {
@@ -51,7 +51,7 @@ public class BuildingBlacksmith extends BuildingWorker
 
         public com.blockout.views.Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<BuildingWorker.View>(this, BLACKSMITH_HUT_NAME);
+            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, BLACKSMITH_HUT_NAME);
         }
     }
 }

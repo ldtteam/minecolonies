@@ -61,6 +61,8 @@ public class Label extends Pane
     @Override
     public void drawSelf(int mx, int my)
     {
+        int color = isPointInPane(mx, my) ? hoverColor : textColor;
+
         int offsetX = 0;
         int offsetY = 0;
 
@@ -86,7 +88,7 @@ public class Label extends Pane
         GL11.glTranslated(getX() + offsetX, getY() + offsetY, 0);
         GL11.glScalef(scale, scale, scale);
         mc.renderEngine.bindTexture(TEXTURE);
-        mc.fontRendererObj.drawString(label, 0, 0, getColor(), shadow);
+        mc.fontRendererObj.drawString(label, 0, 0, color, shadow);
         GL11.glPopMatrix();
     }
 }

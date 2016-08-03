@@ -1,6 +1,6 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.minecolonies.entity.ai.Tree;
+import com.minecolonies.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -46,7 +46,7 @@ public class PathJobFindTree extends PathJob
         int dz = pos.getZ() - hutLocation.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker - halved
-        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.501D ;
+        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.951D ;
     }
 
     @Override

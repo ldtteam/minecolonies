@@ -25,6 +25,7 @@ public abstract class WorkOrder
     static
     {
         addMapping("build", WorkOrderBuild.class);
+        addMapping("decoration", WorkOrderBuildDecoration.class);
     }
 
     /**

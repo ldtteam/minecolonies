@@ -1,8 +1,5 @@
 package com.minecolonies.colony.materials;
 
-import net.minecraftforge.fml.common.registry.GameData;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

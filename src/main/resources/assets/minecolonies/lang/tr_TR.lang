@@ -1,0 +1,132 @@
+com.minecolonies.error.supplyChestAlreadyPlaced=Zaten tedarik sandığı koydun!
+
+com.minecolonies.gui.townHall.build=Şehir Merkezini Yap
+com.minecolonies.gui.townHall.repair=Şehir Merkezini Tamir Et
+com.minecolonies.gui.townHall.recall=Halkı Geri Çağır!
+com.minecolonies.gui.townHall.togglespec=Uzmanlık Alanını Değiştir
+com.minecolonies.gui.townHall.currTownHallName=Koloni Adı:
+com.minecolonies.gui.townHall.currentSpecialization=Şu Anki Uzmanlık:
+com.minecolonies.gui.townHall.rename=Koloniyi Adlandır
+com.minecolonies.gui.townHall.rename.title=Kolonini Adlandır
+com.minecolonies.gui.townHall.actions=İcraat
+com.minecolonies.gui.townHall.defaultName=%s'in Kolonisi
+com.minecolonies.gui.townHall.citizens=Halk
+com.minecolonies.gui.townHall.permissions=Yetkiler
+
+com.minecolonies.gui.townHall.population.totalCitizens=Popülasyon: %d/%d
+com.minecolonies.gui.townHall.population.unemployed=İşsiz: %d
+com.minecolonies.gui.townHall.population.builders=İnşaatçı: %d
+com.minecolonies.gui.townHall.population.deliverymen=Kargocu: %d
+
+com.minecolonies.gui.workerHuts.buildersHut=İnşaatçının Evi
+com.minecolonies.gui.workerHuts.warehouse=Depo
+com.minecolonies.gui.workerHuts.workerAssigned=Atanmış İşçi:
+com.minecolonies.gui.workerHuts.workerLevel=İşçi Seviyesi: %s
+com.minecolonies.gui.workerHuts.hire=İşçi Kirala
+com.minecolonies.gui.workerHuts.fire=İşçiyi Kov
+com.minecolonies.gui.workerHuts.recall=İşçiyi Geri Çağır
+com.minecolonies.gui.workerHuts.build=Yapıyı Oluştur
+com.minecolonies.gui.workerHuts.upgrade=Yapıyı Geliştir
+com.minecolonies.gui.workerHuts.upgradeUnavailable=Geliştirme Mevcut Değil
+com.minecolonies.gui.workerHuts.repair=Yapıyı Tamir Et
+com.minecolonies.gui.workerHuts.buildType=Yapı Çeşidi:
+com.minecolonies.gui.workerHuts.information=Bilgi
+com.minecolonies.gui.workerHuts.settings=Ayarlar
+com.minecolonies.gui.workerHuts.minerHut=Madenci
+com.minecolonies.gui.workerHuts.minerNode=Boğum
+com.minecolonies.gui.workerHuts.minerMineNode=Maden Seviyesi
+com.minecolonies.gui.workerHuts.minerNodeList=Seviyeler
+com.minecolonies.gui.workerHuts.homeHut=Vatandaşın Evi
+com.minecolonies.gui.workerHuts.fisherman=Balıkçının Evi
+com.minecolonies.gui.workerHuts.lumberjackHut=Oduncunun Evi
+com.minecolonies.gui.buildtool.nullHut=Ev Mevcut Değil
+
+com.minecolonies.gui.warehouse.toBlacksmith=Demirciye Teslim Et:
+com.minecolonies.gui.warehouse.toStonemason=Duvarcıya Teslim Et:
+com.minecolonies.gui.warehouse.toGuards=Korumalara Teslim Et:
+com.minecolonies.gui.warehouse.visitCitizenChests=Vatandaş Sandıklarını Ziyaret Et:
+
+com.minecolonies.gui.citizen.skills=Yetenekler
+com.minecolonies.gui.citizen.skills.strength=Güç: %d
+com.minecolonies.gui.citizen.skills.endurance=Dayanıklık: %d
+com.minecolonies.gui.citizen.skills.charisma=Karizma: %d
+com.minecolonies.gui.citizen.skills.intelligence=Zeka: %d
+com.minecolonies.gui.citizen.skills.dexterity=Maharet: %d
+
+com.minecolonies.gui.buildtool.nohut=Ev Yok
+com.minecolonies.gui.buildtool.nodecoration=Dekorasyon Yok
+com.minecolonies.gui.buildtool.hut=Evler
+com.minecolonies.gui.buildtool.decoration=Dekorasyonlar
+
+com.minecolonies.gui.hiring.on=Elle
+com.minecolonies.gui.hiring.off=Otomatik
+com.minecolonies.gui.hiring.buttonHire=İşçi Ata
+com.minecolonies.gui.hiring.description=İş için bir işçi seç.
+com.minecolonies.gui.townHall.addPlayer=Oyuncu Ekle:
+com.minecolonies.gui.townHall.jobHiring=İşçi Atama Modu:
+
+tile.minecolonies.blockHutCitizen.name=Vatandaş Evi
+tile.minecolonies.blockHutBaker.name=Fırıncı
+tile.minecolonies.blockHutBlacksmith.name=Demirci
+tile.minecolonies.blockHutBuilder.name=İnşaatçının Evi
+tile.minecolonies.blockHutWarehouse.name=Depo
+tile.minecolonies.blockHutFarmer.name=Tarla
+tile.minecolonies.blockHutLumberjack.name=Kereste
+tile.minecolonies.blockHutFisherman.name=Balıkçının Evi
+tile.minecolonies.blockHutMiner.name=Maden
+tile.minecolonies.blockHutStonemason.name=Taş Ocağı
+tile.minecolonies.blockHutTownHall.name=Şehir Merkezi
+tile.minecolonies.blockSubstitution.name=ŞematikYerTutucu
+
+tile.blockHut.messageNoPermission=Evleri açman için yetkin yok %s.
+
+com.minecolonies.job.Builder=İnşaatçı
+com.minecolonies.job.Deliveryman=Kargocu
+com.minecolonies.job.Farmer=Çiftçi
+com.minecolonies.job.Lumberjack=Oduncu
+com.minecolonies.job.Miner=Madenci
+com.minecolonies.job.Fisherman=Balıkçı
+
+tile.blockHutTownHall.messageMaxSize=Kolonin maksimum büyüklüğe ulaştı.
+tile.blockHutTownHall.messageColonistDead=Bir kolonist öldü!
+tile.blockHutTownHall.messagePlacedAlready=Zaten şehir merkezi koydun!
+tile.blockHutTownHall.messageInvalidWorld=Bu dünyada şehir merkezi koyamazsın.
+tile.blockHutTownHall.messageTooClose=Şehir merkezine çok yakın
+
+tile.blockHut.messageTooFarFromTownHall=Şehir merkezine daha yakın olmalısın!
+tile.blockHut.messageNoTownHall=İlk önce bir şehir merkezi koymalısın!
+
+item.minecolonies.supplyChestDeployer.name=Tedarik Sandığı
+item.minecolonies.scepterGold.name=Yapım Eşyası
+item.minecolonies.scepterSteel.name=Tarama Eşyası
+item.minecolonies.caliper.name=Kaliper
+
+item.supplyChestDeployer.invalid=Büyük bir gölde olmalısın!
+
+item.scepterSteel.point=Nokta bir kaydedildi
+item.scepterSteel.point2=Nokta iki kayedildi, şematiği kaydetmek için sağ tıkla
+item.scepterSteel.samePoint=Burası aynı nokta
+item.scepterSteel.scanFormat=SCAN_%s-%s.schematic
+item.scepterSteel.scanSuccess=Tarama başarıyla bu adla kaydedildi %s
+item.scepterSteel.scanFailure=Tarama kaydedilemedi
+
+item.caliper.message.same=Burası aynı blok.
+item.caliper.message.line=Bu bir %d blok hatı.
+item.caliper.message.square=Bu bir %d ile %d karesi.
+item.caliper.message.cube=Bu bir %d ile %d ile %d kübü.
+
+itemGroup.minecolonies=MineColonies
+
+entity.worker.inventoryFullChestFull=Lütfen yapım sandığımda boş yer bırak. Envanterimi boşaltamıyorum.
+
+entity.builder.messageBuildStart=Yapım başladı %s
+entity.builder.messageBuildComplete=Yapım bitti %s
+entity.builder.messageNeedMaterial=Buna ihtiyacım var %s (Miktar: %d)
+
+entity.miner.messageNeedTools=Eşyaya ihtiyacım var %s!
+entity.miner.messageNeedBlockAndItem=Buna ihtiyacım var %s!
+entity.miner.messageNeedBetterTools=Daha iyi eşyalar gerekli!
+entity.miner.messageMoreBlocks=Bundan daha çok ihtiyacım var %s!
+entity.miner.messageRequiresBetterHut=Evimi geliştir ki daha derine kazayım!
+
+entity.fisherman.messageWaterTooFar=Balıkçının evi sudan çok uzak!
