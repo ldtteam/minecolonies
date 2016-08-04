@@ -110,7 +110,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
         if(shouldCheckX)
         {
-            for(int i = 0; i < WIDTH; i++)
+            for(int i = 4; i < WIDTH; i++)
             {
                 int j = k * i;
                 if(!BlockUtils.isWater(world.getBlockState(pos.add(j, 0, 0))) ||
@@ -119,14 +119,14 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             }
             for(int i = 0; i < LENGTH; i++)
             {
-                if(!BlockUtils.isWater(world.getBlockState(pos.add(0, 0, -horizontalX + i))) ||
+                if(!BlockUtils.isWater(world.getBlockState(pos.add(4*k, 0, -horizontalX + i))) ||
                    !BlockUtils.isWater(world.getBlockState(pos.add(widthKHalf, 0, -horizontalX + i))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(widthK, 0, horizontalX + i)))) return false;
+                   !BlockUtils.isWater(world.getBlockState(pos.add(widthK, 0, -horizontalX + i)))) return false;
             }
         }
         else
         {
-            for(int i = 0; i < WIDTH; i++)
+            for(int i = 4; i < WIDTH; i++)
             {
                 int j = k * i;
                 if(!BlockUtils.isWater(world.getBlockState(pos.add(0, 0, j))) ||
@@ -136,7 +136,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
             for(int i = 0; i < LENGTH; i++)
             {
-                if(!BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, 0))) ||
+                if(!BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, 4*k))) ||
                    !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthKHalf))) ||
                    !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthK)))) return false;
             }
