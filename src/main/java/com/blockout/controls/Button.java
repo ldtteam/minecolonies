@@ -46,13 +46,13 @@ public class Button extends Pane
     public Button(PaneParams params)
     {
         super(params);
-        label = params.getLocalizedStringAttribute("label", label);
+        label = params.getLocalizedStringAttribute("textContent", label);
     }
 
     /**
-     * Button label getter.
+     * Button textContent getter.
      *
-     * @return button label.
+     * @return button textContent.
      */
     public String getLabel()
     {
@@ -60,9 +60,9 @@ public class Button extends Pane
     }
 
     /**
-     * Button label setter.
+     * Button textContent setter.
      *
-     * @param s new label.
+     * @param s new textContent.
      */
     public void setLabel(String s)
     {
@@ -99,7 +99,7 @@ public class Button extends Pane
             {
                 if (p instanceof Handler)
                 {
-                    delegatedHandler = (Handler)p;
+                    delegatedHandler = (Handler) p;
                     break;
                 }
             }

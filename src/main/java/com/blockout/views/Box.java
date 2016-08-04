@@ -4,12 +4,27 @@ import com.blockout.PaneParams;
 import com.blockout.Render;
 import com.blockout.View;
 
+/**
+ * Simple box element.
+ */
 public class Box extends View
 {
-    float lineWidth = 1.0f;
-    int color = 0xff000000;
+    private float lineWidth = 1.0F;
+    private int color = 0xff000000;
 
-    public Box() { super(); }
+    /**
+     * Required default constructor.
+     */
+    public Box()
+    {
+        super();
+    }
+
+    /**
+     * Loads box from xml.
+     *
+     * @param params xml parameters.
+     */
     public Box(PaneParams params)
     {
         super(params);

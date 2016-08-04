@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
-		dependencies = Constants.FORGE_VERSION, acceptedMinecraftVersions = Constants.MC_VERSION)
+        dependencies = Constants.FORGE_VERSION, acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
     private static SimpleNetworkWrapper network;
@@ -56,7 +56,25 @@ public class MineColonies
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
+        initializeNetwork();
+
+        proxy.registerTileEntities();
+
+        RecipeHandler.init(Configurations.enableInDevelopmentFeatures, Configurations.supplyChests);
+
+        proxy.registerEvents();
+
+        proxy.registerTileEntityRendering();
+
+        proxy.registerRenderer();
+
+        Schematics.init();
+    }
+
+    private static synchronized void initializeNetwork()
+    {
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Constants.MOD_NAME);
+
         //  ColonyView messages
         getNetwork().registerMessage(ColonyViewMessage.class,                ColonyViewMessage.class,                1,  Side.CLIENT);
         getNetwork().registerMessage(ColonyViewCitizenViewMessage.class,     ColonyViewCitizenViewMessage.class,     2,  Side.CLIENT);
@@ -84,25 +102,12 @@ public class MineColonies
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class,       BlockParticleEffectMessage.class,       50, Side.CLIENT);
 
-        proxy.registerTileEntities();
-
-        RecipeHandler.init(Configurations.enableInDevelopmentFeatures, Configurations.supplyChests);
-
-        proxy.registerEvents();
-
-        proxy.registerTileEntityRendering();
-        
-        proxy.registerRenderer();
-
-        Schematics.init();
-
-        // Register Achievement page
-        AchievementPage.registerAchievementPage(ModAchievements.pageMineColonies);
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
+        // Load unimportant resources
     }
 
     /**

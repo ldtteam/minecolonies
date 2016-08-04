@@ -6,21 +6,25 @@ import com.minecolonies.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class WorkOrder
+/**
+ * General information between WorkOrders.
+ */
+public abstract class AbstractWorkOrder
 {
-    protected               int                                     id;
-    private                 int                                     claimedBy;
+    protected int id;
+    private int claimedBy;
 
     //  Job and View Class Mapping
-    private static          Map<String, Class<? extends WorkOrder>> nameToClassMap  = new HashMap<>();
-    private static          Map<Class<? extends WorkOrder>, String> classToNameMap  = new HashMap<>();
+    private static          Map<String, Class<? extends AbstractWorkOrder>> nameToClassMap  = new HashMap<>();
+    private static          Map<Class<? extends AbstractWorkOrder>, String> classToNameMap  = new HashMap<>();
 
-    private static final    String                                  TAG_TYPE        = "type";
-    private static final    String                                  TAG_ID          = "id";
-    private static final    String                                  TAG_CLAIMED_BY  = "claimedBy";
+    private static final String TAG_TYPE = "type";
+    private static final String TAG_ID = "id";
+    private static final String TAG_CLAIMED_BY = "claimedBy";
 
     static
     {
@@ -29,12 +33,21 @@ public abstract class WorkOrder
     }
 
     /**
+     * Default constructor; we also start with a new id and replace it during loading;
+     * this greatly simplifies creating subclasses
+     */
+    public AbstractWorkOrder()
+    {
+        //Should be overridden
+    }
+
+    /**
      * Add a given Work Order mapping
      *
      * @param name       name of work order
      * @param orderClass class of work order
      */
-    private static void addMapping(String name, Class<? extends WorkOrder> orderClass)
+    private static void addMapping(String name, Class<? extends AbstractWorkOrder> orderClass)
     {
         if (nameToClassMap.containsKey(name))
         {
@@ -51,23 +64,24 @@ public abstract class WorkOrder
         }
         catch (NoSuchMethodException exception)
         {
-            throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Work Order class mapping");
+            throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Work Order class mapping", exception);
         }
     }
-
-    /**
-     * Default constructor; we also start with a new id and replace it during loading;
-     * this greatly simplifies creating subclasses
-     */
-    public WorkOrder() {}
 
     /**
      * Get the ID of the Work Order
      *
      * @return          ID of the work order
      */
-    public int getID() { return id; }
-    public void setID(int id) { this.id = id; }
+    public int getID()
+    {
+        return id;
+    }
+
+    public void setID(int id)
+    {
+        this.id = id;
+    }
 
     /**
      * Is the Work Order claimed?
@@ -122,12 +136,12 @@ public abstract class WorkOrder
      * Create a Work Order from a saved NBTTagCompound
      *
      * @param compound      the compound that contains the data for the Work Order
-     * @return              {@link WorkOrder} from the NBT
+     * @return              {@link AbstractWorkOrder} from the NBT
      */
-    public static WorkOrder createFromNBT(NBTTagCompound compound)
+    public static AbstractWorkOrder createFromNBT(NBTTagCompound compound)
     {
-        WorkOrder order = null;
-        Class<? extends WorkOrder> oclass = null;
+        AbstractWorkOrder order = null;
+        Class<? extends AbstractWorkOrder> oclass = null;
 
         try
         {
@@ -136,12 +150,12 @@ public abstract class WorkOrder
             if (oclass != null)
             {
                 Constructor<?> constructor = oclass.getDeclaredConstructor();
-                order = (WorkOrder) constructor.newInstance();
+                order = (AbstractWorkOrder) constructor.newInstance();
             }
         }
-        catch (Exception exception)
+        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
         {
-            exception.printStackTrace();
+            Log.logger.trace(e);
         }
 
         if (order != null)
@@ -150,9 +164,10 @@ public abstract class WorkOrder
             {
                 order.readFromNBT(compound);
             }
-            catch (Exception ex)
+            catch (RuntimeException ex)
             {
-                Log.logger.error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound.getString(TAG_TYPE), oclass.getName()), ex);
+                Log.logger.error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                        compound.getString(TAG_TYPE), oclass.getName()), ex);
                 order = null;
             }
         }
@@ -175,7 +190,7 @@ public abstract class WorkOrder
 
         if (s == null)
         {
-            throw new RuntimeException(this.getClass() + " is missing a mapping! This is a bug!");
+            throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
         }
 
         compound.setString(TAG_TYPE, s);
@@ -201,9 +216,12 @@ public abstract class WorkOrder
      * Is this WorkOrder still valid?  If not, it will be deleted.
      *
      * @param colony    The colony that owns the Work Order
-     * @return          True if the WorkOrder is still valid, or False if it should be deleted
+     * @return True if the WorkOrder is still valid, or False if it should be deleted
      */
-    public boolean isValid(Colony colony) { return true; }
+    public boolean isValid(Colony colony)
+    {
+        return true;
+    }
 
     /**
      * Attempt to fulfill the Work Order.
@@ -211,5 +229,5 @@ public abstract class WorkOrder
      *
      * @param colony    The colony that owns the Work Order
      */
-    public void attemptToFulfill(Colony colony) {}
+    public abstract void attemptToFulfill(Colony colony);
 }

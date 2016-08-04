@@ -5,21 +5,34 @@ import com.blockout.PaneParams;
 import com.blockout.View;
 import com.blockout.controls.Scrollbar;
 
+/**
+ * Basic scrolling view.
+ */
 public class ScrollingView extends View
 {
+    private static final int DEFAULT_SCROLLBAR_WIDTH = 8;
+
     //  Params
-    protected int scrollbarWidth          = 8;
+    protected int scrollbarWidth = DEFAULT_SCROLLBAR_WIDTH;
 
     //  Runtime
     protected ScrollingContainer container;
-    protected Scrollbar          scrollbar;
+    protected Scrollbar scrollbar;
 
+    /**
+     * Required defualt constructor.
+     */
     public ScrollingView()
     {
         super();
         setup();
     }
 
+    /**
+     * Load from xml.
+     *
+     * @param params xml parameters.
+     */
     public ScrollingView(PaneParams params)
     {
         super(params);
@@ -70,6 +83,13 @@ public class ScrollingView extends View
         return true;
     }
 
-    public int getScrollY() { return container.getScrollY(); }
-    public void setScrollY(int offset) { container.setScrollY(offset); }
+    public int getScrollY()
+    {
+        return container.getScrollY();
+    }
+
+    public void setScrollY(int offset)
+    {
+        container.setScrollY(offset);
+    }
 }

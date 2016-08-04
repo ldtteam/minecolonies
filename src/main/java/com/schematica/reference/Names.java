@@ -1,8 +1,10 @@
 package com.schematica.reference;
 
 @SuppressWarnings("HardCodedStringLiteral")
-public final class Names {
-    public static final class NBT {
+public final class Names
+{
+    public static final class NBT
+    {
         public static final String ROOT = "Schematic";
 
         public static final String MATERIALS = "Materials";

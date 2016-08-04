@@ -4,7 +4,7 @@ import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobLumberjack;
 import net.minecraft.util.BlockPos;
 
@@ -37,7 +37,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     @Override
-    public Job createJob(CitizenData citizen)
+    public AbstractJob createJob(CitizenData citizen)
     {
         return new JobLumberjack(citizen);
     }

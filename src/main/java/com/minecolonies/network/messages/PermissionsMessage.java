@@ -17,6 +17,7 @@ import java.util.UUID;
 
 public class PermissionsMessage
 {
+    private static final String COLONY_DOES_NOT_EXIST = "Colony #%d does not exist.";
 
     public static class View implements IMessage, IMessageHandler<View, IMessage>
     {
@@ -25,6 +26,7 @@ public class PermissionsMessage
 
         public View()
         {
+            //Required
         }
 
         public View(Colony colony, Permissions.Rank viewerRank)
@@ -71,13 +73,14 @@ public class PermissionsMessage
 
     public static class Permission implements IMessage, IMessageHandler<Permission, IMessage>
     {
-        int                 colonyID;
-        MessageType         type;
-        Permissions.Rank    rank;
-        Permissions.Action  action;
+        private int                 colonyID;
+        private MessageType         type;
+        private Permissions.Rank    rank;
+        private Permissions.Action  action;
 
         public Permission()
         {
+            //Required
         }
 
         /**
@@ -122,7 +125,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
@@ -158,7 +161,10 @@ public class PermissionsMessage
         private int    colonyID;
         private String playerName;
 
-        public AddPlayer() {}
+        public AddPlayer()
+        {
+            //Required
+        }
 
         /**
          * Constructor for adding player to permission message
@@ -198,7 +204,7 @@ public class PermissionsMessage
             }
             else
             {
-                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
             }
             return null;
         }
@@ -219,13 +225,17 @@ public class PermissionsMessage
             DEMOTE
         }
 
-        public ChangePlayerRank() {}
+        public ChangePlayerRank()
+        {
+            //Required
+        }
 
         /**
-         * Constructor for setting a player rank
+         * Constructor for setting a player rank.
          *
-         * @param colony        Colony the rank is set in
-         * @param player        UUID of the player to set rank
+         * @param colony        Colony the rank is set in.
+         * @param player        UUID of the player to set rank.
+         * @param type          Promote or demote.
          */
         public ChangePlayerRank(ColonyView colony, UUID player, Type type)
         {
@@ -258,7 +268,7 @@ public class PermissionsMessage
 
             if(colony == null)
             {
-                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
@@ -283,7 +293,10 @@ public class PermissionsMessage
         private int  colonyID;
         private UUID playerID;
 
-        public RemovePlayer() {}
+        public RemovePlayer()
+        {
+            //Required
+        }
 
         /**
          * Constructor for removing player from permission set
@@ -319,7 +332,7 @@ public class PermissionsMessage
 
             if(colony == null)
             {
-                Log.logger.error(String.format("Colony '#%d' does not exist.", message.colonyID));
+                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 

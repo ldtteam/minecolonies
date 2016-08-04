@@ -1,6 +1,6 @@
 package com.minecolonies.entity.ai.basic;
 
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractEntityAIInteract<J>
+public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends AbstractEntityAIInteract<J>
 {
 
     /**

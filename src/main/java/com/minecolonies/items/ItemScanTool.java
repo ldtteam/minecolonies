@@ -10,7 +10,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-public class ItemScanTool extends ItemMinecolonies
+public class ItemScanTool extends AbstractItemMinecolonies
 {
     public ItemScanTool()
     {

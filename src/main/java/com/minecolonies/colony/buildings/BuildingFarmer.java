@@ -4,7 +4,7 @@ import com.minecolonies.client.gui.WindowHutFarmer;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -43,7 +43,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public String getJobName(){ return FARMER; }
 
     @Override
-    public Job createJob(CitizenData citizen)
+    public AbstractJob createJob(CitizenData citizen)
     {
         return new JobFarmer(citizen); //TODO Implement Later
     }

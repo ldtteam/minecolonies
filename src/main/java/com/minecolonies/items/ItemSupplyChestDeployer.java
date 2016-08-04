@@ -16,7 +16,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-public class ItemSupplyChestDeployer extends ItemMinecolonies
+public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 {
     public ItemSupplyChestDeployer()
     {

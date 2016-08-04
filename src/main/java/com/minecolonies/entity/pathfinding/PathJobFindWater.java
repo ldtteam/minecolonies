@@ -15,7 +15,7 @@ import java.util.function.Predicate;
  * @author Raycoms
  */
 
-public class PathJobFindWater extends PathJob
+public class PathJobFindWater extends AbstractPathJob
 {
     private static final int MIN_DISTANCE = 40;
     private static final int MAX_RANGE = 250;
@@ -30,7 +30,7 @@ public class PathJobFindWater extends PathJob
     private ArrayList<BlockPos> ponds = new ArrayList<>();
 
     /**
-     * PathJob constructor
+     * AbstractPathJob constructor
      *
      * @param world the world within which to path
      * @param start the start position from which to path from

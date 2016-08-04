@@ -1,16 +1,15 @@
 package com.minecolonies.colony;
 
-import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingHome;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.util.Random;
@@ -20,6 +19,8 @@ import java.util.Random;
  */
 public class CitizenData
 {
+    private static final float MAX_HEALTH = 20.0F;
+
     /**
      * The unique citizen id.
      */
@@ -38,7 +39,7 @@ public class CitizenData
     private Colony         colony;
     private BuildingHome   homeBuilding;
     private AbstractBuildingWorker workBuilding;
-    private Job            job;
+    private AbstractJob job;
 
     private boolean dirty;
 
@@ -318,19 +319,6 @@ public class CitizenData
         return workBuilding;
     }
 
-    //TODO: inspect if we can use this to make worker buildings nicer
-    public <BUILDING extends AbstractBuildingWorker> BUILDING getWorkBuilding(Class<BUILDING> type)
-    {
-        try
-        {
-            return type.cast(workBuilding);
-        }
-        catch(ClassCastException exc)
-        {
-            return null;
-        }
-    }
-
     /**
      * Sets the work building of a citizen
      *
@@ -393,7 +381,7 @@ public class CitizenData
      */
     public EntityCitizen getCitizenEntity()
     {
-        return entity; /*(entity != null) ? entity.get() : null;*/
+        return entity;
     }
 
     /**
@@ -420,7 +408,7 @@ public class CitizenData
      *
      * @return Job of the citizen
      */
-    public Job getJob()
+    public AbstractJob getJob()
     {
         return job;
     }
@@ -430,10 +418,10 @@ public class CitizenData
      * Returns the job subclass needed. Returns null on type mismatch.
      *
      * @param type  the type of job wanted.
-     * @param <JOB> The job type returned
+     * @param <J> The job type returned
      * @return the job this citizen has
      */
-    public <JOB extends Job> JOB getJob(Class<JOB> type)
+    public <J extends AbstractJob> J getJob(Class<J> type)
     {
         try
         {
@@ -441,6 +429,7 @@ public class CitizenData
         }
         catch(ClassCastException exc)
         {
+            Log.logger.catching(exc);
             return null;
         }
     }
@@ -450,7 +439,7 @@ public class CitizenData
      *
      * @param job Job of the citizen
      */
-    public void setJob(Job job)
+    public void setJob(AbstractJob job)
     {
         this.job = job;
 
@@ -525,7 +514,7 @@ public class CitizenData
 
         if(compound.hasKey("job"))
         {
-            setJob(Job.createFromNBT(this, compound.getCompoundTag("job")));
+            setJob(AbstractJob.createFromNBT(this, compound.getCompoundTag("job")));
         }
     }
 
@@ -623,243 +612,6 @@ public class CitizenData
     }
 
     /**
-     * The CitizenData View is the client-side representation of a CitizenData.
-     * Views contain the CitizenData's data that is relevant to a Client, in a more client-friendly form
-     * Mutable operations on a View result in a message to the server to perform the operation
-     */
-    public static class View
-    {
-        /**
-         * Attributes
-         */
-        private final int     id;
-        private       int     entityId;
-        private       String  name;
-        private       boolean female;
-
-        //  Placeholder skills
-        private int    level;
-        private double experience;
-        private double health;
-        private double maxHealth;
-        private int    strength;
-        private int    endurance;
-        private int    charisma;
-        private int    intelligence;
-        private int    dexterity;
-
-        /**
-         * Job identifier.
-         */
-        private String job;
-
-        /**
-         * Working and home position.
-         */
-        private BlockPos homeBuilding;
-        private BlockPos workBuilding;
-
-        /**
-         * Set View id.
-         *
-         * @param id the id to set.
-         */
-        protected View(int id)
-        {
-            this.id = id;
-        }
-
-        /**
-         * Id getter.
-         *
-         * @return view Id.
-         */
-        public int getID()
-        {
-            return id;
-        }
-
-        /**
-         * Entity Id getter.
-         *
-         * @return entity id.
-         */
-        public int getEntityId()
-        {
-            return entityId;
-        }
-
-        /**
-         * Entity name getter.
-         *
-         * @return entity name.
-         */
-        public String getName()
-        {
-            return name;
-        }
-
-        /**
-         * Check entity sex.
-         *
-         * @return true if entity is female.
-         */
-        public boolean isFemale()
-        {
-            return female;
-        }
-
-        /**
-         * Entity level getter.
-         *
-         * @return the citizens level.
-         */
-        public int getLevel()
-        {
-            return level;
-        }
-
-        /**
-         * Entity experience getter.
-         *
-         * @return it's experience.
-         */
-        public double getExperience()
-        {
-            return experience;
-        }
-
-        /**
-         * Entity job getter.
-         *
-         * @return the job as a string.
-         */
-        public String getJob()
-        {
-            return job;
-        }
-
-        /**
-         * Get the entities home building.
-         *
-         * @return the home coordinates.
-         */
-        public BlockPos getHomeBuilding()
-        {
-            return homeBuilding;
-        }
-
-        /**
-         * Get the entities work building.
-         *
-         * @return the work coordinates.
-         */
-        public BlockPos getWorkBuilding()
-        {
-            return workBuilding;
-        }
-
-        /**
-         * Strength getter.
-         *
-         * @return citizen Strength value.
-         */
-        public int getStrength()
-        {
-            return strength;
-        }
-
-        /**
-         * Endurance getter.
-         *
-         * @return citizen Endurance value.
-         */
-        public int getEndurance()
-        {
-            return endurance;
-        }
-
-        /**
-         * Charisma getter.
-         *
-         * @return citizen Charisma value.
-         */
-        public int getCharisma()
-        {
-            return charisma;
-        }
-
-        /**
-         * Intelligence getter.
-         *
-         * @return citizen Intelligence value.
-         */
-        public int getIntelligence()
-        {
-            return intelligence;
-        }
-
-        /**
-         * Dexterity getter.
-         *
-         * @return citizen Dexterity value.
-         */
-        public int getDexterity()
-        {
-            return dexterity;
-        }
-
-        /**
-         * Health getter.
-         *
-         * @return citizen Dexterity value
-         */
-        public double getHealth()
-        {
-            return health;
-        }
-
-        /**
-         * Max health getter.
-         *
-         * @return citizen Dexterity value.
-         */
-        public double getMaxHealth()
-        {
-            return maxHealth;
-        }
-
-        /**
-         * Deserialize the attributes and variables from transition
-         *
-         * @param buf Byte buffer to deserialize
-         */
-        public void deserialize(ByteBuf buf)
-        {
-            name = ByteBufUtils.readUTF8String(buf);
-            female = buf.readBoolean();
-            entityId = buf.readInt();
-
-            homeBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
-            workBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
-
-            //  Attributes
-            level = buf.readInt();
-            experience = buf.readDouble();
-            health = buf.readFloat();
-            maxHealth = buf.readFloat();
-
-            strength = buf.readInt();
-            endurance = buf.readInt();
-            charisma = buf.readInt();
-            intelligence = buf.readInt();
-            dexterity = buf.readInt();
-
-            job = ByteBufUtils.readUTF8String(buf);
-        }
-    }
-
-    /**
      * Writes the citizen data to a byte buf for transition.
      *
      * @param buf Buffer to write to
@@ -869,7 +621,6 @@ public class CitizenData
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeBoolean(female);
 
-        EntityCitizen entity = getCitizenEntity();
         buf.writeInt(entity != null ? entity.getEntityId() : -1);
 
         buf.writeBoolean(homeBuilding != null);
@@ -891,8 +642,8 @@ public class CitizenData
         //If entity is null assume the standard values as health
         if(entity == null)
         {
-            buf.writeFloat(20.0F);
-            buf.writeFloat(20.0F);
+            buf.writeFloat(MAX_HEALTH);
+            buf.writeFloat(MAX_HEALTH);
         }
         else
         {
@@ -916,21 +667,21 @@ public class CitizenData
      * @param buf The network data
      * @return View object of the citizen
      */
-    public static View createCitizenDataView(int id, ByteBuf buf)
+    public static CitizenDataView createCitizenDataView(int id, ByteBuf buf)
     {
-        View view = new View(id);
+        CitizenDataView citizenDataView = new CitizenDataView(id);
 
         try
         {
-            view.deserialize(buf);
+            citizenDataView.deserialize(buf);
         }
-        catch(Exception ex)
+        catch(RuntimeException ex)
         {
-            Log.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author", view
-                    .getID()), ex);
-            view = null;
+            Log.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                    citizenDataView.getID()), ex);
+            citizenDataView = null;
         }
 
-        return view;
+        return citizenDataView;
     }
 }

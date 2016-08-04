@@ -9,13 +9,13 @@ import org.lwjgl.input.Mouse;
 public class Scrollbar extends Pane
 {
     //  Params
-    protected int scrollbarBackground     = 0xFF000000;
-    protected int scrollbarColor          = 0xFFC0C0C0;
+    protected int scrollbarBackground = 0xFF000000;
+    protected int scrollbarColor = 0xFFC0C0C0;
     protected int scrollbarColorHighlight = 0xFF808080;
 
     protected ScrollingContainer container;
-    protected int     barClickY     = 0;
-    protected boolean barClicked    = false;
+    protected int barClickY = 0;
+    protected boolean barClicked = false;
 
     public Scrollbar(ScrollingContainer container)
     {
@@ -109,7 +109,18 @@ public class Scrollbar extends Pane
         }
     }
 
-    private int getContentHeightDiff() { return container.getContentHeight() - getHeight(); }
-    private int getBarHeight() { return Math.max(Math.min(20, getHeight() / 2), (getHeight() * getHeight()) / container.getContentHeight()); }
-    private int getScrollBarYPos() { return container.getScrollY() * (getHeight() - getBarHeight()) / getContentHeightDiff(); }
+    private int getContentHeightDiff()
+    {
+        return container.getContentHeight() - getHeight();
+    }
+
+    private int getBarHeight()
+    {
+        return Math.max(Math.min(20, getHeight() / 2), (getHeight() * getHeight()) / container.getContentHeight());
+    }
+
+    private int getScrollBarYPos()
+    {
+        return container.getScrollY() * (getHeight() - getBarHeight()) / getContentHeightDiff();
+    }
 }

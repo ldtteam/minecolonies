@@ -9,10 +9,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -65,7 +62,10 @@ public final class Schematics
 
             if ("jar".equals(uri.getScheme()))
             {
-                basePath = FileSystems.newFileSystem(uri, Collections.emptyMap()).getPath(SCHEMATICS_ASSET_PATH);
+                try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap()))
+                {
+                    basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
+                }
             }
             else
             {

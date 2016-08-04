@@ -18,15 +18,20 @@ import net.minecraft.util.Vec3;
  */
 public class RenderFishHook extends Render<EntityFishHook>
 {
-	
-    public RenderFishHook(RenderManager renderManagerIn) {
-		super(renderManagerIn);
-	}
-
-	/**
-     * The resource location containing the particle textures (Spawned by the fishHook)
+    /**
+     * The resource location containing the particle textures (Spawned by the fishHook).
      */
     private static final ResourceLocation texture = new ResourceLocation("textures/particle/particles.png");
+
+    /**
+     * Required constructor, sets the RenderManager.
+     *
+     * @param renderManagerIn RenderManager that we use.
+     */
+    public RenderFishHook(RenderManager renderManagerIn)
+    {
+        super(renderManagerIn);
+    }
 
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
@@ -71,7 +76,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 
-        GlStateManager.rotate(180.0F - this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate((float) (180.0D - this.renderManager.playerViewY), 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
         worldrenderer.pos(-0.5D, -0.5D, 0.0D).tex(0.0625D, 0.1875D).normal(0.0F, 1.0F, 0.0F).endVertex();
@@ -104,15 +109,20 @@ public class RenderFishHook extends Render<EntityFishHook>
             final double finalOrientation = Math.sin(Math.sqrt(orientation) * Math.PI);
             final Vec3   vec3             = new Vec3(-0.36D, 0.03D, 0.35D);
 
-            vec3.rotatePitch((float) (-((double)citizen.prevRotationPitch + ((double)citizen.rotationPitch - (double)citizen.prevRotationPitch) * partialTicks) * Math.PI / Literals.HALF_CIRCKLE));
-            vec3.rotateYaw((float) (-((double)citizen.prevRotationYaw + ((double)citizen.rotationYaw - (double)citizen.prevRotationYaw) * partialTicks) * Math.PI / Literals.HALF_CIRCKLE));
+            vec3.rotatePitch((float) (-((double)citizen.prevRotationPitch + ((double)citizen.rotationPitch - (double)citizen.prevRotationPitch) * partialTicks)
+                    * Math.PI / Literals.HALF_CIRCKLE));
+            vec3.rotateYaw((float) (-((double)citizen.prevRotationYaw + ((double)citizen.rotationYaw - (double)citizen.prevRotationYaw)
+                    * partialTicks) * Math.PI / Literals.HALF_CIRCKLE));
             vec3.rotateYaw((float) (finalOrientation * 0.5D));
             vec3.rotatePitch((float) (-finalOrientation * 0.7D));
 
-            double thirdPersonOffset = (citizen.prevRenderYawOffset + (citizen.renderYawOffset - citizen.prevRenderYawOffset) * partialTicks) * 3.1415927F / Literals.HALF_CIRCKLE;
-            double correctedPosX = citizen.prevPosX + (citizen.posX - citizen.prevPosX) * (double)partialTicks - MathHelper.cos((float)thirdPersonOffset) * 0.35D - MathHelper.sin((float)thirdPersonOffset) * 0.8D;
+            double thirdPersonOffset = (citizen.prevRenderYawOffset + ((double) citizen.renderYawOffset - citizen.prevRenderYawOffset) * partialTicks)
+                    * Math.PI / Literals.HALF_CIRCKLE;
+            double correctedPosX = citizen.prevPosX + (citizen.posX - citizen.prevPosX) * (double)partialTicks - MathHelper.cos((float)thirdPersonOffset) * 0.35D
+                    - MathHelper.sin((float)thirdPersonOffset) * 0.8D;
             double correctedPosY = citizen.prevPosY + citizen.getEyeHeight() + (citizen.posY - citizen.prevPosY) * (double)partialTicks - 0.45D;
-            double correctedPosZ = citizen.prevPosZ + (citizen.posZ - citizen.prevPosZ) * (double)partialTicks - MathHelper.sin((float)thirdPersonOffset) * 0.35D + MathHelper.cos((float)thirdPersonOffset) * 0.8D;
+            double correctedPosZ = citizen.prevPosZ + (citizen.posZ - citizen.prevPosZ) * (double)partialTicks - MathHelper.sin((float)thirdPersonOffset) * 0.35D
+                    + MathHelper.cos((float)thirdPersonOffset) * 0.8D;
             double eyeHeight = citizen.isSneaking()?-0.1875D:0.0D;
 
             final double distX = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;

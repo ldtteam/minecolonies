@@ -8,6 +8,7 @@ import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.MathUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +22,9 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+/**
+ * Handles all forge events.
+ */
 public class EventHandler
 {
     /**
@@ -67,50 +71,66 @@ public class EventHandler
             EntityPlayer player = event.entityPlayer;
             World world = event.world;
 
-            if(!player.isSneaking() || player.getHeldItem() == null || player.getHeldItem().getItem() == null || player.getHeldItem().getItem().doesSneakBypassUse(world, event.pos, player))
+            if (playerRightClickInteract(player, world, event.pos) &&
+                    // this was the simple way of doing it, minecraft calls onBlockActivated
+                    // and uses that return value, but I didn't want to call it twice
+                    world.getBlockState(event.pos).getBlock() instanceof AbstractBlockHut)
             {
-                if(world.getBlockState(event.pos).getBlock() instanceof AbstractBlockHut)//this was the simple way of doing it, minecraft calls onBlockActivated
-                {                                              // and uses that return value, but I didn't want to call it twice
-                    IColony colony = ColonyManager.getIColony(world, event.pos);
-                    if (colony != null &&
-                            !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
-                    {
-                        event.setCanceled(true);
-                    }
-
-                    return;
+                IColony colony = ColonyManager.getIColony(world, event.pos);
+                if (colony != null &&
+                        !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+                {
+                    event.setCanceled(true);
                 }
+
+                return;
             }
 
-            if(player.getHeldItem() == null || player.getHeldItem().getItem() == null) return;
-
-            Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
-            if(heldBlock instanceof AbstractBlockHut)
+            if(player.getHeldItem() == null || player.getHeldItem().getItem() == null)
             {
-                switch(event.face)
-                {
-                    case DOWN:
-                        event.pos.down();
-                        break;
-                    case UP:
-                        event.pos.up();
-                        break;
-                    case NORTH:
-                        event.pos.north();
-                        break;
-                    case SOUTH:
-                        event.pos.south();
-                        break;
-                    case WEST:
-                        event.pos.west();
-                        break;
-                    case EAST:
-                        event.pos.east();
-                        break;
-                }
-                event.setCanceled(!onBlockHutPlaced(event.world, player, heldBlock, event.pos));
+                return;
+            }
+
+            handleEventCancellation(event, player);
+        }
+    }
+
+    private void handleEventCancellation(PlayerInteractEvent event, EntityPlayer player)
+    {
+        Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
+        if(heldBlock instanceof AbstractBlockHut)
+        {
+            switch(event.face)
+            {
+                case DOWN:
+                    event.setCanceled(!onBlockHutPlaced(event.world, player, heldBlock, event.pos.down()));
+                    break;
+                case UP:
+                    event.setCanceled(!onBlockHutPlaced(event.world, player, heldBlock, event.pos.up()));
+                    break;
+                case NORTH:
+                    event.setCanceled(!onBlockHutPlaced(event.world, player, heldBlock, event.pos.north()));
+                    break;
+                case SOUTH:
+                    event.setCanceled(!onBlockHutPlaced(event.world, player, heldBlock, event.pos.south()));
+                    break;
+                case WEST:
+                    event.setCanceled(!onBlockHutPlaced(event.world, player, heldBlock, event.pos.west()));
+                    break;
+                case EAST:
+                    event.setCanceled(!onBlockHutPlaced(event.world, player, heldBlock, event.pos.east()));
+                    break;
+                default:
+                    Log.logger.warn("Unexpected Facing value: " + event.face);
+                    event.setCanceled(true);
             }
         }
+    }
+
+    private static boolean playerRightClickInteract(EntityPlayer player, World world, BlockPos pos)
+    {
+        return !player.isSneaking() || player.getHeldItem() == null || player.getHeldItem().getItem() == null ||
+                player.getHeldItem().getItem().doesSneakBypassUse(world, pos, player);
     }
 
     /**

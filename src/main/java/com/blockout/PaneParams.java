@@ -1,5 +1,6 @@
 package com.blockout;
 
+import com.minecolonies.util.Log;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.MathHelper;
 import org.w3c.dom.Node;
@@ -11,21 +12,42 @@ import java.util.regex.Pattern;
 
 public class PaneParams
 {
-    Node node;
-    View parentView;
+    private Node node;
+    private View parentView;
+
+    private static final Pattern PERCENTAGE_PATTERN = Pattern.compile("([-+]?\\d+)(%|px)?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern RGBA_PATTERN =
+            Pattern.compile("rgba?\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*(?:,\\s*([01]\\.\\d+)\\s*)?\\)", Pattern.CASE_INSENSITIVE);
 
     public PaneParams(Node n)
     {
         node = n;
     }
 
-    public String getType() { return node.getNodeName(); }
+    public String getType()
+    {
+        return node.getNodeName();
+    }
 
-    public void setParentView(View parent) { parentView = parent; }
-    public View getParentView() { return parentView; }
+    public void setParentView(View parent)
+    {
+        parentView = parent;
+    }
 
-    public int getParentWidth() { return parentView != null ? parentView.getInteriorWidth() : 0; }
-    public int getParentHeight() { return parentView != null ? parentView.getInteriorHeight() : 0; }
+    public View getParentView()
+    {
+        return parentView;
+    }
+
+    public int getParentWidth()
+    {
+        return parentView != null ? parentView.getInteriorWidth() : 0;
+    }
+
+    public int getParentHeight()
+    {
+        return parentView != null ? parentView.getInteriorHeight() : 0;
+    }
 
     public List<PaneParams> getChildren()
     {
@@ -38,7 +60,7 @@ public class PaneParams
             {
                 if (list == null)
                 {
-                    list = new ArrayList<PaneParams>();
+                    list = new ArrayList<>();
                 }
 
                 list.add(new PaneParams(child));
@@ -56,60 +78,81 @@ public class PaneParams
 
     public String getLocalizedText()
     {
-        return Localize(node.getTextContent().trim());
+        return localize(node.getTextContent().trim());
     }
 
-    public String getStringAttribute(String name) { return getStringAttribute(name, ""); }
+    public String getStringAttribute(String name)
+    {
+        return getStringAttribute(name, "");
+    }
+
     public String getStringAttribute(String name, String def)
     {
         Node attr = getAttribute(name);
         return (attr != null) ? attr.getNodeValue() : def;
     }
 
-    public String getLocalizedStringAttribute(String name) { return getLocalizedStringAttribute(name, ""); }
-    public String getLocalizedStringAttribute(String name, String def)
+    public String getLocalizedStringAttribute(String name)
     {
-        return Localize(getStringAttribute(name, def));
+        return getLocalizedStringAttribute(name, "");
     }
 
-    public int getIntegerAttribute(String name) { return getIntegerAttribute(name, 0); }
+    public String getLocalizedStringAttribute(String name, String def)
+    {
+        return localize(getStringAttribute(name, def));
+    }
+
+    public int getIntegerAttribute(String name)
+    {
+        return getIntegerAttribute(name, 0);
+    }
+
     public int getIntegerAttribute(String name, int def)
     {
         String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            try { return Integer.parseInt(attr); }
-            catch (NumberFormatException ex) {}
+            return Integer.parseInt(attr);
         }
         return def;
     }
 
-    public float getFloatAttribute(String name) { return getFloatAttribute(name, 0); }
+    public float getFloatAttribute(String name)
+    {
+        return getFloatAttribute(name, 0);
+    }
+
     public float getFloatAttribute(String name, float def)
     {
         String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            try { return Float.parseFloat(attr) ; }
-            catch (NumberFormatException ex) {}
+            return Float.parseFloat(attr);
         }
         return def;
     }
 
-    public double getDoubleAttribute(String name) { return getDoubleAttribute(name, 0); }
+    public double getDoubleAttribute(String name)
+    {
+        return getDoubleAttribute(name, 0);
+    }
+
     public double getDoubleAttribute(String name, double def)
     {
         String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            try { return Double.parseDouble(attr); }
-            catch (NumberFormatException ex) {}
+            return Double.parseDouble(attr);
         }
 
         return def;
     }
 
-    public boolean getBooleanAttribute(String name) { return getBooleanAttribute(name, false); }
+    public boolean getBooleanAttribute(String name)
+    {
+        return getBooleanAttribute(name, false);
+    }
+
     public boolean getBooleanAttribute(String name, boolean def)
     {
         String attr = getStringAttribute(name, null);
@@ -120,20 +163,17 @@ public class PaneParams
         return def;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Enum<T>> T getEnumAttribute(String name, T def)
+    public <T extends Enum<T>> T getEnumAttribute(String name, Class<T> clazz, T def)
     {
         String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            try { return T.valueOf((Class<T>)(Object)def.getClass(), attr); }
-            catch (IllegalArgumentException exc) {}
+            return Enum.valueOf(clazz, attr);
         }
         return def;
     }
 
-    static Pattern percentagePattern = Pattern.compile("([-+]?\\d+)(%|px)?", Pattern.CASE_INSENSITIVE);
-    private int parseScalableIntegerRegexMatch(Matcher m, int def, int scale)
+    private static int parseScalableIntegerRegexMatch(Matcher m, int def, int scale)
     {
         try
         {
@@ -149,9 +189,9 @@ public class PaneParams
 
             return value;
         }
-        catch (Exception ex)
+        catch (NumberFormatException | IndexOutOfBoundsException | IllegalStateException ex)
         {
-            //  NumberFormatException | NullPointerException | IndexOutOfBoundsException | IllegalStateException ex
+            Log.logger.warn(ex);
         }
 
         return def;
@@ -162,7 +202,7 @@ public class PaneParams
         String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            Matcher m = percentagePattern.matcher(attr);
+            Matcher m = PERCENTAGE_PATTERN.matcher(attr);
             if (m.find())
             {
                 return parseScalableIntegerRegexMatch(m, def, scale);
@@ -174,10 +214,24 @@ public class PaneParams
 
     public static class SizePair
     {
-        public SizePair(int w, int h) { x = w; y = h; }
+        private int x;
+        private int y;
 
-        public int x;
-        public int y;
+        public SizePair(int w, int h)
+        {
+            x = w;
+            y = h;
+        }
+
+        public int getX()
+        {
+            return x;
+        }
+
+        public int getY()
+        {
+            return y;
+        }
     }
 
     public SizePair getSizePairAttribute(String name, SizePair def, SizePair scale)
@@ -188,7 +242,7 @@ public class PaneParams
             int w = def != null ? def.x : 0;
             int h = def != null ? def.y : 0;
 
-            Matcher m = percentagePattern.matcher(attr);
+            Matcher m = PERCENTAGE_PATTERN.matcher(attr);
             if (m.find())
             {
                 w = parseScalableIntegerRegexMatch(m, w, scale != null ? scale.x : 0);
@@ -206,58 +260,59 @@ public class PaneParams
         return def;
     }
 
-    static Pattern rgbaPattern = Pattern.compile("rgba?\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*(?:,\\s*([01]\\.\\d+)\\s*)?\\)", Pattern.CASE_INSENSITIVE);
-
     public int getColorAttribute(String name, int def)
     {
         String attr = getStringAttribute(name, null);
-        if (attr != null)
+        if (attr == null)
         {
-            if (attr.startsWith("#"))
-            {
-                //  CSS Hex format: #00112233
-                try{ return Integer.parseInt(attr.substring(1), 16); }
-                catch (NumberFormatException ex){}
-            }
-            else if (attr.startsWith("rgb(") || attr.startsWith("rgba("))
-            {
-                //  CSS RGB format: rgb(255,0,0) and rgba(255,0,0,0.3)
-                Matcher m = rgbaPattern.matcher(attr);
-
-                if (m.find())
-                {
-                    try
-                    {
-                        int r = MathHelper.clamp_int(Integer.parseInt(m.group(1)), 0, 255);
-                        int g = MathHelper.clamp_int(Integer.parseInt(m.group(2)), 0, 255);
-                        int b = MathHelper.clamp_int(Integer.parseInt(m.group(3)), 0, 255);
-
-                        int color = ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
-
-                        if (attr.startsWith("rgba"))
-                        {
-                            int alpha = (int) (Float.parseFloat(m.group(4)) * 255.0f);
-                            color |= MathHelper.clamp_int(alpha, 0, 255) << 24;
-                        }
-
-                        return color;
-                    }
-                    catch (Exception ex)
-                    {
-                        //  NumberFormatException | NullPointerException | IndexOutOfBoundsException | IllegalStateException ex
-                    }
-                }
-            }
-            else
-            {
-                //  Integer
-                try{ return Integer.parseInt(attr); }
-                catch (NumberFormatException ex){}
-
-                return Color.getByName(attr, def);
-            }
+            return def;
         }
-        return def;
+
+        Matcher m = RGBA_PATTERN.matcher(attr);
+
+        if (attr.startsWith("#"))
+        {
+            //  CSS Hex format: #00112233
+            return Integer.parseInt(attr.substring(1), 16);
+        }
+        //  CSS RGB format: rgb(255,0,0) and rgba(255,0,0,0.3)
+        else if ((attr.startsWith("rgb(") || attr.startsWith("rgba(")) && m.find())
+        {
+            return getRGBA(attr, m);
+        }
+        else
+        {
+            return getColorByNumberOrName(def, attr);
+        }
+    }
+
+    private static int getColorByNumberOrName(int def, String attr)
+    {
+        try
+        {
+            return Integer.parseInt(attr);
+        }
+        catch (NumberFormatException ex)
+        {
+            return Color.getByName(attr, def);
+        }
+    }
+
+    private static int getRGBA(String attr, Matcher m)
+    {
+        int r = MathHelper.clamp_int(Integer.parseInt(m.group(1)), 0, 255);
+        int g = MathHelper.clamp_int(Integer.parseInt(m.group(2)), 0, 255);
+        int b = MathHelper.clamp_int(Integer.parseInt(m.group(3)), 0, 255);
+
+        int color = ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
+
+        if (attr.startsWith("rgba"))
+        {
+            int alpha = (int) (Double.parseDouble(m.group(4)) * 255.0F);
+            color |= MathHelper.clamp_int(alpha, 0, 255) << 24;
+        }
+
+        return color;
     }
 
     private Node getAttribute(String name)
@@ -265,24 +320,25 @@ public class PaneParams
         return node.getAttributes().getNamedItem(name);
     }
 
-    private static String Localize(String str)
+    private static String localize(String str)
     {
         if (str == null)
         {
-            return str;
+            return null;
         }
 
-        int index = str.indexOf("$(");
+        String s = str;
+        int index = s.indexOf("$(");
         while (index != -1)
         {
-            int endIndex = str.indexOf(")", index);
+            int endIndex = s.indexOf(')', index);
 
             if (endIndex == -1)
             {
                 break;
             }
 
-            String key = str.substring(index + 2, endIndex);
+            String key = s.substring(index + 2, endIndex);
             String replacement = I18n.format(key);
 
             if (replacement.equals(key))
@@ -290,11 +346,11 @@ public class PaneParams
                 replacement = "MISSING:" + key;
             }
 
-            str = str.substring(0, index) + replacement + str.substring(endIndex + 1);
+            s = s.substring(0, index) + replacement + s.substring(endIndex + 1);
 
-            index = str.indexOf("$(", index + replacement.length());
+            index = s.indexOf("$(", index + replacement.length());
         }
 
-        return str;
+        return s;
     }
 }

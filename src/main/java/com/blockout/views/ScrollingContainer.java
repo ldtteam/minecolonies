@@ -5,11 +5,17 @@ import com.blockout.PaneParams;
 import com.blockout.View;
 import org.lwjgl.opengl.GL11;
 
+/**
+ * Basic scrollable pane.
+ */
 public class ScrollingContainer extends View
 {
+    private static final int PERCENT_90 = 90;
+    private static final int PERCENT_FULL = 100;
+
     protected ScrollingView owner;
-    protected int           scrollY       = 0;
-    protected int           contentHeight = 0;
+    protected int scrollY = 0;
+    protected int contentHeight = 0;
 
     ScrollingContainer(ScrollingView owner)
     {
@@ -23,7 +29,11 @@ public class ScrollingContainer extends View
         computeContentHeight();
     }
 
-    public int getScrollY() { return scrollY; }
+    public int getScrollY()
+    {
+        return scrollY;
+    }
+
     public void setScrollY(int offset)
     {
         scrollY = offset;
@@ -40,10 +50,24 @@ public class ScrollingContainer extends View
         }
     }
 
-    public int getContentHeight() { return contentHeight; }
-    public int getMaxScrollY() { return Math.max(0, contentHeight - getHeight()); }
-    public int getScrollPageSize() { return getHeight() * 90 / 100; }
+    public int getContentHeight()
+    {
+        return contentHeight;
+    }
 
+    public int getMaxScrollY()
+    {
+        return Math.max(0, contentHeight - getHeight());
+    }
+
+    public int getScrollPageSize()
+    {
+        return getHeight() * PERCENT_90 / PERCENT_FULL;
+    }
+
+    /**
+     * Compute the height in pixels of the container.
+     */
     public void computeContentHeight()
     {
         contentHeight = 0;
@@ -57,6 +81,11 @@ public class ScrollingContainer extends View
         setScrollY(scrollY);
     }
 
+    /**
+     * Scroll down a certain amount of pixels.
+     *
+     * @param deltaY number of pixels to scroll.
+     */
     public void scrollBy(int deltaY)
     {
         setScrollY(scrollY + deltaY);

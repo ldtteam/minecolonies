@@ -15,28 +15,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ChunkProviderSchematic implements IChunkProvider {
+public class ChunkProviderSchematic implements IChunkProvider
+{
     private final SchematicWorld world;
     private final Chunk emptyChunk;
     private final Map<Long, ChunkSchematic> chunks = new ConcurrentHashMap<>();
 
-    public ChunkProviderSchematic(final SchematicWorld world) {
+    public ChunkProviderSchematic(final SchematicWorld world)
+    {
         this.world = world;
         this.emptyChunk = new EmptyChunk(world, 0, 0);
     }
 
     @Override
-    public boolean chunkExists(final int x, final int z) {
+    public boolean chunkExists(final int x, final int z)
+    {
         return x >= 0 && z >= 0 && x < this.world.getWidth() && z < this.world.getLength();
     }
 
     @Override
-    public Chunk provideChunk(final int x, final int z) {
-        if (chunkExists(x, z)) {
+    public Chunk provideChunk(final int x, final int z)
+    {
+        if (chunkExists(x, z))
+        {
             final long key = ChunkCoordIntPair.chunkXZ2Int(x, z);
 
             ChunkSchematic chunk = this.chunks.get(key);
-            if (chunk == null) {
+            if (chunk == null)
+            {
                 chunk = new ChunkSchematic(this.world, x, z);
                 this.chunks.put(key, chunk);
             }
@@ -48,56 +54,71 @@ public class ChunkProviderSchematic implements IChunkProvider {
     }
 
     @Override
-    public Chunk provideChunk(final BlockPos pos) {
+    public Chunk provideChunk(final BlockPos pos)
+    {
         return provideChunk(pos.getX() >> 4, pos.getZ() >> 4);
     }
 
     @Override
-    public void populate(final IChunkProvider provider, final int x, final int z) {}
+    public void populate(final IChunkProvider provider, final int x, final int z)
+    {
+    }
 
     @Override
-    public boolean populateChunk(final IChunkProvider chunkProvider, final Chunk chunk, final int x, final int z) {
+    public boolean populateChunk(final IChunkProvider chunkProvider, final Chunk chunk, final int x, final int z)
+    {
         return false;
     }
 
     @Override
-    public boolean saveChunks(final boolean saveExtra, final IProgressUpdate progressUpdate) {
+    public boolean saveChunks(final boolean saveExtra, final IProgressUpdate progressUpdate)
+    {
         return true;
     }
 
     @Override
-    public boolean unloadQueuedChunks() {
+    public boolean unloadQueuedChunks()
+    {
         return false;
     }
 
     @Override
-    public boolean canSave() {
+    public boolean canSave()
+    {
         return false;
     }
 
     @Override
-    public String makeString() {
+    public String makeString()
+    {
         return "SchematicChunkCache";
     }
 
     @Override
-    public List<BiomeGenBase.SpawnListEntry> getPossibleCreatures(final EnumCreatureType creatureType, final BlockPos pos) {
+    public List<BiomeGenBase.SpawnListEntry> getPossibleCreatures(final EnumCreatureType creatureType, final BlockPos pos)
+    {
         return null;
     }
 
     @Override
-    public BlockPos getStrongholdGen(final World world, final String name, final BlockPos pos) {
+    public BlockPos getStrongholdGen(final World world, final String name, final BlockPos pos)
+    {
         return null;
     }
 
     @Override
-    public int getLoadedChunkCount() {
+    public int getLoadedChunkCount()
+    {
         return this.world.getWidth() * this.world.getLength();
     }
 
     @Override
-    public void recreateStructures(final Chunk chunk, final int x, final int z) { }
+    public void recreateStructures(final Chunk chunk, final int x, final int z)
+    {
+    }
 
     @Override
-    public void saveExtraData() {}
+    public void saveExtraData()
+    {
+    }
 }

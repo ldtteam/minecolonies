@@ -37,7 +37,7 @@ public class ButtonImage extends Button
     protected int disabledMapWidth = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
     protected int disabledMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
 
-    protected float textScale = 1.0F;
+    protected double textScale = 1.0;
     protected Alignment textAlignment = Alignment.Middle;
     protected int textColor = 0xffffff;
     protected int textHoverColor = 0xffffff;
@@ -50,6 +50,8 @@ public class ButtonImage extends Button
      * Default size is a small square button.
      */
     private static final int DEFAULT_BUTTON_SIZE = 20;
+
+    private static final float HALF = 0.5F;
 
     /**
      * Default constructor. Makes a small square button.
@@ -95,15 +97,15 @@ public class ButtonImage extends Button
         PaneParams.SizePair size = params.getSizePairAttribute("imageoffset", null, null);
         if (size != null)
         {
-            imageOffsetX = size.x;
-            imageOffsetY = size.y;
+            imageOffsetX = size.getX();
+            imageOffsetY = size.getY();
         }
 
         size = params.getSizePairAttribute("imagesize", null, null);
         if (size != null)
         {
-            imageWidth = size.x;
-            imageHeight = size.y;
+            imageWidth = size.getX();
+            imageHeight = size.getY();
         }
     }
 
@@ -124,15 +126,15 @@ public class ButtonImage extends Button
         PaneParams.SizePair size = params.getSizePairAttribute("highlightoffset", null, null);
         if (size != null)
         {
-            highlightOffsetX = size.x;
-            highlightOffsetY = size.y;
+            highlightOffsetX = size.getX();
+            highlightOffsetY = size.getY();
         }
 
         size = params.getSizePairAttribute("highlightsize", null, null);
         if (size != null)
         {
-            highlightWidth = size.x;
-            highlightHeight = size.y;
+            highlightWidth = size.getX();
+            highlightHeight = size.getY();
         }
     }
 
@@ -153,27 +155,27 @@ public class ButtonImage extends Button
         PaneParams.SizePair size = params.getSizePairAttribute("disabledoffset", null, null);
         if (size != null)
         {
-            disabledOffsetX = size.x;
-            disabledOffsetY = size.y;
+            disabledOffsetX = size.getX();
+            disabledOffsetY = size.getY();
         }
 
         size = params.getSizePairAttribute("disabledsize", null, null);
         if (size != null)
         {
-            disabledWidth = size.x;
-            disabledHeight = size.y;
+            disabledWidth = size.getX();
+            disabledHeight = size.getY();
         }
     }
 
     /**
-     * Loads the parameters for the button label.
+     * Loads the parameters for the button textContent.
      *
      * @param params PaneParams provided in the xml.
      */
     private void loadTextInfo(PaneParams params)
     {
-        textScale = params.getFloatAttribute("scale", textScale);
-        textAlignment = params.getEnumAttribute("textalign", textAlignment);
+        textScale = params.getDoubleAttribute("scale", textScale);
+        textAlignment = params.getEnumAttribute("textalign", Alignment.class, textAlignment);
         textColor = params.getColorAttribute("textcolor", textColor);
         // match textColor by default
         textHoverColor = params.getColorAttribute("texthovercolor", textColor);
@@ -184,8 +186,8 @@ public class ButtonImage extends Button
         PaneParams.SizePair size = params.getSizePairAttribute("textoffset", null, null);
         if (size != null)
         {
-            textOffsetX = size.x;
-            textOffsetY = size.y;
+            textOffsetX = size.getX();
+            textOffsetY = size.getY();
         }
     }
 
@@ -382,7 +384,7 @@ public class ButtonImage extends Button
     }
 
     /**
-     * @return The standard text color.
+     * @return The standard textContent color.
      */
     public int getTextColor()
     {
@@ -390,7 +392,7 @@ public class ButtonImage extends Button
     }
 
     /**
-     * @return The text color when you hover the button.
+     * @return The textContent color when you hover the button.
      */
     public int getTextHoverColor()
     {
@@ -398,7 +400,7 @@ public class ButtonImage extends Button
     }
 
     /**
-     * @return The text color when the button is disabled.
+     * @return The textContent color when the button is disabled.
      */
     public int getTextDisabledColor()
     {
@@ -406,9 +408,9 @@ public class ButtonImage extends Button
     }
 
     /**
-     * Set the standard text color.
+     * Set the standard textContent color.
      *
-     * @param c New text color.
+     * @param c New textContent color.
      */
     public void setTextColor(int c)
     {
@@ -416,11 +418,11 @@ public class ButtonImage extends Button
     }
 
     /**
-     * Set all text colors.
+     * Set all textContent colors.
      *
-     * @param c Standard text color.
-     * @param d Disabled text color.
-     * @param h Hover text color.
+     * @param c Standard textContent color.
+     * @param d Disabled textContent color.
+     * @param h Hover textContent color.
      */
     public void setTextColor(int c, int d, int h)
     {
@@ -456,9 +458,9 @@ public class ButtonImage extends Button
     }
 
     /**
-     * Set the label text {@link Alignment}.
+     * Set the textContent textContent {@link Alignment}.
      *
-     * @param align text alignment.
+     * @param align textContent alignment.
      */
     public void setTextAlignment(Alignment align)
     {
@@ -466,17 +468,17 @@ public class ButtonImage extends Button
     }
 
     /**
-     * @return The text scale.
+     * @return The textContent scale.
      */
-    public float getTextScale()
+    public double getTextScale()
     {
         return textScale;
     }
 
     /**
-     * Set the text scale.
+     * Set the textContent scale.
      *
-     * @param s New text scale.
+     * @param s New textContent scale.
      */
     public void setTextScale(float s)
     {
@@ -484,9 +486,9 @@ public class ButtonImage extends Button
     }
 
     /**
-     * Text height is calculated by multiplying FONT_HEIGHT and text scale.
+     * Text height is calculated by multiplying FONT_HEIGHT and textContent scale.
      *
-     * @return The text height.
+     * @return The textContent height.
      */
     public int getTextHeight()
     {
@@ -494,9 +496,9 @@ public class ButtonImage extends Button
     }
 
     /**
-     * The label width is calculated by multiplying the normal string width by the text scale.
+     * The textContent width is calculated by multiplying the normal string width by the textContent scale.
      *
-     * @return The width of the label.
+     * @return The width of the textContent.
      */
     public int getStringWidth()
     {
@@ -505,7 +507,7 @@ public class ButtonImage extends Button
 
     /**
      * Draw the button.
-     * Decide what image to use, and possibly draw label.
+     * Decide what image to use, and possibly draw textContent.
      *
      * @param mx Mouse x (relative to parent)
      * @param my Mouse y (relative to parent)
@@ -587,7 +589,7 @@ public class ButtonImage extends Button
         }
         else
         {
-            GL11.glColor4f(0.5F, 0.5F, 0.5F, 1.0F);
+            GL11.glColor4f(HALF, HALF, HALF, 1.0F);
         }
 
         GL11.glEnable(GL11.GL_BLEND);
@@ -596,7 +598,7 @@ public class ButtonImage extends Button
     }
 
     /**
-     * Draw the label if there is one.
+     * Draw the textContent if there is one.
      *
      * @param mouseOver If the mouse hovering over the button.
      */
@@ -609,27 +611,27 @@ public class ButtonImage extends Button
             int offsetX = textOffsetX;
             int offsetY = textOffsetY;
 
-            if (textAlignment.rightAligned)
+            if (textAlignment.isRightAligned())
             {
                 offsetX += (getWidth() - getStringWidth());
             }
-            else if (textAlignment.horizontalCentered)
+            else if (textAlignment.isHorizontalCentered())
             {
                 offsetX += (getWidth() - getStringWidth()) / 2;
             }
 
-            if (textAlignment.bottomAligned)
+            if (textAlignment.isBottomAligned())
             {
                 offsetY += (getHeight() - getTextHeight());
             }
-            else if (textAlignment.verticalCentered)
+            else if (textAlignment.isVerticalCentered())
             {
                 offsetY += (getHeight() - getTextHeight()) / 2;
             }
 
             GL11.glPushMatrix();
-            GL11.glTranslatef(textScale, textScale, textScale);
-            mc.fontRendererObj.drawString(label, (float) (getX()+ offsetX), (float) (getY() + offsetY), color, shadow);
+            GL11.glTranslatef((float) textScale, (float) textScale, (float) textScale);
+            mc.fontRendererObj.drawString(label, (float) (getX() + offsetX), (float) (getY() + offsetY), color, shadow);
             GL11.glPopMatrix();
         }
     }

@@ -46,7 +46,7 @@ public class Material
     @Override
     public boolean equals(Object material)
     {
-        return material instanceof Material && id.equals(((Material)material).id);
+        return material != null && material.getClass() == this.getClass() && id.equals(((Material)material).id);
     }
 
     /**

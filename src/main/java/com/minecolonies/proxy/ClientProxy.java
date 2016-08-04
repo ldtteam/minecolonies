@@ -6,7 +6,7 @@ import com.minecolonies.client.gui.WindowCitizen;
 import com.minecolonies.client.render.EmptyTileEntitySpecialRenderer;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.client.render.RenderFishHook;
-import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.event.ClientEventHandler;
@@ -58,7 +58,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void showCitizenWindow(CitizenData.View citizen)
+    public void showCitizenWindow(CitizenDataView citizen)
     {
         WindowCitizen window = new WindowCitizen(citizen);
         window.open();

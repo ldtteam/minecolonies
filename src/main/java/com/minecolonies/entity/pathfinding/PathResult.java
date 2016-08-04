@@ -17,7 +17,7 @@ public class PathResult
     public PathResult() {}
 
     /**
-     * For PathNavigate and PathJob use only
+     * For PathNavigate and AbstractPathJob use only
      * @param s status to set
      */
     public void setStatus(Status s)
@@ -53,7 +53,7 @@ public class PathResult
     public boolean isCancelled() { return status == Status.CANCELLED; }
 
     /**
-     * For PathNavigate and PathJob use only
+     * For PathNavigate and AbstractPathJob use only
      * @param value
      */
     public void setPathReachesDestination(boolean value) { pathReachesDestination = value; }

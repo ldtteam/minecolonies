@@ -32,7 +32,7 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
      * @param id        Button ID.
      * @param action    Consumer with the action to be performed.
      */
-    public void registerButton(String id, Consumer<Button> action)
+    public final void registerButton(String id, Consumer<Button> action)
     {
         buttons.put(id, action);
     }
