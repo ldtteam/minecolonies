@@ -98,6 +98,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         final int SPACE_LEFT = 20;
         final int LENGTH = 32;
         final int WIDTH = 20;
+        final int DISTANCE = 4;
 
         int horizontalX = isCoordPositivelyAdded ? SPACE_LEFT : SPACE_RIGHT;
         int horizontalZ = isCoordPositivelyAdded ? SPACE_RIGHT : SPACE_LEFT;
@@ -110,35 +111,47 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
         if(shouldCheckX)
         {
-            for(int i = 4; i < WIDTH; i++)
+            for(int i = DISTANCE; i < WIDTH; i++)
             {
                 int j = k * i;
                 if(!BlockUtils.isWater(world.getBlockState(pos.add(j, 0, 0))) ||
                    !BlockUtils.isWater(world.getBlockState(pos.add(j, 0, spaceRightK))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(j, 0, -spaceLeftK)))) return false;
+                   !BlockUtils.isWater(world.getBlockState(pos.add(j, 0, -spaceLeftK))))
+                {
+                    return false;
+                }
             }
             for(int i = 0; i < LENGTH; i++)
             {
-                if(!BlockUtils.isWater(world.getBlockState(pos.add(4*k, 0, -horizontalX + i))) ||
+                if(!BlockUtils.isWater(world.getBlockState(pos.add(DISTANCE*k, 0, -horizontalX + i))) ||
                    !BlockUtils.isWater(world.getBlockState(pos.add(widthKHalf, 0, -horizontalX + i))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(widthK, 0, -horizontalX + i)))) return false;
+                   !BlockUtils.isWater(world.getBlockState(pos.add(widthK, 0, -horizontalX + i))))
+                {
+                    return false;
+                }
             }
         }
         else
         {
-            for(int i = 4; i < WIDTH; i++)
+            for(int i = DISTANCE; i < WIDTH; i++)
             {
                 int j = k * i;
                 if(!BlockUtils.isWater(world.getBlockState(pos.add(0, 0, j))) ||
                    !BlockUtils.isWater(world.getBlockState(pos.add(-spaceRightK,0, j))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(spaceLeftK, 0, j)))) return false;
+                   !BlockUtils.isWater(world.getBlockState(pos.add(spaceLeftK, 0, j))))
+                {
+                    return false;
+                }
             }
 
             for(int i = 0; i < LENGTH; i++)
             {
-                if(!BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, 4*k))) ||
+                if(!BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, DISTANCE*k))) ||
                    !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthKHalf))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthK)))) return false;
+                   !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthK))))
+                {
+                    return false;
+                }
             }
         }
         return true;
