@@ -476,8 +476,8 @@ public final class SchematicWrapper
      */
     public boolean doesSchematicBlockEqualWorldBlock()
     {
-        IBlockState blockState = schematicWorld.getBlockState(this.getLocalPosition());
-        Block schematicBlock = blockState.getBlock();
+        IBlockState schematicBlockState = schematicWorld.getBlockState(this.getLocalPosition());
+        Block schematicBlock = schematicBlockState.getBlock();
 
         //All worldBlocks are equal the substitution block
         if(schematicBlock == ModBlocks.blockSubstitution)
@@ -497,14 +497,14 @@ public final class SchematicWrapper
         }
         else if(schematicBlock instanceof  BlockStairs)
         {
-            if(BlockStairs.isSameStair(world, worldPos, blockState))
+            if(BlockStairs.isSameStair(world, worldPos, schematicBlockState))
             {
                 return true;
             }
         }
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
         return worldPos.getY() <= 0
-                || blockState == worldBlockState;
+                || schematicBlockState == worldBlockState;
     }
 
     /**
