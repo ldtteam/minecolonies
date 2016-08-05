@@ -69,6 +69,8 @@ public class MineColonies
         proxy.registerRenderer();
 
         Schematics.init();
+        
+        ModAchievements.init();
     }
 
     private static synchronized void initializeNetwork()
