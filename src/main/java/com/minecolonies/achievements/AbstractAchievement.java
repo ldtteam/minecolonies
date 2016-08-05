@@ -21,6 +21,8 @@ public class AbstractAchievement extends Achievement
                                final Achievement parent)
     {
         super(id, name, offsetX, offsetY, itemIcon, parent);
+        
+        registerStat();
     }
 
     public AbstractAchievement(final String id,
@@ -31,6 +33,8 @@ public class AbstractAchievement extends Achievement
                                final Achievement parent)
     {
         super(id, name, offsetX, offsetY, blockIcon, parent);
+        
+        registerStat();
     }
 
     public AbstractAchievement(final String id,
@@ -41,5 +45,7 @@ public class AbstractAchievement extends Achievement
                                final Achievement parent)
     {
         super(id, name, offsetX, offsetY, itemStackIcon, parent);
+        
+        registerStat();
     }
 }
