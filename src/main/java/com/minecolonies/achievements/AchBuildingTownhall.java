@@ -11,9 +11,9 @@ import net.minecraft.stats.Achievement;
  * @author Isfirs
  * @since 0.1
  */
-public class AchTownhall extends AbstractAchievement
+public class AchBuildingTownhall extends AbstractAchievement
 {
-    public AchTownhall(final String id,
+    public AchBuildingTownhall(final String id,
                        final String name,
                        final int offsetX,
                        final int offsetY)
