@@ -1,9 +1,6 @@
 package com.minecolonies.achievements;
 
 import com.minecolonies.items.ModItems;
-import net.minecraft.item.Item;
-import net.minecraft.stats.Achievement;
-import scala.tools.nsc.transform.SpecializeTypes;
 
 /**
  * Achievement: Get Supply

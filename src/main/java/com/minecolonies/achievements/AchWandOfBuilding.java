@@ -1,8 +1,6 @@
 package com.minecolonies.achievements;
 
 import com.minecolonies.items.ModItems;
-import net.minecraft.item.Item;
-import net.minecraft.stats.Achievement;
 
 /**
  * Achievement: Wand of Building
