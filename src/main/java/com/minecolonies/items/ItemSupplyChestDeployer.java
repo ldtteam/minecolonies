@@ -22,11 +22,11 @@ import net.minecraft.world.World;
 public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 {
     /**
-     * The space on the right side of the ship (right side of the chest)
+     * The space on the right side of the ship (right side of the chest).
      */
     private static final int SPACE_RIGHT = 11;
     /**
-     * The space on the left side of the ship (left side of the chest)
+     * The space on the left side of the ship (left side of the chest).
      */
     private static final int SPACE_LEFT = 20;
     /**
@@ -34,26 +34,46 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private static final int LENGTH = 32;
     /**
-     * The total width of the ship
+     * The total width of the ship.
      */
     private static final int WIDTH = 20;
     /**
-     * The distance between the ship and the chest
+     * The distance between the ship and the chest.
      */
     private static final int DISTANCE = 4;
 
+    /**
+     * Creates a new supplychest deployer. The item is not stackable.
+     */
     public ItemSupplyChestDeployer()
     {
         super();
         setMaxStackSize(1);
     }
 
+    /**
+     * Getter of the name.
+     * @return the name of the item/block.
+     */
     @Override
     public String getName()
     {
         return "supplyChestDeployer";
     }
 
+    /**
+     * This method will be executed on placement of the ship.
+     * If the ship can be placed at the current position the function will execute successfully.
+     * @param stack the item.
+     * @param playerIn the player placing.
+     * @param worldIn the world.
+     * @param pos the position.
+     * @param side the direction it faces (not used).
+     * @param hitX the hitBox x position (not used).
+     * @param hitY the hitBox y position (not used).
+     * @param hitZ the hitBox z position (not used).
+     * @return if the chest has been successfully placed.
+     */
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
@@ -74,15 +94,15 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * Checks if the ship can be placed and returns the direction it can face.
      * <p/>
-     * 0: cannot be placed
-     * 2: can be placed at north
-     * 3: can be placed at south
-     * 4: can be placed at west
-     * 5: can be placed at east
+     * 0: cannot be placed.
+     * 2: can be placed at north.
+     * 3: can be placed at south.
+     * 4: can be placed at west.
+     * 5: can be placed at east.
      *
-     * @param world world obj
-     * @param pos    coordinate clicked
-     * @return      facings it can be placed at
+     * @param world world obj.
+     * @param pos    coordinate clicked.
+     * @return      facings it can be placed at.
      */
     public EnumFacing canShipBePlaced(World world, BlockPos pos)
     {
@@ -108,11 +128,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * Checks the area for the ship to be placed.
      *
-     * @param world                  world obj
-     * @param pos                    coordinate clicked
-     * @param shouldCheckX           boolean whether the x-sides should be checks
-     * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false)
-     * @return                       whether the space in the I shape is free or not
+     * @param world                  world obj.
+     * @param pos                    coordinate clicked.
+     * @param shouldCheckX           boolean whether the x-sides should be checks.
+     * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false).
+     * @return                       whether the space in the I shape is free or not.
      */
     private boolean check(World world, BlockPos pos, boolean shouldCheckX, boolean isCoordPositivelyAdded)
     {
@@ -178,9 +198,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     }
 
     /**
-     * Checks if the player already placed a supply chest
+     * Checks if the player already placed a supply chest.
      *
-     * @param player    The player
+     * @param player    the player.
      * @return          boolean, returns true when player hasn't placed before, or when infinite placing is on.
      */
     boolean isFirstPlacing(EntityPlayer player)
@@ -192,11 +212,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     }
 
     /**
-     * Spawns the ship and supply chest
+     * Spawns the ship and supply chest.
      *
-     * @param world        world obj
-     * @param pos          coordinate clicked
-     * @param entityPlayer the player
+     * @param world        world obj.
+     * @param pos          coordinate clicked.
+     * @param entityPlayer the player.
      */
     private void spawnShip(World world, BlockPos pos, EntityPlayer entityPlayer, EnumFacing chestFacing)
     {
@@ -229,6 +249,10 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         }
     }
 
+    /**
+     * Fills the content of the supplychest with the buildTool and townHall.
+     * @param chest the chest to fill.
+     */
     private void fillChest(TileEntityChest chest)
     {
         if(chest == null)
