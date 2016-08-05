@@ -495,12 +495,9 @@ public final class SchematicWrapper
         {
             return schematicBlock == worldBlockState.getBlock();
         }
-        else if(schematicBlock instanceof  BlockStairs)
+        else if(schematicBlock instanceof  BlockStairs && BlockStairs.isSameStair(world, worldPos, schematicBlockState))
         {
-            if(BlockStairs.isSameStair(world, worldPos, schematicBlockState))
-            {
-                return true;
-            }
+            return true;
         }
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
         return worldPos.getY() <= 0
