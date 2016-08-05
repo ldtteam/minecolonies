@@ -477,28 +477,30 @@ public final class SchematicWrapper
     public boolean doesSchematicBlockEqualWorldBlock()
     {
         IBlockState blockState = schematicWorld.getBlockState(this.getLocalPosition());
-        Block block = blockState.getBlock();
+        Block schematicBlock = blockState.getBlock();
 
         //All worldBlocks are equal the substitution block
-        if(block == ModBlocks.blockSubstitution)
+        if(schematicBlock == ModBlocks.blockSubstitution)
         {
             return true;
         }
 
         BlockPos worldPos = this.getBlockPosition();
 
-        if(BlockStairs.isSameStair(world, worldPos, blockState))
-        {
-            return true;
-        }
-
         IBlockState worldBlockState = world.getBlockState(worldPos);
 
         //list of things to only check block for.
         //For the time being any flower pot is equal to each other.
-        if(block instanceof BlockDoor || block == Blocks.flower_pot)
+        if(schematicBlock instanceof BlockDoor || schematicBlock == Blocks.flower_pot)
         {
-            return block == worldBlockState.getBlock();
+            return schematicBlock == worldBlockState.getBlock();
+        }
+        else if(schematicBlock instanceof  BlockStairs)
+        {
+            if(BlockStairs.isSameStair(world, worldPos, blockState))
+            {
+                return true;
+            }
         }
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
         return worldPos.getY() <= 0
