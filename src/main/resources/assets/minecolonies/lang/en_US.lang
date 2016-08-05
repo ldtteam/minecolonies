@@ -79,6 +79,7 @@ tile.minecolonies.blockHutTownHall.name=Town Hall
 tile.minecolonies.blockSubstitution.name=SchematicPlaceholder.
 
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
+tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
 
 com.minecolonies.job.Builder=Builder
 com.minecolonies.job.Deliveryman=Deliveryman
@@ -92,6 +93,7 @@ tile.blockHutTownHall.messageColonistDead=A colonist has died!
 tile.blockHutTownHall.messagePlacedAlready=You have placed a Town Hall already
 tile.blockHutTownHall.messageInvalidWorld=You can't place a town hall in this world type
 tile.blockHutTownHall.messageTooClose=Too close to existing town hall
+tile.blockHutTownHall.messageTooFar=Too far away from your Colony
 
 tile.blockHut.messageTooFarFromTownHall=You need to be closer to your town hall!
 tile.blockHut.messageNoTownHall=You need to place a town hall first!

@@ -151,16 +151,18 @@ public final class ColonyManager
     }
 
     /**
-     * Returns a list of colonies that has the given owner
+     * Returns a Colony that has the given owner.
      *
      * @param owner     UUID of the owner
-     * @return          List of colonies that belong to given owner UUID
+     * @return          Colony that belong to given owner UUID
      */
-    private static List<IColony> getColoniesByOwner(UUID owner)
+    private static IColony getColonyByOwner(UUID owner)
     {
-        return colonies.values().stream()
-                       .filter(c -> c.getPermissions().getOwner().equals(owner))
-                       .collect(Collectors.toList());
+        return colonies.values()
+                .stream()
+                .filter(c -> c.getPermissions().getOwner().equals(owner))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -253,7 +255,7 @@ public final class ColonyManager
 
     /**
      * Returns the closest view
-     * @see {@link #getColonyView(World, BlockPos)}
+     * @see {@link this#getColonyView(World, BlockPos)}
      *
      * @param w     World
      * @param pos    Block Position
@@ -281,25 +283,23 @@ public final class ColonyManager
     }
 
     /**
-     * Returns a list of views of colonies with specific owner
+     * Returns a ColonyView with specific owner.
      *
      * @param owner     UUID of the owner
-     * @return          List of colony views
+     * @return          ColonyView
      */
-    private static List<IColony> getColonyViewsByOwner(UUID owner)
+    private static IColony getColonyViewByOwner(UUID owner)
     {
-        List<IColony> results = new ArrayList<>();
-
         for (ColonyView c : colonyViews.values())
         {
             Permissions.Player p = c.getPlayers().get(owner);
             if (p != null && p.getRank().equals(Permissions.Rank.OWNER))
             {
-                results.add(c);
+                return c;
             }
         }
 
-        return results;
+        return null;
     }
 
     /**
@@ -321,7 +321,7 @@ public final class ColonyManager
      * On clients it returns the view.
      * On servers it returns the colony itself
      *
-     * @see {@link #getClosestColony(World, BlockPos)}
+     * @see {@link this#getClosestColony(World, BlockPos)}
      *
      * @param w         World
      * @param pos        Block position
@@ -337,15 +337,15 @@ public final class ColonyManager
      * On clients it returns the view.
      * On servers it returns the colony itself
      *
-     * Returns a list of colonies or views with given Player as owner
+     * Returns a colony or view with the given Player as owner
      *
      * @param w         World
      * @param owner     Entity Player
-     * @return          List of IColonies belonging to specific player
+     * @return          IColony belonging to specific player
      */
-    public static List<IColony> getIColoniesByOwner(World w, EntityPlayer owner)
+    public static IColony getIColonyByOwner(World w, EntityPlayer owner)
     {
-        return getIColoniesByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
+        return getIColonyByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
     }
 
     /**
@@ -353,15 +353,15 @@ public final class ColonyManager
      * On clients it returns the view.
      * On servers it returns the colony itself
      *
-     * Returns a list of colonies or views with given Player as owner
+     * Returns a colony or view with given Player as owner
      *
      * @param w         World
      * @param owner     UUID of the owner
-     * @return          List of IColonies belonging to specific player
+     * @return          IColony belonging to specific player
      */
-    public static List<IColony> getIColoniesByOwner(World w, UUID owner)
+    public static IColony getIColonyByOwner(World w, UUID owner)
     {
-        return w.isRemote ? getColonyViewsByOwner(owner) : getColoniesByOwner(owner);
+        return w.isRemote ? getColonyViewByOwner(owner) : getColonyByOwner(owner);
     }
 
     /**
