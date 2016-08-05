@@ -8,7 +8,7 @@ public class BlockHutBaker extends AbstractBlockHut
 {
     protected BlockHutBaker()
     {
-        //No different forom Abstract parennt
+        //No different from Abstract parent
         super();
     }
 

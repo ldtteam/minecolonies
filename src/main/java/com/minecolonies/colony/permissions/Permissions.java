@@ -324,6 +324,12 @@ public class Permissions implements IPermissions
         return hasPermission(getRank(player), action);
     }
 
+    @Override
+    public boolean isColonyMember(EntityPlayer player)
+    {
+        return players.containsKey(player.getGameProfile().getId());
+    }
+
     /**
      * Checks if a rank can perform an action
      *
@@ -680,6 +686,12 @@ public class Permissions implements IPermissions
         public boolean hasPermission(EntityPlayer player, Action action)
         {
             return hasPermission(getRank(player), action);
+        }
+
+        @Override
+        public boolean isColonyMember(EntityPlayer player)
+        {
+            return players.containsKey(player.getUniqueID());
         }
 
         public boolean hasPermission(UUID id, Action action)
