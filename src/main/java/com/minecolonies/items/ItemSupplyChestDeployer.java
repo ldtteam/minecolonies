@@ -16,8 +16,32 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
+/**
+ * Class to handle the placement of the supplychest and with it the supplyship.
+ */
 public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 {
+    /**
+     * The space on the right side of the ship (right side of the chest)
+     */
+    private static final int SPACE_RIGHT = 11;
+    /**
+     * The space on the left side of the ship (left side of the chest)
+     */
+    private static final int SPACE_LEFT = 20;
+    /**
+     * The total length of the ship.
+     */
+    private static final int LENGTH = 32;
+    /**
+     * The total width of the ship
+     */
+    private static final int WIDTH = 20;
+    /**
+     * The distance between the ship and the chest
+     */
+    private static final int DISTANCE = 4;
+
     public ItemSupplyChestDeployer()
     {
         super();
@@ -94,11 +118,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         int k = isCoordPositivelyAdded ? 1 : -1;
 
-        final int SPACE_RIGHT = 11;
-        final int SPACE_LEFT = 20;
-        final int LENGTH = 32;
-        final int WIDTH = 20;
-        final int DISTANCE = 4;
+
 
         int horizontalX = isCoordPositivelyAdded ? SPACE_LEFT : SPACE_RIGHT;
         int horizontalZ = isCoordPositivelyAdded ? SPACE_RIGHT : SPACE_LEFT;
