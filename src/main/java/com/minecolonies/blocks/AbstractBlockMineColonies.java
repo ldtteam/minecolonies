@@ -48,10 +48,17 @@ public abstract class AbstractBlockMineColonies extends Block {
 			EntityPlayer player = (EntityPlayer) placer;
 			Block block = state.getBlock();
 			
-			if (ModBlocks.blockHutTownHall.equals(block)) {
-				player.triggerAchievement(ModAchievements.achTownhall);
+			if (block == ModBlocks.blockHutTownHall) {
+				player.triggerAchievement(ModAchievements.achBuildingTownhall);
+			} else if (block == ModBlocks.blockHutBuilder) {
+				player.triggerAchievement(ModAchievements.achBuildingBuilder);
+			} else if (block == ModBlocks.blockHutLumberjack) {
+				player.triggerAchievement(ModAchievements.achBuildingLumberjack);
+			} else if (block == ModBlocks.blockHutMiner) {
+				player.triggerAchievement(ModAchievements.achBuildingMiner);
 			}
 		}
+		
 		
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	}
