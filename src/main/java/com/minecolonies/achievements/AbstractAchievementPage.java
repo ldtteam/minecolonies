@@ -9,7 +9,7 @@ import net.minecraftforge.common.AchievementPage;
  * @author Isfirs
  * @since 0.1
  */
-public class AbstractAchievementPage extends AchievementPage
+public abstract class AbstractAchievementPage extends AchievementPage
 {
     public AbstractAchievementPage(final String name, final Achievement... achievements)
     {
