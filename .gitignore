@@ -23,3 +23,6 @@ Thumbs.db
 minecolonies_Client.launch
 minecolonies_Server.launch
 *.hprof
+/.gradle/
+/build/
+/.settings
