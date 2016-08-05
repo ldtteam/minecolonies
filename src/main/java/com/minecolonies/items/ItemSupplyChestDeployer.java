@@ -1,5 +1,6 @@
 package com.minecolonies.items;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
@@ -41,6 +42,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         {
             spawnShip(worldIn, pos, playerIn, facing);
             stack.stackSize--;
+            
+            playerIn.addStat(ModAchievements.achGetSupply, 1);
+            
             return true;
         }
         LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.supplyChestDeployer.invalid");
