@@ -4,11 +4,11 @@ import com.blockout.PaneParams;
 import org.lwjgl.opengl.GL11;
 
 /**
- * BlockOut label pane. Used to render a piece of text.
+ * BlockOut label pane. Used to render a piece of label.
  */
 public class Label extends AbstractTextElement
 {
-    protected String text;
+    protected String label;
 
     protected int hoverColor = 0xffffff;
 
@@ -25,25 +25,25 @@ public class Label extends AbstractTextElement
     public Label(PaneParams params)
     {
         super(params);
-        text = params.getLocalizedStringAttribute("label", text);
+        label = params.getLocalizedStringAttribute("label", label);
 
         //  match textColor by default
         hoverColor    = params.getColorAttribute("hovercolor", textColor);
 
         if (width == 0)
         {
-            width = Math.min(mc.fontRendererObj.getStringWidth(text), params.getParentWidth());
+            width = Math.min(mc.fontRendererObj.getStringWidth(label), params.getParentWidth());
         }
     }
 
-    public String getText()
+    public String getLabel()
     {
-        return text;
+        return label;
     }
 
-    public void setText(String s)
+    public void setLabel(String s)
     {
-        text = s;
+        label = s;
     }
 
     public int getHoverColor()
@@ -69,7 +69,7 @@ public class Label extends AbstractTextElement
 
     public int getStringWidth()
     {
-        return (int) (mc.fontRendererObj.getStringWidth(text) * scale);
+        return (int) (mc.fontRendererObj.getStringWidth(label) * scale);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class Label extends AbstractTextElement
         GL11.glTranslated((double) (getX() + offsetX), (double) (getY() + offsetY), 0);
         GL11.glScalef((float) scale, (float) scale, (float) scale);
         mc.renderEngine.bindTexture(TEXTURE);
-        mc.fontRendererObj.drawString(text, 0, 0, color, shadow);
+        mc.fontRendererObj.drawString(label, 0, 0, color, shadow);
         GL11.glPopMatrix();
     }
 }

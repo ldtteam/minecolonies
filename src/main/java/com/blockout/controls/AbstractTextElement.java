@@ -6,7 +6,7 @@ import com.blockout.PaneParams;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * Contains any code common to text controls.
+ * Contains any code common to label controls.
  */
 public abstract class AbstractTextElement extends Pane
 {

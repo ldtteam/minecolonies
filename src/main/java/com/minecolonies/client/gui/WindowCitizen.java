@@ -176,7 +176,7 @@ public class WindowCitizen extends Window implements Button.Handler
         //Calculates how much percent of the next level has been completed.
         double experienceRatio = ExperienceUtils.getPercentOfLevelCompleted(citizen.getExperience(),citizen.getLevel());
 
-        findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setText(Integer.toString(citizen.getLevel()));
+        findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabel(Integer.toString(citizen.getLevel()));
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X, XP_LABEL_Y);
 
         Image xpBar = new Image();
@@ -241,7 +241,7 @@ public class WindowCitizen extends Window implements Button.Handler
     @Override
     public void onOpened()
     {
-        findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setText(citizen.getName());
+        findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabel(citizen.getName());
 
         createHealthBar();
         createXpBar();
@@ -253,15 +253,15 @@ public class WindowCitizen extends Window implements Button.Handler
      */
     private void createSkillContent()
     {
-        findPaneOfTypeByID(STRENGTH, Label.class).setText(
+        findPaneOfTypeByID(STRENGTH, Label.class).setLabel(
                 LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()));
-        findPaneOfTypeByID(ENDURANCE, Label.class).setText(
+        findPaneOfTypeByID(ENDURANCE, Label.class).setLabel(
                 LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.getEndurance()));
-        findPaneOfTypeByID(CHARISMA, Label.class).setText(
+        findPaneOfTypeByID(CHARISMA, Label.class).setLabel(
                 LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.getCharisma()));
-        findPaneOfTypeByID(INTELLIGENCE, Label.class).setText(
+        findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabel(
                 LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.getIntelligence()));
-        findPaneOfTypeByID(DEXTERITY, Label.class).setText(
+        findPaneOfTypeByID(DEXTERITY, Label.class).setLabel(
                 LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.getDexterity()));
     }
 

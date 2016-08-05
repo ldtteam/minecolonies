@@ -5,7 +5,7 @@ import net.minecraft.util.ChatAllowedCharacters;
 import org.lwjgl.opengl.GL11;
 
 /**
- * Mimics Vanilla text fields.
+ * Mimics Vanilla label fields.
  */
 public class TextFieldVanilla extends TextField
 {

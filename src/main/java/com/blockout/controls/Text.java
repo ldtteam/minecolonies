@@ -25,7 +25,7 @@ public class Text extends AbstractTextElement
     }
 
     /**
-     * Create text from xml.
+     * Create label from xml.
      *
      * @param params xml parameters.
      */

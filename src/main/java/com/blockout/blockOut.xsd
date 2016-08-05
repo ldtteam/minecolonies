@@ -158,7 +158,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- <text> -->
+    <!-- <label> -->
     <xs:complexType name="textType">
         <xs:simpleContent>
             <xs:extension base="paneType">
