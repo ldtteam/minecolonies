@@ -1,19 +1,20 @@
 package com.minecolonies.achievements;
 
-import com.minecolonies.blocks.ModBlocks;
-import net.minecraft.item.Item;
-import net.minecraft.stats.Achievement;
+import net.minecraft.init.Items;
 
 /**
- * Created by PascalBahl on 03.08.16.
+ * 
+ * @author Isfirs
+ * @since 0.1
  */
-public class AchPioneers extends AbstractAchievement
+public class AchSizeSettlement extends AbstractSizeAchievement
 {
-    public AchPioneers(final String id,
+    public AchSizeSettlement(final String id,
                        final String name,
                        final int offsetX,
-                       final int offsetY)
+                       final int offsetY,
+                       final int size)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutBuilder, null);
+        super(id, name, offsetX, offsetY, Items.iron_ingot, null, size);
     }
 }
