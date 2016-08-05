@@ -18,6 +18,6 @@ public class AchTownhall extends AbstractAchievement
                        final int offsetX,
                        final int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutTownHall, ModAchievements.achWandOfbuilding);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutTownHall, ModAchievements.achGetSupply);
     }
 }
