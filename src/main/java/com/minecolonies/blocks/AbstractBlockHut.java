@@ -29,7 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * The method {@link AbstractBlockHut#getName()} is abstract
  * All AbstractBlockHut[something] should extend this class
  */
-public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
+public abstract class AbstractBlockHut extends AbstractBlockMineColonies implements ITileEntityProvider
 {
 
     protected int workingRange;
