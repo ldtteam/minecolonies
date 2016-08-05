@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="13.1">
-  <zoom_level>4</zoom_level>
+  <zoom_level>5</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>156</x>
-      <y>256</y>
-      <w>72</w>
-      <h>24</h>
+      <x>200</x>
+      <y>330</y>
+      <w>90</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>Minecraft::Block</panel_attributes>
     <additional_attributes/>
@@ -15,10 +15,10 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>148</x>
-      <y>324</y>
-      <w>88</w>
-      <h>24</h>
+      <x>190</x>
+      <y>415</y>
+      <w>110</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>MineColonies::AbstractBlockHut</panel_attributes>
     <additional_attributes/>
@@ -26,10 +26,10 @@
   <element>
     <id>UMLNote</id>
     <coordinates>
-      <x>52</x>
-      <y>236</y>
-      <w>280</w>
-      <h>204</h>
+      <x>70</x>
+      <y>305</y>
+      <w>350</w>
+      <h>255</h>
     </coordinates>
     <panel_attributes>Current
 layer=0</panel_attributes>
@@ -38,10 +38,10 @@ layer=0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>188</x>
-      <y>276</y>
-      <w>12</w>
-      <h>56</h>
+      <x>240</x>
+      <y>355</y>
+      <w>15</w>
+      <h>70</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;120.0</additional_attributes>
@@ -49,10 +49,10 @@ layer=0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>56</x>
-      <y>388</y>
-      <w>88</w>
-      <h>24</h>
+      <x>75</x>
+      <y>495</y>
+      <w>110</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>MineColonies::BlockHutTownHall</panel_attributes>
     <additional_attributes/>
@@ -60,10 +60,10 @@ layer=0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>148</x>
-      <y>388</y>
-      <w>88</w>
-      <h>24</h>
+      <x>190</x>
+      <y>495</y>
+      <w>110</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>MineColonies::BlockHutCitizen</panel_attributes>
     <additional_attributes/>
@@ -71,10 +71,10 @@ layer=0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>240</x>
-      <y>388</y>
-      <w>88</w>
-      <h>24</h>
+      <x>305</x>
+      <y>495</y>
+      <w>110</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>MineColonies::BlockHutMiner</panel_attributes>
     <additional_attributes/>
@@ -82,10 +82,10 @@ layer=0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>188</x>
-      <y>344</y>
-      <w>12</w>
-      <h>52</h>
+      <x>240</x>
+      <y>440</y>
+      <w>15</w>
+      <h>65</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;110.0</additional_attributes>
@@ -93,10 +93,10 @@ layer=0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>100</x>
-      <y>344</y>
-      <w>68</w>
-      <h>52</h>
+      <x>130</x>
+      <y>440</y>
+      <w>85</w>
+      <h>65</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>150.0;10.0;150.0;70.0;10.0;70.0;10.0;110.0</additional_attributes>
@@ -104,10 +104,10 @@ layer=0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>224</x>
-      <y>344</y>
-      <w>72</w>
-      <h>52</h>
+      <x>285</x>
+      <y>440</y>
+      <w>90</w>
+      <h>65</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;70.0;160.0;70.0;160.0;110.0</additional_attributes>
@@ -115,10 +115,10 @@ layer=0</panel_attributes>
   <element>
     <id>UMLNote</id>
     <coordinates>
-      <x>372</x>
-      <y>236</y>
-      <w>392</w>
-      <h>204</h>
+      <x>470</x>
+      <y>305</y>
+      <w>490</w>
+      <h>255</h>
     </coordinates>
     <panel_attributes>My Idea
 layer=0</panel_attributes>
@@ -127,10 +127,10 @@ layer=0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>476</x>
-      <y>256</y>
-      <w>72</w>
-      <h>24</h>
+      <x>600</x>
+      <y>330</y>
+      <w>90</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>Minecraft::Block</panel_attributes>
     <additional_attributes/>
@@ -138,10 +138,10 @@ layer=0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>468</x>
-      <y>336</y>
-      <w>88</w>
-      <h>24</h>
+      <x>590</x>
+      <y>430</y>
+      <w>110</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>MineColonies::AbstractBlockHut</panel_attributes>
     <additional_attributes/>
@@ -149,10 +149,10 @@ layer=0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>508</x>
-      <y>276</y>
-      <w>12</w>
-      <h>32</h>
+      <x>640</x>
+      <y>355</y>
+      <w>15</w>
+      <h>40</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
@@ -160,10 +160,10 @@ layer=0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>376</x>
-      <y>388</y>
-      <w>88</w>
-      <h>24</h>
+      <x>475</x>
+      <y>495</y>
+      <w>110</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>MineColonies::BlockHutTownHall</panel_attributes>
     <additional_attributes/>
@@ -171,10 +171,10 @@ layer=0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>468</x>
-      <y>388</y>
-      <w>88</w>
-      <h>24</h>
+      <x>590</x>
+      <y>495</y>
+      <w>110</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>MineColonies::BlockHutCitizen</panel_attributes>
     <additional_attributes/>
@@ -182,10 +182,10 @@ layer=0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>560</x>
-      <y>388</y>
-      <w>88</w>
-      <h>24</h>
+      <x>705</x>
+      <y>495</y>
+      <w>110</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>MineColonies::BlockHutMiner</panel_attributes>
     <additional_attributes/>
@@ -193,10 +193,10 @@ layer=0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>508</x>
-      <y>356</y>
-      <w>12</w>
-      <h>40</h>
+      <x>640</x>
+      <y>455</y>
+      <w>15</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
@@ -204,10 +204,10 @@ layer=0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>420</x>
-      <y>356</y>
-      <w>68</w>
-      <h>40</h>
+      <x>530</x>
+      <y>455</y>
+      <w>85</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>150.0;10.0;150.0;50.0;10.0;50.0;10.0;80.0</additional_attributes>
@@ -215,10 +215,10 @@ layer=0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>544</x>
-      <y>356</y>
-      <w>72</w>
-      <h>40</h>
+      <x>685</x>
+      <y>455</y>
+      <w>90</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;50.0;160.0;50.0;160.0;80.0</additional_attributes>
@@ -226,21 +226,21 @@ layer=0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>468</x>
-      <y>300</y>
-      <w>88</w>
-      <h>24</h>
+      <x>590</x>
+      <y>385</y>
+      <w>110</w>
+      <h>30</h>
     </coordinates>
-    <panel_attributes>MineColonies::AbstractModBlock</panel_attributes>
+    <panel_attributes>MineColonies::AbstractBlockMineColonies</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>508</x>
-      <y>320</y>
-      <w>12</w>
-      <h>24</h>
+      <x>640</x>
+      <y>410</y>
+      <w>15</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;40.0</additional_attributes>
@@ -248,10 +248,10 @@ layer=0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>668</x>
-      <y>388</y>
-      <w>88</w>
-      <h>24</h>
+      <x>840</x>
+      <y>495</y>
+      <w>110</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>MineColonies::SomeNonHutBlock</panel_attributes>
     <additional_attributes/>
@@ -259,10 +259,10 @@ layer=0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>552</x>
-      <y>308</y>
-      <w>168</w>
-      <h>88</h>
+      <x>695</x>
+      <y>395</y>
+      <w>210</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;400.0;10.0;400.0;200.0</additional_attributes>
