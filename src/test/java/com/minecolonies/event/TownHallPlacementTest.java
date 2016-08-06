@@ -66,7 +66,7 @@ public class TownHallPlacementTest
     //placing townhall succesfully
 
     @Test
-    public void nothingNearby()
+    public void testNothingNearby()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
         when(ColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(null);
@@ -78,7 +78,7 @@ public class TownHallPlacementTest
     }
 
     @Test
-    public void replaceAsOwner()
+    public void testReplaceAsOwner()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(true);
@@ -92,7 +92,7 @@ public class TownHallPlacementTest
     }
 
     @Test
-    public void replaceAsNonOwnerWithoutPermission()
+    public void testReplaceAsNonOwnerWithoutPermission()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
         when(ColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
@@ -109,7 +109,7 @@ public class TownHallPlacementTest
     }
 
     @Test
-    public void replaceAsNonOwnerWithPermission()
+    public void testReplaceAsNonOwnerWithPermission()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
         when(ColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
@@ -126,7 +126,7 @@ public class TownHallPlacementTest
     }
 
     @Test
-    public void replaceAsNonMember()
+    public void testReplaceAsNonMember()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
         when(ColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
@@ -142,7 +142,7 @@ public class TownHallPlacementTest
     }
 
     @Test
-    public void alreadyPlacedInOwnedColony()
+    public void testAlreadyPlacedInOwnedColony()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(true);
@@ -155,7 +155,7 @@ public class TownHallPlacementTest
     }
 
     @Test
-    public void alreadyPlacedInNonOwnedColony()
+    public void testAlreadyPlacedInNonOwnedColony()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(true);
@@ -170,7 +170,7 @@ public class TownHallPlacementTest
     }
 
     @Test
-    public void alreadyPlacedNotInColony()
+    public void testAlreadyPlacedNotInColony()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(false);
@@ -182,7 +182,7 @@ public class TownHallPlacementTest
     }
 
     @Test
-    public void tryPlaceInColony()
+    public void testTryPlaceInColony()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
         when(ColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
@@ -196,7 +196,7 @@ public class TownHallPlacementTest
     }
 
     @Test
-    public void tryPlaceCloseToColony()
+    public void testTryPlaceCloseToColony()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
         when(ColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
@@ -210,7 +210,7 @@ public class TownHallPlacementTest
     }
 
     @Test
-    public void tryPlaceFarAway()
+    public void testTryPlaceFarAway()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
         when(ColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
