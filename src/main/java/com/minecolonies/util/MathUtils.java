@@ -52,6 +52,6 @@ public final class MathUtils
         final int z2 = target.getZ();
 
         //Hypot returns sqrt(x²+ y²) without intermediate overflow or underflow.
-        return Math.hypot(x2-x1,z2-z1);
+        return Math.hypot((double)x2-x1,(double)z2-z1);
     }
 }

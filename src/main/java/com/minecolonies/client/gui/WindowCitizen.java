@@ -223,7 +223,7 @@ public class WindowCitizen extends Window implements Button.Handler
         }
 
         //Half hearts
-        if(citizen.getHealth() / 2 % 1 != 0)
+        if(citizen.getHealth() / 2 % 1 > 0)
         {
             Image heart = new Image();
             heart.setImage(Gui.icons, HALF_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
