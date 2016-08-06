@@ -136,7 +136,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         {
             Log.logger.info(String.format(
                     "ForgeHook not in sync with EfficientTool for %s and %s\n"
-                    + "Please report to MineColonies with this label to add support!",
+                    + "Please report to MineColonies with this text to add support!",
                     curBlock, tool));
         }
 
