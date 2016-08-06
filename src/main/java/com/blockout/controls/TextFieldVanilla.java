@@ -5,7 +5,7 @@ import net.minecraft.util.ChatAllowedCharacters;
 import org.lwjgl.opengl.GL11;
 
 /**
- * Mimics Vanilla label fields.
+ * Mimics Vanilla text fields.
  */
 public class TextFieldVanilla extends TextField
 {
@@ -14,7 +14,7 @@ public class TextFieldVanilla extends TextField
     protected int backgroundInnerColor = 0xFF000000;
 
     /**
-     * Required defualt constructor.
+     * Required default constructor.
      */
     public TextFieldVanilla()
     {
