@@ -14,7 +14,7 @@ public class TextFieldVanilla extends TextField
     protected int backgroundInnerColor = 0xFF000000;
 
     /**
-     * Required defualt constructor.
+     * Required default constructor.
      */
     public TextFieldVanilla()
     {

@@ -46,7 +46,7 @@ public class Button extends Pane
     public Button(PaneParams params)
     {
         super(params);
-        label = params.getLocalizedStringAttribute("textContent", label);
+        label = params.getLocalizedStringAttribute("label", label);
     }
 
     /**
