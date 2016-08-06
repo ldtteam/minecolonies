@@ -7,7 +7,8 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
-import java.util.Stack;
+import java.util.Deque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * A Pane is the root of all UI objects
@@ -36,7 +37,7 @@ public class Pane extends Gui
 
     protected static boolean debugging = false;
 
-    private static Stack<ScissorsInfo> scissorsInfoStack = new Stack<>();
+    private static Deque<ScissorsInfo> scissorsInfoStack = new ConcurrentLinkedDeque<>();
 
     /**
      * Default constructor
@@ -199,7 +200,7 @@ public class Pane extends Gui
      * Returns the currently focused Pane
      * @return the currently focused Pane
      */
-    public static Pane getFocus()
+    public static synchronized Pane getFocus()
     {
         return focus;
     }
@@ -245,7 +246,7 @@ public class Pane extends Gui
      *
      * @return <tt>true</tt> if this Pane is the current focus
      */
-    public final boolean isFocus()
+    public final synchronized boolean isFocus()
     {
         return focus == this;
     }
