@@ -5,7 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 
-public class AbstractSizeAchievement extends AbstractAchievement {
+public abstract class AbstractSizeAchievement extends AbstractAchievement {
 	
 	public final int size;
 
@@ -29,5 +29,11 @@ public class AbstractSizeAchievement extends AbstractAchievement {
 		
 		this.size = size;
 	}
-
+	
+	public abstract void triggerAchievement(EntityPlayer player);
+	
+	protected boolean compare(int compare) {
+	    return compare >= this.size
+	}
+	
 }
