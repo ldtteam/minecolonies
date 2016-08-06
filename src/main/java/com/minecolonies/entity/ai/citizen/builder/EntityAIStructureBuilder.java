@@ -237,7 +237,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             workFrom = getWorkingPosition();
         }
 
-        return walkToBlock(workFrom) || worker.getPosition().distanceSq(workFrom) >= 10;
+        return worker.isWorkerAtSiteWithMove(workFrom,5) || MathUtils.twoDimDistance(worker.getPosition(),workFrom) < 10;
     }
 
     /**
@@ -331,7 +331,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && job.getSchematic().getBlock() != ModBlocks.blockSubstitution)
         {
             //Fill workFrom with the position from where the builder should build.
-            if(goToConstructionSite())
+            if(!goToConstructionSite())
             {
                 return this.getState();
             }
@@ -429,7 +429,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState structureStep()
     {
-        if(goToConstructionSite())
+        if(!goToConstructionSite())
         {
             return this.getState();
         }
@@ -509,7 +509,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState decorationStep()
     {
-        if(goToConstructionSite())
+        if(!goToConstructionSite())
         {
             return this.getState();
         }

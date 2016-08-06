@@ -1,5 +1,7 @@
 package com.minecolonies.util;
 
+import net.minecraft.util.BlockPos;
+
 /**
  * Useful math stuff to use statically.
  */
@@ -34,5 +36,22 @@ public final class MathUtils
     public static long nanoSecondsToSeconds(long nanoSeconds)
     {
         return nanoSeconds / NANO_TIME_DIVIDER;
+    }
+
+    /**
+     * Calculates the distance between two points without considering the y-value.
+     * @param position the start position.
+     * @param target the end position.
+     * @return the distance.
+     */
+    public static double twoDimDistance(BlockPos position, BlockPos target)
+    {
+        final int x1 = position.getX();
+        final int x2 = target.getX();
+        final int z1 = position.getZ();
+        final int z2 = target.getZ();
+
+        //Hypot returns sqrt(x²+ y²) without intermediate overflow or underflow.
+        return Math.hypot(x2-x1,z2-z1);
     }
 }
