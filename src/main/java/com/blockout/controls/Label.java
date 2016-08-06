@@ -4,7 +4,7 @@ import com.blockout.PaneParams;
 import org.lwjgl.opengl.GL11;
 
 /**
- * BlockOut label pane. Used to render a piece of label.
+ * BlockOut label pane. Used to render a piece of text.
  */
 public class Label extends AbstractTextElement
 {
