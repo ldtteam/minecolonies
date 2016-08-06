@@ -429,16 +429,16 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState structureStep()
     {
+        if(goToConstructionSite())
+        {
+            return this.getState();
+        }
+
         if(job.getSchematic().getBlock() == null
                 || job.getSchematic().doesSchematicBlockEqualWorldBlock()
                 || (!job.getSchematic().getBlock().getMaterial().isSolid() && job.getSchematic().getBlock() != Blocks.air))
         {
             return findNextBlockSolid();//findNextBlock count was reached and we can ignore this block
-        }
-
-        if(goToConstructionSite())
-        {
-            return this.getState();
         }
 
         worker.faceBlock(job.getSchematic().getBlockPosition());
@@ -465,8 +465,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if(worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
                 block instanceof AbstractBlockHut)
         {
-            findNextBlockSolid();
-            return this.getState();
+            return findNextBlockSolid();
         }
 
         //We need to deal with materials
@@ -510,14 +509,15 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState decorationStep()
     {
-        if(job.getSchematic().doesSchematicBlockEqualWorldBlock() || job.getSchematic().getBlock().getMaterial().isSolid() || job.getSchematic().getBlock() == Blocks.air)
-        {
-            return findNextBlockNonSolid();//findNextBlock count was reached and we can ignore this block
-        }
-
         if(goToConstructionSite())
         {
             return this.getState();
+        }
+
+        if(job.getSchematic().doesSchematicBlockEqualWorldBlock() || job.getSchematic().getBlock().getMaterial().isSolid() /*|| job.getSchematic().getBlock() == Blocks.air*/)
+        {
+            //findNextBlock count was reached and we can ignore this block
+            return findNextBlockNonSolid();
         }
 
         worker.faceBlock(job.getSchematic().getBlockPosition());
