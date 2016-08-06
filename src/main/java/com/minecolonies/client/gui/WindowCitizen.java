@@ -49,7 +49,6 @@ public class WindowCitizen extends Window implements Button.Handler
      */
     private static final  String                DEXTERITY = "dexterity";
 
-
     /**
      * Xp-bar height
      */
@@ -99,7 +98,6 @@ public class WindowCitizen extends Window implements Button.Handler
      */
     private static final int                    XP_LABEL_Y                      = 28;
 
-
     /**
      * Row position of the empty heart icon
      */
@@ -132,7 +130,6 @@ public class WindowCitizen extends Window implements Button.Handler
      * The position y where the heart is placed
      */
     private static final int                    HEART_ICON_POS_Y                = 10;
-
 
     /**
      * The label to find name in the gui
@@ -207,7 +204,7 @@ public class WindowCitizen extends Window implements Button.Handler
         findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).setAlignment(Alignment.MiddleRight);
 
         //MaxHealth (Black hearts)
-        for(int i=0; i < MathHelper.floor_double(citizen.getHealth() / 2); i++)
+        for(int i=0;i < citizen.getMaxHealth() / 2;i++)
         {
             Image heart = new Image();
             heart.setImage(Gui.icons, EMPTY_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
@@ -217,7 +214,7 @@ public class WindowCitizen extends Window implements Button.Handler
 
         //Current health (Red hearts)
         int heartPos;
-        for(heartPos=0; heartPos < MathHelper.floor_double(citizen.getHealth() / 2); heartPos++)
+        for(heartPos=0;heartPos < ((int)citizen.getHealth() / 2);heartPos++)
         {
             Image heart = new Image();
             heart.setImage(Gui.icons, FULL_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
@@ -226,7 +223,7 @@ public class WindowCitizen extends Window implements Button.Handler
         }
 
         //Half hearts
-        if((MathHelper.floor_double(citizen.getHealth() / 2) % 2) != 0)
+        if(citizen.getHealth() / 2 % 1 > 0)
         {
             Image heart = new Image();
             heart.setImage(Gui.icons, HALF_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);

@@ -39,26 +39,30 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally)
      */
     private static final double XP_EACH_BUILDING = 2.5;
-
     /**
      * How often should intelligence factor into the builders skill modifier.
      */
     private static final int INTELLIGENCE_MULTIPLIER = 2;
-
     /**
      * How often should strength factor into the builders skill modifier.
      */
     private static final int STRENGTH_MULTIPLIER = 1;
-
     /**
      * Position where the Builders constructs from.
      */
     private BlockPos workFrom = null;
-
     /**
      * The maximum range to keep from the current building place
      */
     private static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
+    /**
+     * The standard range the builder should reach until his target.
+     */
+    private static final int STANDARD_WORKING_RANGE = 5;
+    /**
+     * The minimum range the builder has to reach in order to construct or clear.
+     */
+    private static final int MIN_WORKING_RANGE = 10;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -237,7 +241,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             workFrom = getWorkingPosition();
         }
 
-        return walkToBlock(workFrom) || worker.getPosition().distanceSq(workFrom) >= 10;
+        return worker.isWorkerAtSiteWithMove(workFrom,STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(),workFrom) < MIN_WORKING_RANGE;
     }
 
     /**
@@ -331,7 +335,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && job.getSchematic().getBlock() != ModBlocks.blockSubstitution)
         {
             //Fill workFrom with the position from where the builder should build.
-            if(goToConstructionSite())
+            if(!goToConstructionSite())
             {
                 return this.getState();
             }
@@ -429,7 +433,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState structureStep()
     {
-        if(goToConstructionSite())
+        if(!goToConstructionSite())
         {
             return this.getState();
         }
@@ -509,7 +513,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState decorationStep()
     {
-        if(goToConstructionSite())
+        if(!goToConstructionSite())
         {
             return this.getState();
         }
