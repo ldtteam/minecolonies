@@ -1,6 +1,7 @@
 package com.minecolonies.achievements;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
@@ -33,7 +34,7 @@ public abstract class AbstractSizeAchievement extends AbstractAchievement {
 	public abstract void triggerAchievement(EntityPlayer player);
 	
 	protected boolean compare(int compare) {
-	    return compare >= this.size
+	    return compare >= this.size;
 	}
 	
 }
