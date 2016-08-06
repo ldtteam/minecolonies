@@ -601,14 +601,14 @@ public final class SchematicWrapper
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || isBlockSolidOrAir()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((doesSchematicBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
 
-    private boolean isBlockSolidOrAir()
+    private boolean isBlockSolid()
     {
-        return getBlock() != null && (getBlock().getMaterial().isSolid() || isAirBlock());
+        return getBlock() != null && (getBlock().getMaterial().isSolid());
     }
 
     /**
