@@ -25,7 +25,7 @@ public class ModAchievements
     
     // Sizes
     public static Achievement achSizeSettlement = new AchSizeSettlement("size.pioneer", "size.settlement", 2, -2, AchSizeSettlement.size).registerStat();
-    public static Achievement achsizeCity = new AchSizeCity("size.city", "size.city", 4, -2, AchSizeCity.sie).registerStat();
+    public static Achievement achsizeCity = new AchSizeCity("size.city", "size.city", 4, -2, AchSizeCity.size).registerStat();
     public static Achievement achSizeTown = new AchSizeTown("size.town", "size.town", 6, -2, AchSizeTown.size).registerStat();
 
     // Achievement pages
