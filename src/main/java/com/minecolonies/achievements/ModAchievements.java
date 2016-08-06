@@ -24,9 +24,9 @@ public class ModAchievements
     public static Achievement achBuildingMiner        = new AchBuildingMiner("building.miner", "building.miner", 0, 4).registerStat();
     
     // Sizes
-    public static Achievement achSizeSettlement = new AchSizeSettlement("size.pioneer", "size.settlement", 2, -2, 10).registerStat();
-    public static Achievement achsizeCity = new AchSizeCity("size.city", "size.city", 4, -2, 20).registerStat();
-    public static Achievement achSizeTown = new AchSizeTown("size.town", "size.town", 6, -2, 50).registerStat();
+    public static Achievement achSizeSettlement = new AchSizeSettlement("size.pioneer", "size.settlement", 2, -2, AchSizeSettlement.size).registerStat();
+    public static Achievement achsizeCity = new AchSizeCity("size.city", "size.city", 4, -2, AchSizeCity.sie).registerStat();
+    public static Achievement achSizeTown = new AchSizeTown("size.town", "size.town", 6, -2, AchSizeTown.size).registerStat();
 
     // Achievement pages
     public static AchievementPage pageMineColonies = new AchievementPageMineColonies(

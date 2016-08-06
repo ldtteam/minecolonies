@@ -1,5 +1,6 @@
 package com.minecolonies.achievements;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 
 /**
@@ -7,9 +8,22 @@ import net.minecraft.init.Items;
  * @author Isfirs
  * @since 0.1
  */
-public class AchSizeCity extends AbstractAchievement {
+public class AchSizeCity extends AbstractSizeAchievement
+{
 
-	public AchSizeCity(String id, String name, int offsetX, int offsetY, int size) {
-		super(id, name, offsetX, offsetY, Items.gold_ingot, ModAchievements.achSizeTown);
-	}
+    public static final int size = 10;
+
+    public AchSizeCity(String id, String name, int offsetX, int offsetY, int size)
+    {
+        super(id, name, offsetX, offsetY, Items.gold_ingot, ModAchievements.achSizeTown, size);
+    }
+
+    public void triggerAchievement(EntityPlayer player, int size)
+    {
+        if (this.compare(size))
+        {
+            player.triggerAchievement(this);
+        }
+    }
+
 }
