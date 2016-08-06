@@ -516,7 +516,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if(job.getSchematic().doesSchematicBlockEqualWorldBlock() || job.getSchematic().getBlock().getMaterial().isSolid() /*|| job.getSchematic().getBlock() == Blocks.air*/)
         {
-            return findNextBlockNonSolid();//findNextBlock count was reached and we can ignore this block
+            //findNextBlock count was reached and we can ignore this block
+            return findNextBlockNonSolid();
         }
 
         worker.faceBlock(job.getSchematic().getBlockPosition());
