@@ -306,7 +306,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             job.clearItemsNeeded();
             return IDLE;
         }
-        if (walkToBuilding())
+        if (walkToBuilding() || isAtBuilding())
         {
             delay += DELAY_RECHECK;
             ItemStack first = itemsCurrentlyNeeded.get(0);
@@ -376,6 +376,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         //Return true if the building is null to stall the worker
         return ownBuilding == null
                || walkToBlock(ownBuilding.getLocation());
+    }
+
+    protected final boolean isAtBuilding()
+    {
+        @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
+        //Return true if the building is null to stall the worker
+        return ownBuilding == null
+               || BlockPosUtil.isWorkerAtSiteWithMove(this.worker,ownBuilding.getLocation());
     }
 
     /**

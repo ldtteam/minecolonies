@@ -24,6 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -62,7 +63,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * The minimum range the builder has to reach in order to construct or clear.
      */
-    private static final int MIN_WORKING_RANGE = 10;
+    private static final int MIN_WORKING_RANGE = 7;
+    /**
+     * After how many actions should the builder dump his inventory.
+     */
+    private static final int ACTIONS_UNTIL_DUMP = 1024;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -629,6 +634,19 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 stack = new ItemStack(block);
             }
 
+            //I removed this in a previous fix, but it is necessary to get an ItemStack from a door.
+            try
+            {
+                if (stack.getItem() == null)
+                {
+                    stack = new ItemStack(block.getItem(world, job.getSchematic().getPosition()));
+                }
+            }
+            catch(Exception e)
+            {
+                Log.logger.error("Something went terribly wrong, please report this error to the devs: Couldn't resolve: " + block.getUnlocalizedName());
+            }
+
             if(checkOrRequestItems(stack))
             {
                 return false;
@@ -716,6 +734,18 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             stack = new ItemStack(block);
         }
 
+        try
+        {
+            if (stack.getItem() == null)
+            {
+                stack = new ItemStack(block.getItem(world, job.getSchematic().getPosition()));
+            }
+        }
+        catch(Exception e)
+        {
+            Log.logger.error("Something went terribly wrong, please report this error to the devs: Couldn't resolve: " + block.getUnlocalizedName());
+        }
+
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
         if(slot != -1)
         {
@@ -798,5 +828,27 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         workFrom = null;
 
         return AIState.IDLE;
+    }
+
+
+    /**
+     * Calculates after how many actions the ai should dump it's inventory.
+     * @return the number of actions done before item dump.
+     */
+    protected int getActionsDoneUntilDumping()
+    {
+        return ACTIONS_UNTIL_DUMP;
+    }
+
+    /**
+     * Can be overriden by implementations to specify which tools are useful for the worker.
+     * When dumping he will keep these.
+     * @param stack the stack to decide on
+     * @return if should be kept or not.
+     */
+    @Override
+    protected boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return Utils.isMiningTool(stack);
     }
 }
