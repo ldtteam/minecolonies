@@ -2,7 +2,6 @@ package com.minecolonies.inventory;
 
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
-import com.minecolonies.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
@@ -10,21 +9,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntityLockable;
-import net.minecraft.util.IChatComponent;
-import net.minecraftforge.common.util.Constants;
-
-import java.util.Random;
 
 /**
  * Basic inventory for the citizens
  */
-public class InventoryCitizen extends TileEntityLockable implements IInventory
+public class InventoryCitizen extends TileEntityLockable
 {
-
+    /**
+     * Number of slots in the inventory.
+     */
+    private static final int INVENTORY_SIZE = 27;
+    /**
+     * Max size of the stacks.
+     */
+    private static final int MAX_STACK_SIZE = 64;
     /**
      * The inventory content.
      */
-    private ItemStack[] stacks = new ItemStack[27];
+    private ItemStack[] stacks = new ItemStack[INVENTORY_SIZE];
     /**
      * The inventories custom name. In our case the citizens name.
      */
@@ -60,12 +62,15 @@ public class InventoryCitizen extends TileEntityLockable implements IInventory
     @Override
     public int getSizeInventory()
     {
-        return 27;
+        return INVENTORY_SIZE;
     }
 
     /**
-     * Returns the stack in the given slot.
+     * Gets the stack of a certain slot.
+     * @param index the slot.
+     * @return the ItemStack.
      */
+    @Override
     public ItemStack getStackInSlot(int index)
     {
         return this.stacks[index];
@@ -73,7 +78,11 @@ public class InventoryCitizen extends TileEntityLockable implements IInventory
 
     /**
      * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
+     * @param index the slot of the itemStack.
+     * @param count the amount of items to reduce.
+     * @return the resulting stack.
      */
+    @Override
     public ItemStack decrStackSize(int index, int count)
     {
         if (this.stacks[index] != null)
@@ -106,7 +115,10 @@ public class InventoryCitizen extends TileEntityLockable implements IInventory
 
     /**
      * Removes a stack from the given slot and returns it.
+     * @param index the slot of the stack.
+     * @return the removed itemStack.
      */
+    @Override
     public ItemStack removeStackFromSlot(int index)
     {
         if (this.stacks[index] != null)
@@ -123,7 +135,10 @@ public class InventoryCitizen extends TileEntityLockable implements IInventory
 
     /**
      * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
+     * @param index the slot to set the itemStack.
+     * @param stack the itemStack to set.
      */
+    @Override
     public void setInventorySlotContents(int index, ItemStack stack)
     {
         this.stacks[index] = stack;
@@ -137,8 +152,9 @@ public class InventoryCitizen extends TileEntityLockable implements IInventory
     }
 
     /**
-     * Add the given ItemStack to this Dispenser. Return the Slot the Item was placed in or -1 if no free slot is
-     * available.
+     * Add the given itemStack to this inventory Return the Slot the Item was placed in or -1 if no free slot is available.
+     * @param stack the stack to add.
+     * @return the slot it was placed in.
      */
     public int addItemStack(ItemStack stack)
     {
@@ -155,8 +171,10 @@ public class InventoryCitizen extends TileEntityLockable implements IInventory
     }
 
     /**
-     * Get the name of this object. For players this returns their username
+     *  Get the name of this object. For citizens this returns their name.
+     * @return the name of the inventory.
      */
+    @Override
     public String getName()
     {
         return this.hasCustomName() ? this.customName : "citizen.inventory";
@@ -172,72 +190,130 @@ public class InventoryCitizen extends TileEntityLockable implements IInventory
     }
 
     /**
-     * Returns true if this thing is named
+     * Checks if the inventory is named.
+     * @return true if the inventory has a custom name.
      */
+    @Override
     public boolean hasCustomName()
     {
         return this.customName != null;
     }
 
     /**
-     * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended.
+     * Contains the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended.
+     * @return the stack size.
      */
+    @Override
     public int getInventoryStackLimit()
     {
-        return 64;
+        return MAX_STACK_SIZE;
     }
 
-    //todo may restrict it here!
     /**
      * Do not give this method the name canInteractWith because it clashes with Container
+     * @param player the player acessing the inventory.
+     * @return if the player is allowed to access.
      */
+    @Override
     public boolean isUseableByPlayer(EntityPlayer player)
     {
+        //TODO We may restrict its access according to colony rules here.
         return true;
     }
 
-    //todo don't know yet for what that serves
+    /**
+     *  Called when inventory is opened by a player.
+      * @param player the player who opened the inventory.
+     */
+    @Override
     public void openInventory(EntityPlayer player)
     {
+        /*
+         * This may be filled in order to specify some custom handling.
+         */
     }
 
-    //todo don't know yet for what that serves
+    /**
+     * Called after the inventory has been closed by a player.
+      * @param player the player who opened the inventory.
+     */
+    @Override
     public void closeInventory(EntityPlayer player)
     {
+        /*
+         * This may be filled in order to specify some custom handling.
+         */
     }
 
     /**
      * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     * @param index the accessing slot.
+     * @param stack the stack trying to enter.
+     * @return if the stack may be inserted.
      */
+    @Override
     public boolean isItemValidForSlot(int index, ItemStack stack)
     {
         return true;
     }
 
+    /**
+     * ID of the GUI.
+     * @return a string describing the inventory GUI.
+     */
+    @Override
     public String getGuiID()
     {
         return "citizen:inventory";
     }
 
+    /**
+     * This method loades the inventory of the player under the citizen inventory and handles the interactions.
+     * @param playerInventory the player inventory.
+     * @param playerIn the player accessing.
+     * @return the container.
+     */
+    @Override
     public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
     {
         return new ContainerChest(playerInventory, this, playerIn);
     }
 
+    /**
+     * This may be used in order to return values of different GUI areas like the ones in the beacon.
+     * @param id the id of the field.
+     * @return the value of the field.
+     */
+    @Override
     public int getField(int id)
     {
         return 0;
     }
 
+    /**
+     * This may be used to set GUI areas with a certain id and value.
+     * @param id some id.
+     * @param value some value.
+     */
+    @Override
     public void setField(int id, int value)
     {
     }
 
+    /**
+     * Returns the number of fields.
+     * @return the amount.
+     */
+    @Override
     public int getFieldCount()
     {
         return 0;
     }
 
+    /**
+     * Completely clears the inventory.
+     */
+    @Override
     public void clear()
     {
         for (int i = 0; i < this.stacks.length; ++i)
@@ -277,6 +353,11 @@ public class InventoryCitizen extends TileEntityLockable implements IInventory
         return heldItem;
     }
 
+    /**
+     * Checks if a certain slot is empty.
+     * @param index the slot.
+     * @return true if empty.
+     */
     public boolean isSlotEmpty(int index)
     {
         return getStackInSlot(index) == null;

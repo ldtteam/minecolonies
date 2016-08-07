@@ -644,7 +644,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
             catch(Exception e)
             {
-                Log.logger.error("Something went terribly wrong, please report this error to the devs: Couldn't resolve: " + block.getUnlocalizedName());
+                Log.logger.error("Something went terribly wrong, please report this error to the devs: Couldn't resolve: " + block.getUnlocalizedName() +
+                                 " " + e.getMessage());
             }
 
             if(checkOrRequestItems(stack))
@@ -743,7 +744,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         catch(Exception e)
         {
-            Log.logger.error("Something went terribly wrong, please report this error to the devs: Couldn't resolve: " + block.getUnlocalizedName());
+            Log.logger.error("Something went terribly wrong, please report this error to the devs: Couldn't resolve: " + block.getUnlocalizedName() +
+                             " " + e.getMessage());
         }
 
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
@@ -835,6 +837,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * Calculates after how many actions the ai should dump it's inventory.
      * @return the number of actions done before item dump.
      */
+    @Override
     protected int getActionsDoneUntilDumping()
     {
         return ACTIONS_UNTIL_DUMP;
