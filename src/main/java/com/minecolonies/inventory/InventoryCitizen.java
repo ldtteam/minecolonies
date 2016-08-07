@@ -3,68 +3,253 @@ package com.minecolonies.inventory;
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.util.Log;
-import net.minecraft.inventory.IInvBasic;
-import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntityLockable;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants;
+
+import java.util.Random;
 
 /**
  * Basic inventory for the citizens
  */
-public class InventoryCitizen extends InventoryBasic
+public class InventoryCitizen extends TileEntityLockable implements IInventory
 {
-    private int heldItem;
 
+    /**
+     * The inventory content.
+     */
+    private ItemStack[] stacks = new ItemStack[27];
+    /**
+     * The inventories custom name. In our case the citizens name.
+     */
+    protected String customName;
+    /**
+     * The held item.
+     */
+    private int heldItem;
+    /**
+     * The material store object.
+     */
     private MaterialStore materialStore;
 
     /**
      * Creates the inventory of the citizen
      *
-     * @param title             Title of the inventory
-     * @param localeEnabled     Boolean whether the inventory has a custom name
-     * @param size              Size of the inventory
+     * @param title         Title of the inventory
+     * @param localeEnabled Boolean whether the inventory has a custom name
+     * @param size          Size of the inventory
      */
     public InventoryCitizen(String title, boolean localeEnabled, int size)
     {
-        super(title, localeEnabled, size);
+        if(localeEnabled)
+        {
+            customName = title;
+        }
     }
 
     /**
-     * Adds item to the inventory
-     *
-     * @param inventory     Inventory item to add
+     * Contains the size of the inventory.
+     * @return the size.
      */
-    public void addIInvBasic(IInvBasic inventory)
+    @Override
+    public int getSizeInventory()
     {
-        addInventoryChangeListener(inventory);
+        return 27;
     }
 
     /**
-     * Removes item from inventory
-     *
-     * @param inventory     Inventory item to remove
+     * Returns the stack in the given slot.
      */
-    public void removeIInvBasic(IInvBasic inventory)
+    public ItemStack getStackInSlot(int index)
     {
-        removeInventoryChangeListener(inventory);
+        return this.stacks[index];
     }
 
     /**
-     * Sets the inventory name
-     *
-     * @param name          Name of the inventory
+     * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
      */
-    public void setInventoryName(String name)
+    public ItemStack decrStackSize(int index, int count)
     {
-        setCustomName(name);
+        if (this.stacks[index] != null)
+        {
+            if (this.stacks[index].stackSize <= count)
+            {
+                ItemStack itemstack1 = this.stacks[index];
+                this.stacks[index] = null;
+                this.markDirty();
+                return itemstack1;
+            }
+            else
+            {
+                ItemStack itemstack = this.stacks[index].splitStack(count);
+
+                if (this.stacks[index].stackSize == 0)
+                {
+                    this.stacks[index] = null;
+                }
+
+                this.markDirty();
+                return itemstack;
+            }
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /**
+     * Removes a stack from the given slot and returns it.
+     */
+    public ItemStack removeStackFromSlot(int index)
+    {
+        if (this.stacks[index] != null)
+        {
+            ItemStack itemstack = this.stacks[index];
+            this.stacks[index] = null;
+            return itemstack;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /**
+     * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
+     */
+    public void setInventorySlotContents(int index, ItemStack stack)
+    {
+        this.stacks[index] = stack;
+
+        if (stack != null && stack.stackSize > this.getInventoryStackLimit())
+        {
+            stack.stackSize = this.getInventoryStackLimit();
+        }
+
+        this.markDirty();
+    }
+
+    /**
+     * Add the given ItemStack to this Dispenser. Return the Slot the Item was placed in or -1 if no free slot is
+     * available.
+     */
+    public int addItemStack(ItemStack stack)
+    {
+        for (int i = 0; i < this.stacks.length; ++i)
+        {
+            if (this.stacks[i] == null || this.stacks[i].getItem() == null)
+            {
+                this.setInventorySlotContents(i, stack);
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Get the name of this object. For players this returns their username
+     */
+    public String getName()
+    {
+        return this.hasCustomName() ? this.customName : "citizen.inventory";
+    }
+
+    /**
+     * Sets the name of the inventory.
+     * @param customName the string to use to set the name.
+     */
+    public void setCustomName(String customName)
+    {
+        this.customName = customName;
+    }
+
+    /**
+     * Returns true if this thing is named
+     */
+    public boolean hasCustomName()
+    {
+        return this.customName != null;
+    }
+
+    /**
+     * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended.
+     */
+    public int getInventoryStackLimit()
+    {
+        return 64;
+    }
+
+    //todo may restrict it here!
+    /**
+     * Do not give this method the name canInteractWith because it clashes with Container
+     */
+    public boolean isUseableByPlayer(EntityPlayer player)
+    {
+        return true;
+    }
+
+    //todo don't know yet for what that serves
+    public void openInventory(EntityPlayer player)
+    {
+    }
+
+    //todo don't know yet for what that serves
+    public void closeInventory(EntityPlayer player)
+    {
+    }
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isItemValidForSlot(int index, ItemStack stack)
+    {
+        return true;
+    }
+
+    public String getGuiID()
+    {
+        return "citizen:inventory";
+    }
+
+    public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
+    {
+        return new ContainerChest(playerInventory, this, playerIn);
+    }
+
+    public int getField(int id)
+    {
+        return 0;
+    }
+
+    public void setField(int id, int value)
+    {
+    }
+
+    public int getFieldCount()
+    {
+        return 0;
+    }
+
+    public void clear()
+    {
+        for (int i = 0; i < this.stacks.length; ++i)
+        {
+            this.stacks[i] = null;
+        }
     }
 
     /**
      * Set item to be held by citizen
      *
-     * @param slot          Slot index with item to be held by citizen
+     * @param slot Slot index with item to be held by citizen
      */
     public void setHeldItem(int slot)
     {
@@ -74,18 +259,18 @@ public class InventoryCitizen extends InventoryBasic
     /**
      * Returns the item that is currently being held by citizen
      *
-     * @return              {@link ItemStack} currently being held by citizen
+     * @return {@link ItemStack} currently being held by citizen
      */
     public ItemStack getHeldItem()
     {
-        return super.getStackInSlot(heldItem);//TODO when tool breaks material handling isn't updated
+        return getStackInSlot(heldItem);//TODO when tool breaks material handling isn't updated
     }
 
     /**
      * Gets slot that hold item that is being held by citizen
      *
-     * @return              Slot index of held item
-     * @see                 {@link #getHeldItem()}
+     * @return Slot index of held item
+     * @see {@link #getHeldItem()}
      */
     public int getHeldItemSlot()
     {
@@ -94,14 +279,14 @@ public class InventoryCitizen extends InventoryBasic
 
     public boolean isSlotEmpty(int index)
     {
-        return super.getStackInSlot(index) == null;
+        return getStackInSlot(index) == null;
     }
 
     //-----------------------------Material Handling--------------------------------
 
     public void createMaterialStore(MaterialSystem system)
     {
-        if(materialStore == null)
+        if (materialStore == null)
         {
             materialStore = new MaterialStore(MaterialStore.Type.INVENTORY, system);
         }
@@ -124,98 +309,14 @@ public class InventoryCitizen extends InventoryBasic
                     return removed;
     }*/
 
-
-    /**
-     * Makes sure ItemStacks inside of the inventory aren't affected by changes to the returned stack.
-     */
-    @Override
-    public ItemStack getStackInSlot(int index)
-    {
-        ItemStack stack = super.getStackInSlot(index);
-        if(stack == null)
-        {
-            return null;
-        }
-        return stack.copy();
-    }
-
-    @Override
-    public ItemStack decrStackSize(int index, int quantity)
-    {
-        ItemStack removed = super.decrStackSize(index, quantity);
-
-        removeStackFromMaterialStore(removed);
-
-        return removed;
-    }
-
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack)
-    {
-        ItemStack previous = getStackInSlot(index);
-        removeStackFromMaterialStore(previous);
-
-        super.setInventorySlotContents(index, stack);
-
-        addStackToMaterialStore(stack);
-    }
-
-    /**
-     * Put stack in inventory.
-     *
-     * @param stack The {@link ItemStack} to put into the inventory
-     * @return null if successful, otherwise return whatever couldn't be put into the inventory
-     */
-    public ItemStack func_174894_a(ItemStack stack)
-    {
-        //Minecraft code makes a copy of stack and doesn't change it, so its safe for us to use later on
-        ItemStack returned = super.func_174894_a(stack);
-
-        if(returned == null)
-        {
-            addStackToMaterialStore(stack);
-        }
-        else if(stack.stackSize != returned.stackSize)
-        {
-            if(MaterialSystem.isEnabled)
-            {
-                materialStore.addMaterial(stack.getItem(), stack.stackSize - returned.stackSize);
-            }
-        }
-
-        return returned;
-    }
-
-    /**
-     * Removes a stack from the given slot and returns it.
-     */
-    @Override
-    public ItemStack removeStackFromSlot(int index)
-    {
-        ItemStack stack = super.removeStackFromSlot(index);
-        removeStackFromMaterialStore(stack);
-
-        return stack;
-    }
-
-    @Override
-    public void clear()
-    {
-        if(MaterialSystem.isEnabled)
-        {
-            materialStore.clear();
-        }
-
-        super.clear();
-    }
-
     private void addStackToMaterialStore(ItemStack stack)
     {
-        if(stack == null){
+        if (stack == null)
+        {
             return;
         }
 
-        if(MaterialSystem.isEnabled)
+        if (MaterialSystem.isEnabled)
         {
             materialStore.addMaterial(stack.getItem(), stack.stackSize);
         }
@@ -223,61 +324,67 @@ public class InventoryCitizen extends InventoryBasic
 
     private void removeStackFromMaterialStore(ItemStack stack)
     {
-        if(stack == null){
+        if (stack == null)
+        {
             return;
         }
 
-        if(MaterialSystem.isEnabled)
+        if (MaterialSystem.isEnabled)
         {
             materialStore.removeMaterial(stack.getItem(), stack.stackSize);
         }
     }
 
     private static final String TAG_INVENTORY = "Inventory";
-    private static final String TAG_SLOT      = "slot";
 
     public void readFromNBT(NBTTagCompound compound)
     {
-        NBTTagList nbtTagList = compound.getTagList(TAG_INVENTORY, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < nbtTagList.tagCount(); i++)
+        NBTTagList nbttaglist = compound.getTagList("Items", 10);
+        this.stacks = new ItemStack[this.getSizeInventory()];
+
+        for (int i = 0; i < nbttaglist.tagCount(); ++i)
         {
-            NBTTagCompound tag = nbtTagList.getCompoundTagAt(i);
-            ItemStack itemstack = ItemStack.loadItemStackFromNBT(tag);
-            int slot = tag.getInteger(TAG_SLOT);
-            super.setInventorySlotContents(slot, itemstack);
+            NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
+            int            j              = nbttagcompound.getByte("Slot") & 255;
+
+            if (j >= 0 && j < this.stacks.length)
+            {
+                this.stacks[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
+            }
         }
 
-        if(MaterialSystem.isEnabled && materialStore == null)
+        if (compound.hasKey("CustomName", 8))
         {
-            Log.logger.error("EntityCitizen inventory has a null MaterialStore (returning to avoid crash, but will probably crash later, I hope you don't see this).");
-            return;
-        }
-
-        if(MaterialSystem.isEnabled)
-        {
-            materialStore.readFromNBT(compound);
+            this.customName = compound.getString("CustomName");
         }
     }
 
     public void writeToNBT(NBTTagCompound compound)
     {
-        NBTTagList inventoryList = new NBTTagList();
-        for (int i = 0; i < this.getSizeInventory(); i++)
+        NBTTagList nbttaglist = new NBTTagList();
+
+        for (int i = 0; i < this.stacks.length; ++i)
         {
-            if (this.getStackInSlot(i) != null)
+            if (this.stacks[i] != null)
             {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setInteger(TAG_SLOT, i);
-                super.getStackInSlot(i).writeToNBT(tag);
-                inventoryList.appendTag(tag);
+                NBTTagCompound nbttagcompound = new NBTTagCompound();
+                nbttagcompound.setByte("Slot", (byte) i);
+                this.stacks[i].writeToNBT(nbttagcompound);
+                nbttaglist.appendTag(nbttagcompound);
             }
         }
 
-        if(MaterialSystem.isEnabled)
+        compound.setTag("Items", nbttaglist);
+
+        if (this.hasCustomName())
+        {
+            compound.setString("CustomName", this.customName);
+        }
+        if (MaterialSystem.isEnabled)
         {
             materialStore.writeToNBT(compound);
         }
 
-        compound.setTag(TAG_INVENTORY, inventoryList);
+        compound.setTag(TAG_INVENTORY, nbttaglist);
     }
 }
