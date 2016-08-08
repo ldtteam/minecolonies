@@ -392,7 +392,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 }
 
                 Block block = job.getSchematic().getBlock();
-                IBlockState metadata = job.getSchematic().getBlockState();
                 ItemStack itemstack = new ItemStack(block, 1);
 
                 Block worldBlock = BlockPosUtil.getBlock(world, job.getSchematic().getBlockPosition());
@@ -622,33 +621,24 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         if(block != Blocks.air)//Breaking blocks doesn't require taking materials from the citizens inventory
         {
-            if(isBlockFree(block, block.getMetaFromState(metadata)))
+            if (isBlockFree(block, block.getMetaFromState(metadata)))
             {
                 return true;
             }
 
             ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
 
-            if(stack.getItem() == null)
+            if (stack.getItem() == null)
             {
                 stack = new ItemStack(block);
             }
 
-            //I removed this in a previous fix, but it is necessary to get an ItemStack from a door.
-            try
+            if (stack.getItem() == null)
             {
-                if (stack.getItem() == null)
-                {
-                    stack = new ItemStack(block.getItem(null, null));
-                }
-            }
-            catch(Exception e)
-            {
-                Log.logger.error("Something went terribly wrong, please report this error to the devs: Couldn't resolve: " + block.getUnlocalizedName() +
-                                 " " + e);
+                stack = new ItemStack(block.getItem(null, null));
             }
 
-            if(checkOrRequestItems(stack))
+            if (checkOrRequestItems(stack))
             {
                 return false;
             }
@@ -660,19 +650,19 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     private boolean placeBlock(BlockPos pos, Block block, IBlockState metadata)
     {
         //Move out of the way when placing blocks
-        if(MathHelper.floor_double(worker.posX) == pos.getX()
-                && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1
-                && MathHelper.floor_double(worker.posZ) == pos.getZ()
-                && worker.getNavigator().noPath())
+        if (MathHelper.floor_double(worker.posX) == pos.getX()
+            && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1
+            && MathHelper.floor_double(worker.posZ) == pos.getZ()
+            && worker.getNavigator().noPath())
         {
             worker.getNavigator().moveAwayFromXYZ(pos, 4.1, 1.0);
         }
 
         //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
-        if(metadata.getBlock() instanceof BlockStairs
-                && world.getBlockState(pos).getBlock() instanceof BlockStairs
-                && world.getBlockState(pos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING)
-                && metadata.getBlock() == world.getBlockState(pos).getBlock())
+        if (metadata.getBlock() instanceof BlockStairs
+            && world.getBlockState(pos).getBlock() instanceof BlockStairs
+            && world.getBlockState(pos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING)
+            && metadata.getBlock() == world.getBlockState(pos).getBlock())
         {
             return true;
         }
@@ -687,17 +677,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
         }
 
-        if(block instanceof BlockDoor && metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
+        if (block instanceof BlockDoor && metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
         {
             ItemDoor.placeDoor(world, pos, metadata.getValue(BlockDoor.FACING), block);
         }
-        else if(block instanceof BlockBed)
+        else if (block instanceof BlockBed)
         {
             world.setBlockState(pos, metadata, 0x03);
             EnumFacing facing = metadata.getValue(BlockBed.FACING);
 
             //Set other part of the bed, to the opposite PartType
-            if(metadata.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
+            if (metadata.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
             {
                 //pos.offset(facing) will get the other part of the bed
                 world.setBlockState(pos.offset(facing), metadata.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
@@ -707,24 +697,24 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 world.setBlockState(pos.offset(facing), metadata.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
             }
         }
-        else if(block instanceof BlockDoublePlant)
+        else if (block instanceof BlockDoublePlant)
         {
             world.setBlockState(pos, metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 0x03);
             world.setBlockState(pos.up(), metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 0x03);
         }
-        else if(block instanceof BlockEndPortal || block instanceof BlockMobSpawner || block instanceof BlockDragonEgg || block instanceof  BlockPortal)
+        else if (block instanceof BlockEndPortal || block instanceof BlockMobSpawner || block instanceof BlockDragonEgg || block instanceof BlockPortal)
         {
             return true;
         }
         else
         {
-            if(!world.setBlockState(pos, metadata, 0x03))
+            if (!world.setBlockState(pos, metadata, 0x03))
             {
                 return false;
             }
-            if(world.getBlockState(pos).getBlock() == block)
+            if (world.getBlockState(pos).getBlock() == block)
             {
-                if(world.getBlockState(pos) != metadata)
+                if (world.getBlockState(pos) != metadata)
                 {
                     world.setBlockState(pos, metadata, 0x03);
                 }
@@ -733,26 +723,18 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
 
-        if(stack.getItem() == null)
+        if (stack.getItem() == null)
         {
             stack = new ItemStack(block);
         }
 
-        try
+        if (stack.getItem() == null)
         {
-            if (stack.getItem() == null)
-            {
-                stack = new ItemStack(block.getItem(null, null));
-            }
-        }
-        catch(Exception e)
-        {
-            Log.logger.error("Something went terribly wrong, please report this error to the devs: Couldn't resolve: " + block.getUnlocalizedName() +
-                             " " + e);
+            stack = new ItemStack(block.getItem(null, null));
         }
 
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
-        if(slot != -1)
+        if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);
             //Flag 1+2 is needed for updates
