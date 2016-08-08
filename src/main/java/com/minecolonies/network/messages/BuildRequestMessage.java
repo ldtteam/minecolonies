@@ -21,14 +21,31 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
 {
-    private             BlockPos        buildingId;
-    private             int              colonyId;
-    private             int              mode;
+    /**
+     * The id of the building.
+     */
+    private BlockPos buildingId;
+    /**
+     * The id of the colony.
+     */
+    private int colonyId;
+    /**
+     * The mode id.
+     */
+    private int mode;
 
-
+    /**
+     * The int mode for a build job.
+     */
     public static final int              BUILD  = 0;
+    /**
+     * The int mode for a repair job.
+     */
     public static final int              REPAIR = 1;
-
+    /**
+     * The current max level of the Builder, after this level he may upgrade everything.
+     */
+    public static final int CURR_MAX_BUILDER_LEVEL = 2;
 
     public BuildRequestMessage(){}
 
@@ -81,8 +98,8 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
         switch(message.mode)
         {
             case BUILD:
-
-                if(colony.getBuilderLevel() >= requiredBuildingLevel || building instanceof BuildingBuilder)
+                //todo for the time being set the free use of everything after builderLevel 2, later this may be changed according to our builderLevel
+                if(colony.getBuilderLevel() >= requiredBuildingLevel || building instanceof BuildingBuilder || colony.getBuilderLevel() == CURR_MAX_BUILDER_LEVEL)
                 {
                     building.requestUpgrade();
                 }
