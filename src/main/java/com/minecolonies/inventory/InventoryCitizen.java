@@ -15,7 +15,6 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ReportedException;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -330,7 +329,11 @@ public class InventoryCitizen implements IInventory
         this.inventoryChanged = true;
     }
 
-    public boolean HasInventoryChanged()
+    /**
+     * Checks if the inventory has been changed and then resets the boolean.
+     * @return true if it changed.
+     */
+    public boolean hasInventoryChanged()
     {
         if(inventoryChanged)
         {
@@ -501,7 +504,6 @@ public class InventoryCitizen implements IInventory
             {
                 i = i - k;
                 this.stacks[j].stackSize += k;
-                this.stacks[j].animationsToGo = 5;
                 return i;
             }
         }
@@ -577,20 +579,13 @@ public class InventoryCitizen implements IInventory
                     return itemStackIn.stackSize < i;
                 }
             }
-            catch (Exception exp)
+            catch (RuntimeException exp)
             {
                 CrashReport         crashreport         = CrashReport.makeCrashReport(exp, "Adding item to inventory");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
-                crashreportcategory.addCrashSectionCallable("Item name", new Callable<String>()
-                {
-                    @Override
-                    public String call() throws Exception
-                    {
-                        return itemStackIn.getDisplayName();
-                    }
-                });
+                crashreportcategory.addCrashSectionCallable("Item name", itemStackIn::getDisplayName);
                 throw new ReportedException(crashreport);
             }
         }
