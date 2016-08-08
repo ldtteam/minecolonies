@@ -15,6 +15,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ReportedException;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -65,8 +66,10 @@ public class InventoryCitizen implements IInventory
      * NBT tag to store and retrieve the custom name.
      */
     private static final String TAG_SLOT= "Slot";
-
-    public boolean inventoryChanged;
+    /**
+     * Updated after the inventory has been changed
+     */
+    private boolean inventoryChanged = false;
 
     /**
      * Creates the inventory of the citizen
@@ -147,8 +150,9 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Get the size of the citizens hotbar inventory
+     * @return the size.
      */
-    public static int getHotbarSize()
+    public int getHotbarSize()
     {
         return 0;
     }
@@ -326,6 +330,15 @@ public class InventoryCitizen implements IInventory
         this.inventoryChanged = true;
     }
 
+    public boolean HasInventoryChanged()
+    {
+        if(inventoryChanged)
+        {
+            inventoryChanged = false;
+            return true;
+        }
+        return false;
+    }
     /**
      * Do not give this method the name canInteractWith because it clashes with Container
      * @param player the player acessing the inventory.
@@ -447,7 +460,6 @@ public class InventoryCitizen implements IInventory
      */
     private int storePartialItemStack(ItemStack itemStackIn)
     {
-        Item item = itemStackIn.getItem();
         int i = itemStackIn.stackSize;
         int j = this.storeItemStack(itemStackIn);
 
@@ -464,7 +476,8 @@ public class InventoryCitizen implements IInventory
         {
             if (this.stacks[j] == null)
             {
-                this.stacks[j] = itemStackIn.copy(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
+                // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
+                this.stacks[j] = itemStackIn.copy();
                 this.stacks[j].stackSize = 0;
             }
 
@@ -494,8 +507,11 @@ public class InventoryCitizen implements IInventory
         }
     }
 
+
     /**
-     * removed one item of specified Item from inventory (if it is in a stack, the stack size will reduce with 1)
+     * Removes one item of specified Item from inventory (if it is in a stack, the stack size will reduce with 1)
+     * @param itemIn the item to consume.
+     * @return true if succeed.
      */
     public boolean consumeInventoryItem(Item itemIn)
     {
@@ -507,7 +523,8 @@ public class InventoryCitizen implements IInventory
         }
         else
         {
-            if (--this.stacks[i].stackSize <= 0)
+            --this.stacks[i].stackSize;
+            if (this.stacks[i].stackSize <= 0)
             {
                 this.stacks[i] = null;
             }
@@ -518,6 +535,8 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Adds the item stack to the inventory, returns false if it is impossible.
+     * @param itemStackIn the stack to add
+     * @return true if succeeded.
      */
     public boolean addItemStackToInventory(final ItemStack itemStackIn)
     {
@@ -532,7 +551,6 @@ public class InventoryCitizen implements IInventory
                     if (j >= 0)
                     {
                         this.stacks[j] = ItemStack.copyItemStack(itemStackIn);
-                        this.stacks[j].animationsToGo = 5;
                         itemStackIn.stackSize = 0;
                         return true;
                     }
@@ -559,14 +577,15 @@ public class InventoryCitizen implements IInventory
                     return itemStackIn.stackSize < i;
                 }
             }
-            catch (Throwable throwable)
+            catch (Exception exp)
             {
-                CrashReport         crashreport         = CrashReport.makeCrashReport(throwable, "Adding item to inventory");
+                CrashReport         crashreport         = CrashReport.makeCrashReport(exp, "Adding item to inventory");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
                 crashreportcategory.addCrashSectionCallable("Item name", new Callable<String>()
                 {
+                    @Override
                     public String call() throws Exception
                     {
                         return itemStackIn.getDisplayName();
@@ -583,6 +602,8 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Checks if a specified Item is inside the inventory
+     * @param itemIn the item to check for.
+     * @return if itemIn in inventory.
      */
     public boolean hasItem(Item itemIn)
     {

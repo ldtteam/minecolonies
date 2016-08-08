@@ -712,12 +712,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             {
                 return false;
             }
-            if (world.getBlockState(pos).getBlock() == block)
+            if (world.getBlockState(pos).getBlock() == block && world.getBlockState(pos) != metadata)
             {
-                if (world.getBlockState(pos) != metadata)
-                {
-                    world.setBlockState(pos, metadata, 0x03);
-                }
+                world.setBlockState(pos, metadata, 0x03);
             }
         }
 
