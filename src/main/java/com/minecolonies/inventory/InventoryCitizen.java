@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntityLockable;
+import net.minecraftforge.common.util.Constants;
 
 /**
  * Basic inventory for the citizens
@@ -39,7 +40,23 @@ public class InventoryCitizen extends TileEntityLockable
      * The material store object.
      */
     private MaterialStore materialStore;
-
+    /**
+     * NBT tag to store and retrieve the inventory.
+     */
+    private static final String TAG_INVENTORY = "Inventory";
+    /**
+     * NBT tag to store and retrieve the custom name.
+     */
+    private static final String TAG_CUSTOM_NAME = "CustomName";
+    /**
+     * NBT tag to store and retrieve the custom name.
+     */
+    private static final String TAG_ITEMS = "Items";
+    /**
+     * NBT tag to store and retrieve the custom name.
+     */
+    private static final String TAG_SLOT= "Slot";
+    
     /**
      * Creates the inventory of the citizen
      *
@@ -420,17 +437,15 @@ public class InventoryCitizen extends TileEntityLockable
         }
     }
 
-    private static final String TAG_INVENTORY = "Inventory";
-
     public void readFromNBT(NBTTagCompound compound)
     {
-        NBTTagList nbttaglist = compound.getTagList("Items", 10);
+        NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
         this.stacks = new ItemStack[this.getSizeInventory()];
 
         for (int i = 0; i < nbttaglist.tagCount(); ++i)
         {
             NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
-            int            j              = nbttagcompound.getByte("Slot") & 255;
+            int            j              = nbttagcompound.getByte(TAG_SLOT) & Byte.MAX_VALUE;
 
             if (j >= 0 && j < this.stacks.length)
             {
@@ -438,9 +453,9 @@ public class InventoryCitizen extends TileEntityLockable
             }
         }
 
-        if (compound.hasKey("CustomName", 8))
+        if (compound.hasKey(TAG_CUSTOM_NAME, Constants.NBT.TAG_STRING))
         {
-            this.customName = compound.getString("CustomName");
+            this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
     }
 
@@ -453,17 +468,17 @@ public class InventoryCitizen extends TileEntityLockable
             if (this.stacks[i] != null)
             {
                 NBTTagCompound nbttagcompound = new NBTTagCompound();
-                nbttagcompound.setByte("Slot", (byte) i);
+                nbttagcompound.setByte(TAG_SLOT, (byte) i);
                 this.stacks[i].writeToNBT(nbttagcompound);
                 nbttaglist.appendTag(nbttagcompound);
             }
         }
 
-        compound.setTag("Items", nbttaglist);
+        compound.setTag(TAG_ITEMS, nbttaglist);
 
         if (this.hasCustomName())
         {
-            compound.setString("CustomName", this.customName);
+            compound.setString(TAG_CUSTOM_NAME, this.customName);
         }
         if (MaterialSystem.isEnabled)
         {
