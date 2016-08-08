@@ -639,8 +639,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             {
                 if (stack.getItem() == null)
                 {
-                    //todo need schematic world
-                    stack = new ItemStack(block.getItem(world, job.getSchematic().getPosition()));
+                    stack = new ItemStack(block.getItem(null, null));
                 }
             }
             catch(Exception e)
@@ -713,6 +712,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             world.setBlockState(pos, metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 0x03);
             world.setBlockState(pos.up(), metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 0x03);
         }
+        else if(block instanceof BlockEndPortal || block instanceof BlockMobSpawner || block instanceof BlockDragonEgg || block instanceof  BlockPortal)
+        {
+            return true;
+        }
         else
         {
             if(!world.setBlockState(pos, metadata, 0x03))
@@ -725,7 +728,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 {
                     world.setBlockState(pos, metadata, 0x03);
                 }
-                //todo do we need this? block.onPostBlockPlaced(world, x, y, z, metadata);
             }
         }
 
@@ -740,7 +742,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             if (stack.getItem() == null)
             {
-                stack = new ItemStack(block.getItem(world, job.getSchematic().getPosition()));
+                stack = new ItemStack(block.getItem(null, null));
             }
         }
         catch(Exception e)

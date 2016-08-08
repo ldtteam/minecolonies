@@ -33,7 +33,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * The default range for any walking to blocks.
      */
-    private static final int DEFAULT_RANGE_FOR_DELAY = 3;
+    private static final int DEFAULT_RANGE_FOR_DELAY = 4;
 
     /**
      * The number of actions done before item dump.
@@ -306,7 +306,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             job.clearItemsNeeded();
             return IDLE;
         }
-        if (walkToBuilding() || isAtBuilding())
+        if (walkToBuilding())
         {
             delay += DELAY_RECHECK;
             ItemStack first = itemsCurrentlyNeeded.get(0);
@@ -376,14 +376,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         //Return true if the building is null to stall the worker
         return ownBuilding == null
                || walkToBlock(ownBuilding.getLocation());
-    }
-
-    protected final boolean isAtBuilding()
-    {
-        @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
-        //Return true if the building is null to stall the worker
-        return ownBuilding == null
-               || BlockPosUtil.isWorkerAtSiteWithMove(this.worker,ownBuilding.getLocation());
     }
 
     /**
