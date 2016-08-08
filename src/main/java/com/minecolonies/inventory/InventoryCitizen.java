@@ -15,10 +15,6 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ReportedException;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.concurrent.Callable;
 
 /**
  * Basic inventory for the citizens
@@ -94,20 +90,6 @@ public class InventoryCitizen implements IInventory
         for (int i = 0; i < this.stacks.length; ++i)
         {
             if (this.stacks[i] != null && this.stacks[i].getItem() == itemIn)
-            {
-                return i;
-            }
-        }
-
-        return NO_SLOT;
-    }
-
-    @SideOnly(Side.CLIENT)
-    private int getInventorySlotContainItemAndDamage(Item itemIn, int metadataIn)
-    {
-        for (int i = 0; i < this.stacks.length; ++i)
-        {
-            if (this.stacks[i] != null && this.stacks[i].getItem() == itemIn && this.stacks[i].getMetadata() == metadataIn)
             {
                 return i;
             }
@@ -254,25 +236,6 @@ public class InventoryCitizen implements IInventory
         }
 
         this.markDirty();
-    }
-
-    /**
-     * Add the given itemStack to this inventory Return the Slot the Item was placed in or -1 if no free slot is available.
-     * @param stack the stack to add.
-     * @return the slot it was placed in.
-     */
-    public int addItemStack(ItemStack stack)
-    {
-        for (int i = 0; i < this.stacks.length; ++i)
-        {
-            if (this.stacks[i] == null || this.stacks[i].getItem() == null)
-            {
-                this.setInventorySlotContents(i, stack);
-                return i;
-            }
-        }
-
-        return NO_SLOT;
     }
 
     /**
