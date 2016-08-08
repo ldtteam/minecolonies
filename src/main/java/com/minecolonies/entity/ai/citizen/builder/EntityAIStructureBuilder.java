@@ -639,13 +639,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             {
                 if (stack.getItem() == null)
                 {
+                    //todo need schematic world
                     stack = new ItemStack(block.getItem(world, job.getSchematic().getPosition()));
                 }
             }
             catch(Exception e)
             {
                 Log.logger.error("Something went terribly wrong, please report this error to the devs: Couldn't resolve: " + block.getUnlocalizedName() +
-                                 " " + e.getMessage());
+                                 " " + e);
             }
 
             if(checkOrRequestItems(stack))
@@ -745,7 +746,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         catch(Exception e)
         {
             Log.logger.error("Something went terribly wrong, please report this error to the devs: Couldn't resolve: " + block.getUnlocalizedName() +
-                             " " + e.getMessage());
+                             " " + e);
         }
 
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());

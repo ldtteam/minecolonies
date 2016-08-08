@@ -298,6 +298,9 @@ public class InventoryCitizen extends TileEntityLockable
     @Override
     public void setField(int id, int value)
     {
+        /*
+         * We currently need no fields.
+         */
     }
 
     /**
@@ -339,7 +342,8 @@ public class InventoryCitizen extends TileEntityLockable
      */
     public ItemStack getHeldItem()
     {
-        return getStackInSlot(heldItem);//TODO when tool breaks material handling isn't updated
+        //TODO when tool breaks material handling isn't updated
+        return getStackInSlot(heldItem);
     }
 
     /**
