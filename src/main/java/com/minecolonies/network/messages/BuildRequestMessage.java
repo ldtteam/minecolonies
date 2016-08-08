@@ -47,7 +47,15 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
      */
     public static final int CURR_MAX_BUILDER_LEVEL = 2;
 
-    public BuildRequestMessage(){}
+    /**
+     * Empty constructor
+     */
+    public BuildRequestMessage()
+    {
+        /*
+         * Required standard constructor.
+         */
+    }
 
     /**
      * Creates a build request message
