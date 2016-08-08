@@ -69,6 +69,10 @@ public class InventoryCitizen implements IInventory
      * Updated after the inventory has been changed
      */
     private boolean inventoryChanged = false;
+    /**
+     * The returned slot if a slot hasn't been found.
+     */
+    private static final int NO_SLOT = -1;
 
     /**
      * Creates the inventory of the citizen
@@ -95,7 +99,7 @@ public class InventoryCitizen implements IInventory
             }
         }
 
-        return -1;
+        return NO_SLOT;
     }
 
     @SideOnly(Side.CLIENT)
@@ -109,7 +113,7 @@ public class InventoryCitizen implements IInventory
             }
         }
 
-        return -1;
+        return NO_SLOT;
     }
 
     /**
@@ -128,7 +132,7 @@ public class InventoryCitizen implements IInventory
             }
         }
 
-        return -1;
+        return NO_SLOT;
     }
 
     /**
@@ -144,7 +148,7 @@ public class InventoryCitizen implements IInventory
             }
         }
 
-        return -1;
+        return NO_SLOT;
     }
 
     /**
@@ -268,7 +272,7 @@ public class InventoryCitizen implements IInventory
             }
         }
 
-        return -1;
+        return NO_SLOT;
     }
 
     /**
@@ -550,7 +554,7 @@ public class InventoryCitizen implements IInventory
                 {
                     int j = this.getFirstEmptyStack();
 
-                    if (j >= 0)
+                    if (j != NO_SLOT)
                     {
                         this.stacks[j] = ItemStack.copyItemStack(itemStackIn);
                         itemStackIn.stackSize = 0;
@@ -602,8 +606,7 @@ public class InventoryCitizen implements IInventory
      */
     public boolean hasItem(Item itemIn)
     {
-        int i = this.getInventorySlotContainItem(itemIn);
-        return i >= 0;
+        return getInventorySlotContainItem(itemIn) != NO_SLOT;
     }
 
     /**
@@ -694,7 +697,7 @@ public class InventoryCitizen implements IInventory
             NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
             int            j              = nbttagcompound.getByte(TAG_SLOT) & Byte.MAX_VALUE;
 
-            if (j >= 0 && j < this.stacks.length)
+            if (j != NO_SLOT && j < this.stacks.length)
             {
                 this.stacks[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
             }
