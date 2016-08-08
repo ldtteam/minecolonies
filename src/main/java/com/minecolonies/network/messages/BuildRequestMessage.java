@@ -73,13 +73,18 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
             return null;
         }
 
-        //todo add check here
-        if(colony.b)
-
         switch(message.mode)
         {
             case BUILD:
-                building.requestUpgrade();
+
+                if(colony.getBuilderLevel() > colony.getBuilding(buildingId).getBuildingLevel())
+                {
+                    building.requestUpgrade();
+                }
+                else
+                {
+                    //todo claim not possible and send message to the player.
+                }
                 break;
             case REPAIR:
                 building.requestRepair();
