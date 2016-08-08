@@ -41,6 +41,7 @@ public class Colony implements IColony
     private boolean isCitizensDirty = false;
     private boolean isBuildingsDirty = false;
     private boolean manualHiring = false;
+    private int builderLevel = 0;
 
     //  General Attributes
     private String name = "ERROR(Wasn't placed by player)";
@@ -819,6 +820,27 @@ public class Colony implements IColony
         calculateMaxCitizens();
 
         ColonyManager.markDirty();
+    }
+
+    /**
+     * Sets the builder level if it is bigger then the current one.
+     * @param newLevel the level to set.
+     */
+    public void setBuilderLevel(int newLevel)
+    {
+        if(newLevel > builderLevel)
+        {
+            builderLevel = newLevel;
+        }
+    }
+
+    /**
+     * Getter which checks the level of the highest builder in the colony.
+     * @return the builder level.
+     */
+    public int getBuilderLevel()
+    {
+        return builderLevel;
     }
 
     /**

@@ -73,6 +73,9 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
             return null;
         }
 
+        //todo add check here
+        if(colony.b)
+
         switch(message.mode)
         {
             case BUILD:
