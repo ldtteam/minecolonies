@@ -3,7 +3,10 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.EntityUtils;
+import com.minecolonies.util.LanguageHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -73,17 +76,20 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
             return null;
         }
 
+        int requiredBuildingLevel = colony.getBuilding(message.buildingId).getBuildingLevel()+1;
+
         switch(message.mode)
         {
             case BUILD:
 
-                if(colony.getBuilderLevel() > colony.getBuilding(buildingId).getBuildingLevel())
+                if(colony.getBuilderLevel() >= requiredBuildingLevel || building instanceof BuildingBuilder)
                 {
                     building.requestUpgrade();
                 }
                 else
                 {
-                    //todo claim not possible and send message to the player.
+                    LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()),
+                                                                "entity.builder.messageBuilderNecessary" + requiredBuildingLevel);
                 }
                 break;
             case REPAIR:

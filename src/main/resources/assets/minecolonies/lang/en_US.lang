@@ -124,6 +124,11 @@ entity.worker.inventoryFullChestFull=Please make space in my building chest. I a
 entity.builder.messageBuildStart=Started building %s
 entity.builder.messageBuildComplete=Finished building %s
 entity.builder.messageNeedMaterial=I need %s (Amount: %d)
+entity.builder.messageBuilderNecessary1=Builder of level 1 necessary in order to build this building.
+entity.builder.messageBuilderNecessary2=Builder of level 2 necessary in order to upgrade this building.
+entity.builder.messageBuilderNecessary3=Builder of level 3 necessary in order to upgrade this building.
+entity.builder.messageBuilderNecessary4=Builder of level 4 necessary in order to upgrade this building.
+entity.builder.messageBuilderNecessary5=Builder of level 5 necessary in order to upgrade this building.
 
 entity.miner.messageNeedTools=Need tool %s!
 entity.miner.messageNeedBlockAndItem=I need %s!
