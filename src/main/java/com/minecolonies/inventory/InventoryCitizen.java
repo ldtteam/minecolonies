@@ -2,19 +2,28 @@ package com.minecolonies.inventory;
 
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntityLockable;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ReportedException;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.concurrent.Callable;
 
 /**
  * Basic inventory for the citizens
  */
-public class InventoryCitizen extends TileEntityLockable
+public class InventoryCitizen implements IInventory
 {
     /**
      * Number of slots in the inventory.
@@ -56,7 +65,9 @@ public class InventoryCitizen extends TileEntityLockable
      * NBT tag to store and retrieve the custom name.
      */
     private static final String TAG_SLOT= "Slot";
-    
+
+    public boolean inventoryChanged;
+
     /**
      * Creates the inventory of the citizen
      *
@@ -70,6 +81,76 @@ public class InventoryCitizen extends TileEntityLockable
         {
             customName = title;
         }
+    }
+
+    private int getInventorySlotContainItem(Item itemIn)
+    {
+        for (int i = 0; i < this.stacks.length; ++i)
+        {
+            if (this.stacks[i] != null && this.stacks[i].getItem() == itemIn)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    @SideOnly(Side.CLIENT)
+    private int getInventorySlotContainItemAndDamage(Item itemIn, int metadataIn)
+    {
+        for (int i = 0; i < this.stacks.length; ++i)
+        {
+            if (this.stacks[i] != null && this.stacks[i].getItem() == itemIn && this.stacks[i].getMetadata() == metadataIn)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * stores an itemstack in the users inventory
+     */
+    private int storeItemStack(ItemStack itemStackIn)
+    {
+        for (int i = 0; i < this.stacks.length; ++i)
+        {
+            if (this.stacks[i] != null && this.stacks[i].getItem() == itemStackIn.getItem() && this.stacks[i].isStackable()
+                && this.stacks[i].stackSize < this.stacks[i].getMaxStackSize() && this.stacks[i].stackSize < this.getInventoryStackLimit()
+                && (!this.stacks[i].getHasSubtypes() || this.stacks[i].getMetadata() == itemStackIn.getMetadata())
+                && ItemStack.areItemStackTagsEqual(this.stacks[i], itemStackIn))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Returns the first item stack that is empty.
+     */
+    public int getFirstEmptyStack()
+    {
+        for (int i = 0; i < this.stacks.length; ++i)
+        {
+            if (this.stacks[i] == null)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Get the size of the citizens hotbar inventory
+     */
+    public static int getHotbarSize()
+    {
+        return 0;
     }
 
     /**
@@ -217,6 +298,15 @@ public class InventoryCitizen extends TileEntityLockable
     }
 
     /**
+     * Get the formatted ChatComponent that will be used for the sender's username in chat
+     */
+    @Override
+    public IChatComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new ChatComponentText(this.getName()) : new ChatComponentTranslation(this.getName());
+    }
+
+    /**
      * Contains the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended.
      * @return the stack size.
      */
@@ -224,6 +314,16 @@ public class InventoryCitizen extends TileEntityLockable
     public int getInventoryStackLimit()
     {
         return MAX_STACK_SIZE;
+    }
+
+    /**
+     * For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't think it
+     * hasn't changed and skip it.
+     */
+    @Override
+    public void markDirty()
+    {
+        this.inventoryChanged = true;
     }
 
     /**
@@ -272,28 +372,6 @@ public class InventoryCitizen extends TileEntityLockable
     public boolean isItemValidForSlot(int index, ItemStack stack)
     {
         return true;
-    }
-
-    /**
-     * ID of the GUI.
-     * @return a string describing the inventory GUI.
-     */
-    @Override
-    public String getGuiID()
-    {
-        return "citizen:inventory";
-    }
-
-    /**
-     * This method loades the inventory of the player under the citizen inventory and handles the interactions.
-     * @param playerInventory the player inventory.
-     * @param playerIn the player accessing.
-     * @return the container.
-     */
-    @Override
-    public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
-    {
-        return new ContainerChest(playerInventory, this, playerIn);
     }
 
     /**
@@ -361,6 +439,155 @@ public class InventoryCitizen extends TileEntityLockable
     {
         //TODO when tool breaks material handling isn't updated
         return getStackInSlot(heldItem);
+    }
+
+    /**
+     * This function stores as many items of an ItemStack as possible in a matching slot and returns the quantity of
+     * left over items.
+     */
+    private int storePartialItemStack(ItemStack itemStackIn)
+    {
+        Item item = itemStackIn.getItem();
+        int i = itemStackIn.stackSize;
+        int j = this.storeItemStack(itemStackIn);
+
+        if (j < 0)
+        {
+            j = this.getFirstEmptyStack();
+        }
+
+        if (j < 0)
+        {
+            return i;
+        }
+        else
+        {
+            if (this.stacks[j] == null)
+            {
+                this.stacks[j] = itemStackIn.copy(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
+                this.stacks[j].stackSize = 0;
+            }
+
+            int k = i;
+
+            if (i > this.stacks[j].getMaxStackSize() - this.stacks[j].stackSize)
+            {
+                k = this.stacks[j].getMaxStackSize() - this.stacks[j].stackSize;
+            }
+
+            if (k > this.getInventoryStackLimit() - this.stacks[j].stackSize)
+            {
+                k = this.getInventoryStackLimit() - this.stacks[j].stackSize;
+            }
+
+            if (k == 0)
+            {
+                return i;
+            }
+            else
+            {
+                i = i - k;
+                this.stacks[j].stackSize += k;
+                this.stacks[j].animationsToGo = 5;
+                return i;
+            }
+        }
+    }
+
+    /**
+     * removed one item of specified Item from inventory (if it is in a stack, the stack size will reduce with 1)
+     */
+    public boolean consumeInventoryItem(Item itemIn)
+    {
+        int i = this.getInventorySlotContainItem(itemIn);
+
+        if (i < 0)
+        {
+            return false;
+        }
+        else
+        {
+            if (--this.stacks[i].stackSize <= 0)
+            {
+                this.stacks[i] = null;
+            }
+
+            return true;
+        }
+    }
+
+    /**
+     * Adds the item stack to the inventory, returns false if it is impossible.
+     */
+    public boolean addItemStackToInventory(final ItemStack itemStackIn)
+    {
+        if (itemStackIn != null && itemStackIn.stackSize != 0 && itemStackIn.getItem() != null)
+        {
+            try
+            {
+                if (itemStackIn.isItemDamaged())
+                {
+                    int j = this.getFirstEmptyStack();
+
+                    if (j >= 0)
+                    {
+                        this.stacks[j] = ItemStack.copyItemStack(itemStackIn);
+                        this.stacks[j].animationsToGo = 5;
+                        itemStackIn.stackSize = 0;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    int i;
+
+                    while (true)
+                    {
+                        i = itemStackIn.stackSize;
+                        itemStackIn.stackSize = this.storePartialItemStack(itemStackIn);
+
+                        if (itemStackIn.stackSize <= 0 || itemStackIn.stackSize >= i)
+                        {
+                            break;
+                        }
+                    }
+
+                    return itemStackIn.stackSize < i;
+                }
+            }
+            catch (Throwable throwable)
+            {
+                CrashReport         crashreport         = CrashReport.makeCrashReport(throwable, "Adding item to inventory");
+                CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
+                crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
+                crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
+                crashreportcategory.addCrashSectionCallable("Item name", new Callable<String>()
+                {
+                    public String call() throws Exception
+                    {
+                        return itemStackIn.getDisplayName();
+                    }
+                });
+                throw new ReportedException(crashreport);
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if a specified Item is inside the inventory
+     */
+    public boolean hasItem(Item itemIn)
+    {
+        int i = this.getInventorySlotContainItem(itemIn);
+        return i >= 0;
     }
 
     /**
@@ -437,6 +664,10 @@ public class InventoryCitizen extends TileEntityLockable
         }
     }
 
+    /**
+     * Used to retrieve variables.
+     * @param compound with the give tag.
+     */
     public void readFromNBT(NBTTagCompound compound)
     {
         NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
@@ -459,6 +690,10 @@ public class InventoryCitizen extends TileEntityLockable
         }
     }
 
+    /**
+     * Used to store variables.
+     * @param compound with the given tag.
+     */
     public void writeToNBT(NBTTagCompound compound)
     {
         NBTTagList nbttaglist = new NBTTagList();
