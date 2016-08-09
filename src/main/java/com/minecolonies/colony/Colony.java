@@ -1,6 +1,11 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.achievements.AbstractSizeAchievement;
+import com.minecolonies.achievements.AchSizeCity;
+import com.minecolonies.achievements.AchSizeSettlement;
+import com.minecolonies.achievements.AchSizeTown;
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingTownHall;
@@ -11,12 +16,15 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -667,11 +675,31 @@ public class Colony implements IColony
 
             entity.setPosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
             world.spawnEntityInWorld(entity);
+            
+            checkAchievements();
 
             markCitizensDirty();
         }
     }
-
+    
+    /**
+     * Checks if the achievements are valid
+     * 
+     */
+    private void checkAchievements()
+    {
+        // Get the colonies owner UUID
+        final UUID uuidOwner = this.getPermissions().getOwner();
+        // the colonies size
+        final int size = this.citizens.size();
+        
+        EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(uuidOwner);
+        
+        ((AbstractSizeAchievement)ModAchievements.achSizeSettlement).triggerAchievement(owner, size);
+        ((AbstractSizeAchievement)ModAchievements.achSizeTown).triggerAchievement(owner, size);
+        ((AbstractSizeAchievement)ModAchievements.achsizeCity).triggerAchievement(owner, size);
+    }
+    
     /**
      * Returns a map with all buildings within the colony
      * Key is ID (Coordinates), value is building object
