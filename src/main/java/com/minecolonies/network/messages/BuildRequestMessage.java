@@ -18,16 +18,37 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
 {
-    private             BlockPos        buildingId;
-    private             int              colonyId;
-    private             int              mode;
+    /**
+     * The id of the building.
+     */
+    private BlockPos buildingId;
+    /**
+     * The id of the colony.
+     */
+    private int colonyId;
+    /**
+     * The mode id.
+     */
+    private int mode;
 
-
+    /**
+     * The int mode for a build job.
+     */
     public static final int              BUILD  = 0;
+    /**
+     * The int mode for a repair job.
+     */
     public static final int              REPAIR = 1;
 
-
-    public BuildRequestMessage(){}
+    /**
+     * Empty constructor
+     */
+    public BuildRequestMessage()
+    {
+        /*
+         * Required standard constructor.
+         */
+    }
 
     /**
      * Creates a build request message
@@ -72,7 +93,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
         {
             return null;
         }
-
+        
         switch(message.mode)
         {
             case BUILD:
@@ -80,6 +101,8 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
                 break;
             case REPAIR:
                 building.requestRepair();
+                break;
+            default:
                 break;
         }
 
