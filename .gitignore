@@ -21,9 +21,16 @@ Thumbs.db
 /.gradle/
 /build/
 
+# Exclude all Mac DS_Store files
+/**/.DS_Store
+
 # Eclipse stuff
 /.settings/
 /.project
+/.classpath
 /MineColonies_Client.launch
 /MineColonies_Server.launch
-/.classpath
+
+# Old launcher
+/minecolonies_Client.launch
+/minecolonies_Server.launch
