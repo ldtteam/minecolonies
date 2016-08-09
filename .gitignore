@@ -17,12 +17,13 @@ LICENSE-fml*
 README.txt
 Thumbs.db
 /bin/
-*.classpath
-*.project
-.settings/org.eclipse.jdt.core.prefs
-minecolonies_Client.launch
-minecolonies_Server.launch
 *.hprof
 /.gradle/
 /build/
-/.settings
+
+# Eclipse stuff
+/.settings/
+/.project
+/MineColonies_Client.launch
+/MineColonies_Server.launch
+/.classpath
