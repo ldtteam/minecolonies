@@ -106,7 +106,7 @@ task incrementBuildNumber() {
 
 jar {
     appendix = 'universal'
-    archiveName = "minecolonies-universal-" + config.minecraft_version + "-" + project.version + ".jar"
+    archiveName = "minecolonies-universal-" + project.version + ".jar"
 
     manifest {
         attributes 'FMLAT': "minecolonies_at.cfg"
