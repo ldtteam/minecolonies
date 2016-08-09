@@ -364,7 +364,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         setBlockFromInventory(nextCobble, Blocks.cobblestone);
         //set ladder
         setBlockFromInventory(nextLadder, Blocks.ladder, metadata);
-        getOwnBuilding().increamentStartingLevelShaft();
+        getOwnBuilding().incrementStartingLevelShaft();
         return MINER_CHECK_MINESHAFT;
     }
 
