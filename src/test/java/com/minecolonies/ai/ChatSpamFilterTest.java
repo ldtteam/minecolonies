@@ -84,16 +84,16 @@ public class ChatSpamFilterTest
     {
         final EntityCitizen mockedCitizen = mock(EntityCitizen.class);
         final ChatSpamFilter filter = new ChatSpamFilter(mockedCitizen);
-        for (int i = 0; i < 30 * 20 * 127 +80; i++)
+        for (int i = 0; i < 30 * 20 * 27 +80; i++)
         {
             filter.requestWithoutSpam("Whatever");
         }
-        verify(mockedCitizen, times(8)).sendLocalizedChat(any(), any());
-        for (int i = 0; i < 20 * 60 * 60 *2 +8; i++)
+        verify(mockedCitizen, times(5)).sendLocalizedChat(any(), any());
+        for (int i = 0; i < 20 * 60 * 10 *2 +8; i++)
         {
             filter.requestWithoutSpam("Whatever");
         }
-        verify(mockedCitizen, times(10)).sendLocalizedChat(any(), any());
+        verify(mockedCitizen, times(7)).sendLocalizedChat(any(), any());
     }
 
 }

@@ -23,7 +23,7 @@ public class ChatSpamFilter
     /**
      * The maximum delay to wait
      */
-    private static final int MAX_TIMEOUT   = 20 * 60 * 60;
+    private static final int MAX_TIMEOUT   = 20 * 60 * 10;
     private final EntityCitizen worker;
     private int    speechDelay       = 0;
     private String speechDelayString = "";
