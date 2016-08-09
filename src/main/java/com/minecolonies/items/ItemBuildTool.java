@@ -1,6 +1,8 @@
 package com.minecolonies.items;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.achievements.ModAchievements;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -50,7 +52,8 @@ public class ItemBuildTool extends AbstractItemMinecolonies
             pos.east();
             break;
         }
-
+        
+        playerIn.triggerAchievement(ModAchievements.achWandOfbuilding);
         MineColonies.proxy.openBuildToolWindow(pos);
         return false;
     }
