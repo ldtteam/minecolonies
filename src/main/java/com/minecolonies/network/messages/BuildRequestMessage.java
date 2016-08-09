@@ -93,9 +93,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
         {
             return null;
         }
-
-        int requiredBuildingLevel = colony.getBuilding(message.buildingId).getBuildingLevel()+1;
-
+        
         switch(message.mode)
         {
             case BUILD:

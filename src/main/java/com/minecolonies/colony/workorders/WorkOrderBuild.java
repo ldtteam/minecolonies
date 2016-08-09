@@ -140,7 +140,6 @@ public class WorkOrderBuild extends AbstractWorkOrder
     @Override
     public void attemptToFulfill(Colony colony)
     {
-        int requiredBuildingLevel = this.upgradeLevel;
         boolean sendMessage = true;
 
         for (CitizenData citizen : colony.getCitizens().values())
@@ -182,7 +181,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         {
             hasSentMessageForThisWorkOrder = true;
             LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()),
-                                                        "entity.builder.messageBuilderNecessary", requiredBuildingLevel);
+                                                        "entity.builder.messageBuilderNecessary", this.upgradeLevel);
         }
     }
 
