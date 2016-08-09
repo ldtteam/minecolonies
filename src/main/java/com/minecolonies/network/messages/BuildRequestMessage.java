@@ -120,6 +120,8 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
             case REPAIR:
                 building.requestRepair();
                 break;
+            default:
+                break;
         }
 
         return null;
