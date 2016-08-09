@@ -379,7 +379,7 @@ public final class SchematicWrapper
                     }
 
                     TileEntity tileEntity = world.getTileEntity(worldPos);
-                    saveTileEntity(schematic, tileEntity, tileEntity.getPos().subtract(minPos));
+                    saveTileEntity(schematic, tileEntity, minPos);
                 }
             }
         }
@@ -402,12 +402,13 @@ public final class SchematicWrapper
      *
      * @param schematic Schematic to add the TileEntity to.
      * @param tileEntity The tile entity.
-     * @param newPos The schematic pos of the tile entity.
+     * @param minPos The schematic min pos to subtract of the tile entity.
      */
-    private static void saveTileEntity(Schematic schematic, TileEntity tileEntity, BlockPos newPos)
+    private static void saveTileEntity(Schematic schematic, TileEntity tileEntity, BlockPos minPos)
     {
         if (tileEntity != null)
         {
+            BlockPos newPos = tileEntity.getPos().subtract(minPos);
             NBTTagCompound tileEntityNBT = new NBTTagCompound();
             tileEntity.writeToNBT(tileEntityNBT);
 
@@ -480,7 +481,7 @@ public final class SchematicWrapper
         Block schematicBlock = schematicBlockState.getBlock();
 
         //All worldBlocks are equal the substitution block
-        if(schematicBlock == ModBlocks.blockSubstitution && !world.getBlockState(position).getBlock().getMaterial().isLiquid())
+        if(schematicBlock == ModBlocks.blockSubstitution && !world.getBlockState(getBlockPosition()).getBlock().getMaterial().isLiquid())
         {
             return true;
         }

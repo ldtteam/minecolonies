@@ -3,6 +3,7 @@ package com.minecolonies.colony.workorders;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.EntityUtils;
@@ -144,12 +145,11 @@ public class WorkOrderBuild extends AbstractWorkOrder
 
         for (CitizenData citizen : colony.getCitizens().values())
         {
-            JobBuilder job = citizen.getJob(JobBuilder.class);
-            if (job == null)
+            if (citizen.getJob() == null || !(citizen.getJob() instanceof JobBuilder))
             {
                 continue;
             }
-
+            JobBuilder job = citizen.getJob(JobBuilder.class);
             final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
 
             //check if correct level >= 2 etc
