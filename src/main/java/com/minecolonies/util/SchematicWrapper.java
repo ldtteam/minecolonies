@@ -742,7 +742,7 @@ public final class SchematicWrapper
         //In some cases getItemFromBlock returns null. We then have to get the item the safer way.
         if(stack.getItem() == null)
         {
-            stack = new ItemStack(block.getItem(this.world, this.getBlockPosition()));
+            stack = new ItemStack(block.getItem(null, null));
         }
         return stack.getItem();
     }

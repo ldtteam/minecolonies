@@ -24,8 +24,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInvBasic;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,7 +36,10 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
+/**
+ * The Class used to represent the citizen entities.
+ */
+public class EntityCitizen extends EntityAgeable implements INpc
 {
     // Because Entity UniqueIDs are not identical between client and server
     private static final int    DATA_TEXTURE         = 13;
@@ -142,7 +143,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         this.enablePersistence();
         this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
-        this.inventory.addIInvBasic(this);
 
         this.renderDistanceWeight = 2.0D;
         this.newNavigator = new PathNavigate(this, world);
@@ -987,12 +987,6 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
         return entityDropItem(itemstack, 0.0F);
     }
 
-    @Override
-    public void onInventoryChanged(InventoryBasic inventoryBasic)
-    {
-        setCurrentItemOrArmor(0, inventory.getHeldItem());
-    }
-
     /**
      * Get the experience points the entity currently has.
      * <p>
@@ -1056,7 +1050,7 @@ public class EntityCitizen extends EntityAgeable implements IInvBasic, INpc
                 }
             }
             inventory = newInventory;
-            inventory.addIInvBasic(this);
+
             if (dropLeftovers)
             {
                 leftOvers.stream().filter(leftover -> leftover.stackSize > 0).forEach(this::entityDropItem);
