@@ -2,6 +2,7 @@ package com.minecolonies.entity.ai.util;
 
 import com.minecolonies.entity.EntityCitizen;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.Sys;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -14,7 +15,7 @@ public class ChatSpamFilter
     /**
      * The timeout in ticks to wait initially
      */
-    private static final int BASE_TIMEOUT  = 10;
+    private static final int BASE_TIMEOUT  = 30 * 20;
     /**
      * The number to multiply timeout with every time
      */
@@ -22,11 +23,11 @@ public class ChatSpamFilter
     /**
      * The maximum delay to wait
      */
-    private static final int MAX_TIMEOUT   = 1000;
+    private static final int MAX_TIMEOUT   = 20 * 60 * 60;
     private final EntityCitizen worker;
-    private       int           speechDelay;
+    private int    speechDelay       = 0;
     private String speechDelayString = "";
-    private int    speechRepeat      = 1;
+    private int    speechRepeat      = 0;
 
     public ChatSpamFilter(final EntityCitizen worker)
     {
@@ -66,7 +67,7 @@ public class ChatSpamFilter
         else
         {
             speechDelay = 0;
-            speechRepeat = 1;
+            speechRepeat = 0;
         }
         worker.sendLocalizedChat(key, (Object[]) chat);
         speechDelayString = key + Arrays.toString(chat);
