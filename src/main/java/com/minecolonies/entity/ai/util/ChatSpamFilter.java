@@ -12,15 +12,24 @@ import java.util.Objects;
 public class ChatSpamFilter
 {
     /**
-     * The timeout in ticks to wait initially
+     * The timeout in ticks to wait initially.
+     * <p>
+     * 20 Ticks per second.
+     * 30 Seconds.
      */
     protected static final int BASE_TIMEOUT  = 30 * 20;
     /**
      * The maximum delay to wait
+     * <p>
+     * 20 Ticks per second.
+     * 60 Seconds per Minute.
+     * 10 Minutes.
      */
     protected static final int MAX_TIMEOUT   = 20 * 60 * 10;
     /**
      * The number to multiply timeout with every time
+     * <p>
+     * BASE_TIMEOUT * 2^times
      */
     private static final   int POWER_TIMEOUT = 2;
     private final EntityCitizen worker;
