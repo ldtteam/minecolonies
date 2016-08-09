@@ -2,7 +2,6 @@ package com.minecolonies.entity.ai.util;
 
 import com.minecolonies.entity.EntityCitizen;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.Sys;
 
 import java.util.Arrays;
 import java.util.Objects;

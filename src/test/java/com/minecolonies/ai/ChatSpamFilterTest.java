@@ -5,9 +5,9 @@ import com.minecolonies.entity.ai.util.ChatSpamFilter;
 import org.junit.Test;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.mock;
 
 public class ChatSpamFilterTest
 {
