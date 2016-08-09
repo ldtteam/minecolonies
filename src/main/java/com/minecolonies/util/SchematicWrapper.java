@@ -476,33 +476,32 @@ public final class SchematicWrapper
      */
     public boolean doesSchematicBlockEqualWorldBlock()
     {
-        IBlockState blockState = schematicWorld.getBlockState(this.getLocalPosition());
-        Block block = blockState.getBlock();
+        IBlockState schematicBlockState = schematicWorld.getBlockState(this.getLocalPosition());
+        Block schematicBlock = schematicBlockState.getBlock();
 
         //All worldBlocks are equal the substitution block
-        if(block == ModBlocks.blockSubstitution)
+        if(schematicBlock == ModBlocks.blockSubstitution)
         {
             return true;
         }
 
         BlockPos worldPos = this.getBlockPosition();
 
-        if(BlockStairs.isSameStair(world, worldPos, blockState))
-        {
-            return true;
-        }
-
         IBlockState worldBlockState = world.getBlockState(worldPos);
 
         //list of things to only check block for.
         //For the time being any flower pot is equal to each other.
-        if(block instanceof BlockDoor || block == Blocks.flower_pot)
+        if(schematicBlock instanceof BlockDoor || schematicBlock == Blocks.flower_pot)
         {
-            return block == worldBlockState.getBlock();
+            return schematicBlock == worldBlockState.getBlock();
+        }
+        else if(schematicBlock instanceof  BlockStairs && BlockStairs.isSameStair(world, worldPos, schematicBlockState))
+        {
+            return true;
         }
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
         return worldPos.getY() <= 0
-                || blockState == worldBlockState;
+                || schematicBlockState == worldBlockState;
     }
 
     /**
@@ -602,14 +601,14 @@ public final class SchematicWrapper
             }
 
         }
-        while ((doesSchematicBlockEqualWorldBlock() || isBlockSolidOrAir()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((doesSchematicBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
 
-    private boolean isBlockSolidOrAir()
+    private boolean isBlockSolid()
     {
-        return getBlock() != null && (getBlock().getMaterial().isSolid() || isAirBlock());
+        return getBlock() != null && (getBlock().getMaterial().isSolid());
     }
 
     /**
@@ -743,7 +742,7 @@ public final class SchematicWrapper
         //In some cases getItemFromBlock returns null. We then have to get the item the safer way.
         if(stack.getItem() == null)
         {
-            stack = new ItemStack(block.getItem(this.world, this.getBlockPosition()));
+            stack = new ItemStack(block.getItem(null, null));
         }
         return stack.getItem();
     }

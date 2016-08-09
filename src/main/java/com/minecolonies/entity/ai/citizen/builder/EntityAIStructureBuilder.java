@@ -24,6 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -39,26 +40,34 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally)
      */
     private static final double XP_EACH_BUILDING = 2.5;
-
     /**
      * How often should intelligence factor into the builders skill modifier.
      */
     private static final int INTELLIGENCE_MULTIPLIER = 2;
-
     /**
      * How often should strength factor into the builders skill modifier.
      */
     private static final int STRENGTH_MULTIPLIER = 1;
-
     /**
      * Position where the Builders constructs from.
      */
     private BlockPos workFrom = null;
-
     /**
      * The maximum range to keep from the current building place
      */
     private static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
+    /**
+     * The standard range the builder should reach until his target.
+     */
+    private static final int STANDARD_WORKING_RANGE = 5;
+    /**
+     * The minimum range the builder has to reach in order to construct or clear.
+     */
+    private static final int MIN_WORKING_RANGE = 7;
+    /**
+     * After how many actions should the builder dump his inventory.
+     */
+    private static final int ACTIONS_UNTIL_DUMP = 1024;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -237,7 +246,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             workFrom = getWorkingPosition();
         }
 
-        return walkToBlock(workFrom) || worker.getPosition().distanceSq(workFrom) >= 10;
+        return worker.isWorkerAtSiteWithMove(workFrom,STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(),workFrom) < MIN_WORKING_RANGE;
     }
 
     /**
@@ -331,7 +340,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && job.getSchematic().getBlock() != ModBlocks.blockSubstitution)
         {
             //Fill workFrom with the position from where the builder should build.
-            if(goToConstructionSite())
+            if(!goToConstructionSite())
             {
                 return this.getState();
             }
@@ -383,7 +392,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 }
 
                 Block block = job.getSchematic().getBlock();
-                IBlockState metadata = job.getSchematic().getBlockState();
                 ItemStack itemstack = new ItemStack(block, 1);
 
                 Block worldBlock = BlockPosUtil.getBlock(world, job.getSchematic().getBlockPosition());
@@ -429,16 +437,16 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState structureStep()
     {
+        if(!goToConstructionSite())
+        {
+            return this.getState();
+        }
+
         if(job.getSchematic().getBlock() == null
                 || job.getSchematic().doesSchematicBlockEqualWorldBlock()
                 || (!job.getSchematic().getBlock().getMaterial().isSolid() && job.getSchematic().getBlock() != Blocks.air))
         {
             return findNextBlockSolid();//findNextBlock count was reached and we can ignore this block
-        }
-
-        if(goToConstructionSite())
-        {
-            return this.getState();
         }
 
         worker.faceBlock(job.getSchematic().getBlockPosition());
@@ -465,8 +473,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if(worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
                 block instanceof AbstractBlockHut)
         {
-            findNextBlockSolid();
-            return this.getState();
+            return findNextBlockSolid();
         }
 
         //We need to deal with materials
@@ -510,14 +517,15 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState decorationStep()
     {
-        if(job.getSchematic().doesSchematicBlockEqualWorldBlock() || job.getSchematic().getBlock().getMaterial().isSolid() || job.getSchematic().getBlock() == Blocks.air)
-        {
-            return findNextBlockNonSolid();//findNextBlock count was reached and we can ignore this block
-        }
-
-        if(goToConstructionSite())
+        if(!goToConstructionSite())
         {
             return this.getState();
+        }
+
+        if(job.getSchematic().doesSchematicBlockEqualWorldBlock() || job.getSchematic().getBlock().getMaterial().isSolid() /*|| job.getSchematic().getBlock() == Blocks.air*/)
+        {
+            //findNextBlock count was reached and we can ignore this block
+            return findNextBlockNonSolid();
         }
 
         worker.faceBlock(job.getSchematic().getBlockPosition());
@@ -613,19 +621,24 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         if(block != Blocks.air)//Breaking blocks doesn't require taking materials from the citizens inventory
         {
-            if(isBlockFree(block, block.getMetaFromState(metadata)))
+            if (isBlockFree(block, block.getMetaFromState(metadata)))
             {
                 return true;
             }
 
             ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
 
-            if(stack.getItem() == null)
+            if (stack.getItem() == null)
             {
                 stack = new ItemStack(block);
             }
 
-            if(checkOrRequestItems(stack))
+            if (stack.getItem() == null)
+            {
+                stack = new ItemStack(block.getItem(null, null));
+            }
+
+            if (checkOrRequestItems(stack))
             {
                 return false;
             }
@@ -637,19 +650,19 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     private boolean placeBlock(BlockPos pos, Block block, IBlockState metadata)
     {
         //Move out of the way when placing blocks
-        if(MathHelper.floor_double(worker.posX) == pos.getX()
-                && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1
-                && MathHelper.floor_double(worker.posZ) == pos.getZ()
-                && worker.getNavigator().noPath())
+        if (MathHelper.floor_double(worker.posX) == pos.getX()
+            && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1
+            && MathHelper.floor_double(worker.posZ) == pos.getZ()
+            && worker.getNavigator().noPath())
         {
             worker.getNavigator().moveAwayFromXYZ(pos, 4.1, 1.0);
         }
 
         //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
-        if(metadata.getBlock() instanceof BlockStairs
-                && world.getBlockState(pos).getBlock() instanceof BlockStairs
-                && world.getBlockState(pos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING)
-                && metadata.getBlock() == world.getBlockState(pos).getBlock())
+        if (metadata.getBlock() instanceof BlockStairs
+            && world.getBlockState(pos).getBlock() instanceof BlockStairs
+            && world.getBlockState(pos).getValue(BlockStairs.FACING) == metadata.getValue(BlockStairs.FACING)
+            && metadata.getBlock() == world.getBlockState(pos).getBlock())
         {
             return true;
         }
@@ -664,17 +677,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
         }
 
-        if(block instanceof BlockDoor && metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
+        if (block instanceof BlockDoor && metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
         {
             ItemDoor.placeDoor(world, pos, metadata.getValue(BlockDoor.FACING), block);
         }
-        else if(block instanceof BlockBed)
+        else if (block instanceof BlockBed)
         {
             world.setBlockState(pos, metadata, 0x03);
             EnumFacing facing = metadata.getValue(BlockBed.FACING);
 
             //Set other part of the bed, to the opposite PartType
-            if(metadata.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
+            if (metadata.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
             {
                 //pos.offset(facing) will get the other part of the bed
                 world.setBlockState(pos.offset(facing), metadata.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
@@ -684,36 +697,41 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 world.setBlockState(pos.offset(facing), metadata.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
             }
         }
-        else if(block instanceof BlockDoublePlant)
+        else if (block instanceof BlockDoublePlant)
         {
             world.setBlockState(pos, metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 0x03);
             world.setBlockState(pos.up(), metadata.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 0x03);
         }
+        else if (block instanceof BlockEndPortal || block instanceof BlockMobSpawner || block instanceof BlockDragonEgg || block instanceof BlockPortal)
+        {
+            return true;
+        }
         else
         {
-            if(!world.setBlockState(pos, metadata, 0x03))
+            if (!world.setBlockState(pos, metadata, 0x03))
             {
                 return false;
             }
-            if(world.getBlockState(pos).getBlock() == block)
+            if (world.getBlockState(pos).getBlock() == block && world.getBlockState(pos) != metadata)
             {
-                if(world.getBlockState(pos) != metadata)
-                {
-                    world.setBlockState(pos, metadata, 0x03);
-                }
-                //todo do we need this? block.onPostBlockPlaced(world, x, y, z, metadata);
+                world.setBlockState(pos, metadata, 0x03);
             }
         }
 
         ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
 
-        if(stack.getItem() == null)
+        if (stack.getItem() == null)
         {
             stack = new ItemStack(block);
         }
 
+        if (stack.getItem() == null)
+        {
+            stack = new ItemStack(block.getItem(null, null));
+        }
+
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
-        if(slot != -1)
+        if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);
             //Flag 1+2 is needed for updates
@@ -794,5 +812,28 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         workFrom = null;
 
         return AIState.IDLE;
+    }
+
+
+    /**
+     * Calculates after how many actions the ai should dump it's inventory.
+     * @return the number of actions done before item dump.
+     */
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return ACTIONS_UNTIL_DUMP;
+    }
+
+    /**
+     * Can be overriden by implementations to specify which tools are useful for the worker.
+     * When dumping he will keep these.
+     * @param stack the stack to decide on
+     * @return if should be kept or not.
+     */
+    @Override
+    protected boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return Utils.isMiningTool(stack);
     }
 }

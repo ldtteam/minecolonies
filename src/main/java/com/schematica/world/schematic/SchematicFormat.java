@@ -49,9 +49,15 @@ public abstract class SchematicFormat
 
             FORMATS.get(FORMAT_DEFAULT).writeToNBT(tagCompound, schematic);
 
-            try (final DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(file))))
+            try (FileOutputStream fileOutputStream = new FileOutputStream(file))
             {
-                NBTTagCompound.writeEntry(Names.NBT.ROOT, tagCompound, dataOutputStream);
+                try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(fileOutputStream))
+                {
+                    try (final DataOutputStream dataOutputStream = new DataOutputStream(gzipOutputStream))
+                    {
+                        NBTTagCompound.writeEntry(Names.NBT.ROOT, tagCompound, dataOutputStream);
+                    }
+                }
             }
 
             return true;

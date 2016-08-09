@@ -5,6 +5,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.EntityUtils;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
@@ -27,6 +29,8 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private   int      upgradeLevel;
     private   String   upgradeName;
     protected boolean  cleared;
+    private boolean hasSentMessageForThisWorkOrder = false;
+
 
     /**
      * Unused constructor for reflection.
@@ -136,10 +140,25 @@ public class WorkOrderBuild extends AbstractWorkOrder
     @Override
     public void attemptToFulfill(Colony colony)
     {
+        boolean sendMessage = true;
+
         for (CitizenData citizen : colony.getCitizens().values())
         {
             JobBuilder job = citizen.getJob(JobBuilder.class);
-            if (job == null || job.hasWorkOrder())
+            if (job == null)
+            {
+                continue;
+            }
+
+            final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
+
+            //check if correct level >= 2 etc
+            if (builderLevel >= upgradeLevel || builderLevel == 2)
+            {
+                sendMessage = false;
+            }
+
+            if (job.hasWorkOrder())
             {
                 continue;
             }
@@ -148,7 +167,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
             //  - The Builder's Work AbstractBuilding is built
             //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
             //  - OR the WorkOrder is for the TownHall
-            if (citizen.getWorkBuilding().getBuildingLevel() > 0 ||
+            if (extraChecks(builderLevel) ||
                 citizen.getWorkBuilding().getID().equals(buildingLocation) ||
                 (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingLocation)))
             {
@@ -157,6 +176,23 @@ public class WorkOrderBuild extends AbstractWorkOrder
                 return;
             }
         }
+
+        if (sendMessage && !hasSentMessageForThisWorkOrder)
+        {
+            hasSentMessageForThisWorkOrder = true;
+            LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()),
+                                                        "entity.builder.messageBuilderNecessary", this.upgradeLevel);
+        }
+    }
+
+    /**
+     * Checks if a builder may accept this workOrder.
+     * @param builderLevel the builder level.
+     * @return true if he is able to.
+     */
+    private boolean extraChecks(int builderLevel)
+    {
+        return builderLevel >= upgradeLevel || builderLevel == 2;
     }
 
     /**

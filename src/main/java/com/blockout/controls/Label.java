@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class Label extends AbstractTextElement
 {
-    protected String text;
+    protected String labelText;
 
     protected int hoverColor = 0xffffff;
 
@@ -25,25 +25,25 @@ public class Label extends AbstractTextElement
     public Label(PaneParams params)
     {
         super(params);
-        text = params.getLocalizedStringAttribute("label", text);
+        labelText = params.getLocalizedStringAttribute("label", labelText);
 
         //  match textColor by default
         hoverColor    = params.getColorAttribute("hovercolor", textColor);
 
         if (width == 0)
         {
-            width = Math.min(mc.fontRendererObj.getStringWidth(text), params.getParentWidth());
+            width = Math.min(mc.fontRendererObj.getStringWidth(labelText), params.getParentWidth());
         }
     }
 
-    public String getText()
+    public String getLabelText()
     {
-        return text;
+        return labelText;
     }
 
-    public void setText(String s)
+    public void setLabelText(String s)
     {
-        text = s;
+        labelText = s;
     }
 
     public int getHoverColor()
@@ -69,7 +69,7 @@ public class Label extends AbstractTextElement
 
     public int getStringWidth()
     {
-        return (int) (mc.fontRendererObj.getStringWidth(text) * scale);
+        return (int) (mc.fontRendererObj.getStringWidth(labelText) * scale);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class Label extends AbstractTextElement
         GL11.glTranslated((double) (getX() + offsetX), (double) (getY() + offsetY), 0);
         GL11.glScalef((float) scale, (float) scale, (float) scale);
         mc.renderEngine.bindTexture(TEXTURE);
-        mc.fontRendererObj.drawString(text, 0, 0, color, shadow);
+        mc.fontRendererObj.drawString(labelText, 0, 0, color, shadow);
         GL11.glPopMatrix();
     }
 }
