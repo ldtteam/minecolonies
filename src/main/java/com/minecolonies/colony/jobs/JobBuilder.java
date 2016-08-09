@@ -175,14 +175,6 @@ public class JobBuilder extends AbstractJob
      */
     public void complete()
     {
-        int upgradeLevel = getWorkOrder().getUpgradeLevel();
-        AbstractBuilding currentBuildingTask = getCitizen().getColony().getBuilding(getWorkOrder().getBuildingLocation());
-
-        if(currentBuildingTask instanceof BuildingBuilder)
-        {
-            getCitizen().getColony().setBuilderLevel(upgradeLevel);
-        }
-
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
         setSchematic(null);

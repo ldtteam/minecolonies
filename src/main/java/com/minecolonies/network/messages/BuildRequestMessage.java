@@ -42,10 +42,6 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
      * The int mode for a repair job.
      */
     public static final int              REPAIR = 1;
-    /**
-     * The current max level of the Builder, after this level he may upgrade everything.
-     */
-    public static final int CURR_MAX_BUILDER_LEVEL = 2;
 
     /**
      * Empty constructor
@@ -106,16 +102,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
         switch(message.mode)
         {
             case BUILD:
-                //todo for the time being set the free use of everything after builderLevel 2, later this may be changed according to our builderLevel
-                if(colony.getBuilderLevel() >= requiredBuildingLevel || building instanceof BuildingBuilder || colony.getBuilderLevel() == CURR_MAX_BUILDER_LEVEL)
-                {
-                    building.requestUpgrade();
-                }
-                else
-                {
-                    LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()),
-                                                                "entity.builder.messageBuilderNecessary" + requiredBuildingLevel);
-                }
+                building.requestUpgrade();
                 break;
             case REPAIR:
                 building.requestRepair();
