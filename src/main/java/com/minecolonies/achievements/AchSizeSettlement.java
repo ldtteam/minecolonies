@@ -1,6 +1,5 @@
 package com.minecolonies.achievements;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 
 /**
@@ -11,7 +10,7 @@ import net.minecraft.init.Items;
 public class AchSizeSettlement extends AbstractSizeAchievement
 {
     
-    public static final int size = 10;
+    public static final int size = 5;
     
     public AchSizeSettlement(final String id,
                        final String name,
@@ -22,11 +21,4 @@ public class AchSizeSettlement extends AbstractSizeAchievement
         super(id, name, offsetX, offsetY, Items.iron_ingot, null, size);
     }
     
-    @Override
-    public void triggerAchievement(EntityPlayer player, int size)
-    {
-        if (this.compare(size)) {
-            player.triggerAchievement(this);
-        }
-    }
 }

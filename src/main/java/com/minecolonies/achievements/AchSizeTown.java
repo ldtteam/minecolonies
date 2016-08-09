@@ -10,16 +10,10 @@ import net.minecraft.init.Items;
  */
 public class AchSizeTown extends AbstractSizeAchievement {
     
-    public static final int size = 10;
+    public static final int size = 20;
 
 	public AchSizeTown(String id, String name, int offsetX, int offsetY, int size) {
 		super(id, name, offsetX, offsetY, Items.diamond, ModAchievements.achSizeSettlement, size);
 	}
 	
-    public void triggerAchievement(EntityPlayer player, int size)
-    {
-        if (this.compare(size)) {
-            player.triggerAchievement(this);
-        }
-    }
 }

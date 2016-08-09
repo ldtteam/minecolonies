@@ -31,7 +31,11 @@ public abstract class AbstractSizeAchievement extends AbstractAchievement {
 		this.size = size;
 	}
 	
-	public abstract void triggerAchievement(EntityPlayer player, int size);
+	public void triggerAchievement(EntityPlayer player, int size) {
+	    if (this.compare(size)) {
+	        player.triggerAchievement(this);
+	    }
+	}
 	
 	protected boolean compare(int compare) {
 	    return compare >= this.size;

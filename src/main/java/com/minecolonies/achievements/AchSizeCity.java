@@ -18,12 +18,4 @@ public class AchSizeCity extends AbstractSizeAchievement
         super(id, name, offsetX, offsetY, Items.gold_ingot, ModAchievements.achSizeTown, size);
     }
 
-    public void triggerAchievement(EntityPlayer player, int size)
-    {
-        if (this.compare(size))
-        {
-            player.triggerAchievement(this);
-        }
-    }
-
 }
