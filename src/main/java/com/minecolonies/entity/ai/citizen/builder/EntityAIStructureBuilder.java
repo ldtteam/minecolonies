@@ -560,12 +560,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         //We need to deal with materials
-        if (!Configurations.builderInfiniteResources)
+        if (!Configurations.builderInfiniteResources && !handleMaterials(block, metadata))
         {
-            if (!handleMaterials(block, metadata))
-            {
-                return this.getState();
-            }
+            return this.getState();
         }
 
         Item item = Item.getItemFromBlock(block);

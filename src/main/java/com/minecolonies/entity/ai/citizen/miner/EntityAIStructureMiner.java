@@ -18,8 +18,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -327,12 +325,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return state;
         }
 
-        BlockPos safeStand =
-                new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation()), getOwnBuilding().getLadderLocation().getZ());
-        BlockPos nextLadder =
-                new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation()) - 1, getOwnBuilding().getLadderLocation().getZ());
-        BlockPos nextCobble =
-                new BlockPos(getOwnBuilding().getCobbleLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation()) - 1, getOwnBuilding().getCobbleLocation().getZ());
         BlockPos safeCobble =
                 new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation()) - 2, getOwnBuilding().getLadderLocation().getZ());
 
@@ -351,6 +343,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             }
         }
 
+        BlockPos safeStand =
+                new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation()), getOwnBuilding().getLadderLocation().getZ());
+        BlockPos nextLadder =
+                new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation()) - 1, getOwnBuilding().getLadderLocation().getZ());
+        BlockPos nextCobble =
+                new BlockPos(getOwnBuilding().getCobbleLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation()) - 1, getOwnBuilding().getCobbleLocation().getZ());
 
         if (!mineBlock(nextCobble, safeStand) || !mineBlock(nextLadder, safeStand))
         {
