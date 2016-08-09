@@ -4,7 +4,7 @@ import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
 
 /**
- * Created by Isfirs
+ * Abstract achievement page
  *
  * @author Isfirs
  * @since 0.1

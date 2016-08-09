@@ -3,10 +3,19 @@ package com.minecolonies.achievements;
 import net.minecraft.stats.Achievement;
 
 /**
- * Created by PascalBahl on 03.08.16.
+ * The achievement page
+ * 
+ * @author Isfirs
+ * @since 0.1
  */
 public class AchievementPageMineColonies extends AbstractAchievementPage
 {
+    
+    /**
+     * Constructor
+     * 
+     * @param achievements
+     */
     public AchievementPageMineColonies(final Achievement... achievements)
     {
         super("MineColonies", achievements);

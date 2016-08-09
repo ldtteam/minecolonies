@@ -13,32 +13,17 @@ import net.minecraft.stats.Achievement;
  */
 public class AbstractAchievement extends Achievement
 {
-    public AbstractAchievement(final String id,
-                               final String name,
-                               final int offsetX,
-                               final int offsetY,
-                               final Item itemIcon,
-                               final Achievement parent)
+    public AbstractAchievement(final String id, final String name, final int offsetX, final int offsetY, final Item itemIcon, final Achievement parent)
     {
         super(id, name, offsetX, offsetY, itemIcon, parent);
     }
 
-    public AbstractAchievement(final String id,
-                               final String name,
-                               final int offsetX,
-                               final int offsetY,
-                               final Block blockIcon,
-                               final Achievement parent)
+    public AbstractAchievement(final String id, final String name, final int offsetX, final int offsetY, final Block blockIcon, final Achievement parent)
     {
         super(id, name, offsetX, offsetY, blockIcon, parent);
     }
 
-    public AbstractAchievement(final String id,
-                               final String name,
-                               final int offsetX,
-                               final int offsetY,
-                               final ItemStack itemStackIcon,
-                               final Achievement parent)
+    public AbstractAchievement(final String id, final String name, final int offsetX, final int offsetY, final ItemStack itemStackIcon, final Achievement parent)
     {
         super(id, name, offsetX, offsetY, itemStackIcon, parent);
     }
