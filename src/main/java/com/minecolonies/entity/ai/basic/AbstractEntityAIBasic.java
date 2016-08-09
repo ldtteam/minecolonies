@@ -33,7 +33,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * The default range for any walking to blocks.
      */
-    private static final int DEFAULT_RANGE_FOR_DELAY = 3;
+    private static final int DEFAULT_RANGE_FOR_DELAY = 4;
 
     /**
      * The number of actions done before item dump.
