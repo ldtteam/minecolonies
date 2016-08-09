@@ -1,6 +1,7 @@
 package com.minecolonies.entity.ai.citizen.builder;
 
 import com.minecolonies.blocks.AbstractBlockHut;
+import com.minecolonies.blocks.BlockSubstitution;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
@@ -337,7 +338,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         BlockPos coordinates = job.getSchematic().getBlockPosition();
         Block worldBlock = world.getBlockState(coordinates).getBlock();
 
-        if(worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock && job.getSchematic().getBlock() != ModBlocks.blockSubstitution)
+        if((worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock &&
+           job.getSchematic().getBlock() != ModBlocks.blockSubstitution) || worldBlock.getMaterial().isLiquid())
         {
             //Fill workFrom with the position from where the builder should build.
             if(!goToConstructionSite())
@@ -432,7 +434,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 || block.equals(Blocks.double_plant) && Utils.testFlag(metadata, 0x08)
                 || block instanceof BlockDoor && Utils.testFlag(metadata, 0x08)
                 || block.equals(Blocks.grass)
-                || block.equals(Blocks.dirt);
+                || block.equals(Blocks.dirt)
+                || block instanceof BlockSubstitution;
     }
 
     private AIState structureStep()
@@ -705,6 +708,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         else if (block instanceof BlockEndPortal || block instanceof BlockMobSpawner || block instanceof BlockDragonEgg || block instanceof BlockPortal)
         {
             return true;
+        }
+        else if(block instanceof BlockSubstitution)
+        {
+            world.setBlockState(pos, Blocks.dirt.getDefaultState(), 0x03);
         }
         else
         {

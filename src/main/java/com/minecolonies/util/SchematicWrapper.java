@@ -480,7 +480,7 @@ public final class SchematicWrapper
         Block schematicBlock = schematicBlockState.getBlock();
 
         //All worldBlocks are equal the substitution block
-        if(schematicBlock == ModBlocks.blockSubstitution)
+        if(schematicBlock == ModBlocks.blockSubstitution && !world.getBlockState(position).getBlock().getMaterial().isLiquid())
         {
             return true;
         }
