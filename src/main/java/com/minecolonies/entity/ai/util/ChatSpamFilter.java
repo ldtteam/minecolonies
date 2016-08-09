@@ -14,15 +14,15 @@ public class ChatSpamFilter
     /**
      * The timeout in ticks to wait initially
      */
-    private static final int BASE_TIMEOUT  = 30 * 20;
-    /**
-     * The number to multiply timeout with every time
-     */
-    private static final int POWER_TIMEOUT = 2;
+    protected static final int BASE_TIMEOUT  = 30 * 20;
     /**
      * The maximum delay to wait
      */
-    private static final int MAX_TIMEOUT   = 20 * 60 * 10;
+    protected static final int MAX_TIMEOUT   = 20 * 60 * 10;
+    /**
+     * The number to multiply timeout with every time
+     */
+    private static final   int POWER_TIMEOUT = 2;
     private final EntityCitizen worker;
     private int    speechDelay       = 0;
     private String speechDelayString = "";
