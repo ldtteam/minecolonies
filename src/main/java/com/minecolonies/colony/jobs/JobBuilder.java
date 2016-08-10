@@ -2,6 +2,8 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.builder.EntityAIStructureBuilder;
@@ -173,6 +175,11 @@ public class JobBuilder extends AbstractJob
      */
     public void complete()
     {
+        final BlockPos buildingLocation = this.getWorkOrder().getBuildingLocation();
+        final AbstractBuilding building = this.getCitizen().getColony().getBuilding(buildingLocation);
+
+        this.getCitizen().getColony().onBuildingUpgradeComplete(building, this.getWorkOrder().getUpgradeLevel());
+
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
         setSchematic(null);

@@ -996,24 +996,6 @@ public class Colony implements IColony
      * @param level The new level
      */
     public void onBuildingUpgradeComplete(AbstractBuilding building, int level) {
-        if (building instanceof BuildingHome) {
-
-        }
-
-        if (building instanceof BuildingBuilder) {
-
-        }
-
-        if (building instanceof BuildingLumberjack) {
-
-        }
-
-        if (building instanceof BuildingMiner) {
-
-        }
-
-        if (building instanceof BuildingTownHall) {
-
-        }
+        building.onUpgradeComplete(level);
     }
 }
