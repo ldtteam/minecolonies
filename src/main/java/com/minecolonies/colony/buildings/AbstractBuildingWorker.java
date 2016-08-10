@@ -1,11 +1,14 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.util.ServerUtils;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -224,5 +227,17 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         super.serializeToView(buf);
 
         buf.writeInt(worker != null ? worker.getId() : 0);
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel >= this.getMaxBuildingLevel()) {
+            final EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(getColony().getPermissions().getOwner());
+
+            owner.triggerAchievement(ModAchievements.achUpgradeBuilderMax);
+        }
     }
 }
