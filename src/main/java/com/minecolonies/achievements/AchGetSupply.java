@@ -8,11 +8,11 @@ import com.minecolonies.items.ModItems;
  *
  *
  * @author Isfirs
- * @since 0.1
+ * @since 0.2
  */
 public class AchGetSupply extends AbstractAchievement
 {
-    
+
     /**
      * Constructor
      * 

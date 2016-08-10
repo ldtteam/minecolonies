@@ -2,9 +2,14 @@ package com.minecolonies.achievements;
 
 import com.minecolonies.blocks.ModBlocks;
 
+/**
+ * 
+ * @author Isfirs
+ * @since 0.2
+ */
 public class AchBuildingColonist extends AbstractAchievement
 {
-    
+
     /**
      * Constructor
      * 

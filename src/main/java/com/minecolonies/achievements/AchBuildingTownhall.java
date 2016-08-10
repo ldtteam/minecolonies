@@ -6,11 +6,11 @@ import com.minecolonies.blocks.ModBlocks;
  * Achievement: A new Dawn Granted for: Placing the Townhall
  *
  * @author Isfirs
- * @since 0.1
+ * @since 0.2
  */
 public class AchBuildingTownhall extends AbstractAchievement
 {
-    
+
     /**
      * Constructor
      * 

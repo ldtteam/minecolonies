@@ -7,7 +7,7 @@ import net.minecraftforge.common.AchievementPage;
  * Abstract achievement page
  *
  * @author Isfirs
- * @since 0.1
+ * @since 0.2
  */
 public abstract class AbstractAchievementPage extends AchievementPage
 {

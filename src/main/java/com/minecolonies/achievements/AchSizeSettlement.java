@@ -5,7 +5,7 @@ import net.minecraft.init.Items;
 /**
  * 
  * @author Isfirs
- * @since 0.1
+ * @since 0.2
  */
 public class AchSizeSettlement extends AbstractSizeAchievement
 {

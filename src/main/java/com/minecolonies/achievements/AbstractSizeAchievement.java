@@ -11,20 +11,21 @@ import net.minecraftforge.common.AchievementPage;
  * Abstract
  * 
  * @author Isfirs
- * @since 0.1
+ * @since 0.2
  */
 public abstract class AbstractSizeAchievement extends AbstractAchievement
 {
-    
+
     /**
      * The size of the required colony size
      */
     public final int size;
-    
+
     /**
      * Inherit parent constructor
      * 
-     * @see AbstractAchievement#AbstractAchievement(String, String, int, int, Item, Achievement)
+     * @see AbstractAchievement#AbstractAchievement(String, String, int, int,
+     *      Item, Achievement)
      * 
      * @param id
      * @param name
@@ -40,11 +41,12 @@ public abstract class AbstractSizeAchievement extends AbstractAchievement
 
         this.size = size;
     }
-    
+
     /**
      * Inherit parent constructor
      * 
-     * @see AbstractAchievement#AbstractAchievement(String, String, int, int, Block, Achievement)
+     * @see AbstractAchievement#AbstractAchievement(String, String, int, int,
+     *      Block, Achievement)
      * 
      * @param id
      * @param name
@@ -60,11 +62,12 @@ public abstract class AbstractSizeAchievement extends AbstractAchievement
 
         this.size = size;
     }
-    
+
     /**
      * Inherit parent constructor
      * 
-     * @see AbstractAchievement#AbstractAchievement(String, String, int, int, ItemStack, Achievement)
+     * @see AbstractAchievement#AbstractAchievement(String, String, int, int,
+     *      ItemStack, Achievement)
      * 
      * @param id
      * @param name
@@ -80,7 +83,7 @@ public abstract class AbstractSizeAchievement extends AbstractAchievement
 
         this.size = size;
     }
-    
+
     /**
      * Checks the condition and triggers the achievement
      * 
@@ -94,7 +97,7 @@ public abstract class AbstractSizeAchievement extends AbstractAchievement
             player.triggerAchievement(this);
         }
     }
-    
+
     /**
      * Checks if the param matches the set size
      * 

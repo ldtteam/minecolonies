@@ -5,13 +5,13 @@ import net.minecraft.init.Items;
 /**
  * 
  * @author Isfirs
- * @since 0.1
+ * @since 0.2
  */
 public class AchSizeTown extends AbstractSizeAchievement
 {
 
     public static final int size = 20;
-    
+
     /**
      * Constructor
      * 

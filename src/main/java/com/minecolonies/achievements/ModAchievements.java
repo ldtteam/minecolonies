@@ -7,7 +7,7 @@ import net.minecraftforge.common.AchievementPage;
  * Achievement collection
  *
  * @author Isfirs
- * @since 0.1
+ * @since 0.2
  */
 public class ModAchievements
 {
@@ -18,26 +18,26 @@ public class ModAchievements
             .registerStat();
 
     // Buildings
-    public static Achievement achBuildingTownhall   = new AchBuildingTownhall("townhall", "townhall", -2, 0)
+    public static Achievement achBuildingTownhall  = new AchBuildingTownhall("townhall", "townhall", -2, 0)
             .registerStat();
-    public static Achievement achBuildingBuilder    = new AchBuildingBuilder("building.builder", "building.builder", 0, 1)
+    public static Achievement achBuildingBuilder   = new AchBuildingBuilder("building.builder", "building.builder", 0, 1)
             .registerStat();
-    public static Achievement achUpgradeBuilderMax  = new AchUpgradeBuilderMax("upgrade.builder.max", "upgrade.builder.max", 2, 1)
+    public static Achievement achUpgradeBuilderMax = new AchUpgradeBuilderMax("upgrade.builder.max", "upgrade.builder.max", 2, 1)
             .registerStat();
 
     public static Achievement achBuildingColonist   = new AchBuildingColonist("building.colonist", "building.colonist", 0, 2)
             .registerStat();
-    public static Achievement achUpgradeColonistMax   = new AchUpgradeColonistMax("upgrade.colonist.max", "upgrade.colonist.max", 2, 2)
+    public static Achievement achUpgradeColonistMax = new AchUpgradeColonistMax("upgrade.colonist.max", "upgrade.colonist.max", 2, 2)
             .registerStat();
 
-    public static Achievement achBuildingLumberjack = new AchBuildingLumberjack("building.lumberjack", "building.lumberjack", 0, 3)
+    public static Achievement achBuildingLumberjack   = new AchBuildingLumberjack("building.lumberjack", "building.lumberjack", 0, 3)
             .registerStat();
     public static Achievement achUpgradeLumberjackMax = new AchUpgradeLumberjackMax("upgrade.lumberjack.max", "upgrade.lumberjack.max", 2, 3)
             .registerStat();
 
-    public static Achievement achBuildingMiner      = new AchBuildingMiner("building.miner", "building.miner", 0, 4)
-        .registerStat();
-    public static Achievement achUpgradeMinerMax      = new AchUpgradeMinerMax("upgrade.miner.max", "upgrade.miner.max", 2, 4)
+    public static Achievement achBuildingMiner   = new AchBuildingMiner("building.miner", "building.miner", 0, 4)
+            .registerStat();
+    public static Achievement achUpgradeMinerMax = new AchUpgradeMinerMax("upgrade.miner.max", "upgrade.miner.max", 2, 4)
             .registerStat();
 
     // Sizes

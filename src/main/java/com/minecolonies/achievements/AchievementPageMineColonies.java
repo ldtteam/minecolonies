@@ -6,11 +6,11 @@ import net.minecraft.stats.Achievement;
  * The achievement page
  * 
  * @author Isfirs
- * @since 0.1
+ * @since 0.2
  */
 public class AchievementPageMineColonies extends AbstractAchievementPage
 {
-    
+
     /**
      * Constructor
      * 

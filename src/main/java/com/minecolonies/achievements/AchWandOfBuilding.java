@@ -7,11 +7,11 @@ import com.minecolonies.items.ModItems;
  * {@link ModItems#buildTool}
  *
  * @author Isfirs
- * @since 0.1
+ * @since 0.2
  */
 public class AchWandOfBuilding extends AbstractAchievement
 {
-    
+
     /**
      * Constructor
      * 

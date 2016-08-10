@@ -9,7 +9,7 @@ import net.minecraft.stats.Achievement;
  * Abstraction of the {@link Achievement} class.
  *
  * @author Isfirs
- * @since 0.1
+ * @since 0.2
  */
 public class AbstractAchievement extends Achievement
 {
