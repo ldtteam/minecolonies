@@ -6,9 +6,7 @@ import com.minecolonies.achievements.AchSizeCity;
 import com.minecolonies.achievements.AchSizeSettlement;
 import com.minecolonies.achievements.AchSizeTown;
 import com.minecolonies.achievements.ModAchievements;
-import com.minecolonies.colony.buildings.AbstractBuilding;
-import com.minecolonies.colony.buildings.BuildingHome;
-import com.minecolonies.colony.buildings.BuildingTownHall;
+import com.minecolonies.colony.buildings.*;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -989,5 +987,33 @@ public class Colony implements IColony
     public MaterialSystem getMaterialSystem()
     {
         return materialSystem;
+    }
+
+    /**
+     * Performed when a building of this colony finished his upgrade state.
+     *
+     * @param building The upgraded building
+     * @param level The new level
+     */
+    public void onBuildingUpgradeComplete(AbstractBuilding building, int level) {
+        if (building instanceof BuildingHome) {
+
+        }
+
+        if (building instanceof BuildingBuilder) {
+
+        }
+
+        if (building instanceof BuildingLumberjack) {
+
+        }
+
+        if (building instanceof BuildingMiner) {
+
+        }
+
+        if (building instanceof BuildingTownHall) {
+
+        }
     }
 }
