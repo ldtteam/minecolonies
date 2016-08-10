@@ -340,8 +340,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         BlockPos coordinates = job.getSchematic().getBlockPosition();
         Block    worldBlock  = world.getBlockState(coordinates).getBlock();
 
-        if((worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock &&
-           job.getSchematic().getBlock() != ModBlocks.blockSubstitution) || worldBlock.getMaterial().isLiquid())
+        if ((worldBlock != Blocks.air && !(worldBlock instanceof AbstractBlockHut) && worldBlock != Blocks.bedrock &&
+             job.getSchematic().getBlock() != ModBlocks.blockSubstitution) || worldBlock.getMaterial().isLiquid())
         {
             //Fill workFrom with the position from where the builder should build.
             if (!goToConstructionSite())
@@ -429,7 +429,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      */
     private boolean isBlockFree(Block block, int metadata)
     {
-        return (block == null)
+        return block == null
                || BlockUtils.isWater(block.getDefaultState())
                || block.equals(Blocks.leaves)
                || block.equals(Blocks.leaves2)
@@ -448,7 +448,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if (job.getSchematic().getBlock() == null
             || job.getSchematic().doesSchematicBlockEqualWorldBlock()
-            || (!job.getSchematic().getBlock().getMaterial().isSolid() && job.getSchematic().getBlock() != Blocks.air))
+            || (!job.getSchematic().getBlock().getMaterial().isSolid()
+                && job.getSchematic().getBlock() != Blocks.air))
         {
             //findNextBlock count was reached and we can ignore this block
             return findNextBlockSolid();
@@ -525,7 +526,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             return this.getState();
         }
-//|| job.getSchematic().getBlock() == Blocks.air
+        //|| job.getSchematic().getBlock() == Blocks.air
         if (job.getSchematic().doesSchematicBlockEqualWorldBlock()
             || job.getSchematic().getBlock().getMaterial().isSolid())
         {
@@ -544,7 +545,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         Block       worldBlock         = world.getBlockState(coords).getBlock();
         IBlockState worldBlockMetadata = world.getBlockState(coords);
-//should never happen
+        //should never happen
         if (block == null)
         {
             BlockPos local = job.getSchematic().getLocalPosition();
@@ -715,8 +716,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             return true;
         }
-        else if(block instanceof BlockSubstitution)
+        else if (block instanceof BlockSubstitution)
         {
+            //todo: something more sophisticated then default dirt
             world.setBlockState(pos, Blocks.dirt.getDefaultState(), 0x03);
         }
         else
