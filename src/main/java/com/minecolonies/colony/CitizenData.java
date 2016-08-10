@@ -429,7 +429,6 @@ public class CitizenData
         }
         catch(ClassCastException exc)
         {
-            Log.logger.catching(exc);
             return null;
         }
     }

@@ -144,11 +144,13 @@ public class WorkOrderBuild extends AbstractWorkOrder
 
         for (CitizenData citizen : colony.getCitizens().values())
         {
-            if (citizen.getJob() == null || !(citizen.getJob() instanceof JobBuilder))
+            JobBuilder job = citizen.getJob(JobBuilder.class);
+
+            if (job == null)
             {
                 continue;
             }
-            JobBuilder job = citizen.getJob(JobBuilder.class);
+
             final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
 
             //check if correct level >= 2 etc
