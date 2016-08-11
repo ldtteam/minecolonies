@@ -249,14 +249,14 @@ public abstract class AbstractJob
 
     /**
      * Add (or increment) an ItemStack to the items needed by the Job
-     *
+     * We're not comparing item damage values since i.e a damaged rod is the same as a normal rod for our purpose.
      * @param stack Item+count needed to do the job
      */
     public void addItemNeeded(ItemStack stack)
     {
         for(ItemStack neededItem : itemsNeeded)
         {
-            if(stack.isItemEqual(neededItem))
+            if(stack.getItem() == neededItem.getItem())
             {
                 neededItem.stackSize += stack.stackSize;
                 return;
@@ -267,17 +267,17 @@ public abstract class AbstractJob
     }
 
     /**
-     * Remove a items from those required to do the Job
-     *
-     * @param stack ItemStack (item+count) to remove from the list of needed items
-     * @return modified ItemStack with remaining items (or null)
+     * Remove a items from those required to do the Job.
+     * We're not comparing item damage values since i.e a damaged rod is the same as a normal rod for our purpose.
+     * @param stack ItemStack (item+count) to remove from the list of needed items.
+     * @return modified ItemStack with remaining items (or null).
      */
     public ItemStack removeItemNeeded(ItemStack stack)
     {
         ItemStack stackCopy = stack.copy();
         for(ItemStack neededItem : itemsNeeded)
         {
-            if(stackCopy.isItemEqual(neededItem))
+            if(stack.getItem() == neededItem.getItem())
             {
                 int itemsToRemove = Math.min(neededItem.stackSize, stackCopy.stackSize);
                 neededItem.stackSize -= itemsToRemove;
