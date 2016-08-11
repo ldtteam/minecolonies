@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.client.gui.WindowHutMiner;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -8,8 +9,11 @@ import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.ai.citizen.miner.Level;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.ServerUtils;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -21,20 +25,20 @@ import java.util.List;
 
 public class BuildingMiner extends AbstractBuildingWorker
 {
-    private static final    String              TAG_FLOOR_BLOCK         = "floorBlock";
-    private static final    String              TAG_FENCE_BLOCK         = "fenceBlock";
-    private static final    String              TAG_STARTING_LEVEL      = "startingLevelShaft";
-    private static final    String              TAG_LEVELS              = "levels";
-    private static final    String              TAG_CLEARED             = "clearedShaft";
-    private static final    String              TAG_SLOCATION           = "shaftLocation";
-    private static final    String              TAG_VECTORX             = "vectorx";
-    private static final    String              TAG_VECTORZ             = "vectorz";
-    private static final    String              TAG_CLOCATION           = "cobblelocation";
-    private static final    String              TAG_ACTIVE              = "activeNodeint";
-    private static final    String              TAG_CURRENT_LEVEL       = "currentLevel";
-    private static final    String              TAG_SN                  = "StartingNode";
-    private static final    String              TAG_LLOCATION           = "ladderlocation";
-    private static final    String              TAG_LADDER              = "found_ladder";
+    private static final String TAG_FLOOR_BLOCK    = "floorBlock";
+    private static final String TAG_FENCE_BLOCK    = "fenceBlock";
+    private static final String TAG_STARTING_LEVEL = "startingLevelShaft";
+    private static final String TAG_LEVELS         = "levels";
+    private static final String TAG_CLEARED        = "clearedShaft";
+    private static final String TAG_SLOCATION      = "shaftLocation";
+    private static final String TAG_VECTORX        = "vectorx";
+    private static final String TAG_VECTORZ        = "vectorz";
+    private static final String TAG_CLOCATION      = "cobblelocation";
+    private static final String TAG_ACTIVE         = "activeNodeint";
+    private static final String TAG_CURRENT_LEVEL  = "currentLevel";
+    private static final String TAG_SN             = "StartingNode";
+    private static final String TAG_LLOCATION      = "ladderlocation";
+    private static final String TAG_LADDER         = "found_ladder";
 
     private Block floorBlock = Blocks.planks;
     private Block fenceBlock = Blocks.oak_fence;
@@ -52,12 +56,12 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * True if shaft is at bottom limit
      */
-    public                  boolean             clearedShaft            = false;
+    public boolean clearedShaft = false;
 
-    //Save in hut
-    private int startingLevelNode = 0;
-    private int active = 0;
-    private int currentLevel = 0;
+    // Save in hut
+    private int      startingLevelNode = 0;
+    private int      active            = 0;
+    private int      currentLevel      = 0;
     private BlockPos shaftStart;
 
     /**
@@ -80,14 +84,16 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     private boolean foundLadder = false;
 
-    //Stores the levels of the miners mine. This could be a map<depth,level>
+    // Stores the levels of the miners mine. This could be a map<depth,level>
     private List<Level> levels = new ArrayList<>();
 
     /**
      * Required constructor.
      *
-     * @param c colony containing the building.
-     * @param l location of the building.
+     * @param c
+     *            colony containing the building.
+     * @param l
+     *            location of the building.
      */
     public BuildingMiner(Colony c, BlockPos l)
     {
@@ -121,7 +127,8 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Adds a level to the levels list
      *
-     * @param currentLevel      {@link Level}to add
+     * @param currentLevel
+     *            {@link Level}to add
      */
     public void addLevel(Level currentLevel)
     {
@@ -141,14 +148,11 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Returns the current level
      *
-     * @return              Current level
+     * @return Current level
      */
     public Level getCurrentLevel()
     {
-        if(currentLevel >= 0 && currentLevel < levels.size())
-        {
-            return levels.get(currentLevel);
-        }
+        if (currentLevel >= 0 && currentLevel < levels.size()) { return levels.get(currentLevel); }
         return null;
     }
 
@@ -159,35 +163,27 @@ public class BuildingMiner extends AbstractBuildingWorker
         buf.writeInt(currentLevel);
         buf.writeInt(levels.size());
 
-        for(Level level : levels)
+        for (Level level : levels)
         {
             buf.writeInt(level.getNumberOfNodes());
         }
     }
 
     /**
-     * Returns the depth limit
-     * Limitted by building level
-     *      - Level 1: 50
-     *      - Level 2: 30
-     *      - Level 3: 5
+     * Returns the depth limit Limitted by building level - Level 1: 50 - Level
+     * 2: 30 - Level 3: 5
      *
-     * @return              Depth limit
+     * @return Depth limit
      */
     public int getDepthLimit()
     {
-        if(this.getBuildingLevel() == 1)
+        if (this.getBuildingLevel() == 1)
         {
             return 50;
-        }
-        else if(this.getBuildingLevel() == 2)
+        } else if (this.getBuildingLevel() == 2)
         {
             return 30;
-        }
-        else if(this.getBuildingLevel() == 3)
-        {
-            return 5;
-        }
+        } else if (this.getBuildingLevel() == 3) { return 5; }
 
         return 70;
     }
@@ -293,19 +289,19 @@ public class BuildingMiner extends AbstractBuildingWorker
         compound.setBoolean(TAG_LADDER, foundLadder);
         compound.setInteger(TAG_SN, startingLevelNode);
 
-        if(shaftStart != null && cobbleLocation != null)
+        if (shaftStart != null && cobbleLocation != null)
         {
             BlockPosUtil.writeToNBT(compound, TAG_SLOCATION, shaftStart);
             BlockPosUtil.writeToNBT(compound, TAG_CLOCATION, cobbleLocation);
         }
 
-        if(ladderLocation != null)
+        if (ladderLocation != null)
         {
             BlockPosUtil.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
         }
 
         NBTTagList levelTagList = new NBTTagList();
-        for(Level level : levels)
+        for (Level level : levels)
         {
             NBTTagCompound levelCompound = new NBTTagCompound();
             level.writeToNBT(levelCompound);
@@ -319,11 +315,11 @@ public class BuildingMiner extends AbstractBuildingWorker
     {
         super.readFromNBT(compound);
 
-        if(compound.hasKey(TAG_FLOOR_BLOCK))
+        if (compound.hasKey(TAG_FLOOR_BLOCK))
         {
             floorBlock = Block.getBlockFromName(compound.getString(TAG_FLOOR_BLOCK));
         }
-        if(compound.hasKey(TAG_FENCE_BLOCK))
+        if (compound.hasKey(TAG_FENCE_BLOCK))
         {
             fenceBlock = Block.getBlockFromName(compound.getString(TAG_FENCE_BLOCK));
         }
@@ -347,10 +343,26 @@ public class BuildingMiner extends AbstractBuildingWorker
         startingLevelNode = compound.getInteger(TAG_SN);
 
         NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
-        for(int i = 0; i < levelTagList.tagCount(); i++)
+        for (int i = 0; i < levelTagList.tagCount(); i++)
         {
             Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
             this.levels.add(level);
+        }
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        final EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(getColony().getPermissions().getOwner());
+
+        if (newLevel == 1)
+        {
+            owner.triggerAchievement(ModAchievements.achBuildingMiner);
+        } else if (newLevel >= this.getMaxBuildingLevel())
+        {
+            owner.triggerAchievement(ModAchievements.achUpgradeMinerMax);
         }
     }
 
@@ -378,7 +390,7 @@ public class BuildingMiner extends AbstractBuildingWorker
             int size = buf.readInt();
             levels = new int[size];
 
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
                 levels[i] = buf.readInt();
             }

@@ -1,10 +1,14 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.client.gui.WindowHomeBuilding;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.util.ServerUtils;
+
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -17,8 +21,8 @@ public class BuildingHome extends AbstractBuildingHut
 {
     private List<CitizenData> residents = new ArrayList<>();
 
-    private static final String TAG_RESIDENTS   = "residents";
-    private static final String CITIZEN         = "Citizen";
+    private static final String TAG_RESIDENTS = "residents";
+    private static final String CITIZEN       = "Citizen";
 
     public BuildingHome(Colony c, BlockPos l)
     {
@@ -61,21 +65,18 @@ public class BuildingHome extends AbstractBuildingHut
     @Override
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
-        if (event.phase != TickEvent.Phase.END)
-        {
-            return;
-        }
+        if (event.phase != TickEvent.Phase.END) { return; }
 
         if (residents.size() < getMaxInhabitants())
         {
-            //  'Capture' as many citizens into this house as possible
+            // 'Capture' as many citizens into this house as possible
             addHomelessCitizens();
         }
     }
 
     /**
-     * Looks for a homeless citizen to add to the current building.
-     * Calls {@link #addResident(CitizenData)}
+     * Looks for a homeless citizen to add to the current building. Calls
+     * {@link #addResident(CitizenData)}
      */
     public void addHomelessCitizens()
     {
@@ -96,7 +97,8 @@ public class BuildingHome extends AbstractBuildingHut
     /**
      * Adds the citizen to the building
      *
-     * @param citizen       Citizen to add
+     * @param citizen
+     *            Citizen to add
      */
     private void addResident(CitizenData citizen)
     {
@@ -119,8 +121,9 @@ public class BuildingHome extends AbstractBuildingHut
     /**
      * Returns whether the citizen has this as home or not
      *
-     * @param citizen       Citizen to check
-     * @return              True if citizen lives here, otherwise false
+     * @param citizen
+     *            Citizen to check
+     * @return True if citizen lives here, otherwise false
      */
     public boolean hasResident(CitizenData citizen)
     {
@@ -140,7 +143,7 @@ public class BuildingHome extends AbstractBuildingHut
             CitizenData citizen = getColony().getCitizen(citizenId);
             if (citizen != null)
             {
-                //  Bypass addResident (which marks dirty)
+                // Bypass addResident (which marks dirty)
                 residents.add(citizen);
                 citizen.setHomeBuilding(this);
             }
@@ -163,6 +166,22 @@ public class BuildingHome extends AbstractBuildingHut
         }
     }
 
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        final EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(getColony().getPermissions().getOwner());
+
+        if (newLevel == 1)
+        {
+            owner.triggerAchievement(ModAchievements.achBuildingColonist);
+        } else if (newLevel >= this.getMaxBuildingLevel())
+        {
+            owner.triggerAchievement(ModAchievements.achUpgradeColonistMax);
+        }
+    }
+
     public static class View extends AbstractBuildingHut.View
     {
         private List<Integer> residents = new ArrayList<>();
@@ -172,7 +191,10 @@ public class BuildingHome extends AbstractBuildingHut
             super(c, l);
         }
 
-        public List<Integer> getResidents() { return Collections.unmodifiableList(residents); }
+        public List<Integer> getResidents()
+        {
+            return Collections.unmodifiableList(residents);
+        }
 
         public com.blockout.views.Window getWindow()
         {
@@ -203,4 +225,5 @@ public class BuildingHome extends AbstractBuildingHut
             buf.writeInt(citizen.getId());
         }
     }
+
 }

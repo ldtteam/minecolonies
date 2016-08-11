@@ -1,11 +1,15 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobLumberjack;
+import com.minecolonies.util.ServerUtils;
+
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 
 public class BuildingLumberjack extends AbstractBuildingWorker
@@ -42,6 +46,22 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         return new JobLumberjack(citizen);
     }
 
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        final EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(getColony().getPermissions().getOwner());
+
+        if (newLevel == 1)
+        {
+            owner.triggerAchievement(ModAchievements.achBuildingLumberjack);
+        } else if (newLevel >= this.getMaxBuildingLevel())
+        {
+            owner.triggerAchievement(ModAchievements.achUpgradeLumberjackMax);
+        }
+    }
+
     public static class View extends AbstractBuildingWorker.View
     {
         public View(ColonyView c, BlockPos l)
@@ -54,4 +74,5 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             return new WindowHutWorkerPlaceholder<>(this, LUMBERJACK_HUT_NAME);
         }
     }
+
 }
