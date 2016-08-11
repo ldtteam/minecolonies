@@ -136,24 +136,36 @@ entity.fisherman.messageWaterTooFar=Fisherman's hut is too far from water!
 
 com.minecolonies.workOrderAdded=Build Request Created!
 
-achievement.supply=Supply ship
+achievement.supply=A new start
 achievement.supply.desc=Get supplies
 achievement.wandofbuilding=Wand of Building
 achievement.wandofbuilding.desc=Be a better builder
-achievement.townhall=New Dawn
+achievement.townhall=Found a colony
 achievement.townhall.desc=Create your own Settlement
-achievement.building.builder=The Builder!
-achievement.building.builder.desc=TODO
-achievement.building.colonist=The Citizen!
-achievement.building.colonist.desc=TODO
-achievement.building.lumberjack=The Lumberjack!
-achievement.building.lumberjack.desc=TODO
-achievement.building.miner=The Miner!
-achievement.building.miner.desc=TODO
+
+achievement.upgrade.builder.first=A construction worker
+achievement.upgrade.builder.first.desc=Build the foundation...
+achievement.upgrade.builder.max=The Builder!
+achievement.upgrade.builder.max.desc=What a powerfull man
+
+achievement.upgrade.colonist.first=The Citizen!
+achievement.upgrade.colonist.first.desc=A place to live
+achievement.upgrade.colonist.max=Prestige
+achievement.upgrade.colonist.max.desc=What a noble man 
+
+achievement.upgrade.lumberjack.first=Just a wood cutter
+achievement.upgrade.lumberjack.first.desc=Chop chop
+achievement.upgrade.lumberjack.max=A real Lumberjack
+achievement.upgrade.lumberjack.max.desc=Deforestation
+
+achievement.upgrade.miner.first=A miner
+achievement.upgrade.miner.first.desc=Diggy diggy whole
+achievement.upgrade.miner.max=The diamond finder!
+achievement.upgrade.miner.max.desc=A diamond gatherer
 
 achievement.size.settlement=Settlement
-achievement.size.settlement.desc=TODO
-achievement.size.city=City
-achievement.size.city.desc=TODO
+achievement.size.settlement.desc=A few lost souls
 achievement.size.town=Town
-achievement.size.town.desc=TODO
+achievement.size.town.desc=A healthy colony
+achievement.size.city=City
+achievement.size.city.desc=The Capital
