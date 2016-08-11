@@ -2,6 +2,7 @@ package com.minecolonies.inventory;
 
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
+import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;
@@ -71,14 +72,20 @@ public class InventoryCitizen implements IInventory
     private static final int NO_SLOT = -1;
 
     /**
-     * Creates the inventory of the citizen
-     *
-     * @param title         Title of the inventory
-     * @param localeEnabled Boolean whether the inventory has a custom name
-     * @param size          Size of the inventory
+     * The citizen which owns the inventory.
      */
-    public InventoryCitizen(String title, boolean localeEnabled, int size)
+    private EntityCitizen citizen;
+
+    /**
+     * Creates the inventory of the citizen.
+     *
+     * @param title         Title of the inventory.
+     * @param localeEnabled Boolean whether the inventory has a custom name.
+     * @param citizen       Citizen owner of the inventory.
+     */
+    public InventoryCitizen(String title, boolean localeEnabled, EntityCitizen citizen)
     {
+        this.citizen = citizen;
         if(localeEnabled)
         {
             customName = title;
@@ -179,6 +186,11 @@ public class InventoryCitizen implements IInventory
                 ItemStack itemstack1 = this.stacks[index];
                 this.stacks[index] = null;
                 this.markDirty();
+                if(index == heldItem)
+                {
+                    citizen.removeHeldItem();
+                    heldItem = 0;
+                }
                 return itemstack1;
             }
             else
@@ -193,6 +205,7 @@ public class InventoryCitizen implements IInventory
                 this.markDirty();
                 return itemstack;
             }
+
         }
         else
         {
@@ -228,6 +241,12 @@ public class InventoryCitizen implements IInventory
     @Override
     public void setInventorySlotContents(int index, ItemStack stack)
     {
+        if(index == heldItem && stack == null)
+        {
+            citizen.removeHeldItem();
+            heldItem = 0;
+        }
+
         this.stacks[index] = stack;
 
         if (stack != null && stack.stackSize > this.getInventoryStackLimit())

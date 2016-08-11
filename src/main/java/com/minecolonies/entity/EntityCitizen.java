@@ -142,7 +142,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         setSize(0.6F, 1.8F);
         this.enablePersistence();
         this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
-        this.inventory = new InventoryCitizen("Minecolonies Inventory", false, 27);
+        this.inventory = new InventoryCitizen("Minecolonies Inventory", false, this);
 
         this.renderDistanceWeight = 2.0D;
         this.newNavigator = new PathNavigate(this, world);
@@ -1032,7 +1032,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (!worldObj.isRemote)
         {
-            InventoryCitizen     newInventory = new InventoryCitizen(inventory.getName(), inventory.hasCustomName(), newSize);
+            InventoryCitizen     newInventory = new InventoryCitizen(inventory.getName(), inventory.hasCustomName(), this);
             ArrayList<ItemStack> leftOvers    = new ArrayList<>();
             for (int i = 0; i < inventory.getSizeInventory(); i++)
             {
@@ -1083,6 +1083,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
+    /**
+     * Removes the currently held item.
+     */
+    public void removeHeldItem()
+    {
+        setCurrentItemOrArmor(0,null);
+    }
+
+    /**
+     * Sets the currently held item.
+     * @param slot from the inventory slot.
+     */
     public void setHeldItem(int slot)
     {
         inventory.setHeldItem(slot);
@@ -1170,7 +1182,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void damageItemInHand(final int damage)
     {
-        final ItemStack heldItem = getInventoryCitizen().getHeldItem();
+        final ItemStack heldItem = getHeldItem();
         //If we hit with bare hands, ignore
         if(heldItem == null)
         {
