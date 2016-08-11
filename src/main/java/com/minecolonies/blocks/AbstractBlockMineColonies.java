@@ -18,49 +18,48 @@ import net.minecraft.world.World;
  * @author Isfirs
  * @since 0.1
  */
-public abstract class AbstractBlockMineColonies extends Block {
+public abstract class AbstractBlockMineColonies extends Block
+{
 
-	/**
-	 * Parent constructor
-	 * 
-	 * @param materialIn
-	 * @see Block#Block(Material)
-	 */
-	public AbstractBlockMineColonies(Material materialIn) {
-		super(materialIn);
-	}
-	
-	/**
-	 * Parent constructor
-	 * 
-	 * @param blockMaterialIn
-	 * @param blockMapColorIn
-	 * @see Block#Block(Material, MapColor)
-	 */
-	public AbstractBlockMineColonies(Material blockMaterialIn, MapColor blockMapColorIn) {
-		super(blockMaterialIn, blockMapColorIn);
-	}
-	
-	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
-			ItemStack stack) {
-		if (placer instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) placer;
-			Block block = state.getBlock();
-			
-			if (block == ModBlocks.blockHutTownHall) {
-				player.triggerAchievement(ModAchievements.achBuildingTownhall);
-			} else if (block == ModBlocks.blockHutBuilder) {
-				player.triggerAchievement(ModAchievements.achBuildingBuilder);
-			} else if (block == ModBlocks.blockHutLumberjack) {
-				player.triggerAchievement(ModAchievements.achBuildingLumberjack);
-			} else if (block == ModBlocks.blockHutMiner) {
-				player.triggerAchievement(ModAchievements.achBuildingMiner);
-			}
-		}
-		
-		
-		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-	}
+    /**
+     * Parent constructor
+     * 
+     * @param materialIn
+     * @see Block#Block(Material)
+     */
+    public AbstractBlockMineColonies(Material materialIn)
+    {
+        super(materialIn);
+    }
+
+    /**
+     * Parent constructor
+     * 
+     * @param blockMaterialIn
+     * @param blockMapColorIn
+     * @see Block#Block(Material, MapColor)
+     */
+    public AbstractBlockMineColonies(Material blockMaterialIn, MapColor blockMapColorIn)
+    {
+        super(blockMaterialIn, blockMapColorIn);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
+            ItemStack stack)
+    {
+        if (placer instanceof EntityPlayer)
+        {
+            EntityPlayer player = (EntityPlayer) placer;
+            Block block = state.getBlock();
+
+            if (block == ModBlocks.blockHutTownHall)
+            {
+                player.triggerAchievement(ModAchievements.achBuildingTownhall);
+            }
+        }
+
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    }
 
 }
