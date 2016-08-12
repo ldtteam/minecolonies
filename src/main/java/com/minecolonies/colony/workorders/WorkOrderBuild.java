@@ -145,6 +145,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         for (CitizenData citizen : colony.getCitizens().values())
         {
             JobBuilder job = citizen.getJob(JobBuilder.class);
+
             if (job == null)
             {
                 continue;
