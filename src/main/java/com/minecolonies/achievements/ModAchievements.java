@@ -41,6 +41,11 @@ public class ModAchievements
     public static Achievement achUpgradeMinerMax = new AchUpgradeMinerMax("upgrade.miner.max", "upgrade.miner.max", 2, 4)
             .registerStat();
 
+    public static Achievement achBuildingFisher   = new AchBuildingFisher("upgrade.fisher.first", "upgrade.fisher.first", 0, 5)
+            .registerStat();
+    public static Achievement achUpgradeFisherMax = new AchUpgradeFisherMax("upgrade.fisher.max", "upgrade.fisher.max", 2, 5)
+            .registerStat();
+
     // Sizes
     public static Achievement achSizeSettlement = new AchSizeSettlement("size.pioneer", "size.settlement", 2, -2, AchSizeSettlement.size)
             .registerStat();
