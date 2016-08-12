@@ -1182,7 +1182,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void damageItemInHand(final int damage)
     {
-        final ItemStack heldItem = getHeldItem();
+        final ItemStack heldItem = inventory.getHeldItem();
         //If we hit with bare hands, ignore
         if(heldItem == null)
         {
