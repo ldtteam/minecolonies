@@ -292,7 +292,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         int z = buildingMiner.getLadderLocation().getZ();
 
         buildingMiner.setCobbleLocation(new BlockPos(x - buildingMiner.getVectorX(), y, z - buildingMiner.getVectorZ()));
-        buildingMiner.setShaftStart(new BlockPos(x, getLastLadder(new BlockPos(x, y, z)) - 1, z));
+        buildingMiner.setShaftStart(new BlockPos(x, getLastLadder(buildingMiner.getLadderLocation()) - 1, z));
         buildingMiner.setFoundLadder(true);
     }
 
