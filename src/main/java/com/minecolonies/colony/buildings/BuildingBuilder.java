@@ -16,7 +16,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     /**
      * The maximum upgrade of the building.
      */
-    private final static int MAX_BUILDING_LEVEL = 2;
+    private static final int MAX_BUILDING_LEVEL = 2;
     /**
      * The job description.
      */

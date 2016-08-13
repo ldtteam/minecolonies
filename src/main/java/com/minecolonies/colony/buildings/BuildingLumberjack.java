@@ -16,7 +16,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     /**
      * The maximum upgrade of the building.
      */
-    private final static int MAX_BUILDING_LEVEL = 3;
+    private static final int MAX_BUILDING_LEVEL = 3;
     /**
      * The job description.
      */
