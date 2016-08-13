@@ -4,9 +4,7 @@ author_approval: required
 reject_regex: ^Rejected
 reset_on_push: false
 reviewers:
-  members:
-  - cltnschlosser
-  - Kostronor
-  - Raycoms
-  name: pullapprove
+  name: maintainers
   required: 3
+  teams:
+    - maintainers
