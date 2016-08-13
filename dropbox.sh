@@ -1,6 +1,4 @@
-cat > ~/.dropbox_uploader <<EOL
-OAUTH_ACCESS_TOKEN=${OAUTH_ACCESS_TOKEN}
-EOL
+echo "OAUTH_ACCESS_TOKEN=$OAUTH_ACCESS_TOKEN" > ~/.dropbox_uploader
 
 curl "https://raw.githubusercontent.com/andreafabrizi/Dropbox-Uploader/master/dropbox_uploader.sh" -o ~/dropbox_uploader.sh
 chmod +x ~/dropbox_uploader.sh
