@@ -1,5 +1,5 @@
 approve_by_comment: true
-approve_regex: '^(Approved|:shipit:|:\+1:)'
+approve_regex: '^(Approved|:shipit:|:\+1:|LGTM)'
 author_approval: required
 reject_regex: ^Rejected
 reset_on_push: false
