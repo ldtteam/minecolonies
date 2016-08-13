@@ -117,6 +117,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return false;
     }
 
+    //todo why does this return AIState if it isn't used.
     private AIState initiate()
     {
         if (!job.hasSchematic())
