@@ -13,44 +13,85 @@ import net.minecraft.util.BlockPos;
  */
 public class BuildingBuilder extends AbstractBuildingWorker
 {
+    /**
+     * The maximum upgrade of the building.
+     */
+    private static final int MAX_BUILDING_LEVEL = 2;
+    /**
+     * The job description.
+     */
     private static final String BUILDER     = "Builder";
 
+    /**
+     * Public constructor of the building, creates an object of the building.
+     * @param c the colony.
+     * @param l the position.
+     */
     public BuildingBuilder(Colony c, BlockPos l)
     {
         super(c, l);
     }
 
+    /**
+     * Getter of the schematic name.
+     * @return the schematic name.
+     */
     @Override
     public String getSchematicName()
     {
         return BUILDER;
     }
 
+    /**
+     * Getter of the max building level.
+     * @return the integer.
+     */
     @Override
     public int getMaxBuildingLevel()
     {
-        return 2;
+        return MAX_BUILDING_LEVEL;
     }
 
+    /**
+     * Getter of the job description.
+     * @return the description of the builder job.
+     */
     @Override
     public String getJobName()
     {
         return BUILDER;
     }
 
+    /**
+     * Create the job for the builder.
+     * @param citizen the citizen to take the job.
+     * @return the new job.
+     */
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
         return new JobBuilder(citizen);
     }
 
+    /**
+     * Provides a view of the builder building class.
+     */
     public static class View extends AbstractBuildingWorker.View
     {
+        /**
+         * Public constructor of the view, creates an instance of it.
+         * @param c the colony.
+         * @param l the position.
+         */
         public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }
 
+        /**
+         * Gets the blockOut Window.
+         * @return the window of the builder building.
+         */
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutBuilder(this);
