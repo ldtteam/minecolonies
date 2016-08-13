@@ -15,7 +15,6 @@ CREDITS*
 LICENSE-fml*
 *changelog.txt
 README.txt
-Thumbs.db
 /bin/
 *.hprof
 /.gradle/
@@ -23,6 +22,9 @@ Thumbs.db
 
 # Exclude all Mac DS_Store files
 /**/.DS_Store
+
+# Exclude all Windows stuff
+/**/Thumbs.db
 
 # Eclipse stuff
 /.settings/
