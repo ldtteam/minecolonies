@@ -93,31 +93,31 @@ public class MineColonies
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Constants.MOD_NAME);
 
         //  ColonyView messages
-        getNetwork().registerMessage(ColonyViewMessage.class, ColonyViewMessage.class, 1, Side.CLIENT);
-        getNetwork().registerMessage(ColonyViewCitizenViewMessage.class, ColonyViewCitizenViewMessage.class, 2, Side.CLIENT);
-        getNetwork().registerMessage(ColonyViewRemoveCitizenMessage.class, ColonyViewRemoveCitizenMessage.class, 3, Side.CLIENT);
-        getNetwork().registerMessage(ColonyViewBuildingViewMessage.class, ColonyViewBuildingViewMessage.class, 4, Side.CLIENT);
-        getNetwork().registerMessage(ColonyViewRemoveBuildingMessage.class, ColonyViewRemoveBuildingMessage.class, 5, Side.CLIENT);
-        getNetwork().registerMessage(PermissionsMessage.View.class, PermissionsMessage.View.class, 6, Side.CLIENT);
-        getNetwork().registerMessage(ColonyStylesMessage.class, ColonyStylesMessage.class, 7, Side.CLIENT);
+        getNetwork().registerMessage(ColonyViewMessage.class,                   ColonyViewMessage.class,                    1, Side.CLIENT);
+        getNetwork().registerMessage(ColonyViewCitizenViewMessage.class,        ColonyViewCitizenViewMessage.class,         2, Side.CLIENT);
+        getNetwork().registerMessage(ColonyViewRemoveCitizenMessage.class,      ColonyViewRemoveCitizenMessage.class,       3, Side.CLIENT);
+        getNetwork().registerMessage(ColonyViewBuildingViewMessage.class,       ColonyViewBuildingViewMessage.class,        4, Side.CLIENT);
+        getNetwork().registerMessage(ColonyViewRemoveBuildingMessage.class,     ColonyViewRemoveBuildingMessage.class,      5, Side.CLIENT);
+        getNetwork().registerMessage(PermissionsMessage.View.class,             PermissionsMessage.View.class,              6, Side.CLIENT);
+        getNetwork().registerMessage(ColonyStylesMessage.class,                 ColonyStylesMessage.class,                  7, Side.CLIENT);
         //  Permission Request messages
-        getNetwork().registerMessage(PermissionsMessage.Permission.class, PermissionsMessage.Permission.class, 10, Side.SERVER);
-        getNetwork().registerMessage(PermissionsMessage.AddPlayer.class, PermissionsMessage.AddPlayer.class, 11, Side.SERVER);
-        getNetwork().registerMessage(PermissionsMessage.RemovePlayer.class, PermissionsMessage.RemovePlayer.class, 12, Side.SERVER);
-        getNetwork().registerMessage(PermissionsMessage.ChangePlayerRank.class, PermissionsMessage.ChangePlayerRank.class, 13, Side.SERVER);
+        getNetwork().registerMessage(PermissionsMessage.Permission.class,       PermissionsMessage.Permission.class,        10, Side.SERVER);
+        getNetwork().registerMessage(PermissionsMessage.AddPlayer.class,        PermissionsMessage.AddPlayer.class,         11, Side.SERVER);
+        getNetwork().registerMessage(PermissionsMessage.RemovePlayer.class,     PermissionsMessage.RemovePlayer.class,      12, Side.SERVER);
+        getNetwork().registerMessage(PermissionsMessage.ChangePlayerRank.class, PermissionsMessage.ChangePlayerRank.class,  13, Side.SERVER);
         //  Colony Request messages
-        getNetwork().registerMessage(BuildRequestMessage.class, BuildRequestMessage.class, 20, Side.SERVER);
-        getNetwork().registerMessage(OpenInventoryMessage.class, OpenInventoryMessage.class, 21, Side.SERVER);
-        getNetwork().registerMessage(TownHallRenameMessage.class, TownHallRenameMessage.class, 22, Side.SERVER);
-        getNetwork().registerMessage(MinerSetLevelMessage.class, MinerSetLevelMessage.class, 23, Side.SERVER);
-        getNetwork().registerMessage(FarmerCropTypeMessage.class, FarmerCropTypeMessage.class, 24, Side.SERVER);
-        getNetwork().registerMessage(RecallCitizenMessage.class, RecallCitizenMessage.class, 25, Side.SERVER);
-        getNetwork().registerMessage(BuildToolPlaceMessage.class, BuildToolPlaceMessage.class, 26, Side.SERVER);
-        getNetwork().registerMessage(ToggleJobMessage.class, ToggleJobMessage.class, 27, Side.SERVER);
-        getNetwork().registerMessage(HireFireMessage.class, HireFireMessage.class, 28, Side.SERVER);
+        getNetwork().registerMessage(BuildRequestMessage.class,                 BuildRequestMessage.class,                  20, Side.SERVER);
+        getNetwork().registerMessage(OpenInventoryMessage.class,                OpenInventoryMessage.class,                 21, Side.SERVER);
+        getNetwork().registerMessage(TownHallRenameMessage.class,               TownHallRenameMessage.class,                22, Side.SERVER);
+        getNetwork().registerMessage(MinerSetLevelMessage.class,                MinerSetLevelMessage.class,                 23, Side.SERVER);
+        getNetwork().registerMessage(FarmerCropTypeMessage.class,               FarmerCropTypeMessage.class,                24, Side.SERVER);
+        getNetwork().registerMessage(RecallCitizenMessage.class,                RecallCitizenMessage.class,                 25, Side.SERVER);
+        getNetwork().registerMessage(BuildToolPlaceMessage.class,               BuildToolPlaceMessage.class,                26, Side.SERVER);
+        getNetwork().registerMessage(ToggleJobMessage.class,                    ToggleJobMessage.class,                     27, Side.SERVER);
+        getNetwork().registerMessage(HireFireMessage.class,                     HireFireMessage.class,                      28, Side.SERVER);
 
         //Client side only
-        getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, 50, Side.CLIENT);
+        getNetwork().registerMessage(BlockParticleEffectMessage.class,          BlockParticleEffectMessage.class,           50, Side.CLIENT);
 
     }
 
