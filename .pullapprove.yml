@@ -1,0 +1,12 @@
+approve_by_comment: true
+approve_regex: '^(Approved|:shipit:|:\+1:)'
+author_approval: required
+reject_regex: ^Rejected
+reset_on_push: false
+reviewers:
+  members:
+  - cltnschlosser
+  - Kostronor
+  - Raycoms
+  name: pullapprove
+  required: 3
