@@ -4,6 +4,7 @@
 [![Public API](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F&blinking=true&metric=public_documented_api_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F)
 [![Lines of Code](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F&blinking=true&metric=ncloc)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F)
 [![Stories in Ready](https://badge.waffle.io/Minecolonies/minecolonies.png?label=ready&title=Ready)](http://waffle.io/Minecolonies/minecolonies)
+[![ReviewNinja](https://app.review.ninja/65616760/badge)](https://app.review.ninja/Minecolonies/minecolonies)
 
 For Users
 --
