@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2.0">
+  <zoom_level>6</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>42</x>
+      <y>48</y>
+      <w>102</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>stats::Achievement</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>18</x>
+      <y>312</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+/AbstractAchievement/</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>6</x>
+      <y>6</y>
+      <w>396</w>
+      <h>228</h>
+    </coordinates>
+    <panel_attributes>net.minecraft
+--
+bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>6</x>
+      <y>258</y>
+      <w>594</w>
+      <h>498</h>
+    </coordinates>
+    <panel_attributes>com.minecolonies
+--
+bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>12</x>
+      <y>276</y>
+      <w>576</w>
+      <h>420</h>
+    </coordinates>
+    <panel_attributes>achievement
+--
+bg=white
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>84</x>
+      <y>66</y>
+      <w>18</w>
+      <h>258</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>10.0;410.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>432</x>
+      <y>312</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+/AbstractSizeAchievement/</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>156</x>
+      <y>318</y>
+      <w>288</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>460.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>330</x>
+      <y>372</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchSizeSettlement</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>330</x>
+      <y>402</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchSizeTown</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>330</x>
+      <y>432</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchSizeCity</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>468</x>
+      <y>330</y>
+      <w>48</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>10.0;90.0;60.0;90.0;60.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>468</x>
+      <y>330</y>
+      <w>48</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>10.0;140.0;60.0;140.0;60.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>468</x>
+      <y>330</y>
+      <w>48</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>10.0;190.0;60.0;190.0;60.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>372</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchGetSupply</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>402</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchWandofBuilding</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>462</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchBuildingTownhall</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>492</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchUpgradeBuilderFirst</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>522</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchUpgradeColonistFirst</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>552</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchUpgradeLumberjackFirst</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>582</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchUpgradeMinerFirst</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>84</x>
+      <y>330</y>
+      <w>48</w>
+      <h>276</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>60.0;440.0;10.0;440.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>84</x>
+      <y>330</y>
+      <w>48</w>
+      <h>156</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>60.0;240.0;10.0;240.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>84</x>
+      <y>330</y>
+      <w>48</w>
+      <h>246</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>60.0;390.0;10.0;390.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>84</x>
+      <y>330</y>
+      <w>48</w>
+      <h>216</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>60.0;340.0;10.0;340.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>84</x>
+      <y>330</y>
+      <w>48</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>60.0;280.0;10.0;280.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>84</x>
+      <y>330</y>
+      <w>48</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>60.0;140.0;10.0;140.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>84</x>
+      <y>330</y>
+      <w>48</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>60.0;90.0;10.0;90.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>294</x>
+      <y>492</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchUpgradeBuilderMax</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>294</x>
+      <y>522</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchUpgradeColonistMax</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>294</x>
+      <y>552</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchUpgradeLumberjackMax</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>294</x>
+      <y>582</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchUpgradeMinerMax</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>294</x>
+      <y>612</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchUpgradeFisherMax</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>612</y>
+      <w>144</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>layer=2
+AchUpgradeFisherFirst</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>84</x>
+      <y>330</y>
+      <w>48</w>
+      <h>306</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+layer=2</panel_attributes>
+    <additional_attributes>60.0;490.0;10.0;490.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>258</x>
+      <y>498</y>
+      <w>48</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=2</panel_attributes>
+    <additional_attributes>10.0;10.0;60.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>258</x>
+      <y>528</y>
+      <w>48</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=2</panel_attributes>
+    <additional_attributes>10.0;10.0;60.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>258</x>
+      <y>558</y>
+      <w>48</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=2</panel_attributes>
+    <additional_attributes>10.0;10.0;60.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>258</x>
+      <y>588</y>
+      <w>48</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=2</panel_attributes>
+    <additional_attributes>10.0;10.0;60.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>258</x>
+      <y>618</y>
+      <w>48</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=2</panel_attributes>
+    <additional_attributes>10.0;10.0;60.0;10.0</additional_attributes>
+  </element>
+</diagram>
