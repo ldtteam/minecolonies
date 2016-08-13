@@ -1,8 +1,9 @@
-[![Build Status](https://travis-ci.org/MinecoloniesDevs/Minecolonies.svg?branch=develop)](https://travis-ci.org/MinecoloniesDevs/Minecolonies) 
+[![Build Status](https://travis-ci.org/Minecolonies/minecolonies.svg?branch=develop)](https://travis-ci.org/Minecolonies/minecolonies)
 [![Quality Gate](http://home.kk-sc.de:9000/api/badges/gate?key=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F&blinking=true)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F)
 [![Comment Lines](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F&blinking=true&metric=comment_lines_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F)
 [![Public API](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F&blinking=true&metric=public_documented_api_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F)
 [![Lines of Code](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F&blinking=true&metric=ncloc)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F)
+[![Stories in Ready](https://badge.waffle.io/Minecolonies/minecolonies.png?label=ready&title=Ready)](http://waffle.io/Minecolonies/minecolonies)
 
 For Users
 --
