@@ -14,3 +14,5 @@ else
     ~/dropbox_uploader.sh mkdir "pr/$TRAVIS_PULL_REQUEST"
     ~/dropbox_uploader.sh upload ./build/libs/*univ*.jar "pr/$TRAVIS_PULL_REQUEST"
 fi
+
+exit 0
