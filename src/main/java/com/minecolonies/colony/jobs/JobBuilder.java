@@ -3,12 +3,12 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.AbstractBuilding;
-import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.SchematicWrapper;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
