@@ -60,10 +60,12 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         if (newLevel == 1)
         {
             owner.triggerAchievement(ModAchievements.achBuildingLumberjack);
-        } else if (newLevel >= this.getMaxBuildingLevel())
-        {
-            owner.triggerAchievement(ModAchievements.achUpgradeLumberjackMax);
         }
+        else
+            if (newLevel >= this.getMaxBuildingLevel())
+            {
+                owner.triggerAchievement(ModAchievements.achUpgradeLumberjackMax);
+            }
     }
 
     public static class View extends AbstractBuildingWorker.View

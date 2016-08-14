@@ -152,7 +152,10 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     public Level getCurrentLevel()
     {
-        if (currentLevel >= 0 && currentLevel < levels.size()) { return levels.get(currentLevel); }
+        if (currentLevel >= 0 && currentLevel < levels.size())
+        {
+            return levels.get(currentLevel);
+        }
         return null;
     }
 
@@ -180,10 +183,17 @@ public class BuildingMiner extends AbstractBuildingWorker
         if (this.getBuildingLevel() == 1)
         {
             return 50;
-        } else if (this.getBuildingLevel() == 2)
-        {
-            return 30;
-        } else if (this.getBuildingLevel() == 3) { return 5; }
+        }
+        else
+            if (this.getBuildingLevel() == 2)
+            {
+                return 30;
+            }
+            else
+                if (this.getBuildingLevel() == 3)
+                {
+                    return 5;
+                }
 
         return 70;
     }
@@ -364,10 +374,12 @@ public class BuildingMiner extends AbstractBuildingWorker
         if (newLevel == 1)
         {
             owner.triggerAchievement(ModAchievements.achBuildingMiner);
-        } else if (newLevel >= this.getMaxBuildingLevel())
-        {
-            owner.triggerAchievement(ModAchievements.achUpgradeMinerMax);
         }
+        else
+            if (newLevel >= this.getMaxBuildingLevel())
+            {
+                owner.triggerAchievement(ModAchievements.achUpgradeMinerMax);
+            }
     }
 
     public static class View extends AbstractBuildingWorker.View
