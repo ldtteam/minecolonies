@@ -7,7 +7,7 @@ import com.minecolonies.blocks.ModBlocks;
  * @author Isfirs
  * @since 0.2
  */
-public class AchUpgradeBuilderMax extends AbstractAchievement
+public class AchievementUpgradeBuilderMax extends AbstractAchievement
 {
 
     /**
@@ -18,7 +18,7 @@ public class AchUpgradeBuilderMax extends AbstractAchievement
      * @param offsetX
      * @param offsetY
      */
-    public AchUpgradeBuilderMax(final String id, final String name, final int offsetX, final int offsetY)
+    public AchievementUpgradeBuilderMax(final String id, final String name, final int offsetX, final int offsetY)
     {
         super(id, name, offsetX, offsetY, ModBlocks.blockHutBuilder, ModAchievements.achBuildingBuilder);
     }

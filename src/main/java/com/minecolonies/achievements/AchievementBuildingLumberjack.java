@@ -7,7 +7,7 @@ import com.minecolonies.blocks.ModBlocks;
  * @author Isfirs
  * @since 0.2
  */
-public class AchBuildingColonist extends AbstractAchievement
+public class AchievementBuildingLumberjack extends AbstractAchievement
 {
 
     /**
@@ -18,9 +18,9 @@ public class AchBuildingColonist extends AbstractAchievement
      * @param offsetX
      * @param offsetY
      */
-    public AchBuildingColonist(String id, String name, int offsetX, int offsetY)
+    public AchievementBuildingLumberjack(String id, String name, int offsetX, int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutCitizen, ModAchievements.achBuildingTownhall);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutLumberjack, ModAchievements.achBuildingTownhall);
     }
 
 }

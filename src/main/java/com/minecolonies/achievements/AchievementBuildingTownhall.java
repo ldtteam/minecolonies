@@ -8,7 +8,7 @@ import com.minecolonies.blocks.ModBlocks;
  * @author Isfirs
  * @since 0.2
  */
-public class AchBuildingTownhall extends AbstractAchievement
+public class AchievementBuildingTownhall extends AbstractAchievement
 {
 
     /**
@@ -19,7 +19,7 @@ public class AchBuildingTownhall extends AbstractAchievement
      * @param offsetX
      * @param offsetY
      */
-    public AchBuildingTownhall(final String id, final String name, final int offsetX, final int offsetY)
+    public AchievementBuildingTownhall(final String id, final String name, final int offsetX, final int offsetY)
     {
         super(id, name, offsetX, offsetY, ModBlocks.blockHutTownHall, ModAchievements.achGetSupply);
     }

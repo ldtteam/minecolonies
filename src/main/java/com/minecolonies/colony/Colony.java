@@ -11,9 +11,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.achievements.AchSizeCity;
-import com.minecolonies.achievements.AchSizeSettlement;
-import com.minecolonies.achievements.AchSizeTown;
+import com.minecolonies.achievements.AchievementSizeCity;
+import com.minecolonies.achievements.AchievementSizeSettlement;
+import com.minecolonies.achievements.AchievementSizeTown;
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.BuildingHome;
@@ -710,17 +710,17 @@ public class Colony implements IColony
         
         EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(uuidOwner);
         
-        if (size >= AchSizeSettlement.SIZE)
+        if (size >= AchievementSizeSettlement.SIZE)
         {
             owner.triggerAchievement(ModAchievements.achSizeSettlement);
         }
 
-        if (size >= AchSizeTown.SIZE)
+        if (size >= AchievementSizeTown.SIZE)
         {
             owner.triggerAchievement(ModAchievements.achSizeTown);
         }
 
-        if (size >= AchSizeCity.SIZE)
+        if (size >= AchievementSizeCity.SIZE)
         {
             owner.triggerAchievement(ModAchievements.achsizeCity);
         }

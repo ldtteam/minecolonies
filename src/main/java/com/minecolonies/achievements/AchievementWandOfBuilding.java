@@ -9,7 +9,7 @@ import com.minecolonies.items.ModItems;
  * @author Isfirs
  * @since 0.2
  */
-public class AchWandOfBuilding extends AbstractAchievement
+public class AchievementWandOfBuilding extends AbstractAchievement
 {
 
     /**
@@ -20,7 +20,7 @@ public class AchWandOfBuilding extends AbstractAchievement
      * @param offsetX
      * @param offsetY
      */
-    public AchWandOfBuilding(final String id, final String name, final int offsetX, final int offsetY)
+    public AchievementWandOfBuilding(final String id, final String name, final int offsetX, final int offsetY)
     {
         super(id, name, offsetX, offsetY, ModItems.buildTool, ModAchievements.achGetSupply);
     }

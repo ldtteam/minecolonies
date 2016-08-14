@@ -7,10 +7,10 @@ import net.minecraft.init.Items;
  * @author Isfirs
  * @since 0.2
  */
-public class AchSizeTown extends AbstractSizeAchievement
+public class AchievementSizeCity extends AbstractSizeAchievement
 {
 
-    public static final int SIZE = 20;
+    public static final int SIZE = 10;
 
     /**
      * Constructor
@@ -20,9 +20,9 @@ public class AchSizeTown extends AbstractSizeAchievement
      * @param offsetX
      * @param offsetY
      */
-    public AchSizeTown(String id, String name, int offsetX, int offsetY)
+    public AchievementSizeCity(String id, String name, int offsetX, int offsetY)
     {
-        super(id, name, offsetX, offsetY, Items.diamond, ModAchievements.achSizeSettlement);
+        super(id, name, offsetX, offsetY, Items.gold_ingot, ModAchievements.achSizeTown);
     }
 
 }
