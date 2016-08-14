@@ -30,6 +30,13 @@ sonarqube {
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
+apply plugin: 'jacoco'
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
 dependencies {
     testCompile 'junit:junit:4.11'
     testCompile "org.mockito:mockito-core:1.+"
