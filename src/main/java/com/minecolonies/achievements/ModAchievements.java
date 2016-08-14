@@ -55,7 +55,7 @@ public class ModAchievements
             .registerStat();
 
     // Achievement pages
-    public static AchievementPage pageMineColonies = new AchievementPageMineColonies(achGetSupply, achWandOfbuilding, achBuildingTownhall, achBuildingBuilder, achBuildingColonist, achBuildingLumberjack, achBuildingMiner, achBuildingFisher, achSizeSettlement, achSizeTown, achsizeCity, achUpgradeColonistMax, achUpgradeBuilderMax, achUpgradeLumberjackMax, achUpgradeMinerMax, achUpgradeFisherMax);
+    public static final AchievementPage pageMineColonies = new AchievementPageMineColonies(achGetSupply, achWandOfbuilding, achBuildingTownhall, achBuildingBuilder, achBuildingColonist, achBuildingLumberjack, achBuildingMiner, achBuildingFisher, achSizeSettlement, achSizeTown, achsizeCity, achUpgradeColonistMax, achUpgradeBuilderMax, achUpgradeLumberjackMax, achUpgradeMinerMax, achUpgradeFisherMax);
 
     /**
      * private constructor to hide the implicit public one.
