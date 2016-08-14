@@ -71,17 +71,17 @@ public abstract class AbstractBuilding
 
     static
     {
-        addMapping("Baker", BuildingBaker.class, BlockHutBaker.class);
-        addMapping("Blacksmith", BuildingBlacksmith.class, BlockHutBlacksmith.class);
-        addMapping("Builder", BuildingBuilder.class, BlockHutBuilder.class);
-        addMapping("Home", BuildingHome.class, BlockHutCitizen.class);
-        addMapping("Farmer", BuildingFarmer.class, BlockHutFarmer.class);
-        addMapping("Lumberjack", BuildingLumberjack.class, BlockHutLumberjack.class);
-        addMapping("Miner", BuildingMiner.class, BlockHutMiner.class);
-        addMapping("Stonemason", BuildingStonemason.class, BlockHutStonemason.class);
-        addMapping("TownHall", BuildingTownHall.class, BlockHutTownHall.class);
-        addMapping("Warehouse", BuildingWarehouse.class, BlockHutWarehouse.class);
-        addMapping("Fisherman", BuildingFisherman.class, BlockHutFisherman.class);
+        addMapping("Baker",         BuildingBaker.class,         BlockHutBaker.class);
+        addMapping("Blacksmith",    BuildingBlacksmith.class,    BlockHutBlacksmith.class);
+        addMapping("Builder",       BuildingBuilder.class,       BlockHutBuilder.class);
+        addMapping("Home",          BuildingHome.class,          BlockHutCitizen.class);
+        addMapping("Farmer",        BuildingFarmer.class,        BlockHutFarmer.class);
+        addMapping("Lumberjack",    BuildingLumberjack.class,    BlockHutLumberjack.class);
+        addMapping("Miner",         BuildingMiner.class,         BlockHutMiner.class);
+        addMapping("Stonemason",    BuildingStonemason.class,    BlockHutStonemason.class);
+        addMapping("TownHall",      BuildingTownHall.class,      BlockHutTownHall.class);
+        addMapping("Warehouse",     BuildingWarehouse.class,     BlockHutWarehouse.class);
+        addMapping("Fisherman",     BuildingFisherman.class,     BlockHutFisherman.class);
 
     }
 
