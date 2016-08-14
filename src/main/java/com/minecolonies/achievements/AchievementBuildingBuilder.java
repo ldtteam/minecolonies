@@ -21,6 +21,6 @@ public class AchievementBuildingBuilder extends AbstractAchievement
      */
     public AchievementBuildingBuilder(final String id, final String name, final int offsetX, final int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutBuilder, ModAchievements.achBuildingTownhall);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutBuilder, ModAchievements.achievementBuildingTownhall);
     }
 }

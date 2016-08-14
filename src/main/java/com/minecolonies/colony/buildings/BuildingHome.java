@@ -178,12 +178,12 @@ public class BuildingHome extends AbstractBuildingHut
 
         if (newLevel == 1)
         {
-            owner.triggerAchievement(ModAchievements.achBuildingColonist);
+            owner.triggerAchievement(ModAchievements.achievementBuildingColonist);
         }
         else
             if (newLevel >= this.getMaxBuildingLevel())
             {
-                owner.triggerAchievement(ModAchievements.achUpgradeColonistMax);
+                owner.triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
             }
     }
 

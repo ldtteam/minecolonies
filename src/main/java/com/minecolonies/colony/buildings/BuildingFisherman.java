@@ -69,12 +69,12 @@ public class BuildingFisherman extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            owner.triggerAchievement(ModAchievements.achBuildingFisher);
+            owner.triggerAchievement(ModAchievements.achievementBuildingFisher);
         }
         else
             if (newLevel >= this.getMaxBuildingLevel())
             {
-                owner.triggerAchievement(ModAchievements.achUpgradeFisherMax);
+                owner.triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
             }
     }
 

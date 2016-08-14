@@ -53,7 +53,7 @@ public class ItemBuildTool extends AbstractItemMinecolonies
             break;
         }
         
-        playerIn.triggerAchievement(ModAchievements.achWandOfbuilding);
+        playerIn.triggerAchievement(ModAchievements.achievementWandOfbuilding);
         MineColonies.proxy.openBuildToolWindow(pos);
         return false;
     }

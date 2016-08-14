@@ -21,6 +21,6 @@ public class AchievementBuildingTownhall extends AbstractAchievement
      */
     public AchievementBuildingTownhall(final String id, final String name, final int offsetX, final int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutTownHall, ModAchievements.achGetSupply);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutTownHall, ModAchievements.achievementGetSupply);
     }
 }

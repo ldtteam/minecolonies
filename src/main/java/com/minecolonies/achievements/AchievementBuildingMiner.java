@@ -20,7 +20,7 @@ public class AchievementBuildingMiner extends AbstractAchievement
      */
     public AchievementBuildingMiner(String id, String name, int offsetX, int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutMiner, ModAchievements.achBuildingTownhall);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutMiner, ModAchievements.achievementBuildingTownhall);
     }
 
 }

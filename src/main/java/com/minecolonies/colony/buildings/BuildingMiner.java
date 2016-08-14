@@ -373,12 +373,12 @@ public class BuildingMiner extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            owner.triggerAchievement(ModAchievements.achBuildingMiner);
+            owner.triggerAchievement(ModAchievements.achievementBuildingMiner);
         }
         else
             if (newLevel >= this.getMaxBuildingLevel())
             {
-                owner.triggerAchievement(ModAchievements.achUpgradeMinerMax);
+                owner.triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
             }
     }
 

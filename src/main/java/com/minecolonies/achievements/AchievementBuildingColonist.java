@@ -20,7 +20,7 @@ public class AchievementBuildingColonist extends AbstractAchievement
      */
     public AchievementBuildingColonist(String id, String name, int offsetX, int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutCitizen, ModAchievements.achBuildingTownhall);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutCitizen, ModAchievements.achievementBuildingTownhall);
     }
 
 }

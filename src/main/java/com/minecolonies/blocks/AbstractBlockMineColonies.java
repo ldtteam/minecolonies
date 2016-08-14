@@ -55,7 +55,7 @@ public abstract class AbstractBlockMineColonies extends Block
 
             if (block == ModBlocks.blockHutTownHall)
             {
-                player.triggerAchievement(ModAchievements.achBuildingTownhall);
+                player.triggerAchievement(ModAchievements.achievementBuildingTownhall);
             }
         }
 

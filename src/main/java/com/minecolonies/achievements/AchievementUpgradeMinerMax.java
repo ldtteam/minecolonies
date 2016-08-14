@@ -20,6 +20,6 @@ public class AchievementUpgradeMinerMax extends AbstractAchievement
      */
     public AchievementUpgradeMinerMax(final String id, final String name, final int offsetX, final int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutMiner, ModAchievements.achBuildingMiner);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutMiner, ModAchievements.achievementBuildingMiner);
     }
 }

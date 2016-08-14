@@ -20,6 +20,6 @@ public class AchievementUpgradeBuilderMax extends AbstractAchievement
      */
     public AchievementUpgradeBuilderMax(final String id, final String name, final int offsetX, final int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutBuilder, ModAchievements.achBuildingBuilder);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutBuilder, ModAchievements.achievementBuildingBuilder);
     }
 }

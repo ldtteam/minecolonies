@@ -20,6 +20,6 @@ public class AchievementUpgradeLumberjackMax extends AbstractAchievement
      */
     public AchievementUpgradeLumberjackMax(final String id, final String name, final int offsetX, final int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutLumberjack, ModAchievements.achBuildingLumberjack);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutLumberjack, ModAchievements.achievementBuildingLumberjack);
     }
 }

@@ -20,6 +20,6 @@ public class AchievementUpgradeColonistMax extends AbstractAchievement
      */
     public AchievementUpgradeColonistMax(final String id, final String name, final int offsetX, final int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutCitizen, ModAchievements.achBuildingColonist);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutCitizen, ModAchievements.achievementBuildingColonist);
     }
 }

@@ -712,17 +712,17 @@ public class Colony implements IColony
         
         if (size >= AchievementSizeSettlement.SIZE)
         {
-            owner.triggerAchievement(ModAchievements.achSizeSettlement);
+            owner.triggerAchievement(ModAchievements.achievementSizeSettlement);
         }
 
         if (size >= AchievementSizeTown.SIZE)
         {
-            owner.triggerAchievement(ModAchievements.achSizeTown);
+            owner.triggerAchievement(ModAchievements.achievementSizeTown);
         }
 
         if (size >= AchievementSizeCity.SIZE)
         {
-            owner.triggerAchievement(ModAchievements.achsizeCity);
+            owner.triggerAchievement(ModAchievements.achievementsizeCity);
         }
     }
     

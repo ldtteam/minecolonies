@@ -22,7 +22,7 @@ public class AchievementSizeTown extends AbstractSizeAchievement
      */
     public AchievementSizeTown(String id, String name, int offsetX, int offsetY)
     {
-        super(id, name, offsetX, offsetY, Items.diamond, ModAchievements.achSizeSettlement);
+        super(id, name, offsetX, offsetY, Items.diamond, ModAchievements.achievementSizeSettlement);
     }
 
 }

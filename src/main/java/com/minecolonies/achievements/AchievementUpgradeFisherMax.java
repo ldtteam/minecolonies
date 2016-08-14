@@ -20,6 +20,6 @@ public class AchievementUpgradeFisherMax extends AbstractAchievement
      */
     public AchievementUpgradeFisherMax(final String id, final String name, final int offsetX, final int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutFisherman, ModAchievements.achBuildingFisher);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutFisherman, ModAchievements.achievementBuildingFisher);
     }
 }

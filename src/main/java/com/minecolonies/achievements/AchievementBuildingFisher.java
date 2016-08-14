@@ -20,6 +20,6 @@ public class AchievementBuildingFisher extends AbstractAchievement
      */
     public AchievementBuildingFisher(final String id, final String name, final int offsetX, final int offsetY)
     {
-        super(id, name, offsetX, offsetY, ModBlocks.blockHutFisherman, ModAchievements.achBuildingTownhall);
+        super(id, name, offsetX, offsetY, ModBlocks.blockHutFisherman, ModAchievements.achievementBuildingTownhall);
     }
 }
