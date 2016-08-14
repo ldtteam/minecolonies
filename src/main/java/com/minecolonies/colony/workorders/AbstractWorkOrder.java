@@ -1,14 +1,15 @@
 package com.minecolonies.colony.workorders;
 
-import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.Colony;
-import com.minecolonies.util.Log;
-import net.minecraft.nbt.NBTTagCompound;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.Colony;
+import com.minecolonies.util.Log;
+
+import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * General information between WorkOrders.
