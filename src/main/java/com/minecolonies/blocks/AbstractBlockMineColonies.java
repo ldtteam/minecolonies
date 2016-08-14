@@ -45,8 +45,7 @@ public abstract class AbstractBlockMineColonies extends Block
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
-            ItemStack stack)
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         if (placer instanceof EntityPlayer)
         {

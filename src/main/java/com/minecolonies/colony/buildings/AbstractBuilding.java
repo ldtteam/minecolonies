@@ -5,18 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.minecolonies.blocks.AbstractBlockHut;
-import com.minecolonies.blocks.BlockHutBaker;
-import com.minecolonies.blocks.BlockHutBlacksmith;
-import com.minecolonies.blocks.BlockHutBuilder;
-import com.minecolonies.blocks.BlockHutCitizen;
-import com.minecolonies.blocks.BlockHutFarmer;
-import com.minecolonies.blocks.BlockHutFisherman;
-import com.minecolonies.blocks.BlockHutLumberjack;
-import com.minecolonies.blocks.BlockHutMiner;
-import com.minecolonies.blocks.BlockHutStonemason;
-import com.minecolonies.blocks.BlockHutTownHall;
-import com.minecolonies.blocks.BlockHutWarehouse;
+import com.minecolonies.blocks.*;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
@@ -117,13 +106,9 @@ public abstract class AbstractBuilding
      * {@link AbstractBuilding} <code>parentBlock</code> needs to extend
      * {@link AbstractBlockHut}
      *
-     * @param name
-     *            name of building.
-     * @param buildingClass
-     *            subclass of AbstractBuilding, located in
-     *            {@link com.minecolonies.colony.buildings}
-     * @param parentBlock
-     *            subclass of Block, located in {@link com.minecolonies.blocks}
+     * @param name name of building.
+     * @param buildingClass subclass of AbstractBuilding, located in {@link com.minecolonies.colony.buildings}
+     * @param parentBlock subclass of Block, located in {@link com.minecolonies.blocks}
      */
     private static void addMapping(String name, Class<? extends AbstractBuilding> buildingClass,
             Class<? extends AbstractBlockHut> parentBlock)
