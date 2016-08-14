@@ -1000,10 +1000,13 @@ public class Colony implements IColony
     /**
      * Performed when a building of this colony finished his upgrade state.
      *
-     * @param building The upgraded building
-     * @param level The new level
+     * @param building
+     *            The upgraded building
+     * @param level
+     *            The new level
      */
-    public void onBuildingUpgradeComplete(AbstractBuilding building, int level) {
+    public void onBuildingUpgradeComplete(AbstractBuilding building, int level)
+    {
         building.onUpgradeComplete(level);
     }
 }
