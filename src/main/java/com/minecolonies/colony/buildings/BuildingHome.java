@@ -65,7 +65,10 @@ public class BuildingHome extends AbstractBuildingHut
     @Override
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
-        if (event.phase != TickEvent.Phase.END) { return; }
+        if (event.phase != TickEvent.Phase.END)
+        {
+            return;
+        }
 
         if (residents.size() < getMaxInhabitants())
         {
@@ -176,10 +179,12 @@ public class BuildingHome extends AbstractBuildingHut
         if (newLevel == 1)
         {
             owner.triggerAchievement(ModAchievements.achBuildingColonist);
-        } else if (newLevel >= this.getMaxBuildingLevel())
-        {
-            owner.triggerAchievement(ModAchievements.achUpgradeColonistMax);
         }
+        else
+            if (newLevel >= this.getMaxBuildingLevel())
+            {
+                owner.triggerAchievement(ModAchievements.achUpgradeColonistMax);
+            }
     }
 
     public static class View extends AbstractBuildingHut.View
