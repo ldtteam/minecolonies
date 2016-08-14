@@ -17,11 +17,6 @@ public abstract class AbstractSizeAchievement extends AbstractAchievement
 {
 
     /**
-     * The size of the required colony size
-     */
-    public final int size;
-
-    /**
      * Inherit parent constructor
      * 
      * @see AbstractAchievement#AbstractAchievement(String, String, int, int,
@@ -35,11 +30,9 @@ public abstract class AbstractSizeAchievement extends AbstractAchievement
      * @param parent
      * @param size
      */
-    public AbstractSizeAchievement(String id, String name, int offsetX, int offsetY, Item itemIcon, Achievement parent, int size)
+    public AbstractSizeAchievement(String id, String name, int offsetX, int offsetY, Item itemIcon, Achievement parent)
     {
         super(id, name, offsetX, offsetY, itemIcon, parent);
-
-        this.size = size;
     }
 
     /**
@@ -56,11 +49,9 @@ public abstract class AbstractSizeAchievement extends AbstractAchievement
      * @param parent
      * @param size
      */
-    public AbstractSizeAchievement(String id, String name, int offsetX, int offsetY, Block blockIcon, Achievement parent, int size)
+    public AbstractSizeAchievement(String id, String name, int offsetX, int offsetY, Block blockIcon, Achievement parent)
     {
         super(id, name, offsetX, offsetY, blockIcon, parent);
-
-        this.size = size;
     }
 
     /**
@@ -77,36 +68,9 @@ public abstract class AbstractSizeAchievement extends AbstractAchievement
      * @param parent
      * @param size
      */
-    public AbstractSizeAchievement(String id, String name, int offsetX, int offsetY, ItemStack itemStackIcon, Achievement parent, int size)
+    public AbstractSizeAchievement(String id, String name, int offsetX, int offsetY, ItemStack itemStackIcon, Achievement parent)
     {
         super(id, name, offsetX, offsetY, itemStackIcon, parent);
-
-        this.size = size;
-    }
-
-    /**
-     * Checks the condition and triggers the achievement
-     * 
-     * @param player
-     * @param size
-     */
-    public void triggerAchievement(EntityPlayer player, int size)
-    {
-        if (this.compare(size))
-        {
-            player.triggerAchievement(this);
-        }
-    }
-
-    /**
-     * Checks if the param matches the set size
-     * 
-     * @param compare
-     * @return
-     */
-    protected boolean compare(int compare)
-    {
-        return compare >= this.size;
     }
 
 }

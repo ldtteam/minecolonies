@@ -693,9 +693,17 @@ public class Colony implements IColony
         
         EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(uuidOwner);
         
-        ((AbstractSizeAchievement)ModAchievements.achSizeSettlement).triggerAchievement(owner, size);
-        ((AbstractSizeAchievement)ModAchievements.achSizeTown).triggerAchievement(owner, size);
-        ((AbstractSizeAchievement)ModAchievements.achsizeCity).triggerAchievement(owner, size);
+        if (size >= AchSizeSettlement.SIZE) {
+            owner.triggerAchievement(ModAchievements.achSizeSettlement);
+        }
+        
+        if (size >= AchSizeTown.SIZE) {
+            owner.triggerAchievement(ModAchievements.achSizeTown);
+        }
+        
+        if (size >= AchSizeCity.SIZE) {
+            owner.triggerAchievement(ModAchievements.achsizeCity);
+        }
     }
     
     /**

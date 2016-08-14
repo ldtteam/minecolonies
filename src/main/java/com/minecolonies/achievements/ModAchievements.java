@@ -47,12 +47,10 @@ public class ModAchievements
             .registerStat();
 
     // Sizes
-    public static Achievement achSizeSettlement = new AchSizeSettlement("size.pioneer", "size.settlement", 2, -2, AchSizeSettlement.size)
+    public static Achievement achSizeSettlement = new AchSizeSettlement("size.pioneer", "size.settlement", 2, -2)
             .registerStat();
-    public static Achievement achSizeTown       = new AchSizeTown("size.town", "size.town", 4, -2, AchSizeTown.size)
-            .registerStat();
-    public static Achievement achsizeCity       = new AchSizeCity("size.city", "size.city", 6, -2, AchSizeCity.size)
-            .registerStat();
+    public static Achievement achSizeTown       = new AchSizeTown("size.town", "size.town", 4, -2).registerStat();
+    public static Achievement achsizeCity       = new AchSizeCity("size.city", "size.city", 6, -2).registerStat();
 
     // Achievement pages
     public static final AchievementPage pageMineColonies = new AchievementPageMineColonies(achGetSupply, achWandOfbuilding, achBuildingTownhall, achBuildingBuilder, achBuildingColonist, achBuildingLumberjack, achBuildingMiner, achBuildingFisher, achSizeSettlement, achSizeTown, achsizeCity, achUpgradeColonistMax, achUpgradeBuilderMax, achUpgradeLumberjackMax, achUpgradeMinerMax, achUpgradeFisherMax);

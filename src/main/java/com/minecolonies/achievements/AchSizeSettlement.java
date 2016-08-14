@@ -10,7 +10,7 @@ import net.minecraft.init.Items;
 public class AchSizeSettlement extends AbstractSizeAchievement
 {
 
-    public static final int size = 5;
+    public static final int SIZE = 5;
 
     /**
      * Constructor
@@ -19,11 +19,10 @@ public class AchSizeSettlement extends AbstractSizeAchievement
      * @param name
      * @param offsetX
      * @param offsetY
-     * @param size
      */
-    public AchSizeSettlement(final String id, final String name, final int offsetX, final int offsetY, final int size)
+    public AchSizeSettlement(final String id, final String name, final int offsetX, final int offsetY)
     {
-        super(id, name, offsetX, offsetY, Items.iron_ingot, null, size);
+        super(id, name, offsetX, offsetY, Items.iron_ingot, null);
     }
 
 }
