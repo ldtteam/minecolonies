@@ -11,7 +11,7 @@ import net.minecraft.stats.Achievement;
  * @author Isfirs
  * @since 0.2
  */
-public class AbstractAchievement extends Achievement
+public abstract class AbstractAchievement extends Achievement
 {
 
     /**
