@@ -32,6 +32,7 @@ com.minecolonies.gui.workerHuts.repair=Repair Building
 com.minecolonies.gui.workerHuts.buildType=Build Type:
 com.minecolonies.gui.workerHuts.information=Information
 com.minecolonies.gui.workerHuts.settings=Settings
+com.minecolonies.gui.workerHuts.workOrder=Work Orders
 com.minecolonies.gui.workerHuts.minerHut=Miner
 com.minecolonies.gui.workerHuts.minerNode=Node
 com.minecolonies.gui.workerHuts.minerMineNode=Mine Level

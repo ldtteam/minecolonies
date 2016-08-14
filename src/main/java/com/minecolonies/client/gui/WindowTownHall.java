@@ -48,6 +48,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String BUTTON_CITIZENS = "citizens";
 
     /**
+     * Id of the citizens button in the GUI.
+     */
+    private static final String BUTTON_WORKORDER = "workOrder";
+
+    /**
      * Id of the recall button in the GUI.
      */
     private static final String BUTTON_RECALL = "recall";
@@ -121,6 +126,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      * Id of the citizens page in the GUI.
      */
     private static final String PAGE_CITIZENS = "pageCitizens";
+
+    /**
+     * Id of the citizens page in the GUI.
+     */
+    private static final String PAGE_WORKORDER = "pageWorkorder";
 
     /**
      * Id of the user list in the GUI.
@@ -210,6 +220,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         tabsToPages.put(BUTTON_SETTINGS, PAGE_SETTINGS);
         tabsToPages.put(BUTTON_PERMISSIONS, PAGE_PERMISSIONS);
         tabsToPages.put(BUTTON_CITIZENS, PAGE_CITIZENS);
+        tabsToPages.put(BUTTON_WORKORDER, PAGE_WORKORDER);
+
 
         tabsToPages.keySet().forEach(key -> registerButton(key, this::onTabClicked));
         registerButton(BUTTON_ADD_PLAYER, this::addPlayerCLicked);
