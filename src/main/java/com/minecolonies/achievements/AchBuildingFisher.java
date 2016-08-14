@@ -1,8 +1,6 @@
 package com.minecolonies.achievements;
 
 import com.minecolonies.blocks.ModBlocks;
-import net.minecraft.block.Block;
-import net.minecraft.stats.Achievement;
 
 /**
  *
