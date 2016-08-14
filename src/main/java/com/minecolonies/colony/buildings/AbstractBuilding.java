@@ -1,7 +1,22 @@
 package com.minecolonies.colony.buildings;
 
-import com.minecolonies.achievements.ModAchievements;
-import com.minecolonies.blocks.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.minecolonies.blocks.AbstractBlockHut;
+import com.minecolonies.blocks.BlockHutBaker;
+import com.minecolonies.blocks.BlockHutBlacksmith;
+import com.minecolonies.blocks.BlockHutBuilder;
+import com.minecolonies.blocks.BlockHutCitizen;
+import com.minecolonies.blocks.BlockHutFarmer;
+import com.minecolonies.blocks.BlockHutFisherman;
+import com.minecolonies.blocks.BlockHutLumberjack;
+import com.minecolonies.blocks.BlockHutMiner;
+import com.minecolonies.blocks.BlockHutStonemason;
+import com.minecolonies.blocks.BlockHutTownHall;
+import com.minecolonies.blocks.BlockHutWarehouse;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
@@ -12,19 +27,13 @@ import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
-import com.minecolonies.util.ServerUtils;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Base building class, has all the foundation for what a building stores and
@@ -125,7 +134,8 @@ public abstract class AbstractBuilding
         {
             throw new IllegalArgumentException("Duplicate type '" + name
                     + "' when adding AbstractBuilding class mapping");
-        } else
+        }
+        else
         {
             try
             {
@@ -139,7 +149,8 @@ public abstract class AbstractBuilding
                     classToNameMap.put(buildingClass, name);
                     classNameHashToClassMap.put(buildingClass.getName().hashCode(), buildingClass);
                 }
-            } catch (NoSuchMethodException exception)
+            }
+            catch (NoSuchMethodException exception)
             {
                 throw new IllegalArgumentException("Missing constructor for type '" + name
                         + "' when adding AbstractBuilding class mapping", exception);
@@ -150,7 +161,8 @@ public abstract class AbstractBuilding
         {
             throw new IllegalArgumentException("AbstractBuilding type '" + name + "' uses TileEntity '"
                     + parentBlock.getClass().getName() + "' which is already in use.");
-        } else
+        }
+        else
         {
             blockClassToBuildingClassMap.put(parentBlock, buildingClass);
         }
@@ -194,7 +206,8 @@ public abstract class AbstractBuilding
                 Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
                 building = (AbstractBuilding) constructor.newInstance(colony, pos);
             }
-        } catch (NoSuchMethodException | InstantiationException | InvocationTargetException
+        }
+        catch (NoSuchMethodException | InstantiationException | InvocationTargetException
                 | IllegalAccessException exception)
         {
             Log.logger.error(exception);
@@ -205,14 +218,16 @@ public abstract class AbstractBuilding
             try
             {
                 building.readFromNBT(compound);
-            } catch (RuntimeException ex)
+            }
+            catch (RuntimeException ex)
             {
                 Log.logger.error(String
                         .format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", compound
                                 .getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
                 building = null;
             }
-        } else
+        }
+        else
         {
             Log.logger
                     .warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound
@@ -245,12 +260,14 @@ public abstract class AbstractBuilding
                 BlockPos loc = parent.getPosition();
                 Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
                 building = (AbstractBuilding) constructor.newInstance(colony, loc);
-            } else
+            }
+            else
             {
                 Log.logger.error(String
                         .format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
             }
-        } catch (NoSuchMethodException | InstantiationException | InvocationTargetException
+        }
+        catch (NoSuchMethodException | InstantiationException | InvocationTargetException
                 | IllegalAccessException exception)
         {
             Log.logger.error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent
@@ -300,7 +317,8 @@ public abstract class AbstractBuilding
         if (s == null)
         {
             throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
-        } else
+        }
+        else
         {
             compound.setString(TAG_BUILDING_TYPE, s);
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
@@ -365,7 +383,10 @@ public abstract class AbstractBuilding
      */
     public void setBuildingLevel(int level)
     {
-        if (level > getMaxBuildingLevel()) { return; }
+        if (level > getMaxBuildingLevel())
+        {
+            return;
+        }
 
         buildingLevel = level;
         markDirty();
@@ -498,7 +519,10 @@ public abstract class AbstractBuilding
     {
         for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
         {
-            if (o.getBuildingLocation().equals(getID())) { return; }
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                return;
+            }
         }
 
         colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
@@ -750,7 +774,8 @@ public abstract class AbstractBuilding
                     }
                 }
             }
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException
+        }
+        catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException
                 | InstantiationException exception)
         {
             Log.logger.error(exception);
@@ -761,14 +786,16 @@ public abstract class AbstractBuilding
             try
             {
                 view.deserialize(buf);
-            } catch (IndexOutOfBoundsException ex)
+            }
+            catch (IndexOutOfBoundsException ex)
             {
                 Log.logger.error(String
                         .format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author", oclass
                                 .getName()), ex);
                 view = null;
             }
-        } else
+        }
+        else
         {
             Log.logger
                     .warn("Unknown AbstractBuilding type, missing View subclass, or missing constructor of proper format.");
