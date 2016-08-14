@@ -46,6 +46,10 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         return new JobLumberjack(citizen);
     }
 
+    /**
+     * 
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
     @Override
     public void onUpgradeComplete(final int newLevel)
     {

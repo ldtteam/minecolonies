@@ -56,6 +56,10 @@ public class BuildingFisherman extends AbstractBuildingWorker
         super.readFromNBT(compound);
     }
 
+    /**
+     * 
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
@@ -63,9 +67,11 @@ public class BuildingFisherman extends AbstractBuildingWorker
 
         EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(this.getColony().getPermissions().getOwner());
 
-        if (newLevel == 1) {
+        if (newLevel == 1)
+        {
             owner.triggerAchievement(ModAchievements.achBuildingFisher);
-        } else if (newLevel >= this.getMaxBuildingLevel()) {
+        } else if (newLevel >= this.getMaxBuildingLevel())
+        {
             owner.triggerAchievement(ModAchievements.achUpgradeFisherMax);
         }
     }
@@ -92,4 +98,3 @@ public class BuildingFisherman extends AbstractBuildingWorker
         }
     }
 }
-

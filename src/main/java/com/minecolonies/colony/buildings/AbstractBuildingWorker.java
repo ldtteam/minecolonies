@@ -168,6 +168,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         return citizen == worker;
     }
 
+    /**
+     * 
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
     @Override
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {

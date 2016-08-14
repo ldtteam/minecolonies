@@ -350,6 +350,10 @@ public class BuildingMiner extends AbstractBuildingWorker
         }
     }
 
+    /**
+     * 
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
     @Override
     public void onUpgradeComplete(final int newLevel)
     {

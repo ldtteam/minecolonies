@@ -48,6 +48,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
         return new JobBuilder(citizen);
     }
 
+    /**
+     * 
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
