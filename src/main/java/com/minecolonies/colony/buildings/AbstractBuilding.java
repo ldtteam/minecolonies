@@ -88,10 +88,8 @@ public abstract class AbstractBuilding
     /**
      * Constructor for a AbstractBuilding.
      *
-     * @param colony
-     *            Colony the building belongs to
-     * @param pos
-     *            Location of the building (it's Hut Block)
+     * @param colony Colony the building belongs to
+     * @param pos Location of the building (it's Hut Block)
      */
     protected AbstractBuilding(Colony colony, BlockPos pos)
     {
