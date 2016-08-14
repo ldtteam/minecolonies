@@ -6,7 +6,7 @@ import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import net.minecraft.block.Block;
+
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
@@ -72,8 +72,8 @@ public abstract class AbstractBlockHut extends AbstractBlockMineColonies impleme
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
-    	super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-    	
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        
         /*
         Only work on server side
         */
