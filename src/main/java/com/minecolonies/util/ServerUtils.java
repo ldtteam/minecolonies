@@ -15,30 +15,31 @@ import net.minecraft.server.MinecraftServer;
  */
 public final class ServerUtils
 {
-    
+
     /**
      * Private
      */
     private ServerUtils()
     {
     }
-    
+
     /**
-     * Found on <a href="http://jabelarminecraft.blogspot.de/p/minecraft-forge-172-finding-block.html">jabelarminecraft</a>
+     * Found on <a href=
+     * "http://jabelarminecraft.blogspot.de/p/minecraft-forge-172-finding-block.html">jabelarminecraft</a>
      * 
      * @param parUUID
      * @return The player
      */
-    public static EntityPlayer getPlayerOnServerFromUUID(UUID parUUID) 
+    public static EntityPlayer getPlayerOnServerFromUUID(UUID parUUID)
     {
-        if (parUUID == null) 
+        if (parUUID == null)
         {
             return null;
         }
         List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-        for (EntityPlayerMP player : allPlayers) 
+        for (EntityPlayerMP player : allPlayers)
         {
-            if (player.getUniqueID().equals(parUUID)) 
+            if (player.getUniqueID().equals(parUUID))
             {
                 return player;
             }
