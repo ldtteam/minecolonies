@@ -5,7 +5,7 @@
 if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   #./gradlew setupDecompWorkspace --refresh-dependencies
   #./gradlew build
-  ./gradlew sonarqube --stacktrace \
+  ./gradlew test sonarqube --stacktrace \
       -Dsonar.analysis.mode=issues \
       -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST \
       -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
@@ -20,7 +20,7 @@ fi
 if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   #./gradlew setupDecompWorkspace
   if [ -n "${GITHUB_TOKEN:-}" ]; then
-    ./gradlew sonarqube --stacktrace \
+    ./gradlew test sonarqube --stacktrace \
         -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
         -Dsonar.github.oauth=$GITHUB_TOKEN \
         -Dsonar.host.url=$SONAR_HOST_URL \
