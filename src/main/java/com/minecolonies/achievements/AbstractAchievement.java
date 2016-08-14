@@ -15,7 +15,7 @@ public class AbstractAchievement extends Achievement
 {
 
     /**
-     * Parent constructor
+     * Inherit parent constructor
      * 
      * @param id
      * @param name

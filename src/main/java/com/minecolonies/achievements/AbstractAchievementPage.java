@@ -11,6 +11,13 @@ import net.minecraftforge.common.AchievementPage;
  */
 public abstract class AbstractAchievementPage extends AchievementPage
 {
+
+    /**
+     * Inherit parent constructor
+     * 
+     * @param name
+     * @param achievements
+     */
     public AbstractAchievementPage(final String name, final Achievement... achievements)
     {
         super(name, achievements);
