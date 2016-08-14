@@ -1,35 +1,52 @@
 package com.minecolonies.colony;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.minecolonies.MineColonies;
-import com.minecolonies.achievements.AbstractSizeAchievement;
 import com.minecolonies.achievements.AchSizeCity;
 import com.minecolonies.achievements.AchSizeSettlement;
 import com.minecolonies.achievements.AchSizeTown;
 import com.minecolonies.achievements.ModAchievements;
-import com.minecolonies.colony.buildings.*;
+import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.BuildingHome;
+import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.network.messages.*;
+import com.minecolonies.network.messages.ColonyViewBuildingViewMessage;
+import com.minecolonies.network.messages.ColonyViewCitizenViewMessage;
+import com.minecolonies.network.messages.ColonyViewMessage;
+import com.minecolonies.network.messages.ColonyViewRemoveBuildingMessage;
+import com.minecolonies.network.messages.ColonyViewRemoveCitizenMessage;
+import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.*;
+import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.EntityUtils;
+import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
+import com.minecolonies.util.MathUtils;
+import com.minecolonies.util.ServerUtils;
+import com.minecolonies.util.Utils;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This class describes a colony and contains all the data and methods for manipulating a Colony.
