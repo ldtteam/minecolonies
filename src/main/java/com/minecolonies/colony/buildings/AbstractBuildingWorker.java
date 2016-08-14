@@ -126,7 +126,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      */
     public void setWorker(CitizenData citizen)
     {
-        if (worker == citizen) { return; }
+        if (worker == citizen)
+        {
+            return;
+        }
 
         // If we have a worker, it no longer works here
         if (worker != null)
