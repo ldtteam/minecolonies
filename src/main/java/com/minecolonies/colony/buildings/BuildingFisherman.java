@@ -65,7 +65,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
     {
         super.onUpgradeComplete(newLevel);
 
-        EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(this.getColony().getPermissions().getOwner());
+        EntityPlayer owner = ServerUtils.getPlayerFromUUID(this.getColony().getPermissions().getOwner());
 
         if (newLevel == 1)
         {

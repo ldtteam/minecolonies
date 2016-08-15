@@ -57,7 +57,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         super.onUpgradeComplete(newLevel);
 
-        final EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(getColony().getPermissions().getOwner());
+        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
 
         if (newLevel == 1)
         {

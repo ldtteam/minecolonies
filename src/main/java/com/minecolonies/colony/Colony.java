@@ -34,6 +34,7 @@ import com.minecolonies.util.MathUtils;
 import com.minecolonies.util.ServerUtils;
 import com.minecolonies.util.Utils;
 
+import com.sun.corba.se.spi.activation.Server;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -702,7 +703,7 @@ public class Colony implements IColony
         // the colonies size
         final int size = this.citizens.size();
         
-        EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(this.getPermissions().getOwner() );
+        EntityPlayer owner = ServerUtils.getPlayerFromUUID(this.getPermissions().getOwner());
         
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
