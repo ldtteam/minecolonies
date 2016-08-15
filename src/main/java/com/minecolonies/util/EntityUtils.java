@@ -130,25 +130,6 @@ public final class EntityUtils
     }
 
     /**
-     * Returns the online EntityPlayer with the given UUID
-     *
-     * @param world world the player is in
-     * @param id    the player's UUID
-     * @return the Player
-     */
-    public static EntityPlayer getPlayerFromUUID(World world, UUID id)
-    {
-        for (int i = 0; i < world.playerEntities.size(); ++i)
-        {
-            if (id.equals(((EntityPlayer) world.playerEntities.get(i)).getGameProfile().getId()))
-            {
-                return (EntityPlayer) world.playerEntities.get(i);
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns the loaded Entity with the given UUID
      *
      * @param world world the entity is in
