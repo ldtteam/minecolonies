@@ -174,6 +174,16 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String DELIVERY_MAN_LABEL = "deliverymen";
 
     /**
+     * Id of the total assignee label in the GUI.
+     */
+    private static final String ASSIGNEE_LABEL =  "assignee";
+
+    /**
+     * Id of the total work label in the GUI.
+     */
+    private static final String WORK_LABEL =  "work";
+
+    /**
      * Link to the xml file of the window.
      */
     private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownHall.xml";
@@ -257,7 +267,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void updatePriority(Button button)
     {
-        townHall.getColony().setPermission();
+        //townHall.getColony().setPermission();
     }
 
     /**
@@ -294,10 +304,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void updateWorkOrders()
     {
         workOrders.clear();
-        //todo get the workOrders from the colonyView
         workOrders.addAll(townHall.getColony().getWorkOrders());
         //todo sort them by priority.
         //todo create different lists for different workOrders
+        //todo add message when buildOrder has been created.
+        //todo sort java list few elements by x
     }
 
     /**
@@ -401,15 +412,34 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-                WorkOrderView workOrder = workOrders.get(index);
+                final WorkOrderView workOrder = workOrders.get(index);
+                String claimingCitizen = "";
 
-                //Creates the list of attributes for each citizen
+                if(index ==0)
+                {
+                    rowPane.findPaneOfTypeByID("up",Button.class).hide();
+                }
+                else if(index == getElementCount()-1)
+                {
+                    rowPane.findPaneOfTypeByID("down",Button.class).hide();
+                }
 
+                //Searches citizen of id x
+                for(CitizenDataView citizen: citizens)
+                {
+                    if(citizen.getID() == workOrder.getClaimedBy())
+                    {
+                        claimingCitizen = citizen.getName();
+                    }
+                }
 
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(workOrder.getValue());
+                rowPane.findPaneOfTypeByID(WORK_LABEL, Label.class).setLabelText(workOrder.getValue());
+                rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Label.class).setLabelText(claimingCitizen);
 
                 //Invisible id textContent.
-                //rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabelText());
+                rowPane.findPaneOfTypeByID("hiddenId", Label.class).setLabelText(workOrder.getId() + "");
+
+
             }
         });
 

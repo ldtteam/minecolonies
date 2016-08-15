@@ -50,6 +50,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
      */
     private void buildClicked(Button ignored)
     {
+        //todo LanguageHandler.sendPlayerLocalizedMessage(, "com.minecolonies.gui.workerHuts.workOrderAdded");
         MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
     }
 

@@ -10,6 +10,7 @@ import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;

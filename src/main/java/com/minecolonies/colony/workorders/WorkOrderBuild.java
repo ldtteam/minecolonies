@@ -66,7 +66,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     @Override
     protected String getValue()
     {
-        return upgradeName + " " + upgradeLevel;
+        return upgradeName;
     }
     /**
      * Returns the name after upgrade.
