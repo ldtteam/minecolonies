@@ -1,7 +1,7 @@
 <window size="171 247" pause="false" lightbox="false"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
-    <group size="100 155" pos="-90 10" spacing="1">
+    <group size="100 185" pos="-90 10" spacing="1">
         <buttonimage id="info" size="100% 30"
                      source="minecolonies:textures/gui/guiBanners.png"
                      imageoffset="0 0" imagesize="120 30"
@@ -133,8 +133,13 @@
 
             <list id="workOrder" size="140 100%" pos="15 20">
                 <view size="100% 15">
+                    <buttonimage id="up" size="100% 30"
+                                  source="minecolonies:textures/gui/up.png"
+                                  imageoffset="0 0" imagesize="120 30"/>
+                    <buttonimage id="down" size="100% 30"
+                                 source="minecolonies:textures/gui/down.png"
+                                 imageoffset="0 0" imagesize="120 30"/>
                     <label id="name" size="60 12" pos="5 4" textalign="MiddleLeft" color="black"/>
-                    <!-- label id="job" size="25 12" pos="95 4" textalign="MiddleLeft" color="black"/ -->
                 </view>
             </list>
         </view>

@@ -33,6 +33,12 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
     }
 
     @Override
+    protected workOrderTypes getType()
+    {
+        return workOrderTypes.BUILD_DECORATION;
+    }
+
+    @Override
     public boolean isValid(Colony colony)
     {
         return true;

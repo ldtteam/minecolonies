@@ -4,6 +4,8 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.TownHallRenameMessage;
@@ -15,10 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Client side representation of the Colony.
@@ -219,6 +218,13 @@ public final class ColonyView implements IColony
         return Collections.unmodifiableMap(citizens);
     }
 
+    public List<WorkOrderBuild> getWorkOrders()
+    {
+        //todo return the WorkOrders here
+        //return workManager.getWorkOrdersOfType(WorkOrderBuild.class);
+        return null;
+    }
+
     /**
      * Gets the CitizenDataView for a citizen id.
      *
@@ -285,6 +291,28 @@ public final class ColonyView implements IColony
     public IMessage handlePermissionsViewMessage(ByteBuf buf)
     {
         permissions.deserialize(buf);
+        return null;
+    }
+
+    /**
+     * Update a ColonyView's workOrders given a network data ColonyView update packet
+     * This uses a full-replacement - workOrders do not get updated and are instead overwritten
+     *
+     * @param id        ID of the citizen
+     * @param buf       Network data
+     * @return          null == no response
+     */
+    public IMessage handleColonyViewWorkOrderMessage(int id, ByteBuf buf)
+    {
+        //todo create type enum at the correct place.
+
+        //Todo create list etc
+        WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderDataView(id, buf);
+        //if (workOrder != null)
+        {
+            //workOrders.put(workOrder.getID(), workOrder);
+        }
+
         return null;
     }
 

@@ -10,6 +10,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.ToggleJobMessage;
@@ -188,6 +189,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private List<CitizenDataView>   citizens    = new ArrayList<>();
 
     /**
+     * List of workOrders.
+     */
+    private List<AbstractWorkOrder> workOrders = new ArrayList<>();
+
+    /**
      * Map of the pages.
      */
     private Map<String, String>      tabsToPages = new HashMap<>();
@@ -233,6 +239,46 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
 
+        registerButton("up", this::doNothing);
+        registerButton("down", this::doNothing);
+
+        ScrollingList workOrderList = findPaneOfTypeByID("workOrder", ScrollingList.class);
+        workOrderList.enable();
+        workOrderList.show();
+        //Creates a dataProvider for the unemployed citizenList.
+        workOrderList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            /**
+             * The number of rows of the list.
+             * @return the number.
+             */
+            @Override
+            public int getElementCount()
+            {
+                return workOrders.size();
+            }
+
+            /**
+             * Inserts the elements into each row.
+             * @param index the index of the row/list element
+             * @param rowPane the parent Pane for the row, containing the elements to update
+             */
+            @Override
+            public void updateElement(int index, Pane rowPane)
+            {
+                AbstractWorkOrder workOrder = workOrders.get(index);
+
+                //Creates the list of attributes for each citizen
+
+
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(workOrder.toString());
+
+                //Invisible id textContent.
+                //rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabelText());
+            }
+        });
+
+
     }
 
 
@@ -253,6 +299,18 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         citizens.clear();
         citizens.addAll(townHall.getColony().getCitizens().values());
+    }
+
+    /**
+     * Clears and resets all citizens
+     */
+    private void updateWorkOrders()
+    {
+        workOrders.clear();
+        //todo get the workOrders from the colonyView
+        //workOrders.addAll(townHall.getColony().ge);
+        //todo sort them by priority.
+        //todo create different lists for different workOrders
     }
 
     /**

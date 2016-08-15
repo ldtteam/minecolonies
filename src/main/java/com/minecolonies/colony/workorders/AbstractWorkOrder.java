@@ -1,9 +1,14 @@
 package com.minecolonies.colony.workorders;
 
 import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.WorkOrderView;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -17,6 +22,7 @@ public abstract class AbstractWorkOrder
 {
     protected int id;
     private int claimedBy;
+    private int priority;
 
     //  Job and View Class Mapping
     private static          Map<String, Class<? extends AbstractWorkOrder>> nameToClassMap  = new HashMap<>();
@@ -25,6 +31,12 @@ public abstract class AbstractWorkOrder
     private static final String TAG_TYPE = "type";
     private static final String TAG_ID = "id";
     private static final String TAG_CLAIMED_BY = "claimedBy";
+
+    protected enum workOrderTypes
+    {
+        BUILD,
+        BUILD_DECORATION;
+    }
 
     static
     {
@@ -40,6 +52,12 @@ public abstract class AbstractWorkOrder
     {
         //Should be overridden
     }
+
+    /**
+     * Gets the type of the WorkOrder.
+     * @return the type.
+     */
+    protected abstract workOrderTypes getType();
 
     /**
      * Add a given Work Order mapping
@@ -230,4 +248,45 @@ public abstract class AbstractWorkOrder
      * @param colony    The colony that owns the Work Order
      */
     public abstract void attemptToFulfill(Colony colony);
+
+
+    /**
+     * Writes the workOrders data to a byte buf for transition.
+     *
+     * @param buf Buffer to write to
+     */
+    public void serializeViewNetworkData(ByteBuf buf)
+    {
+        buf.writeInt(id);
+        buf.writeInt(priority);
+        buf.writeInt(getType().ordinal());
+        ByteBufUtils.writeUTF8String(buf, value);
+        //value is upgradeName and upgradeLevel for workOrderBuild
+    }
+
+
+    /**
+     * Create a CitizenData View given it's saved NBTTagCompound
+     *
+     * @param id  The citizen's id
+     * @param buf The network data
+     * @return View object of the citizen
+     */
+    public static WorkOrderView createCitizenDataView(int id, ByteBuf buf)
+    {
+        WorkOrderView workOrderView = new WorkOrderView();
+
+        try
+        {
+            workOrderView.deserialize(buf);
+        }
+        catch(RuntimeException ex)
+        {
+            Log.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                                           workOrderView.getId()), ex);
+            workOrderView = null;
+        }
+
+        return workOrderView;
+    }
 }

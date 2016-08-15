@@ -57,6 +57,12 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.cleared = level > 1;
     }
 
+    @Override
+    protected workOrderTypes getType()
+    {
+        return workOrderTypes.BUILD;
+    }
+
     /**
      * Returns the name after upgrade.
      *

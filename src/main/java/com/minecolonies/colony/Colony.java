@@ -6,6 +6,7 @@ import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.network.messages.*;
@@ -478,6 +479,9 @@ public class Colony implements IColony
             // Permissions
             sendPermissionsPackets(oldSubscribers, hasNewSubscribers);
 
+            //workOrders
+            sendWorkOrderPackets(oldSubscribers,hasNewSubscribers);
+
             //  Citizens
             sendCitizenPackets(oldSubscribers, hasNewSubscribers);
 
@@ -514,6 +518,25 @@ public class Colony implements IColony
 
     private void sendCitizenPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
+        if (isCitizensDirty || hasNewSubscribers)
+        {
+            for (CitizenData citizen : citizens.values())
+            {
+                if (citizen.isDirty() || hasNewSubscribers)
+                {
+                    ColonyViewCitizenViewMessage msg = new ColonyViewCitizenViewMessage(this, citizen);
+
+                    subscribers.stream()
+                               .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
+                               .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
+                }
+            }
+        }
+    }
+
+    private void sendWorkOrderPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
+    {
+        //todo only if hasn't been claimed yet!
         if (isCitizensDirty || hasNewSubscribers)
         {
             for (CitizenData citizen : citizens.values())
