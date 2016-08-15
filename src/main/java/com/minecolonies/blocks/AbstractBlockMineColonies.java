@@ -22,7 +22,7 @@ public abstract class AbstractBlockMineColonies extends Block
 {
 
     /**
-     * Parent constructor
+     * Parent constructor.
      * 
      * @param materialIn
      * @see Block#Block(Material)
@@ -33,8 +33,8 @@ public abstract class AbstractBlockMineColonies extends Block
     }
 
     /**
-     * Parent constructor
-     * 
+     * Parent constructor.
+     *
      * @param blockMaterialIn
      * @param blockMapColorIn
      * @see Block#Block(Material, MapColor)
