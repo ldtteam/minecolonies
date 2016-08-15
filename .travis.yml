@@ -23,5 +23,3 @@ deploy:
   on:
     tags: true
   before_deploy: "ls -al build/libs/"
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
