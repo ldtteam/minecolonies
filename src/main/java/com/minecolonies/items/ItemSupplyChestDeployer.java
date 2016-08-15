@@ -88,7 +88,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             stack.stackSize--;
             
             // Trigger Achievement
-            playerIn.addStat(ModAchievements.achievementGetSupply, 1);
+            playerIn.triggerAchievement(ModAchievements.achievementGetSupply);
             
             return true;
         }
