@@ -11,9 +11,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.achievements.AchievementSizeCity;
-import com.minecolonies.achievements.AchievementSizeSettlement;
-import com.minecolonies.achievements.AchievementSizeTown;
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.BuildingHome;
@@ -699,28 +696,25 @@ public class Colony implements IColony
     
     /**
      * Checks if the achievements are valid
-     * 
      */
     private void checkAchievements()
     {
-        // Get the colonies owner UUID
-        final UUID uuidOwner = this.getPermissions().getOwner();
         // the colonies size
         final int size = this.citizens.size();
         
-        EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(uuidOwner);
+        EntityPlayer owner = ServerUtils.getPlayerOnServerFromUUID(this.getPermissions().getOwner() );
         
-        if (size >= AchievementSizeSettlement.SIZE)
+        if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
             owner.triggerAchievement(ModAchievements.achievementSizeSettlement);
         }
 
-        if (size >= AchievementSizeTown.SIZE)
+        if (size >= ModAchievements.ACHIEVEMENT_SIZE_TOWN)
         {
             owner.triggerAchievement(ModAchievements.achievementSizeTown);
         }
 
-        if (size >= AchievementSizeCity.SIZE)
+        if (size >= ModAchievements.ACHIEVEMENT_SIZE_CITY)
         {
             owner.triggerAchievement(ModAchievements.achievementsizeCity);
         }

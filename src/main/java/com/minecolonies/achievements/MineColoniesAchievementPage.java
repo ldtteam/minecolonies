@@ -4,21 +4,23 @@ import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
 
 /**
- * Abstract achievement page
+ * A sublcass for this mod.
+ *
+ * May contain page logic.
  *
  * @author Isfirs
  * @since 0.2
  */
-public abstract class AbstractAchievementPage extends AchievementPage
+public class MineColoniesAchievementPage extends AchievementPage
 {
 
     /**
-     * Inherit parent constructor
-     * 
+     * {@inheritDoc}
+     *
      * @param name
      * @param achievements
      */
-    public AbstractAchievementPage(final String name, final Achievement... achievements)
+    public MineColoniesAchievementPage(final String name, final Achievement... achievements)
     {
         super(name, achievements);
     }

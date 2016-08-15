@@ -6,12 +6,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 
 /**
- * Abstraction of the {@link Achievement} class.
+ * A sublcass for this mod.
+ *
+ * May contain custom logic for achievements
  *
  * @author Isfirs
  * @since 0.2
  */
-public abstract class AbstractAchievement extends Achievement
+public class MineColoniesAchievement extends Achievement
 {
 
     /**
@@ -24,7 +26,7 @@ public abstract class AbstractAchievement extends Achievement
      * @param itemIcon
      * @param parent
      */
-    public AbstractAchievement(final String id, final String name, final int offsetX, final int offsetY, final Item itemIcon, final Achievement parent)
+    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final Item itemIcon, final Achievement parent)
     {
         super(id, name, offsetX, offsetY, itemIcon, parent);
     }
@@ -39,7 +41,7 @@ public abstract class AbstractAchievement extends Achievement
      * @param blockIcon
      * @param parent
      */
-    public AbstractAchievement(final String id, final String name, final int offsetX, final int offsetY, final Block blockIcon, final Achievement parent)
+    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final Block blockIcon, final Achievement parent)
     {
         super(id, name, offsetX, offsetY, blockIcon, parent);
     }
@@ -54,7 +56,7 @@ public abstract class AbstractAchievement extends Achievement
      * @param itemStackIcon
      * @param parent
      */
-    public AbstractAchievement(final String id, final String name, final int offsetX, final int offsetY, final ItemStack itemStackIcon, final Achievement parent)
+    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final ItemStack itemStackIcon, final Achievement parent)
     {
         super(id, name, offsetX, offsetY, itemStackIcon, parent);
     }
