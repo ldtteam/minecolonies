@@ -81,11 +81,14 @@ public class MineColonies
         getNetwork().registerMessage(ColonyViewRemoveBuildingMessage.class,  ColonyViewRemoveBuildingMessage.class,  5,  Side.CLIENT);
         getNetwork().registerMessage(PermissionsMessage.View.class,          PermissionsMessage.View.class,          6,  Side.CLIENT);
         getNetwork().registerMessage(ColonyStylesMessage.class,              ColonyStylesMessage.class,              7,  Side.CLIENT);
+        getNetwork().registerMessage(ColonyViewWorkOrderMessage.class,       ColonyViewWorkOrderMessage.class,       8,  Side.CLIENT);
+
         //  Permission Request messages
         getNetwork().registerMessage(PermissionsMessage.Permission.class,    PermissionsMessage.Permission.class,    10, Side.SERVER);
         getNetwork().registerMessage(PermissionsMessage.AddPlayer.class,     PermissionsMessage.AddPlayer.class,     11, Side.SERVER);
         getNetwork().registerMessage(PermissionsMessage.RemovePlayer.class,  PermissionsMessage.RemovePlayer.class,  12, Side.SERVER);
         getNetwork().registerMessage(PermissionsMessage.ChangePlayerRank.class, PermissionsMessage.ChangePlayerRank.class, 13, Side.SERVER);
+
         //  Colony Request messages
         getNetwork().registerMessage(BuildRequestMessage.class,              BuildRequestMessage.class,              20, Side.SERVER);
         getNetwork().registerMessage(OpenInventoryMessage.class,             OpenInventoryMessage.class,             21, Side.SERVER);

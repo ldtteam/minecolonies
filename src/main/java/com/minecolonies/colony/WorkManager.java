@@ -29,6 +29,10 @@ public class WorkManager
     private static  final   int                     WORK_ORDER_FULFILL_INCREMENT    = 1 * 20;
 
     /**
+     * Checks if there has been changes.
+     */
+    private boolean dirty = false;
+    /**
      * Constructor, saves reference to the colony.
      *
      * @param c Colony the work manager is for.
@@ -45,6 +49,8 @@ public class WorkManager
      */
     public void addWorkOrder(AbstractWorkOrder order)
     {
+        dirty = true;
+
         if (order.getID() == 0)
         {
             topWorkOrderId++;
@@ -61,6 +67,7 @@ public class WorkManager
      */
     public void removeWorkOrder(int orderId)
     {
+        dirty = true;
         workOrders.remove(orderId);
     }
 
@@ -137,12 +144,23 @@ public class WorkManager
     }
 
     /**
+     * Get all work orders.
+     *
+     * @return a list of all work orders of the given type
+     */
+    public Map<Integer, AbstractWorkOrder> getWorkOrders()
+    {
+        return workOrders;
+    }
+
+    /**
      * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen
      *
      * @param citizen       Citizen to unclaim work for.
      */
     public void clearWorkForCitizen(CitizenData citizen)
     {
+        dirty = true;
         workOrders.values().stream().filter(o -> o.isClaimedBy(citizen)).forEach(AbstractWorkOrder::clearClaimedBy);
     }
 
@@ -211,6 +229,12 @@ public class WorkManager
                 if (!o.isValid(colony))
                 {
                     iter.remove();
+                    dirty = true;
+                }
+                else if(o.hasChanged())
+                {
+                    dirty = true;
+                    o.resetChange();
                 }
             }
 
@@ -219,5 +243,23 @@ public class WorkManager
                 workOrders.values().stream().filter(o -> !o.isClaimed()).forEach(o -> o.attemptToFulfill(colony));
             }
         }
+    }
+
+    /**
+     * Checks if changes has been made.
+     * @return true if so.
+     */
+    public boolean isDirty()
+    {
+        return dirty;
+    }
+
+    /**
+     * Sets if changes has been made.
+     * @param dirty true if so. False to reset.
+     */
+    public void setDirty(final boolean dirty)
+    {
+        this.dirty = dirty;
     }
 }

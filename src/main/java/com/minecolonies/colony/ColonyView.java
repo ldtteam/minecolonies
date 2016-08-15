@@ -11,6 +11,7 @@ import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.TownHallRenameMessage;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.MathUtils;
+import com.sun.xml.internal.ws.api.pipe.FiberContextSwitchInterceptor;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -44,6 +45,8 @@ public final class ColonyView implements IColony
 
     //  Citizenry
     private Map<Integer, CitizenDataView> citizens = new HashMap<>();
+    private Map<Integer, WorkOrderView> workOrders = new HashMap<>();
+
     private int maxCitizens = 0;
 
     /**
@@ -218,12 +221,13 @@ public final class ColonyView implements IColony
         return Collections.unmodifiableMap(citizens);
     }
 
-    public List<WorkOrderBuild> getWorkOrders()
+    public Collection<WorkOrderView> getWorkOrders()
     {
-        //todo return the WorkOrders here
-        //return workManager.getWorkOrdersOfType(WorkOrderBuild.class);
-        return null;
+        return workOrders.values();
     }
+
+    //todo send message to server for delete
+    //todo send message to server for change.
 
     /**
      * Gets the CitizenDataView for a citizen id.
@@ -298,19 +302,17 @@ public final class ColonyView implements IColony
      * Update a ColonyView's workOrders given a network data ColonyView update packet
      * This uses a full-replacement - workOrders do not get updated and are instead overwritten
      *
-     * @param id        ID of the citizen
      * @param buf       Network data
      * @return          null == no response
      */
-    public IMessage handleColonyViewWorkOrderMessage(int id, ByteBuf buf)
+    public IMessage handleColonyViewWorkOrderMessage(ByteBuf buf)
     {
-        //todo create type enum at the correct place.
 
         //Todo create list etc
-        WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderDataView(id, buf);
-        //if (workOrder != null)
+        WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
+        if (workOrder != null)
         {
-            //workOrders.put(workOrder.getID(), workOrder);
+            workOrders.put(workOrder.getId(), workOrder);
         }
 
         return null;

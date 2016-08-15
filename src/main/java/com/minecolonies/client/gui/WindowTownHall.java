@@ -8,6 +8,7 @@ import com.blockout.views.ScrollingList;
 import com.blockout.views.SwitchView;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenDataView;
+import com.minecolonies.colony.WorkOrderView;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
@@ -131,7 +132,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Id of the citizens page in the GUI.
      */
-    private static final String PAGE_WORKORDER = "pageWorkorder";
+    private static final String PAGE_WORKORDER = "pageWorkOrder";
 
     /**
      * Id of the user list in the GUI.
@@ -143,6 +144,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private static final String LIST_CITIZENS = "citizenList";
 
+    /**
+     * Id of the workOrder list in the GUI.
+     */
+    private static final String LIST_WORKORDER = "workOrderList";
     /**
      * Id of the current specializations label in the GUI.
      */
@@ -191,7 +196,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * List of workOrders.
      */
-    private List<AbstractWorkOrder> workOrders = new ArrayList<>();
+    private List<WorkOrderView> workOrders = new ArrayList<>();
 
     /**
      * Map of the pages.
@@ -220,6 +225,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         updateUsers();
         updateCitizens();
+        updateWorkOrders();
 
         tabsToPages.put(BUTTON_ACTIONS, PAGE_ACTIONS);
         tabsToPages.put(BUTTON_INFO, PAGE_INFO);
@@ -239,48 +245,29 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
 
-        registerButton("up", this::doNothing);
-        registerButton("down", this::doNothing);
-
-        ScrollingList workOrderList = findPaneOfTypeByID("workOrder", ScrollingList.class);
-        workOrderList.enable();
-        workOrderList.show();
-        //Creates a dataProvider for the unemployed citizenList.
-        workOrderList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            /**
-             * The number of rows of the list.
-             * @return the number.
-             */
-            @Override
-            public int getElementCount()
-            {
-                return workOrders.size();
-            }
-
-            /**
-             * Inserts the elements into each row.
-             * @param index the index of the row/list element
-             * @param rowPane the parent Pane for the row, containing the elements to update
-             */
-            @Override
-            public void updateElement(int index, Pane rowPane)
-            {
-                AbstractWorkOrder workOrder = workOrders.get(index);
-
-                //Creates the list of attributes for each citizen
-
-
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(workOrder.toString());
-
-                //Invisible id textContent.
-                //rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabelText());
-            }
-        });
-
+        registerButton("up", this::updatePriority);
+        registerButton("down", this::updatePriority);
+        registerButton("delete", this::deleteWorkOrder);
 
     }
 
+    /**
+     * On Button click update the priority.
+     * @param button the clicked button.
+     */
+    private void updatePriority(Button button)
+    {
+        townHall.getColony().setPermission();
+    }
+
+    /**
+     * On Button click remove the workOrder.
+     * @param ignored ignored.
+     */
+    private void deleteWorkOrder(Button ignored)
+    {
+
+    }
 
     /**
      * Clears and resets all users
@@ -308,7 +295,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         workOrders.clear();
         //todo get the workOrders from the colonyView
-        //workOrders.addAll(townHall.getColony().ge);
+        workOrders.addAll(townHall.getColony().getWorkOrders());
         //todo sort them by priority.
         //todo create different lists for different workOrders
     }
@@ -389,6 +376,43 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         {
             findPaneOfTypeByID("toggleJob", Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
         }
+
+        ScrollingList workOrderList =  findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class);
+        workOrderList.enable();
+        workOrderList.show();
+        //Creates a dataProvider for the unemployed citizenList.
+        workOrderList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            /**
+             * The number of rows of the list.
+             * @return the number.
+             */
+            @Override
+            public int getElementCount()
+            {
+                return workOrders.size();
+            }
+
+            /**
+             * Inserts the elements into each row.
+             * @param index the index of the row/list element
+             * @param rowPane the parent Pane for the row, containing the elements to update
+             */
+            @Override
+            public void updateElement(int index, Pane rowPane)
+            {
+                WorkOrderView workOrder = workOrders.get(index);
+
+                //Creates the list of attributes for each citizen
+
+
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(workOrder.getValue());
+
+                //Invisible id textContent.
+                //rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabelText());
+            }
+        });
+
     }
 
     /**
@@ -451,6 +475,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             updateCitizens();
             window.findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class).refreshElementPanes();
         }
+        window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class);
     }
 
 

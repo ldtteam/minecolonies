@@ -1,10 +1,8 @@
 package com.minecolonies.colony.workorders;
 
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.WorkOrderView;
-import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,10 +30,14 @@ public abstract class AbstractWorkOrder
     private static final String TAG_ID = "id";
     private static final String TAG_CLAIMED_BY = "claimedBy";
 
-    protected enum workOrderTypes
+    private boolean changed = false;
+
+    /**
+     * Contains all classes which inherit directly from this class.
+     */
+    public enum workOrderTypes
     {
         BUILD,
-        BUILD_DECORATION;
     }
 
     static
@@ -46,7 +48,7 @@ public abstract class AbstractWorkOrder
 
     /**
      * Default constructor; we also start with a new id and replace it during loading;
-     * this greatly simplifies creating subclasses
+     * this greatly simplifies creating subclasses.
      */
     public AbstractWorkOrder()
     {
@@ -54,10 +56,30 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Gets the type of the WorkOrder.
+     * Checks if the workOrder has changed.
+     * @return true if so.
+     */
+    public boolean hasChanged(){ return changed; }
+
+    /**
+     * Resets the changed variable.
+     */
+    public void resetChange()
+    {
+        changed = false;
+    }
+
+    /**
+     * Gets of the WorkOrder Type. Overwrite this for the different implementations.
      * @return the type.
      */
     protected abstract workOrderTypes getType();
+
+    /**
+     * Gets the value of the WorkOrder. Overwrite this in every subclass.
+     * @return a description string.
+     */
+    protected abstract String getValue();
 
     /**
      * Add a given Work Order mapping
@@ -139,6 +161,7 @@ public abstract class AbstractWorkOrder
      */
     void setClaimedBy(CitizenData citizen)
     {
+        changed = true;
         claimedBy = (citizen != null) ? citizen.getId() : 0;
     }
 
@@ -147,6 +170,7 @@ public abstract class AbstractWorkOrder
      */
     public void clearClaimedBy()
     {
+        changed = true;
         claimedBy = 0;
     }
 
@@ -259,20 +283,19 @@ public abstract class AbstractWorkOrder
     {
         buf.writeInt(id);
         buf.writeInt(priority);
+        buf.writeInt(claimedBy);
         buf.writeInt(getType().ordinal());
-        ByteBufUtils.writeUTF8String(buf, value);
+        ByteBufUtils.writeUTF8String(buf, getValue());
         //value is upgradeName and upgradeLevel for workOrderBuild
     }
 
-
     /**
-     * Create a CitizenData View given it's saved NBTTagCompound
+     * Create a Workorder View given it's saved NBTTagCompound
      *
-     * @param id  The citizen's id
      * @param buf The network data
-     * @return View object of the citizen
+     * @return View object of the workOrder
      */
-    public static WorkOrderView createCitizenDataView(int id, ByteBuf buf)
+    public static WorkOrderView createWorkOrderView(ByteBuf buf)
     {
         WorkOrderView workOrderView = new WorkOrderView();
 
@@ -282,7 +305,7 @@ public abstract class AbstractWorkOrder
         }
         catch(RuntimeException ex)
         {
-            Log.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+            Log.logger.error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
                                            workOrderView.getId()), ex);
             workOrderView = null;
         }

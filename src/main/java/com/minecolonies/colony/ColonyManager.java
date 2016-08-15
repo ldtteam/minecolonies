@@ -681,6 +681,25 @@ public final class ColonyManager
     }
 
     /**
+     * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)} (int, ByteBuf)} if {@link #getColonyView(int)}
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     *
+     * @param colonyId      ID of the colony
+     * @param buf           {@link ByteBuf} with colony data
+     * @return              result of {@link ColonyView#handleColonyViewCitizensMessage(int, ByteBuf)} or null
+     */
+    public static IMessage handleColonyViewWorkOrderMessage(int colonyId, ByteBuf buf)
+    {
+        ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            return view.handleColonyViewWorkOrderMessage(buf);
+        }
+
+        return null;
+    }
+
+    /**
      * Returns result of {@link ColonyView#handleColonyViewRemoveCitizenMessage(int)} if {@link #getColonyView(int)}
      * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
      *

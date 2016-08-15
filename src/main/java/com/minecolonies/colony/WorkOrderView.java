@@ -1,6 +1,5 @@
 package com.minecolonies.colony;
 
-import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
@@ -12,48 +11,99 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 public class WorkOrderView
 {
     /**
-     * Attributes
+     * The work orders id.
      */
     private int id;
+    /**
+     * The priority.
+     */
     private int priority;
+    /**
+     * Its description.
+     */
     private String value;
+    /**
+     * The type (defined by an enum).
+     */
     private int type;
+    /**
+     * Claimed by citizen id x.
+     */
+    private int claimedBy;
 
+    /**
+     * Priority getter.
+     * @return the priority.
+     */
     public int getPriority()
     {
         return priority;
     }
 
+    /**
+     * Value getter.
+     * @return the value String.
+     */
     public String getValue()
     {
         return value;
     }
 
+    /**
+     * Type getter.
+     * @return the type (defined by Enum).
+     */
     public int getType()
     {
         return type;
     }
 
+    /**
+     * Id getter.
+     * @return the id.
+     */
     public int getId()
     {
         return id;
     }
 
+    /**
+     * Id setter.
+     * @param id the id to set.
+     */
     public void setId(int id)
     {
         this.id = id;
     }
 
+    /**
+     * ClaimedBy getter.
+     * @return citizen id who claimed the workOrder.
+     */
+    public int getClaimedBy()
+    {
+        return claimedBy;
+    }
 
     /**
-     * Deserialize the attributes and variables from transition
+     * ClaimedBy setter.
+     * @param claimedBy sets a citizen who claims the workOrder.
+     */
+    public void setClaimedBy(int claimedBy)
+    {
+        this.claimedBy = claimedBy;
+    }
+
+    /**
+     * Deserialize the attributes and variables from transition.
      *
-     * @param buf Byte buffer to deserialize
+     * @param buf Byte buffer to deserialize.
      */
     public void deserialize(ByteBuf buf)
     {
         id = buf.readInt();
         priority = buf.readInt();
+        claimedBy = buf.readInt();
         type = buf.readInt();
         value = ByteBufUtils.readUTF8String(buf);
     }

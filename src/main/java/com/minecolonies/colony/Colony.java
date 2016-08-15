@@ -6,6 +6,7 @@ import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
@@ -537,18 +538,14 @@ public class Colony implements IColony
     private void sendWorkOrderPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
         //todo only if hasn't been claimed yet!
-        if (isCitizensDirty || hasNewSubscribers)
+        if (getWorkManager().isDirty() || hasNewSubscribers)
         {
-            for (CitizenData citizen : citizens.values())
-            {
-                if (citizen.isDirty() || hasNewSubscribers)
-                {
-                    ColonyViewCitizenViewMessage msg = new ColonyViewCitizenViewMessage(this, citizen);
+            getWorkManager().setDirty(false);
 
-                    subscribers.stream()
-                               .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
-                               .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
-                }
+            for (AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
+            {
+                ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, workOrder);
+                subscribers.forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
             }
         }
     }
