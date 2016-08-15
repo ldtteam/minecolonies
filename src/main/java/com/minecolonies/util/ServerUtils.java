@@ -43,4 +43,27 @@ public final class ServerUtils
         return null;
     }
 
+    /**
+     * Found on <a href="http://jabelarminecraft.blogspot.de/p/minecraft-forge-172-finding-block.html">jabelarminecraft</a>
+     *
+     * @param parUUID
+     * @return The player
+     */
+    public static EntityPlayer getPlayerFromUUID(UUID parUUID)
+    {
+        if (parUUID == null)
+        {
+            return null;
+        }
+        List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+        for (EntityPlayerMP player : allPlayers)
+        {
+            if (player.getUniqueID().equals(parUUID))
+            {
+                return player;
+            }
+        }
+        return null;
+    }
+
 }
