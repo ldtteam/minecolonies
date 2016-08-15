@@ -59,9 +59,9 @@ public class BuildingMiner extends AbstractBuildingWorker
     public boolean clearedShaft = false;
 
     // Save in hut
-    private int      startingLevelNode = 0;
-    private int      active            = 0;
-    private int      currentLevel      = 0;
+    private int startingLevelNode = 0;
+    private int active            = 0;
+    private int currentLevel      = 0;
     private BlockPos shaftStart;
 
     /**
@@ -90,10 +90,8 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Required constructor.
      *
-     * @param c
-     *            colony containing the building.
-     * @param l
-     *            location of the building.
+     * @param c colony containing the building.
+     * @param l location of the building.
      */
     public BuildingMiner(Colony c, BlockPos l)
     {
@@ -127,8 +125,7 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Adds a level to the levels list
      *
-     * @param currentLevel
-     *            {@link Level}to add
+     * @param currentLevel {@link Level}to add
      */
     public void addLevel(Level currentLevel)
     {
@@ -184,16 +181,14 @@ public class BuildingMiner extends AbstractBuildingWorker
         {
             return 50;
         }
-        else
-            if (this.getBuildingLevel() == 2)
-            {
-                return 30;
-            }
-            else
-                if (this.getBuildingLevel() == 3)
-                {
-                    return 5;
-                }
+        else if (this.getBuildingLevel() == 2)
+        {
+            return 30;
+        }
+        else if (this.getBuildingLevel() == 3)
+        {
+            return 5;
+        }
 
         return 70;
     }
@@ -361,7 +356,6 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
-     * 
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -375,11 +369,10 @@ public class BuildingMiner extends AbstractBuildingWorker
         {
             owner.triggerAchievement(ModAchievements.achievementBuildingMiner);
         }
-        else
-            if (newLevel >= this.getMaxBuildingLevel())
-            {
-                owner.triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
-            }
+        else if (newLevel >= this.getMaxBuildingLevel())
+        {
+            owner.triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
+        }
     }
 
     public static class View extends AbstractBuildingWorker.View
