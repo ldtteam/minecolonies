@@ -106,13 +106,13 @@ public final class PlayerProperties implements IExtendedEntityProperties
      *
      * @return whether the player has placed a supply chest.
      */
-    public boolean getHasPlacedSupplyChest()
+    public boolean hasPlacedSupplyChest()
     {
         return hasPlacedSupplyChest;
     }
 
     /**
-     * Sets getHasPlacedSupplyChest to true
+     * Sets hasPlacedSupplyChest to true
      */
     public void placeSupplyChest()
     {
