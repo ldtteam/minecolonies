@@ -4,10 +4,9 @@ import com.minecolonies.client.gui.WindowHutMiner;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobMiner;
-import com.minecolonies.entity.ai.Level;
-import com.minecolonies.entity.ai.Node;
+import com.minecolonies.entity.ai.citizen.miner.Level;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -20,86 +19,191 @@ import net.minecraftforge.common.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuildingMiner extends BuildingWorker
+/**
+ * The miners building.
+ */
+public class BuildingMiner extends AbstractBuildingWorker
 {
-    private static final    String              TAG_FLOOR_BLOCK         = "floorBlock";//TODO: is this something that needs to be saved? id say yea mw
+    /**
+     * The NBT Tag to store the floorBlock
+     */
+    private static final    String              TAG_FLOOR_BLOCK         = "floorBlock";
+    /**
+     * The NBT Tag to store the fenceBlock
+     */
     private static final    String              TAG_FENCE_BLOCK         = "fenceBlock";
+    /**
+     * The NBT Tag to store the starting level of the shaft.
+     */
     private static final    String              TAG_STARTING_LEVEL      = "startingLevelShaft";
+    /**
+     * The NBT Tag to store list of levels.
+     */
     private static final    String              TAG_LEVELS              = "levels";
+    /**
+     * The NBT Tag to store if the shaft has been cleared.
+     */
     private static final    String              TAG_CLEARED             = "clearedShaft";
+    /**
+     * The NBT Tag to store the location of the shaft.
+     */
     private static final    String              TAG_SLOCATION           = "shaftLocation";
+    /**
+     * The NBT Tag to store the vector-x of the shaft
+     */
     private static final    String              TAG_VECTORX             = "vectorx";
+    /**
+     * The NBT Tag to store the vector-z of the shaft
+     */
     private static final    String              TAG_VECTORZ             = "vectorz";
+    /**
+     * The NBT Tag to store the location of the cobblestone at the shaft.
+     */
     private static final    String              TAG_CLOCATION           = "cobblelocation";
+    /**
+     * The NBT Tag to store the active node the miner is working on.
+     */
     private static final    String              TAG_ACTIVE              = "activeNodeint";
+    /**
+     * The NBT Tag to store the current level the miner is working in.
+     */
     private static final    String              TAG_CURRENT_LEVEL       = "currentLevel";
+    /**
+     * The NBT Tag to store the starting node.
+     */
     private static final    String              TAG_SN                  = "StartingNode";
+    /**
+     * The NBT Tag to store the location of the ladder.
+     */
     private static final    String              TAG_LLOCATION           = "ladderlocation";
+    /**
+     * The NBT Tag to store if a ladder has been found yet.
+     */
     private static final    String              TAG_LADDER              = "found_ladder";
 
-    public                  Block               floorBlock              = Blocks.planks;
-    public                  Block               fenceBlock              = Blocks.oak_fence; //todo this changed, mw, transition 1.8
+    /**
+     * Defines the material used for the floor of the shaft.
+     */
+    private Block floorBlock = Blocks.planks;
+    /**
+     * Defines the material used for the fence of the shaft.
+     */
+    private Block fenceBlock = Blocks.oak_fence;
 
-    public                  Node                activeNode;
     /**
      * Here we can detect multiples of 5
      */
-    public                  int                 startingLevelShaft      = 0;
+    private int startingLevelShaft = 0;
+
     /**
      * The location of the topmost cobblestone the ladder starts at
      */
-    public                  BlockPos            cobbleLocation;
+    private BlockPos cobbleLocation;
+
     /**
      * True if shaft is at bottom limit
      */
     public                  boolean             clearedShaft            = false;
-    public                  int                 startingLevelNode       = 0; //Save in hut
-    public                  int                 active                  = 0;
-    public                  int                 currentLevel            = 0;
-    public                  BlockPos            shaftStart;
+
+    /**
+     * The starting level of the node.
+     */
+    private int startingLevelNode = 0;
+    /**
+     * The id of the active node.
+     */
+    private int active = 0;
+    /**
+     * The number of the current level.
+     */
+    private int currentLevel = 0;
+    /**
+     * The position of the start of the shaft.
+     */
+    private BlockPos shaftStart;
+
     /**
      * Ladder orientation in x
      */
-    public                  int                vectorX                  = 1;
+    private int vectorX = 1;
+
     /**
      * Ladder orientation in y
      */
-    public                  int                 vectorZ                 = 1;
+    private int vectorZ = 1;
+
     /**
      * The location of the topmost ladder in the shaft
      */
-    public                  BlockPos            ladderLocation;
+    private BlockPos ladderLocation;
+
     /**
      * True if a ladder is found
      */
-    public                  boolean             foundLadder             = false;
-    private                 List<Level>         levels                  = new ArrayList<>();     //Stores the levels of the miners mine. This could be a map<depth,level>
+    private boolean foundLadder = false;
 
+    /**
+     * Stores the levels of the miners mine. This could be a map<depth,level>
+     */
+    private List<Level> levels = new ArrayList<>();
+
+    /**
+     * The maximum upgrade of the building.
+     */
+    private static final int MAX_BUILDING_LEVEL = 3;
+    /**
+     * The job description.
+     */
+    private static final String MINER          = "Miner";
+
+    /**
+     * Required constructor.
+     *
+     * @param c colony containing the building.
+     * @param l location of the building.
+     */
     public BuildingMiner(Colony c, BlockPos l)
     {
         super(c, l);
     }
 
+    /**
+     * Getter of the schematic name.
+     * @return the schematic name.
+     */
     @Override
     public String getSchematicName()
     {
-        return "Miner";
+        return MINER;
     }
 
+    /**
+     * Getter of the max building level.
+     * @return the integer.
+     */
     @Override
     public int getMaxBuildingLevel()
     {
-        return 3;
+        return MAX_BUILDING_LEVEL;
     }
 
+    /**
+     * Getter of the job description.
+     * @return the description of the miners job.
+     */
     @Override
     public String getJobName()
     {
-        return "Miner";
+        return MINER;
     }
 
+    /**
+     * Create the job for the miner.
+     * @param citizen the citizen to take the job.
+     * @return the new job.
+     */
     @Override
-    public Job createJob(CitizenData citizen)
+    public AbstractJob createJob(CitizenData citizen)
     {
         return new JobMiner(citizen);
     }
@@ -111,15 +215,17 @@ public class BuildingMiner extends BuildingWorker
      */
     public void addLevel(Level currentLevel)
     {
-        getLevels().add(currentLevel);
+        levels.add(currentLevel);
     }
 
     /**
-     * A list of all shaft levels that are cleared
+     * The number of levels in the mine.
+     *
+     * @return levels size.
      */
-    public List<Level> getLevels()
+    public int getNumberOfLevels()
     {
-        return levels;
+        return levels.size();
     }
 
     /**
@@ -136,16 +242,20 @@ public class BuildingMiner extends BuildingWorker
         return null;
     }
 
+    /**
+     * Method to serialize data to send it to the view.
+     * @param buf the used ByteBuffer.
+     */
     @Override
     public void serializeToView(ByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeInt(currentLevel);
-        buf.writeInt(getLevels().size());
+        buf.writeInt(levels.size());
 
-        for(Level level : getLevels())
+        for(Level level : levels)
         {
-            buf.writeInt(level.getNodes().size());
+            buf.writeInt(level.getNumberOfNodes());
         }
     }
 
@@ -176,13 +286,168 @@ public class BuildingMiner extends BuildingWorker
         return 70;
     }
 
+    /**
+     * Getter of the ladderLocation.
+     * @return the ladder location.
+     */
+    public BlockPos getLadderLocation()
+    {
+        return ladderLocation;
+    }
+
+    /**
+     * Setter of the ladder location.
+     * @param ladderLocation the new ladder location.
+     */
+    public void setLadderLocation(BlockPos ladderLocation)
+    {
+        this.ladderLocation = ladderLocation;
+    }
+
+    /**
+     * Checks if a ladder has been found already.
+     * @return true if so.
+     */
+    public boolean hasFoundLadder()
+    {
+        return foundLadder;
+    }
+
+    /**
+     * Setter for the foundLadder.
+     * @param foundLadder the boolean.
+     */
+    public void setFoundLadder(boolean foundLadder)
+    {
+        this.foundLadder = foundLadder;
+    }
+
+    /**
+     * Getter of the X-vector.
+     * @return the vectorX.
+     */
+    public int getVectorX()
+    {
+        return vectorX;
+    }
+
+    /**
+     * Getter of the Z-vector.
+     * @return the vectorZ.
+     */
+    public int getVectorZ()
+    {
+        return vectorZ;
+    }
+
+    /**
+     * Setter of the X-vector.
+     * @param vectorX the vector to set +1 or -1.
+     */
+    public void setVectorX(int vectorX)
+    {
+        this.vectorX = vectorX;
+    }
+
+    /**
+     * Setter of the Z-vector.
+     * @param vectorZ the vector to set +1 or -1.
+     */
+    public void setVectorZ(int vectorZ)
+    {
+        this.vectorZ = vectorZ;
+    }
+
+    /**
+     * Getter of the cobbleLocation.
+     * @return the location.
+     */
+    public BlockPos getCobbleLocation()
+    {
+        return cobbleLocation;
+    }
+
+    /**
+     * Setter for the cobbleLocation.
+     * @param pos the location to set.
+     */
+    public void setCobbleLocation(BlockPos pos)
+    {
+        this.cobbleLocation = pos;
+    }
+
+    /**
+     * Setter of the shaftStart.
+     * @param pos the location.
+     */
+    public void setShaftStart(BlockPos pos)
+    {
+        this.shaftStart = pos;
+    }
+
+    /**
+     * Getter of the starting level of the shaft.
+     * @return the start level.
+     */
+    public int getStartingLevelShaft()
+    {
+        return startingLevelShaft;
+    }
+
+    /**
+     * Resets the starting level of the shaft to 0.
+     */
+    public void resetStartingLevelShaft()
+    {
+        this.startingLevelShaft = 0;
+    }
+
+    /**
+     * Increments the starting level of the shaft by one.
+     */
+    public void incrementStartingLevelShaft()
+    {
+        this.startingLevelShaft++;
+    }
+
+    /**
+     * Sets the current level the miner is at.
+     * @param currentLevel the level to set.
+     */
+    public void setCurrentLevel(int currentLevel)
+    {
+        this.currentLevel = currentLevel;
+    }
+
+    /**
+     * Getter of the floor block.
+     * @return the material of the floor block.
+     */
+    public Block getFloorBlock()
+    {
+        return floorBlock;
+    }
+
+    /**
+     * Getter of the fence block.
+     * @return the material of the fence block.
+     */
+    public Block getFenceBlock()
+    {
+        return fenceBlock;
+    }
+
+    /**
+     * Writes the information to NBT to store it permanently.
+     * @param compound the compound key.
+     */
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
-       compound.setString(TAG_FLOOR_BLOCK, Block.blockRegistry.getNameForObject(floorBlock).toString());
-       compound.setString(TAG_FENCE_BLOCK, Block.blockRegistry.getNameForObject(fenceBlock).toString());
+        compound.setString(TAG_FLOOR_BLOCK, Block.blockRegistry.getNameForObject(floorBlock).toString());
+        compound.setString(TAG_FENCE_BLOCK, Block.blockRegistry.getNameForObject(fenceBlock).toString());
         compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.setBoolean(TAG_CLEARED, clearedShaft);
         compound.setInteger(TAG_VECTORX, vectorX);
@@ -204,7 +469,7 @@ public class BuildingMiner extends BuildingWorker
         }
 
         NBTTagList levelTagList = new NBTTagList();
-        for(Level level : getLevels())
+        for(Level level : levels)
         {
             NBTTagCompound levelCompound = new NBTTagCompound();
             level.writeToNBT(levelCompound);
@@ -213,6 +478,10 @@ public class BuildingMiner extends BuildingWorker
         compound.setTag(TAG_LEVELS, levelTagList);
     }
 
+    /**
+     * Reads the information from NBT from permanent storage.
+     * @param compound the compound key.
+     */
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -249,30 +518,42 @@ public class BuildingMiner extends BuildingWorker
         for(int i = 0; i < levelTagList.tagCount(); i++)
         {
             Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
-            getLevels().add(level);
-        }
-
-        if(currentLevel >= 0 && currentLevel < getLevels().size() && active < getLevels().get(currentLevel).getNodes().size())
-        {
-            activeNode = getLevels().get(currentLevel).getNodes().get(active);
+            this.levels.add(level);
         }
     }
 
-    public static class View extends BuildingWorker.View
+    /**
+     * Provides a view of the miner building class.
+     */
+    public static class View extends AbstractBuildingWorker.View
     {
         public int[] levels;
         public int   current;
 
+        /**
+         * Public constructor of the view, creates an instance of it.
+         * @param c the colony.
+         * @param l the position.
+         */
         public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }
 
+        /**
+         * Gets the blockOut Window.
+         * @return the window of the lumberjack building.
+         */
+        @Override
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutMiner(this);
         }
 
+        /**
+         * Deserializes the information the building class sent to store it in the view.
+         * @param buf the buffer to read from.
+         */
         @Override
         public void deserialize(ByteBuf buf)
         {

@@ -4,12 +4,11 @@ import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.BlockHutTownHall;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.IColony;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.MathUtils;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
@@ -22,6 +21,9 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+/**
+ * Handles all forge events.
+ */
 public class EventHandler
 {
     /**
@@ -37,7 +39,7 @@ public class EventHandler
 
         if(!world.isRemote && event.state.getBlock() instanceof AbstractBlockHut)
         {
-            Building building = ColonyManager.getBuilding(world, event.pos);
+            AbstractBuilding building = ColonyManager.getBuilding(world, event.pos);
             if (building == null)
             {
                 return;
@@ -54,7 +56,7 @@ public class EventHandler
     }
 
     /**
-     * Event when a placker right clicks a block, or right clicks with an item
+     * Event when a player right clicks a block, or right clicks with an item
      * Event gets cancelled when player has no permission
      * Event gets cancelled when the player has no permission to place a hut, and tried it
      *
@@ -68,50 +70,43 @@ public class EventHandler
             EntityPlayer player = event.entityPlayer;
             World world = event.world;
 
-            if(!player.isSneaking() || player.getHeldItem() == null || player.getHeldItem().getItem() == null || player.getHeldItem().getItem().doesSneakBypassUse(world, event.pos, player))
+            if (playerRightClickInteract(player, world, event.pos) &&
+                    // this was the simple way of doing it, minecraft calls onBlockActivated
+                    // and uses that return value, but I didn't want to call it twice
+                    world.getBlockState(event.pos).getBlock() instanceof AbstractBlockHut)
             {
-                if(world.getBlockState(event.pos).getBlock() instanceof AbstractBlockHut)//this was the simple way of doing it, minecraft calls onBlockActivated
-                {                                              // and uses that return value, but I didn't want to call it twice
-                    IColony colony = ColonyManager.getIColony(world, event.pos);
-                    if (colony != null &&
-                            !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
-                    {
-                        event.setCanceled(true);
-                    }
-
-                    return;
-                }
-            }
-
-            if(player.getHeldItem() == null || player.getHeldItem().getItem() == null) return;
-
-            Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
-            if(heldBlock instanceof AbstractBlockHut)
-            {
-                switch(event.face)
+                IColony colony = ColonyManager.getIColony(world, event.pos);
+                if (colony != null &&
+                        !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
                 {
-                    case DOWN:
-                        event.pos.down();
-                        break;
-                    case UP:
-                        event.pos.up();
-                        break;
-                    case NORTH:
-                        event.pos.north();
-                        break;
-                    case SOUTH:
-                        event.pos.south();
-                        break;
-                    case WEST:
-                        event.pos.west();
-                        break;
-                    case EAST:
-                        event.pos.east();
-                        break;
+                    event.setCanceled(true);
                 }
-                event.setCanceled(!onBlockHutPlaced(event.world, player, heldBlock, event.pos));
+
+                return;
             }
+
+            if(player.getHeldItem() == null || player.getHeldItem().getItem() == null)
+            {
+                return;
+            }
+
+            handleEventCancellation(event, player);
         }
+    }
+
+    private void handleEventCancellation(PlayerInteractEvent event, EntityPlayer player)
+    {
+        Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
+        if(heldBlock instanceof AbstractBlockHut)
+        {
+            event.setCanceled(!onBlockHutPlaced(event.world, player, heldBlock, event.pos.offset(event.face)));
+        }
+    }
+
+    private static boolean playerRightClickInteract(EntityPlayer player, World world, BlockPos pos)
+    {
+        return !player.isSneaking() || player.getHeldItem() == null || player.getHeldItem().getItem() == null ||
+                player.getHeldItem().getItem().doesSneakBypassUse(world, pos, player);
     }
 
     /**
@@ -120,80 +115,120 @@ public class EventHandler
      * @param world  The world the player is in
      * @param player The player
      * @param block  The block type the player is placing
-     * @param x      The x coordinate of the block
-     * @param y      The y coordinate of the block
-     * @param z      The z coordinate of the block
+     * @param pos    The location of the block
      * @return       false to cancel the event
      */
-    public static boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, BlockPos pos)//TODO use permissions
+    public static boolean onBlockHutPlaced(World world, EntityPlayer player, Block block, BlockPos pos)
     {
-        //  Check if this Hut Block can be placed
         if (block instanceof BlockHutTownHall)
         {
-            IColony colony = ColonyManager.getClosestIColony(world, pos);
-            if (colony != null)
-            {
-                //  Town Halls must be far enough apart
-                if (colony.isCoordInColony(world, pos))
-                {
-                    if (colony.hasTownHall())
-                    {
-                        //  Placing in a colony which already has a town halfal
-                        LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
-                        return false;
-                    }
-                    else if (!colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
-                    {
-                        //  No permission to place hut in colony
-                        LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission",
-                                                                   colony.getName());
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-                else if (colony.getDistanceSquared(pos) <= MathUtils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
-                {
-                    //  Placing too close to an existing colony
-                    LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
-                    return false;
-                }
-            }
-
-            if (!ColonyManager.getIColoniesByOwner(world, player).isEmpty())
-            {
-                //  Players are currently only allowed a single colony
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messagePlacedAlready");
-                return false;
-            }
+            return onTownHallPlaced(world, player, pos);
         }
-        else //  Not a town hall
+        else
         {
-            IColony colony = ColonyManager.getIColony(world, pos);
+            return onBlockHutPlaced(world, player, pos);
+        }
+    }
 
-            if (colony == null)
-            {
-                //  Not in a colony
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoTownHall");
-                return false;
-            }
-//            else if (!colony.isCoordInColony(world, x, y, z))
-//            {
-//                //  Not close enough to colony
-//                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageTooFarFromTownHall");
-//                return false;
-//            }
-            else if (!colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
-            {
-                //  No permission to place hut in colony
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission");
-                return false;
-            }
+    static boolean onTownHallPlaced(World world, EntityPlayer player, BlockPos pos)
+    {
+        IColony colony = ColonyManager.getIColonyByOwner(world, player);
+        if (colony != null)
+        {
+            return canOwnerPlaceTownHallHere(world, player, colony, pos);
+        }
+
+        colony = ColonyManager.getClosestIColony(world, pos);
+        if(colony == null)
+        {
+            createColony(world, player, pos);
+            return true;
+        }
+
+        //  Town Halls must be far enough apart
+        return canPlayerPlaceTownHallHere(world, player, pos, colony);
+    }
+
+    private static boolean canOwnerPlaceTownHallHere(World world, EntityPlayer player, IColony colony, BlockPos pos)
+    {
+        if(!colony.isCoordInColony(world, pos) || colony.hasTownHall())
+        {
+            //  Players are currently only allowed a single colony
+            LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messagePlacedAlready");
+            return false;
+        }
+
+        IColony currentColony = ColonyManager.getIColony(world, pos);
+        if(currentColony != colony)
+        {
+            LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooFar");
+            return false;
         }
 
         return true;
+    }
+
+    private static boolean canPlayerPlaceTownHallHere(World world, EntityPlayer player, BlockPos pos, IColony closestColony)
+    {
+        // Is the player trying to place a town hall in a colony
+        if (closestColony.isCoordInColony(world, pos))
+        {
+            if (closestColony.hasTownHall() || !closestColony.getPermissions().isColonyMember(player))
+            {
+                //  Placing in a colony which already has a town hall
+                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
+                return false;
+            }
+
+            if (!closestColony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
+            {
+                //  No permission to place hut in colony
+                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermissionPlace", closestColony.getName());
+                return false;
+            }
+
+            return true;
+        }
+
+        if (closestColony.getDistanceSquared(pos) <= MathUtils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+        {
+            //  Placing too close to an existing colony
+            LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
+            return false;
+        }
+
+        createColony(world, player, pos);
+        return true;
+    }
+
+    private static void createColony(World world, EntityPlayer player, BlockPos pos)
+    {
+        if (!world.isRemote)
+        {
+            ColonyManager.createColony(world, pos, player);
+        }
+    }
+
+    private static boolean onBlockHutPlaced(World world, EntityPlayer player, BlockPos pos)
+    {
+        IColony colony = ColonyManager.getIColony(world, pos);
+
+        if (colony == null)
+        {
+            //  Not in a colony
+            LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoTownHall");
+            return false;
+        }
+        else if (!colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
+        {
+            //  No permission to place hut in colony
+            LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission");
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     /**

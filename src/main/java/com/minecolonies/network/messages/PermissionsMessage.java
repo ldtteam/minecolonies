@@ -17,6 +17,7 @@ import java.util.UUID;
 
 public class PermissionsMessage
 {
+    private static final String COLONY_DOES_NOT_EXIST = "Colony #%d does not exist.";
 
     public static class View implements IMessage, IMessageHandler<View, IMessage>
     {
@@ -25,6 +26,7 @@ public class PermissionsMessage
 
         public View()
         {
+            //Required
         }
 
         public View(Colony colony, Permissions.Rank viewerRank)
@@ -71,13 +73,14 @@ public class PermissionsMessage
 
     public static class Permission implements IMessage, IMessageHandler<Permission, IMessage>
     {
-        int                 colonyID;
-        MessageType         type;
-        Permissions.Rank    rank;
-        Permissions.Action  action;
+        private int                 colonyID;
+        private MessageType         type;
+        private Permissions.Rank    rank;
+        private Permissions.Action  action;
 
         public Permission()
         {
+            //Required
         }
 
         /**
@@ -122,7 +125,13 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                return null;
+            }
+
+            //Verify player has permission to do edit permissions
+            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.EDIT_PERMISSIONS))
+            {
                 return null;
             }
 
@@ -149,10 +158,13 @@ public class PermissionsMessage
      */
     public static class AddPlayer implements IMessage, IMessageHandler<AddPlayer, IMessage>
     {
-        int colonyID;
-        String playerName;
+        private int    colonyID;
+        private String playerName;
 
-        public AddPlayer() {}
+        public AddPlayer()
+        {
+            //Required
+        }
 
         /**
          * Constructor for adding player to permission message
@@ -186,13 +198,13 @@ public class PermissionsMessage
 
             Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if (colony != null)
+            if (colony != null && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE))
             {
                 colony.getPermissions().addPlayer(message.playerName, Permissions.Rank.NEUTRAL);
             }
             else
             {
-                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
             }
             return null;
         }
@@ -201,26 +213,35 @@ public class PermissionsMessage
     /**
      * Message class for setting a player rank in the permissions
      */
-    public static class SetPlayerRank implements IMessage, IMessageHandler<SetPlayerRank, IMessage>
+    public static class ChangePlayerRank implements IMessage, IMessageHandler<ChangePlayerRank, IMessage>
     {
-        int colonyID;
-        UUID playerID;
-        Permissions.Rank rank;
+        private int  colonyID;
+        private UUID playerID;
+        private Type type;
 
-        public SetPlayerRank() {}
+        public enum Type
+        {
+            PROMOTE,
+            DEMOTE
+        }
+
+        public ChangePlayerRank()
+        {
+            //Required
+        }
 
         /**
-         * Constructor for setting a player rank
+         * Constructor for setting a player rank.
          *
-         * @param colony        Colony the rank is set in
-         * @param player        UUID of the player to set rank
-         * @param rank          Rank to be set
+         * @param colony        Colony the rank is set in.
+         * @param player        UUID of the player to set rank.
+         * @param type          Promote or demote.
          */
-        public SetPlayerRank(ColonyView colony, UUID player, Permissions.Rank rank)
+        public ChangePlayerRank(ColonyView colony, UUID player, Type type)
         {
             this.colonyID = colony.getID();
             this.playerID = player;
-            this.rank = rank;
+            this.type = type;
         }
 
         @Override
@@ -228,7 +249,7 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
-            ByteBufUtils.writeUTF8String(buf, rank.name());
+            ByteBufUtils.writeUTF8String(buf, type.name());
         }
 
         @Override
@@ -236,23 +257,30 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
-            rank = Permissions.Rank.valueOf(ByteBufUtils.readUTF8String(buf));
+            type = Type.valueOf(ByteBufUtils.readUTF8String(buf));
         }
 
         @Override
-        public IMessage onMessage(SetPlayerRank message, MessageContext ctx)
+        public IMessage onMessage(ChangePlayerRank message, MessageContext ctx)
         {
 
             Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if (colony != null)
+            if(colony == null)
             {
-                colony.getPermissions().setPlayerRank(message.playerID, message.rank);
+                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                return null;
             }
-            else
+
+            if(message.type == Type.PROMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE))
             {
-                Log.logger.error(String.format("Colony #%d does not exist.", message.colonyID));
+                colony.getPermissions().setPlayerRank(message.playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(message.playerID)));
             }
+            else if(message.type == Type.DEMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE))
+            {
+                colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)));
+            }
+
             return null;
         }
     }
@@ -262,10 +290,13 @@ public class PermissionsMessage
      */
     public static class RemovePlayer implements IMessage, IMessageHandler<RemovePlayer, IMessage>
     {
-        int colonyID;
-        UUID playerID;
+        private int  colonyID;
+        private UUID playerID;
 
-        public RemovePlayer() {}
+        public RemovePlayer()
+        {
+            //Required
+        }
 
         /**
          * Constructor for removing player from permission set
@@ -299,14 +330,19 @@ public class PermissionsMessage
 
             Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if (colony != null)
+            if(colony == null)
+            {
+                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                return null;
+            }
+
+            Permissions.Player player = colony.getPermissions().getPlayers().get(message.playerID);
+            if((player.getRank() == Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE)) ||
+                    (player.getRank() != Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE)))
             {
                 colony.getPermissions().removePlayer(message.playerID);
             }
-            else
-            {
-                Log.logger.error(String.format("Colony '#%d' does not exist.", message.colonyID));
-            }
+
             return null;
         }
     }

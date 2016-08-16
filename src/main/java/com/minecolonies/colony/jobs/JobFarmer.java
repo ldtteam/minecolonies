@@ -2,18 +2,18 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.entity.ai.EntityAIWorkFarmer;
-import net.minecraft.entity.ai.EntityAITasks;
+import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.entity.ai.citizen.farmer.EntityAIWorkFarmer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.List;
 
-public class JobFarmer extends Job
+public class JobFarmer extends AbstractJob
 {
-    private static final    String                      TAG_STAGE   = "Stage";
+    private static final String TAG_STAGE = "Stage";
 
-    private                 EntityAIWorkFarmer.Stage    stage       = EntityAIWorkFarmer.Stage.WORKING;
+    private EntityAIWorkFarmer.Stage stage = EntityAIWorkFarmer.Stage.WORKING;
 
     public JobFarmer(CitizenData entity)
     {
@@ -43,26 +43,21 @@ public class JobFarmer extends Job
         stage = EntityAIWorkFarmer.Stage.valueOf(compound.getString(TAG_STAGE));
     }
 
-    @Override
-    public void addTasks(EntityAITasks tasks)
-    {
-        tasks.addTask(3, new EntityAIWorkFarmer(this));
-    }
-
     /**
-     * Sets the stage of the worker
+     * Generate your AI class to register.
      *
-     * @param stage     {@link com.minecolonies.entity.ai.EntityAIWorkFarmer.Stage} to set
+     * @return your personal AI instance.
      */
-    public void setStage(EntityAIWorkFarmer.Stage stage)
+    @Override
+    public AbstractAISkeleton generateAI()
     {
-        this.stage = stage;
+        return new EntityAIWorkFarmer(this);
     }
 
     /**
      * Returns the stage of the worker
      *
-     * @return          {@link com.minecolonies.entity.ai.EntityAIWorkFarmer.Stage}
+     * @return {@link EntityAIWorkFarmer.Stage}
      */
     public EntityAIWorkFarmer.Stage getStage()
     {
@@ -70,9 +65,19 @@ public class JobFarmer extends Job
     }
 
     /**
+     * Sets the stage of the worker
+     *
+     * @param stage {@link EntityAIWorkFarmer.Stage} to set
+     */
+    public void setStage(EntityAIWorkFarmer.Stage stage)
+    {
+        this.stage = stage;
+    }
+
+    /**
      * Adds items if job requires items not in inventory
      *
-     * @param stack     Stack to check if it is a required item
+     * @param stack Stack to check if it is a required item
      */
     public void addItemNeededIfNotAlready(ItemStack stack)
     {

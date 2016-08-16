@@ -13,13 +13,22 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import java.util.List;
 
-public class BlockPosUtil
+/**
+ * Utility methods for BlockPos.
+ */
+public final class BlockPosUtil
 {
+    private static final double CLOSE_DISTANCE = 4.84;
+
+    private BlockPosUtil()
+    {
+        //Hide default constructor.
+    }
+
     /**
      * Writes a Chunk Coordinate to an NBT compound, with a specific tag name
      *
@@ -111,7 +120,7 @@ public class BlockPosUtil
     }
 
     /**
-     * Returns if the {@link #distanceSqrd(BlockPos, Vec3)} from a coordinate to an cititzen is closer than 4.84
+     * Returns if the {@link #getDistanceSquared(BlockPos, BlockPos)} from a coordinate to an citizen is closer than 4.84
      *
      * @param coordinate Coordinate you want check distance of
      * @param citizen    Citizen you want check distance of
@@ -119,27 +128,22 @@ public class BlockPosUtil
      */
     public static boolean isClose(BlockPos coordinate, EntityCitizen citizen)
     {
-        return distanceSqrd(coordinate, citizen.getPosition()) < 4.84;
-    }
-
-    public static int getDistanceSquared(BlockPos block1, BlockPos block2){
-        float f = (float)(block1.getX() - block2.getX());
-        float f1 = (float)(block1.getY() - block2.getY());
-        float f2 = (float)(block1.getZ() - block2.getZ());
-        return  (int) (f * f + f1 * f1 + f2 * f2);
+        return getDistanceSquared(coordinate, citizen.getPosition()) < CLOSE_DISTANCE;
     }
 
     /**
-     * Returns the squared distance to a Vec3
+     * Squared distance between two BlockPos.
      *
-     * @param coords1 BlockPos   (point 1)
-     * @param coords2 BlockPos   (point 2)
-     * @return Squared distance between points (float)
+     * @param block1 position one.
+     * @param block2 position two.
+     * @return squared distance.
      */
-    public static float distanceSqrd(BlockPos coords1, BlockPos coords2)
+    public static int getDistanceSquared(BlockPos block1, BlockPos block2)
     {
-        return getDistanceSquared(coords1, coords2); // TODO: does this work
-    	//return getDistanceSquared(coords1, new BlockPos((int) coords2.xCoord, (int) coords2.yCoord, (int) coords2.zCoord));
+        int i = block1.getX() - block2.getX();
+        int i1 = block1.getY() - block2.getY();
+        int i2 = block1.getZ() - block2.getZ();
+        return i * i + i1 * i1 + i2 * i2;
     }
 
     /**
@@ -201,7 +205,7 @@ public class BlockPosUtil
      */
     public static boolean setBlock(World world, BlockPos coords, Block block)
     {
-    	return world.setBlockState(coords, block.getDefaultState());
+         return world.setBlockState(coords, block.getDefaultState());
     }
 
     /**
@@ -215,7 +219,7 @@ public class BlockPosUtil
      */
     public static boolean setBlock(World worldIn, BlockPos coords, IBlockState state, int flag)
     {
-    	return worldIn.setBlockState(coords, state, flag);
+         return worldIn.setBlockState(coords, state, flag);
     }
 
     /**
@@ -279,6 +283,17 @@ public class BlockPosUtil
     }
 
     /**
+     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.BlockPos.MutableBlockPos#set(int, int, int)}.
+     *
+     * @param pos {@link net.minecraft.util.BlockPos.MutableBlockPos}.
+     * @param newPos The new position to set.
+     */
+    public static void set(BlockPos.MutableBlockPos pos, BlockPos newPos)
+    {
+        pos.set(newPos.getX(), newPos.getY(), newPos.getZ());
+    }
+
+    /**
      * Returns whether a chunk coordinate is equals to (x, y, z)
      *
      * @param coords Chunk Coordinate    (point 1)
@@ -287,35 +302,9 @@ public class BlockPosUtil
      * @param z      z-coordinate        (point 2)
      * @return True when coordinates are equal, otherwise false
      */
-    public static boolean equals(BlockPos coords, int x, int y, int z)
+    public static boolean isEqual(BlockPos coords, int x, int y, int z)
     {
         return coords.getX() == x && coords.getY() == y && coords.getZ() == z;
-    }
-
-    /**
-     * Substract two coordinates, and returns the result
-     *
-     * @param coords1 Chunk Coordinate (point 1)
-     * @param coords2 Chunk Coordinate (point 2)
-     * @return coordinates with the result of {@code coords1} minus {@code coords2}
-     */
-    public static BlockPos subtract(BlockPos coords1, BlockPos coords2)
-    {
-        return new BlockPos(coords1.getX() - coords2.getX(), coords1.getY() - coords2.getY(), coords1.getZ() - coords2.getZ());
-    }
-
-    /**
-     * Add two coordinates, and returns the result
-     *
-     * @param coords Chunk Coordinate (point 1)
-     * @param x      x-coordinate (point 2)
-     * @param y      y-coordinate (point 2)
-     * @param z      z-coordinate (point 2)
-     * @return the result of {@code x},{@code y},{@code z} added to {@code coords}
-     */
-    public static BlockPos add(BlockPos coords, int x, int y, int z)
-    {
-        return new BlockPos(coords.getX() + x, coords.getY() + y, coords.getZ() + z);
     }
 
     /**

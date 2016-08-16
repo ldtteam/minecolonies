@@ -5,7 +5,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import net.minecraft.util.BlockPos;
 
-public class BuildingTownHall extends BuildingHut
+public class BuildingTownHall extends AbstractBuildingHut
 {
     private static final String TOWN_HALL = "TownHall";
 
@@ -26,7 +26,7 @@ public class BuildingTownHall extends BuildingHut
         return 4;
     }
 
-    public static class View extends BuildingHut.View
+    public static class View extends AbstractBuildingHut.View
     {
         public View(ColonyView c, BlockPos l)
         {

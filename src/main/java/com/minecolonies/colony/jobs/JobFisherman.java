@@ -2,9 +2,9 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.entity.ai.EntityAIWorkFisherman;
+import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import com.minecolonies.util.BlockPosUtil;
-import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
@@ -17,7 +17,7 @@ import java.util.List;
  * The fisherman's job class,
  * implements some useful things for him.
  */
-public class JobFisherman extends Job
+public class JobFisherman extends AbstractJob
 {
     /**
      * Final strings to save and retrieve the current water location and pond list.
@@ -25,10 +25,6 @@ public class JobFisherman extends Job
     private static final String TAG_WATER = "Pond";
     private static final String TAG_PONDS = "Ponds";
 
-    /**
-     * Sets the priority of the workers job.
-     */
-    private static final int TASK_PRIORITY = 3;
     /**
      * The water the fisherman is currently fishing at
      * Contains the location of the water so that the fisherman can path to the fishing spot.
@@ -46,6 +42,7 @@ public class JobFisherman extends Job
 
     /**
      * Initializes the job class
+     *
      * @param entity The entity which will use this job class.
      */
     public JobFisherman(CitizenData entity)
@@ -54,9 +51,9 @@ public class JobFisherman extends Job
     }
 
     /**
-     * Return a Localization label for the Job
+     * Return a Localization textContent for the Job
      *
-     * @return          localization label String
+     * @return localization textContent String
      */
     @Override
     public String getName()
@@ -86,13 +83,13 @@ public class JobFisherman extends Job
         super.writeToNBT(compound);
 
         NBTTagCompound waterTag = new NBTTagCompound();
-        if (water != null)
+        if(water != null)
         {
-            BlockPosUtil.writeToNBT(waterTag,TAG_WATER,water);
+            BlockPosUtil.writeToNBT(waterTag, TAG_WATER, water);
         }
 
         NBTTagList lakes = new NBTTagList();
-        for (BlockPos pond : ponds)
+        for(BlockPos pond : ponds)
         {
             BlockPosUtil.writeToNBTTagList(lakes, pond);
         }
@@ -109,28 +106,28 @@ public class JobFisherman extends Job
     {
         super.readFromNBT(compound);
 
-        if (compound.hasKey(TAG_WATER))
+        if(compound.hasKey(TAG_WATER))
         {
-            water = BlockPosUtil.readFromNBT(compound,TAG_WATER);
+            water = BlockPosUtil.readFromNBT(compound, TAG_WATER);
         }
 
         ponds = new ArrayList<>();
         NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < listOfPonds.tagCount(); i++)
+        for(int i = 0; i < listOfPonds.tagCount(); i++)
         {
             ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
         }
     }
 
     /**
-     * Override to add Job-specific AI tasks to the given EntityAITask list
+     * Generate your AI class to register.
      *
-     * @param tasks EntityAITasks list to add tasks to
+     * @return your personal AI instance.
      */
     @Override
-    public void addTasks(EntityAITasks tasks)
+    public AbstractAISkeleton generateAI()
     {
-        tasks.addTask(TASK_PRIORITY, new EntityAIWorkFisherman(this));
+        return new EntityAIWorkFisherman(this);
     }
 
     /**

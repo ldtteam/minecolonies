@@ -6,15 +6,15 @@ import com.minecolonies.client.gui.WindowCitizen;
 import com.minecolonies.client.render.EmptyTileEntitySpecialRenderer;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.client.render.RenderFishHook;
-import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.event.ClientEventHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.schematica.client.events.TickHandler;
-import com.schematica.client.renderer.RendererSchematicGlobal;
-import com.schematica.world.SchematicWorld;
+import com.schematica.client.renderer.RenderSchematic;
+import com.schematica.handler.client.TickHandler;
+import com.schematica.handler.client.WorldHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -25,22 +25,10 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy extends CommonProxy
 {
-    private RendererSchematicGlobal rendererSchematicGlobal;
-    private SchematicWorld          schematicWorld          = null;
-
     @Override
     public boolean isClient()
     {
         return true;
-    }
-
-    @Override
-    public void registerKeyBindings()
-    {
-//        for(KeyBinding keyBinding : KeyInputHandler.KEY_BINDINGS)
-//        {
-//            ClientRegistry.registerKeyBinding(keyBinding);
-//        }
     }
 
     @Override
@@ -51,9 +39,9 @@ public class ClientProxy extends CommonProxy
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 
         //Schematica
-        MinecraftForge.EVENT_BUS.register(new TickHandler());
-        this.rendererSchematicGlobal = new RendererSchematicGlobal();
-        MinecraftForge.EVENT_BUS.register(this.rendererSchematicGlobal);
+        MinecraftForge.EVENT_BUS.register(RenderSchematic.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(TickHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(new WorldHandler());
     }
 
     @Override
@@ -61,7 +49,6 @@ public class ClientProxy extends CommonProxy
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, RenderFishHook::new);
-
     }
 
     @Override
@@ -71,7 +58,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void showCitizenWindow(CitizenData.View citizen)
+    public void showCitizenWindow(CitizenDataView citizen)
     {
         WindowCitizen window = new WindowCitizen(citizen);
         window.open();
@@ -84,21 +71,9 @@ public class ClientProxy extends CommonProxy
         window.open();
     }
 
-    //Schematica
     @Override
-    public void setActiveSchematic(SchematicWorld world)
+    public void registerRenderer()
     {
-        this.schematicWorld = world;
-    }
-
-    @Override
-    public SchematicWorld getActiveSchematic()
-    {
-        return this.schematicWorld;
-    }
-    
-    @Override
-    public void registerRenderer() {
     	super.registerRenderer();
     	
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.blockHutBaker), 0, new ModelResourceLocation(ModBlocks.blockHutBaker.getRegistryName(), "inventory"));
@@ -112,6 +87,7 @@ public class ClientProxy extends CommonProxy
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.blockHutStonemason), 0, new ModelResourceLocation(ModBlocks.blockHutStonemason.getRegistryName(), "inventory"));
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.blockHutTownHall), 0, new ModelResourceLocation(ModBlocks.blockHutTownHall.getRegistryName(), "inventory"));
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.blockHutWarehouse), 0, new ModelResourceLocation(ModBlocks.blockHutWarehouse.getRegistryName(), "inventory"));
+    	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.blockSubstitution), 0, new ModelResourceLocation(ModBlocks.blockSubstitution.getRegistryName(), "inventory"));
     	
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(ModItems.buildTool, 0, new ModelResourceLocation(ModItems.buildTool.getRegistryName(), "inventory"));
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(ModItems.caliper, 0, new ModelResourceLocation(ModItems.caliper.getRegistryName(), "inventory"));

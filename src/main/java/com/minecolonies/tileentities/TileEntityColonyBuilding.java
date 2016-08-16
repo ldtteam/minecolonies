@@ -3,7 +3,7 @@ package com.minecolonies.tileentities;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +18,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 {
     private              int        colonyId    = 0;
     private              Colony     colony;
-    private              Building   building;
+    private AbstractBuilding building;
 
     private final static String     TAG_COLONY  = "colony";
 
@@ -170,9 +170,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * Returns the building associated with the tile entity
      *
-     * @return      {@link Building} associated with the tile entity
+     * @return      {@link AbstractBuilding} associated with the tile entity
      */
-    public Building getBuilding()
+    public AbstractBuilding getBuilding()
     {
         if (building == null) updateColonyReferences();
         return building;
@@ -181,9 +181,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      *  Sets the building associated with the tile entity
      *
-     * @param b     {@link Building} to associate with the tile entity
+     * @param b     {@link AbstractBuilding} to associate with the tile entity
      */
-    public void setBuilding(Building b)
+    public void setBuilding(AbstractBuilding b)
     {
         building = b;
     }
@@ -191,9 +191,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * Returns the view of the building associated with the tile entity
      *
-     * @return      {@link com.minecolonies.colony.buildings.Building.View} the tile entity is associated with
+     * @return      {@link AbstractBuilding.View} the tile entity is associated with
      */
-    public Building.View getBuildingView()
+    public AbstractBuilding.View getBuildingView()
     {
         ColonyView c = ColonyManager.getColonyView(colonyId);
         return c!= null ? c.getBuilding(getPosition()) : null;

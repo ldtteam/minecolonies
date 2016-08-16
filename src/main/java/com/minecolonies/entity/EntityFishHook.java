@@ -31,120 +31,128 @@ public final class EntityFishHook extends Entity
     /**
      * Number of seconds to wait before removing a stuck hook
      */
-    private static final int  TTL       = 360;
+    private static final int TTL = 360;
+
     /**
      * possible drop list for level 2 building with speed
      */
     private static final List junkDrops = Arrays.asList(
-                                                        (new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).setMaxDamagePercent(0.9F),
-                                                        new WeightedRandomFishable(new ItemStack(Items.leather), 10),
-                                                        new WeightedRandomFishable(new ItemStack(Items.bone), 10),
-                                                        new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
-                                                        new WeightedRandomFishable(new ItemStack(Items.string), 5),
-                                                        (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).setMaxDamagePercent(0.9F),
-                                                        new WeightedRandomFishable(new ItemStack(Items.bowl), 10),
-                                                        new WeightedRandomFishable(new ItemStack(Items.stick), 5),
-                                                        new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1),
-                                                        new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10),
-                                                        new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
+            (new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).setMaxDamagePercent(0.9F),
+            new WeightedRandomFishable(new ItemStack(Items.leather), 10),
+            new WeightedRandomFishable(new ItemStack(Items.bone), 10),
+            new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
+            new WeightedRandomFishable(new ItemStack(Items.string), 5),
+            (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).setMaxDamagePercent(0.9F),
+            new WeightedRandomFishable(new ItemStack(Items.bowl), 10),
+            new WeightedRandomFishable(new ItemStack(Items.stick), 5),
+            new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1),
+            new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10),
+            new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
+
     /**
      * Entity size to scale it down
      */
     private static final float ENTITY_SIZE = 0.25F;
+
     /**
      * possible drop list for level 3 building with luck
      */
     private static final List rareDrops = Arrays.asList(
-                                                                            new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
-                                                                            (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).setMaxDamagePercent(0.25F).setEnchantable(),
-                                                                            (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).setMaxDamagePercent(0.25F)
-                                                                                                                                             .setEnchantable(),
-                                                                            (new WeightedRandomFishable(new ItemStack(Items.book), 1)).setEnchantable());
+            new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
+            new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
+            new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
+            (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).setMaxDamagePercent(0.25F).setEnchantable(),
+            (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).setMaxDamagePercent(0.25F).setEnchantable(),
+            (new WeightedRandomFishable(new ItemStack(Items.book), 1)).setEnchantable());
+
     /**
      * possible drop list for level 1 building and without luck or speed
      */
     private static final List fishDrops = Arrays.asList(
-                                                                            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.getMetadata()), 60),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.getMetadata()),
-                                                                                                       25),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.fish,
-                                                                                                                     1,
-                                                                                                                     ItemFishFood.FishType.CLOWNFISH.getMetadata()),
-                                                                                                       2),
-                                                                            new WeightedRandomFishable(new ItemStack(Items.fish,
-                                                                                                                     1,
-                                                                                                                     ItemFishFood.FishType.PUFFERFISH.getMetadata()),
-                                                                                                       13));
+            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.getMetadata()), 60),
+            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.getMetadata()), 25),
+            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.getMetadata()), 2),
+            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.getMetadata()), 13));
     /**
      * 180 degree used in trig. functions
      */
-    private static final double HALF_CIRCLE                 = 180.0;
+    private static final double HALF_CIRCLE = 180.0;
+
     /**
      * Used as a speed multiplicator for drifting movement
      */
-    private static final double RANDOM_MOVEMENT_OFFSET      = 0.007499999832361937;
+    private static final double RANDOM_MOVEMENT_OFFSET = 0.007499999832361937;
+
     /**
      * Limits initial horizontal movement speed
      */
-    private static final double INITIAL_MOVEMENT_LIMITER    = 0.16;
+    private static final double INITIAL_MOVEMENT_LIMITER = 0.16;
+
     /**
      * The hook starts a bit lower
      */
-    private static final double SUNKEN_OFFSET               = 0.10000000149011612;
+    private static final double SUNKEN_OFFSET = 0.10000000149011612;
+
     /**
      * Multiplicator to get sum of edges
      */
-    private static final double NUM_BOUNDING_BOX_EDGES      = 4.0;
+    private static final double NUM_BOUNDING_BOX_EDGES = 4.0;
+
     /**
      * factor to scale up to distance
      */
-    private static final double DISTANCE_FACTOR             = 64.0;
+    private static final double DISTANCE_FACTOR = 64.0;
+
     /**
      * Limits horizontal movement speed while bouncing
      */
-    private static final double BOUNCE_MOVEMENT_LIMITER     = 0.2;
+    private static final double BOUNCE_MOVEMENT_LIMITER = 0.2;
+
     /**
      * Limits horizontal movement speed while in air
      */
-    private static final float  AIR_MOVEMENT_LIMITER        = 0.92F;
+    private static final float AIR_MOVEMENT_LIMITER = 0.92F;
+
     /**
      * Limits horizontal movement speed while on the ground
      */
-    private static final double GROUND_MOVEMENT_LIMITER     = 0.5;
+    private static final double GROUND_MOVEMENT_LIMITER = 0.5;
+
     /**
      * Limits horizontal movement speed while in the water
      */
-    private static final double WATER_MOVEMENT_LIMITER      = 0.03999999910593033;
+    private static final double WATER_MOVEMENT_LIMITER = 0.03999999910593033;
+
     /**
      * Chance to slow down fishing while the sky is not visible
      */
-    private static final double NO_CLEAR_SKY_CHANCE         = 0.5;
-    /**
-     * Chance to speed up fishing when lightning can strike
-     */
-    private static final double CAN_STRIKE_LIGHTNING_CHANCE = 0.25;
+    private static final double NO_CLEAR_SKY_CHANCE = 0.5;
+
     /**
      * Chance to get rare drops while fishing. Higher value leads to a lower chance.
      */
-    private static final double INCREASE_RARENESS_MODIFIER  = 7.5;
+    private static final double INCREASE_RARENESS_MODIFIER = 7.5;
+
     /**
      * The citizen who threw this rod
      */
     private EntityCitizen citizen;
+
     /**
      * The fishing speed enchantment level on the rod that threw this hook
      */
-    private int     fishingSpeedEnchantment;
+    private int fishingSpeedEnchantment;
+
     /**
      * The fishing loot enchantment level on the rod that threw this hook
      */
-    private int     fishingLootEnchantment;
+    private int fishingLootEnchantment;
+
     /**
      * If this hook is in the ground
      */
     private boolean inGround;
+
     /**
      * A counter for at what position in the shaking movement the hook is
      */
@@ -153,11 +161,13 @@ public final class EntityFishHook extends Entity
     private int     countdownFishNear;
     private int     countdownFishBites;
     private double  relativeRotation;
+
     /**
      * entity creation time.
      * Used to check it the hook got stuck.
      */
     private long    creationTime;
+
     /**
      * When a fish is on the hook, this will be true
      */
@@ -346,9 +356,16 @@ public final class EntityFishHook extends Entity
         //Check how much water is around the hook
         for (int j = 0; j < numSteps; ++j)
         {
-            double        d3             = this.getEntityBoundingBox().minY + (this.getEntityBoundingBox().maxY - this.getEntityBoundingBox().minY) * j / numSteps;
-            double        d4             = this.getEntityBoundingBox().minY + (this.getEntityBoundingBox().maxY - this.getEntityBoundingBox().minY) * (j + 1) / numSteps;
-            AxisAlignedBB axisAlignedBB1 = new AxisAlignedBB(this.getEntityBoundingBox().minX, d3, this.getEntityBoundingBox().minZ, this.getEntityBoundingBox().maxX, d4, this.getEntityBoundingBox().maxZ);
+            double d3 = this.getEntityBoundingBox().minY + (this.getEntityBoundingBox().maxY - this.getEntityBoundingBox().minY) * j / numSteps;
+            double d4 = this.getEntityBoundingBox().minY + (this.getEntityBoundingBox().maxY - this.getEntityBoundingBox().minY) * (j + 1) / numSteps;
+
+            AxisAlignedBB axisAlignedBB1 = new AxisAlignedBB(
+                    this.getEntityBoundingBox().minX,
+                    d3,
+                    this.getEntityBoundingBox().minZ,
+                    this.getEntityBoundingBox().maxX,
+                    d4,
+                    this.getEntityBoundingBox().maxZ);
 
             //If the hook is swimming
             if (this.worldObj.isAABBInMaterial(axisAlignedBB1, Material.water))
@@ -387,9 +404,7 @@ public final class EntityFishHook extends Entity
     {
         if (!this.worldObj.isRemote && waterDensity > 0.0)
         {
-
-            WorldServer worldServer         = (WorldServer) this.worldObj;
-            int         fishingProgressStep = 1;
+            int fishingProgressStep = 1;
 
             if (this.rand.nextDouble() < NO_CLEAR_SKY_CHANCE
                 && !this.worldObj.canBlockSeeSky(new BlockPos(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ))))
@@ -399,50 +414,15 @@ public final class EntityFishHook extends Entity
 
             if (this.countdownNoFish > 0)
             {
-                --this.countdownNoFish;
-
-                if (this.countdownNoFish <= 0)
-                {
-                    this.countdownFishNear = 0;
-                    this.countdownFishBites = 0;
-                }
-                else
-                {
-                    this.motionY -= (this.rand.nextDouble() * this.rand.nextDouble() * this.rand.nextDouble()) * BOUNCE_MOVEMENT_LIMITER;
-                }
+                updateNoFishCounter();
                 return;
             }
-            double bubbleY;
+
+            WorldServer worldServer = (WorldServer) this.worldObj;
 
             if (this.countdownFishNear > 0)
             {
-                this.countdownFishNear -= fishingProgressStep;
-                bubbleY = 0.15;
-
-                if (this.countdownFishNear < 20)
-                {
-                    bubbleY = bubbleY + (double) (20 - this.countdownFishNear) * 0.05;
-                }
-                else if (this.countdownFishNear < 40)
-                {
-                    bubbleY = bubbleY + (double) (40 - this.countdownFishNear) * 0.02;
-                }
-                else if (this.countdownFishNear < 60)
-                {
-                    bubbleY = bubbleY + (double) (60 - this.countdownFishNear) * 0.01;
-                }
-
-                if (this.rand.nextDouble() < bubbleY)
-                {
-                    renderLittleSplash(worldServer);
-
-                }
-
-                if (this.countdownFishNear <= 0)
-                {
-                    this.relativeRotation = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F);
-                    this.countdownFishBites = MathHelper.getRandomIntegerInRange(this.rand, 20, 80);
-                }
+                renderBubble(fishingProgressStep, worldServer);
                 return;
             }
 
@@ -450,16 +430,7 @@ public final class EntityFishHook extends Entity
             {
                 this.countdownFishBites -= fishingProgressStep;
 
-                if (this.countdownFishBites <= 0)
-                {
-                    //Show fish bite animation
-                    showFishBiteAnimation(worldServer);
-                }
-                else
-                {
-                    //Show fish swim animation
-                    showFishSwimmingTowardsHookAnimation(worldServer);
-                }
+                renderFishBiteOrSwim(worldServer);
             }
             else
             {
@@ -467,6 +438,67 @@ public final class EntityFishHook extends Entity
                 this.countdownFishNear -= fishingSpeedEnchantment * 20 * 5;
             }
 
+        }
+    }
+
+    private void renderFishBiteOrSwim(WorldServer worldServer)
+    {
+        if (this.countdownFishBites <= 0)
+        {
+            //Show fish bite animation
+            showFishBiteAnimation(worldServer);
+        }
+        else
+        {
+            //Show fish swim animation
+            showFishSwimmingTowardsHookAnimation(worldServer);
+        }
+    }
+
+    private void updateNoFishCounter()
+    {
+        --this.countdownNoFish;
+
+        if (this.countdownNoFish <= 0)
+        {
+            this.countdownFishNear = 0;
+            this.countdownFishBites = 0;
+        }
+        else
+        {
+            this.motionY -= (this.rand.nextDouble() * this.rand.nextDouble() * this.rand.nextDouble()) * BOUNCE_MOVEMENT_LIMITER;
+        }
+    }
+
+    private void renderBubble(int fishingProgressStep, WorldServer worldServer)
+    {
+        this.countdownFishNear -= fishingProgressStep;
+
+        double bubbleY = 0.15;
+
+        if (this.countdownFishNear < 20)
+        {
+            bubbleY = bubbleY + (double) (20 - this.countdownFishNear) * 0.05;
+        }
+        else if (this.countdownFishNear < 40)
+        {
+            bubbleY = bubbleY + (double) (40 - this.countdownFishNear) * 0.02;
+        }
+        else if (this.countdownFishNear < 60)
+        {
+            bubbleY = bubbleY + (double) (60 - this.countdownFishNear) * 0.01;
+        }
+
+        if (this.rand.nextDouble() < bubbleY)
+        {
+            renderLittleSplash(worldServer);
+
+        }
+
+        if (this.countdownFishNear <= 0)
+        {
+            this.relativeRotation = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F);
+            this.countdownFishBites = MathHelper.getRandomIntegerInRange(this.rand, 20, 80);
         }
     }
 
@@ -517,8 +549,8 @@ public final class EntityFishHook extends Entity
 
         double f3 = sinYPosition * 0.04;
         double f4 = cosYPosition * 0.04;
-        worldServer.spawnParticle(WATER_WAKE, bubbleX, increasedYPosition, bubbleZ, 0, f4, 0.01, (-f3), 1.0);
-        worldServer.spawnParticle(WATER_WAKE, bubbleX, increasedYPosition, bubbleZ, 0, (-f4), 0.01, f3, 1.0);
+        worldServer.spawnParticle(WATER_WAKE, bubbleX, increasedYPosition, bubbleZ, 0, f4, 0.01, -f3, 1.0);
+        worldServer.spawnParticle(WATER_WAKE, bubbleX, increasedYPosition, bubbleZ, 0, -f4, 0.01, f3, 1.0);
     }
 
     /**
@@ -532,11 +564,11 @@ public final class EntityFishHook extends Entity
     private void showFishBiteAnimation(final WorldServer worldServer)
     {
         this.motionY -= 0.20000000298023224D;
-        this.playSound("random.splash", ENTITY_SIZE, (float) (1.0D + (this.rand.nextDouble() - this.rand.nextDouble()) * 0.4D));
+        this.playSound("random.splash", ENTITY_SIZE, (float) (1.0D + this.rand.nextGaussian() * 0.4D));
         double bubbleY = Math.floor(this.getEntityBoundingBox().minY);
         worldServer.spawnParticle(WATER_BUBBLE,
                                   this.posX,
-                                  (bubbleY + 1.0),
+                                  bubbleY + 1.0,
                                   this.posZ,
                                   (int) (1.0 + this.width * 20.0),
                                   (double) this.width,
@@ -545,7 +577,7 @@ public final class EntityFishHook extends Entity
                                   0.20000000298023224);
         worldServer.spawnParticle(WATER_WAKE,
                                   this.posX,
-                                  (bubbleY + 1.0),
+                                  bubbleY + 1.0,
                                   this.posZ,
                                   (int) (1.0 + this.width * 20.0),
                                   (double) this.width,
@@ -609,6 +641,7 @@ public final class EntityFishHook extends Entity
     @Override
     public void writeEntityToNBT(NBTTagCompound unused)
     {
+        //We don't save this
     }
 
     /**
@@ -624,6 +657,12 @@ public final class EntityFishHook extends Entity
     public boolean equals(Object o)
     {
         return !(o == null || getClass() != o.getClass() || !super.equals(o));
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return getEntityId();
     }
 
     /**
@@ -660,9 +699,9 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Spawns a random loot from the loottable
+     * Spawns a random loot from the loot table
      * and some exp orbs.
-     * Should be calles when retrieving a hook.
+     * Should be called when retrieving a hook.
      * todo: Perhaps streamline this and directly add the items?
      *
      * @param citizen the fisherman getting the loot

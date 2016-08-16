@@ -2,15 +2,15 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.entity.ai.EntityAIWorkLumberjack;
-import com.minecolonies.entity.ai.Tree;
-import net.minecraft.entity.ai.EntityAITasks;
+import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
+import com.minecolonies.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * The Lumberjack job class
  */
-public class JobLumberjack extends Job
+public class JobLumberjack extends AbstractJob
 {
     private static final String TAG_TREE = "Tree";
     /**
@@ -29,9 +29,9 @@ public class JobLumberjack extends Job
     }
 
     /**
-     * Return a Localization label for the Job
+     * Return a Localization textContent for the Job
      *
-     * @return localization label String
+     * @return localization textContent String
      */
     @Override
     public String getName()
@@ -62,7 +62,7 @@ public class JobLumberjack extends Job
 
         NBTTagCompound treeTag = new NBTTagCompound();
 
-        if (tree != null)
+        if(tree != null)
         {
             tree.writeToNBT(treeTag);
         }
@@ -78,21 +78,21 @@ public class JobLumberjack extends Job
     {
         super.readFromNBT(compound);
 
-        if (compound.hasKey(TAG_TREE))
+        if(compound.hasKey(TAG_TREE))
         {
             tree = Tree.readFromNBT(compound.getCompoundTag(TAG_TREE));
         }
     }
 
     /**
-     * Override to add Job-specific AI tasks to the given EntityAITask list
+     * Generate your AI class to register.
      *
-     * @param tasks EntityAITasks list to add tasks to
+     * @return your personal AI instance.
      */
     @Override
-    public void addTasks(EntityAITasks tasks)
+    public AbstractAISkeleton generateAI()
     {
-        tasks.addTask(3, new EntityAIWorkLumberjack(this));
+        return new EntityAIWorkLumberjack(this);
     }
 
 }

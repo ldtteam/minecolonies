@@ -1,24 +1,64 @@
 package com.blockout.controls;
 
 import com.blockout.PaneParams;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+/**
+ * BlockOut implementation of a Vanilla Button.
+ */
 public class ButtonVanilla extends Button
 {
-    private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
+    /**
+     * Texture map that contains the button texture.
+     */
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
 
-    public ButtonVanilla(){ setSize(200, 20); }
+    private static final int DEFAULT_BUTTON_WIDTH = 200;
+    private static final int DEFAULT_BUTTON_HEIGHT = 20;
+
+    private static final int ENABLED_COLOR = 14737632;
+    private static final int HOVER_COLOR = 16777120;
+    private static final int DISABLED_COLOR = 10526880;
+
+    private static final int ENABLED_TEXTURE_V = 66;
+    private static final int HOVER_TEXTURE_V = 86;
+    private static final int DISABLED_TEXTURE_V = 46;
+
+    /**
+     * Default constructor.
+     */
+    public ButtonVanilla()
+    {
+        width = DEFAULT_BUTTON_WIDTH;
+        height = DEFAULT_BUTTON_HEIGHT;
+    }
+
+    /**
+     * Constructor called when loaded from xml.
+     *
+     * @param params PaneParams from xml file.
+     */
     public ButtonVanilla(PaneParams params)
     {
         super(params);
-        if (getWidth() == 0)    width = 200;
-        if (getHeight() == 0)   height = 20;
+        if (width == 0)
+        {
+            width = DEFAULT_BUTTON_WIDTH;
+        }
+        if (height == 0)
+        {
+            height = DEFAULT_BUTTON_HEIGHT;
+        }
     }
 
+    /**
+     * Draws a vanilla button.
+     *
+     * @param mx Mouse x (relative to parent)
+     * @param my Mouse y (relative to parent)
+     */
     @Override
     public void drawSelf(int mx, int my)
     {
@@ -27,34 +67,28 @@ public class ButtonVanilla extends Button
 
         boolean isMouseOver = isPointInPane(mx, my);
 
-        int u = 0,
-            v = enabled ? (isMouseOver ? 86 : 66) : 46; //  Base button
+        int u = 0;
+        int v = this.enabled ? (isMouseOver ? HOVER_TEXTURE_V : ENABLED_TEXTURE_V) : DISABLED_TEXTURE_V;
 
-        GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        if (width == 200 && height == 20)
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        if (width == DEFAULT_BUTTON_WIDTH && height == DEFAULT_BUTTON_HEIGHT)
         {
             //Full size button
             drawTexturedModalRect(x, y, u, v, width, height);
         }
         else
         {
-            drawTexturedModalRect(x, y, u, v, width/2, height/2);
-            drawTexturedModalRect(x+width/2, y, u +200 - width /2, v, width/2, height/2);
-            drawTexturedModalRect(x, y+height/2, u, v+20-height/2, width/2, height/2);
-            drawTexturedModalRect(x+width/2, y+height/2, u + 200-width/2, v+20-height/2, width/2, height/2);
+            drawTexturedModalRect(x, y, u, v, width / 2, height / 2);
+            drawTexturedModalRect(x + width / 2, y, u + DEFAULT_BUTTON_WIDTH - width / 2, v, width / 2, height / 2);
+            drawTexturedModalRect(x, y + height / 2, u, v + DEFAULT_BUTTON_HEIGHT - height / 2, width / 2, height / 2);
+            drawTexturedModalRect(x + width / 2, y + height / 2, u + DEFAULT_BUTTON_WIDTH - width / 2, v + DEFAULT_BUTTON_HEIGHT - height / 2, width / 2, height / 2);
         }
 
-        int textColor = enabled ? (isMouseOver ? 16777120 : 14737632) : 10526880;
-        drawCenteredString(mc.fontRendererObj, label, x + width / 2, y + (height - 8) / 2, textColor);
-    }
-
-    @Override
-    public void handleClick(int mx, int my)
-    {
-        mc.getSoundHandler().playSound(PositionedSoundRecord.create(soundClick, 1.0F));
-        super.handleClick(mx, my);
+        int textColor = this.enabled ? (isMouseOver ? HOVER_COLOR : ENABLED_COLOR) : DISABLED_COLOR;
+        drawCenteredString(this.mc.fontRendererObj, label, x + width / 2, y + (height - this.mc.fontRendererObj.FONT_HEIGHT) / 2, textColor);
     }
 }

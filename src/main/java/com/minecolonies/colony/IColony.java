@@ -1,7 +1,6 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.colony.permissions.IPermissions;
-
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 

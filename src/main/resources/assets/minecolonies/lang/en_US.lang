@@ -58,6 +58,13 @@ com.minecolonies.gui.buildtool.nodecoration=No Decorations
 com.minecolonies.gui.buildtool.hut=Huts
 com.minecolonies.gui.buildtool.decoration=Decorations
 
+com.minecolonies.gui.hiring.on=Manual
+com.minecolonies.gui.hiring.off=Automatic
+com.minecolonies.gui.hiring.buttonHire=Hire
+com.minecolonies.gui.hiring.description=Choose a worker for the job.
+com.minecolonies.gui.townHall.addPlayer=Add Player:
+com.minecolonies.gui.townHall.jobHiring=Worker Hiring Mode:
+
 tile.minecolonies.blockHutCitizen.name=Citizen's Hut
 tile.minecolonies.blockHutBaker.name=Bakery
 tile.minecolonies.blockHutBlacksmith.name=Forge
@@ -69,8 +76,10 @@ tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
 tile.minecolonies.blockHutMiner.name=Mine
 tile.minecolonies.blockHutStonemason.name=Quarry
 tile.minecolonies.blockHutTownHall.name=Town Hall
+tile.minecolonies.blockSubstitution.name=SchematicPlaceholder.
 
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
+tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
 
 com.minecolonies.job.Builder=Builder
 com.minecolonies.job.Deliveryman=Deliveryman
@@ -84,6 +93,7 @@ tile.blockHutTownHall.messageColonistDead=A colonist has died!
 tile.blockHutTownHall.messagePlacedAlready=You have placed a Town Hall already
 tile.blockHutTownHall.messageInvalidWorld=You can't place a town hall in this world type
 tile.blockHutTownHall.messageTooClose=Too close to existing town hall
+tile.blockHutTownHall.messageTooFar=Too far away from your Colony
 
 tile.blockHut.messageTooFarFromTownHall=You need to be closer to your town hall!
 tile.blockHut.messageNoTownHall=You need to place a town hall first!
@@ -109,9 +119,12 @@ item.caliper.message.cube=That's a %d by %d by %d cube.
 
 itemGroup.minecolonies=MineColonies
 
+entity.worker.inventoryFullChestFull=Please make space in my building chest. I am not able to dump my inventory.
+
 entity.builder.messageBuildStart=Started building %s
 entity.builder.messageBuildComplete=Finished building %s
 entity.builder.messageNeedMaterial=I need %s (Amount: %d)
+entity.builder.messageBuilderNecessary=Requiring a builder of level %d in order to build or upgrade this building.
 
 entity.miner.messageNeedTools=Need tool %s!
 entity.miner.messageNeedBlockAndItem=I need %s!
@@ -120,3 +133,5 @@ entity.miner.messageMoreBlocks=I need more %s!
 entity.miner.messageRequiresBetterHut=Please upgrade my hut to dig deeper!
 
 entity.fisherman.messageWaterTooFar=Fisherman's hut is too far from water!
+
+com.minecolonies.workOrderAdded=Build Request Created!

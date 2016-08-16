@@ -6,12 +6,26 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class PathJobMoveAwayFromLocation extends PathJob
+/**
+ * Job that handles moving away from something.
+ */
+public class PathJobMoveAwayFromLocation extends AbstractPathJob
 {
+    private static final double TIE_BREAKER = 1.001D;
+
     protected final BlockPos         avoid;
     protected final BlockPos heuristicPoint;
     protected final int              avoidDistance;
 
+    /**
+     * Prepares the PathJob for the path finding system.
+     *
+     * @param world world the entity is in.
+     * @param start starting location.
+     * @param avoid location to avoid.
+     * @param avoidDistance how far to move away.
+     * @param range max range to search.
+     */
     public PathJobMoveAwayFromLocation(World world, BlockPos start, BlockPos avoid, int avoidDistance, int range)
     {
         super(world, start, avoid, range);
@@ -19,8 +33,8 @@ public class PathJobMoveAwayFromLocation extends PathJob
         this.avoid = new BlockPos(avoid);
         this.avoidDistance = avoidDistance;
 
-        double dx = start.getX() - avoid.getX();
-        double dz = start.getZ() - avoid.getZ();
+        double dx = (double) (start.getX() - avoid.getX());
+        double dz = (double) (start.getZ() - avoid.getZ());
 
         double scalar = avoidDistance / Math.sqrt(dx * dx + dz * dz);
         dx *= scalar;
@@ -47,8 +61,8 @@ public class PathJobMoveAwayFromLocation extends PathJob
 
     /**
      * For MoveAwayFromLocation we want our heuristic to weight
-     * @param x,y,z Position to compute heuristic from
-     * @return
+     * @param pos Position to compute heuristic from
+     * @return heuristic as a double - Manhatten Distance with tie-breaker
      */
     @Override
     protected double computeHeuristic(BlockPos pos)
@@ -58,8 +72,7 @@ public class PathJobMoveAwayFromLocation extends PathJob
         int dz = pos.getZ() - heuristicPoint.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker
-        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 1.001D;
-//        return Math.sqrt(avoid.getDistanceSquaredToChunkCoordinates(start) / avoid.getDistanceSquared(x, y, z));
+        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
     }
 
     @Override

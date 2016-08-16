@@ -1,14 +1,13 @@
 package com.minecolonies.proxy;
 
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.schematica.world.SchematicWorld;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
@@ -76,8 +75,6 @@ public class CommonProxy implements IProxy
         // See EntityTracker.addEntityToTracker for more default values
         EntityRegistry.registerModEntity(EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
         EntityRegistry.registerModEntity(EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
-
-
     }
 
     @Override
@@ -94,25 +91,10 @@ public class CommonProxy implements IProxy
     public void registerTileEntityRendering(){}
 
     @Override
-    public void registerKeyBindings(){}
-
-    @Override
-    public void showCitizenWindow(CitizenData.View citizen) {}
+    public void showCitizenWindow(CitizenDataView citizen) {}
 
     @Override
     public void openBuildToolWindow(BlockPos pos) {}
-
-    //Schematica
-    @Override
-    public void setActiveSchematic(SchematicWorld world)
-    {
-    }
-
-    @Override
-    public SchematicWorld getActiveSchematic()
-    {
-        return null;
-    }
 
     /**
      * Used for entity IDs, starts at 0 & increments for each call

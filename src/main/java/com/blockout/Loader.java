@@ -2,24 +2,19 @@ package com.blockout;
 
 import com.blockout.controls.*;
 import com.blockout.views.*;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.w3c.dom.Document;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -28,9 +23,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Loader
+/**
+ * Utilities to load xml files.
+ */
+public final class Loader
 {
-    public static Logger logger = LogManager.getLogger("BlockOut");
+    private static final Logger logger = LogManager.getLogger("BlockOut");
 
     private static Map<String, Constructor<? extends Pane>> paneConstructorMap = new HashMap<>();
 
@@ -51,6 +49,11 @@ public class Loader
         register("switch", SwitchView.class);
     }
 
+    private Loader()
+    {
+        // Hides default constructor.
+    }
+
     private static String makeFactoryKey(String name, String style)
     {
         return name + ":" + (style != null ? style : "");
@@ -63,9 +66,9 @@ public class Loader
         if (paneConstructorMap.containsKey(key))
         {
             throw new IllegalArgumentException("Duplicate pane type '"
-                                               + name + "' of style '"
-                                               + style + "' when registering Pane class mapping for "
-                                               + paneClass.getName());
+                    + name + "' of style '"
+                    + style + "' when registering Pane class mapping for "
+                    + paneClass.getName());
         }
 
         try
@@ -76,7 +79,7 @@ public class Loader
         catch (NoSuchMethodException exception)
         {
             throw new IllegalArgumentException("Missing (XMLNode) constructor for type '"
-                                               + name + "' when adding Pane class mapping for " + paneClass.getName());
+                    + name + "' when adding Pane class mapping for " + paneClass.getName(), exception);
         }
     }
 
@@ -117,9 +120,16 @@ public class Loader
         return null;
     }
 
+    /**
+     * Create a pane from its xml parameters.
+     *
+     * @param params xml parameters.
+     * @param parent parent view.
+     * @return the new pane.
+     */
     public static Pane createFromPaneParams(PaneParams params, View parent)
     {
-        if (params.getType().equalsIgnoreCase("layout"))
+        if ("layout".equalsIgnoreCase(params.getType()))
         {
             String resource = params.getStringAttribute("source", null);
             if (resource != null)
@@ -144,8 +154,9 @@ public class Loader
 
     /**
      * Parse an XML Document into contents for a View
-     * @param doc
-     * @param parent
+     *
+     * @param doc    xml document.
+     * @param parent parent view.
      */
     private static void createFromXML(Document doc, View parent)
     {
@@ -154,7 +165,7 @@ public class Loader
         PaneParams root = new PaneParams(doc.getDocumentElement());
         if (parent instanceof Window)
         {
-            ((Window)parent).loadParams(root);
+            ((Window) parent).loadParams(root);
         }
 
         for (PaneParams child : root.getChildren())
@@ -166,8 +177,8 @@ public class Loader
     /**
      * Parse XML from an InputSource into contents for a View
      *
-     * @param input
-     * @param parent
+     * @param input  xml file.
+     * @param parent parent view.
      */
     private static void createFromXML(InputSource input, View parent)
     {
@@ -228,7 +239,7 @@ public class Loader
     {
         try
         {
-            if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
             {
                 return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
             }
@@ -237,7 +248,7 @@ public class Loader
                 return Loader.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
             }
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             logger.error("IOException Loader.java", e);
         }

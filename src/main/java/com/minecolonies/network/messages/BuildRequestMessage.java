@@ -2,7 +2,7 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.buildings.Building;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
@@ -18,24 +18,45 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
 {
-    private             BlockPos        buildingId;
-    private             int              colonyId;
-    private             int              mode;
+    /**
+     * The id of the building.
+     */
+    private BlockPos buildingId;
+    /**
+     * The id of the colony.
+     */
+    private int colonyId;
+    /**
+     * The mode id.
+     */
+    private int mode;
 
-
+    /**
+     * The int mode for a build job.
+     */
     public static final int              BUILD  = 0;
+    /**
+     * The int mode for a repair job.
+     */
     public static final int              REPAIR = 1;
 
-
-    public BuildRequestMessage(){}
+    /**
+     * Empty constructor
+     */
+    public BuildRequestMessage()
+    {
+        /*
+         * Required standard constructor.
+         */
+    }
 
     /**
      * Creates a build request message
      *
-     * @param building      Building of the request
+     * @param building      AbstractBuilding of the request
      * @param mode          Mode of the request, 1 is repair, 0 is build
      */
-    public BuildRequestMessage(Building.View building, int mode)
+    public BuildRequestMessage(AbstractBuilding.View building, int mode)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -67,12 +88,12 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
             return null;
         }
 
-        Building building = colony.getBuilding(message.buildingId);
+        AbstractBuilding building = colony.getBuilding(message.buildingId);
         if (building == null)
         {
             return null;
         }
-
+        
         switch(message.mode)
         {
             case BUILD:
@@ -80,6 +101,8 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
                 break;
             case REPAIR:
                 building.requestRepair();
+                break;
+            default:
                 break;
         }
 

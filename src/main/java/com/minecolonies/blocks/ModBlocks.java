@@ -8,11 +8,7 @@ import net.minecraft.block.Block;
  */
 public final class ModBlocks
 {
-    private ModBlocks()
-    {
-    }
-
-    /**
+    /*
      * Creating objects for all blocks in the mod.
      * References can be made to here.
      */
@@ -27,9 +23,12 @@ public final class ModBlocks
     public static final Block blockHutStonemason = new BlockHutStonemason();
     public static final Block blockHutFarmer     = new BlockHutFarmer();
     public static final Block blockHutFisherman  = new BlockHutFisherman();
+    public static final Block blockSubstitution  = new BlockSubstitution();
 
-    public static void init()
+    /**
+     * private constructor to hide the implicit public one.
+     */
+    private ModBlocks()
     {
-
     }
 }

@@ -1,7 +1,6 @@
 package com.minecolonies.proxy;
 
-import com.minecolonies.colony.CitizenData;
-import com.schematica.world.SchematicWorld;
+import com.minecolonies.colony.CitizenDataView;
 import net.minecraft.util.BlockPos;
 
 public interface IProxy
@@ -17,11 +16,6 @@ public interface IProxy
      * Method to register Tile Entities in
      */
     void registerTileEntities();
-
-    /**
-     * Method to register Key Bindings in
-     */
-    void registerKeyBindings();
 
     /**
      * Method to register events in
@@ -46,9 +40,9 @@ public interface IProxy
     /**
      * Method to display the citizen window
      *
-     * @param citizen       {@link com.minecolonies.colony.CitizenData.View}
+     * @param citizen       {@link CitizenDataView}
      */
-    void showCitizenWindow(CitizenData.View citizen);
+    void showCitizenWindow(CitizenDataView citizen);
 
     /**
      * Opens a build tool window
@@ -56,23 +50,6 @@ public interface IProxy
      * @param pos     coordinates
      */
     void openBuildToolWindow(BlockPos pos);
-
-    //Schematica
-
-    /**
-     * Sets the active schematica.
-     * The current {@link SchematicWorld} os given
-     *
-     * @param world     {@link SchematicWorld}
-     */
-    void setActiveSchematic(SchematicWorld world);
-
-    /**
-     * Returns the active schematica
-     *
-     * @return          {@link SchematicWorld}
-     */
-    SchematicWorld getActiveSchematic();
     
     /**
      * Registers all block and item renderers.

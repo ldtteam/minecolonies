@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-/*
+/**
  * A View is a Pane which can contain other Panes
  */
 public class View extends Pane
 {
-    protected List<Pane> children = new ArrayList<Pane>();
+    protected List<Pane> children = new ArrayList<>();
     protected int padding = 0;
 
     /**
@@ -34,15 +34,29 @@ public class View extends Pane
         padding = params.getIntegerAttribute("padding", padding);
     }
 
-    public List<Pane> getChildren() { return children; }
+    public List<Pane> getChildren()
+    {
+        return children;
+    }
 
-    public int getInteriorWidth() { return width - (padding * 2); }
-    public int getInteriorHeight() { return height - (padding * 2); }
+    public int getInteriorWidth()
+    {
+        return width - (padding * 2);
+    }
 
+    public int getInteriorHeight()
+    {
+        return height - (padding * 2);
+    }
+
+    @Override
     public void parseChildren(PaneParams params)
     {
         List<PaneParams> childNodes = params.getChildren();
-        if (childNodes == null) return;
+        if (childNodes == null)
+        {
+            return;
+        }
 
         for (PaneParams node : childNodes)
         {
@@ -52,10 +66,10 @@ public class View extends Pane
 
     protected void adjustChild(Pane child)
     {
-        int childX = child.getX(),
-            childY = child.getY();
-        int childWidth = child.getWidth(),
-            childHeight = child.getHeight();
+        int childX = child.getX();
+        int childY = child.getY();
+        int childWidth = child.getWidth();
+        int childHeight = child.getHeight();
 
         //  Negative width = 100% of parents width minus abs(width)
         if (childWidth < 0)
@@ -64,11 +78,11 @@ public class View extends Pane
         }
 
         //  Adjust for horizontal alignment
-        if (child.alignment.rightAligned)
+        if (child.alignment.isRightAligned())
         {
             childX = (getInteriorWidth() - childWidth) - childX;
         }
-        else if (child.alignment.horizontalCentered)
+        else if (child.alignment.isHorizontalCentered())
         {
             childX = ((getInteriorWidth() - childWidth) / 2) + childX;
         }
@@ -80,11 +94,11 @@ public class View extends Pane
         }
 
         //  Adjust for vertical alignment
-        if (child.alignment.bottomAligned)
+        if (child.alignment.isBottomAligned())
         {
             childY = (getInteriorHeight() - childHeight) - childY;
         }
-        else if (child.alignment.verticalCentered)
+        else if (child.alignment.isVerticalCentered())
         {
             childY = ((getInteriorHeight() - childHeight) / 2) + childY;
         }
@@ -105,10 +119,10 @@ public class View extends Pane
 
     protected boolean childIsVisible(Pane child)
     {
-        return  child.getX() < getInteriorWidth() &&
+        return child.getX() < getInteriorWidth() &&
                 child.getY() < getInteriorHeight() &&
-               (child.getX() + child.getWidth()) >= 0 &&
-               (child.getY() + child.getHeight()) >= 0;
+                (child.getX() + child.getWidth()) >= 0 &&
+                (child.getY() + child.getHeight()) >= 0;
     }
 
     @Override
@@ -116,19 +130,17 @@ public class View extends Pane
     {
         //  Translate the drawing origin to our x,y
         GL11.glPushMatrix();
-        GL11.glTranslatef((float)x + padding, (float)y + padding, 0);
+
+        int paddedX = x + padding;
+        int paddedY = y + padding;
+
+        GL11.glTranslatef((float) paddedX, (float) paddedY, 0);
 
         //  Translate Mouse into the View
-        mx -= x + padding;
-        my -= y + padding;
+        int drawX = mx - paddedX;
+        int drawY = my - paddedY;
 
-        for (Pane child : children)
-        {
-            if (childIsVisible(child))
-            {
-                child.draw(mx, my);
-            }
-        }
+        children.stream().filter(this::childIsVisible).forEach(child -> child.draw(drawX, drawY));
 
         GL11.glPopMatrix();
     }
@@ -177,6 +189,11 @@ public class View extends Pane
         return null;
     }
 
+    /**
+     * Add child Pane to this view.
+     *
+     * @param child pane to add.
+     */
     public void addChild(Pane child)
     {
         child.setWindow(getWindow());
@@ -184,12 +201,15 @@ public class View extends Pane
         adjustChild(child);
     }
 
+    /**
+     * Remove pane from view.
+     *
+     * @param child pane to remove.
+     */
     public void removeChild(Pane child)
     {
         children.remove(child);
     }
-
-    //public void removeAllChildren() { children.clear(); }
 
     //  Mouse
     @Override
@@ -211,9 +231,6 @@ public class View extends Pane
     @Override
     public void onUpdate()
     {
-        for (Pane child : children)
-        {
-            child.onUpdate();
-        }
+        children.forEach(Pane::onUpdate);
     }
 }
