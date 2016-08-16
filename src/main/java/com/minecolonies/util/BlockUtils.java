@@ -1,11 +1,12 @@
 package com.minecolonies.util;
 
 import com.minecolonies.blocks.AbstractBlockHut;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDoor;
+import net.minecraft.block.*;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 
 import java.util.Arrays;
 import java.util.List;
@@ -105,5 +106,133 @@ public final class BlockUtils
     {
         return Objects.equals(iBlockState, Blocks.water.getDefaultState())
                || Objects.equals(iBlockState, Blocks.flowing_water.getDefaultState());
+    }
+
+    /**
+     * Gets an item from a block.
+     * @param block input block.
+     * @return output item.
+     */
+    public static Item getItemFromBlock(Block block)
+    {
+        if(block instanceof BlockBanner)
+        {
+            return Items.banner;
+        }
+        else if(block instanceof BlockBed)
+        {
+            return Items.bed;
+        }
+        else if(block instanceof BlockBrewingStand)
+        {
+            return Items.brewing_stand;
+        }
+        else if(block instanceof BlockCake)
+        {
+            return Items.cake;
+        }
+        else if(block instanceof BlockCauldron)
+        {
+            return Items.cauldron;
+        }
+        else if(block instanceof BlockCocoa)
+        {
+            return Items.dye;
+        }
+        else if(block instanceof BlockCrops)
+        {
+            if(block instanceof BlockCarrot)
+            {
+                return Items.carrot;
+            }
+            else if(block instanceof BlockPotato)
+            {
+                return Items.potato;
+            }
+            return Items.wheat_seeds;
+        }
+        else if(block instanceof BlockDaylightDetector)
+        {
+            return Item.getItemFromBlock(Blocks.daylight_detector);
+        }
+        else if(block instanceof BlockDoor)
+        {
+            return block == Blocks.iron_door ? Items.iron_door : (block == Blocks.spruce_door ? Items.spruce_door :
+                                                                  (block == Blocks.birch_door ? Items.birch_door :
+                                                                   (block == Blocks.jungle_door ? Items.jungle_door :
+                                                                    (block == Blocks.acacia_door ? Items.acacia_door :
+                                                                     (block == Blocks.dark_oak_door ? Items.dark_oak_door : Items.oak_door)))));
+        }
+        else if(block instanceof BlockFarmland)
+        {
+            return Item.getItemFromBlock(Blocks.dirt);
+        }
+        else if(block instanceof BlockFlowerPot)
+        {
+            return Items.flower_pot;
+        }
+        else if(block instanceof BlockFurnace)
+        {
+            return Item.getItemFromBlock(Blocks.furnace);
+        }
+        else if(block instanceof BlockNetherWart)
+        {
+            return Items.nether_wart;
+        }
+        else if(block instanceof BlockRedstoneComparator)
+        {
+            return Items.comparator;
+        }
+        else if(block instanceof BlockRedstoneLight)
+        {
+            return Item.getItemFromBlock(Blocks.redstone_lamp);
+        }
+        else if(block instanceof BlockRedstoneRepeater)
+        {
+            return Items.repeater;
+        }
+        else if(block instanceof BlockRedstoneTorch)
+        {
+            return Item.getItemFromBlock(Blocks.redstone_torch);
+        }
+        else if(block instanceof BlockRedstoneWire)
+        {
+            return Items.redstone;
+        }
+        else if(block instanceof BlockReed)
+        {
+            return Items.reeds;
+        }
+        else if(block instanceof BlockSign)
+        {
+            return Items.sign;
+        }
+        else if(block instanceof BlockSkull)
+        {
+            return Items.skull;
+        }
+        else if(block instanceof BlockStem)
+        {
+            Item item =  block == Blocks.pumpkin ? Items.pumpkin_seeds : (block == Blocks.melon_block ? Items.melon_seeds : null);
+            return item != null ? item : null;
+        }
+        else if(block instanceof BlockStoneSlab)
+        {
+            return Item.getItemFromBlock(Blocks.stone_slab);
+        }
+        else if(block instanceof BlockStoneSlabNew)
+        {
+            return Item.getItemFromBlock(Blocks.stone_slab2);
+        }
+        else if(block instanceof BlockTripWire)
+        {
+            return Items.string;
+        }
+        else if(block instanceof BlockWoodSlab)
+        {
+            return Item.getItemFromBlock(Blocks.wooden_slab);
+        }
+
+        return null;
     }
 }
