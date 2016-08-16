@@ -111,9 +111,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private Supplier<AIState> generateSchematicIterator(Function<Structure.SchematicBlock, Boolean> evaluationFunction, AIState nextState)
     {
-        // do not replace with method reference, this one stays the same on changing reference for currentStructure
-        Supplier<Structure.SchematicBlock> getCurrentBlock = currentStructure::getCurrentBlock;
-        Supplier<Structure.Result>         advanceBlock    = currentStructure::advanceBlock;
+        //do not replace with method reference, this one stays the same on changing reference for currentStructure
+        //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
+        Supplier<Structure.SchematicBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
+        Supplier<Structure.Result>         advanceBlock    = () -> currentStructure.advanceBlock();
 
         return () -> {
             Structure.SchematicBlock currentBlock = getCurrentBlock.get();
