@@ -319,7 +319,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             job.clearItemsNeeded();
             return IDLE;
         }
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             delay += DELAY_RECHECK;
             ItemStack first = itemsCurrentlyNeeded.get(0);

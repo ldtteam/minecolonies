@@ -178,6 +178,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         worker.setSkillModifier(
                 INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                 + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
+        worker.setCanPickUpLoot(true);
     }
 
     /**

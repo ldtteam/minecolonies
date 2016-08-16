@@ -331,7 +331,7 @@ public class Tree
      */
     public boolean hasLogs()
     {
-        return woodBlocks.isEmpty();
+        return !woodBlocks.isEmpty();
     }
 
     /**
