@@ -11,7 +11,6 @@ import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.WorkOrderView;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
-import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.ToggleJobMessage;
@@ -307,7 +306,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         workOrders.addAll(townHall.getColony().getWorkOrders());
         //todo sort them by priority.
         //todo create different lists for different workOrders
-        //todo add message when buildOrder has been created.
         //todo sort java list few elements by x
     }
 

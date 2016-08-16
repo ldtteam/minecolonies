@@ -190,7 +190,6 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         if(colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
         {
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(decoration, style, rotation, buildPos));
-            LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.workOrderAdded");
         }
     }
 }
