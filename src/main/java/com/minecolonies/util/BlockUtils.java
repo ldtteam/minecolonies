@@ -115,124 +115,132 @@ public final class BlockUtils
      */
     public static Item getItemFromBlock(Block block)
     {
+        Item item = null;
+
         if(block instanceof BlockBanner)
         {
-            return Items.banner;
+            item = Items.banner;
         }
         else if(block instanceof BlockBed)
         {
-            return Items.bed;
+            item = Items.bed;
         }
         else if(block instanceof BlockBrewingStand)
         {
-            return Items.brewing_stand;
+            item = Items.brewing_stand;
         }
         else if(block instanceof BlockCake)
         {
-            return Items.cake;
+            item = Items.cake;
         }
         else if(block instanceof BlockCauldron)
         {
-            return Items.cauldron;
+            item = Items.cauldron;
         }
         else if(block instanceof BlockCocoa)
         {
-            return Items.dye;
+            item = Items.dye;
         }
         else if(block instanceof BlockCrops)
         {
             if(block instanceof BlockCarrot)
             {
-                return Items.carrot;
+                item = Items.carrot;
             }
             else if(block instanceof BlockPotato)
             {
-                return Items.potato;
+                item = Items.potato;
             }
-            return Items.wheat_seeds;
+            else
+            {
+                item = Items.wheat_seeds;
+            }
         }
         else if(block instanceof BlockDaylightDetector)
         {
-            return Item.getItemFromBlock(Blocks.daylight_detector);
+            item = Item.getItemFromBlock(Blocks.daylight_detector);
         }
         else if(block instanceof BlockDoor)
         {
-            return block == Blocks.iron_door ? Items.iron_door : (block == Blocks.spruce_door ? Items.spruce_door :
-                                                                  (block == Blocks.birch_door ? Items.birch_door :
-                                                                   (block == Blocks.jungle_door ? Items.jungle_door :
-                                                                    (block == Blocks.acacia_door ? Items.acacia_door :
-                                                                     (block == Blocks.dark_oak_door ? Items.dark_oak_door : Items.oak_door)))));
+            item = block == Blocks.iron_door ? Items.iron_door
+                                             : (block == Blocks.spruce_door ? Items.spruce_door
+                                             : (block == Blocks.birch_door ? Items.birch_door
+                                             : (block == Blocks.jungle_door ? Items.jungle_door
+                                             : (block == Blocks.acacia_door ? Items.acacia_door
+                                             : (block == Blocks.dark_oak_door ? Items.dark_oak_door
+                                             : Items.oak_door)))));
         }
         else if(block instanceof BlockFarmland)
         {
-            return Item.getItemFromBlock(Blocks.dirt);
+            item = Item.getItemFromBlock(Blocks.dirt);
         }
         else if(block instanceof BlockFlowerPot)
         {
-            return Items.flower_pot;
+            item = Items.flower_pot;
         }
         else if(block instanceof BlockFurnace)
         {
-            return Item.getItemFromBlock(Blocks.furnace);
+            item = Item.getItemFromBlock(Blocks.furnace);
         }
         else if(block instanceof BlockNetherWart)
         {
-            return Items.nether_wart;
+            item = Items.nether_wart;
         }
         else if(block instanceof BlockRedstoneComparator)
         {
-            return Items.comparator;
+            item = Items.comparator;
         }
         else if(block instanceof BlockRedstoneLight)
         {
-            return Item.getItemFromBlock(Blocks.redstone_lamp);
+            item = Item.getItemFromBlock(Blocks.redstone_lamp);
         }
         else if(block instanceof BlockRedstoneRepeater)
         {
-            return Items.repeater;
+            item = Items.repeater;
         }
         else if(block instanceof BlockRedstoneTorch)
         {
-            return Item.getItemFromBlock(Blocks.redstone_torch);
+            item = Item.getItemFromBlock(Blocks.redstone_torch);
         }
         else if(block instanceof BlockRedstoneWire)
         {
-            return Items.redstone;
+            item = Items.redstone;
         }
         else if(block instanceof BlockReed)
         {
-            return Items.reeds;
+            item = Items.reeds;
         }
         else if(block instanceof BlockSign)
         {
-            return Items.sign;
+            item = Items.sign;
         }
         else if(block instanceof BlockSkull)
         {
-            return Items.skull;
+            item = Items.skull;
         }
         else if(block instanceof BlockStem)
         {
-            Item item =  block == Blocks.pumpkin ? Items.pumpkin_seeds : (block == Blocks.melon_block ? Items.melon_seeds : null);
-            return item != null ? item : null;
+            item =  block == Blocks.pumpkin ? Items.pumpkin_seeds
+                                                 : (block == Blocks.melon_block ? Items.melon_seeds
+                                                 : null);
         }
         else if(block instanceof BlockStoneSlab)
         {
-            return Item.getItemFromBlock(Blocks.stone_slab);
+            item = Item.getItemFromBlock(Blocks.stone_slab);
         }
         else if(block instanceof BlockStoneSlabNew)
         {
-            return Item.getItemFromBlock(Blocks.stone_slab2);
+            item = Item.getItemFromBlock(Blocks.stone_slab2);
         }
         else if(block instanceof BlockTripWire)
         {
-            return Items.string;
+            item = Items.string;
         }
         else if(block instanceof BlockWoodSlab)
         {
-            return Item.getItemFromBlock(Blocks.wooden_slab);
+            item = Item.getItemFromBlock(Blocks.wooden_slab);
         }
 
-        return null;
+        return item;
     }
 }
