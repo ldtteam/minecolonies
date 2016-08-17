@@ -15,11 +15,13 @@ import java.util.stream.Collectors;
  */
 public class WorkManager
 {
+    /**
+     * The Colony the workManager takes part of.
+     */
     protected final Colony colony;
-
-    //todo this map has to be reordered
     private Map<Integer, AbstractWorkOrder> workOrders      = new LinkedHashMap<>();
     private int                     topWorkOrderId = 0;
+    private int                     topPriority = 0;
 
     private static  final   String                  TAG_WORK_ORDERS                 = "workOrders";
 
@@ -30,6 +32,7 @@ public class WorkManager
      * Checks if there has been changes.
      */
     private boolean dirty = false;
+
     /**
      * Constructor, saves reference to the colony.
      *
@@ -52,7 +55,9 @@ public class WorkManager
         if (order.getID() == 0)
         {
             topWorkOrderId++;
+            topPriority++;
             order.setID(topWorkOrderId);
+            order.setPriority(topPriority);
         }
 
         workOrders.put(order.getID(), order);
@@ -206,6 +211,7 @@ public class WorkManager
                 }
 
                 topWorkOrderId = Math.max(topWorkOrderId, o.getID());
+                topPriority = Math.max(topPriority, o.getPriority());
             }
         }
     }

@@ -104,6 +104,7 @@ public class WorkOrderView
     }
     /**
      * Deserialize the attributes and variables from transition.
+     * Buffer may be not readable because the workOrderView may be null.
      *
      * @param buf Byte buffer to deserialize.
      */

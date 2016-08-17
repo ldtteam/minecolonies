@@ -109,8 +109,8 @@ public class Colony implements IColony
     /**
      * Load a saved colony
      *
-     * @param compound  The NBT compound containing the colony's data
-     * @return          loaded colony
+     * @param compound  The NBT compound containing the colony's data.
+     * @return          loaded colony.
      */
     public static Colony loadColony(NBTTagCompound compound)
     {
@@ -164,11 +164,11 @@ public class Colony implements IColony
     }
 
     /**
-     * Write colony to save data
+     * Write colony to save data.
      *
-     * @param compound  compound to write to
+     * @param compound  compound to write to.
      */
-    void writeToNBT(NBTTagCompound compound)
+    protected void writeToNBT(NBTTagCompound compound)
     {
         //  Core attributes
         compound.setInteger(TAG_ID, id);
@@ -211,9 +211,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Returns the ID of the colony
+     * Returns the ID of the colony.
      *
-     * @return      Colony ID
+     * @return      Colony ID.
      */
     public int getID()
     {
@@ -221,9 +221,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Returns the dimension ID
+     * Returns the dimension ID.
      *
-     * @return      Dimension ID
+     * @return      Dimension ID.
      */
     public int getDimensionId()
     {
@@ -233,7 +233,7 @@ public class Colony implements IColony
     /**
      * Returns the world the colony is in.
      *
-     * @return      World the colony is in
+     * @return      World the colony is in.
      */
     public World getWorld()
     {
@@ -247,10 +247,10 @@ public class Colony implements IColony
     }
 
     /**
-     * Sets the name of the colony
-     * Marks dirty
+     * Sets the name of the colony.
+     * Marks dirty.
      *
-     * @param n     new name
+     * @param n     new name.
      */
     public void setName(String n)
     {
@@ -259,9 +259,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Returns the center of the colony
+     * Returns the center of the colony.
      *
-     * @return      Chunk Coordinates of the center of the colony
+     * @return      Chunk Coordinates of the center of the colony.
      */
     public BlockPos getCenter()
     {
@@ -269,7 +269,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Marks the instance dirty
+     * Marks the instance dirty.
      */
     private void markDirty()
     {
@@ -277,7 +277,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Marks citizen data dirty
+     * Marks citizen data dirty.
      */
     public void markCitizensDirty()
     {
@@ -285,7 +285,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Marks building data dirty
+     * Marks building data dirty.
      */
     public void markBuildingsDirty()
     {
@@ -314,9 +314,9 @@ public class Colony implements IColony
     }
 
     /**
-     * When the Colony's world is loaded, associate with it
+     * When the Colony's world is loaded, associate with it.
      *
-     * @param w     World object
+     * @param w     World object.
      */
     public void onWorldLoad(World w)
     {
@@ -327,9 +327,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Unsets the world if the world unloads
+     * Unsets the world if the world unloads.
      *
-     * @param w     World object
+     * @param w     World object.
      */
     public void onWorldUnload(World w)
     {
@@ -342,7 +342,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Any per-server-tick logic should be performed here
+     * Any per-server-tick logic should be performed here.
      *
      * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
@@ -360,9 +360,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Any per-world-tick logic should be performed here
+     * Any per-world-tick logic should be performed here.
      * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
-     * Use onServerTick for logic that should _always_ run
+     * Use onServerTick for logic that should _always_ run.
      *
      * @param event     {@link TickEvent.WorldTickEvent}
      */
@@ -422,7 +422,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Update Subscribers with Colony, Citizen, and AbstractBuilding Views
+     * Update Subscribers with Colony, Citizen, and AbstractBuilding Views.
      */
     public void updateSubscribers()
     {
@@ -474,19 +474,19 @@ public class Colony implements IColony
             //      - To Subscribers if the data changes
             //      - To New Subscribers even if it hasn't changed
 
-            //  ColonyView
+            //ColonyView
             sendColonyViewPackets(oldSubscribers, hasNewSubscribers);
 
-            // Permissions
+            //Permissions
             sendPermissionsPackets(oldSubscribers, hasNewSubscribers);
 
-            //workOrders
+            //WorkOrders
             sendWorkOrderPackets(oldSubscribers,hasNewSubscribers);
 
-            //  Citizens
+            //Citizens
             sendCitizenPackets(oldSubscribers, hasNewSubscribers);
 
-            //  Buildings
+            //Buildings
             sendBuildingPackets(oldSubscribers, hasNewSubscribers);
         }
 
@@ -499,6 +499,11 @@ public class Colony implements IColony
         citizens.values().forEach(CitizenData::clearDirty);
     }
 
+    /**
+     * Sends packages to update the buildings.
+     * @param oldSubscribers the existing subscribers.
+     * @param hasNewSubscribers the new subscribers.
+     */
     private void sendBuildingPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
         if (isBuildingsDirty || hasNewSubscribers)
@@ -517,6 +522,11 @@ public class Colony implements IColony
         }
     }
 
+    /**
+     * Sends packages to update the citizens.
+     * @param oldSubscribers the existing subscribers.
+     * @param hasNewSubscribers the new subscribers.
+     */
     private void sendCitizenPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
         if (isCitizensDirty || hasNewSubscribers)
@@ -535,27 +545,39 @@ public class Colony implements IColony
         }
     }
 
+    /**
+     * Sends packages to update the workOrders.
+     * @param oldSubscribers the existing subscribers.
+     * @param hasNewSubscribers the new subscribers.
+     */
     private void sendWorkOrderPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
         if (getWorkManager().isDirty() || hasNewSubscribers)
         {
-            getWorkManager().setDirty(false);
             int i = 0;
             for (AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
             {
 
                 ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, workOrder , i++);
-                subscribers.forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
+                subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
+                           .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
             }
 
-            if(getWorkManager().getWorkOrders().isEmpty())
+            if(getWorkManager().getWorkOrders().isEmpty() && getWorkManager().isDirty())
             {
                 ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, null , 0);
-                subscribers.forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
+                subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
+                           .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
             }
+            getWorkManager().setDirty(false);
         }
     }
 
+    /**
+     * Sends packages to update the permissions.
+     * @param oldSubscribers the existing subscribers.
+     * @param hasNewSubscribers the new subscribers.
+     */
     private void sendPermissionsPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
         if(permissions.isDirty() || hasNewSubscribers)
@@ -699,10 +721,10 @@ public class Colony implements IColony
     }
 
     /**
-     * Returns a map with all buildings within the colony
-     * Key is ID (Coordinates), value is building object
+     * Returns a map with all buildings within the colony.
+     * Key is ID (Coordinates), value is building object.
      *
-     * @return      Map with ID (coordinates) as key, and buildings as value
+     * @return      Map with ID (coordinates) as key, and buildings as value.
      */
     public Map<BlockPos, AbstractBuilding> getBuildings()
     {
@@ -710,9 +732,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Gets the town hall of the colony
+     * Gets the town hall of the colony.
      *
-     * @return      Town hall of the colony
+     * @return      Town hall of the colony.
      */
     public BuildingTownHall getTownHall()
     {
@@ -726,10 +748,10 @@ public class Colony implements IColony
     }
 
     /**
-     * Get building in Colony by ID
+     * Get building in Colony by ID.
      *
-     * @param buildingId    ID (coordinates) of the building to get
-     * @return              AbstractBuilding belonging to the given ID
+     * @param buildingId    ID (coordinates) of the building to get.
+     * @return              AbstractBuilding belonging to the given ID.
      */
     public AbstractBuilding getBuilding(BlockPos buildingId)
     {
@@ -739,9 +761,9 @@ public class Colony implements IColony
     /**
      * Get building in Colony by ID. The building will be casted to the provided type.
      *
-     * @param buildingId    ID (coordinates) of the building to get
-     * @param type          Type of building
-     * @param <B>           Building class
+     * @param buildingId    ID (coordinates) of the building to get.
+     * @param type          Type of building.
+     * @param <B>           Building class.
      * @return the building with the specified id.
      */
     public <B extends AbstractBuilding> B getBuilding(BlockPos buildingId, Class<B> type)
@@ -758,9 +780,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Add a AbstractBuilding to the Colony
+     * Add a AbstractBuilding to the Colony.
      *
-     * @param building      AbstractBuilding to add to the colony
+     * @param building AbstractBuilding to add to the colony.
      */
     private void addBuilding(AbstractBuilding building)
     {
@@ -775,10 +797,10 @@ public class Colony implements IColony
     }
 
     /**
-     * Creates a building from a tile entity and adds it to the colony
+     * Creates a building from a tile entity and adds it to the colony.
      *
-     * @param tileEntity    Tile entity to build a building from
-     * @return              AbstractBuilding that was created and added
+     * @param tileEntity Tile entity to build a building from.
+     * @return AbstractBuilding that was created and added.
      */
     public AbstractBuilding addNewBuilding(TileEntityColonyBuilding tileEntity)
     {
@@ -804,16 +826,15 @@ public class Colony implements IColony
         }
 
         calculateMaxCitizens();
-
         ColonyManager.markDirty();
 
         return building;
     }
 
     /**
-     * Remove a AbstractBuilding from the Colony (when it is destroyed)
+     * Remove a AbstractBuilding from the Colony (when it is destroyed).
      *
-     * @param building          AbstractBuilding to remove
+     * @param building AbstractBuilding to remove.
      */
     public void removeBuilding(AbstractBuilding building)
     {
@@ -836,7 +857,7 @@ public class Colony implements IColony
             townHall = null;
         }
 
-        //  Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
+        //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
         for (CitizenData citizen : citizens.values())
         {
             citizen.onRemoveBuilding(building);
@@ -867,9 +888,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Returns the max amount of citizens in the colony
+     * Returns the max amount of citizens in the colony.
      *
-     * @return          Max amount of citizens
+     * @return Max amount of citizens.
      */
     public int getMaxCitizens()
     {
@@ -877,7 +898,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Recalculates how many citizen can be in the colony
+     * Recalculates how many citizen can be in the colony.
      */
     public void calculateMaxCitizens()
     {
@@ -900,10 +921,10 @@ public class Colony implements IColony
     }
 
     /**
-     * Returns a map of citizens in the colony
-     * The map has ID as key, and citizen data as value
+     * Returns a map of citizens in the colony.
+     * The map has ID as key, and citizen data as value.
      *
-     * @return          Map of citizens in the colony, with as key the citizen ID, and as value the citiizen data
+     * @return          Map of citizens in the colony, with as key the citizen ID, and as value the citizen data.
      */
     public Map<Integer, CitizenData> getCitizens()
     {
@@ -911,13 +932,13 @@ public class Colony implements IColony
     }
 
     /**
-     * Removes a citizen from the colony
+     * Removes a citizen from the colony.
      *
-     * @param citizen   Citizen data to remove
+     * @param citizen Citizen data to remove.
      */
     public void removeCitizen(CitizenData citizen)
     {
-        //  Remove the Citizen
+        //Remove the Citizen
         citizens.remove(citizen.getId());
 
         for (AbstractBuilding building : buildings.values())
@@ -927,7 +948,7 @@ public class Colony implements IColony
 
         workManager.clearWorkForCitizen(citizen);
 
-        //  Inform Subscribers of removed citizen
+        //Inform Subscribers of removed citizen
         ColonyViewRemoveCitizenMessage msg = new ColonyViewRemoveCitizenMessage(this, citizen.getId());
         for (EntityPlayerMP player : subscribers)
         {
@@ -936,10 +957,10 @@ public class Colony implements IColony
     }
 
     /**
-     * Get citizen by ID
+     * Get citizen by ID.
      *
-     * @param citizenId ID of the Citizen
-     * @return          CitizenData associated with the ID, or null if it was not found
+     * @param citizenId ID of the Citizen.
+     * @return CitizenData associated with the ID, or null if it was not found.
      */
     public CitizenData getCitizen(int citizenId)
     {
@@ -947,9 +968,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Get the first unemployed citizen
+     * Get the first unemployed citizen.
      *
-     * @return          Citizen with no current job
+     * @return Citizen with no current job.
      */
     public CitizenData getJoblessCitizen()
     {
@@ -965,9 +986,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Get the Work Manager for the Colony
+     * Get the Work Manager for the Colony.
      *
-     * @return          WorkManager for the Colony
+     * @return WorkManager for the Colony.
      */
     public WorkManager getWorkManager()
     {
