@@ -646,7 +646,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (stack.getItem() == null)
             {
-                stack = new ItemStack(block.getItem(null, null));
+                stack = new ItemStack(BlockUtils.getItemFromBlock(block));
             }
 
             if (checkOrRequestItems(stack))
@@ -738,7 +738,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if (stack.getItem() == null)
         {
-            stack = new ItemStack(block.getItem(null, null));
+            stack = new ItemStack(BlockUtils.getItemFromBlock(block));
         }
 
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());

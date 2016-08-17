@@ -12,6 +12,7 @@ import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.event.ClientEventHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+import com.schematica.Settings;
 import com.schematica.client.renderer.RenderSchematic;
 import com.schematica.handler.client.TickHandler;
 import com.schematica.handler.client.WorldHandler;
@@ -67,6 +68,10 @@ public class ClientProxy extends CommonProxy
     @Override
     public void openBuildToolWindow(BlockPos pos)
     {
+        if (pos == null && Settings.instance.getActiveSchematic() == null) {
+            return;
+        }
+
         WindowBuildTool window = new WindowBuildTool(pos);
         window.open();
     }
