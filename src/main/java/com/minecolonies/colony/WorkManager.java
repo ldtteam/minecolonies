@@ -7,10 +7,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -21,7 +18,7 @@ public class WorkManager
     protected final Colony colony;
 
     //todo this map has to be reordered
-    private Map<Integer, AbstractWorkOrder> workOrders      = new HashMap<>();
+    private Map<Integer, AbstractWorkOrder> workOrders      = new LinkedHashMap<>();
     private int                     topWorkOrderId = 0;
 
     private static  final   String                  TAG_WORK_ORDERS                 = "workOrders";
@@ -241,7 +238,8 @@ public class WorkManager
 
             if ((event.world.getWorldTime() % WORK_ORDER_FULFILL_INCREMENT) == 0)
             {
-                workOrders.values().stream().filter(o -> !o.isClaimed()).forEach(o -> o.attemptToFulfill(colony));
+                workOrders.values().stream().filter(o -> !o.isClaimed()).sorted((first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0))
+                          .forEach(o -> o.attemptToFulfill(colony));
             }
         }
     }

@@ -188,12 +188,25 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private static final String HIDDEN_WORKORDER_ID = "hiddenId";
 
+    /**
+     * The position of the hidden id in the workOrder window.
+     */
     private static final int HIDDEN_ID_POSITION = 5;
 
     /**
      * Link to the xml file of the window.
      */
     private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownHall.xml";
+
+    /**
+     * The builders job description string.
+     */
+    private static final String BUILDER_JOB = "com.minecolonies.job.Builder";
+
+    /**
+     * The deliverymen job description string.
+     */
+    private static final String DELIVERYMEN_JOB = "com.minecolonies.job.Deliveryman";
 
     /**
      * The view of the current building.
@@ -286,7 +299,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 {
                     if (i-1 >= 0)
                     {
-                        workOrder.setPriority(workOrders.get(i-1).getPriority()+1);
+                        workOrder.setPriority(workOrders.get(i-1).getPriority());
+                        workOrders.get(i-1).setPriority(workOrder.getPriority());
+
                         MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrders.get(i-1).getPriority()+1));
                     }
                 }
@@ -294,7 +309,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 {
                     if (i+1 < workOrders.size())
                     {
-                        workOrder.setPriority(workOrders.get(i+1).getPriority()-1);
+                        workOrder.setPriority(workOrders.get(i+1).getPriority());
+                        workOrders.get(i+1).setPriority(workOrder.getPriority());
                         MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrders.get(i+1).getPriority()-1));
                     }
                 }
@@ -305,7 +321,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         }
         Collections.sort(workOrders, (first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
         window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
-        //todo send to server
     }
 
     /**
@@ -325,7 +340,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         }
         MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id , true, 0));
         window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
-        //todo send to server
     }
 
     /**
@@ -355,7 +369,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         workOrders.clear();
         workOrders.addAll(townHall.getColony().getWorkOrders());
         Collections.sort(workOrders, (first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
-        //todo create different lists for different workOrders
     }
 
     /**
@@ -368,10 +381,28 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         super.onOpened();
         int citizensSize = townHall.getColony().getCitizens().size();
 
-        //TODO - Base these on server-side computed statistics
         int workers     = 0;
         int builders    = 0;
         int deliverymen = 0;
+
+        for(CitizenDataView citizen: citizens)
+        {
+            switch(citizen.getJob())
+            {
+                case BUILDER_JOB:
+                    builders++;
+                    break;
+                case DELIVERYMEN_JOB:
+                    deliverymen++;
+                    break;
+                case "":
+                    break;
+                default:
+                    workers++;
+
+            }
+            workers += deliverymen + builders;
+        }
 
         String numberOfCitizens    = LanguageHandler.format("com.minecolonies.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
         String numberOfUnemployed  = LanguageHandler.format("com.minecolonies.gui.townHall.population.unemployed", citizensSize - workers);

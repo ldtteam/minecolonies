@@ -427,7 +427,7 @@ public class Permissions implements IPermissions
         GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(player);
 
         //Check if the player already exists so that their rank isn't overridden
-        return gameprofile != null && players.get(gameprofile.getId()) != null && addPlayer(gameprofile, rank);
+        return gameprofile != null && players.get(gameprofile.getId()) == null && addPlayer(gameprofile, rank);
 
     }
 

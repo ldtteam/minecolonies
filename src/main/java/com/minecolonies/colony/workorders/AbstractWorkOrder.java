@@ -64,6 +64,14 @@ public abstract class AbstractWorkOrder
         this.priority = priority;
     }
 
+    /**
+     * Getter for the priority.
+     */
+    public int getPriority()
+    {
+        return this.priority;
+    }
+
 
     /**
      * Checks if the workOrder has changed.
