@@ -39,9 +39,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private static final String RENDER_META_TORCH = "Torch";
     private static final int        NODE_DISTANCE             = 7;
     /**
-     * Return to chest after 5 stacks
+     * Return to chest after 3 stacks
      */
-    private static final int        MAX_BLOCKS_MINED          = 64 * 5;
+    private static final int        MAX_BLOCKS_MINED          = 64 * 3;
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
@@ -83,6 +83,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         worker.setSkillModifier(
                 2 * worker.getCitizenData().getStrength()
                 + worker.getCitizenData().getEndurance());
+        worker.setCanPickUpLoot(true);
     }
 
     //Miner wants to work but is not at building

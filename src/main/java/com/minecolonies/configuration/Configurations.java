@@ -11,8 +11,7 @@ public class Configurations
     public static final int CITIZEN_RESPAWN_INTERVAL_MIN    = 10;
     public static final int CITIZEN_RESPAWN_INTERVAL_MAX    = 600;
 
-    //TODO change to false when material handling is implemented
-    public static boolean   builderInfiniteResources        = true;
+    public static boolean   builderInfiniteResources        = false;
 
     //TODO change to false when material handling is implemented
     public static boolean   deliverymanInfiniteResources    = true;
