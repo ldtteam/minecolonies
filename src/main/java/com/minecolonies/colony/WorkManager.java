@@ -20,6 +20,7 @@ public class WorkManager
 {
     protected final Colony colony;
 
+    //todo this map has to be reordered
     private Map<Integer, AbstractWorkOrder> workOrders      = new HashMap<>();
     private int                     topWorkOrderId = 0;
 

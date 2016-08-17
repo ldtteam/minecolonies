@@ -56,6 +56,16 @@ public abstract class AbstractWorkOrder
     }
 
     /**
+     * Setter for the priority.
+     * @param priority the new priority.
+     */
+    public void setPriority(int priority)
+    {
+        this.priority = priority;
+    }
+
+
+    /**
      * Checks if the workOrder has changed.
      * @return true if so.
      */

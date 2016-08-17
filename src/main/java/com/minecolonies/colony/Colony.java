@@ -537,14 +537,20 @@ public class Colony implements IColony
 
     private void sendWorkOrderPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
-        //todo only if hasn't been claimed yet!
         if (getWorkManager().isDirty() || hasNewSubscribers)
         {
             getWorkManager().setDirty(false);
-
+            int i = 0;
             for (AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
             {
-                ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, workOrder);
+
+                ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, workOrder , i++);
+                subscribers.forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
+            }
+
+            if(getWorkManager().getWorkOrders().isEmpty())
+            {
+                ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, null , 0);
                 subscribers.forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
             }
         }

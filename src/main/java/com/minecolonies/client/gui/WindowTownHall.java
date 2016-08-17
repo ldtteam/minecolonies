@@ -14,6 +14,7 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.ToggleJobMessage;
+import com.minecolonies.network.messages.WorkOrderChangeMessage;
 import com.minecolonies.util.LanguageHandler;
 
 import java.util.*;
@@ -183,6 +184,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String WORK_LABEL =  "work";
 
     /**
+     * Id of the hidden workorder id in the GUI.
+     */
+    private static final String HIDDEN_WORKORDER_ID = "hiddenId";
+
+    private static final int HIDDEN_ID_POSITION = 5;
+
+    /**
      * Link to the xml file of the window.
      */
     private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownHall.xml";
@@ -257,7 +265,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton("up", this::updatePriority);
         registerButton("down", this::updatePriority);
         registerButton("delete", this::deleteWorkOrder);
-
     }
 
     /**
@@ -266,16 +273,59 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void updatePriority(Button button)
     {
-        //townHall.getColony().setPermission();
+        Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
+        int id = Integer.valueOf(idLabel.getLabelText());
+        String buttonLabel = button.getID();
+
+        for (int i = 0; i < workOrders.size(); i++)
+        {
+            WorkOrderView workOrder = workOrders.get(i);
+            if (workOrder.getId() == id)
+            {
+                if(buttonLabel.equals("up"))
+                {
+                    if (i-1 >= 0)
+                    {
+                        workOrder.setPriority(workOrders.get(i-1).getPriority()+1);
+                        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrders.get(i-1).getPriority()+1));
+                    }
+                }
+                else if (buttonLabel.equals("down"))
+                {
+                    if (i+1 < workOrders.size())
+                    {
+                        workOrder.setPriority(workOrders.get(i+1).getPriority()-1);
+                        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrders.get(i+1).getPriority()-1));
+                    }
+                }
+                workOrders.remove(i);
+                workOrders.add(workOrder);
+                break;
+            }
+        }
+        Collections.sort(workOrders, (first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
+        window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
+        //todo send to server
     }
 
     /**
      * On Button click remove the workOrder.
-     * @param ignored ignored.
+     * @param button the clicked button.
      */
-    private void deleteWorkOrder(Button ignored)
+    private void deleteWorkOrder(Button button)
     {
-
+        Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
+        int id = Integer.valueOf(idLabel.getLabelText());
+        for(int i = 0; i < workOrders.size(); i++)
+        {
+            if(workOrders.get(i).getId() == id)
+            {
+                workOrders.remove(i);
+            }
+        }
+        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id , true, 0));
+        window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
+        //todo send to server
     }
 
     /**
@@ -304,9 +354,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         workOrders.clear();
         workOrders.addAll(townHall.getColony().getWorkOrders());
-        //todo sort them by priority.
+        Collections.sort(workOrders, (first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
         //todo create different lists for different workOrders
-        //todo sort java list few elements by x
     }
 
     /**
@@ -435,12 +484,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Label.class).setLabelText(claimingCitizen);
 
                 //Invisible id textContent.
-                rowPane.findPaneOfTypeByID("hiddenId", Label.class).setLabelText(workOrder.getId() + "");
-
-
+                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Label.class).setLabelText(workOrder.getId() + "");
             }
         });
-
     }
 
     /**
@@ -503,9 +549,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             updateCitizens();
             window.findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class).refreshElementPanes();
         }
-        window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class);
+        updateWorkOrders();
+        window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
     }
-
 
     /**
      * Action performed when rename button is clicked

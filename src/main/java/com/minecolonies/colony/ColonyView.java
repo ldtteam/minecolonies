@@ -5,13 +5,11 @@ import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.TownHallRenameMessage;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.MathUtils;
-import com.sun.xml.internal.ws.api.pipe.FiberContextSwitchInterceptor;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -223,7 +221,7 @@ public final class ColonyView implements IColony
 
     public Collection<WorkOrderView> getWorkOrders()
     {
-        return workOrders.values();
+        return Collections.unmodifiableCollection(workOrders.values());
     }
 
     //todo send message to server for delete
@@ -299,16 +297,20 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Update a ColonyView's workOrders given a network data ColonyView update packet
-     * This uses a full-replacement - workOrders do not get updated and are instead overwritten
+     * Update a ColonyView's workOrders given a network data ColonyView update packet.
+     * This uses a full-replacement - workOrders do not get updated and are instead overwritten.
      *
      * @param buf       Network data
+     * @param order     is 0 if this is the first message after a change.
      * @return          null == no response
      */
-    public IMessage handleColonyViewWorkOrderMessage(ByteBuf buf)
+    public IMessage handleColonyViewWorkOrderMessage(ByteBuf buf, int order)
     {
-
-        //Todo create list etc
+        if(order == 0)
+        {
+            workOrders = new HashMap<>();
+        }
+        //todo why isn't workOrder null?
         WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
         if (workOrder != null)
         {

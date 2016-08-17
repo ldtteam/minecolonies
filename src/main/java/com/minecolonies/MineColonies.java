@@ -99,6 +99,7 @@ public class MineColonies
         getNetwork().registerMessage(BuildToolPlaceMessage.class,            BuildToolPlaceMessage.class,            26, Side.SERVER);
         getNetwork().registerMessage(ToggleJobMessage.class,                 ToggleJobMessage.class,                 27, Side.SERVER);
         getNetwork().registerMessage(HireFireMessage.class,                  HireFireMessage.class,                  28, Side.SERVER);
+        getNetwork().registerMessage(WorkOrderChangeMessage.class,           WorkOrderChangeMessage.class,           29, Side.SERVER);
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class,       BlockParticleEffectMessage.class,       50, Side.CLIENT);

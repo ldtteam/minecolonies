@@ -95,6 +95,14 @@ public class WorkOrderView
     }
 
     /**
+     * Setter for the priority.
+     * @param priority the new priority.
+     */
+    public void setPriority(int priority)
+    {
+        this.priority = priority;
+    }
+    /**
      * Deserialize the attributes and variables from transition.
      *
      * @param buf Byte buffer to deserialize.

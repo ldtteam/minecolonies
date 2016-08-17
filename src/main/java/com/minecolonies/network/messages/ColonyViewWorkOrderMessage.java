@@ -14,13 +14,22 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 /**
  * Add or Update a ColonyView on the client
  */
-public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<com.minecolonies.network.messages.ColonyViewWorkOrderMessage, IMessage>
+public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<ColonyViewWorkOrderMessage, IMessage>
 {
     private int     colonyId;
     private int     workOrderId;
+    private int     order;
     private ByteBuf workOrderBuffer;
 
-    public ColonyViewWorkOrderMessage(){}
+    /**
+     * Empty public constructor
+    */
+    public ColonyViewWorkOrderMessage()
+    {
+        /**
+         * Intentionally left empty.
+         **/
+    }
 
     /**
      * Updates a {@link com.minecolonies.colony.WorkOrderView} of the workOrders
@@ -28,12 +37,17 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<com
      * @param colony  Colony of the citizen
      * @param workOrder Workorder of the colony to update view
      */
-    public ColonyViewWorkOrderMessage(Colony colony, AbstractWorkOrder workOrder)
+    public ColonyViewWorkOrderMessage(Colony colony, AbstractWorkOrder workOrder, int order)
     {
         this.colonyId = colony.getID();
-        this.workOrderId = workOrder.getID();
         this.workOrderBuffer = Unpooled.buffer();
-        workOrder.serializeViewNetworkData(workOrderBuffer);
+        this.order = order;
+
+        if(workOrder != null)
+        {
+            this.workOrderId = workOrder.getID();
+            workOrder.serializeViewNetworkData(workOrderBuffer);
+        }
     }
 
     @Override
@@ -41,6 +55,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<com
     {
         buf.writeInt(colonyId);
         buf.writeInt(workOrderId);
+        buf.writeInt(order);
         buf.writeBytes(workOrderBuffer);
     }
 
@@ -49,13 +64,14 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<com
     {
         colonyId = buf.readInt();
         workOrderId = buf.readInt();
+        order = buf.readInt();
         workOrderBuffer = buf;
     }
 
     @Override
-    public IMessage onMessage(com.minecolonies.network.messages.ColonyViewWorkOrderMessage message, MessageContext ctx)
+    public IMessage onMessage(ColonyViewWorkOrderMessage message, MessageContext ctx)
     {
-        return ColonyManager.handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer);
+        return ColonyManager.handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer, message.order);
     }
 }
 
