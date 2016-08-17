@@ -4,7 +4,9 @@ import com.minecolonies.colony.jobs.AbstractJob;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by marvin on 19.05.16.
+ * AI class for skills
+ *
+ * @param <J> The job this ai has to fulfil
  */
 public abstract class AbstractEntityAISkill<J extends AbstractJob> extends AbstractEntityAIBasic<J>
 {

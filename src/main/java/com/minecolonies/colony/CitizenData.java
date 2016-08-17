@@ -427,9 +427,8 @@ public class CitizenData
         {
             return type.cast(job);
         }
-        catch(ClassCastException exc)
+        catch(ClassCastException ignored)
         {
-            Log.logger.catching(exc);
             return null;
         }
     }
