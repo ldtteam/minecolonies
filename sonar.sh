@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # filter out # for sonar
-BRANCH=$(echo $TRAVIS_BRANCH | sed 's/[#]//g')
+BRANCH=$(echo $TRAVIS_BRANCH | tr -d '#')
 
 echo "building for branch $BRANCH"
 
