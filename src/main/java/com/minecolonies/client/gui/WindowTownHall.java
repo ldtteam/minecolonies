@@ -500,6 +500,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
                 if(index == 0)
                 {
+                    if(workOrders.size() == 1)
+                    {
+                        rowPane.findPaneOfTypeByID(BUTTON_DOWN,Button.class).hide();
+                    }
                     rowPane.findPaneOfTypeByID(BUTTON_UP,Button.class).hide();
                 }
                 else if(index == getElementCount()-1)
