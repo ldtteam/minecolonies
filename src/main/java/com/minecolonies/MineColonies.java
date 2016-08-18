@@ -22,35 +22,54 @@ import net.minecraftforge.fml.relauncher.Side;
         dependencies = Constants.FORGE_VERSION, acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
-    private static SimpleNetworkWrapper network;
-
     /**
      * Forge created instance of the Mod.
      */
     @Mod.Instance(Constants.MOD_ID)
-    public static MineColonies instance;
-
+    public static  MineColonies         instance;
     /**
      * Access to the proxy associated with your current side. Variable updated by forge.
      */
     @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
-    public static IProxy proxy;
+    public static  IProxy               proxy;
+    private static SimpleNetworkWrapper network;
 
-    public static SimpleNetworkWrapper getNetwork()
+    /**
+     * Returns whether the side is client or not
+     *
+     * @return True when client, otherwise false
+     */
+    public static boolean isClient()
     {
-        return network;
+        return proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isClient();
     }
 
+    /**
+     * Returns whether the side is client or not
+     *
+     * @return True when server, otherwise false
+     */
+    public static boolean isServer()
+    {
+        return !proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isServer();
+    }
+
+    /**
+     * Event handler for forge pre init event
+     */
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
-        
+
         proxy.registerEntities();
 
         proxy.registerEntityRendering();
     }
 
+    /**
+     * Event handler for forge init event
+     */
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
@@ -63,7 +82,7 @@ public class MineColonies
         proxy.registerEvents();
 
         proxy.registerTileEntityRendering();
-        
+
         proxy.registerRenderer();
 
         Schematics.init();
@@ -102,33 +121,18 @@ public class MineColonies
         getNetwork().registerMessage(WorkOrderChangeMessage.class,           WorkOrderChangeMessage.class,           29, Side.SERVER);
 
         //Client side only
-        getNetwork().registerMessage(BlockParticleEffectMessage.class,       BlockParticleEffectMessage.class,       50, Side.CLIENT);
+        getNetwork().registerMessage(BlockParticleEffectMessage.class,          BlockParticleEffectMessage.class,           50, Side.CLIENT);
 
+    }
+
+    public static SimpleNetworkWrapper getNetwork()
+    {
+        return network;
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
         // Load unimportant resources
-    }
-
-    /**
-     * Returns whether the side is client or not
-     *
-     * @return      True when client, otherwise false
-     */
-    public static boolean isClient()
-    {
-        return proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isClient();
-    }
-
-    /**
-     * Returns whether the side is client or not
-     *
-     * @return      True when server, otherwise false
-     */
-    public static boolean isServer()
-    {
-        return !proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isServer();
     }
 }

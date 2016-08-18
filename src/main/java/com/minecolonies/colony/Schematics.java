@@ -65,15 +65,15 @@ public final class Schematics
                 try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap()))
                 {
                     basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
+                    loadStyleMaps(basePath);
                 }
             }
             else
             {
                 basePath = Paths.get(uri);
+                loadStyleMaps(basePath);
             }
-
-            loadStyleMaps(basePath);
-
+            
         }
         catch (IOException | URISyntaxException e)
         {

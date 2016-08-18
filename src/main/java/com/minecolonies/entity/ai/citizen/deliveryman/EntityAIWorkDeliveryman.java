@@ -11,6 +11,11 @@ import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
  */
 public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliveryman>
 {
+    /**
+     * Initialize the deliveryman and add all his tasks.
+     *
+     * @param deliveryman the job he has.
+     */
     public EntityAIWorkDeliveryman(JobDeliveryman deliveryman)
     {
         super(deliveryman);
