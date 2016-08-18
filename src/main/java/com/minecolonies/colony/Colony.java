@@ -502,11 +502,9 @@ public class Colony implements IColony
             {
                 if (building.isDirty() || hasNewSubscribers)
                 {
-                    ColonyViewBuildingViewMessage msg = new ColonyViewBuildingViewMessage(building);
-
                     subscribers.stream()
                                .filter(player -> building.isDirty() || !oldSubscribers.contains(player))
-                               .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
+                               .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
         }
@@ -520,11 +518,9 @@ public class Colony implements IColony
             {
                 if (citizen.isDirty() || hasNewSubscribers)
                 {
-                    ColonyViewCitizenViewMessage msg = new ColonyViewCitizenViewMessage(this, citizen);
-
                     subscribers.stream()
                                .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
-                               .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
+                               .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(this, citizen), player));
                 }
             }
         }
@@ -793,10 +789,9 @@ public class Colony implements IColony
     {
         if (buildings.remove(building.getID()) != null)
         {
-            ColonyViewRemoveBuildingMessage msg = new ColonyViewRemoveBuildingMessage(this, building.getID());
             for (EntityPlayerMP player : subscribers)
             {
-                MineColonies.getNetwork().sendTo(msg, player);
+                MineColonies.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(this, building.getID()), player);
             }
 
             Log.logger.info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
@@ -902,10 +897,9 @@ public class Colony implements IColony
         workManager.clearWorkForCitizen(citizen);
 
         //  Inform Subscribers of removed citizen
-        ColonyViewRemoveCitizenMessage msg = new ColonyViewRemoveCitizenMessage(this, citizen.getId());
         for (EntityPlayerMP player : subscribers)
         {
-            MineColonies.getNetwork().sendTo(msg, player);
+            MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(this, citizen.getId()), player);
         }
     }
 
