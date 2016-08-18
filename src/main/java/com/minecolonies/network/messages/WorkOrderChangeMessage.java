@@ -92,7 +92,7 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
      *
      * @param message the message.
      * @param ctx     the context.
-     * @return possible response, in this case -> null.
+     * @return possible response, in this case it is null.
      */
     @Override
     public IMessage onMessage(WorkOrderChangeMessage message, MessageContext ctx)
