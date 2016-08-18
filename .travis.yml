@@ -12,11 +12,11 @@ before_cache:
   - rm -r $HOME/.gradle/caches/minecraft/McpMappings.json
   - rm -r $HOME/.gradle/caches/minecraft/deobfedDeps/providedDummy.jar
   - rm -r $HOME/.gradle/caches/minecraft/deobfedDeps/compileDummy.jar
-  - rm -r ./.gradle/2.10./taskArtifacts/cache.properties.lock
-  - rm -r ./.gradle/2.10./taskArtifacts/fileHashes.bin
-  - rm -r ./.gradle/2.10./taskArtifacts/fileSnapshots.bin
-  - rm -r ./.gradle/2.10./taskArtifacts/outputFileStates.bin
-  - rm -r ./.gradle/2.10./taskArtifacts/taskArtifacts.bin
+  - rm -r $TRAVIS_BUILD_DIR/.gradle/2.10./taskArtifacts/cache.properties.lock
+  - rm -r $TRAVIS_BUILD_DIR/.gradle/2.10./taskArtifacts/fileHashes.bin
+  - rm -r $TRAVIS_BUILD_DIR/.gradle/2.10./taskArtifacts/fileSnapshots.bin
+  - rm -r $TRAVIS_BUILD_DIR/.gradle/2.10./taskArtifacts/outputFileStates.bin
+  - rm -r $TRAVIS_BUILD_DIR/.gradle/2.10./taskArtifacts/taskArtifacts.bin
 cache:
   directories:
     - $HOME/.m2
