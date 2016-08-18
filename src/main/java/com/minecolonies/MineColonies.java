@@ -105,6 +105,7 @@ public class MineColonies
         getNetwork().registerMessage(PermissionsMessage.View.class,          PermissionsMessage.View.class,          6,  Side.CLIENT);
         getNetwork().registerMessage(ColonyStylesMessage.class,              ColonyStylesMessage.class,              7,  Side.CLIENT);
         getNetwork().registerMessage(ColonyViewWorkOrderMessage.class,       ColonyViewWorkOrderMessage.class,       8,  Side.CLIENT);
+        getNetwork().registerMessage(ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage.class, 9,  Side.CLIENT);
 
         //  Permission Request messages
         getNetwork().registerMessage(PermissionsMessage.Permission.class,    PermissionsMessage.Permission.class,    10, Side.SERVER);

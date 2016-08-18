@@ -680,19 +680,19 @@ public final class ColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(int, ByteBuf, int, ColonyViewWorkOrderMessage)} (int, ByteBuf)} if {@link #getColonyView(int)}
+     * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)} (int, ByteBuf)} if {@link #getColonyView(int)}
      * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
      *
      * @param colonyId      ID of the colony
      * @param buf           {@link ByteBuf} with colony data
-     * @return              result of {@link ColonyView#handleColonyViewCitizensMessage(int, ByteBuf)} or null
+     * @return              result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)} or null
      */
-    public static IMessage handleColonyViewWorkOrderMessage(int colonyId, ByteBuf buf, int order, ColonyViewWorkOrderMessage.workOrderMessages operation)
+    public static IMessage handleColonyViewWorkOrderMessage(int colonyId, ByteBuf buf)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
-            return view.handleColonyViewWorkOrderMessage(buf, order, operation);
+            return view.handleColonyViewWorkOrderMessage(buf);
         }
 
         return null;
@@ -758,6 +758,27 @@ public final class ColonyManager
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
             //  possible to receive a 'remove' notice before receiving the View
             return view.handleColonyViewRemoveBuildingMessage(buildingId);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)} if {@link #getColonyView(int)}
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     *
+     * @param colonyId      ID of the colony
+     * @param workOrderId    ID of the workOrder
+     * @return              result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)}  or null
+     */
+    public static IMessage handleColonyViewRemoveWorkOrderMessage(final int colonyId, final int workOrderId)
+    {
+        ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            //  Can legitimately be NULL, because (to keep the code simple and fast), it is
+            //  possible to receive a 'remove' notice before receiving the View
+            return view.handleColonyViewRemoveWorkOrderMessage(workOrderId);
         }
 
         return null;

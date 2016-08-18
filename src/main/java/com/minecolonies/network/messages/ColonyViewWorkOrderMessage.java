@@ -18,15 +18,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
 {
     private int     colonyId;
     private int     workOrderId;
-    private int     order;
     private ByteBuf workOrderBuffer;
-    private workOrderMessages operation;
-
-    public enum workOrderMessages
-    {
-        EDIT,
-        EMPTY
-    }
 
     /**
      * Empty public constructor
@@ -44,18 +36,12 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
      * @param colony  Colony of the citizen
      * @param workOrder Workorder of the colony to update view
      */
-    public ColonyViewWorkOrderMessage(Colony colony, AbstractWorkOrder workOrder, int order, workOrderMessages operation)
+    public ColonyViewWorkOrderMessage(Colony colony, AbstractWorkOrder workOrder)
     {
         this.colonyId = colony.getID();
         this.workOrderBuffer = Unpooled.buffer();
-        this.order = order;
-        this.operation = operation;
-
-        if(workOrder != null)
-        {
-            this.workOrderId = workOrder.getID();
-            workOrder.serializeViewNetworkData(workOrderBuffer);
-        }
+        this.workOrderId = workOrder.getID();
+        workOrder.serializeViewNetworkData(workOrderBuffer);
     }
 
     @Override
@@ -63,8 +49,6 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     {
         buf.writeInt(colonyId);
         buf.writeInt(workOrderId);
-        buf.writeInt(order);
-        buf.writeInt(operation.ordinal());
         buf.writeBytes(workOrderBuffer);
     }
 
@@ -73,25 +57,13 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     {
         colonyId = buf.readInt();
         workOrderId = buf.readInt();
-        order = buf.readInt();
-        int op = buf.readInt();
         workOrderBuffer = buf;
-
-        switch(op)
-        {
-            case 0:
-                operation = workOrderMessages.EDIT;
-                break;
-            default:
-                operation = workOrderMessages.EMPTY;
-                break;
-        }
     }
 
     @Override
     public IMessage onMessage(ColonyViewWorkOrderMessage message, MessageContext ctx)
     {
-        return ColonyManager.handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer, message.order, message.operation);
+        return ColonyManager.handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer);
     }
 }
 

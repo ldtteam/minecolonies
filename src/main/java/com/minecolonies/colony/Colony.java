@@ -553,14 +553,9 @@ public class Colony implements IColony
             for (AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
             {
                 subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
-                           .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, workOrder , 0 , ColonyViewWorkOrderMessage.workOrderMessages.EDIT), player));
+                           .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, workOrder), player));
             }
 
-            if(getWorkManager().getWorkOrders().isEmpty())
-            {
-                subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
-                           .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, new WorkOrderBuild() , 0 , ColonyViewWorkOrderMessage.workOrderMessages.EMPTY), player));
-            }
             getWorkManager().setDirty(false);
         }
     }
@@ -943,6 +938,19 @@ public class Colony implements IColony
         for (EntityPlayerMP player : subscribers)
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(this, citizen.getId()), player);
+        }
+    }
+
+    /**
+     * Send the message of a removed workOrder to the client.
+     * @param orderId the workOrder to remove.
+     */
+    public void removeWorkOrder(int orderId)
+    {
+        //  Inform Subscribers of removed workOrder
+        for (EntityPlayerMP player : subscribers)
+        {
+            MineColonies.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
         }
     }
 

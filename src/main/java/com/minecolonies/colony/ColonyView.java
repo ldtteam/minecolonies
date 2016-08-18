@@ -302,21 +302,12 @@ public final class ColonyView implements IColony
      * This uses a full-replacement - workOrders do not get updated and are instead overwritten.
      *
      * @param buf       Network data
-     * @param order     is 0 if this is the first message after a change.
      * @return          null == no response
      */
-    public IMessage handleColonyViewWorkOrderMessage(ByteBuf buf, int order, ColonyViewWorkOrderMessage.workOrderMessages operation)
+    public IMessage handleColonyViewWorkOrderMessage(ByteBuf buf)
     {
-        if(order == 0)
-        {
-            workOrders = new HashMap<>();
-        }
-
-        if (operation == ColonyViewWorkOrderMessage.workOrderMessages.EDIT)
-        {
-            WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
-            workOrders.put(workOrder.getId(), workOrder);
-        }
+        WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
+        workOrders.put(workOrder.getId(), workOrder);
 
         return null;
     }
@@ -367,6 +358,20 @@ public final class ColonyView implements IColony
         }
         return null;
     }
+
+    /**
+     * Remove a workOrder from the ColonyView.
+     *
+     * @param workOrderId id of the workOrder.
+     * @return          null == no response
+     */
+    public IMessage handleColonyViewRemoveWorkOrderMessage(final int workOrderId)
+    {
+        workOrders.remove(workOrderId);
+
+        return null;
+    }
+
 
     /**
      * Update a ColonyView's buildings given a network data ColonyView update packet.
@@ -444,4 +449,5 @@ public final class ColonyView implements IColony
     {
         return permissions;
     }
+
 }

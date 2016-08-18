@@ -1,6 +1,9 @@
 package com.minecolonies.colony;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.network.messages.ColonyViewRemoveCitizenMessage;
+import com.minecolonies.network.messages.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -67,8 +70,8 @@ public class WorkManager
      */
     public void removeWorkOrder(int orderId)
     {
-        dirty = true;
         workOrders.remove(orderId);
+        colony.removeWorkOrder(orderId);
     }
 
     /**

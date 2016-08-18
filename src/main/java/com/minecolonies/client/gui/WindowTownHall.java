@@ -330,7 +330,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                         MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrderDown.getPriority()-1));
                     }
                 }
+                workOrders.remove(i);
+                workOrders.add(workOrder);
                 break;
+
             }
         }
         Collections.sort(workOrders, (first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
