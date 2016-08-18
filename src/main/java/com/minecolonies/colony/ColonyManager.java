@@ -3,7 +3,6 @@ package com.minecolonies.colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
@@ -22,7 +21,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Singleton class that links colonies to minecraft.
