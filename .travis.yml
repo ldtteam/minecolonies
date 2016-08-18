@@ -9,6 +9,14 @@ after_success: ./dropbox.sh
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -r $HOME/.gradle/caches/minecraft/McpMappings.json
+  - rm -r $HOME/.gradle/caches/minecraft/deobfedDeps/providedDummy.jar
+  - rm -r $HOME/.gradle/caches/minecraft/deobfedDeps/compileDummy.jar
+  - rm -r ./.gradle/2.10./taskArtifacts/cache.properties.lock
+  - rm -r ./.gradle/2.10./taskArtifacts/fileHashes.bin
+  - rm -r ./.gradle/2.10./taskArtifacts/fileSnapshots.bin
+  - rm -r ./.gradle/2.10./taskArtifacts/outputFileStates.bin
+  - rm -r ./.gradle/2.10./taskArtifacts/taskArtifacts.bin
 cache:
   directories:
     - $HOME/.m2
