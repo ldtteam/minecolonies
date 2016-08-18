@@ -1,3 +1,5 @@
+#!/bin/bash
+
 rm -f ~/.dropbox_uploader
 echo "OAUTH_ACCESS_TOKEN=$OAUTH_ACCESS_TOKEN" > ~/.dropbox_uploader
 

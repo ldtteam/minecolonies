@@ -1,25 +1,26 @@
 language: java
 sudo: false
-install: true
 jdk: oraclejdk8
-script: ./travis.sh
-notifications:
-  slack:
-    secure: GneNUHoycBShoxpyAwIIF9C368R9XOO5e/L8d/FQUcgTvIxMAieKjTVUQeNMGj2eS4vZdMqO3PaGQ8XAwvCZq2Q+A7E1xPwbpOjyxcBfpBbkLyptIv7JmY8BX7V99946WOmIQV2VLzsgVz+Lu+BY14MaNCZ5TVgX74drDCbh/KxXV0gvJWKYx+0C/94lsQNNlQQJ7kYer0PORAZJt5pROJFaTdKGfrc+PflZ1mp9YYhVeLfXWrqmm8pthtWo4FgHfzntbvz000Spiv4DbqPuUjfxRbgkUqzMQNIen+px+VhJUraNKyINfn1vc0n8Akt8MxSdGGsJYa+D/c1huBSOHoXF/7HGyigYMXKEuuFHttSpEGc4KeOo7SdjuKilasHmoO9w0IflXunsbRcZTh6c5SM28goqsDklWamu60CYT2IkwuRspi49pua2JyxKT9JBMEdD4xU9UL/XZ+d7i7sPQcOvzFl7Nt0ZQhM8z23n+unNg29LU5AJ1bWJc+Y8N+/Ol01/bv1DfXaimeTSYniL8FpjEVPqJPxaAyFrmJn4TdJ4RD5lOJhqpu2qRzyJKLTjWuFfhalp6NZ9DUTMFWduJYyD8S1nJ8ORYQbiAK4D92Wyoj5GsyX5yMQxNjj63Vg65rNMpafROBMRu6ZTIQiUhXRAbf3qLPLURyaoazvtIoA=
+install: ./gradlew build
+script:
+  - ./gradlew javadoc
+  - ./sonar.sh
+after_success: ./dropbox.sh
 before_cache:
-- rm -rf $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -rf $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf $HOME/.gradle/caches/minecraft/McpMappings.json
+  - rm -rf $HOME/.gradle/caches/minecraft/deobfedDeps/providedDummy.jar
+  - rm -rf $HOME/.gradle/caches/minecraft/deobfedDeps/compileDummy.jar
+  - rm -rf $HOME/.gradle/gradle.log
+  - rm -rf $TRAVIS_BUILD_DIR/.gradle/2.10./taskArtifacts/cache.properties.lock
+  - rm -rf $TRAVIS_BUILD_DIR/.gradle/2.10./taskArtifacts/fileHashes.bin
+  - rm -rf $TRAVIS_BUILD_DIR/.gradle/2.10./taskArtifacts/fileSnapshots.bin
+  - rm -rf $TRAVIS_BUILD_DIR/.gradle/2.10./taskArtifacts/outputFileStates.bin
+  - rm -rf $TRAVIS_BUILD_DIR/.gradle/2.10./taskArtifacts/taskArtifacts.bin
 cache:
   directories:
-  - $HOME/.m2
-  - .gradle
-  - $HOME/.gradle/caches/
-  - $HOME/.gradle/wrapper/
-deploy:
-  provider: releases
-  api_key:
-    secure: Icmx7CzokpVIMWf+c1LU6fEzH5H3Kzo3WUuNuvbYW+4SgB83xha/GNbfukYMFYmHHtqP2V6d80eIy0HfflgD9QHN4518ObTE6nFjZssKF92jkg9nfDNRwN/DTh9hSEt8J9A0gHoEX55euBI52x6NZP4nigahvibcVfz2YGbQgxOiB8h2YMf1bxtw21wiU/T8p7oDjrF9Sxb4k40BhhGJFR/Al+lZ4Jwc9p2ddTH85tVA85vtjWY65eK2nU5YfVtV7OJVNfRMmSeV2UApfsE2MwbgeXLUaF8/nlB01aQLDWY8flpD3jUug2IbV/o1USm+D7OSHh70/rzeewIWRPQ/KMQVmF0wikDoYIwtY5coBvGKqhzFKaE9X5Kd/K+S6e3jWqAZ0s3Z25pR0aNA8fgG+Ga7zys9nOh1g+UTPcRTY1n1DtYy3o9DFDaJR0488GFWVN7yTbYINsf6jz0Br6S1eTie1a5hsFJ5uikJiNmmJfRHEM7lFIhplkV8WUNw4V9gMcBVxYCkOfYpMbT2kzIUwsVXhXxHzSgxEIVuuTSChM9+LphyPEARmipOmxWO0q2ADnQrBeA0xGAQB8xgoEEkdbik5DlMosT0C+apBfYaV6Xb3T5PNt6xyTXb6QfF9p+kSMT7abNfG74DNIuMeGcAnUA0g7ZgBKournIalXWSWBQ=
-  file: build/libs/*
-  skip_cleanup: true
-  on:
-    tags: true
-  before_deploy: "ls -al build/libs/"
+    - $HOME/.m2
+    - .gradle
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/

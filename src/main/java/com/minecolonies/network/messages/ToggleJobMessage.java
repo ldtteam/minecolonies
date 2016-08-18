@@ -23,13 +23,11 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
     private boolean          toggle;
 
     /**
-     * Empty public constructor
+     * Empty public constructor.
      */
     public ToggleJobMessage()
     {
-        /**
-         * Intentionally left empty.
-         */
+        // Required for netty.
     }
 
     /**
@@ -70,7 +68,7 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
      * Called when a message has been received.
      * @param message the message.
      * @param ctx the context.
-     * @return possible response, in this case -> null.
+     * @return possible response, in this case -&gt; null.
      */
     @Override
     public IMessage onMessage(ToggleJobMessage message, MessageContext ctx)

@@ -272,8 +272,8 @@ public class Pane extends Gui
     /**
      * Draw the current Pane if visible.
      *
-     * @param mx
-     * @param my
+     * @param mx mouse x
+     * @param my mouse y
      */
     public final void draw(int mx, int my)
     {
@@ -332,11 +332,12 @@ public class Pane extends Gui
 
     /**
      * Returns the first Pane (depth-first search) of a given ID,
-     * if it matches the specified type
-     * Performs a depth-first search on the hierarchy of Panes and Views
+     * if it matches the specified type.
+     * Performs a depth-first search on the hierarchy of Panes and Views.
      *
      * @param id ID of Pane to find
      * @param type Class of the desired Pane type
+     * @param <T> The type of pane returned
      * @return a Pane of the given ID, if it matches the specified type
      */
     public final <T extends Pane> T findPaneOfTypeByID(String id, Class<T> type)
@@ -402,9 +403,9 @@ public class Pane extends Gui
     /**
      * Is a point relative to the parent's origin within the pane?
      *
-     * @param mx
-     * @param my
-     * @return
+     * @param mx point x
+     * @param my point y
+     * @return true if the point is in the pane
      */
     protected boolean isPointInPane(int mx, int my)
     {

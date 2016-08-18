@@ -96,7 +96,7 @@ public class InventoryFunctions
 
     /**
      * Search for a stack in an Inventory matching the predicate.
-     * (IInventory, Integer) -> Boolean
+     * (IInventory, Integer) -&gt; Boolean
      *
      * @param inventory the inventory to search in
      * @param tester    the function to use for testing slots

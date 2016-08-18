@@ -513,10 +513,11 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
     }
 
     /**
-     * Compute the cost (immediate 'g' value) of moving from the parent space to the new space
+     * Compute the cost (immediate 'g' value) of moving from the parent space to the new space,
      *
      * @param parent The parent node being moved from
      * @param dPos The delta from the parent to the new space; assumes dx,dy,dz in range of [-1..1]
+     * @param isSwimming true is the current node would require the citizen to swim.
      * @return cost to move from the parent to the new position
      */
     protected static double computeCost(Node parent, BlockPos dPos, boolean isSwimming)
@@ -538,7 +539,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
     }
 
     /**
-     * Compute the heuristic cost ('h' value) of a given position x,y,z
+     * Compute the heuristic cost ('h' value) of a given position x,y,z.
      *
      * Returning a value of 0 performs a breadth-first search
      * Returning a value less than actual possible cost to goal guarantees shortest path, but at computational expense
@@ -549,7 +550,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      *   as the search will be a very fast greedy best-first-search, ignoring cost weighting and distance
      *
      * @param pos Position to compute heuristic from
-     * @return
+     * @return the heuristic.
      */
     protected abstract double computeHeuristic(BlockPos pos);
 
@@ -720,8 +721,9 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
     }
 
     /**
-     * Get the height of the ground at the given x,z coordinate, within 1 step of y
+     * Get the height of the ground at the given x,z coordinate, within 1 step of y.
      *
+     * @param parent parent node.
      * @param pos coordinate of block
      * @return y height of first open, viable block above ground, or -1 if blocked or too far a drop
      */
@@ -853,8 +855,8 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
     /**
      * Is the space passable?
      *
-     * @param block
-     * @param pos
+     * @param block the block we are checking.
+     * @param pos location of the block.
      * @return true if the block does not block movement
      */
     protected boolean isPassable(Block block, BlockPos pos)
@@ -886,7 +888,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      *
      * @param block Block to check
      * @param pos position of block
-     * @return
+     * @return true if the block at that location can be walked on.
      */
     protected boolean isWalkableSurface(Block block, BlockPos pos)
     {
@@ -898,9 +900,9 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
 
     /**
      * Is the block a ladder?
-     * @param block
-     * @param pos
-     * @return
+     * @param block block to check.
+     * @param pos location of the block.
+     * @return true if the block is a ladder.
      */
     protected boolean isLadder(Block block, BlockPos pos)
     {

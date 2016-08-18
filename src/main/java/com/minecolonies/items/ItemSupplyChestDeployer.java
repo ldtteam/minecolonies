@@ -93,13 +93,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     /**
      * Checks if the ship can be placed and returns the direction it can face.
-     * <p/>
+     * <pre>
      * 0: cannot be placed.
      * 2: can be placed at north.
      * 3: can be placed at south.
      * 4: can be placed at west.
      * 5: can be placed at east.
-     *
+     * </pre>
      * @param world world obj.
      * @param pos    coordinate clicked.
      * @return      facings it can be placed at.

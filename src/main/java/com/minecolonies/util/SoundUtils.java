@@ -5,12 +5,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 /**
- * Utilities for playing sounds
- * todo: at the moment unused @colton check if useful
+ * Utilities for playing sounds.
  */
 public final class SoundUtils
 {
-
     private static final double HALF_BLOCK_OFFSET  = 0.5D;
     private static final double STATIC_PITCH_VALUE = 0.9D;
     private static final double RANDOM_PITCH_VALUE = 0.1D;
@@ -23,12 +21,12 @@ public final class SoundUtils
     }
 
     /**
+     * {@link #playSound(World, String, double, double, double, float, float)}.
      * @param world World to play sound in
      * @param name  Name of the sound to play
      * @param x     X-coordinate
      * @param y     Y-coordinate
      * @param z     Z-coordinate
-     * @see {@link #playSound(World, String, double, double, double, float, float)}
      */
     public static void playSound(World world, String name, int x, int y, int z)
     {
@@ -39,7 +37,7 @@ public final class SoundUtils
 
     /**
      * Plays a sound effect at a specific location.
-     * Pitch and volume will be applied
+     * Pitch and volume will be applied.
      *
      * @param world  World to play sound in
      * @param name   Name of the sound
@@ -55,7 +53,7 @@ public final class SoundUtils
     }
 
     /**
-     * Plays sound near an entity
+     * Plays sound near an entity.
      *
      * @param entity Entity to play sound at
      * @param name   Name of the sound to play
