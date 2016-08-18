@@ -29,12 +29,12 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
     private int priority;
 
     /**
-     * Remove the workOrder?
+     * Remove the workOrder or not.
      */
     private boolean removeWorkOrder;
 
     /**
-     * Empty public constructor
+     * Empty public constructor.
      */
     public WorkOrderChangeMessage()
     {

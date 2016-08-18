@@ -43,14 +43,14 @@ public final class ColonyView implements IColony
 
     //  Citizenry
     private Map<Integer, CitizenDataView> citizens = new HashMap<>();
-    final private Map<Integer, WorkOrderView> workOrders = new HashMap<>();
+    private final Map<Integer, WorkOrderView> workOrders = new HashMap<>();
 
     private int maxCitizens = 0;
 
     /**
      * Base constructor for a colony.
      *
-     * @param id The current id for the colony
+     * @param id The current id for the colony.
      */
     private ColonyView(int id)
     {
@@ -58,10 +58,10 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Create a ColonyView given a UUID and NBTTagCompound
+     * Create a ColonyView given a UUID and NBTTagCompound.
      *
-     * @param id    Id of the colony view
-     * @return      the new colony view
+     * @param id    Id of the colony view.
+     * @return      the new colony view.
      */
     public static ColonyView createFromNetwork(int id)
     {
@@ -69,9 +69,9 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Returns the ID of the view
+     * Returns the ID of the view.
      *
-     * @return ID of the view
+     * @return ID of the view.
      */
     public int getID()
     {
@@ -79,9 +79,9 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Returns the dimension ID of the view
+     * Returns the dimension ID of the view.
      *
-     * @return      dimension ID of the view
+     * @return      dimension ID of the view.
      */
     public int getDimensionId()
     {
@@ -89,9 +89,9 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Sets the name of the view
+     * Sets the name of the view.
      *
-     * @param name  Name of the view
+     * @param name  Name of the view.
      */
     public void setName(String name)
     {
@@ -109,7 +109,7 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Sets if workers should be hired manually
+     * Sets if workers should be hired manually.
      * @param manualHiring true if manually.
      */
     public void setManualHiring(boolean manualHiring)
@@ -118,9 +118,9 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Get the town hall View for this ColonyView
+     * Get the town hall View for this ColonyView.
      *
-     * @return {@link BuildingTownHall.View} of the colony
+     * @return {@link BuildingTownHall.View} of the colony.
      */
     public BuildingTownHall.View getTownHall()
     {
@@ -128,7 +128,7 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Get a AbstractBuilding.View for a given building (by coordinate-id) using raw x,y,z
+     * Get a AbstractBuilding.View for a given building (by coordinate-id) using raw x,y,z.
      *
      * @param x     x-coordinate
      * @param y     y-coordinate
@@ -141,7 +141,7 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Get a AbstractBuilding.View for a given building (by coordinate-id) using ChunkCoordinates
+     * Get a AbstractBuilding.View for a given building (by coordinate-id) using ChunkCoordinates.
      *
      * @param buildingId        Coordinates/ID of the AbstractBuilding
      * @return                  {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null
@@ -152,7 +152,7 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Returns a map of players in the colony
+     * Returns a map of players in the colony.
      * Key is the UUID, value is {@link com.minecolonies.colony.permissions.Permissions.Player}
      *
      * @return                  Map of UUID's and {@link com.minecolonies.colony.permissions.Permissions.Player}
@@ -163,10 +163,10 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server
+     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
      *
-     * @param rank              Rank to get the permission
-     * @param action            Permission to get
+     * @param rank              Rank to get the permission.
+     * @param action            Permission to get.
      */
     public void setPermission(Permissions.Rank rank, Permissions.Action action)
     {
@@ -177,10 +177,10 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * removes a specific permission to a rank. If the permission was set, it sends a message to the server
+     * removes a specific permission to a rank. If the permission was set, it sends a message to the server.
      *
-     * @param rank              Rank to remove permission from
-     * @param action            Action to remove permission of
+     * @param rank              Rank to remove permission from.
+     * @param action            Action to remove permission of.
      */
     public void removePermission(Permissions.Rank rank, Permissions.Action action)
     {
@@ -192,10 +192,10 @@ public final class ColonyView implements IColony
 
     /**
      *
-     * Toggles a specific permission to a rank. Sends a message to the server
+     * Toggles a specific permission to a rank. Sends a message to the server.
      *
-     * @param rank      Rank to toggle permission of
-     * @param action    Action to toggle permission of
+     * @param rank      Rank to toggle permission of.
+     * @param action    Action to toggle permission of.
      */
     public void togglePermission(Permissions.Rank rank, Permissions.Action action)
     {
@@ -205,9 +205,9 @@ public final class ColonyView implements IColony
 
 
     /**
-     * Returns the maximum amount of citizen in the colony
+     * Returns the maximum amount of citizen in the colony.
      *
-     * @return          maximum amount of citizens
+     * @return          maximum amount of citizens.
      */
     public int getMaxCitizens()
     {
@@ -215,7 +215,7 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Getter for the citizens map
+     * Getter for the citizens map.
      * @return a unmodifiable Map of the citizen.
      */
     public Map<Integer, CitizenDataView> getCitizens()
@@ -310,7 +310,7 @@ public final class ColonyView implements IColony
      */
     public IMessage handleColonyViewWorkOrderMessage(ByteBuf buf)
     {
-        WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
+        final WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
         workOrders.put(workOrder.getId(), workOrder);
 
         return null;
@@ -326,7 +326,7 @@ public final class ColonyView implements IColony
      */
     public IMessage handleColonyViewCitizensMessage(int id, ByteBuf buf)
     {
-        CitizenDataView citizen = CitizenData.createCitizenDataView(id, buf);
+        final CitizenDataView citizen = CitizenData.createCitizenDataView(id, buf);
         if (citizen != null)
         {
             citizens.put(citizen.getID(), citizen);
@@ -355,7 +355,7 @@ public final class ColonyView implements IColony
      */
     public IMessage handleColonyViewRemoveBuildingMessage(BlockPos buildingId)
     {
-        AbstractBuilding.View building = buildings.remove(buildingId);
+        final AbstractBuilding.View building = buildings.remove(buildingId);
         if (townHall == building)
         {
             townHall = null;
@@ -387,7 +387,7 @@ public final class ColonyView implements IColony
      */
     public IMessage handleColonyBuildingViewMessage(BlockPos buildingId, ByteBuf buf)
     {
-        AbstractBuilding.View building = AbstractBuilding.createBuildingView(this, buildingId, buf);
+        final AbstractBuilding.View building = AbstractBuilding.createBuildingView(this, buildingId, buf);
         if (building != null)
         {
             buildings.put(building.getID(), building);
