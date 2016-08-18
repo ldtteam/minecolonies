@@ -37,7 +37,7 @@ public abstract class AbstractWorkOrder
      */
     public enum workOrderTypes
     {
-        BUILD,
+        BUILD
     }
 
     static

@@ -3,6 +3,7 @@ package com.minecolonies.colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
@@ -681,19 +682,19 @@ public final class ColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(int, ByteBuf, int)} (int, ByteBuf)} if {@link #getColonyView(int)}
+     * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(int, ByteBuf, int, ColonyViewWorkOrderMessage)} (int, ByteBuf)} if {@link #getColonyView(int)}
      * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
      *
      * @param colonyId      ID of the colony
      * @param buf           {@link ByteBuf} with colony data
      * @return              result of {@link ColonyView#handleColonyViewCitizensMessage(int, ByteBuf)} or null
      */
-    public static IMessage handleColonyViewWorkOrderMessage(int colonyId, ByteBuf buf, int order)
+    public static IMessage handleColonyViewWorkOrderMessage(int colonyId, ByteBuf buf, int order, ColonyViewWorkOrderMessage.workOrderMessages operation)
     {
         ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
-            return view.handleColonyViewWorkOrderMessage(buf, order);
+            return view.handleColonyViewWorkOrderMessage(buf, order, operation);
         }
 
         return null;

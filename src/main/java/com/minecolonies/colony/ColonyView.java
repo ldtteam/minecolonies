@@ -6,6 +6,7 @@ import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.TownHallRenameMessage;
 import com.minecolonies.util.BlockPosUtil;
@@ -304,16 +305,16 @@ public final class ColonyView implements IColony
      * @param order     is 0 if this is the first message after a change.
      * @return          null == no response
      */
-    public IMessage handleColonyViewWorkOrderMessage(ByteBuf buf, int order)
+    public IMessage handleColonyViewWorkOrderMessage(ByteBuf buf, int order, ColonyViewWorkOrderMessage.workOrderMessages operation)
     {
         if(order == 0)
         {
             workOrders = new HashMap<>();
         }
-        //todo why isn't workOrder null?
-        WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
-        if (workOrder != null)
+
+        if (operation == ColonyViewWorkOrderMessage.workOrderMessages.EDIT)
         {
+            WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
             workOrders.put(workOrder.getId(), workOrder);
         }
 

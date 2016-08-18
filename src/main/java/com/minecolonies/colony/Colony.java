@@ -558,14 +558,14 @@ public class Colony implements IColony
             for (AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
             {
 
-                ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, workOrder , i++);
+                ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, workOrder , i++ , ColonyViewWorkOrderMessage.workOrderMessages.EDIT);
                 subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
                            .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
             }
 
-            if(getWorkManager().getWorkOrders().isEmpty() && getWorkManager().isDirty())
+            if(getWorkManager().getWorkOrders().isEmpty())
             {
-                ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, null , 0);
+                ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, new WorkOrderBuild() , 0 , ColonyViewWorkOrderMessage.workOrderMessages.EMPTY);
                 subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
                            .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
             }
