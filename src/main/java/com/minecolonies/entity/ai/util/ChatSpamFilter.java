@@ -17,7 +17,7 @@ public class ChatSpamFilter
      * 20 Ticks per second.
      * 30 Seconds.
      */
-    static final int BASE_TIMEOUT = 30 * 20;
+    protected static final int BASE_TIMEOUT = 30 * 20;
 
     /**
      * The maximum delay to wait
@@ -26,7 +26,7 @@ public class ChatSpamFilter
      * 60 Seconds per Minute.
      * 10 Minutes.
      */
-    static final int MAX_TIMEOUT = 20 * 60 * 10;
+    protected static final int MAX_TIMEOUT = 20 * 60 * 10;
 
     /**
      * The worker we send chats from.

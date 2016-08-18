@@ -107,5 +107,4 @@ public class ChatSpamFilterTest
 
         verify(citizen, times(7)).sendLocalizedChat(any(), any());
     }
-
 }
