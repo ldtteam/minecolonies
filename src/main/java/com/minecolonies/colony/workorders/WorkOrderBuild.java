@@ -58,9 +58,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
     }
 
     @Override
-    protected workOrderTypes getType()
+    protected WorkOrderType getType()
     {
-        return workOrderTypes.BUILD;
+        return WorkOrderType.BUILD;
     }
 
     @Override

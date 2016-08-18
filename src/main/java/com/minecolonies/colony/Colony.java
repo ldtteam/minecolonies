@@ -481,7 +481,7 @@ public class Colony implements IColony
             sendPermissionsPackets(oldSubscribers, hasNewSubscribers);
 
             //WorkOrders
-            sendWorkOrderPackets(oldSubscribers,hasNewSubscribers);
+            sendWorkOrderPackets(oldSubscribers, hasNewSubscribers);
 
             //Citizens
             sendCitizenPackets(oldSubscribers, hasNewSubscribers);
@@ -553,17 +553,14 @@ public class Colony implements IColony
             int i = 0;
             for (AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
             {
-
-                ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, workOrder , i++ , ColonyViewWorkOrderMessage.workOrderMessages.EDIT);
                 subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
-                           .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
+                           .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, workOrder , i++ , ColonyViewWorkOrderMessage.workOrderMessages.EDIT), player));
             }
 
             if(getWorkManager().getWorkOrders().isEmpty())
             {
-                ColonyViewWorkOrderMessage msg = new ColonyViewWorkOrderMessage(this, new WorkOrderBuild() , 0 , ColonyViewWorkOrderMessage.workOrderMessages.EMPTY);
                 subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
-                           .forEach(player -> MineColonies.getNetwork().sendTo(msg, player));
+                           .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, new WorkOrderBuild() , 0 , ColonyViewWorkOrderMessage.workOrderMessages.EMPTY), player));
             }
             getWorkManager().setDirty(false);
         }

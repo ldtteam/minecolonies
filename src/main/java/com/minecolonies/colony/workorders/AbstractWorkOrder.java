@@ -35,7 +35,7 @@ public abstract class AbstractWorkOrder
     /**
      * Contains all classes which inherit directly from this class.
      */
-    public enum workOrderTypes
+    public enum WorkOrderType
     {
         BUILD
     }
@@ -91,7 +91,7 @@ public abstract class AbstractWorkOrder
      * Gets of the WorkOrder Type. Overwrite this for the different implementations.
      * @return the type.
      */
-    protected abstract workOrderTypes getType();
+    protected abstract WorkOrderType getType();
 
     /**
      * Gets the value of the WorkOrder. Overwrite this in every subclass.
@@ -308,7 +308,7 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Create a Workorder View given it's saved NBTTagCompound
+     * Create a WorkOrder View from a buffer.
      *
      * @param buf The network data
      * @return View object of the workOrder

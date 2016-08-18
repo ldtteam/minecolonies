@@ -315,8 +315,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     if (i > 0)
                     {
                         WorkOrderView workOrderUp = workOrders.get(i-1);
-                        workOrder.setPriority(workOrderUp.getPriority());
-                        workOrderUp.setPriority(workOrder.getPriority());
+                        workOrder.setPriority(workOrderUp.getPriority()+1);
 
                         MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrderUp.getPriority()+1));
                     }
@@ -327,13 +326,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     {
                         WorkOrderView workOrderDown = workOrders.get(i+1);
 
-                        workOrder.setPriority(workOrderDown.getPriority());
-                        workOrderDown.setPriority(workOrder.getPriority());
+                        workOrder.setPriority(workOrderDown.getPriority()-1);
                         MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrderDown.getPriority()-1));
                     }
                 }
-                workOrders.remove(i);
-                workOrders.add(workOrder);
                 break;
             }
         }
@@ -347,6 +343,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void deleteWorkOrder(Button button)
     {
+        //todo player has permission to do this?
         Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
         int id = Integer.parseInt(idLabel.getLabelText());
         for(int i = 0; i < workOrders.size(); i++)
@@ -354,6 +351,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             if(workOrders.get(i).getId() == id)
             {
                 workOrders.remove(i);
+                break;
             }
         }
         MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id , true, 0));
@@ -390,13 +388,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Executed when <code>WindowTownHall</code> is opened.
-     * Does tasks like setting buttons
+     * Creates several statistics and sets them in the townhall GUI.
      */
-    @Override
-    public void onOpened()
+    private void createAndSetStatistics()
     {
-        super.onOpened();
         int citizensSize = townHall.getColony().getCitizens().size();
 
         int workers     = 0;
@@ -432,11 +427,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(UNEMP_CITIZENS_LABEL, Label.class).setLabelText(numberOfUnemployed);
         findPaneOfTypeByID(BUILDERS_LABEL, Label.class).setLabelText(numberOfBuilders);
         findPaneOfTypeByID(DELIVERY_MAN_LABEL, Label.class).setLabelText(numberOfDeliverymen);
-        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
+    }
 
-        lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
-        lastTabButton.setEnabled(false);
-
+    /**
+     * Fills the userList in the GUI.
+     */
+    private void fillUserList()
+    {
         userList = findPaneOfTypeByID(LIST_USERS, ScrollingList.class);
         userList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -456,11 +453,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabelText(rank);
             }
         });
+    }
 
-
-        /*
-      The ScrollingList of the cit
+    /**
+     * Fills the citizens list in the GUI.
      */
+    private void fillCitizensList()
+    {
         ScrollingList citizenList = findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class);
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -478,12 +477,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(citizen.getName());
             }
         });
+    }
 
-        if(townHall.getColony().isManualHiring())
-        {
-            findPaneOfTypeByID("toggleJob", Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
-        }
-
+    /**
+     * Fills the workOrder list inside the townhall GUI.
+     */
+    private void fillWorkOrderList()
+    {
         ScrollingList workOrderList =  findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class);
         workOrderList.enable();
         workOrderList.show();
@@ -526,6 +526,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     if(citizen.getID() == workOrder.getClaimedBy())
                     {
                         claimingCitizen = citizen.getName();
+                        break;
                     }
                 }
 
@@ -536,6 +537,34 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Label.class).setLabelText(workOrder.getId() + "");
             }
         });
+    }
+
+    /**
+     * Executed when <code>WindowTownHall</code> is opened.
+     * Does tasks like setting buttons
+     */
+    @Override
+    public void onOpened()
+    {
+        super.onOpened();
+
+        createAndSetStatistics();
+
+
+        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
+
+        lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
+        lastTabButton.setEnabled(false);
+
+        fillUserList();
+        fillCitizensList();
+        fillWorkOrderList();
+
+        if(townHall.getColony().isManualHiring())
+        {
+            findPaneOfTypeByID("toggleJob", Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
+        }
+
     }
 
     /**

@@ -21,7 +21,6 @@ public class WorkManager
     protected final Colony colony;
     private Map<Integer, AbstractWorkOrder> workOrders      = new LinkedHashMap<>();
     private int                     topWorkOrderId = 0;
-    private int                     topPriority = 0;
 
     private static  final   String                  TAG_WORK_ORDERS                 = "workOrders";
 
@@ -55,9 +54,7 @@ public class WorkManager
         if (order.getID() == 0)
         {
             topWorkOrderId++;
-            topPriority++;
             order.setID(topWorkOrderId);
-            order.setPriority(topPriority);
         }
 
         workOrders.put(order.getID(), order);
@@ -136,10 +133,10 @@ public class WorkManager
     }
 
     /**
-     * Get all work orders of a specified type
+     * Get all work orders of a specified type.
      *
-     * @param type the class of the type of work order to find
-     * @return a list of all work orders of the given type
+     * @param type the class of the type of work order to find.
+     * @return a list of all work orders of the given type.
      */
     public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(Class<W> type)
     {
@@ -148,8 +145,7 @@ public class WorkManager
 
     /**
      * Get all work orders.
-     *
-     * @return a list of all work orders of the given type
+     * @return a list of all work orders.
      */
     public Map<Integer, AbstractWorkOrder> getWorkOrders()
     {
@@ -211,7 +207,6 @@ public class WorkManager
                 }
 
                 topWorkOrderId = Math.max(topWorkOrderId, o.getID());
-                topPriority = Math.max(topPriority, o.getPriority());
             }
         }
     }
