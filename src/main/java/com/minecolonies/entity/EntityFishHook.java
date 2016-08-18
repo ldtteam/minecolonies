@@ -736,7 +736,6 @@ public final class EntityFishHook extends Entity
      * @param citizen the fisherman getting the loot
      * @return an ItemStack randomly from the loot table
      */
-    @SuppressWarnings("unchecked")
     private ItemStack getFishingLoot(final EntityCitizen citizen)
     {
         //Reduce random to get more fish drops
