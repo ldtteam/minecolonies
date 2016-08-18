@@ -647,8 +647,8 @@ public final class ColonyManager
      */
     public static IMessage handlePermissionsViewMessage(int colonyID, ByteBuf data)
     {
-        ColonyView view = getColonyView(colonyID);
-        if(view != null)
+        final ColonyView view = getColonyView(colonyID);
+        if (view != null)
         {
             return view.handlePermissionsViewMessage(data);
         }
@@ -670,7 +670,7 @@ public final class ColonyManager
      */
     public static IMessage handleColonyViewCitizensMessage(int colonyId, int citizenId, ByteBuf buf)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             return view.handleColonyViewCitizensMessage(citizenId, buf);
@@ -689,7 +689,7 @@ public final class ColonyManager
      */
     public static IMessage handleColonyViewWorkOrderMessage(int colonyId, ByteBuf buf)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             return view.handleColonyViewWorkOrderMessage(buf);
@@ -708,7 +708,7 @@ public final class ColonyManager
      */
     public static IMessage handleColonyViewRemoveCitizenMessage(int colonyId, int citizenId)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
@@ -730,7 +730,7 @@ public final class ColonyManager
      */
     public static IMessage handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, ByteBuf buf)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             return view.handleColonyBuildingViewMessage(buildingId, buf);
@@ -752,7 +752,7 @@ public final class ColonyManager
      */
     public static IMessage handleColonyViewRemoveBuildingMessage(int colonyId, BlockPos buildingId)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
@@ -773,7 +773,7 @@ public final class ColonyManager
      */
     public static IMessage handleColonyViewRemoveWorkOrderMessage(final int colonyId, final int workOrderId)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is

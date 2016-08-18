@@ -6,7 +6,6 @@ import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.TownHallRenameMessage;
 import com.minecolonies.util.BlockPosUtil;
@@ -44,7 +43,7 @@ public final class ColonyView implements IColony
 
     //  Citizenry
     private Map<Integer, CitizenDataView> citizens = new HashMap<>();
-    private Map<Integer, WorkOrderView> workOrders = new HashMap<>();
+    final private Map<Integer, WorkOrderView> workOrders = new HashMap<>();
 
     private int maxCitizens = 0;
 

@@ -34,11 +34,12 @@ public class WorkOrderView
 
     /**
      * Public constructor of the WorkOrderView.
-     * @param id the unique id.
      */
-    public WorkOrderView(int id)
+    public WorkOrderView()
     {
-        this.id = id;
+        /**
+         * Intentionally left empty.
+         */
     }
 
     /**

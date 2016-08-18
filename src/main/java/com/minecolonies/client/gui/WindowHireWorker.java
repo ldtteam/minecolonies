@@ -114,7 +114,7 @@ public class WindowHireWorker extends Window implements Button.Handler
     public void onOpened()
     {
         updateCitizens();
-        ScrollingList citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
+        final ScrollingList citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
         citizenList.enable();
         citizenList.show();
         //Creates a dataProvider for the unemployed citizenList.
@@ -172,8 +172,8 @@ public class WindowHireWorker extends Window implements Button.Handler
     {
         if (button.getID().equals(BUTTON_DONE))
         {
-            Label idLabel = (Label)button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
-            int id = Integer.parseInt(idLabel.getLabelText());
+            final Label idLabel = (Label)button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
+            final int id = Integer.parseInt(idLabel.getLabelText());
 
             if (building instanceof AbstractBuildingWorker.View)
             {

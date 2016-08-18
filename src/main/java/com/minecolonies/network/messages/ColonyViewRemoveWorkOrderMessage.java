@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
- * Add or Update a ColonyView on the client
+ * Add or Update a ColonyView on the client.
  */
 public class ColonyViewRemoveWorkOrderMessage implements IMessage, IMessageHandler<ColonyViewRemoveWorkOrderMessage, IMessage>
 {
@@ -16,13 +16,21 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage, IMessageHandl
     private int colonyId;
     private int workOrderId;
 
-    public ColonyViewRemoveWorkOrderMessage(){}
+    /**
+     * Empty public constructor.
+     */
+    public ColonyViewRemoveWorkOrderMessage()
+    {
+        /**
+        * Intentionally left empty.
+        **/
+    }
 
     /**
-     * Creates an object for the remove message for citizen
+     * Creates an object for the remove message for citizen.
      *
-     * @param colony  Colony the citizen is in
-     * @param workOrderId Citizen ID
+     * @param colony  colony the workOrder is in.
+     * @param workOrderId workOrder ID.
      */
     public ColonyViewRemoveWorkOrderMessage(Colony colony, int workOrderId)
     {

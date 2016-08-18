@@ -97,7 +97,7 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
     @Override
     public IMessage onMessage(WorkOrderChangeMessage message, MessageContext ctx)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
             if (message.removeWorkOrder)

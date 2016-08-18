@@ -340,8 +340,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void deleteWorkOrder(Button button)
     {
         //todo player has permission to do this?
-        Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
-        int id = Integer.parseInt(idLabel.getLabelText());
+        final Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
+        final int id = Integer.parseInt(idLabel.getLabelText());
         for(int i = 0; i < workOrders.size(); i++)
         {
             if(workOrders.get(i).getId() == id)
@@ -388,7 +388,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void createAndSetStatistics()
     {
-        int citizensSize = townHall.getColony().getCitizens().size();
+        final int citizensSize = townHall.getColony().getCitizens().size();
 
         int workers     = 0;
         int builders    = 0;
@@ -456,7 +456,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void fillCitizensList()
     {
-        ScrollingList citizenList = findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class);
+        final ScrollingList citizenList = findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class);
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -480,7 +480,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void fillWorkOrderList()
     {
-        ScrollingList workOrderList =  findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class);
+        final ScrollingList workOrderList =  findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class);
         workOrderList.enable();
         workOrderList.show();
 

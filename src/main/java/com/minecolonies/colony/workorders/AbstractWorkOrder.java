@@ -77,7 +77,10 @@ public abstract class AbstractWorkOrder
      * Checks if the workOrder has changed.
      * @return true if so.
      */
-    public boolean hasChanged(){ return changed; }
+    public boolean hasChanged()
+    {
+        return changed;
+    }
 
     /**
      * Resets the changed variable.
