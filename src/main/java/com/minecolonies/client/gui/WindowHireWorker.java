@@ -9,6 +9,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.HireFireMessage;
 import com.minecolonies.util.LanguageHandler;
@@ -72,6 +73,11 @@ public class WindowHireWorker extends Window implements Button.Handler
      * The view of the current building.
      */
     private AbstractBuilding.View building;
+
+    /**
+     * The abstract building to set things in the worker building GUI.
+     */
+    private AbstractBuildingWorker abstractBuildingWorker;
 
     /**
      * The colony.
@@ -171,8 +177,15 @@ public class WindowHireWorker extends Window implements Button.Handler
     {
         if (button.getID().equals(BUTTON_DONE))
         {
-            Label id = (Label)button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
-            MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building,true, Integer.parseInt(id.getLabelText())));
+            Label idLabel = (Label)button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
+            int id = Integer.parseInt(idLabel.getLabelText());
+
+            if (building instanceof AbstractBuildingWorker.View)
+            {
+                ((AbstractBuildingWorker.View) building).setWorkerId(id);
+            }
+            MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building,true, id));
+
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
         {
