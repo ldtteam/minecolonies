@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# filter out # for sonar
+BRANCH=$(echo $TRAVIS_BRANCH | sed 's/[#]//g')
+
 if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   ./gradlew test jacocoTestReport sonarqube --stacktrace \
       -Dsonar.analysis.mode=issues \
@@ -10,6 +13,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
       -Dsonar.login=$SONAR_TOKEN \
       -Dsonar.password=$SONAR_PASS \
       -Dsonar.sources=src/main/java \
+      -Dsonar.branch=$BRANCH \
       -Dsonar.java.binaries=build/classes/main
 fi
 
@@ -21,6 +25,6 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     -Dsonar.login=$SONAR_TOKEN \
     -Dsonar.password=$SONAR_PASS \
     -Dsonar.sources=src/main/java \
-    -Dsonar.branch=$TRAVIS_BRANCH \
+    -Dsonar.branch=$BRANCH \
     -Dsonar.java.binaries=build/classes/main
 fi
