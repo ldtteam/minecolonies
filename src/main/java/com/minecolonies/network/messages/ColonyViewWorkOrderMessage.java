@@ -1,9 +1,7 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.WorkOrderView;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -12,7 +10,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
- * Add or Update a ColonyView on the client
+ * Add or Update a ColonyView on the client.
  */
 public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<ColonyViewWorkOrderMessage, IMessage>
 {
@@ -21,7 +19,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     private ByteBuf workOrderBuffer;
 
     /**
-     * Empty public constructor
+     * Empty public constructor.
     */
     public ColonyViewWorkOrderMessage()
     {
@@ -31,10 +29,10 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     }
 
     /**
-     * Updates a {@link com.minecolonies.colony.WorkOrderView} of the workOrders
+     * Updates a {@link com.minecolonies.colony.WorkOrderView} of the workOrders.
      *
-     * @param colony  Colony of the citizen
-     * @param workOrder Workorder of the colony to update view
+     * @param colony  colony of the workOrder.
+     * @param workOrder workOrder of the colony to update view.
      */
     public ColonyViewWorkOrderMessage(Colony colony, AbstractWorkOrder workOrder)
     {

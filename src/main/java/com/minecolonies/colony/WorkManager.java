@@ -1,9 +1,6 @@
 package com.minecolonies.colony;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.network.messages.ColonyViewRemoveCitizenMessage;
-import com.minecolonies.network.messages.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -245,7 +242,8 @@ public class WorkManager
 
             if ((event.world.getWorldTime() % WORK_ORDER_FULFILL_INCREMENT) == 0)
             {
-                workOrders.values().stream().filter(o -> !o.isClaimed()).sorted((first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0))
+                workOrders.values().stream().filter(o -> !o.isClaimed())
+                          .sorted((first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0))
                           .forEach(o -> o.attemptToFulfill(colony));
             }
         }

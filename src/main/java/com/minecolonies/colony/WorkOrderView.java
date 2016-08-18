@@ -33,6 +33,15 @@ public class WorkOrderView
     private int                             claimedBy;
 
     /**
+     * Public constructor of the WorkOrderView.
+     * @param id the unique id.
+     */
+    public WorkOrderView(int id)
+    {
+        this.id = id;
+    }
+
+    /**
      * Priority getter.
      * @return the priority.
      */

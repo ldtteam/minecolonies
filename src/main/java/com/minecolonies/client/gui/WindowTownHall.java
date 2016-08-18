@@ -20,7 +20,7 @@ import com.minecolonies.util.LanguageHandler;
 import java.util.*;
 
 /**
- * Window for the town hall
+ * Window for the town hall.
  */
 public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View>
 {
@@ -107,7 +107,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * The id of the delete button in the GUI.
      */
-    private static final String BUTTON_DELETE      = "delete";
+    private static final String BUTTON_DELETE = "delete";
 
     /**
      * Id of the input bar to add players. in the GUI.
@@ -231,22 +231,22 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * List of added users.
      */
-    private List<Permissions.Player> users       = new ArrayList<>();
+    private List<Permissions.Player> users = new ArrayList<>();
 
     /**
      * List of citizens.
      */
-    private List<CitizenDataView>   citizens    = new ArrayList<>();
+    private List<CitizenDataView> citizens = new ArrayList<>();
 
     /**
      * List of workOrders.
      */
-    private List<WorkOrderView> workOrders = new ArrayList<>();
+    private final List<WorkOrderView> workOrders = new ArrayList<>();
 
     /**
      * Map of the pages.
      */
-    private Map<String, String>      tabsToPages = new HashMap<>();
+    private Map<String, String> tabsToPages = new HashMap<>();
 
     /**
      * The button f the last tab -> will be filled later on.
@@ -301,34 +301,27 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void updatePriority(Button button)
     {
-        Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
-        int id = Integer.parseInt(idLabel.getLabelText());
-        String buttonLabel = button.getID();
+        final Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
+        final int id = Integer.parseInt(idLabel.getLabelText());
+        final String buttonLabel = button.getID();
 
         for (int i = 0; i < workOrders.size(); i++)
         {
-            WorkOrderView workOrder = workOrders.get(i);
+            final WorkOrderView workOrder = workOrders.get(i);
             if (workOrder.getId() == id)
             {
-                if(buttonLabel.equals(BUTTON_UP))
+                if(buttonLabel.equals(BUTTON_UP) && i > 0)
                 {
-                    if (i > 0)
-                    {
-                        WorkOrderView workOrderUp = workOrders.get(i-1);
-                        workOrder.setPriority(workOrderUp.getPriority()+1);
-
-                        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrderUp.getPriority()+1));
-                    }
+                    final WorkOrderView workOrderUp = workOrders.get(i-1);
+                    workOrder.setPriority(workOrderUp.getPriority()+1);
+                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrderUp.getPriority()+1));
                 }
-                else if (buttonLabel.equals(BUTTON_DOWN))
+                else if (buttonLabel.equals(BUTTON_DOWN) && i <= workOrders.size())
                 {
-                    if (i <= workOrders.size())
-                    {
-                        WorkOrderView workOrderDown = workOrders.get(i+1);
 
-                        workOrder.setPriority(workOrderDown.getPriority()-1);
-                        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrderDown.getPriority()-1));
-                    }
+                    final WorkOrderView workOrderDown = workOrders.get(i + 1);
+                    workOrder.setPriority(workOrderDown.getPriority() - 1);
+                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrderDown.getPriority() - 1));
                 }
                 workOrders.remove(i);
                 workOrders.add(workOrder);
@@ -381,7 +374,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Clears and resets all citizens
+     * Clears and resets all citizens.
      */
     private void updateWorkOrders()
     {
@@ -391,7 +384,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Creates several statistics and sets them in the townhall GUI.
+     * Creates several statistics and sets them in the townHall GUI.
      */
     private void createAndSetStatistics()
     {
@@ -401,7 +394,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         int builders    = 0;
         int deliverymen = 0;
 
-        for(CitizenDataView citizen: citizens)
+        for(final CitizenDataView citizen: citizens)
         {
             switch(citizen.getJob())
             {
@@ -490,41 +483,33 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         ScrollingList workOrderList =  findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class);
         workOrderList.enable();
         workOrderList.show();
+
         //Creates a dataProvider for the unemployed citizenList.
         workOrderList.setDataProvider(new ScrollingList.DataProvider()
         {
-            /**
-             * The number of rows of the list.
-             * @return the number.
-             */
             @Override
             public int getElementCount()
             {
                 return workOrders.size();
             }
 
-            /**
-             * Inserts the elements into each row.
-             * @param index the index of the row/list element
-             * @param rowPane the parent Pane for the row, containing the elements to update
-             */
             @Override
             public void updateElement(int index, Pane rowPane)
             {
                 final WorkOrderView workOrder = workOrders.get(index);
                 String claimingCitizen = "";
 
-                if(index ==0)
+                if(index == 0)
                 {
-                    rowPane.findPaneOfTypeByID("up",Button.class).hide();
+                    rowPane.findPaneOfTypeByID(BUTTON_UP,Button.class).hide();
                 }
                 else if(index == getElementCount()-1)
                 {
-                    rowPane.findPaneOfTypeByID("down",Button.class).hide();
+                    rowPane.findPaneOfTypeByID(BUTTON_DOWN,Button.class).hide();
                 }
 
                 //Searches citizen of id x
-                for(CitizenDataView citizen: citizens)
+                for(final CitizenDataView citizen: citizens)
                 {
                     if(citizen.getID() == workOrder.getClaimedBy())
                     {
@@ -535,9 +520,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
                 rowPane.findPaneOfTypeByID(WORK_LABEL, Label.class).setLabelText(workOrder.getValue());
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Label.class).setLabelText(claimingCitizen);
-
-                //Invisible id textContent.
-                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Label.class).setLabelText(workOrder.getId() + "");
+                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Label.class).setLabelText(Integer.toString(workOrder.getId()));
             }
         });
     }

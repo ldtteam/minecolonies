@@ -215,18 +215,23 @@ public final class ColonyView implements IColony
         return maxCitizens;
     }
 
+    /**
+     * Getter for the citizens map
+     * @return a unmodifiable Map of the citizen.
+     */
     public Map<Integer, CitizenDataView> getCitizens()
     {
         return Collections.unmodifiableMap(citizens);
     }
 
+    /**
+     * Getter for the workOrders.
+     * @return a unmodifiable Collection of the workOrders.
+     */
     public Collection<WorkOrderView> getWorkOrders()
     {
         return Collections.unmodifiableCollection(workOrders.values());
     }
-
-    //todo send message to server for delete
-    //todo send message to server for change.
 
     /**
      * Gets the CitizenDataView for a citizen id.
